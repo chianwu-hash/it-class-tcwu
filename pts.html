@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新北市親師生平台 - 登入教學小遊戲</title>
+    
+    <!-- 引入 Tailwind CSS (樣式) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 引入 React 和 ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    
+    <!-- 引入 Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(-10%); }
+            50% { transform: translateY(10%); }
+        }
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.5s ease-out forwards;
+        }
+        .animate-shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+    </style>
+</head>
+<body class="bg-blue-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // --- 內建圖示 (SVG Icons) ---
+        const Icons = {
+            User: ({size=24, className=""}) => (
+                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            ),
+            Lock: ({size=24, className=""}) => (
+                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            ),
+            Key: ({size=24, className=""}) => (
+                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
+            ),
+            Check: ({size=24, className="", strokeWidth=2}) => (
+                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="20 6 9 17 4 12"/></svg>
+            ),
+            Star: ({size=24, className=""}) => (
+                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            ),
+            ArrowRight: ({size=24, className=""}) => (
+                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            ),
+            RefreshCcw: ({size=24, className=""}) => (
+                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 2v6h6"/><path d="M21 12A9 9 0 0 0 6 5.3L3 8"/><path d="M21 22v-6h-6"/><path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"/></svg>
+            ),
+            CreditCard: ({size=24, className=""}) => (
+                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            ),
+            Mail: ({size=24, className=""}) => (
+                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            ),
+            AlertTriangle: ({size=24, className=""}) => (
+                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            ),
+            Delete: ({size=24, className=""}) => (
+                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+            ),
+            // 新增：Home Icon
+            Home: ({size=24, className=""}) => (
+                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            )
+        };
+
+        function LoginLesson() {
+            const [step, setStep] = useState(0); 
+            const [practiceUser, setPracticeUser] = useState('');
+            const [practicePass, setPracticePass] = useState('');
+            const [showSuccess, setShowSuccess] = useState(false);
+            const [errorMsg, setErrorMsg] = useState('');
+
+            const demoData = {
+                name: "林小美",
+                pinyin: "lxm",
+                bday: "1226",
+                fullUser: "lxm1226",
+                id: "B12345678"
+            };
+
+            const nextStep = () => setStep(step + 1);
+            const prevStep = () => setStep(step - 1);
+            const resetPractice = () => {
+                setPracticeUser('');
+                setPracticePass('');
+                setShowSuccess(false);
+                setErrorMsg('');
+            };
+
+            const handleLogin = () => {
+                setErrorMsg('');
+                
+                if (practiceUser.length < 5) {
+                setErrorMsg('帳號好像太短囉！記得是：英文名字首字 + 生日4碼');
+                return;
+                }
+                
+                if (practicePass.length > 0 && practicePass[0] !== practicePass[0].toUpperCase()) {
+                setErrorMsg('哎呀！身分證字號的第一個英文字母要「大寫」喔！(按住 Shift 鍵)');
+                return;
+                }
+
+                if (practicePass.length < 6) {
+                setErrorMsg('密碼還沒打完喔！請輸入完整身分證字號。');
+                return;
+                }
+
+                setShowSuccess(true);
+            };
+
+            return (
+                <div className="min-h-screen bg-blue-50 font-sans selection:bg-yellow-200 pb-10">
+                {/* Header */}
+                <header className="bg-indigo-600 text-white p-4 shadow-lg sticky top-0 z-10">
+                    <div className="max-w-6xl mx-auto flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        {/* 1. 修改：加入回首頁按鈕 */}
+                        <a href="index.html" className="flex items-center gap-1 bg-indigo-700 hover:bg-indigo-800 text-indigo-100 px-3 py-2 rounded-lg transition-colors border border-indigo-500">
+                            <Icons.Home size={20} />
+                            <span className="hidden sm:inline font-bold">回首頁</span>
+                        </a>
+
+                        <h1 className="text-lg md:text-2xl font-bold flex items-center gap-2">
+                            <div className="hidden sm:flex w-10 h-10 bg-yellow-400 rounded-full items-center justify-center text-indigo-800 flex-shrink-0">
+                            <Icons.User size={24} />
+                            </div>
+                            <span>新北市親師生平台 - 登入小教室</span>
+                        </h1>
+                    </div>
+
+                    <div className="flex gap-2 overflow-x-auto">
+                        {[0, 1, 2, 3, 4].map((s) => (
+                        <button
+                            key={s}
+                            onClick={() => setStep(s)}
+                            className={`w-8 h-8 rounded-full font-bold transition-all flex-shrink-0 ${
+                            step === s 
+                                ? 'bg-yellow-400 text-indigo-900 scale-110 shadow-md' 
+                                : 'bg-indigo-500 text-indigo-200 hover:bg-indigo-400'
+                            }`}
+                        >
+                            {s + 1}
+                        </button>
+                        ))}
+                    </div>
+                    </div>
+                </header>
+
+                <main className="max-w-4xl mx-auto p-4 md:p-6">
+                    
+                    {/* Step 1: The Account Strip */}
+                    {step === 0 && (
+                    <div className="space-y-8 animate-fade-in">
+                        <div className="text-center space-y-4">
+                        <h2 className="text-2xl md:text-3xl font-bold text-indigo-800">第一關：認識你的「秘密紙條」</h2>
+                        <p className="text-lg md:text-xl text-gray-600">每個人都會拿到一張像這樣的紙條，千萬不要弄丟喔！</p>
+                        </div>
+
+                        <div className="flex justify-center py-8">
+                        <div className="bg-white p-6 rounded-xl shadow-xl border-l-8 border-yellow-400 w-full max-w-lg transform rotate-1 hover:rotate-0 transition-transform duration-300 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 bg-yellow-100 text-yellow-800 px-3 py-1 text-sm font-bold rounded-bl-lg">
+                            三年二班
+                            </div>
+                            <div className="space-y-4">
+                            <div className="border-b-2 border-dashed border-gray-200 pb-2">
+                                <span className="text-gray-500 text-sm block">姓名 Name</span>
+                                <span className="text-3xl font-bold text-gray-800">{demoData.name}</span>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                                <span className="text-blue-600 text-sm font-bold block flex items-center gap-1"><Icons.User size={14}/> 帳號 Account</span>
+                                <span className="text-2xl font-mono font-bold text-blue-800 break-all">{demoData.fullUser}</span>
+                                </div>
+                                <div className="bg-green-50 p-3 rounded-lg border border-green-100">
+                                <span className="text-green-600 text-sm font-bold block flex items-center gap-1"><Icons.Lock size={14}/> 密碼 Password</span>
+                                <span className="text-xl font-mono font-bold text-green-800 break-all">{demoData.id}</span>
+                                </div>
+                            </div>
+
+                            <div className="text-sm text-gray-400 flex items-center gap-2 flex-wrap">
+                                <Icons.Mail size={14} />
+                                <span>Email: {demoData.fullUser}@apps.ntpc.edu.tw</span>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+
+                        <div className="text-center">
+                        <button 
+                            onClick={nextStep}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-all flex items-center gap-2 mx-auto"
+                        >
+                            我看懂了！下一關 <Icons.ArrowRight />
+                        </button>
+                        </div>
+                    </div>
+                    )}
+
+                    {/* Step 2: Username Logic */}
+                    {step === 1 && (
+                    <div className="space-y-8 animate-fade-in">
+                        <div className="text-center space-y-4">
+                        <h2 className="text-2xl md:text-3xl font-bold text-indigo-800">第二關：帳號是怎麼變出來的？</h2>
+                        <p className="text-lg md:text-xl text-gray-600">帳號的規則是：<span className="text-pink-500 font-bold">3個英文字</span> + <span className="text-blue-500 font-bold">4個數字</span></p>
+                        </div>
+
+                        <div className="bg-white p-8 rounded-2xl shadow-xl max-w-3xl mx-auto space-y-8">
+                        
+                        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
+                            <div className="text-center">
+                            <p className="text-gray-500 mb-2">中文名字</p>
+                            <div className="flex gap-2">
+                                <div className="w-14 h-14 md:w-16 md:h-16 bg-pink-100 rounded-lg flex items-center justify-center text-2xl md:text-3xl font-bold text-pink-700">林</div>
+                                <div className="w-14 h-14 md:w-16 md:h-16 bg-pink-100 rounded-lg flex items-center justify-center text-2xl md:text-3xl font-bold text-pink-700">小</div>
+                                <div className="w-14 h-14 md:w-16 md:h-16 bg-pink-100 rounded-lg flex items-center justify-center text-2xl md:text-3xl font-bold text-pink-700">美</div>
+                            </div>
+                            </div>
+                            <Icons.ArrowRight className="text-gray-300 hidden md:block" size={32} />
+                            <div className="text-center">
+                            <p className="text-gray-500 mb-2">英文拼音首字</p>
+                            <div className="flex gap-2">
+                                <div className="w-14 h-14 md:w-16 md:h-16 bg-pink-500 rounded-lg flex items-center justify-center text-2xl md:text-3xl font-bold text-white" style={{animation: 'bounce 1s infinite', animationDelay: '0s'}}>l</div>
+                                <div className="w-14 h-14 md:w-16 md:h-16 bg-pink-500 rounded-lg flex items-center justify-center text-2xl md:text-3xl font-bold text-white" style={{animation: 'bounce 1s infinite', animationDelay: '0.2s'}}>x</div>
+                                <div className="w-14 h-14 md:w-16 md:h-16 bg-pink-500 rounded-lg flex items-center justify-center text-2xl md:text-3xl font-bold text-white" style={{animation: 'bounce 1s infinite', animationDelay: '0.4s'}}>m</div>
+                            </div>
+                            </div>
+                        </div>
+
+                        <div className="border-t-2 border-dashed border-gray-200"></div>
+
+                        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
+                            <div className="text-center">
+                            <p className="text-gray-500 mb-2">生日</p>
+                            <div className="bg-blue-100 px-6 py-4 rounded-xl text-2xl font-bold text-blue-800">
+                                12月 26日
+                            </div>
+                            </div>
+                            <Icons.ArrowRight className="text-gray-300 hidden md:block" size={32} />
+                            <div className="text-center">
+                            <p className="text-gray-500 mb-2">變身成數字</p>
+                            <div className="flex gap-2">
+                                <div className="w-14 h-14 md:w-16 md:h-16 bg-blue-500 rounded-lg flex items-center justify-center text-2xl md:text-3xl font-bold text-white">1</div>
+                                <div className="w-14 h-14 md:w-16 md:h-16 bg-blue-500 rounded-lg flex items-center justify-center text-2xl md:text-3xl font-bold text-white">2</div>
+                                <div className="w-14 h-14 md:w-16 md:h-16 bg-blue-500 rounded-lg flex items-center justify-center text-2xl md:text-3xl font-bold text-white">2</div>
+                                <div className="w-14 h-14 md:w-16 md:h-16 bg-blue-500 rounded-lg flex items-center justify-center text-2xl md:text-3xl font-bold text-white">6</div>
+                            </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-indigo-50 p-6 rounded-xl text-center">
+                            <p className="text-indigo-600 mb-2 font-bold">合體變成帳號！</p>
+                            <div className="text-4xl md:text-5xl font-mono font-bold text-indigo-900 tracking-wider break-all">
+                            <span className="text-pink-600">lxm</span>
+                            <span className="text-blue-600">1226</span>
+                            </div>
+                        </div>
+
+                        </div>
+                        
+                        <div className="flex justify-between max-w-3xl mx-auto">
+                        <button onClick={prevStep} className="text-gray-500 font-bold hover:text-gray-700 px-4">
+                            上一步
+                        </button>
+                        <button 
+                            onClick={nextStep}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-all flex items-center gap-2"
+                        >
+                            我知道了！下一關 <Icons.ArrowRight />
+                        </button>
+                        </div>
+                    </div>
+                    )}
+
+                    {/* Step 3: Password Logic */}
+                    {step === 2 && (
+                    <div className="space-y-8 animate-fade-in">
+                        <div className="text-center space-y-4">
+                        <h2 className="text-2xl md:text-3xl font-bold text-indigo-800">第三關：密碼的小秘密</h2>
+                        <p className="text-lg md:text-xl text-gray-600">密碼就是你的<span className="text-green-600 font-bold">身分證字號</span>，第一個字要變大！</p>
+                        </div>
+
+                        <div className="bg-white p-8 rounded-2xl shadow-xl max-w-3xl mx-auto">
+                        
+                        <div className="flex flex-col items-center gap-8">
+                            <div className="bg-green-50 p-4 rounded-xl border-2 border-green-200 flex flex-col md:flex-row items-center gap-4">
+                            <Icons.CreditCard className="text-green-600" size={40} />
+                            <div className="text-center md:text-left">
+                                <p className="text-sm text-green-800 font-bold">範例身分證字號</p>
+                                <p className="text-3xl md:text-4xl font-mono font-bold tracking-widest">
+                                <span className="text-red-500 relative inline-block">
+                                    B
+                                    <span className="absolute -top-6 left-0 w-max bg-red-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">
+                                    一定要大寫!
+                                    </span>
+                                </span>
+                                <span className="text-gray-800">12345678</span>
+                                </p>
+                            </div>
+                            </div>
+
+                            <div className="flex items-center gap-4 bg-gray-100 p-6 rounded-xl w-full justify-center">
+                            <div className="text-center">
+                                <p className="mb-2 font-bold text-gray-600">長大藥水：Shift 鍵</p>
+                                <div className="flex gap-2 items-end justify-center">
+                                <div className="flex flex-col items-center">
+                                    <div className="w-24 h-12 bg-gray-800 text-white rounded-lg flex items-center justify-center font-bold shadow-md border-b-4 border-gray-900 active:border-b-0 active:translate-y-1 transition-all">
+                                    Shift
+                                    </div>
+                                    <span className="text-xs mt-1 text-gray-500">左手按住不放</span>
+                                </div>
+                                <div className="text-2xl font-bold text-gray-400 pb-2">+</div>
+                                <div className="flex flex-col items-center">
+                                    <div className="w-12 h-12 bg-white text-gray-800 rounded-lg flex items-center justify-center font-bold shadow-md border border-gray-300 border-b-4 active:border-b-0 active:translate-y-1 transition-all">
+                                    B
+                                    </div>
+                                    <span className="text-xs mt-1 text-gray-500">右手按一下</span>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+
+                        </div>
+
+                        <div className="flex justify-between max-w-3xl mx-auto">
+                        <button onClick={prevStep} className="text-gray-500 font-bold hover:text-gray-700 px-4">
+                            上一步
+                        </button>
+                        <button 
+                            onClick={nextStep}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-all flex items-center gap-2"
+                        >
+                            下一關：鍵盤小偵探 <Icons.ArrowRight />
+                        </button>
+                        </div>
+                    </div>
+                    )}
+
+                    {/* Step 4 (Troubleshooting): Keyboard Detective */}
+                    {step === 3 && (
+                    <div className="space-y-8 animate-fade-in">
+                        <div className="text-center space-y-4">
+                        <h2 className="text-2xl md:text-3xl font-bold text-indigo-800">第四關：鍵盤小偵探</h2>
+                        <p className="text-lg md:text-xl text-gray-600">這些字長得很像，但是完全不一樣喔！</p>
+                        </div>
+
+                        <div className="bg-white p-8 rounded-2xl shadow-xl max-w-4xl mx-auto space-y-8">
+                        
+                        {/* Section 1: l vs 1 vs I */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                            <div className="bg-pink-50 p-6 rounded-xl border-2 border-pink-100 relative overflow-hidden group hover:border-pink-300 transition-all">
+                            <div className="absolute top-0 left-0 w-full bg-pink-200 text-pink-800 text-xs font-bold py-1">帳號用的 (姓名)</div>
+                            <p className="text-6xl md:text-8xl font-mono text-pink-600 my-4">l</p>
+                            <p className="text-sm text-gray-500 font-bold">英文小寫 L (ell)</p>
+                            <p className="text-xs text-gray-400 mt-1">林小美的 l</p>
+                            </div>
+                            
+                            <div className="bg-blue-50 p-6 rounded-xl border-2 border-blue-100 relative overflow-hidden group hover:border-blue-300 transition-all">
+                            <div className="absolute top-0 left-0 w-full bg-blue-200 text-blue-800 text-xs font-bold py-1">生日用的 (數字)</div>
+                            <p className="text-6xl md:text-8xl font-mono text-blue-600 my-4">1</p>
+                            <p className="text-sm text-gray-500 font-bold">數字 One</p>
+                            <p className="text-xs text-gray-400 mt-1">1月1日的 1</p>
+                            </div>
+
+                            <div className="bg-gray-50 p-6 rounded-xl border-2 border-gray-100 relative overflow-hidden group hover:border-gray-300 transition-all opacity-60 grayscale">
+                            <div className="absolute top-0 left-0 w-full bg-gray-200 text-gray-600 text-xs font-bold py-1">很少用到</div>
+                            <p className="text-6xl md:text-8xl font-mono text-gray-600 my-4">I</p>
+                            <p className="text-sm text-gray-500 font-bold">英文大寫 i</p>
+                            <p className="text-xs text-gray-400 mt-1">不要按錯囉</p>
+                            </div>
+                        </div>
+
+                        {/* Section 1.5: o vs 0 vs O */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center mt-4">
+                            <div className="bg-purple-50 p-6 rounded-xl border-2 border-purple-100 relative overflow-hidden group hover:border-purple-300 transition-all">
+                            <div className="absolute top-0 left-0 w-full bg-purple-200 text-purple-800 text-xs font-bold py-1">帳號用的</div>
+                            <p className="text-6xl md:text-8xl font-mono text-purple-600 my-4">o</p>
+                            <p className="text-sm text-gray-500 font-bold">英文小寫 o</p>
+                            <p className="text-xs text-gray-400 mt-1">矮矮圓圓的</p>
+                            </div>
+                            
+                            <div className="bg-orange-50 p-6 rounded-xl border-2 border-orange-100 relative overflow-hidden group hover:border-orange-300 transition-all">
+                            <div className="absolute top-0 left-0 w-full bg-orange-200 text-orange-800 text-xs font-bold py-1">生日/密碼用的</div>
+                            <p className="text-6xl md:text-8xl font-mono text-orange-600 my-4">0</p>
+                            <p className="text-sm text-gray-500 font-bold">數字 0 (Zero)</p>
+                            <p className="text-xs text-gray-400 mt-1">瘦瘦長長的</p>
+                            </div>
+
+                            <div className="bg-gray-50 p-6 rounded-xl border-2 border-gray-100 relative overflow-hidden group hover:border-gray-300 transition-all opacity-60 grayscale">
+                            <div className="absolute top-0 left-0 w-full bg-gray-200 text-gray-600 text-xs font-bold py-1">身分證可能有</div>
+                            <p className="text-6xl md:text-8xl font-mono text-gray-600 my-4">O</p>
+                            <p className="text-sm text-gray-500 font-bold">英文大寫 O</p>
+                            <p className="text-xs text-gray-400 mt-1">胖胖大大的</p>
+                            </div>
+                        </div>
+
+                        {/* Section 1.6: g vs q */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center mt-4 max-w-2xl mx-auto">
+                            <div className="bg-teal-50 p-6 rounded-xl border-2 border-teal-100 relative overflow-hidden group hover:border-teal-300 transition-all">
+                            <div className="absolute top-0 left-0 w-full bg-teal-200 text-teal-800 text-xs font-bold py-1">帳號可能會有</div>
+                            <p className="text-6xl md:text-8xl font-mono text-teal-600 my-4">g</p>
+                            <p className="text-sm text-gray-500 font-bold">英文小寫 g</p>
+                            <p className="text-xs text-gray-400 mt-1">尾巴彎彎的 (像眼鏡)</p>
+                            </div>
+                            
+                            <div className="bg-rose-50 p-6 rounded-xl border-2 border-rose-100 relative overflow-hidden group hover:border-rose-300 transition-all">
+                            <div className="absolute top-0 left-0 w-full bg-rose-200 text-rose-800 text-xs font-bold py-1">帳號可能會有</div>
+                            <p className="text-6xl md:text-8xl font-mono text-rose-600 my-4">q</p>
+                            <p className="text-sm text-gray-500 font-bold">英文小寫 q</p>
+                            <p className="text-xs text-gray-400 mt-1">尾巴直直的 (像棒棒糖)</p>
+                            </div>
+                        </div>
+
+                        <div className="border-t-2 border-dashed border-gray-200"></div>
+
+                        {/* Section 2: Troubleshooting Keys */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            
+                            {/* NumLock Guide */}
+                            <div className="bg-yellow-50 p-5 rounded-xl border border-yellow-200 flex flex-col items-center text-center">
+                            <h3 className="font-bold text-lg text-yellow-800 mb-3 flex items-center gap-2">
+                                <Icons.AlertTriangle size={20}/> 數字鍵沒反應？
+                            </h3>
+                            <div className="flex gap-4 items-center">
+                                <div className="w-20 h-20 bg-white border-2 border-gray-300 rounded-lg flex flex-col items-center justify-center shadow-sm">
+                                    <span className="text-xs font-bold text-gray-400 mb-1">Num Lock</span>
+                                    <div className="w-full h-1 bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)] rounded-full mb-2"></div>
+                                    <span className="text-xs text-gray-400">燈要亮</span>
+                                </div>
+                                <div className="text-left text-sm text-gray-600">
+                                    <p>如果右邊的數字按不出來，</p>
+                                    <p>檢查 <span className="font-bold bg-gray-200 px-1 rounded">Num Lock</span> 燈有沒有亮！</p>
+                                    <p>按一下按鍵可以開關。</p>
+                                </div>
+                            </div>
+                            </div>
+
+                            {/* Backspace Guide */}
+                            <div className="bg-red-50 p-5 rounded-xl border border-red-200 flex flex-col items-center text-center">
+                            <h3 className="font-bold text-lg text-red-800 mb-3 flex items-center gap-2">
+                                <Icons.Delete size={20}/> 打錯字怎麼辦？
+                            </h3>
+                            <div className="flex gap-4 items-center">
+                                <div className="w-24 h-14 bg-gray-800 text-white rounded-lg flex items-center justify-center font-bold shadow-md border-b-4 border-gray-900">
+                                    <Icons.ArrowRight className="transform rotate-180" /> Backspace
+                                </div>
+                                <div className="text-left text-sm text-gray-600">
+                                    <p>別緊張！按下 <span className="font-bold text-red-500">Backspace</span></p>
+                                    <p>這隻「向左的箭頭」</p>
+                                    <p>可以把前面打錯的字吃掉！</p>
+                                </div>
+                            </div>
+                            </div>
+
+                        </div>
+
+                        </div>
+
+                        <div className="flex justify-between max-w-3xl mx-auto">
+                        <button onClick={prevStep} className="text-gray-500 font-bold hover:text-gray-700 px-4">
+                            上一步
+                        </button>
+                        <button 
+                            onClick={nextStep}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-all flex items-center gap-2"
+                        >
+                            我準備好挑戰了！ <Icons.Star className="fill-yellow-300 text-yellow-300" />
+                        </button>
+                        </div>
+                    </div>
+                    )}
+
+                    {/* Step 5: Interactive Practice */}
+                    {step === 4 && (
+                    <div className="space-y-6 animate-fade-in">
+                        <div className="text-center space-y-2">
+                        <h2 className="text-2xl md:text-3xl font-bold text-indigo-800">最終關卡：登入大挑戰</h2>
+                        <p className="text-lg md:text-xl text-gray-600">試著輸入看看！(可以用林小美的資料，或是你自己的)</p>
+                        <p className="text-sm bg-white inline-block px-4 py-1 rounded-full shadow-sm text-gray-500">
+                            林小美提示：帳號 <span className="font-mono text-pink-500 font-bold">lxm1226</span> / 密碼 <span className="font-mono text-green-600 font-bold">B12345678</span>
+                        </p>
+                        </div>
+
+                        <div className="flex justify-center items-start pt-4">
+                        {/* Mock Login Box */}
+                        {!showSuccess ? (
+                            <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md border border-gray-100">
+                            <div className="text-center mb-6">
+                                <h3 className="text-2xl font-bold text-gray-700">親師生平台登入</h3>
+                                <div className="h-1 w-20 bg-yellow-400 mx-auto mt-2 rounded-full"></div>
+                            </div>
+
+                            <div className="space-y-6">
+                                <div>
+                                <label className="block text-gray-700 font-bold mb-2 flex items-center gap-2">
+                                    <Icons.User size={18} className="text-indigo-500"/> 帳號 (Account)
+                                </label>
+                                <input 
+                                    type="text" 
+                                    value={practiceUser}
+                                    onChange={(e) => setPracticeUser(e.target.value.toLowerCase())} // Auto lowercase for better UX
+                                    placeholder="例如：lxm1226"
+                                    className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 text-lg font-mono transition-colors"
+                                />
+                                <p className="text-xs text-gray-400 mt-1">提示：小寫英文(lxm) + 數字(1226)</p>
+                                </div>
+
+                                <div>
+                                <label className="block text-gray-700 font-bold mb-2 flex items-center gap-2">
+                                    <Icons.Key size={18} className="text-indigo-500"/> 密碼 (Password)
+                                </label>
+                                <input 
+                                    type="text" // Visible for learning
+                                    value={practicePass}
+                                    onChange={(e) => setPracticePass(e.target.value)}
+                                    placeholder="身分證字號 (首字大寫)"
+                                    className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 text-lg font-mono transition-colors"
+                                />
+                                <p className="text-xs text-gray-400 mt-1">提示：第一個英文字要大寫喔！</p>
+                                </div>
+
+                                {errorMsg && (
+                                <div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm font-bold animate-shake flex items-start gap-2">
+                                    <Icons.AlertTriangle size={18} className="flex-shrink-0 mt-0.5"/>
+                                    <span>{errorMsg}</span>
+                                </div>
+                                )}
+
+                                <button 
+                                onClick={handleLogin}
+                                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-md transform active:scale-95 transition-all text-xl"
+                                >
+                                登入
+                                </button>
+                            </div>
+                            </div>
+                        ) : (
+                            <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md border-4 border-yellow-400 text-center animate-bounce-in">
+                            <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <Icons.Check size={48} className="text-green-600" strokeWidth={4} />
+                            </div>
+                            <h3 className="text-3xl font-bold text-gray-800 mb-2">太棒了！</h3>
+                            <p className="text-xl text-gray-600 mb-8">你已經學會怎麼登入了！<br/>趕快拿著你的紙條試試看吧！</p>
+                            <button 
+                                onClick={resetPractice}
+                                className="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-3 px-6 rounded-full flex items-center gap-2 mx-auto"
+                            >
+                                <Icons.RefreshCcw size={18} /> 再練習一次
+                            </button>
+                            </div>
+                        )}
+                        </div>
+                        <div className="text-center mt-8">
+                        <button onClick={prevStep} className="text-gray-500 font-bold hover:text-gray-700 px-4">
+                            回上一步複習
+                        </button>
+                        </div>
+                    </div>
+                    )}
+
+                </main>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<LoginLesson />);
+    </script>
+</body>
+</html>

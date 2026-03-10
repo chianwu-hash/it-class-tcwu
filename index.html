@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吳老師的電腦教室 | 課程首頁</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- 引入共用樣式表 -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50">
+
+    <!-- Header -->
+    <header class="relative overflow-hidden shadow-lg border-b-4 border-orange-300">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
+                 alt="Tech Background" 
+                 class="w-full h-full object-cover object-center opacity-90">
+            <div class="absolute inset-0 bg-orange-50/75 backdrop-blur-[2px]"></div>
+        </div>
+
+        <div class="relative z-10 container mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-center gap-8">
+            <!-- Logo -->
+            <img src="https://i.postimg.cc/L4yBGtw7/logo.png" 
+                 alt="吳老師的電腦教室 Logo" 
+                 class="w-[112px] h-auto drop-shadow-md flex-shrink-0 transform hover:rotate-6 transition duration-300">
+            
+            <div class="text-center md:text-left">
+                <h1 class="text-4xl md:text-6xl font-black mb-3 text-orange-950 tracking-wider drop-shadow-md" style="font-family: 'Noto Sans TC', sans-serif;">
+                    吳老師的電腦教室
+                </h1>
+                <div class="inline-block bg-white/90 text-orange-900 px-6 py-2 rounded-full font-bold shadow-md border border-orange-200 backdrop-blur-md">
+                    🎈 歡迎來到電腦教室，選擇你的年級或學習工具吧！
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-12">
+        
+        <!-- ========================================== -->
+        <!-- 區塊一：各年級課程專區 (新增)                 -->
+        <!-- ========================================== -->
+        <div class="mb-16">
+            <div class="flex items-center justify-center md:justify-start mb-8 pb-3 border-b-2 border-orange-200 max-w-5xl mx-auto">
+                <span class="text-4xl mr-3">🏫</span>
+                <h2 class="text-3xl font-black text-orange-950 tracking-wide">本學期課程專區</h2>
+            </div>
+
+            <!-- 課程卡片網格 (2欄) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+
+                <!-- 三年級卡片 -->
+                <div class="bg-white rounded-3xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-[1.02] hover:shadow-xl border-4 border-teal-200 group flex flex-col">
+                    <div class="h-56 bg-teal-100 relative overflow-hidden flex-shrink-0">
+                        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                             alt="三年級資訊課" 
+                             class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition duration-500">
+                        <div class="absolute top-0 right-0 m-4 bg-teal-500 text-white text-sm font-bold px-4 py-1.5 rounded-full uppercase tracking-wide shadow-md transform rotate-2 border-2 border-teal-300">
+                            🚀 網路探險家
+                        </div>
+                    </div>
+                    <div class="p-8 flex flex-col flex-grow bg-gradient-to-b from-white to-teal-50/50">
+                        <h2 class="text-3xl font-black text-teal-700 mb-3 tracking-wide">
+                            🎒 三年級資訊課
+                        </h2>
+                        <p class="text-gray-600 mb-8 text-lg font-medium leading-relaxed flex-grow">
+                            探索看不見的網路魔法！從認識瀏覽器、中打修煉場，一路晉升為超強的程式小神童。
+                        </p>
+                        <!-- 請確認此處的 href 是否符合您存放三年級首頁的路徑 -->
+                        <a href="grade3/index.html" class="block w-full bg-teal-500 hover:bg-teal-600 text-white text-xl text-center font-black py-4 px-4 rounded-2xl transition duration-300 shadow-lg border-b-4 border-teal-700 active:border-b-0 active:translate-y-1">
+                            進入三年級教室
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 六年級卡片 -->
+                <div class="bg-white rounded-3xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-[1.02] hover:shadow-xl border-4 border-purple-200 group flex flex-col">
+                    <div class="h-56 bg-purple-100 relative overflow-hidden flex-shrink-0">
+                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                             alt="六年級資訊課" 
+                             class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition duration-500">
+                        <div class="absolute top-0 right-0 m-4 bg-purple-500 text-white text-sm font-bold px-4 py-1.5 rounded-full uppercase tracking-wide shadow-md transform -rotate-2 border-2 border-purple-300">
+                            🎓 Canva 魔法
+                        </div>
+                    </div>
+                    <div class="p-8 flex flex-col flex-grow bg-gradient-to-b from-white to-purple-50/50">
+                        <h2 class="text-3xl font-black text-purple-700 mb-3 tracking-wide">
+                            🎬 六年級資訊課
+                        </h2>
+                        <p class="text-gray-600 mb-8 text-lg font-medium leading-relaxed flex-grow">
+                            打造專屬畢業故事！收集珍貴回憶，運用排版、特效與配樂製作獨一無二的畢業影片。
+                        </p>
+                        <!-- 請確認此處的 href 是否符合您存放六年級首頁的路徑 -->
+                        <a href="grade6/index.html" class="block w-full bg-purple-500 hover:bg-purple-600 text-white text-xl text-center font-black py-4 px-4 rounded-2xl transition duration-300 shadow-lg border-b-4 border-purple-700 active:border-b-0 active:translate-y-1">
+                            進入六年級教室
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 區塊二：常用打字與學習工具 (原先的卡片)      -->
+        <!-- ========================================== -->
+        <div class="mb-12">
+            <div class="flex items-center justify-center md:justify-start mb-8 pb-3 border-b-2 border-gray-200 max-w-7xl mx-auto">
+                <span class="text-4xl mr-3">🧰</span>
+                <h2 class="text-3xl font-black text-gray-800 tracking-wide">常用打字與學習工具</h2>
+            </div>
+
+            <!-- 工具卡片網格 (3欄) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+
+                <!-- 卡片 1：打字練習 (Sky Blue) -->
+                <div class="bg-white rounded-3xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-[1.02] hover:shadow-xl border-2 border-sky-200 group flex flex-col">
+                    <div class="h-48 bg-sky-100 relative overflow-hidden flex-shrink-0">
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                             alt="打字練習" 
+                             class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h2 class="text-2xl font-bold text-sky-600 mb-2">🚀 小小打字探險家</h2>
+                        <p class="text-gray-500 mb-6 text-base leading-relaxed flex-grow">
+                            鍛鍊你的手指靈活度，挑戰成為打字高手！(英文指法練習)
+                        </p>
+                        <a href="kidztype.html" class="block w-full bg-sky-400 hover:bg-sky-500 text-white text-lg text-center font-bold py-3 px-4 rounded-2xl transition duration-300 shadow-md border-b-4 border-sky-600 active:border-b-0 active:translate-y-1">
+                            開始練習 (KidzType)
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 卡片 2：鍵盤魔法 (Rose Pink) -->
+                <div class="bg-white rounded-3xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-[1.02] hover:shadow-xl border-2 border-rose-200 group flex flex-col">
+                    <div class="h-48 bg-rose-100 relative overflow-hidden flex-shrink-0">
+                        <img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                             onerror="this.src='https://placehold.co/800x400/e2e8f0/475569?text=鍵盤圖片'"
+                             alt="鍵盤特寫" 
+                             class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h2 class="text-2xl font-bold text-rose-500 mb-2">✨ 鍵盤小魔法</h2>
+                        <p class="text-gray-500 mb-6 text-base leading-relaxed flex-grow">
+                            認識神奇的 Ctrl, Shift 等按鍵，學會魔法組合技！
+                        </p>
+                        <a href="keyboard.html" class="block w-full bg-rose-400 hover:bg-rose-500 text-white text-lg text-center font-bold py-3 px-4 rounded-2xl transition duration-300 shadow-md border-b-4 border-rose-600 active:border-b-0 active:translate-y-1">
+                            認識魔法鍵 (Keyboard)
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 卡片 3：英文打字冒險 (Green) -->
+                <div class="bg-white rounded-3xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-[1.02] hover:shadow-xl border-2 border-green-200 group flex flex-col">
+                    <div class="h-48 bg-green-100 relative overflow-hidden flex-shrink-0">
+                        <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                             alt="英文學習" 
+                             class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h2 class="text-2xl font-bold text-green-600 mb-2">📝 快樂學英打</h2>
+                        <p class="text-gray-500 mb-6 text-base leading-relaxed flex-grow">
+                            解決大小寫問題，用 LoiLoNote 練習打出第一句英文！
+                        </p>
+                        <a href="en-type-lession1.html" class="block w-full bg-green-500 hover:bg-green-600 text-white text-lg text-center font-bold py-3 px-4 rounded-2xl transition duration-300 shadow-md border-b-4 border-green-700 active:border-b-0 active:translate-y-1">
+                            進入課程 (Lesson 1)
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 卡片 4：中文打字篇 (Pink/Purple) -->
+                <div class="bg-white rounded-3xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-[1.02] hover:shadow-xl border-2 border-pink-200 group flex flex-col">
+                    <div class="h-48 bg-pink-100 relative overflow-hidden flex-shrink-0">
+                        <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                             alt="中文打字" 
+                             class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h2 class="text-2xl font-bold text-pink-600 mb-2">🖐️ ㄅㄆㄇ特攻隊</h2>
+                        <p class="text-gray-500 mb-6 text-base leading-relaxed flex-grow">
+                            每一隻手指頭都有任務喔！學會組字、選字和標點符號。
+                        </p>
+                        <a href="c-type.html" class="block w-full bg-pink-500 hover:bg-pink-600 text-white text-lg text-center font-bold py-3 px-4 rounded-2xl transition duration-300 shadow-md border-b-4 border-pink-700 active:border-b-0 active:translate-y-1">
+                            開始特訓 (Zhuyin)
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 卡片 5：親師生平台登入 (Indigo) -->
+                <div class="bg-white rounded-3xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-[1.02] hover:shadow-xl border-2 border-indigo-200 group flex flex-col">
+                    <div class="h-48 bg-indigo-100 relative overflow-hidden flex-shrink-0">
+                        <img src="https://images.unsplash.com/photo-1555421689-d68471e189f2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                             alt="登入教學" 
+                             class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h2 class="text-2xl font-bold text-indigo-600 mb-2">🏫 平台登入教室</h2>
+                        <p class="text-gray-500 mb-6 text-base leading-relaxed flex-grow">
+                            認識你的秘密紙條，學會「帳號」跟「密碼」的小秘密！
+                        </p>
+                        <a href="pts.html" class="block w-full bg-indigo-500 hover:bg-indigo-600 text-white text-lg text-center font-bold py-3 px-4 rounded-2xl transition duration-300 shadow-md border-b-4 border-indigo-700 active:border-b-0 active:translate-y-1">
+                            進入遊戲 (Login)
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 卡片 6：一小時玩程式 (Purple) -->
+                <div class="bg-white rounded-3xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-[1.02] hover:shadow-xl border-2 border-purple-200 group flex flex-col">
+                    <div class="h-48 bg-purple-100 relative overflow-hidden flex-shrink-0">
+                        <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                             alt="一小時玩程式" 
+                             class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h2 class="text-2xl font-bold text-purple-600 mb-2">🐦 一小時玩程式</h2>
+                        <p class="text-gray-500 mb-6 text-base leading-relaxed flex-grow">
+                            憤怒鳥迷宮破關攻略！學會用迴圈、判斷式來解決難題。
+                        </p>
+                        <a href="angry_birds_guide.html" class="block w-full bg-purple-500 hover:bg-purple-600 text-white text-lg text-center font-bold py-3 px-4 rounded-2xl transition duration-300 shadow-md border-b-4 border-purple-700 active:border-b-0 active:translate-y-1">
+                            看攻略 (Hour of Code)
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 老師的溫馨提醒 -->
+        <div class="mt-16 max-w-3xl mx-auto bg-yellow-50 border-2 border-yellow-300 p-6 rounded-2xl shadow-sm rotate-1 hover:rotate-0 transition duration-300">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 text-5xl mr-5 animate-bounce">
+                    📢
+                </div>
+                <div>
+                    <h3 class="font-black text-yellow-800 text-2xl mb-2">老師的小叮嚀</h3>
+                    <p class="text-yellow-700 text-lg font-medium leading-relaxed">
+                        使用電腦時，記得每 30 分鐘要讓眼睛看遠方休息一下喔！保持正確的坐姿，才能健康快樂地學習。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-orange-100 text-orange-800 py-8 border-t-4 border-orange-200">
+        <div class="container mx-auto px-4 text-center">
+            <p class="font-bold text-xl mb-2 tracking-wide">🎈 吳老師的電腦教室</p>
+            <p class="text-sm opacity-75 font-medium">&copy; 2024 快樂學習，聰明成長</p>
+        </div>
+    </footer>
+
+</body>
+</html>

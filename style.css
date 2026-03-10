@@ -1,0 +1,153 @@
+/* =========================================
+   吳老師的電腦教室 - 共用樣式表 (styles.css)
+   =========================================
+   包含：
+   1. 全站基礎設定 (字體、背景)
+   2. 共用元件樣式 (按鈕)
+   3. 鍵盤模擬樣式 (用於 keyboard.html 和 kidztype.htm)
+*/
+
+/* --- 1. 全站基礎設定 --- */
+body {
+    font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    /* 預設背景色：溫暖的米黃色 (配合首頁風格) */
+    background-color: #FFF9E5; 
+    color: #4B5563; /* 柔和深灰 */
+}
+
+/* 如果特定頁面需要不同背景，可以在該頁面的 body class 覆蓋，
+   或者在這裡定義特定 class */
+.bg-blue-theme {
+    background-color: #f0f9ff;
+}
+
+/* --- 2. 共用元件樣式 --- */
+
+/* 回首頁按鈕的共用樣式 (如果不想用 Tailwind class 堆疊，可以用這個 class) */
+.btn-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    font-weight: 700;
+    transition: all 0.2s;
+}
+.btn-home:hover {
+    background-color: #fff7ed; /* orange-50 */
+}
+
+
+/* --- 3. 鍵盤模擬樣式 (Keyboard CSS) --- */
+/* 這是從 keyboard.html 和 kidztype.htm 抽離出來的共用樣式 */
+
+.keyboard-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    background-color: #D1D5DB; /* 鍵盤底座顏色 */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.key-row {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+}
+
+/* 通用按鍵樣式 */
+.key-cap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;      /* 預設寬度 (Kidztype用) */
+    height: 40px;
+    font-size: 14px;
+    font-weight: 600;
+    background-color: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    box-shadow: 0 2px 0 #D1D5DB;
+    color: #374151;
+}
+
+/* 用於 keyboard.html 的大按鍵 (因為那邊的按鍵比較大且有說明) */
+.key-lg {
+    display: inline-block;
+    padding: 6px 12px;
+    width: auto;
+    height: auto;
+    font-size: 1rem;
+    margin: 0 4px;
+    border: 2px solid #d1d5db;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+/* 定位鍵 (F, J) 的小凸點 */
+.key-f, .key-j {
+    position: relative;
+}
+.key-f::after, .key-j::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    width: 12px;
+    height: 2px;
+    background-color: #9CA3AF;
+    border-radius: 1px;
+}
+
+/* 手指擺放位置提示色 */
+.key-home-left { 
+    background-color: #3B82F6; 
+    color: white; 
+    border-color: #2563EB;
+}
+.key-home-right { 
+    background-color: #10B981; 
+    color: white; 
+    border-color: #059669;
+}
+
+/* 鍵盤教學頁面的標題圖示 */
+.key-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.key-icon {
+    font-size: 2.5rem;
+    margin-right: 1rem;
+}
+
+/* 朗讀按鈕 */
+.listen-button {
+    background-color: #f0f9ff;
+    color: #0c4a6e;
+    border: 2px solid #bae6fd;
+    border-radius: 9999px;
+    padding: 8px 16px;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.listen-button:hover {
+    background-color: #e0f2fe;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.listen-button:disabled {
+    background-color: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+}

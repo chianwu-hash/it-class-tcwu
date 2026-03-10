@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>憤怒鳥迷宮破關攻略 - 頂溪國小三年級</title>
+    <!-- 引入 Tailwind CSS 以便使用回首頁按鈕樣式 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 保留原本的樣式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative; /* 為了放回首頁按鈕 */
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .intro {
+            background: #fff9e6;
+            padding: 25px 30px;
+            border-left: 5px solid #ffc107;
+            margin: 30px;
+            border-radius: 10px;
+        }
+
+        .intro h2 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .intro p {
+            color: #555;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .lessons {
+            padding: 20px 30px 40px 30px;
+        }
+
+        .lesson-card {
+            background: white;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .lesson-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .lesson-header h3 {
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .lesson-number {
+            background: rgba(255,255,255,0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .toggle-icon {
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
+
+        .lesson-header.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .lesson-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .lesson-content.active {
+            max-height: 2000px;
+        }
+
+        .lesson-body {
+            padding: 25px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-content {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section-content p {
+            color: #444;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .section-content ul, .section-content ol {
+            margin-left: 20px;
+            color: #444;
+            font-size: 1.05em;
+        }
+
+        .section-content li {
+            margin-bottom: 8px;
+        }
+
+        .code-example {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-family: "Courier New", monospace;
+            font-size: 1em;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+        .tip-box {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-top: 15px;
+        }
+
+        .tip-box .tip-title {
+            color: #2e7d32;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+
+        .tip-box p {
+            color: #1b5e20;
+            font-size: 1.05em;
+        }
+
+        .example-box {
+            background: #fff3e0;
+            border: 2px solid #ff9800;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-top: 15px;
+        }
+
+        .example-box .example-title {
+            color: #e65100;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+
+        .example-box p {
+            color: #bf360c;
+            font-size: 1.05em;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .footer h2 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .footer p {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .emoji {
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .lesson-header h3 {
+                font-size: 1.2em;
+            }
+
+            .intro, .lessons {
+                padding: 15px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- 新增：回首頁按鈕 (懸浮在左上角) -->
+    <a href="index.html" class="fixed top-4 left-4 z-50 bg-white text-purple-600 px-4 py-2 rounded-full shadow-lg font-bold hover:bg-purple-50 transition border-2 border-purple-200 flex items-center gap-2 no-underline">
+        <span>🏠</span> 回首頁
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎮 憤怒鳥迷宮破關攻略</h1>
+            <div class="subtitle">頂溪國小三年級 - 一小時玩程式</div>
+        </div>
+
+        <div class="intro">
+            <h2>📚 使用說明</h2>
+            <!-- 新增：註冊提示 -->
+            <div class="mb-4 bg-yellow-100 p-3 rounded-lg border-l-4 border-yellow-500 text-yellow-800">
+                <strong>⚠️ 重要提醒：</strong>
+                請先到 <a href="https://studio.code.org/users/sign_up" target="_blank" class="underline text-blue-600 font-bold">Code.org</a> 註冊帳號，若已註冊，請選登入 (記得選「使用 Google 帳戶登入」喔！)
+            </div>
+            
+            <!-- 修改：活動網站連結 -->
+            <p><strong>活動網站：</strong><a href="http://hocintw.thealliance.org.tw/3963639511199682356726178296093124324335.html" target="_blank" style="color: #667eea; text-decoration: underline;">一小時玩程式在台灣</a></p>
+            <p><strong>課程名稱：</strong>經典迷宮(憤怒鳥)</p>
+            <p><strong>總關卡數：</strong>20 關</p>
+            <p><strong>特殊關卡：</strong>這裡整理了 6 個比較需要特別說明的關卡，點擊每個關卡就可以看到詳細的破關攻略！</p>
+        </div>
+
+        <div class="lessons">
+            <!-- 第1關 -->
+            <div class="lesson-card">
+                <div class="lesson-header" onclick="toggleLesson(this)">
+                    <h3>
+                        <span class="lesson-number">第 1 關</span>
+                        簡介 - 認識程式積木
+                    </h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="lesson-content">
+                    <div class="lesson-body">
+                        <div class="section">
+                            <div class="section-title">🎯 這一關要學什麼？</div>
+                            <div class="section-content">
+                                <ul>
+                                    <li>認識「向前移動」、「向左轉」、「向右轉」這些積木</li>
+                                    <li>學會怎麼把積木拖曳到工作區</li>
+                                    <li>讓憤怒鳥走到綠豬那裡</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">💡 破關小技巧</div>
+                            <div class="section-content">
+                                <ol>
+                                    <li>先看看憤怒鳥和綠豬的位置</li>
+                                    <li>想一想：要往哪個方向走？</li>
+                                    <li>把積木拖曳到右邊的空白區域</li>
+                                    <li>積木要「上下連接」，就像疊積木一樣</li>
+                                    <li>按下「執行」按鈕看看結果</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="tip-box">
+                            <div class="tip-title">🌟 給同學的話</div>
+                            <p>如果憤怒鳥走錯路，沒關係！把積木拖到左邊的垃圾桶就可以刪掉，再試一次！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第6關 -->
+            <div class="lesson-card">
+                <div class="lesson-header" onclick="toggleLesson(this)">
+                    <h3>
+                        <span class="lesson-number">第 6 關</span>
+                        迴圈 - 重複做一樣的事
+                    </h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="lesson-content">
+                    <div class="lesson-body">
+                        <div class="section">
+                            <div class="section-title">🎯 這一關要學什麼？</div>
+                            <div class="section-content">
+                                <ul>
+                                    <li>學會使用「重複」積木</li>
+                                    <li>當你要做很多次一樣的動作時，就可以用迴圈</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="example-box">
+                            <div class="example-title">💡 生活中的例子</div>
+                            <p><strong>就像刷牙：</strong></p>
+                            <p>❌ 不用迴圈：刷一下、刷一下、刷一下、刷一下...（要寫很多次）</p>
+                            <p>✅ 用迴圈：「重複刷10次」（只要寫一次就好）</p>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">🎮 破關步驟</div>
+                            <div class="section-content">
+                                <ol>
+                                    <li>先看看憤怒鳥要走幾格？</li>
+                                    <li>如果要一直重複「向前」→「向前」→「向前」</li>
+                                    <li>就可以用「重複 __ 次」積木</li>
+                                    <li>把「向前移動」放進「重複」積木裡面</li>
+                                    <li>數字改成你要重複的次數</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="tip-box">
+                            <div class="tip-title">🌟 小訣竅</div>
+                            <p>先數數看：憤怒鳥要走幾步？再把這個數字填進「重複」積木裡</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- (已移除：第 9 關 巢狀迴圈) -->
+
+            <!-- 第10關 -->
+            <div class="lesson-card">
+                <div class="lesson-header" onclick="toggleLesson(this)">
+                    <h3>
+                        <span class="lesson-number">第 10 關</span>
+                        重複直到... - 走到終點才停
+                    </h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="lesson-content">
+                    <div class="lesson-body">
+                        <div class="section">
+                            <div class="section-title">🎯 這一關要學什麼？</div>
+                            <div class="section-content">
+                                <ul>
+                                    <li>使用「重複直到」積木</li>
+                                    <li>不用數有幾格，程式會自動走到終點</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="example-box">
+                            <div class="example-title">💡 生活中的例子</div>
+                            <p><strong>就像走路回家：</strong></p>
+                            <p>❌ 普通迴圈：「走100步」（但如果家比較近呢？）</p>
+                            <p>✅ 重複直到：「一直走，直到看到家門口」（自動停下來）</p>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">🎮 破關步驟</div>
+                            <div class="section-content">
+                                <ol>
+                                    <li>找到「重複直到」積木</li>
+                                    <li>選擇停止的條件（通常是「直到終點」）</li>
+                                    <li>在裡面放入要重複做的動作</li>
+                                    <li>程式會自己判斷什麼時候該停</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="tip-box">
+                            <div class="tip-title">🌟 什麼時候用這個？</div>
+                            <p>• 當你不確定要走幾步的時候<br>
+                            • 當路線會變化的時候<br>
+                            • 讓程式「自己決定」什麼時候停</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第14關 -->
+            <div class="lesson-card">
+                <div class="lesson-header" onclick="toggleLesson(this)">
+                    <h3>
+                        <span class="lesson-number">第 14 關</span>
+                        if 判斷 - 遇到障礙要轉彎
+                    </h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="lesson-content">
+                    <div class="lesson-body">
+                        <div class="section">
+                            <div class="section-title">🎯 這一關要學什麼？</div>
+                            <div class="section-content">
+                                <ul>
+                                    <li>使用「如果...就...」積木</li>
+                                    <li>讓憤怒鳥自己判斷要不要轉彎</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="example-box">
+                            <div class="example-title">💡 生活中的例子</div>
+                            <p><strong>就像走路：</strong></p>
+                            <p>• 「如果」前面有牆壁，「就」要轉彎</p>
+                            <p>• 「如果」前面沒有牆壁，「就」繼續往前走</p>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">🎮 破關步驟</div>
+                            <div class="section-content">
+                                <ol>
+                                    <li>找到「如果」積木</li>
+                                    <li>選擇判斷條件（例如：「如果前方有路」）</li>
+                                    <li>在「如果」積木裡面，放入要做的動作</li>
+                                    <li>把整組放進「重複」積木裡</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">🌟 想像成這樣</div>
+                            <div class="code-example">重複：
+    如果（前方有路）：
+        向前移動
+    （如果沒路就不會動）</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第18關 -->
+            <div class="lesson-card">
+                <div class="lesson-header" onclick="toggleLesson(this)">
+                    <h3>
+                        <span class="lesson-number">第 18 關</span>
+                        if ... else ... - 有路就走，沒路就轉
+                    </h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="lesson-content">
+                    <div class="lesson-body">
+                        <div class="section">
+                            <div class="section-title">🎯 這一關要學什麼？</div>
+                            <div class="section-content">
+                                <ul>
+                                    <li>使用「如果...就...否則...」積木</li>
+                                    <li>給憤怒鳥兩種選擇</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="example-box">
+                            <div class="example-title">💡 生活中的例子</div>
+                            <p><strong>就像選擇：</strong></p>
+                            <p>• 「如果」今天下雨，「就」帶雨傘</p>
+                            <p>• 「否則」（沒下雨），「就」不用帶</p>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">🎮 破關步驟</div>
+                            <div class="section-content">
+                                <ol>
+                                    <li>找到「如果...否則...」積木</li>
+                                    <li>在「如果」裡面：放入有路時要做的事（例如：向前）</li>
+                                    <li>在「否則」裡面：放入沒路時要做的事（例如：轉彎）</li>
+                                    <li>整組放進「重複」積木裡</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">🌟 想像成這樣</div>
+                            <div class="code-example">重複：
+    如果（前方有路）：
+        向前移動
+    否則（前方沒路）：
+        向左轉或向右轉</div>
+                        </div>
+
+                        <div class="tip-box">
+                            <div class="tip-title">💪 進階小技巧</div>
+                            <p>• 在「否則」裡面，可能還要再判斷要往左還是往右<br>
+                            • 可以在「否則」裡面再放一個「如果」積木！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <h2>🎓 給同學的鼓勵</h2>
+            <p><strong>卡關沒關係：</strong>程式設計師每天都在「試錯」，失敗是成功的一部分！</p>
+            <p><strong>多試幾次：</strong>按「重設」按鈕，再試一次不一樣的方法</p>
+            <p><strong>看提示：</strong>如果真的想不出來，可以按「提示」按鈕</p>
+            <p><strong>幫助別人：</strong>如果你過關了，可以幫助還在努力的同學</p>
+            <p style="margin-top: 20px; font-size: 1.3em;">
+                <strong>記住：程式設計就像解謎遊戲，要動動腦筋想辦法！加油！💪🎮</strong>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function toggleLesson(header) {
+            const content = header.nextElementSibling;
+            const allHeaders = document.querySelectorAll('.lesson-header');
+            const allContents = document.querySelectorAll('.lesson-content');
+            
+            // 關閉其他所有的卡片
+            allHeaders.forEach(h => {
+                if (h !== header) {
+                    h.classList.remove('active');
+                }
+            });
+            allContents.forEach(c => {
+                if (c !== content) {
+                    c.classList.remove('active');
+                }
+            });
+            
+            // 切換當前卡片
+            header.classList.toggle('active');
+            content.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

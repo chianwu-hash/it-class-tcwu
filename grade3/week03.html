@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三年級資訊課 - 第3週：網路安全與鍵盤魔法</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f0fdfa;
+            background-image: radial-gradient(#bae6fd 2px, transparent 2px);
+            background-size: 30px 30px;
+        }
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 9999px;
+            color: white;
+            font-weight: 900;
+            font-size: 1.25rem;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            border: 3px solid rgba(255,255,255,0.5);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        .keyboard-key {
+            display: inline-block;
+            background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 2px solid #cbd5e1;
+            border-bottom: 5px solid #94a3b8;
+            border-radius: 8px;
+            padding: 4px 12px;
+            font-family: monospace;
+            font-weight: 900;
+            color: #334155;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin: 0 4px;
+        }
+        .magic-text {
+            cursor: text; /* 移除自動全選，讓游標變成 I 字型，強迫學生練習真正拖曳 */
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased pb-12">
+
+    <!-- 統一載入的頂部導航列 -->
+    <script src="navbar.js"></script>
+
+    <!-- Header 頂部標題區 -->
+    <header class="bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-xl rounded-b-[3rem] mb-10 border-b-8 border-blue-600">
+        <div class="max-w-5xl mx-auto px-6 py-12 relative overflow-hidden">
+            <div class="relative z-10 flex items-center justify-between">
+                <div>
+                    <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-4 py-1.5 rounded-full text-sm mb-4 shadow-sm tracking-wide">
+                        <i class="fa-solid fa-star mr-1 text-yellow-100"></i> 三年級資訊課 ｜ 第 03 週
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">網路安全與鍵盤魔法 🧙‍♂️</h1>
+                    <p class="text-xl text-cyan-50 font-bold drop-shadow">成為保護密碼的小尖兵，學會神奇的複製魔法！</p>
+                </div>
+                <div class="hidden md:block text-8xl opacity-90 drop-shadow-lg transform rotate-12">
+                    <i class="fa-solid fa-shield-cat"></i>
+                </div>
+            </div>
+            <i class="fa-solid fa-keyboard absolute text-white opacity-20 text-9xl -top-10 -right-10"></i>
+        </div>
+    </header>
+
+    <!-- Main Content 主要內容區 -->
+    <main class="max-w-5xl mx-auto px-6 space-y-10">
+
+        <!-- 任務一：網路安全停看聽 -->
+        <section class="bg-white rounded-3xl shadow-md border-4 border-indigo-200 overflow-hidden card-hover">
+            <div class="bg-indigo-100 px-6 py-4 border-b-4 border-indigo-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="bg-indigo-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4 font-black">1</div>
+                    <h3 class="text-2xl md:text-3xl font-black text-indigo-800 tracking-wide">網路安全停看聽</h3>
+                </div>
+                <span class="bg-indigo-600 text-white px-5 py-2 rounded-full font-black text-sm shadow-md flex items-center">
+                    <i class="fa-solid fa-shield-halved mr-2"></i> 安全第一
+                </span>
+            </div>
+            <div class="p-8 grid md:grid-cols-2 gap-8 items-center">
+                <div class="space-y-6">
+                    <div class="flex items-start">
+                        <i class="fa-solid fa-tv text-3xl text-indigo-500 mr-4 mt-1"></i>
+                        <div>
+                            <h4 class="text-xl font-bold text-gray-800 mb-1">看影片學觀念</h4>
+                            <p class="text-gray-600 font-medium">請大家眼睛看著前方大螢幕，老師會播放一部有趣的動畫影片，告訴我們上網要注意什麼危險喔！</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fa-solid fa-clipboard-question text-3xl text-orange-500 mr-4 mt-1"></i>
+                        <div>
+                            <h4 class="text-xl font-bold text-gray-800 mb-1">牛刀小試：安全測驗</h4>
+                            <p class="text-gray-600 font-medium">看完影片後，請大家打開 <strong>LoiLoNote</strong>，老師會發送一張「測驗卡片」給大家，點開來挑戰看看你能得幾分！</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-indigo-50 p-6 rounded-2xl border-2 border-dashed border-indigo-300 text-center">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=security&backgroundColor=c7d2fe" alt="Robot" class="w-32 h-32 mx-auto mb-4 rounded-full bg-indigo-200 border-4 border-white shadow-sm">
+                    <h5 class="text-lg font-black text-indigo-800 mb-2">我是網路小尖兵！</h5>
+                    <p class="text-indigo-600 font-bold text-sm">不隨便點陌生連結<br>不告訴別人我的密碼</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 任務二：滑鼠鍵盤魔法師 -->
+        <section class="bg-white rounded-3xl shadow-md border-4 border-emerald-200 overflow-hidden card-hover">
+            <div class="bg-emerald-100 px-6 py-4 border-b-4 border-emerald-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="bg-emerald-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4 font-black">2</div>
+                    <h3 class="text-2xl md:text-3xl font-black text-emerald-800 tracking-wide">滑鼠鍵盤魔法師</h3>
+                </div>
+            </div>
+            
+            <div class="p-8">
+                <p class="text-lg text-gray-700 font-bold mb-6 text-center">要成為電腦高手，一定要學會這三個超強的魔法！</p>
+                
+                <!-- 魔法教學區 -->
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-emerald-50 p-6 rounded-2xl border-2 border-emerald-200 text-center">
+                        <i class="fa-solid fa-copy text-4xl text-emerald-500 mb-3"></i>
+                        <h4 class="text-xl font-black text-gray-800 mb-2">影印機魔法 (複製)</h4>
+                        <div class="mb-3">
+                            <span class="keyboard-key">Ctrl</span> + <span class="keyboard-key">C</span>
+                        </div>
+                        <p class="text-sm text-gray-600 font-medium">把選起來的字，偷偷印一份在電腦的腦袋裡。</p>
+                    </div>
+                    
+                    <div class="bg-teal-50 p-6 rounded-2xl border-2 border-teal-200 text-center">
+                        <i class="fa-solid fa-paste text-4xl text-teal-500 mb-3"></i>
+                        <h4 class="text-xl font-black text-gray-800 mb-2">黏土魔法 (貼上)</h4>
+                        <div class="mb-3">
+                            <span class="keyboard-key">Ctrl</span> + <span class="keyboard-key">V</span>
+                        </div>
+                        <p class="text-sm text-gray-600 font-medium">把剛剛印好的字，像黏土一樣貼在你想貼的地方。</p>
+                    </div>
+
+                    <div class="bg-rose-50 p-6 rounded-2xl border-2 border-rose-200 text-center">
+                        <i class="fa-solid fa-clock-rotate-left text-4xl text-rose-500 mb-3"></i>
+                        <h4 class="text-xl font-black text-gray-800 mb-2">時光倒流 (復原)</h4>
+                        <div class="mb-3">
+                            <span class="keyboard-key">Ctrl</span> + <span class="keyboard-key">Z</span>
+                        </div>
+                        <p class="text-sm text-gray-600 font-medium">哎呀！不小心貼錯了？按這個就能回到上一步！</p>
+                    </div>
+                </div>
+
+                <!-- 小關卡實作區 -->
+                <div class="bg-gray-800 rounded-2xl p-6 border-4 border-gray-700 shadow-inner relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-yellow-500 text-yellow-900 font-black px-4 py-1 rounded-bl-xl text-sm">
+                        <i class="fa-solid fa-gamepad mr-1"></i> 魔鬼訓練營
+                    </div>
+                    <h4 class="text-2xl font-black text-yellow-400 mb-4 flex items-center">
+                        <i class="fa-solid fa-wand-magic-sparkles mr-3"></i> 小關卡：通關密語大挑戰！
+                    </h4>
+                    
+                    <div class="space-y-6">
+                        <!-- 步驟 1 -->
+                        <div class="bg-gray-700 p-4 rounded-xl border border-gray-600">
+                            <!-- 強調選取重要性的提示框 -->
+                            <div class="bg-red-100 border-l-4 border-red-500 p-4 mb-4 rounded-r-lg">
+                                <h5 class="text-red-800 font-bold flex items-center text-lg"><i class="fa-solid fa-triangle-exclamation mr-2"></i> 老師特別提醒：選取是最重要的一步！</h5>
+                                <p class="text-red-700 font-medium mt-2">如果沒有把字變成「藍色底」，電腦就不知道你要複製什麼魔法喔！請記住三個選取小秘訣：</p>
+                                <ul class="list-disc list-inside text-red-700 text-sm mt-2 space-y-1">
+                                    <li><strong>起點最重要：</strong> 滑鼠游標一定要準確放在「第一個字」的前面，再按住左鍵。</li>
+                                    <li><strong>拖錯不放手：</strong> 萬一拖曳時選歪了，<strong>千萬不要放開左鍵</strong>！繼續移動滑鼠找回正確位置再放開就好。</li>
+                                    <li><strong>點空白重來：</strong> 如果真的選錯並放開了，只要在旁邊<strong>空白的地方點一下左鍵</strong>，就能取消選取重新再來。</li>
+                                </ul>
+                            </div>
+
+                            <p class="text-white font-bold mb-3">第一步：按住滑鼠左鍵，將下面的「多行」藍色文字全部反白，然後按下 <span class="keyboard-key">Ctrl</span> + <span class="keyboard-key">C</span> 複製。</p>
+                            <div class="bg-blue-100 text-blue-900 font-black text-xl p-6 rounded-lg text-left border-2 border-blue-400 magic-text leading-loose md:w-4/5 mx-auto">
+                                我是頂溪國小資訊小尖兵！<br>
+                                我會保護自己的密碼，<br>
+                                也會做個守規矩的網路好孩子！<br>
+                                遇到奇怪的連結絕對不亂點！
+                            </div>
+                        </div>
+
+                        <!-- 步驟 2 -->
+                        <div class="bg-gray-700 p-4 rounded-xl border border-gray-600">
+                            <p class="text-white font-bold mb-3">第二步：點一下下面的白色大框框，按下 <span class="keyboard-key">Ctrl</span> + <span class="keyboard-key">V</span> 貼上。請試著連續貼上 <span class="text-yellow-400 text-xl">5</span> 次！</p>
+                            <p class="text-gray-400 text-sm mb-2">💡 如果貼壞了，記得用 <span class="keyboard-key">Ctrl</span> + <span class="keyboard-key">Z</span> 時光倒流喔！</p>
+                            <textarea rows="5" class="w-full p-4 rounded-lg border-2 border-emerald-400 focus:outline-none focus:ring-4 focus:ring-emerald-500 font-bold text-gray-800 text-lg resize-none placeholder-gray-400" placeholder="點這裡，然後開始施放黏土魔法 (Ctrl+V) 吧！"></textarea>
+                            
+                            <!-- 新增右鍵提示 -->
+                            <div class="mt-4 bg-gray-600/50 p-4 rounded-lg flex items-start border border-gray-500">
+                                <i class="fa-solid fa-computer-mouse text-yellow-400 text-2xl mr-3 mt-1 animate-pulse"></i>
+                                <div>
+                                    <h5 class="text-yellow-400 font-bold text-lg">隱藏版滑鼠魔法！</h5>
+                                    <p class="text-gray-300 font-medium mt-1">除了按鍵盤快速鍵之外，選好藍色文字後，你也可以按 <strong class="text-white bg-gray-800 px-2 py-0.5 rounded border border-gray-600">滑鼠右鍵</strong>，選單裡面也有 <strong class="text-emerald-400">「複製」</strong> 和 <strong class="text-teal-400">「貼上」</strong> 可以點選喔！大家可以試試看哪一種比較順手！</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 任務三：課本任務 -->
+        <section class="bg-white rounded-3xl shadow-md border-4 border-blue-200 overflow-hidden card-hover">
+            <div class="bg-blue-100 px-6 py-4 border-b-4 border-blue-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="bg-blue-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4 font-black">3</div>
+                    <h3 class="text-2xl md:text-3xl font-black text-blue-800 tracking-wide">課本小遊戲：網址連連看</h3>
+                </div>
+                <span class="bg-blue-600 text-white px-5 py-2 rounded-full font-black text-sm shadow-md flex items-center">
+                    <i class="fa-solid fa-book-open mr-2"></i> 課本 P.23 - 25
+                </span>
+            </div>
+            <div class="p-8">
+                <p class="text-lg text-gray-700 font-medium mb-6">剛剛學會了滑鼠左鍵「按住、拖曳」的技巧，現在我們來挑戰課本的小遊戲，看看你能不能把網址連到正確的國家吧！</p>
+                
+                <div class="bg-blue-50 p-6 rounded-2xl border-2 border-dashed border-blue-300 relative text-center">
+                    <i class="fa-solid fa-earth-americas text-6xl text-blue-400 mb-4 animate-spin" style="animation-duration: 10s;"></i>
+                    <h4 class="text-2xl font-black text-blue-800 mb-5">準備好接受挑戰了嗎？</h4>
+                    
+                    <!-- 新增的遊戲按鈕 -->
+                    <a href="https://book.eduweb.com.tw/e1d1u4/vips091/games/url_link/index.html" target="_blank" class="inline-flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white text-xl md:text-2xl font-black py-4 px-8 rounded-full shadow-lg transform transition hover:scale-105">
+                        <i class="fa-solid fa-gamepad mr-3"></i> 點我開始玩「網址連連看」！
+                    </a>
+                    
+                    <p class="text-blue-600 font-bold mt-5">遊戲中要記得，<strong class="text-red-500 text-xl">.tw</strong> 就是代表我們美麗的 <strong class="text-red-500 text-xl">臺灣 (Taiwan)</strong> 喔！</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer 底部區 -->
+    <footer class="text-center mt-12 mb-6">
+        <div class="inline-flex items-center justify-center space-x-2 text-gray-400 font-bold bg-white px-6 py-2 rounded-full shadow-sm border border-gray-200">
+            <i class="fa-solid fa-paw text-blue-400"></i>
+            <span>新北市頂溪國小資訊課 - 小小探險家系列</span>
+            <i class="fa-solid fa-paw text-blue-400"></i>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快樂學英打：三年級的小冒險</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* 保留原本可愛的筆記本風格樣式 */
+        body {
+            font-family: 'Zen Maru Gothic', 'Noto Sans TC', sans-serif;
+            background-color: #f0f9ff;
+            background-image: radial-gradient(#bae6fd 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .key {
+            box-shadow: 0 4px 0 #cbd5e1;
+            transition: all 0.1s;
+        }
+        .key:active {
+            box-shadow: 0 0 0 #cbd5e1;
+            transform: translateY(4px);
+        }
+        .notebook-line {
+            background-image: linear-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 100% 2rem;
+            line-height: 2rem;
+        }
+        .marker-highlight {
+            position: relative;
+            z-index: 0;
+        }
+        .marker-highlight::before {
+            content: "";
+            position: absolute;
+            bottom: 2px;
+            left: -2px;
+            right: -2px;
+            height: 12px;
+            background-color: #fde047;
+            z-index: -1;
+            opacity: 0.6;
+            transform: rotate(-1deg);
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50 border-b-4 border-blue-400">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- 修改重點：點擊標題可以回首頁，並加入 Hover 效果提示 -->
+            <a href="index.html" class="flex items-center gap-2 group hover:opacity-80 transition">
+                <i data-lucide="keyboard" class="text-blue-500 w-8 h-8 group-hover:text-blue-600"></i>
+                <div>
+                    <h1 class="text-2xl font-bold text-blue-600 group-hover:text-blue-700">打字小學堂</h1>
+                    <span class="text-xs text-blue-400 font-bold md:hidden">點我回首頁</span>
+                </div>
+            </a>
+            
+            <div class="flex items-center gap-4">
+                <!-- 電腦版顯示的標籤 -->
+                <div class="hidden md:flex gap-4 text-sm font-bold text-slate-500">
+                    <span class="bg-yellow-100 px-3 py-1 rounded-full text-yellow-700">三年級電腦課</span>
+                    <span class="bg-green-100 px-3 py-1 rounded-full text-green-700">第五單元</span>
+                </div>
+                <!-- 新增：顯眼的「回首頁」按鈕，確保學生不會迷路 -->
+                <a href="index.html" class="flex items-center gap-1 bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-slate-200 transition">
+                    <i data-lucide="home" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">回首頁</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="container mx-auto px-4 py-12 text-center">
+        <div class="inline-block bg-white p-6 rounded-3xl shadow-xl border-4 border-blue-200 rotate-1 mb-8">
+            <h2 class="text-4xl md:text-5xl font-bold text-slate-800 mb-4">
+                準備好開始你的<br><span class="text-blue-500">英文打字冒險</span>了嗎？
+            </h2>
+            <p class="text-lg text-slate-500">認識鍵盤、正確指法，讓我們用 LoiLoNote 練習輸入第一份英文文件吧！</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 pb-20 max-w-4xl">
+
+        <!-- Section 1: Challenges (Requested First) -->
+        <section class="mb-16">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="bg-red-500 text-white p-2 rounded-lg">
+                    <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-700">遇到困難別擔心！先看這裡</h3>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Challenge 1 -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border-l-8 border-orange-400 hover:scale-[1.02] transition-transform">
+                    <h4 class="text-lg font-bold text-orange-600 mb-2 flex items-center gap-2">
+                        <span class="bg-orange-100 w-8 h-8 flex items-center justify-center rounded-full text-sm">1</span>
+                        怎麼打出來是注音？
+                    </h4>
+                    <p class="text-slate-600 mb-4">這是我最常聽到的問題！如果你想打 <span class="font-mono bg-slate-100 px-1 rounded">A</span> 卻出現 <span class="font-mono bg-slate-100 px-1 rounded">ㄇ</span>，代表你還在中文模式喔。</p>
+                    <div class="bg-orange-50 p-4 rounded-xl">
+                        <p class="font-bold text-sm text-orange-700 mb-2">💡 解決方法：</p>
+                        <p class="mb-2">按一下鍵盤左邊的 <span class="inline-block bg-white border-2 border-slate-300 rounded px-2 py-0.5 text-xs font-bold shadow-sm">Shift</span> 鍵，或是按一下螢幕右下角的 <span class="inline-block bg-white border border-slate-300 px-1 rounded text-xs">中</span> 把它變成 <span class="inline-block bg-white border border-slate-300 px-1 rounded text-xs">英</span>。</p>
+                    </div>
+                </div>
+
+                <!-- Challenge 2 -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border-l-8 border-purple-400 hover:scale-[1.02] transition-transform">
+                    <h4 class="text-lg font-bold text-purple-600 mb-2 flex items-center gap-2">
+                        <span class="bg-purple-100 w-8 h-8 flex items-center justify-center rounded-full text-sm">2</span>
+                        大寫小寫分不清楚？
+                    </h4>
+                    <p class="text-slate-600 mb-4">想打大寫 <span class="font-mono bg-slate-100 px-1 rounded">H</span> 卻出現小寫 <span class="font-mono bg-slate-100 px-1 rounded">h</span> 嗎？</p>
+                    <div class="bg-purple-50 p-4 rounded-xl">
+                        <p class="font-bold text-sm text-purple-700 mb-2">💡 解決方法：</p>
+                        <p>這時候你需要「魔法組合技」！<br>
+                        <span class="font-bold text-purple-600">按住</span> <span class="inline-block bg-white border-2 border-slate-300 rounded px-2 py-0.5 text-xs font-bold shadow-sm">Shift</span> 不要放開，再按字母鍵，就會變大寫囉！</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Step by Step Guide -->
+        <section class="space-y-12">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="bg-blue-500 text-white p-2 rounded-lg">
+                    <i data-lucide="book-open" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-700">跟著課本一起做</h3>
+            </div>
+
+            <!-- Step 1: Open Text Card -->
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+                <div class="bg-blue-400 p-4 text-white font-bold flex justify-between items-center">
+                    <span>第 1 步：建立文字卡</span>
+                    <i data-lucide="sticky-note" class="w-6 h-6 text-blue-100"></i>
+                </div>
+                <div class="p-6 md:p-8">
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="flex-1 space-y-4">
+                            <p class="text-lg">在 LoiLoNote 裡面，我們要拿一張<span class="marker-highlight font-bold">「文字卡」</span>來練習。</p>
+                            <ol class="list-decimal list-inside space-y-2 text-slate-600 bg-slate-50 p-4 rounded-xl">
+                                <li>點選選單上的 <span class="font-bold text-blue-500">文字</span> 建立一張新卡片。</li>
+                                <li>點一下卡片中間，會看到一條閃爍的直線 <span class="font-mono font-bold text-black">|</span> 。</li>
+                                <li>這條線叫做「插入點」，等一下打的字就會從這裡跑出來喔！</li>
+                            </ol>
+                        </div>
+                        <div class="w-full md:w-1/3 bg-blue-50 rounded-xl p-4 flex flex-col items-center justify-center border-2 border-blue-100 border-dashed">
+                            <i data-lucide="file-text" class="w-24 h-24 text-blue-300 mb-2"></i>
+                            <span class="text-sm text-blue-400">文字卡</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Typing Capital & Small -->
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+                <div class="bg-green-500 p-4 text-white font-bold flex justify-between items-center">
+                    <span>第 2 步：輸入大寫與小寫</span>
+                    <i data-lucide="type" class="w-6 h-6 text-green-100"></i>
+                </div>
+                <div class="p-6 md:p-8">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <!-- Capital -->
+                        <div class="bg-green-50 p-6 rounded-2xl text-center border-2 border-green-100">
+                            <h4 class="font-bold text-green-700 mb-4 text-xl">輸入大寫【H】</h4>
+                            <div class="flex justify-center items-center gap-2 mb-4">
+                                <div class="key bg-white border-2 border-slate-300 rounded-lg px-4 py-2 font-bold text-slate-600 text-sm">Shift</div>
+                                <span class="text-slate-400">+</span>
+                                <div class="key bg-white border-2 border-slate-300 rounded-lg w-10 h-10 flex items-center justify-center font-bold text-slate-600">H</div>
+                            </div>
+                            <p class="text-sm text-slate-600">按住 Shift 不放，再按一下 H</p>
+                            <div class="mt-4 text-4xl font-mono text-green-600 font-bold bg-white inline-block px-4 py-2 rounded-lg shadow-inner">H</div>
+                        </div>
+
+                        <!-- Small -->
+                        <div class="bg-green-50 p-6 rounded-2xl text-center border-2 border-green-100">
+                            <h4 class="font-bold text-green-700 mb-4 text-xl">輸入小寫【i】</h4>
+                            <div class="flex justify-center items-center gap-2 mb-4">
+                                <div class="key bg-white border-2 border-slate-300 rounded-lg w-10 h-10 flex items-center justify-center font-bold text-slate-600">I</div>
+                            </div>
+                            <p class="text-sm text-slate-600">直接按一下 I 鍵就可以囉</p>
+                            <div class="mt-4 text-4xl font-mono text-green-600 font-bold bg-white inline-block px-4 py-2 rounded-lg shadow-inner">i</div>
+                        </div>
+                    </div>
+                    <div class="mt-6 bg-yellow-50 p-4 rounded-xl flex items-start gap-3">
+                        <i data-lucide="lightbulb" class="text-yellow-500 w-6 h-6 flex-shrink-0 mt-1"></i>
+                        <div>
+                            <p class="font-bold text-yellow-700 text-sm">老師說：</p>
+                            <p class="text-sm text-yellow-800">如果要一直打大寫，可以按一下 <span class="key bg-white border border-slate-300 px-1 rounded text-xs inline-block">Caps Lock</span> 鍵。燈亮了就是大寫鎖定，再按一次就可以解除囉！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Sentence & Punctuation -->
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+                <div class="bg-indigo-500 p-4 text-white font-bold flex justify-between items-center">
+                    <span>第 3 步：句子與標點符號</span>
+                    <i data-lucide="message-square" class="w-6 h-6 text-indigo-100"></i>
+                </div>
+                <div class="p-6 md:p-8">
+                    <p class="mb-6 text-lg text-center">讓我們來打這句話： <br><span class="font-mono text-2xl font-bold bg-indigo-50 px-3 py-1 rounded text-indigo-600 mt-2 inline-block">Hi, I am Tom.</span></p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 bg-slate-50 p-3 rounded-lg">
+                            <span class="w-8 h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">1</span>
+                            <div>
+                                <span class="font-bold text-slate-700">輸入逗號 [ , ]：</span>
+                                <span class="text-sm text-slate-500">直接按鍵盤上的 <span class="key bg-white border border-slate-300 px-2 py-0.5 rounded text-xs font-mono">,</span> 鍵。</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 bg-slate-50 p-3 rounded-lg">
+                            <span class="w-8 h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">2</span>
+                            <div>
+                                <span class="font-bold text-slate-700">空格 (Space)：</span>
+                                <span class="text-sm text-slate-500">單字和單字中間要有空隙，請按下面長長的 <span class="key bg-white border border-slate-300 px-4 py-0.5 rounded text-xs">空白鍵</span>。</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 bg-slate-50 p-3 rounded-lg">
+                            <span class="w-8 h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">3</span>
+                            <div>
+                                <span class="font-bold text-slate-700">輸入問號 [ ? ]：</span>
+                                <span class="text-sm text-slate-500">這在上面，所以要用 <span class="key bg-white border border-slate-300 px-2 py-0.5 rounded text-xs">Shift</span> + <span class="key bg-white border border-slate-300 px-2 py-0.5 rounded text-xs">/ ?</span> 喔！</span>
+                            </div>
+                        </div>
+                         <div class="flex items-center gap-4 bg-slate-50 p-3 rounded-lg">
+                            <span class="w-8 h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">4</span>
+                            <div>
+                                <span class="font-bold text-slate-700">換行 (Enter)：</span>
+                                <span class="text-sm text-slate-500">打完一行想換下一行？請按大大的 <span class="key bg-white border border-slate-300 px-2 py-0.5 rounded text-xs">Enter</span> 鍵！</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Editing & Auto-Save -->
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+                <div class="bg-rose-500 p-4 text-white font-bold flex justify-between items-center">
+                    <span>第 4 步：修改文字</span>
+                    <i data-lucide="eraser" class="w-6 h-6 text-rose-100"></i>
+                </div>
+                <div class="p-6 md:p-8">
+                    <div class="grid md:grid-cols-2 gap-8 mb-8">
+                        <div>
+                            <h4 class="font-bold text-slate-700 mb-3 flex items-center gap-2">
+                                <i data-lucide="delete" class="text-rose-500 w-5 h-5"></i> 刪除文字的兩種方法
+                            </h4>
+                            <ul class="space-y-3">
+                                <li class="bg-rose-50 p-3 rounded-lg text-sm">
+                                    <span class="font-bold text-rose-600 block mb-1">Backspace (倒退鍵) <i data-lucide="arrow-left" class="inline w-3 h-3"></i></span>
+                                    刪除「插入點」<span class="font-bold text-rose-500">左邊</span> 的字 (往回刪)。
+                                </li>
+                                <li class="bg-rose-50 p-3 rounded-lg text-sm">
+                                    <span class="font-bold text-rose-600 block mb-1">Delete (刪除鍵) <i data-lucide="arrow-right" class="inline w-3 h-3"></i></span>
+                                    刪除「插入點」<span class="font-bold text-rose-500">右邊</span> 的字 (往後吸)。
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="flex flex-col justify-center">
+                            <div class="bg-blue-50 p-6 rounded-2xl border-l-8 border-blue-400">
+                                <h4 class="font-bold text-blue-700 mb-3 flex items-center gap-2">
+                                    <i data-lucide="cloud" class="text-blue-500 w-6 h-6"></i>
+                                    雲端自動存檔
+                                </h4>
+                                <p class="text-slate-600 text-sm mb-2">
+                                    因為我們用的是 LoiLoNote，所以<span class="font-bold text-blue-600">不用按存檔</span>喔！
+                                </p>
+                                <p class="text-slate-600 text-sm">
+                                    它會像魔法一樣，自動幫你把打好的字存到雲端上，再也不怕作業不見了！
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bonus Tip -->
+                    <div class="border-t pt-6">
+                        <div class="bg-gradient-to-r from-pink-100 to-purple-100 p-4 rounded-xl flex items-center gap-4">
+                            <span class="text-3xl">😎</span>
+                            <div>
+                                <h5 class="font-bold text-purple-700">學會了更厲害：輸入表情符號</h5>
+                                <p class="text-sm text-purple-600">按住 <span class="key bg-white/50 border border-purple-300 px-1 rounded">Win鍵 (田)</span> 再按一下 <span class="key bg-white/50 border border-purple-300 px-1 rounded">. (句號)</span>，就可以選可愛的圖案喔！</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Practice Area -->
+        <section class="mt-16 bg-slate-800 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-10 -mt-10"></div>
+            
+            <h3 class="text-2xl font-bold mb-2 flex items-center gap-2">
+                <i data-lucide="gamepad-2" class="text-green-400"></i> 小試身手
+            </h3>
+            <p class="text-slate-300 mb-6">請在下面試著打出：<br><span class="text-2xl text-yellow-300 font-mono font-bold mt-2 block">Hi, I am Tom.</span></p>
+            
+            <textarea id="practice-area" 
+                class="w-full h-32 bg-slate-700 text-white text-2xl font-mono p-4 rounded-xl border-2 border-slate-600 focus:border-green-400 focus:outline-none placeholder-slate-500"
+                placeholder="點這裡開始打字..."></textarea>
+            
+            <div id="feedback-msg" class="mt-4 hidden p-4 bg-green-500/20 text-green-300 rounded-lg font-bold text-center border border-green-500/50">
+                🎉 太棒了！你完全打對了！
+            </div>
+
+            <div class="mt-4 flex gap-4 text-sm text-slate-400">
+                <div class="flex items-center gap-1">
+                    <span id="char-count" class="font-mono text-white">0</span> 字元
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-blue-600 text-white py-8 text-center mt-12">
+        <p class="mb-2 text-blue-200">國小三年級 資訊教育課程</p>
+        <p class="font-bold text-lg">加油，你是最棒的小小打字員！</p>
+    </footer>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Practice Area Logic
+        const textarea = document.getElementById('practice-area');
+        const feedback = document.getElementById('feedback-msg');
+        const charCount = document.getElementById('char-count');
+        const targetText = "Hi, I am Tom.";
+
+        textarea.addEventListener('input', (e) => {
+            const currentText = e.target.value;
+            charCount.textContent = currentText.length;
+
+            if (currentText.includes(targetText)) {
+                feedback.classList.remove('hidden');
+                textarea.classList.add('border-green-400', 'bg-green-900/20');
+                textarea.classList.remove('border-slate-600');
+            } else {
+                feedback.classList.add('hidden');
+                textarea.classList.remove('border-green-400', 'bg-green-900/20');
+                textarea.classList.add('border-slate-600');
+            }
+        });
+    </script>
+</body>
+</html>

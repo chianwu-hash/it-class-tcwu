@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六年級資訊課 - 畢業影片專題 (第4週)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+        }
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 9999px;
+            color: white;
+            font-weight: bold;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+        .keyword-tag {
+            display: inline-block;
+            background-color: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: bold;
+            margin: 0.25rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .keyword-tag:hover {
+            background-color: #e2e8f0;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .keyword-tag.english {
+            background-color: #eff6ff;
+            color: #1d4ed8;
+            border-color: #bfdbfe;
+        }
+        .keyword-tag.english:hover {
+            background-color: #dbeafe;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased pb-12">
+
+    <!-- 統一載入的頂部導航列 -->
+    <script src="navbar.js"></script>
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-lg mb-8">
+        <div class="max-w-5xl mx-auto px-6 py-10 relative overflow-hidden">
+            <div class="relative z-10 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-teal-100 mb-2">頂溪國小 114下資訊課 ｜ 第 04 週</h2>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4">素材尋寶與範本挑選</h1>
+                    <p class="text-lg text-teal-50">大量收集回憶照片，為你的畢業影片挑選最美的魔法外衣！</p>
+                </div>
+                <div class="hidden md:block text-7xl opacity-80 transform rotate-12">
+                    <i class="fa-solid fa-images"></i>
+                </div>
+            </div>
+            <!-- 背景裝飾 -->
+            <i class="fa-solid fa-magnifying-glass absolute text-white opacity-10 text-9xl -bottom-10 -right-10"></i>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-6 space-y-8">
+
+        <!-- ⚠️ 法治宣導 (非常重要，置頂) -->
+        <section class="bg-red-50 border-l-8 border-red-500 rounded-r-2xl shadow-sm overflow-hidden p-6 relative">
+            <i class="fa-solid fa-scale-balanced absolute text-red-100 text-8xl -bottom-4 right-4"></i>
+            <div class="relative z-10">
+                <h3 class="text-2xl font-black text-red-800 mb-3 flex items-center">
+                    <i class="fa-solid fa-triangle-exclamation mr-3 text-red-600"></i> 下載照片前，請先閱讀「小尖兵守則」！
+                </h3>
+                <p class="text-gray-800 font-bold mb-2">我們即將使用同學們的照片，請大家務必遵守法律與網路禮儀：</p>
+                <ul class="space-y-2 mt-4">
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-circle-check text-green-600 mt-1 mr-2"></i>
+                        <span class="text-gray-700 font-medium"><strong>合理使用：</strong> 這些照片【僅限於】本次資訊課製作畢業影片使用。</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-ban text-red-600 mt-1 mr-2"></i>
+                        <span class="text-gray-700 font-medium text-red-700"><strong>嚴禁外流：</strong> 未經同學同意，絕對不可以把別人的照片發布到 IG、TikTok 或 FB 等公開網路。</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-ban text-red-600 mt-1 mr-2"></i>
+                        <span class="text-gray-700 font-medium text-red-700"><strong>嚴禁惡搞：</strong> 絕對不可以惡意修改 (P圖) 或加上難聽的字眼來取笑同學，這會構成網路霸凌並觸犯法律！</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 任務一：素材尋寶大作戰 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-blue-100 px-6 py-4 border-b border-blue-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-folder-open text-blue-600 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-bold text-blue-800">任務一：素材尋寶大作戰</h3>
+                </div>
+                <span class="bg-blue-600 text-white text-xs px-3 py-1 rounded-full font-bold">收集 10~20 張照片</span>
+            </div>
+            
+            <div class="p-6 grid md:grid-cols-2 gap-8">
+                <!-- 左側：下載區 -->
+                <div>
+                    <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-download text-blue-500 mr-2"></i> 第一步：下載照片
+                    </h4>
+                    <p class="text-sm text-gray-600 mb-4">目標是收集 <strong class="text-blue-600 text-lg">10 到 20 張</strong> 漂亮的回憶照片！</p>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <h5 class="font-bold text-gray-800 mb-2"><i class="fa-solid fa-school text-emerald-500 mr-2"></i>來源 1：全新畢旅照片！</h5>
+                            <p class="text-sm text-gray-600">資訊組老師已經幫大家準備好 604、605 班專屬的相簿了。請點擊電腦<strong>「桌面」</strong>上的<strong>「備用相簿連結」</strong>去挖寶吧！</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <h5 class="font-bold text-gray-800 mb-2"><i class="fa-brands fa-google-drive text-amber-500 mr-2"></i>來源 2：自己的相簿</h5>
+                            <p class="text-sm text-gray-600">如果你有帶隨身碟，或是照片存在自己的 Google 雲端硬碟，也可以趁現在下載到電腦裡。</p>
+                        </div>
+                    </div>
+
+                    <!-- ZIP 防呆提醒 -->
+                    <div class="mt-4 bg-amber-50 border border-amber-300 rounded-xl p-4 flex items-start">
+                        <i class="fa-solid fa-file-zipper text-amber-600 text-xl mr-3 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-amber-800">有下載到「壓縮檔」嗎？</h5>
+                            <p class="text-amber-700 text-sm mt-1">如果你下載的照片是有拉鍊的資料夾 (ZIP壓縮檔)，記得要先對著它按滑鼠右鍵選擇 <strong>「解壓縮」</strong>，裡面的照片才能用喔！</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右側：上傳區 -->
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-xl font-bold text-gray-800 flex items-center">
+                            <i class="fa-solid fa-cloud-arrow-up text-purple-500 mr-2"></i> 第二步：大量拖曳上傳
+                        </h4>
+                        <span class="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded font-bold">課本 P.60</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-3">不要一張一張慢慢傳！你可以用滑鼠框選很多張照片，一次 <strong>拖曳</strong> 進 Canva 裡。</p>
+                    
+                    <!-- 重要圖示提醒 -->
+                    <div class="bg-purple-50 border-l-4 border-purple-500 p-3 mb-4 rounded-r-lg">
+                        <h5 class="text-purple-800 font-bold"><i class="fa-solid fa-location-dot mr-1"></i> 注意！請拖曳到「安全降落區」</h5>
+                        <p class="text-purple-700 text-sm mt-1">請一定要把照片拖曳到左側工具列和畫布中間的<strong>「灰色區域」</strong>放開（如下圖標示）。如果直接丟進白色畫布，照片會把你的版面蓋掉喔！</p>
+                    </div>
+
+                    <!-- 插入使用者提供的教學參考圖 -->
+                    <div class="relative group">
+                        <img src="https://i.postimg.cc/cLZwJkZ6/012.png" alt="Canva 照片上傳拖曳教學圖" class="w-full rounded-lg shadow-md border-2 border-purple-200 transition transform group-hover:scale-105">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition rounded-lg flex items-center justify-center">
+                            <span class="bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm opacity-0 group-hover:opacity-100 transition">💡 拖到紅框標示的區域</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 任務二：範本挑選與風格設定 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-emerald-100 px-6 py-4 border-b border-emerald-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-wand-magic-sparkles text-emerald-600 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-bold text-emerald-800">任務二：奠定影片風格 (範本挑選)</h3>
+                </div>
+                <span class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-full font-bold">課本 P.117-118</span>
+            </div>
+            
+            <div class="p-8">
+                <div class="flex flex-col md:flex-row gap-8">
+                    <!-- 步驟說明 -->
+                    <div class="flex-1 space-y-6">
+                        <div class="flex items-start">
+                            <span class="step-number bg-emerald-500">1</span>
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-800">搜尋魔法外衣</h4>
+                                <p class="text-gray-600 mt-1">點擊畫面左側最上面的 <strong>「設計」</strong>，然後在搜尋框輸入底下的「關鍵字」來尋找範本。</p>
+                                
+                                <!-- 關鍵字標籤區 -->
+                                <div class="mt-3 bg-gray-50 p-4 rounded-xl border border-gray-200">
+                                    <p class="text-sm font-bold text-gray-500 mb-2">試試看這些尋寶關鍵字 (點擊可看清楚)：</p>
+                                    <div>
+                                        <span class="keyword-tag">畢業</span>
+                                        <span class="keyword-tag">回憶</span>
+                                        <span class="keyword-tag">相簿</span>
+                                        <span class="keyword-tag">拍立得</span>
+                                        <span class="keyword-tag">拼貼</span>
+                                    </div>
+                                    <div class="mt-2 pt-2 border-t border-gray-200">
+                                        <p class="text-xs font-bold text-blue-500 mb-1"><i class="fa-solid fa-star"></i> 老師強推！用英文搜尋質感大升級：</p>
+                                        <span class="keyword-tag english">Graduation (畢業)</span>
+                                        <span class="keyword-tag english">Scrapbook (手帳風)</span>
+                                        <span class="keyword-tag english">Polaroid (拍立得)</span>
+                                        <span class="keyword-tag english">Photo Album (相簿)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <span class="step-number bg-emerald-500">2</span>
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-800">套用全部頁面</h4>
+                                <p class="text-gray-600 mt-1">找到喜歡的風格後點進去，一定要記得點選 <strong>「套用全部 X 個頁面」</strong>，這樣你的影片才會有整體感喔！目前只要套用「背景與風格」就好，裡面的外國人照片下週我們才會換成自己的。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 防呆與 Ctrl+Z 教學 -->
+                    <div class="md:w-1/3">
+                        <div class="bg-gray-800 text-white rounded-2xl p-6 shadow-lg h-full border-b-4 border-yellow-500">
+                            <div class="text-yellow-400 text-4xl mb-3 text-center">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                            </div>
+                            <h4 class="text-xl font-black text-center mb-4">大膽嘗試，不要怕！</h4>
+                            <p class="text-gray-300 text-sm mb-4 leading-relaxed">
+                                看到喜歡的範本就勇敢套用看看！如果套上去發現不喜歡，或是版面突然變得很奇怪，<strong>千萬不要緊張！</strong>
+                            </p>
+                            <div class="bg-gray-700 rounded-lg p-4 text-center border border-gray-600">
+                                <p class="font-bold text-yellow-300 mb-2">只要施放時光倒流魔法：</p>
+                                <div class="text-2xl font-mono font-black tracking-widest bg-gray-900 py-2 rounded shadow-inner">
+                                    Ctrl + Z
+                                </div>
+                                <p class="text-xs text-gray-400 mt-2">(或是按畫面上方彎彎的復原箭頭)</p>
+                            </div>
+                            <p class="text-gray-400 text-xs text-center mt-4">給自己 8 分鐘的時間，挑出最棒的版面吧！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center mt-12 pb-8 text-gray-400 text-sm font-medium">
+        <p><i class="fa-solid fa-graduation-cap mr-1"></i> 新北市頂溪國小資訊課 - 畢業影片專案系列</p>
+    </footer>
+
+</body>
+</html>

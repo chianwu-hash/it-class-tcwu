@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>114下資訊課教學計畫總覽</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Chosen Palette: Warm Neutrals & Educational Indigos -->
+    <!-- Application Structure Plan: The application uses a "Master-Detail Dashboard" architecture. The left panel acts as the 'Master' navigator, displaying the semester schedule and allowing users to toggle between Grade 3 and Grade 6. The right panel acts as the 'Detail' view, dynamically displaying the specific lesson plan for the selected week. This structure was chosen because the source report functions as a high-level syllabus mapped to specific detailed lesson plans; a dashboard perfectly facilitates jumping between the macro-schedule and micro-lesson views without losing context. -->
+    <!-- Visualization & Content Choices: Source Report Info -> Lesson Time Breakdown Goal -> Display proportion of 40-min class spent on each activity -> Doughnut Chart (Chart.js) -> Hover interaction for exact minutes -> Justification: Doughnut charts effectively show parts-to-whole relationships for time allocation within a strict 40-minute boundary. NO SVG or Mermaid used; Chart.js canvas handles the visualization. HTML/CSS used for timeline lists. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 280px;
+            max-height: 350px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 320px;
+            }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9; 
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+        .tab-active {
+            background-color: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+        .tab-inactive {
+            background-color: white;
+            color: #64748b;
+            border-color: #cbd5e1;
+        }
+        .schedule-item:hover {
+            background-color: #f1f5f9;
+            cursor: pointer;
+            border-left-color: #4f46e5;
+        }
+        .schedule-active {
+            background-color: #e0e7ff;
+            border-left-color: #4f46e5;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased h-screen flex flex-col overflow-hidden">
+
+    <header class="bg-white border-b border-slate-200 shadow-sm z-10 shrink-0">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-black text-slate-800 tracking-tight">&#127979; 114下 資訊課教學計畫總覽</h1>
+                <p class="text-sm text-slate-500 font-medium mt-1">頂溪國小・課程大綱與教案導覽系統</p>
+            </div>
+            <div class="flex space-x-2 bg-slate-100 p-1 rounded-lg border border-slate-200">
+                <button id="btn-grade3" class="px-6 py-2 rounded-md font-bold text-sm transition-colors duration-200 tab-active" onclick="switchGrade('grade3')">&#128103; 三年級</button>
+                <button id="btn-grade6" class="px-6 py-2 rounded-md font-bold text-sm transition-colors duration-200 tab-inactive" onclick="switchGrade('grade6')">&#128104; 六年級</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow flex flex-col md:flex-row max-w-7xl mx-auto w-full overflow-hidden">
+        
+        <aside class="w-full md:w-1/3 lg:w-2/5 bg-white border-r border-slate-200 flex flex-col h-1/3 md:h-full shrink-0">
+            <div class="p-6 border-b border-slate-100 bg-slate-50 shrink-0">
+                <p class="text-xs font-bold text-indigo-600 mb-1 tracking-wider uppercase">課程導覽 (Semester Navigator)</p>
+                <p class="text-sm text-slate-600 mb-4 leading-relaxed">此區域列出全學期的教學進度。點擊帶有「&#128221;」標記的週次，即可在右側檢視該週詳細教案與時間分配圖表。</p>
+                
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <h2 id="grade-theme" class="text-lg font-black text-slate-800 mb-2"></h2>
+                    <p id="grade-materials" class="text-sm text-slate-600 font-medium"></p>
+                </div>
+            </div>
+            
+            <div class="flex-grow overflow-y-auto custom-scrollbar p-4" id="schedule-list">
+            </div>
+        </aside>
+
+        <section class="w-full md:w-2/3 lg:w-3/5 bg-slate-50/50 flex flex-col h-2/3 md:h-full overflow-y-auto custom-scrollbar relative">
+            <div id="detail-empty" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 p-8 text-center">
+                <div class="text-6xl mb-4">&#128072;</div>
+                <h3 class="text-xl font-bold text-slate-600">請從左側選擇週次</h3>
+                <p class="text-sm mt-2">點選課程進度表以檢視詳細教案資訊與時間分配圖</p>
+            </div>
+
+            <div id="detail-content" class="hidden p-6 lg:p-10 w-full max-w-4xl mx-auto">
+                <div class="mb-8">
+                    <p class="text-sm font-bold text-indigo-600 mb-1 tracking-wider uppercase">教案詳情 (Lesson Details)</p>
+                    <p class="text-sm text-slate-600 mb-4 leading-relaxed">本區展示所選週次的具體教學目標、40分鐘課堂時間分配圖表，以及教學流程與注意事項，協助教師精準掌握授課節奏。</p>
+                    
+                    <div class="flex items-center gap-3 mb-2">
+                        <span id="detail-week-badge" class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-black border border-indigo-200"></span>
+                        <span id="detail-time-badge" class="bg-slate-200 text-slate-700 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">&#9201; <span id="detail-time-val"></span> 分鐘</span>
+                    </div>
+                    <h2 id="detail-title" class="text-3xl font-black text-slate-800 mt-2 mb-4 leading-tight"></h2>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+                    <h3 class="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">&#127919; 教學目標</h3>
+                    <ul id="detail-goals" class="space-y-2 text-slate-700 font-medium"></ul>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+                    <h3 class="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">&#128202; 課堂時間分配</h3>
+                    <div class="chart-container">
+                        <canvas id="timeAllocationChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+                    <h3 class="text-lg font-black text-slate-800 mb-6 flex items-center gap-2">&#128203; 教學流程</h3>
+                    <div id="detail-flow" class="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-indigo-100 before:via-indigo-300 before:to-indigo-100">
+                    </div>
+                </div>
+
+                <div id="detail-notes-container" class="bg-amber-50 rounded-2xl shadow-sm border border-amber-200 p-6 mb-8">
+                    <h3 class="text-lg font-black text-amber-900 mb-3 flex items-center gap-2">&#9888;&#65039; 教師重點叮嚀</h3>
+                    <div id="detail-notes" class="text-amber-800 text-sm leading-relaxed font-medium"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const curriculumData = {
+            grade3: {
+                theme: "【網路探險家】從認識網路到小小程式設計師",
+                materials: "教材：巨岩出版《S091：Google 網路 AI 好幫手》",
+                schedule: [
+                    { week: "03", date: "02/23起", topic: "網路安全與基礎操作", desc: "第一課 (P.22-25)：網路安全觀念與基本文書。", hasDetail: true },
+                    { week: "04", date: "03/02起", topic: "網路大探險(二)", desc: "第一課 (P.11-28)：認識瀏覽器、網址。", hasDetail: true },
+                    { week: "05", date: "03/09起", topic: "網路尋寶去(一)", desc: "第二課 (P.31-40)：認識搜尋引擎、輸入關鍵字。", hasDetail: false },
+                    { week: "06", date: "03/16起", topic: "網路尋寶去(二)", desc: "第二課 (P.41-52)：書籤管理與人工智慧。", hasDetail: false },
+                    { week: "07", date: "03/23起", topic: "我是誰？(一)", desc: "第三課 (P.55-61)：認識網路身分與密碼安全。", hasDetail: false },
+                    { week: "08", date: "03/30起", topic: "我是誰？(二)", desc: "第三課 (P.62-75)：認識與操作 Gmail。", hasDetail: false },
+                    { week: "09", date: "04/06起", topic: "考前衝刺與素養", desc: "網路素養 / 打字練習", hasDetail: false },
+                    { week: "10", date: "04/13起", topic: "-- 期中考週 --", desc: "配合學校期中評量", hasDetail: false },
+                    { week: "11-20", date: "04/20起", topic: "雲端、地圖、簡報、程式設計", desc: "逐步推進至 Code.org 程式邏輯。", hasDetail: false }
+                ],
+                lessons: {
+                    "03": {
+                        title: "網路安全停看聽 & 滑鼠鍵盤魔法師",
+                        time: "40",
+                        goals: [
+                            "建立網路安全觀念。",
+                            "熟練「選取」、Ctrl+C、Ctrl+V、Ctrl+Z。"
+                        ],
+                        flow: [
+                            { minutes: 10, name: "網路安全停看聽", desc: "統一播放資安影片，並透過 LoiLoNote 發送測驗。" },
+                            { minutes: 15, name: "滑鼠鍵盤魔法師", desc: "教導選取口訣(左鍵按住不要放，變藍色才放開)。透過網頁修煉場練習複製貼上 5 次。" },
+                            { minutes: 10, name: "課本進度(P.22-25)", desc: "介紹瀏覽器首頁，挑戰課本「網址連連看」遊戲。" },
+                            { minutes: 5, name: "總結收拾", desc: "提問複習快捷鍵，建立輕輕歸位的好習慣。" }
+                        ],
+                        notes: "三年級滑鼠常不受控，示範時請放大游標並放慢。糾正學生用「一根食指」按快捷鍵的習慣。"
+                    },
+                    "04": {
+                        title: "瀏覽器任意門與中打修煉場",
+                        time: "40",
+                        goals: [
+                            "熟練「複製網址 ➜ 開新分頁 ➜ 貼至網址列」。",
+                            "找回中打注音手感。"
+                        ],
+                        flow: [
+                            { minutes: 5, name: "暖身宣告", desc: "宣告本週任務與隱藏大魔王。" },
+                            { minutes: 15, name: "瀏覽器任意門", desc: "實作複製均一網址並貼上網址列。教導分頁切換。隱藏魔王：放大鏡(Ctrl++)與復活魔法(Ctrl+Shift+T)。" },
+                            { minutes: 15, name: "中打修煉場", desc: "宣告防禦魔法(封印 Ctrl+V)。提醒一聲按空白鍵、用方向鍵選字。引導挑戰 5 大中打關卡。" },
+                            { minutes: 5, name: "總結收拾", desc: "快問快答(網址貼哪裡？一聲按哪裡？)。" }
+                        ],
+                        notes: "學生常把網址貼到 Google 搜尋框，請強調「長長網址列在天花板」。利用「欲擒故縱」封印複製貼上，能降低學生對打字的抗拒。"
+                    }
+                }
+            },
+            grade6: {
+                theme: "【Canva 魔法實戰專案】我的畢業故事起點",
+                materials: "軟體：Canva (教育版)、學校網站素材",
+                schedule: [
+                    { week: "01", date: "02/09起", topic: "專案啟動", desc: "說明任務目標、Canva 帳號登入。", hasDetail: true },
+                    { week: "02", date: "02/16起", topic: "Canva 暖身", desc: "基本介面認識、簡報排版練習。", hasDetail: false },
+                    { week: "03", date: "02/23起", topic: "故事起點與素材(一)", desc: "觀摩歷屆作品、建專案、下載畢旅照片並上傳。", hasDetail: true },
+                    { week: "04", date: "03/02起", topic: "素材尋寶大作戰", desc: "大量圖片上傳技巧、範本挑選與套用全部。", hasDetail: true },
+                    { week: "05", date: "03/09起", topic: "視覺魔法：照片編修", desc: "Canva 去背、照片入框裁切、AI 魔法編輯工具。", hasDetail: true },
+                    { week: "06", date: "03/16起", topic: "文字魔法：排版特效", desc: "插入文字、特效（外框、霓虹燈）。", hasDetail: false },
+                    { week: "07-13", date: "03/23起", topic: "感恩留言、轉場、音樂", desc: "撰寫感謝語、轉場動畫、匯入無版權配樂、秒數微調。", hasDetail: false },
+                    { week: "14", date: "05/11起", topic: "完美輸出：MP4下載", desc: "導出 MP4 影片，教導檔案命名與繳交。", hasDetail: false },
+                    { week: "15", date: "05/18起", topic: "畢業影展首映會", desc: "老師挑選優秀作品大螢幕播放。", hasDetail: false }
+                ],
+                lessons: {
+                    "01": {
+                        title: "觀摩與企劃——我的畢業故事起點",
+                        time: "40",
+                        goals: [
+                            "觀摩歷屆作品，構思個人主題。",
+                            "成功登入 Canva。"
+                        ],
+                        flow: [
+                            { minutes: 5, name: "學期任務說明", desc: "宣告「個人畢業影片」任務與評分時程。" },
+                            { minutes: 10, name: "學長姐作品觀摩", desc: "觀察照片堆疊、音樂與文字的配合。" },
+                            { minutes: 10, name: "企劃發想與討論", desc: "思考最想放的 3 個回憶點與風格。" },
+                            { minutes: 10, name: "環境與資源盤點", desc: "建立新專案，示範進入校網「頂溪映像」。" },
+                            { minutes: 5, name: "總結", desc: "提醒回家找照片。" }
+                        ],
+                        notes: "強調每個人都要獨立完成。專案命名必須統一。後續會教學合法素材使用。"
+                    },
+                    "03": {
+                        title: "觀摩與平台初探 (含規格說明)",
+                        time: "40",
+                        goals: [
+                            "了解 6 頁 30 秒底線。",
+                            "熟悉頂溪映像下載與 Canva 上傳。"
+                        ],
+                        flow: [
+                            { minutes: 5, name: "任務公告", desc: "底線要求 6 頁、30 秒，需有正向留言。" },
+                            { minutes: 10, name: "觀摩與文字教育", desc: "預告 P.24 文字特效。" },
+                            { minutes: 10, name: "Canva 專案建立", desc: "建立「簡報」專案(16:9)，統一命名。" },
+                            { minutes: 10, name: "尋寶與上傳實作", desc: "校網下載畢旅照片，操作 Canva 左側上傳備用。" },
+                            { minutes: 5, name: "總結", desc: "提醒上傳後檔案會跟著帳號走。" }
+                        ],
+                        notes: "策略是「先排版，後動態」。上傳素材後檔案會跟著帳號走，不怕換電腦。"
+                    },
+                    "04": {
+                        title: "素材尋寶大作戰 & 奠定影片風格",
+                        time: "40",
+                        goals: [
+                            "法治素養(肖像權)。",
+                            "大量拖曳上傳、挑選套用簡報範本。"
+                        ],
+                        flow: [
+                            { minutes: 5, name: "宣告與檢查", desc: "目標收集 10-20 張照片，並挑選魔法外衣。" },
+                            { minutes: 15, name: "素材尋寶 (含法治)", desc: "宣導合理使用與嚴禁惡搞。解壓縮防呆，示範「多選拖曳」。" },
+                            { minutes: 15, name: "套用魔法外衣", desc: "搜尋中英文關鍵字。教導「套用全部頁面」與 Ctrl+Z 復原。" },
+                            { minutes: 5, name: "總結存檔", desc: "確保大家都已套用範本。" }
+                        ],
+                        notes: "法治教育務必嚴格佈達。學生極易將照片直接拖進畫布蓋掉背景，請反覆強調「丟在工具列旁」。"
+                    },
+                    "05": {
+                        title: "視覺魔法：照片編修與進階 AI 挑戰",
+                        time: "40",
+                        goals: [
+                            "照片入框裁切。",
+                            "一鍵去背、Canva 魔法編輯工具(AI)。"
+                        ],
+                        flow: [
+                            { minutes: 5, name: "進度快篩", desc: "下載第一頁(PNG)並繳交至 LoiLoNote。" },
+                            { minutes: 15, name: "核心任務一 (入框)", desc: "示範拖曳照片進框架、快點兩下裁切、水平翻轉。" },
+                            { minutes: 15, name: "核心任務二", desc: "去背與 AI 挑戰：大魔王挑戰(快手學生)使用「魔法編輯工具」。" },
+                            { minutes: 5, name: "總結預告", desc: "提醒畫面要「留白」給下週打字用。" }
+                        ],
+                        notes: "針對提早做完的學生賦予「設計總監」稱號，下座位協助同學。AI 咒語引導需加入「形容詞＋名詞」。"
+                    }
+                }
+            }
+        };
+
+        let currentGrade = 'grade3';
+        let currentChart = null;
+
+        function switchGrade(grade) {
+            currentGrade = grade;
+            
+            document.getElementById('btn-grade3').className = grade === 'grade3' ? 'px-6 py-2 rounded-md font-bold text-sm transition-colors duration-200 tab-active' : 'px-6 py-2 rounded-md font-bold text-sm transition-colors duration-200 tab-inactive';
+            document.getElementById('btn-grade6').className = grade === 'grade6' ? 'px-6 py-2 rounded-md font-bold text-sm transition-colors duration-200 tab-active' : 'px-6 py-2 rounded-md font-bold text-sm transition-colors duration-200 tab-inactive';
+            
+            const data = curriculumData[grade];
+            document.getElementById('grade-theme').innerText = data.theme;
+            document.getElementById('grade-materials').innerText = data.materials;
+            
+            renderSchedule();
+            hideDetail();
+        }
+
+        function renderSchedule() {
+            const listContainer = document.getElementById('schedule-list');
+            listContainer.innerHTML = '';
+            
+            const schedule = curriculumData[currentGrade].schedule;
+            
+            schedule.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = `schedule-item p-4 rounded-xl mb-3 border-l-4 border-transparent transition-all duration-200 ${item.hasDetail ? 'bg-white shadow-sm border border-slate-100' : 'bg-slate-50 opacity-70'}`;
+                div.id = `sched-item-${item.week}`;
+                
+                const detailIcon = item.hasDetail ? '<span class="bg-indigo-100 text-indigo-600 text-xs px-2 py-0.5 rounded font-bold">&#128221; 教案</span>' : '';
+                
+                div.innerHTML = `
+                    <div class="flex justify-between items-start mb-1">
+                        <div class="text-xs font-black text-slate-400">第 ${item.week} 週 <span class="font-normal mx-1">|</span> ${item.date}</div>
+                        ${detailIcon}
+                    </div>
+                    <div class="font-bold text-slate-800 text-lg mb-1">${item.topic}</div>
+                    <div class="text-sm text-slate-500">${item.desc}</div>
+                `;
+                
+                if (item.hasDetail) {
+                    div.onclick = () => showDetail(item.week);
+                }
+                
+                listContainer.appendChild(div);
+            });
+        }
+
+        function hideDetail() {
+            document.getElementById('detail-empty').classList.remove('hidden');
+            document.getElementById('detail-content').classList.add('hidden');
+            
+            document.querySelectorAll('.schedule-item').forEach(el => {
+                el.classList.remove('schedule-active');
+            });
+        }
+
+        function showDetail(week) {
+            document.querySelectorAll('.schedule-item').forEach(el => {
+                el.classList.remove('schedule-active');
+            });
+            document.getElementById(`sched-item-${week}`).classList.add('schedule-active');
+            
+            const lesson = curriculumData[currentGrade].lessons[week];
+            if (!lesson) return;
+
+            document.getElementById('detail-empty').classList.add('hidden');
+            document.getElementById('detail-content').classList.remove('hidden');
+
+            document.getElementById('detail-week-badge').innerText = `第 ${week} 週`;
+            document.getElementById('detail-time-val').innerText = lesson.time;
+            document.getElementById('detail-title').innerText = lesson.title;
+
+            const goalsList = document.getElementById('detail-goals');
+            goalsList.innerHTML = lesson.goals.map(g => `<li><span class="text-indigo-400 mr-2">&#10004;</span>${g}</li>`).join('');
+
+            const flowContainer = document.getElementById('detail-flow');
+            flowContainer.innerHTML = lesson.flow.map((step, idx) => `
+                <div class="relative flex items-start md:justify-center">
+                    <div class="hidden md:block w-1/2 pr-8 text-right">
+                        <div class="text-sm font-bold text-indigo-600 mb-1">${step.minutes} 分鐘</div>
+                        <div class="font-black text-slate-800">${step.name}</div>
+                    </div>
+                    <div class="absolute left-0 md:left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-white border-4 border-indigo-200 flex items-center justify-center font-black text-indigo-600 z-10 shadow-sm">${idx + 1}</div>
+                    <div class="w-full md:w-1/2 pl-14 md:pl-8">
+                        <div class="md:hidden flex items-baseline gap-2 mb-1">
+                            <span class="text-sm font-bold text-white bg-indigo-500 px-2 rounded-md">${step.minutes}'</span>
+                            <span class="font-black text-slate-800">${step.name}</span>
+                        </div>
+                        <div class="text-sm text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-sm leading-relaxed">${step.desc}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            if (lesson.notes) {
+                document.getElementById('detail-notes-container').classList.remove('hidden');
+                document.getElementById('detail-notes').innerText = lesson.notes;
+            } else {
+                document.getElementById('detail-notes-container').classList.add('hidden');
+            }
+
+            renderChart(lesson.flow);
+            
+            if(window.innerWidth < 768) {
+                document.getElementById('detail-content').scrollIntoView({behavior: 'smooth'});
+            }
+        }
+
+        function renderChart(flowData) {
+            const ctx = document.getElementById('timeAllocationChart').getContext('2d');
+            
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            const labels = flowData.map(f => f.name);
+            const data = flowData.map(f => f.minutes);
+            const colors = ['#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e'];
+
+            currentChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors.slice(0, data.length),
+                        borderWidth: 2,
+                        borderColor: '#ffffff',
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: 10
+                    },
+                    plugins: {
+                        legend: {
+                            position: window.innerWidth < 640 ? 'bottom' : 'right',
+                            labels: {
+                                font: { family: "'Noto Sans TC', sans-serif", weight: 'bold' },
+                                color: '#475569',
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleFont: { family: "'Noto Sans TC', sans-serif", size: 14 },
+                            bodyFont: { family: "'Noto Sans TC', sans-serif", size: 14, weight: 'bold' },
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${context.label}: ${context.raw} 分鐘`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+        }
+
+        window.addEventListener('resize', () => {
+            if(currentChart) {
+                currentChart.options.plugins.legend.position = window.innerWidth < 640 ? 'bottom' : 'right';
+                currentChart.update();
+            }
+        });
+
+        // Initialize
+        switchGrade('grade3');
+    </script>
+</body>
+</html>

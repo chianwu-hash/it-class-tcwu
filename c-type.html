@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ㄅㄆㄇ打字小學堂：組字與選字大冒險</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- 引入共用樣式表 -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Zen Maru Gothic', 'Noto Sans TC', sans-serif;
+            background-color: #fff1f2; 
+            background-image: radial-gradient(#fecdd3 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        .key-cap {
+            min-width: 45px;
+            height: 45px;
+            padding: 0 5px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 0 #cbd5e1;
+            font-weight: bold;
+            transition: all 0.1s;
+            position: relative;
+            user-select: none;
+        }
+        .key-cap:active {
+            box-shadow: 0 0 0 #cbd5e1;
+            transform: translateY(3px);
+        }
+        .zhuyin {
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+        .eng {
+            color: #94a3b8;
+            font-size: 0.7rem;
+            position: absolute;
+            top: 2px;
+            left: 4px;
+        }
+        
+        .left-hand .zhuyin { color: #db2777; }
+        .right-hand .zhuyin { color: #059669; }
+        .tone-key .zhuyin { color: #2563eb; }
+
+        @keyframes bounce-arrow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px); }
+        }
+        .animate-bounce-arrow {
+            animation: bounce-arrow 1s infinite;
+        }
+        
+        /* 虛線效果：加粗、明顯 */
+        .dotted-underline {
+            border-bottom: 3px dashed #64748b;
+            padding-bottom: 4px;
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50 border-b-4 border-pink-400">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2 group hover:opacity-80 transition">
+                <div class="bg-pink-100 p-2 rounded-lg">
+                    <span class="text-2xl">ㄅ</span>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-pink-600 group-hover:text-pink-700">ㄅㄆㄇ打字小學堂</h1>
+                    <span class="text-xs text-pink-400 font-bold md:hidden">點我回首頁</span>
+                </div>
+            </a>
+            
+            <div class="flex items-center gap-4">
+                <div class="hidden md:flex gap-4 text-sm font-bold text-slate-500">
+                    <span class="bg-yellow-100 px-3 py-1 rounded-full text-yellow-700">三年級電腦課</span>
+                    <span class="bg-pink-100 px-3 py-1 rounded-full text-pink-700">中文打字篇</span>
+                </div>
+                <a href="index.html" class="flex items-center gap-1 bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-slate-200 transition">
+                    <i data-lucide="home" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">回首頁</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-12 max-w-5xl">
+
+        <!-- 1. 手指分工圖 (圖片取代文字) -->
+        <section class="mb-16">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-slate-800 mb-4">🖐️ 雙手合作，打字更輕鬆！</h2>
+                <p class="text-lg text-slate-600">打中文就像彈鋼琴，看看這張圖，記住每一根手指頭負責的顏色喔！</p>
+            </div>
+
+            <div class="flex justify-center">
+                <div class="bg-white p-4 rounded-3xl shadow-lg border-4 border-pink-200 inline-block transform hover:scale-[1.01] transition-transform duration-300">
+                    <img src="https://i.postimg.cc/VNYTTS1L/Gemini-Generated-Image-smqex3smqex3smqe.png" 
+                         alt="手指分工對照圖" 
+                         class="rounded-xl max-w-full h-auto md:max-w-4xl shadow-sm">
+                </div>
+            </div>
+        </section>
+
+        <!-- 1.5 切換輸入法 (新增區塊，放在組字之前) -->
+        <section class="mb-16">
+            <div class="flex items-center justify-center gap-3 mb-8">
+                <div class="bg-teal-500 text-white p-3 rounded-xl shadow-lg transform rotate-2">
+                    <i data-lucide="arrow-left-right" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-slate-800">變身！中文/英文 切換術</h3>
+            </div>
+
+            <div class="bg-teal-50 rounded-[2rem] p-8 border-4 border-teal-200 max-w-4xl mx-auto flex flex-col md:flex-row gap-8 items-stretch">
+                
+                <!-- 方法一：鍵盤快速鍵 -->
+                <div class="flex-1 bg-white p-6 rounded-2xl shadow-md border-t-8 border-teal-400">
+                    <h4 class="font-bold text-xl text-teal-700 mb-4 text-center">方法 1：鍵盤變身 (最快!)</h4>
+                    <div class="flex flex-col items-center justify-center gap-4 h-full pb-4">
+                        <div class="flex items-center gap-2">
+                            <!-- 修正：改成 Ctrl + Shift -->
+                            <div class="key-cap w-16 h-14 bg-slate-800 text-white border-b-4 border-slate-900 flex flex-col items-center justify-center shadow-lg active:translate-y-1 active:shadow-none transition-all">
+                                <span class="text-sm font-bold">Ctrl</span>
+                            </div>
+                            <span class="text-2xl font-bold text-slate-400">+</span>
+                            <div class="key-cap w-16 h-14 bg-slate-800 text-white border-b-4 border-slate-900 flex flex-col items-center justify-center shadow-lg active:translate-y-1 active:shadow-none transition-all">
+                                <span class="text-sm font-bold">Shift</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-500 bg-teal-100 px-3 py-1 rounded-full">老師推薦：按 <span class="font-bold">Ctrl + Shift</span> 切換輸入法</p>
+                         <p class="text-xs text-slate-400 mt-1">(或是按 <span class="font-bold">Win + Space</span> 也可以喔！)</p>
+                    </div>
+                </div>
+
+                <!-- 方法二：滑鼠點擊 -->
+                <div class="flex-1 bg-white p-6 rounded-2xl shadow-md border-t-8 border-orange-400">
+                    <h4 class="font-bold text-xl text-orange-700 mb-4 text-center">方法 2：滑鼠點點 (最簡單)</h4>
+                    <div class="flex flex-col items-center justify-center gap-4 h-full">
+                        <div class="relative">
+                            <!-- 模擬任務列右下角 -->
+                            <div class="bg-slate-200 p-2 rounded-lg flex items-center gap-2 border border-slate-300">
+                                <div class="flex flex-col items-end mr-2">
+                                    <div class="h-1 w-4 bg-slate-400 rounded"></div>
+                                    <div class="h-1 w-3 bg-slate-400 rounded mt-1"></div>
+                                </div>
+                                <div class="bg-white px-2 py-1 rounded text-sm font-bold border border-slate-300 cursor-pointer hover:bg-blue-50 transition-colors group">
+                                    <span class="group-hover:text-blue-600">中</span>
+                                    <!-- 模擬點擊手勢 -->
+                                    <i data-lucide="mouse-pointer-2" class="w-6 h-6 text-orange-500 absolute -bottom-4 -right-4 fill-orange-200 transform -rotate-12 animate-bounce"></i>
+                                </div>
+                                <div class="text-xs text-slate-500 font-mono">10:00</div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-500 text-center mt-2">
+                            看到螢幕右下角的 <span class="font-bold bg-slate-100 px-1 rounded border border-slate-300">中</span> 或 <span class="font-bold bg-slate-100 px-1 rounded border border-slate-300">英</span> 嗎？<br>
+                            點一下就可以切換囉！
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 2. 組字魔法流程 -->
+        <section class="mb-16 bg-white rounded-[2rem] shadow-xl overflow-hidden border-4 border-indigo-100">
+            <div class="bg-indigo-500 p-4 text-white text-center">
+                <h2 class="text-2xl font-bold flex items-center justify-center gap-2">
+                    <i data-lucide="wand-2" class="w-6 h-6"></i> 組字三部曲
+                </h2>
+            </div>
+            
+            <div class="p-8 space-y-12">
+                <!-- 例子 1：第一聲 -->
+                <div class="flex flex-col md:flex-row items-center gap-6">
+                    <div class="w-full md:w-1/3 text-center">
+                        <span class="text-sm text-slate-500 font-bold block mb-2">第一聲的字</span>
+                        <div class="text-6xl font-bold text-slate-700 bg-slate-100 inline-block px-6 py-4 rounded-2xl border-b-4 border-slate-300">
+                            媽
+                            <span class="block text-lg text-pink-500 mt-2">ㄇㄚ</span>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-2/3">
+                        <div class="bg-slate-50 p-6 rounded-2xl flex flex-wrap items-center gap-4">
+                            <div class="text-center">
+                                <div class="key-cap left-hand mb-1 mx-auto"><span class="zhuyin">ㄇ</span></div>
+                                <span class="text-xs text-pink-500 font-bold">左手</span>
+                            </div>
+                            <i data-lucide="plus" class="text-slate-300"></i>
+                            <div class="text-center">
+                                <div class="key-cap right-hand mb-1 mx-auto"><span class="zhuyin">ㄚ</span></div>
+                                <span class="text-xs text-green-500 font-bold">右手</span>
+                            </div>
+                            <i data-lucide="plus" class="text-slate-300"></i>
+                            <div class="text-center relative">
+                                <div class="key-cap w-24 border-b-4 border-slate-300 bg-yellow-50 mb-1 mx-auto">
+                                    <span class="text-sm font-bold text-slate-600">Space</span>
+                                </div>
+                                <span class="text-xs text-yellow-600 font-bold">一聲要按空白鍵!</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-slate-200 border-dashed">
+
+                <!-- 例子 2：有聲調 -->
+                <div class="flex flex-col md:flex-row items-center gap-6">
+                    <div class="w-full md:w-1/3 text-center">
+                        <span class="text-sm text-slate-500 font-bold block mb-2">有聲調的字</span>
+                        <div class="text-6xl font-bold text-slate-700 bg-slate-100 inline-block px-6 py-4 rounded-2xl border-b-4 border-slate-300">
+                            馬
+                            <span class="block text-lg text-blue-600 mt-2">ㄇㄚˇ</span>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-2/3">
+                        <div class="bg-slate-50 p-6 rounded-2xl flex flex-wrap items-center gap-4">
+                            <div class="text-center">
+                                <div class="key-cap left-hand mb-1 mx-auto"><span class="zhuyin">ㄇ</span></div>
+                                <span class="text-xs text-pink-500 font-bold">左手</span>
+                            </div>
+                            <i data-lucide="plus" class="text-slate-300"></i>
+                            <div class="text-center">
+                                <div class="key-cap right-hand mb-1 mx-auto"><span class="zhuyin">ㄚ</span></div>
+                                <span class="text-xs text-green-500 font-bold">右手</span>
+                            </div>
+                            <i data-lucide="plus" class="text-slate-300"></i>
+                            <div class="text-center">
+                                <div class="key-cap tone-key mb-1 mx-auto bg-blue-50 border-blue-200">
+                                    <span class="zhuyin">ˇ</span><span class="eng">3</span>
+                                </div>
+                                <span class="text-xs text-blue-600 font-bold">直接按聲調</span>
+                            </div>
+                            <div class="ml-auto bg-red-100 text-red-600 text-xs px-3 py-1 rounded-full font-bold">
+                                🚫 不用按空白鍵
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. 超級重要！虛線 vs 沒虛線 -->
+        <section class="mb-16">
+            <div class="flex items-center justify-center gap-3 mb-8">
+                <div class="bg-blue-500 text-white p-3 rounded-xl shadow-lg transform rotate-2">
+                    <i data-lucide="eye" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-slate-800">超級重要！虛線 vs 沒虛線</h3>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                
+                <!-- 虛線狀態 -->
+                <div class="bg-white p-8 rounded-3xl shadow-lg border-t-8 border-dashed border-slate-400 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-slate-200 text-slate-600 text-xs font-bold px-3 py-1 rounded-bl-lg">組字中...</div>
+                    <div class="text-center mb-6">
+                        <!-- 中文字 + 虛線 -->
+                        <div class="text-6xl mb-4 font-mono font-bold text-slate-700 dotted-underline inline-block pb-1">
+                            媽
+                        </div>
+                        <p class="text-slate-500 text-sm mt-2 font-bold">(字出來了，但有虛線)</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
+                        <h4 class="font-bold text-lg text-blue-800 mb-3 flex items-center gap-2">
+                            <i data-lucide="edit-3" class="w-5 h-5 text-blue-500"></i>
+                            還可以做很多事！
+                        </h4>
+                        <ul class="space-y-3 text-base text-slate-700">
+                            <li class="flex items-start gap-3">
+                                <span class="bg-green-100 text-green-700 px-2 rounded font-bold text-sm border border-green-200 shrink-0 mt-0.5">O</span>
+                                <div>
+                                    <span class="font-bold text-red-600">可以選字！</span>
+                                    <p class="text-sm text-slate-500">如果不小心變成「嗎」，可按 <span class="font-bold bg-white border border-slate-300 px-1 rounded shadow-sm">↓</span> 選字。</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="bg-green-100 text-green-700 px-2 rounded font-bold text-sm border border-green-200 shrink-0 mt-0.5">O</span>
+                                <span>按 <span class="font-bold bg-white border border-slate-300 px-1 rounded shadow-sm">Enter</span>：確定這個字 (虛線消失)</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 沒虛線狀態 -->
+                <div class="bg-white p-8 rounded-3xl shadow-lg border-t-8 border-green-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-bl-lg">已按 Enter</div>
+                    <div class="text-center mb-6">
+                        <!-- 中文字 + 無虛線 -->
+                        <div class="text-6xl mb-4 font-mono font-bold text-slate-800 inline-block pb-1">
+                            媽
+                        </div>
+                        <p class="text-slate-500 text-sm mt-2 font-bold">(虛線消失了)</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-xl border border-green-200">
+                        <h4 class="font-bold text-lg text-green-800 mb-3 flex items-center gap-2">
+                            <i data-lucide="check-circle-2" class="w-5 h-5 text-green-600"></i>
+                            已經固定囉！
+                        </h4>
+                        <ul class="space-y-3 text-base text-green-800">
+                            <li class="flex items-start gap-3">
+                                <span class="bg-red-100 text-red-700 px-2 rounded font-bold text-sm border border-red-200 shrink-0 mt-0.5">X</span>
+                                <div>
+                                    <span class="font-bold text-slate-600">不能選字了</span>
+                                    <p class="text-sm text-slate-500">這時候按 <span class="font-bold bg-white border border-slate-300 px-1 rounded shadow-sm">↓</span> 只會跑到下一行喔！</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="bg-green-100 text-green-700 px-2 rounded font-bold text-sm border border-green-200 shrink-0 mt-0.5">O</span>
+                                <span>請繼續打下一個字吧！</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 4. 選字大考驗 -->
+        <section class="mb-16">
+            <div class="flex items-center justify-center gap-3 mb-8">
+                <div class="bg-orange-500 text-white p-3 rounded-xl shadow-lg transform -rotate-2">
+                    <i data-lucide="mouse-pointer-2" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-slate-800">選字大考驗</h3>
+            </div>
+
+            <div class="bg-orange-50 rounded-[2rem] p-8 border-4 border-orange-200 max-w-4xl mx-auto">
+                
+                <div class="text-center mb-8">
+                    <h4 class="text-2xl font-bold text-orange-700 mb-4">並不是在注音狀態，已組字完成，但尚未按 Enter</h4>
+                    <p class="text-slate-600 text-lg leading-relaxed">
+                        當你字打出來，<span class="font-bold text-slate-600">還在虛線狀態</span>的時候...<br>
+                        例如你想打「<span class="font-bold text-blue-600">音</span>樂」，電腦卻給你「<span class="font-bold text-slate-400">因</span>為」。
+                    </p>
+                </div>
+
+                <!-- 選字方法 -->
+                <div class="bg-white p-8 rounded-2xl shadow-md border-l-8 border-red-500 relative overflow-hidden max-w-3xl mx-auto mb-8">
+                    <div class="absolute right-0 top-0 bg-red-500 text-white text-xs px-3 py-1 font-bold rounded-bl">課本重點 P120</div>
+                    <h4 class="font-bold text-xl text-slate-800 mb-6 text-center">趕快用這 3 招選字：</h4>
+                    
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <!-- 方法 1：下鍵選字 -->
+                        <div class="flex flex-col items-center text-center p-4 bg-red-50 rounded-xl border border-red-100 transform hover:scale-105 transition-transform">
+                            <div class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg mb-3">1</div>
+                            <span class="font-bold text-red-600 text-lg mb-2">按「下」方向鍵</span>
+                            <div class="key-cap w-12 h-12 bg-white border-b-4 border-slate-300 flex items-center justify-center mb-2 animate-bounce">
+                                <i data-lucide="arrow-down" class="w-6 h-6 text-slate-700"></i>
+                            </div>
+                            <p class="text-sm text-slate-500 font-bold bg-white px-2 py-1 rounded shadow-sm border border-slate-200">老師推薦！</p>
+                            <!-- 修正：這裡改成「嗎」和「選字」 -->
+                            <p class="text-xs text-slate-400 mt-1">如果不小心變成「嗎」，<br>可按 ↓ 選字。</p>
+                        </div>
+                        
+                        <!-- 方法 2 -->
+                        <div class="flex flex-col items-center text-center p-4 bg-orange-50 rounded-xl border border-orange-100">
+                            <div class="bg-orange-400 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg mb-3">2</div>
+                            <span class="font-bold text-slate-700 text-lg mb-2">按數字鍵</span>
+                            <div class="key-cap w-12 h-12 bg-white border-b-4 border-slate-300 flex items-center justify-center mb-2">
+                                <span class="text-xl">2</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-2">如果要選第2個字<br>就按數字 2</p>
+                        </div>
+                        
+                        <!-- 方法 3 -->
+                        <div class="flex flex-col items-center text-center p-4 bg-yellow-50 rounded-xl border border-yellow-100">
+                            <div class="bg-yellow-400 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg mb-3">3</div>
+                            <span class="font-bold text-slate-700 text-lg mb-2">用滑鼠點</span>
+                            <div class="w-12 h-12 flex items-center justify-center mb-2">
+                                <i data-lucide="mouse-pointer" class="w-8 h-8 text-slate-400"></i>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-2">手要離開鍵盤<br>速度比較慢喔！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. 進階技巧：打語詞 -->
+        <section class="mb-16">
+            <div class="bg-sky-50 p-8 rounded-2xl shadow-md border-l-8 border-sky-500 relative overflow-hidden max-w-3xl mx-auto">
+                <div class="absolute right-0 top-0 bg-sky-500 text-white text-xs px-3 py-1 font-bold rounded-bl">進階技巧</div>
+                <h4 class="font-bold text-xl text-sky-800 mb-4 flex items-center gap-2">
+                    <i data-lucide="lightbulb" class="w-6 h-6 text-yellow-500 fill-current"></i>
+                    打「語詞」更快喔！
+                </h4>
+                
+                <p class="text-slate-600 mb-4">
+                    例如打「小星星」，三個字一起打，電腦會比較聰明！<br>
+                    但如果電腦還是猜錯了...例如變成「小猩猩」？
+                </p>
+
+                <div class="bg-white p-4 rounded-xl border border-sky-200 mb-4">
+                    <p class="text-sm font-bold text-slate-500 mb-2">狀況：你想打「小星星」，但出現了「小猩猩」，而且游標在最後面。</p>
+                    <div class="flex items-center gap-2 mb-2 text-2xl font-mono font-bold">
+                        <span class="text-slate-400 dotted-underline">小</span>
+                        <span class="text-red-500 dotted-underline">猩</span>
+                        <span class="text-slate-400 dotted-underline">猩</span>
+                        <span class="animate-pulse">|</span>
+                    </div>
+                    <p class="text-xs text-red-500">哎呀！變成「小猩猩」(動物) 了！(游標在最後面)</p>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-center bg-white p-6 rounded-xl border-2 border-sky-200">
+                    <div class="text-center">
+                        <div class="bg-sky-100 text-sky-700 w-8 h-8 rounded-full flex items-center justify-center font-bold mb-2 mx-auto">1</div>
+                        <span class="font-bold text-slate-700 block mb-1">先按「左」</span>
+                        <div class="key-cap w-12 h-12 bg-white border-b-4 border-slate-300 flex items-center justify-center mx-auto">
+                            <i data-lucide="arrow-left" class="w-6 h-6 text-slate-700"></i>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">把游標移到<br>錯字前面</p>
+                    </div>
+                    <i data-lucide="arrow-right" class="text-slate-300"></i>
+                    <div class="text-center">
+                        <div class="bg-sky-100 text-sky-700 w-8 h-8 rounded-full flex items-center justify-center font-bold mb-2 mx-auto">2</div>
+                        <span class="font-bold text-slate-700 block mb-1">再按「下」</span>
+                        <div class="key-cap w-12 h-12 bg-white border-b-4 border-slate-300 flex items-center justify-center mx-auto">
+                            <i data-lucide="arrow-down" class="w-6 h-6 text-slate-700"></i>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">選字清單<br>就會跑出來！</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. 取消選字魔法 (新增區塊) -->
+        <section class="mb-16">
+            <div class="flex items-center justify-center gap-3 mb-8">
+                <div class="bg-red-500 text-white p-3 rounded-xl shadow-lg transform rotate-3">
+                    <i data-lucide="x-circle" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-slate-800">選錯了？取消魔法！</h3>
+            </div>
+
+            <div class="bg-red-50 rounded-[2rem] p-8 border-4 border-red-200 max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8">
+                
+                <div class="flex-1 space-y-4">
+                    <h4 class="text-2xl font-bold text-red-700">哎呀！選單擋住視線了？</h4>
+                    <p class="text-slate-700 text-lg leading-relaxed">
+                        如果你按了 <span class="font-bold bg-white px-2 py-1 rounded border border-slate-300">↓</span> 叫出選字清單，<br>
+                        卻發現<span class="font-bold text-red-600">不是你要選的字</span>，或者只是想<span class="font-bold text-red-600">把選單關掉</span>...
+                    </p>
+                    <div class="bg-white p-6 rounded-2xl shadow-md border-l-8 border-red-400">
+                        <p class="font-bold text-slate-600 mb-2">請按下鍵盤左上角的魔法鍵：</p>
+                        <div class="flex items-center gap-4">
+                            <div class="key-cap w-20 h-16 bg-slate-800 text-white border-b-4 border-slate-900 flex flex-col items-center justify-center shadow-lg active:translate-y-1 active:shadow-none transition-all">
+                                <span class="text-xl font-bold">Esc</span>
+                                <span class="text-[10px] text-slate-400">離開</span>
+                            </div>
+                            <span class="text-4xl font-bold text-slate-300">=</span>
+                            <span class="text-xl font-bold text-red-600">取消 / 關閉</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-1">
+                    <div class="bg-white p-4 rounded-3xl shadow-lg transform rotate-2 hover:rotate-0 transition-transform duration-300 border-4 border-white">
+                        <img src="https://i.postimg.cc/tRczwZk5/069.png" 
+                             alt="Esc鍵的位置圖示" 
+                             class="rounded-xl w-full h-auto shadow-inner">
+                        <p class="text-center text-slate-400 text-sm mt-2 font-bold">👆 就在鍵盤的最左上角喔！</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 7. 標點符號魔法陣 (擴充為 7 組) -->
+        <section class="mb-16">
+            <div class="flex items-center justify-center gap-3 mb-8">
+                <div class="bg-indigo-500 text-white p-3 rounded-xl shadow-lg transform rotate-3">
+                    <span class="text-2xl font-bold">，。？！：、；</span>
+                </div>
+                <h3 class="text-3xl font-bold text-slate-800">標點符號魔法陣</h3>
+            </div>
+
+            <div class="bg-indigo-50 rounded-[2rem] p-8 border-4 border-indigo-200 max-w-4xl mx-auto">
+                <p class="text-center text-slate-600 mb-8 text-lg">
+                    中文的標點符號胖胖的（全形），跟英文瘦瘦的（半形）不一樣喔！<br>
+                    我們要召喚<span class="font-bold text-indigo-600">「組合鍵」</span>來幫忙！
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    
+                    <!-- 魔法一：Ctrl + 符號 (增加頓號、分號) -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md border-t-8 border-indigo-400">
+                        <h4 class="font-bold text-xl text-indigo-700 mb-4 flex items-center gap-2">
+                            <span class="bg-indigo-100 p-1 rounded">下方符號</span> Ctrl + 符號鍵
+                        </h4>
+                        <div class="space-y-3">
+                            <!-- 逗號 -->
+                            <div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl border border-slate-200">
+                                <div class="flex gap-2 items-center">
+                                    <div class="key-cap w-14 h-10 bg-slate-800 text-white text-sm">Ctrl</div>
+                                    <span class="text-slate-400">+</span>
+                                    <div class="key-cap w-10 h-10"><span class="text-lg">,</span></div>
+                                </div>
+                                <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center text-2xl font-bold text-indigo-800 shadow-inner">，</div>
+                            </div>
+                            <!-- 句號 -->
+                            <div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl border border-slate-200">
+                                <div class="flex gap-2 items-center">
+                                    <div class="key-cap w-14 h-10 bg-slate-800 text-white text-sm">Ctrl</div>
+                                    <span class="text-slate-400">+</span>
+                                    <div class="key-cap w-10 h-10"><span class="text-lg">.</span></div>
+                                </div>
+                                <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center text-2xl font-bold text-indigo-800 shadow-inner">。</div>
+                            </div>
+                            <!-- 頓號 (新增) -->
+                            <div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl border border-slate-200">
+                                <div class="flex gap-2 items-center">
+                                    <div class="key-cap w-14 h-10 bg-slate-800 text-white text-sm">Ctrl</div>
+                                    <span class="text-slate-400">+</span>
+                                    <div class="key-cap w-10 h-10"><span class="text-lg">'</span></div>
+                                </div>
+                                <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center text-2xl font-bold text-indigo-800 shadow-inner">、</div>
+                            </div>
+                            <!-- 分號 (新增) -->
+                            <div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl border border-slate-200">
+                                <div class="flex gap-2 items-center">
+                                    <div class="key-cap w-14 h-10 bg-slate-800 text-white text-sm">Ctrl</div>
+                                    <span class="text-slate-400">+</span>
+                                    <div class="key-cap w-10 h-10"><span class="text-lg">;</span></div>
+                                </div>
+                                <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center text-2xl font-bold text-indigo-800 shadow-inner">；</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 魔法二：Ctrl + Shift + 符號 (增加冒號) -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md border-t-8 border-pink-400">
+                        <h4 class="font-bold text-xl text-pink-600 mb-4 flex items-center gap-2">
+                            <span class="bg-pink-100 p-1 rounded">上方符號</span> Ctrl + Shift + 符號
+                        </h4>
+                        <div class="space-y-3">
+                            <!-- 問號 -->
+                            <div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl border border-slate-200">
+                                <div class="flex gap-1 items-center">
+                                    <div class="key-cap w-12 h-10 bg-slate-800 text-white text-xs px-1">Ctrl</div>
+                                    <span class="text-slate-300 text-xs">+</span>
+                                    <div class="key-cap w-12 h-10 bg-slate-800 text-white text-xs px-1">Shift</div>
+                                    <span class="text-slate-300 text-xs">+</span>
+                                    <div class="key-cap w-10 h-10"><span class="text-lg">?</span></div>
+                                </div>
+                                <div class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center text-2xl font-bold text-pink-600 shadow-inner">？</div>
+                            </div>
+                            <!-- 驚嘆號 -->
+                            <div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl border border-slate-200">
+                                <div class="flex gap-1 items-center">
+                                    <div class="key-cap w-12 h-10 bg-slate-800 text-white text-xs px-1">Ctrl</div>
+                                    <span class="text-slate-300 text-xs">+</span>
+                                    <div class="key-cap w-12 h-10 bg-slate-800 text-white text-xs px-1">Shift</div>
+                                    <span class="text-slate-300 text-xs">+</span>
+                                    <div class="key-cap w-10 h-10"><span class="text-lg">!</span></div>
+                                </div>
+                                <div class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center text-2xl font-bold text-pink-600 shadow-inner">！</div>
+                            </div>
+                            <!-- 冒號 (新增) -->
+                            <div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl border border-slate-200">
+                                <div class="flex gap-1 items-center">
+                                    <div class="key-cap w-12 h-10 bg-slate-800 text-white text-xs px-1">Ctrl</div>
+                                    <span class="text-slate-300 text-xs">+</span>
+                                    <div class="key-cap w-12 h-10 bg-slate-800 text-white text-xs px-1">Shift</div>
+                                    <span class="text-slate-300 text-xs">+</span>
+                                    <div class="key-cap w-10 h-10"><span class="text-lg">:</span></div>
+                                </div>
+                                <div class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center text-2xl font-bold text-pink-600 shadow-inner">：</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. 輸入法整合器 (保持不變) -->
+        <section class="mb-16">
+            <div class="flex items-center justify-center gap-3 mb-8">
+                <div class="bg-purple-500 text-white p-3 rounded-xl shadow-lg transform -rotate-2">
+                    <i data-lucide="pen-tool" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-slate-800">不會唸？找不到符號？</h3>
+            </div>
+
+            <div class="bg-purple-50 rounded-[2rem] p-8 border-4 border-purple-200 max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8">
+                
+                <div class="flex-1 space-y-4">
+                    <h4 class="text-2xl font-bold text-purple-700">標點符號大絕招：「輸入法整合器」！</h4>
+                    <p class="text-slate-700 text-lg leading-relaxed">
+                        這是一個超級百寶箱！不只可以<span class="font-bold text-purple-600">手寫不會唸的字</span>，<br>
+                        更是<span class="font-bold text-pink-600">輸入標點符號</span>的大絕招喔！
+                    </p>
+                    <div class="bg-white p-6 rounded-2xl shadow-md border-l-8 border-purple-400">
+                        <p class="font-bold text-slate-600 mb-2">啟動祕技 (快速鍵)：</p>
+                        <div class="flex items-center gap-2 flex-wrap mb-4">
+                            <div class="key-cap w-16 h-12 bg-slate-800 text-white border-b-4 border-slate-900 flex items-center justify-center shadow-md">
+                                <span class="text-lg font-bold">Ctrl</span>
+                            </div>
+                            <span class="text-2xl font-bold text-slate-400">+</span>
+                            <div class="key-cap w-16 h-12 bg-slate-800 text-white border-b-4 border-slate-900 flex items-center justify-center shadow-md">
+                                <span class="text-lg font-bold">Alt</span>
+                            </div>
+                            <span class="text-2xl font-bold text-slate-400">+</span>
+                            <div class="key-cap w-12 h-12 bg-white border-b-4 border-slate-300 flex items-center justify-center shadow-md text-slate-700">
+                                <span class="text-2xl font-bold">,</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm text-purple-800">
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                <span>選單按 <span class="font-bold bg-purple-100 px-1 rounded">手寫識別</span>：可以用滑鼠寫字</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="hash" class="w-4 h-4"></i>
+                                <span>選單按 <span class="font-bold bg-purple-100 px-1 rounded">符號查詢</span>：可以找各種標點符號</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="flex-1">
+                    <div class="bg-white p-4 rounded-3xl shadow-lg transform rotate-2 hover:rotate-0 transition-transform duration-300 border-4 border-white">
+                        <img src="https://i.postimg.cc/kX4WJnjf/070.png" 
+                             alt="輸入法整合器介面圖" 
+                             class="rounded-xl w-full h-auto shadow-inner">
+                        <p class="text-center text-slate-400 text-sm mt-2 font-bold">👆 記得按左邊的按鈕切換喔！</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-white py-8 mt-12 text-center">
+        <p class="mb-2 text-slate-400">國小三年級 資訊教育課程</p>
+        <p class="font-bold text-lg">熟能生巧，每天練習 10 分鐘，你就是打字高手！</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

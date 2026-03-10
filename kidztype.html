@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小小打字探險家！Kidz Type 闖關GOGO！</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- 引入共用樣式表 (負責背景色和字體) -->
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        /* --- 鍵盤專用樣式 --- */
+        /* 為了防止外部 CSS 遺失導致排版崩壞，我們將鍵盤的核心樣式保留在頁面內 */
+        .keyboard-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 10px;
+            background-color: #D1D5DB;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .key-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+        .key-cap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            background-color: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 6px;
+            box-shadow: 0 2px 0 #D1D5DB;
+            color: #374151;
+        }
+        .key-home-left { 
+            background-color: #3B82F6; 
+            color: white; 
+            border-color: #2563EB;
+        }
+        .key-home-right { 
+            background-color: #10B981; 
+            color: white; 
+            border-color: #059669;
+        }
+        /* 定位鍵的小凸點 */
+        .key-f, .key-j {
+            position: relative;
+        }
+        .key-f::after, .key-j::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            width: 12px;
+            height: 2px;
+            background-color: #9CA3AF;
+            border-radius: 1px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    
+    <!-- 回首頁按鈕 -->
+    <div class="container mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
+        <a href="index.html" class="inline-flex items-center gap-2 bg-white text-orange-500 px-4 py-2 rounded-lg shadow font-bold hover:bg-orange-50 transition">
+            <span>🏠</span> 回首頁
+        </a>
+    </div>
+
+    <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-orange-500">🚀 小小打字探險家！</h1>
+            <p class="mt-4 text-lg text-gray-600">歡迎來到打字王國的冒險！跟著地圖，一步步成為打字高手吧！</p>
+        </header>
+
+        <div class="bg-yellow-100 border-l-4 border-yellow-400 text-yellow-800 p-4 rounded-lg mb-8" role="alert">
+            <p class="font-bold">🎯 今天的小任務</p>
+            <p>請點擊下面地圖中 **Level 1** 的 **第 1 關**，開始你的第一次挑戰！如果覺得很簡單，可以繼續挑戰第 2 關喔！</p>
+        </div>
+
+        <div class="lg:grid lg:grid-cols-3 lg:gap-8">
+            <main class="lg:col-span-2">
+                
+                <!-- 關卡區 -->
+                <h2 class="text-2xl font-bold mb-6 text-center text-cyan-600">🌟 點擊關卡，開始冒險！ 🌟</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <div class="bg-white rounded-xl shadow-lg p-6 transition-transform hover:scale-105">
+                        <h3 class="text-xl font-bold text-blue-500 mb-4 text-center">➡️ Level 1：手指的暖身運動</h3>
+                        <div class="space-y-4">
+                            <a href="https://www.kidztype.com/html5/dmt-v3/level1/" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden rounded-lg transition-all hover:shadow-lg">
+                                <img src="https://i.postimg.cc/kBdKvjwG/level1.png" alt="第 1 關縮圖" class="w-full h-28 object-cover transition-transform group-hover:scale-105">
+                                <p class="bg-blue-500 text-white font-bold py-3 px-4 text-center">第 1 關：認識新朋友 f j d k s l a ;</p>
+                            </a>
+                            <a href="https://www.kidztype.com/html5/dmt-v3/level2/" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden rounded-lg transition-all hover:shadow-lg">
+                                <img src="https://i.postimg.cc/F7Q3VPG1/level2.png" alt="第 2 關縮圖" class="w-full h-28 object-cover transition-transform group-hover:scale-105">
+                                <p class="bg-blue-500 text-white font-bold py-3 px-4 text-center">第 2 關：認識新朋友 g h</p>
+                            </a>
+                            <a href="https://www.kidztype.com/html5/dmt-v3/level3/" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden rounded-lg transition-all hover:shadow-lg">
+                                <img src="https://i.postimg.cc/BXGHBhNX/level3.png" alt="第 3 關縮圖" class="w-full h-28 object-cover transition-transform group-hover:scale-105">
+                                <p class="bg-blue-500 text-white font-bold py-3 px-4 text-center">第 3 關：認識新朋友 r u</p>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6 transition-transform hover:scale-105">
+                        <h3 class="text-xl font-bold text-green-500 mb-4 text-center">➡️ Level 2：挑戰鍵盤的上層樓</h3>
+                        <div class="space-y-4">
+                            <a href="https://www.kidztype.com/html5/dmt-v3/level4/" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden rounded-lg transition-all hover:shadow-lg">
+                                <img src="https://i.postimg.cc/9rjZYx1M/level4.png" alt="第 4 關縮圖" class="w-full h-28 object-cover transition-transform group-hover:scale-105">
+                                <p class="bg-green-500 text-white font-bold py-3 px-4 text-center">第 4 關：學習 e i</p>
+                            </a>
+                            <a href="https://www.kidztype.com/html5/dmt-v3/level5/" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden rounded-lg transition-all hover:shadow-lg">
+                                <img src="https://i.postimg.cc/jLQNgzk2/level5.png" alt="第 5 關縮圖" class="w-full h-28 object-cover transition-transform group-hover:scale-105">
+                                <p class="bg-green-500 text-white font-bold py-3 px-4 text-center">第 5 關：學習 o w</p>
+                            </a>
+                            <a href="https://www.kidztype.com/html5/dmt-v3/level6/" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden rounded-lg transition-all hover:shadow-lg">
+                                <img src="https://i.postimg.cc/2VFvc4XV/level6.png" alt="第 6 關縮圖" class="w-full h-28 object-cover transition-transform group-hover:scale-105">
+                                <p class="bg-green-500 text-white font-bold py-3 px-4 text-center">第 6 關：學習 q p</p>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6 transition-transform hover:scale-105">
+                        <h3 class="text-xl font-bold text-purple-500 mb-4 text-center">➡️ Level 3：進攻鍵盤的地下室</h3>
+                        <div class="space-y-4">
+                            <a href="https://www.kidztype.com/html5/dmt-v3/level7/" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden rounded-lg transition-all hover:shadow-lg">
+                                <img src="https://i.postimg.cc/pyddj4wb/level7.png" alt="第 7 關縮圖" class="w-full h-28 object-cover transition-transform group-hover:scale-105">
+                                <p class="bg-purple-500 text-white font-bold py-3 px-4 text-center">第 7 關：學習 t y</p>
+                            </a>
+                            <a href="https://www.kidztype.com/html5/dmt-v3/level8/" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden rounded-lg transition-all hover:shadow-lg">
+                                <img src="https://i.postimg.cc/Wt44ZCBc/level8.png" alt="第 8 關縮圖" class="w-full h-28 object-cover transition-transform group-hover:scale-105">
+                                <p class="bg-purple-500 text-white font-bold py-3 px-4 text-center">第 8 關：學習 n m</p>
+                            </a>
+                            <a href="https://www.kidztype.com/html5/dmt-v3/level9/" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden rounded-lg transition-all hover:shadow-lg">
+                                <img src="https://i.postimg.cc/bdvvnW7X/level9.png" alt="第 9 關縮圖" class="w-full h-28 object-cover transition-transform group-hover:scale-105">
+                                <p class="bg-purple-500 text-white font-bold py-3 px-4 text-center">第 9 關：學習 v c</p>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6 transition-transform hover:scale-105">
+                        <h3 class="text-xl font-bold text-red-500 mb-4 text-center">➡️ Level 4：成為打字小高手</h3>
+                        <div class="space-y-4">
+                            <a href="https://www.kidztype.com/html5/dmt-v3/level10/" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden rounded-lg transition-all hover:shadow-lg">
+                                <img src="https://i.postimg.cc/hhGGm6kn/level10.png" alt="第 10 關縮圖" class="w-full h-28 object-cover transition-transform group-hover:scale-105">
+                                <p class="bg-red-500 text-white font-bold py-3 px-4 text-center">第 10 關：學習 b x</p>
+                            </a>
+                            <a href="https://www.kidztype.com/html5/dmt-v3/level11/" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden rounded-lg transition-all hover:shadow-lg">
+                                <img src="https://i.postimg.cc/gr00hQCd/level11.png" alt="第 11 關縮圖" class="w-full h-28 object-cover transition-transform group-hover:scale-105">
+                                <p class="bg-red-500 text-white font-bold py-3 px-4 text-center">第 11 關：學習 z , .</p>
+                            </a>
+                            <a href="https://www.kidztype.com/html5/dmt-v3/level12/" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden rounded-lg transition-all hover:shadow-lg">
+                                <img src="https://i.postimg.cc/6TQQZgkt/level12.png" alt="第 12 關縮圖" class="w-full h-28 object-cover transition-transform group-hover:scale-105">
+                                <p class="bg-red-500 text-white font-bold py-3 px-4 text-center">第 12 關：挑戰大寫字母！</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 打字遊戲區 -->
+                <h2 class="text-2xl font-bold mb-6 text-center text-teal-600 mt-16">🎮 打字遊戲 🎮</h2>
+                <p class="text-center text-gray-600 mb-6">學累了嗎？來玩點小遊戲，練習你的反應速度吧！</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <a href="https://www.kidztype.com/html5/games/boat-rush/" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden rounded-lg transition-all hover:shadow-lg">
+                        <img src="https://i.postimg.cc/4Hn16yH9/Typing-Game-Boat-Rush.png" alt="小船衝刺 遊戲縮圖" class="w-full h-40 object-cover transition-transform group-hover:scale-105">
+                        <p class="bg-teal-500 text-white font-bold py-3 px-4 text-center">小船衝刺</p>
+                    </a>
+
+                    <a href="https://www.kidztype.com/html5/games/flappy/" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden rounded-lg transition-all hover:shadow-lg">
+                        <img src="https://i.postimg.cc/RJqT7hJN/Typing-Game-Flappy.png" alt="Flappy 小鳥 遊戲縮圖" class="w-full h-40 object-cover transition-transform group-hover:scale-105">
+                        <p class="bg-teal-500 text-white font-bold py-3 px-4 text-center">Flappy 小鳥</p>
+                    </a>
+
+                    <a href="https://www.kidztype.com/html5/games/ninja/" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden rounded-lg transition-all hover:shadow-lg">
+                        <img src="https://i.postimg.cc/pXt3mR45/004.png" alt="忍者快手 遊戲縮圖" class="w-full h-40 object-cover transition-transform group-hover:scale-105">
+                        <p class="bg-teal-500 text-white font-bold py-3 px-4 text-center">忍者快手</p>
+                    </a>
+
+                    <a href="https://www.kidztype.com/html5/games/vampire/" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden rounded-lg transition-all hover:shadow-lg">
+                        <img src="https://i.postimg.cc/nVq70ktC/007.png" alt="吸血鬼打字 遊戲縮圖" class="w-full h-40 object-cover transition-transform group-hover:scale-105">
+                        <p class="bg-teal-500 text-white font-bold py-3 px-4 text-center">吸血鬼打字</p>
+                    </a>
+
+                </div>
+
+            </main>
+
+            <aside class="mt-8 lg:mt-0">
+                <div class="bg-white rounded-xl shadow-lg p-6 sticky top-8">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">🖐️ 手指準備，預備備...放！</h3>
+                    <p class="mb-4">開始前，先把手指寶寶放在鍵盤中間的「家」裡喔！</p>
+                    
+                    <div class="keyboard-container mb-4 mx-auto" style="max-width: 300px;">
+                        <div class="key-row">
+                            <div class="key-cap">Q</div><div class="key-cap">W</div><div class="key-cap">E</div><div class="key-cap">R</div><div class="key-cap">T</div><div class="key-cap">Y</div><div class="key-cap">U</div><div class="key-cap">I</div><div class="key-cap">O</div><div class="key-cap">P</div>
+                        </div>
+                        <div class="key-row">
+                            <div class="key-cap key-home-left">A</div><div class="key-cap key-home-left">S</div><div class="key-cap key-home-left">D</div><div class="key-cap key-home-left key-f">F</div>
+                            <div class="key-cap">G</div><div class="key-cap">H</div>
+                            <div class="key-cap key-home-right key-j">J</div><div class="key-cap key-home-right">K</div><div class="key-cap key-home-right">L</div><div class="key-cap key-home-right">;</div>
+                        </div>
+                        <div class="key-row">
+                            <div class="key-cap">Z</div><div class="key-cap">X</div><div class="key-cap">C</div><div class="key-cap">V</div><div class="key-cap">B</div><div class="key-cap">N</div><div class="key-cap">M</div>
+                        </div>
+                    </div>
+
+                    <ul class="space-y-2 text-sm">
+                        <li><strong>左手食指</strong> 👆 找到 <code class="bg-gray-200 px-1 rounded">F</code> (有小凸點)</li>
+                        <li><strong>右手食指</strong> 👆 找到 <code class="bg-gray-200 px-1 rounded">J</code> (也有小凸點)</li>
+                        <li><strong>左手手指</strong>：放在 <code class="bg-blue-100 text-blue-800 px-1 rounded">A S D F</code></li>
+                        <li><strong>右手手指</strong>：放在 <code class="bg-green-100 text-green-800 px-1 rounded">J K L ;</code></li>
+                        <li><strong>兩隻大拇指</strong> 👍 輕輕放在長長的<strong>空白鍵</strong>上。</li>
+                    </ul>
+
+                    <div class="mt-6 border-t pt-4">
+                        <h4 class="font-bold text-gray-700 mb-2">✨ 老師的悄悄話 ✨</h4>
+                        <ul class="list-disc list-inside space-y-2 text-sm text-gray-600">
+                            <li>練習時可以戴上耳機 🎧，聽聽動物老師說了什麼！</li>
+                            <li>身體坐正，腰桿打直，當個最帥氣、最漂亮的探險家！</li>
+                            <li>剛開始打錯字或打很慢，都是**完全正常**的喔！多練習幾次就會變厲害！</li>
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+        </div>
+        
+        <footer class="text-center mt-12 text-gray-500 text-sm">
+            <p>加油！祝你闖關成功！🎉</p>
+        </footer>
+    </div>
+</body>
+</html>

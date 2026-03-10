@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六年級資訊課 - 畢業影片專案 (首頁)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+        }
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased pb-12">
+
+    <!-- 統一載入的頂部導航列 -->
+    <script src="navbar.js"></script>
+
+    <!-- Header 頂部標題區 -->
+    <header class="bg-gradient-to-r from-slate-700 to-slate-900 text-white shadow-xl rounded-b-[3rem] mb-12">
+        <div class="max-w-5xl mx-auto px-6 py-16 relative overflow-hidden">
+            <div class="relative z-10 text-center">
+                <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-4 py-1.5 rounded-full text-sm mb-6 shadow-sm tracking-wide">
+                    <i class="fa-solid fa-star mr-1 text-yellow-100"></i> 114學年度第二學期
+                </div>
+                <h1 class="text-4xl md:text-6xl font-black tracking-tight mb-4 drop-shadow-md">Canva 魔法實戰專案</h1>
+                <p class="text-xl md:text-2xl text-slate-300 font-bold drop-shadow">我的畢業故事起點 🎓</p>
+            </div>
+            <i class="fa-solid fa-film absolute text-white opacity-10 text-9xl -top-5 -left-10 transform -rotate-12"></i>
+            <i class="fa-solid fa-clapperboard absolute text-white opacity-10 text-8xl -bottom-5 right-10 transform rotate-12"></i>
+        </div>
+    </header>
+
+    <!-- Main Content 主要內容區 -->
+    <main class="max-w-5xl mx-auto px-6">
+        
+        <!-- 課本電子書快速連結 (全學期通用資源) -->
+        <section class="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-3xl shadow-md overflow-hidden transform transition hover:scale-[1.01] hover:shadow-lg mb-10 border-4 border-white">
+            <a href="https://book.eduweb.com.tw/e1d1u4/vips092/html/lesson.html#1" target="_blank" class="block p-6 md:flex items-center justify-between">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <div class="bg-white/20 p-4 rounded-full mr-5 shadow-inner">
+                        <i class="fa-solid fa-book-open-reader text-white text-3xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-black text-white mb-1 drop-shadow-sm">《Canva 魔法工作室》線上電子書</h3>
+                        <p class="text-blue-50 font-bold text-sm md:text-base">忘記帶課本嗎？點擊這裡開啟線上版，隨時查閱操作步驟與精確頁碼！</p>
+                    </div>
+                </div>
+                <div class="bg-white text-blue-600 px-8 py-3 rounded-full font-black text-lg shadow-lg flex items-center justify-center hover:bg-gray-50 transition transform hover:scale-105">
+                    立即翻閱 <i class="fa-solid fa-arrow-up-right-from-square ml-2"></i>
+                </div>
+            </a>
+        </section>
+
+        <div class="flex items-center mb-8 border-b-2 border-gray-200 pb-2">
+            <i class="fa-solid fa-map-location-dot text-3xl text-indigo-600 mr-3"></i>
+            <h2 class="text-3xl font-black text-gray-800">課程進度列表</h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <!-- 第 3 週卡片 -->
+            <a class='block bg-white rounded-3xl shadow-md border-4 border-transparent hover:border-indigo-200 overflow-hidden card-hover group' href='week03.html'>
+                <div class="h-32 bg-gradient-to-r from-purple-500 to-indigo-500 relative flex items-center justify-center">
+                    <i class="fa-solid fa-graduation-cap text-6xl text-white opacity-50 transform group-hover:scale-110 transition duration-500"></i>
+                    <div class="absolute top-4 left-4 bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full font-bold text-sm">第 03 週</div>
+                </div>
+                <div class="p-6 flex flex-col h-[calc(100%-8rem)]">
+                    <h3 class="text-xl font-black text-gray-800 mb-2 group-hover:text-indigo-600 transition">我的畢業故事起點</h3>
+                    <p class="text-gray-600 text-sm font-medium mb-4 flex-grow">觀摩學長姐作品、建立 Canva 簡報專案，並學習從學校網站下載第一批回憶照片。</p>
+                    <div class="flex flex-wrap gap-2 mt-auto">
+                        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-md font-bold"><i class="fa-solid fa-desktop mr-1"></i> 觀摩</span>
+                        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-md font-bold"><i class="fa-solid fa-folder-plus mr-1"></i> 專案</span>
+                        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-md font-bold"><i class="fa-solid fa-cloud-arrow-up mr-1"></i> 上傳</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- 第 4 週卡片 -->
+            <a class='block bg-white rounded-3xl shadow-md border-4 border-transparent hover:border-emerald-200 overflow-hidden card-hover group' href='week04.html'>
+                <div class="h-32 bg-gradient-to-r from-teal-500 to-emerald-500 relative flex items-center justify-center">
+                    <i class="fa-solid fa-images text-6xl text-white opacity-50 transform group-hover:scale-110 transition duration-500"></i>
+                    <div class="absolute top-4 left-4 bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full font-bold text-sm">第 04 週</div>
+                </div>
+                <div class="p-6 flex flex-col h-[calc(100%-8rem)]">
+                    <h3 class="text-xl font-black text-gray-800 mb-2 group-hover:text-emerald-600 transition">素材尋寶與範本挑選</h3>
+                    <p class="text-gray-600 text-sm font-medium mb-4 flex-grow">學習肖像權法治觀念，大量收集照片，並搜尋高質感英文關鍵字套用專屬範本。</p>
+                    <div class="flex flex-wrap gap-2 mt-auto">
+                        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-md font-bold"><i class="fa-solid fa-scale-balanced mr-1"></i> 法治</span>
+                        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-md font-bold"><i class="fa-solid fa-images mr-1"></i> 尋寶</span>
+                        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-md font-bold"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> 範本</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- 第 5 週卡片 (本週最新) -->
+            <a class='block bg-white rounded-3xl shadow-lg border-4 border-purple-400 overflow-hidden card-hover group relative' href='week05.html'>
+                <div class="absolute -inset-1 bg-gradient-to-r from-fuchsia-500 to-purple-600 rounded-[2rem] blur opacity-25 group-hover:opacity-60 transition duration-500 animate-pulse"></div>
+                <div class="relative bg-white h-full flex flex-col">
+                    <div class="h-32 bg-gradient-to-br from-purple-100 to-fuchsia-100 relative flex items-center justify-center overflow-hidden">
+                        <i class="fa-solid fa-wand-magic-sparkles text-6xl text-purple-400 group-hover:text-fuchsia-500 transition duration-300 transform group-hover:scale-110 group-hover:rotate-12"></i>
+                        <div class="absolute top-4 left-4 bg-purple-600 text-white px-3 py-1 rounded-full font-bold text-sm shadow-md">⭐ 本週最新</div>
+                    </div>
+                    <div class="p-6 flex flex-col h-[calc(100%-8rem)]">
+                        <h3 class="text-xl font-black text-purple-800 mb-2 group-hover:text-fuchsia-600 transition">視覺魔法照片編修</h3>
+                        <p class="text-gray-600 text-sm font-medium mb-4 flex-grow">把照片完美拖曳入框！學習「一鍵去背」神技，並召喚 AI 魔法編輯大變身。</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                            <span class="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded-md font-bold"><i class="fa-solid fa-crop-simple mr-1"></i> 入框</span>
+                            <span class="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded-md font-bold"><i class="fa-solid fa-user-astronaut mr-1"></i> 去背</span>
+                            <span class="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded-md font-bold"><i class="fa-solid fa-wand-sparkles mr-1"></i> AI 編輯</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- 未來週次預留框 -->
+            <div class="block bg-gray-50 rounded-3xl border-4 border-dashed border-gray-200 overflow-hidden opacity-70 col-span-1 md:col-span-2 lg:col-span-3 mt-4">
+                <div class="flex flex-col items-center justify-center text-gray-400 p-8 text-center">
+                    <i class="fa-solid fa-lock text-4xl mb-3"></i>
+                    <h3 class="text-xl font-bold mb-1">第 06 週即將解鎖</h3>
+                    <p class="text-sm font-medium">下週的「文字特效與動畫」魔法課程還在準備中，敬請期待...</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center mt-16 pb-8 text-gray-400 text-sm font-medium">
+        <p><i class="fa-solid fa-graduation-cap mr-1"></i> 新北市頂溪國小資訊課 - 畢業影片專案系列</p>
+    </footer>
+
+</body>
+</html>

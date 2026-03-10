@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六年級資訊課 - 畢業影片專題 (第3週)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 9999px;
+            color: white;
+            font-weight: bold;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased">
+
+    <!-- 統一載入的頂部導航列 -->
+    <script src="navbar.js"></script>
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">
+        <div class="max-w-5xl mx-auto px-6 py-10">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-purple-200 mb-2">頂溪國小 114下資訊課 ｜ 第 3 週</h2>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4">我的畢業故事起點</h1>
+                    <p class="text-lg text-purple-100">觀摩學長姐作品、建立專案、尋找素材、上傳回憶！</p>
+                </div>
+                <div class="hidden md:block text-6xl opacity-80">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-6 py-8 space-y-8">
+
+        <!-- 課本電子書快速連結 -->
+        <section class="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl shadow-md overflow-hidden transform transition hover:scale-[1.01] hover:shadow-lg">
+            <a href="https://book.eduweb.com.tw/e1d1u4/vips092/html/lesson.html#1" target="_blank" class="block p-6 md:flex items-center justify-between">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <div class="bg-white/20 p-3 rounded-full mr-4">
+                        <i class="fa-solid fa-book-open-reader text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-1">《Canva 魔法工作室》線上電子書</h3>
+                        <p class="text-blue-50 text-sm">忘記帶課本？點擊這裡開啟線上版，隨時查閱操作步驟與精確頁碼！</p>
+                    </div>
+                </div>
+                <div class="bg-white text-blue-600 px-6 py-2 rounded-full font-bold shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
+                    立即翻閱 <i class="fa-solid fa-arrow-up-right-from-square ml-2"></i>
+                </div>
+            </a>
+        </section>
+
+        <!-- 任務公告區 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="bg-amber-100 px-6 py-4 border-b border-amber-200 flex items-center">
+                <i class="fa-solid fa-bullhorn text-amber-600 text-2xl mr-3"></i>
+                <h3 class="text-2xl font-bold text-amber-800">本學期終極任務：畢業影片</h3>
+            </div>
+            <div class="p-6 grid md:grid-cols-3 gap-6">
+                <div class="bg-gray-50 rounded-xl p-5 text-center border border-gray-100">
+                    <div class="text-4xl mb-3">⏱️</div>
+                    <div class="font-bold text-gray-700 mb-1">基本長度</div>
+                    <div class="text-purple-600 font-black text-xl">至少 30 秒</div>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-5 text-center border border-gray-100">
+                    <div class="text-4xl mb-3">📑</div>
+                    <div class="font-bold text-gray-700 mb-1">頁面數量</div>
+                    <div class="text-purple-600 font-black text-xl">至少 6 頁</div>
+                    <div class="text-sm text-gray-500 mt-1">(簡報格式)</div>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-5 text-center border border-gray-100">
+                    <div class="text-4xl mb-3">💬</div>
+                    <div class="font-bold text-gray-700 mb-1">必備內容</div>
+                    <div class="text-purple-600 font-black text-xl">正面積極留言</div>
+                    <div class="text-sm text-gray-500 mt-1">(給老師/同學/自己)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 任務一：觀摩學長姐作品 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="bg-rose-100 px-6 py-4 border-b border-rose-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-circle-play text-rose-600 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-bold text-rose-800">任務一：觀摩學長姐作品</h3>
+                </div>
+                <span class="bg-rose-600 text-white text-xs px-3 py-1 rounded-full font-bold">參考課本 P.24 文字特效</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-2 gap-8">
+                <!-- 觀看步驟 -->
+                <div>
+                    <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-desktop text-rose-500 mr-2"></i> 觀看步驟
+                    </h4>
+                    <ul class="space-y-5">
+                        <li class="flex items-start">
+                            <span class="step-number bg-rose-500">1</span>
+                            <div>
+                                <h5 class="text-lg font-bold text-gray-800">在電腦桌面尋找影片</h5>
+                                <p class="text-gray-600 mt-1">老師已經把歷屆優秀的畢業影片傳送到大家的電腦<strong>「桌面」</strong>了，請自行點選打開瀏覽。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="step-number bg-rose-500">2</span>
+                            <div>
+                                <h5 class="text-lg font-bold text-gray-800">戴上耳機聆聽</h5>
+                                <p class="text-gray-600 mt-1">請戴上耳機，仔細感受影片的配樂與氣氛。</p>
+                                <!-- 防呆警告：保護耳機 -->
+                                <div class="mt-3 bg-red-50 border border-red-200 rounded-xl p-3 flex items-start animate-pulse">
+                                    <i class="fa-solid fa-triangle-exclamation text-red-500 text-lg mr-2 mt-0.5"></i>
+                                    <div>
+                                        <h6 class="font-bold text-red-700">設備愛惜提醒！</h6>
+                                        <p class="text-red-600 text-sm">教室裡的耳機比較脆弱，拿取和佩戴時請務必<strong>輕輕拿、輕輕放，愛惜使用喔！</strong></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <!-- 觀察重點 -->
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-lightbulb text-amber-500 mr-2"></i> 觀察重點
+                    </h4>
+                    <p class="text-sm text-gray-600 mb-4">看影片時不要只顧著笑，請仔細觀察以下三個重點：</p>
+                    <ul class="space-y-3 text-gray-700 font-medium">
+                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-3"></i> 畫面：照片是怎麼拼貼與切換的？</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-3"></i> 聲音：音樂聽起來是熱血還是感傷？</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-3"></i> 文字：學長姐寫了哪些感人的<strong>正向感謝語詞</strong>？</li>
+                    </ul>
+                    <div class="mt-5 text-sm text-rose-600 border-t border-rose-200 pt-3">
+                        <i class="fa-solid fa-book-open mr-1"></i> 未來我們也會用到 <strong>課本 P.24</strong> 的文字特效來製作漂亮的字幕喔！
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Canva 專案建立 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="bg-indigo-100 px-6 py-4 border-b border-indigo-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-paintbrush text-indigo-600 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-bold text-indigo-800">任務二：建立 Canva 專案</h3>
+                </div>
+                <span class="bg-indigo-600 text-white text-xs px-3 py-1 rounded-full font-bold">參考課本 P.15, P.20</span>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="flex items-start">
+                    <span class="step-number bg-indigo-500">1</span>
+                    <div>
+                        <h4 class="text-lg font-bold text-gray-800">登入 Canva 並建立「簡報」</h4>
+                        <p class="text-gray-600 mt-1">點擊右上角「建立設計」，選擇 <strong>簡報 (1920x1080像素)</strong>。</p>
+                        <div class="mt-3 bg-blue-50 border-l-4 border-blue-400 p-3 text-sm text-blue-800 rounded-r-lg">
+                            <i class="fa-solid fa-circle-info mr-1"></i>
+                            <strong>為什麼選簡報而不是影片？</strong> 老師說：「先排版，後動態！」用簡報介面排版最簡單，最後我們再加入音樂和秒數，下載成 MP4 就會變成完美的影片囉！
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <span class="step-number bg-indigo-500">2</span>
+                    <div>
+                        <h4 class="text-lg font-bold text-gray-800">為你的專案命名</h4>
+                        <p class="text-gray-600 mt-1">請在最上方的標題欄位，將檔名統一修改為：</p>
+                        <div class="mt-2 bg-gray-100 inline-block px-4 py-2 rounded-lg font-mono text-indigo-700 font-bold border border-gray-200">
+                            60xxx-姓名-畢業影片
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">範例：60401-王小明-畢業影片 (班級座號) (老師才找得到你的作品打分數喔！)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 素材尋寶區 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="bg-emerald-100 px-6 py-4 border-b border-emerald-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-camera-retro text-emerald-600 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-bold text-emerald-800">任務三：頂溪映像尋寶記</h3>
+                </div>
+            </div>
+            
+            <div class="p-6 grid md:grid-cols-2 gap-8">
+                <!-- 下載步驟 -->
+                <div>
+                    <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-download text-emerald-500 mr-2"></i> 步驟A：從校網下載照片
+                    </h4>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="text-emerald-500 font-black mr-2">1.</span>
+                            <span class="text-gray-700">進入頂溪國小校網，點擊 <strong>「頂溪映像」</strong>。</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-emerald-500 font-black mr-2">2.</span>
+                            <div class="text-gray-700">
+                                點選正確的路徑尋找畢旅照片：
+                                <div class="mt-2 text-sm bg-gray-50 p-3 rounded border border-gray-200">
+                                    📁 114學年度活動照片<br>
+                                    <span class="text-gray-400 pl-2">↳</span> 📁 114年10月<br>
+                                    <span class="text-gray-400 pl-6">↳</span> 📸 <strong>1141001六年級畢業旅行</strong>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-emerald-500 font-black mr-2">3.</span>
+                            <span class="text-gray-700">找到照片後，按 <strong>「滑鼠右鍵」 ➜ 「另存圖片」</strong> 存到桌面。</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-emerald-500 font-black mr-2">4.</span>
+                            <span class="text-gray-700"><strong>溫馨提醒：</strong>除了畢旅照片，也可以找其他活動照片喔！</span>
+                        </li>
+                    </ul>
+
+                    <!-- 防呆警告 -->
+                    <div class="mt-5 bg-yellow-50 border border-yellow-300 rounded-xl p-4 flex items-start">
+                        <i class="fa-solid fa-triangle-exclamation text-yellow-600 text-xl mr-3 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-yellow-800">千萬別漏看！</h5>
+                            <p class="text-yellow-700 text-sm mt-1">畢旅照片有很多，網頁最下方有 <strong>「第 2 頁」</strong> 可以翻頁！一定要點過去看看喔！</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 上傳步驟 -->
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 relative">
+                    <div class="absolute top-4 right-4 bg-purple-600 text-white text-xs px-2 py-1 rounded font-bold">
+                        課本 P.60
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-cloud-arrow-up text-purple-500 mr-2"></i> 步驟B：上傳到 Canva 備用
+                    </h4>
+                    <p class="text-sm text-gray-600 mb-4">把照片上傳到 Canva，以後不管用哪台電腦，照片都會跟著你的帳號走喔！</p>
+                    
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="text-purple-500 font-black mr-2">1.</span>
+                            <span class="text-gray-700">回到你的 Canva 簡報專案。</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-purple-500 font-black mr-2">2.</span>
+                            <span class="text-gray-700">看畫面左邊的工具列，點擊 <strong><i class="fa-solid fa-cloud"></i> 上傳</strong>。</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-purple-500 font-black mr-2">3.</span>
+                            <span class="text-gray-700">點擊紫色的 <strong>「上傳檔案」</strong> 按鈕。</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-purple-500 font-black mr-2">4.</span>
+                            <span class="text-gray-700">去「桌面」找到剛剛下載的照片，點選開啟，就上傳完成囉！</span>
+                        </li>
+                    </ul>
+
+                    <!-- 拖曳上傳秘訣框 -->
+                    <div class="mt-5 bg-purple-100 border border-purple-300 rounded-xl p-4 flex items-start">
+                        <i class="fa-solid fa-lightbulb text-purple-600 text-xl mr-3 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-purple-800">超酷小秘訣：拖曳上傳！</h5>
+                            <p class="text-purple-700 text-sm mt-1">除了課本教的方法，你也可以直接把下載好的照片，用滑鼠<strong>「拖曳」</strong>拉進 Canva 的網頁畫面中放開，就能瞬間完成上傳喔！大家可以試試看！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 總結與預告 -->
+        <section class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-sm text-white p-8 flex flex-col md:flex-row items-center justify-between">
+            <div class="mb-4 md:mb-0">
+                <h3 class="text-2xl font-bold text-yellow-400 mb-2">🏠 回家任務</h3>
+                <p class="text-gray-300">除了學校網站，回家記得翻找家裡的電腦或手機，把 1~5 年級的照片也挖出來備用！</p>
+            </div>
+            <div class="bg-gray-700 px-6 py-4 rounded-xl border border-gray-600 text-center">
+                <div class="text-sm text-gray-400 mb-1">下週預告</div>
+                <div class="font-bold text-white text-lg">大量素材尋寶大作戰！</div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center pb-8 pt-4 text-gray-400 text-sm">
+        <p>新北市頂溪國小資訊課 - Canva 魔法實戰專案</p>
+    </footer>
+
+</body>
+</html>
