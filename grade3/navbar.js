@@ -1,7 +1,7 @@
 // 三年級獨立動態導覽列元件 (極簡導航版)
 (function() {
     // 🌟 1. 設定目前有開放的週次 (三年級目前為第3、4週)
-    const activeWeeks = [3, 4];
+    const activeWeeks = [3, 4, 5];
 
     // 2. 取得目前的網址與檔名
     const currentPath = window.location.pathname;
