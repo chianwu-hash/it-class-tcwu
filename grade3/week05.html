@@ -94,6 +94,9 @@
                     <button id="login-btn" class="bg-white border-2 border-teal-400 text-teal-700 hover:bg-teal-50 font-black px-4 py-2 rounded-full shadow-sm transition">
                         <i class="fa-brands fa-google mr-2"></i>Google 登入
                     </button>
+                    <button id="reset-progress-btn" class="hidden bg-amber-500 text-white hover:bg-amber-400 font-black px-4 py-2 rounded-full shadow-sm transition">
+                        <i class="fa-solid fa-rotate-left mr-2"></i>重新闖關
+                    </button>
                     <button id="logout-btn" class="hidden bg-slate-700 text-white hover:bg-slate-600 font-black px-4 py-2 rounded-full shadow-sm transition">
                         <i class="fa-solid fa-right-from-bracket mr-2"></i>登出
                     </button>
@@ -470,6 +473,7 @@
         const authStatusEl = document.getElementById("auth-status");
         const progressStatusEl = document.getElementById("progress-status");
         const loginBtn = document.getElementById("login-btn");
+        const resetProgressBtn = document.getElementById("reset-progress-btn");
         const logoutBtn = document.getElementById("logout-btn");
 
         function normalizeInput(value) {
@@ -521,13 +525,16 @@
             }
             if (completed) {
                 markLevelAsCompleted(maxLevel);
+                resetProgressBtn.classList.remove("hidden");
                 progressStatusEl.textContent = "你已經全破了，今天可以直接複習或挑戰給老師看。";
             } else if (highestUnlockedLevel > 1) {
+                resetProgressBtn.classList.add("hidden");
                 progressStatusEl.textContent = `已為你續關，目前從第 ${highestUnlockedLevel} 關開始。`;
                 setTimeout(() => {
                     document.getElementById(`block-level${highestUnlockedLevel}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
                 }, 250);
             } else {
+                resetProgressBtn.classList.add("hidden");
                 progressStatusEl.textContent = "已登入成功，這次會自動幫你記錄進度。";
             }
         }
@@ -541,8 +548,25 @@
                 authStatusEl.textContent = "尚未登入，現在練習不會保存進度。";
                 progressStatusEl.textContent = "";
                 loginBtn.classList.remove("hidden");
+                resetProgressBtn.classList.add("hidden");
                 logoutBtn.classList.add("hidden");
             }
+        }
+
+        async function getActiveUser() {
+            if (currentSession?.user) {
+                return currentSession.user;
+            }
+
+            const { data, error } = await supabase.auth.getSession();
+            if (error) {
+                console.error("getSession failed", error);
+                return null;
+            }
+
+            currentSession = data.session;
+            updateAuthUI(currentSession);
+            return currentSession?.user ?? null;
         }
 
         async function loadProgress() {
@@ -573,13 +597,32 @@
             revealProgress(data.current_level, data.completed);
         }
 
+        async function fetchSavedProgress(userId) {
+            const { data, error } = await supabase
+                .from("student_progress")
+                .select("current_level, completed")
+                .eq("user_id", userId)
+                .eq("week_code", WEEK_CODE)
+                .eq("activity_key", ACTIVITY_KEY)
+                .maybeSingle();
+
+            if (error) {
+                console.error("fetchSavedProgress failed", error);
+                return null;
+            }
+
+            return data;
+        }
+
         async function saveProgress(nextLevel, completed) {
-            if (!currentSession?.user) {
-                return;
+            const user = await getActiveUser();
+            if (!user) {
+                progressStatusEl.textContent = "目前沒有登入狀態，這次過關不會保存，請先重新登入。";
+                return false;
             }
 
             const payload = {
-                user_id: currentSession.user.id,
+                user_id: user.id,
                 week_code: WEEK_CODE,
                 activity_key: ACTIVITY_KEY,
                 current_level: nextLevel,
@@ -587,21 +630,43 @@
                 updated_at: new Date().toISOString()
             };
 
-            const { error } = await supabase
-                .from("student_progress")
-                .upsert(payload, { onConflict: "user_id,week_code,activity_key" });
+            let lastError = null;
 
-            if (error) {
+            for (let attempt = 1; attempt <= 2; attempt += 1) {
+                const { error } = await supabase
+                    .from("student_progress")
+                    .upsert(payload, { onConflict: "user_id,week_code,activity_key" });
+
+                if (error) {
+                    lastError = error;
+                    console.error(`saveProgress failed on attempt ${attempt}`, error, payload);
+                    continue;
+                }
+
+                const saved = await fetchSavedProgress(user.id);
+                if (saved?.current_level === nextLevel && saved?.completed === completed) {
+                    highestUnlockedLevel = Math.max(highestUnlockedLevel, nextLevel);
+                    if (completed) {
+                        resetProgressBtn.classList.remove("hidden");
+                        progressStatusEl.textContent = "已幫你保存全破紀錄，下次登入也會記得。";
+                    } else {
+                        resetProgressBtn.classList.add("hidden");
+                        progressStatusEl.textContent = `已保存進度：下次可從第 ${nextLevel} 關繼續。`;
+                    }
+
+                    return true;
+                }
+
+                lastError = new Error("Saved state verification failed");
+                console.error(`saveProgress verification failed on attempt ${attempt}`, saved, payload);
+            }
+
+            if (lastError) {
+                console.error("saveProgress failed", lastError, payload);
                 progressStatusEl.textContent = "進度保存失敗，請先不要關掉頁面，稍後再試。";
-                return;
             }
 
-            highestUnlockedLevel = Math.max(highestUnlockedLevel, nextLevel);
-            if (completed) {
-                progressStatusEl.textContent = "已幫你保存全破紀錄，下次登入也會記得。";
-            } else {
-                progressStatusEl.textContent = `已保存進度：下次可從第 ${nextLevel} 關繼續。`;
-            }
+            return false;
         }
 
         async function signInWithGoogle() {
@@ -622,6 +687,41 @@
 
         async function signOutUser() {
             await supabase.auth.signOut();
+            window.location.reload();
+        }
+
+        async function resetProgress() {
+            const user = await getActiveUser();
+            if (!user) {
+                progressStatusEl.textContent = "目前沒有登入狀態，無法重新闖關。";
+                return;
+            }
+
+            const shouldReset = window.confirm("要重新闖關嗎？這會把目前的關卡進度重設回第 1 關。");
+            if (!shouldReset) {
+                return;
+            }
+
+            const { error } = await supabase
+                .from("student_progress")
+                .delete()
+                .eq("user_id", user.id)
+                .eq("week_code", WEEK_CODE)
+                .eq("activity_key", ACTIVITY_KEY);
+
+            if (error) {
+                console.error("resetProgress failed", error);
+                progressStatusEl.textContent = "重新闖關失敗，請稍後再試一次。";
+                return;
+            }
+
+            const saved = await fetchSavedProgress(user.id);
+            if (saved) {
+                console.error("resetProgress verification failed", saved);
+                progressStatusEl.textContent = "重新闖關驗證失敗，請再試一次。";
+                return;
+            }
+
             window.location.reload();
         }
 
@@ -654,6 +754,7 @@
             const msgEl = document.getElementById(`msg-level${levelIndex}`);
             const userVal = normalizeInput(inputEl.value);
             const targetVal = levelsData[levelIndex - 1].ans;
+            const isLoggedIn = !!(await getActiveUser());
 
             if (userVal === targetVal) {
                 msgEl.innerHTML = "🎉 太棒了！完全正確！";
@@ -668,15 +769,47 @@
                 }
 
                 if (levelIndex < maxLevel) {
+                    if (isLoggedIn) {
+                        const didSave = await saveProgress(levelIndex + 1, false);
+                        if (!didSave) {
+                            msgEl.innerHTML = "⚠️ 這關答對了，但進度還沒存成功，請再按一次或稍後再試。";
+                            msgEl.className = "text-center font-bold mt-4 h-6 text-sm text-amber-600";
+                            inputEl.readOnly = false;
+                            inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800");
+                            inputEl.classList.add("border-amber-400", "bg-amber-50", "text-amber-800");
+                            if (btnEl) {
+                                btnEl.style.display = "";
+                            }
+                            return;
+                        }
+                    } else {
+                        progressStatusEl.textContent = "目前是未登入練習模式，這次過關不會保存。";
+                    }
+
                     const nextBlock = document.getElementById(`block-level${levelIndex + 1}`);
                     nextBlock.classList.remove("hidden");
                     setTimeout(() => {
                         nextBlock.scrollIntoView({ behavior: "smooth", block: "center" });
                     }, 150);
                     confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
-                    await saveProgress(levelIndex + 1, false);
                 } else {
-                    await saveProgress(maxLevel, true);
+                    if (isLoggedIn) {
+                        const didSave = await saveProgress(maxLevel, true);
+                        if (!didSave) {
+                            msgEl.innerHTML = "⚠️ 魔王關答對了，但全破紀錄還沒存成功，請再按一次或稍後再試。";
+                            msgEl.className = "text-center font-bold mt-4 h-6 text-sm text-amber-600";
+                            inputEl.readOnly = false;
+                            inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800");
+                            inputEl.classList.add("border-amber-400", "bg-amber-50", "text-amber-800");
+                            if (btnEl) {
+                                btnEl.style.display = "";
+                            }
+                            return;
+                        }
+                    } else {
+                        progressStatusEl.textContent = "目前是未登入練習模式，這次全破不會保存。";
+                    }
+
                     triggerUltimateCelebration();
                 }
             } else {
@@ -733,6 +866,7 @@
         }
 
         loginBtn.addEventListener("click", signInWithGoogle);
+        resetProgressBtn.addEventListener("click", resetProgress);
         logoutBtn.addEventListener("click", signOutUser);
 
         const { data: sessionData } = await supabase.auth.getSession();
