@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -85,7 +85,7 @@
         <div class="bg-white/95 rounded-3xl shadow-md border-4 border-teal-200 p-5 md:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <h3 class="text-xl font-black text-teal-800 mb-1">登入 Google 才會自動記錄闖關進度</h3>
-                <p class="text-gray-600 font-bold text-sm md:text-base">登入後，下次回來就能從上次停下來的關卡繼續挑戰。</p>
+                <p class="text-gray-600 font-bold text-sm md:text-base">登入後，下次回來就能接著上次的練習繼續，不用從頭開始。</p>
             </div>
             <div class="flex flex-col md:items-end gap-2">
                 <div id="auth-status" class="text-sm font-bold text-slate-600">尚未登入，現在練習不會保存進度。</div>
@@ -119,7 +119,7 @@
             </div>
             
             <div class="p-8">
-                <p class="text-lg text-gray-700 font-bold mb-4">上週有些同學還沒練熟，這週一起補滿！先做基礎操作，再挑戰隱藏快捷鍵！</p>
+                <p class="text-lg text-gray-700 font-bold mb-4">上週有些同學還在熟悉操作，這週我們一步一步補齊。先把基礎做好，再試試隱藏快捷鍵。</p>
 
                 <div class="grid md:grid-cols-2 gap-8">
                     <!-- 任務步驟 -->
@@ -208,7 +208,7 @@
             
             <div class="p-8">
                 <!-- 轉場提示文字 -->
-                <p class="text-lg text-gray-700 font-bold mb-6">現在進入中打實戰修煉 2！先過基礎關，再挑戰魔王關，看看你能不能全破！</p>
+                <p class="text-lg text-gray-700 font-bold mb-6">現在進入中打實戰修煉 2！先把基礎關一步一步完成，再繼續挑戰後面的關卡。</p>
 
                 <!-- 提示與 c-type 連結 -->
                 <div class="bg-gray-50 border border-gray-200 p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
@@ -392,7 +392,7 @@
             <div class="text-center md:text-left">
                 <h4 class="text-xl font-black text-orange-800 mb-2">老師的溫馨小提醒</h4>
                 <p class="text-orange-700 font-bold text-lg leading-relaxed">
-                    今天我們完成了三個任務：瀏覽器補完、資安測驗、中打修煉 2！基礎關完成就很厲害，挑戰魔王關成功更是超級勇者！
+                    今天我們完成了三個任務：瀏覽器補完、資安測驗、中打修煉 2！每一關都是靠練習、修正和耐心一步一步完成的。
                 </p>
             </div>
         </section>
@@ -466,6 +466,14 @@
             { id: 5, ans: "大魔王說：「你居然還活著？！最後一關來了！」\n複製貼上要學會，不然老師瞬間老十歲。\n想跟吳老師一樣帥！那就把這關打敗！" }
         ];
 
+        const levelEncouragements = {
+            1: "你先把第一步穩穩完成了，這表示你願意開始，也願意自己試試看。",
+            2: "這一關要更仔細，你有把注意力放在小地方，這份專心很重要。",
+            3: "你有發現換行也要一起顧到，代表你開始注意整體格式了。",
+            4: "這一關比前面更複雜，你願意一邊檢查一邊修正，已經進步很多。",
+            5: "你把最後一關也慢慢完成了，這不是靠快，而是靠耐心檢查和一次一次修正。"
+        };
+
         const maxLevel = levelsData.length;
         let currentSession = null;
         let highestUnlockedLevel = 1;
@@ -504,12 +512,12 @@
 
             inputEl.readOnly = true;
             if (!inputEl.value) {
-                inputEl.value = "已通關";
+                inputEl.value = "這一關完成了";
             }
             inputEl.classList.remove("border-orange-300", "border-pink-300", "border-cyan-300", "border-emerald-300", "border-purple-400", "border-red-500", "shake");
             inputEl.classList.add("border-green-400", "bg-green-50", "text-green-800");
-            msgEl.textContent = "已通關，下次可直接從後面繼續。";
-            msgEl.className = "text-center font-bold mt-4 h-6 text-sm text-emerald-600";
+            msgEl.textContent = levelEncouragements[level] || "你把這一關練好了，下次可以接著後面繼續練習。";
+            msgEl.className = "text-center font-bold mt-4 min-h-12 text-sm text-emerald-600 leading-relaxed";
             if (btnEl) {
                 btnEl.style.display = "none";
             }
@@ -526,16 +534,16 @@
             if (completed) {
                 markLevelAsCompleted(maxLevel);
                 resetProgressBtn.classList.remove("hidden");
-                progressStatusEl.textContent = "你已經全破了，今天可以直接複習或挑戰給老師看。";
+                progressStatusEl.textContent = "你已經把整套練習走完了，今天可以直接複習，或重新再練一次。";
             } else if (highestUnlockedLevel > 1) {
                 resetProgressBtn.classList.add("hidden");
-                progressStatusEl.textContent = `已為你續關，目前從第 ${highestUnlockedLevel} 關開始。`;
+                progressStatusEl.textContent = `已幫你接回上次的進度，這次從第 ${highestUnlockedLevel} 關繼續練習。`;
                 setTimeout(() => {
                     document.getElementById(`block-level${highestUnlockedLevel}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
                 }, 250);
             } else {
                 resetProgressBtn.classList.add("hidden");
-                progressStatusEl.textContent = "已登入成功，這次會自動幫你記錄進度。";
+                progressStatusEl.textContent = "已登入成功，這次的練習過程會自動記錄下來。";
             }
         }
 
@@ -584,13 +592,13 @@
                 .maybeSingle();
 
             if (error) {
-                progressStatusEl.textContent = "讀取進度失敗，先照常練習，待會再試一次。";
+                progressStatusEl.textContent = "進度暫時讀取不到，先照常練習，待會再試一次。";
                 return;
             }
 
             if (!data) {
                 highestUnlockedLevel = 1;
-                progressStatusEl.textContent = "第一次登入成功，從第 1 關開始挑戰。";
+                progressStatusEl.textContent = "第一次登入成功，先從第 1 關開始慢慢練。";
                 return;
             }
 
@@ -617,7 +625,7 @@
         async function saveProgress(nextLevel, completed) {
             const user = await getActiveUser();
             if (!user) {
-                progressStatusEl.textContent = "目前沒有登入狀態，這次過關不會保存，請先重新登入。";
+                progressStatusEl.textContent = "目前沒有登入狀態，這次的練習不會保存，請先重新登入。";
                 return false;
             }
 
@@ -648,10 +656,10 @@
                     highestUnlockedLevel = Math.max(highestUnlockedLevel, nextLevel);
                     if (completed) {
                         resetProgressBtn.classList.remove("hidden");
-                        progressStatusEl.textContent = "已幫你保存全破紀錄，下次登入也會記得。";
+                        progressStatusEl.textContent = "已幫你記下這次完整練習的進度，下次登入也會接著記得。";
                     } else {
                         resetProgressBtn.classList.add("hidden");
-                        progressStatusEl.textContent = `已保存進度：下次可從第 ${nextLevel} 關繼續。`;
+                        progressStatusEl.textContent = `已記下你的練習進度，下次可以從第 ${nextLevel} 關繼續。`;
                     }
 
                     return true;
@@ -663,7 +671,7 @@
 
             if (lastError) {
                 console.error("saveProgress failed", lastError, payload);
-                progressStatusEl.textContent = "進度保存失敗，請先不要關掉頁面，稍後再試。";
+                progressStatusEl.textContent = "進度暫時沒有記錄成功，先不要關掉頁面，稍後再試一次。";
             }
 
             return false;
@@ -693,11 +701,11 @@
         async function resetProgress() {
             const user = await getActiveUser();
             if (!user) {
-                progressStatusEl.textContent = "目前沒有登入狀態，無法重新闖關。";
+                progressStatusEl.textContent = "目前沒有登入狀態，暫時不能重新開始練習。";
                 return;
             }
 
-            const shouldReset = window.confirm("要重新闖關嗎？這會把目前的關卡進度重設回第 1 關。");
+            const shouldReset = window.confirm("要重新開始練習嗎？這會把目前的進度重設回第 1 關。");
             if (!shouldReset) {
                 return;
             }
@@ -711,14 +719,14 @@
 
             if (error) {
                 console.error("resetProgress failed", error);
-                progressStatusEl.textContent = "重新闖關失敗，請稍後再試一次。";
+                progressStatusEl.textContent = "重新開始練習暫時失敗，請稍後再試一次。";
                 return;
             }
 
             const saved = await fetchSavedProgress(user.id);
             if (saved) {
                 console.error("resetProgress verification failed", saved);
-                progressStatusEl.textContent = "重新闖關驗證失敗，請再試一次。";
+                progressStatusEl.textContent = "重新開始練習的驗證沒有成功，請再試一次。";
                 return;
             }
 
@@ -752,13 +760,25 @@
         window.checkLevel = async function checkLevel(levelIndex) {
             const inputEl = document.getElementById(`input-level${levelIndex}`);
             const msgEl = document.getElementById(`msg-level${levelIndex}`);
+
+            if (inputEl.readOnly) {
+                msgEl.textContent = levelEncouragements[levelIndex] || "你把這一關練好了，下次可以接著後面繼續練習。";
+                msgEl.className = "text-center font-black mt-4 min-h-12 text-base md:text-lg text-green-600 leading-relaxed";
+                if (levelIndex < maxLevel) {
+                    confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
+                } else {
+                    triggerUltimateCelebration();
+                }
+                return;
+            }
+
             const userVal = normalizeInput(inputEl.value);
             const targetVal = levelsData[levelIndex - 1].ans;
             const isLoggedIn = !!(await getActiveUser());
 
             if (userVal === targetVal) {
-                msgEl.innerHTML = "🎉 太棒了！完全正確！";
-                msgEl.className = "text-center font-black mt-4 h-6 text-xl text-green-600 animate-bounce";
+                msgEl.textContent = levelEncouragements[levelIndex] || "你有仔細檢查，也有慢慢修正，這一關練好了。";
+                msgEl.className = "text-center font-black mt-4 min-h-12 text-base md:text-lg text-green-600 leading-relaxed animate-bounce";
                 inputEl.classList.remove("shake", "border-red-400", "border-red-500", "border-orange-300", "border-pink-300", "border-cyan-300", "border-emerald-300", "border-purple-400");
                 inputEl.classList.add("border-green-400", "bg-green-50", "text-green-800");
                 inputEl.readOnly = true;
@@ -772,7 +792,7 @@
                     if (isLoggedIn) {
                         const didSave = await saveProgress(levelIndex + 1, false);
                         if (!didSave) {
-                            msgEl.innerHTML = "⚠️ 這關答對了，但進度還沒存成功，請再按一次或稍後再試。";
+                            msgEl.innerHTML = "⚠️ 你已經完成這一關了，但進度還沒記錄成功，請再按一次或稍後再試。";
                             msgEl.className = "text-center font-bold mt-4 h-6 text-sm text-amber-600";
                             inputEl.readOnly = false;
                             inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800");
@@ -783,20 +803,22 @@
                             return;
                         }
                     } else {
-                        progressStatusEl.textContent = "目前是未登入練習模式，這次過關不會保存。";
+                        progressStatusEl.textContent = "目前是未登入練習模式，這次的練習過程不會保存。";
                     }
 
                     const nextBlock = document.getElementById(`block-level${levelIndex + 1}`);
                     nextBlock.classList.remove("hidden");
                     setTimeout(() => {
                         nextBlock.scrollIntoView({ behavior: "smooth", block: "center" });
-                    }, 150);
-                    confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
+                    }, 1200);
+                    setTimeout(() => {
+                        confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
+                    }, 500);
                 } else {
                     if (isLoggedIn) {
                         const didSave = await saveProgress(maxLevel, true);
                         if (!didSave) {
-                            msgEl.innerHTML = "⚠️ 魔王關答對了，但全破紀錄還沒存成功，請再按一次或稍後再試。";
+                            msgEl.innerHTML = "⚠️ 你已經把最後一關完成了，但完整進度還沒記錄成功，請再按一次或稍後再試。";
                             msgEl.className = "text-center font-bold mt-4 h-6 text-sm text-amber-600";
                             inputEl.readOnly = false;
                             inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800");
@@ -807,7 +829,7 @@
                             return;
                         }
                     } else {
-                        progressStatusEl.textContent = "目前是未登入練習模式，這次全破不會保存。";
+                        progressStatusEl.textContent = "目前是未登入練習模式，這次完整練習的過程不會保存。";
                     }
 
                     triggerUltimateCelebration();
@@ -830,9 +852,9 @@
             const trophy = document.createElement("div");
             trophy.innerHTML = `
                 <div class="text-[120px] mb-4 animate-bounce drop-shadow-[0_0_30px_rgba(250,204,21,1)]">🏆</div>
-                <h2 class="text-5xl md:text-7xl font-black text-yellow-400 tracking-widest drop-shadow-[0_0_20px_rgba(250,204,21,0.8)] mb-4">傳說級鍵盤大師</h2>
-                <p class="text-2xl text-white mt-4 font-bold">恭喜完全通關！吳老師為你感到驕傲！</p>
-                <button onclick="document.getElementById('celebration-overlay').remove()" class="mt-10 bg-yellow-500 hover:bg-yellow-400 text-yellow-900 font-black px-10 py-4 rounded-full text-2xl shadow-[0_0_20px_rgba(250,204,21,0.6)] transition transform hover:scale-110">領取榮耀返回</button>
+                <h2 class="text-5xl md:text-7xl font-black text-yellow-400 tracking-widest drop-shadow-[0_0_20px_rgba(250,204,21,0.8)] mb-4">一步一步完成所有關卡</h2>
+                <p class="text-2xl text-white mt-4 font-bold">你真的把所有關卡一步一步完成了，現在回頭看，一定會發現自己比剛開始更進步了。</p>
+                <button onclick="document.getElementById('celebration-overlay').remove()" class="mt-10 bg-yellow-500 hover:bg-yellow-400 text-yellow-900 font-black px-10 py-4 rounded-full text-2xl shadow-[0_0_20px_rgba(250,204,21,0.6)] transition transform hover:scale-110">帶著成果回到練習區</button>
             `;
             trophy.className = "text-center transform scale-0 transition-transform duration-1000";
 
@@ -884,3 +906,4 @@
     </script>
 </body>
 </html>
+
