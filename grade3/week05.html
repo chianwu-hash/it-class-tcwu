@@ -81,25 +81,15 @@
         <i class="fa-solid fa-keyboard absolute text-white opacity-10 text-9xl -bottom-10 right-20"></i>
     </header>
 
-    <section class="max-w-5xl mx-auto px-6 mb-8">
-        <div class="bg-white/95 rounded-3xl shadow-md border-4 border-teal-200 p-5 md:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-                <h3 class="text-xl font-black text-teal-800 mb-1">登入 Google 才會自動記錄闖關進度</h3>
-                <p class="text-gray-600 font-bold text-sm md:text-base">登入後，下次回來就能接著上次的練習繼續，不用從頭開始。</p>
-            </div>
-            <div class="flex flex-col md:items-end gap-2">
-                <div id="auth-status" class="text-sm font-bold text-slate-600">尚未登入，現在練習不會保存進度。</div>
-                <div id="progress-status" class="text-sm font-bold text-emerald-600 min-h-6"></div>
-                <div class="flex gap-2">
-                    <button id="login-btn" class="bg-white border-2 border-teal-400 text-teal-700 hover:bg-teal-50 font-black px-4 py-2 rounded-full shadow-sm transition">
-                        <i class="fa-brands fa-google mr-2"></i>Google 登入
-                    </button>
-                    <button id="reset-progress-btn" class="hidden bg-amber-500 text-white hover:bg-amber-400 font-black px-4 py-2 rounded-full shadow-sm transition">
-                        <i class="fa-solid fa-rotate-left mr-2"></i>重新闖關
-                    </button>
-                    <button id="logout-btn" class="hidden bg-slate-700 text-white hover:bg-slate-600 font-black px-4 py-2 rounded-full shadow-sm transition">
-                        <i class="fa-solid fa-right-from-bracket mr-2"></i>登出
-                    </button>
+    <section class="max-w-5xl mx-auto px-6 mb-6">
+        <div id="progress-banner" class="rounded-2xl border border-emerald-200 bg-white/90 shadow-sm px-5 py-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg flex-shrink-0">
+                    <i class="fa-solid fa-seedling"></i>
+                </div>
+                <div>
+                    <div class="text-sm font-black text-emerald-800">闖關進度提示</div>
+                    <div id="progress-status" class="text-sm md:text-base font-bold text-emerald-700">尚未登入時，練習不會保存；登入後會自動記錄進度。</div>
                 </div>
             </div>
         </div>
@@ -484,6 +474,20 @@
         const resetProgressBtn = document.getElementById("reset-progress-btn");
         const logoutBtn = document.getElementById("logout-btn");
 
+        function configureTypingInputs() {
+            for (let level = 1; level <= maxLevel; level += 1) {
+                const inputEl = document.getElementById(`input-level${level}`);
+                if (!inputEl) {
+                    continue;
+                }
+                inputEl.setAttribute("autocomplete", "off");
+                inputEl.setAttribute("autocorrect", "off");
+                inputEl.setAttribute("autocapitalize", "off");
+                inputEl.setAttribute("spellcheck", "false");
+                inputEl.setAttribute("data-form-type", "other");
+            }
+        }
+
         function normalizeInput(value) {
             return value
                 .replace(/\r\n/g, "\n")
@@ -549,12 +553,12 @@
 
         function updateAuthUI(session) {
             if (session?.user) {
-                authStatusEl.textContent = `已登入：${session.user.email || "Google 使用者"}`;
+                authStatusEl.textContent = session.user.email || "Google 使用者";
                 loginBtn.classList.add("hidden");
                 logoutBtn.classList.remove("hidden");
             } else {
-                authStatusEl.textContent = "尚未登入，現在練習不會保存進度。";
-                progressStatusEl.textContent = "";
+                authStatusEl.textContent = "未登入";
+                progressStatusEl.textContent = "尚未登入時，練習不會保存；登入後會自動記錄進度。";
                 loginBtn.classList.remove("hidden");
                 resetProgressBtn.classList.add("hidden");
                 logoutBtn.classList.add("hidden");
@@ -890,6 +894,7 @@
         loginBtn.addEventListener("click", signInWithGoogle);
         resetProgressBtn.addEventListener("click", resetProgress);
         logoutBtn.addEventListener("click", signOutUser);
+        configureTypingInputs();
 
         const { data: sessionData } = await supabase.auth.getSession();
         currentSession = sessionData.session;
