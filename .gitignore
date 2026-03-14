@@ -13,3 +13,9 @@ Desktop.ini
 *.log
 *.tmp
 *.temp
+
+# OAuth / secrets
+client_secret_*.json
+
+# Local generated assets
+grade3/LessonPlan/_tmp_page_images/
