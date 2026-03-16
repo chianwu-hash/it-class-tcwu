@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教師後台｜學生進度管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #f8fbff 0%, #eef8ff 100%);
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-sky-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+                <div class="text-sm font-black text-sky-600 tracking-wide">Teacher Admin</div>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900">學生進度管理</h1>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <div id="auth-status" class="px-3 py-2 rounded-full bg-sky-50 border border-sky-100 text-sm font-bold text-slate-700">
+                    尚未登入
+                </div>
+                <button id="login-btn" class="px-4 py-2 rounded-xl border-2 border-sky-300 text-sky-700 hover:bg-sky-50 font-black transition">
+                    <i class="fa-brands fa-google mr-1"></i> Google 登入
+                </button>
+                <button id="logout-btn" class="hidden px-4 py-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 font-black transition">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i> 登出
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-8 space-y-6">
+        <section class="bg-white rounded-3xl border border-sky-100 shadow-sm p-6">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                <div>
+                    <h2 class="text-xl font-black text-slate-900 mb-1">篩選條件</h2>
+                    <p class="text-sm text-slate-500">先登入教師帳號，再依週次、活動類型或學生 email 進行查詢。</p>
+                </div>
+                <button id="refresh-btn" class="px-4 py-2 rounded-xl bg-sky-600 text-white hover:bg-sky-500 font-black transition">
+                    <i class="fa-solid fa-rotate mr-1"></i> 重新整理
+                </button>
+            </div>
+
+            <div class="grid md:grid-cols-2 xl:grid-cols-5 gap-4 mt-5">
+                <label class="block">
+                    <span class="text-sm font-black text-slate-700 mb-1 block">週次</span>
+                    <select id="week-filter" class="w-full rounded-xl border border-slate-200 px-4 py-3 font-bold text-slate-700 bg-white">
+                        <option value="">全部週次</option>
+                    </select>
+                </label>
+                <label class="block">
+                    <span class="text-sm font-black text-slate-700 mb-1 block">活動類型</span>
+                    <select id="activity-filter" class="w-full rounded-xl border border-slate-200 px-4 py-3 font-bold text-slate-700 bg-white">
+                        <option value="">全部活動</option>
+                        <option value="typing">typing</option>
+                        <option value="quiz">quiz</option>
+                        <option value="project">project</option>
+                        <option value="other">other</option>
+                    </select>
+                </label>
+                <label class="block">
+                    <span class="text-sm font-black text-slate-700 mb-1 block">完成狀態</span>
+                    <select id="completed-filter" class="w-full rounded-xl border border-slate-200 px-4 py-3 font-bold text-slate-700 bg-white">
+                        <option value="">全部狀態</option>
+                        <option value="false">進行中</option>
+                        <option value="true">已完成</option>
+                    </select>
+                </label>
+                <label class="block xl:col-span-2">
+                    <span class="text-sm font-black text-slate-700 mb-1 block">搜尋</span>
+                    <input id="search-filter" type="text" placeholder="輸入 email 或 activity_key" class="w-full rounded-xl border border-slate-200 px-4 py-3 font-bold text-slate-700 bg-white">
+                </label>
+            </div>
+        </section>
+
+        <section id="notice-panel" class="hidden rounded-2xl border px-5 py-4 text-sm font-bold"></section>
+
+        <section class="bg-white rounded-3xl border border-sky-100 shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h2 class="text-xl font-black text-slate-900">學生最新進度</h2>
+                    <p id="summary-text" class="text-sm font-bold text-slate-500 mt-1">尚未載入資料。</p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead class="bg-slate-50 text-slate-600">
+                        <tr>
+                            <th class="text-left px-4 py-3 font-black">學生</th>
+                            <th class="text-left px-4 py-3 font-black">週次</th>
+                            <th class="text-left px-4 py-3 font-black">活動</th>
+                            <th class="text-left px-4 py-3 font-black">類型</th>
+                            <th class="text-left px-4 py-3 font-black">目前進度</th>
+                            <th class="text-left px-4 py-3 font-black">分數</th>
+                            <th class="text-left px-4 py-3 font-black">狀態</th>
+                            <th class="text-left px-4 py-3 font-black">最後更新</th>
+                            <th class="text-left px-4 py-3 font-black">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="progress-tbody" class="divide-y divide-slate-100">
+                        <tr>
+                            <td colspan="9" class="px-4 py-12 text-center text-slate-400 font-bold">請先登入教師帳號。</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+        const SUPABASE_URL = "https://upxgyusodibaqcrocdzj.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_VhqRaRCR5m4VRuCqTMXToA_XgeCgl5j";
+        const TEACHER_EMAILS = ["chianwu@gmail.com"];
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+            auth: {
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: true
+            }
+        });
+
+        const authStatusEl = document.getElementById("auth-status");
+        const loginBtn = document.getElementById("login-btn");
+        const logoutBtn = document.getElementById("logout-btn");
+        const weekFilterEl = document.getElementById("week-filter");
+        const activityFilterEl = document.getElementById("activity-filter");
+        const completedFilterEl = document.getElementById("completed-filter");
+        const searchFilterEl = document.getElementById("search-filter");
+        const refreshBtn = document.getElementById("refresh-btn");
+        const tbodyEl = document.getElementById("progress-tbody");
+        const summaryTextEl = document.getElementById("summary-text");
+        const noticePanelEl = document.getElementById("notice-panel");
+
+        let currentSession = null;
+
+        function initWeekOptions() {
+            for (let i = 1; i <= 15; i += 1) {
+                const week = String(i).padStart(2, "0");
+                const option = document.createElement("option");
+                option.value = week;
+                option.textContent = `第 ${week} 週`;
+                weekFilterEl.appendChild(option);
+            }
+        }
+
+        function isTeacher(session) {
+            const email = session?.user?.email?.toLowerCase() || "";
+            return TEACHER_EMAILS.includes(email);
+        }
+
+        function showNotice(message, tone = "info") {
+            const toneClass = {
+                info: "bg-sky-50 border-sky-200 text-sky-700",
+                error: "bg-rose-50 border-rose-200 text-rose-700",
+                success: "bg-emerald-50 border-emerald-200 text-emerald-700"
+            };
+            noticePanelEl.className = `rounded-2xl border px-5 py-4 text-sm font-bold ${toneClass[tone] || toneClass.info}`;
+            noticePanelEl.textContent = message;
+            noticePanelEl.classList.remove("hidden");
+        }
+
+        function hideNotice() {
+            noticePanelEl.classList.add("hidden");
+        }
+
+        function activityLabel(activityKey) {
+            if (activityKey.startsWith("typing")) return "中打闖關";
+            if (activityKey.startsWith("quiz")) return "週測驗";
+            if (activityKey.startsWith("project")) return "專案任務";
+            return activityKey;
+        }
+
+        function progressLabel(row) {
+            if (row.activity_type === "typing") {
+                return row.completed ? `第 ${row.current_level}/5 關（完成）` : `第 ${row.current_level}/5 關`;
+            }
+            if (row.activity_type === "quiz") {
+                return row.completed ? "已作答" : "未完成";
+            }
+            return row.completed ? "已完成" : "-";
+        }
+
+        function statusBadge(row) {
+            return row.completed
+                ? '<span class="inline-flex px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-black">已完成</span>'
+                : '<span class="inline-flex px-3 py-1 rounded-full bg-amber-100 text-amber-700 font-black">進行中</span>';
+        }
+
+        function formatTime(value) {
+            return new Date(value).toLocaleString("zh-TW", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+        }
+
+        function renderRows(rows) {
+            if (!rows.length) {
+                tbodyEl.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="px-4 py-12 text-center text-slate-400 font-bold">目前查無資料。</td>
+                    </tr>
+                `;
+                summaryTextEl.textContent = "目前沒有符合篩選條件的紀錄。";
+                return;
+            }
+
+            tbodyEl.innerHTML = rows.map((row) => `
+                <tr class="hover:bg-slate-50">
+                    <td class="px-4 py-4 font-bold text-slate-800">${row.email}</td>
+                    <td class="px-4 py-4 font-bold text-slate-600">${row.week_code}</td>
+                    <td class="px-4 py-4">
+                        <div class="font-black text-slate-800">${activityLabel(row.activity_key)}</div>
+                        <div class="text-xs text-slate-400 font-bold">${row.activity_key}</div>
+                    </td>
+                    <td class="px-4 py-4 font-bold text-slate-600">${row.activity_type}</td>
+                    <td class="px-4 py-4 font-bold text-slate-700">${progressLabel(row)}</td>
+                    <td class="px-4 py-4 font-black text-slate-700">${row.score ?? "-"}</td>
+                    <td class="px-4 py-4">${statusBadge(row)}</td>
+                    <td class="px-4 py-4 font-bold text-slate-500">${formatTime(row.updated_at)}</td>
+                    <td class="px-4 py-4">
+                        <button
+                            class="reset-btn px-3 py-2 rounded-xl bg-rose-500 text-white hover:bg-rose-400 font-black transition"
+                            data-user-id="${row.user_id}"
+                            data-week-code="${row.week_code}"
+                            data-activity-key="${row.activity_key}">
+                            重設
+                        </button>
+                    </td>
+                </tr>
+            `).join("");
+
+            summaryTextEl.textContent = `共 ${rows.length} 筆資料。`;
+
+            tbodyEl.querySelectorAll(".reset-btn").forEach((btn) => {
+                btn.addEventListener("click", async () => {
+                    const userId = btn.dataset.userId;
+                    const weekCode = btn.dataset.weekCode;
+                    const activityKey = btn.dataset.activityKey;
+                    const confirmed = window.confirm(`確定要重設 ${weekCode} 週 / ${activityKey} 的進度嗎？`);
+                    if (!confirmed) return;
+
+                    btn.disabled = true;
+                    const { error } = await supabase.rpc("admin_reset_progress", {
+                        p_user_id: userId,
+                        p_week_code: weekCode,
+                        p_activity_key: activityKey
+                    });
+
+                    if (error) {
+                        showNotice(`重設失敗：${error.message}`, "error");
+                        btn.disabled = false;
+                        return;
+                    }
+
+                    showNotice("已重設該筆進度。", "success");
+                    await loadProgress();
+                });
+            });
+        }
+
+        async function signInWithGoogle() {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: "google",
+                options: {
+                    redirectTo: `${window.location.origin}${window.location.pathname}`,
+                    queryParams: { prompt: "select_account" }
+                }
+            });
+
+            if (error) {
+                showNotice(`登入啟動失敗：${error.message}`, "error");
+            }
+        }
+
+        async function signOut() {
+            await supabase.auth.signOut();
+            window.location.reload();
+        }
+
+        function updateAuthUI() {
+            if (!currentSession?.user) {
+                authStatusEl.textContent = "未登入";
+                loginBtn.classList.remove("hidden");
+                logoutBtn.classList.add("hidden");
+                tbodyEl.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="px-4 py-12 text-center text-slate-400 font-bold">請先登入教師帳號。</td>
+                    </tr>
+                `;
+                summaryTextEl.textContent = "尚未載入資料。";
+                return;
+            }
+
+            authStatusEl.textContent = currentSession.user.email || "Google 使用者";
+            loginBtn.classList.add("hidden");
+            logoutBtn.classList.remove("hidden");
+        }
+
+        async function loadProgress() {
+            if (!currentSession?.user) return;
+            if (!isTeacher(currentSession)) {
+                tbodyEl.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="px-4 py-12 text-center text-rose-400 font-bold">這個帳號沒有教師後台權限。</td>
+                    </tr>
+                `;
+                summaryTextEl.textContent = "目前登入帳號不具備教師權限。";
+                showNotice("目前登入帳號不在教師白名單內。若要授權其他教師，請同步更新 SQL 與前端白名單。", "error");
+                return;
+            }
+
+            hideNotice();
+            summaryTextEl.textContent = "載入中...";
+            tbodyEl.innerHTML = `
+                <tr>
+                    <td colspan="9" class="px-4 py-12 text-center text-slate-400 font-bold">正在讀取資料...</td>
+                </tr>
+            `;
+
+            const completedFilterValue = completedFilterEl.value === ""
+                ? null
+                : completedFilterEl.value === "true";
+
+            const { data, error } = await supabase.rpc("admin_list_progress", {
+                p_week_code: weekFilterEl.value || null,
+                p_activity_type: activityFilterEl.value || null,
+                p_search: searchFilterEl.value.trim() || null,
+                p_completed: completedFilterValue
+            });
+
+            if (error) {
+                tbodyEl.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="px-4 py-12 text-center text-rose-400 font-bold">資料讀取失敗。</td>
+                    </tr>
+                `;
+                summaryTextEl.textContent = "讀取失敗。";
+                showNotice(`讀取教師後台資料失敗：${error.message}`, "error");
+                return;
+            }
+
+            renderRows(data || []);
+        }
+
+        loginBtn.addEventListener("click", signInWithGoogle);
+        logoutBtn.addEventListener("click", signOut);
+        refreshBtn.addEventListener("click", loadProgress);
+        weekFilterEl.addEventListener("change", loadProgress);
+        activityFilterEl.addEventListener("change", loadProgress);
+        completedFilterEl.addEventListener("change", loadProgress);
+        searchFilterEl.addEventListener("input", () => {
+            window.clearTimeout(searchFilterEl._debounceTimer);
+            searchFilterEl._debounceTimer = window.setTimeout(loadProgress, 300);
+        });
+
+        initWeekOptions();
+
+        const { data: sessionData } = await supabase.auth.getSession();
+        currentSession = sessionData.session;
+        updateAuthUI();
+        await loadProgress();
+
+        supabase.auth.onAuthStateChange(async (_event, session) => {
+            currentSession = session;
+            updateAuthUI();
+            await loadProgress();
+        });
+    </script>
+</body>
+</html>
