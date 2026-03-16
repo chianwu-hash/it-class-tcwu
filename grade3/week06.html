@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三年級資訊課 - 第06週任務闖關日</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f0fdfa;
+        }
+        .keyboard-key {
+            display: inline-block;
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-bottom: 3px solid #94a3b8;
+            border-radius: 0.375rem;
+            padding: 0.1rem 0.5rem;
+            font-family: monospace;
+            font-weight: bold;
+            color: #334155;
+            margin: 0 0.2rem;
+            box-shadow: 0 2px 0 rgba(0,0,0,0.05);
+        }
+        .boss-bg {
+            background-color: #1f2937;
+            background-image: radial-gradient(#374151 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+        .shake { animation: shake 0.4s ease-in-out; }
+        .pinyin-box ruby { ruby-align: center; margin: 0 1px; }
+        .pinyin-box rt {
+            font-size: 0.6em;
+            font-weight: 900;
+            color: #4b5563;
+            letter-spacing: 0;
+            margin-bottom: 2px;
+            font-family: "Microsoft JhengHei", sans-serif;
+        }
+        .boss-bg .pinyin-box rt { color: #9ca3af; }
+        .opt-btn { transition: all 0.15s; }
+        .opt-btn.selected { border-color: #f43f5e; background-color: #fff1f2; color: #be123c; }
+        .opt-btn.correct { border-color: #16a34a !important; background-color: #dcfce7 !important; color: #15803d !important; }
+        .opt-btn.wrong { border-color: #dc2626 !important; background-color: #fee2e2 !important; color: #b91c1c !important; text-decoration: line-through; }
+    </style>
+</head>
+<body class="text-gray-800 antialiased pb-12 relative">
+
+    <script src="navbar.js"></script>
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-xl mb-8 relative overflow-hidden">
+        <div class="max-w-5xl mx-auto px-6 py-10 relative z-10">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-cyan-100 mb-2">三年級資訊課 ｜ 第 06 週</h2>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">我的第一封 Email + 中打闖關</h1>
+                    <p class="text-lg text-cyan-50 font-medium">今天有三個任務：寄信給老師、中打闖關〈許願〉，還有資安測驗！</p>
+                </div>
+                <div class="hidden md:block text-7xl opacity-80 transform rotate-12">
+                    <i class="fa-solid fa-envelope"></i>
+                </div>
+            </div>
+        </div>
+        <i class="fa-solid fa-keyboard absolute text-white opacity-10 text-9xl -bottom-10 right-20"></i>
+    </header>
+
+    <!-- Progress Banner -->
+    <section class="max-w-5xl mx-auto px-6 mb-6">
+        <div id="progress-banner" class="rounded-2xl border border-cyan-200 bg-white/90 shadow-sm px-5 py-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-cyan-100 text-cyan-700 flex items-center justify-center text-lg flex-shrink-0">
+                    <i class="fa-solid fa-seedling"></i>
+                </div>
+                <div>
+                    <div class="text-sm font-black text-cyan-800">闖關進度提示</div>
+                    <div id="progress-status" class="text-sm md:text-base font-bold text-cyan-700">尚未登入時，練習不會保存；登入後會自動記錄進度。</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 點擊放大 Lightbox -->
+    <div id="lightbox" class="fixed inset-0 bg-black/85 z-[200] items-center justify-center p-4 cursor-zoom-out hidden" onclick="closeLightbox()">
+        <div class="relative max-w-5xl w-full">
+            <img id="lightbox-img" src="" alt="圖卡放大" class="w-full max-h-[88vh] object-contain rounded-2xl shadow-2xl">
+            <button onclick="closeLightbox()" class="absolute -top-4 -right-4 bg-white text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-xl font-black text-xl hover:bg-red-500 hover:text-white transition">✕</button>
+        </div>
+    </div>
+
+    <main class="max-w-5xl mx-auto px-6 space-y-8">
+
+        <!-- 任務一：資安測驗 -->
+        <section class="bg-white rounded-3xl shadow-md border-4 border-rose-200 overflow-hidden">
+            <div class="bg-rose-100 px-6 py-4 border-b-4 border-rose-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="bg-rose-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4 font-black">1</div>
+                    <h3 class="text-2xl font-black text-rose-800 tracking-wide">任務一：網路安全闖關測驗</h3>
+                </div>
+                <span class="bg-rose-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">防護力測試</span>
+            </div>
+            <div class="p-8">
+                <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5 mb-6 text-gray-700 font-bold space-y-2">
+                    <p><i class="fa-solid fa-image text-rose-500 mr-2"></i> 先看圖卡複習六大守則，再來挑戰下面的測驗！</p>
+                    <p><i class="fa-solid fa-star text-yellow-500 mr-2"></i> 每答對 1 題得 1 分，全對可以得到 5 分滿分！</p>
+                    <p><i class="fa-solid fa-lock text-rose-400 mr-2"></i> 測驗需要 <strong>登入 Google 帳號</strong> 才能進行，成績會自動記錄。</p>
+                </div>
+
+                <!-- 資安圖卡 -->
+                <div class="mb-8">
+                    <div class="flex items-center mb-3">
+                        <i class="fa-solid fa-shield-halved text-rose-500 mr-2 text-lg"></i>
+                        <span class="font-black text-rose-800 text-lg">網路安全六大守則圖卡</span>
+                        <span class="ml-3 text-xs bg-rose-100 text-rose-600 px-2 py-1 rounded-full font-bold">點擊可放大</span>
+                    </div>
+                    <img
+                        src="https://i.postimg.cc/8Czt97sW/Gemini-Generated-Image-qy86phqy86phqy86.png"
+                        alt="網路安全六大守則圖卡"
+                        onclick="openLightbox(this.src)"
+                        class="w-full rounded-2xl border-2 border-rose-200 shadow-md cursor-zoom-in hover:shadow-xl hover:scale-[1.01] transition duration-200"
+                    >
+                </div>
+
+                <!-- 未登入：鎖定提示 -->
+                <div id="quiz-lock" class="text-center py-12 bg-rose-50 rounded-2xl border-2 border-dashed border-rose-300">
+                    <i class="fa-solid fa-lock text-5xl text-rose-300 mb-4 block"></i>
+                    <h4 class="text-xl font-black text-rose-700 mb-2">請先登入才能開始測驗</h4>
+                    <p class="text-gray-500 font-medium mb-6 text-sm">測驗成績會自動記錄，方便老師追蹤學習狀況</p>
+                    <button id="quiz-login-btn" class="bg-rose-500 hover:bg-rose-600 text-white font-black px-8 py-3 rounded-2xl shadow-md transition transform hover:scale-105">
+                        <i class="fa-brands fa-google mr-2"></i> 登入後開始測驗
+                    </button>
+                </div>
+
+                <!-- 已登入：測驗內容 -->
+                <div id="quiz-content" class="hidden">
+                    <div id="quiz-status-banner" class="hidden rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 mb-6">
+                        <div id="quiz-status-text" class="text-sm font-bold text-rose-700"></div>
+                    </div>
+                    <div id="quiz-container" class="space-y-6 max-w-3xl mx-auto">
+                        <!-- 由 JS 動態產生，題目與選項每次都會重新亂序 -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 任務二：Email -->
+        <section class="bg-white rounded-3xl shadow-md border-4 border-blue-200 overflow-hidden">
+            <div class="bg-blue-100 px-6 py-4 border-b-4 border-blue-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="bg-blue-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4 font-black">2</div>
+                    <h3 class="text-2xl font-black text-blue-800 tracking-wide">任務二：寄第一封 Email 給老師</h3>
+                </div>
+                <span class="bg-blue-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">基礎任務</span>
+            </div>
+            <div class="p-8">
+                <p class="text-lg text-gray-700 font-bold mb-6">有沒有人寄過 Email？跟傳 LINE 訊息有什麼不一樣？今天要寄出你人生第一封正式的電子郵件！</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+                        <h4 class="font-black text-blue-800 text-lg mb-4"><i class="fa-solid fa-envelope-open-text mr-2"></i>信件格式說明</h4>
+                        <div class="space-y-4">
+                            <div class="bg-white rounded-xl p-4 border-2 border-blue-200 shadow-sm">
+                                <div class="text-xs font-bold text-gray-500 mb-1">📬 收件人（收件者）：</div>
+                                <div class="font-mono font-black text-blue-700 text-lg select-text">chianwu@apps.ntpc.edu.tw</div>
+                            </div>
+                            <div class="bg-white rounded-xl p-4 border-2 border-blue-200 shadow-sm">
+                                <div class="text-xs font-bold text-gray-500 mb-1">📌 主旨格式：</div>
+                                <div class="font-black text-blue-700 text-base">班級、座號＋姓名</div>
+                                <div class="text-sm text-gray-500 mt-1">例如：<span class="bg-blue-50 px-2 py-0.5 rounded text-blue-600 font-bold">三年一班、08號 王小明</span></div>
+                            </div>
+                            <div class="bg-white rounded-xl p-4 border-2 border-blue-200 shadow-sm">
+                                <div class="text-xs font-bold text-gray-500 mb-2">✉️ 信件內容：</div>
+                                <div class="bg-gray-50 p-3 rounded-lg font-bold text-gray-700 text-sm leading-relaxed border border-gray-200">
+                                    老師您好：<br><br>
+                                    這是我寫的第一封 Email，<br>
+                                    謝謝老師的指導!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-white p-5 rounded-2xl border-2 border-blue-200 shadow-sm">
+                            <h4 class="font-black text-blue-800 mb-3"><i class="fa-solid fa-list-check mr-2"></i>操作步驟</h4>
+                            <ul class="space-y-2">
+                                <li class="flex items-center text-gray-700 font-bold text-sm bg-blue-50 p-2 rounded-lg">
+                                    <span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs mr-3 flex-shrink-0">1</span>登入 Gmail（或教育雲信箱）
+                                </li>
+                                <li class="flex items-center text-gray-700 font-bold text-sm bg-blue-50 p-2 rounded-lg">
+                                    <span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs mr-3 flex-shrink-0">2</span>點擊【撰寫】開啟新郵件視窗
+                                </li>
+                                <li class="flex items-center text-gray-700 font-bold text-sm bg-blue-50 p-2 rounded-lg">
+                                    <span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs mr-3 flex-shrink-0">3</span>依序輸入收件人、主旨、信件內容
+                                </li>
+                                <li class="flex items-center text-gray-700 font-bold text-sm bg-blue-50 p-2 rounded-lg">
+                                    <span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs mr-3 flex-shrink-0">4</span>按【傳送】寄出
+                                </li>
+                                <li class="flex items-center text-gray-700 font-bold text-sm bg-red-50 p-2 rounded-lg border border-red-100">
+                                    <span class="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs mr-3 flex-shrink-0">5</span>到【寄件備份】確認信件已送出 ✓
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="boss-bg rounded-2xl p-5 text-white border-4 border-pink-500 shadow-xl relative">
+                            <div class="absolute -top-4 -right-4 bg-pink-600 text-white px-4 py-1 rounded-full font-black shadow-lg animate-pulse text-sm">👑 魔王關</div>
+                            <h4 class="text-lg font-black text-pink-300 mb-3 flex items-center">
+                                <i class="fa-solid fa-star text-yellow-400 mr-2"></i> 進階任務：寄信給同學！
+                            </h4>
+                            <ul class="space-y-2 text-sm text-gray-300 font-bold">
+                                <li>📧 寄一封信給同學（使用同學的 Email 地址）</li>
+                                <li>✏️ 主旨與內容自訂，需要有稱謂與署名</li>
+                                <li>✅ 過關條件：同學的信箱有收到</li>
+                            </ul>
+                        </div>
+                        <div class="bg-amber-50 rounded-xl p-4 border border-amber-200">
+                            <h4 class="font-black text-amber-800 text-sm mb-2"><i class="fa-solid fa-triangle-exclamation mr-1"></i> 常見錯誤提醒</h4>
+                            <ul class="space-y-1 text-amber-700 font-bold text-sm">
+                                <li>• 收件人要輸入完整 Email 地址，不能只打姓名</li>
+                                <li>• 主旨不能留空</li>
+                                <li>• 寄出後務必到【寄件備份】確認</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 任務三：中打闖關 -->
+        <section class="bg-white rounded-3xl shadow-md border-4 border-emerald-200 overflow-hidden">
+            <div class="bg-emerald-100 px-6 py-4 border-b-4 border-emerald-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="bg-emerald-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4 font-black">3</div>
+                    <h3 class="text-2xl font-black text-emerald-800 tracking-wide">任務三：中打闖關 ── 〈許願〉</h3>
+                </div>
+            </div>
+            <div class="p-8">
+                <p class="text-lg text-gray-700 font-bold mb-6">今天的闖關內容來自國語三下第一課〈許願〉！從第一關開始，逐關加長挑戰，完成五關就算打敗大魔王！</p>
+                <div class="bg-gray-50 border border-gray-200 p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+                    <div class="flex-1">
+                        <h4 class="font-black text-orange-600 mb-2 text-lg"><i class="fa-solid fa-circle-exclamation mr-1"></i> 打字起手式：</h4>
+                        <ul class="text-gray-700 font-bold space-y-1 text-sm">
+                            <li>👉 沒有二三四聲的字（第一聲），要按長長的 <strong class="text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded">空白鍵 (Space)</strong>！</li>
+                            <li>👉 字下面有虛線時，記得用 <strong class="text-blue-600 bg-blue-100 px-2 py-0.5 rounded">方向鍵</strong> 挑選正確的國字再按 Enter。</li>
+                        </ul>
+                    </div>
+                    <a href="https://it-class-tcwu.netlify.app/c-type" target="_blank" class="w-full md:w-auto text-center bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3 px-6 rounded-xl shadow-lg transform transition hover:scale-105 whitespace-nowrap">
+                        <i class="fa-solid fa-hand-fist mr-2"></i> 先去 c-type 暖身
+                    </a>
+                </div>
+
+                <div id="typing-levels-container" class="flex flex-col space-y-8 max-w-3xl mx-auto">
+
+                    <!-- 第 1 關 -->
+                    <div id="block-level1" class="bg-orange-50 border-4 border-orange-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-orange-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 1 關</div>
+                        <h4 class="text-xl font-black text-orange-800 mb-2 flex items-center">
+                            <i class="fa-solid fa-seedling text-green-500 mr-2"></i> 小樹苗冒出頭
+                        </h4>
+                        <div class="flex justify-between items-center mb-3">
+                            <p class="text-gray-600 font-bold text-sm">請在下方準確打出這句詩文：</p>
+                            <button onclick="togglePinyin(1)" id="btn-pinyin-1" class="text-xs bg-orange-200 text-orange-800 hover:bg-orange-300 px-3 py-1.5 rounded-full font-bold shadow-sm transition">👀 看注音</button>
+                        </div>
+                        <div id="text-normal-1" class="text-2xl font-black text-center text-orange-600 tracking-widest mb-4 bg-white py-3 rounded-xl border-2 border-orange-200 shadow-inner select-none pointer-events-none">
+                            小樹苗發了芽
+                        </div>
+                        <div id="text-pinyin-1" class="hidden pinyin-box text-2xl font-black text-center text-orange-600 tracking-widest mb-4 bg-white py-3 rounded-xl border-2 border-orange-200 shadow-inner select-none pointer-events-none leading-loose">
+                            <ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>樹<rt>ㄕㄨˋ</rt></ruby><ruby>苗<rt>ㄇㄧㄠˊ</rt></ruby><ruby>發<rt>ㄈㄚ</rt></ruby><ruby>了<rt>ㄌㄜ˙</rt></ruby><ruby>芽<rt>ㄧㄚˊ</rt></ruby>
+                        </div>
+                        <input type="text" id="input-level1" onpaste="return false;" ondrop="return false;" class="w-full h-16 p-3 rounded-xl border-2 border-orange-300 focus:outline-none focus:ring-4 focus:ring-orange-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="點這裡開始打字 (禁止貼上)...">
+                        <button onclick="checkLevel(1)" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level1" class="text-center font-bold mt-4 min-h-6 text-lg"></p>
+                    </div>
+
+                    <!-- 第 2 關 -->
+                    <div id="block-level2" class="hidden bg-pink-50 border-4 border-pink-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-pink-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 2 關</div>
+                        <h4 class="text-xl font-black text-pink-800 mb-2 flex items-center">
+                            <i class="fa-solid fa-music text-pink-500 mr-2"></i> 小鳥齊合唱
+                        </h4>
+                        <div class="flex justify-between items-center mb-3">
+                            <p class="text-gray-600 font-bold text-sm">逗號、句號都要打對喔：</p>
+                            <button onclick="togglePinyin(2)" id="btn-pinyin-2" class="text-xs bg-pink-200 text-pink-800 hover:bg-pink-300 px-3 py-1.5 rounded-full font-bold shadow-sm transition">👀 看注音</button>
+                        </div>
+                        <div id="text-normal-2" class="text-xl font-black text-center text-pink-600 tracking-widest mb-4 bg-white py-4 rounded-xl border-2 border-pink-200 shadow-inner select-none pointer-events-none">
+                            在枝頭上合唱，虔誠唱出每一天的希望。
+                        </div>
+                        <div id="text-pinyin-2" class="hidden pinyin-box text-xl font-black text-center text-pink-600 tracking-widest mb-4 bg-white py-4 rounded-xl border-2 border-pink-200 shadow-inner select-none pointer-events-none leading-loose">
+                            <ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>枝<rt>ㄓ</rt></ruby><ruby>頭<rt>ㄊㄡˊ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>合<rt>ㄏㄜˊ</rt></ruby><ruby>唱<rt>ㄔㄤˋ</rt></ruby>，<ruby>虔<rt>ㄑㄧㄢˊ</rt></ruby><ruby>誠<rt>ㄔㄥˊ</rt></ruby><ruby>唱<rt>ㄔㄤˋ</rt></ruby><ruby>出<rt>ㄔㄨ</rt></ruby><ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>希<rt>ㄒㄧ</rt></ruby><ruby>望<rt>ㄨㄤˋ</rt></ruby>。
+                        </div>
+                        <input type="text" id="input-level2" onpaste="return false;" ondrop="return false;" class="w-full h-16 p-3 rounded-xl border-2 border-pink-300 focus:outline-none focus:ring-4 focus:ring-pink-400 font-bold text-gray-800 text-xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="小心逗號與句號 (禁止貼上)...">
+                        <button onclick="checkLevel(2)" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level2" class="text-center font-bold mt-4 min-h-6 text-lg"></p>
+                    </div>
+
+                    <!-- 第 3 關 -->
+                    <div id="block-level3" class="hidden bg-cyan-50 border-4 border-cyan-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-cyan-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 3 關</div>
+                        <h4 class="text-xl font-black text-cyan-800 mb-2 flex items-center">
+                            <i class="fa-solid fa-spa text-pink-400 mr-2"></i> 杜鵑花盛開
+                        </h4>
+                        <div class="flex justify-between items-center mb-3">
+                            <p class="text-gray-600 font-bold text-sm">句子更長了，小心每個標點符號！</p>
+                            <button onclick="togglePinyin(3)" id="btn-pinyin-3" class="text-xs bg-cyan-200 text-cyan-800 hover:bg-cyan-300 px-3 py-1.5 rounded-full font-bold shadow-sm transition">👀 看注音</button>
+                        </div>
+                        <div id="text-normal-3" class="text-xl font-black text-center text-cyan-600 tracking-widest leading-relaxed mb-4 bg-white py-4 rounded-xl border-2 border-cyan-200 shadow-inner select-none pointer-events-none">
+                            杜鵑花滿天邊，開得多麼鮮豔，使大地變得亮麗又耀眼。
+                        </div>
+                        <div id="text-pinyin-3" class="hidden pinyin-box text-xl font-black text-center text-cyan-600 tracking-widest mb-4 bg-white py-4 rounded-xl border-2 border-cyan-200 shadow-inner select-none pointer-events-none leading-loose">
+                            <ruby>杜<rt>ㄉㄨˋ</rt></ruby><ruby>鵑<rt>ㄐㄩㄢ</rt></ruby><ruby>花<rt>ㄏㄨㄚ</rt></ruby><ruby>滿<rt>ㄇㄢˇ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>邊<rt>ㄅㄧㄢ</rt></ruby>，<ruby>開<rt>ㄎㄞ</rt></ruby><ruby>得<rt>ㄉㄜ˙</rt></ruby><ruby>多<rt>ㄉㄨㄛ</rt></ruby><ruby>麼<rt>ㄇㄜ˙</rt></ruby><ruby>鮮<rt>ㄒㄧㄢ</rt></ruby><ruby>豔<rt>ㄧㄢˋ</rt></ruby>，<ruby>使<rt>ㄕˇ</rt></ruby><ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>變<rt>ㄅㄧㄢˋ</rt></ruby><ruby>得<rt>ㄉㄜ˙</rt></ruby><ruby>亮<rt>ㄌㄧㄤˋ</rt></ruby><ruby>麗<rt>ㄌㄧˋ</rt></ruby><ruby>又<rt>ㄧㄡˋ</rt></ruby><ruby>耀<rt>ㄧㄠˋ</rt></ruby><ruby>眼<rt>ㄧㄢˇ</rt></ruby>。
+                        </div>
+                        <input type="text" id="input-level3" onpaste="return false;" ondrop="return false;" class="w-full h-16 p-3 rounded-xl border-2 border-cyan-300 focus:outline-none focus:ring-4 focus:ring-cyan-400 font-bold text-gray-800 text-lg text-center mb-4 transition-colors placeholder:text-base placeholder-gray-400" placeholder="句子更長了，加油！(禁止貼上)...">
+                        <button onclick="checkLevel(3)" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level3" class="text-center font-bold mt-4 min-h-6 text-lg"></p>
+                    </div>
+
+                    <!-- 第 4 關 -->
+                    <div id="block-level4" class="hidden bg-emerald-50 border-4 border-emerald-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-emerald-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 4 關</div>
+                        <h4 class="text-xl font-black text-emerald-800 mb-2 flex items-center">
+                            <i class="fa-solid fa-sun text-yellow-500 mr-2"></i> 陽光照心房
+                        </h4>
+                        <div class="flex justify-between items-center mb-3">
+                            <p class="text-gray-600 font-bold text-sm">最長的一關！課名、作者都要打出來，一個字都不能少！</p>
+                            <button onclick="togglePinyin(4)" id="btn-pinyin-4" class="text-xs bg-emerald-200 text-emerald-800 hover:bg-emerald-300 px-3 py-1.5 rounded-full font-bold shadow-sm transition">👀 看注音</button>
+                        </div>
+                        <div id="text-normal-4" class="text-base font-black text-left text-emerald-600 leading-relaxed mb-4 bg-white p-4 rounded-xl border-2 border-emerald-200 shadow-inner select-none pointer-events-none">
+                            第一課 許願 作者：陳木城溫暖的陽光，照亮我的心房，告訴我世界多麼的美好。我張開夢想的翅膀，願新的一年有更高更遠的飛翔。
+                        </div>
+                        <div id="text-pinyin-4" class="hidden pinyin-box text-sm font-black text-left text-emerald-600 mb-4 bg-white p-4 rounded-xl border-2 border-emerald-200 shadow-inner select-none pointer-events-none leading-loose">
+                            <ruby>第<rt>ㄉㄧˋ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby> <ruby>許<rt>ㄒㄩˇ</rt></ruby><ruby>願<rt>ㄩㄢˋ</rt></ruby> <ruby>作<rt>ㄗㄨㄛˋ</rt></ruby><ruby>者<rt>ㄓㄜˇ</rt></ruby>：<ruby>陳<rt>ㄔㄣˊ</rt></ruby><ruby>木<rt>ㄇㄨˋ</rt></ruby><ruby>城<rt>ㄔㄥˊ</rt></ruby><ruby>溫<rt>ㄨㄣ</rt></ruby><ruby>暖<rt>ㄋㄨㄢˇ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>陽<rt>ㄧㄤˊ</rt></ruby><ruby>光<rt>ㄍㄨㄤ</rt></ruby>，<ruby>照<rt>ㄓㄠˋ</rt></ruby><ruby>亮<rt>ㄌㄧㄤˋ</rt></ruby><ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>心<rt>ㄒㄧㄣ</rt></ruby><ruby>房<rt>ㄈㄤˊ</rt></ruby>，<ruby>告<rt>ㄍㄠˋ</rt></ruby><ruby>訴<rt>ㄙㄨˋ</rt></ruby><ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>世<rt>ㄕˋ</rt></ruby><ruby>界<rt>ㄐㄧㄝˋ</rt></ruby><ruby>多<rt>ㄉㄨㄛ</rt></ruby><ruby>麼<rt>ㄇㄜ˙</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>美<rt>ㄇㄟˇ</rt></ruby><ruby>好<rt>ㄏㄠˇ</rt></ruby>。<ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>張<rt>ㄓㄤ</rt></ruby><ruby>開<rt>ㄎㄞ</rt></ruby><ruby>夢<rt>ㄇㄥˋ</rt></ruby><ruby>想<rt>ㄒㄧㄤˇ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>翅<rt>ㄔˋ</rt></ruby><ruby>膀<rt>ㄅㄤˇ</rt></ruby>，<ruby>願<rt>ㄩㄢˋ</rt></ruby><ruby>新<rt>ㄒㄧㄣ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>年<rt>ㄋㄧㄢˊ</rt></ruby><ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>更<rt>ㄍㄥˋ</rt></ruby><ruby>高<rt>ㄍㄠ</rt></ruby><ruby>更<rt>ㄍㄥˋ</rt></ruby><ruby>遠<rt>ㄩㄢˇ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>飛<rt>ㄈㄟ</rt></ruby><ruby>翔<rt>ㄒㄧㄤˊ</rt></ruby>。
+                        </div>
+                        <textarea rows="3" id="input-level4" onpaste="return false;" ondrop="return false;" class="w-full p-3 rounded-xl border-2 border-emerald-300 focus:outline-none focus:ring-4 focus:ring-emerald-400 font-bold text-gray-800 text-base mb-4 transition-colors placeholder:text-base placeholder-gray-400 resize-none leading-relaxed" placeholder="最長的一關，慢慢來 (禁止貼上)..."></textarea>
+                        <button onclick="checkLevel(4)" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level4" class="text-center font-bold mt-4 min-h-6 text-lg"></p>
+                    </div>
+
+                    <!-- 第 5 關：驚喜大魔王 -->
+                    <div id="block-level5" class="hidden boss-bg border-4 border-purple-500 rounded-2xl p-6 shadow-2xl relative text-white transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -right-4 bg-purple-600 text-white px-4 py-1 rounded-full font-black shadow-lg animate-pulse">👑 驚喜大魔王</div>
+                        <h4 class="text-2xl font-black text-purple-300 mb-4 flex items-center">
+                            <i class="fa-solid fa-wand-magic-sparkles text-3xl mr-2 text-yellow-400"></i> 最終關卡現身！
+                        </h4>
+                        <div class="flex justify-between items-end mb-4 bg-gray-800/80 p-3 rounded-lg">
+                            <p class="text-gray-300 font-bold text-sm leading-relaxed">你已經打了四關了！最後這一關只有你知道內容喔～</p>
+                            <button onclick="togglePinyin(5)" id="btn-pinyin-5" class="text-xs bg-gray-700 text-gray-300 border border-purple-500 hover:bg-gray-600 hover:text-white px-3 py-1.5 rounded-full font-bold shadow-sm transition whitespace-nowrap ml-2">👀 看注音</button>
+                        </div>
+                        <div id="text-normal-5" class="text-xl md:text-2xl font-black text-center text-yellow-400 tracking-widest leading-relaxed mb-6 bg-gray-900 p-5 rounded-xl border-2 border-gray-600 shadow-inner select-none pointer-events-none">
+                            老師我打完五關了！我要許一個願：希望老師給我一百分！謝謝老師！
+                        </div>
+                        <div id="text-pinyin-5" class="hidden pinyin-box text-lg md:text-xl font-black text-center text-yellow-400 tracking-widest mb-6 bg-gray-900 p-5 rounded-xl border-2 border-gray-600 shadow-inner select-none pointer-events-none leading-loose">
+                            <ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>打<rt>ㄉㄚˇ</rt></ruby><ruby>完<rt>ㄨㄢˊ</rt></ruby><ruby>五<rt>ㄨˇ</rt></ruby><ruby>關<rt>ㄍㄨㄢ</rt></ruby><ruby>了<rt>ㄌㄜ˙</rt></ruby>！<ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>要<rt>ㄧㄠˋ</rt></ruby><ruby>許<rt>ㄒㄩˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>個<rt>ㄍㄜ˙</rt></ruby><ruby>願<rt>ㄩㄢˋ</rt></ruby>：<ruby>希<rt>ㄒㄧ</rt></ruby><ruby>望<rt>ㄨㄤˋ</rt></ruby><ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>給<rt>ㄍㄟˇ</rt></ruby><ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>百<rt>ㄅㄞˇ</rt></ruby><ruby>分<rt>ㄈㄣ</rt></ruby>！<ruby>謝<rt>ㄒㄧㄝˋ</rt></ruby><ruby>謝<rt>ㄒㄧㄝ˙</rt></ruby><ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby>！
+                        </div>
+                        <input type="text" id="input-level5" onpaste="return false;" ondrop="return false;" class="w-full h-16 p-4 rounded-xl bg-gray-800 border-2 border-purple-400 focus:outline-none focus:ring-4 focus:ring-purple-500 font-bold text-white text-xl text-center mb-4 transition-colors placeholder:text-base placeholder-gray-500" placeholder="最終關卡！(禁止貼上喔)">
+                        <button onclick="checkLevel(5)" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-black text-xl py-4 rounded-xl shadow-[0_0_15px_rgba(168,85,247,0.5)] transition transform active:scale-95">
+                            <i class="fa-solid fa-fire mr-2"></i> 發動終極攻擊！
+                        </button>
+                        <p id="msg-level5" class="text-center font-bold mt-4 min-h-6 text-lg"></p>
+                    </div>
+
+                </div>
+
+                <div class="bg-purple-100 border-2 border-purple-300 p-5 rounded-2xl mt-12 shadow-sm flex flex-col md:flex-row items-center transform transition hover:-translate-y-1">
+                    <div class="bg-purple-500 text-white p-4 rounded-full mb-3 md:mb-0 md:mr-5 shadow-inner flex-shrink-0">
+                        <i class="fa-solid fa-shield-halved text-3xl animate-pulse"></i>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h4 class="font-black text-purple-900 text-xl mb-1">⚠️ 警告：防禦魔法已啟動！</h4>
+                        <p class="text-purple-800 font-bold text-lg">有發現文字反白不了、也貼不上去嗎？老師已在這個修煉場施放了『防禦魔法』，<span class="bg-white px-2 py-0.5 rounded border border-purple-200 mx-1 shadow-sm text-sm text-purple-600">Ctrl + C</span> 和 <span class="bg-white px-2 py-0.5 rounded border border-purple-200 mx-1 shadow-sm text-sm text-purple-600">Ctrl + V</span> 完全失效，只能靠你親手打出來！</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 老師的溫馨提醒 -->
+        <section class="bg-gradient-to-r from-amber-100 to-orange-100 rounded-2xl shadow-sm border-2 border-orange-200 p-6 flex flex-col md:flex-row items-center transition transform hover:-translate-y-1">
+            <div class="bg-white p-4 rounded-full md:mr-5 mb-4 md:mb-0 shadow-sm flex-shrink-0">
+                <i class="fa-solid fa-lightbulb text-4xl text-orange-500 animate-pulse"></i>
+            </div>
+            <div class="text-center md:text-left">
+                <h4 class="text-xl font-black text-orange-800 mb-2">老師的溫馨小提醒</h4>
+                <p class="text-orange-700 font-bold text-lg leading-relaxed">
+                    今天完成了三個任務：寄信給老師、中打闖關〈許願〉、資安測驗！每一關都是靠細心和耐心慢慢完成的，大家做得很棒！
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center mt-12 pb-8 text-gray-400 font-medium text-sm">
+        <p><i class="fa-solid fa-rocket mr-1"></i> 新北市頂溪國小資訊課 - 小小探險家系列</p>
+    </footer>
+
+    <!-- 左側：標點符號小幫手 -->
+    <div class="fixed bottom-6 left-6 z-50 flex flex-col items-start">
+        <div id="floating-punc-panel" class="hidden mb-4 bg-white p-3 rounded-2xl shadow-2xl border-4 border-rose-400 max-w-[68vw] md:max-w-[450px] transform transition-all origin-bottom-left">
+            <div class="flex justify-between items-center mb-2 px-2 border-b border-gray-100 pb-2">
+                <span class="font-black text-rose-800 text-lg"><i class="fa-solid fa-quote-left mr-2"></i>標點符號小幫手</span>
+                <button onclick="toggleFloatingPunctuation()" class="bg-gray-100 hover:bg-red-500 hover:text-white text-gray-600 rounded-full w-8 h-8 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <img src="https://i.postimg.cc/s26VcVtR/101.png" alt="常用標點符號組合鍵" class="w-full rounded-xl border border-gray-200 shadow-sm">
+        </div>
+        <button onclick="toggleFloatingPunctuation()" class="bg-rose-600 hover:bg-rose-500 text-white px-5 py-3 rounded-full shadow-[0_4px_15px_rgba(244,63,94,0.45)] font-black text-lg flex items-center justify-center transform transition hover:scale-105 border-2 border-white">
+            <i class="fa-solid fa-quote-left mr-2 text-2xl"></i> 看標點符號
+        </button>
+    </div>
+
+    <!-- 右側：浮動鍵盤小幫手 -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div id="floating-kb-panel" class="hidden mb-4 bg-white p-3 rounded-2xl shadow-2xl border-4 border-indigo-400 max-w-[90vw] md:max-w-[600px] transform transition-all origin-bottom-right">
+            <div class="flex justify-between items-center mb-2 px-2 border-b border-gray-100 pb-2">
+                <span class="font-black text-indigo-800 text-lg"><i class="fa-solid fa-keyboard mr-2"></i>找字小幫手</span>
+                <button onclick="toggleFloatingKeyboard()" class="bg-gray-100 hover:bg-red-500 hover:text-white text-gray-600 rounded-full w-8 h-8 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <img src="https://i.postimg.cc/SxFfnLKN/040.png" alt="注音鍵盤圖" class="w-full rounded-xl border border-gray-200 shadow-sm">
+        </div>
+        <button onclick="toggleFloatingKeyboard()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-3 rounded-full shadow-[0_4px_15px_rgba(79,70,229,0.5)] font-black text-lg flex items-center justify-center transform transition hover:scale-105 border-2 border-white">
+            <i class="fa-solid fa-keyboard mr-2 text-2xl"></i> 看鍵盤圖
+        </button>
+    </div>
+
+    <script type="module">
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+        const SUPABASE_URL = "https://upxgyusodibaqcrocdzj.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_VhqRaRCR5m4VRuCqTMXToA_XgeCgl5j";
+        const WEEK_CODE = "06";
+        const TYPING_KEY = "typing_task_4";
+        const QUIZ_KEY = "safety_quiz_1";
+
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+            auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+        });
+
+        // ── Typing Data ──────────────────────────────────────────────────────
+        const levelsData = [
+            { id: 1, ans: "小樹苗發了芽" },
+            { id: 2, ans: "在枝頭上合唱，虔誠唱出每一天的希望。" },
+            { id: 3, ans: "杜鵑花滿天邊，開得多麼鮮豔，使大地變得亮麗又耀眼。" },
+            { id: 4, ans: "第一課 許願 作者：陳木城溫暖的陽光，照亮我的心房，告訴我世界多麼的美好。我張開夢想的翅膀，願新的一年有更高更遠的飛翔。" },
+            { id: 5, ans: "老師我打完五關了！我要許一個願：希望老師給我一百分！謝謝老師！" }
+        ];
+
+        const levelMsg = {
+            1: "第一步穩穩踏出去了，繼續往下一關！",
+            2: "連逗號和句號都打對了，你很細心！",
+            3: "這麼長的一句也打完了，太厲害了！",
+            4: "最長的一關也通過了，四關全部征服！",
+            5: "五關全部打完了！老師有收到你的願望喔！"
+        };
+
+        const maxLevel = levelsData.length;
+        let currentSession = null;
+        let highestUnlockedLevel = 1;
+
+        // ── Quiz Data ────────────────────────────────────────────────────────
+        const quizRawData = [
+            {
+                id: 1,
+                q: "小明在學校電腦收完信，準備離開時，應該要怎麼做？",
+                opts: [
+                    { text: "直接關掉視窗就好", correct: false },
+                    { text: "把電腦關機", correct: false },
+                    { text: "先登出帳號，再離開", correct: true },
+                    { text: "叫同學幫他看", correct: false }
+                ]
+            },
+            {
+                id: 2,
+                q: "網路上有個陌生人說要送你禮物，請你告訴他你家住哪裡。你應該？",
+                opts: [
+                    { text: "只說學校名稱，不說住址", correct: false },
+                    { text: "告訴他，因為有禮物很划算", correct: false },
+                    { text: "不說，個人資料不能給陌生人", correct: true },
+                    { text: "用假地址騙他", correct: false }
+                ]
+            },
+            {
+                id: 3,
+                q: "你在網路上認識了一個新朋友，他邀請你單獨去見面。你應該？",
+                opts: [
+                    { text: "不去，要見面一定要有大人陪", correct: true },
+                    { text: "去，因為他看起來很友善", correct: false },
+                    { text: "先去見面，之後再告訴爸媽", correct: false },
+                    { text: "約在學校門口就好", correct: false }
+                ]
+            },
+            {
+                id: 4,
+                q: "你很想在網路上買一個玩具，這時候應該怎麼做？",
+                opts: [
+                    { text: "用爸媽的信用卡偷偷刷", correct: false },
+                    { text: "請同學幫你買", correct: false },
+                    { text: "先告訴家長，得到同意再購買", correct: true },
+                    { text: "找最便宜的直接下單", correct: false }
+                ]
+            },
+            {
+                id: 5,
+                q: "下列哪一種網站，小朋友<strong class=\"text-red-500\">不應該</strong>瀏覽？",
+                opts: [
+                    { text: "學校的教學網站", correct: false },
+                    { text: "圖書館的電子書平台", correct: false },
+                    { text: "有暴力和色情內容的網站", correct: true },
+                    { text: "均一教育平台", correct: false }
+                ]
+            }
+        ];
+        const selectedBtns = {};
+        let quizSubmitted = false;
+        let quizRendered = false;
+
+        // ── DOM ──────────────────────────────────────────────────────────────
+        const authStatusEl = document.getElementById("auth-status");
+        const progressStatusEl = document.getElementById("progress-status");
+        const adminBtn = document.getElementById("admin-btn");
+        const loginBtn = document.getElementById("login-btn");
+        const resetProgressBtn = document.getElementById("reset-progress-btn");
+        const logoutBtn = document.getElementById("logout-btn");
+        const TEACHER_EMAILS = ["chianwu@gmail.com"];
+        const LOGIN_RETURN_KEY = "post_login_redirect";
+
+        function isTeacher(session) {
+            const email = session?.user?.email?.toLowerCase() || "";
+            return TEACHER_EMAILS.includes(email);
+        }
+
+        // ── Typing Helpers ───────────────────────────────────────────────────
+        function configureTypingInputs() {
+            for (let level = 1; level <= maxLevel; level++) {
+                const el = document.getElementById(`input-level${level}`);
+                if (!el) continue;
+                el.setAttribute("autocomplete", "off");
+                el.setAttribute("autocorrect", "off");
+                el.setAttribute("autocapitalize", "off");
+                el.setAttribute("spellcheck", "false");
+                el.setAttribute("data-form-type", "other");
+            }
+        }
+
+        function normalizeInput(value) {
+            return value.replace(/\r\n/g, "\n").split("\n").map(l => l.trim()).join("\n")
+                .replace(/[奬奨]/g, "獎").replace(/説/g, "說");
+        }
+
+        function unlockLevel(level) {
+            document.getElementById(`block-level${level}`)?.classList.remove("hidden");
+        }
+
+        function markLevelAsCompleted(level) {
+            const inputEl = document.getElementById(`input-level${level}`);
+            const msgEl = document.getElementById(`msg-level${level}`);
+            const btnEl = document.getElementById(`btn-pinyin-${level}`);
+            if (!inputEl) return;
+            inputEl.readOnly = true;
+            if (!inputEl.value) inputEl.value = "這一關完成了";
+            inputEl.classList.remove(
+                "border-orange-300", "border-pink-300", "border-cyan-300",
+                "border-emerald-300", "border-purple-400", "border-red-500", "shake"
+            );
+            inputEl.classList.add("border-green-400", "bg-green-50", "text-green-800");
+            msgEl.textContent = levelMsg[level] || "這一關完成了！";
+            msgEl.className = "text-center font-bold mt-4 min-h-12 text-sm text-emerald-600 leading-relaxed";
+            if (btnEl) btnEl.style.display = "none";
+        }
+
+        function revealTypingProgress(level, completed) {
+            highestUnlockedLevel = Math.max(1, Math.min(level, maxLevel));
+            for (let i = 1; i <= highestUnlockedLevel; i++) unlockLevel(i);
+            for (let i = 1; i < highestUnlockedLevel; i++) markLevelAsCompleted(i);
+            if (completed) {
+                markLevelAsCompleted(maxLevel);
+                resetProgressBtn.classList.remove("hidden");
+                progressStatusEl.textContent = "你已經把中打五關全部完成了！";
+            } else if (highestUnlockedLevel > 1) {
+                resetProgressBtn.classList.add("hidden");
+                progressStatusEl.textContent = `已幫你接回上次的進度，從第 ${highestUnlockedLevel} 關繼續。`;
+                setTimeout(() => {
+                    document.getElementById(`block-level${highestUnlockedLevel}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+                }, 250);
+            } else {
+                resetProgressBtn.classList.add("hidden");
+                progressStatusEl.textContent = "已登入成功，這次的練習過程會自動記錄下來。";
+            }
+        }
+
+        function updateAuthUI(session) {
+            if (session?.user) {
+                authStatusEl.textContent = session.user.email || "Google 使用者";
+                loginBtn.classList.add("hidden");
+                logoutBtn.classList.remove("hidden");
+                adminBtn?.classList.toggle("hidden", !isTeacher(session));
+                document.getElementById("quiz-lock").classList.add("hidden");
+                document.getElementById("quiz-content").classList.remove("hidden");
+                renderQuiz();
+            } else {
+                authStatusEl.textContent = "未登入";
+                progressStatusEl.textContent = "尚未登入時，練習不會保存；登入後會自動記錄進度。";
+                loginBtn.classList.remove("hidden");
+                resetProgressBtn.classList.add("hidden");
+                logoutBtn.classList.add("hidden");
+                adminBtn?.classList.add("hidden");
+                document.getElementById("quiz-lock").classList.remove("hidden");
+                document.getElementById("quiz-content").classList.add("hidden");
+            }
+        }
+
+        async function getActiveUser() {
+            if (currentSession?.user) return currentSession.user;
+            const { data, error } = await supabase.auth.getSession();
+            if (error) { console.error("getSession failed", error); return null; }
+            currentSession = data.session;
+            updateAuthUI(currentSession);
+            return currentSession?.user ?? null;
+        }
+
+        // ── Typing Progress ──────────────────────────────────────────────────
+        async function loadTypingProgress() {
+            if (!currentSession?.user) { highestUnlockedLevel = 1; return; }
+            const { data, error } = await supabase
+                .from("student_progress")
+                .select("current_level, completed")
+                .eq("user_id", currentSession.user.id)
+                .eq("week_code", WEEK_CODE)
+                .eq("activity_key", TYPING_KEY)
+                .maybeSingle();
+            if (error) { progressStatusEl.textContent = "進度暫時讀取不到，先照常練習。"; return; }
+            if (!data) { highestUnlockedLevel = 1; progressStatusEl.textContent = "第一次登入成功，從第 1 關開始！"; return; }
+            revealTypingProgress(data.current_level, data.completed);
+        }
+
+        async function fetchSavedTypingProgress(userId) {
+            const { data, error } = await supabase
+                .from("student_progress")
+                .select("current_level, completed")
+                .eq("user_id", userId).eq("week_code", WEEK_CODE).eq("activity_key", TYPING_KEY)
+                .maybeSingle();
+            if (error) { console.error("fetchSavedTypingProgress failed", error); return null; }
+            return data;
+        }
+
+        async function saveTypingProgress(nextLevel, completed) {
+            const user = await getActiveUser();
+            if (!user) { progressStatusEl.textContent = "目前沒有登入狀態，練習不會保存，請先登入。"; return false; }
+            const payload = {
+                user_id: user.id, week_code: WEEK_CODE, activity_key: TYPING_KEY,
+                current_level: nextLevel, completed, score: null,
+                updated_at: new Date().toISOString()
+            };
+            let lastError = null;
+            for (let attempt = 1; attempt <= 2; attempt++) {
+                const { error } = await supabase.from("student_progress")
+                    .upsert(payload, { onConflict: "user_id,week_code,activity_key" });
+                if (error) { lastError = error; console.error(`saveTypingProgress attempt ${attempt}`, error); continue; }
+                const saved = await fetchSavedTypingProgress(user.id);
+                if (saved?.current_level === nextLevel && saved?.completed === completed) {
+                    highestUnlockedLevel = Math.max(highestUnlockedLevel, nextLevel);
+                    progressStatusEl.textContent = completed
+                        ? "已記下中打五關的完整進度！"
+                        : `已記下進度，下次從第 ${nextLevel} 關繼續。`;
+                    return true;
+                }
+                lastError = new Error("Verification failed");
+            }
+            console.error("saveTypingProgress failed", lastError, payload);
+            progressStatusEl.textContent = "進度暫時沒有記錄成功，請稍後再試。";
+            return false;
+        }
+
+        // ── Quiz Progress ────────────────────────────────────────────────────
+        async function loadQuizProgress() {
+            if (!currentSession?.user) return;
+            const { data, error } = await supabase
+                .from("student_progress")
+                .select("completed, score")
+                .eq("user_id", currentSession.user.id)
+                .eq("week_code", WEEK_CODE)
+                .eq("activity_key", QUIZ_KEY)
+                .maybeSingle();
+            if (error) { console.error("loadQuizProgress failed", error); return; }
+            if (data?.completed) showQuizCompletedState(data.score);
+        }
+
+        function showQuizCompletedState(score) {
+            quizSubmitted = true;
+            const banner = document.getElementById("quiz-status-banner");
+            const text = document.getElementById("quiz-status-text");
+            banner.classList.remove("hidden");
+            text.textContent = `你已經完成這次的資安測驗！上次得分：${score ?? "?"} / 5 分。`;
+            document.querySelectorAll("#quiz-container .opt-btn").forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add("opacity-60", "cursor-not-allowed");
+            });
+            const btn = document.getElementById("quiz-submit-btn");
+            if (btn) {
+                btn.disabled = true;
+                btn.classList.add("opacity-50", "cursor-not-allowed");
+                btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i>已完成測驗';
+            }
+        }
+
+        async function saveQuizProgress(score) {
+            const user = await getActiveUser();
+            if (!user) return false;
+            const payload = {
+                user_id: user.id, week_code: WEEK_CODE, activity_key: QUIZ_KEY,
+                current_level: 5, completed: true, score,
+                updated_at: new Date().toISOString()
+            };
+            const { error } = await supabase.from("student_progress")
+                .upsert(payload, { onConflict: "user_id,week_code,activity_key" });
+            if (error) { console.error("saveQuizProgress failed", error); return false; }
+            return true;
+        }
+
+        // ── Auth ─────────────────────────────────────────────────────────────
+        async function signInWithGoogle() {
+            if (window.location.protocol === "file:") {
+                alert("請改用 http://localhost:3000 或正式站開啟，登入功能不支援直接開檔。");
+                return;
+            }
+            localStorage.setItem(LOGIN_RETURN_KEY, window.location.href);
+            window.location.href = `${window.location.origin}/index.html?login=1`;
+        }
+
+        async function signOutUser() {
+            await supabase.auth.signOut();
+            window.location.reload();
+        }
+
+        async function resetProgress() {
+            const user = await getActiveUser();
+            if (!user) { progressStatusEl.textContent = "目前沒有登入，不能重新開始。"; return; }
+            if (!window.confirm("要重新開始中打闖關嗎？這會把目前的進度重設回第 1 關。")) return;
+            const { error } = await supabase.from("student_progress")
+                .delete()
+                .eq("user_id", user.id).eq("week_code", WEEK_CODE).eq("activity_key", TYPING_KEY);
+            if (error) { console.error("resetProgress failed", error); progressStatusEl.textContent = "重新開始失敗，請稍後再試。"; return; }
+            window.location.reload();
+        }
+
+        // ── Typing Check ─────────────────────────────────────────────────────
+        window.checkLevel = async function(levelIndex) {
+            const inputEl = document.getElementById(`input-level${levelIndex}`);
+            const msgEl = document.getElementById(`msg-level${levelIndex}`);
+
+            if (inputEl.readOnly) {
+                msgEl.textContent = levelMsg[levelIndex] || "這一關完成了！";
+                msgEl.className = "text-center font-black mt-4 min-h-12 text-base md:text-lg text-green-600 leading-relaxed";
+                levelIndex < maxLevel
+                    ? confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } })
+                    : triggerUltimateCelebration();
+                return;
+            }
+
+            const userVal = normalizeInput(inputEl.value);
+            const targetVal = levelsData[levelIndex - 1].ans;
+            const isLoggedIn = !!(await getActiveUser());
+
+            if (userVal === targetVal) {
+                msgEl.textContent = levelMsg[levelIndex] || "這一關完成了！";
+                msgEl.className = "text-center font-black mt-4 min-h-12 text-base md:text-lg text-green-600 leading-relaxed animate-bounce";
+                inputEl.classList.remove(
+                    "shake", "border-red-400", "border-red-500",
+                    "border-orange-300", "border-pink-300", "border-cyan-300",
+                    "border-emerald-300", "border-purple-400"
+                );
+                inputEl.classList.add("border-green-400", "bg-green-50", "text-green-800");
+                inputEl.readOnly = true;
+                const btnEl = document.getElementById(`btn-pinyin-${levelIndex}`);
+                if (btnEl) btnEl.style.display = "none";
+
+                if (levelIndex < maxLevel) {
+                    if (isLoggedIn) {
+                        const didSave = await saveTypingProgress(levelIndex + 1, false);
+                        if (!didSave) {
+                            msgEl.innerHTML = "⚠️ 你已完成這一關，但進度還沒記錄成功，請再按一次或稍後再試。";
+                            msgEl.className = "text-center font-bold mt-4 min-h-6 text-sm text-amber-600";
+                            inputEl.readOnly = false;
+                            inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800");
+                            inputEl.classList.add("border-amber-400", "bg-amber-50", "text-amber-800");
+                            if (btnEl) btnEl.style.display = "";
+                            return;
+                        }
+                    } else {
+                        progressStatusEl.textContent = "目前是未登入模式，練習不會保存。";
+                    }
+                    const nextBlock = document.getElementById(`block-level${levelIndex + 1}`);
+                    nextBlock.classList.remove("hidden");
+                    setTimeout(() => nextBlock.scrollIntoView({ behavior: "smooth", block: "center" }), 1200);
+                    setTimeout(() => confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } }), 500);
+                } else {
+                    if (isLoggedIn) {
+                        const didSave = await saveTypingProgress(maxLevel, true);
+                        if (!didSave) {
+                            msgEl.innerHTML = "⚠️ 你已把最後一關完成了，但完整進度還沒記錄成功，請再按一次。";
+                            msgEl.className = "text-center font-bold mt-4 min-h-6 text-sm text-amber-600";
+                            inputEl.readOnly = false;
+                            inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800");
+                            inputEl.classList.add("border-amber-400", "bg-amber-50", "text-amber-800");
+                            if (btnEl) btnEl.style.display = "";
+                            return;
+                        }
+                    } else {
+                        progressStatusEl.textContent = "目前是未登入模式，完整練習不會保存。";
+                    }
+                    triggerUltimateCelebration();
+                }
+            } else {
+                msgEl.innerHTML = "❌ 哎呀，有錯字或少打標點喔！再仔細檢查一下！";
+                msgEl.className = "text-center font-bold mt-4 min-h-6 text-lg text-red-500";
+                inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800", "shake");
+                void inputEl.offsetWidth;
+                inputEl.classList.add("shake", "border-red-500");
+            }
+        };
+
+        // ── Quiz ─────────────────────────────────────────────────────────────
+        function shuffleArray(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        function renderQuiz() {
+            if (quizRendered) return;
+            quizRendered = true;
+            const container = document.getElementById("quiz-container");
+            const shuffledQuestions = shuffleArray(quizRawData);
+            let html = "";
+            shuffledQuestions.forEach((q, idx) => {
+                const shuffledOpts = shuffleArray(q.opts);
+                const optsHtml = shuffledOpts.map(opt =>
+                    `<button class="opt-btn text-left p-4 rounded-xl border-2 border-gray-200 bg-white font-bold text-gray-700 hover:border-rose-400 hover:bg-rose-50"
+                        data-qid="${q.id}" data-correct="${opt.correct}"
+                        onclick="selectOption(${q.id}, this)">${opt.text}</button>`
+                ).join("");
+                html += `
+                    <div class="bg-gray-50 border-2 border-gray-200 rounded-2xl p-5">
+                        <p class="font-black text-gray-800 text-lg mb-4">
+                            <span class="bg-rose-100 text-rose-600 px-2 py-0.5 rounded mr-2">第 ${idx + 1} 題</span>${q.q}
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="opts-${q.id}">${optsHtml}</div>
+                    </div>`;
+            });
+            html += `
+                <div class="text-center mt-8">
+                    <button id="quiz-submit-btn" onclick="submitQuiz()" class="bg-rose-500 hover:bg-rose-600 text-white font-black text-xl py-4 px-12 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95">
+                        <i class="fa-solid fa-check-circle mr-2"></i> 交出我的答案！
+                    </button>
+                </div>
+                <div id="quiz-result" class="hidden bg-rose-50 border-4 border-rose-300 rounded-2xl p-8 text-center mt-6">
+                    <div id="quiz-result-emoji" class="text-6xl mb-4"></div>
+                    <div id="quiz-result-score" class="text-4xl font-black text-rose-700 mb-3"></div>
+                    <div id="quiz-result-msg" class="text-xl font-bold text-gray-700"></div>
+                </div>`;
+            container.innerHTML = html;
+        }
+
+        window.selectOption = function(qId, btnEl) {
+            if (quizSubmitted) return;
+            selectedBtns[qId] = btnEl;
+            document.getElementById(`opts-${qId}`).querySelectorAll(".opt-btn").forEach(btn => {
+                btn.classList.remove("selected");
+            });
+            btnEl.classList.add("selected");
+        };
+
+        window.submitQuiz = async function() {
+            if (quizSubmitted) return;
+            const totalQ = quizRawData.length;
+            const answered = Object.keys(selectedBtns).length;
+            if (answered < totalQ) {
+                alert(`你還有 ${totalQ - answered} 題沒有作答，請全部都選一個答案再提交！`);
+                return;
+            }
+            quizSubmitted = true;
+            let correct = 0;
+            quizRawData.forEach(q => {
+                const opts = document.getElementById(`opts-${q.id}`);
+                if (!opts) return;
+                opts.querySelectorAll(".opt-btn").forEach(btn => {
+                    btn.classList.remove("selected");
+                    btn.disabled = true;
+                    if (btn.dataset.correct === "true") btn.classList.add("correct");
+                    else if (btn === selectedBtns[q.id]) btn.classList.add("wrong");
+                });
+                if (selectedBtns[q.id]?.dataset.correct === "true") correct++;
+            });
+
+            const resultDiv = document.getElementById("quiz-result");
+            resultDiv.classList.remove("hidden");
+            document.getElementById("quiz-result-score").textContent = `得分：${correct} / ${totalQ} 分`;
+            const msgs = [
+                ["🏆", "太棒了！全部答對！你是網路安全小達人！"],
+                ["😊", "答對了大部分，再複習一下答錯的題目！"],
+                ["🤔", "還可以更好！仔細看看哪幾題答錯了，記住重點！"],
+                ["💪", "再加油！仔細看看哪幾題答錯了，記住重點！"]
+            ];
+            const [emoji, msg] = correct === 5 ? msgs[0] : correct >= 4 ? msgs[1] : correct >= 3 ? msgs[2] : msgs[3];
+            document.getElementById("quiz-result-emoji").textContent = emoji;
+            document.getElementById("quiz-result-msg").textContent = msg;
+
+            const submitBtn = document.getElementById("quiz-submit-btn");
+            submitBtn.disabled = true;
+            submitBtn.classList.add("opacity-50", "cursor-not-allowed");
+
+            if (correct === 5) confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+            setTimeout(() => resultDiv.scrollIntoView({ behavior: "smooth", block: "center" }), 300);
+
+            const isLoggedIn = !!(await getActiveUser());
+            if (isLoggedIn) await saveQuizProgress(correct);
+        };
+
+        // ── Helpers ──────────────────────────────────────────────────────────
+        window.togglePinyin = function(level) {
+            const n = document.getElementById(`text-normal-${level}`);
+            const p = document.getElementById(`text-pinyin-${level}`);
+            const b = document.getElementById(`btn-pinyin-${level}`);
+            if (n.classList.contains("hidden")) {
+                n.classList.remove("hidden"); p.classList.add("hidden"); b.innerHTML = "👀 看注音";
+            } else {
+                n.classList.add("hidden"); p.classList.remove("hidden"); b.innerHTML = "🙈 隱藏注音";
+            }
+        };
+
+        window.toggleFloatingKeyboard = function() {
+            document.getElementById("floating-kb-panel").classList.toggle("hidden");
+        };
+
+        window.toggleFloatingPunctuation = function() {
+            document.getElementById("floating-punc-panel").classList.toggle("hidden");
+        };
+
+        window.openLightbox = function(src) {
+            const lb = document.getElementById("lightbox");
+            document.getElementById("lightbox-img").src = src;
+            lb.classList.remove("hidden");
+            lb.classList.add("flex");
+        };
+
+        window.closeLightbox = function() {
+            const lb = document.getElementById("lightbox");
+            lb.classList.add("hidden");
+            lb.classList.remove("flex");
+        };
+
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape") closeLightbox();
+        });
+
+        function triggerUltimateCelebration() {
+            const overlay = document.createElement("div");
+            overlay.id = "celebration-overlay";
+            overlay.className = "fixed inset-0 bg-black/85 z-50 flex flex-col items-center justify-center transition-opacity duration-1000 opacity-0";
+            const trophy = document.createElement("div");
+            trophy.innerHTML = `
+                <div class="text-[120px] mb-4 animate-bounce drop-shadow-[0_0_30px_rgba(250,204,21,1)]">🏆</div>
+                <h2 class="text-5xl md:text-7xl font-black text-yellow-400 tracking-widest drop-shadow-[0_0_20px_rgba(250,204,21,0.8)] mb-4">許願成功！五關全部打完了！</h2>
+                <p class="text-2xl text-white mt-4 font-bold">老師有收到你的願望了！希望你的願望可以成真～</p>
+                <button onclick="document.getElementById('celebration-overlay').remove()" class="mt-10 bg-yellow-500 hover:bg-yellow-400 text-yellow-900 font-black px-10 py-4 rounded-full text-2xl shadow-[0_0_20px_rgba(250,204,21,0.6)] transition transform hover:scale-110">帶著成果回到練習區</button>
+            `;
+            trophy.className = "text-center transform scale-0 transition-transform duration-1000";
+            overlay.appendChild(trophy);
+            document.body.appendChild(overlay);
+            setTimeout(() => {
+                overlay.classList.remove("opacity-0");
+                trophy.classList.remove("scale-0");
+                trophy.classList.add("scale-100");
+            }, 100);
+            const duration = 8000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+            const rng = (min, max) => Math.random() * (max - min) + min;
+            const interval = setInterval(() => {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) { clearInterval(interval); return; }
+                const particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: rng(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: rng(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        // ── Init ─────────────────────────────────────────────────────────────
+        loginBtn.addEventListener("click", signInWithGoogle);
+        resetProgressBtn.addEventListener("click", resetProgress);
+        logoutBtn.addEventListener("click", signOutUser);
+        document.getElementById("quiz-login-btn").addEventListener("click", signInWithGoogle);
+        configureTypingInputs();
+
+        const { data: sessionData } = await supabase.auth.getSession();
+        currentSession = sessionData.session;
+        updateAuthUI(currentSession);
+        await loadTypingProgress();
+        await loadQuizProgress();
+
+        supabase.auth.onAuthStateChange(async (_event, session) => {
+            currentSession = session;
+            updateAuthUI(currentSession);
+            if (currentSession) {
+                await loadTypingProgress();
+                await loadQuizProgress();
+            }
+        });
+    </script>
+</body>
+</html>

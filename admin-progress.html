@@ -142,6 +142,10 @@
 
         let currentSession = null;
 
+        function getAdminRedirectUrl() {
+            return `${window.location.origin}/admin-progress.html`;
+        }
+
         function initWeekOptions() {
             for (let i = 1; i <= 15; i += 1) {
                 const week = String(i).padStart(2, "0");
@@ -271,10 +275,14 @@
         }
 
         async function signInWithGoogle() {
+            if (window.location.protocol === "file:") {
+                alert("請改用 http://localhost:3000 或正式站開啟，登入功能不支援直接開檔。");
+                return;
+            }
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
-                    redirectTo: `${window.location.origin}${window.location.pathname}`,
+                    redirectTo: getAdminRedirectUrl(),
                     queryParams: { prompt: "select_account" }
                 }
             });

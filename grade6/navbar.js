@@ -1,7 +1,7 @@
 // 獨立出來的動態導覽列元件 (極簡導航版)
 (function() {
     // 🌟 1. 設定目前有開放的週次 (未來新增第6週，只要在這裡加上 , 6 即可)
-    const activeWeeks = [3, 4, 5];
+    const activeWeeks = [3, 4, 5, 6];
 
     // 2. 取得目前的網址與檔名
     const currentPath = window.location.pathname;

@@ -470,9 +470,12 @@
 
         const authStatusEl = document.getElementById("auth-status");
         const progressStatusEl = document.getElementById("progress-status");
+        const adminBtn = document.getElementById("admin-btn");
         const loginBtn = document.getElementById("login-btn");
         const resetProgressBtn = document.getElementById("reset-progress-btn");
         const logoutBtn = document.getElementById("logout-btn");
+        const TEACHER_EMAILS = ["chianwu@gmail.com"];
+        const LOGIN_RETURN_KEY = "post_login_redirect";
 
         function configureTypingInputs() {
             for (let level = 1; level <= maxLevel; level += 1) {
@@ -486,6 +489,11 @@
                 inputEl.setAttribute("spellcheck", "false");
                 inputEl.setAttribute("data-form-type", "other");
             }
+        }
+
+        function isTeacher(session) {
+            const email = session?.user?.email?.toLowerCase() || "";
+            return TEACHER_EMAILS.includes(email);
         }
 
         function normalizeInput(value) {
@@ -556,12 +564,14 @@
                 authStatusEl.textContent = session.user.email || "Google 使用者";
                 loginBtn.classList.add("hidden");
                 logoutBtn.classList.remove("hidden");
+                adminBtn?.classList.toggle("hidden", !isTeacher(session));
             } else {
                 authStatusEl.textContent = "未登入";
                 progressStatusEl.textContent = "尚未登入時，練習不會保存；登入後會自動記錄進度。";
                 loginBtn.classList.remove("hidden");
                 resetProgressBtn.classList.add("hidden");
                 logoutBtn.classList.add("hidden");
+                adminBtn?.classList.add("hidden");
             }
         }
 
@@ -682,19 +692,12 @@
         }
 
         async function signInWithGoogle() {
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: "google",
-                options: {
-                    redirectTo: `${window.location.origin}${window.location.pathname}`,
-                    queryParams: {
-                        prompt: "select_account"
-                    }
-                }
-            });
-
-            if (error) {
-                authStatusEl.textContent = "Google 登入啟動失敗，請稍後再試。";
+            if (window.location.protocol === "file:") {
+                alert("請改用 http://localhost:3000 或正式站開啟，登入功能不支援直接開檔。");
+                return;
             }
+            localStorage.setItem(LOGIN_RETURN_KEY, window.location.href);
+            window.location.href = `${window.location.origin}/index.html?login=1`;
         }
 
         async function signOutUser() {

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六年級資訊課 - 畢業影片專題 (第6週)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+        }
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 9999px;
+            color: white;
+            font-weight: bold;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+        .keyboard-key {
+            display: inline-block;
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-bottom: 3px solid #94a3b8;
+            border-radius: 0.375rem;
+            padding: 0.1rem 0.4rem;
+            font-family: monospace;
+            font-weight: bold;
+            color: #334155;
+            font-size: 0.875rem;
+        }
+        .effect-card {
+            transition: all 0.2s ease;
+        }
+        .effect-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased pb-12">
+
+    <!-- 統一載入的頂部導航列 -->
+    <script src="navbar.js"></script>
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg mb-8">
+        <div class="max-w-5xl mx-auto px-6 py-10 relative overflow-hidden">
+            <div class="relative z-10 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-amber-100 mb-2">頂溪國小 114下資訊課 ｜ 第 06 週</h2>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">文字魔法：排版特效</h1>
+                    <p class="text-lg text-amber-50 font-medium">讓文字幫照片說故事，為你的畢業影片加上最完美的文字！</p>
+                </div>
+                <div class="hidden md:block text-7xl opacity-80 transform rotate-12 drop-shadow-lg">
+                    <i class="fa-solid fa-font"></i>
+                </div>
+            </div>
+            <!-- 背景裝飾 -->
+            <i class="fa-solid fa-spell-check absolute text-white opacity-10 text-9xl -bottom-10 -right-10"></i>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-6 space-y-8">
+
+        <!-- 任務一：文字基本操作 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-amber-100 px-6 py-4 border-b border-amber-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-font text-amber-600 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-bold text-amber-800">任務一：新增文字與基本排版</h3>
+                </div>
+                <span class="bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold">課本 P.23, P.26, P.46, P.47, P.73</span>
+            </div>
+
+            <div class="p-6 grid md:grid-cols-2 gap-8">
+                <!-- 左側：新增文字步驟 -->
+                <div>
+                    <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-plus text-amber-500 mr-2"></i> 第一步：新增文字
+                    </h4>
+                    <p class="text-sm text-gray-600 mb-4">點擊左側工具列的 <strong>「文字」</strong>，你會看到三種選項：</p>
+                    <div class="space-y-3">
+                        <div class="flex items-center bg-amber-50 border border-amber-200 rounded-xl p-3">
+                            <span class="step-number bg-amber-500 text-sm">T</span>
+                            <div>
+                                <span class="font-black text-gray-800">新增標題</span>
+                                <span class="text-gray-500 text-sm ml-2">— 大字，適合放頁面主題</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center bg-amber-50 border border-amber-200 rounded-xl p-3">
+                            <span class="step-number bg-amber-400 text-xs">T</span>
+                            <div>
+                                <span class="font-bold text-gray-800">新增副標題</span>
+                                <span class="text-gray-500 text-sm ml-2">— 中字，適合放名字或日期</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center bg-amber-50 border border-amber-200 rounded-xl p-3">
+                            <span class="step-number bg-amber-300 text-xs">t</span>
+                            <div>
+                                <span class="font-medium text-gray-800">新增內文</span>
+                                <span class="text-gray-500 text-sm ml-2">— 小字，適合放回憶句、感謝語</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 移動提醒 -->
+                    <div class="mt-4 bg-blue-50 border-l-4 border-blue-400 p-3 rounded-r-xl">
+                        <h5 class="text-blue-800 font-bold flex items-center"><i class="fa-solid fa-hand-pointer mr-2"></i> 拖曳移動文字位置</h5>
+                        <p class="text-blue-700 text-sm mt-1">按住文字方塊，把它拖曳到照片旁邊的空白處。<strong>千萬不要蓋住人物的臉！</strong></p>
+                    </div>
+                </div>
+
+                <!-- 右側：排版調整 -->
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 space-y-5">
+                    <h4 class="text-xl font-bold text-gray-800 flex items-center">
+                        <i class="fa-solid fa-sliders text-indigo-500 mr-2"></i> 第二步：調整文字樣式
+                    </h4>
+                    <p class="text-sm text-gray-500">點選文字方塊後，上方工具列會出現各種調整選項：</p>
+
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200">
+                            <div class="flex items-center font-bold text-gray-800">
+                                <i class="fa-solid fa-text-height text-indigo-400 mr-2 w-5 text-center"></i> 字型
+                            </div>
+                            <span class="text-gray-500 text-xs">下拉選單選擇字體<br><span class="text-indigo-500 font-bold">課本 P.26, P.46</span></span>
+                        </div>
+                        <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200">
+                            <div class="flex items-center font-bold text-gray-800">
+                                <i class="fa-solid fa-text-size text-indigo-400 mr-2 w-5 text-center"></i> 字級（大小）
+                            </div>
+                            <span class="text-gray-500 text-xs">直接輸入數字，建議<br>標題 40～60、內文 20～30<br><span class="text-indigo-500 font-bold">課本 P.47, P.108</span></span>
+                        </div>
+                        <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200">
+                            <div class="flex items-center font-bold text-gray-800">
+                                <span class="text-indigo-400 mr-2 font-mono w-5 text-center">A</span> 字色
+                            </div>
+                            <span class="text-gray-500 text-xs">點擊有彩虹底線的「A」<br><span class="text-indigo-500 font-bold">課本 P.26</span></span>
+                        </div>
+                        <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200">
+                            <div class="flex items-center font-bold text-gray-800">
+                                <span class="text-indigo-400 mr-2 font-bold font-mono w-5 text-center">B</span> 粗體
+                            </div>
+                            <span class="text-gray-500 text-xs">點擊「B」圖示，讓標題更醒目<br><span class="text-indigo-500 font-bold">課本 P.46</span></span>
+                        </div>
+                        <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200">
+                            <div class="flex items-center font-bold text-gray-800">
+                                <i class="fa-solid fa-align-center text-indigo-400 mr-2 w-5 text-center"></i> 對齊方式
+                            </div>
+                            <span class="text-gray-500 text-xs">靠左 / 置中 / 靠右<br><span class="text-amber-600 font-bold">* 老師示範，課本未涵蓋</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 重要原則提醒 -->
+            <div class="mx-6 mb-6 bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-4">
+                <i class="fa-solid fa-circle-check text-green-500 text-3xl flex-shrink-0"></i>
+                <div>
+                    <h5 class="font-black text-green-800">老師的排版黃金法則</h5>
+                    <p class="text-green-700 text-sm mt-1">字要<strong>清楚可讀</strong>、位置要<strong>合理不擋臉</strong>、文字要跟照片的<strong>故事有關係</strong>。少字精準，勝過字多雜亂！</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 任務二：文字特效 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-rose-100 px-6 py-4 border-b border-rose-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-wand-sparkles text-rose-600 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-bold text-rose-800">任務二：文字特效施法</h3>
+                </div>
+                <span class="bg-rose-600 text-white text-xs px-3 py-1 rounded-full font-bold">課本 P.69, P.119</span>
+            </div>
+
+            <div class="p-6">
+                <!-- 開啟特效步驟 -->
+                <div class="bg-rose-50 border border-rose-200 rounded-xl p-4 mb-6 flex items-center gap-4">
+                    <i class="fa-solid fa-route text-rose-400 text-2xl flex-shrink-0"></i>
+                    <p class="text-gray-800 font-medium text-sm">
+                        點選文字方塊 ➜ 點擊上方工具列的 <strong class="text-rose-700">【效果】</strong> ➜ 左側面板會出現各種特效選項！
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <!-- 外框特效 -->
+                    <div class="effect-card bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-5">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-indigo-500 text-white p-2 rounded-lg mr-3">
+                                <i class="fa-solid fa-square-dashed text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-black text-indigo-800">外框</h4>
+                                <span class="text-xs text-indigo-500 font-bold">課本 P.69, P.119</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-3">幫文字加上一圈外框線，讓字在任何背景顏色上都清楚可見。<br>適合用在<strong>照片上面的標題</strong>。</p>
+                        <div class="bg-white rounded-lg p-3 border border-indigo-100 text-sm space-y-1 text-gray-600">
+                            <p><span class="text-indigo-600 font-bold">外框顏色：</span>選白色或黑色最安全</p>
+                            <p><span class="text-indigo-600 font-bold">外框粗細：</span>數值 2～4 即可，太粗會很醜</p>
+                        </div>
+                    </div>
+
+                    <!-- 霓虹燈特效 -->
+                    <div class="effect-card bg-purple-50 border-2 border-purple-200 rounded-2xl p-5">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-purple-500 text-white p-2 rounded-lg mr-3">
+                                <i class="fa-solid fa-star-of-life text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-black text-purple-800">霓虹燈</h4>
+                                <span class="text-xs text-amber-600 font-bold">* 老師示範，課本未涵蓋完整步驟</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-3">讓文字發出神秘的光芒，科幻感十足！<br>適合用在<strong>深色背景</strong>或想要<strong>特別突出</strong>的頁面。</p>
+                        <div class="bg-white rounded-lg p-3 border border-purple-100 text-sm text-gray-600">
+                            <p>在「效果」面板中點選 <strong class="text-purple-700">「霓虹燈」</strong>，可以調整光芒顏色與強度。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 錯誤示範警告 -->
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl">
+                    <h5 class="text-red-800 font-black flex items-center mb-2">
+                        <i class="fa-solid fa-triangle-exclamation mr-2"></i> 特效地雷！這樣做會讓版面很可怕
+                    </h5>
+                    <div class="grid md:grid-cols-3 gap-3 text-sm">
+                        <div class="bg-white p-3 rounded-lg border border-red-100 text-red-700">
+                            <i class="fa-solid fa-xmark mr-1"></i> <strong>每個字都加特效</strong>——版面會像霓虹燈招牌，眼花撩亂
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-red-100 text-red-700">
+                            <i class="fa-solid fa-xmark mr-1"></i> <strong>外框粗細拉到最大</strong>——字會被框線淹沒，完全看不清楚
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-red-100 text-red-700">
+                            <i class="fa-solid fa-xmark mr-1"></i> <strong>同時疊加很多種特效</strong>——記得一次只套用一種！
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 進階挑戰：文字層次感大師 -->
+        <section class="bg-gradient-to-br from-slate-800 to-gray-900 rounded-2xl shadow-xl border-4 border-yellow-400 overflow-hidden text-white relative">
+            <div class="absolute top-0 right-0 bg-yellow-400 text-yellow-900 font-black px-5 py-1.5 rounded-bl-2xl shadow-md transform rotate-2">
+                👑 提早做完的進階挑戰！
+            </div>
+
+            <div class="p-8">
+                <h3 class="text-3xl font-black text-yellow-300 mb-2 flex items-center drop-shadow-md">
+                    <i class="fa-solid fa-layer-group mr-3 text-yellow-300"></i> 文字層次感大師
+                </h3>
+                <p class="text-gray-300 font-medium mb-8">讓同一頁的標題和內文形成<strong class="text-white">「大小層次」</strong>，讓讀者的眼睛知道先看哪裡、再看哪裡。</p>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- 挑戰任務 -->
+                    <div class="space-y-4">
+                        <h4 class="text-xl font-bold text-yellow-200 mb-2">三個進階挑戰：</h4>
+                        <div class="bg-white/10 p-4 rounded-xl border border-white/20 backdrop-blur-sm">
+                            <span class="text-yellow-300 font-black mr-2">挑戰 1．</span> 讓標題文字<strong>明顯比內文大兩倍以上</strong>，讓人一眼就看出主角是誰。
+                        </div>
+                        <div class="bg-white/10 p-4 rounded-xl border border-white/20 backdrop-blur-sm">
+                            <span class="text-yellow-300 font-black mr-2">挑戰 2．</span> 根據照片的<strong>情緒</strong>選擇特效：溫馨的用外框、炫酷的用霓虹燈。
+                        </div>
+                        <div class="bg-white/10 p-4 rounded-xl border border-white/20 backdrop-blur-sm">
+                            <span class="text-yellow-300 font-black mr-2">挑戰 3．</span> 完成 <strong>2 頁以上</strong>的文字設計，且每頁畫面仍保持<strong>整潔不雜亂</strong>。
+                        </div>
+                    </div>
+
+                    <!-- 排版小秘訣 -->
+                    <div class="bg-white/10 p-6 rounded-xl border border-white/20 backdrop-blur-md">
+                        <h4 class="text-xl font-bold text-yellow-300 mb-4"><i class="fa-solid fa-lightbulb mr-2 text-yellow-400"></i> 排版四大法則</h4>
+                        <div class="space-y-3 text-sm text-gray-200">
+                            <div class="flex items-start gap-3">
+                                <span class="text-yellow-400 font-black text-lg leading-none">①</span>
+                                <div><strong class="text-white">對齊</strong> — 文字和照片的邊緣對齊，版面自動整齊</div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="text-yellow-400 font-black text-lg leading-none">②</span>
+                                <div><strong class="text-white">留白</strong> — 文字和圖片之間保留空隙，版面才會呼吸</div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="text-yellow-400 font-black text-lg leading-none">③</span>
+                                <div><strong class="text-white">對比</strong> — 深色背景配淺色字，淺色背景配深色字</div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="text-yellow-400 font-black text-lg leading-none">④</span>
+                                <div><strong class="text-white">一致</strong> — 整份作品最多使用 2 種字型就夠了</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center mt-12 pb-8 text-gray-400 text-sm font-medium">
+        <p><i class="fa-solid fa-graduation-cap mr-1"></i> 新北市頂溪國小資訊課 - 畢業影片專案系列</p>
+    </footer>
+
+</body>
+</html>

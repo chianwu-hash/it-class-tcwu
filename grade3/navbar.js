@@ -1,7 +1,7 @@
 // 三年級獨立動態導覽列元件 (極簡導航版)
 (function() {
     // 🌟 1. 設定目前有開放的週次 (三年級目前為第3、4週)
-    const activeWeeks = [3, 4, 5];
+    const activeWeeks = [3, 4, 5, 6];
 
     // 2. 取得目前的網址與檔名
     const currentPath = window.location.pathname;
@@ -73,6 +73,9 @@
                     <span class="text-gray-300 mx-1 hidden md:inline">|</span>
                     <div id="nav-auth-bar" class="flex flex-wrap items-center gap-2 lg:ml-2">
                         <div id="auth-status" class="max-w-[180px] md:max-w-[220px] px-3 py-1.5 rounded-full bg-cyan-50 text-slate-700 text-sm font-bold border border-cyan-100 truncate" title="登入狀態">未登入</div>
+                        <a id="admin-btn" href="/admin-progress.html" class="hidden px-3 py-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800 font-black transition whitespace-nowrap" title="教師後台" aria-label="教師後台">
+                            <i class="fa-solid fa-user-shield mr-1"></i> 後台
+                        </a>
                         <button id="login-btn" class="w-11 h-11 rounded-full border-2 border-cyan-300 text-cyan-700 hover:bg-cyan-50 font-black transition flex items-center justify-center" title="Google 登入" aria-label="Google 登入">
                             <i class="fa-brands fa-google text-lg"></i>
                         </button>
