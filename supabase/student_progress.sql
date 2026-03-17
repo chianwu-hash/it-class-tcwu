@@ -141,3 +141,77 @@ end;
 $$;
 
 grant execute on function public.admin_reset_progress(uuid, text, text) to authenticated;
+
+create table if not exists public.week_visibility (
+    grade text not null check (grade in ('grade3', 'grade6')),
+    week_code text not null,
+    is_visible boolean not null default true,
+    updated_at timestamptz not null default now(),
+    primary key (grade, week_code)
+);
+
+alter table public.week_visibility enable row level security;
+
+drop policy if exists "public_can_read_week_visibility" on public.week_visibility;
+create policy "public_can_read_week_visibility"
+on public.week_visibility
+for select
+to anon, authenticated
+using (true);
+
+drop policy if exists "teachers_manage_week_visibility" on public.week_visibility;
+create policy "teachers_manage_week_visibility"
+on public.week_visibility
+for all
+to authenticated
+using (public.is_teacher())
+with check (public.is_teacher());
+
+create or replace function public.admin_list_week_visibility()
+returns table (
+    grade text,
+    week_code text,
+    is_visible boolean,
+    updated_at timestamptz
+)
+language sql
+security definer
+set search_path = public, auth
+as $$
+    select
+        wv.grade,
+        wv.week_code,
+        wv.is_visible,
+        wv.updated_at
+    from public.week_visibility wv
+    where public.is_teacher()
+    order by wv.grade asc, wv.week_code asc;
+$$;
+
+grant execute on function public.admin_list_week_visibility() to authenticated;
+
+create or replace function public.admin_set_week_visibility(
+    p_grade text,
+    p_week_code text,
+    p_is_visible boolean
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, auth
+as $$
+begin
+    if not public.is_teacher() then
+        raise exception 'not authorized';
+    end if;
+
+    insert into public.week_visibility (grade, week_code, is_visible, updated_at)
+    values (p_grade, p_week_code, p_is_visible, now())
+    on conflict (grade, week_code)
+    do update set
+        is_visible = excluded.is_visible,
+        updated_at = now();
+end;
+$$;
+
+grant execute on function public.admin_set_week_visibility(text, text, boolean) to authenticated;

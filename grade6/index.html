@@ -150,7 +150,49 @@
             </div>
 
         </div>
-    </main>
+</main>
+
+    <script type="module">
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+        const supabase = createClient(
+            "https://upxgyusodibaqcrocdzj.supabase.co",
+            "sb_publishable_VhqRaRCR5m4VRuCqTMXToA_XgeCgl5j"
+        );
+
+        const weekCards = Array.from(document.querySelectorAll('a[href^="week"]')).filter((card) => {
+            const href = card.getAttribute("href") || "";
+            return /^week\d+\.html$/i.test(href);
+        });
+
+        async function applyWeekVisibility() {
+            const { data, error } = await supabase
+                .from("week_visibility")
+                .select("week_code,is_visible")
+                .eq("grade", "grade6");
+
+            if (error) {
+                console.error("grade6 week visibility load failed", error);
+                return;
+            }
+
+            const hiddenWeeks = new Set(
+                (data || [])
+                    .filter((row) => row.is_visible === false)
+                    .map((row) => String(row.week_code).padStart(2, "0"))
+            );
+
+            weekCards.forEach((card) => {
+                const href = card.getAttribute("href") || "";
+                const match = href.match(/week(\d+)\.html/i);
+                if (!match) return;
+                const weekCode = String(match[1]).padStart(2, "0");
+                card.classList.toggle("hidden", hiddenWeeks.has(weekCode));
+            });
+        }
+
+        applyWeekVisibility();
+    </script>
 
     <!-- Footer -->
     <footer class="text-center mt-16 pb-8 text-gray-400 text-sm font-medium">
