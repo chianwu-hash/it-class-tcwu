@@ -291,13 +291,11 @@
                             <p class="text-gray-600 font-bold text-sm">逗號、句號都要打對喔：</p>
                             <button onclick="togglePinyin(2)" id="btn-pinyin-2" class="text-xs bg-pink-200 text-pink-800 hover:bg-pink-300 px-3 py-1.5 rounded-full font-bold shadow-sm transition">👀 看注音</button>
                         </div>
-                        <div id="text-normal-2" class="text-xl font-black text-center text-pink-600 tracking-widest mb-4 bg-white py-4 rounded-xl border-2 border-pink-200 shadow-inner select-none pointer-events-none">
-                            在枝頭上合唱，虔誠唱出每一天的希望。
-                        </div>
-                        <div id="text-pinyin-2" class="hidden pinyin-box text-xl font-black text-center text-pink-600 tracking-widest mb-4 bg-white py-4 rounded-xl border-2 border-pink-200 shadow-inner select-none pointer-events-none leading-loose">
-                            <ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>枝<rt>ㄓ</rt></ruby><ruby>頭<rt>ㄊㄡˊ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>合<rt>ㄏㄜˊ</rt></ruby><ruby>唱<rt>ㄔㄤˋ</rt></ruby>，<ruby>虔<rt>ㄑㄧㄢˊ</rt></ruby><ruby>誠<rt>ㄔㄥˊ</rt></ruby><ruby>唱<rt>ㄔㄤˋ</rt></ruby><ruby>出<rt>ㄔㄨ</rt></ruby><ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>希<rt>ㄒㄧ</rt></ruby><ruby>望<rt>ㄨㄤˋ</rt></ruby>。
-                        </div>
-                        <input type="text" id="input-level2" onpaste="return false;" ondrop="return false;" class="w-full h-16 p-3 rounded-xl border-2 border-pink-300 focus:outline-none focus:ring-4 focus:ring-pink-400 font-bold text-gray-800 text-xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="小心逗號與句號 (禁止貼上)...">
+                        <div id="text-normal-2" class="text-xl font-black text-center text-pink-600 tracking-widest leading-relaxed whitespace-pre-line mb-4 bg-white py-4 rounded-xl border-2 border-pink-200 shadow-inner select-none pointer-events-none">在枝頭上合唱，
+                            虔誠唱出每一天的希望。</div>
+                        <div id="text-pinyin-2" class="hidden pinyin-box text-xl font-black text-center text-pink-600 tracking-widest mb-4 bg-white py-4 rounded-xl border-2 border-pink-200 shadow-inner select-none pointer-events-none leading-loose whitespace-pre-line"><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>枝<rt>ㄓ</rt></ruby><ruby>頭<rt>ㄊㄡˊ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>合<rt>ㄏㄜˊ</rt></ruby><ruby>唱<rt>ㄔㄤˋ</rt></ruby>，
+                            <ruby>虔<rt>ㄑㄧㄢˊ</rt></ruby><ruby>誠<rt>ㄔㄥˊ</rt></ruby><ruby>唱<rt>ㄔㄤˋ</rt></ruby><ruby>出<rt>ㄔㄨ</rt></ruby><ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>希<rt>ㄒㄧ</rt></ruby><ruby>望<rt>ㄨㄤˋ</rt></ruby>。</div>
+                        <textarea rows="2" id="input-level2" onpaste="return false;" ondrop="return false;" class="w-full p-3 rounded-xl border-2 border-pink-300 focus:outline-none focus:ring-4 focus:ring-pink-400 font-bold text-gray-800 text-xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400 resize-none leading-relaxed" placeholder="小心逗號、句號和換行 (禁止貼上)..."></textarea>
                         <button onclick="checkLevel(2)" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
                             <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
                         </button>
@@ -314,13 +312,11 @@
                             <p class="text-gray-600 font-bold text-sm">句子更長了，小心每個標點符號！</p>
                             <button onclick="togglePinyin(3)" id="btn-pinyin-3" class="text-xs bg-cyan-200 text-cyan-800 hover:bg-cyan-300 px-3 py-1.5 rounded-full font-bold shadow-sm transition">👀 看注音</button>
                         </div>
-                        <div id="text-normal-3" class="text-xl font-black text-center text-cyan-600 tracking-widest leading-relaxed mb-4 bg-white py-4 rounded-xl border-2 border-cyan-200 shadow-inner select-none pointer-events-none">
-                            杜鵑花滿天邊，開得多麼鮮豔，使大地變得亮麗又耀眼。
-                        </div>
-                        <div id="text-pinyin-3" class="hidden pinyin-box text-xl font-black text-center text-cyan-600 tracking-widest mb-4 bg-white py-4 rounded-xl border-2 border-cyan-200 shadow-inner select-none pointer-events-none leading-loose">
-                            <ruby>杜<rt>ㄉㄨˋ</rt></ruby><ruby>鵑<rt>ㄐㄩㄢ</rt></ruby><ruby>花<rt>ㄏㄨㄚ</rt></ruby><ruby>滿<rt>ㄇㄢˇ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>邊<rt>ㄅㄧㄢ</rt></ruby>，<ruby>開<rt>ㄎㄞ</rt></ruby><ruby>得<rt>ㄉㄜ˙</rt></ruby><ruby>多<rt>ㄉㄨㄛ</rt></ruby><ruby>麼<rt>ㄇㄜ˙</rt></ruby><ruby>鮮<rt>ㄒㄧㄢ</rt></ruby><ruby>豔<rt>ㄧㄢˋ</rt></ruby>，<ruby>使<rt>ㄕˇ</rt></ruby><ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>變<rt>ㄅㄧㄢˋ</rt></ruby><ruby>得<rt>ㄉㄜ˙</rt></ruby><ruby>亮<rt>ㄌㄧㄤˋ</rt></ruby><ruby>麗<rt>ㄌㄧˋ</rt></ruby><ruby>又<rt>ㄧㄡˋ</rt></ruby><ruby>耀<rt>ㄧㄠˋ</rt></ruby><ruby>眼<rt>ㄧㄢˇ</rt></ruby>。
-                        </div>
-                        <input type="text" id="input-level3" onpaste="return false;" ondrop="return false;" class="w-full h-16 p-3 rounded-xl border-2 border-cyan-300 focus:outline-none focus:ring-4 focus:ring-cyan-400 font-bold text-gray-800 text-lg text-center mb-4 transition-colors placeholder:text-base placeholder-gray-400" placeholder="句子更長了，加油！(禁止貼上)...">
+                        <div id="text-normal-3" class="text-xl font-black text-center text-cyan-600 tracking-widest leading-relaxed whitespace-pre-line mb-4 bg-white py-4 rounded-xl border-2 border-cyan-200 shadow-inner select-none pointer-events-none">杜鵑花滿天邊，開得多麼鮮豔，
+                            使大地變得亮麗又耀眼。</div>
+                        <div id="text-pinyin-3" class="hidden pinyin-box text-xl font-black text-center text-cyan-600 tracking-widest mb-4 bg-white py-4 rounded-xl border-2 border-cyan-200 shadow-inner select-none pointer-events-none leading-loose whitespace-pre-line"><ruby>杜<rt>ㄉㄨˋ</rt></ruby><ruby>鵑<rt>ㄐㄩㄢ</rt></ruby><ruby>花<rt>ㄏㄨㄚ</rt></ruby><ruby>滿<rt>ㄇㄢˇ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>邊<rt>ㄅㄧㄢ</rt></ruby>，<ruby>開<rt>ㄎㄞ</rt></ruby><ruby>得<rt>ㄉㄜ˙</rt></ruby><ruby>多<rt>ㄉㄨㄛ</rt></ruby><ruby>麼<rt>ㄇㄜ˙</rt></ruby><ruby>鮮<rt>ㄒㄧㄢ</rt></ruby><ruby>豔<rt>ㄧㄢˋ</rt></ruby>，
+                            <ruby>使<rt>ㄕˇ</rt></ruby><ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>變<rt>ㄅㄧㄢˋ</rt></ruby><ruby>得<rt>ㄉㄜ˙</rt></ruby><ruby>亮<rt>ㄌㄧㄤˋ</rt></ruby><ruby>麗<rt>ㄌㄧˋ</rt></ruby><ruby>又<rt>ㄧㄡˋ</rt></ruby><ruby>耀<rt>ㄧㄠˋ</rt></ruby><ruby>眼<rt>ㄧㄢˇ</rt></ruby>。</div>
+                        <textarea rows="2" id="input-level3" onpaste="return false;" ondrop="return false;" class="w-full p-3 rounded-xl border-2 border-cyan-300 focus:outline-none focus:ring-4 focus:ring-cyan-400 font-bold text-gray-800 text-lg text-center mb-4 transition-colors placeholder:text-base placeholder-gray-400 resize-none leading-relaxed" placeholder="句子更長了，記得換行！(禁止貼上)..."></textarea>
                         <button onclick="checkLevel(3)" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
                             <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
                         </button>
@@ -337,12 +333,16 @@
                             <p class="text-gray-600 font-bold text-sm">最長的一關！課名、作者都要打出來，一個字都不能少！</p>
                             <button onclick="togglePinyin(4)" id="btn-pinyin-4" class="text-xs bg-emerald-200 text-emerald-800 hover:bg-emerald-300 px-3 py-1.5 rounded-full font-bold shadow-sm transition">👀 看注音</button>
                         </div>
-                        <div id="text-normal-4" class="text-base font-black text-left text-emerald-600 leading-relaxed mb-4 bg-white p-4 rounded-xl border-2 border-emerald-200 shadow-inner select-none pointer-events-none">
-                            第一課 許願 作者：陳木城溫暖的陽光，照亮我的心房，告訴我世界多麼的美好。我張開夢想的翅膀，願新的一年有更高更遠的飛翔。
-                        </div>
-                        <div id="text-pinyin-4" class="hidden pinyin-box text-sm font-black text-left text-emerald-600 mb-4 bg-white p-4 rounded-xl border-2 border-emerald-200 shadow-inner select-none pointer-events-none leading-loose">
-                            <ruby>第<rt>ㄉㄧˋ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby> <ruby>許<rt>ㄒㄩˇ</rt></ruby><ruby>願<rt>ㄩㄢˋ</rt></ruby> <ruby>作<rt>ㄗㄨㄛˋ</rt></ruby><ruby>者<rt>ㄓㄜˇ</rt></ruby>：<ruby>陳<rt>ㄔㄣˊ</rt></ruby><ruby>木<rt>ㄇㄨˋ</rt></ruby><ruby>城<rt>ㄔㄥˊ</rt></ruby><ruby>溫<rt>ㄨㄣ</rt></ruby><ruby>暖<rt>ㄋㄨㄢˇ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>陽<rt>ㄧㄤˊ</rt></ruby><ruby>光<rt>ㄍㄨㄤ</rt></ruby>，<ruby>照<rt>ㄓㄠˋ</rt></ruby><ruby>亮<rt>ㄌㄧㄤˋ</rt></ruby><ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>心<rt>ㄒㄧㄣ</rt></ruby><ruby>房<rt>ㄈㄤˊ</rt></ruby>，<ruby>告<rt>ㄍㄠˋ</rt></ruby><ruby>訴<rt>ㄙㄨˋ</rt></ruby><ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>世<rt>ㄕˋ</rt></ruby><ruby>界<rt>ㄐㄧㄝˋ</rt></ruby><ruby>多<rt>ㄉㄨㄛ</rt></ruby><ruby>麼<rt>ㄇㄜ˙</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>美<rt>ㄇㄟˇ</rt></ruby><ruby>好<rt>ㄏㄠˇ</rt></ruby>。<ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>張<rt>ㄓㄤ</rt></ruby><ruby>開<rt>ㄎㄞ</rt></ruby><ruby>夢<rt>ㄇㄥˋ</rt></ruby><ruby>想<rt>ㄒㄧㄤˇ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>翅<rt>ㄔˋ</rt></ruby><ruby>膀<rt>ㄅㄤˇ</rt></ruby>，<ruby>願<rt>ㄩㄢˋ</rt></ruby><ruby>新<rt>ㄒㄧㄣ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>年<rt>ㄋㄧㄢˊ</rt></ruby><ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>更<rt>ㄍㄥˋ</rt></ruby><ruby>高<rt>ㄍㄠ</rt></ruby><ruby>更<rt>ㄍㄥˋ</rt></ruby><ruby>遠<rt>ㄩㄢˇ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>飛<rt>ㄈㄟ</rt></ruby><ruby>翔<rt>ㄒㄧㄤˊ</rt></ruby>。
-                        </div>
+                        <div id="text-normal-4" class="text-lg md:text-xl font-black text-left text-emerald-600 leading-relaxed whitespace-pre-line mb-4 bg-white p-4 rounded-xl border-2 border-emerald-200 shadow-inner select-none pointer-events-none">第一課 許願 作者：陳木城
+                            溫暖的陽光，照亮我的心房，
+                            告訴我世界多麼的美好。
+                            我張開夢想的翅膀，
+                            願新的一年有更高更遠的飛翔。</div>
+                        <div id="text-pinyin-4" class="hidden pinyin-box text-sm font-black text-left text-emerald-600 mb-4 bg-white p-4 rounded-xl border-2 border-emerald-200 shadow-inner select-none pointer-events-none leading-loose whitespace-pre-line"><ruby>第<rt>ㄉㄧˋ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby> <ruby>許<rt>ㄒㄩˇ</rt></ruby><ruby>願<rt>ㄩㄢˋ</rt></ruby> <ruby>作<rt>ㄗㄨㄛˋ</rt></ruby><ruby>者<rt>ㄓㄜˇ</rt></ruby>：<ruby>陳<rt>ㄔㄣˊ</rt></ruby><ruby>木<rt>ㄇㄨˋ</rt></ruby><ruby>城<rt>ㄔㄥˊ</rt></ruby>
+                            <ruby>溫<rt>ㄨㄣ</rt></ruby><ruby>暖<rt>ㄋㄨㄢˇ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>陽<rt>ㄧㄤˊ</rt></ruby><ruby>光<rt>ㄍㄨㄤ</rt></ruby>，<ruby>照<rt>ㄓㄠˋ</rt></ruby><ruby>亮<rt>ㄌㄧㄤˋ</rt></ruby><ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>心<rt>ㄒㄧㄣ</rt></ruby><ruby>房<rt>ㄈㄤˊ</rt></ruby>，
+                            <ruby>告<rt>ㄍㄠˋ</rt></ruby><ruby>訴<rt>ㄙㄨˋ</rt></ruby><ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>世<rt>ㄕˋ</rt></ruby><ruby>界<rt>ㄐㄧㄝˋ</rt></ruby><ruby>多<rt>ㄉㄨㄛ</rt></ruby><ruby>麼<rt>ㄇㄜ˙</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>美<rt>ㄇㄟˇ</rt></ruby><ruby>好<rt>ㄏㄠˇ</rt></ruby>。
+                            <ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>張<rt>ㄓㄤ</rt></ruby><ruby>開<rt>ㄎㄞ</rt></ruby><ruby>夢<rt>ㄇㄥˋ</rt></ruby><ruby>想<rt>ㄒㄧㄤˇ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>翅<rt>ㄔˋ</rt></ruby><ruby>膀<rt>ㄅㄤˇ</rt></ruby>，
+                            <ruby>願<rt>ㄩㄢˋ</rt></ruby><ruby>新<rt>ㄒㄧㄣ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>年<rt>ㄋㄧㄢˊ</rt></ruby><ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>更<rt>ㄍㄥˋ</rt></ruby><ruby>高<rt>ㄍㄠ</rt></ruby><ruby>更<rt>ㄍㄥˋ</rt></ruby><ruby>遠<rt>ㄩㄢˇ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>飛<rt>ㄈㄟ</rt></ruby><ruby>翔<rt>ㄒㄧㄤˊ</rt></ruby>。</div>
                         <textarea rows="3" id="input-level4" onpaste="return false;" ondrop="return false;" class="w-full p-3 rounded-xl border-2 border-emerald-300 focus:outline-none focus:ring-4 focus:ring-emerald-400 font-bold text-gray-800 text-base mb-4 transition-colors placeholder:text-base placeholder-gray-400 resize-none leading-relaxed" placeholder="最長的一關，慢慢來 (禁止貼上)..."></textarea>
                         <button onclick="checkLevel(4)" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
                             <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
@@ -360,13 +360,13 @@
                             <p class="text-gray-300 font-bold text-sm leading-relaxed">你已經打了四關了！最後這一關只有你知道內容喔～</p>
                             <button onclick="togglePinyin(5)" id="btn-pinyin-5" class="text-xs bg-gray-700 text-gray-300 border border-purple-500 hover:bg-gray-600 hover:text-white px-3 py-1.5 rounded-full font-bold shadow-sm transition whitespace-nowrap ml-2">👀 看注音</button>
                         </div>
-                        <div id="text-normal-5" class="text-xl md:text-2xl font-black text-center text-yellow-400 tracking-widest leading-relaxed mb-6 bg-gray-900 p-5 rounded-xl border-2 border-gray-600 shadow-inner select-none pointer-events-none">
-                            老師我打完五關了！我要許一個願：希望老師給我一百分！謝謝老師！
-                        </div>
-                        <div id="text-pinyin-5" class="hidden pinyin-box text-lg md:text-xl font-black text-center text-yellow-400 tracking-widest mb-6 bg-gray-900 p-5 rounded-xl border-2 border-gray-600 shadow-inner select-none pointer-events-none leading-loose">
-                            <ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>打<rt>ㄉㄚˇ</rt></ruby><ruby>完<rt>ㄨㄢˊ</rt></ruby><ruby>五<rt>ㄨˇ</rt></ruby><ruby>關<rt>ㄍㄨㄢ</rt></ruby><ruby>了<rt>ㄌㄜ˙</rt></ruby>！<ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>要<rt>ㄧㄠˋ</rt></ruby><ruby>許<rt>ㄒㄩˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>個<rt>ㄍㄜ˙</rt></ruby><ruby>願<rt>ㄩㄢˋ</rt></ruby>：<ruby>希<rt>ㄒㄧ</rt></ruby><ruby>望<rt>ㄨㄤˋ</rt></ruby><ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>給<rt>ㄍㄟˇ</rt></ruby><ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>百<rt>ㄅㄞˇ</rt></ruby><ruby>分<rt>ㄈㄣ</rt></ruby>！<ruby>謝<rt>ㄒㄧㄝˋ</rt></ruby><ruby>謝<rt>ㄒㄧㄝ˙</rt></ruby><ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby>！
-                        </div>
-                        <input type="text" id="input-level5" onpaste="return false;" ondrop="return false;" class="w-full h-16 p-4 rounded-xl bg-gray-800 border-2 border-purple-400 focus:outline-none focus:ring-4 focus:ring-purple-500 font-bold text-white text-xl text-center mb-4 transition-colors placeholder:text-base placeholder-gray-500" placeholder="最終關卡！(禁止貼上喔)">
+                        <div id="text-normal-5" class="text-xl md:text-2xl font-black text-center text-yellow-400 tracking-widest leading-relaxed whitespace-pre-line mb-6 bg-gray-900 p-5 rounded-xl border-2 border-gray-600 shadow-inner select-none pointer-events-none">老師我打完五關了！
+                            我要許一個願：
+                            希望老師給我一百分！謝謝老師！</div>
+                        <div id="text-pinyin-5" class="hidden pinyin-box text-lg md:text-xl font-black text-center text-yellow-400 tracking-widest mb-6 bg-gray-900 p-5 rounded-xl border-2 border-gray-600 shadow-inner select-none pointer-events-none leading-loose whitespace-pre-line"><ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>打<rt>ㄉㄚˇ</rt></ruby><ruby>完<rt>ㄨㄢˊ</rt></ruby><ruby>五<rt>ㄨˇ</rt></ruby><ruby>關<rt>ㄍㄨㄢ</rt></ruby><ruby>了<rt>ㄌㄜ˙</rt></ruby>！
+                            <ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>要<rt>ㄧㄠˋ</rt></ruby><ruby>許<rt>ㄒㄩˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>個<rt>ㄍㄜ˙</rt></ruby><ruby>願<rt>ㄩㄢˋ</rt></ruby>：
+                            <ruby>希<rt>ㄒㄧ</rt></ruby><ruby>望<rt>ㄨㄤˋ</rt></ruby><ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>給<rt>ㄍㄟˇ</rt></ruby><ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>百<rt>ㄅㄞˇ</rt></ruby><ruby>分<rt>ㄈㄣ</rt></ruby>！<ruby>謝<rt>ㄒㄧㄝˋ</rt></ruby><ruby>謝<rt>ㄒㄧㄝ˙</rt></ruby><ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby>！</div>
+                        <textarea rows="3" id="input-level5" onpaste="return false;" ondrop="return false;" class="w-full p-4 rounded-xl bg-gray-800 border-2 border-purple-400 focus:outline-none focus:ring-4 focus:ring-purple-500 font-bold text-white text-xl text-center mb-4 transition-colors placeholder:text-base placeholder-gray-500 resize-none leading-relaxed" placeholder="最終關卡！記得把換行也打出來 (禁止貼上喔)"></textarea>
                         <button onclick="checkLevel(5)" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-black text-xl py-4 rounded-xl shadow-[0_0_15px_rgba(168,85,247,0.5)] transition transform active:scale-95">
                             <i class="fa-solid fa-fire mr-2"></i> 發動終極攻擊！
                         </button>
@@ -454,18 +454,18 @@
         // ── Typing Data ──────────────────────────────────────────────────────
         const levelsData = [
             { id: 1, ans: "小樹苗發了芽" },
-            { id: 2, ans: "在枝頭上合唱，虔誠唱出每一天的希望。" },
-            { id: 3, ans: "杜鵑花滿天邊，開得多麼鮮豔，使大地變得亮麗又耀眼。" },
-            { id: 4, ans: "第一課 許願 作者：陳木城溫暖的陽光，照亮我的心房，告訴我世界多麼的美好。我張開夢想的翅膀，願新的一年有更高更遠的飛翔。" },
-            { id: 5, ans: "老師我打完五關了！我要許一個願：希望老師給我一百分！謝謝老師！" }
+            { id: 2, ans: "在枝頭上合唱，\n虔誠唱出每一天的希望。" },
+            { id: 3, ans: "杜鵑花滿天邊，開得多麼鮮豔，\n使大地變得亮麗又耀眼。" },
+            { id: 4, ans: "第一課 許願 作者：陳木城\n溫暖的陽光，照亮我的心房，\n告訴我世界多麼的美好。\n我張開夢想的翅膀，\n願新的一年有更高更遠的飛翔。" },
+            { id: 5, ans: "老師我打完五關了！\n我要許一個願：\n希望老師給我一百分！謝謝老師！" }
         ];
 
         const levelMsg = {
-            1: "第一步穩穩踏出去了，繼續往下一關！",
-            2: "連逗號和句號都打對了，你很細心！",
-            3: "這麼長的一句也打完了，太厲害了！",
-            4: "最長的一關也通過了，四關全部征服！",
-            5: "五關全部打完了！老師有收到你的願望喔！"
+            1: "你先把第一步穩穩完成了，這表示你願意開始，也願意自己試試看。",
+            2: "這一關開始要顧到換行和標點，你有把注意力放在小地方，這份專心很重要。",
+            3: "你有發現句子變長、換行也變重要，代表你開始注意整體格式了。",
+            4: "這一關更長也更複雜，你願意一邊檢查一邊修正，已經進步很多。",
+            5: "你把最後一關也慢慢完成了，這不是靠快，而是靠耐心檢查和一次一次修正。"
         };
 
         const maxLevel = levelsData.length;
@@ -560,6 +560,50 @@
         function normalizeInput(value) {
             return value.replace(/\r\n/g, "\n").split("\n").map(l => l.trim()).join("\n")
                 .replace(/[奬奨]/g, "獎").replace(/説/g, "說");
+        }
+
+        function buildTypingHint(userVal, targetVal) {
+            const userLines = userVal.split("\n");
+            const targetLines = targetVal.split("\n");
+            const maxLines = Math.max(userLines.length, targetLines.length);
+
+            for (let lineIndex = 0; lineIndex < maxLines; lineIndex += 1) {
+                const userLine = userLines[lineIndex] ?? "";
+                const targetLine = targetLines[lineIndex] ?? "";
+
+                if (userLine === targetLine) continue;
+
+                if (!userLine && targetLine) {
+                    return `提示：第 ${lineIndex + 1} 行還沒完成，看看是不是少了整行內容。`;
+                }
+
+                if (userLine && !targetLine) {
+                    return `提示：第 ${lineIndex + 1} 行多打了內容，檢查一下換行位置。`;
+                }
+
+                const maxChars = Math.max(userLine.length, targetLine.length);
+                for (let charIndex = 0; charIndex < maxChars; charIndex += 1) {
+                    const userChar = userLine[charIndex] ?? "";
+                    const targetChar = targetLine[charIndex] ?? "";
+                    if (userChar === targetChar) continue;
+
+                    if (targetChar === " ") {
+                        return `提示：第 ${lineIndex + 1} 行第 ${charIndex + 1} 個位置附近，多了一個空格。`;
+                    }
+                    if (userChar === " ") {
+                        return `提示：第 ${lineIndex + 1} 行第 ${charIndex + 1} 個位置附近，多打一個空格了。`;
+                    }
+                    if (!userChar) {
+                        return `提示：第 ${lineIndex + 1} 行後半段可能少字，從「${targetLine.slice(Math.max(0, charIndex - 2), charIndex + 3)}」附近再看一次。`;
+                    }
+                    if (!targetChar) {
+                        return `提示：第 ${lineIndex + 1} 行後半段可能多字了，檢查一下句尾。`;
+                    }
+                    return `提示：第 ${lineIndex + 1} 行第 ${charIndex + 1} 個字附近不一樣，從「${targetLine.slice(Math.max(0, charIndex - 2), charIndex + 3)}」附近再看一次。`;
+                }
+            }
+
+            return "提示：再檢查一下換行、標點和空格。";
         }
 
         function unlockLevel(level) {
@@ -826,8 +870,9 @@
                     triggerUltimateCelebration();
                 }
             } else {
-                msgEl.innerHTML = "❌ 哎呀，有錯字或少打標點喔！再仔細檢查一下！";
-                msgEl.className = "text-center font-bold mt-4 min-h-6 text-lg text-red-500";
+                const hint = buildTypingHint(userVal, targetVal);
+                msgEl.innerHTML = `❌ 哎呀，還有一點點地方不一樣。<br>${hint}`;
+                msgEl.className = "text-center font-bold mt-4 min-h-12 text-base text-red-500 leading-relaxed";
                 inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800", "shake");
                 void inputEl.offsetWidth;
                 inputEl.classList.add("shake", "border-red-500");
