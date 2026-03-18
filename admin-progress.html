@@ -161,6 +161,7 @@
 
         let currentSession = null;
         let isSyncing = false;
+        let adminPageWasHidden = false;
 
         function initWeekOptions() {
             for (let i = 1; i <= 15; i += 1) {
@@ -252,7 +253,7 @@
                                 </span>
                                 <button
                                     type="button"
-                                    onclick="window.__adminHandleVisibilityToggle(event)"
+                                    onclick="window.__adminHandleVisibilityToggle(this)"
                                     class="rounded-xl px-3 py-2 font-black text-white transition ${btnClass}"
                                     data-grade="${grade}"
                                     data-week-code="${weekCode}"
@@ -293,7 +294,7 @@
                     <td class="px-4 py-4">
                         <button
                             type="button"
-                            onclick="window.__adminHandleProgressReset(event)"
+                            onclick="window.__adminHandleProgressReset(this)"
                             class="rounded-xl bg-rose-500 px-3 py-2 font-black text-white transition hover:bg-rose-400"
                             data-user-id="${row.user_id}"
                             data-week-code="${row.week_code}"
@@ -417,8 +418,7 @@
             }
         }
 
-        window.__adminHandleVisibilityToggle = async (event) => {
-            const btn = event.currentTarget;
+        window.__adminHandleVisibilityToggle = async (btn) => {
             const session = await resolveSession();
             currentSession = session;
             updateAuthUI();
@@ -452,8 +452,7 @@
             await loadWeekVisibility();
         };
 
-        window.__adminHandleProgressReset = async (event) => {
-            const btn = event.currentTarget;
+        window.__adminHandleProgressReset = async (btn) => {
             const session = await resolveSession();
             currentSession = session;
             updateAuthUI();
@@ -500,10 +499,34 @@
             searchFilterEl._debounceTimer = window.setTimeout(loadProgress, 300);
         });
 
-        window.addEventListener("pageshow", syncSessionAndRender);
-        window.addEventListener("focus", syncSessionAndRender);
+        window.addEventListener("pageshow", (event) => {
+            if (event.persisted) {
+                window.location.reload();
+                return;
+            }
+            syncSessionAndRender();
+        });
         document.addEventListener("visibilitychange", () => {
-            if (!document.hidden) syncSessionAndRender();
+            if (document.hidden) {
+                adminPageWasHidden = true;
+                return;
+            }
+
+            if (adminPageWasHidden) {
+                adminPageWasHidden = false;
+                window.location.reload();
+                return;
+            }
+
+            syncSessionAndRender();
+        });
+        window.addEventListener("focus", () => {
+            if (adminPageWasHidden) {
+                adminPageWasHidden = false;
+                window.location.reload();
+                return;
+            }
+            syncSessionAndRender();
         });
         window.addEventListener("storage", (event) => {
             if (event.key === AUTH_STORAGE_KEY) {
