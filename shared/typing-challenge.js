@@ -6,10 +6,46 @@ import {
     supabase
 } from "./auth.js";
 
-export function initTypingChallenge({ weekCode, activityKey, levelsData, levelEncouragements }) {
+const DEFAULT_PROGRESS_MESSAGES = {
+    completed: "你已經把整套練習走完了，今天可以直接複習，或重新再練一次。",
+    resumed: (level) => `已幫你接回上次的進度，這次從第 ${level} 關繼續練習。`,
+    firstLogin: "已登入成功，這次的練習過程會自動記錄下來。",
+    unauthenticated: "尚未登入時，練習不會保存；登入後會自動記錄進度。",
+    loadError: "進度暫時讀取不到，先照常練習，待會再試一次。",
+    saveNoSession: "目前沒有登入狀態，這次的練習不會保存，請先重新登入。",
+    saveCompleted: "已幫你記下這次完整練習的進度，下次登入也會接著記得。",
+    saveNextLevel: (level) => `已記下你的練習進度，下次可以從第 ${level} 關繼續。`,
+    saveError: "進度暫時沒有記錄成功，先不要關掉頁面，稍後再試一次。",
+    resetNoSession: "目前沒有登入狀態，暫時不能重新開始練習。",
+    resetConfirm: "要重新開始練習嗎？這會把目前的進度重設回第 1 關。",
+    resetError: "重新開始練習暫時失敗，請稍後再試一次。",
+    resetVerificationError: "重新開始練習的驗證沒有成功，請再試一次。",
+    noLoginLevelAdvance: "目前是未登入練習模式，這次的練習過程不會保存。",
+    noLoginCompleted: "目前是未登入練習模式，這次完整練習的過程不會保存。"
+};
+
+const DEFAULT_CELEBRATION_CONTENT = {
+    title: "一步一步完成所有關卡",
+    message: "你真的把所有關卡一步一步完成了，現在回頭看，一定會發現自己比剛開始更進步了。",
+    buttonText: "帶著成果回到練習區"
+};
+
+export function initTypingChallenge({
+    weekCode,
+    activityKey,
+    levelsData,
+    levelEncouragements,
+    buildHint = null,
+    getWrongAnswerHtml = null,
+    progressMessages = {},
+    celebrationContent = {},
+    afterAuthUpdate = null
+}) {
     const maxLevel = levelsData.length;
     let currentSession = null;
     let highestUnlockedLevel = 1;
+    const messages = { ...DEFAULT_PROGRESS_MESSAGES, ...progressMessages };
+    const celebration = { ...DEFAULT_CELEBRATION_CONTENT, ...celebrationContent };
 
     const authStatusEl = document.getElementById("auth-status");
     const progressStatusEl = document.getElementById("progress-status");
@@ -132,12 +168,12 @@ export function initTypingChallenge({ weekCode, activityKey, levelsData, levelEn
             markLevelAsCompleted(maxLevel);
             resetProgressBtn?.classList.remove("hidden");
             if (progressStatusEl) {
-                progressStatusEl.textContent = "你已經把整套練習走完了，今天可以直接複習，或重新再練一次。";
+                progressStatusEl.textContent = messages.completed;
             }
         } else if (highestUnlockedLevel > 1) {
             resetProgressBtn?.classList.add("hidden");
             if (progressStatusEl) {
-                progressStatusEl.textContent = `已幫你接回上次的進度，這次從第 ${highestUnlockedLevel} 關繼續練習。`;
+                progressStatusEl.textContent = messages.resumed(highestUnlockedLevel);
             }
             setTimeout(() => {
                 document.getElementById(`block-level${highestUnlockedLevel}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -145,12 +181,12 @@ export function initTypingChallenge({ weekCode, activityKey, levelsData, levelEn
         } else {
             resetProgressBtn?.classList.add("hidden");
             if (progressStatusEl) {
-                progressStatusEl.textContent = "已登入成功，這次的練習過程會自動記錄下來。";
+                progressStatusEl.textContent = messages.firstLogin;
             }
         }
     }
 
-    function updateAuthUI(session) {
+    async function updateAuthUI(session) {
         if (session?.user) {
             if (authStatusEl) {
                 authStatusEl.textContent = session.user.email || "Google 使用者";
@@ -158,20 +194,23 @@ export function initTypingChallenge({ weekCode, activityKey, levelsData, levelEn
             loginBtn?.classList.add("hidden");
             logoutBtn?.classList.remove("hidden");
             adminBtn?.classList.toggle("hidden", !isTeacher(session));
-            return;
+        } else {
+            if (authStatusEl) {
+                authStatusEl.textContent = "未登入";
+            }
+            if (progressStatusEl) {
+                progressStatusEl.textContent = messages.unauthenticated;
+            }
+            clearProgressDebug();
+            loginBtn?.classList.remove("hidden");
+            resetProgressBtn?.classList.add("hidden");
+            logoutBtn?.classList.add("hidden");
+            adminBtn?.classList.add("hidden");
         }
 
-        if (authStatusEl) {
-            authStatusEl.textContent = "未登入";
+        if (typeof afterAuthUpdate === "function") {
+            await afterAuthUpdate(session);
         }
-        if (progressStatusEl) {
-            progressStatusEl.textContent = "尚未登入時，練習不會保存；登入後會自動記錄進度。";
-        }
-        clearProgressDebug();
-        loginBtn?.classList.remove("hidden");
-        resetProgressBtn?.classList.add("hidden");
-        logoutBtn?.classList.add("hidden");
-        adminBtn?.classList.add("hidden");
     }
 
     async function getActiveUser() {
@@ -187,7 +226,7 @@ export function initTypingChallenge({ weekCode, activityKey, levelsData, levelEn
         }
 
         currentSession = session;
-        updateAuthUI(currentSession);
+        await updateAuthUI(currentSession);
         return currentSession?.user ?? null;
     }
 
@@ -207,7 +246,7 @@ export function initTypingChallenge({ weekCode, activityKey, levelsData, levelEn
 
         if (error) {
             if (progressStatusEl) {
-                progressStatusEl.textContent = "進度暫時讀取不到，先照常練習，待會再試一次。";
+                progressStatusEl.textContent = messages.loadError;
             }
             showProgressDebug("loadProgress", error);
             return;
@@ -217,7 +256,7 @@ export function initTypingChallenge({ weekCode, activityKey, levelsData, levelEn
             highestUnlockedLevel = 1;
             clearProgressDebug();
             if (progressStatusEl) {
-                progressStatusEl.textContent = "第一次登入成功，先從第 1 關開始慢慢練。";
+                progressStatusEl.textContent = messages.firstLogin;
             }
             return;
         }
@@ -247,7 +286,7 @@ export function initTypingChallenge({ weekCode, activityKey, levelsData, levelEn
         const user = await getActiveUser();
         if (!user) {
             if (progressStatusEl) {
-                progressStatusEl.textContent = "目前沒有登入狀態，這次的練習不會保存，請先重新登入。";
+                progressStatusEl.textContent = messages.saveNoSession;
             }
             showProgressDebug("saveProgress", new Error("No active session"), { next_level: nextLevel, completed });
             return false;
@@ -280,8 +319,8 @@ export function initTypingChallenge({ weekCode, activityKey, levelsData, levelEn
                 highestUnlockedLevel = Math.max(highestUnlockedLevel, nextLevel);
                 if (progressStatusEl) {
                     progressStatusEl.textContent = completed
-                        ? "已幫你記下這次完整練習的進度，下次登入也會接著記得。"
-                        : `已記下你的練習進度，下次可以從第 ${nextLevel} 關繼續。`;
+                        ? messages.saveCompleted
+                        : messages.saveNextLevel(nextLevel);
                 }
                 if (completed) {
                     resetProgressBtn?.classList.remove("hidden");
@@ -298,7 +337,7 @@ export function initTypingChallenge({ weekCode, activityKey, levelsData, levelEn
         if (lastError) {
             console.error("saveProgress failed", lastError, payload);
             if (progressStatusEl) {
-                progressStatusEl.textContent = "進度暫時沒有記錄成功，先不要關掉頁面，稍後再試一次。";
+                progressStatusEl.textContent = messages.saveError;
             }
             showProgressDebug("saveProgress", lastError, {
                 next_level: nextLevel,
@@ -323,12 +362,12 @@ export function initTypingChallenge({ weekCode, activityKey, levelsData, levelEn
         const user = await getActiveUser();
         if (!user) {
             if (progressStatusEl) {
-                progressStatusEl.textContent = "目前沒有登入狀態，暫時不能重新開始練習。";
+                progressStatusEl.textContent = messages.resetNoSession;
             }
             return;
         }
 
-        const shouldReset = window.confirm("要重新開始練習嗎？這會把目前的進度重設回第 1 關。");
+        const shouldReset = window.confirm(messages.resetConfirm);
         if (!shouldReset) {
             return;
         }
@@ -343,7 +382,7 @@ export function initTypingChallenge({ weekCode, activityKey, levelsData, levelEn
         if (error) {
             console.error("resetProgress failed", error);
             if (progressStatusEl) {
-                progressStatusEl.textContent = "重新開始練習暫時失敗，請稍後再試一次。";
+                progressStatusEl.textContent = messages.resetError;
             }
             showProgressDebug("resetProgress", error, { user_id: user.id });
             return;
@@ -353,7 +392,7 @@ export function initTypingChallenge({ weekCode, activityKey, levelsData, levelEn
         if (saved) {
             console.error("resetProgress verification failed", saved);
             if (progressStatusEl) {
-                progressStatusEl.textContent = "重新開始練習的驗證沒有成功，請再試一次。";
+                progressStatusEl.textContent = messages.resetVerificationError;
             }
             showProgressDebug("resetProgress verification", new Error("Progress row still exists after delete"), { saved });
             return;
@@ -441,7 +480,7 @@ export function initTypingChallenge({ weekCode, activityKey, levelsData, levelEn
                         return;
                     }
                 } else if (progressStatusEl) {
-                    progressStatusEl.textContent = "目前是未登入練習模式，這次的練習過程不會保存。";
+                    progressStatusEl.textContent = messages.noLoginLevelAdvance;
                 }
 
                 const nextBlock = document.getElementById(`block-level${levelIndex + 1}`);
@@ -469,12 +508,19 @@ export function initTypingChallenge({ weekCode, activityKey, levelsData, levelEn
                     return;
                 }
             } else if (progressStatusEl) {
-                progressStatusEl.textContent = "目前是未登入練習模式，這次完整練習的過程不會保存。";
+                progressStatusEl.textContent = messages.noLoginCompleted;
             }
 
             triggerUltimateCelebration();
         } else {
-            msgEl.innerHTML = "❌ 哎呀，有錯字或少打換行/標點喔！再檢查一下！";
+            const fallbackHint = typeof buildHint === "function"
+                ? buildHint(userVal, targetVal, levelIndex)
+                : null;
+            msgEl.innerHTML = typeof getWrongAnswerHtml === "function"
+                ? getWrongAnswerHtml({ levelIndex, userVal, targetVal, hint: fallbackHint })
+                : (fallbackHint
+                    ? `❌ 哎呀，還有一點點地方不一樣。<br>${fallbackHint}`
+                    : "❌ 哎呀，有錯字或少打換行/標點喔！再檢查一下！");
             msgEl.className = "text-center font-bold mt-4 h-6 text-lg text-red-500";
             inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800");
             inputEl.classList.remove("shake");
@@ -493,9 +539,9 @@ export function initTypingChallenge({ weekCode, activityKey, levelsData, levelEn
         const trophy = document.createElement("div");
         trophy.innerHTML = `
             <div class="text-[120px] mb-4 animate-bounce drop-shadow-[0_0_30px_rgba(250,204,21,1)]">🏆</div>
-            <h2 class="text-5xl md:text-7xl font-black text-yellow-400 tracking-widest drop-shadow-[0_0_20px_rgba(250,204,21,0.8)] mb-4">一步一步完成所有關卡</h2>
-            <p class="text-2xl text-white mt-4 font-bold">你真的把所有關卡一步一步完成了，現在回頭看，一定會發現自己比剛開始更進步了。</p>
-            <button onclick="document.getElementById('celebration-overlay').remove()" class="mt-10 bg-yellow-500 hover:bg-yellow-400 text-yellow-900 font-black px-10 py-4 rounded-full text-2xl shadow-[0_0_20px_rgba(250,204,21,0.6)] transition transform hover:scale-110">帶著成果回到練習區</button>
+            <h2 class="text-5xl md:text-7xl font-black text-yellow-400 tracking-widest drop-shadow-[0_0_20px_rgba(250,204,21,0.8)] mb-4">${celebration.title}</h2>
+            <p class="text-2xl text-white mt-4 font-bold">${celebration.message}</p>
+            <button onclick="document.getElementById('celebration-overlay').remove()" class="mt-10 bg-yellow-500 hover:bg-yellow-400 text-yellow-900 font-black px-10 py-4 rounded-full text-2xl shadow-[0_0_20px_rgba(250,204,21,0.6)] transition transform hover:scale-110">${celebration.buttonText}</button>
         `;
         trophy.className = "text-center transform scale-0 transition-transform duration-1000";
 
@@ -536,12 +582,12 @@ export function initTypingChallenge({ weekCode, activityKey, levelsData, levelEn
     async function initialize() {
         const { session } = await getSession();
         currentSession = session;
-        updateAuthUI(currentSession);
+        await updateAuthUI(currentSession);
         await loadProgress();
 
         supabase.auth.onAuthStateChange(async (_event, session) => {
             currentSession = session;
-            updateAuthUI(currentSession);
+            await updateAuthUI(currentSession);
             if (currentSession) {
                 await loadProgress();
             }
