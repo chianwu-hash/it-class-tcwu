@@ -150,47 +150,9 @@
 </main>
 
     <script type="module">
-        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+        import { applyWeekVisibilityToCards } from "../shared/week-visibility.js";
 
-        const supabase = createClient(
-            "https://upxgyusodibaqcrocdzj.supabase.co",
-            "sb_publishable_VhqRaRCR5m4VRuCqTMXToA_XgeCgl5j"
-        );
-
-        function extractWeekCodeFromHref(href) {
-            const match = (href || "").match(/week(\d+)(?:\.html)?(?:[/?#]|$)/i);
-            return match ? String(match[1]).padStart(2, "0") : null;
-        }
-
-        const weekCards = Array.from(document.querySelectorAll('a[href*="week"]')).filter((card) => {
-            return extractWeekCodeFromHref(card.getAttribute("href")) !== null;
-        });
-
-        async function applyWeekVisibility() {
-            const { data, error } = await supabase
-                .from("week_visibility")
-                .select("week_code,is_visible")
-                .eq("grade", "grade3");
-
-            if (error) {
-                console.error("grade3 week visibility load failed", error);
-                return;
-            }
-
-            const hiddenWeeks = new Set(
-                (data || [])
-                    .filter((row) => row.is_visible === false)
-                    .map((row) => String(row.week_code).padStart(2, "0"))
-            );
-
-            weekCards.forEach((card) => {
-                const weekCode = extractWeekCodeFromHref(card.getAttribute("href"));
-                if (!weekCode) return;
-                card.classList.toggle("hidden", hiddenWeeks.has(weekCode));
-            });
-        }
-
-        applyWeekVisibility();
+        applyWeekVisibilityToCards("grade3");
     </script>
 
     <!-- Footer -->
