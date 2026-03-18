@@ -90,6 +90,7 @@
                 <div>
                     <div class="text-sm font-black text-emerald-800">闖關進度提示</div>
                     <div id="progress-status" class="text-sm md:text-base font-bold text-emerald-700">尚未登入時，練習不會保存；登入後會自動記錄進度。</div>
+                    <div id="progress-debug" class="hidden mt-3 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-xs md:text-sm font-mono text-amber-900 whitespace-pre-wrap break-all"></div>
                 </div>
             </div>
         </div>
@@ -402,7 +403,7 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <img src="https://i.postimg.cc/s26VcVtR/101.png" alt="常用標點符號組合鍵" class="w-full rounded-xl border border-gray-200 shadow-sm">
+            <img src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1773745152/postimages-migration/101_ngog8m.png" alt="常用標點符號組合鍵" class="w-full rounded-xl border border-gray-200 shadow-sm">
         </div>
 
         <button onclick="toggleFloatingPunctuation()" class="bg-rose-600 hover:bg-rose-500 text-white px-5 py-3 rounded-full shadow-[0_4px_15px_rgba(244,63,94,0.45)] font-black text-lg flex items-center justify-center transform transition hover:scale-105 border-2 border-white">
@@ -422,7 +423,7 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <img src="https://i.postimg.cc/SxFfnLKN/040.png" alt="注音鍵盤圖" class="w-full rounded-xl border border-gray-200 shadow-sm">
+            <img src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1773745139/postimages-migration/040_ytvyrx.png" alt="注音鍵盤圖" class="w-full rounded-xl border border-gray-200 shadow-sm">
         </div>
         
         <!-- 懸浮按鈕 -->
@@ -470,6 +471,7 @@
 
         const authStatusEl = document.getElementById("auth-status");
         const progressStatusEl = document.getElementById("progress-status");
+        const progressDebugEl = document.getElementById("progress-debug");
         const adminBtn = document.getElementById("admin-btn");
         const loginBtn = document.getElementById("login-btn");
         const resetProgressBtn = document.getElementById("reset-progress-btn");
@@ -494,6 +496,47 @@
         function isTeacher(session) {
             const email = session?.user?.email?.toLowerCase() || "";
             return TEACHER_EMAILS.includes(email);
+        }
+
+        function clearProgressDebug() {
+            progressDebugEl.textContent = "";
+            progressDebugEl.classList.add("hidden");
+        }
+
+        function formatProgressDebugValue(value) {
+            if (value === null || value === undefined || value === "") return "-";
+            if (typeof value === "object") {
+                try {
+                    return JSON.stringify(value);
+                } catch (_error) {
+                    return String(value);
+                }
+            }
+            return String(value);
+        }
+
+        function showProgressDebug(context, error, extra = {}) {
+            const user = currentSession?.user;
+            const lines = [
+                `[${new Date().toLocaleString("zh-TW", { hour12: false })}] ${context}`,
+                `message: ${formatProgressDebugValue(error?.message ?? error)}`,
+                `code: ${formatProgressDebugValue(error?.code)}`,
+                `status: ${formatProgressDebugValue(error?.status)}`,
+                `details: ${formatProgressDebugValue(error?.details)}`,
+                `hint: ${formatProgressDebugValue(error?.hint)}`,
+                `user: ${formatProgressDebugValue(user?.email ?? user?.id)}`,
+                `online: ${formatProgressDebugValue(navigator.onLine)}`,
+                `week: ${WEEK_CODE}`,
+                `activity: ${ACTIVITY_KEY}`,
+                `href: ${window.location.href}`
+            ];
+
+            Object.entries(extra).forEach(([key, value]) => {
+                lines.push(`${key}: ${formatProgressDebugValue(value)}`);
+            });
+
+            progressDebugEl.textContent = lines.join("\n");
+            progressDebugEl.classList.remove("hidden");
         }
 
         function normalizeInput(value) {
@@ -536,6 +579,7 @@
         }
 
         function revealProgress(level, completed) {
+            clearProgressDebug();
             highestUnlockedLevel = Math.max(1, Math.min(level, maxLevel));
             for (let i = 1; i <= highestUnlockedLevel; i += 1) {
                 unlockLevel(i);
@@ -568,6 +612,7 @@
             } else {
                 authStatusEl.textContent = "未登入";
                 progressStatusEl.textContent = "尚未登入時，練習不會保存；登入後會自動記錄進度。";
+                clearProgressDebug();
                 loginBtn.classList.remove("hidden");
                 resetProgressBtn.classList.add("hidden");
                 logoutBtn.classList.add("hidden");
@@ -583,6 +628,7 @@
             const { data, error } = await supabase.auth.getSession();
             if (error) {
                 console.error("getSession failed", error);
+                showProgressDebug("getActiveUser", error);
                 return null;
             }
 
@@ -607,11 +653,13 @@
 
             if (error) {
                 progressStatusEl.textContent = "進度暫時讀取不到，先照常練習，待會再試一次。";
+                showProgressDebug("loadProgress", error);
                 return;
             }
 
             if (!data) {
                 highestUnlockedLevel = 1;
+                clearProgressDebug();
                 progressStatusEl.textContent = "第一次登入成功，先從第 1 關開始慢慢練。";
                 return;
             }
@@ -630,6 +678,7 @@
 
             if (error) {
                 console.error("fetchSavedProgress failed", error);
+                showProgressDebug("fetchSavedProgress", error, { target_user: userId });
                 return null;
             }
 
@@ -640,6 +689,7 @@
             const user = await getActiveUser();
             if (!user) {
                 progressStatusEl.textContent = "目前沒有登入狀態，這次的練習不會保存，請先重新登入。";
+                showProgressDebug("saveProgress", new Error("No active session"), { next_level: nextLevel, completed });
                 return false;
             }
 
@@ -686,6 +736,12 @@
             if (lastError) {
                 console.error("saveProgress failed", lastError, payload);
                 progressStatusEl.textContent = "進度暫時沒有記錄成功，先不要關掉頁面，稍後再試一次。";
+                showProgressDebug("saveProgress", lastError, {
+                    next_level: nextLevel,
+                    completed,
+                    expected: payload,
+                    highest_unlocked: highestUnlockedLevel
+                });
             }
 
             return false;
@@ -727,6 +783,7 @@
             if (error) {
                 console.error("resetProgress failed", error);
                 progressStatusEl.textContent = "重新開始練習暫時失敗，請稍後再試一次。";
+                showProgressDebug("resetProgress", error, { user_id: user.id });
                 return;
             }
 
@@ -734,9 +791,11 @@
             if (saved) {
                 console.error("resetProgress verification failed", saved);
                 progressStatusEl.textContent = "重新開始練習的驗證沒有成功，請再試一次。";
+                showProgressDebug("resetProgress verification", new Error("Progress row still exists after delete"), { saved });
                 return;
             }
 
+            clearProgressDebug();
             window.location.reload();
         }
 
