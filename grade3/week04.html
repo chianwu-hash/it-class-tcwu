@@ -417,20 +417,15 @@
 
     <!-- 闖關判定與動態解鎖邏輯 -->
     <script type="module">
-        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+                import {
+            beginCentralizedLogin,
+            isTeacher,
+            signOutAndReload,
+            supabase
+        } from "../shared/auth.js";
 
-        const SUPABASE_URL = "https://upxgyusodibaqcrocdzj.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_VhqRaRCR5m4VRuCqTMXToA_XgeCgl5j";
         const WEEK_CODE = "04";
         const ACTIVITY_KEY = "typing_task_2";
-
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-            auth: {
-                persistSession: true,
-                autoRefreshToken: true,
-                detectSessionInUrl: true
-            }
-        });
 
         const levelsData = [
             { id: 1, ans: "網路任意門" },
@@ -459,8 +454,6 @@
         const loginBtn = document.getElementById("login-btn");
         const resetProgressBtn = document.getElementById("reset-progress-btn");
         const logoutBtn = document.getElementById("logout-btn");
-        const TEACHER_EMAILS = ["chianwu@gmail.com"];
-        const LOGIN_RETURN_KEY = "post_login_redirect";
 
         function configureTypingInputs() {
             for (let level = 1; level <= maxLevel; level += 1) {
@@ -474,11 +467,6 @@
                 inputEl.setAttribute("spellcheck", "false");
                 inputEl.setAttribute("data-form-type", "other");
             }
-        }
-
-        function isTeacher(session) {
-            const email = session?.user?.email?.toLowerCase() || "";
-            return TEACHER_EMAILS.includes(email);
         }
 
         function clearProgressDebug() {
@@ -731,17 +719,11 @@
         }
 
         async function signInWithGoogle() {
-            if (window.location.protocol === "file:") {
-                alert("請改用 http://localhost:3000 或正式站開啟，登入功能不支援直接開檔。");
-                return;
-            }
-            localStorage.setItem(LOGIN_RETURN_KEY, window.location.href);
-            window.location.href = `${window.location.origin}/index.html?login=1`;
+            beginCentralizedLogin({ returnTo: window.location.href });
         }
 
         async function signOutUser() {
-            await supabase.auth.signOut();
-            window.location.reload();
+            await signOutAndReload();
         }
 
         async function resetProgress() {
@@ -956,4 +938,6 @@
     </script>
 </body>
 </html>
+
+
 

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>教師後台 | 進度與卡片管理</title>
+    <title>教師後台 | 進度管理</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -22,13 +22,11 @@
                 <h1 class="text-2xl font-black text-slate-900 md:text-3xl">教師後台</h1>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-                <div id="auth-status" class="rounded-full border border-sky-100 bg-sky-50 px-3 py-2 text-sm font-bold text-slate-700">
-                    尚未登入
-                </div>
-                <button id="login-btn" class="rounded-xl border-2 border-sky-300 px-4 py-2 font-black text-sky-700 transition hover:bg-sky-50">
+                <div id="auth-status" class="rounded-full border border-sky-100 bg-sky-50 px-3 py-2 text-sm font-bold text-slate-700">尚未登入</div>
+                <button id="login-btn" type="button" class="rounded-xl border-2 border-sky-300 px-4 py-2 font-black text-sky-700 transition hover:bg-sky-50">
                     <i class="fa-brands fa-google mr-1"></i> Google 登入
                 </button>
-                <button id="logout-btn" class="hidden rounded-xl bg-slate-800 px-4 py-2 font-black text-white transition hover:bg-slate-700">
+                <button id="logout-btn" type="button" class="hidden rounded-xl bg-slate-800 px-4 py-2 font-black text-white transition hover:bg-slate-700">
                     <i class="fa-solid fa-right-from-bracket mr-1"></i> 登出
                 </button>
             </div>
@@ -44,7 +42,7 @@
                     <h2 class="text-xl font-black text-slate-900">進度查詢</h2>
                     <p class="mt-1 text-sm font-bold text-slate-500">可依週次、活動類型、完成狀態與 email 搜尋學生資料。</p>
                 </div>
-                <button id="refresh-btn" class="rounded-xl bg-sky-600 px-4 py-2 font-black text-white transition hover:bg-sky-500">
+                <button id="refresh-btn" type="button" class="rounded-xl bg-sky-600 px-4 py-2 font-black text-white transition hover:bg-sky-500">
                     <i class="fa-solid fa-rotate mr-1"></i> 重新整理
                 </button>
             </div>
@@ -82,11 +80,9 @@
         </section>
 
         <section class="rounded-3xl border border-sky-100 bg-white p-6 shadow-sm">
-            <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                <div>
-                    <h2 class="text-xl font-black text-slate-900">首頁週卡片顯示管理</h2>
-                    <p class="mt-1 text-sm font-bold text-slate-500">控制三年級與六年級首頁要不要顯示某一張週卡片。</p>
-                </div>
+            <div>
+                <h2 class="text-xl font-black text-slate-900">首頁週卡片顯示管理</h2>
+                <p class="mt-1 text-sm font-bold text-slate-500">控制三年級與六年級首頁要不要顯示某一張週卡片。</p>
             </div>
             <div class="mt-5 grid gap-6 lg:grid-cols-2">
                 <div class="rounded-2xl border border-teal-100 bg-teal-50/60 p-5">
@@ -103,7 +99,7 @@
         <section class="overflow-hidden rounded-3xl border border-sky-100 bg-white shadow-sm">
             <div class="border-b border-slate-100 px-6 py-4">
                 <h2 class="text-xl font-black text-slate-900">學生進度總表</h2>
-                <p id="summary-text" class="mt-1 text-sm font-bold text-slate-500">尚未讀取資料</p>
+                <p id="summary-text" class="mt-1 text-sm font-bold text-slate-500">請先登入教師帳號</p>
             </div>
 
             <div class="overflow-x-auto">
@@ -132,18 +128,15 @@
     </main>
 
     <script type="module">
-        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
-        const SUPABASE_URL = "https://upxgyusodibaqcrocdzj.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_VhqRaRCR5m4VRuCqTMXToA_XgeCgl5j";
-        const TEACHER_EMAILS = ["chianwu@gmail.com"];
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-            auth: {
-                persistSession: true,
-                autoRefreshToken: true,
-                detectSessionInUrl: true
-            }
-        });
+        import {
+            AUTH_STORAGE_KEY,
+            getAdminRedirectUrl,
+            isTeacher,
+            resolveSession,
+            signInWithGoogle as sharedSignInWithGoogle,
+            signOutAndReload,
+            supabase
+        } from "./shared/auth.js";
 
         const authStatusEl = document.getElementById("auth-status");
         const loginBtn = document.getElementById("login-btn");
@@ -167,10 +160,7 @@
         };
 
         let currentSession = null;
-
-        function getAdminRedirectUrl() {
-            return `${window.location.origin}/admin-progress.html`;
-        }
+        let isSyncing = false;
 
         function initWeekOptions() {
             for (let i = 1; i <= 15; i += 1) {
@@ -180,11 +170,6 @@
                 option.textContent = `第 ${week} 週`;
                 weekFilterEl.appendChild(option);
             }
-        }
-
-        function isTeacher(session) {
-            const email = session?.user?.email?.toLowerCase() || "";
-            return TEACHER_EMAILS.includes(email);
         }
 
         function showNotice(message, tone = "info") {
@@ -200,6 +185,20 @@
 
         function hideNotice() {
             noticePanelEl.classList.add("hidden");
+        }
+
+        function formatTime(value) {
+            if (!value) return "尚未設定";
+            const date = new Date(value);
+            return Number.isNaN(date.getTime())
+                ? String(value)
+                : date.toLocaleString("zh-TW", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                });
         }
 
         function activityLabel(activityKey) {
@@ -221,29 +220,18 @@
 
         function statusBadge(row) {
             return row.completed
-                ? '<span class="inline-flex rounded-full bg-emerald-100 px-3 py-1 font-black text-emerald-700">已完成</span>'
-                : '<span class="inline-flex rounded-full bg-amber-100 px-3 py-1 font-black text-amber-700">進行中</span>';
+                ? '<span class="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-sm font-black text-emerald-700">已完成</span>'
+                : '<span class="inline-flex rounded-full bg-amber-100 px-3 py-1 text-sm font-black text-amber-700">進行中</span>';
         }
 
-        function formatTime(value) {
-            return new Date(value).toLocaleString("zh-TW", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit"
-            });
-        }
-
-        function renderVisibilityControls(rows = []) {
-            const visibilityMap = new Map(rows.map((row) => [`${row.grade}-${row.week_code}`, row]));
+        function renderVisibilityControls(rows) {
+            const byKey = new Map(rows.map((row) => [`${row.grade}-${row.week_code}`, row]));
 
             Object.entries(visibilityDefaults).forEach(([grade, weeks]) => {
-                const target = visibilityLists[grade];
-                target.innerHTML = weeks.map((weekCode) => {
-                    const row = visibilityMap.get(`${grade}-${weekCode}`);
+                visibilityLists[grade].innerHTML = weeks.map((weekCode) => {
+                    const row = byKey.get(`${grade}-${weekCode}`);
                     const isVisible = row ? row.is_visible : true;
-                    const updatedAt = row?.updated_at ? formatTime(row.updated_at) : "尚未設定";
+                    const updatedAt = row ? formatTime(row.updated_at) : "尚未設定";
                     const stateClass = isVisible
                         ? "bg-emerald-100 text-emerald-700"
                         : "bg-slate-200 text-slate-600";
@@ -263,7 +251,9 @@
                                     ${isVisible ? "顯示中" : "隱藏中"}
                                 </span>
                                 <button
-                                    class="visibility-toggle rounded-xl px-3 py-2 font-black text-white transition ${btnClass}"
+                                    type="button"
+                                    onclick="window.__adminHandleVisibilityToggle(event)"
+                                    class="rounded-xl px-3 py-2 font-black text-white transition ${btnClass}"
                                     data-grade="${grade}"
                                     data-week-code="${weekCode}"
                                     data-next-visible="${(!isVisible).toString()}">
@@ -273,31 +263,6 @@
                         </div>
                     `;
                 }).join("");
-            });
-
-            document.querySelectorAll(".visibility-toggle").forEach((btn) => {
-                btn.addEventListener("click", async () => {
-                    const grade = btn.dataset.grade;
-                    const weekCode = btn.dataset.weekCode;
-                    const nextVisible = btn.dataset.nextVisible === "true";
-                    btn.disabled = true;
-
-                    const { error } = await supabase.rpc("admin_set_week_visibility", {
-                        p_grade: grade,
-                        p_week_code: weekCode,
-                        p_is_visible: nextVisible
-                    });
-
-                    if (error) {
-                        showNotice(`卡片狀態更新失敗：${error.message}`, "error");
-                        btn.disabled = false;
-                        return;
-                    }
-
-                    const gradeLabel = grade === "grade3" ? "三年級" : "六年級";
-                    showNotice(`已更新 ${gradeLabel} 第 ${weekCode} 週卡片狀態。`, "success");
-                    await loadWeekVisibility();
-                });
             });
         }
 
@@ -327,7 +292,9 @@
                     <td class="px-4 py-4 font-bold text-slate-500">${formatTime(row.updated_at)}</td>
                     <td class="px-4 py-4">
                         <button
-                            class="reset-btn rounded-xl bg-rose-500 px-3 py-2 font-black text-white transition hover:bg-rose-400"
+                            type="button"
+                            onclick="window.__adminHandleProgressReset(event)"
+                            class="rounded-xl bg-rose-500 px-3 py-2 font-black text-white transition hover:bg-rose-400"
                             data-user-id="${row.user_id}"
                             data-week-code="${row.week_code}"
                             data-activity-key="${row.activity_key}">
@@ -338,56 +305,20 @@
             `).join("");
 
             summaryTextEl.textContent = `共 ${rows.length} 筆資料`;
-
-            tbodyEl.querySelectorAll(".reset-btn").forEach((btn) => {
-                btn.addEventListener("click", async () => {
-                    const userId = btn.dataset.userId;
-                    const weekCode = btn.dataset.weekCode;
-                    const activityKey = btn.dataset.activityKey;
-                    const confirmed = window.confirm(`要重設第 ${weekCode} 週 / ${activityKey} 的進度嗎？`);
-                    if (!confirmed) return;
-
-                    btn.disabled = true;
-                    const { error } = await supabase.rpc("admin_reset_progress", {
-                        p_user_id: userId,
-                        p_week_code: weekCode,
-                        p_activity_key: activityKey
-                    });
-
-                    if (error) {
-                        showNotice(`重設失敗：${error.message}`, "error");
-                        btn.disabled = false;
-                        return;
-                    }
-
-                    showNotice("已重設該筆進度。", "success");
-                    await loadProgress();
-                });
-            });
         }
 
         async function signInWithGoogle() {
-            if (window.location.protocol === "file:") {
-                alert("請改用 http://localhost:3000 或正式站開啟，登入功能不支援直接開檔。");
-                return;
-            }
-
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: "google",
-                options: {
-                    redirectTo: getAdminRedirectUrl(),
-                    queryParams: { prompt: "select_account" }
-                }
+            const { error } = await sharedSignInWithGoogle({
+                redirectTo: getAdminRedirectUrl()
             });
 
             if (error) {
-                showNotice(`登入啟動失敗：${error.message}`, "error");
+                showNotice(`登入失敗：${error.message}`, "error");
             }
         }
 
         async function signOut() {
-            await supabase.auth.signOut();
-            window.location.reload();
+            await signOutAndReload();
         }
 
         function updateAuthUI() {
@@ -400,7 +331,7 @@
                         <td colspan="9" class="px-4 py-12 text-center font-bold text-slate-400">請先登入教師帳號</td>
                     </tr>
                 `;
-                summaryTextEl.textContent = "尚未讀取資料";
+                summaryTextEl.textContent = "請先登入教師帳號";
                 renderVisibilityControls([]);
                 return;
             }
@@ -416,11 +347,11 @@
             if (!isTeacher(currentSession)) {
                 tbodyEl.innerHTML = `
                     <tr>
-                        <td colspan="9" class="px-4 py-12 text-center font-bold text-rose-400">目前登入帳號不在教師白名單內</td>
+                        <td colspan="9" class="px-4 py-12 text-center font-bold text-rose-400">此帳號不是教師白名單，無法讀取學生資料。</td>
                     </tr>
                 `;
-                summaryTextEl.textContent = "目前沒有教師權限";
-                showNotice("目前登入帳號不在教師白名單內。若要授權其他教師，請同步更新 SQL 與前端白名單。", "error");
+                summaryTextEl.textContent = "此帳號沒有教師權限";
+                showNotice("此帳號不是教師白名單。請確認 Supabase SQL 裡的 is_teacher() 是否已加入你的 email。", "error");
                 renderVisibilityControls([]);
                 return;
             }
@@ -429,7 +360,7 @@
             summaryTextEl.textContent = "讀取資料中...";
             tbodyEl.innerHTML = `
                 <tr>
-                    <td colspan="9" class="px-4 py-12 text-center font-bold text-slate-400">正在讀取資料...</td>
+                    <td colspan="9" class="px-4 py-12 text-center font-bold text-slate-400">讀取資料中...</td>
                 </tr>
             `;
 
@@ -447,11 +378,11 @@
             if (error) {
                 tbodyEl.innerHTML = `
                     <tr>
-                        <td colspan="9" class="px-4 py-12 text-center font-bold text-rose-400">讀取教師後台資料失敗</td>
+                        <td colspan="9" class="px-4 py-12 text-center font-bold text-rose-400">讀取資料失敗</td>
                     </tr>
                 `;
-                summaryTextEl.textContent = "資料讀取失敗";
-                showNotice(`讀取教師後台資料失敗：${error.message}`, "error");
+                summaryTextEl.textContent = "讀取失敗";
+                showNotice(`讀取資料失敗：${error.message}`, "error");
                 return;
             }
 
@@ -459,31 +390,108 @@
         }
 
         async function loadWeekVisibility() {
-            if (!currentSession?.user) {
-                renderVisibilityControls([]);
-                return;
-            }
-
-            if (!isTeacher(currentSession)) {
+            if (!currentSession?.user || !isTeacher(currentSession)) {
                 renderVisibilityControls([]);
                 return;
             }
 
             const { data, error } = await supabase.rpc("admin_list_week_visibility");
             if (error) {
-                showNotice(`卡片狀態讀取失敗：${error.message}`, "error");
+                showNotice(`讀取卡片顯示設定失敗：${error.message}`, "error");
                 return;
             }
 
             renderVisibilityControls(data || []);
         }
 
+        async function syncSessionAndRender() {
+            if (isSyncing) return;
+            isSyncing = true;
+            try {
+                currentSession = await resolveSession();
+                updateAuthUI();
+                await loadProgress();
+                await loadWeekVisibility();
+            } finally {
+                isSyncing = false;
+            }
+        }
+
+        window.__adminHandleVisibilityToggle = async (event) => {
+            const btn = event.currentTarget;
+            const session = await resolveSession();
+            currentSession = session;
+            updateAuthUI();
+
+            if (!session?.user || !isTeacher(session)) {
+                showNotice("教師登入狀態已失效，請重新登入後再試。", "error");
+                return;
+            }
+
+            const grade = btn.dataset.grade;
+            const weekCode = btn.dataset.weekCode;
+            const nextVisible = btn.dataset.nextVisible === "true";
+            btn.disabled = true;
+            btn.textContent = "處理中...";
+
+            const { error } = await supabase.rpc("admin_set_week_visibility", {
+                p_grade: grade,
+                p_week_code: weekCode,
+                p_is_visible: nextVisible
+            });
+
+            if (error) {
+                showNotice(`更新卡片顯示設定失敗：${error.message}`, "error");
+                btn.disabled = false;
+                await loadWeekVisibility();
+                return;
+            }
+
+            const gradeLabel = grade === "grade3" ? "三年級" : "六年級";
+            showNotice(`已更新 ${gradeLabel} 第 ${weekCode} 週卡片狀態。`, "success");
+            await loadWeekVisibility();
+        };
+
+        window.__adminHandleProgressReset = async (event) => {
+            const btn = event.currentTarget;
+            const session = await resolveSession();
+            currentSession = session;
+            updateAuthUI();
+
+            if (!session?.user || !isTeacher(session)) {
+                showNotice("教師登入狀態已失效，請重新登入後再試。", "error");
+                return;
+            }
+
+            const userId = btn.dataset.userId;
+            const weekCode = btn.dataset.weekCode;
+            const activityKey = btn.dataset.activityKey;
+            const confirmed = window.confirm(`確定要重設 ${weekCode} 週 / ${activityKey} 的進度嗎？`);
+            if (!confirmed) return;
+
+            btn.disabled = true;
+            btn.textContent = "處理中...";
+
+            const { error } = await supabase.rpc("admin_reset_progress", {
+                p_user_id: userId,
+                p_week_code: weekCode,
+                p_activity_key: activityKey
+            });
+
+            if (error) {
+                showNotice(`重設進度失敗：${error.message}`, "error");
+                btn.disabled = false;
+                await loadProgress();
+                return;
+            }
+
+            showNotice("已重設該筆學生進度。", "success");
+            await loadProgress();
+        };
+
         loginBtn.addEventListener("click", signInWithGoogle);
         logoutBtn.addEventListener("click", signOut);
-        refreshBtn.addEventListener("click", async () => {
-            await loadProgress();
-            await loadWeekVisibility();
-        });
+        refreshBtn.addEventListener("click", syncSessionAndRender);
         weekFilterEl.addEventListener("change", loadProgress);
         activityFilterEl.addEventListener("change", loadProgress);
         completedFilterEl.addEventListener("change", loadProgress);
@@ -492,13 +500,19 @@
             searchFilterEl._debounceTimer = window.setTimeout(loadProgress, 300);
         });
 
-        initWeekOptions();
+        window.addEventListener("pageshow", syncSessionAndRender);
+        window.addEventListener("focus", syncSessionAndRender);
+        document.addEventListener("visibilitychange", () => {
+            if (!document.hidden) syncSessionAndRender();
+        });
+        window.addEventListener("storage", (event) => {
+            if (event.key === AUTH_STORAGE_KEY) {
+                syncSessionAndRender();
+            }
+        });
 
-        const { data: sessionData } = await supabase.auth.getSession();
-        currentSession = sessionData.session;
-        updateAuthUI();
-        await loadProgress();
-        await loadWeekVisibility();
+        initWeekOptions();
+        await syncSessionAndRender();
 
         supabase.auth.onAuthStateChange(async (_event, session) => {
             currentSession = session;
@@ -509,3 +523,5 @@
     </script>
 </body>
 </html>
+
+

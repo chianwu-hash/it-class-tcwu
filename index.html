@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -278,34 +278,20 @@
     </footer>
 
     <script type="module">
-        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
-        const SUPABASE_URL = "https://upxgyusodibaqcrocdzj.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_VhqRaRCR5m4VRuCqTMXToA_XgeCgl5j";
-        const TEACHER_EMAILS = ["chianwu@gmail.com"];
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-            auth: {
-                persistSession: true,
-                autoRefreshToken: true,
-                detectSessionInUrl: true
-            }
-        });
+        import {
+            consumePendingRedirect,
+            getHomeRedirectUrl,
+            getSession,
+            isTeacher,
+            signInWithGoogle,
+            signOutAndReload,
+            supabase
+        } from "./shared/auth.js";
 
         const authStatusEl = document.getElementById("site-auth-status");
         const adminBtn = document.getElementById("site-admin-btn");
         const loginBtn = document.getElementById("site-login-btn");
         const logoutBtn = document.getElementById("site-logout-btn");
-        const LOGIN_RETURN_KEY = "post_login_redirect";
-
-        function getHomeRedirectUrl() {
-            return `${window.location.origin}/index.html`;
-        }
-
-        function isTeacher(session) {
-            const email = session?.user?.email?.toLowerCase() || "";
-            return TEACHER_EMAILS.includes(email);
-        }
-
         function updateAuthUI(session) {
             if (session?.user) {
                 authStatusEl.textContent = session.user.email || "Google 使用者";
@@ -320,52 +306,34 @@
             }
         }
 
-        function consumePendingRedirect() {
-            const target = localStorage.getItem(LOGIN_RETURN_KEY);
-            if (!target) return;
-            localStorage.removeItem(LOGIN_RETURN_KEY);
-            if (target !== window.location.href && target !== getHomeRedirectUrl()) {
-                window.location.replace(target);
-            }
-        }
-
-        async function signInWithGoogle() {
-            if (window.location.protocol === "file:") {
-                alert("請改用 http://localhost:3000 或正式站開啟，登入功能不支援直接開檔。");
-                return;
-            }
-            await supabase.auth.signInWithOAuth({
-                provider: "google",
-                options: {
-                    redirectTo: getHomeRedirectUrl(),
-                    queryParams: { prompt: "select_account" }
-                }
+        async function startHomeLogin() {
+            const { error } = await signInWithGoogle({
+                redirectTo: getHomeRedirectUrl()
             });
+
+            if (error) {
+                console.error("Home login failed", error);
+            }
         }
 
-        async function signOut() {
-            await supabase.auth.signOut();
-            window.location.reload();
-        }
+        loginBtn.addEventListener("click", startHomeLogin);
+        logoutBtn.addEventListener("click", signOutAndReload);
 
-        loginBtn.addEventListener("click", signInWithGoogle);
-        logoutBtn.addEventListener("click", signOut);
-
-        const { data: sessionData } = await supabase.auth.getSession();
-        updateAuthUI(sessionData.session);
-        if (sessionData.session) {
-            consumePendingRedirect();
+        const { session } = await getSession();
+        updateAuthUI(session);
+        if (session) {
+            consumePendingRedirect(getHomeRedirectUrl());
         } else {
             const params = new URLSearchParams(window.location.search);
             if (params.get("login") === "1") {
-                await signInWithGoogle();
+                await startHomeLogin();
             }
         }
 
-        supabase.auth.onAuthStateChange((_event, session) => {
-            updateAuthUI(session);
-            if (session) {
-                consumePendingRedirect();
+        supabase.auth.onAuthStateChange((_event, nextSession) => {
+            updateAuthUI(nextSession);
+            if (nextSession) {
+                consumePendingRedirect(getHomeRedirectUrl());
             }
         });
     </script>
