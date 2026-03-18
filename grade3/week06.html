@@ -445,6 +445,7 @@
             supabase
         } from "../shared/auth.js";
         import { initTypingChallenge } from "../shared/typing-challenge.js";
+        import { initWeek06QuizAdapter } from "./week06.quiz-adapter.js";
 
         const WEEK_CODE = "06";
         const TYPING_KEY = "typing_task_4";
@@ -468,7 +469,6 @@
         };
 
         let currentSession = null;
-        let quizSessionLoaded = false;
 
         const progressStatusEl = document.getElementById("progress-status");
 
@@ -522,25 +522,9 @@
 
         async function handleWeek06AuthUpdate(session) {
             currentSession = session;
-            const quizLock = document.getElementById("quiz-lock");
-            const quizContent = document.getElementById("quiz-content");
-
-            if (session?.user) {
-                quizLock?.classList.add("hidden");
-                quizContent?.classList.remove("hidden");
-                renderQuiz();
-                if (!quizSessionLoaded) {
-                    await loadQuizProgress();
-                    quizSessionLoaded = true;
-                }
-                return;
-            }
-
-            quizSessionLoaded = false;
-            quizLock?.classList.remove("hidden");
-            quizContent?.classList.add("hidden");
-            if (progressStatusEl) {
-                progressStatusEl.textContent = "尚未登入時，練習不會保存；登入後會自動記錄進度。";
+            await quiz.handleAuthChange(session);
+            if (!session?.user && progressStatusEl) {
+                progressStatusEl.textContent = "????????????????????????";
             }
         }
 
@@ -604,13 +588,14 @@
                 ]
             }
         ];
-        const selectedBtns = {};
-        let quizSubmitted = false;
-        let quizRendered = false;
+        const quizQuestions = quizRawData.map((item) => ({
+            id: item.id,
+            q: item.q,
+            opts: item.opts
+        }));
 
-        // ── Quiz Progress ────────────────────────────────────────────────────
         async function loadQuizProgress() {
-            if (!currentSession?.user) return;
+            if (!currentSession?.user) return null;
             const { data, error } = await supabase
                 .from("student_progress")
                 .select("completed, score")
@@ -618,143 +603,61 @@
                 .eq("week_code", WEEK_CODE)
                 .eq("activity_key", QUIZ_KEY)
                 .maybeSingle();
-            if (error) { console.error("loadQuizProgress failed", error); return; }
-            if (data?.completed) showQuizCompletedState(data.score);
-        }
-
-        function showQuizCompletedState(score) {
-            quizSubmitted = true;
-            const banner = document.getElementById("quiz-status-banner");
-            const text = document.getElementById("quiz-status-text");
-            banner.classList.remove("hidden");
-            text.textContent = `你已經完成這次的資安測驗！上次得分：${score ?? "?"} / 5 分。`;
-            document.querySelectorAll("#quiz-container .opt-btn").forEach(btn => {
-                btn.disabled = true;
-                btn.classList.add("opacity-60", "cursor-not-allowed");
-            });
-            const btn = document.getElementById("quiz-submit-btn");
-            if (btn) {
-                btn.disabled = true;
-                btn.classList.add("opacity-50", "cursor-not-allowed");
-                btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i>已完成測驗';
+            if (error) {
+                console.error("loadQuizProgress failed", error);
+                return null;
             }
+            if (!data?.completed) {
+                return null;
+            }
+            return { completed: true, score: data.score };
         }
 
         async function saveQuizProgress(score) {
             const user = await getQuizUser();
             if (!user) return false;
             const payload = {
-                user_id: user.id, week_code: WEEK_CODE, activity_key: QUIZ_KEY,
-                current_level: 5, completed: true, score,
+                user_id: user.id,
+                week_code: WEEK_CODE,
+                activity_key: QUIZ_KEY,
+                current_level: 5,
+                completed: true,
+                score,
                 updated_at: new Date().toISOString()
             };
-            const { error } = await supabase.from("student_progress")
+            const { error } = await supabase
+                .from("student_progress")
                 .upsert(payload, { onConflict: "user_id,week_code,activity_key" });
-            if (error) { console.error("saveQuizProgress failed", error); return false; }
+            if (error) {
+                console.error("saveQuizProgress failed", error);
+                return false;
+            }
             return true;
         }
 
-        // ── Quiz ─────────────────────────────────────────────────────────────
-        function shuffleArray(arr) {
-            const a = [...arr];
-            for (let i = a.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [a[i], a[j]] = [a[j], a[i]];
+        const quiz = initWeek06QuizAdapter({
+            questions: quizQuestions,
+            loadProgress: loadQuizProgress,
+            saveProgress: saveQuizProgress,
+            getCurrentUser: getQuizUser,
+            onRequireLogin: signInWithGoogle,
+            onAfterSubmit: async ({ correct, total }) => {
+                if (correct === total) {
+                    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                }
+                const resultDiv = document.getElementById("quiz-result");
+                setTimeout(() => resultDiv?.scrollIntoView({ behavior: "smooth", block: "center" }), 300);
             }
-            return a;
-        }
-
-        function renderQuiz() {
-            if (quizRendered) return;
-            quizRendered = true;
-            const container = document.getElementById("quiz-container");
-            const shuffledQuestions = shuffleArray(quizRawData);
-            let html = "";
-            shuffledQuestions.forEach((q, idx) => {
-                const shuffledOpts = shuffleArray(q.opts);
-                const optsHtml = shuffledOpts.map(opt =>
-                    `<button class="opt-btn text-left p-4 rounded-xl border-2 border-gray-200 bg-white font-bold text-gray-700 hover:border-rose-400 hover:bg-rose-50"
-                        data-qid="${q.id}" data-correct="${opt.correct}"
-                        onclick="selectOption(${q.id}, this)">${opt.text}</button>`
-                ).join("");
-                html += `
-                    <div class="bg-gray-50 border-2 border-gray-200 rounded-2xl p-5">
-                        <p class="font-black text-gray-800 text-lg mb-4">
-                            <span class="bg-rose-100 text-rose-600 px-2 py-0.5 rounded mr-2">第 ${idx + 1} 題</span>${q.q}
-                        </p>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="opts-${q.id}">${optsHtml}</div>
-                    </div>`;
-            });
-            html += `
-                <div class="text-center mt-8">
-                    <button id="quiz-submit-btn" onclick="submitQuiz()" class="bg-rose-500 hover:bg-rose-600 text-white font-black text-xl py-4 px-12 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95">
-                        <i class="fa-solid fa-check-circle mr-2"></i> 交出我的答案！
-                    </button>
-                </div>
-                <div id="quiz-result" class="hidden bg-rose-50 border-4 border-rose-300 rounded-2xl p-8 text-center mt-6">
-                    <div id="quiz-result-emoji" class="text-6xl mb-4"></div>
-                    <div id="quiz-result-score" class="text-4xl font-black text-rose-700 mb-3"></div>
-                    <div id="quiz-result-msg" class="text-xl font-bold text-gray-700"></div>
-                </div>`;
-            container.innerHTML = html;
-        }
+        });
 
         window.selectOption = function(qId, btnEl) {
-            if (quizSubmitted) return;
-            selectedBtns[qId] = btnEl;
-            document.getElementById(`opts-${qId}`).querySelectorAll(".opt-btn").forEach(btn => {
-                btn.classList.remove("selected");
-            });
-            btnEl.classList.add("selected");
+            quiz.selectOption(qId, btnEl);
         };
 
         window.submitQuiz = async function() {
-            if (quizSubmitted) return;
-            const totalQ = quizRawData.length;
-            const answered = Object.keys(selectedBtns).length;
-            if (answered < totalQ) {
-                alert(`你還有 ${totalQ - answered} 題沒有作答，請全部都選一個答案再提交！`);
-                return;
-            }
-            quizSubmitted = true;
-            let correct = 0;
-            quizRawData.forEach(q => {
-                const opts = document.getElementById(`opts-${q.id}`);
-                if (!opts) return;
-                opts.querySelectorAll(".opt-btn").forEach(btn => {
-                    btn.classList.remove("selected");
-                    btn.disabled = true;
-                    if (btn.dataset.correct === "true") btn.classList.add("correct");
-                    else if (btn === selectedBtns[q.id]) btn.classList.add("wrong");
-                });
-                if (selectedBtns[q.id]?.dataset.correct === "true") correct++;
-            });
-
-            const resultDiv = document.getElementById("quiz-result");
-            resultDiv.classList.remove("hidden");
-            document.getElementById("quiz-result-score").textContent = `得分：${correct} / ${totalQ} 分`;
-            const msgs = [
-                ["🏆", "太棒了！全部答對！你是網路安全小達人！"],
-                ["😊", "答對了大部分，再複習一下答錯的題目！"],
-                ["🤔", "還可以更好！仔細看看哪幾題答錯了，記住重點！"],
-                ["💪", "再加油！仔細看看哪幾題答錯了，記住重點！"]
-            ];
-            const [emoji, msg] = correct === 5 ? msgs[0] : correct >= 4 ? msgs[1] : correct >= 3 ? msgs[2] : msgs[3];
-            document.getElementById("quiz-result-emoji").textContent = emoji;
-            document.getElementById("quiz-result-msg").textContent = msg;
-
-            const submitBtn = document.getElementById("quiz-submit-btn");
-            submitBtn.disabled = true;
-            submitBtn.classList.add("opacity-50", "cursor-not-allowed");
-
-            if (correct === 5) confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-            setTimeout(() => resultDiv.scrollIntoView({ behavior: "smooth", block: "center" }), 300);
-
-            const isLoggedIn = !!(await getQuizUser());
-            if (isLoggedIn) await saveQuizProgress(correct);
+            await quiz.submit();
         };
 
-        // ── Helpers ──────────────────────────────────────────────────────────
         window.togglePinyin = function(level) {
             const n = document.getElementById(`text-normal-${level}`);
             const p = document.getElementById(`text-pinyin-${level}`);
