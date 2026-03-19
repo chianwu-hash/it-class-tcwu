@@ -162,6 +162,7 @@
         let currentSession = null;
         let isSyncing = false;
         let adminPageWasHidden = false;
+        let studentProfilesByUserId = new Map();
 
         function initWeekOptions() {
             for (let i = 1; i <= 15; i += 1) {
@@ -202,27 +203,95 @@
                 });
         }
 
+        function normalizedActivityType(row) {
+            const key = String(row.activity_key || '').toLowerCase();
+            const type = String(row.activity_type || '').toLowerCase();
+
+            if (type === 'typing' || key.startsWith('typing')) return 'typing';
+            if (type === 'quiz' || key.startsWith('quiz') || key.includes('_quiz_') || key.endsWith('_quiz') || key.startsWith('safety_quiz')) return 'quiz';
+            if (type === 'project' || key.startsWith('project')) return 'project';
+            return type || 'other';
+        }
+
         function activityLabel(activityKey) {
-            if (activityKey.startsWith("typing")) return "中打闖關";
-            if (activityKey.startsWith("quiz")) return "測驗";
-            if (activityKey.startsWith("project")) return "專案";
+            const key = String(activityKey || '').toLowerCase();
+            if (key.startsWith('typing')) return '中打闖關';
+            if (key.startsWith('quiz') || key.includes('_quiz_') || key.endsWith('_quiz') || key.startsWith('safety_quiz')) return '測驗';
+            if (key.startsWith('project')) return '專案';
             return activityKey;
         }
 
+        function activityTypeLabel(row) {
+            const type = normalizedActivityType(row);
+            if (type === 'typing') return 'typing';
+            if (type === 'quiz') return 'quiz';
+            if (type === 'project') return 'project';
+            return type;
+        }
+
         function progressLabel(row) {
-            if (row.activity_type === "typing") {
+            const type = normalizedActivityType(row);
+            if (type === 'typing') {
                 return row.completed ? `第 ${row.current_level}/5 關（完成）` : `第 ${row.current_level}/5 關`;
             }
-            if (row.activity_type === "quiz") {
-                return row.completed ? "已作答" : "未完成";
+            if (type === 'quiz') {
+                return row.completed ? '已作答' : '未完成';
             }
-            return row.completed ? "已完成" : "-";
+            return row.completed ? '已完成' : '-';
         }
 
         function statusBadge(row) {
             return row.completed
                 ? '<span class="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-sm font-black text-emerald-700">已完成</span>'
                 : '<span class="inline-flex rounded-full bg-amber-100 px-3 py-1 text-sm font-black text-amber-700">進行中</span>';
+        }
+
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+
+        function formatStudentIdentity(row) {
+            const profile = studentProfilesByUserId.get(row.user_id);
+            if (!profile) {
+                return {
+                    primary: row.email,
+                    secondary: row.email ? '尚未建立 student profile' : '沒有可用識別資料'
+                };
+            }
+
+            const primaryParts = [profile.student_code, profile.display_name].filter(Boolean);
+            const secondaryParts = [];
+
+            if (profile.class_code) {
+                secondaryParts.push(`班級 ${profile.class_code}`);
+            }
+            if (profile.seat_no != null) {
+                secondaryParts.push(`座號 ${String(profile.seat_no).padStart(2, '0')}`);
+            }
+            if (profile.email && profile.email !== row.email) {
+                secondaryParts.push(profile.email);
+            } else if (row.email) {
+                secondaryParts.push(row.email);
+            }
+
+            return {
+                primary: primaryParts.join(' ') || profile.email || row.email || '未命名學生',
+                secondary: secondaryParts.join('・') || '已建立 student profile'
+            };
+        }
+
+        function renderStudentCell(row) {
+            const identity = formatStudentIdentity(row);
+            return `
+                <div class="font-black text-slate-800">${escapeHtml(identity.primary)}</div>
+                <div class="text-xs font-bold text-slate-400">${escapeHtml(identity.secondary)}</div>
+            `;
         }
 
         function renderVisibilityControls(rows) {
@@ -280,13 +349,13 @@
 
             tbodyEl.innerHTML = rows.map((row) => `
                 <tr class="hover:bg-slate-50">
-                    <td class="px-4 py-4 font-bold text-slate-800">${row.email}</td>
+                    <td class="px-4 py-4">${renderStudentCell(row)}</td>
                     <td class="px-4 py-4 font-bold text-slate-600">${row.week_code}</td>
                     <td class="px-4 py-4">
                         <div class="font-black text-slate-800">${activityLabel(row.activity_key)}</div>
                         <div class="text-xs font-bold text-slate-400">${row.activity_key}</div>
                     </td>
-                    <td class="px-4 py-4 font-bold text-slate-600">${row.activity_type}</td>
+                    <td class="px-4 py-4 font-bold text-slate-600">${activityTypeLabel(row)}</td>
                     <td class="px-4 py-4 font-bold text-slate-700">${progressLabel(row)}</td>
                     <td class="px-4 py-4 font-black text-slate-700">${row.score ?? "-"}</td>
                     <td class="px-4 py-4">${statusBadge(row)}</td>
@@ -342,6 +411,28 @@
             logoutBtn.classList.remove("hidden");
         }
 
+
+        async function loadStudentProfiles() {
+            if (!currentSession?.user || !isTeacher(currentSession)) {
+                studentProfilesByUserId = new Map();
+                return;
+            }
+
+            const { data, error } = await supabase.rpc('admin_list_student_profiles', {
+                p_class_code: null,
+                p_search: null
+            });
+
+            if (error) {
+                studentProfilesByUserId = new Map();
+                console.error('admin_list_student_profiles failed', error);
+                return;
+            }
+
+            studentProfilesByUserId = new Map((data || []).map((profile) => [profile.user_id, profile]));
+        }
+
+
         async function loadProgress() {
             if (!currentSession?.user) return;
 
@@ -368,6 +459,8 @@
             const completedFilterValue = completedFilterEl.value === ""
                 ? null
                 : completedFilterEl.value === "true";
+
+            await loadStudentProfiles();
 
             const { data, error } = await supabase.rpc("admin_list_progress", {
                 p_week_code: weekFilterEl.value || null,
