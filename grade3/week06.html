@@ -524,7 +524,7 @@
             currentSession = session;
             await quiz.handleAuthChange(session);
             if (!session?.user && progressStatusEl) {
-                progressStatusEl.textContent = "????????????????????????";
+                progressStatusEl.textContent = "尚未登入時，練習不會保存；登入後會自動記錄進度。";
             }
         }
 
