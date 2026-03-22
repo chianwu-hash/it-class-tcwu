@@ -1,0 +1,263 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六年級資訊課 - 畢業影片專題 (第7週)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+        }
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 9999px;
+            color: white;
+            font-weight: bold;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+        .idea-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            border-radius: 9999px;
+            padding: 0.4rem 0.85rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            border: 1px solid;
+        }
+        .idea-chip:hover {
+            transform: translateY(-1px);
+            transition: 0.2s ease;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased pb-12">
+
+    <script src="navbar.js?v=20260322"></script>
+
+    <header class="bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg mb-8">
+        <div class="max-w-5xl mx-auto px-6 py-10 relative overflow-hidden">
+            <div class="relative z-10 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-cyan-100 mb-2">頂溪國小 114下資訊課 ｜ 第 07 週</h2>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">感恩留言與影片敘事</h1>
+                    <p class="text-lg text-cyan-50 font-medium">讓畢業影片不只好看，還能說出真實的感謝與回憶。</p>
+                </div>
+                <div class="hidden md:block text-7xl opacity-80 transform rotate-12 drop-shadow-lg">
+                    <i class="fa-solid fa-heart-circle-check"></i>
+                </div>
+            </div>
+            <i class="fa-solid fa-comment-dots absolute text-white opacity-10 text-9xl -bottom-10 -right-10"></i>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 space-y-8">
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-cyan-100 px-6 py-4 border-b border-cyan-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-pen-nib text-cyan-600 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-bold text-cyan-800">任務一：感恩留言怎麼寫</h3>
+                </div>
+                <span class="bg-cyan-600 text-white text-xs px-3 py-1 rounded-full font-bold">本節核心任務</span>
+            </div>
+
+            <div class="p-6 grid md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-heart text-cyan-500 mr-2"></i> 先寫真心話，再排版
+                    </h4>
+                    <p class="text-sm text-gray-600 mb-4">這節課的重點不是再一直玩特效，而是把想說的話寫清楚。感恩留言要<strong>具體</strong>，不能只有一句空泛的「謝謝大家」。</p>
+                    <div class="space-y-3">
+                        <div class="bg-cyan-50 border border-cyan-200 rounded-xl p-4">
+                            <div class="font-black text-cyan-800 mb-1">普通版</div>
+                            <p class="text-sm text-gray-700">謝謝老師。</p>
+                        </div>
+                        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                            <div class="font-black text-emerald-800 mb-1">改寫版</div>
+                            <p class="text-sm text-gray-700">謝謝老師這一年陪我們學習與成長，讓我們留下很多珍貴回憶。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-list-check text-indigo-500 mr-2"></i> 老師給的寫作公式
+                    </h4>
+                    <div class="space-y-4 text-sm text-gray-700">
+                        <div class="flex items-start">
+                            <span class="step-number bg-cyan-500">1</span>
+                            <div><strong>寫對象</strong>：老師、同學、家人或學校。</div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="step-number bg-cyan-500">2</span>
+                            <div><strong>寫具體事情</strong>：一起參加活動、一起完成任務、一起留下回憶。</div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="step-number bg-cyan-500">3</span>
+                            <div><strong>寫感受</strong>：開心、感動、捨不得、感謝。</div>
+                        </div>
+                    </div>
+                    <div class="mt-5 bg-white border border-gray-200 rounded-xl p-4">
+                        <div class="font-black text-slate-800 mb-2">本節最低標準</div>
+                        <p class="text-sm text-slate-600">至少完成 <strong>1 頁感謝文字頁</strong>，並開始 <strong>1 頁回憶敘事頁草稿</strong>。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-indigo-100 px-6 py-4 border-b border-indigo-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-wand-magic-sparkles text-indigo-600 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-bold text-indigo-800">任務二：魔法文案與畫面搭配</h3>
+                </div>
+                <span class="bg-indigo-600 text-white text-xs px-3 py-1 rounded-full font-bold">Canva 中文版功能</span>
+            </div>
+
+            <div class="p-6 grid md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-bolt text-indigo-500 mr-2"></i> Canva 魔法文案
+                    </h4>
+                    <p class="text-sm text-gray-600 mb-4">如果你一時不知道怎麼開頭，可以先用 Canva 的 <strong>魔法文案</strong> 產生草稿，再自己改成真正像你會說的話。</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="idea-chip bg-indigo-50 text-indigo-700 border-indigo-200">
+                            <i class="fa-solid fa-lightbulb"></i> 幫我寫一句感謝老師的畢業留言
+                        </span>
+                        <span class="idea-chip bg-indigo-50 text-indigo-700 border-indigo-200">
+                            <i class="fa-solid fa-lightbulb"></i> 把這句話改得更溫暖
+                        </span>
+                        <span class="idea-chip bg-indigo-50 text-indigo-700 border-indigo-200">
+                            <i class="fa-solid fa-lightbulb"></i> 30 字內、真誠一點
+                        </span>
+                    </div>
+                    <div class="mt-4 bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-xl">
+                        <h5 class="font-black text-amber-800 mb-1">注意</h5>
+                        <p class="text-sm text-amber-700">魔法文案只能幫你想開頭，不能直接整段照貼。一定要自己讀過、修改，內容要真的符合你的回憶。</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-image text-emerald-500 mr-2"></i> 文字與照片要有對應
+                    </h4>
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex items-start gap-3">
+                            <span class="font-black text-emerald-600">①</span>
+                            <span>一頁只講一件事，不要一頁塞進太多回憶。</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="font-black text-emerald-600">②</span>
+                            <span>先看照片，再決定這一頁要說什麼。</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="font-black text-emerald-600">③</span>
+                            <span>感謝文字放在留白較多的頁面，避免壓到人物臉部。</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="font-black text-emerald-600">④</span>
+                            <span>回憶敘事適合搭配活動照片，例如畢旅、合作、表演或校園生活。</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-rose-100 px-6 py-4 border-b border-rose-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-border-all text-rose-600 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-bold text-rose-800">任務三：補回邊框與網格</h3>
+                </div>
+                <span class="bg-rose-600 text-white text-xs px-3 py-1 rounded-full font-bold">補救操作</span>
+            </div>
+
+            <div class="p-6 grid md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-toolbox text-rose-500 mr-2"></i> 邊框與網格怎麼選
+                    </h4>
+                    <div class="space-y-3 text-sm text-gray-700">
+                        <div class="bg-rose-50 border border-rose-200 rounded-xl p-4">
+                            <div class="font-black text-rose-800 mb-1">邊框</div>
+                            <p>適合單張照片、特殊造型照片框。照片拖進去後可自動入框。</p>
+                        </div>
+                        <div class="bg-purple-50 border border-purple-200 rounded-xl p-4">
+                            <div class="font-black text-purple-800 mb-1">網格</div>
+                            <p>適合多張照片整齊拼貼。若原本是多格版面，優先找回網格。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-rotate-left text-purple-500 mr-2"></i> 補回步驟
+                    </h4>
+                    <div class="space-y-4 text-sm text-gray-700">
+                        <div class="flex items-start">
+                            <span class="step-number bg-rose-500">1</span>
+                            <div>到左側 <strong>元素</strong> 找回 <strong>邊框</strong> 或 <strong>網格</strong>。</div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="step-number bg-rose-500">2</span>
+                            <div>選一個和原本版面接近的樣式放回頁面。</div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="step-number bg-rose-500">3</span>
+                            <div>把照片拖進去，Canva 會自動裁切與置中。</div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="step-number bg-rose-500">4</span>
+                            <div>若位置不對，雙擊照片再微調。</div>
+                        </div>
+                    </div>
+                    <div class="mt-5 bg-white border border-gray-200 rounded-xl p-4 text-sm text-slate-600">
+                        <strong class="text-slate-800">提醒：</strong> 找的是 `邊框` 或 `網格`，不是一般裝飾圖案。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-gradient-to-br from-slate-800 to-gray-900 rounded-2xl shadow-xl border-4 border-cyan-400 overflow-hidden text-white relative">
+            <div class="absolute top-0 right-0 bg-cyan-400 text-cyan-900 font-black px-5 py-1.5 rounded-bl-2xl shadow-md transform rotate-2">
+                本節完成標準
+            </div>
+
+            <div class="p-8">
+                <h3 class="text-3xl font-black text-cyan-300 mb-4 flex items-center drop-shadow-md">
+                    <i class="fa-solid fa-flag-checkered mr-3 text-cyan-300"></i> 本節任務目標
+                </h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-3">
+                        <div class="bg-white/10 p-4 rounded-xl border border-white/20">完成 <strong>1 頁感謝文字頁</strong></div>
+                        <div class="bg-white/10 p-4 rounded-xl border border-white/20">開始 <strong>1 頁回憶敘事頁草稿</strong></div>
+                        <div class="bg-white/10 p-4 rounded-xl border border-white/20">若使用 <strong>魔法文案</strong>，必須自行修改後再使用</div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="bg-white/10 p-4 rounded-xl border border-white/20">若誤刪照片容器，能自行找回 <strong>邊框 / 網格</strong></div>
+                        <div class="bg-white/10 p-4 rounded-xl border border-white/20">文字位置合理，不遮住主角臉部</div>
+                        <div class="bg-white/10 p-4 rounded-xl border border-white/20">文字與照片內容有對應，不是隨便堆字</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center mt-12 pb-8 text-gray-400 text-sm font-medium">
+        <p><i class="fa-solid fa-graduation-cap mr-1"></i> 新北市頂溪國小資訊課 - 畢業影片專案系列</p>
+    </footer>
+
+</body>
+</html>
+

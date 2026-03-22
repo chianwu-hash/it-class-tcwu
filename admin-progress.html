@@ -22,6 +22,9 @@
                 <h1 class="text-2xl font-black text-slate-900 md:text-3xl">教師後台</h1>
             </div>
             <div class="flex flex-wrap items-center gap-2">
+                <a href="/index.html" class="rounded-xl border border-slate-200 bg-white px-4 py-2 font-black text-slate-700 transition hover:bg-slate-50">
+                    <i class="fa-solid fa-house mr-1"></i> 回首頁
+                </a>
                 <div id="auth-status" class="rounded-full border border-sky-100 bg-sky-50 px-3 py-2 text-sm font-bold text-slate-700">尚未登入</div>
                 <button id="login-btn" type="button" class="rounded-xl border-2 border-sky-300 px-4 py-2 font-black text-sky-700 transition hover:bg-sky-50">
                     <i class="fa-brands fa-google mr-1"></i> Google 登入
@@ -36,70 +39,89 @@
     <main class="mx-auto max-w-7xl space-y-6 px-6 py-8">
         <section id="notice-panel" class="hidden rounded-2xl border px-5 py-4 text-sm font-bold"></section>
 
-        <section class="rounded-3xl border border-sky-100 bg-white p-6 shadow-sm">
-            <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <section id="debug-panel" class="hidden rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm font-mono text-amber-900">
+            <div class="flex items-center justify-between gap-3">
                 <div>
-                    <h2 class="text-xl font-black text-slate-900">進度查詢</h2>
-                    <p class="mt-1 text-sm font-bold text-slate-500">可依週次、活動類型、完成狀態與 email 搜尋學生資料。</p>
+                    <div class="font-black">Admin Debug</div>
+                    <div id="debug-meta" class="mt-1 text-xs font-bold text-amber-800"></div>
                 </div>
-                <button id="refresh-btn" type="button" class="rounded-xl bg-sky-600 px-4 py-2 font-black text-white transition hover:bg-sky-500">
-                    <i class="fa-solid fa-rotate mr-1"></i> 重新整理
-                </button>
+                <div class="text-xs font-bold text-amber-700">debug=1 / noreload=1</div>
             </div>
-
-            <div class="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-                <label class="block">
-                    <span class="mb-1 block text-sm font-black text-slate-700">週次</span>
-                    <select id="week-filter" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700">
-                        <option value="">全部週次</option>
-                    </select>
-                </label>
-                <label class="block">
-                    <span class="mb-1 block text-sm font-black text-slate-700">活動類型</span>
-                    <select id="activity-filter" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700">
-                        <option value="">全部類型</option>
-                        <option value="typing">typing</option>
-                        <option value="quiz">quiz</option>
-                        <option value="project">project</option>
-                        <option value="other">other</option>
-                    </select>
-                </label>
-                <label class="block">
-                    <span class="mb-1 block text-sm font-black text-slate-700">完成狀態</span>
-                    <select id="completed-filter" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700">
-                        <option value="">全部狀態</option>
-                        <option value="false">進行中</option>
-                        <option value="true">已完成</option>
-                    </select>
-                </label>
-                <label class="block xl:col-span-2">
-                    <span class="mb-1 block text-sm font-black text-slate-700">搜尋</span>
-                    <input id="search-filter" type="text" placeholder="搜尋 email 或 activity_key" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700">
-                </label>
-            </div>
-        </section>
-
-        <section class="rounded-3xl border border-sky-100 bg-white p-6 shadow-sm">
-            <div>
-                <h2 class="text-xl font-black text-slate-900">首頁週卡片顯示管理</h2>
-                <p class="mt-1 text-sm font-bold text-slate-500">控制三年級與六年級首頁要不要顯示某一張週卡片。</p>
-            </div>
-            <div class="mt-5 grid gap-6 lg:grid-cols-2">
-                <div class="rounded-2xl border border-teal-100 bg-teal-50/60 p-5">
-                    <h3 class="mb-4 text-lg font-black text-teal-800">三年級卡片</h3>
-                    <div id="grade3-visibility-list" class="space-y-3"></div>
-                </div>
-                <div class="rounded-2xl border border-purple-100 bg-purple-50/60 p-5">
-                    <h3 class="mb-4 text-lg font-black text-purple-800">六年級卡片</h3>
-                    <div id="grade6-visibility-list" class="space-y-3"></div>
-                </div>
-            </div>
+            <pre id="debug-log" class="mt-3 max-h-72 overflow-auto rounded-xl bg-white/80 p-3 text-xs leading-5 text-slate-700"></pre>
         </section>
 
         <section class="overflow-hidden rounded-3xl border border-sky-100 bg-white shadow-sm">
-            <div class="border-b border-slate-100 px-6 py-4">
-                <h2 class="text-xl font-black text-slate-900">學生進度總表</h2>
-                <p id="summary-text" class="mt-1 text-sm font-bold text-slate-500">請先登入教師帳號</p>
+            <div class="px-6 py-6">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                        <h2 class="text-xl font-black text-slate-900">學生進度總表</h2>
+                        <p class="mt-1 text-sm font-bold text-slate-500">可依班級、週次、活動類型、完成狀態與學生識別資訊搜尋學生資料。</p>
+                    </div>
+                    <button id="refresh-btn" type="button" class="rounded-xl bg-sky-600 px-4 py-2 font-black text-white transition hover:bg-sky-500">
+                        <i class="fa-solid fa-rotate mr-1"></i> 重新整理
+                    </button>
+                </div>
+
+                <div class="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+                    <label class="block">
+                        <span class="mb-1 block text-sm font-black text-slate-700">班級</span>
+                        <select id="class-filter" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700">
+                            <option value="">全部班級</option>
+                        </select>
+                    </label>
+                    <label class="block">
+                        <span class="mb-1 block text-sm font-black text-slate-700">週次</span>
+                        <select id="week-filter" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700">
+                            <option value="">全部週次</option>
+                        </select>
+                    </label>
+                    <label class="block">
+                        <span class="mb-1 block text-sm font-black text-slate-700">活動類型</span>
+                        <select id="activity-filter" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700">
+                            <option value="">全部類型</option>
+                            <option value="typing">typing</option>
+                            <option value="quiz">quiz</option>
+                            <option value="project">project</option>
+                            <option value="other">other</option>
+                        </select>
+                    </label>
+                    <label class="block">
+                        <span class="mb-1 block text-sm font-black text-slate-700">完成狀態</span>
+                        <select id="completed-filter" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700">
+                            <option value="">全部狀態</option>
+                            <option value="false">進行中</option>
+                            <option value="true">已完成</option>
+                        </select>
+                    </label>
+                    <label class="block xl:col-span-2">
+                        <span class="mb-1 block text-sm font-black text-slate-700">搜尋</span>
+                        <input id="search-filter" type="text" placeholder="搜尋姓名、student_code、座號、email 或 activity_key" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700">
+                    </label>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-100 px-6 py-4">
+                <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                    <p id="summary-text" class="text-sm font-bold text-slate-500">請先登入教師帳號</p>
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                        <div id="pagination-summary" class="text-sm font-bold text-slate-400">尚未讀取資料</div>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <label class="flex items-center gap-2 text-sm font-bold text-slate-600">
+                                <span>每頁顯示</span>
+                                <select id="page-size-select" class="rounded-xl border border-slate-200 bg-white px-3 py-2 font-black text-slate-700">
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </label>
+                            <div class="flex items-center gap-2">
+                                <button id="prev-page-btn" type="button" class="rounded-xl border border-slate-200 px-3 py-2 text-sm font-black text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40">上一頁</button>
+                                <span id="page-indicator" class="min-w-24 text-center text-sm font-black text-slate-500">第 1 / 1 頁</span>
+                                <button id="next-page-btn" type="button" class="rounded-xl border border-slate-200 px-3 py-2 text-sm font-black text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40">下一頁</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="overflow-x-auto">
@@ -125,6 +147,24 @@
                 </table>
             </div>
         </section>
+
+        <section class="rounded-3xl border border-sky-100 bg-white p-6 shadow-sm">
+            <div>
+                <h2 class="text-xl font-black text-slate-900">首頁週卡片顯示管理</h2>
+                <p class="mt-1 text-sm font-bold text-slate-500">控制三年級與六年級首頁要不要顯示某一張週卡片。</p>
+            </div>
+            <div class="mt-5 grid gap-6 lg:grid-cols-2">
+                <div class="rounded-2xl border border-teal-100 bg-teal-50/60 p-5">
+                    <h3 class="mb-4 text-lg font-black text-teal-800">三年級卡片</h3>
+                    <div id="grade3-visibility-list" class="space-y-3"></div>
+                </div>
+                <div class="rounded-2xl border border-purple-100 bg-purple-50/60 p-5">
+                    <h3 class="mb-4 text-lg font-black text-purple-800">六年級卡片</h3>
+                    <div id="grade6-visibility-list" class="space-y-3"></div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <script type="module">
@@ -141,6 +181,7 @@
         const authStatusEl = document.getElementById("auth-status");
         const loginBtn = document.getElementById("login-btn");
         const logoutBtn = document.getElementById("logout-btn");
+        const classFilterEl = document.getElementById("class-filter");
         const weekFilterEl = document.getElementById("week-filter");
         const activityFilterEl = document.getElementById("activity-filter");
         const completedFilterEl = document.getElementById("completed-filter");
@@ -148,7 +189,15 @@
         const refreshBtn = document.getElementById("refresh-btn");
         const tbodyEl = document.getElementById("progress-tbody");
         const summaryTextEl = document.getElementById("summary-text");
+        const paginationSummaryEl = document.getElementById("pagination-summary");
+        const pageSizeSelectEl = document.getElementById("page-size-select");
+        const prevPageBtn = document.getElementById("prev-page-btn");
+        const nextPageBtn = document.getElementById("next-page-btn");
+        const pageIndicatorEl = document.getElementById("page-indicator");
         const noticePanelEl = document.getElementById("notice-panel");
+        const debugPanelEl = document.getElementById("debug-panel");
+        const debugMetaEl = document.getElementById("debug-meta");
+        const debugLogEl = document.getElementById("debug-log");
         const visibilityLists = {
             grade3: document.getElementById("grade3-visibility-list"),
             grade6: document.getElementById("grade6-visibility-list")
@@ -156,13 +205,22 @@
 
         const visibilityDefaults = {
             grade3: ["03", "04", "05", "06"],
-            grade6: ["03", "04", "05", "06"]
+            grade6: ["03", "04", "05", "06", "07"]
         };
+
+        const ADMIN_FILTERS_STORAGE_KEY = "admin-progress-filters";
+        const ADMIN_DEBUG_STORAGE_KEY = "admin-progress-debug-log";
+        const ADMIN_DEBUG_RELOAD_REASON_KEY = "admin-progress-debug-reload-reason";
+        const debugParams = new URLSearchParams(window.location.search);
+        const debugEnabled = debugParams.get("debug") === "1";
+        const disableAutoReload = debugParams.get("noreload") === "1";
 
         let currentSession = null;
         let isSyncing = false;
         let adminPageWasHidden = false;
         let studentProfilesByUserId = new Map();
+        let currentPage = 1;
+        let pageSize = 20;
 
         function initWeekOptions() {
             for (let i = 1; i <= 15; i += 1) {
@@ -187,6 +245,69 @@
 
         function hideNotice() {
             noticePanelEl.classList.add("hidden");
+        }
+
+        function readDebugEntries() {
+            try {
+                const parsed = JSON.parse(window.sessionStorage.getItem(ADMIN_DEBUG_STORAGE_KEY) || '[]');
+                return Array.isArray(parsed) ? parsed : [];
+            } catch {
+                return [];
+            }
+        }
+
+        function writeDebugEntries(entries) {
+            window.sessionStorage.setItem(ADMIN_DEBUG_STORAGE_KEY, JSON.stringify(entries.slice(-80)));
+        }
+
+        function debugSnapshot() {
+            return {
+                hidden: document.hidden,
+                visibility: document.visibilityState,
+                email: currentSession?.user?.email || null,
+                classFilter: classFilterEl?.value || '',
+                weekFilter: weekFilterEl?.value || '',
+                activityFilter: activityFilterEl?.value || '',
+                completedFilter: completedFilterEl?.value || '',
+                searchFilter: searchFilterEl?.value || ''
+            };
+        }
+
+        function renderDebugPanel() {
+            if (!debugEnabled) {
+                debugPanelEl.classList.add('hidden');
+                return;
+            }
+
+            debugPanelEl.classList.remove('hidden');
+            const entries = readDebugEntries();
+            debugMetaEl.textContent = JSON.stringify(debugSnapshot());
+            debugLogEl.textContent = entries.map((entry) => `${entry.time} ${entry.event} ${entry.detail}`).join('\n');
+        }
+
+        function logDebug(event, detail = {}) {
+            if (!debugEnabled) return;
+            const entries = readDebugEntries();
+            entries.push({
+                time: new Date().toLocaleTimeString('zh-TW', { hour12: false }),
+                event,
+                detail: JSON.stringify(detail)
+            });
+            writeDebugEntries(entries);
+            renderDebugPanel();
+        }
+
+        function setReloadReason(reason) {
+            if (!debugEnabled) return;
+            window.sessionStorage.setItem(ADMIN_DEBUG_RELOAD_REASON_KEY, reason);
+        }
+
+        function consumeReloadReason() {
+            const reason = window.sessionStorage.getItem(ADMIN_DEBUG_RELOAD_REASON_KEY);
+            if (reason) {
+                window.sessionStorage.removeItem(ADMIN_DEBUG_RELOAD_REASON_KEY);
+            }
+            return reason;
         }
 
         function formatTime(value) {
@@ -294,6 +415,120 @@
             `;
         }
 
+        function saveFilterState() {
+            const payload = {
+                classCode: classFilterEl.value,
+                weekCode: weekFilterEl.value,
+                activityType: activityFilterEl.value,
+                completed: completedFilterEl.value,
+                search: searchFilterEl.value,
+                page: currentPage,
+                pageSize
+            };
+            window.sessionStorage.setItem(ADMIN_FILTERS_STORAGE_KEY, JSON.stringify(payload));
+        }
+
+        function loadFilterState() {
+            try {
+                return JSON.parse(window.sessionStorage.getItem(ADMIN_FILTERS_STORAGE_KEY) || '{}');
+            } catch {
+                return {};
+            }
+        }
+
+        function applyFilterState() {
+            const state = loadFilterState();
+            weekFilterEl.value = state.weekCode || '';
+            activityFilterEl.value = state.activityType || '';
+            completedFilterEl.value = state.completed || '';
+            searchFilterEl.value = state.search || '';
+            classFilterEl.dataset.pendingValue = state.classCode || '';
+            currentPage = Number.isFinite(Number(state.page)) && Number(state.page) > 0 ? Number(state.page) : 1;
+            pageSize = Number.isFinite(Number(state.pageSize)) && Number(state.pageSize) > 0 ? Number(state.pageSize) : 20;
+            pageSizeSelectEl.value = String(pageSize);
+        }
+
+        function populateClassOptions() {
+            const pendingValue = classFilterEl.dataset.pendingValue || "";
+            const currentValue = pendingValue || classFilterEl.value;
+            const classCodes = Array.from(new Set(
+                Array.from(studentProfilesByUserId.values())
+                    .map((profile) => profile.class_code)
+                    .filter(Boolean)
+            )).sort();
+
+            classFilterEl.innerHTML = [
+                '<option value="">全部班級</option>',
+                ...classCodes.map((classCode) => `<option value="${escapeHtml(classCode)}">${escapeHtml(classCode)}</option>`)
+            ].join('');
+
+            if (currentValue && classCodes.includes(currentValue)) {
+                classFilterEl.value = currentValue;
+            }
+            classFilterEl.dataset.pendingValue = "";
+        }
+
+        function profileMatchesSearch(profile, keyword) {
+            if (!profile || !keyword) return false;
+            const normalized = keyword.toLowerCase();
+            const seatNo = profile.seat_no == null ? '' : String(profile.seat_no);
+            const paddedSeatNo = profile.seat_no == null ? '' : String(profile.seat_no).padStart(2, '0');
+            const haystacks = [
+                profile.display_name,
+                profile.student_code,
+                profile.class_code,
+                seatNo,
+                paddedSeatNo,
+                profile.email
+            ].filter(Boolean).map((value) => String(value).toLowerCase());
+            return haystacks.some((value) => value.includes(normalized));
+        }
+
+        function filterProgressRows(rows) {
+            const classCode = classFilterEl.value || null;
+            const keyword = searchFilterEl.value.trim().toLowerCase();
+
+            return rows.filter((row) => {
+                const profile = studentProfilesByUserId.get(row.user_id);
+
+                if (classCode && profile?.class_code !== classCode) {
+                    return false;
+                }
+
+                if (!keyword) {
+                    return true;
+                }
+
+                if (profileMatchesSearch(profile, keyword)) {
+                    return true;
+                }
+
+                const fallbackHaystacks = [row.email, row.activity_key, activityLabel(row.activity_key), activityTypeLabel(row)]
+                    .filter(Boolean)
+                    .map((value) => String(value).toLowerCase());
+                return fallbackHaystacks.some((value) => value.includes(keyword));
+            });
+        }
+
+        function updatePaginationControls(totalRows, paginatedRows) {
+            const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
+            const safePage = Math.min(currentPage, totalPages);
+            const startIndex = totalRows === 0 ? 0 : (safePage - 1) * pageSize + 1;
+            const endIndex = totalRows === 0 ? 0 : startIndex + paginatedRows.length - 1;
+
+            pageIndicatorEl.textContent = `第 ${safePage} / ${totalPages} 頁`;
+            paginationSummaryEl.textContent = totalRows === 0
+                ? '目前沒有符合條件的資料'
+                : `顯示第 ${startIndex}-${endIndex} 筆，共 ${totalRows} 筆`;
+            prevPageBtn.disabled = safePage <= 1 || totalRows === 0;
+            nextPageBtn.disabled = safePage >= totalPages || totalRows === 0;
+        }
+
+        function resetPagination() {
+            currentPage = 1;
+            saveFilterState();
+        }
+
         function renderVisibilityControls(rows) {
             const byKey = new Map(rows.map((row) => [`${row.grade}-${row.week_code}`, row]));
 
@@ -337,17 +572,25 @@
         }
 
         function renderRows(rows) {
-            if (!rows.length) {
+            const totalRows = rows.length;
+            const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
+            currentPage = Math.min(currentPage, totalPages);
+            const startIndex = totalRows === 0 ? 0 : (currentPage - 1) * pageSize;
+            const paginatedRows = rows.slice(startIndex, startIndex + pageSize);
+
+            if (!totalRows) {
                 tbodyEl.innerHTML = `
                     <tr>
                         <td colspan="9" class="px-4 py-12 text-center font-bold text-slate-400">目前沒有符合條件的資料</td>
                     </tr>
                 `;
                 summaryTextEl.textContent = "目前沒有符合條件的資料";
+                updatePaginationControls(0, []);
+                saveFilterState();
                 return;
             }
 
-            tbodyEl.innerHTML = rows.map((row) => `
+            tbodyEl.innerHTML = paginatedRows.map((row) => `
                 <tr class="hover:bg-slate-50">
                     <td class="px-4 py-4">${renderStudentCell(row)}</td>
                     <td class="px-4 py-4 font-bold text-slate-600">${row.week_code}</td>
@@ -374,7 +617,9 @@
                 </tr>
             `).join("");
 
-            summaryTextEl.textContent = `共 ${rows.length} 筆資料`;
+            summaryTextEl.textContent = `共 ${totalRows} 筆資料`;
+            updatePaginationControls(totalRows, paginatedRows);
+            saveFilterState();
         }
 
         async function signInWithGoogle() {
@@ -430,6 +675,7 @@
             }
 
             studentProfilesByUserId = new Map((data || []).map((profile) => [profile.user_id, profile]));
+            populateClassOptions();
         }
 
 
@@ -465,7 +711,7 @@
             const { data, error } = await supabase.rpc("admin_list_progress", {
                 p_week_code: weekFilterEl.value || null,
                 p_activity_type: activityFilterEl.value || null,
-                p_search: searchFilterEl.value.trim() || null,
+                p_search: null,
                 p_completed: completedFilterValue
             });
 
@@ -480,43 +726,79 @@
                 return;
             }
 
-            renderRows(data || []);
+            renderRows(filterProgressRows(data || []));
         }
 
         async function loadWeekVisibility() {
+            logDebug("load-visibility-start", { hasUser: !!currentSession?.user, isTeacher: !!currentSession && isTeacher(currentSession) });
             if (!currentSession?.user || !isTeacher(currentSession)) {
                 renderVisibilityControls([]);
+                logDebug("load-visibility-skip", { reason: "not-teacher-or-no-session" });
                 return;
             }
 
             const { data, error } = await supabase.rpc("admin_list_week_visibility");
             if (error) {
+                logDebug("load-visibility-error", { message: error.message, code: error.code || null, details: error.details || null });
                 showNotice(`讀取卡片顯示設定失敗：${error.message}`, "error");
                 return;
             }
 
             renderVisibilityControls(data || []);
+            logDebug("load-visibility-done", { count: (data || []).length });
         }
 
         async function syncSessionAndRender() {
-            if (isSyncing) return;
+            if (isSyncing) {
+                logDebug('sync-skip', { reason: 'already-syncing' });
+                return;
+            }
             isSyncing = true;
+            logDebug('sync-start', debugSnapshot());
             try {
                 currentSession = await resolveSession();
+                logDebug('session-resolved', { email: currentSession?.user?.email || null });
                 updateAuthUI();
                 await loadProgress();
                 await loadWeekVisibility();
+                logDebug('sync-done', debugSnapshot());
+            } catch (error) {
+                logDebug('sync-error', { message: error?.message || String(error) });
+                throw error;
             } finally {
                 isSyncing = false;
+                renderDebugPanel();
             }
         }
 
+        async function getSessionForAdminAction() {
+            if (currentSession?.user) {
+                logDebug('action-session-current', { email: currentSession.user.email || null });
+                return currentSession;
+            }
+
+            const { data, error } = await supabase.auth.getSession();
+            if (error) {
+                logDebug('action-session-error', { message: error.message, code: error.code || null });
+                return null;
+            }
+
+            currentSession = data.session || null;
+            logDebug('action-session-fetched', { email: currentSession?.user?.email || null });
+            updateAuthUI();
+            renderDebugPanel();
+            return currentSession;
+        }
+
         window.__adminHandleVisibilityToggle = async (btn) => {
-            const session = await resolveSession();
+            logDebug("click-visibility-toggle", { grade: btn?.dataset?.grade, weekCode: btn?.dataset?.weekCode, nextVisible: btn?.dataset?.nextVisible, disabled: !!btn?.disabled });
+            const session = await getSessionForAdminAction();
             currentSession = session;
             updateAuthUI();
+            logDebug("toggle-session-resolved", { email: session?.user?.email || null, isTeacher: !!session && isTeacher(session) });
 
             if (!session?.user || !isTeacher(session)) {
+                logDebug("toggle-blocked", { reason: "not-teacher-or-no-session" });
                 showNotice("教師登入狀態已失效，請重新登入後再試。", "error");
                 return;
             }
@@ -526,6 +808,7 @@
             const nextVisible = btn.dataset.nextVisible === "true";
             btn.disabled = true;
             btn.textContent = "處理中...";
+            logDebug("toggle-rpc-start", { grade, weekCode, nextVisible });
 
             const { error } = await supabase.rpc("admin_set_week_visibility", {
                 p_grade: grade,
@@ -534,19 +817,24 @@
             });
 
             if (error) {
+                logDebug("toggle-rpc-error", { message: error.message, code: error.code || null, details: error.details || null });
                 showNotice(`更新卡片顯示設定失敗：${error.message}`, "error");
                 btn.disabled = false;
                 await loadWeekVisibility();
+                logDebug("toggle-refresh-after-error", { grade, weekCode });
                 return;
             }
 
+            logDebug("toggle-rpc-success", { grade, weekCode, nextVisible });
             const gradeLabel = grade === "grade3" ? "三年級" : "六年級";
             showNotice(`已更新 ${gradeLabel} 第 ${weekCode} 週卡片狀態。`, "success");
             await loadWeekVisibility();
+            logDebug("toggle-refresh-done", { grade, weekCode });
         };
 
         window.__adminHandleProgressReset = async (btn) => {
-            const session = await resolveSession();
+            logDebug("click-progress-reset", { userId: btn?.dataset?.userId, weekCode: btn?.dataset?.weekCode, activityKey: btn?.dataset?.activityKey });
+            const session = await getSessionForAdminAction();
             currentSession = session;
             updateAuthUI();
 
@@ -584,39 +872,79 @@
         loginBtn.addEventListener("click", signInWithGoogle);
         logoutBtn.addEventListener("click", signOut);
         refreshBtn.addEventListener("click", syncSessionAndRender);
-        weekFilterEl.addEventListener("change", loadProgress);
-        activityFilterEl.addEventListener("change", loadProgress);
-        completedFilterEl.addEventListener("change", loadProgress);
+        classFilterEl.addEventListener("change", () => { resetPagination(); loadProgress(); });
+        weekFilterEl.addEventListener("change", () => { resetPagination(); loadProgress(); });
+        activityFilterEl.addEventListener("change", () => { resetPagination(); loadProgress(); });
+        completedFilterEl.addEventListener("change", () => { resetPagination(); loadProgress(); });
         searchFilterEl.addEventListener("input", () => {
+            resetPagination();
             window.clearTimeout(searchFilterEl._debounceTimer);
             searchFilterEl._debounceTimer = window.setTimeout(loadProgress, 300);
         });
+        pageSizeSelectEl.addEventListener("change", () => {
+            pageSize = Number(pageSizeSelectEl.value) || 20;
+            currentPage = 1;
+            saveFilterState();
+            loadProgress();
+        });
+        prevPageBtn.addEventListener("click", () => {
+            if (currentPage <= 1) return;
+            currentPage -= 1;
+            saveFilterState();
+            loadProgress();
+        });
+        nextPageBtn.addEventListener("click", () => {
+            currentPage += 1;
+            saveFilterState();
+            loadProgress();
+        });
 
         window.addEventListener("pageshow", (event) => {
-            if (event.persisted) {
+            logDebug('pageshow', { persisted: event.persisted });
+            if (event.persisted && !disableAutoReload) {
+                setReloadReason('pageshow:persisted');
                 window.location.reload();
+                return;
+            }
+            if (disableAutoReload) {
+                logDebug('pageshow-skip-sync', { reason: 'noreload-mode' });
                 return;
             }
             syncSessionAndRender();
         });
         document.addEventListener("visibilitychange", () => {
+            logDebug('visibilitychange', { hidden: document.hidden, state: document.visibilityState, adminPageWasHidden });
             if (document.hidden) {
                 adminPageWasHidden = true;
                 return;
             }
 
-            if (adminPageWasHidden) {
+            if (adminPageWasHidden && !disableAutoReload) {
                 adminPageWasHidden = false;
+                setReloadReason('visibilitychange:return');
                 window.location.reload();
+                return;
+            }
+
+            if (adminPageWasHidden && disableAutoReload) {
+                adminPageWasHidden = false;
+                logDebug('visibilitychange-skip-sync', { reason: 'noreload-mode' });
                 return;
             }
 
             syncSessionAndRender();
         });
         window.addEventListener("focus", () => {
-            if (adminPageWasHidden) {
+            logDebug('focus', { adminPageWasHidden });
+            if (adminPageWasHidden && !disableAutoReload) {
                 adminPageWasHidden = false;
+                setReloadReason('focus:return');
                 window.location.reload();
+                return;
+            }
+            if (adminPageWasHidden && disableAutoReload) {
+                adminPageWasHidden = false;
+                logDebug('focus-skip-sync', { reason: 'noreload-mode' });
                 return;
             }
             syncSessionAndRender();
@@ -628,16 +956,28 @@
         });
 
         initWeekOptions();
+        applyFilterState();
+        const reloadReason = consumeReloadReason();
+        if (reloadReason) {
+            logDebug('reload-complete', { reason: reloadReason });
+        } else {
+            logDebug('page-init', { debugEnabled, disableAutoReload });
+        }
+        renderDebugPanel();
         await syncSessionAndRender();
 
-        supabase.auth.onAuthStateChange(async (_event, session) => {
+        supabase.auth.onAuthStateChange((event, session) => {
+            logDebug('auth-state-change', { event, email: session?.user?.email || null });
             currentSession = session;
             updateAuthUI();
-            await loadProgress();
-            await loadWeekVisibility();
+            renderDebugPanel();
+
+            window.setTimeout(() => {
+                syncSessionAndRender().catch((error) => {
+                    logDebug('auth-state-change-sync-error', { message: error?.message || String(error) });
+                });
+            }, 0);
         });
     </script>
 </body>
 </html>
-
-

@@ -13,7 +13,7 @@
     }
 
     const navHTML = window.__buildCourseNavbarHtml({
-        activeWeeks: [3, 4, 5, 6],
+        activeWeeks: [3, 4, 5, 6, 7],
         gradeLabel: "六年級資訊課",
         titleIconClass: "fa-solid fa-graduation-cap text-purple-800",
         titleClassName: "font-black text-purple-800 flex items-center text-lg tracking-wide",
