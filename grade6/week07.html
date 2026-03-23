@@ -38,6 +38,9 @@
             transform: translateY(-1px);
             transition: 0.2s ease;
         }
+        .lightbox-hidden {
+            display: none;
+        }
     </style>
 </head>
 <body class="text-gray-800 antialiased pb-12">
@@ -61,6 +64,25 @@
     </header>
 
     <main class="max-w-5xl mx-auto px-6 space-y-8">
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-sky-100 px-6 py-4 border-b border-sky-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-chart-column text-sky-600 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-bold text-sky-800">本節課程資訊圖表</h3>
+                </div>
+                <span class="bg-sky-600 text-white text-xs px-3 py-1 rounded-full font-bold">快速掌握</span>
+            </div>
+            <div class="p-4 md:p-6 bg-slate-50">
+                <img
+                    src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1774245263/it-class-tcwu/grade6/week07/week07-infographic.png"
+                    alt="第07週 Canva 任務重點資訊圖表"
+                    onclick="openLightbox(this.src)"
+                    class="w-full rounded-2xl border border-slate-200 shadow-sm cursor-zoom-in hover:shadow-xl hover:scale-[1.01] transition duration-200"
+                    loading="lazy"
+                >
+            </div>
+        </section>
 
         <section class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="bg-cyan-100 px-6 py-4 border-b border-cyan-200 flex items-center justify-between">
@@ -353,12 +375,41 @@
 
     </main>
 
+    <div id="lightbox" class="fixed inset-0 bg-black/85 z-[200] items-center justify-center p-4 cursor-zoom-out lightbox-hidden" onclick="closeLightbox()">
+        <div class="relative max-w-6xl w-full">
+            <img id="lightbox-img" src="" alt="資訊圖表放大" class="w-full max-h-[88vh] object-contain rounded-2xl shadow-2xl">
+            <button onclick="closeLightbox()" class="absolute -top-4 -right-4 bg-white text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-xl font-black text-xl hover:bg-red-500 hover:text-white transition">✕</button>
+        </div>
+    </div>
+
     <footer class="text-center mt-12 pb-8 text-gray-400 text-sm font-medium">
         <p><i class="fa-solid fa-graduation-cap mr-1"></i> 新北市頂溪國小資訊課 - 畢業影片專案系列</p>
     </footer>
 
+    <script>
+        window.openLightbox = function(src) {
+            const lb = document.getElementById("lightbox");
+            document.getElementById("lightbox-img").src = src;
+            lb.classList.remove("lightbox-hidden");
+            lb.classList.add("flex");
+        };
+
+        window.closeLightbox = function() {
+            const lb = document.getElementById("lightbox");
+            lb.classList.add("lightbox-hidden");
+            lb.classList.remove("flex");
+        };
+
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Escape") {
+                closeLightbox();
+            }
+        });
+    </script>
+
 </body>
 </html>
+
 
 
 
