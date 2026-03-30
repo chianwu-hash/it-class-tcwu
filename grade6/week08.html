@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六年級資訊課 - 第8週：改密碼與問卷填答</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background:
+                radial-gradient(circle at top right, rgba(59, 130, 246, 0.12), transparent 30%),
+                linear-gradient(180deg, #f8fafc 0%, #eef4ff 100%);
+        }
+        .step-card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .step-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 30px rgba(15, 23, 42, 0.12);
+        }
+        .spotlight-hidden {
+            display: none;
+        }
+        .spotlight-backdrop {
+            background:
+                radial-gradient(circle at center, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 16%, rgba(2, 6, 23, 0.9) 48%, rgba(2, 6, 23, 0.98) 100%);
+            backdrop-filter: blur(3px);
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pb-12">
+
+    <script src="navbar.js?v=20260330"></script>
+
+    <header class="bg-gradient-to-r from-sky-700 via-blue-700 to-indigo-800 text-white shadow-xl mb-8">
+        <div class="max-w-6xl mx-auto px-6 py-12 relative overflow-hidden">
+            <div class="relative z-10 flex items-center justify-between gap-6">
+                <div>
+                    <h2 class="text-xl font-bold text-sky-100 mb-2">頂溪國小 114下資訊課 ｜ 第 08 週</h2>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">改密碼與問卷填答任務</h1>
+                    <p class="text-xl md:text-2xl text-sky-50 font-black leading-relaxed">先改密碼，再登入問卷。<br>先完成的人可以續做 Canva。</p>
+                </div>
+                <div class="hidden md:block text-7xl opacity-80 transform rotate-6 drop-shadow-lg">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+            </div>
+            <i class="fa-solid fa-key absolute text-white opacity-10 text-9xl -bottom-10 right-4"></i>
+        </div>
+    </header>
+
+    <div id="spotlight" class="spotlight-hidden fixed inset-0 z-[200] items-center justify-center p-4 spotlight-backdrop" onclick="closeSpotlight()">
+        <div class="relative max-w-6xl w-full flex items-center justify-center">
+            <img id="spotlight-img" src="" alt="教學截圖放大檢視" class="max-w-full max-h-[88vh] rounded-3xl shadow-2xl border-4 border-white object-contain">
+            <button onclick="closeSpotlight()" class="absolute -top-3 right-0 md:-top-4 md:-right-4 bg-white text-slate-800 rounded-full w-11 h-11 flex items-center justify-center shadow-xl font-black text-xl hover:bg-rose-500 hover:text-white transition">
+                ✕
+            </button>
+        </div>
+    </div>
+
+    <main class="max-w-6xl mx-auto px-6 space-y-8">
+
+        <section class="bg-white rounded-3xl border border-sky-100 shadow-sm overflow-hidden">
+            <div class="bg-sky-100 px-6 py-4 border-b border-sky-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-image text-sky-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-sky-900">本週任務重點圖</h3>
+                </div>
+                <span class="bg-sky-600 text-white text-xs px-3 py-1 rounded-full font-bold">可點圖放大</span>
+            </div>
+            <div class="p-4 md:p-6">
+                <button type="button" class="step-card w-full text-left rounded-3xl overflow-hidden border border-slate-200 bg-slate-50" onclick="openSpotlight('https://res.cloudinary.com/dmqmjfqng/image/upload/v1774848035/it-class-tcwu/grade6/week08/week08-infographic-1920x1080-q80.webp', '第08週 改密碼與問卷填答資訊圖')">
+                    <img src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1774848035/it-class-tcwu/grade6/week08/week08-infographic-1920x1080-q80.webp" alt="第08週 改密碼與問卷填答資訊圖" class="w-full rounded-2xl object-contain bg-white">
+                </button>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-amber-100 shadow-sm overflow-hidden">
+            <div class="bg-amber-100 px-6 py-4 border-b border-amber-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-scroll text-amber-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-amber-900">為什麼今天要先改密碼？</h3>
+                </div>
+                <span class="bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold">教育局公告重點</span>
+            </div>
+            <div class="p-6 md:p-8 grid lg:grid-cols-[1.2fr,0.8fr] gap-6">
+                <div>
+                    <p class="text-2xl md:text-3xl text-slate-700 font-black leading-relaxed mb-5">
+                        教育局要求加強帳號安全。<br>
+                        <span class="text-rose-600">太弱的密碼，之後可能不能再用。</span>
+                    </p>
+                    <div class="grid gap-4">
+                        <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5">
+                            <div class="text-sm font-black text-rose-700 mb-2">公文重點 1</div>
+                            <h4 class="text-2xl font-black text-rose-900 leading-snug">弱密碼會被停用</h4>
+                        </div>
+                        <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5">
+                            <div class="text-sm font-black text-sky-700 mb-2">公文重點 2</div>
+                            <h4 class="text-2xl font-black text-sky-900 leading-snug">登入安全會逐步加強</h4>
+                        </div>
+                        <div class="bg-violet-50 border border-violet-200 rounded-2xl p-5">
+                            <div class="text-sm font-black text-violet-700 mb-2">和你最有關的地方</div>
+                            <h4 class="text-2xl font-black text-violet-900 leading-snug">親師生平台密碼<br>也會一起受影響</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                    <h4 class="text-xl font-black text-slate-900 mb-4">今天先記住這 3 件事</h4>
+                    <ul class="space-y-4 text-lg font-black text-slate-700">
+                        <li class="flex items-start gap-3">
+                            <span class="mt-0.5 text-amber-600"><i class="fa-solid fa-circle-check"></i></span>
+                            <span>今天改密碼，是教育局要求。</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="mt-0.5 text-amber-600"><i class="fa-solid fa-circle-check"></i></span>
+                            <span>太弱、太好猜的密碼，以後可能不能再用。</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="mt-0.5 text-amber-600"><i class="fa-solid fa-circle-check"></i></span>
+                            <span>改好的新密碼，也會影響親師生平台。</span>
+                        </li>
+                    </ul>
+                    <div class="mt-5 bg-white border border-amber-200 rounded-2xl p-4">
+                        <div class="text-sm font-black text-amber-700 mb-2">老師提醒</div>
+                        <p class="text-lg font-black text-slate-700 leading-relaxed">
+                            今天先改對、記住，<br>再用新密碼登入問卷。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-indigo-100 shadow-sm overflow-hidden">
+            <div class="bg-indigo-100 px-6 py-4 border-b border-indigo-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-keyboard text-indigo-600 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-indigo-800">安全密碼怎麼想</h3>
+                </div>
+                <span class="bg-indigo-600 text-white text-xs px-3 py-1 rounded-full font-bold">先想好再改</span>
+            </div>
+            <div class="p-6 grid lg:grid-cols-2 gap-6">
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                    <h4 class="text-2xl font-black text-slate-900 mb-4">本節建議公式</h4>
+                    <div class="bg-white border-2 border-indigo-200 rounded-2xl p-5 text-center">
+                        <div class="text-sm font-black text-indigo-600 mb-2">密碼公式</div>
+                        <div class="text-3xl font-black text-slate-800 tracking-wide leading-snug">大寫英文字母<br>+ 英文單字<br>+ 2個數字<br>+ 1個符號</div>
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-3 mt-5">
+                        <div class="bg-white rounded-xl border border-slate-200 p-4">
+                            <div class="font-black text-sky-700 mb-1">範例 1</div>
+                            <div class="text-lg font-black text-slate-800">Tiger35!</div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-slate-200 p-4">
+                            <div class="font-black text-sky-700 mb-1">範例 2</div>
+                            <div class="text-lg font-black text-slate-800">Panda42@</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5">
+                    <h4 class="text-2xl font-black text-rose-800 mb-4">不能放進密碼</h4>
+                    <div class="grid sm:grid-cols-2 gap-3 text-lg font-black text-rose-700">
+                        <div class="bg-white rounded-xl border border-rose-200 p-4"><i class="fa-solid fa-ban mr-2"></i>生日</div>
+                        <div class="bg-white rounded-xl border border-rose-200 p-4"><i class="fa-solid fa-ban mr-2"></i>學號</div>
+                        <div class="bg-white rounded-xl border border-rose-200 p-4"><i class="fa-solid fa-ban mr-2"></i>自己名字</div>
+                        <div class="bg-white rounded-xl border border-rose-200 p-4"><i class="fa-solid fa-ban mr-2"></i>帳號</div>
+                        <div class="bg-white rounded-xl border border-rose-200 p-4 sm:col-span-2"><i class="fa-solid fa-ban mr-2"></i>身分證字號</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="bg-slate-900 px-6 py-4 border-b border-slate-700 flex items-center justify-between text-white">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-list-ol text-sky-300 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black">改密碼流程圖</h3>
+                </div>
+                <span class="bg-sky-400 text-sky-950 text-xs px-3 py-1 rounded-full font-black">點圖片可放大</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <button type="button" class="step-card text-left bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden" onclick="openSpotlight('https://res.cloudinary.com/dmqmjfqng/image/upload/v1774840039/it-class-tcwu/grade6/week08/01.png', '步驟 1：點登入')">
+                    <img src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1774840039/it-class-tcwu/grade6/week08/01.png" alt="步驟1 點選登入畫面" class="w-full h-52 object-cover object-top">
+                    <div class="p-5">
+                        <div class="text-sm font-black text-sky-600 mb-1">步驟 1</div>
+                        <h4 class="text-xl font-black text-slate-900 mb-2">先點首頁的登入</h4>
+                        <p class="text-base font-black text-slate-700">先點左邊粉紅色的 <strong>登入(Login)</strong>。</p>
+                    </div>
+                </button>
+
+                <button type="button" class="step-card text-left bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden" onclick="openSpotlight('https://res.cloudinary.com/dmqmjfqng/image/upload/v1774840041/it-class-tcwu/grade6/week08/02.png', '步驟 2：輸入帳密登入')">
+                    <img src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1774840041/it-class-tcwu/grade6/week08/02.png" alt="步驟2 輸入帳號密碼畫面" class="w-full h-52 object-cover object-top">
+                    <div class="p-5">
+                        <div class="text-sm font-black text-sky-600 mb-1">步驟 2</div>
+                        <h4 class="text-xl font-black text-slate-900 mb-2">輸入帳號與舊密碼</h4>
+                        <p class="text-base font-black text-slate-700">先用原本帳號密碼登入。</p>
+                    </div>
+                </button>
+
+                <button type="button" class="step-card text-left bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden" onclick="openSpotlight('https://res.cloudinary.com/dmqmjfqng/image/upload/v1774840043/it-class-tcwu/grade6/week08/03.png', '步驟 3：點名字和個人資料密碼修改')">
+                    <img src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1774840043/it-class-tcwu/grade6/week08/03.png" alt="步驟3 點選右上角名字與個人資料密碼修改" class="w-full h-52 object-cover object-top">
+                    <div class="p-5">
+                        <div class="text-sm font-black text-sky-600 mb-1">步驟 3</div>
+                        <h4 class="text-xl font-black text-slate-900 mb-2">點右上角名字</h4>
+                        <p class="text-base font-black text-slate-700">先點右上角名字，再點 <strong>個人資料/密碼修改</strong>。</p>
+                    </div>
+                </button>
+
+                <button type="button" class="step-card text-left bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden" onclick="openSpotlight('https://res.cloudinary.com/dmqmjfqng/image/upload/v1774840045/it-class-tcwu/grade6/week08/04.png', '步驟 4：點變更密碼')">
+                    <img src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1774840045/it-class-tcwu/grade6/week08/04.png" alt="步驟4 點選變更密碼" class="w-full h-52 object-cover object-top">
+                    <div class="p-5">
+                        <div class="text-sm font-black text-sky-600 mb-1">步驟 4</div>
+                        <h4 class="text-xl font-black text-slate-900 mb-2">找到變更密碼</h4>
+                        <p class="text-base font-black text-slate-700">在 <strong>自訂帳號與密碼</strong> 區塊點 <strong>變更密碼</strong>。</p>
+                    </div>
+                </button>
+
+                <button type="button" class="step-card text-left bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden md:col-span-2 xl:col-span-2" onclick="openSpotlight('https://res.cloudinary.com/dmqmjfqng/image/upload/v1774840046/it-class-tcwu/grade6/week08/05.png', '步驟 5：輸入新密碼並儲存')">
+                    <img src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1774840046/it-class-tcwu/grade6/week08/05.png" alt="步驟5 輸入舊密碼新密碼驗證碼並儲存" class="w-full h-60 object-contain bg-white">
+                    <div class="p-5">
+                        <div class="text-sm font-black text-sky-600 mb-1">步驟 5</div>
+                        <h4 class="text-xl font-black text-slate-900 mb-2">輸入舊密碼、新密碼、驗證碼後儲存</h4>
+                        <p class="text-base font-black text-slate-700">填入 <strong>舊密碼</strong>、<strong>新密碼</strong>、<strong>圖形數字</strong>，最後按 <strong>儲存</strong>。</p>
+                    </div>
+                </button>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-emerald-100 shadow-sm overflow-hidden">
+            <div class="bg-emerald-100 px-6 py-4 border-b border-emerald-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-file-lines text-emerald-600 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-emerald-800">學生問卷怎麼進</h3>
+                </div>
+                <span class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-full font-bold">改完密碼後立刻做</span>
+            </div>
+            <div class="p-6 grid lg:grid-cols-2 gap-6">
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                    <h4 class="text-xl font-black text-slate-900 mb-4">問卷網址</h4>
+                    <a href="https://myschool-ntpc.epa.ntnu.edu.tw/ques/114myschool_stu" target="_blank" rel="noopener noreferrer" class="block bg-white border-2 border-emerald-200 rounded-2xl p-5 hover:border-emerald-400 hover:shadow-md transition">
+                        <div class="text-sm font-black text-emerald-600 mb-2">學生問卷</div>
+                        <div class="text-sm md:text-base font-black text-slate-800 break-all">https://myschool-ntpc.epa.ntnu.edu.tw/ques/114myschool_stu</div>
+                        <div class="mt-3 inline-flex items-center text-sm font-black text-emerald-700">
+                            前往問卷 <i class="fa-solid fa-arrow-up-right-from-square ml-2"></i>
+                        </div>
+                    </a>
+                    <p class="mt-4 text-lg font-black text-slate-700">登入時請用<strong>剛剛更新後</strong>的新密碼。</p>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                    <h4 class="text-2xl font-black text-amber-800 mb-4">填問卷前一定要知道</h4>
+                    <ul class="space-y-3 text-lg font-black text-slate-700">
+                        <li><i class="fa-solid fa-computer text-amber-500 mr-2"></i>建議用電腦填寫</li>
+                        <li><i class="fa-solid fa-floppy-disk text-amber-500 mr-2"></i>可以分次填寫</li>
+                        <li><i class="fa-solid fa-right-to-bracket text-amber-500 mr-2"></i>重新登入會從上次未完成頁面繼續</li>
+                        <li><i class="fa-solid fa-triangle-exclamation text-rose-500 mr-2"></i>不能回上一頁修改，所以每頁送出前先看清楚</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-cyan-100 shadow-sm overflow-hidden">
+            <div class="bg-cyan-100 px-6 py-4 border-b border-cyan-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-clipboard-question text-cyan-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-cyan-900">為什麼今天要填問卷？</h3>
+                </div>
+                <span class="bg-cyan-600 text-white text-xs px-3 py-1 rounded-full font-bold">學校配合事項</span>
+            </div>
+            <div class="p-6 md:p-8 grid lg:grid-cols-[1.1fr,0.9fr] gap-6">
+                <div>
+                    <p class="text-2xl md:text-3xl text-slate-700 font-black leading-relaxed mb-5">
+                        這不是隨機作業。<br>
+                        <span class="text-cyan-700">這是新北市中小學 114 學年問卷調查。</span>
+                    </p>
+                    <div class="grid gap-4">
+                        <div class="bg-cyan-50 border border-cyan-200 rounded-2xl p-5">
+                            <div class="text-sm font-black text-cyan-700 mb-2">調查對象</div>
+                            <h4 class="text-2xl font-black text-cyan-900 leading-snug">4 到 6 年級學生<br>都要填</h4>
+                        </div>
+                        <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5">
+                            <div class="text-sm font-black text-sky-700 mb-2">學校任務</div>
+                            <h4 class="text-2xl font-black text-sky-900 leading-snug">學校要配合完成<br>線上填答</h4>
+                        </div>
+                        <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-5">
+                            <div class="text-sm font-black text-indigo-700 mb-2">登入方式</div>
+                            <h4 class="text-2xl font-black text-indigo-900 leading-snug">用校務行政系統<br>帳號密碼登入</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                    <h4 class="text-xl font-black text-slate-900 mb-4">今天先記住這 3 件事</h4>
+                    <ul class="space-y-4 text-lg font-black text-slate-700">
+                        <li class="flex items-start gap-3">
+                            <span class="mt-0.5 text-cyan-600"><i class="fa-solid fa-circle-check"></i></span>
+                            <span>六年級學生是正式填答對象。</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="mt-0.5 text-cyan-600"><i class="fa-solid fa-circle-check"></i></span>
+                            <span>今天要用新密碼登入問卷。</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="mt-0.5 text-cyan-600"><i class="fa-solid fa-circle-check"></i></span>
+                            <span>問卷可以分次填，但不能回上一頁改。</span>
+                        </li>
+                    </ul>
+                    <div class="mt-5 bg-white border border-cyan-200 rounded-2xl p-4">
+                        <div class="text-sm font-black text-cyan-700 mb-2">老師提醒</div>
+                        <p class="text-lg font-black text-slate-700 leading-relaxed">
+                            先登入成功，<br>再慢慢看題目填答。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-gradient-to-r from-violet-700 to-indigo-800 rounded-3xl shadow-xl text-white p-6 md:p-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-white/10 px-4 py-1.5 rounded-full text-sm font-black mb-4">
+                        <i class="fa-solid fa-forward"></i> 先完成的人接著做
+                    </div>
+                    <h3 class="text-2xl md:text-3xl font-black mb-3">問卷填完後，不用空等</h3>
+                    <p class="text-indigo-100 font-medium leading-relaxed">如果你已經完成改密碼，也順利完成問卷填答，就可以回到自己的 <strong>Canva 畢業影片專案</strong>，繼續把上週做到一半的內容補完整。</p>
+                </div>
+                <div class="bg-white/10 rounded-2xl p-5 min-w-[280px] border border-white/15">
+                    <div class="text-sm font-black text-cyan-200 mb-2">續做方向</div>
+                    <ul class="space-y-2 text-sm font-bold text-white">
+                        <li><i class="fa-solid fa-check mr-2 text-cyan-300"></i>補感恩留言</li>
+                        <li><i class="fa-solid fa-check mr-2 text-cyan-300"></i>調整文字位置</li>
+                        <li><i class="fa-solid fa-check mr-2 text-cyan-300"></i>整理頁面排版</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const spotlightEl = document.getElementById("spotlight");
+        const spotlightImgEl = document.getElementById("spotlight-img");
+
+        function openSpotlight(src, alt) {
+            spotlightImgEl.src = src;
+            spotlightImgEl.alt = alt || "教學截圖放大檢視";
+            spotlightEl.classList.remove("spotlight-hidden");
+            spotlightEl.classList.add("flex");
+            document.body.classList.add("overflow-hidden");
+        }
+
+        function closeSpotlight() {
+            spotlightEl.classList.add("spotlight-hidden");
+            spotlightEl.classList.remove("flex");
+            spotlightImgEl.src = "";
+            document.body.classList.remove("overflow-hidden");
+        }
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                closeSpotlight();
+            }
+        });
+
+        spotlightImgEl.addEventListener("click", (event) => {
+            event.stopPropagation();
+        });
+    </script>
+
+    <footer class="text-center mt-16 pb-8 text-gray-400 text-sm font-medium">
+        <p><i class="fa-solid fa-graduation-cap mr-1"></i> 新北市頂溪國小資訊課 - 畢業影片專案系列</p>
+    </footer>
+
+</body>
+</html>
