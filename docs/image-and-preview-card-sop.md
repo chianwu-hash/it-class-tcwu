@@ -58,3 +58,18 @@
 
 - 本地壓縮檔：`grade6/images/week08/week08-infographic-1920x1080-q80.webp`
 - Cloudinary：`https://res.cloudinary.com/dmqmjfqng/image/upload/v1774848035/it-class-tcwu/grade6/week08/week08-infographic-1920x1080-q80.webp`
+
+## 7. 每週新增頁面檢查清單
+
+每次新增 `weekXX.html` 時，至少檢查以下項目：
+
+1. 頁面是否已載入對應年級的 `navbar.js`
+2. navbar 的 auth bar 是否真的有啟動，不只是顯示外殼
+3. 若頁面需要顯示登入狀態 / 教師後台按鈕 / 登出按鈕，需接上：
+   - `shared/navbar-auth.js`
+   - 或等效的 auth 初始化流程
+4. 不能只看到 `未登入` 與 Google 按鈕就當作完成，必須實際確認：
+   - 已登入時會顯示帳號
+   - 教師帳號會顯示後台按鈕
+   - 登出按鈕行為正常
+5. 若該頁有額外進度功能，再另外決定是否需要啟用 `重新闖關` 按鈕
