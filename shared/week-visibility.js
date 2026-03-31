@@ -1,5 +1,3 @@
-import { supabase } from "./auth.js";
-
 export function extractWeekCodeFromHref(href) {
     const match = (href || "").match(/week(\d+)(?:\.html)?(?:[/?#]|$)/i);
     return match ? String(match[1]).padStart(2, "0") : null;
@@ -12,6 +10,14 @@ export function collectWeekCards(root = document) {
 }
 
 export async function loadWeekVisibility(grade) {
+    let supabase;
+    try {
+        ({ supabase } = await import("./auth.js"));
+    } catch (error) {
+        console.warn(`${grade} week visibility auth bootstrap failed`, error);
+        return null;
+    }
+
     const { data, error } = await supabase
         .from("week_visibility")
         .select("week_code,is_visible")
@@ -39,12 +45,31 @@ export function applyWeekVisibilityRows(weekCards, rows) {
     });
 }
 
+export function prioritizeLatestVisibleWeekCard(weekCards) {
+    const visibleCards = (weekCards || []).filter((card) => !card.classList.contains("hidden"));
+    if (visibleCards.length < 2) return;
+
+    const latestCard = visibleCards.find((card) => card.dataset.latestWeek === "true")
+        || visibleCards.find((card) => card.textContent.includes("本週最新"));
+    if (!latestCard) return;
+
+    const firstVisibleCard = visibleCards[0];
+    if (latestCard === firstVisibleCard) return;
+
+    const container = firstVisibleCard.parentElement;
+    if (!container || latestCard.parentElement !== container) return;
+
+    container.insertBefore(latestCard, firstVisibleCard);
+}
+
 export async function applyWeekVisibilityToCards(grade, root = document) {
     const weekCards = collectWeekCards(root);
     if (!weekCards.length) return;
 
     const rows = await loadWeekVisibility(grade);
-    if (!rows) return;
+    if (rows) {
+        applyWeekVisibilityRows(weekCards, rows);
+    }
 
-    applyWeekVisibilityRows(weekCards, rows);
+    prioritizeLatestVisibleWeekCard(weekCards);
 }
