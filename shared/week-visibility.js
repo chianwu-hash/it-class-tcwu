@@ -66,6 +66,10 @@ export async function applyWeekVisibilityToCards(grade, root = document) {
     const weekCards = collectWeekCards(root);
     if (!weekCards.length) return;
 
+    // Prioritize the latest visible card immediately so local preview and
+    // slow network responses do not block the homepage ordering.
+    prioritizeLatestVisibleWeekCard(weekCards);
+
     const rows = await loadWeekVisibility(grade);
     if (rows) {
         applyWeekVisibilityRows(weekCards, rows);
