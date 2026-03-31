@@ -162,9 +162,9 @@
                     <h4 class="text-2xl font-black text-rose-800 mb-4">不能放進密碼</h4>
                     <div class="grid sm:grid-cols-2 gap-3 text-lg font-black text-rose-700">
                         <div class="bg-white rounded-xl border border-rose-200 p-4"><i class="fa-solid fa-ban mr-2"></i>生日</div>
-                        <div class="bg-white rounded-xl border border-rose-200 p-4"><i class="fa-solid fa-ban mr-2"></i>學號</div>
                         <div class="bg-white rounded-xl border border-rose-200 p-4"><i class="fa-solid fa-ban mr-2"></i>自己名字</div>
                         <div class="bg-white rounded-xl border border-rose-200 p-4"><i class="fa-solid fa-ban mr-2"></i>帳號</div>
+                        <div class="bg-white rounded-xl border border-rose-200 p-4"><i class="fa-solid fa-ban mr-2"></i>太簡單的連號</div>
                         <div class="bg-white rounded-xl border border-rose-200 p-4 sm:col-span-2"><i class="fa-solid fa-ban mr-2"></i>身分證字號</div>
                     </div>
                 </div>
@@ -243,6 +243,31 @@
                         <p class="text-base font-black text-slate-700">填入 <strong>舊密碼</strong>、<strong>新密碼</strong>、<strong>圖形數字</strong>，最後按 <strong>儲存</strong>。</p>
                     </div>
                 </button>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-violet-100 shadow-sm overflow-hidden">
+            <div class="bg-violet-100 px-6 py-4 border-b border-violet-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-circle-exclamation text-violet-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-violet-900">最容易卡住的地方</h3>
+                </div>
+                <span class="bg-violet-600 text-white text-xs px-3 py-1 rounded-full font-bold">先看再輸入</span>
+            </div>
+            <div class="p-4 md:p-6">
+                <button type="button" class="step-card w-full text-left rounded-3xl overflow-hidden border border-slate-200 bg-slate-50" onclick="openSpotlight('https://res.cloudinary.com/dmqmjfqng/image/upload/v1774929399/it-class-tcwu/grade6/week08/week08-password-reminder-078-q80.webp', '舊密碼與再次輸入新密碼提醒圖')">
+                    <img src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1774929399/it-class-tcwu/grade6/week08/week08-password-reminder-078-q80.webp" alt="舊密碼與再次輸入新密碼提醒圖" class="w-full rounded-2xl object-contain bg-white">
+                </button>
+                <div class="grid md:grid-cols-2 gap-4 mt-5">
+                    <div class="bg-white border border-violet-200 rounded-2xl p-4">
+                        <div class="text-sm font-black text-violet-700 mb-2">提醒 1</div>
+                        <p class="text-lg font-black text-slate-800 leading-relaxed">第一格的 <span class="text-violet-700">舊密碼</span>，不是帳號，是你原本登入時的密碼。</p>
+                    </div>
+                    <div class="bg-white border border-violet-200 rounded-2xl p-4">
+                        <div class="text-sm font-black text-violet-700 mb-2">提醒 2</div>
+                        <p class="text-lg font-black text-slate-800 leading-relaxed">第三格不是再想一個新的，是把 <span class="text-violet-700">新密碼再打一次</span>。</p>
+                    </div>
+                </div>
             </div>
         </section>
 
