@@ -13,6 +13,8 @@ Desktop.ini
 *.log
 *.tmp
 *.temp
+node_modules/
+.claude/
 
 # OAuth / secrets
 client_secret_*.json
@@ -29,5 +31,7 @@ tools/postimages_migration/url_mapping.csv
 tools/postimages_migration/failed_uploads.txt
 tools/postimages_migration/images/
 tools/postimages_migration/__pycache__/
+tools/__pycache__/
+automation/output/
 
 .vercel

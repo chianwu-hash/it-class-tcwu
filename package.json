@@ -1,0 +1,41 @@
+﻿{
+    "name":  "it-class-tcwu",
+    "version":  "1.0.0",
+    "description":  "Teaching website and automation tools for it-class-tcwu",
+    "main":  "index.js",
+    "directories":  {
+                        "doc":  "docs"
+                    },
+    "scripts":  {
+                    "test":  "echo \"Error: no test specified\" \u0026\u0026 exit 1",
+                    "browser:smoke":  "node automation/browser-smoke.js",
+                    "wayground:open":  "node automation/wayground-open.js",
+                    "wayground:inspect":  "node automation/wayground-cdp-inspect.js",
+                    "wayground:generate":  "node automation/wayground-generate-from-bank.js",
+                    "wayground:check":  "node automation/wayground-check-generated-quiz.js",
+                    "wayground:delete":  "node automation/wayground-delete-questions.js",
+                    "wayground:set-language":  "node automation/wayground-set-language-chinese.js",
+                    "notebooklm:open":  "node automation/notebooklm-open.js",
+                    "notebooklm:edge":  "node automation/notebooklm-open.js msedge",
+                    "notebooklm:chrome":  "node automation/notebooklm-open.js chrome",
+                    "wayground:publish":  "node automation/wayground-publish.js",
+                    "wayground:set-all-timers-2min":  "node automation/wayground-set-all-timers-2min.js"
+                },
+    "repository":  {
+                       "type":  "git",
+                       "url":  "git+https://github.com/chianwu-hash/it-class-tcwu.git"
+                   },
+    "keywords":  [
+
+                 ],
+    "author":  "",
+    "license":  "ISC",
+    "type":  "commonjs",
+    "bugs":  {
+                 "url":  "https://github.com/chianwu-hash/it-class-tcwu/issues"
+             },
+    "homepage":  "https://github.com/chianwu-hash/it-class-tcwu#readme",
+    "devDependencies":  {
+                            "playwright":  "^1.59.1"
+                        }
+}
