@@ -15,6 +15,7 @@
                     "wayground:check":  "node automation/wayground-check-generated-quiz.js",
                     "wayground:delete":  "node automation/wayground-delete-questions.js",
                     "wayground:set-language":  "node automation/wayground-set-language-chinese.js",
+                    "wayground:collect-links":  "node automation/wayground-collect-share-links.js",
                     "notebooklm:open":  "node automation/notebooklm-open.js",
                     "notebooklm:edge":  "node automation/notebooklm-open.js msedge",
                     "notebooklm:chrome":  "node automation/notebooklm-open.js chrome",

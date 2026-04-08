@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>??? Wayground ???</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: radial-gradient(circle at top left, rgba(14, 165, 233, 0.14), transparent 30%), radial-gradient(circle at top right, rgba(99, 102, 241, 0.12), transparent 28%), linear-gradient(180deg, #ecfeff 0%, #f8fdff 48%, #eef7ff 100%);
+            color: #0f172a;
+        }
+        .card-hover { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12); }
+    </style>
+</head>
+<body class="antialiased pb-12">
+    <script src="navbar.js"></script>
+    <header class="bg-gradient-to-r from-cyan-500 via-sky-500 to-indigo-500 text-white shadow-xl mb-8">
+        <div class="max-w-5xl mx-auto px-6 py-12 relative overflow-hidden">
+            <div class="relative z-10 flex items-center justify-between gap-6">
+                <div>
+                    <h2 class="text-xl font-bold text-cyan-100 mb-2">?????? ? Wayground ???</h2>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">Wayground ????</h1>
+                    <p class="text-xl md:text-2xl text-cyan-50 font-black leading-relaxed">??????????<br>??????????</p>
+                </div>
+                <div class="hidden md:block text-7xl opacity-80 transform rotate-6 drop-shadow-lg">
+                    <i class="fa-solid fa-graduation-cap text-amber-200"></i>
+                </div>
+            </div>
+            <i class="fa-solid fa-star absolute text-white opacity-10 text-9xl -bottom-10 right-4"></i>
+        </div>
+    </header>
+    <main class="max-w-5xl mx-auto px-6 space-y-8">
+        <section class="bg-white rounded-3xl border-4 border-cyan-200 shadow-md overflow-hidden">
+            <div class="bg-cyan-100 px-6 py-4 border-b-4 border-cyan-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-route text-cyan-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-cyan-900">????????</h3>
+                </div>
+                <span class="bg-cyan-600 text-white text-xs px-3 py-1 rounded-full font-bold">?????????</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-3 gap-4">
+                <div class="bg-cyan-50 border border-cyan-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-cyan-700 mb-2">?? 1</div>
+                    <h4 class="text-xl font-black text-cyan-900 mb-2">?????</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">?????????????????????</p>
+                </div>
+                <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-sky-700 mb-2">?? 2</div>
+                    <h4 class="text-xl font-black text-sky-900 mb-2">??????</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">??????????????????????</p>
+                </div>
+                <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-indigo-700 mb-2">?? 3</div>
+                    <h4 class="text-xl font-black text-indigo-900 mb-2">??????</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">???????????????????????</p>
+                </div>
+            </div>
+        </section>
+        <section class="bg-white rounded-3xl border-4 border-violet-200 shadow-md overflow-hidden">
+            <div class="bg-violet-100 px-6 py-4 border-b-4 border-violet-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-book-open text-violet-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-violet-900">????</h3>
+                </div>
+                <span class="bg-violet-600 text-white text-xs px-3 py-1 rounded-full font-bold">??????</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-2 gap-5">
+                <article class="card-hover bg-white rounded-2xl border border-violet-200 p-5 shadow-sm">
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">????????????</h4>
+                    <p class="text-slate-700 font-bold leading-relaxed mb-4">????????? 30 ????????????????????</p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2 py-1 rounded-md font-bold">?????</span>
+                        <span class="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2 py-1 rounded-md font-bold">30 ?</span>
+                        <span class="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2 py-1 rounded-md font-bold">??</span>
+                    </div>
+                    <a href="https://wayground.com/admin/quiz/69d4ebc67140ece99878b577?source=quiz_share" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full min-h-[46px] rounded-2xl bg-gradient-to-r from-violet-500 to-indigo-500 text-white font-black shadow-md hover:opacity-95 transition">????</a>
+                </article>
+                <article class="card-hover bg-white rounded-2xl border border-violet-200 p-5 shadow-sm">
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">????????????</h4>
+                    <p class="text-slate-700 font-bold leading-relaxed mb-4">????????? 30 ??????????????????????</p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2 py-1 rounded-md font-bold">?????</span>
+                        <span class="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2 py-1 rounded-md font-bold">30 ?</span>
+                        <span class="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2 py-1 rounded-md font-bold">??</span>
+                    </div>
+                    <a href="https://wayground.com/admin/quiz/69d50a8fb6631d1ebdfdb782?source=quiz_share" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full min-h-[46px] rounded-2xl bg-gradient-to-r from-violet-500 to-indigo-500 text-white font-black shadow-md hover:opacity-95 transition">????</a>
+                </article>
+            </div>
+        </section>
+        <section class="bg-white rounded-3xl border-4 border-emerald-200 shadow-md overflow-hidden">
+            <div class="bg-emerald-100 px-6 py-4 border-b-4 border-emerald-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-globe text-emerald-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-emerald-900">????</h3>
+                </div>
+                <span class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-full font-bold">????</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-3 gap-5">
+                <article class="card-hover bg-white rounded-2xl border border-emerald-200 p-5 shadow-sm">
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">?? CH1</h4>
+                    <p class="text-slate-700 font-bold leading-relaxed mb-4">??????? 20 ????????</p>
+                    <div class="flex flex-wrap gap-2 mb-5"><span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-bold">CH1</span><span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-bold">20 ?</span><span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-bold">??</span></div>
+                    <a href="https://wayground.com/admin/quiz/69d50b6d42678d6c2a75b247?source=quiz_share" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full min-h-[46px] rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black shadow-md hover:opacity-95 transition">????</a>
+                </article>
+                <article class="card-hover bg-white rounded-2xl border border-emerald-200 p-5 shadow-sm">
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">?? CH2</h4>
+                    <p class="text-slate-700 font-bold leading-relaxed mb-4">??????? 20 ?????????????</p>
+                    <div class="flex flex-wrap gap-2 mb-5"><span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-bold">CH2</span><span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-bold">20 ?</span><span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-bold">??</span></div>
+                    <a href="https://wayground.com/admin/quiz/69d50bf135b8fe286581b11a?source=quiz_share" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full min-h-[46px] rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black shadow-md hover:opacity-95 transition">????</a>
+                </article>
+                <article class="card-hover bg-white rounded-2xl border border-emerald-200 p-5 shadow-sm">
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">?? CH3</h4>
+                    <p class="text-slate-700 font-bold leading-relaxed mb-4">??????? 20 ?????????????</p>
+                    <div class="flex flex-wrap gap-2 mb-5"><span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-bold">CH3</span><span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-bold">20 ?</span><span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-bold">??</span></div>
+                    <a href="https://wayground.com/admin/quiz/69d50c561677b34ccfc54d1e?source=quiz_share" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full min-h-[46px] rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black shadow-md hover:opacity-95 transition">????</a>
+                </article>
+            </div>
+        </section>
+    </main>
+    <footer class="text-center mt-14 pb-8 text-gray-400 text-sm font-medium"><p><i class="fa-solid fa-rocket mr-1"></i> ?????????? - Wayground ???</p></footer>
+    <script type="module">import { initNavbarAuth } from "../shared/navbar-auth.js"; initNavbarAuth();</script>
+</body>
+</html>

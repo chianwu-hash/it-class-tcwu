@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>?????? - ?09? ?????</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; background: radial-gradient(circle at top right, rgba(34, 211, 238, 0.18), transparent 28%), linear-gradient(180deg, #ecfeff 0%, #f0fdfa 100%); }
+        .card-hover { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 18px 30px rgba(15, 23, 42, 0.12); }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pb-12">
+    <script src="navbar.js"></script>
+    <header class="bg-gradient-to-r from-cyan-500 via-sky-500 to-blue-500 text-white shadow-xl mb-8">
+        <div class="max-w-5xl mx-auto px-6 py-12 relative overflow-hidden">
+            <div class="relative z-10 flex items-center justify-between gap-6">
+                <div>
+                    <h2 class="text-xl font-bold text-cyan-100 mb-2">?????? ? ? 09 ?</h2>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">????? + ????</h1>
+                    <p class="text-xl md:text-2xl text-cyan-50 font-black leading-relaxed">???????????<br>????????????? Wayground?</p>
+                </div>
+                <div class="hidden md:block text-7xl opacity-80 transform rotate-6 drop-shadow-lg"><i class="fa-solid fa-compass text-yellow-200"></i></div>
+            </div>
+            <i class="fa-solid fa-star absolute text-white opacity-10 text-9xl -bottom-10 right-4"></i>
+        </div>
+    </header>
+    <main class="max-w-5xl mx-auto px-6 space-y-8">
+        <section class="bg-white rounded-3xl border-4 border-cyan-200 shadow-md overflow-hidden">
+            <div class="bg-cyan-100 px-6 py-4 border-b-4 border-cyan-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center"><i class="fa-solid fa-route text-cyan-700 text-2xl mr-3"></i><h3 class="text-2xl font-black text-cyan-900">??????</h3></div>
+                <span class="bg-cyan-600 text-white text-xs px-3 py-1 rounded-full font-bold">???????</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-3 gap-4">
+                <div class="bg-cyan-50 border border-cyan-200 rounded-2xl p-5"><div class="text-sm font-black text-cyan-700 mb-2">?? 1</div><h4 class="text-xl font-black text-cyan-900 mb-2">?????</h4><p class="font-bold text-slate-700 leading-relaxed">??????????????????????</p></div>
+                <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5"><div class="text-sm font-black text-sky-700 mb-2">?? 2</div><h4 class="text-xl font-black text-sky-900 mb-2">??????</h4><p class="font-bold text-slate-700 leading-relaxed">??????????????????????????????</p></div>
+                <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-5"><div class="text-sm font-black text-indigo-700 mb-2">?? 3</div><h4 class="text-xl font-black text-indigo-900 mb-2">???????</h4><p class="font-bold text-slate-700 leading-relaxed">??????????????? Wayground ?????</p></div>
+            </div>
+        </section>
+        <section class="bg-white rounded-3xl border-4 border-amber-200 shadow-md overflow-hidden">
+            <div class="bg-amber-100 px-6 py-4 border-b-4 border-amber-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center"><i class="fa-solid fa-key text-amber-700 text-2xl mr-3"></i><h3 class="text-2xl font-black text-amber-900">???????</h3></div>
+                <span class="bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold">??????</span>
+            </div>
+            <div class="p-6 md:p-8 grid lg:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <p class="text-2xl md:text-3xl font-black text-slate-800 leading-relaxed">????????<br>?????? <span class="text-amber-600">????????</span>?</p>
+                    <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5"><div class="text-sm font-black text-rose-700 mb-2">????????????</div><div class="text-2xl font-black text-rose-900 leading-snug">????????????????????</div></div>
+                </div>
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                    <h4 class="text-xl font-black text-slate-900 mb-4">???? 3 ??</h4>
+                    <ul class="space-y-4 text-lg font-black text-slate-700">
+                        <li class="flex items-start gap-3"><span class="mt-0.5 text-amber-600"><i class="fa-solid fa-circle-check"></i></span><span>????????????? Wayground?</span></li>
+                        <li class="flex items-start gap-3"><span class="mt-0.5 text-amber-600"><i class="fa-solid fa-circle-check"></i></span><span>??????????????????????</span></li>
+                        <li class="flex items-start gap-3"><span class="mt-0.5 text-amber-600"><i class="fa-solid fa-circle-check"></i></span><span>?????????????? Wayground?</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="bg-white rounded-3xl border-4 border-indigo-200 shadow-md overflow-hidden">
+            <div class="bg-indigo-100 px-6 py-4 border-b-4 border-indigo-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center"><i class="fa-solid fa-keyboard text-indigo-700 text-2xl mr-3"></i><h3 class="text-2xl font-black text-indigo-900">??????????</h3></div>
+                <span class="bg-indigo-600 text-white text-xs px-3 py-1 rounded-full font-bold">??????</span>
+            </div>
+            <div class="p-6 space-y-5">
+                <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 text-slate-700 font-bold leading-relaxed">?????????????????????????????????????????????</div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <a href="week04.html" class="card-hover block bg-white rounded-2xl border border-indigo-200 p-5"><div class="text-sm font-black text-indigo-700 mb-2">???? 1</div><h4 class="text-xl font-black text-slate-900 mb-2">? 04 ?</h4><p class="font-bold text-slate-700">?????????????????</p></a>
+                    <a href="week05.html" class="card-hover block bg-white rounded-2xl border border-indigo-200 p-5"><div class="text-sm font-black text-indigo-700 mb-2">???? 2</div><h4 class="text-xl font-black text-slate-900 mb-2">? 05 ?</h4><p class="font-bold text-slate-700">?????????????????????</p></a>
+                    <a href="week06.html" class="card-hover block bg-white rounded-2xl border border-indigo-200 p-5"><div class="text-sm font-black text-indigo-700 mb-2">???? 3</div><h4 class="text-xl font-black text-slate-900 mb-2">? 06 ?</h4><p class="font-bold text-slate-700">???????????????????</p></a>
+                    <a href="week07.html" class="card-hover block bg-white rounded-2xl border border-indigo-200 p-5"><div class="text-sm font-black text-indigo-700 mb-2">???? 4</div><h4 class="text-xl font-black text-slate-900 mb-2">? 07 ?</h4><p class="font-bold text-slate-700">?????????????????????????</p></a>
+                </div>
+            </div>
+        </section>
+        <section class="bg-white rounded-3xl border-4 border-emerald-200 shadow-md overflow-hidden">
+            <div class="bg-emerald-100 px-6 py-4 border-b-4 border-emerald-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center"><i class="fa-solid fa-graduation-cap text-emerald-700 text-2xl mr-3"></i><h3 class="text-2xl font-black text-emerald-900">????????Wayground ??</h3></div>
+                <span class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-full font-bold">??????</span>
+            </div>
+            <div class="p-6 md:p-8 grid lg:grid-cols-[1.2fr_0.8fr] gap-6 items-start">
+                <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 text-slate-700 font-bold leading-relaxed">Wayground ????????????????????????????????????????????????????????</div>
+                <a href="wayground.html" class="card-hover inline-flex items-center justify-center min-h-[64px] rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black text-lg shadow-md hover:opacity-95 transition">?? Wayground ??</a>
+            </div>
+        </section>
+    </main>
+    <footer class="text-center mt-14 pb-8 text-gray-400 text-sm font-medium"><p><i class="fa-solid fa-rocket mr-1"></i> ?????????? - ???????</p></footer>
+    <script type="module">import { initNavbarAuth } from "../shared/navbar-auth.js"; initNavbarAuth();</script>
+</body>
+</html>
