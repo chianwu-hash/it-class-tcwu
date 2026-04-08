@@ -1,4 +1,4 @@
-﻿const fs = require('fs');
+const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
 
@@ -16,10 +16,17 @@ const TWO_MIN_RE = /\u0032\s*\u5206/;
   await page.bringToFront();
   await page.waitForLoadState('domcontentloaded');
 
-  const bodyText = await page.locator('body').innerText();
+  let bodyText = await page.locator('body').innerText();
   if (bodyText.includes('儲存題目')) {
     await page.locator('button[data-testid="generic-button"]').first().click();
     await page.waitForTimeout(1200);
+  }
+  if (bodyText.includes('測驗設置')) {
+    const cancelButton = page.getByRole('button', { name: '取消' });
+    if (await cancelButton.count()) {
+      await cancelButton.click({ force: true });
+      await page.waitForTimeout(1200);
+    }
   }
 
   const cardCount = await page.locator('[data-testid^="question-details-card-"]').count();
@@ -37,29 +44,17 @@ const TWO_MIN_RE = /\u0032\s*\u5206/;
       continue;
     }
 
-    const changed = await card.evaluate((el) => {
-      const trigger = el.querySelectorAll('.popover-trigger .hover\\:bg-wds-light-300.rounded-w-admin-lg.py-1.px-2.cursor-pointer')[0];
-      if (!trigger) return false;
-      trigger.click();
-      return true;
-    });
-    if (!changed) throw new Error(`Could not open timer dropdown for question ${i + 1}`);
+    const trigger = card.locator('div.hover\\:bg-wds-light-300.rounded-w-admin-lg.py-1.px-2.cursor-pointer').first();
+    if (!(await trigger.count())) {
+      throw new Error(`Could not find timer dropdown for question ${i + 1}`);
+    }
+    await trigger.click({ force: true });
 
-    await page.waitForFunction(() => {
-      return [...document.querySelectorAll('*')].some(el => (el.innerText || '').trim() === '\u0032 \u5206\u9418');
-    }, null, { timeout: 10000 });
+    const option = page.getByRole('option', { name: '2 分鐘' }).first();
+    await option.waitFor({ state: 'visible', timeout: 10000 });
+    await option.click({ force: true });
 
-    const picked = await page.evaluate(() => {
-      const target = '\u0032 \u5206\u9418';
-      const elements = [...document.querySelectorAll('*')].filter(el => (el.innerText || '').trim() === target);
-      const match = elements.find(el => (el.className || '').includes('p-3 rounded-w-admin-lg')) || elements[0];
-      if (!match) return false;
-      match.click();
-      return true;
-    });
-    if (!picked) throw new Error(`Could not pick 2 分鐘 for question ${i + 1}`);
-
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(1200);
     const afterText = await card.innerText();
     if (!TWO_MIN_RE.test(afterText)) {
       throw new Error(`Question ${i + 1} did not update to 2 分鐘`);

@@ -18,27 +18,34 @@ async function main() {
   await page.waitForLoadState('domcontentloaded');
   await page.waitForTimeout(800);
 
-  await page.getByTestId('edit-quiz-settings-button').evaluate((el) => el.click());
-  await page.waitForTimeout(1000);
+  let languageBox = page.getByTestId('publish-modal-language-input-select-box');
+  if (!(await languageBox.count())) {
+    await page.getByTestId('edit-quiz-settings-button').click({ force: true });
+    await page.waitForTimeout(1000);
+  }
 
-  const languageBox = page.getByTestId('publish-modal-language-input-select-box');
+  languageBox = page.getByTestId('publish-modal-language-input-select-box');
   await languageBox.waitFor({ state: 'visible', timeout: 10000 });
-  await languageBox.evaluate((el) => el.click());
+  await languageBox.click({ force: true });
   await page.waitForTimeout(1000);
 
   const chineseOption = page.getByTestId('publish-modal-language-input-select-box-option-32');
-  await chineseOption.waitFor({ state: 'visible', timeout: 10000 });
+  await chineseOption.waitFor({ state: 'attached', timeout: 10000 });
   const optionText = ((await chineseOption.textContent()) || '').trim();
-  await chineseOption.evaluate((el) => el.click());
+  await chineseOption.click({ force: true });
   await page.waitForTimeout(800);
 
   const saveButton = page.getByTestId('quiz-settings-modal-primary-button');
   await saveButton.waitFor({ state: 'visible', timeout: 10000 });
-  await saveButton.evaluate((el) => el.click());
+  await saveButton.click({ force: true });
+  await page.waitForFunction(
+    () => !document.querySelector('[data-testid="publish-modal-language-input-select-box"]'),
+    { timeout: 15000 }
+  ).catch(() => {});
   await page.waitForTimeout(1500);
 
   // Re-open settings to verify the saved language value.
-  await page.getByTestId('edit-quiz-settings-button').evaluate((el) => el.click());
+  await page.getByTestId('edit-quiz-settings-button').click({ force: true });
   await page.waitForTimeout(1000);
   const savedLanguage = ((await page.getByTestId('publish-modal-language-input-select-box').textContent()) || '').trim();
 
