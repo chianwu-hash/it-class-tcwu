@@ -49,10 +49,24 @@ const TWO_MIN_RE = /\u0032\s*\u5206/;
       throw new Error(`Could not find timer dropdown for question ${i + 1}`);
     }
     await trigger.click({ force: true });
+    await page.waitForFunction(
+      () => document.querySelectorAll('[role="option"]').length > 0,
+      null,
+      { timeout: 10000 }
+    );
 
-    const option = page.getByRole('option', { name: '2 分鐘' }).first();
-    await option.waitFor({ state: 'visible', timeout: 10000 });
-    await option.click({ force: true });
+    const clicked = await page.evaluate(() => {
+      const normalize = (text) => (text || '').replace(/\s+/g, ' ').trim();
+      const options = [...document.querySelectorAll('[role="option"]')];
+      const target = options.find((el) => normalize(el.textContent) === '2 分鐘');
+      if (!target) return false;
+      target.click();
+      return true;
+    });
+
+    if (!clicked) {
+      throw new Error(`Could not select 2 分鐘 for question ${i + 1}`);
+    }
 
     await page.waitForTimeout(1200);
     const afterText = await card.innerText();

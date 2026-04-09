@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六年級期中考題庫 - Wayground 題組練習</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(14, 165, 233, 0.12), transparent 28%),
+                radial-gradient(circle at top right, rgba(249, 115, 22, 0.12), transparent 24%),
+                linear-gradient(180deg, #f8fbff 0%, #eef6ff 52%, #f9fbff 100%);
+            color: #0f172a;
+        }
+        .card-hover {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.12);
+        }
+    </style>
+</head>
+<body class="antialiased pb-12">
+    <script src="navbar.js"></script>
+
+    <header class="bg-gradient-to-r from-sky-500 via-cyan-500 to-teal-500 text-white shadow-xl mb-8">
+        <div class="max-w-6xl mx-auto px-6 py-12 relative overflow-hidden">
+            <div class="relative z-10 flex items-center justify-between gap-6">
+                <div>
+                    <h2 class="text-xl font-bold text-cyan-100 mb-2">六年級期中考題庫整理</h2>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">Wayground 題組練習</h1>
+                    <p class="text-lg md:text-2xl text-cyan-50 font-bold leading-relaxed">
+                        依照期中考範圍整理各科題組<br>
+                        題型難度配置為難 25%、中 50%、易 25%
+                    </p>
+                </div>
+                <div class="hidden md:block text-7xl opacity-80 transform rotate-6 drop-shadow-lg">
+                    <i class="fa-solid fa-school text-amber-200"></i>
+                </div>
+            </div>
+            <i class="fa-solid fa-book absolute text-white opacity-10 text-9xl -bottom-10 right-4"></i>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 space-y-8">
+        <section class="bg-white rounded-3xl border-4 border-cyan-200 shadow-md overflow-hidden">
+            <div class="bg-cyan-100 px-6 py-4 border-b-4 border-cyan-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-route text-cyan-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-cyan-900">使用建議</h3>
+                </div>
+                <span class="bg-cyan-600 text-white text-xs px-3 py-1 rounded-full font-bold">期中複習專用</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-3 gap-4">
+                <div class="bg-cyan-50 border border-cyan-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-cyan-700 mb-2">步驟 1</div>
+                    <h4 class="text-xl font-black text-cyan-900 mb-2">先看範圍</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">先依照考試範圍挑選對應題組，避免一次做太多造成混亂。</p>
+                </div>
+                <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-sky-700 mb-2">步驟 2</div>
+                    <h4 class="text-xl font-black text-sky-900 mb-2">分次完成</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">每份題組都已設定每題 2 分鐘，適合當成單元複習或模擬測驗。</p>
+                </div>
+                <div class="bg-teal-50 border border-teal-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-teal-700 mb-2">步驟 3</div>
+                    <h4 class="text-xl font-black text-teal-900 mb-2">錯題回看</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">做完題目後再回到課本章節複習重點，效果會比只刷題更穩。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border-4 border-violet-200 shadow-md overflow-hidden">
+            <div class="bg-violet-100 px-6 py-4 border-b-4 border-violet-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-language text-violet-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-violet-900">國語題組</h3>
+                </div>
+                <span class="bg-violet-600 text-white text-xs px-3 py-1 rounded-full font-bold">Wayground 科目：世界語言</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-2 gap-5">
+                <article class="card-hover bg-white rounded-2xl border border-violet-200 p-5 shadow-sm">
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">第一課～第三課</h4>
+                    <p class="text-slate-700 font-bold leading-relaxed mb-4">共 30 題，依課文理解、詞語運用、修辭判讀與內容統整安排題目。</p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2 py-1 rounded-md font-bold">30 題</span>
+                        <span class="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2 py-1 rounded-md font-bold">第一課～第三課</span>
+                        <span class="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2 py-1 rounded-md font-bold">世界語言</span>
+                    </div>
+                    <a href="https://wayground.com/admin/quiz/69d7580b793579726516c200?source=quiz_share" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full min-h-[46px] rounded-2xl bg-gradient-to-r from-violet-500 to-indigo-500 text-white font-black shadow-md hover:opacity-95 transition">開啟題組</a>
+                </article>
+
+                <article class="card-hover bg-white rounded-2xl border border-violet-200 p-5 shadow-sm">
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">第四課～第六課</h4>
+                    <p class="text-slate-700 font-bold leading-relaxed mb-4">共 30 題，涵蓋語文理解、人物情境推論與課文主旨判斷。</p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2 py-1 rounded-md font-bold">30 題</span>
+                        <span class="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2 py-1 rounded-md font-bold">第四課～第六課</span>
+                        <span class="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2 py-1 rounded-md font-bold">世界語言</span>
+                    </div>
+                    <a href="https://wayground.com/admin/quiz/69d758951d2d95f04c84424a?source=quiz_share" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full min-h-[46px] rounded-2xl bg-gradient-to-r from-violet-500 to-indigo-500 text-white font-black shadow-md hover:opacity-95 transition">開啟題組</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border-4 border-amber-200 shadow-md overflow-hidden">
+            <div class="bg-amber-100 px-6 py-4 border-b-4 border-amber-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-calculator text-amber-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-amber-900">數學題組</h3>
+                </div>
+                <span class="bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold">兩份各 20 題</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-2 gap-5">
+                <article class="card-hover bg-white rounded-2xl border border-amber-200 p-5 shadow-sm">
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">單元一～二</h4>
+                    <p class="text-slate-700 font-bold leading-relaxed mb-4">共 20 題，聚焦分數、比與比值觀念，混合基本題與應用題。</p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2 py-1 rounded-md font-bold">20 題</span>
+                        <span class="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2 py-1 rounded-md font-bold">單元一～二</span>
+                        <span class="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2 py-1 rounded-md font-bold">數學</span>
+                    </div>
+                    <a href="https://wayground.com/admin/quiz/69d755db793579726516c17e?source=quiz_share" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full min-h-[46px] rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 text-white font-black shadow-md hover:opacity-95 transition">開啟題組</a>
+                </article>
+
+                <article class="card-hover bg-white rounded-2xl border border-amber-200 p-5 shadow-sm">
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">單元三～四</h4>
+                    <p class="text-slate-700 font-bold leading-relaxed mb-4">共 20 題，涵蓋速率、圓形圖與資料判讀，已補齊每題 2 分鐘。</p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2 py-1 rounded-md font-bold">20 題</span>
+                        <span class="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2 py-1 rounded-md font-bold">單元三～四</span>
+                        <span class="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2 py-1 rounded-md font-bold">數學</span>
+                    </div>
+                    <a href="https://wayground.com/admin/quiz/69d7565cd2506d32f70164eb?source=quiz_share" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full min-h-[46px] rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 text-white font-black shadow-md hover:opacity-95 transition">開啟題組</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border-4 border-emerald-200 shadow-md overflow-hidden">
+            <div class="bg-emerald-100 px-6 py-4 border-b-4 border-emerald-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-globe text-emerald-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-emerald-900">社會題組</h3>
+                </div>
+                <span class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-full font-bold">兩份各 25 題</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-2 gap-5">
+                <article class="card-hover bg-white rounded-2xl border border-emerald-200 p-5 shadow-sm">
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">1-1～1-3</h4>
+                    <p class="text-slate-700 font-bold leading-relaxed mb-4">共 25 題，整理多元文化、科技發展與生活改變等第一單元重點。</p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-bold">25 題</span>
+                        <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-bold">1-1～1-3</span>
+                        <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-bold">社會研究</span>
+                    </div>
+                    <a href="https://wayground.com/admin/quiz/69d75b5d6f4f3a2975d64cb8?source=quiz_share" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full min-h-[46px] rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black shadow-md hover:opacity-95 transition">開啟題組</a>
+                </article>
+
+                <article class="card-hover bg-white rounded-2xl border border-emerald-200 p-5 shadow-sm">
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">2-1～2-3</h4>
+                    <p class="text-slate-700 font-bold leading-relaxed mb-4">共 25 題，聚焦全球議題、人權、公民行動與國際參與。</p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-bold">25 題</span>
+                        <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-bold">2-1～2-3</span>
+                        <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-bold">社會研究</span>
+                    </div>
+                    <a href="https://wayground.com/admin/quiz/69d75bec533370f680730fb4?source=quiz_share" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full min-h-[46px] rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black shadow-md hover:opacity-95 transition">開啟題組</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border-4 border-lime-200 shadow-md overflow-hidden">
+            <div class="bg-lime-100 px-6 py-4 border-b-4 border-lime-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-flask text-lime-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-lime-900">自然題組</h3>
+                </div>
+                <span class="bg-lime-600 text-white text-xs px-3 py-1 rounded-full font-bold">兩份各 15 題</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-2 gap-5">
+                <article class="card-hover bg-white rounded-2xl border border-lime-200 p-5 shadow-sm">
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">1-1～1-2</h4>
+                    <p class="text-slate-700 font-bold leading-relaxed mb-4">共 15 題，以簡單機械與力的應用為主，適合先做基礎概念整理。</p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="text-xs bg-lime-50 text-lime-700 border border-lime-200 px-2 py-1 rounded-md font-bold">15 題</span>
+                        <span class="text-xs bg-lime-50 text-lime-700 border border-lime-200 px-2 py-1 rounded-md font-bold">1-1～1-2</span>
+                        <span class="text-xs bg-lime-50 text-lime-700 border border-lime-200 px-2 py-1 rounded-md font-bold">科學</span>
+                    </div>
+                    <a href="https://wayground.com/admin/quiz/69d75a96e9c11198a6d9c76f?source=quiz_share" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full min-h-[46px] rounded-2xl bg-gradient-to-r from-lime-500 to-emerald-500 text-white font-black shadow-md hover:opacity-95 transition">開啟題組</a>
+                </article>
+
+                <article class="card-hover bg-white rounded-2xl border border-lime-200 p-5 shadow-sm">
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">2-1～2-2</h4>
+                    <p class="text-slate-700 font-bold leading-relaxed mb-4">共 15 題，涵蓋聲音的產生、傳播、音量與音色等重點概念。</p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="text-xs bg-lime-50 text-lime-700 border border-lime-200 px-2 py-1 rounded-md font-bold">15 題</span>
+                        <span class="text-xs bg-lime-50 text-lime-700 border border-lime-200 px-2 py-1 rounded-md font-bold">2-1～2-2</span>
+                        <span class="text-xs bg-lime-50 text-lime-700 border border-lime-200 px-2 py-1 rounded-md font-bold">科學</span>
+                    </div>
+                    <a href="https://wayground.com/admin/quiz/69d75b0124be3384c2d170e7?source=quiz_share" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full min-h-[46px] rounded-2xl bg-gradient-to-r from-lime-500 to-emerald-500 text-white font-black shadow-md hover:opacity-95 transition">開啟題組</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border-4 border-rose-200 shadow-md overflow-hidden">
+            <div class="bg-rose-100 px-6 py-4 border-b-4 border-rose-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-language text-rose-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-rose-900">英語題組</h3>
+                </div>
+                <span class="bg-rose-500 text-white text-xs px-3 py-1 rounded-full font-bold">Unit1～Review1</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-1 gap-5">
+                <article class="card-hover bg-white rounded-2xl border border-rose-200 p-5 shadow-sm">
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">Unit1～Review1</h4>
+                    <p class="text-slate-700 font-bold leading-relaxed mb-4">共 20 題，整合單字、句型、閱讀理解與 Review 1 綜合複習內容。</p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="text-xs bg-rose-50 text-rose-700 border border-rose-200 px-2 py-1 rounded-md font-bold">20 題</span>
+                        <span class="text-xs bg-rose-50 text-rose-700 border border-rose-200 px-2 py-1 rounded-md font-bold">Unit1～Review1</span>
+                        <span class="text-xs bg-rose-50 text-rose-700 border border-rose-200 px-2 py-1 rounded-md font-bold">英語</span>
+                    </div>
+                    <a href="https://wayground.com/admin/quiz/69d7540611e9bfefe793d876?source=quiz_share" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full min-h-[46px] rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 text-white font-black shadow-md hover:opacity-95 transition">開啟題組</a>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center mt-16 pb-8 text-gray-500 text-sm font-medium">
+        <p><i class="fa-solid fa-rocket mr-1"></i> 六年級期中考複習 - Wayground 題組整理頁</p>
+    </footer>
+
+    <script type="module">
+        import { initNavbarAuth } from "../shared/navbar-auth.js";
+        initNavbarAuth();
+    </script>
+</body>
+</html>
