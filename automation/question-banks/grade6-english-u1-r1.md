@@ -1,158 +1,183 @@
-# 六年級英文 U1-R1 題庫
+# 六年級英語 U1-R1 題庫
+
 範圍：
-- Unit 1：休閒活動與 free time
-- Unit 2：夢想職業
-- Review 1：Units 1-2 綜合應用
-難度分配：
-- 困難：5 題
-- 中等：10 題
-- 容易：5 題
-說明：
-- 題目與選項使用繁體中文說明，英文句型與關鍵詞保留英文
-- 請依課本範圍出題，不超出 U1-R1
+- Unit 1：free time activities
+- Review 1：Units 1-2 句型與短文理解
 
-## 容易
+配分建議：
+- 基礎題：8 題
+- 中等題：8 題
+- 挑戰題：4 題
 
-1. 問別人「你空閒時間喜歡做什麼？」應該怎麼說？
-A. What do you want to be?
-B. What do you like to do in your free time?
-C. Where are you from?
-D. How old are you?
-答案：B
+備註：
+- 依教材 `What do you like to do in your free time?`、`Do/Does ...?`、`What do you want to be?` 命題
+- 風格參考本校六年級 113 下、114 上英語段考卷
+- 輸出格式採 Wayground 單選題
 
-2. 問別人「你想成為什麼？」應該怎麼說？
-A. What do you want to be?
-B. Do you like to listen to music?
-C. What time is it?
-D. What’s your name?
+## 基礎題
+
+1. A: What do you like to do in your free time?  
+   B: ______
+   A. I like to go hiking.
+   B. I want to be a writer.
+   C. He likes to go shopping.
+   D. At the campsite.
 答案：A
 
-3. 「I want to be a writer.」意思是什麼？
-A. 我想去游泳。
-B. 我想成為作家。
-C. 我想當警察。
-D. 我喜歡寫字。
-答案：B
-
-4. 「go camping」的意思是什麼？
-A. 去露營
-B. 去買書
-C. 去上班
-D. 去畫畫
+2. A: Do you like to listen to music in your free time?  
+   B: ______
+   A. Yes, I do.
+   B. Yes, I am.
+   C. Yes, she does.
+   D. I like a song.
 答案：A
 
-5. 「listen to music」的意思是什麼？
-A. 聽音樂
-B. 打籃球
-C. 去爬山
-D. 做數學作業
+3. Which sentence is correct?
+   A. She like to go swimming.
+   B. He likes to go camping.
+   C. Does Amy likes music?
+   D. They likes to watch TV.
+答案：B
+
+4. A: What does Emma like to do in her free time?  
+   B: ______
+   A. She likes to go camping and listen to music.
+   B. She wants to be a police officer.
+   C. She is from the classroom.
+   D. She does in her free time.
 答案：A
 
-## 中等
-
-6. Emma says, “I like to go camping and listen to music.” 從這句話可知什麼？
-A. Emma 喜歡打棒球
-B. Emma 喜歡露營和聽音樂
-C. Emma 想當農夫
-D. Emma 來自美國
-答案：B
-
-7. 「Do you like to listen to music?」最合適的回答是什麼？
-A. Yes, I do.
-B. I’m a writer.
-C. She does.
-D. I want to be a teacher.
+5. A: What do you like to do in your free time?  
+   B: ______
+   A. I like to go shopping.
+   B. I clean the classroom.
+   C. I do my homework.
+   D. I wash the dishes every day.
 答案：A
 
-8. 下列哪一句最適合回答「What do you want to be?」
-A. I like to go hiking.
-B. I want to be a police officer.
-C. Yes, I do.
-D. She likes music.
+6. A: Does Jack like to watch TV in his free time?  
+   B: Yes, ______.
+   A. he does
+   B. he do
+   C. Jack likes
+   D. does he
+答案：A
+
+7. A: What do you want to be?  
+   B: ______
+   A. I like to go swimming.
+   B. I want to be a dentist.
+   C. He wants to be a singer.
+   D. Yes, I do.
 答案：B
 
-9. 「I’m from India.」表示什麼？
-A. 我喜歡印度食物。
-B. 我來自印度。
-C. 我想去印度。
-D. 我住在學校。
+8. Which sentence correctly describes someone's dream job?
+   A. I want to be a basketball player.
+   B. I like to go hiking in my free time.
+   C. She goes shopping every weekend.
+   D. They listen to music after school.
+答案：A
+
+## 中等題
+
+9. Amy likes to go camping and listen to music on weekends. Emma likes to go camping, but she doesn't like music. She likes to ride a bike after school. What do they both like to do?
+   A. Go camping.
+   B. Listen to music.
+   C. Ride a bike.
+   D. Go shopping.
+答案：A
+
+10. Which answer matches the question?
+    A. What do you want to be? / He likes to go hiking.
+    B. Does Sally like to go camping? / Yes, she does.
+    C. What do you like to do in your free time? / She wants to be a writer.
+    D. Do they like music? / Yes, they is.
 答案：B
 
-10. Jello says, “I want to be a police officer.” 她想成為什麼？
-A. singer
-B. writer
-C. police officer
-D. farmer
+11. Read and choose the best answer.  
+    Ben likes to play basketball in his free time. He wants to be a dentist.  
+    What does Ben want to be?
+    A. A basketball player.
+    B. A dentist.
+    C. A singer.
+    D. A farmer.
+答案：B
+
+12. Read and choose the best answer.  
+    Anna writes children's books. She likes to ride a bike and listen to music in her free time.  
+    What does Anna like to do in her free time?
+    A. Ride a bike and listen to music.
+    B. Go swimming and watch TV.
+    C. Play basketball and sing.
+    D. Go camping and shop.
+答案：A
+
+13. Which sentence is correct?
+    A. Does Lily want to be a writer?
+    B. Do Lily want to be a writer?
+    C. Lily want to be a writer?
+    D. Does Lily wants to be a writer?
+答案：A
+
+14. A: Do they like to go hiking in their free time?  
+    B: No, ______.
+    A. they do
+    B. they don't
+    C. they doesn't
+    D. they aren't
+答案：B
+
+15. Which sentence is correct?
+    A. Frank works at a police station. He likes to play basketball in his free time.
+    B. Frank works at a police station. He like to play basketball in his free time.
+    C. Frank works at the police station. He likes play basketball in his free time.
+    D. Frank works at a police station. He likes to plays basketball in his free time.
+答案：A
+
+16. Read and choose the best answer.  
+    Ron is a farmer. He keeps chickens and goats on his farm. He likes to go swimming in his free time.  
+    Where does Ron work?
+    A. At the bookstore.
+    B. At the police station.
+    C. On the farm.
+    D. At the school.
 答案：C
 
-11. 「Do you want to be a police officer, too?」中的 too 是什麼意思？
-A. 但是
-B. 也
-C. 不要
-D. 因為
+## 挑戰題
+
+17. Read and choose the best answer.  
+    Kelly: I like to go shopping in my free time.  
+    Frank: I like to go camping in my free time.  
+    Which sentence is correct?
+    A. Kelly likes to go camping.
+    B. Frank likes to go shopping.
+    C. Kelly and Frank like the same activity.
+    D. Kelly likes to go shopping, but Frank likes to go camping.
+答案：D
+
+18. Read and choose the best answer.  
+    Dave wants to be a bus driver. Sally can sing very well, but she wants to be a basketball player.  
+    Which one is true?
+    A. Dave wants to be a singer.
+    B. Sally wants to be a basketball player.
+    C. Sally wants to be a bus driver.
+    D. Dave and Sally want the same job.
 答案：B
 
-12. Kevin says, “Math is so hard.” 從這句話可以推測什麼？
-A. Kevin 很喜歡數學
-B. Kevin 覺得數學很難
-C. Kevin 不會說英文
-D. Kevin 已經完成作業
-答案：B
-
-13. 下列哪一個是正確的職業說法？
-A. an police officer
-B. a artist
-C. a writer
-D. an farmer
-答案：C
-
-14. Review 1 中，Frank works at a police station. 他的職業最可能是什麼？
-A. farmer
-B. writer
-C. police officer
-D. singer
-答案：C
-
-15. Review 1 中，Ron works on the farm. 他最可能是什麼？
-A. dentist
-B. farmer
-C. teacher
-D. artist
-答案：B
-
-## 困難
-
-16. 下列哪一段對話最合理？
-A. What do you want to be? / I like to listen to music.
-B. What do you like to do in your free time? / I like to go camping.
-C. Do you like to go hiking? / I want to be a writer.
-D. Where are you from? / I want to be a singer.
-答案：B
-
-17. Amy and Emma both like to go camping and listen to music. 「both」最接近什麼意思？
-A. 只有 Emma
-B. 兩個人都
-C. 只有 Amy
-D. 沒有人
-答案：B
-
-18. Anna writes children’s books and likes to go to the bookstore. 她最可能是什麼？
-A. writer
-B. farmer
-C. police officer
-D. dentist
+19. Read and choose the best answer.  
+    Mark likes to listen to music and go hiking in his free time. He wants to be a teacher.  
+    Which question can this paragraph answer best?
+    A. What does Mark like to do in his free time?
+    B. Where does Mark study after school?
+    C. Does Mark have a brother?
+    D. What time does Mark get up?
 答案：A
 
-19. Tim likes to play basketball in his free time, but he wants to be a dentist. 這句話表示什麼？
-A. 興趣和夢想職業可以不同
-B. 喜歡籃球就一定是籃球員
-C. dentist 是休閒活動
-D. Tim 不喜歡任何運動
-答案：A
-
-20. 如果你要做一個完整的自我介紹，最合理的內容順序是什麼？
-A. My dream job... / I like to...
-B. I’m from... / What do you want to be?
-C. Hi, I’m Kevin. I like to go hiking in my free time. I want to be a teacher.
-D. Yes, I do. / Nice to see you again.
+20. Read and choose the best answer.  
+    Lucy likes to watch TV in her free time. She wants to be a bus driver. Kevin likes to go hiking, but he wants to be a dentist.  
+    Which one is true?
+    A. Lucy wants to be a dentist.
+    B. Kevin likes to watch TV in his free time.
+    C. Lucy wants to be a bus driver, and Kevin likes to go hiking.
+    D. Lucy and Kevin want the same job.
 答案：C
