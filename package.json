@@ -12,6 +12,7 @@
                     "wayground:open":  "node automation/wayground-open.js",
                     "wayground:inspect":  "node automation/wayground-cdp-inspect.js",
                     "wayground:generate":  "node automation/wayground-generate-from-bank.js",
+                    "wayground:import":  "node automation/wayground-import-from-bank.js",
                     "wayground:check":  "node automation/wayground-check-generated-quiz.js",
                     "wayground:delete":  "node automation/wayground-delete-questions.js",
                     "wayground:set-language":  "node automation/wayground-set-language-chinese.js",

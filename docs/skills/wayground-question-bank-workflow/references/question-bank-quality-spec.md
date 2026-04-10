@@ -136,6 +136,14 @@ Pass standard:
 - the correct answer should not simply be the longest, nicest, or most morally positive option
 - avoid making the wrong options wildly extreme unless the item is intentionally easy
 
+#### Special rule for synthesis and summary questions
+
+Questions that ask students to identify the "core spirit," "common theme," or "main message" across multiple texts or units are especially prone to weak distractors.
+
+For these questions, every wrong option must correspond to a specific misreading that a student could arrive at by only partially engaging with the material — for example, reading one text but not integrating across all, or focusing on a surface detail while missing the deeper theme.
+
+Wrong options that represent moral positions no text in the unit would convey are not valid distractors for these questions, even if they are clearly false. A student who read all three texts carefully should still need to think before eliminating each wrong option.
+
 ### 6. Difficulty control
 
 Difficulty should come from thinking depth, not only wording length.

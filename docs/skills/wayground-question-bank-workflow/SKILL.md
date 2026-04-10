@@ -88,13 +88,21 @@ If there are suspected wrong answers, out-of-scope items, or clear duplicates, f
 
 ### 2.5. Use Gemini as a second reviewer when quality matters
 
-After the first local validation pass, optionally run a second independent review with the already open Gemini tab.
+After the first local validation pass, run a second independent review with the already open Gemini tab.
+
+This step is **mandatory** for:
+- Social studies
+- Chinese and other language subjects
+- Any bank where more than half the questions involve judgment, values, or synthesis
+
+For math and science banks with clear factual or calculation answers, this step is optional unless the bank contains many judgment-based items.
 
 Use Gemini for:
 - catching likely wrong answers
 - spotting concept repetition
 - identifying wording that may be too abstract or ambiguous for elementary students
 - sanity-checking whether the intended hard questions are actually hard enough
+- evaluating whether challenge question distractors could realistically cause hesitation
 
 Use this only as a second-review layer.
 Gemini does not replace the local bank as source of truth.
@@ -126,6 +134,7 @@ Ask Gemini to:
   - duplicate or overly repetitive concepts
   - ambiguity for elementary students
   - difficulty balance
+  - distractor quality: for each challenge question, evaluate whether each wrong option could realistically cause a student who partially understands the material to hesitate — flag any option that only a completely uninformed student would choose
 
 #### How to use Gemini results
 

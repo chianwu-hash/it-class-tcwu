@@ -1,0 +1,76 @@
+{
+  "generated_at": "2026-04-10",
+  "grade": 3,
+  "items": [
+    {
+      "subject": "國語",
+      "range": "第1課～第3課",
+      "bank_path": "C:\\Users\\user\\projects\\it-class-tcwu\\automation\\question-banks\\grade3-chinese-midterm-lessons1-3.md",
+      "quiz_id": "69d9144e54cf85bd39f1e3e3",
+      "url": "https://wayground.com/admin/quiz/69d9144e54cf85bd39f1e3e3?source=quiz_share"
+    },
+    {
+      "subject": "國語",
+      "range": "第4課～第6課",
+      "bank_path": "C:\\Users\\user\\projects\\it-class-tcwu\\automation\\question-banks\\grade3-chinese-midterm-lessons4-6.md",
+      "quiz_id": "69d9145c4de7410a739e42c6",
+      "url": "https://wayground.com/admin/quiz/69d9145c4de7410a739e42c6?source=quiz_share"
+    },
+    {
+      "subject": "數學",
+      "range": "第1～3單元",
+      "bank_path": "C:\\Users\\user\\projects\\it-class-tcwu\\automation\\question-banks\\grade3-math-midterm-ch1-3.md",
+      "quiz_id": "69d91469fe6a05d665cef739",
+      "url": "https://wayground.com/admin/quiz/69d91469fe6a05d665cef739?source=quiz_share"
+    },
+    {
+      "subject": "數學",
+      "range": "第4～5單元",
+      "bank_path": "C:\\Users\\user\\projects\\it-class-tcwu\\automation\\question-banks\\grade3-math-midterm-ch4-5.md",
+      "quiz_id": "69d91477e691a2123fb15f1a",
+      "url": "https://wayground.com/admin/quiz/69d91477e691a2123fb15f1a?source=quiz_share"
+    },
+    {
+      "subject": "自然",
+      "range": "第1單元",
+      "bank_path": "C:\\Users\\user\\projects\\it-class-tcwu\\automation\\question-banks\\grade3-science-unit1.md",
+      "quiz_id": "69d9148f54cf85bd39f1e446",
+      "url": "https://wayground.com/admin/quiz/69d9148f54cf85bd39f1e446?source=quiz_share"
+    },
+    {
+      "subject": "自然",
+      "range": "第2單元",
+      "bank_path": "C:\\Users\\user\\projects\\it-class-tcwu\\automation\\question-banks\\grade3-science-unit2.md",
+      "quiz_id": "69d9149c8351dc39e2e8b3e1",
+      "url": "https://wayground.com/admin/quiz/69d9149c8351dc39e2e8b3e1?source=quiz_share"
+    },
+    {
+      "subject": "英文",
+      "range": "U1、R1",
+      "bank_path": "C:\\Users\\user\\projects\\it-class-tcwu\\automation\\question-banks\\grade3-english-u1-r1.md",
+      "quiz_id": "69d914ed17620226f4d1f200",
+      "url": "https://wayground.com/admin/quiz/69d914ed17620226f4d1f200?source=quiz_share"
+    },
+    {
+      "subject": "社會",
+      "range": "第1單元",
+      "bank_path": "C:\\Users\\user\\projects\\it-class-tcwu\\automation\\question-banks\\grade3-social-ch1.md",
+      "quiz_id": "69d914c5fe6a05d665cef79e",
+      "url": "https://wayground.com/admin/quiz/69d914c5fe6a05d665cef79e?source=quiz_share"
+    },
+    {
+      "subject": "社會",
+      "range": "第2單元",
+      "bank_path": "C:\\Users\\user\\projects\\it-class-tcwu\\automation\\question-banks\\grade3-social-ch2.md",
+      "quiz_id": "69d914d2fe6a05d665cef7dd",
+      "url": "https://wayground.com/admin/quiz/69d914d2fe6a05d665cef7dd?source=quiz_share"
+    },
+    {
+      "subject": "社會",
+      "range": "第3單元",
+      "bank_path": "C:\\Users\\user\\projects\\it-class-tcwu\\automation\\question-banks\\grade3-social-ch3.md",
+      "quiz_id": "69d914df08ce23454fecb0b4",
+      "url": "https://wayground.com/admin/quiz/69d914df08ce23454fecb0b4?source=quiz_share"
+    }
+  ]
+}
