@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "browser:smoke": "node automation/browser-smoke.js",
+    "gemini:capture": "node automation/gemini-capture-latest-response.js",
+    "gemini:review-banks": "node automation/gemini-review-question-banks.js",
+    "wayground:inspect": "node automation/wayground-cdp-inspect.js",
+    "wayground:open": "node automation/wayground-open.js",
+    "wayground:generate": "node automation/wayground-generate-from-bank.js",
+    "wayground:import": "node automation/wayground-import-from-bank.js",
+    "wayground:check": "node automation/wayground-check-generated-quiz.js",
+    "wayground:delete": "node automation/wayground-delete-questions.js",
+    "wayground:set-language": "node automation/wayground-set-language-chinese.js",
+    "wayground:collect-links": "node automation/wayground-collect-share-links.js",
+    "wayground:publish": "node automation/wayground-publish.js",
+    "wayground:set-all-timers-2min": "node automation/wayground-set-all-timers-2min.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.59.1"
+  }
+}
