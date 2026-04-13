@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六年級資訊課 - 第10週：問卷收尾與期中題組練習</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(14, 165, 233, 0.12), transparent 28%),
+                radial-gradient(circle at top right, rgba(245, 158, 11, 0.13), transparent 25%),
+                linear-gradient(180deg, #f8fbff 0%, #eef7f4 55%, #fff8ed 100%);
+        }
+        .action-card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 34px rgba(15, 23, 42, 0.13);
+        }
+        .spotlight-hidden {
+            display: none;
+        }
+        .spotlight-backdrop {
+            background:
+                radial-gradient(circle at center, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 18%, rgba(2, 6, 23, 0.9) 50%, rgba(2, 6, 23, 0.98) 100%);
+            backdrop-filter: blur(3px);
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pb-12">
+
+    <script src="navbar.js?v=20260411"></script>
+
+    <header class="bg-gradient-to-r from-cyan-700 via-teal-700 to-emerald-700 text-white shadow-xl mb-8">
+        <div class="max-w-6xl mx-auto px-6 py-12 relative overflow-hidden">
+            <div class="relative z-10 flex items-center justify-between gap-6">
+                <div>
+                    <h2 class="text-xl font-bold text-cyan-100 mb-2">頂溪國小 114下資訊課 ｜ 第 10 週</h2>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">問卷收尾與期中題組練習</h1>
+                    <p class="text-xl md:text-2xl text-cyan-50 font-black leading-relaxed">先確認密碼能登入，再完成問卷。<br>完成後進行 Wayground 期中複習。</p>
+                </div>
+                <div class="hidden md:block text-7xl opacity-85 transform rotate-6 drop-shadow-lg">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+            </div>
+            <i class="fa-solid fa-clipboard-question absolute text-white opacity-10 text-9xl -bottom-10 right-4"></i>
+        </div>
+    </header>
+
+    <div id="spotlight" class="spotlight-hidden fixed inset-0 z-[200] items-center justify-center p-4 spotlight-backdrop" onclick="closeSpotlight()">
+        <div class="relative max-w-6xl w-full flex items-center justify-center">
+            <img id="spotlight-img" src="" alt="教學截圖放大檢視" class="max-w-full max-h-[88vh] rounded-3xl shadow-2xl border-4 border-white object-contain">
+            <button onclick="closeSpotlight()" class="absolute -top-3 right-0 md:-top-4 md:-right-4 bg-white text-slate-800 rounded-full w-11 h-11 flex items-center justify-center shadow-xl font-black text-xl hover:bg-rose-500 hover:text-white transition">
+                X
+            </button>
+        </div>
+    </div>
+
+    <main class="max-w-6xl mx-auto px-6 space-y-8">
+
+        <section class="bg-white rounded-3xl border border-cyan-100 shadow-sm overflow-hidden">
+            <div class="bg-cyan-100 px-6 py-4 border-b border-cyan-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-route text-cyan-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-cyan-900">今天任務順序</h3>
+                </div>
+                <span class="bg-cyan-600 text-white text-xs px-3 py-1 rounded-full font-bold">照順序完成</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-4 gap-4">
+                <div class="bg-cyan-50 border border-cyan-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-cyan-700 mb-2">第一步</div>
+                    <h4 class="text-xl font-black text-cyan-950 mb-2">確認密碼</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">先確認校務行政系統能登入。</p>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-emerald-700 mb-2">第二步</div>
+                    <h4 class="text-xl font-black text-emerald-950 mb-2">進入問卷</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">用新密碼登入學生問卷。</p>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-amber-700 mb-2">第三步</div>
+                    <h4 class="text-xl font-black text-amber-950 mb-2">完成填答</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">每頁看清楚再送出。</p>
+                </div>
+                <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-rose-700 mb-2">完成後</div>
+                    <h4 class="text-xl font-black text-rose-950 mb-2">題組練習</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">進入 Wayground 複習期中考。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid lg:grid-cols-3 gap-6">
+            <a href="https://esa.ntpc.edu.tw" target="_blank" rel="noopener noreferrer" class="action-card block bg-white rounded-3xl border-4 border-cyan-200 shadow-md overflow-hidden">
+                <div class="bg-cyan-100 px-6 py-4 border-b border-cyan-200">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-black text-cyan-900">校務行政系統</h3>
+                        <i class="fa-solid fa-key text-cyan-700 text-3xl"></i>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="font-black text-slate-700 leading-relaxed mb-4">先確認目前密碼能登入。登入失敗先舉手，不要一直亂試。</p>
+                    <div class="text-sm font-black text-cyan-700 break-all">https://esa.ntpc.edu.tw</div>
+                    <div class="mt-5 inline-flex items-center justify-center rounded-xl bg-cyan-600 text-white px-4 py-2 font-black">
+                        前往登入 <i class="fa-solid fa-arrow-up-right-from-square ml-2"></i>
+                    </div>
+                </div>
+            </a>
+
+            <a href="https://myschool-ntpc.epa.ntnu.edu.tw/ques/114myschool_stu" target="_blank" rel="noopener noreferrer" class="action-card block bg-white rounded-3xl border-4 border-emerald-200 shadow-md overflow-hidden">
+                <div class="bg-emerald-100 px-6 py-4 border-b border-emerald-200">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-black text-emerald-900">學生問卷</h3>
+                        <i class="fa-solid fa-file-lines text-emerald-700 text-3xl"></i>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="font-black text-slate-700 leading-relaxed mb-4">尚未完成問卷者先做這個。每一頁送出前都先看清楚。</p>
+                    <div class="text-sm font-black text-emerald-700 break-all">myschool-ntpc.epa.ntnu.edu.tw</div>
+                    <div class="mt-5 inline-flex items-center justify-center rounded-xl bg-emerald-600 text-white px-4 py-2 font-black">
+                        前往問卷 <i class="fa-solid fa-arrow-up-right-from-square ml-2"></i>
+                    </div>
+                </div>
+            </a>
+
+            <a href="wayground.html" target="_blank" rel="noopener noreferrer" class="action-card block bg-white rounded-3xl border-4 border-amber-200 shadow-md overflow-hidden">
+                <div class="bg-amber-100 px-6 py-4 border-b border-amber-200">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-black text-amber-900">Wayground 題組</h3>
+                        <i class="fa-solid fa-book-open-reader text-amber-700 text-3xl"></i>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="font-black text-slate-700 leading-relaxed mb-4">完成密碼與問卷任務後，再進入期中考題組練習。</p>
+                    <div class="text-sm font-black text-amber-700">國語、數學、社會、自然、英語</div>
+                    <div class="mt-5 inline-flex items-center justify-center rounded-xl bg-amber-500 text-white px-4 py-2 font-black">
+                        開啟題組 <i class="fa-solid fa-arrow-up-right-from-square ml-2"></i>
+                    </div>
+                </div>
+            </a>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-rose-100 shadow-sm overflow-hidden">
+            <div class="bg-rose-100 px-6 py-4 border-b border-rose-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-triangle-exclamation text-rose-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-rose-900">登入與填答提醒</h3>
+                </div>
+                <span class="bg-rose-600 text-white text-xs px-3 py-1 rounded-full font-bold">先讀再做</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-2 gap-6">
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                    <h4 class="text-2xl font-black text-slate-900 mb-4">密碼提醒</h4>
+                    <ul class="space-y-3 text-lg font-black text-slate-700">
+                        <li><i class="fa-solid fa-circle-check text-cyan-600 mr-2"></i>不要把密碼念出來。</li>
+                        <li><i class="fa-solid fa-circle-check text-cyan-600 mr-2"></i>不要請同學代打密碼。</li>
+                        <li><i class="fa-solid fa-circle-check text-cyan-600 mr-2"></i>登入失敗先舉手。</li>
+                        <li><i class="fa-solid fa-circle-check text-cyan-600 mr-2"></i>新舊密碼混淆時，先停下來確認。</li>
+                    </ul>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                    <h4 class="text-2xl font-black text-amber-900 mb-4">問卷提醒</h4>
+                    <ul class="space-y-3 text-lg font-black text-slate-700">
+                        <li><i class="fa-solid fa-floppy-disk text-amber-600 mr-2"></i>問卷可以接續上次進度。</li>
+                        <li><i class="fa-solid fa-eye text-amber-600 mr-2"></i>每頁送出前先看清楚。</li>
+                        <li><i class="fa-solid fa-ban text-rose-600 mr-2"></i>不要問同學答案。</li>
+                        <li><i class="fa-solid fa-hourglass-half text-amber-600 mr-2"></i>題目長，穩定完成就好。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="bg-slate-900 px-6 py-4 border-b border-slate-700 flex items-center justify-between text-white gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-image text-cyan-300 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black">改密碼卡關時看這裡</h3>
+                </div>
+                <span class="bg-cyan-400 text-cyan-950 text-xs px-3 py-1 rounded-full font-black">點圖片可放大</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <button type="button" class="action-card text-left bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden" onclick="openSpotlight('https://res.cloudinary.com/dmqmjfqng/image/upload/v1774840043/it-class-tcwu/grade6/week08/03.png', '點右上角名字與個人資料密碼修改')">
+                    <img src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1774840043/it-class-tcwu/grade6/week08/03.png" alt="點右上角名字與個人資料密碼修改" class="w-full h-52 object-cover object-top">
+                    <div class="p-5">
+                        <div class="text-sm font-black text-cyan-700 mb-1">找不到改密碼位置</div>
+                        <h4 class="text-xl font-black text-slate-900">點右上角名字</h4>
+                        <p class="text-base font-black text-slate-700 mt-2">再點 `個人資料/密碼修改`。</p>
+                    </div>
+                </button>
+
+                <button type="button" class="action-card text-left bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden" onclick="openSpotlight('https://res.cloudinary.com/dmqmjfqng/image/upload/v1774840045/it-class-tcwu/grade6/week08/04.png', '點變更密碼')">
+                    <img src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1774840045/it-class-tcwu/grade6/week08/04.png" alt="點變更密碼" class="w-full h-52 object-cover object-top">
+                    <div class="p-5">
+                        <div class="text-sm font-black text-cyan-700 mb-1">找不到按鈕</div>
+                        <h4 class="text-xl font-black text-slate-900">點變更密碼</h4>
+                        <p class="text-base font-black text-slate-700 mt-2">在 `自訂帳號與密碼` 區塊。</p>
+                    </div>
+                </button>
+
+                <button type="button" class="action-card text-left bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden" onclick="openSpotlight('https://res.cloudinary.com/dmqmjfqng/image/upload/v1774929399/it-class-tcwu/grade6/week08/week08-password-reminder-078-q80.webp', '舊密碼與再次輸入新密碼提醒圖')">
+                    <img src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1774929399/it-class-tcwu/grade6/week08/week08-password-reminder-078-q80.webp" alt="舊密碼與再次輸入新密碼提醒圖" class="w-full h-52 object-contain bg-white">
+                    <div class="p-5">
+                        <div class="text-sm font-black text-cyan-700 mb-1">最容易打錯</div>
+                        <h4 class="text-xl font-black text-slate-900">舊密碼與確認新密碼</h4>
+                        <p class="text-base font-black text-slate-700 mt-2">第三格是把新密碼再打一次。</p>
+                    </div>
+                </button>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-amber-100 shadow-sm overflow-hidden">
+            <div class="bg-amber-100 px-6 py-4 border-b border-amber-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-graduation-cap text-amber-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-amber-900">完成問卷後做哪一份題組？</h3>
+                </div>
+                <span class="bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold">期中考週</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-5 gap-4">
+                <div class="bg-violet-50 border border-violet-200 rounded-2xl p-4">
+                    <div class="text-sm font-black text-violet-700 mb-2">國語</div>
+                    <p class="font-black text-slate-800">第一課到第六課</p>
+                </div>
+                <div class="bg-orange-50 border border-orange-200 rounded-2xl p-4">
+                    <div class="text-sm font-black text-orange-700 mb-2">數學</div>
+                    <p class="font-black text-slate-800">單元一到四</p>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+                    <div class="text-sm font-black text-emerald-700 mb-2">社會</div>
+                    <p class="font-black text-slate-800">第一、二單元</p>
+                </div>
+                <div class="bg-lime-50 border border-lime-200 rounded-2xl p-4">
+                    <div class="text-sm font-black text-lime-700 mb-2">自然</div>
+                    <p class="font-black text-slate-800">1-1 到 2-2</p>
+                </div>
+                <div class="bg-rose-50 border border-rose-200 rounded-2xl p-4">
+                    <div class="text-sm font-black text-rose-700 mb-2">英語</div>
+                    <p class="font-black text-slate-800">Unit 1 到 Review 1</p>
+                </div>
+            </div>
+            <div class="px-6 pb-6">
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                    <h4 class="text-xl font-black text-slate-900 mb-3">選題組原則</h4>
+                    <div class="grid md:grid-cols-3 gap-4 text-lg font-black text-slate-700">
+                        <div><i class="fa-solid fa-1 text-amber-600 mr-2"></i>先做最近要考的科目。</div>
+                        <div><i class="fa-solid fa-2 text-amber-600 mr-2"></i>再做自己最不熟的科目。</div>
+                        <div><i class="fa-solid fa-3 text-amber-600 mr-2"></i>做完要看錯題。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-gradient-to-r from-slate-800 to-slate-950 rounded-3xl shadow-xl text-white p-6 md:p-8">
+            <div class="grid lg:grid-cols-[1.2fr,0.8fr] gap-6 items-center">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-white/10 px-4 py-1.5 rounded-full text-sm font-black mb-4">
+                        <i class="fa-solid fa-flag-checkered"></i> 本節完成標準
+                    </div>
+                    <h3 class="text-3xl font-black mb-4 text-cyan-200">先完成行政任務，再進入複習</h3>
+                    <p class="text-slate-100 text-lg font-bold leading-relaxed">本節最重要的是讓每個人確認密碼能用，並完成學生問卷。Wayground 題組是完成後的期中複習任務。</p>
+                </div>
+                <div class="bg-white/10 rounded-2xl p-5 border border-white/15">
+                    <ul class="space-y-3 text-lg font-black">
+                        <li><i class="fa-solid fa-check text-cyan-300 mr-2"></i>校務行政系統可登入</li>
+                        <li><i class="fa-solid fa-check text-cyan-300 mr-2"></i>學生問卷已完成或持續接續填答</li>
+                        <li><i class="fa-solid fa-check text-cyan-300 mr-2"></i>完成者進入 Wayground 題組練習</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const spotlightEl = document.getElementById("spotlight");
+        const spotlightImgEl = document.getElementById("spotlight-img");
+
+        function openSpotlight(src, alt) {
+            spotlightImgEl.src = src;
+            spotlightImgEl.alt = alt || "教學截圖放大檢視";
+            spotlightEl.classList.remove("spotlight-hidden");
+            spotlightEl.classList.add("flex");
+            document.body.classList.add("overflow-hidden");
+        }
+
+        function closeSpotlight() {
+            spotlightEl.classList.add("spotlight-hidden");
+            spotlightEl.classList.remove("flex");
+            spotlightImgEl.src = "";
+            document.body.classList.remove("overflow-hidden");
+        }
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                closeSpotlight();
+            }
+        });
+
+        spotlightImgEl.addEventListener("click", (event) => {
+            event.stopPropagation();
+        });
+    </script>
+
+    <script type="module">
+        import { initNavbarAuth } from "../shared/navbar-auth.js";
+
+        initNavbarAuth();
+    </script>
+
+    <footer class="text-center mt-16 pb-8 text-gray-500 text-sm font-medium">
+        <p><i class="fa-solid fa-graduation-cap mr-1"></i> 新北市頂溪國小資訊課 - 行政任務收尾與期中複習</p>
+    </footer>
+
+</body>
+</html>
