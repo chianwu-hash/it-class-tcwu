@@ -12,7 +12,7 @@
         }
     }
 
-    const navHTML = window.__buildCourseNavbarHtml({
+    const navConfig = {
         activeWeeks: [3, 4, 5, 6, 7, 8, 9, 10],
         gradeLabel: "三年級資訊課",
         titleIconClass: "fa-solid fa-rocket text-cyan-600",
@@ -42,8 +42,58 @@
                         </button>
                     </div>
         `
-    });
+    };
 
-    currentScript.insertAdjacentHTML("beforebegin", navHTML);
+    function parseCurrentWeek(pathname) {
+        const currentFile = pathname.split("/").pop() || "index.html";
+        const weekMatch = currentFile.match(/(?:week|w)(\d+)/);
+        return weekMatch ? parseInt(weekMatch[1], 10) : null;
+    }
+
+    function renderNavbar(activeWeeks) {
+        const existingNav = document.querySelector("body > nav");
+        const html = window.__buildCourseNavbarHtml({
+            ...navConfig,
+            activeWeeks
+        });
+
+        if (existingNav) {
+            existingNav.remove();
+        }
+        document.body.insertAdjacentHTML("afterbegin", html);
+    }
+
+    function buildVisibleWeeks(rows) {
+        const hiddenWeeks = new Set(
+            (rows || [])
+                .filter((row) => row.is_visible === false)
+                .map((row) => Number.parseInt(String(row.week_code), 10))
+                .filter((week) => Number.isFinite(week))
+        );
+
+        const currentWeek = parseCurrentWeek(window.location.pathname);
+        const visibleWeeks = navConfig.activeWeeks.filter((week) => !hiddenWeeks.has(week));
+
+        if (currentWeek !== null && !visibleWeeks.includes(currentWeek) && navConfig.activeWeeks.includes(currentWeek)) {
+            visibleWeeks.push(currentWeek);
+            visibleWeeks.sort((a, b) => a - b);
+        }
+
+        return visibleWeeks;
+    }
+
+    renderNavbar(navConfig.activeWeeks);
+
     currentScript.remove();
+
+    (async () => {
+        try {
+            const { loadWeekVisibility } = await import("../shared/week-visibility.js");
+            const rows = await loadWeekVisibility("grade3");
+            if (!rows) return;
+            renderNavbar(buildVisibleWeeks(rows));
+        } catch (error) {
+            console.warn("grade3 navbar visibility sync failed", error);
+        }
+    })();
 })();
