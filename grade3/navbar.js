@@ -13,7 +13,7 @@
     }
 
     const navHTML = window.__buildCourseNavbarHtml({
-        activeWeeks: [3, 4, 5, 6, 7, 8, 9],
+        activeWeeks: [3, 4, 5, 6, 7, 8, 9, 10],
         gradeLabel: "三年級資訊課",
         titleIconClass: "fa-solid fa-rocket text-cyan-600",
         titleClassName: "font-black text-gray-800 flex items-center text-lg tracking-wide whitespace-nowrap",
@@ -23,6 +23,7 @@
         currentWeekClassName: "px-3 py-1.5 text-sm font-bold bg-cyan-100 text-cyan-800 rounded-lg shadow-sm whitespace-nowrap cursor-default",
         separatorClassName: "text-gray-300 mx-1",
         showAuthBarOnWeekPages: true,
+        showAuthBarOnHomePages: false,
         authBarHtml: `
                     <span class="text-gray-300 mx-1 hidden md:inline">|</span>
                     <div id="nav-auth-bar" class="flex flex-nowrap items-center gap-2 lg:ml-2 shrink-0">
