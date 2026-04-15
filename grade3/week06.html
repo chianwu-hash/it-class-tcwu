@@ -444,8 +444,11 @@
             resolveSession,
             supabase
         } from "../shared/auth.js";
+        import { initNavbarAuth } from "../shared/navbar-auth.js";
         import { initTypingChallenge } from "../shared/typing-challenge.js";
         import { initWeek06QuizAdapter } from "./week06.quiz-adapter.js";
+
+        initNavbarAuth();
 
         const WEEK_CODE = "06";
         const TYPING_KEY = "typing_task_4";

@@ -366,8 +366,11 @@
             resolveSession,
             supabase
         } from "../shared/auth.js";
+        import { initNavbarAuth } from "../shared/navbar-auth.js";
         import { initTypingChallenge } from "../shared/typing-challenge.js";
         import { initWeek07QuizAdapter } from "./week07.quiz-adapter.js";
+
+        initNavbarAuth();
 
         const WEEK_CODE = "07";
         const QUIZ_KEY = "privacy_quiz_1";

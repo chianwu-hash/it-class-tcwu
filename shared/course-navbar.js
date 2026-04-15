@@ -22,6 +22,7 @@
             currentWeekClassName,
             separatorClassName,
             showAuthBarOnWeekPages = false,
+            showAuthBarOnHomePages = false,
             authBarHtml = "",
             currentPath = window.location.pathname
         } = config;
@@ -65,15 +66,24 @@
                     </a>`;
             }
         } else {
-            activeWeeks.forEach((week) => {
+            if (showAuthBarOnHomePages && activeWeeks.length) {
+                const latestWeek = activeWeeks[activeWeeks.length - 1];
                 navHTML += `
-                    <a href="${buildWeekLink(week)}" class="${linkClassName}">
-                        第 ${week} 週
+                    <span class="${separatorClassName}">|</span>
+                    <a href="${buildWeekLink(latestWeek)}" class="${currentWeekClassName}">
+                        <i class="fa-solid fa-star text-yellow-500 mr-1"></i> 目前: 第 ${latestWeek} 週
                     </a>`;
-            });
+            } else {
+                activeWeeks.forEach((week) => {
+                    navHTML += `
+                        <a href="${buildWeekLink(week)}" class="${linkClassName}">
+                            第 ${week} 週
+                        </a>`;
+                });
+            }
         }
 
-        if (showAuthBarOnWeekPages && currentWeek !== null) {
+        if ((showAuthBarOnWeekPages && currentWeek !== null) || (showAuthBarOnHomePages && currentWeek === null)) {
             navHTML += authBarHtml;
         }
 

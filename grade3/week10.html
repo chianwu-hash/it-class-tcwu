@@ -6,6 +6,7 @@
     <title>三年級資訊課 - 第 10 週 期中暖身與題組複習</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
         body {
@@ -35,7 +36,7 @@
     </style>
 </head>
 <body class="text-slate-800 antialiased pb-12">
-    <script src="navbar.js"></script>
+    <script src="navbar.js?v=20260415"></script>
 
     <header class="bg-gradient-to-r from-teal-500 via-cyan-500 to-sky-500 text-white shadow-xl mb-8">
         <div class="max-w-5xl mx-auto px-6 py-12 relative overflow-hidden">
@@ -234,184 +235,81 @@ I'm nine years old.</div>
 
     <script type="module">
         import { initNavbarAuth } from "../shared/navbar-auth.js";
+        import { initTypingChallenge } from "../shared/typing-challenge.js";
 
         initNavbarAuth();
 
         const levelsData = [
-            { id: 1, answer: "What's your name?" },
-            { id: 2, answer: "Hello! I'm Mia.\nI'm nine years old." },
-            { id: 3, answer: "遠方的山好像披著一件輕紗" },
-            { id: 4, answer: "孩子們喜歡去小書店。\n美如奶奶總是滿臉笑容。" }
+            { id: 1, ans: "What's your name?" },
+            { id: 2, ans: "Hello! I'm Mia.\nI'm nine years old." },
+            { id: 3, ans: "遠方的山好像披著一件輕紗" },
+            { id: 4, ans: "孩子們喜歡去小書店。\n美如奶奶總是滿臉笑容。" }
         ];
 
-        const encouragements = {
+        const levelMsg = {
             1: "第一關過了，先把英文句型暖起來了。",
             2: "英文兩行也完成了，接下來換中文。",
             3: "中文短句過關了，最後一關記得顧好標點和換行。",
             4: "四關全部完成，Wayground 題組已經解鎖。"
         };
 
-        const STORAGE_KEY = "grade3-week10-warmup-level";
-        const COMPLETE_KEY = "grade3-week10-warmup-complete";
-        const progressStatusEl = document.getElementById("progress-status");
         const warmupBadgeEl = document.getElementById("warmup-badge");
         const lockedSection = document.getElementById("locked-section");
         const unlockSection = document.getElementById("unlock-section");
+        const progressStatusEl = document.getElementById("progress-status");
 
-        function configureInputs() {
-            for (let level = 1; level <= levelsData.length; level += 1) {
-                const inputEl = document.getElementById(`input-level${level}`);
-                if (!inputEl) continue;
-                inputEl.setAttribute("autocomplete", "off");
-                inputEl.setAttribute("autocorrect", "off");
-                inputEl.setAttribute("autocapitalize", "off");
-                inputEl.setAttribute("spellcheck", "false");
-                inputEl.setAttribute("data-form-type", "other");
-                inputEl.setAttribute("name", `typing-level-${level}`);
-            }
-        }
-
-        function normalizeInput(value) {
-            return value
-                .replace(/\r\n/g, "\n")
-                .split("\n")
-                .map((line) => line.trim())
-                .join("\n");
-        }
-
-        function saveProgress(level) {
-            window.localStorage.setItem(STORAGE_KEY, String(level));
-        }
-
-        function readProgress() {
-            const raw = Number(window.localStorage.getItem(STORAGE_KEY) || "1");
-            if (!Number.isFinite(raw)) return 1;
-            return Math.max(1, Math.min(levelsData.length, raw));
-        }
-
-        function setCompletedState(isCompleted) {
-            if (isCompleted) {
-                window.localStorage.setItem(COMPLETE_KEY, "true");
-                lockedSection.classList.add("hidden");
-                unlockSection.classList.remove("hidden");
-                progressStatusEl.innerHTML = '<i class="fa-solid fa-party-horn text-emerald-500 mr-2"></i> 4 關全部完成，Wayground 題組已解鎖。';
+        function applyCompletedUI() {
+            lockedSection?.classList.add("hidden");
+            unlockSection?.classList.remove("hidden");
+            if (warmupBadgeEl) {
                 warmupBadgeEl.textContent = "4 關完成";
                 warmupBadgeEl.className = "bg-emerald-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm";
-            } else {
-                window.localStorage.removeItem(COMPLETE_KEY);
-                lockedSection.classList.remove("hidden");
-                unlockSection.classList.add("hidden");
             }
         }
 
-        function isCompleted() {
-            return window.localStorage.getItem(COMPLETE_KEY) === "true";
+        // 監聽進度狀態變化，當第 4 關完成時顯示解鎖區塊
+        const observer = new MutationObserver(() => {
+            const input4 = document.getElementById("input-level4");
+            if (input4?.readOnly) {
+                applyCompletedUI();
+                observer.disconnect();
+            }
+        });
+        if (progressStatusEl) {
+            observer.observe(progressStatusEl, { childList: true, characterData: true, subtree: true });
         }
 
-        function unlockLevel(level) {
-            document.getElementById(`block-level${level}`)?.classList.remove("hidden");
+        function buildHint(_userVal, targetVal, levelIndex) {
+            if (levelIndex === 1) return "提示：檢查問號和縮寫符號。";
+            if (levelIndex === 2) return "提示：檢查驚嘆號、句點和換行。";
+            if (levelIndex === 3) return "提示：這一關沒有標點，看看有沒有多打一個符號。";
+            return `提示：請從「${targetVal.slice(0, 6)}」附近開始重新比對，記得看逗號、句號和換行。`;
         }
 
-        function markLevelAsCompleted(level) {
-            const inputEl = document.getElementById(`input-level${level}`);
-            const msgEl = document.getElementById(`msg-level${level}`);
-            const pinyinBtn = document.getElementById(`btn-pinyin-${level}`);
-            if (!inputEl || !msgEl) return;
-
-            inputEl.readOnly = true;
-            inputEl.classList.remove("border-cyan-300", "border-indigo-300", "border-emerald-300", "border-amber-300", "border-red-500", "shake");
-            inputEl.classList.add("border-green-400", "bg-green-50", "text-green-800");
-            msgEl.textContent = encouragements[level] || "這一關完成了。";
-            msgEl.className = "text-center font-black mt-4 min-h-12 text-base text-emerald-600 leading-relaxed";
-            if (pinyinBtn) {
-                pinyinBtn.classList.add("hidden");
+        initTypingChallenge({
+            weekCode: "10",
+            activityKey: "typing_task_4",
+            levelsData,
+            levelEncouragements: levelMsg,
+            buildHint,
+            getWrongAnswerHtml: ({ hint }) => `還差一點點。${hint}`,
+            progressMessages: {
+                completed: "4 關全部完成，Wayground 題組已經解鎖。",
+                resumed: (level) => `已接回暖身進度，從第 ${level} 關繼續。`,
+                firstLogin: "已登入成功，這次的練習過程會自動記錄下來。",
+                unauthenticated: "尚未登入時，練習不會保存；登入後會自動記錄進度。",
+                saveCompleted: "已記下完整進度，Wayground 題組已解鎖。",
+                saveNextLevel: (level) => `已記下進度，下次從第 ${level} 關繼續。`,
+                saveError: "進度暫時沒有記錄成功，請稍後再試一次。",
+                resetNoSession: "目前沒有登入，不能重新開始練習。",
+                resetConfirm: "要重新開始練習嗎？這會把目前的進度重設回第 1 關。"
+            },
+            celebrationContent: {
+                title: "4 關全部完成",
+                message: "英打和中打暖身都完成了，Wayground 題組現在可以開始。",
+                buttonText: "帶著成果回到練習區"
             }
-        }
-
-        function restoreProgress() {
-            const level = readProgress();
-            for (let i = 1; i <= level; i += 1) {
-                unlockLevel(i);
-            }
-            for (let i = 1; i < level; i += 1) {
-                markLevelAsCompleted(i);
-            }
-
-            if (isCompleted()) {
-                markLevelAsCompleted(4);
-                setCompletedState(true);
-                return;
-            }
-
-            if (level > 1) {
-                progressStatusEl.innerHTML = `<i class="fa-solid fa-flag-checkered text-indigo-500 mr-2"></i> 已接回暖身進度，現在從第 ${level} 關繼續。`;
-                warmupBadgeEl.textContent = `進行到第 ${level} 關`;
-            }
-        }
-
-        window.togglePinyin = function togglePinyin(level) {
-            const normalEl = document.getElementById(`text-normal-${level}`);
-            const pinyinEl = document.getElementById(`text-pinyin-${level}`);
-            const btnEl = document.getElementById(`btn-pinyin-${level}`);
-            if (!normalEl || !pinyinEl || !btnEl) return;
-
-            const showingPinyin = !pinyinEl.classList.contains("hidden");
-            if (showingPinyin) {
-                pinyinEl.classList.add("hidden");
-                normalEl.classList.remove("hidden");
-                btnEl.innerHTML = "👀 看注音";
-            } else {
-                normalEl.classList.add("hidden");
-                pinyinEl.classList.remove("hidden");
-                btnEl.innerHTML = "🙈 隱藏注音";
-            }
-        };
-
-        function buildHint(level, target) {
-            if (level === 1) return "提示：檢查問號和縮寫符號。";
-            if (level === 2) return "提示：檢查驚嘆號、句點和換行。";
-            if (level === 3) return "提示：這一關沒有標點，看看有沒有多打一個符號。";
-            return `提示：請從「${target.slice(0, 8)}」附近開始重新比對，記得看逗號、句號和換行。`;
-        }
-
-        window.checkLevel = function checkLevel(level) {
-            const inputEl = document.getElementById(`input-level${level}`);
-            const msgEl = document.getElementById(`msg-level${level}`);
-            const target = levelsData[level - 1]?.answer;
-
-            if (!inputEl || !msgEl || !target) return;
-            if (inputEl.readOnly) return;
-
-            const userValue = normalizeInput(inputEl.value);
-            if (userValue === target) {
-                markLevelAsCompleted(level);
-
-                if (level < levelsData.length) {
-                    const nextLevel = level + 1;
-                    saveProgress(nextLevel);
-                    unlockLevel(nextLevel);
-                    progressStatusEl.innerHTML = `<i class="fa-solid fa-flag-checkered text-indigo-500 mr-2"></i> 第 ${level} 關完成，請繼續第 ${nextLevel} 關。`;
-                    warmupBadgeEl.textContent = `進行到第 ${nextLevel} 關`;
-                    setTimeout(() => {
-                        document.getElementById(`block-level${nextLevel}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
-                    }, 250);
-                    return;
-                }
-
-                saveProgress(levelsData.length);
-                setCompletedState(true);
-                return;
-            }
-
-            inputEl.classList.remove("shake");
-            void inputEl.offsetWidth;
-            inputEl.classList.add("shake", "border-red-500");
-            msgEl.innerHTML = `還差一點點。${buildHint(level, target)}`;
-            msgEl.className = "text-center font-black mt-4 min-h-12 text-base text-red-500 leading-relaxed";
-        };
-
-        configureInputs();
-        restoreProgress();
+        });
     </script>
 </body>
 </html>

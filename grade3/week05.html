@@ -434,7 +434,10 @@
 
     <!-- 闖關判定與動態解鎖邏輯 -->
     <script type="module">
+        import { initNavbarAuth } from "../shared/navbar-auth.js";
         import { initTypingChallenge } from "../shared/typing-challenge.js";
+
+        initNavbarAuth();
 
         const levelsData = [
             { id: 1, ans: "瀏覽器小高手" },
