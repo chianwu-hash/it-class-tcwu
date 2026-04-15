@@ -61,6 +61,12 @@
             existingNav.remove();
         }
         document.body.insertAdjacentHTML("afterbegin", html);
+        window.dispatchEvent(new CustomEvent("course-navbar:rendered", {
+            detail: {
+                grade: "grade3",
+                activeWeeks
+            }
+        }));
     }
 
     function buildVisibleWeeks(rows) {

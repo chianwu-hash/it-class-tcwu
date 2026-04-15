@@ -6,24 +6,50 @@ import {
     supabase
 } from "./auth.js";
 
+function getNavbarElements() {
+    return {
+        authStatusEl: document.getElementById("auth-status"),
+        adminBtn: document.getElementById("admin-btn"),
+        loginBtn: document.getElementById("login-btn"),
+        resetProgressBtn: document.getElementById("reset-progress-btn"),
+        logoutBtn: document.getElementById("logout-btn")
+    };
+}
+
 export function initNavbarAuth({
     onResetProgress = null,
     onSessionResolved = null
 } = {}) {
-    const authStatusEl = document.getElementById("auth-status");
-    const adminBtn = document.getElementById("admin-btn");
-    const loginBtn = document.getElementById("login-btn");
-    const resetProgressBtn = document.getElementById("reset-progress-btn");
-    const logoutBtn = document.getElementById("logout-btn");
-
-    if (!authStatusEl && !loginBtn && !logoutBtn) {
-        return;
+    const existingController = window.__navbarAuthController;
+    if (existingController) {
+        existingController.setOptions({ onResetProgress, onSessionResolved });
+        existingController.refresh();
+        return existingController.api;
     }
 
     let currentSession = null;
+    let options = { onResetProgress, onSessionResolved };
+
+    function setOptions(nextOptions) {
+        options = {
+            onResetProgress: nextOptions.onResetProgress ?? null,
+            onSessionResolved: nextOptions.onSessionResolved ?? null
+        };
+    }
 
     function updateAuthUI(session) {
         currentSession = session;
+        const {
+            authStatusEl,
+            adminBtn,
+            loginBtn,
+            resetProgressBtn,
+            logoutBtn
+        } = getNavbarElements();
+
+        if (!authStatusEl && !loginBtn && !logoutBtn && !adminBtn && !resetProgressBtn) {
+            return;
+        }
 
         if (session?.user) {
             if (authStatusEl) {
@@ -33,7 +59,7 @@ export function initNavbarAuth({
             loginBtn?.classList.add("hidden");
             logoutBtn?.classList.remove("hidden");
             adminBtn?.classList.toggle("hidden", !isTeacher(session));
-            if (typeof onResetProgress === "function") {
+            if (typeof options.onResetProgress === "function") {
                 resetProgressBtn?.classList.remove("hidden");
             } else {
                 resetProgressBtn?.classList.add("hidden");
@@ -49,8 +75,8 @@ export function initNavbarAuth({
             resetProgressBtn?.classList.add("hidden");
         }
 
-        if (typeof onSessionResolved === "function") {
-            onSessionResolved(session);
+        if (typeof options.onSessionResolved === "function") {
+            options.onSessionResolved(session);
         }
     }
 
@@ -63,14 +89,36 @@ export function initNavbarAuth({
     }
 
     async function handleResetProgress() {
-        if (typeof onResetProgress === "function") {
-            await onResetProgress(currentSession);
+        if (typeof options.onResetProgress === "function") {
+            await options.onResetProgress(currentSession);
         }
     }
 
-    loginBtn?.addEventListener("click", signInWithGoogle);
-    logoutBtn?.addEventListener("click", signOutUser);
-    resetProgressBtn?.addEventListener("click", handleResetProgress);
+    async function handleClick(event) {
+        const loginBtn = event.target.closest("#login-btn");
+        if (loginBtn) {
+            event.preventDefault();
+            await signInWithGoogle();
+            return;
+        }
+
+        const logoutBtn = event.target.closest("#logout-btn");
+        if (logoutBtn) {
+            event.preventDefault();
+            await signOutUser();
+            return;
+        }
+
+        const resetProgressBtn = event.target.closest("#reset-progress-btn");
+        if (resetProgressBtn) {
+            event.preventDefault();
+            await handleResetProgress();
+        }
+    }
+
+    async function refresh() {
+        updateAuthUI(currentSession);
+    }
 
     async function initialize() {
         const session = await resolveSession();
@@ -81,5 +129,19 @@ export function initNavbarAuth({
         });
     }
 
+    document.addEventListener("click", handleClick);
+    window.addEventListener("course-navbar:rendered", refresh);
+
+    const api = {
+        refresh
+    };
+
+    window.__navbarAuthController = {
+        setOptions,
+        refresh,
+        api
+    };
+
     initialize();
+    return api;
 }
