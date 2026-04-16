@@ -107,18 +107,19 @@ initNavbarAuth();
 ### 打字闖關（若有）
 
 5. 輸入第 1 關正確答案，過關動畫出現，第 2 關出現
-6. 繼續打完最後一關，確認 Supabase 有記錄（開後台查）
-7. **開新分頁**，同一頁面，確認進度自動接回（顯示「從第 N 關繼續」）
-8. 用重置按鈕重設，確認回到第 1 關
+6. 故意輸入錯誤答案，確認提示能指出第幾行、第幾個字附近，或判斷可能少字/多字；不可只出現籠統提示，且不可把少字誤導成多打標點
+7. 繼續打完最後一關，確認 Supabase 有記錄（開後台查）
+8. **開新分頁**，同一頁面，確認進度自動接回（顯示「從第 N 關繼續」）
+9. 用重置按鈕重設，確認回到第 1 關
 
 ### 解鎖邏輯（若有）
 
-9. 完成最後一關後，確認解鎖區塊出現，鎖定區塊隱藏
-10. 重新整理頁面（已完成進度），確認解鎖狀態正確恢復
+10. 完成最後一關後，確認解鎖區塊出現，鎖定區塊隱藏
+11. 重新整理頁面（已完成進度），確認解鎖狀態正確恢復
 
 ### 後台
 
-11. 用教師帳號登入 `admin-progress.html`，確認此週此活動出現在進度清單
+12. 用教師帳號登入 `admin-progress.html`，確認此週此活動出現在進度清單
 
 ---
 
@@ -128,6 +129,7 @@ initNavbarAuth();
 □ 確認是用 http:// 開啟（不是 file://）
 □ 點一下 navbar 登入按鈕，確認有反應（跳 Google 授權或跳 alert）
 □ 若有打字闖關：輸入一個正確答案，確認過關訊息出現
+□ 若有打字闖關：故意少打一兩個字，確認錯誤提示方向正確且能指出附近位置
 □ 若有解鎖邏輯：（若可以）打完最後一關，確認解鎖區塊出現
 □ Console 無紅色錯誤（F12 打開看一眼）
 □ 手機或小螢幕快速確認版面不爛
@@ -145,6 +147,7 @@ initNavbarAuth();
 | 登入按鈕點了沒反應 | 沒呼叫 `initNavbarAuth()`，或 grade3 navbar 重渲後 listener 消失 | 確認 `initNavbarAuth()` 有被呼叫；若頁面有 `initTypingChallenge`，兩個都要呼叫 |
 | 打了字過關，但後台看不到進度 | 打字邏輯用 localStorage 實作，沒有接 `initTypingChallenge` | 改用 `initTypingChallenge`，`activityKey` 要有值 |
 | 刷新頁面進度不見 | 同上，或 `weekCode` / `activityKey` 格式錯誤 | 確認 `weekCode` 是兩位數字串、`activityKey` 不重複 |
+| 打字錯誤提示方向不對，例如少字卻提示多打標點 | 新頁沒有沿用精準 `buildHint`，只寫了籠統提示 | 參考 week06/week07/week10 的逐行逐字比對提示，至少能指出第幾行與錯誤附近文字 |
 | 完成最後一關，解鎖區塊沒出現 | 解鎖 UI 依賴 module 完成狀態，但沒有橋接 | 加 MutationObserver 監聽 `#progress-status`，參考 week10 寫法 |
 | `confetti is not defined` | 沒加 canvas-confetti CDN | 在 `<head>` 加入 CDN script |
 | `levelsData` 第一關過不了（正確答案也不對） | `levelsData` 用了 `answer` 而非 `ans` | 把所有 `answer:` 改成 `ans:` |

@@ -244,9 +244,46 @@
             observer.observe(progressStatusEl, { childList: true, characterData: true, subtree: true });
         }
 
-        function buildHint(_userVal, targetVal, levelIndex) {
-            if (levelIndex === 1) return "提示：檢查問號和縮寫符號。";
-            return "提示：這一關沒有標點，看看有沒有多打一個符號。";
+        function buildHint(userVal, targetVal, levelIndex) {
+            const userLines = userVal.split("\n");
+            const targetLines = targetVal.split("\n");
+            const maxLines = Math.max(userLines.length, targetLines.length);
+
+            for (let lineIndex = 0; lineIndex < maxLines; lineIndex += 1) {
+                const userLine = userLines[lineIndex] || "";
+                const targetLine = targetLines[lineIndex] || "";
+
+                if (userLine === targetLine) {
+                    continue;
+                }
+                if (!userLine && targetLine) {
+                    return `提示：第 ${lineIndex + 1} 行還沒完成，看看是不是少了整行內容。`;
+                }
+                if (userLine && !targetLine) {
+                    return `提示：第 ${lineIndex + 1} 行多打了內容，檢查一下句尾。`;
+                }
+
+                const maxChars = Math.max(userLine.length, targetLine.length);
+                for (let charIndex = 0; charIndex < maxChars; charIndex += 1) {
+                    const userChar = userLine[charIndex];
+                    const targetChar = targetLine[charIndex];
+
+                    if (userChar === targetChar) {
+                        continue;
+                    }
+                    if (!userChar) {
+                        return `提示：第 ${lineIndex + 1} 行後面可能少字，從「${targetLine.slice(Math.max(0, charIndex - 2), charIndex + 3)}」附近再看一次。`;
+                    }
+                    if (!targetChar) {
+                        return `提示：第 ${lineIndex + 1} 行後面可能多打了，檢查一下句尾。`;
+                    }
+                    return `提示：第 ${lineIndex + 1} 行第 ${charIndex + 1} 個字附近不一樣，從「${targetLine.slice(Math.max(0, charIndex - 2), charIndex + 3)}」附近再看一次。`;
+                }
+            }
+
+            return levelIndex === 1
+                ? "提示：再檢查一下大小寫、問號或縮寫符號。"
+                : "提示：再檢查一下是不是多字、少字或有空格。";
         }
 
         initTypingChallenge({
@@ -269,8 +306,9 @@
             },
             celebrationContent: {
                 title: "2 關全部完成",
-                message: "英打和中打暖身都完成了，Wayground 題組現在可以開始。",
-                buttonText: "帶著成果回到練習區"
+                message: "英打和中打暖身都完成了，現在直接前往 Wayground 題組。",
+                buttonText: "前往 Wayground 題組",
+                buttonHref: "wayground.html"
             }
         });
     </script>

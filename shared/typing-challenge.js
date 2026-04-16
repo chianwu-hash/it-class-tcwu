@@ -27,7 +27,8 @@ const DEFAULT_PROGRESS_MESSAGES = {
 const DEFAULT_CELEBRATION_CONTENT = {
     title: "一步一步完成所有關卡",
     message: "你真的把所有關卡一步一步完成了，現在回頭看，一定會發現自己比剛開始更進步了。",
-    buttonText: "帶著成果回到練習區"
+    buttonText: "帶著成果回到練習區",
+    buttonHref: ""
 };
 
 export function initTypingChallenge({
@@ -537,11 +538,15 @@ export function initTypingChallenge({
         overlay.className = "fixed inset-0 bg-black/85 z-50 flex flex-col items-center justify-center transition-opacity duration-1000 opacity-0";
 
         const trophy = document.createElement("div");
+        const buttonHtml = celebration.buttonHref
+            ? `<a href="${celebration.buttonHref}" class="inline-block mt-10 bg-yellow-500 hover:bg-yellow-400 text-yellow-900 font-black px-10 py-4 rounded-full text-2xl shadow-[0_0_20px_rgba(250,204,21,0.6)] transition transform hover:scale-110">${celebration.buttonText}</a>`
+            : `<button onclick="document.getElementById('celebration-overlay').remove()" class="mt-10 bg-yellow-500 hover:bg-yellow-400 text-yellow-900 font-black px-10 py-4 rounded-full text-2xl shadow-[0_0_20px_rgba(250,204,21,0.6)] transition transform hover:scale-110">${celebration.buttonText}</button>`;
+
         trophy.innerHTML = `
             <div class="text-[120px] mb-4 animate-bounce drop-shadow-[0_0_30px_rgba(250,204,21,1)]">🏆</div>
             <h2 class="text-5xl md:text-7xl font-black text-yellow-400 tracking-widest drop-shadow-[0_0_20px_rgba(250,204,21,0.8)] mb-4">${celebration.title}</h2>
             <p class="text-2xl text-white mt-4 font-bold">${celebration.message}</p>
-            <button onclick="document.getElementById('celebration-overlay').remove()" class="mt-10 bg-yellow-500 hover:bg-yellow-400 text-yellow-900 font-black px-10 py-4 rounded-full text-2xl shadow-[0_0_20px_rgba(250,204,21,0.6)] transition transform hover:scale-110">${celebration.buttonText}</button>
+            ${buttonHtml}
         `;
         trophy.className = "text-center transform scale-0 transition-transform duration-1000";
 
