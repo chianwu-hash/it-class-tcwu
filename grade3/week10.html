@@ -44,7 +44,7 @@
                 <div>
                     <h2 class="text-xl font-bold text-cyan-100 mb-2">三年級資訊課 ｜ 第 10 週</h2>
                     <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">期中暖身 + 題組複習</h1>
-                    <p class="text-xl md:text-2xl text-cyan-50 font-black leading-relaxed">先完成英打 2 關和中打 2 關。<br>4 關都完成後，再解鎖 Wayground 題組。</p>
+                    <p class="text-xl md:text-2xl text-cyan-50 font-black leading-relaxed">先完成英打 1 關和中打 1 關。<br>2 關都完成後，再解鎖 Wayground 題組。</p>
                 </div>
                 <div class="hidden md:block text-7xl opacity-80 transform rotate-6 drop-shadow-lg">
                     <i class="fa-solid fa-unlock-keyhole text-amber-200"></i>
@@ -66,12 +66,12 @@
             <div class="p-6 grid md:grid-cols-3 gap-4">
                 <div class="bg-cyan-50 border border-cyan-200 rounded-2xl p-5">
                     <div class="text-sm font-black text-cyan-700 mb-2">步驟 1</div>
-                    <h4 class="text-xl font-black text-cyan-900 mb-2">先做 4 關暖身</h4>
-                    <p class="font-bold text-slate-700 leading-relaxed">英打 2 關、中打 2 關，句子都不長，重點是順利完成。</p>
+                    <h4 class="text-xl font-black text-cyan-900 mb-2">先做 2 關暖身</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">英打 1 關、中打 1 關，每關都只有一行，重點是順利完成。</p>
                 </div>
                 <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5">
                     <div class="text-sm font-black text-sky-700 mb-2">步驟 2</div>
-                    <h4 class="text-xl font-black text-sky-900 mb-2">4 關完成才解鎖</h4>
+                    <h4 class="text-xl font-black text-sky-900 mb-2">2 關完成才解鎖</h4>
                     <p class="font-bold text-slate-700 leading-relaxed">本節課不是一開始就做題組，先把暖身闖關全部完成。</p>
                 </div>
                 <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-5">
@@ -88,13 +88,13 @@
                     <i class="fa-solid fa-keyboard text-indigo-700 text-2xl mr-3"></i>
                     <h3 class="text-2xl font-black text-indigo-900">暖身關卡</h3>
                 </div>
-                <span id="warmup-badge" class="bg-indigo-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">共 4 關</span>
+                <span id="warmup-badge" class="bg-indigo-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">共 2 關</span>
             </div>
             <div class="p-8">
                 <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 mb-6 text-slate-700 font-bold space-y-2">
                     <p><i class="fa-solid fa-circle-info text-indigo-500 mr-2"></i> 這次暖身直接用期中範圍的英文句型和國語課文短句。</p>
                     <p><i class="fa-solid fa-hand text-indigo-500 mr-2"></i> 不能複製貼上，只能自己慢慢打。打對一關，下一關才會出現。</p>
-                    <p id="progress-status"><i class="fa-solid fa-flag-checkered text-indigo-500 mr-2"></i> 目前進度：第 1 關開始。4 關完成後，Wayground 題組才會開放。</p>
+                    <p id="progress-status"><i class="fa-solid fa-flag-checkered text-indigo-500 mr-2"></i> 目前進度：第 1 關開始。2 關完成後，Wayground 題組才會開放。</p>
                 </div>
 
                 <div id="typing-levels-container" class="flex flex-col space-y-8 max-w-3xl mx-auto">
@@ -112,55 +112,24 @@
                         <p id="msg-level1" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
                     </div>
 
-                    <div id="block-level2" class="hidden bg-indigo-50 border-4 border-indigo-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
-                        <div class="absolute -top-4 -left-4 bg-indigo-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">英打第 2 關</div>
-                        <h4 class="text-xl font-black text-indigo-800 mb-2 flex items-center"><i class="fa-solid fa-comments text-indigo-500 mr-2"></i> 自我介紹兩行</h4>
-                        <p class="text-gray-600 font-bold text-sm mb-3">2 行，有標點。驚嘆號、句點和換行都要對。</p>
-                        <div class="text-xl font-black text-center text-indigo-700 tracking-wide leading-relaxed whitespace-pre-line mb-4 bg-white py-4 rounded-xl border-2 border-indigo-200 shadow-inner select-none pointer-events-none">Hello! I'm Mia.
-I'm nine years old.</div>
-                        <textarea rows="2" id="input-level2" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-indigo-300 focus:outline-none focus:ring-4 focus:ring-indigo-400 font-bold text-gray-800 text-xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400 resize-none leading-relaxed" placeholder="要記得換行 (禁止貼上)..."></textarea>
-                        <button onclick="checkLevel(2)" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
-                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
-                        </button>
-                        <p id="msg-level2" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
-                    </div>
-
-                    <div id="block-level3" class="hidden bg-emerald-50 border-4 border-emerald-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                    <div id="block-level2" class="hidden bg-emerald-50 border-4 border-emerald-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
                         <div class="absolute -top-4 -left-4 bg-emerald-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">中打第 1 關</div>
                         <h4 class="text-xl font-black text-emerald-800 mb-2 flex items-center"><i class="fa-solid fa-mountain text-emerald-500 mr-2"></i> 雨景短句</h4>
                         <div class="flex justify-between items-center mb-3 gap-3">
                             <p class="text-gray-600 font-bold text-sm">1 行，無標點。先把這句穩穩打出來。</p>
-                            <button onclick="togglePinyin(3)" id="btn-pinyin-3" class="text-xs bg-emerald-200 text-emerald-800 hover:bg-emerald-300 px-3 py-1.5 rounded-full font-bold shadow-sm transition whitespace-nowrap">👀 看注音</button>
+                            <button onclick="togglePinyin(2)" id="btn-pinyin-2" class="text-xs bg-emerald-200 text-emerald-800 hover:bg-emerald-300 px-3 py-1.5 rounded-full font-bold shadow-sm transition whitespace-nowrap">👀 看注音</button>
                         </div>
-                        <div id="text-normal-3" class="text-2xl font-black text-center text-emerald-700 tracking-widest mb-4 bg-white py-3 rounded-xl border-2 border-emerald-200 shadow-inner select-none pointer-events-none">
+                        <div id="text-normal-2" class="text-2xl font-black text-center text-emerald-700 tracking-widest mb-4 bg-white py-3 rounded-xl border-2 border-emerald-200 shadow-inner select-none pointer-events-none">
                             遠方的山好像披著一件輕紗
                         </div>
-                        <div id="text-pinyin-3" class="hidden text-2xl font-black text-center text-emerald-700 tracking-widest mb-4 bg-white py-3 rounded-xl border-2 border-emerald-200 shadow-inner select-none pointer-events-none leading-loose">
+                        <div id="text-pinyin-2" class="hidden text-2xl font-black text-center text-emerald-700 tracking-widest mb-4 bg-white py-3 rounded-xl border-2 border-emerald-200 shadow-inner select-none pointer-events-none leading-loose">
                             <ruby>遠<rt>ㄩㄢˇ</rt></ruby><ruby>方<rt>ㄈㄤ</rt></ruby><ruby>的<rt>ㄉㄜ˙</rt></ruby><ruby>山<rt>ㄕㄢ</rt></ruby><ruby>好<rt>ㄏㄠˇ</rt></ruby><ruby>像<rt>ㄒㄧㄤˋ</rt></ruby><ruby>披<rt>ㄆㄧ</rt></ruby><ruby>著<rt>ㄓㄜ˙</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>件<rt>ㄐㄧㄢˋ</rt></ruby><ruby>輕<rt>ㄑㄧㄥ</rt></ruby><ruby>紗<rt>ㄕㄚ</rt></ruby>
                         </div>
-                        <input type="text" id="input-level3" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full h-16 p-3 rounded-xl border-2 border-emerald-300 focus:outline-none focus:ring-4 focus:ring-emerald-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="沒有標點，慢慢打 (禁止貼上)...">
-                        <button onclick="checkLevel(3)" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                        <input type="text" id="input-level2" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full h-16 p-3 rounded-xl border-2 border-emerald-300 focus:outline-none focus:ring-4 focus:ring-emerald-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="沒有標點，慢慢打 (禁止貼上)...">
+                        <button onclick="checkLevel(2)" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
                             <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
                         </button>
-                        <p id="msg-level3" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
-                    </div>
-
-                    <div id="block-level4" class="hidden bg-amber-50 border-4 border-amber-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
-                        <div class="absolute -top-4 -left-4 bg-amber-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">中打第 2 關</div>
-                        <h4 class="text-xl font-black text-amber-800 mb-2 flex items-center"><i class="fa-solid fa-cloud-rain text-amber-500 mr-2"></i> 兩行課文句子</h4>
-                        <div class="flex justify-between items-center mb-3 gap-3">
-                            <p class="text-gray-600 font-bold text-sm">2 行，有標點。逗號、句號和換行都要正確。</p>
-                            <button onclick="togglePinyin(4)" id="btn-pinyin-4" class="text-xs bg-amber-200 text-amber-800 hover:bg-amber-300 px-3 py-1.5 rounded-full font-bold shadow-sm transition whitespace-nowrap">👀 看注音</button>
-                        </div>
-                        <div id="text-normal-4" class="text-xl font-black text-center text-amber-700 tracking-widest leading-relaxed whitespace-pre-line mb-4 bg-white py-4 rounded-xl border-2 border-amber-200 shadow-inner select-none pointer-events-none">孩子們喜歡去小書店。
-美如奶奶總是滿臉笑容。</div>
-                        <div id="text-pinyin-4" class="hidden text-xl font-black text-center text-amber-700 tracking-widest mb-4 bg-white py-4 rounded-xl border-2 border-amber-200 shadow-inner select-none pointer-events-none leading-loose whitespace-pre-line"><ruby>孩<rt>ㄏㄞˊ</rt></ruby><ruby>子<rt>ㄗˇ</rt></ruby><ruby>們<rt>ㄇㄣ˙</rt></ruby><ruby>喜<rt>ㄒㄧˇ</rt></ruby><ruby>歡<rt>ㄏㄨㄢ</rt></ruby><ruby>去<rt>ㄑㄩˋ</rt></ruby><ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>書<rt>ㄕㄨ</rt></ruby><ruby>店<rt>ㄉㄧㄢˋ</rt></ruby>。
-<ruby>美<rt>ㄇㄟˇ</rt></ruby><ruby>如<rt>ㄖㄨˊ</rt></ruby><ruby>奶<rt>ㄋㄞˇ</rt></ruby><ruby>奶<rt>ㄋㄞˇ</rt></ruby><ruby>總<rt>ㄗㄨㄥˇ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby><ruby>滿<rt>ㄇㄢˇ</rt></ruby><ruby>臉<rt>ㄌㄧㄢˇ</rt></ruby><ruby>笑<rt>ㄒㄧㄠˋ</rt></ruby><ruby>容<rt>ㄖㄨㄥˊ</rt></ruby>。</div>
-                        <textarea rows="2" id="input-level4" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-amber-300 focus:outline-none focus:ring-4 focus:ring-amber-400 font-bold text-gray-800 text-xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400 resize-none leading-relaxed" placeholder="兩行都要打對 (禁止貼上)..."></textarea>
-                        <button onclick="checkLevel(4)" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
-                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
-                        </button>
-                        <p id="msg-level4" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                        <p id="msg-level2" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
                     </div>
                 </div>
             </div>
@@ -176,11 +145,11 @@ I'm nine years old.</div>
             </div>
             <div class="p-6 grid lg:grid-cols-[1.15fr_0.85fr] gap-6">
                 <div class="bg-white rounded-2xl border border-emerald-200 p-5">
-                    <h4 class="text-2xl font-black text-emerald-900 mb-3">先完成 4 關暖身</h4>
-                    <p class="text-slate-700 font-bold leading-relaxed mb-4">本節課不是一開始就直接做題組。請先把英打 2 關和中打 2 關全部完成，完成後才會出現 Wayground 題組連結。</p>
+                    <h4 class="text-2xl font-black text-emerald-900 mb-3">先完成 2 關暖身</h4>
+                    <p class="text-slate-700 font-bold leading-relaxed mb-4">本節課不是一開始就直接做題組。請先把英打 1 關和中打 1 關全部完成，完成後才會出現 Wayground 題組連結。</p>
                     <div class="grid sm:grid-cols-2 gap-3">
-                        <div class="rounded-2xl bg-emerald-50 border border-emerald-200 px-4 py-3 font-black text-emerald-800">英打 2 關完成</div>
-                        <div class="rounded-2xl bg-emerald-50 border border-emerald-200 px-4 py-3 font-black text-emerald-800">中打 2 關完成</div>
+                        <div class="rounded-2xl bg-emerald-50 border border-emerald-200 px-4 py-3 font-black text-emerald-800">英打 1 關完成</div>
+                        <div class="rounded-2xl bg-emerald-50 border border-emerald-200 px-4 py-3 font-black text-emerald-800">中打 1 關完成</div>
                     </div>
                 </div>
                 <div class="bg-white rounded-2xl border border-emerald-200 p-5">
@@ -191,7 +160,7 @@ I'm nine years old.</div>
                         <li><i class="fa-solid fa-circle-check text-emerald-500 mr-2"></i>Wayground 入口現在先不開放。</li>
                     </ul>
                     <div class="mt-5 min-h-[52px] rounded-2xl bg-slate-200 text-slate-500 font-black flex items-center justify-center">
-                        <i class="fa-solid fa-lock mr-2"></i>完成 4 關後才會出現題組入口
+                        <i class="fa-solid fa-lock mr-2"></i>完成 2 關後才會出現題組入口
                     </div>
                 </div>
             </div>
@@ -203,7 +172,7 @@ I'm nine years old.</div>
                     <i class="fa-solid fa-unlock text-emerald-700 text-2xl mr-3"></i>
                     <h3 class="text-2xl font-black text-emerald-900">Wayground 已解鎖</h3>
                 </div>
-                <span class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-full font-bold">4 關完成</span>
+                <span class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-full font-bold">2 關完成</span>
             </div>
             <div class="p-6 grid lg:grid-cols-[1.15fr_0.85fr] gap-6">
                 <div class="bg-white rounded-2xl border border-emerald-200 p-5">
@@ -241,16 +210,12 @@ I'm nine years old.</div>
 
         const levelsData = [
             { id: 1, ans: "What's your name?" },
-            { id: 2, ans: "Hello! I'm Mia.\nI'm nine years old." },
-            { id: 3, ans: "遠方的山好像披著一件輕紗" },
-            { id: 4, ans: "孩子們喜歡去小書店。\n美如奶奶總是滿臉笑容。" }
+            { id: 2, ans: "遠方的山好像披著一件輕紗" }
         ];
 
         const levelMsg = {
             1: "第一關過了，先把英文句型暖起來了。",
-            2: "英文兩行也完成了，接下來換中文。",
-            3: "中文短句過關了，最後一關記得顧好標點和換行。",
-            4: "四關全部完成，Wayground 題組已經解鎖。"
+            2: "兩關全部完成，Wayground 題組已經解鎖。"
         };
 
         const warmupBadgeEl = document.getElementById("warmup-badge");
@@ -262,15 +227,15 @@ I'm nine years old.</div>
             lockedSection?.classList.add("hidden");
             unlockSection?.classList.remove("hidden");
             if (warmupBadgeEl) {
-                warmupBadgeEl.textContent = "4 關完成";
+                warmupBadgeEl.textContent = "2 關完成";
                 warmupBadgeEl.className = "bg-emerald-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm";
             }
         }
 
-        // 監聽進度狀態變化，當第 4 關完成時顯示解鎖區塊
+        // 監聽進度狀態變化，當第 2 關完成時顯示解鎖區塊
         const observer = new MutationObserver(() => {
-            const input4 = document.getElementById("input-level4");
-            if (input4?.readOnly) {
+            const input2 = document.getElementById("input-level2");
+            if (input2?.readOnly) {
                 applyCompletedUI();
                 observer.disconnect();
             }
@@ -281,31 +246,29 @@ I'm nine years old.</div>
 
         function buildHint(_userVal, targetVal, levelIndex) {
             if (levelIndex === 1) return "提示：檢查問號和縮寫符號。";
-            if (levelIndex === 2) return "提示：檢查驚嘆號、句點和換行。";
-            if (levelIndex === 3) return "提示：這一關沒有標點，看看有沒有多打一個符號。";
-            return `提示：請從「${targetVal.slice(0, 6)}」附近開始重新比對，記得看逗號、句號和換行。`;
+            return "提示：這一關沒有標點，看看有沒有多打一個符號。";
         }
 
         initTypingChallenge({
             weekCode: "10",
-            activityKey: "typing_task_4",
+            activityKey: "typing_task_2",
             levelsData,
             levelEncouragements: levelMsg,
             buildHint,
             getWrongAnswerHtml: ({ hint }) => `還差一點點。${hint}`,
             progressMessages: {
-                completed: "4 關全部完成，Wayground 題組已經解鎖。",
+                completed: "2 關全部完成，Wayground 題組已經解鎖。",
                 resumed: (level) => `已接回暖身進度，從第 ${level} 關繼續。`,
                 firstLogin: "已登入成功，這次的練習過程會自動記錄下來。",
                 unauthenticated: "尚未登入時，練習不會保存；登入後會自動記錄進度。",
-                saveCompleted: "已記下完整進度，Wayground 題組已解鎖。",
+                saveCompleted: "已記下 2 關完整進度，Wayground 題組已解鎖。",
                 saveNextLevel: (level) => `已記下進度，下次從第 ${level} 關繼續。`,
                 saveError: "進度暫時沒有記錄成功，請稍後再試一次。",
                 resetNoSession: "目前沒有登入，不能重新開始練習。",
                 resetConfirm: "要重新開始練習嗎？這會把目前的進度重設回第 1 關。"
             },
             celebrationContent: {
-                title: "4 關全部完成",
+                title: "2 關全部完成",
                 message: "英打和中打暖身都完成了，Wayground 題組現在可以開始。",
                 buttonText: "帶著成果回到練習區"
             }

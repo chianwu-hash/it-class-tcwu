@@ -350,10 +350,17 @@
             return type;
         }
 
+        function typingTotalLevels(activityKey) {
+            const match = String(activityKey || '').toLowerCase().match(/^typing_task_(\d+)$/);
+            const total = match ? Number.parseInt(match[1], 10) : NaN;
+            return Number.isFinite(total) && total > 0 ? total : 5;
+        }
+
         function progressLabel(row) {
             const type = normalizedActivityType(row);
             if (type === 'typing') {
-                return row.completed ? `第 ${row.current_level}/5 關（完成）` : `第 ${row.current_level}/5 關`;
+                const totalLevels = typingTotalLevels(row.activity_key);
+                return row.completed ? `第 ${row.current_level}/${totalLevels} 關（完成）` : `第 ${row.current_level}/${totalLevels} 關`;
             }
             if (type === 'quiz') {
                 return row.completed ? '已作答' : '未完成';

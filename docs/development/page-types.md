@@ -68,7 +68,7 @@
 | week05 | `"05"` | 待確認 |
 | week06 | `"06"` | `typing_task_N`（含 quiz） |
 | week07 | `"07"` | `typing_task_5` |
-| week10 | `"10"` | `typing_task_4` |
+| week10 | `"10"` | `typing_task_2` |
 
 **必須同時呼叫 `initNavbarAuth()`**：`initTypingChallenge` 的 button listener 是直接綁定，會因 navbar 重渲失效，必須靠 `initNavbarAuth` 的事件代理補位。
 
