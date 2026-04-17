@@ -12,6 +12,7 @@
                     "gemini:generate-image":  "node automation/gemini-generate-infographic.js",
                     "image:compress-infographic":  "python automation/convert-infographic-to-webp.py",
                     "cloudinary:upload-infographic":  "python automation/upload-infographic-to-cloudinary.py",
+                    "notebooklm:ask":  "node automation/notebooklm-ask.js",
                     "notebooklm:page-refs":  "python automation/notebooklm-page-refs-workflow.py",
                     "wayground:open":  "node automation/wayground-open.js",
                     "wayground:inspect":  "node automation/wayground-cdp-inspect.js",

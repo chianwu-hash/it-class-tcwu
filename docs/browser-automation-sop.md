@@ -51,6 +51,7 @@ CDP 檢查入口：
 主要腳本：
 - `automation/browser-smoke.js`
 - `automation/notebooklm-open.js`
+- `automation/notebooklm-ask.js`
 - `automation/wayground-open.js`
 - `automation/wayground-generate-from-bank.js`
 - `automation/wayground-check-generated-quiz.js`
@@ -63,6 +64,7 @@ PowerShell 請一律使用 `npm.cmd`：
 
 ```powershell
 npm.cmd run browser:smoke
+npm.cmd run notebooklm:ask -- --prompt "請根據這個筆記本中的來源，列出本週技能對應頁碼"
 npm.cmd run wayground:open
 npm.cmd run wayground:generate -- .\automation\question-banks\xxx.md
 npm.cmd run wayground:check -- .\automation\question-banks\xxx.md
@@ -214,3 +216,41 @@ npm.cmd run wayground:delete -- 21,20,19
 7. 發布
 
 這條流程目前可重複使用。
+
+## 14. NotebookLM 問答與擷取
+
+腳本：
+- `automation/notebooklm-ask.js`
+
+用途：
+- 連到已登入的正式 Chrome（CDP `9222`）
+- 找到目前開著的 NotebookLM 筆記本分頁
+- 把提示詞送進底部對話框
+- 等待最新回答穩定
+- 輸出純文字回答
+
+支援三種輸入提示詞方式：
+
+1. `--prompt "..."`  
+2. `--prompt-file path/to/prompt.txt`  
+3. PowerShell 管線輸入
+
+範例：
+
+```powershell
+@'
+請根據這個筆記本中的來源，列出本週技能與對應頁碼。
+'@ | npm.cmd run notebooklm:ask -- --out automation/output/notebooklm-latest-response.txt
+```
+
+預設輸出：
+
+- `automation/output/notebooklm-latest-response.txt`
+- `automation/output/notebooklm-latest-response.json`
+- `automation/output/notebooklm-after-ask.png`
+
+注意：
+- 必須先手動打開對應的 NotebookLM 筆記本
+- 腳本會操作目前最後一個 NotebookLM 筆記本頁面
+- 若回答格式之後要回寫教案 / HTML，請再接 `notebooklm:page-refs`
+- 若提示詞含中文，優先使用 `--prompt-file`；PowerShell 管線有機會把中文轉成亂碼，導致 NotebookLM 收到錯誤內容
