@@ -9,6 +9,10 @@
     "scripts":  {
                     "test":  "echo \"Error: no test specified\" \u0026\u0026 exit 1",
                     "browser:smoke":  "node automation/browser-smoke.js",
+                    "gemini:generate-image":  "node automation/gemini-generate-infographic.js",
+                    "image:compress-infographic":  "python automation/convert-infographic-to-webp.py",
+                    "cloudinary:upload-infographic":  "python automation/upload-infographic-to-cloudinary.py",
+                    "notebooklm:page-refs":  "python automation/notebooklm-page-refs-workflow.py",
                     "wayground:open":  "node automation/wayground-open.js",
                     "wayground:inspect":  "node automation/wayground-cdp-inspect.js",
                     "wayground:generate":  "node automation/wayground-generate-from-bank.js",

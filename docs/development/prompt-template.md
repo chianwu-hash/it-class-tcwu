@@ -12,8 +12,9 @@
 1. 閱讀 docs/development/dev-sop.md
 2. 閱讀 docs/development/shared-modules.md
 3. 閱讀 docs/development/page-types.md，判斷本頁屬於哪種類型
-4. 根據判斷出的類型，對照 docs/development/new-page-checklist.md，逐項確認功能契約
-5. 找同類型的最近一頁作為結構參考，**必須先盤點該頁使用的 shared modules、登入流程、進度保存方式、解鎖方式**，確認理解後再開始實作（不可只看 HTML 結構）
+4. 閱讀 docs/development/lesson-to-web-sop.md，依照標準流程確認目前做到哪一階段
+5. 根據判斷出的類型，對照 docs/development/new-page-checklist.md，逐項確認功能契約
+6. 找同類型的最近一頁作為結構參考，**必須先盤點該頁使用的 shared modules、登入流程、進度保存方式、解鎖方式**，確認理解後再開始實作（不可只看 HTML 結構）
 
 ## 硬性規定（不論何種類型都必須遵守）
 - 頁面中引用 navbar.js 的 <script src> 必須加版本字串，格式：navbar.js?v=YYYYMMDD（今天日期）
@@ -45,4 +46,5 @@
 4. 參考的頁面
 5. 做了哪些驗證
 6. 哪些地方沿用了原有功能，哪些地方是新寫的
+7. 請把本次最重要的 1 到 3 個新增或修改檔案明確列出來，不要只講路徑上下文；若 IDE 支援，這樣比較容易出現可直接開啟的檔案卡片
 ```

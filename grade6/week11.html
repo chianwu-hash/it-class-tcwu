@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六年級資訊課 - 第 11 週 Canva 動畫與頁面轉場</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(34, 197, 94, 0.14), transparent 26%),
+                radial-gradient(circle at top right, rgba(59, 130, 246, 0.12), transparent 24%),
+                linear-gradient(180deg, #f6fbff 0%, #eefbf6 56%, #fffaf0 100%);
+        }
+        .info-card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .info-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 34px rgba(15, 23, 42, 0.12);
+        }
+        .spotlight-hidden {
+            display: none;
+        }
+        .spotlight-backdrop {
+            background:
+                radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.03) 16%, rgba(2, 6, 23, 0.9) 52%, rgba(2, 6, 23, 0.98) 100%);
+            backdrop-filter: blur(3px);
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pb-12">
+
+    <script src="navbar.js?v=20260417"></script>
+
+    <header class="bg-gradient-to-r from-emerald-700 via-teal-700 to-cyan-700 text-white shadow-xl mb-8">
+        <div class="max-w-6xl mx-auto px-6 py-12 relative overflow-hidden">
+            <div class="relative z-10 flex items-center justify-between gap-6">
+                <div>
+                    <h2 class="text-xl font-bold text-emerald-100 mb-2">六年級資訊課 114學年度第二學期 第 11 週</h2>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">Canva 動畫與頁面轉場</h1>
+                    <p class="text-xl md:text-2xl text-emerald-50 font-black leading-relaxed">
+                        先檢查作品頁數，再替畢業影片加上剛剛好的動態節奏。<br>
+                        動畫是幫助觀眾看懂重點，不是讓每個東西都飛來飛去。
+                    </p>
+                </div>
+                <div class="hidden md:block text-7xl opacity-80 transform rotate-6 drop-shadow-lg">
+                    <i class="fa-solid fa-clapperboard"></i>
+                </div>
+            </div>
+            <i class="fa-solid fa-film absolute text-white opacity-10 text-9xl -bottom-10 right-4"></i>
+        </div>
+    </header>
+
+    <div id="spotlight" class="spotlight-hidden fixed inset-0 z-[200] items-center justify-center p-4 spotlight-backdrop" onclick="closeSpotlight()">
+        <div class="relative max-w-6xl w-full flex items-center justify-center">
+            <img id="spotlight-img" src="" alt="教學圖卡放大檢視" class="max-w-full max-h-[88vh] rounded-3xl shadow-2xl border-4 border-white object-contain">
+            <button onclick="closeSpotlight()" class="absolute -top-3 right-0 md:-top-4 md:-right-4 bg-white text-slate-800 rounded-full w-11 h-11 flex items-center justify-center shadow-xl font-black text-xl hover:bg-rose-500 hover:text-white transition">
+                X
+            </button>
+        </div>
+    </div>
+
+    <main class="max-w-6xl mx-auto px-6 space-y-8">
+
+        <section class="bg-white rounded-3xl border border-emerald-100 shadow-sm overflow-hidden">
+            <div class="bg-emerald-100 px-6 py-4 border-b border-emerald-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-image text-emerald-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-emerald-900">本週資訊圖卡</h3>
+                </div>
+                <span class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-full font-bold">先看這張再開始</span>
+            </div>
+            <div class="p-4 md:p-6">
+                <button type="button" class="info-card w-full text-left rounded-3xl overflow-hidden border border-slate-200 bg-slate-50" onclick="openSpotlight('images/week11/week11-infographic-1920x1080-q80.webp', '第 11 週 Canva 動畫與頁面轉場資訊圖卡')">
+                    <img src="images/week11/week11-infographic-1920x1080-q80.webp" alt="第 11 週 Canva 動畫與頁面轉場資訊圖卡" class="w-full rounded-2xl object-contain bg-white">
+                </button>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-cyan-100 shadow-sm overflow-hidden">
+            <div class="bg-cyan-100 px-6 py-4 border-b border-cyan-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-route text-cyan-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-cyan-900">今天怎麼進行</h3>
+                </div>
+                <span class="bg-cyan-600 text-white text-xs px-3 py-1 rounded-full font-bold">40 分鐘進度推進</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-4 gap-4">
+                <div class="bg-cyan-50 border border-cyan-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-cyan-700 mb-2">步驟 1</div>
+                    <h4 class="text-xl font-black text-cyan-950 mb-2">先看頁數</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">少於 4 頁先補 1 頁；4 頁以上直接做動畫與轉場。</p>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-emerald-700 mb-2">步驟 2</div>
+                    <h4 class="text-xl font-black text-emerald-950 mb-2">先做動畫</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">至少完成 1 頁文字動畫，進度快的同學再做圖片或物件動畫。</p>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-amber-700 mb-2">步驟 3</div>
+                    <h4 class="text-xl font-black text-amber-950 mb-2">再做轉場</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">至少完成 2 個頁面轉場，標準進度做 3 個，盡量維持同一風格。</p>
+                </div>
+                <div class="bg-violet-50 border border-violet-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-violet-700 mb-2">步驟 4</div>
+                    <h4 class="text-xl font-black text-violet-950 mb-2">截圖繳交</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">最後截兩張圖，貼到 LoiLoNote 的 `week11進度報告` 繳交盒。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid lg:grid-cols-[1.1fr,0.9fr] gap-6">
+            <div class="bg-white rounded-3xl border border-amber-100 shadow-sm overflow-hidden">
+                <div class="bg-amber-100 px-6 py-4 border-b border-amber-200 flex items-center justify-between gap-4 flex-wrap">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-layer-group text-amber-700 text-2xl mr-3"></i>
+                        <h3 class="text-2xl font-black text-amber-900">先分組再開做</h3>
+                    </div>
+                    <span class="bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold">先判斷目前頁數</span>
+                </div>
+                <div class="p-6 space-y-5">
+                    <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-rose-700 mb-2">頁數不足組</div>
+                        <h4 class="text-2xl font-black text-rose-900 mb-3">作品少於 4 頁</h4>
+                        <ul class="space-y-2 text-lg font-black text-slate-700">
+                            <li><i class="fa-solid fa-circle-check text-rose-500 mr-2"></i>先補 1 頁內容</li>
+                            <li><i class="fa-solid fa-circle-check text-rose-500 mr-2"></i>補完後做 1 頁文字動畫</li>
+                            <li><i class="fa-solid fa-circle-check text-rose-500 mr-2"></i>再完成 2 個頁面轉場</li>
+                        </ul>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-emerald-700 mb-2">動畫轉場組</div>
+                        <h4 class="text-2xl font-black text-emerald-900 mb-3">作品已有 4 頁以上</h4>
+                        <ul class="space-y-2 text-lg font-black text-slate-700">
+                            <li><i class="fa-solid fa-circle-check text-emerald-500 mr-2"></i>至少完成 1 頁文字動畫</li>
+                            <li><i class="fa-solid fa-circle-check text-emerald-500 mr-2"></i>標準進度做 2 頁文字動畫</li>
+                            <li><i class="fa-solid fa-circle-check text-emerald-500 mr-2"></i>進度快可加 1 個圖片或物件動畫</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-violet-100 shadow-sm overflow-hidden">
+                <div class="bg-violet-100 px-6 py-4 border-b border-violet-200 flex items-center justify-between gap-4 flex-wrap">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-bullseye text-violet-700 text-2xl mr-3"></i>
+                        <h3 class="text-2xl font-black text-violet-900">最低完成標準</h3>
+                    </div>
+                    <span class="bg-violet-600 text-white text-xs px-3 py-1 rounded-full font-bold">先完成再微調</span>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-violet-700 mb-2">基礎組</div>
+                        <div class="text-2xl font-black text-slate-900 leading-snug">1 頁文字動畫<br>+ 2 個頁面轉場</div>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-violet-700 mb-2">標準組</div>
+                        <div class="text-2xl font-black text-slate-900 leading-snug">2 頁文字動畫<br>+ 1 個物件動畫<br>+ 3 個頁面轉場</div>
+                    </div>
+                    <div class="bg-slate-900 text-white rounded-2xl p-5">
+                        <div class="text-sm font-black text-cyan-200 mb-2">本週提醒</div>
+                        <p class="text-lg font-black leading-relaxed">動畫是幫助觀眾看見重點，不是讓每一個物件都飛來飛去。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="bg-slate-900 px-6 py-4 border-b border-slate-700 flex items-center justify-between text-white gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-list-check text-cyan-300 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black">操作提醒</h3>
+                </div>
+                <span class="bg-cyan-400 text-cyan-950 text-xs px-3 py-1 rounded-full font-black">照這些做會比較順</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-2 xl:grid-cols-4 gap-5">
+                <div class="info-card bg-slate-50 rounded-2xl border border-slate-200 p-5">
+                    <div class="text-sm font-black text-cyan-700 mb-2">提醒 1</div>
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">先看完成度</h4>
+                    <p class="text-lg font-black text-slate-700 leading-relaxed">頁數不足先補內容，不要還沒湊到頁數就一直試特效。</p>
+                </div>
+                <div class="info-card bg-slate-50 rounded-2xl border border-slate-200 p-5">
+                    <div class="text-sm font-black text-cyan-700 mb-2">提醒 2</div>
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">不要每樣都動</h4>
+                    <p class="text-lg font-black text-slate-700 leading-relaxed">標題或重點文字可以有動畫，裝飾物和背景不一定需要。</p>
+                </div>
+                <div class="info-card bg-slate-50 rounded-2xl border border-slate-200 p-5">
+                    <div class="text-sm font-black text-cyan-700 mb-2">提醒 3</div>
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">轉場要一致</h4>
+                    <p class="text-lg font-black text-slate-700 leading-relaxed">同一份影片盡量使用相近的轉場風格，整體看起來才不會太亂。</p>
+                </div>
+                <div class="info-card bg-slate-50 rounded-2xl border border-slate-200 p-5">
+                    <div class="text-sm font-black text-cyan-700 mb-2">提醒 4</div>
+                    <h4 class="text-2xl font-black text-slate-900 mb-3">預覽再收整</h4>
+                    <p class="text-lg font-black text-slate-700 leading-relaxed">播放一次，如果自己都看不清楚，就要刪掉或減少多餘動畫。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-sky-100 shadow-sm overflow-hidden">
+            <div class="bg-sky-100 px-6 py-4 border-b border-sky-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-book-open text-sky-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-sky-900">技能參考課本頁碼</h3>
+                </div>
+                <span class="bg-sky-600 text-white text-xs px-3 py-1 rounded-full font-bold">NotebookLM 整理</span>
+            </div>
+            <div class="p-6 space-y-5">
+                <!-- PAGE_REFS:START -->
+<div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div class="info-card bg-slate-50 border border-slate-200 rounded-2xl p-5">
+        <div class="text-sm font-black text-sky-700 mb-2">技能 1</div>
+        <h4 class="text-xl font-black text-slate-900 mb-2">新增頁面轉場動畫</h4>
+        <p class="text-lg font-black text-sky-800 mb-3">P.125、P.157</p>
+        <p class="font-bold text-slate-700 leading-relaxed">P.125 詳細圖解如何在兩個頁面縮圖中間點擊「+」下方的轉場圖示，並挑選喜歡的動態效果（如顏色擦去）；P.157 再次複習此技巧應用於影片片段的銜接。</p>
+    </div>
+    <div class="info-card bg-slate-50 border border-slate-200 rounded-2xl p-5">
+        <div class="text-sm font-black text-sky-700 mb-2">技能 2</div>
+        <h4 class="text-xl font-black text-slate-900 mb-2">一鍵套用至所有頁面</h4>
+        <p class="text-lg font-black text-sky-800 mb-3">P.125</p>
+        <p class="font-bold text-slate-700 leading-relaxed">P.125 的步驟 3 示範如何將效果清單捲到最下方，按下「套用至所有頁面」，讓整部影片的轉場風格保持統一並節省時間。</p>
+    </div>
+    <div class="info-card bg-slate-50 border border-slate-200 rounded-2xl p-5">
+        <div class="text-sm font-black text-sky-700 mb-2">技能 3</div>
+        <h4 class="text-xl font-black text-slate-900 mb-2">變更轉場效果</h4>
+        <p class="text-lg font-black text-sky-800 mb-3">P.125</p>
+        <p class="font-bold text-slate-700 leading-relaxed">P.125 的步驟 4 說明若對當前特效不滿意，只要再按一下原轉場圖示即可進行更改。</p>
+    </div>
+    <div class="info-card bg-slate-50 border border-slate-200 rounded-2xl p-5">
+        <div class="text-sm font-black text-sky-700 mb-2">技能 4</div>
+        <h4 class="text-xl font-black text-slate-900 mb-2">物件 / 文字進場動畫</h4>
+        <p class="text-lg font-black text-sky-800 mb-3">未明確對應</p>
+        <p class="font-bold text-slate-700 leading-relaxed">課本僅在 P.10 概念性介紹 Canva 能讓「文字與元素產生動態效果」，但在後續章節中，缺乏具體點選單一物件並設定動畫的操作步驟，學生需自行探索或由老師引導。</p>
+    </div>
+</div>
+<div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+    <div class="text-sm font-black text-amber-700 mb-2">先翻哪幾頁最有幫助</div>
+    <ul class="space-y-2 text-lg font-black text-slate-800">
+        <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>P.125 是本週必看的「通關秘笈」：本週所有的轉場核心操作都在這一頁，當學生舉手發問「轉場按鈕在哪裡」時，請直接引導他們翻開 P.125 看圖解。</li>
+        <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>強力宣導 P.125 的「套用至所有頁面」：小學生常會每一頁設定不同、眼花撩亂的轉場。請特別提醒他們看 P.125 的步驟 3，用一鍵套用的方式讓影片更具專業感。</li>
+        <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>「物件動畫」需由老師親自加碼示範：因為課本並未針對單獨的「文字」或「照片」寫出加入動畫的步驟，老師在上課時務必要親自投影示範「先點選物件 ➜ 再按上方『動畫』按鈕」的正確邏輯，以免學生把轉場和物件動畫搞混。</li>
+    </ul>
+</div>
+<!-- PAGE_REFS:END -->
+            </div>
+        </section>
+
+        <section class="grid lg:grid-cols-[1fr,1fr] gap-6">
+            <section class="bg-white rounded-3xl border border-cyan-100 shadow-sm overflow-hidden">
+                <div class="bg-cyan-100 px-6 py-4 border-b border-cyan-200 flex items-center justify-between gap-4 flex-wrap">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-scissors text-cyan-700 text-2xl mr-3"></i>
+                        <h3 class="text-2xl font-black text-cyan-900">這週要截哪兩張</h3>
+                    </div>
+                    <span class="bg-cyan-600 text-white text-xs px-3 py-1 rounded-full font-bold">LoiLoNote 用</span>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-cyan-700 mb-2">截圖 1</div>
+                        <p class="text-xl font-black text-slate-900 leading-relaxed">一頁含動畫的文字頁，能看出你正在編輯那一頁。</p>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-cyan-700 mb-2">截圖 2</div>
+                        <p class="text-xl font-black text-slate-900 leading-relaxed">頁面面板或轉場設定畫面，能看出至少 2 到 3 個頁面有轉場。</p>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-emerald-700 mb-2">繳交盒名稱</div>
+                        <p class="text-2xl font-black text-emerald-900">week11進度報告</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-3xl border border-amber-100 shadow-sm overflow-hidden">
+                <div class="bg-amber-100 px-6 py-4 border-b border-amber-200 flex items-center justify-between gap-4 flex-wrap">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-laptop-file text-amber-700 text-2xl mr-3"></i>
+                        <h3 class="text-2xl font-black text-amber-900">快速入口</h3>
+                    </div>
+                    <span class="bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold">開工前先備好</span>
+                </div>
+                <div class="p-6 grid gap-4">
+                    <a href="https://www.canva.com/" target="_blank" rel="noopener noreferrer" class="info-card block bg-slate-50 border-2 border-amber-200 rounded-2xl p-5 hover:border-amber-400">
+                        <div class="text-sm font-black text-amber-700 mb-2">Canva</div>
+                        <div class="text-lg font-black text-slate-900 break-all">https://www.canva.com/</div>
+                        <div class="mt-3 inline-flex items-center text-sm font-black text-amber-700">
+                            打開 Canva <i class="fa-solid fa-arrow-up-right-from-square ml-2"></i>
+                        </div>
+                    </a>
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-amber-700 mb-2">先完成這些</div>
+                        <ul class="space-y-2 text-lg font-black text-slate-700">
+                            <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>確認今天要編輯的是同一份畢業影片</li>
+                            <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>先看自己作品目前有幾頁</li>
+                            <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>預留 3 分鐘做截圖與繳交</li>
+                        </ul>
+                    </div>
+                    <div class="bg-violet-50 border border-violet-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-violet-700 mb-2">下週預告</div>
+                        <p class="text-lg font-black text-slate-800 leading-relaxed">第 12 週會接著做配樂與影片節奏，所以這週先把動畫與轉場整理乾淨。</p>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <section class="bg-gradient-to-r from-slate-800 to-slate-950 rounded-3xl shadow-xl text-white p-6 md:p-8">
+            <div class="grid lg:grid-cols-[1.2fr,0.8fr] gap-6 items-center">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-white/10 px-4 py-1.5 rounded-full text-sm font-black mb-4">
+                        <i class="fa-solid fa-flag-checkered"></i> 本週收尾
+                    </div>
+                    <h3 class="text-3xl font-black mb-4 text-cyan-200">先完成，再微調</h3>
+                    <p class="text-slate-100 text-lg font-bold leading-relaxed">這週最重要的是把作品帶回穩定進度：頁數不足先補，頁數夠了就完成動畫與轉場，最後把兩張截圖交出去。先把基本任務收好，下週的配樂才會更順。</p>
+                </div>
+                <div class="bg-white/10 rounded-2xl p-5 border border-white/15">
+                    <ul class="space-y-3 text-lg font-black">
+                        <li><i class="fa-solid fa-check text-cyan-300 mr-2"></i>1 頁文字動畫</li>
+                        <li><i class="fa-solid fa-check text-cyan-300 mr-2"></i>2 到 3 個頁面轉場</li>
+                        <li><i class="fa-solid fa-check text-cyan-300 mr-2"></i>LoiLoNote 兩張截圖</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const spotlightEl = document.getElementById("spotlight");
+        const spotlightImgEl = document.getElementById("spotlight-img");
+
+        function openSpotlight(src, alt) {
+            spotlightImgEl.src = src;
+            spotlightImgEl.alt = alt || "教學圖卡放大檢視";
+            spotlightEl.classList.remove("spotlight-hidden");
+            spotlightEl.classList.add("flex");
+            document.body.classList.add("overflow-hidden");
+        }
+
+        function closeSpotlight() {
+            spotlightEl.classList.add("spotlight-hidden");
+            spotlightEl.classList.remove("flex");
+            spotlightImgEl.src = "";
+            document.body.classList.remove("overflow-hidden");
+        }
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                closeSpotlight();
+            }
+        });
+
+        spotlightImgEl.addEventListener("click", (event) => {
+            event.stopPropagation();
+        });
+    </script>
+
+    <script type="module">
+        import { initNavbarAuth } from "../shared/navbar-auth.js";
+
+        initNavbarAuth();
+    </script>
+
+    <footer class="text-center mt-16 pb-8 text-gray-500 text-sm font-medium">
+        <p><i class="fa-solid fa-graduation-cap mr-1"></i> 新北市頂溪國小資訊課 - 六年級 Canva 畢業影片專案</p>
+    </footer>
+
+</body>
+</html>
