@@ -207,6 +207,7 @@ npm.cmd run notebooklm:page-refs -- --input C:\Users\user\projects\it-class-tcwu
 - NotebookLM 問答與內容判讀仍由人主導
 - 但存檔、結構化、回寫已可重複使用
 - 目前頁碼格式主要辨識 `P.125`、`P.125, P.157`、`未明確對應`；若 NotebookLM 回成 `p.125`、`第125頁`、`P. 125` 等格式，腳本會跳 warning，需人工確認
+- 若教師或使用者已知某個技能對應頁碼，但第一輪 NotebookLM 沒抓到，必須做第二輪「指定技能追問」，例如：`請再檢查本週是否有和路徑動畫相關的課本頁碼；若有請直接列出頁碼與對應技能。`
 
 ---
 
