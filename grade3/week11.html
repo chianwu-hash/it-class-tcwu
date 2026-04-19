@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三年級資訊課 - 第 11 週 網路禮儀與 Email 附件</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background:
+                radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent 28%),
+                radial-gradient(circle at top left, rgba(59, 130, 246, 0.12), transparent 30%),
+                linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        .step-badge { display: inline-flex; align-items: center; justify-content: center; width: 2.2rem; height: 2.2rem; border-radius: 9999px; font-weight: 900; color: white; flex-shrink: 0; }
+        .opt-btn { transition: all 0.15s; }
+        .opt-btn.selected { border-color: #6366f1; background-color: #eef2ff; color: #4338ca; }
+        .opt-btn.correct { border-color: #16a34a !important; background-color: #dcfce7 !important; color: #15803d !important; }
+        .opt-btn.wrong { border-color: #dc2626 !important; background-color: #fee2e2 !important; color: #b91c1c !important; text-decoration: line-through; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pb-12 relative">
+
+    <script src="navbar.js?v=20260419"></script>
+
+    <header class="bg-gradient-to-r from-indigo-500 via-blue-500 to-sky-500 text-white shadow-xl mb-8 relative overflow-hidden">
+        <div class="max-w-5xl mx-auto px-6 py-10 relative z-10">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-indigo-100 mb-2">三年級資訊課 ｜ 第 11 週</h2>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">網路禮儀與 Email 附件</h1>
+                    <p class="text-lg text-indigo-50 font-medium">學習網路說話的禮貌，並把圖片當成禮物寄出去。</p>
+                </div>
+                <div class="hidden md:block text-7xl opacity-80 transform rotate-12">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </div>
+            </div>
+        </div>
+        <i class="fa-solid fa-comments absolute text-white opacity-10 text-9xl -bottom-10 right-8"></i>
+    </header>
+
+    <div id="lightbox" class="fixed inset-0 bg-black/85 z-[200] items-center justify-center p-4 cursor-zoom-out hidden" onclick="closeLightbox()">
+        <div class="relative max-w-5xl w-full">
+            <img id="lightbox-img" src="" alt="圖卡放大" class="w-full max-h-[88vh] object-contain rounded-2xl shadow-2xl">
+            <button onclick="closeLightbox()" class="absolute -top-4 -right-4 bg-white text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-xl font-black text-xl hover:bg-red-500 hover:text-white transition">✕</button>
+        </div>
+    </div>
+
+    <main class="max-w-5xl mx-auto px-6 space-y-8">
+        <!-- 資訊圖卡區 -->
+        <section class="bg-white rounded-3xl shadow-md border-4 border-indigo-200 overflow-hidden">
+            <div class="bg-indigo-50 px-6 py-4 border-b-4 border-indigo-100 flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="bg-indigo-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4 font-black">
+                        <i class="fa-solid fa-image"></i>
+                    </div>
+                    <h3 class="text-2xl font-black text-indigo-800 tracking-wide">本週重要提醒</h3>
+                </div>
+                <span class="bg-indigo-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">點圖可放大</span>
+            </div>
+            <div class="p-6 bg-slate-50">
+                <img
+                    src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1776587065/it-class-tcwu/grade3/week11/week11-infographic-1920x1080-q80.webp"
+                    alt="第11週 網路交流禮儀資訊圖卡"
+                    onclick="openLightbox(this.src)"
+                    class="w-full rounded-2xl border-2 border-indigo-100 shadow-md cursor-zoom-in hover:shadow-xl hover:scale-[1.01] transition duration-200"
+                    loading="lazy"
+                >
+            </div>
+        </section>
+
+        <!-- 任務一：網路禮儀測驗 -->
+        <section class="bg-white rounded-3xl shadow-md border-4 border-rose-200 overflow-hidden">
+            <div class="bg-rose-100 px-6 py-4 border-b-4 border-rose-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="bg-rose-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4 font-black">1</div>
+                    <h3 class="text-2xl font-black text-rose-800 tracking-wide">任務一：網路交流禮儀測驗</h3>
+                </div>
+                <span class="bg-rose-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">核心觀念</span>
+            </div>
+            <div class="p-8">
+                <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5 mb-6 text-gray-700 font-bold space-y-2">
+                    <p><i class="fa-solid fa-comments text-rose-500 mr-2"></i> 先看上面的圖卡，再挑戰這 5 題情境測驗。</p>
+                    <p><i class="fa-solid fa-brain text-rose-500 mr-2"></i> 記住最重要的三點：<strong>三思後行、不洗版、看到不對先截圖</strong>。</p>
+                    <p><i class="fa-solid fa-lock text-rose-400 mr-2"></i> 請登入 Google 帳號開始作答。</p>
+                </div>
+
+                <div id="quiz-lock" class="text-center py-12 bg-rose-50 rounded-2xl border-2 border-dashed border-rose-300">
+                    <i class="fa-solid fa-lock text-5xl text-rose-300 mb-4 block"></i>
+                    <h4 class="text-xl font-black text-rose-700 mb-2">請先登入才能開始測驗</h4>
+                    <button id="quiz-login-btn" class="bg-rose-500 hover:bg-rose-600 text-white font-black px-8 py-3 rounded-2xl shadow-md transition transform hover:scale-105">
+                        <i class="fa-brands fa-google mr-2"></i> 登入後開始測驗
+                    </button>
+                </div>
+
+                <div id="quiz-content" class="hidden">
+                    <div id="quiz-status-banner" class="hidden rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 mb-6">
+                        <div id="quiz-status-text" class="text-sm font-bold text-rose-700"></div>
+                    </div>
+                    <div id="quiz-container" class="space-y-6 max-w-3xl mx-auto"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 任務二：Email 附件寄送 -->
+        <section class="bg-white rounded-3xl shadow-md border-4 border-amber-200 overflow-hidden">
+            <div class="bg-amber-100 px-6 py-4 border-b-4 border-amber-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="bg-amber-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4 font-black">2</div>
+                    <h3 class="text-2xl font-black text-amber-800 tracking-wide">任務二：用 Email 寄出禮物圖片</h3>
+                </div>
+                <span class="bg-amber-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">主線任務</span>
+            </div>
+            <div class="p-8 space-y-8">
+                <!-- 第一步：重新下載 -->
+                <div class="bg-slate-50 rounded-2xl border-2 border-slate-200 p-6">
+                    <h4 class="text-xl font-black text-slate-800 mb-4 flex items-center"><i class="fa-solid fa-download text-amber-500 mr-3"></i>步驟 A：重新下載圖片</h4>
+                    <p class="text-gray-700 font-bold mb-4">電腦教室重開機後會自動「還原」，所以第 7 週下載的圖片已經不見了。請先點擊下方連結重新下載一張你喜歡的圖片：</p>
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <a href="https://loosedrawing.com/illust/1816/" target="_blank" class="flex items-center justify-between bg-white p-4 rounded-xl border-2 border-amber-100 hover:border-amber-400 hover:shadow-md transition group">
+                            <span class="font-black text-slate-700">木雕熊插圖</span>
+                            <i class="fa-solid fa-download text-amber-500 group-hover:scale-110 transition"></i>
+                        </a>
+                        <a href="https://loosedrawing.com/illust/1808/" target="_blank" class="flex items-center justify-between bg-white p-4 rounded-xl border-2 border-amber-100 hover:border-amber-400 hover:shadow-md transition group">
+                            <span class="font-black text-slate-700">冰淇淋插圖</span>
+                            <i class="fa-solid fa-download text-amber-500 group-hover:scale-110 transition"></i>
+                        </a>
+                    </div>
+                    <p class="mt-4 text-sm text-slate-500 font-bold"><i class="fa-solid fa-circle-info mr-1"></i> 記得存到「下載」資料夾，下一個步驟才找得到喔！</p>
+                </div>
+
+                <!-- 第二步：寄給老師 -->
+                <div class="bg-amber-50 rounded-2xl border-2 border-amber-200 p-6">
+                    <h4 class="text-xl font-black text-amber-900 mb-4 flex items-center"><i class="fa-solid fa-envelope-open-text text-amber-600 mr-3"></i>步驟 B：寄 Email 給老師</h4>
+                    <div class="space-y-4 text-slate-700 font-bold">
+                        <div class="flex items-start gap-4">
+                            <span class="step-badge bg-amber-500">1</span>
+                            <div>開啟學校 Gmail，點擊「撰寫」。</div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <span class="step-badge bg-amber-500">2</span>
+                            <div><strong>收件者：</strong> 輸入老師的 Email（請看黑板）。</div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <span class="step-badge bg-amber-500">3</span>
+                            <div><strong>主旨：</strong> 填寫 <code>三年級11週-座號-姓名</code>。</div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <span class="step-badge bg-amber-600 shadow-md">4</span>
+                            <div class="text-amber-900"><strong>最重要：</strong> 點擊底部的「迴紋針」圖示，到「下載」資料夾選取剛才下載的圖片。</div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <span class="step-badge bg-amber-500">5</span>
+                            <div>看到檔名出現、<strong>沒有轉圈</strong>後，再按下「寄出」。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 進階挑戰 -->
+                <div class="bg-indigo-50 rounded-2xl border-4 border-dashed border-indigo-200 p-6">
+                    <h4 class="text-xl font-black text-indigo-900 mb-3 flex items-center">
+                        <i class="fa-solid fa-star text-yellow-500 mr-2"></i> ⭐ 進階挑戰區
+                    </h4>
+                    <p class="text-indigo-800 font-bold mb-4">如果你已經成功寄信給老師了，可以挑戰寄給一位「班上的同學」：</p>
+                    <ul class="list-disc list-inside space-y-2 text-indigo-900/80 font-bold ml-2">
+                        <li>詢問隔壁同學的座號（帳號）。</li>
+                        <li>用同樣的方法，把漂亮的圖片也分享給同學。</li>
+                        <li>如果你收到同學的信，記得禮貌回覆「收到了，謝謝」喔！</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 教師提醒 -->
+        <section class="bg-slate-800 rounded-3xl p-6 flex flex-col md:flex-row items-center transition transform hover:-translate-y-1 shadow-lg">
+            <div class="bg-slate-700 p-4 rounded-full md:mr-6 mb-4 md:mb-0 shadow-inner flex-shrink-0">
+                <i class="fa-solid fa-lightbulb text-4xl text-yellow-300"></i>
+            </div>
+            <div class="text-center md:text-left">
+                <h4 class="text-xl font-black text-white mb-2">過關小撇步</h4>
+                <p class="text-slate-300 font-bold leading-relaxed">主線任務是「正確寄出含附件的信件」給老師。如果你卡住了，先檢查圖片是不是還在上傳中（轉圈圈），等它跑完再寄出喔！</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center mt-12 pb-8 text-slate-400 font-medium text-sm">
+        <p><i class="fa-solid fa-rocket mr-1"></i> 新北市頂溪國小資訊課 - 小小探險家系列</p>
+    </footer>
+
+    <script type="module">
+        import {
+            beginCentralizedLogin,
+            resolveSession,
+            supabase
+        } from "../shared/auth.js";
+        import { initNavbarAuth } from "../shared/navbar-auth.js";
+        import { initWeek11QuizAdapter } from "./week11.quiz-adapter.js";
+
+        initNavbarAuth();
+
+        const WEEK_CODE = "11";
+        const QUIZ_KEY = "etiquette_quiz_1";
+        let currentSession = null;
+
+        async function signInWithGoogle() {
+            beginCentralizedLogin({ returnTo: window.location.href });
+        }
+
+        async function handleAuthUpdate(session) {
+            currentSession = session;
+            await quiz.handleAuthChange(session);
+        }
+
+        async function getQuizUser() {
+            if (currentSession?.user) return currentSession.user;
+            currentSession = await resolveSession();
+            await handleAuthUpdate(currentSession);
+            return currentSession?.user ?? null;
+        }
+
+        async function loadQuizProgress() {
+            if (!currentSession?.user) return null;
+            const { data, error } = await supabase
+                .from("student_progress")
+                .select("completed, score")
+                .eq("user_id", currentSession.user.id)
+                .eq("week_code", WEEK_CODE)
+                .eq("activity_key", QUIZ_KEY)
+                .maybeSingle();
+            if (error || !data?.completed) return null;
+            return { completed: true, score: data.score };
+        }
+
+        async function saveQuizProgress(score) {
+            const user = await getQuizUser();
+            if (!user) return false;
+            const payload = {
+                user_id: user.id,
+                week_code: WEEK_CODE,
+                activity_key: QUIZ_KEY,
+                current_level: 5,
+                completed: true,
+                score,
+                updated_at: new Date().toISOString()
+            };
+            const { error } = await supabase.from("student_progress").upsert(payload, { onConflict: "user_id,week_code,activity_key" });
+            return !error;
+        }
+
+        const quiz = initWeek11QuizAdapter({
+            loadProgress: loadQuizProgress,
+            saveProgress: saveQuizProgress,
+            getCurrentUser: getQuizUser,
+            onRequireLogin: signInWithGoogle,
+            onAfterSubmit: async ({ correct, total }) => {
+                if (correct === total) confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                const resultDiv = document.getElementById("quiz-result");
+                setTimeout(() => resultDiv?.scrollIntoView({ behavior: "smooth", block: "center" }), 300);
+            }
+        });
+
+        window.selectOption = function(qId, btnEl) { quiz.selectOption(qId, btnEl); };
+        window.submitQuiz = async function() { await quiz.submit(); };
+        window.openLightbox = function(src) {
+            const lb = document.getElementById("lightbox");
+            document.getElementById("lightbox-img").src = src;
+            lb.classList.remove("hidden");
+            lb.classList.add("flex");
+        };
+        window.closeLightbox = function() {
+            const lb = document.getElementById("lightbox");
+            lb.classList.add("hidden");
+            lb.classList.remove("flex");
+        };
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") closeLightbox();
+        });
+        document.getElementById("quiz-login-btn").addEventListener("click", signInWithGoogle);
+
+        // Listen for auth state to update quiz
+        supabase.auth.onAuthStateChange((event, session) => {
+            handleAuthUpdate(session);
+        });
+    </script>
+</body>
+</html>
