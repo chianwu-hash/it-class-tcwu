@@ -21,6 +21,15 @@
         .opt-btn.selected { border-color: #6366f1; background-color: #eef2ff; color: #4338ca; }
         .opt-btn.correct { border-color: #16a34a !important; background-color: #dcfce7 !important; color: #15803d !important; }
         .opt-btn.wrong { border-color: #dc2626 !important; background-color: #fee2e2 !important; color: #b91c1c !important; text-decoration: line-through; }
+        .section-toggle {
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .section-toggle .toggle-chevron {
+            transition: transform 0.2s ease;
+        }
+        .section-toggle[aria-expanded="false"] .toggle-chevron {
+            transform: rotate(-90deg);
+        }
     </style>
 </head>
 <body class="text-slate-800 antialiased pb-12 relative">
@@ -53,16 +62,19 @@
     <main class="max-w-5xl mx-auto px-6 space-y-8">
         <!-- 資訊圖卡區 -->
         <section class="bg-white rounded-3xl shadow-md border-4 border-indigo-200 overflow-hidden">
-            <div class="bg-indigo-50 px-6 py-4 border-b-4 border-indigo-100 flex items-center justify-between">
-                <div class="flex items-center">
-                    <div class="bg-indigo-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4 font-black">
+            <button type="button" class="section-toggle w-full bg-indigo-50 px-6 py-4 border-b-4 border-indigo-100 flex items-center justify-between text-left" data-target="week11-reminder-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-indigo-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4 font-black">
                         <i class="fa-solid fa-image"></i>
-                    </div>
-                    <h3 class="text-2xl font-black text-indigo-800 tracking-wide">本週重要提醒</h3>
-                </div>
-                <span class="bg-indigo-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">點圖可放大</span>
-            </div>
-            <div class="p-6 bg-slate-50">
+                    </span>
+                    <span class="text-2xl font-black text-indigo-800 tracking-wide">本週重要提醒</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span class="bg-indigo-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">點圖可放大</span>
+                    <i class="toggle-chevron fa-solid fa-chevron-down text-indigo-500 text-lg"></i>
+                </span>
+            </button>
+            <div id="week11-reminder-body" class="p-6 bg-slate-50">
                 <img
                     src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1776587065/it-class-tcwu/grade3/week11/week11-infographic-1920x1080-q80.webp"
                     alt="第11週 網路交流禮儀資訊圖卡"
@@ -75,14 +87,17 @@
 
         <!-- 任務一：網路禮儀測驗 -->
         <section class="bg-white rounded-3xl shadow-md border-4 border-rose-200 overflow-hidden">
-            <div class="bg-rose-100 px-6 py-4 border-b-4 border-rose-200 flex items-center justify-between">
-                <div class="flex items-center">
-                    <div class="bg-rose-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4 font-black">1</div>
-                    <h3 class="text-2xl font-black text-rose-800 tracking-wide">任務一：網路交流禮儀測驗</h3>
-                </div>
-                <span class="bg-rose-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">核心觀念</span>
-            </div>
-            <div class="p-8">
+            <button type="button" class="section-toggle w-full bg-rose-100 px-6 py-4 border-b-4 border-rose-200 flex items-center justify-between text-left" data-target="week11-task1-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-rose-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4 font-black">1</span>
+                    <span class="text-2xl font-black text-rose-800 tracking-wide">任務一：網路交流禮儀測驗</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span class="bg-rose-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">核心觀念</span>
+                    <i class="toggle-chevron fa-solid fa-chevron-down text-rose-500 text-lg"></i>
+                </span>
+            </button>
+            <div id="week11-task1-body" class="p-8">
                 <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5 mb-6 text-gray-700 font-bold space-y-2">
                     <p><i class="fa-solid fa-comments text-rose-500 mr-2"></i> 先看上面的圖卡，再挑戰這 5 題情境測驗。</p>
                     <p><i class="fa-solid fa-brain text-rose-500 mr-2"></i> 記住最重要的三點：<strong>三思後行、不洗版、看到不對先截圖</strong>。</p>
@@ -108,14 +123,17 @@
 
         <!-- 任務二：Email 附件寄送 -->
         <section class="bg-white rounded-3xl shadow-md border-4 border-amber-200 overflow-hidden">
-            <div class="bg-amber-100 px-6 py-4 border-b-4 border-amber-200 flex items-center justify-between">
-                <div class="flex items-center">
-                    <div class="bg-amber-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4 font-black">2</div>
-                    <h3 class="text-2xl font-black text-amber-800 tracking-wide">任務二：用 Email 寄出禮物圖片</h3>
-                </div>
-                <span class="bg-amber-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">主線任務</span>
-            </div>
-            <div class="p-8 space-y-8">
+            <button type="button" class="section-toggle w-full bg-amber-100 px-6 py-4 border-b-4 border-amber-200 flex items-center justify-between text-left" data-target="week11-task2-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-amber-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4 font-black">2</span>
+                    <span class="text-2xl font-black text-amber-800 tracking-wide">任務二：用 Email 寄出禮物圖片</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span class="bg-amber-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">主線任務</span>
+                    <i class="toggle-chevron fa-solid fa-chevron-down text-amber-500 text-lg"></i>
+                </span>
+            </button>
+            <div id="week11-task2-body" class="p-8 space-y-8">
                 <!-- 第一步：重新下載 -->
                 <div class="bg-slate-50 rounded-2xl border-2 border-slate-200 p-6">
                     <h4 class="text-xl font-black text-slate-800 mb-4 flex items-center"><i class="fa-solid fa-download text-amber-500 mr-3"></i>步驟 A：重新下載圖片</h4>
@@ -173,7 +191,6 @@
                                 <div class="mt-2 space-y-2 font-bold">
                                     <div>方法 A：點擊底部的「迴紋針」圖示，到「下載」資料夾選取剛才下載的圖片。</div>
                                     <div>方法 B：打開「下載」資料夾後，用滑鼠把圖片<strong>直接拖曳進 Email</strong> 裡。</div>
-                                    <div class="text-rose-600">不要把圖片複製貼進信件內文，那樣不算附件。</div>
                                 </div>
                             </div>
                         </div>
@@ -191,7 +208,6 @@
                     </h4>
                     <p class="text-indigo-800 font-bold mb-4">如果你已經成功寄信給老師了，可以挑戰寄給一位「班上的同學」：</p>
                     <ul class="list-disc list-inside space-y-2 text-indigo-900/80 font-bold ml-2">
-                        <li>只寄給老師或老師同意的同學。</li>
                         <li>詢問隔壁同學的座號（帳號）。</li>
                         <li>如果忘記自己的 Email，可以按右上角自己的頭像，就會看到自己的 Email。</li>
                         <li>用同樣的方法，把漂亮的圖片也分享給同學。</li>
@@ -227,10 +243,25 @@
         import { initWeek11QuizAdapter } from "./week11.quiz-adapter.js";
 
         initNavbarAuth();
+        initCollapsibleSections();
 
         const WEEK_CODE = "11";
         const QUIZ_KEY = "etiquette_quiz_1";
         let currentSession = null;
+
+        function initCollapsibleSections() {
+            document.querySelectorAll(".section-toggle").forEach((toggleBtn) => {
+                const targetId = toggleBtn.dataset.target;
+                const targetEl = document.getElementById(targetId);
+                if (!targetEl) return;
+
+                toggleBtn.addEventListener("click", () => {
+                    const isExpanded = toggleBtn.getAttribute("aria-expanded") === "true";
+                    toggleBtn.setAttribute("aria-expanded", String(!isExpanded));
+                    targetEl.classList.toggle("hidden", isExpanded);
+                });
+            });
+        }
 
         async function signInWithGoogle() {
             beginCentralizedLogin({ returnTo: window.location.href });
