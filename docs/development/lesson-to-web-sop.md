@@ -249,6 +249,7 @@ npm.cmd run gemini:generate-image -- --prompt-file C:\Users\user\projects\tmp\we
 
 注意：
 
+- 生圖前先切到 Gemini 的「新對話」，不要沿用舊對話脈絡，避免上一張圖卡或其他任務內容殘留，導致生錯主題
 - 中文提示詞一律先存成 UTF-8 檔案
 - 不要用 PowerShell inline / here-string 直接塞中文 prompt
 

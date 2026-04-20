@@ -69,6 +69,28 @@ async function getGeminiPage(browser) {
   return { context, page };
 }
 
+async function openNewChat(page) {
+  const selectors = [
+    () => page.getByRole('link', { name: '新對話' }).first(),
+    () => page.getByRole('link', { name: '新的對話' }).first(),
+    () => page.getByRole('button', { name: '新對話' }).first(),
+    () => page.getByRole('button', { name: '新的對話' }).first(),
+    () => page.getByLabel('新對話').first(),
+  ];
+
+  for (const getLocator of selectors) {
+    const locator = getLocator();
+    if (await locator.isVisible().catch(() => false)) {
+      await locator.click();
+      await page.waitForLoadState('domcontentloaded').catch(() => {});
+      await page.waitForTimeout(1500);
+      return;
+    }
+  }
+
+  throw new Error('Could not find Gemini new chat control. Open a fresh Gemini conversation before generating images.');
+}
+
 async function clickImageMode(page) {
   const selectors = [
     () => page.getByRole('button', { name: '🖼️ 生成圖片' }).first(),
@@ -123,13 +145,19 @@ async function waitForImageReady(page, timeoutMs) {
   const deadline = Date.now() + timeoutMs;
 
   while (Date.now() < deadline) {
+    const loadingVisible = await page
+      .getByText('正在載入')
+      .isVisible()
+      .catch(() => false);
     const downloadVisible = await page
       .getByRole('button', { name: '下載原尺寸圖片' })
       .last()
       .isVisible()
       .catch(() => false);
 
-    if (downloadVisible) {
+    if (downloadVisible && !loadingVisible) {
+      // Give Gemini a short buffer after the UI first reports readiness.
+      await page.waitForTimeout(1200);
       return;
     }
 
@@ -144,6 +172,7 @@ async function downloadGeneratedImage(page, outDir, outputName) {
 
   const downloadButton = page.getByRole('button', { name: '下載原尺寸圖片' }).last();
   await downloadButton.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(1000);
 
   const [download] = await Promise.all([
     page.waitForEvent('download', { timeout: 20000 }),
@@ -169,6 +198,7 @@ async function main() {
   try {
     const { page } = await getGeminiPage(browser);
 
+    await openNewChat(page);
     await clickImageMode(page);
     await fillPrompt(page, prompt);
     await clickSend(page);
