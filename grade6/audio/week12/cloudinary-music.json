@@ -1,0 +1,68 @@
+﻿[
+    {
+        "label":  "溫暖回憶",
+        "file":  "01-warm-memory-tomorrow-morning-piano.mp3",
+        "public_id":  "it-class-tcwu/grade6/week12/audio/01-warm-memory-tomorrow-morning-piano",
+        "resource_type":  "video",
+        "duration":  223.451406,
+        "bytes":  7150445,
+        "format":  "mp3",
+        "secure_url":  "https://res.cloudinary.com/dmqmjfqng/video/upload/v1776935698/it-class-tcwu/grade6/week12/audio/01-warm-memory-tomorrow-morning-piano.mp3",
+        "download_url":  "https://res.cloudinary.com/dmqmjfqng/video/upload/fl_attachment/v1776935698/it-class-tcwu/grade6/week12/audio/01-warm-memory-tomorrow-morning-piano.mp3"
+    },
+    {
+        "label":  "希望成長",
+        "file":  "02-hope-growth-tomorrow-morning-2026.mp3",
+        "public_id":  "it-class-tcwu/grade6/week12/audio/02-hope-growth-tomorrow-morning-2026",
+        "resource_type":  "video",
+        "duration":  214.491406,
+        "bytes":  6863725,
+        "format":  "mp3",
+        "secure_url":  "https://res.cloudinary.com/dmqmjfqng/video/upload/v1776935702/it-class-tcwu/grade6/week12/audio/02-hope-growth-tomorrow-morning-2026.mp3",
+        "download_url":  "https://res.cloudinary.com/dmqmjfqng/video/upload/fl_attachment/v1776935702/it-class-tcwu/grade6/week12/audio/02-hope-growth-tomorrow-morning-2026.mp3"
+    },
+    {
+        "label":  "活潑校園",
+        "file":  "03-cheerful-campus-graduation-smile.mp3",
+        "public_id":  "it-class-tcwu/grade6/week12/audio/03-cheerful-campus-graduation-smile",
+        "resource_type":  "video",
+        "duration":  65.959156,
+        "bytes":  2110693,
+        "format":  "mp3",
+        "secure_url":  "https://res.cloudinary.com/dmqmjfqng/video/upload/v1776935705/it-class-tcwu/grade6/week12/audio/03-cheerful-campus-graduation-smile.mp3",
+        "download_url":  "https://res.cloudinary.com/dmqmjfqng/video/upload/fl_attachment/v1776935705/it-class-tcwu/grade6/week12/audio/03-cheerful-campus-graduation-smile.mp3"
+    },
+    {
+        "label":  "溫暖敘事",
+        "file":  "04-warm-story-inspirational-piano-story.mp3",
+        "public_id":  "it-class-tcwu/grade6/week12/audio/04-warm-story-inspirational-piano-story",
+        "resource_type":  "video",
+        "duration":  96.026094,
+        "bytes":  3072835,
+        "format":  "mp3",
+        "secure_url":  "https://res.cloudinary.com/dmqmjfqng/video/upload/v1776935709/it-class-tcwu/grade6/week12/audio/04-warm-story-inspirational-piano-story.mp3",
+        "download_url":  "https://res.cloudinary.com/dmqmjfqng/video/upload/fl_attachment/v1776935709/it-class-tcwu/grade6/week12/audio/04-warm-story-inspirational-piano-story.mp3"
+    },
+    {
+        "label":  "感謝友情",
+        "file":  "05-thanks-friendship-calm-inspirational-piano.mp3",
+        "public_id":  "it-class-tcwu/grade6/week12/audio/05-thanks-friendship-calm-inspirational-piano",
+        "resource_type":  "video",
+        "duration":  135.079156,
+        "bytes":  4322533,
+        "format":  "mp3",
+        "secure_url":  "https://res.cloudinary.com/dmqmjfqng/video/upload/v1776935712/it-class-tcwu/grade6/week12/audio/05-thanks-friendship-calm-inspirational-piano.mp3",
+        "download_url":  "https://res.cloudinary.com/dmqmjfqng/video/upload/fl_attachment/v1776935712/it-class-tcwu/grade6/week12/audio/05-thanks-friendship-calm-inspirational-piano.mp3"
+    },
+    {
+        "label":  "感動片尾",
+        "file":  "06-emotional-ending-uplifting-piano.mp3",
+        "public_id":  "it-class-tcwu/grade6/week12/audio/06-emotional-ending-uplifting-piano",
+        "resource_type":  "video",
+        "duration":  158.537125,
+        "bytes":  5073188,
+        "format":  "mp3",
+        "secure_url":  "https://res.cloudinary.com/dmqmjfqng/video/upload/v1776935716/it-class-tcwu/grade6/week12/audio/06-emotional-ending-uplifting-piano.mp3",
+        "download_url":  "https://res.cloudinary.com/dmqmjfqng/video/upload/fl_attachment/v1776935716/it-class-tcwu/grade6/week12/audio/06-emotional-ending-uplifting-piano.mp3"
+    }
+]

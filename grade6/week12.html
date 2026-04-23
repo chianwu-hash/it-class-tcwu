@@ -1,0 +1,375 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六年級資訊課 - 第 12 週 Canva 配樂與影片節奏</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(245, 158, 11, 0.18), transparent 28%),
+                radial-gradient(circle at top right, rgba(20, 184, 166, 0.15), transparent 26%),
+                linear-gradient(180deg, #fff7ed 0%, #f0fdfa 52%, #f8fafc 100%);
+        }
+        .info-card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .info-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 34px rgba(15, 23, 42, 0.12);
+        }
+        audio {
+            width: 100%;
+            accent-color: #0f766e;
+        }
+        .music-card {
+            background:
+                linear-gradient(135deg, rgba(255,255,255,0.96), rgba(240,253,250,0.94)),
+                radial-gradient(circle at top right, rgba(251,191,36,0.18), transparent 38%);
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pb-12">
+
+    <script src="navbar.js?v=20260423"></script>
+
+    <header class="bg-gradient-to-r from-amber-600 via-orange-600 to-teal-700 text-white shadow-xl mb-8">
+        <div class="max-w-6xl mx-auto px-6 py-12 relative overflow-hidden">
+            <div class="relative z-10 flex items-center justify-between gap-6">
+                <div>
+                    <h2 class="text-xl font-bold text-amber-100 mb-2">六年級資訊課 114學年度第二學期 第 12 週</h2>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">Canva 配樂與影片節奏</h1>
+                    <p class="text-xl md:text-2xl text-amber-50 font-black leading-relaxed">
+                        替畢業影片加入一首合適配樂，<br>
+                        再調整音量與節奏，讓作品更有氣氛。
+                    </p>
+                </div>
+                <div class="hidden md:block text-7xl opacity-85 transform rotate-6 drop-shadow-lg">
+                    <i class="fa-solid fa-music"></i>
+                </div>
+            </div>
+            <i class="fa-solid fa-headphones absolute text-white opacity-10 text-9xl -bottom-10 right-4"></i>
+            <i class="fa-solid fa-volume-high absolute text-white opacity-10 text-8xl -top-6 -left-4 -rotate-12"></i>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 space-y-8">
+
+        <section class="bg-white rounded-3xl border border-amber-100 shadow-sm overflow-hidden">
+            <div class="bg-amber-100 px-6 py-4 border-b border-amber-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-route text-amber-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-amber-900">今天怎麼進行</h3>
+                </div>
+                <span class="bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold">40 分鐘配樂任務</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-4 gap-4">
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-amber-700 mb-2">步驟 1</div>
+                    <h4 class="text-xl font-black text-amber-950 mb-2">開啟作品</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">確認今天編輯的是同一份 Canva 畢業影片，不要開錯專案。</p>
+                </div>
+                <div class="bg-teal-50 border border-teal-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-teal-700 mb-2">步驟 2</div>
+                    <h4 class="text-xl font-black text-teal-950 mb-2">選一首配樂</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">從老師推薦配樂或 Canva 內建音樂中，選 1 首最適合的。</p>
+                </div>
+                <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-sky-700 mb-2">步驟 3</div>
+                    <h4 class="text-xl font-black text-sky-950 mb-2">加入並調音量</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">音樂是背景，不要太大聲，也不要蓋過作品內容。</p>
+                </div>
+                <div class="bg-violet-50 border border-violet-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-violet-700 mb-2">步驟 4</div>
+                    <h4 class="text-xl font-black text-violet-950 mb-2">播放預覽</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">至少播放一次，檢查音樂、動畫與轉場是否自然。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-slate-900 rounded-3xl shadow-xl text-white p-6 md:p-8">
+            <div class="grid lg:grid-cols-[1.1fr,0.9fr] gap-6 items-center">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-white/10 px-4 py-1.5 rounded-full text-sm font-black mb-4">
+                        <i class="fa-solid fa-lightbulb"></i> 本週核心觀念
+                    </div>
+                    <h3 class="text-3xl font-black mb-4 text-amber-200">配樂是幫影片加氣氛，不是搶走主角</h3>
+                    <p class="text-slate-100 text-lg font-bold leading-relaxed">一首好的配樂會讓觀眾更投入作品；但如果音樂太大聲、太吵或和畫面不搭，就會讓人忘記你真正想說的畢業故事。</p>
+                </div>
+                <div class="bg-white/10 rounded-2xl p-5 border border-white/15">
+                    <ul class="space-y-3 text-lg font-black">
+                        <li><i class="fa-solid fa-check text-amber-300 mr-2"></i>選歌最多 5 分鐘</li>
+                        <li><i class="fa-solid fa-check text-amber-300 mr-2"></i>找不到就用老師推薦配樂</li>
+                        <li><i class="fa-solid fa-check text-amber-300 mr-2"></i>音量不能蓋過作品內容</li>
+                        <li><i class="fa-solid fa-check text-amber-300 mr-2"></i>完成後一定要播放預覽</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-teal-100 shadow-sm overflow-hidden">
+            <div class="bg-teal-100 px-6 py-4 border-b border-teal-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-headphones-simple text-teal-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-teal-900">老師推薦配樂包</h3>
+                </div>
+                <span class="bg-teal-600 text-white text-xs px-3 py-1 rounded-full font-bold">可試聽，也可下載 MP3</span>
+            </div>
+            <div class="p-6 space-y-5">
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-amber-700 mb-2">來源提醒</div>
+                    <p class="text-lg font-black text-slate-800 leading-relaxed">本頁配樂來自 Pixabay Music，僅供本課堂畢業影片練習使用。課堂中請從下方配樂包選歌，不要自行上網搜尋或使用 YouTube 轉檔網站。</p>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-5">
+                    <article class="music-card info-card rounded-3xl border border-teal-200 p-5">
+                        <div class="flex items-start justify-between gap-4 mb-4">
+                            <div>
+                                <div class="text-sm font-black text-teal-700 mb-1">01</div>
+                                <h4 class="text-2xl font-black text-slate-900">溫暖回憶</h4>
+                                <p class="font-bold text-slate-600 mt-2">溫柔鋼琴，適合感謝頁或影片尾聲。</p>
+                            </div>
+                            <i class="fa-solid fa-piano text-4xl text-amber-400"></i>
+                        </div>
+                        <audio controls preload="none" src="https://res.cloudinary.com/dmqmjfqng/video/upload/v1776935698/it-class-tcwu/grade6/week12/audio/01-warm-memory-tomorrow-morning-piano.mp3"></audio>
+                        <a href="https://res.cloudinary.com/dmqmjfqng/video/upload/fl_attachment/v1776935698/it-class-tcwu/grade6/week12/audio/01-warm-memory-tomorrow-morning-piano.mp3" download class="mt-4 inline-flex items-center bg-teal-600 hover:bg-teal-700 text-white font-black px-4 py-2 rounded-full transition">
+                            下載 MP3 <i class="fa-solid fa-download ml-2"></i>
+                        </a>
+                    </article>
+
+                    <article class="music-card info-card rounded-3xl border border-teal-200 p-5">
+                        <div class="flex items-start justify-between gap-4 mb-4">
+                            <div>
+                                <div class="text-sm font-black text-teal-700 mb-1">02</div>
+                                <h4 class="text-2xl font-black text-slate-900">希望成長</h4>
+                                <p class="font-bold text-slate-600 mt-2">安定、有希望感，適合整體回憶型影片。</p>
+                            </div>
+                            <i class="fa-solid fa-seedling text-4xl text-emerald-400"></i>
+                        </div>
+                        <audio controls preload="none" src="https://res.cloudinary.com/dmqmjfqng/video/upload/v1776935702/it-class-tcwu/grade6/week12/audio/02-hope-growth-tomorrow-morning-2026.mp3"></audio>
+                        <a href="https://res.cloudinary.com/dmqmjfqng/video/upload/fl_attachment/v1776935702/it-class-tcwu/grade6/week12/audio/02-hope-growth-tomorrow-morning-2026.mp3" download class="mt-4 inline-flex items-center bg-teal-600 hover:bg-teal-700 text-white font-black px-4 py-2 rounded-full transition">
+                            下載 MP3 <i class="fa-solid fa-download ml-2"></i>
+                        </a>
+                    </article>
+
+                    <article class="music-card info-card rounded-3xl border border-teal-200 p-5">
+                        <div class="flex items-start justify-between gap-4 mb-4">
+                            <div>
+                                <div class="text-sm font-black text-teal-700 mb-1">03</div>
+                                <h4 class="text-2xl font-black text-slate-900">活潑校園</h4>
+                                <p class="font-bold text-slate-600 mt-2">開朗、孩子感，適合班級活動與輕快回憶。</p>
+                            </div>
+                            <i class="fa-solid fa-face-laugh-beam text-4xl text-yellow-400"></i>
+                        </div>
+                        <audio controls preload="none" src="https://res.cloudinary.com/dmqmjfqng/video/upload/v1776935705/it-class-tcwu/grade6/week12/audio/03-cheerful-campus-graduation-smile.mp3"></audio>
+                        <a href="https://res.cloudinary.com/dmqmjfqng/video/upload/fl_attachment/v1776935705/it-class-tcwu/grade6/week12/audio/03-cheerful-campus-graduation-smile.mp3" download class="mt-4 inline-flex items-center bg-teal-600 hover:bg-teal-700 text-white font-black px-4 py-2 rounded-full transition">
+                            下載 MP3 <i class="fa-solid fa-download ml-2"></i>
+                        </a>
+                    </article>
+
+                    <article class="music-card info-card rounded-3xl border border-teal-200 p-5">
+                        <div class="flex items-start justify-between gap-4 mb-4">
+                            <div>
+                                <div class="text-sm font-black text-teal-700 mb-1">04</div>
+                                <h4 class="text-2xl font-black text-slate-900">溫暖敘事</h4>
+                                <p class="font-bold text-slate-600 mt-2">溫暖敘事感，適合一般畢業影片背景。</p>
+                            </div>
+                            <i class="fa-solid fa-book-open text-4xl text-sky-400"></i>
+                        </div>
+                        <audio controls preload="none" src="https://res.cloudinary.com/dmqmjfqng/video/upload/v1776935709/it-class-tcwu/grade6/week12/audio/04-warm-story-inspirational-piano-story.mp3"></audio>
+                        <a href="https://res.cloudinary.com/dmqmjfqng/video/upload/fl_attachment/v1776935709/it-class-tcwu/grade6/week12/audio/04-warm-story-inspirational-piano-story.mp3" download class="mt-4 inline-flex items-center bg-teal-600 hover:bg-teal-700 text-white font-black px-4 py-2 rounded-full transition">
+                            下載 MP3 <i class="fa-solid fa-download ml-2"></i>
+                        </a>
+                    </article>
+
+                    <article class="music-card info-card rounded-3xl border border-teal-200 p-5">
+                        <div class="flex items-start justify-between gap-4 mb-4">
+                            <div>
+                                <div class="text-sm font-black text-teal-700 mb-1">05</div>
+                                <h4 class="text-2xl font-black text-slate-900">感謝友情</h4>
+                                <p class="font-bold text-slate-600 mt-2">平穩溫柔，適合感謝老師、友情或校園回憶。</p>
+                            </div>
+                            <i class="fa-solid fa-heart text-4xl text-rose-400"></i>
+                        </div>
+                        <audio controls preload="none" src="https://res.cloudinary.com/dmqmjfqng/video/upload/v1776935712/it-class-tcwu/grade6/week12/audio/05-thanks-friendship-calm-inspirational-piano.mp3"></audio>
+                        <a href="https://res.cloudinary.com/dmqmjfqng/video/upload/fl_attachment/v1776935712/it-class-tcwu/grade6/week12/audio/05-thanks-friendship-calm-inspirational-piano.mp3" download class="mt-4 inline-flex items-center bg-teal-600 hover:bg-teal-700 text-white font-black px-4 py-2 rounded-full transition">
+                            下載 MP3 <i class="fa-solid fa-download ml-2"></i>
+                        </a>
+                    </article>
+
+                    <article class="music-card info-card rounded-3xl border border-teal-200 p-5">
+                        <div class="flex items-start justify-between gap-4 mb-4">
+                            <div>
+                                <div class="text-sm font-black text-teal-700 mb-1">06</div>
+                                <h4 class="text-2xl font-black text-slate-900">感動片尾</h4>
+                                <p class="font-bold text-slate-600 mt-2">感動、正式、片尾感較強，適合影片最後收束。</p>
+                            </div>
+                            <i class="fa-solid fa-star text-4xl text-orange-400"></i>
+                        </div>
+                        <audio controls preload="none" src="https://res.cloudinary.com/dmqmjfqng/video/upload/v1776935716/it-class-tcwu/grade6/week12/audio/06-emotional-ending-uplifting-piano.mp3"></audio>
+                        <a href="https://res.cloudinary.com/dmqmjfqng/video/upload/fl_attachment/v1776935716/it-class-tcwu/grade6/week12/audio/06-emotional-ending-uplifting-piano.mp3" download class="mt-4 inline-flex items-center bg-teal-600 hover:bg-teal-700 text-white font-black px-4 py-2 rounded-full transition">
+                            下載 MP3 <i class="fa-solid fa-download ml-2"></i>
+                        </a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid lg:grid-cols-[0.95fr,1.05fr] gap-6">
+            <div class="bg-white rounded-3xl border border-sky-100 shadow-sm overflow-hidden">
+                <div class="bg-sky-100 px-6 py-4 border-b border-sky-200 flex items-center justify-between gap-4 flex-wrap">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-sliders text-sky-700 text-2xl mr-3"></i>
+                        <h3 class="text-2xl font-black text-sky-900">音量與節奏檢查</h3>
+                    </div>
+                    <span class="bg-sky-600 text-white text-xs px-3 py-1 rounded-full font-bold">預覽時看這裡</span>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                        <h4 class="text-xl font-black text-slate-900 mb-3">播放預覽時檢查</h4>
+                        <ul class="space-y-2 text-lg font-black text-slate-700">
+                            <li><i class="fa-solid fa-circle-check text-sky-500 mr-2"></i>音樂是否太大聲？</li>
+                            <li><i class="fa-solid fa-circle-check text-sky-500 mr-2"></i>開頭或結尾是否太突然？</li>
+                            <li><i class="fa-solid fa-circle-check text-sky-500 mr-2"></i>動畫與轉場是否太花？</li>
+                            <li><i class="fa-solid fa-circle-check text-sky-500 mr-2"></i>音樂氣氛是否符合照片內容？</li>
+                        </ul>
+                    </div>
+                    <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-rose-700 mb-2">如果不合適</div>
+                        <p class="text-lg font-black text-slate-800 leading-relaxed">可以換一次音樂，或先降低音量；不要一直試聽到忘記完成作品。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-violet-100 shadow-sm overflow-hidden">
+                <div class="bg-violet-100 px-6 py-4 border-b border-violet-200 flex items-center justify-between gap-4 flex-wrap">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-bullseye text-violet-700 text-2xl mr-3"></i>
+                        <h3 class="text-2xl font-black text-violet-900">本週完成標準</h3>
+                    </div>
+                    <span class="bg-violet-600 text-white text-xs px-3 py-1 rounded-full font-bold">完成才算過關</span>
+                </div>
+                <div class="p-6 grid md:grid-cols-2 gap-4">
+                    <div class="bg-violet-50 border border-violet-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-violet-700 mb-2">基礎組</div>
+                        <ul class="space-y-2 text-lg font-black text-slate-700">
+                            <li><i class="fa-solid fa-check text-violet-500 mr-2"></i>加入 1 首配樂</li>
+                            <li><i class="fa-solid fa-check text-violet-500 mr-2"></i>調整音量</li>
+                            <li><i class="fa-solid fa-check text-violet-500 mr-2"></i>播放預覽 1 次</li>
+                        </ul>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-amber-700 mb-2">進階組</div>
+                        <ul class="space-y-2 text-lg font-black text-slate-700">
+                            <li><i class="fa-solid fa-check text-amber-500 mr-2"></i>修正 1 個不順處</li>
+                            <li><i class="fa-solid fa-check text-amber-500 mr-2"></i>檢查動畫與音樂節奏</li>
+                            <li><i class="fa-solid fa-check text-amber-500 mr-2"></i>整理下週要修的地方</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-sky-100 shadow-sm overflow-hidden">
+            <div class="bg-sky-100 px-6 py-4 border-b border-sky-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-book-open text-sky-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-sky-900">技能參考課本頁碼</h3>
+                </div>
+                <span class="bg-sky-600 text-white text-xs px-3 py-1 rounded-full font-bold">預覽檢查最重要</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-2 gap-5">
+                <div class="info-card bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-sky-700 mb-2">播放預覽與全螢幕檢查</div>
+                    <h4 class="text-xl font-black text-slate-900 mb-2">P.127、P.146</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">做完配樂後，請用播放預覽檢查音樂、動畫與轉場是否自然。</p>
+                </div>
+                <div class="info-card bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-sky-700 mb-2">轉場與影片銜接</div>
+                    <h4 class="text-xl font-black text-slate-900 mb-2">P.125、P.157</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">如果音樂節奏和頁面切換不搭，可回頭調整轉場效果與整體速度。</p>
+                </div>
+                <div class="md:col-span-2 bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-amber-700 mb-2">老師補充</div>
+                    <p class="text-lg font-black text-slate-800 leading-relaxed">課本沒有完整的配樂操作頁，本週配樂加入、音量調整與下載 MP3 的操作，請跟著老師投影示範。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-amber-100 shadow-sm overflow-hidden">
+            <div class="bg-amber-100 px-6 py-4 border-b border-amber-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-laptop-file text-amber-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-amber-900">快速入口</h3>
+                </div>
+                <span class="bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold">開工前先備好</span>
+            </div>
+            <div class="p-6 grid gap-4">
+                <a href="https://www.canva.com/" target="_blank" rel="noopener noreferrer" class="info-card block bg-slate-50 border-2 border-amber-200 rounded-2xl p-5 hover:border-amber-400">
+                    <div class="text-sm font-black text-amber-700 mb-2">Canva</div>
+                    <div class="text-lg font-black text-slate-900 break-all">https://www.canva.com/</div>
+                    <div class="mt-3 inline-flex items-center text-sm font-black text-amber-700">
+                        打開 Canva <i class="fa-solid fa-arrow-up-right-from-square ml-2"></i>
+                    </div>
+                </a>
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-amber-700 mb-2">今天不要做這些</div>
+                    <ul class="space-y-2 text-lg font-black text-slate-700">
+                        <li><i class="fa-solid fa-circle-xmark text-rose-500 mr-2"></i>不要用 YouTube 轉 MP3</li>
+                        <li><i class="fa-solid fa-circle-xmark text-rose-500 mr-2"></i>不要開不明下載網站</li>
+                        <li><i class="fa-solid fa-circle-xmark text-rose-500 mr-2"></i>不要一直試聽不完成作品</li>
+                    </ul>
+                </div>
+                <div class="bg-violet-50 border border-violet-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-violet-700 mb-2">下週預告</div>
+                    <p class="text-lg font-black text-slate-800 leading-relaxed">第 13 週會做完整預覽、節奏修正與補進度，準備第 14 週匯出 MP4 並繳交。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-gradient-to-r from-teal-800 to-slate-950 rounded-3xl shadow-xl text-white p-6 md:p-8">
+            <div class="grid lg:grid-cols-[1.2fr,0.8fr] gap-6 items-center">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-white/10 px-4 py-1.5 rounded-full text-sm font-black mb-4">
+                        <i class="fa-solid fa-flag-checkered"></i> 本週收尾
+                    </div>
+                    <h3 class="text-3xl font-black mb-4 text-amber-200">選一首、加進去、調音量、播一次</h3>
+                    <p class="text-slate-100 text-lg font-bold leading-relaxed">這週不是比誰找到最多音樂，而是讓你的畢業影片多一層合適的情緒。完成後請記得預覽，確認音樂不會搶走畫面主角。</p>
+                </div>
+                <div class="bg-white/10 rounded-2xl p-5 border border-white/15">
+                    <ul class="space-y-3 text-lg font-black">
+                        <li><i class="fa-solid fa-check text-amber-300 mr-2"></i>1 首配樂</li>
+                        <li><i class="fa-solid fa-check text-amber-300 mr-2"></i>音量合適</li>
+                        <li><i class="fa-solid fa-check text-amber-300 mr-2"></i>至少預覽 1 次</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { initNavbarAuth } from "../shared/navbar-auth.js";
+
+        initNavbarAuth();
+
+        document.querySelectorAll("audio").forEach((audio) => {
+            audio.addEventListener("play", () => {
+                document.querySelectorAll("audio").forEach((otherAudio) => {
+                    if (otherAudio !== audio) {
+                        otherAudio.pause();
+                    }
+                });
+            });
+        });
+    </script>
+
+    <footer class="text-center mt-16 pb-8 text-gray-500 text-sm font-medium">
+        <p><i class="fa-solid fa-graduation-cap mr-1"></i> 新北市頂溪國小資訊課 - 六年級 Canva 配樂與影片節奏</p>
+    </footer>
+
+</body>
+</html>
