@@ -27,6 +27,11 @@ For new week pages, also read:
 - If requirements conflict with existing shared modules or page type contracts, stop and report the conflict before inventing a separate implementation.
 - Prefer the newest same-type page as reference, but inspect its modules, auth flow, progress flow, and unlock behavior before copying structure.
 
+## Project Skills And Workflows
+
+- For ChatGPT browser-based image generation, read `skills/chatgpt-image-workflow/SKILL.md` first. This project has an npm wrapper: `npm run chatgpt:image-batch -- --cdp-url http://127.0.0.1:9333 --prompt-file <prompt.txt> ...`.
+- For Chinese prompts on Windows, always use UTF-8 prompt files instead of inline PowerShell text.
+
 ## Collaboration With Claude Code
 
 Use `docs/development/agent-handoff.md` as the shared handoff file between Codex, Claude Code, and the user.

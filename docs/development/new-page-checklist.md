@@ -39,8 +39,8 @@
 - [ ] **有打字闖關** → 使用 `initTypingChallenge`，不重寫進度邏輯，不用 localStorage 存進度
 - [ ] `levelsData` 格式確認：`{ id: number, ans: string }`（不是 `answer`）
 - [ ] `weekCode` 格式確認：兩位數字串，例如 `"11"`，不是數字 `11`
-- [ ] `activityKey` 已確認不與其他頁面重複（格式 `typing_task_N`，N 為關卡數）
-  - 確認方式：grep 整個 repo 確認此 activityKey 未被使用
+- [ ] `activityKey` 已確認不會覆蓋其他進度資料（格式 `typing_task_N`，N 需符合後台顯示的總關卡數；允許不同週次使用相同 activityKey，因資料表唯一鍵包含 `weekCode + activityKey`）
+  - 確認方式：grep 整個 repo 確認同一 `weekCode + activityKey` 未被使用
   - 填入本頁 activityKey：`___________`
 - [ ] `canvas-confetti` CDN 已加入 `<head>`：
   ```html

@@ -1,6 +1,6 @@
 # 從教案討論到網頁完成 SOP
 
-最後更新：2026-04-17
+最後更新：2026-04-27
 
 ## 1. 目的
 
@@ -36,7 +36,7 @@
 
 - `docs/image-and-preview-card-sop.md`
 
-如果會用到 Gemini / NotebookLM / Wayground 的瀏覽器自動化，再讀：
+如果會用到 Gemini / ChatGPT / NotebookLM / Wayground 的瀏覽器自動化，再讀：
 
 - `docs/browser-automation-sop.md`
 
@@ -235,23 +235,35 @@ npm.cmd run notebooklm:page-refs -- --input C:\Users\user\projects\it-class-tcwu
 - 藍綠邊框與柔和陰影
 - 適合教室投影
 
-### 7.3 Gemini 生圖
+### 7.3 生圖：Gemini 或 ChatGPT
 
-已驗證工具：
+Gemini 已驗證工具：
 
 - `automation/gemini-generate-infographic.js`
 
-使用方式：
+Gemini 使用方式：
 
 ```powershell
 npm.cmd run gemini:generate-image -- --prompt-file C:\Users\user\projects\tmp\week11-gemini-prompt.txt --out-dir C:\Users\user\projects\tmp --output-name week11-infographic-source.png
 ```
 
+ChatGPT 生圖先讀：
+
+- `skills/chatgpt-image-workflow/SKILL.md`
+
+ChatGPT 使用方式：
+
+```powershell
+npm.cmd run chatgpt:image-batch -- --cdp-url http://127.0.0.1:9333 --prompt-file automation/prompts/week12-safety-card.txt --count 1 --min-images 1 --output-dir grade3/images/week12 --output-prefix week12-safety-card --meta automation/output/week12-safety-card.json
+```
+
 注意：
 
 - 生圖前先切到 Gemini 的「新對話」，不要沿用舊對話脈絡，避免上一張圖卡或其他任務內容殘留，導致生錯主題
+- ChatGPT 若非刻意延續對話，也不要沿用舊對話脈絡；只有需要上下文連續時才使用 `--reuse-chat`
 - 中文提示詞一律先存成 UTF-8 檔案
 - 不要用 PowerShell inline / here-string 直接塞中文 prompt
+- 生圖後要確認 metadata 與實際圖片檔，再進入壓圖與 Cloudinary 流程
 
 ### 7.4 圖卡資產落點
 

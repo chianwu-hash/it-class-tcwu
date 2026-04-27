@@ -1,6 +1,6 @@
 ﻿# 圖像與首頁預告卡 SOP
 
-更新日期：2026-03-31
+更新日期：2026-04-27
 
 ## 1. 資訊圖卡預設規格
 
@@ -12,7 +12,7 @@
 
 ## 2. 資訊圖卡標準流程
 
-1. Gemini 原圖先放到本機可處理路徑，例如 `C:\Users\user\projects\tmp`
+1. Gemini 或 ChatGPT 產出的原圖先放到本機可處理路徑，例如 `C:\Users\user\projects\tmp`
 2. 先縮圖輸出成 `1920x1080 WebP q80`
 3. 再複製回專案對應週次資料夾，例如 `grade3/images/week08/` 或 `grade6/images/week08/`
 4. 上傳到 Cloudinary
@@ -51,6 +51,38 @@ npm.cmd run gemini:generate-image -- --prompt-file .\tmp\week11-gemini-prompt.tx
 > 注意：這個腳本目前只負責「Gemini 生圖 + 下載原尺寸 PNG」，壓圖請接下一步的 WebP 轉檔腳本。
 >
 > 補充：若未先開新對話，Gemini 可能會吃到前一輪對話內容，造成主題錯誤或文字串題；這次 week11 已實際踩到這個問題，因此改列為固定步驟。
+
+## 2.1.1 ChatGPT 生圖自動化（CDP 9333）
+
+當本週教材指定用 ChatGPT 生圖，或 Gemini 下載不穩時，可改用已登入的 ChatGPT 瀏覽器分頁。
+
+使用前先讀專案技能：
+
+- `skills/chatgpt-image-workflow/SKILL.md`
+
+目前支援的流程：
+
+1. 連到已登入的正式 Chrome（預設 CDP `9333`）
+2. 找到既有 ChatGPT 分頁
+3. 送出 UTF-8 prompt 檔案內容
+4. 等待 ChatGPT 生成圖片
+5. 從已登入頁面下載圖片
+6. 寫出 metadata，記錄下載結果
+
+快捷指令：
+
+```powershell
+npm.cmd run chatgpt:image-batch -- --cdp-url http://127.0.0.1:9333 --prompt-file automation/prompts/week12-safety-card.txt --count 1 --min-images 1 --output-dir grade3/images/week12 --output-prefix week12-safety-card --meta automation/output/week12-safety-card.json
+```
+
+固定規則：
+
+- 中文提示詞一律存成 UTF-8 `.txt`，用 `--prompt-file` 傳入
+- 不要用 PowerShell inline / here-string 直接塞中文 prompt
+- 若要延續目前對話才使用 `--reuse-chat`；一般課程圖卡建議開新脈絡，避免舊對話污染主題
+- 生圖成功與下載成功要分開確認；以 metadata JSON 與實際圖片檔是否存在為準
+- 下載後仍需接 WebP 壓圖與 Cloudinary 上傳流程，正式上站不要直接引用原始大圖
+- 教案與圖卡文案應先確認，再把產圖整合進週頁
 
 ## 2.2 資訊圖卡壓圖腳本（已補上）
 

@@ -87,7 +87,7 @@
 
 **weekCode 格式**：兩位數字串，`"04"`、`"07"`、`"10"`，不是數字 `4`、`7`、`10`。
 
-**activityKey 命名規則**：`typing_task_N`（N 為關卡數），不同週不同 key，確保 `student_progress` 不衝突。
+**activityKey 命名規則**：`typing_task_N`（N 需符合後台顯示的總關卡數）。`student_progress` 的唯一鍵是 `user_id + week_code + activity_key`，所以不同週次可以使用相同 activityKey；重點是同一週內不要讓兩個活動共用相同 key。
 
 **內建的 listener 問題**：模組自身會對 `#login-btn` 等元素執行直接綁定（`loginBtn?.addEventListener`）。在 grade3 頁面，navbar 重渲後這些直接綁定會消失。**因此，所有使用 `initTypingChallenge` 的頁面，必須同時呼叫 `initNavbarAuth()`。**
 

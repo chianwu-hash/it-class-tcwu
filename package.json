@@ -9,6 +9,7 @@
     "scripts":  {
                     "test":  "echo \"Error: no test specified\" \u0026\u0026 exit 1",
                     "browser:smoke":  "node automation/browser-smoke.js",
+                    "chatgpt:image-batch": "node ..\\browser-automation-workflow\\scripts\\chatgpt-image-batch.js",
                     "gemini:generate-image":  "node automation/gemini-generate-infographic.js",
                     "image:compress-infographic":  "python automation/convert-infographic-to-webp.py",
                     "cloudinary:upload-infographic":  "python automation/upload-infographic-to-cloudinary.py",

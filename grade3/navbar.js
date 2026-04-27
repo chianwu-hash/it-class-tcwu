@@ -13,7 +13,7 @@
     }
 
     const navConfig = {
-        activeWeeks: [3, 4, 5, 6, 7, 8, 9, 10, 11],
+        activeWeeks: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
         gradeLabel: "三年級資訊課",
         titleIconClass: "fa-solid fa-rocket text-cyan-600",
         titleClassName: "font-black text-gray-800 flex items-center text-lg tracking-wide whitespace-nowrap",

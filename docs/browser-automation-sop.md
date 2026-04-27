@@ -1,6 +1,6 @@
 ﻿# Browser Automation SOP
 
-最後更新：2026-04-07
+最後更新：2026-04-27
 
 ## 1. 目的
 
@@ -9,6 +9,7 @@
 - 不要再用 Playwright 直接開新瀏覽器登入 Google
 - 正確使用「手動登入的正式 Chrome + CDP」
 - 讓 Wayground 出題流程可重複執行、可檢查、可修正、可發布
+- 讓 NotebookLM、Gemini、ChatGPT 等已登入頁面自動化有固定入口
 
 正式專案路徑：
 - `C:\Users\user\projects\it-class-tcwu`
@@ -38,10 +39,14 @@
 啟動後：
 1. 手動登入 Google
 2. 打開 Wayground
-3. 如果需要 NotebookLM，也在同一個 Chrome 裡開啟
+3. 如果需要 NotebookLM、Gemini 或 ChatGPT，也在支援 CDP 的正式 Chrome 裡開啟
 
 CDP 檢查入口：
 - `http://localhost:9222/json`
+
+補充：
+- 本專案近期也常用 `9333` 作為已登入 ChatGPT 分頁的 CDP port
+- ChatGPT 生圖流程預設檢查入口：`http://127.0.0.1:9333/json`
 
 ## 4. automation 目錄與主要腳本
 
@@ -59,6 +64,7 @@ CDP 檢查入口：
 - `automation/wayground-set-language-chinese.js`
 - `automation/wayground-set-all-timers-2min.js`
 - `automation/wayground-publish.js`
+- ChatGPT 生圖使用外部共用腳本，入口由 `package.json` 包成 `npm.cmd run chatgpt:image-batch`
 
 PowerShell 請一律使用 `npm.cmd`：
 
@@ -254,3 +260,33 @@ npm.cmd run wayground:delete -- 21,20,19
 - 腳本會操作目前最後一個 NotebookLM 筆記本頁面
 - 若回答格式之後要回寫教案 / HTML，請再接 `notebooklm:page-refs`
 - 若提示詞含中文，優先使用 `--prompt-file`；PowerShell 管線有機會把中文轉成亂碼，導致 NotebookLM 收到錯誤內容
+
+## 15. ChatGPT 生圖自動化
+
+用途：
+
+- 透過已登入 ChatGPT 分頁生成課程資訊圖卡、教學圖片或簡報主視覺
+- 特別適合需要使用 ChatGPT 圖像生成能力、或 Gemini 下載不穩時替代
+
+使用前先讀：
+
+- `skills/chatgpt-image-workflow/SKILL.md`
+- `docs/image-and-preview-card-sop.md`
+
+入口：
+
+- `npm.cmd run chatgpt:image-batch`
+
+範例：
+
+```powershell
+npm.cmd run chatgpt:image-batch -- --cdp-url http://127.0.0.1:9333 --prompt-file automation/prompts/week12-safety-card.txt --count 1 --min-images 1 --output-dir grade3/images/week12 --output-prefix week12-safety-card --meta automation/output/week12-safety-card.json
+```
+
+固定規則：
+
+- ChatGPT 頁面必須先由使用者手動登入並保持開啟
+- 中文提示詞一律放 UTF-8 `.txt`，用 `--prompt-file`
+- 不要把中文 prompt 放進 PowerShell inline / here-string
+- `--reuse-chat` 只在刻意延續同一段對話時使用
+- 生圖後檢查 metadata 與實際圖片檔，再接壓圖與 Cloudinary 流程

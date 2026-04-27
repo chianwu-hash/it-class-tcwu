@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三年級資訊課 - 第 12 週 網路識讀與 Google Maps</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background:
+                radial-gradient(circle at top right, rgba(14, 165, 233, 0.16), transparent 28%),
+                radial-gradient(circle at top left, rgba(34, 197, 94, 0.14), transparent 30%),
+                linear-gradient(180deg, #f0f9ff 0%, #f8fafc 100%);
+        }
+        .card-hover {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 30px rgba(15, 23, 42, 0.12);
+        }
+        .shake {
+            animation: shake 0.35s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+        .section-toggle .toggle-chevron {
+            transition: transform 0.2s ease;
+        }
+        .section-toggle[aria-expanded="false"] .toggle-chevron {
+            transform: rotate(-90deg);
+        }
+        textarea {
+            resize: vertical;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pb-12">
+    <script src="navbar.js?v=20260427"></script>
+
+    <header class="bg-gradient-to-r from-sky-500 via-cyan-500 to-emerald-500 text-white shadow-xl mb-8 relative overflow-hidden">
+        <div class="max-w-5xl mx-auto px-6 py-10 relative z-10">
+            <div class="flex items-center justify-between gap-6">
+                <div>
+                    <h2 class="text-xl font-bold text-cyan-50 mb-2">三年級資訊課 ｜ 第 12 週</h2>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">網路識讀與 Google Maps</h1>
+                    <p class="text-lg md:text-xl text-cyan-50 font-bold leading-relaxed">先學會查證網路和 AI 訊息，再探索地圖與街景，最後完成 5 關中英打闖關。</p>
+                </div>
+                <div class="hidden md:block text-7xl opacity-85 transform rotate-6 drop-shadow-lg">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                </div>
+            </div>
+        </div>
+        <i class="fa-solid fa-magnifying-glass-location absolute text-white opacity-10 text-9xl -bottom-10 right-8"></i>
+    </header>
+
+    <div id="lightbox" class="fixed inset-0 bg-black/85 z-[200] items-center justify-center p-4 cursor-zoom-out hidden" onclick="closeLightbox()">
+        <div class="relative max-w-5xl w-full">
+            <img id="lightbox-img" src="" alt="圖卡放大" class="w-full max-h-[88vh] object-contain rounded-2xl shadow-2xl">
+            <button onclick="closeLightbox()" class="absolute -top-4 -right-4 bg-white text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-xl font-black text-xl hover:bg-red-500 hover:text-white transition">X</button>
+        </div>
+    </div>
+
+    <main class="max-w-5xl mx-auto px-6 space-y-8">
+        <section class="bg-white rounded-3xl border-4 border-sky-200 shadow-md overflow-hidden">
+            <div class="bg-sky-50 px-6 py-4 border-b-4 border-sky-100 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <span class="bg-sky-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-route"></i>
+                    </span>
+                    <h3 class="text-2xl font-black text-sky-900">今天怎麼進行</h3>
+                </div>
+                <span class="bg-sky-600 text-white text-xs px-3 py-1 rounded-full font-bold">查證、地圖、打字</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-3 gap-4">
+                <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5 card-hover">
+                    <div class="text-sm font-black text-sky-700 mb-2">任務 1</div>
+                    <h4 class="text-xl font-black text-sky-900 mb-2">網路識讀</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">網路訊息和 AI 回答都要查證，練習看來源、看時間、比一比。</p>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 card-hover">
+                    <div class="text-sm font-black text-emerald-700 mb-2">任務 2</div>
+                    <h4 class="text-xl font-black text-emerald-900 mb-2">Google Maps</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">搜尋地點、放大縮小地圖，並用街景圖觀察公共地標。</p>
+                </div>
+                <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 card-hover">
+                    <div class="text-sm font-black text-indigo-700 mb-2">任務 3</div>
+                    <h4 class="text-xl font-black text-indigo-900 mb-2">中英打闖關</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">完成 5 關英文、中文與中英混打，登入後會記錄進度。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-md border-4 border-cyan-200 overflow-hidden">
+            <button type="button" class="section-toggle w-full bg-cyan-50 px-6 py-4 border-b-4 border-cyan-100 flex items-center justify-between text-left" data-target="safety-card-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-cyan-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </span>
+                    <span class="text-2xl font-black text-cyan-900">資訊安全圖卡</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span class="bg-cyan-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">點圖可放大</span>
+                    <i class="toggle-chevron fa-solid fa-chevron-down text-cyan-500 text-lg"></i>
+                </span>
+            </button>
+            <div id="safety-card-body" class="p-6 bg-slate-50">
+                <img
+                    src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1777279433/it-class-tcwu/grade3/week12/week12-infographic-1920x1080-q80.webp"
+                    alt="第12週 網路訊息和 AI 訊息不可全信資訊圖卡"
+                    onclick="openLightbox(this.src)"
+                    class="w-full rounded-2xl border-2 border-cyan-100 shadow-md cursor-zoom-in hover:shadow-xl hover:scale-[1.01] transition duration-200"
+                    loading="lazy"
+                >
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-md border-4 border-amber-200 overflow-hidden">
+            <button type="button" class="section-toggle w-full bg-amber-50 px-6 py-4 border-b-4 border-amber-100 flex items-center justify-between text-left" data-target="safety-quiz-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-amber-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-list-check"></i>
+                    </span>
+                    <span class="text-2xl font-black text-amber-900">資訊安全小測驗</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span class="bg-amber-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">5 題口頭檢查</span>
+                    <i class="toggle-chevron fa-solid fa-chevron-down text-amber-500 text-lg"></i>
+                </span>
+            </button>
+            <div id="safety-quiz-body" class="p-6 space-y-4">
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-slate-700 font-bold leading-relaxed">
+                    先在心裡選答案，再點選選項檢查。這個小測驗不記錄進度，只是幫你確認自己有沒有聽懂。
+                </div>
+                <div id="quiz-list" class="space-y-5"></div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-md border-4 border-emerald-200 overflow-hidden">
+            <button type="button" class="section-toggle w-full bg-emerald-50 px-6 py-4 border-b-4 border-emerald-100 flex items-center justify-between text-left" data-target="maps-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-emerald-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-map"></i>
+                    </span>
+                    <span class="text-2xl font-black text-emerald-900">Google Maps 初探</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span class="bg-emerald-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">注意隱私</span>
+                    <i class="toggle-chevron fa-solid fa-chevron-down text-emerald-500 text-lg"></i>
+                </span>
+            </button>
+            <div id="maps-body" class="p-6 grid lg:grid-cols-[1fr_0.85fr] gap-6">
+                <div class="space-y-4">
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+                        <h4 class="text-xl font-black text-emerald-900 mb-3">操作順序</h4>
+                        <ol class="space-y-3 text-slate-700 font-bold leading-relaxed list-decimal list-inside">
+                            <li>開啟 Google Maps，搜尋學校或熟悉的公共地點。</li>
+                            <li>用滑鼠拖曳地圖，練習放大與縮小。</li>
+                            <li>搜尋住家附近的公共地標，不公開完整地址。</li>
+                            <li>開啟街景圖，觀察道路、商店、公園或明顯地標。</li>
+                        </ol>
+                    </div>
+                    <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5">
+                        <h4 class="text-xl font-black text-rose-900 mb-3">隱私提醒</h4>
+                        <ul class="space-y-2 text-slate-700 font-bold leading-relaxed">
+                            <li><i class="fa-solid fa-circle-check text-rose-500 mr-2"></i>不要公開說出完整住家地址。</li>
+                            <li><i class="fa-solid fa-circle-check text-rose-500 mr-2"></i>可以改找學校、公園、圖書館或捷運站。</li>
+                            <li><i class="fa-solid fa-circle-check text-rose-500 mr-2"></i>街景圖用來觀察地標，不拿來嘲笑別人的家。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border-2 border-emerald-200 p-5 shadow-sm">
+                    <h4 class="text-xl font-black text-emerald-900 mb-3">地圖入口</h4>
+                    <p class="text-slate-700 font-bold leading-relaxed mb-5">點開後，先搜尋「頂溪國小」或老師指定的公共地點。若找住家附近，請只找附近地標。</p>
+                    <a href="https://www.google.com/maps" target="_blank" rel="noopener" class="inline-flex w-full min-h-[56px] items-center justify-center rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black shadow-md hover:opacity-95 transition">
+                        <i class="fa-solid fa-arrow-up-right-from-square mr-2"></i>開啟 Google Maps
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-md border-4 border-indigo-200 overflow-hidden">
+            <div class="bg-indigo-50 px-6 py-4 border-b-4 border-indigo-100 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <span class="bg-indigo-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-keyboard"></i>
+                    </span>
+                    <h3 class="text-2xl font-black text-indigo-900">中英打闖關</h3>
+                </div>
+                <span id="typing-badge" class="bg-indigo-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">共 5 關</span>
+            </div>
+            <div class="p-8">
+                <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 mb-6 text-slate-700 font-bold space-y-2">
+                    <p><i class="fa-solid fa-circle-info text-indigo-500 mr-2"></i> 英文來自 U3，中文來自國語第 7 課「油桐花」。</p>
+                    <p><i class="fa-solid fa-hand text-indigo-500 mr-2"></i> 不能複製貼上。英文大小寫、標點、空格和換行都要一樣。</p>
+                    <p id="progress-status"><i class="fa-solid fa-flag-checkered text-indigo-500 mr-2"></i> 目前進度：第 1 關開始。</p>
+                    <pre id="progress-debug" class="hidden mt-3 overflow-auto rounded-xl bg-slate-900 p-4 text-left text-xs text-slate-100"></pre>
+                </div>
+
+                <div id="typing-levels-container" class="flex flex-col space-y-8 max-w-3xl mx-auto">
+                    <div id="block-level1" class="bg-cyan-50 border-4 border-cyan-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-cyan-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 1 關</div>
+                        <h4 class="text-xl font-black text-cyan-800 mb-2 flex items-center"><i class="fa-solid fa-language text-cyan-500 mr-2"></i> 英文一行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">注意縮寫、問號、句點與空格。</p>
+                        <div class="text-2xl font-black text-center text-cyan-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-cyan-200 shadow-inner select-none pointer-events-none">
+                            What's this? It's a pencil.
+                        </div>
+                        <input type="text" id="input-level1" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full h-16 p-3 rounded-xl border-2 border-cyan-300 focus:outline-none focus:ring-4 focus:ring-cyan-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="點這裡開始打字">
+                        <button onclick="checkLevel(1)" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level1" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level2" class="hidden bg-emerald-50 border-4 border-emerald-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-emerald-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 2 關</div>
+                        <h4 class="text-xl font-black text-emerald-800 mb-2 flex items-center"><i class="fa-solid fa-seedling text-emerald-500 mr-2"></i> 中文一行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">句號也要打出來。</p>
+                        <div class="text-2xl font-black text-center text-emerald-700 tracking-widest mb-4 bg-white py-3 px-3 rounded-xl border-2 border-emerald-200 shadow-inner select-none pointer-events-none">
+                            油桐花又叫五月雪。
+                        </div>
+                        <input type="text" id="input-level2" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full h-16 p-3 rounded-xl border-2 border-emerald-300 focus:outline-none focus:ring-4 focus:ring-emerald-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="慢慢打，記得句號">
+                        <button onclick="checkLevel(2)" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level2" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level3" class="hidden bg-blue-50 border-4 border-blue-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-blue-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 3 關</div>
+                        <h4 class="text-xl font-black text-blue-800 mb-2 flex items-center"><i class="fa-solid fa-comment-dots text-blue-500 mr-2"></i> 英文二行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">兩行都要打，換行位置也要一樣。</p>
+                        <pre class="text-2xl font-black text-center text-blue-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-blue-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">What's that?
+It's a book.</pre>
+                        <textarea id="input-level3" rows="3" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="第一行打完按 Enter 換行"></textarea>
+                        <button onclick="checkLevel(3)" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level3" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level4" class="hidden bg-orange-50 border-4 border-orange-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-orange-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 4 關</div>
+                        <h4 class="text-xl font-black text-orange-800 mb-2 flex items-center"><i class="fa-solid fa-tree text-orange-500 mr-2"></i> 中文二行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">注意逗號、句號和換行。</p>
+                        <pre class="text-2xl font-black text-center text-orange-700 tracking-wider mb-4 bg-white py-3 px-3 rounded-xl border-2 border-orange-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">初夏時節，山林間開滿油桐花。
+遠遠望去，好像一片白雪。</pre>
+                        <textarea id="input-level4" rows="4" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-orange-300 focus:outline-none focus:ring-4 focus:ring-orange-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="兩行都要打完整"></textarea>
+                        <button onclick="checkLevel(4)" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level4" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level5" class="hidden bg-purple-50 border-4 border-purple-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-purple-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 5 關</div>
+                        <h4 class="text-xl font-black text-purple-800 mb-2 flex items-center"><i class="fa-solid fa-layer-group text-purple-500 mr-2"></i> 中英混打三行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">這一關和前面不重複，中文、英文、標點與換行都要對。</p>
+                        <pre class="text-2xl font-black text-center text-purple-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-purple-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">山林間有美麗的花。
+What's that?
+It's a ruler.</pre>
+                        <textarea id="input-level5" rows="5" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-purple-300 focus:outline-none focus:ring-4 focus:ring-purple-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="最後一關，三行都要打"></textarea>
+                        <button onclick="checkLevel(5)" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level5" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center mt-16 pb-8 text-gray-400 text-sm font-medium">
+        <p><i class="fa-solid fa-rocket mr-1"></i> 新北市頂溪國小資訊課 - 小小探險家系列</p>
+    </footer>
+
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div id="floating-kb-panel" class="hidden mb-4 bg-white p-3 rounded-2xl shadow-2xl border-4 border-indigo-400 max-w-[90vw] md:max-w-[600px] transform transition-all origin-bottom-right">
+            <div class="flex justify-between items-center mb-2 px-2 border-b border-gray-100 pb-2">
+                <span class="font-black text-indigo-800 text-lg"><i class="fa-solid fa-keyboard mr-2"></i>找字小幫手</span>
+                <button onclick="toggleFloatingKeyboard()" class="bg-gray-100 hover:bg-red-500 hover:text-white text-gray-600 rounded-full w-8 h-8 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <img src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1773745139/postimages-migration/040_ytvyrx.png" alt="注音鍵盤圖" class="w-full rounded-xl border border-gray-200 shadow-sm">
+        </div>
+        <button onclick="toggleFloatingKeyboard()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-3 rounded-full shadow-[0_4px_15px_rgba(79,70,229,0.5)] font-black text-lg flex items-center justify-center transform transition hover:scale-105 border-2 border-white">
+            <i class="fa-solid fa-keyboard mr-2 text-2xl"></i> 看鍵盤圖
+        </button>
+    </div>
+
+    <script>
+        const safetyQuestions = [
+            {
+                q: "看到網路上的第一個搜尋結果時，最好的做法是什麼？",
+                options: ["立刻相信", "先看來源，再找其他資料比對", "只看圖片，不看文字", "只相信留言最多的網站"],
+                correctIndex: 1
+            },
+            {
+                q: "AI 回答問題時，哪一個說法比較正確？",
+                options: ["AI 說的一定正確", "AI 不可能犯錯", "AI 回答也需要查證", "AI 回答比老師說的永遠正確"],
+                correctIndex: 2
+            },
+            {
+                q: "查證網路訊息時，下面哪一件事很重要？",
+                options: ["看資料來源和日期", "只看標題", "只看誰轉貼", "看到驚人的內容就馬上分享"],
+                correctIndex: 0
+            },
+            {
+                q: "如果看到「今天下午全市停課」的網路訊息，最適合先去哪裡確認？",
+                options: ["官方網站或學校公告", "不認識的人留言", "遊戲聊天室", "隨便一張截圖"],
+                correctIndex: 0
+            },
+            {
+                q: "看到很驚人的網路消息時，分享以前最好先做什麼？",
+                options: ["馬上轉傳給所有同學", "看來源、看日期，並找其他可信資料確認", "只要圖片很清楚就相信", "看到很多人按讚就相信"],
+                correctIndex: 1
+            }
+        ];
+
+        function renderSafetyQuiz() {
+            const quizList = document.getElementById("quiz-list");
+            if (!quizList) return;
+
+            quizList.innerHTML = safetyQuestions.map((item, index) => `
+                <article class="rounded-2xl border-2 border-amber-100 bg-white p-5 shadow-sm">
+                    <h4 class="text-lg md:text-xl font-black text-amber-900 mb-4">${index + 1}. ${item.q}</h4>
+                    <div class="grid sm:grid-cols-2 gap-3">
+                        ${item.options.map((option, optionIndex) => `
+                            <button type="button" class="quiz-option rounded-xl border-2 border-slate-200 bg-slate-50 px-4 py-3 text-left font-bold text-slate-700 hover:border-amber-400 hover:bg-amber-50 transition" data-question="${index}" data-option="${optionIndex}">
+                                ${String.fromCharCode(65 + optionIndex)}. ${option}
+                            </button>
+                        `).join("")}
+                    </div>
+                    <p id="quiz-msg-${index}" class="mt-3 min-h-6 font-black"></p>
+                </article>
+            `).join("");
+        }
+
+        function handleQuizClick(event) {
+            const button = event.target.closest(".quiz-option");
+            if (!button) return;
+            const questionIndex = Number(button.dataset.question);
+            const optionIndex = Number(button.dataset.option);
+            const question = safetyQuestions[questionIndex];
+            const article = button.closest("article");
+            const msg = document.getElementById(`quiz-msg-${questionIndex}`);
+
+            article?.querySelectorAll(".quiz-option").forEach((optionButton) => {
+                optionButton.classList.remove("border-green-500", "bg-green-50", "text-green-700", "border-red-500", "bg-red-50", "text-red-700");
+                const optionValue = Number(optionButton.dataset.option);
+                if (optionValue === question.correctIndex) {
+                    optionButton.classList.add("border-green-500", "bg-green-50", "text-green-700");
+                }
+            });
+
+            if (optionIndex === question.correctIndex) {
+                msg.textContent = "答對了，這就是比較安全的做法。";
+                msg.className = "mt-3 min-h-6 font-black text-green-600";
+            } else {
+                button.classList.add("border-red-500", "bg-red-50", "text-red-700");
+                msg.textContent = `再想想，正確答案是 ${String.fromCharCode(65 + question.correctIndex)}。`;
+                msg.className = "mt-3 min-h-6 font-black text-red-600";
+            }
+        }
+
+        window.openLightbox = function openLightbox(src) {
+            const box = document.getElementById("lightbox");
+            const image = document.getElementById("lightbox-img");
+            if (!box || !image) return;
+            image.src = src;
+            box.classList.remove("hidden");
+            box.classList.add("flex");
+        };
+
+        window.closeLightbox = function closeLightbox() {
+            const box = document.getElementById("lightbox");
+            if (!box) return;
+            box.classList.add("hidden");
+            box.classList.remove("flex");
+        };
+
+        document.querySelectorAll(".section-toggle").forEach((button) => {
+            button.addEventListener("click", () => {
+                const target = document.getElementById(button.dataset.target);
+                const isExpanded = button.getAttribute("aria-expanded") === "true";
+                button.setAttribute("aria-expanded", String(!isExpanded));
+                target?.classList.toggle("hidden", isExpanded);
+            });
+        });
+
+        renderSafetyQuiz();
+        document.getElementById("quiz-list")?.addEventListener("click", handleQuizClick);
+    </script>
+
+    <script type="module">
+        import { initNavbarAuth } from "../shared/navbar-auth.js";
+        import { initTypingChallenge } from "../shared/typing-challenge.js";
+
+        initNavbarAuth();
+
+        const levelsData = [
+            { id: 1, ans: "What's this? It's a pencil." },
+            { id: 2, ans: "油桐花又叫五月雪。" },
+            { id: 3, ans: "What's that?\nIt's a book." },
+            { id: 4, ans: "初夏時節，山林間開滿油桐花。\n遠遠望去，好像一片白雪。" },
+            { id: 5, ans: "山林間有美麗的花。\nWhat's that?\nIt's a ruler." }
+        ];
+
+        const levelMsg = {
+            1: "第 1 關完成，英文短句很穩。",
+            2: "第 2 關完成，中文標點也有注意到。",
+            3: "第 3 關完成，換行和英文句型都對了。",
+            4: "第 4 關完成，國語課文句子也能打好了。",
+            5: "5 關全部完成，今天的中英混打任務成功。"
+        };
+
+        function buildHint(userVal, targetVal, levelIndex) {
+            const userLines = userVal.split("\n");
+            const targetLines = targetVal.split("\n");
+            const maxLines = Math.max(userLines.length, targetLines.length);
+
+            for (let lineIndex = 0; lineIndex < maxLines; lineIndex += 1) {
+                const userLine = userLines[lineIndex] || "";
+                const targetLine = targetLines[lineIndex] || "";
+
+                if (userLine === targetLine) continue;
+                if (!userLine && targetLine) {
+                    return `提示：第 ${lineIndex + 1} 行還沒完成，看看是不是少了整行內容。`;
+                }
+                if (userLine && !targetLine) {
+                    return `提示：第 ${lineIndex + 1} 行多打了內容，檢查一下句尾。`;
+                }
+
+                const maxChars = Math.max(userLine.length, targetLine.length);
+                for (let charIndex = 0; charIndex < maxChars; charIndex += 1) {
+                    const userChar = userLine[charIndex];
+                    const targetChar = targetLine[charIndex];
+
+                    if (userChar === targetChar) continue;
+                    if (!userChar) {
+                        return `提示：第 ${lineIndex + 1} 行後面可能少字，從「${targetLine.slice(Math.max(0, charIndex - 2), charIndex + 3)}」附近再看一次。`;
+                    }
+                    if (!targetChar) {
+                        return `提示：第 ${lineIndex + 1} 行後面可能多打了，檢查一下句尾。`;
+                    }
+                    return `提示：第 ${lineIndex + 1} 行第 ${charIndex + 1} 個字附近不一樣，從「${targetLine.slice(Math.max(0, charIndex - 2), charIndex + 3)}」附近再看一次。`;
+                }
+            }
+
+            return levelIndex === 1 || levelIndex === 3 || levelIndex === 5
+                ? "提示：再檢查一下大小寫、問號、句點、縮寫符號或換行。"
+                : "提示：再檢查一下是不是多字、少字、標點或換行不同。";
+        }
+
+        initTypingChallenge({
+            weekCode: "12",
+            activityKey: "typing_task_5",
+            levelsData,
+            levelEncouragements: levelMsg,
+            buildHint,
+            getWrongAnswerHtml: ({ hint }) => `還差一點點。${hint}`,
+            progressMessages: {
+                completed: "5 關全部完成，今天的中英打闖關已經完成。",
+                resumed: (level) => `已接回 Week 12 打字進度，從第 ${level} 關繼續。`,
+                firstLogin: "已登入成功，這次的打字進度會自動記錄下來。",
+                unauthenticated: "尚未登入時，打字可以練習但不會保存進度；登入後會自動記錄。",
+                saveCompleted: "已記下 5 關完整進度，今天的打字任務完成。",
+                saveNextLevel: (level) => `已記下進度，下次從第 ${level} 關繼續。`,
+                saveError: "進度暫時沒有記錄成功，請稍後再試一次。",
+                resetNoSession: "目前沒有登入，不能重新開始練習。",
+                resetConfirm: "要重新開始 Week 12 打字練習嗎？這會把目前進度重設回第 1 關。"
+            },
+            celebrationContent: {
+                title: "5 關全部完成",
+                message: "你完成了英文、中文和中英混打，今天的打字任務成功。",
+                buttonText: "回到練習區",
+                buttonHref: ""
+            }
+        });
+    </script>
+</body>
+</html>
