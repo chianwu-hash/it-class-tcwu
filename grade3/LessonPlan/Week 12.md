@@ -83,6 +83,8 @@
 
 #### 資訊安全小測驗（5 題）
 
+登入 Google 後才能作答，完成後需寫入 `student_progress`。
+
 1. 看到網路上的第一個搜尋結果時，最好的做法是什麼？
    - A. 立刻相信
    - B. 先看來源，再找其他資料比對
@@ -197,9 +199,11 @@ It's a ruler.
 預計設定：
 
 - `weekCode`: `"12"`
-- `activityKey`: `"typing_task_5"`
+- 資訊安全小測驗 `activityKey`: `"media_literacy_quiz_1"`
+- 中英打闖關 `activityKey`: `"typing_task_5"`
 - `levelsData`: 使用 `{ id, ans }`
 - 需要 `initNavbarAuth()`
+- 資訊安全小測驗需使用 `shared/quiz-module.js`，未登入時顯示登入鎖定區，不可直接作答
 - 需要 `initTypingChallenge()`
 - 不使用 `localStorage` 儲存學生進度
 - 不手寫 navbar HTML

@@ -23,6 +23,10 @@
             transform: translateY(-4px);
             box-shadow: 0 18px 30px rgba(15, 23, 42, 0.12);
         }
+        .opt-btn { transition: all 0.15s; }
+        .opt-btn.selected { border-color: #f59e0b; background-color: #fffbeb; color: #92400e; }
+        .opt-btn.correct { border-color: #16a34a !important; background-color: #dcfce7 !important; color: #15803d !important; }
+        .opt-btn.wrong { border-color: #dc2626 !important; background-color: #fee2e2 !important; color: #b91c1c !important; text-decoration: line-through; }
         .shake {
             animation: shake 0.35s ease-in-out;
         }
@@ -133,15 +137,28 @@
                     <span class="text-2xl font-black text-amber-900">資訊安全小測驗</span>
                 </span>
                 <span class="flex items-center gap-3">
-                    <span class="bg-amber-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">5 題口頭檢查</span>
+                    <span class="bg-amber-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">登入後作答</span>
                     <i class="toggle-chevron fa-solid fa-chevron-down text-amber-500 text-lg"></i>
                 </span>
             </button>
             <div id="safety-quiz-body" class="p-6 space-y-4">
                 <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-slate-700 font-bold leading-relaxed">
-                    先在心裡選答案，再點選選項檢查。這個小測驗不記錄進度，只是幫你確認自己有沒有聽懂。
+                    登入 Google 後才能開始作答，完成後會把測驗進度記錄下來。
                 </div>
-                <div id="quiz-list" class="space-y-5"></div>
+                <div id="quiz-lock" class="text-center py-12 bg-amber-50 rounded-2xl border-2 border-dashed border-amber-300">
+                    <i class="fa-solid fa-lock text-5xl text-amber-300 mb-4 block"></i>
+                    <h4 class="text-xl font-black text-amber-800 mb-2">請先登入後再開始小測驗</h4>
+                    <p class="font-bold text-slate-600 mb-5">登入後，系統才能確認你的作答進度。</p>
+                    <button id="quiz-login-btn" class="bg-amber-500 hover:bg-amber-600 text-white font-black px-8 py-3 rounded-2xl shadow-md transition transform hover:scale-105">
+                        <i class="fa-brands fa-google mr-2"></i> Google 登入
+                    </button>
+                </div>
+                <div id="quiz-content" class="hidden">
+                    <div id="quiz-status-banner" class="hidden rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 mb-6">
+                        <div id="quiz-status-text" class="text-sm font-bold text-amber-800"></div>
+                    </div>
+                    <div id="quiz-container" class="space-y-6 max-w-3xl mx-auto"></div>
+                </div>
             </div>
         </section>
 
@@ -299,80 +316,6 @@ It's a ruler.</pre>
     </div>
 
     <script>
-        const safetyQuestions = [
-            {
-                q: "看到網路上的第一個搜尋結果時，最好的做法是什麼？",
-                options: ["立刻相信", "先看來源，再找其他資料比對", "只看圖片，不看文字", "只相信留言最多的網站"],
-                correctIndex: 1
-            },
-            {
-                q: "AI 回答問題時，哪一個說法比較正確？",
-                options: ["AI 說的一定正確", "AI 不可能犯錯", "AI 回答也需要查證", "AI 回答比老師說的永遠正確"],
-                correctIndex: 2
-            },
-            {
-                q: "查證網路訊息時，下面哪一件事很重要？",
-                options: ["看資料來源和日期", "只看標題", "只看誰轉貼", "看到驚人的內容就馬上分享"],
-                correctIndex: 0
-            },
-            {
-                q: "如果看到「今天下午全市停課」的網路訊息，最適合先去哪裡確認？",
-                options: ["官方網站或學校公告", "不認識的人留言", "遊戲聊天室", "隨便一張截圖"],
-                correctIndex: 0
-            },
-            {
-                q: "看到很驚人的網路消息時，分享以前最好先做什麼？",
-                options: ["馬上轉傳給所有同學", "看來源、看日期，並找其他可信資料確認", "只要圖片很清楚就相信", "看到很多人按讚就相信"],
-                correctIndex: 1
-            }
-        ];
-
-        function renderSafetyQuiz() {
-            const quizList = document.getElementById("quiz-list");
-            if (!quizList) return;
-
-            quizList.innerHTML = safetyQuestions.map((item, index) => `
-                <article class="rounded-2xl border-2 border-amber-100 bg-white p-5 shadow-sm">
-                    <h4 class="text-lg md:text-xl font-black text-amber-900 mb-4">${index + 1}. ${item.q}</h4>
-                    <div class="grid sm:grid-cols-2 gap-3">
-                        ${item.options.map((option, optionIndex) => `
-                            <button type="button" class="quiz-option rounded-xl border-2 border-slate-200 bg-slate-50 px-4 py-3 text-left font-bold text-slate-700 hover:border-amber-400 hover:bg-amber-50 transition" data-question="${index}" data-option="${optionIndex}">
-                                ${String.fromCharCode(65 + optionIndex)}. ${option}
-                            </button>
-                        `).join("")}
-                    </div>
-                    <p id="quiz-msg-${index}" class="mt-3 min-h-6 font-black"></p>
-                </article>
-            `).join("");
-        }
-
-        function handleQuizClick(event) {
-            const button = event.target.closest(".quiz-option");
-            if (!button) return;
-            const questionIndex = Number(button.dataset.question);
-            const optionIndex = Number(button.dataset.option);
-            const question = safetyQuestions[questionIndex];
-            const article = button.closest("article");
-            const msg = document.getElementById(`quiz-msg-${questionIndex}`);
-
-            article?.querySelectorAll(".quiz-option").forEach((optionButton) => {
-                optionButton.classList.remove("border-green-500", "bg-green-50", "text-green-700", "border-red-500", "bg-red-50", "text-red-700");
-                const optionValue = Number(optionButton.dataset.option);
-                if (optionValue === question.correctIndex) {
-                    optionButton.classList.add("border-green-500", "bg-green-50", "text-green-700");
-                }
-            });
-
-            if (optionIndex === question.correctIndex) {
-                msg.textContent = "答對了，這就是比較安全的做法。";
-                msg.className = "mt-3 min-h-6 font-black text-green-600";
-            } else {
-                button.classList.add("border-red-500", "bg-red-50", "text-red-700");
-                msg.textContent = `再想想，正確答案是 ${String.fromCharCode(65 + question.correctIndex)}。`;
-                msg.className = "mt-3 min-h-6 font-black text-red-600";
-            }
-        }
-
         window.openLightbox = function openLightbox(src) {
             const box = document.getElementById("lightbox");
             const image = document.getElementById("lightbox-img");
@@ -398,15 +341,171 @@ It's a ruler.</pre>
             });
         });
 
-        renderSafetyQuiz();
-        document.getElementById("quiz-list")?.addEventListener("click", handleQuizClick);
     </script>
 
     <script type="module">
+        import {
+            beginCentralizedLogin,
+            resolveSession,
+            supabase
+        } from "../shared/auth.js";
         import { initNavbarAuth } from "../shared/navbar-auth.js";
+        import { initQuizModule } from "../shared/quiz-module.js";
         import { initTypingChallenge } from "../shared/typing-challenge.js";
 
         initNavbarAuth();
+
+        const WEEK_CODE = "12";
+        const QUIZ_KEY = "media_literacy_quiz_1";
+        let currentSession = null;
+
+        const safetyQuestions = [
+            {
+                id: 1,
+                questionHtml: "看到網路上的第一個搜尋結果時，最好的做法是什麼？",
+                options: [
+                    { text: "A. 立刻相信", correct: false },
+                    { text: "B. 先看來源，再找其他資料比對", correct: true },
+                    { text: "C. 只看圖片，不看文字", correct: false },
+                    { text: "D. 只相信留言最多的網站", correct: false }
+                ]
+            },
+            {
+                id: 2,
+                questionHtml: "AI 回答問題時，哪一個說法比較正確？",
+                options: [
+                    { text: "A. AI 說的一定正確", correct: false },
+                    { text: "B. AI 不可能犯錯", correct: false },
+                    { text: "C. AI 回答也需要查證", correct: true },
+                    { text: "D. AI 回答比老師說的永遠正確", correct: false }
+                ]
+            },
+            {
+                id: 3,
+                questionHtml: "查證網路訊息時，下面哪一件事很重要？",
+                options: [
+                    { text: "A. 看資料來源和日期", correct: true },
+                    { text: "B. 只看標題", correct: false },
+                    { text: "C. 只看誰轉貼", correct: false },
+                    { text: "D. 看到驚人的內容就馬上分享", correct: false }
+                ]
+            },
+            {
+                id: 4,
+                questionHtml: "如果看到「今天下午全市停課」的網路訊息，最適合先去哪裡確認？",
+                options: [
+                    { text: "A. 官方網站或學校公告", correct: true },
+                    { text: "B. 不認識的人留言", correct: false },
+                    { text: "C. 遊戲聊天室", correct: false },
+                    { text: "D. 隨便一張截圖", correct: false }
+                ]
+            },
+            {
+                id: 5,
+                questionHtml: "看到很驚人的網路消息時，分享以前最好先做什麼？",
+                options: [
+                    { text: "A. 馬上轉傳給所有同學", correct: false },
+                    { text: "B. 看來源、看日期，並找其他可信資料確認", correct: true },
+                    { text: "C. 只要圖片很清楚就相信", correct: false },
+                    { text: "D. 看到很多人按讚就相信", correct: false }
+                ]
+            }
+        ];
+
+        function signInWithGoogle() {
+            beginCentralizedLogin({ returnTo: window.location.href });
+        }
+
+        async function handleQuizAuthUpdate(session) {
+            currentSession = session;
+            await quiz.handleAuthChange(session);
+        }
+
+        async function getQuizUser() {
+            if (currentSession?.user) return currentSession.user;
+            currentSession = await resolveSession();
+            await handleQuizAuthUpdate(currentSession);
+            return currentSession?.user ?? null;
+        }
+
+        async function loadQuizProgress() {
+            if (!currentSession?.user) return null;
+            const { data, error } = await supabase
+                .from("student_progress")
+                .select("completed, score")
+                .eq("user_id", currentSession.user.id)
+                .eq("week_code", WEEK_CODE)
+                .eq("activity_key", QUIZ_KEY)
+                .maybeSingle();
+            if (error || !data?.completed) return null;
+            return { completed: true, score: data.score };
+        }
+
+        async function saveQuizProgress(score) {
+            const user = await getQuizUser();
+            if (!user) return false;
+            const payload = {
+                user_id: user.id,
+                week_code: WEEK_CODE,
+                activity_key: QUIZ_KEY,
+                current_level: safetyQuestions.length,
+                completed: true,
+                score,
+                updated_at: new Date().toISOString()
+            };
+            const { error } = await supabase
+                .from("student_progress")
+                .upsert(payload, { onConflict: "user_id,week_code,activity_key" });
+            return !error;
+        }
+
+        const quiz = initQuizModule({
+            questions: safetyQuestions,
+            selectors: {
+                lock: "quiz-lock",
+                content: "quiz-content",
+                container: "quiz-container",
+                statusBanner: "quiz-status-banner",
+                statusText: "quiz-status-text"
+            },
+            messages: {
+                questionLabel: (index) => `第 ${index} 題`,
+                submitButton: "送出測驗",
+                submittedButton: "已完成",
+                unansweredAlert: (remaining) => `還有 ${remaining} 題還沒選，請先全部作答。`,
+                scoreLabel: (correct, total) => `答對：${correct} / ${total} 題`,
+                completedBanner: (score, total) => `你已完成資訊安全小測驗，分數：${score ?? "?"} / ${total} 題。`,
+                unauthenticated: "登入 Google 後，才能開始資訊安全小測驗。",
+                resultMessages: {
+                    perfect: ["太棒了", "你很會查證網路與 AI 訊息。"],
+                    great: ["很接近", "只差一點點，記得分享前先查證。"],
+                    good: ["有進步", "再複習來源、日期和官方公告會更穩。"],
+                    retry: ["再試試", "網路訊息不要急著相信，先查證最重要。"]
+                }
+            },
+            loadProgress: loadQuizProgress,
+            saveProgress: saveQuizProgress,
+            getCurrentUser: getQuizUser,
+            onRequireLogin: signInWithGoogle,
+            onAfterSubmit: async ({ correct, total }) => {
+                if (correct === total) {
+                    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                }
+                document.getElementById("quiz-result")?.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        });
+
+        window.selectOption = function selectOption(qId, btnEl) {
+            quiz.selectOption(qId, btnEl);
+        };
+        window.submitQuiz = async function submitQuiz() {
+            await quiz.submit();
+        };
+        document.getElementById("quiz-login-btn")?.addEventListener("click", signInWithGoogle);
+        supabase.auth.onAuthStateChange((_event, session) => {
+            handleQuizAuthUpdate(session);
+        });
+        resolveSession().then(handleQuizAuthUpdate);
 
         const levelsData = [
             { id: 1, ans: "What's this? It's a pencil." },
