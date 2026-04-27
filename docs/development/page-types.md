@@ -53,7 +53,7 @@
 | 項目 | 狀態 |
 |------|------|
 | 共用模組 | `navbar.js`、`navbar-auth.js`、`typing-challenge.js`、`canvas-confetti`（CDN） |
-| 需要登入 | 建議（未登入可練習但不記錄） |
+| 需要登入 | **強制**（未登入不可開始闖關） |
 | 進度記錄 | **是**，存到 `student_progress`（`week_code` + `activity_key`） |
 | student_progress | **是** |
 | 讀取 week_visibility | 否 |
@@ -71,6 +71,10 @@
 | week10 | `"10"` | `typing_task_2` |
 
 **必須同時呼叫 `initNavbarAuth()`**：`initTypingChallenge` 的 button listener 是直接綁定，會因 navbar 重渲失效，必須靠 `initNavbarAuth` 的事件代理補位。
+
+**未登入行為**：打字闖關必須先登入才可開始。未登入時，輸入框與檢查按鈕應為 disabled，不可讓學生完成關卡後才發現進度沒有保存。
+
+**測驗 / 小測驗規則**：只要頁面提供可點選作答的測驗 UI，預設必須登入鎖定並寫入 `student_progress`。請使用 `shared/quiz-module.js` 或既有 quiz adapter；不可手寫未登入可作答的前端 quiz。若只是教師口頭提問，應做成靜態文字，不做可點選作答 UI。
 
 ---
 

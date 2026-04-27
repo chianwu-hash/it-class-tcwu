@@ -10,9 +10,9 @@ const DEFAULT_PROGRESS_MESSAGES = {
     completed: "你已經把整套練習走完了，今天可以直接複習，或重新再練一次。",
     resumed: (level) => `已幫你接回上次的進度，這次從第 ${level} 關繼續練習。`,
     firstLogin: "已登入成功，這次的練習過程會自動記錄下來。",
-    unauthenticated: "尚未登入時，練習不會保存；登入後會自動記錄進度。",
+    unauthenticated: "請先登入 Google，才能開始打字闖關並記錄進度。",
     loadError: "進度暫時讀取不到，先照常練習，待會再試一次。",
-    saveNoSession: "目前沒有登入狀態，這次的練習不會保存，請先重新登入。",
+    saveNoSession: "目前沒有登入狀態，請先登入後再開始闖關。",
     saveCompleted: "已幫你記下這次完整練習的進度，下次登入也會接著記得。",
     saveNextLevel: (level) => `已記下你的練習進度，下次可以從第 ${level} 關繼續。`,
     saveError: "進度暫時沒有記錄成功，先不要關掉頁面，稍後再試一次。",
@@ -20,8 +20,9 @@ const DEFAULT_PROGRESS_MESSAGES = {
     resetConfirm: "要重新開始練習嗎？這會把目前的進度重設回第 1 關。",
     resetError: "重新開始練習暫時失敗，請稍後再試一次。",
     resetVerificationError: "重新開始練習的驗證沒有成功，請再試一次。",
-    noLoginLevelAdvance: "目前是未登入練習模式，這次的練習過程不會保存。",
-    noLoginCompleted: "目前是未登入練習模式，這次完整練習的過程不會保存。"
+    loginRequired: "請先登入 Google，系統確認身分後才可以開始闖關。",
+    noLoginLevelAdvance: "請先登入 Google，才能進入下一關。",
+    noLoginCompleted: "請先登入 Google，才能完成並保存闖關結果。"
 };
 
 const DEFAULT_CELEBRATION_CONTENT = {
@@ -68,6 +69,20 @@ export function initTypingChallenge({
             inputEl.setAttribute("spellcheck", "false");
             inputEl.setAttribute("data-form-type", "other");
         }
+    }
+
+    function setTypingLocked(locked) {
+        const container = document.getElementById("typing-levels-container") || document;
+        container.querySelectorAll("input[id^='input-level'], textarea[id^='input-level']").forEach((inputEl) => {
+            inputEl.disabled = locked;
+            inputEl.classList.toggle("opacity-60", locked);
+            inputEl.classList.toggle("cursor-not-allowed", locked);
+        });
+        container.querySelectorAll("button[onclick^='checkLevel']").forEach((buttonEl) => {
+            buttonEl.disabled = locked;
+            buttonEl.classList.toggle("opacity-60", locked);
+            buttonEl.classList.toggle("cursor-not-allowed", locked);
+        });
     }
 
     function clearProgressDebug() {
@@ -208,6 +223,8 @@ export function initTypingChallenge({
             logoutBtn?.classList.add("hidden");
             adminBtn?.classList.add("hidden");
         }
+
+        setTypingLocked(!session?.user);
 
         if (typeof afterAuthUpdate === "function") {
             await afterAuthUpdate(session);
@@ -450,9 +467,19 @@ export function initTypingChallenge({
             return;
         }
 
+        const user = await getActiveUser();
+        if (!user) {
+            msgEl.textContent = messages.loginRequired;
+            msgEl.className = "text-center font-black mt-4 min-h-12 text-base md:text-lg text-amber-600 leading-relaxed";
+            inputEl.classList.remove("shake");
+            void inputEl.offsetWidth;
+            inputEl.classList.add("shake");
+            loginBtn?.focus();
+            return;
+        }
+
         const userVal = normalizeInput(inputEl.value);
         const targetVal = levelsData[levelIndex - 1]?.ans;
-        const isLoggedIn = !!(await getActiveUser());
 
         if (userVal === targetVal) {
             msgEl.textContent = levelEncouragements[levelIndex] || "你有仔細檢查，也有慢慢修正，這一關練好了。";
@@ -467,21 +494,17 @@ export function initTypingChallenge({
             }
 
             if (levelIndex < maxLevel) {
-                if (isLoggedIn) {
-                    const didSave = await saveProgress(levelIndex + 1, false);
-                    if (!didSave) {
-                        msgEl.innerHTML = "⚠️ 你已經完成這一關了，但進度還沒記錄成功，請再按一次或稍後再試。";
-                        msgEl.className = "text-center font-bold mt-4 h-6 text-sm text-amber-600";
-                        inputEl.readOnly = false;
-                        inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800");
-                        inputEl.classList.add("border-amber-400", "bg-amber-50", "text-amber-800");
-                        if (btnEl) {
-                            btnEl.style.display = "";
-                        }
-                        return;
+                const didSave = await saveProgress(levelIndex + 1, false);
+                if (!didSave) {
+                    msgEl.innerHTML = "⚠️ 你已經完成這一關了，但進度還沒記錄成功，請再按一次或稍後再試。";
+                    msgEl.className = "text-center font-bold mt-4 h-6 text-sm text-amber-600";
+                    inputEl.readOnly = false;
+                    inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800");
+                    inputEl.classList.add("border-amber-400", "bg-amber-50", "text-amber-800");
+                    if (btnEl) {
+                        btnEl.style.display = "";
                     }
-                } else if (progressStatusEl) {
-                    progressStatusEl.textContent = messages.noLoginLevelAdvance;
+                    return;
                 }
 
                 const nextBlock = document.getElementById(`block-level${levelIndex + 1}`);
@@ -495,21 +518,17 @@ export function initTypingChallenge({
                 return;
             }
 
-            if (isLoggedIn) {
-                const didSave = await saveProgress(maxLevel, true);
-                if (!didSave) {
-                    msgEl.innerHTML = "⚠️ 你已經把最後一關完成了，但完整進度還沒記錄成功，請再按一次或稍後再試。";
-                    msgEl.className = "text-center font-bold mt-4 h-6 text-sm text-amber-600";
-                    inputEl.readOnly = false;
-                    inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800");
-                    inputEl.classList.add("border-amber-400", "bg-amber-50", "text-amber-800");
-                    if (btnEl) {
-                        btnEl.style.display = "";
-                    }
-                    return;
+            const didSave = await saveProgress(maxLevel, true);
+            if (!didSave) {
+                msgEl.innerHTML = "⚠️ 你已經把最後一關完成了，但完整進度還沒記錄成功，請再按一次或稍後再試。";
+                msgEl.className = "text-center font-bold mt-4 h-6 text-sm text-amber-600";
+                inputEl.readOnly = false;
+                inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800");
+                inputEl.classList.add("border-amber-400", "bg-amber-50", "text-amber-800");
+                if (btnEl) {
+                    btnEl.style.display = "";
                 }
-            } else if (progressStatusEl) {
-                progressStatusEl.textContent = messages.noLoginCompleted;
+                return;
             }
 
             triggerUltimateCelebration();

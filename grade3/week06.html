@@ -84,7 +84,7 @@
                 </div>
                 <div>
                     <div class="text-sm font-black text-cyan-800">闖關進度提示</div>
-                    <div id="progress-status" class="text-sm md:text-base font-bold text-cyan-700">尚未登入時，練習不會保存；登入後會自動記錄進度。</div>
+                    <div id="progress-status" class="text-sm md:text-base font-bold text-cyan-700">請先登入 Google，才能開始打字闖關並記錄進度。</div>
                 </div>
             </div>
         </div>
@@ -527,7 +527,7 @@
             currentSession = session;
             await quiz.handleAuthChange(session);
             if (!session?.user && progressStatusEl) {
-                progressStatusEl.textContent = "尚未登入時，練習不會保存；登入後會自動記錄進度。";
+                progressStatusEl.textContent = "請先登入 Google，才能開始打字闖關並記錄進度。";
             }
         }
 
@@ -743,15 +743,15 @@
                 completed: "你已經把中打五關全部完成了！",
                 resumed: (level) => `已幫你接回上次的進度，從第 ${level} 關繼續。`,
                 firstLogin: "第一次登入成功，從第 1 關開始！",
-                saveNoSession: "目前沒有登入狀態，練習不會保存，請先登入。",
+                saveNoSession: "目前沒有登入狀態，請先登入後再開始闖關。",
                 saveCompleted: "已記下中打五關的完整進度！",
                 saveNextLevel: (level) => `已記下進度，下次從第 ${level} 關繼續。`,
                 saveError: "進度暫時沒有記錄成功，請稍後再試。",
                 resetNoSession: "目前沒有登入，不能重新開始。",
                 resetConfirm: "要重新開始中打闖關嗎？這會把目前的進度重設回第 1 關。",
                 resetError: "重新開始失敗，請稍後再試。",
-                noLoginLevelAdvance: "目前是未登入模式，練習不會保存。",
-                noLoginCompleted: "目前是未登入模式，完整練習不會保存。"
+                noLoginLevelAdvance: "請先登入 Google，才能進入下一關。",
+                noLoginCompleted: "請先登入 Google，才能完成並保存闖關結果。"
             },
             celebrationContent: {
                 title: "許願成功！五關全部打完了！",

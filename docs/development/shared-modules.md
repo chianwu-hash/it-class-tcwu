@@ -91,6 +91,8 @@
 
 **內建的 listener 問題**：模組自身會對 `#login-btn` 等元素執行直接綁定（`loginBtn?.addEventListener`）。在 grade3 頁面，navbar 重渲後這些直接綁定會消失。**因此，所有使用 `initTypingChallenge` 的頁面，必須同時呼叫 `initNavbarAuth()`。**
 
+**未登入鎖定規則**：`initTypingChallenge` 必須在未登入時鎖定 `#typing-levels-container` 內的輸入框與 `checkLevel` 按鈕。學生不可在未登入狀態先完成關卡，避免完成後才發現沒有保存。
+
 **需要的外部 CDN**：`canvas-confetti`，必須在 `<head>` 加入，否則完成動畫會報 ReferenceError：
 ```html
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -125,6 +127,8 @@
 ## `shared/quiz-module.js`
 
 **責任**：通用題目問答 UI 邏輯（選項顯示、作答、送出、評分）。不直接操作 Supabase，由使用方的 adapter 負責讀寫。
+
+**登入規則**：只要是課程頁中的可點選測驗 / 小測驗，預設必須使用登入鎖定。未登入時顯示 lock 區塊，不渲染可作答題目；登入後才顯示 quiz content。若只是口頭檢查，請做成靜態文字，不做互動選項。
 
 **匯出**：`initQuizModule({ questions, selectors, messages, loadProgress, saveProgress, getCurrentUser, onRequireLogin, onAfterSubmit })`
 

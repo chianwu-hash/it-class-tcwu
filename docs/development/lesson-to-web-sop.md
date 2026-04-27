@@ -124,6 +124,8 @@
 - 是否有 `navbar.js`
 - 是否有 `initNavbarAuth()`
 - 是否有進度寫入
+- 若有打字闖關：未登入是否鎖定輸入框與檢查按鈕
+- 若有測驗 / 小測驗：是否使用 `shared/quiz-module.js` 或既有 adapter，未登入是否只顯示登入鎖定區
 - 是否有 spotlight 放大圖
 - 是否有外部連結卡
 - 是否有週卡首頁入口同步

@@ -138,7 +138,7 @@ initQuizModule({
     retry: ["💪", "先別灰心，知道哪裡不熟就是下一次進步的起點。"]
   },
   completedBanner: (score) => `你已經完成這份測驗，分數是 ${score ?? "?"} / 5 分。`,
-  unauthenticated: "尚未登入時，練習不會保存；登入後會自動記錄進度。"
+  unauthenticated: "登入 Google 後，才能開始測驗。"
 }
 ```
 
