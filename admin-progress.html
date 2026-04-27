@@ -350,16 +350,32 @@
             return type;
         }
 
-        function typingTotalLevels(activityKey) {
+        const typingTotalLevelsByWeekAndKey = {
+            "04:typing_task_2": 4,
+            "05:typing_task_3": 3,
+            "06:typing_task_4": 5,
+            "07:typing_task_5": 5,
+            "10:typing_task_2": 2,
+            "12:typing_task_5": 5
+        };
+
+        function typingTotalLevels(row) {
+            const weekCode = String(row?.week_code || '').padStart(2, '0');
+            const activityKey = String(row?.activity_key || '').toLowerCase();
+            const configuredTotal = typingTotalLevelsByWeekAndKey[`${weekCode}:${activityKey}`];
+            if (Number.isFinite(configuredTotal) && configuredTotal > 0) {
+                return Math.max(Number(row?.current_level) || 0, configuredTotal);
+            }
             const match = String(activityKey || '').toLowerCase().match(/^typing_task_(\d+)$/);
             const total = match ? Number.parseInt(match[1], 10) : NaN;
-            return Number.isFinite(total) && total > 0 ? total : 5;
+            const fallbackTotal = Number.isFinite(total) && total > 0 ? total : 5;
+            return Math.max(Number(row?.current_level) || 0, fallbackTotal);
         }
 
         function progressLabel(row) {
             const type = normalizedActivityType(row);
             if (type === 'typing') {
-                const totalLevels = typingTotalLevels(row.activity_key);
+                const totalLevels = typingTotalLevels(row);
                 return row.completed ? `第 ${row.current_level}/${totalLevels} 關（完成）` : `第 ${row.current_level}/${totalLevels} 關`;
             }
             if (type === 'quiz') {
