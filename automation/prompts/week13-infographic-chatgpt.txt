@@ -1,0 +1,52 @@
+Create a polished 16:9 educational infographic card for an elementary school Grade 6 computer class.
+
+Topic:
+Week 13 Canva graduation video final workflow: review, export, submit, and share safely.
+
+Visual style:
+- Bright, clean, friendly classroom infographic style.
+- Match the existing Grade 6 Week 08 infographic mood: light background, strong black title, clear rounded information blocks, blue-green borders, soft shadows, simple teaching icons, cute but not childish.
+- Suitable for projection on a classroom screen.
+- Large readable Traditional Chinese text.
+- Do not make it look like an advertisement.
+- Do not use dark, dramatic, or overly busy visuals.
+
+Required visible title:
+第13週 作品匯出與繳交
+
+Required subtitle:
+先檢查，再匯出；先同意，再分享
+
+Main layout:
+Use four clear information cards arranged in a 2x2 grid, each with a simple icon.
+
+Card 1:
+作品回顧
+範本、照片、文字、動畫、配樂
+
+Card 2:
+匯出 MP4
+先播放預覽，再下載影片
+
+Card 3:
+繳交 LoiLoNote
+上傳成功，老師才收得到
+
+Card 4:
+分享前檢查
+照片要取得本人同意
+
+Add a small bottom checklist strip:
+預覽完成　MP4完成　LoiLoNote完成　同意檢查完成
+
+Visual elements:
+- A student or small group looking at a laptop with a video timeline.
+- Simple icons: play button, MP4 file, upload arrow, shield or consent check.
+- A friendly classroom/workspace mood.
+- Use enough whitespace.
+
+Text rules:
+- Use Traditional Chinese only.
+- Do not add English labels, fake URLs, fake brand names, dates, watermarks, or extra school names.
+- Keep all Chinese text large and legible.
+- If there is too much text, prioritize the required title, subtitle, four card headings, and the short checklist strip.
