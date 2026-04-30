@@ -143,14 +143,18 @@ async function waitForLatestAssistantResponse(page, prompt, options, initialStat
         best = state.assistantText;
       }
 
-      if (state.assistantText && state.assistantText === previous) {
+      const isPlaceholder =
+        state.assistantText.includes('Consulting your sources') ||
+        state.assistantText.includes('Reviewing the content');
+
+      if (state.assistantText && !isPlaceholder && state.assistantText === previous) {
         stable += 1;
       } else {
         previous = state.assistantText;
         stable = 0;
       }
 
-      if (state.assistantText && stable >= options.stableChecks) {
+      if (state.assistantText && !isPlaceholder && stable >= options.stableChecks) {
         return state.assistantText;
       }
     }

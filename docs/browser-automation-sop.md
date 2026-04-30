@@ -229,7 +229,7 @@ npm.cmd run wayground:delete -- 21,20,19
 - `automation/notebooklm-ask.js`
 
 用途：
-- 連到已登入的正式 Chrome（CDP `9222`）
+- 連到已登入的正式 Chrome（預設 CDP `9222`，也可依使用者已開啟的瀏覽器改用 `9333`）
 - 找到目前開著的 NotebookLM 筆記本分頁
 - 把提示詞送進底部對話框
 - 等待最新回答穩定
@@ -244,9 +244,7 @@ npm.cmd run wayground:delete -- 21,20,19
 範例：
 
 ```powershell
-@'
-請根據這個筆記本中的來源，列出本週技能與對應頁碼。
-'@ | npm.cmd run notebooklm:ask -- --out automation/output/notebooklm-latest-response.txt
+npm.cmd run notebooklm:ask -- --cdp-url http://127.0.0.1:9333 --prompt-file automation/output/notebooklm-week13-prompt.txt --out automation/output/notebooklm-week13-page-refs.txt --screenshot automation/output/notebooklm-week13-page-refs.png --stable-checks 4 --poll-ms 3000 --timeout-ms 300000
 ```
 
 預設輸出：
@@ -260,6 +258,7 @@ npm.cmd run wayground:delete -- 21,20,19
 - 腳本會操作目前最後一個 NotebookLM 筆記本頁面
 - 若回答格式之後要回寫教案 / HTML，請再接 `notebooklm:page-refs`
 - 若提示詞含中文，優先使用 `--prompt-file`；PowerShell 管線有機會把中文轉成亂碼，導致 NotebookLM 收到錯誤內容
+- 若輸出只有 `Consulting your sources...` 或 `Reviewing the content...`，代表 NotebookLM 尚未完成回答；重新整理 NotebookLM 後可用同一個 prompt file 再送一次
 
 ## 15. ChatGPT 生圖自動化
 

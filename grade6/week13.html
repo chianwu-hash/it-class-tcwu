@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六年級資訊課 - 第 13 週 作品匯出與繳交</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(14, 165, 233, 0.16), transparent 26%),
+                radial-gradient(circle at top right, rgba(16, 185, 129, 0.14), transparent 28%),
+                linear-gradient(180deg, #f0f9ff 0%, #ecfdf5 50%, #f8fafc 100%);
+        }
+        .info-card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .info-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 34px rgba(15, 23, 42, 0.12);
+        }
+        .step-num {
+            width: 2.25rem;
+            height: 2.25rem;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pb-12">
+
+    <script src="navbar.js?v=20260430"></script>
+
+    <header class="bg-gradient-to-r from-sky-700 via-teal-700 to-emerald-700 text-white shadow-xl mb-8">
+        <div class="max-w-6xl mx-auto px-6 py-12 relative overflow-hidden">
+            <div class="relative z-10 flex items-center justify-between gap-6">
+                <div>
+                    <h2 class="text-xl font-bold text-sky-100 mb-2">六年級資訊課 114學年度第二學期 第 13 週</h2>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">作品匯出、繳交與分享準備</h1>
+                    <p class="text-xl md:text-2xl text-sky-50 font-black leading-relaxed">
+                        從範本、照片、文字、動畫到配樂，<br>
+                        今天把畢業影片匯出成 MP4，並繳交到 LoiLoNote。
+                    </p>
+                </div>
+                <div class="hidden md:block text-7xl opacity-85 transform rotate-6 drop-shadow-lg">
+                    <i class="fa-solid fa-file-video"></i>
+                </div>
+            </div>
+            <i class="fa-solid fa-cloud-arrow-up absolute text-white opacity-10 text-9xl -bottom-10 right-4"></i>
+            <i class="fa-solid fa-share-nodes absolute text-white opacity-10 text-8xl -top-6 -left-4 -rotate-12"></i>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 space-y-8">
+
+        <section class="bg-white rounded-3xl border border-sky-100 shadow-sm overflow-hidden">
+            <div class="bg-sky-100 px-6 py-4 border-b border-sky-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-route text-sky-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-sky-900">今天怎麼進行</h3>
+                </div>
+                <span class="bg-sky-600 text-white text-xs px-3 py-1 rounded-full font-bold">40 分鐘完稿任務</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-2 xl:grid-cols-5 gap-4">
+                <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5">
+                    <div class="step-num rounded-full bg-sky-600 text-white flex items-center justify-center font-black mb-3">1</div>
+                    <h4 class="text-xl font-black text-sky-950 mb-2">回顧流程</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">確認作品從範本、照片、文字、動畫、轉場到配樂都完成。</p>
+                </div>
+                <div class="bg-teal-50 border border-teal-200 rounded-2xl p-5">
+                    <div class="step-num rounded-full bg-teal-600 text-white flex items-center justify-center font-black mb-3">2</div>
+                    <h4 class="text-xl font-black text-teal-950 mb-2">播放預覽</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">至少看一次，檢查文字、照片、動畫、轉場與音樂。</p>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+                    <div class="step-num rounded-full bg-emerald-600 text-white flex items-center justify-center font-black mb-3">3</div>
+                    <h4 class="text-xl font-black text-emerald-950 mb-2">匯出 MP4</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">在 Canva 下載影片格式，並確認下載檔可以播放。</p>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                    <div class="step-num rounded-full bg-amber-500 text-white flex items-center justify-center font-black mb-3">4</div>
+                    <h4 class="text-xl font-black text-amber-950 mb-2">繳交作品</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">把 MP4 上傳到 LoiLoNote，看到繳交完成才算完成。</p>
+                </div>
+                <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5">
+                    <div class="step-num rounded-full bg-rose-600 text-white flex items-center justify-center font-black mb-3">5</div>
+                    <h4 class="text-xl font-black text-rose-950 mb-2">分享檢查</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">願意分享前，先確認作品裡的照片有取得本人同意。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-slate-900 rounded-3xl shadow-xl text-white p-6 md:p-8">
+            <div class="grid lg:grid-cols-[1.1fr,0.9fr] gap-6 items-center">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-white/10 px-4 py-1.5 rounded-full text-sm font-black mb-4">
+                        <i class="fa-solid fa-lightbulb"></i> 本週核心觀念
+                    </div>
+                    <h3 class="text-3xl font-black mb-4 text-sky-200">匯出前先檢查，分享前先尊重</h3>
+                    <p class="text-slate-100 text-lg font-bold leading-relaxed">作品不是只要有檔案就好。匯出前要確認影片真的能完整播放；如果要分享給大家看，也要確認照片中的同學願意被展示。</p>
+                </div>
+                <div class="bg-white/10 rounded-2xl p-5 border border-white/15">
+                    <ul class="space-y-3 text-lg font-black">
+                        <li><i class="fa-solid fa-check text-sky-300 mr-2"></i>先預覽，再下載</li>
+                        <li><i class="fa-solid fa-check text-sky-300 mr-2"></i>下載 MP4，不是 PNG 或 PDF</li>
+                        <li><i class="fa-solid fa-check text-sky-300 mr-2"></i>繳交到 LoiLoNote 才算完成</li>
+                        <li><i class="fa-solid fa-check text-sky-300 mr-2"></i>分享作品前先檢查照片同意</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid lg:grid-cols-[0.9fr,1.1fr] gap-6">
+            <div class="bg-white rounded-3xl border border-amber-100 shadow-sm overflow-hidden">
+                <div class="bg-amber-100 px-6 py-4 border-b border-amber-200 flex items-center justify-between gap-4 flex-wrap">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-magnifying-glass text-amber-700 text-2xl mr-3"></i>
+                        <h3 class="text-2xl font-black text-amber-900">匯出前檢查</h3>
+                    </div>
+                    <span class="bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold">先修最明顯問題</span>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                        <h4 class="text-xl font-black text-slate-900 mb-3">播放預覽時看這些</h4>
+                        <ul class="space-y-2 text-lg font-black text-slate-700">
+                            <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>作品能不能從頭播到尾？</li>
+                            <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>文字有沒有太小或被背景吃掉？</li>
+                            <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>照片有沒有裁到重要人物？</li>
+                            <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>動畫或轉場會不會太亂？</li>
+                            <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>配樂會不會太大聲？</li>
+                        </ul>
+                    </div>
+                    <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-rose-700 mb-2">時間不夠時</div>
+                        <p class="text-lg font-black text-slate-800 leading-relaxed">不要重新做整份作品，先修正最明顯的 1 到 2 個問題，再準備匯出。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-emerald-100 shadow-sm overflow-hidden">
+                <div class="bg-emerald-100 px-6 py-4 border-b border-emerald-200 flex items-center justify-between gap-4 flex-wrap">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-download text-emerald-700 text-2xl mr-3"></i>
+                        <h3 class="text-2xl font-black text-emerald-900">MP4 匯出與 LoiLoNote 繳交</h3>
+                    </div>
+                    <span class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-full font-bold">照順序做</span>
+                </div>
+                <div class="p-6 grid md:grid-cols-2 gap-4">
+                    <div class="info-card bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-emerald-700 mb-2">Canva 匯出</div>
+                        <ul class="space-y-2 text-lg font-black text-slate-700">
+                            <li><i class="fa-solid fa-1 text-emerald-500 mr-2"></i>點分享或下載</li>
+                            <li><i class="fa-solid fa-2 text-emerald-500 mr-2"></i>檔案類型選 MP4 影片</li>
+                            <li><i class="fa-solid fa-3 text-emerald-500 mr-2"></i>等待下載完成</li>
+                            <li><i class="fa-solid fa-4 text-emerald-500 mr-2"></i>到下載資料夾找影片</li>
+                        </ul>
+                    </div>
+                    <div class="info-card bg-sky-50 border border-sky-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-sky-700 mb-2">LoiLoNote 繳交</div>
+                        <ul class="space-y-2 text-lg font-black text-slate-700">
+                            <li><i class="fa-solid fa-circle-check text-sky-500 mr-2"></i>上傳的是 MP4，不是 Canva 連結</li>
+                            <li><i class="fa-solid fa-circle-check text-sky-500 mr-2"></i>確認是自己的作品</li>
+                            <li><i class="fa-solid fa-circle-check text-sky-500 mr-2"></i>等待上傳完成</li>
+                            <li><i class="fa-solid fa-circle-check text-sky-500 mr-2"></i>看到繳交完成再離開</li>
+                        </ul>
+                    </div>
+                    <div class="md:col-span-2 bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-amber-700 mb-2">今天最容易出錯</div>
+                        <p class="text-lg font-black text-slate-800 leading-relaxed">只下載到電腦不算完成；只有成功上傳到 LoiLoNote，老師才收得到你的作品。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-rose-100 shadow-sm overflow-hidden">
+            <div class="bg-rose-100 px-6 py-4 border-b border-rose-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-user-shield text-rose-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-rose-900">作品分享區檢查</h3>
+                </div>
+                <span class="bg-rose-600 text-white text-xs px-3 py-1 rounded-full font-bold">願意分享才放入</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-2 gap-5">
+                <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5">
+                    <h4 class="text-2xl font-black text-rose-900 mb-3">分享前先問自己</h4>
+                    <ul class="space-y-2 text-lg font-black text-slate-700">
+                        <li><i class="fa-solid fa-circle-check text-rose-500 mr-2"></i>影片裡的同學願意被展示嗎？</li>
+                        <li><i class="fa-solid fa-circle-check text-rose-500 mr-2"></i>有沒有尷尬、惡搞或可能讓人不舒服的照片？</li>
+                        <li><i class="fa-solid fa-circle-check text-rose-500 mr-2"></i>有沒有聊天畫面、個人資料或私人物品？</li>
+                        <li><i class="fa-solid fa-circle-check text-rose-500 mr-2"></i>不確定時，有沒有先請老師看過？</li>
+                    </ul>
+                </div>
+                <div class="bg-slate-900 text-white rounded-2xl p-5">
+                    <h4 class="text-2xl font-black text-rose-200 mb-3">分享區原則</h4>
+                    <ul class="space-y-3 text-lg font-black">
+                        <li><i class="fa-solid fa-heart text-rose-300 mr-2"></i>自願分享，不強迫公開</li>
+                        <li><i class="fa-solid fa-heart text-rose-300 mr-2"></i>有別人的照片，要尊重本人感受</li>
+                        <li><i class="fa-solid fa-heart text-rose-300 mr-2"></i>不確定就先不要放入分享區</li>
+                        <li><i class="fa-solid fa-heart text-rose-300 mr-2"></i>分享作品要讓人感到被尊重</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-violet-100 shadow-sm overflow-hidden">
+            <div class="bg-violet-100 px-6 py-4 border-b border-violet-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-wand-magic-sparkles text-violet-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-violet-900">我已經完成了，還可以做什麼？</h3>
+                </div>
+                <span class="bg-violet-600 text-white text-xs px-3 py-1 rounded-full font-bold">作品升級任務</span>
+            </div>
+            <div class="p-6 space-y-5">
+                <div class="bg-violet-50 border border-violet-200 rounded-2xl p-5">
+                    <p class="text-lg font-black text-slate-800 leading-relaxed">如果你已經匯出並繳交，但作品只有套範本、照片很少、文字也沒有改，請選 2 項升級任務完成後，再請老師確認。</p>
+                </div>
+                <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <div class="info-card bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-violet-700 mb-2">升級 1</div>
+                        <h4 class="text-xl font-black text-slate-900 mb-2">每頁補一句自己的文字</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">不要保留範本文字，至少寫一句這張照片想說的回憶。</p>
+                    </div>
+                    <div class="info-card bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-violet-700 mb-2">升級 2</div>
+                        <h4 class="text-xl font-black text-slate-900 mb-2">補一頁片尾感謝</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">寫給老師、同學、家人或六年級自己的畢業祝福。</p>
+                    </div>
+                    <div class="info-card bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-violet-700 mb-2">升級 3</div>
+                        <h4 class="text-xl font-black text-slate-900 mb-2">播放預覽並修正 1 個問題</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">找出最明顯的錯誤，例如文字太小、照片裁切不佳或音樂太大聲。</p>
+                    </div>
+                    <div class="info-card bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-violet-700 mb-2">升級 4</div>
+                        <h4 class="text-xl font-black text-slate-900 mb-2">檢查照片同意</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">確認影片裡的同學願意被分享，不確定就先問或換照片。</p>
+                    </div>
+                    <div class="info-card bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-violet-700 mb-2">升級 5</div>
+                        <h4 class="text-xl font-black text-slate-900 mb-2">寫 20 字作品介紹</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">用一句話介紹這部影片想表達的畢業回憶或感謝。</p>
+                    </div>
+                    <div class="info-card bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-violet-700 mb-2">升級 6</div>
+                        <h4 class="text-xl font-black text-slate-900 mb-2">協助同學找檔案或上傳</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">只能協助流程，不代替同學修改或操作作品內容。</p>
+                    </div>
+                </div>
+                <a href="files/week13-upgrade-tickets.docx" class="inline-flex items-center bg-violet-700 hover:bg-violet-800 text-white font-black px-5 py-3 rounded-full transition">
+                    下載作品升級任務單 <i class="fa-solid fa-file-word ml-2"></i>
+                </a>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-sky-100 shadow-sm overflow-hidden">
+            <div class="bg-sky-100 px-6 py-4 border-b border-sky-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-book-open text-sky-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-sky-900">技能參考課本頁碼</h3>
+                </div>
+                <span class="bg-sky-600 text-white text-xs px-3 py-1 rounded-full font-bold">NotebookLM 整理</span>
+            </div>
+            <div class="p-6 space-y-5">
+                <!-- PAGE_REFS:START -->
+<div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div class="info-card bg-slate-50 border border-slate-200 rounded-2xl p-5">
+        <div class="text-sm font-black text-sky-700 mb-2">技能 1</div>
+        <h4 class="text-xl font-black text-slate-900 mb-2">回顧作品製作流程</h4>
+        <p class="text-lg font-black text-sky-800 mb-3">P.60、P.70、P.117-118、P.119、P.125、P.148、P.157-158</p>
+        <p class="font-bold text-slate-700 leading-relaxed">範本套用、上傳與加入照片、文字編輯、轉場與背景音樂分散在不同章節，適合教師帶學生快速回顧。</p>
+    </div>
+    <div class="info-card bg-slate-50 border border-slate-200 rounded-2xl p-5">
+        <div class="text-sm font-black text-sky-700 mb-2">技能 2</div>
+        <h4 class="text-xl font-black text-slate-900 mb-2">匯出前播放預覽</h4>
+        <p class="text-lg font-black text-sky-800 mb-3">P.125、P.127、P.146、P.158</p>
+        <p class="font-bold text-slate-700 leading-relaxed">可參考轉場即時預覽、全螢幕展示、從頭播放影片與加入音樂後從時間軸最前端播放確認。</p>
+    </div>
+    <div class="info-card bg-slate-50 border border-slate-200 rounded-2xl p-5">
+        <div class="text-sm font-black text-sky-700 mb-2">技能 3</div>
+        <h4 class="text-xl font-black text-slate-900 mb-2">匯出 MP4 影片</h4>
+        <p class="text-lg font-black text-sky-800 mb-3">P.95</p>
+        <p class="font-bold text-slate-700 leading-relaxed">P.95 圖解將包含動畫的作品輸出為影片：分享或下載、檔案類型選 MP4 影片、按下載。</p>
+    </div>
+    <div class="info-card bg-slate-50 border border-slate-200 rounded-2xl p-5">
+        <div class="text-sm font-black text-sky-700 mb-2">技能 4</div>
+        <h4 class="text-xl font-black text-slate-900 mb-2">確認下載後影片</h4>
+        <p class="text-lg font-black text-sky-800 mb-3">P.95</p>
+        <p class="font-bold text-slate-700 leading-relaxed">P.95 說明輸出完成後可在下載資料夾看到影片檔案，並點兩下確認影片是否正常播放。</p>
+    </div>
+</div>
+<div class="grid md:grid-cols-3 gap-4">
+    <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5">
+        <div class="text-sm font-black text-rose-700 mb-2">課本未明確對應</div>
+        <h4 class="text-xl font-black text-slate-900 mb-2">LoiLoNote 繳交</h4>
+        <p class="font-bold text-slate-700 leading-relaxed">LoiLoNote 是外部教學平台，需由老師投影示範上傳流程。</p>
+    </div>
+    <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5">
+        <div class="text-sm font-black text-rose-700 mb-2">課本未明確對應</div>
+        <h4 class="text-xl font-black text-slate-900 mb-2">作品分享區</h4>
+        <p class="font-bold text-slate-700 leading-relaxed">分享區屬於課堂活動動線，需由老師說明自願分享與展示方式。</p>
+    </div>
+    <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5">
+        <div class="text-sm font-black text-rose-700 mb-2">課本未明確對應</div>
+        <h4 class="text-xl font-black text-slate-900 mb-2">照片同意檢查</h4>
+        <p class="font-bold text-slate-700 leading-relaxed">照片同意與肖像權屬於資訊倫理與法治素養，老師要親自提醒與把關。</p>
+    </div>
+</div>
+<div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+    <div class="text-sm font-black text-amber-700 mb-2">先翻哪幾頁最有幫助</div>
+    <ul class="space-y-2 text-lg font-black text-slate-800">
+        <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>P.95 是本週 MP4 匯出與下載檔案檢查的核心頁碼。</li>
+        <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>LoiLoNote 繳交流程課本沒有，請跟著老師投影示範。</li>
+        <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>分享前的照片同意與肖像檢查不在課本中，請以老師提醒為準。</li>
+    </ul>
+</div>
+<!-- PAGE_REFS:END -->
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border border-amber-100 shadow-sm overflow-hidden">
+            <div class="bg-amber-100 px-6 py-4 border-b border-amber-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-laptop-file text-amber-700 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-black text-amber-900">快速入口</h3>
+                </div>
+                <span class="bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold">先開好再操作</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-2 gap-4">
+                <a href="https://www.canva.com/" target="_blank" rel="noopener noreferrer" class="info-card block bg-slate-50 border-2 border-amber-200 rounded-2xl p-5 hover:border-amber-400">
+                    <div class="text-sm font-black text-amber-700 mb-2">Canva</div>
+                    <div class="text-lg font-black text-slate-900 break-all">https://www.canva.com/</div>
+                    <div class="mt-3 inline-flex items-center text-sm font-black text-amber-700">
+                        打開 Canva <i class="fa-solid fa-arrow-up-right-from-square ml-2"></i>
+                    </div>
+                </a>
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-amber-700 mb-2">LoiLoNote</div>
+                    <p class="text-lg font-black text-slate-800 leading-relaxed">請依老師投影進入指定繳交區，上傳 MP4 影片檔。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-gradient-to-r from-teal-800 to-slate-950 rounded-3xl shadow-xl text-white p-6 md:p-8">
+            <div class="grid lg:grid-cols-[1.2fr,0.8fr] gap-6 items-center">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-white/10 px-4 py-1.5 rounded-full text-sm font-black mb-4">
+                        <i class="fa-solid fa-flag-checkered"></i> 本週收尾
+                    </div>
+                    <h3 class="text-3xl font-black mb-4 text-sky-200">下載 MP4，繳交完成，分享前檢查</h3>
+                    <p class="text-slate-100 text-lg font-bold leading-relaxed">今天的任務是把作品變成可以收件與展示的影片。匯出前先預覽，繳交後再確認，如果要分享，記得先尊重照片中每個人的意願。</p>
+                </div>
+                <div class="bg-white/10 rounded-2xl p-5 border border-white/15">
+                    <ul class="space-y-3 text-lg font-black">
+                        <li><i class="fa-solid fa-check text-sky-300 mr-2"></i>播放預覽 1 次</li>
+                        <li><i class="fa-solid fa-check text-sky-300 mr-2"></i>匯出 MP4 影片</li>
+                        <li><i class="fa-solid fa-check text-sky-300 mr-2"></i>繳交到 LoiLoNote</li>
+                        <li><i class="fa-solid fa-check text-sky-300 mr-2"></i>分享前檢查照片同意</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { initNavbarAuth } from "../shared/navbar-auth.js";
+
+        initNavbarAuth();
+    </script>
+
+    <footer class="text-center mt-16 pb-8 text-gray-500 text-sm font-medium">
+        <p><i class="fa-solid fa-graduation-cap mr-1"></i> 新北市頂溪國小資訊課 - 六年級作品匯出、繳交與分享準備</p>
+    </footer>
+
+</body>
+</html>

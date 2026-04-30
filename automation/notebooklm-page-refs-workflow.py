@@ -36,6 +36,12 @@ def clean_line(line: str) -> str:
     return re.sub(r"\s+", " ", line).strip()
 
 
+def clean_note(note: str) -> str:
+    note = note.replace("<br>", " ")
+    note = note.replace("•", "")
+    return clean_line(note)
+
+
 def warn(message: str) -> None:
     print(f"[WARN] {message}", file=sys.stderr)
 
@@ -43,8 +49,8 @@ def warn(message: str) -> None:
 def extract_structured_block(raw_text: str) -> tuple[list[dict[str, str]], list[str]]:
     lines = [clean_line(line) for line in raw_text.splitlines()]
     header_index = None
-    for idx in range(len(lines) - 3, -1, -1):
-        header_window = "".join(lines[idx : idx + 4])
+    for idx in range(len(lines) - 5, -1, -1):
+        header_window = "".join(lines[idx : idx + 6])
         if "技能" in header_window and "可參考頁碼" in header_window and "頁碼重點" in header_window:
             header_index = idx
             break
@@ -64,7 +70,7 @@ def extract_structured_block(raw_text: str) -> tuple[list[dict[str, str]], list[
             break
         data_lines.append(line)
 
-    page_pattern = re.compile(r"^(P\.\d+(?:\s*,\s*P\.\d+)*)$|^未明確對應$")
+    page_pattern = re.compile(r"^(P\.\d+(?:-\d+)?(?:\s*,\s*P\.\d+(?:-\d+)?)*)$|^未明確對應$")
     index = 0
     while index < len(data_lines) - 2:
         if data_lines[index] in {"技能", "可參考頁碼", "頁碼重點"}:
@@ -72,7 +78,7 @@ def extract_structured_block(raw_text: str) -> tuple[list[dict[str, str]], list[
             continue
         skill = data_lines[index]
         pages = data_lines[index + 1]
-        note = data_lines[index + 2]
+        note = clean_note(data_lines[index + 2])
         if page_pattern.match(pages):
             rows.append({"skill": skill, "pages": pages.replace(", ", "、"), "note": note})
             index += 3

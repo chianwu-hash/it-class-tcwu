@@ -156,6 +156,23 @@
 - 技能｜可參考頁碼｜頁碼重點
 - 另補 3 行「給老師的提醒摘要」，方便之後直接回寫到網頁
 
+### 6.2.1 透過 CDP 自動送出頁碼查詢
+
+若使用者已經在支援 CDP 的正式 Chrome 中打開正確的 NotebookLM 筆記本，可直接用 `notebooklm:ask` 將提示詞送入目前開啟的筆記本。
+
+重要規則：
+
+- 中文提示詞一律先存成 UTF-8 `.txt` 檔，不要用 PowerShell inline / here-string 傳中文。
+- 若使用者指定 CDP `9333`，就明確加上 `--cdp-url http://127.0.0.1:9333`。
+- 回答若停在 `Consulting your sources...` 或 `Reviewing the content...`，代表 NotebookLM 尚未完成，需等待、重新整理 NotebookLM，或重新送出提示詞，不可把 placeholder 當成答案。
+- 頁碼表格請要求欄位固定為「技能 / 可參考頁碼 / 頁碼重點」，方便後續 `notebooklm:page-refs` 解析。
+
+範例：
+
+```powershell
+npm.cmd run notebooklm:ask -- --cdp-url http://127.0.0.1:9333 --prompt-file automation/output/notebooklm-week13-prompt.txt --out automation/output/notebooklm-week13-page-refs.txt --screenshot automation/output/notebooklm-week13-page-refs.png --stable-checks 4 --poll-ms 3000 --timeout-ms 300000
+```
+
 ### 6.3 回收答案後要做的事
 
 把結果同步寫進兩個地方：
@@ -208,8 +225,15 @@ npm.cmd run notebooklm:page-refs -- --input C:\Users\user\projects\it-class-tcwu
 
 - NotebookLM 問答與內容判讀仍由人主導
 - 但存檔、結構化、回寫已可重複使用
-- 目前頁碼格式主要辨識 `P.125`、`P.125, P.157`、`未明確對應`；若 NotebookLM 回成 `p.125`、`第125頁`、`P. 125` 等格式，腳本會跳 warning，需人工確認
+- 目前頁碼格式主要辨識 `P.125`、`P.125, P.157`、`P.117-118`、`未明確對應`；若 NotebookLM 回成 `p.125`、`第125頁`、`P. 125` 等格式，腳本會跳 warning，需人工確認
 - 若教師或使用者已知某個技能對應頁碼，但第一輪 NotebookLM 沒抓到，必須做第二輪「指定技能追問」，例如：`請再檢查本週是否有和路徑動畫相關的課本頁碼；若有請直接列出頁碼與對應技能。`
+
+第 13 週已實測成功的流程：
+
+1. 先建立 UTF-8 提示詞：`automation/output/notebooklm-week13-prompt.txt`
+2. 用 `notebooklm:ask` 連到 CDP `9333` 的 NotebookLM 筆記本，輸出：`automation/output/notebooklm-week13-page-refs.txt`
+3. 用 `notebooklm:page-refs` 產生 JSON / Markdown / HTML snippet，並回寫 `grade6/LessonPlan/Week 13.md`
+4. 若 NotebookLM 第一次卡住，可請使用者重新整理 NotebookLM 後重送同一份 prompt file
 
 ---
 
