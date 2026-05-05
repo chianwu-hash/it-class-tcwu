@@ -1,0 +1,44 @@
+Create a polished 16:9 educational infographic for elementary grade 3 students.
+
+Topic:
+認識網路沉迷
+
+Main message:
+網路是好工具，但如果停不下來、影響生活，就要留意。
+
+Required visible Chinese text:
+- 認識網路沉迷
+- 網路是好工具，不是生活的全部
+- 停不下來，會影響生活
+- 眼睛痠、脖子痛，要休息
+- 睡不好、功課退步，要留意
+- 時間到就停止
+- 遇到帳號問題，找大人幫忙
+
+Text accuracy requirement:
+- All Traditional Chinese text must be proofread and correct.
+- Use the exact phrase 「脖子痛」. Do not write 「膀子痛」 or any other similar-looking wrong word.
+- If any Chinese word is uncertain, omit that small label instead of inventing text.
+
+Visual direction:
+- Bright, friendly, classroom-safe infographic style for Taiwanese elementary students.
+- Use a clean 1920x1080 horizontal layout with one large title and four clear content blocks.
+- Show children using a computer or tablet in a healthy classroom/home learning context.
+- Add simple visual symbols: screen, eyes, neck/shoulder rest, sleep, schoolwork, trusted adult help.
+- Make the mood caring and supportive, not scary, not blaming, not shaming.
+
+Content blocks:
+1. 什麼是網路沉迷：停不下來，影響睡眠、功課、家人相處。
+2. 身體提醒：眼睛痠、脖子痛、腰背不舒服、手指累。
+3. 生活提醒：精神不集中、學習變差、人際受影響。
+4. 好做法：時間到就停止，休息活動，帳號出事找大人。
+
+Design rules:
+- Large readable Traditional Chinese text.
+- Keep text short; no long paragraphs.
+- Preserve the required Chinese phrases exactly.
+- Use warm colors with good contrast, not a single-color palette.
+- Use friendly icons and simple illustrations.
+- No horror, no dark mood, no crying close-ups, no addiction stereotype.
+- No phone brand logos, no game brand logos, no fake app logos, no watermark.
+- Do not include a weekly schedule or time table.

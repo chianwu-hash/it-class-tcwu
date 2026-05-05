@@ -1,0 +1,44 @@
+Create a polished 16:9 educational infographic for elementary grade 3 students.
+
+Topic:
+短影音與線上遊戲：停不下來要留意
+
+Main message:
+短影音一支接一支，線上遊戲再一場，都可能讓時間不知不覺過很久。
+
+Required visible Chinese text:
+- 短影音與線上遊戲
+- 一支接一支，時間會變很長
+- 再打一場，也要記得約定
+- 影響睡覺、功課、心情，就要留意
+- 時間到，先停止
+- 帳號或寶物出事，找大人幫忙
+
+Text accuracy requirement:
+- All Traditional Chinese text must be proofread and correct.
+- Preserve the required Chinese phrases exactly.
+- If any Chinese word is uncertain, omit that small label instead of inventing text.
+
+Visual direction:
+- Bright, friendly, classroom-safe infographic style for Taiwanese elementary students.
+- Use a clean 1920x1080 horizontal layout.
+- Split the image into two clear main areas:
+  1. 短影音：a child watching short videos, with simple repeated video cards or play icons, showing "再看一支" feeling without using any real app logo.
+  2. 線上遊戲：children playing an online game together, with a friendly clock/reminder showing "再打一場" and "時間到".
+- Add a calm adult/teacher helper icon in the corner for account or item problems.
+- Make the mood caring and supportive, not scary, not blaming, not shaming.
+
+Content blocks:
+1. 短影音提醒：影片很短，容易一直下一支，時間不知不覺變長。
+2. 線上遊戲提醒：任務、隊友、寶物和同學邀請，會讓人想再打一場。
+3. 需要留意：影響睡覺、功課、心情、眼睛休息或家人相處。
+4. 好做法：時間到先停止，休息活動，帳號或寶物出事找大人。
+
+Design rules:
+- Large readable Traditional Chinese text.
+- Keep text short; no long paragraphs.
+- Use warm colors with good contrast, not a single-color palette.
+- Use friendly icons and simple illustrations.
+- No horror, no dark mood, no crying close-ups, no addiction stereotype.
+- No real app logos, no video platform logos, no game brand logos, no fake app logos, no watermark.
+- Do not include a weekly schedule or time table.

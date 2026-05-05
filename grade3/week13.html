@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>三年級資訊課 - 第 12 週 網路識讀與 Google Maps</title>
+    <title>三年級資訊課 - 第 13 週 網路沉迷與 Gmail 通訊錄</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -12,9 +12,9 @@
         body {
             font-family: 'Noto Sans TC', sans-serif;
             background:
-                radial-gradient(circle at top right, rgba(14, 165, 233, 0.16), transparent 28%),
-                radial-gradient(circle at top left, rgba(34, 197, 94, 0.14), transparent 30%),
-                linear-gradient(180deg, #f0f9ff 0%, #f8fafc 100%);
+                radial-gradient(circle at top right, rgba(34, 197, 94, 0.16), transparent 28%),
+                radial-gradient(circle at top left, rgba(251, 146, 60, 0.14), transparent 30%),
+                linear-gradient(180deg, #f7fee7 0%, #f8fafc 100%);
         }
         .card-hover {
             transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -24,7 +24,7 @@
             box-shadow: 0 18px 30px rgba(15, 23, 42, 0.12);
         }
         .opt-btn { transition: all 0.15s; }
-        .opt-btn.selected { border-color: #f59e0b; background-color: #fffbeb; color: #92400e; }
+        .opt-btn.selected { border-color: #22c55e; background-color: #f0fdf4; color: #166534; }
         .opt-btn.correct { border-color: #16a34a !important; background-color: #dcfce7 !important; color: #15803d !important; }
         .opt-btn.wrong { border-color: #dc2626 !important; background-color: #fee2e2 !important; color: #b91c1c !important; text-decoration: line-through; }
         .shake {
@@ -51,210 +51,290 @@
 <body class="text-slate-800 antialiased pb-12">
     <script src="navbar.js?v=20260504"></script>
 
-    <header class="bg-gradient-to-r from-sky-500 via-cyan-500 to-emerald-500 text-white shadow-xl mb-8 relative overflow-hidden">
+    <header class="bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 text-white shadow-xl mb-8 relative overflow-hidden">
         <div class="max-w-5xl mx-auto px-6 py-10 relative z-10">
             <div class="flex items-center justify-between gap-6">
                 <div>
-                    <h2 class="text-xl font-bold text-cyan-50 mb-2">三年級資訊課 ｜ 第 12 週</h2>
-                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">網路識讀與 Google Maps</h1>
-                    <p class="text-lg md:text-xl text-cyan-50 font-bold leading-relaxed">先學會查證網路和 AI 訊息，再探索地圖與街景，最後完成 5 關中英打闖關。</p>
+                    <h2 class="text-xl font-bold text-emerald-50 mb-2">三年級資訊課 ｜ 第 13 週</h2>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">網路沉迷與 Gmail 通訊錄</h1>
+                    <p class="text-lg md:text-xl text-emerald-50 font-bold leading-relaxed">認識停不下來的上網風險，建立 Gmail 聯絡人與標籤，最後完成 5 關中英打闖關。</p>
                 </div>
                 <div class="hidden md:block text-7xl opacity-85 transform rotate-6 drop-shadow-lg">
-                    <i class="fa-solid fa-map-location-dot"></i>
+                    <i class="fa-solid fa-address-book"></i>
                 </div>
             </div>
         </div>
-        <i class="fa-solid fa-magnifying-glass-location absolute text-white opacity-10 text-9xl -bottom-10 right-8"></i>
+        <i class="fa-solid fa-laptop-file absolute text-white opacity-10 text-9xl -bottom-10 right-8"></i>
     </header>
 
     <div id="lightbox" class="fixed inset-0 bg-black/85 z-[200] items-center justify-center p-4 cursor-zoom-out hidden" onclick="closeLightbox()">
         <div class="relative max-w-5xl w-full">
-            <img id="lightbox-img" src="" alt="圖卡放大" class="w-full max-h-[88vh] object-contain rounded-2xl shadow-2xl">
+            <img id="lightbox-img" src="" alt="圖片放大" class="w-full max-h-[88vh] object-contain rounded-2xl shadow-2xl">
             <button onclick="closeLightbox()" class="absolute -top-4 -right-4 bg-white text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-xl font-black text-xl hover:bg-red-500 hover:text-white transition">X</button>
         </div>
     </div>
 
     <main class="max-w-5xl mx-auto px-6 space-y-8">
-        <section class="bg-white rounded-3xl border-4 border-sky-200 shadow-md overflow-hidden">
-            <div class="bg-sky-50 px-6 py-4 border-b-4 border-sky-100 flex items-center justify-between gap-4 flex-wrap">
+        <section class="bg-white rounded-3xl border-4 border-emerald-200 shadow-md overflow-hidden">
+            <div class="bg-emerald-50 px-6 py-4 border-b-4 border-emerald-100 flex items-center justify-between gap-4 flex-wrap">
                 <div class="flex items-center">
-                    <span class="bg-sky-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                    <span class="bg-emerald-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
                         <i class="fa-solid fa-route"></i>
                     </span>
-                    <h3 class="text-2xl font-black text-sky-900">今天怎麼進行</h3>
+                    <h3 class="text-2xl font-black text-emerald-900">今天怎麼進行</h3>
                 </div>
-                <span class="bg-sky-600 text-white text-xs px-3 py-1 rounded-full font-bold">查證、地圖、打字</span>
+                <span class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-full font-bold">網路健康、通訊錄、打字</span>
             </div>
             <div class="p-6 grid md:grid-cols-3 gap-4">
-                <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5 card-hover">
-                    <div class="text-sm font-black text-sky-700 mb-2">任務 1</div>
-                    <h4 class="text-xl font-black text-sky-900 mb-2">網路識讀</h4>
-                    <p class="font-bold text-slate-700 leading-relaxed">網路訊息和 AI 回答都要查證，練習看來源、看時間、比一比。</p>
-                </div>
                 <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 card-hover">
-                    <div class="text-sm font-black text-emerald-700 mb-2">任務 2</div>
-                    <h4 class="text-xl font-black text-emerald-900 mb-2">Google Maps</h4>
-                    <p class="font-bold text-slate-700 leading-relaxed">搜尋地點、放大縮小地圖，並用街景圖觀察公共地標。</p>
+                    <div class="text-sm font-black text-emerald-700 mb-2">任務 1</div>
+                    <h4 class="text-xl font-black text-emerald-900 mb-2">認識網路沉迷</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">網路是工具；如果停不下來、影響睡眠、功課或家人相處，就要留意。</p>
                     <p class="mt-3 inline-flex items-center rounded-full bg-white px-3 py-1 text-sm font-black text-emerald-700 border border-emerald-200">
-                        <i class="fa-solid fa-book-open mr-2"></i>課本第 5 課 P.100-106
+                        <i class="fa-solid fa-book-open mr-2"></i>課本 P.135
+                    </p>
+                </div>
+                <div class="bg-cyan-50 border border-cyan-200 rounded-2xl p-5 card-hover">
+                    <div class="text-sm font-black text-cyan-700 mb-2">任務 2</div>
+                    <h4 class="text-xl font-black text-cyan-900 mb-2">建立聯絡人與標籤</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">在 Google 聯絡人新增老師與同學，再建立標籤整理通訊錄。</p>
+                    <p class="mt-3 inline-flex items-center rounded-full bg-white px-3 py-1 text-sm font-black text-cyan-700 border border-cyan-200">
+                        <i class="fa-solid fa-book-open mr-2"></i>課本 P.69-P.70
                     </p>
                 </div>
                 <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 card-hover">
                     <div class="text-sm font-black text-indigo-700 mb-2">任務 3</div>
                     <h4 class="text-xl font-black text-indigo-900 mb-2">中英打闖關</h4>
-                    <p class="font-bold text-slate-700 leading-relaxed">完成 5 關英文、中文與中英混打，登入後會記錄進度。</p>
+                    <p class="font-bold text-slate-700 leading-relaxed">英文延續 U3，中文使用國語第 8 課，登入後完成 5 關並記錄進度。</p>
                 </div>
-            </div>
-        </section>
-
-        <section class="bg-white rounded-3xl shadow-md border-4 border-cyan-200 overflow-hidden">
-            <button type="button" class="section-toggle w-full bg-cyan-50 px-6 py-4 border-b-4 border-cyan-100 flex items-center justify-between text-left" data-target="safety-card-body" aria-expanded="true">
-                <span class="flex items-center">
-                    <span class="bg-cyan-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
-                        <i class="fa-solid fa-shield-halved"></i>
-                    </span>
-                    <span class="text-2xl font-black text-cyan-900">資訊安全圖卡</span>
-                </span>
-                <span class="flex items-center gap-3">
-                    <span class="bg-cyan-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">點圖可放大</span>
-                    <i class="toggle-chevron fa-solid fa-chevron-down text-cyan-500 text-lg"></i>
-                </span>
-            </button>
-            <div id="safety-card-body" class="p-6 bg-slate-50">
-                <img
-                    src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1777288431/it-class-tcwu/grade3/week12/week12-infographic-1920x1080-q80.webp"
-                    alt="第12週 網路訊息和 AI 訊息不可全信資訊圖卡"
-                    onclick="openLightbox(this.src)"
-                    class="w-full rounded-2xl border-2 border-cyan-100 shadow-md cursor-zoom-in hover:shadow-xl hover:scale-[1.01] transition duration-200"
-                    loading="lazy"
-                >
             </div>
         </section>
 
         <section class="bg-white rounded-3xl shadow-md border-4 border-lime-200 overflow-hidden">
-            <button type="button" class="section-toggle w-full bg-lime-50 px-6 py-4 border-b-4 border-lime-100 flex items-center justify-between text-left" data-target="fact-check-body" aria-expanded="true">
+            <button type="button" class="section-toggle w-full bg-lime-50 px-6 py-4 border-b-4 border-lime-100 flex items-center justify-between text-left" data-target="addiction-card-body" aria-expanded="true">
                 <span class="flex items-center">
                     <span class="bg-lime-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
-                        <i class="fa-solid fa-magnifying-glass-check"></i>
+                        <i class="fa-solid fa-heart-pulse"></i>
                     </span>
-                    <span class="text-2xl font-black text-lime-900">查證工具箱</span>
+                    <span class="text-2xl font-black text-lime-900">資訊圖卡：認識網路沉迷</span>
                 </span>
                 <span class="flex items-center gap-3">
-                    <span class="bg-lime-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">先查再分享</span>
+                    <span class="bg-lime-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">點圖可放大</span>
                     <i class="toggle-chevron fa-solid fa-chevron-down text-lime-500 text-lg"></i>
                 </span>
             </button>
-            <div id="fact-check-body" class="p-6 space-y-5">
-                <div class="bg-lime-50 border border-lime-200 rounded-2xl p-5 text-slate-700 font-bold leading-relaxed">
-                    看到奇怪、很誇張、很可怕或叫你「快轉傳」的訊息時，可以先問大人，也可以用台灣的查證工具找看看。
+            <div id="addiction-card-body" class="p-6 bg-slate-50 space-y-6">
+                <div class="bg-white rounded-2xl border-2 border-lime-100 p-4 shadow-sm">
+                    <div class="flex items-center justify-between gap-3 mb-3 flex-wrap">
+                        <h4 class="text-xl font-black text-lime-900">圖卡一：網路沉迷總覽</h4>
+                        <span class="rounded-full bg-lime-100 px-3 py-1 text-sm font-black text-lime-700">身體、生活、好做法</span>
+                    </div>
+                    <img
+                        src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1777951206/it-class-tcwu/grade3/week13/week13-infographic-1920x1080-q80.webp"
+                        alt="第13週 認識網路沉迷總覽資訊圖卡"
+                        onclick="openLightbox(this.src)"
+                        class="w-full rounded-2xl border-2 border-lime-100 shadow-md cursor-zoom-in hover:shadow-xl hover:scale-[1.01] transition duration-200"
+                        loading="lazy"
+                    >
                 </div>
-                <div class="grid md:grid-cols-3 gap-4">
-                    <a href="https://www.mygopen.com/" target="_blank" rel="noopener" class="block bg-white rounded-2xl border-2 border-lime-100 p-5 shadow-sm hover:border-lime-400 hover:shadow-md transition">
-                        <div class="text-3xl text-lime-600 mb-3"><i class="fa-solid fa-shield-heart"></i></div>
-                        <h4 class="text-xl font-black text-lime-900 mb-2">MyGoPen</h4>
-                        <p class="font-bold text-slate-700 leading-relaxed">常查網路謠言、詐騙訊息和生活傳言，也能用 LINE 把可疑訊息送去查。</p>
-                    </a>
-                    <a href="https://tfc-taiwan.org.tw/" target="_blank" rel="noopener" class="block bg-white rounded-2xl border-2 border-sky-100 p-5 shadow-sm hover:border-sky-400 hover:shadow-md transition">
-                        <div class="text-3xl text-sky-600 mb-3"><i class="fa-solid fa-newspaper"></i></div>
-                        <h4 class="text-xl font-black text-sky-900 mb-2">台灣事實查核中心</h4>
-                        <p class="font-bold text-slate-700 leading-relaxed">會發布查核報告，幫大家確認新聞、公共事件和網路傳言是否可信。</p>
-                    </a>
-                    <a href="https://cofacts.tw/" target="_blank" rel="noopener" class="block bg-white rounded-2xl border-2 border-violet-100 p-5 shadow-sm hover:border-violet-400 hover:shadow-md transition">
-                        <div class="text-3xl text-violet-600 mb-3"><i class="fa-solid fa-comments"></i></div>
-                        <h4 class="text-xl font-black text-violet-900 mb-2">Cofacts 真的假的</h4>
-                        <p class="font-bold text-slate-700 leading-relaxed">可以查詢 LINE 或網路上流傳的訊息，看看有沒有其他人已經查過。</p>
-                    </a>
-                </div>
-                <div class="rounded-2xl bg-slate-50 border border-slate-200 p-5">
-                    <h4 class="text-xl font-black text-slate-900 mb-3">三年級查證口訣</h4>
-                    <ol class="space-y-2 text-slate-700 font-bold leading-relaxed list-decimal list-inside">
-                        <li>先停一下，不要立刻轉傳。</li>
-                        <li>看來源，是官方、新聞、查核網站，還是陌生人截圖。</li>
-                        <li>看日期，舊消息可能已經不適用。</li>
-                        <li>找兩個以上可信來源，還不確定就問老師或家人。</li>
-                    </ol>
+                <div class="bg-white rounded-2xl border-2 border-amber-100 p-4 shadow-sm">
+                    <div class="flex items-center justify-between gap-3 mb-3 flex-wrap">
+                        <h4 class="text-xl font-black text-amber-900">圖卡二：短影音與線上遊戲</h4>
+                        <span class="rounded-full bg-amber-100 px-3 py-1 text-sm font-black text-amber-700">一支接一支、再打一場</span>
+                    </div>
+                    <img
+                        src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1777951183/it-class-tcwu/grade3/week13/week13-short-video-game-1920x1080-q80.webp"
+                        alt="第13週 短影音與線上遊戲情境資訊圖卡"
+                        onclick="openLightbox(this.src)"
+                        class="w-full rounded-2xl border-2 border-amber-100 shadow-md cursor-zoom-in hover:shadow-xl hover:scale-[1.01] transition duration-200"
+                        loading="lazy"
+                    >
                 </div>
             </div>
         </section>
 
-        <section class="bg-white rounded-3xl shadow-md border-4 border-amber-200 overflow-hidden">
-            <button type="button" class="section-toggle w-full bg-amber-50 px-6 py-4 border-b-4 border-amber-100 flex items-center justify-between text-left" data-target="safety-quiz-body" aria-expanded="true">
+        <section class="bg-white rounded-3xl shadow-md border-4 border-green-200 overflow-hidden">
+            <button type="button" class="section-toggle w-full bg-green-50 px-6 py-4 border-b-4 border-green-100 flex items-center justify-between text-left" data-target="internet-health-body" aria-expanded="true">
                 <span class="flex items-center">
-                    <span class="bg-amber-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
-                        <i class="fa-solid fa-list-check"></i>
+                    <span class="bg-green-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-seedling"></i>
                     </span>
-                    <span class="text-2xl font-black text-amber-900">資訊安全小測驗</span>
+                    <span class="text-2xl font-black text-green-900">網路沉迷重點</span>
                 </span>
                 <span class="flex items-center gap-3">
-                    <span class="bg-amber-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">登入後作答</span>
-                    <i class="toggle-chevron fa-solid fa-chevron-down text-amber-500 text-lg"></i>
+                    <span class="bg-white text-green-700 border border-green-200 px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">課本 P.135</span>
+                    <i class="toggle-chevron fa-solid fa-chevron-down text-green-500 text-lg"></i>
                 </span>
             </button>
-            <div id="safety-quiz-body" class="p-6 space-y-4">
-                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-slate-700 font-bold leading-relaxed">
-                    登入 Google 後才能開始作答，完成後會把測驗進度記錄下來。
+            <div id="internet-health-body" class="p-6 grid lg:grid-cols-[1fr_0.85fr] gap-6">
+                <div class="space-y-4">
+                    <div class="bg-green-50 border border-green-200 rounded-2xl p-5">
+                        <h4 class="text-xl font-black text-green-900 mb-3">判斷重點</h4>
+                        <p class="text-slate-700 font-bold leading-relaxed">不是「有上網」就叫網路沉迷，而是短影音、線上遊戲或其他網路活動已經影響身體、睡眠、功課、家人相處或人際關係。</p>
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5">
+                            <h4 class="text-lg font-black text-rose-900 mb-3">短影音提醒</h4>
+                            <p class="text-slate-700 font-bold leading-relaxed">影片很短，容易覺得「再看一支就好」；但一支接一支，時間會不知不覺變很長。</p>
+                        </div>
+                        <div class="bg-cyan-50 border border-cyan-200 rounded-2xl p-5">
+                            <h4 class="text-lg font-black text-cyan-900 mb-3">線上遊戲提醒</h4>
+                            <p class="text-slate-700 font-bold leading-relaxed">任務、隊友、寶物和同學邀請，會讓人想再打一場；時間到了還是要記得約定。</p>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                            <h4 class="text-lg font-black text-amber-900 mb-3">身體提醒</h4>
+                            <ul class="space-y-2 text-slate-700 font-bold leading-relaxed">
+                                <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>眼睛痠、乾眼或視力變差。</li>
+                                <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>脖子、腰背或手指不舒服。</li>
+                            </ul>
+                        </div>
+                        <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5">
+                            <h4 class="text-lg font-black text-sky-900 mb-3">生活提醒</h4>
+                            <ul class="space-y-2 text-slate-700 font-bold leading-relaxed">
+                                <li><i class="fa-solid fa-circle-check text-sky-500 mr-2"></i>精神不集中，學習變差。</li>
+                                <li><i class="fa-solid fa-circle-check text-sky-500 mr-2"></i>課業、人際或生活受影響。</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div id="quiz-lock" class="text-center py-12 bg-amber-50 rounded-2xl border-2 border-dashed border-amber-300">
-                    <i class="fa-solid fa-lock text-5xl text-amber-300 mb-4 block"></i>
-                    <h4 class="text-xl font-black text-amber-800 mb-2">請先登入後再開始小測驗</h4>
+                <div class="bg-white rounded-2xl border-2 border-green-200 p-5 shadow-sm">
+                    <h4 class="text-xl font-black text-green-900 mb-3">今天口訣</h4>
+                    <div class="space-y-3 text-slate-700 font-black leading-relaxed">
+                        <div class="rounded-2xl bg-green-50 border border-green-200 px-4 py-3">能使用，是工具。</div>
+                        <div class="rounded-2xl bg-amber-50 border border-amber-200 px-4 py-3">停不下，會影響。</div>
+                        <div class="rounded-2xl bg-rose-50 border border-rose-200 px-4 py-3">短影音，一支接一支。</div>
+                        <div class="rounded-2xl bg-cyan-50 border border-cyan-200 px-4 py-3">玩遊戲，再一場要小心。</div>
+                        <div class="rounded-2xl bg-sky-50 border border-sky-200 px-4 py-3">眼睛痠，要休息。</div>
+                        <div class="rounded-2xl bg-rose-50 border border-rose-200 px-4 py-3">遇到事，找大人。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-md border-4 border-emerald-200 overflow-hidden">
+            <button type="button" class="section-toggle w-full bg-emerald-50 px-6 py-4 border-b-4 border-emerald-100 flex items-center justify-between text-left" data-target="addiction-quiz-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-emerald-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-list-check"></i>
+                    </span>
+                    <span class="text-2xl font-black text-emerald-900">資訊素養小測驗</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span class="bg-emerald-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">登入後作答</span>
+                    <i class="toggle-chevron fa-solid fa-chevron-down text-emerald-500 text-lg"></i>
+                </span>
+            </button>
+            <div id="addiction-quiz-body" class="p-6 space-y-4">
+                <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 text-slate-700 font-bold leading-relaxed">
+                    先聽完「網路沉迷」的重點再作答。登入 Google 後才能開始，完成後會把測驗進度記錄下來。
+                </div>
+                <div id="quiz-lock" class="text-center py-12 bg-emerald-50 rounded-2xl border-2 border-dashed border-emerald-300">
+                    <i class="fa-solid fa-lock text-5xl text-emerald-300 mb-4 block"></i>
+                    <h4 class="text-xl font-black text-emerald-800 mb-2">請先登入後再開始小測驗</h4>
                     <p class="font-bold text-slate-600 mb-5">登入後，系統才能確認你的作答進度。</p>
-                    <button id="quiz-login-btn" class="bg-amber-500 hover:bg-amber-600 text-white font-black px-8 py-3 rounded-2xl shadow-md transition transform hover:scale-105">
+                    <button id="quiz-login-btn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-black px-8 py-3 rounded-2xl shadow-md transition transform hover:scale-105">
                         <i class="fa-brands fa-google mr-2"></i> Google 登入
                     </button>
                 </div>
                 <div id="quiz-content" class="hidden">
-                    <div id="quiz-status-banner" class="hidden rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 mb-6">
-                        <div id="quiz-status-text" class="text-sm font-bold text-amber-800"></div>
+                    <div id="quiz-status-banner" class="hidden rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 mb-6">
+                        <div id="quiz-status-text" class="text-sm font-bold text-emerald-800"></div>
                     </div>
                     <div id="quiz-container" class="space-y-6 max-w-3xl mx-auto"></div>
                 </div>
             </div>
         </section>
 
-        <section class="bg-white rounded-3xl shadow-md border-4 border-emerald-200 overflow-hidden">
-            <button type="button" class="section-toggle w-full bg-emerald-50 px-6 py-4 border-b-4 border-emerald-100 flex items-center justify-between text-left" data-target="maps-body" aria-expanded="true">
+        <section class="bg-white rounded-3xl shadow-md border-4 border-cyan-200 overflow-hidden">
+            <button type="button" class="section-toggle w-full bg-cyan-50 px-6 py-4 border-b-4 border-cyan-100 flex items-center justify-between text-left" data-target="contacts-body" aria-expanded="true">
                 <span class="flex items-center">
-                    <span class="bg-emerald-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
-                        <i class="fa-solid fa-map"></i>
+                    <span class="bg-cyan-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-address-card"></i>
                     </span>
-                    <span class="text-2xl font-black text-emerald-900">Google Maps 初探</span>
+                    <span class="text-2xl font-black text-cyan-900">Gmail 聯絡人與標籤</span>
                 </span>
                 <span class="flex items-center gap-3">
-                    <span class="bg-white text-emerald-700 border border-emerald-200 px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">課本 P.100-106</span>
-                    <span class="bg-emerald-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">注意隱私</span>
-                    <i class="toggle-chevron fa-solid fa-chevron-down text-emerald-500 text-lg"></i>
+                    <span class="bg-white text-cyan-700 border border-cyan-200 px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">課本 P.69-P.70</span>
+                    <i class="toggle-chevron fa-solid fa-chevron-down text-cyan-500 text-lg"></i>
                 </span>
             </button>
-            <div id="maps-body" class="p-6 grid lg:grid-cols-[1fr_0.85fr] gap-6">
-                <div class="space-y-4">
-                    <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5">
-                        <h4 class="text-xl font-black text-sky-900 mb-2">課本參考</h4>
-                        <p class="text-slate-700 font-bold leading-relaxed">資訊課本第 5 課「悠遊 Google 地圖」P.100-106；基本操作可看 P.101，街景瀏覽可看 P.103-106。</p>
+            <div id="contacts-body" class="p-6 space-y-6">
+                <div class="grid lg:grid-cols-[1fr_0.9fr] gap-6">
+                    <div class="space-y-4">
+                        <div class="bg-cyan-50 border border-cyan-200 rounded-2xl p-5">
+                            <h4 class="text-xl font-black text-cyan-900 mb-3">今天只做這四件事</h4>
+                            <ol class="space-y-3 text-slate-700 font-bold leading-relaxed list-decimal list-inside">
+                                <li>新增老師聯絡人，資料從網頁複製。</li>
+                                <li>問一位同學的帳號，新增同學聯絡人。</li>
+                                <li>建立老師指定的標籤。</li>
+                                <li>把同學聯絡人加入標籤。</li>
+                            </ol>
+                        </div>
+                        <div class="bg-white border-2 border-cyan-200 rounded-2xl p-5 shadow-sm">
+                            <h4 class="text-xl font-black text-cyan-900 mb-4">老師聯絡人資料</h4>
+                            <div class="grid gap-3">
+                                <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4">
+                                    <div class="text-sm font-black text-slate-500 mb-1">姓氏</div>
+                                    <div class="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                                        <code id="teacher-family-name" class="text-xl font-black text-slate-900">吳</code>
+                                        <button type="button" class="copy-btn rounded-2xl bg-cyan-500 px-4 py-2 text-white font-black hover:bg-cyan-600 transition" data-copy="吳">
+                                            <i class="fa-solid fa-copy mr-2"></i>複製姓氏
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4">
+                                    <div class="text-sm font-black text-slate-500 mb-1">名字</div>
+                                    <div class="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                                        <code id="teacher-given-name" class="text-xl font-black text-slate-900">重謙</code>
+                                        <button type="button" class="copy-btn rounded-2xl bg-cyan-500 px-4 py-2 text-white font-black hover:bg-cyan-600 transition" data-copy="重謙">
+                                            <i class="fa-solid fa-copy mr-2"></i>複製名字
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4">
+                                    <div class="text-sm font-black text-slate-500 mb-1">職稱</div>
+                                    <div class="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                                        <code id="teacher-title" class="text-xl font-black text-slate-900">老師</code>
+                                        <button type="button" class="copy-btn rounded-2xl bg-cyan-500 px-4 py-2 text-white font-black hover:bg-cyan-600 transition" data-copy="老師">
+                                            <i class="fa-solid fa-copy mr-2"></i>複製職稱
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4">
+                                    <div class="text-sm font-black text-slate-500 mb-1">Email</div>
+                                    <div class="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                                        <code id="teacher-email" class="text-lg md:text-xl font-black text-slate-900 break-all">chianwu@apps.ntpc.edu.tw</code>
+                                        <button type="button" class="copy-btn rounded-2xl bg-cyan-500 px-4 py-2 text-white font-black hover:bg-cyan-600 transition" data-copy="chianwu@apps.ntpc.edu.tw">
+                                            <i class="fa-solid fa-copy mr-2"></i>複製 Email
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="copy-status" class="mt-3 min-h-6 text-sm font-black text-cyan-700"></div>
+                        </div>
                     </div>
-                    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
-                        <h4 class="text-xl font-black text-emerald-900 mb-3">操作順序</h4>
-                        <ol class="space-y-3 text-slate-700 font-bold leading-relaxed list-decimal list-inside">
-                            <li>開啟 Google Maps，搜尋學校或熟悉的公共地點。</li>
-                            <li>用滑鼠拖曳地圖，練習放大與縮小。</li>
-                            <li>搜尋住家附近的公共地標，不公開完整地址。</li>
-                            <li>開啟街景圖，觀察道路、商店、公園或明顯地標。</li>
-                        </ol>
-                    </div>
-                    <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5">
-                        <h4 class="text-xl font-black text-rose-900 mb-3">隱私提醒</h4>
-                        <ul class="space-y-2 text-slate-700 font-bold leading-relaxed">
-                            <li><i class="fa-solid fa-circle-check text-rose-500 mr-2"></i>不要公開說出完整住家地址。</li>
-                            <li><i class="fa-solid fa-circle-check text-rose-500 mr-2"></i>可以改找學校、公園、圖書館或捷運站。</li>
-                            <li><i class="fa-solid fa-circle-check text-rose-500 mr-2"></i>街景圖用來觀察地標，不拿來嘲笑別人的家。</li>
-                        </ul>
+                    <div class="bg-white rounded-2xl border-2 border-cyan-200 p-5 shadow-sm">
+                        <h4 class="text-xl font-black text-cyan-900 mb-3">Google 聯絡人入口</h4>
+                        <p class="text-slate-700 font-bold leading-relaxed mb-5">如果九宮格找不到聯絡人，可以直接開啟 Google 聯絡人。今天不做群發，只整理通訊錄。</p>
+                        <a href="https://contacts.google.com/" target="_blank" rel="noopener" class="inline-flex w-full min-h-[56px] items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-500 to-sky-500 text-white font-black shadow-md hover:opacity-95 transition">
+                            <i class="fa-solid fa-arrow-up-right-from-square mr-2"></i>開啟 Google 聯絡人
+                        </a>
+                        <div class="mt-5 rounded-2xl bg-amber-50 border border-amber-200 p-4">
+                            <h5 class="font-black text-amber-900 mb-2">省打字小技巧</h5>
+                            <p class="text-slate-700 font-bold leading-relaxed">先從 Gmail 右上角頭像複製自己的 Email。全班通常只有 @ 前面的帳號不同，後面的 <code class="font-black">@apps.ntpc.edu.tw</code> 不要亂改。</p>
+                        </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-2xl border-2 border-emerald-200 p-5 shadow-sm">
-                    <h4 class="text-xl font-black text-emerald-900 mb-3">地圖入口</h4>
-                    <p class="text-slate-700 font-bold leading-relaxed mb-5">點開後，先搜尋「頂溪國小」或老師指定的公共地點。若找住家附近，請只找附近地標。</p>
-                    <a href="https://www.google.com/maps" target="_blank" rel="noopener" class="inline-flex w-full min-h-[56px] items-center justify-center rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black shadow-md hover:opacity-95 transition">
-                        <i class="fa-solid fa-arrow-up-right-from-square mr-2"></i>開啟 Google Maps
-                    </a>
+
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                    <h4 class="text-xl font-black text-slate-900 mb-3">從頭像複製自己的 Email</h4>
+                    <img
+                        src="images/week13/gmail-copy-own-email.png"
+                        alt="Gmail 右上角頭像可查看並複製自己的 Email"
+                        onclick="openLightbox(this.src)"
+                        class="w-full rounded-2xl border-2 border-slate-200 shadow-md cursor-zoom-in hover:shadow-xl transition"
+                        loading="lazy"
+                    >
                 </div>
             </div>
         </section>
@@ -271,7 +351,7 @@
             </div>
             <div class="p-8">
                 <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 mb-6 text-slate-700 font-bold space-y-2">
-                    <p><i class="fa-solid fa-circle-info text-indigo-500 mr-2"></i> 英文來自 U3，中文來自國語第 7 課「油桐花」。</p>
+                    <p><i class="fa-solid fa-circle-info text-indigo-500 mr-2"></i> 英文延續 U3，中文來自國語第 8 課「大自然的美術館」。</p>
                     <p><i class="fa-solid fa-hand text-indigo-500 mr-2"></i> 不能複製貼上。英文大小寫、標點、空格和換行都要一樣。</p>
                     <p id="progress-status"><i class="fa-solid fa-flag-checkered text-indigo-500 mr-2"></i> 目前進度：第 1 關開始。</p>
                     <pre id="progress-debug" class="hidden mt-3 overflow-auto rounded-xl bg-slate-900 p-4 text-left text-xs text-slate-100"></pre>
@@ -283,7 +363,7 @@
                         <h4 class="text-xl font-black text-cyan-800 mb-2 flex items-center"><i class="fa-solid fa-language text-cyan-500 mr-2"></i> 英文一行</h4>
                         <p class="text-gray-600 font-bold text-sm mb-3">注意縮寫、問號、句點與空格。</p>
                         <div class="text-2xl font-black text-center text-cyan-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-cyan-200 shadow-inner select-none pointer-events-none">
-                            What's this? It's a pencil.
+                            What's this? It's a pen.
                         </div>
                         <input type="text" id="input-level1" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full h-16 p-3 rounded-xl border-2 border-cyan-300 focus:outline-none focus:ring-4 focus:ring-cyan-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="點這裡開始打字">
                         <button onclick="checkLevel(1)" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
@@ -294,10 +374,10 @@
 
                     <div id="block-level2" class="hidden bg-emerald-50 border-4 border-emerald-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
                         <div class="absolute -top-4 -left-4 bg-emerald-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 2 關</div>
-                        <h4 class="text-xl font-black text-emerald-800 mb-2 flex items-center"><i class="fa-solid fa-seedling text-emerald-500 mr-2"></i> 中文一行</h4>
-                        <p class="text-gray-600 font-bold text-sm mb-3">句號也要打出來。</p>
+                        <h4 class="text-xl font-black text-emerald-800 mb-2 flex items-center"><i class="fa-solid fa-earth-asia text-emerald-500 mr-2"></i> 中文一行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">注意句號也要打出來。</p>
                         <div class="text-2xl font-black text-center text-emerald-700 tracking-widest mb-4 bg-white py-3 px-3 rounded-xl border-2 border-emerald-200 shadow-inner select-none pointer-events-none">
-                            油桐花又叫五月雪。
+                            野柳是新北市著名的觀光景點。
                         </div>
                         <input type="text" id="input-level2" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full h-16 p-3 rounded-xl border-2 border-emerald-300 focus:outline-none focus:ring-4 focus:ring-emerald-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="慢慢打，記得句號">
                         <button onclick="checkLevel(2)" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
@@ -311,7 +391,7 @@
                         <h4 class="text-xl font-black text-blue-800 mb-2 flex items-center"><i class="fa-solid fa-comment-dots text-blue-500 mr-2"></i> 英文二行</h4>
                         <p class="text-gray-600 font-bold text-sm mb-3">兩行都要打，換行位置也要一樣。</p>
                         <pre class="text-2xl font-black text-center text-blue-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-blue-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">What's that?
-It's a book.</pre>
+It's an eraser.</pre>
                         <textarea id="input-level3" rows="3" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="第一行打完按 Enter 換行"></textarea>
                         <button onclick="checkLevel(3)" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
                             <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
@@ -321,10 +401,10 @@ It's a book.</pre>
 
                     <div id="block-level4" class="hidden bg-orange-50 border-4 border-orange-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
                         <div class="absolute -top-4 -left-4 bg-orange-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 4 關</div>
-                        <h4 class="text-xl font-black text-orange-800 mb-2 flex items-center"><i class="fa-solid fa-tree text-orange-500 mr-2"></i> 中文二行</h4>
+                        <h4 class="text-xl font-black text-orange-800 mb-2 flex items-center"><i class="fa-solid fa-mountain-sun text-orange-500 mr-2"></i> 中文二行</h4>
                         <p class="text-gray-600 font-bold text-sm mb-3">注意逗號、句號和換行。</p>
-                        <pre class="text-2xl font-black text-center text-orange-700 tracking-wider mb-4 bg-white py-3 px-3 rounded-xl border-2 border-orange-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">初夏時節，山林間開滿油桐花。
-遠遠望去，好像一片白雪。</pre>
+                        <pre class="text-2xl font-black text-center text-orange-700 tracking-wider mb-4 bg-white py-3 px-3 rounded-xl border-2 border-orange-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">走進野柳地質公園，往前望去。
+野柳岬就像一隻烏龜。</pre>
                         <textarea id="input-level4" rows="4" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-orange-300 focus:outline-none focus:ring-4 focus:ring-orange-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="兩行都要打完整"></textarea>
                         <button onclick="checkLevel(4)" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
                             <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
@@ -335,10 +415,10 @@ It's a book.</pre>
                     <div id="block-level5" class="hidden bg-purple-50 border-4 border-purple-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
                         <div class="absolute -top-4 -left-4 bg-purple-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 5 關</div>
                         <h4 class="text-xl font-black text-purple-800 mb-2 flex items-center"><i class="fa-solid fa-layer-group text-purple-500 mr-2"></i> 中英混打三行</h4>
-                        <p class="text-gray-600 font-bold text-sm mb-3">這一關和前面不重複，中文、英文、標點與換行都要對。</p>
-                        <pre class="text-2xl font-black text-center text-purple-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-purple-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">山林間有美麗的花。
-What's that?
-It's a ruler.</pre>
+                        <p class="text-gray-600 font-bold text-sm mb-3">中文、英文、標點與換行都要對。</p>
+                        <pre class="text-2xl font-black text-center text-purple-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-purple-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">這裡真是一座大自然的美術館。
+What's this?
+It's a marker.</pre>
                         <textarea id="input-level5" rows="5" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-purple-300 focus:outline-none focus:ring-4 focus:ring-purple-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="最後一關，三行都要打"></textarea>
                         <button onclick="checkLevel(5)" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
                             <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
@@ -391,6 +471,10 @@ It's a ruler.</pre>
             box.classList.remove("flex");
         };
 
+        window.toggleFloatingKeyboard = function toggleFloatingKeyboard() {
+            document.getElementById("floating-kb-panel")?.classList.toggle("hidden");
+        };
+
         window.showKeyboardLayout = function showKeyboardLayout(layout) {
             const isEnglish = layout === "en";
             document.getElementById("keyboard-img-zh")?.classList.toggle("hidden", isEnglish);
@@ -414,6 +498,22 @@ It's a ruler.</pre>
             });
         });
 
+        document.querySelectorAll(".copy-btn").forEach((button) => {
+            button.addEventListener("click", async () => {
+                const text = button.dataset.copy || "";
+                const status = document.getElementById("copy-status");
+                try {
+                    await navigator.clipboard.writeText(text);
+                    if (status) status.textContent = `已複製：${text}`;
+                } catch {
+                    if (status) status.textContent = "複製失敗，請用滑鼠選取文字後複製。";
+                }
+            });
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") closeLightbox();
+        });
     </script>
 
     <script type="module">
@@ -428,59 +528,59 @@ It's a ruler.</pre>
 
         initNavbarAuth();
 
-        const WEEK_CODE = "12";
-        const QUIZ_KEY = "media_literacy_quiz_1";
+        const WEEK_CODE = "13";
+        const QUIZ_KEY = "internet_addiction_quiz_1";
         let currentSession = null;
 
-        const safetyQuestions = [
+        const addictionQuestions = [
             {
                 id: 1,
-                questionHtml: "看到訊息寫「快轉傳給所有人」，最好的做法是什麼？",
+                questionHtml: "看短影音時，下面哪一個情況最需要留意？",
                 options: [
-                    { text: "A. 立刻轉傳", correct: false },
-                    { text: "B. 先停一下，查證後再決定要不要分享", correct: true },
-                    { text: "C. 改幾個字再轉傳", correct: false },
-                    { text: "D. 只傳給最好的朋友", correct: false }
+                    { text: "A. 看老師指定的影片，時間到就關掉", correct: false },
+                    { text: "B. 原本只想看 5 分鐘，卻一直滑下一支，結果影響睡覺和功課", correct: true },
+                    { text: "C. 看完一支教學影片後，去完成作業", correct: false },
+                    { text: "D. 在資訊課看老師投影的網路沉迷圖卡", correct: false }
                 ]
             },
             {
                 id: 2,
-                questionHtml: "如果想查網路謠言、詐騙訊息或生活傳言，可以先想到哪個台灣查證工具？",
+                questionHtml: "線上遊戲時間到了，但同學說「再打一場就好」，比較好的做法是什麼？",
                 options: [
-                    { text: "A. MyGoPen", correct: true },
-                    { text: "B. 小畫家", correct: false },
-                    { text: "C. 計算機", correct: false },
-                    { text: "D. 音樂播放器", correct: false }
+                    { text: "A. 因為是同學邀請，所以一定要陪他玩到最後", correct: false },
+                    { text: "B. 先照約定停止或存檔後停止，告訴同學明天再玩", correct: true },
+                    { text: "C. 偷偷再玩一場，只要家人沒發現就沒關係", correct: false },
+                    { text: "D. 把帳號密碼給同學，請他幫你繼續玩", correct: false }
                 ]
             },
             {
                 id: 3,
-                questionHtml: "如果想看新聞、公共事件或網路傳言的查核報告，可以使用哪個網站？",
+                questionHtml: "下面哪一個情況最像「正常使用網路」，而不是網路沉迷？",
                 options: [
-                    { text: "A. 台灣事實查核中心", correct: true },
-                    { text: "B. 隨便一張截圖", correct: false },
-                    { text: "C. 遊戲聊天室", correct: false },
-                    { text: "D. 陌生人的留言區", correct: false }
+                    { text: "A. 短影音一直自動播放，眼睛痠了還繼續看", correct: false },
+                    { text: "B. 每天睡前都玩到很晚，隔天上課想睡覺", correct: false },
+                    { text: "C. 上網查資料 10 分鐘，查完就去吃飯", correct: true },
+                    { text: "D. 遊戲輸了很生氣，所以把功課放到明天", correct: false }
                 ]
             },
             {
                 id: 4,
-                questionHtml: "Cofacts 真的假的主要可以幫我們做什麼？",
+                questionHtml: "長時間一直看螢幕，可能會造成什麼生理影響？",
                 options: [
-                    { text: "A. 查 LINE 或網路流傳訊息是否有人查過", correct: true },
-                    { text: "B. 幫電腦換桌布", correct: false },
-                    { text: "C. 自動完成所有功課", correct: false },
-                    { text: "D. 幫鍵盤打字", correct: false }
+                    { text: "A. 眼睛痠、視力變差", correct: true },
+                    { text: "B. 跑步變快", correct: false },
+                    { text: "C. 書包變輕", correct: false },
+                    { text: "D. 鉛筆變長", correct: false }
                 ]
             },
             {
                 id: 5,
-                questionHtml: "AI 很快給出答案時，我們應該怎麼做？",
+                questionHtml: "如果遊戲帳號或虛擬寶物被盜，應該怎麼做？",
                 options: [
-                    { text: "A. 一定全部相信", correct: false },
-                    { text: "B. 看來源和日期，再用可信網站或查證工具比對", correct: true },
-                    { text: "C. 只看答案有沒有很長", correct: false },
-                    { text: "D. 只要有圖片就相信", correct: false }
+                    { text: "A. 找陌生網友幫忙", correct: false },
+                    { text: "B. 自己偷偷付錢買回來", correct: false },
+                    { text: "C. 詳細記錄，告訴家人或老師，必要時報警處理", correct: true },
+                    { text: "D. 把密碼貼到聊天區", correct: false }
                 ]
             }
         ];
@@ -521,7 +621,7 @@ It's a ruler.</pre>
                 user_id: user.id,
                 week_code: WEEK_CODE,
                 activity_key: QUIZ_KEY,
-                current_level: safetyQuestions.length,
+                current_level: addictionQuestions.length,
                 completed: true,
                 score,
                 updated_at: new Date().toISOString()
@@ -533,7 +633,7 @@ It's a ruler.</pre>
         }
 
         const quiz = initQuizModule({
-            questions: safetyQuestions,
+            questions: addictionQuestions,
             selectors: {
                 lock: "quiz-lock",
                 content: "quiz-content",
@@ -547,13 +647,13 @@ It's a ruler.</pre>
                 submittedButton: "已完成",
                 unansweredAlert: (remaining) => `還有 ${remaining} 題還沒選，請先全部作答。`,
                 scoreLabel: (correct, total) => `答對：${correct} / ${total} 題`,
-                completedBanner: (score, total) => `你已完成資訊安全小測驗，分數：${score ?? "?"} / ${total} 題。`,
-                unauthenticated: "登入 Google 後，才能開始資訊安全小測驗。",
+                completedBanner: (score, total) => `你已完成網路沉迷小測驗，分數：${score ?? "?"} / ${total} 題。`,
+                unauthenticated: "登入 Google 後，才能開始網路沉迷小測驗。",
                 resultMessages: {
-                    perfect: ["太棒了", "你很會查證網路與 AI 訊息。"],
-                    great: ["很接近", "只差一點點，記得分享前先查證。"],
-                    good: ["有進步", "再複習來源、日期和官方公告會更穩。"],
-                    retry: ["再試試", "網路訊息不要急著相信，先查證最重要。"]
+                    perfect: ["太棒了", "你能分辨健康使用和需要留意的情況。"],
+                    great: ["很接近", "再記得時間到就停止，遇到帳號問題找大人。"],
+                    good: ["有進步", "再複習身體提醒和生活提醒會更穩。"],
+                    retry: ["再試試", "網路是工具，停不下來並影響生活時就要留意。"]
                 }
             },
             loadProgress: loadQuizProgress,
@@ -581,17 +681,17 @@ It's a ruler.</pre>
         resolveSession().then(handleQuizAuthUpdate);
 
         const levelsData = [
-            { id: 1, ans: "What's this? It's a pencil." },
-            { id: 2, ans: "油桐花又叫五月雪。" },
-            { id: 3, ans: "What's that?\nIt's a book." },
-            { id: 4, ans: "初夏時節，山林間開滿油桐花。\n遠遠望去，好像一片白雪。" },
-            { id: 5, ans: "山林間有美麗的花。\nWhat's that?\nIt's a ruler." }
+            { id: 1, ans: "What's this? It's a pen." },
+            { id: 2, ans: "野柳是新北市著名的觀光景點。" },
+            { id: 3, ans: "What's that?\nIt's an eraser." },
+            { id: 4, ans: "走進野柳地質公園，往前望去。\n野柳岬就像一隻烏龜。" },
+            { id: 5, ans: "這裡真是一座大自然的美術館。\nWhat's this?\nIt's a marker." }
         ];
 
         const levelMsg = {
             1: "第 1 關完成，英文短句很穩。",
-            2: "第 2 關完成，中文標點也有注意到。",
-            3: "第 3 關完成，換行和英文句型都對了。",
+            2: "第 2 關完成，中文句號也有注意到。",
+            3: "第 3 關完成，英文換行和句型都對了。",
             4: "第 4 關完成，國語課文句子也能打好了。",
             5: "5 關全部完成，今天的中英混打任務成功。"
         };
@@ -635,7 +735,7 @@ It's a ruler.</pre>
         }
 
         initTypingChallenge({
-            weekCode: "12",
+            weekCode: "13",
             activityKey: "typing_task_5",
             levelsData,
             levelEncouragements: levelMsg,
@@ -643,14 +743,14 @@ It's a ruler.</pre>
             getWrongAnswerHtml: ({ hint }) => `還差一點點。${hint}`,
             progressMessages: {
                 completed: "5 關全部完成，今天的中英打闖關已經完成。",
-                resumed: (level) => `已接回 Week 12 打字進度，從第 ${level} 關繼續。`,
+                resumed: (level) => `已接回 Week 13 打字進度，從第 ${level} 關繼續。`,
                 firstLogin: "已登入成功，這次的打字進度會自動記錄下來。",
                 unauthenticated: "請先登入 Google，才能開始打字闖關並記錄進度。",
                 saveCompleted: "已記下 5 關完整進度，今天的打字任務完成。",
                 saveNextLevel: (level) => `已記下進度，下次從第 ${level} 關繼續。`,
                 saveError: "進度暫時沒有記錄成功，請稍後再試一次。",
                 resetNoSession: "目前沒有登入，不能重新開始練習。",
-                resetConfirm: "要重新開始 Week 12 打字練習嗎？這會把目前進度重設回第 1 關。"
+                resetConfirm: "要重新開始 Week 13 打字練習嗎？這會把目前進度重設回第 1 關。"
             },
             celebrationContent: {
                 title: "5 關全部完成",
@@ -662,4 +762,3 @@ It's a ruler.</pre>
     </script>
 </body>
 </html>
-
