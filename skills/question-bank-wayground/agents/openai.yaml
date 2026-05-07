@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wayground Bank"
+  short_description: "Build, review, and publish question banks"
+  default_prompt: "Use $question-bank-wayground to turn textbooks or exam references into a reviewed local Markdown bank, route the subject through the correct Wayground workflow, and publish only after checks pass."
