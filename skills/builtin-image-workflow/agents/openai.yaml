@@ -1,0 +1,4 @@
+interface:
+  display_name: "Builtin Image Workflow"
+  short_description: "Use Codex built-in image generation for quick classroom visuals."
+  default_prompt: "Generate a classroom-ready image using the built-in image tool, save or copy it to the requested project location, and record comparison notes when relevant."
