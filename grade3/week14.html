@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三年級資訊課 - 第 14 週 病毒與釣魚網站、Google 地圖再探</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #fff7ed 0%, #eefcf7 46%, #f8fafc 100%);
+        }
+        .card-hover {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 30px rgba(15, 23, 42, 0.12);
+        }
+        .opt-btn { transition: all 0.15s; }
+        .opt-btn.selected { border-color: #f59e0b; background-color: #fffbeb; color: #92400e; }
+        .opt-btn.correct { border-color: #16a34a !important; background-color: #dcfce7 !important; color: #15803d !important; }
+        .opt-btn.wrong { border-color: #dc2626 !important; background-color: #fee2e2 !important; color: #b91c1c !important; text-decoration: line-through; }
+        .shake {
+            animation: shake 0.35s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+        .section-toggle .toggle-chevron {
+            transition: transform 0.2s ease;
+        }
+        .section-toggle[aria-expanded="false"] .toggle-chevron {
+            transform: rotate(-90deg);
+        }
+        .spotlight-frame {
+            box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.95), 0 28px 70px rgba(120, 53, 15, 0.28);
+        }
+        textarea {
+            resize: vertical;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pb-12">
+    <script src="navbar.js?v=20260512"></script>
+
+    <header class="bg-gradient-to-r from-amber-500 via-emerald-500 to-sky-500 text-white shadow-xl mb-8 relative overflow-hidden">
+        <div class="max-w-5xl mx-auto px-6 py-10 relative z-10">
+            <div class="flex items-center justify-between gap-6">
+                <div>
+                    <h2 class="text-xl font-bold text-amber-50 mb-2">三年級資訊課 ｜ 第 14 週</h2>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">安全偵探與世界地圖</h1>
+                    <p class="text-lg md:text-xl text-amber-50 font-bold leading-relaxed">看懂病毒與釣魚網站的線索，探索主題樂園、驚奇地點與世界景點，再用中英打闖關當作彈性加練任務。</p>
+                </div>
+                <div class="hidden md:block text-7xl opacity-85 transform rotate-6 drop-shadow-lg">
+                    <i class="fa-solid fa-user-secret"></i>
+                </div>
+            </div>
+        </div>
+        <i class="fa-solid fa-map-location-dot absolute text-white opacity-10 text-9xl -bottom-10 right-8"></i>
+    </header>
+
+    <div id="lightbox" class="fixed inset-0 bg-black/90 z-[200] items-center justify-center p-4 cursor-zoom-out hidden" onclick="closeLightbox()">
+        <div class="relative max-w-6xl w-full">
+            <img id="lightbox-img" src="" alt="圖片放大" class="w-full max-h-[88vh] object-contain rounded-2xl shadow-2xl">
+            <button id="lightbox-prev-btn" onclick="changeLightboxCaseSlide(-1, event)" class="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-white/95 text-slate-800 rounded-full w-12 h-12 flex items-center justify-center shadow-xl font-black text-xl hover:bg-amber-100 transition disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white" title="上一張" aria-label="上一張">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <button id="lightbox-next-btn" onclick="changeLightboxCaseSlide(1, event)" class="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-white/95 text-slate-800 rounded-full w-12 h-12 flex items-center justify-center shadow-xl font-black text-xl hover:bg-amber-100 transition disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white" title="下一張" aria-label="下一張">
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            <button onclick="closeLightbox()" class="absolute -top-4 -right-4 bg-white text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-xl font-black text-xl hover:bg-red-500 hover:text-white transition">X</button>
+        </div>
+    </div>
+
+    <main class="max-w-5xl mx-auto px-6 space-y-8">
+        <section class="bg-white rounded-3xl border-4 border-amber-200 shadow-md overflow-hidden">
+            <div class="bg-amber-50 px-6 py-4 border-b-4 border-amber-100 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <span class="bg-amber-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-route"></i>
+                    </span>
+                    <h3 class="text-2xl font-black text-amber-900">今天怎麼進行</h3>
+                </div>
+                <span class="bg-amber-600 text-white text-xs px-3 py-1 rounded-full font-bold">資訊素養、Google 地圖、彈性打字</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-3 gap-4">
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 card-hover">
+                    <div class="text-sm font-black text-amber-700 mb-2">任務 1</div>
+                    <h4 class="text-xl font-black text-amber-900 mb-2">安全偵探案例卡</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">從真實生活常見情境找出可疑訊息、假登入頁和不明下載。</p>
+                    <p class="mt-3 inline-flex items-center rounded-full bg-white px-3 py-1 text-sm font-black text-amber-700 border border-amber-200">
+                        <i class="fa-solid fa-book-open mr-2"></i>課本 P.115
+                    </p>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 card-hover">
+                    <div class="text-sm font-black text-emerald-700 mb-2">任務 2</div>
+                    <h4 class="text-xl font-black text-emerald-900 mb-2">Google 地圖再探</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">開啟 24 個主題樂園、驚奇地點與世界景點連結，挑一個最有印象的畫面截圖。</p>
+                    <p class="mt-3 inline-flex items-center rounded-full bg-white px-3 py-1 text-sm font-black text-emerald-700 border border-emerald-200">
+                        <i class="fa-solid fa-book-open mr-2"></i>課本 P.100-P.111
+                    </p>
+                </div>
+                <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 card-hover">
+                    <div class="text-sm font-black text-indigo-700 mb-2">彈性任務</div>
+                    <h4 class="text-xl font-black text-indigo-900 mb-2">中英打闖關</h4>
+                    <p class="font-bold text-slate-700 leading-relaxed">登入、開網頁或繳交較快完成時，就先到打字闖關練習。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-md border-4 border-amber-200 overflow-hidden">
+            <button type="button" class="section-toggle w-full bg-amber-50 px-6 py-4 border-b-4 border-amber-100 flex items-center justify-between text-left" data-target="safety-card-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-amber-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <span class="text-2xl font-black text-amber-900">安全偵探案例卡</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span class="hidden md:inline-flex bg-white text-amber-700 border border-amber-200 px-3 py-1 rounded-full text-sm font-black">封面 + 13 張圖卡</span>
+                    <i class="fa-solid fa-chevron-down text-amber-500 text-xl toggle-chevron"></i>
+                </span>
+            </button>
+            <div id="safety-card-body" class="p-6 space-y-5">
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-slate-700 font-bold leading-relaxed">
+                    <p><i class="fa-solid fa-circle-info text-amber-500 mr-2"></i> 每張圖卡先找線索，再說出「停、看、想、問」其中一個安全動作。</p>
+                </div>
+                <div class="grid lg:grid-cols-[1fr_180px] gap-5 items-start">
+                    <div class="bg-slate-950 rounded-3xl p-4 md:p-6">
+                        <div class="relative">
+                            <img id="case-slide-img" src="images/week14/week14-safety-card-cover.png" alt="安全偵探案例卡封面" class="spotlight-frame w-full aspect-[3/2] object-contain rounded-2xl bg-slate-900 cursor-zoom-in" onclick="openLightbox(this.src)">
+                        </div>
+                        <div class="mt-5 flex items-center justify-between gap-3 flex-wrap">
+                            <button id="case-prev-btn" type="button" onclick="changeCaseSlide(-1)" class="inline-flex items-center justify-center rounded-full bg-white text-slate-800 w-12 h-12 shadow-md hover:bg-amber-100 transition disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white" title="上一張" aria-label="上一張">
+                                <i class="fa-solid fa-arrow-left text-xl"></i>
+                            </button>
+                            <div class="text-center">
+                                <div id="case-slide-title" class="text-white font-black text-xl">安全偵探出動</div>
+                                <div id="case-slide-counter" class="text-amber-100 font-bold text-sm">1 / 14</div>
+                            </div>
+                            <button id="case-next-btn" type="button" onclick="changeCaseSlide(1)" class="inline-flex items-center justify-center rounded-full bg-white text-slate-800 w-12 h-12 shadow-md hover:bg-amber-100 transition disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white" title="下一張" aria-label="下一張">
+                                <i class="fa-solid fa-arrow-right text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="case-slide-nav" class="grid grid-cols-4 lg:grid-cols-2 gap-2"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-md border-4 border-orange-200 overflow-hidden">
+            <button type="button" class="section-toggle w-full bg-orange-50 px-6 py-4 border-b-4 border-orange-100 flex items-center justify-between text-left" data-target="safety-quiz-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-orange-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-clipboard-question"></i>
+                    </span>
+                    <span class="text-2xl font-black text-orange-900">資訊素養小測驗</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span class="hidden md:inline-flex bg-white text-orange-700 border border-orange-200 px-3 py-1 rounded-full text-sm font-black">5 題</span>
+                    <i class="fa-solid fa-chevron-down text-orange-500 text-xl toggle-chevron"></i>
+                </span>
+            </button>
+            <div id="safety-quiz-body" class="p-6 space-y-4">
+                <div class="bg-orange-50 border border-orange-200 rounded-2xl p-5 text-slate-700 font-bold leading-relaxed">
+                    <p><i class="fa-solid fa-triangle-exclamation text-orange-500 mr-2"></i> 測驗會記錄完成狀態；請登入後再開始作答。</p>
+                </div>
+                <div id="quiz-lock" class="text-center py-12 bg-orange-50 rounded-2xl border-2 border-dashed border-orange-300">
+                    <div class="text-5xl text-orange-400 mb-4"><i class="fa-solid fa-lock"></i></div>
+                    <h4 class="text-2xl font-black text-orange-900 mb-3">登入後開始小測驗</h4>
+                    <p class="font-bold text-slate-600 mb-6">完成後會寫入學習進度，老師可以看到你已經完成。</p>
+                    <button id="quiz-login-btn" class="bg-orange-500 hover:bg-orange-600 text-white font-black px-8 py-3 rounded-2xl shadow-md transition transform hover:scale-105">
+                        <i class="fa-brands fa-google mr-2"></i> Google 登入
+                    </button>
+                </div>
+                <div id="quiz-content" class="hidden">
+                    <div id="quiz-status-banner" class="hidden rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 mb-6">
+                        <div id="quiz-status-text" class="text-sm font-bold text-orange-800"></div>
+                    </div>
+                    <div id="quiz-container" class="space-y-6 max-w-3xl mx-auto"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-md border-4 border-emerald-200 overflow-hidden">
+            <button type="button" class="section-toggle w-full bg-emerald-50 px-6 py-4 border-b-4 border-emerald-100 flex items-center justify-between text-left" data-target="maps-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-emerald-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                    </span>
+                    <span class="text-2xl font-black text-emerald-900">Google 地圖再探</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span class="hidden md:inline-flex bg-white text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full text-sm font-black">課本 P.100-P.111</span>
+                    <i class="fa-solid fa-chevron-down text-emerald-500 text-xl toggle-chevron"></i>
+                </span>
+            </button>
+            <div id="maps-body" class="p-6 space-y-6">
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+                        <div class="text-emerald-600 text-3xl mb-3"><i class="fa-solid fa-up-right-from-square"></i></div>
+                        <h4 class="font-black text-emerald-900 text-xl mb-2">開啟景點</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">從下方連結開新分頁，觀察地圖、照片或街景，至少瀏覽 3 個。</p>
+                    </div>
+                    <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5">
+                        <div class="text-sky-600 text-3xl mb-3"><i class="fa-solid fa-camera"></i></div>
+                        <h4 class="font-black text-sky-900 text-xl mb-2">擷取畫面</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">Windows 用 Win + Shift + S；Chromebook 用 Ctrl + Shift + 顯示視窗鍵。</p>
+                    </div>
+                    <div class="bg-violet-50 border border-violet-200 rounded-2xl p-5">
+                        <div class="text-violet-600 text-3xl mb-3"><i class="fa-solid fa-paper-plane"></i></div>
+                        <h4 class="font-black text-violet-900 text-xl mb-2">貼上繳交</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">回到 LoiLoNote 筆記，用 Ctrl + V 貼上截圖，寫一句原因後繳交。</p>
+                    </div>
+                </div>
+                <div class="space-y-5">
+                    <div>
+                        <h4 class="mb-3 text-xl font-black text-pink-800"><i class="fa-solid fa-wand-magic-sparkles mr-2 text-pink-500"></i>主題樂園與童趣景點</h4>
+                        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            <a href="https://www.google.com/maps/search/?api=1&query=Tokyo%20Disneyland" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-pink-200 hover:border-pink-500 rounded-2xl p-4 font-black text-slate-700 hover:text-pink-700 transition card-hover"><i class="fa-solid fa-wand-magic-sparkles mr-2 text-pink-500"></i>東京迪士尼</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Universal%20Studios%20Japan" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-pink-200 hover:border-pink-500 rounded-2xl p-4 font-black text-slate-700 hover:text-pink-700 transition card-hover"><i class="fa-solid fa-film mr-2 text-pink-500"></i>大阪環球影城</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Hong%20Kong%20Disneyland" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-pink-200 hover:border-pink-500 rounded-2xl p-4 font-black text-slate-700 hover:text-pink-700 transition card-hover"><i class="fa-solid fa-wand-magic-sparkles mr-2 text-pink-500"></i>香港迪士尼</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Sanrio%20Puroland" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-pink-200 hover:border-pink-500 rounded-2xl p-4 font-black text-slate-700 hover:text-pink-700 transition card-hover"><i class="fa-solid fa-heart mr-2 text-pink-500"></i>三麗鷗彩虹樂園</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Ghibli%20Museum%20Mitaka" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-violet-200 hover:border-violet-500 rounded-2xl p-4 font-black text-slate-700 hover:text-violet-700 transition card-hover"><i class="fa-solid fa-palette mr-2 text-violet-500"></i>吉卜力美術館</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Osaka%20Aquarium%20Kaiyukan" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-violet-200 hover:border-violet-500 rounded-2xl p-4 font-black text-slate-700 hover:text-violet-700 transition card-hover"><i class="fa-solid fa-water mr-2 text-violet-500"></i>大阪海遊館</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Singapore%20Zoo" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-violet-200 hover:border-violet-500 rounded-2xl p-4 font-black text-slate-700 hover:text-violet-700 transition card-hover"><i class="fa-solid fa-leaf mr-2 text-violet-500"></i>新加坡動物園</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=LEGOLAND%20Japan" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-violet-200 hover:border-violet-500 rounded-2xl p-4 font-black text-slate-700 hover:text-violet-700 transition card-hover"><i class="fa-solid fa-cubes mr-2 text-violet-500"></i>樂高樂園日本</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="mb-3 text-xl font-black text-amber-800"><i class="fa-solid fa-compass mr-2 text-amber-500"></i>驚奇自然與神祕地點</h4>
+                        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            <a href="https://www.google.com/maps/search/?api=1&query=Crop%20Circles%20Wiltshire%20England" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-amber-200 hover:border-amber-500 rounded-2xl p-4 font-black text-slate-700 hover:text-amber-700 transition card-hover"><i class="fa-solid fa-circle-nodes mr-2 text-amber-500"></i>麥田圈</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Stonehenge" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-amber-200 hover:border-amber-500 rounded-2xl p-4 font-black text-slate-700 hover:text-amber-700 transition card-hover"><i class="fa-solid fa-ring mr-2 text-amber-500"></i>巨石陣</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Nazca%20Lines%20Peru" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-amber-200 hover:border-amber-500 rounded-2xl p-4 font-black text-slate-700 hover:text-amber-700 transition card-hover"><i class="fa-solid fa-draw-polygon mr-2 text-amber-500"></i>納斯卡線</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Moai%20Easter%20Island" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-amber-200 hover:border-amber-500 rounded-2xl p-4 font-black text-slate-700 hover:text-amber-700 transition card-hover"><i class="fa-solid fa-monument mr-2 text-amber-500"></i>摩艾石像</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Pamukkale%20Turkey" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-rose-200 hover:border-rose-500 rounded-2xl p-4 font-black text-slate-700 hover:text-rose-700 transition card-hover"><i class="fa-solid fa-water-ladder mr-2 text-rose-500"></i>土耳其棉堡</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Grand%20Canyon%20National%20Park" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-rose-200 hover:border-rose-500 rounded-2xl p-4 font-black text-slate-700 hover:text-rose-700 transition card-hover"><i class="fa-solid fa-mountain-sun mr-2 text-rose-500"></i>大峽谷</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Great%20Blue%20Hole%20Belize" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-rose-200 hover:border-rose-500 rounded-2xl p-4 font-black text-slate-700 hover:text-rose-700 transition card-hover"><i class="fa-solid fa-circle-dot mr-2 text-rose-500"></i>大藍洞</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Zhangjiajie%20National%20Forest%20Park" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-rose-200 hover:border-rose-500 rounded-2xl p-4 font-black text-slate-700 hover:text-rose-700 transition card-hover"><i class="fa-solid fa-tree mr-2 text-rose-500"></i>張家界</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="mb-3 text-xl font-black text-emerald-800"><i class="fa-solid fa-landmark mr-2 text-emerald-500"></i>世界地標與知名建築</h4>
+                        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            <a href="https://www.google.com/maps/search/?api=1&query=Louvre%20Museum%20Paris" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-emerald-200 hover:border-emerald-500 rounded-2xl p-4 font-black text-slate-700 hover:text-emerald-700 transition card-hover"><i class="fa-solid fa-landmark mr-2 text-emerald-500"></i>羅浮宮</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Eiffel%20Tower%20Paris" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-emerald-200 hover:border-emerald-500 rounded-2xl p-4 font-black text-slate-700 hover:text-emerald-700 transition card-hover"><i class="fa-solid fa-tower-observation mr-2 text-emerald-500"></i>艾菲爾鐵塔</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=British%20Museum%20London" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-emerald-200 hover:border-emerald-500 rounded-2xl p-4 font-black text-slate-700 hover:text-emerald-700 transition card-hover"><i class="fa-solid fa-building-columns mr-2 text-emerald-500"></i>大英博物館</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Colosseum%20Rome" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-emerald-200 hover:border-emerald-500 rounded-2xl p-4 font-black text-slate-700 hover:text-emerald-700 transition card-hover"><i class="fa-solid fa-archway mr-2 text-emerald-500"></i>羅馬競技場</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Great%20Pyramid%20of%20Giza" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-sky-200 hover:border-sky-500 rounded-2xl p-4 font-black text-slate-700 hover:text-sky-700 transition card-hover"><i class="fa-solid fa-mountain-sun mr-2 text-sky-500"></i>吉薩金字塔</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Statue%20of%20Liberty%20New%20York" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-sky-200 hover:border-sky-500 rounded-2xl p-4 font-black text-slate-700 hover:text-sky-700 transition card-hover"><i class="fa-solid fa-monument mr-2 text-sky-500"></i>自由女神像</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Mount%20Fuji%20Japan" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-sky-200 hover:border-sky-500 rounded-2xl p-4 font-black text-slate-700 hover:text-sky-700 transition card-hover"><i class="fa-solid fa-mountain mr-2 text-sky-500"></i>富士山</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Taipei%20101" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-sky-200 hover:border-sky-500 rounded-2xl p-4 font-black text-slate-700 hover:text-sky-700 transition card-hover"><i class="fa-solid fa-city mr-2 text-sky-500"></i>台北 101</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-md border-4 border-indigo-200 overflow-hidden">
+            <div class="bg-indigo-50 px-6 py-4 border-b-4 border-indigo-100 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <span class="bg-indigo-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-keyboard"></i>
+                    </span>
+                    <h3 class="text-2xl font-black text-indigo-900">中英打闖關</h3>
+                </div>
+                <span id="typing-badge" class="bg-indigo-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-sm">彈性加練 5 關</span>
+            </div>
+            <div class="p-8">
+                <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 mb-6 text-slate-700 font-bold space-y-2">
+                    <p><i class="fa-solid fa-circle-info text-indigo-500 mr-2"></i> 先完成老師指定任務的同學，先到這裡練習；本節課不要求全班完成 5 關。</p>
+                    <p><i class="fa-solid fa-hand text-indigo-500 mr-2"></i> 不能複製貼上。英文大小寫、標點、空格和換行都要一樣。</p>
+                    <p id="progress-status"><i class="fa-solid fa-flag-checkered text-indigo-500 mr-2"></i> 目前進度：第 1 關開始。</p>
+                    <pre id="progress-debug" class="hidden mt-3 overflow-auto rounded-xl bg-slate-900 p-4 text-left text-xs text-slate-100"></pre>
+                </div>
+
+                <div id="typing-levels-container" class="flex flex-col space-y-8 max-w-3xl mx-auto">
+                    <div id="block-level1" class="bg-cyan-50 border-4 border-cyan-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-cyan-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 1 關</div>
+                        <h4 class="text-xl font-black text-cyan-800 mb-2 flex items-center"><i class="fa-solid fa-language text-cyan-500 mr-2"></i> 英文暖身</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">三個英文單字加句點，先拿下第一關。</p>
+                        <div class="text-2xl font-black text-center text-cyan-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-cyan-200 shadow-inner select-none pointer-events-none">
+                            I am Ben.
+                        </div>
+                        <input type="text" id="input-level1" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full h-16 p-3 rounded-xl border-2 border-cyan-300 focus:outline-none focus:ring-4 focus:ring-cyan-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="點這裡開始打字">
+                        <button onclick="checkLevel(1)" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level1" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level2" class="hidden bg-emerald-50 border-4 border-emerald-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-emerald-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 2 關</div>
+                        <h4 class="text-xl font-black text-emerald-800 mb-2 flex items-center"><i class="fa-solid fa-earth-asia text-emerald-500 mr-2"></i> 中文一行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">注意逗號和句號也要打出來。</p>
+                        <div class="text-2xl font-black text-center text-emerald-700 tracking-widest mb-4 bg-white py-3 px-3 rounded-xl border-2 border-emerald-200 shadow-inner select-none pointer-events-none">
+                            山椒魚可不是魚，牠們是兩生類的動物。
+                        </div>
+                        <input type="text" id="input-level2" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full h-16 p-3 rounded-xl border-2 border-emerald-300 focus:outline-none focus:ring-4 focus:ring-emerald-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="慢慢打，記得標點">
+                        <button onclick="checkLevel(2)" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level2" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level3" class="hidden bg-blue-50 border-4 border-blue-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-blue-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 3 關</div>
+                        <h4 class="text-xl font-black text-blue-800 mb-2 flex items-center"><i class="fa-solid fa-comment-dots text-blue-500 mr-2"></i> 英文二行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">兩行都要打，縮寫符號也要一樣。</p>
+                        <pre class="text-2xl font-black text-center text-blue-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-blue-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">Is he a driver?
+No, he's not.</pre>
+                        <textarea id="input-level3" rows="3" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="第一行打完按 Enter 換行"></textarea>
+                        <button onclick="checkLevel(3)" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level3" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level4" class="hidden bg-orange-50 border-4 border-orange-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-orange-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 4 關</div>
+                        <h4 class="text-xl font-black text-orange-800 mb-2 flex items-center"><i class="fa-solid fa-water text-orange-500 mr-2"></i> 中文二行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">注意逗號、句號和換行。</p>
+                        <pre class="text-2xl font-black text-center text-orange-700 tracking-wider mb-4 bg-white py-3 px-3 rounded-xl border-2 border-orange-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">山椒魚皮膚上的黏液，可以保持溼潤。
+遇到敵人時，牠們會抬起尾巴。</pre>
+                        <textarea id="input-level4" rows="4" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-orange-300 focus:outline-none focus:ring-4 focus:ring-orange-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="兩行都要打完整"></textarea>
+                        <button onclick="checkLevel(4)" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level4" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level5" class="hidden bg-purple-50 border-4 border-purple-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-purple-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 5 關</div>
+                        <h4 class="text-xl font-black text-purple-800 mb-2 flex items-center"><i class="fa-solid fa-layer-group text-purple-500 mr-2"></i> 中英混打三行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">中文、英文、標點與換行都要對。</p>
+                        <pre class="text-2xl font-black text-center text-purple-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-purple-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">我們一起來認識山椒魚吧！
+Is she a nurse?
+Yes, she is.</pre>
+                        <textarea id="input-level5" rows="5" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-purple-300 focus:outline-none focus:ring-4 focus:ring-purple-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="最後一關，三行都要打"></textarea>
+                        <button onclick="checkLevel(5)" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level5" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center mt-16 pb-8 text-gray-400 text-sm font-medium">
+        <p><i class="fa-solid fa-rocket mr-1"></i> 新北市頂溪國小資訊課 - 小小探險家系列</p>
+    </footer>
+
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div id="floating-kb-panel" class="hidden mb-4 bg-white p-3 rounded-2xl shadow-2xl border-4 border-indigo-400 max-w-[90vw] md:max-w-[680px] transform transition-all origin-bottom-right">
+            <div class="flex justify-between items-center mb-2 px-2 border-b border-gray-100 pb-2 gap-3">
+                <span class="font-black text-indigo-800 text-lg"><i class="fa-solid fa-keyboard mr-2"></i>找字小幫手</span>
+                <button onclick="toggleFloatingKeyboard()" class="bg-gray-100 hover:bg-red-500 hover:text-white text-gray-600 rounded-full w-8 h-8 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mb-3">
+                <button id="keyboard-tab-zh" type="button" onclick="showKeyboardLayout('zh')" class="rounded-xl bg-indigo-600 text-white font-black py-2 shadow-sm transition">中文鍵盤</button>
+                <button id="keyboard-tab-en" type="button" onclick="showKeyboardLayout('en')" class="rounded-xl bg-slate-100 text-slate-700 font-black py-2 shadow-sm transition">英文鍵盤</button>
+            </div>
+            <img id="keyboard-img-zh" src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1773745139/postimages-migration/040_ytvyrx.png" alt="注音鍵盤圖" class="w-full rounded-xl border border-gray-200 shadow-sm">
+            <img id="keyboard-img-en" src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1777287126/it-class-tcwu/grade3/week12/english-keyboard-071.png" alt="英文鍵盤圖" class="hidden w-full rounded-xl border border-gray-200 shadow-sm">
+        </div>
+        <button onclick="toggleFloatingKeyboard()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-3 rounded-full shadow-[0_4px_15px_rgba(79,70,229,0.5)] font-black text-lg flex items-center justify-center transform transition hover:scale-105 border-2 border-white">
+            <i class="fa-solid fa-keyboard mr-2 text-2xl"></i> 看鍵盤圖
+        </button>
+    </div>
+
+    <script>
+        const safetySlides = [
+            { title: "安全偵探出動", src: "images/week14/week14-safety-card-cover.png", alt: "安全偵探案例卡封面" },
+            { title: "假快遞簡訊案情卡", src: "images/week14/week14-safety-card-01.png", alt: "假快遞簡訊案情卡" },
+            { title: "假快遞簡訊破解卡", src: "images/week14/week14-safety-card-02.png", alt: "假快遞簡訊破解卡" },
+            { title: "免費遊戲寶物案情卡", src: "images/week14/week14-safety-card-03.png", alt: "免費遊戲寶物案情卡" },
+            { title: "免費遊戲寶物破解卡", src: "images/week14/week14-safety-card-04.png", alt: "免費遊戲寶物破解卡" },
+            { title: "免費外掛與下載檔案情卡", src: "images/week14/week14-safety-card-05.png", alt: "免費外掛與下載檔案情卡" },
+            { title: "免費外掛與下載檔破解卡", src: "images/week14/week14-safety-card-06.png", alt: "免費外掛與下載檔破解卡" },
+            { title: "低價遊戲帳號案情卡", src: "images/week14/week14-safety-card-07.png", alt: "低價遊戲帳號與虛寶交易案情卡" },
+            { title: "低價遊戲帳號破解卡", src: "images/week14/week14-safety-card-08.png", alt: "低價遊戲帳號與虛寶交易破解卡" },
+            { title: "假的登入頁案情卡", src: "images/week14/week14-safety-card-09.png", alt: "假的登入頁案情卡" },
+            { title: "假的登入頁破解卡", src: "images/week14/week14-safety-card-10.png", alt: "假的登入頁破解卡" },
+            { title: "奇怪 QR Code 案情卡", src: "images/week14/week14-safety-card-11.png", alt: "奇怪 QR Code 案情卡" },
+            { title: "奇怪 QR Code 破解卡", src: "images/week14/week14-safety-card-12.png", alt: "奇怪 QR Code 破解卡" },
+            { title: "安全偵探四步驟", src: "images/week14/week14-safety-card-13.png", alt: "安全偵探四步驟總結卡" }
+        ];
+        let currentSlideIndex = 0;
+        let lightboxCaseMode = false;
+
+        function updateCaseSlide(index) {
+            currentSlideIndex = Math.max(0, Math.min(index, safetySlides.length - 1));
+            const slide = safetySlides[currentSlideIndex];
+            const img = document.getElementById("case-slide-img");
+            const title = document.getElementById("case-slide-title");
+            const counter = document.getElementById("case-slide-counter");
+            const isFirst = currentSlideIndex === 0;
+            const isLast = currentSlideIndex === safetySlides.length - 1;
+            if (img) {
+                img.src = slide.src;
+                img.alt = slide.alt;
+            }
+            if (title) title.textContent = slide.title;
+            if (counter) counter.textContent = `${currentSlideIndex + 1} / ${safetySlides.length}`;
+            ["case-prev-btn", "lightbox-prev-btn"].forEach((id) => {
+                const button = document.getElementById(id);
+                if (button) button.disabled = isFirst;
+            });
+            ["case-next-btn", "lightbox-next-btn"].forEach((id) => {
+                const button = document.getElementById(id);
+                if (button) button.disabled = isLast;
+            });
+            if (lightboxCaseMode) {
+                const lightboxImage = document.getElementById("lightbox-img");
+                if (lightboxImage) {
+                    lightboxImage.src = slide.src;
+                    lightboxImage.alt = slide.alt;
+                }
+            }
+            document.querySelectorAll("[data-slide-index]").forEach((button) => {
+                const active = Number(button.dataset.slideIndex) === currentSlideIndex;
+                button.classList.toggle("bg-amber-500", active);
+                button.classList.toggle("text-white", active);
+                button.classList.toggle("border-amber-500", active);
+                button.classList.toggle("bg-white", !active);
+                button.classList.toggle("text-slate-700", !active);
+                button.classList.toggle("border-slate-200", !active);
+            });
+        }
+
+        window.changeCaseSlide = function changeCaseSlide(delta) {
+            if (delta < 0 && currentSlideIndex === 0) return;
+            if (delta > 0 && currentSlideIndex === safetySlides.length - 1) return;
+            updateCaseSlide(currentSlideIndex + delta);
+        };
+
+        window.changeLightboxCaseSlide = function changeLightboxCaseSlide(delta, event) {
+            event?.stopPropagation();
+            if (!lightboxCaseMode) return;
+            updateCaseSlide(currentSlideIndex + delta);
+        };
+
+        function renderCaseSlideNav() {
+            const nav = document.getElementById("case-slide-nav");
+            if (!nav) return;
+            nav.innerHTML = safetySlides.map((slide, index) => `
+                <button type="button" data-slide-index="${index}" onclick="updateCaseSlide(${index})" class="min-h-[44px] rounded-xl border-2 bg-white text-slate-700 font-black text-sm hover:border-amber-500 hover:text-amber-700 transition" title="${slide.title}">
+                    ${index + 1}
+                </button>
+            `).join("");
+            updateCaseSlide(0);
+        }
+
+        window.openLightbox = function openLightbox(src) {
+            const box = document.getElementById("lightbox");
+            const image = document.getElementById("lightbox-img");
+            if (!box || !image) return;
+            const matchedIndex = safetySlides.findIndex((slide) => src.endsWith(slide.src));
+            lightboxCaseMode = matchedIndex >= 0;
+            if (lightboxCaseMode) {
+                updateCaseSlide(matchedIndex);
+                const slide = safetySlides[currentSlideIndex];
+                image.src = slide.src;
+                image.alt = slide.alt;
+            } else {
+                image.src = src;
+                image.alt = "圖片放大";
+            }
+            box.classList.remove("hidden");
+            box.classList.add("flex");
+        };
+
+        window.closeLightbox = function closeLightbox() {
+            const box = document.getElementById("lightbox");
+            if (!box) return;
+            box.classList.add("hidden");
+            box.classList.remove("flex");
+            lightboxCaseMode = false;
+        };
+
+        window.toggleFloatingKeyboard = function toggleFloatingKeyboard() {
+            document.getElementById("floating-kb-panel")?.classList.toggle("hidden");
+        };
+
+        window.showKeyboardLayout = function showKeyboardLayout(layout) {
+            const isEnglish = layout === "en";
+            document.getElementById("keyboard-img-zh")?.classList.toggle("hidden", isEnglish);
+            document.getElementById("keyboard-img-en")?.classList.toggle("hidden", !isEnglish);
+            document.getElementById("keyboard-tab-zh")?.classList.toggle("bg-indigo-600", !isEnglish);
+            document.getElementById("keyboard-tab-zh")?.classList.toggle("text-white", !isEnglish);
+            document.getElementById("keyboard-tab-zh")?.classList.toggle("bg-slate-100", isEnglish);
+            document.getElementById("keyboard-tab-zh")?.classList.toggle("text-slate-700", isEnglish);
+            document.getElementById("keyboard-tab-en")?.classList.toggle("bg-indigo-600", isEnglish);
+            document.getElementById("keyboard-tab-en")?.classList.toggle("text-white", isEnglish);
+            document.getElementById("keyboard-tab-en")?.classList.toggle("bg-slate-100", !isEnglish);
+            document.getElementById("keyboard-tab-en")?.classList.toggle("text-slate-700", !isEnglish);
+        };
+
+        document.querySelectorAll(".section-toggle").forEach((button) => {
+            button.addEventListener("click", () => {
+                const target = document.getElementById(button.dataset.target);
+                const isExpanded = button.getAttribute("aria-expanded") === "true";
+                button.setAttribute("aria-expanded", String(!isExpanded));
+                target?.classList.toggle("hidden", isExpanded);
+            });
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") closeLightbox();
+            if (event.key === "ArrowLeft" || event.key === "ArrowUp") changeCaseSlide(-1);
+            if (event.key === "ArrowRight" || event.key === "ArrowDown") changeCaseSlide(1);
+        });
+
+        renderCaseSlideNav();
+    </script>
+
+    <script type="module">
+        import {
+            beginCentralizedLogin,
+            resolveSession,
+            supabase
+        } from "../shared/auth.js";
+        import { initNavbarAuth } from "../shared/navbar-auth.js";
+        import { initQuizModule } from "../shared/quiz-module.js";
+        import { initTypingChallenge } from "../shared/typing-challenge.js";
+
+        initNavbarAuth();
+
+        const WEEK_CODE = "14";
+        const QUIZ_KEY = "phishing_safety_quiz_1";
+        let currentSession = null;
+
+        const safetyQuestions = [
+            {
+                id: 1,
+                questionHtml: "收到「包裹地址錯誤，請立刻點連結補資料」的簡訊，比較安全的做法是什麼？",
+                options: [
+                    { text: "A. 直接點連結，因為看起來很急", correct: false },
+                    { text: "B. 不點簡訊連結，改用官方 App、官方網站或請大人協助確認", correct: true },
+                    { text: "C. 先把身分證字號和密碼填好，之後再問大人", correct: false },
+                    { text: "D. 轉傳給全班，請大家一起點看看", correct: false }
+                ]
+            },
+            {
+                id: 2,
+                questionHtml: "下面哪一個情況最像釣魚網站？",
+                options: [
+                    { text: "A. 老師給的學校網站，只要看公告不需要輸入密碼", correct: false },
+                    { text: "B. Google 地圖裡查到的博物館地點", correct: false },
+                    { text: "C. 免費領遊戲寶物的頁面，要求輸入遊戲帳號和密碼", correct: true },
+                    { text: "D. 課堂上開啟的國語課文練習頁", correct: false }
+                ]
+            },
+            {
+                id: 3,
+                questionHtml: "網頁說「登入帳號密碼就送 9999 顆寶石」，你應該先想到什麼？",
+                options: [
+                    { text: "A. 太好了，先拿再說", correct: false },
+                    { text: "B. 看起來太好，可能是騙帳號的陷阱", correct: true },
+                    { text: "C. 只要是同學傳的連結就一定安全", correct: false },
+                    { text: "D. 密碼可以填簡單一點，才不會忘記", correct: false }
+                ]
+            },
+            {
+                id: 4,
+                questionHtml: "下載不明外掛或安裝檔，可能帶來什麼危險？",
+                options: [
+                    { text: "A. 可能有病毒或惡意程式，讓電腦或帳號出問題", correct: true },
+                    { text: "B. 一定會讓電腦跑得更快", correct: false },
+                    { text: "C. 只要檔名有「免費」兩個字就安全", correct: false },
+                    { text: "D. 下載完不用掃描，也不用問大人", correct: false }
+                ]
+            },
+            {
+                id: 5,
+                questionHtml: "看到陌生 QR Code 說掃描可領禮物，最好的做法是什麼？",
+                options: [
+                    { text: "A. 先掃再說，反正只是 QR Code", correct: false },
+                    { text: "B. 請同學先掃，確認有沒有中獎", correct: false },
+                    { text: "C. 先確認來源，必要時問老師或家人，不隨便輸入資料", correct: true },
+                    { text: "D. 掃描後把帳號密碼貼上去，才領得到", correct: false }
+                ]
+            }
+        ];
+
+        function signInWithGoogle() {
+            beginCentralizedLogin({ returnTo: window.location.href });
+        }
+
+        async function handleQuizAuthUpdate(session) {
+            currentSession = session;
+            await quiz.handleAuthChange(session);
+        }
+
+        async function getQuizUser() {
+            if (currentSession?.user) return currentSession.user;
+            currentSession = await resolveSession();
+            await handleQuizAuthUpdate(currentSession);
+            return currentSession?.user ?? null;
+        }
+
+        async function loadQuizProgress() {
+            if (!currentSession?.user) return null;
+            const { data, error } = await supabase
+                .from("student_progress")
+                .select("completed, score")
+                .eq("user_id", currentSession.user.id)
+                .eq("week_code", WEEK_CODE)
+                .eq("activity_key", QUIZ_KEY)
+                .maybeSingle();
+            if (error || !data?.completed) return null;
+            return { completed: true, score: data.score };
+        }
+
+        async function saveQuizProgress(score) {
+            const user = await getQuizUser();
+            if (!user) return false;
+            const payload = {
+                user_id: user.id,
+                week_code: WEEK_CODE,
+                activity_key: QUIZ_KEY,
+                current_level: safetyQuestions.length,
+                completed: true,
+                score,
+                updated_at: new Date().toISOString()
+            };
+            const { error } = await supabase
+                .from("student_progress")
+                .upsert(payload, { onConflict: "user_id,week_code,activity_key" });
+            return !error;
+        }
+
+        const quiz = initQuizModule({
+            questions: safetyQuestions,
+            selectors: {
+                lock: "quiz-lock",
+                content: "quiz-content",
+                container: "quiz-container",
+                statusBanner: "quiz-status-banner",
+                statusText: "quiz-status-text"
+            },
+            messages: {
+                questionLabel: (index) => `第 ${index} 題`,
+                submitButton: "送出測驗",
+                submittedButton: "已完成",
+                unansweredAlert: (remaining) => `還有 ${remaining} 題還沒選，請先全部作答。`,
+                scoreLabel: (correct, total) => `答對：${correct} / ${total} 題`,
+                completedBanner: (score, total) => `你已完成病毒與釣魚網站小測驗，分數：${score ?? "?"} / ${total} 題。`,
+                unauthenticated: "登入 Google 後，才能開始資訊素養小測驗。",
+                resultMessages: {
+                    perfect: ["安全偵探滿分", "你能抓出釣魚網站、病毒和陌生 QR Code 的重要線索。"],
+                    great: ["很接近", "再記得不點怪連結、不填密碼，遇到不確定就問大人。"],
+                    good: ["有進步", "把停、看、想、問四步驟再複習一次會更穩。"],
+                    retry: ["再試試", "太急、太好、要密碼和來源不明，都是需要停下來的提醒。"]
+                }
+            },
+            loadProgress: loadQuizProgress,
+            saveProgress: saveQuizProgress,
+            getCurrentUser: getQuizUser,
+            onRequireLogin: signInWithGoogle,
+            onAfterSubmit: async ({ correct, total }) => {
+                if (correct === total) {
+                    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                }
+                document.getElementById("quiz-result")?.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        });
+
+        window.selectOption = function selectOption(qId, btnEl) {
+            quiz.selectOption(qId, btnEl);
+        };
+        window.submitQuiz = async function submitQuiz() {
+            await quiz.submit();
+        };
+        document.getElementById("quiz-login-btn")?.addEventListener("click", signInWithGoogle);
+        supabase.auth.onAuthStateChange((_event, session) => {
+            handleQuizAuthUpdate(session);
+        });
+        resolveSession().then(handleQuizAuthUpdate);
+
+        const levelsData = [
+            { id: 1, ans: "I am Ben." },
+            { id: 2, ans: "山椒魚可不是魚，牠們是兩生類的動物。" },
+            { id: 3, ans: "Is he a driver?\nNo, he's not." },
+            { id: 4, ans: "山椒魚皮膚上的黏液，可以保持溼潤。\n遇到敵人時，牠們會抬起尾巴。" },
+            { id: 5, ans: "我們一起來認識山椒魚吧！\nIs she a nurse?\nYes, she is." }
+        ];
+
+        const levelMsg = {
+            1: "第 1 關完成，先拿到成功感了。",
+            2: "第 2 關完成，中文標點也有注意到。",
+            3: "第 3 關完成，英文換行和縮寫都對了。",
+            4: "第 4 關完成，國語課文句子也能打好了。",
+            5: "5 關全部完成，今天的中英混打任務成功。"
+        };
+
+        function buildHint(userVal, targetVal, levelIndex) {
+            const userLines = userVal.split("\n");
+            const targetLines = targetVal.split("\n");
+            const maxLines = Math.max(userLines.length, targetLines.length);
+
+            for (let lineIndex = 0; lineIndex < maxLines; lineIndex += 1) {
+                const userLine = userLines[lineIndex] || "";
+                const targetLine = targetLines[lineIndex] || "";
+
+                if (userLine === targetLine) continue;
+                if (!userLine && targetLine) {
+                    return `提示：第 ${lineIndex + 1} 行還沒完成，看看是不是少了整行內容。`;
+                }
+                if (userLine && !targetLine) {
+                    return `提示：第 ${lineIndex + 1} 行多打了內容，檢查一下句尾。`;
+                }
+
+                const maxChars = Math.max(userLine.length, targetLine.length);
+                for (let charIndex = 0; charIndex < maxChars; charIndex += 1) {
+                    const userChar = userLine[charIndex];
+                    const targetChar = targetLine[charIndex];
+
+                    if (userChar === targetChar) continue;
+                    if (!userChar) {
+                        return `提示：第 ${lineIndex + 1} 行後面可能少字，從「${targetLine.slice(Math.max(0, charIndex - 2), charIndex + 3)}」附近再看一次。`;
+                    }
+                    if (!targetChar) {
+                        return `提示：第 ${lineIndex + 1} 行後面可能多打了，檢查一下句尾。`;
+                    }
+                    return `提示：第 ${lineIndex + 1} 行第 ${charIndex + 1} 個字附近不一樣，從「${targetLine.slice(Math.max(0, charIndex - 2), charIndex + 3)}」附近再看一次。`;
+                }
+            }
+
+            return levelIndex === 1 || levelIndex === 3 || levelIndex === 5
+                ? "提示：再檢查一下大小寫、問號、句點、逗號、縮寫符號或換行。"
+                : "提示：再檢查一下是不是多字、少字、標點或換行不同。";
+        }
+
+        initTypingChallenge({
+            weekCode: "14",
+            activityKey: "typing_task_5",
+            levelsData,
+            levelEncouragements: levelMsg,
+            buildHint,
+            getWrongAnswerHtml: ({ hint }) => `還差一點點。${hint}`,
+            progressMessages: {
+                completed: "5 關全部完成，今天的中英打闖關已經完成。",
+                resumed: (level) => `已接回 Week 14 打字進度，從第 ${level} 關繼續。`,
+                firstLogin: "已登入成功，這次的打字進度會自動記錄下來。",
+                unauthenticated: "請先登入 Google，才能開始打字闖關並記錄進度。",
+                saveCompleted: "已記下 5 關完整進度，今天的打字任務完成。",
+                saveNextLevel: (level) => `已記下進度，下次從第 ${level} 關繼續。`,
+                saveError: "進度暫時沒有記錄成功，請稍後再試一次。",
+                resetNoSession: "目前沒有登入，不能重新開始練習。",
+                resetConfirm: "要重新開始 Week 14 打字練習嗎？這會把目前進度重設回第 1 關。"
+            },
+            celebrationContent: {
+                title: "5 關全部完成",
+                message: "你完成了英文、中文和中英混打，今天的打字加練任務成功。",
+                buttonText: "回到練習區",
+                buttonHref: ""
+            }
+        });
+    </script>
+</body>
+</html>
