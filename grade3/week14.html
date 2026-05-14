@@ -191,18 +191,26 @@
         </section>
 
         <section class="bg-white rounded-3xl shadow-md border-4 border-emerald-200 overflow-hidden">
-            <button type="button" class="section-toggle w-full bg-emerald-50 px-6 py-4 border-b-4 border-emerald-100 flex items-center justify-between text-left" data-target="maps-body" aria-expanded="true">
-                <span class="flex items-center">
-                    <span class="bg-emerald-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
-                        <i class="fa-solid fa-map-location-dot"></i>
+            <div class="bg-emerald-50 px-6 py-4 border-b-4 border-emerald-100 flex items-center justify-between gap-3 flex-wrap">
+                <div class="flex min-w-0 flex-1 items-center gap-4">
+                    <span class="flex min-w-0 items-center">
+                        <span class="bg-emerald-500 text-white w-12 h-12 rounded-full flex shrink-0 items-center justify-center text-2xl shadow-md mr-4">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                        </span>
+                        <span class="text-2xl font-black text-emerald-900">Google 地圖再探</span>
                     </span>
-                    <span class="text-2xl font-black text-emerald-900">Google 地圖再探</span>
-                </span>
-                <span class="flex items-center gap-3">
+                </div>
+                <div class="flex items-center gap-3 flex-wrap justify-end">
+                    <button id="maps-teacher-toggle" type="button" class="hidden items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-sm font-black text-white shadow-md transition hover:bg-emerald-700">
+                        <i class="fa-solid fa-lock-open"></i>
+                        <span>開放景點連結</span>
+                    </button>
                     <span class="hidden md:inline-flex bg-white text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full text-sm font-black">課本 P.100-P.111</span>
-                    <i class="fa-solid fa-chevron-down text-emerald-500 text-xl toggle-chevron"></i>
-                </span>
-            </button>
+                    <button type="button" class="section-toggle inline-flex h-11 w-11 items-center justify-center rounded-full text-emerald-600 transition hover:bg-white" data-target="maps-body" aria-expanded="true" title="收合 Google 地圖再探" aria-label="收合 Google 地圖再探">
+                        <i class="fa-solid fa-chevron-down text-xl toggle-chevron"></i>
+                    </button>
+                </div>
+            </div>
             <div id="maps-body" class="p-6 space-y-6">
                 <div class="grid md:grid-cols-3 gap-4">
                     <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
@@ -220,6 +228,18 @@
                         <h4 class="font-black text-violet-900 text-xl mb-2">貼上繳交</h4>
                         <p class="font-bold text-slate-700 leading-relaxed">回到 LoiLoNote 筆記，用 Ctrl + V 貼上截圖，寫一句原因後繳交。</p>
                     </div>
+                </div>
+                <div id="maps-links-control" class="flex flex-col gap-3 rounded-2xl border-2 border-emerald-100 bg-emerald-50 p-4 md:flex-row md:items-center md:justify-between">
+                    <div class="flex items-center gap-3 font-black text-emerald-900">
+                        <span id="maps-links-status-icon" class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-emerald-600 shadow-sm">
+                            <i class="fa-solid fa-lock"></i>
+                        </span>
+                        <span id="maps-links-status">正在確認景點連結狀態...</span>
+                    </div>
+                    <button id="maps-refresh-btn" type="button" class="inline-flex items-center justify-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-black text-emerald-700 shadow-sm ring-2 ring-emerald-200 transition hover:bg-emerald-100">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>更新連結狀態</span>
+                    </button>
                 </div>
                 <div class="space-y-5">
                     <div>
@@ -529,18 +549,59 @@ Yes, she is.</pre>
     <script type="module">
         import {
             beginCentralizedLogin,
+            isTeacher,
             resolveSession,
             supabase
         } from "../shared/auth.js";
+        import { initClassroomLinkControl } from "../shared/classroom-controls.js";
         import { initNavbarAuth } from "../shared/navbar-auth.js";
         import { initQuizModule } from "../shared/quiz-module.js";
         import { initTypingChallenge } from "../shared/typing-challenge.js";
 
-        initNavbarAuth();
-
         const WEEK_CODE = "14";
         const QUIZ_KEY = "phishing_safety_quiz_1";
         let currentSession = null;
+
+        const mapsLinkControl = initClassroomLinkControl({
+            supabase,
+            isTeacher,
+            grade: "grade3",
+            weekCode: WEEK_CODE,
+            controlKey: "maps_links",
+            container: "#maps-body",
+            linkSelector: "a[target='_blank']",
+            statusText: "#maps-links-status",
+            statusIcon: "#maps-links-status-icon",
+            refreshButton: "#maps-refresh-btn",
+            teacherToggleButton: "#maps-teacher-toggle",
+            messages: {
+                loading: "正在確認景點連結狀態...",
+                refreshing: "正在更新連結狀態...",
+                open: "景點連結已開放，可以點選後用新分頁探索。",
+                locked: "景點連結尚未開放，請先完成目前任務。",
+                blockedClick: "老師還沒開放景點連結，請先完成目前任務。",
+                loadError: "讀取連結狀態失敗，請稍後再按一次更新。",
+                teacherOnly: "只有老師登入後可以開關景點連結。",
+                opening: "正在開放景點連結...",
+                closing: "正在關閉景點連結...",
+                toggleError: (error) => {
+                    const parts = [error?.message, error?.code].filter(Boolean);
+                    return `開關景點連結失敗：${parts.length ? parts.join(" / ") : "unknown error"}`;
+                }
+            },
+            toggleButtonHtml: {
+                open: '<i class="fa-solid fa-lock"></i><span>關閉景點連結</span>',
+                locked: '<i class="fa-solid fa-lock-open"></i><span>開放景點連結</span>'
+            }
+        });
+
+        initNavbarAuth({ onSessionResolved: handlePageSessionResolved });
+
+        function handlePageSessionResolved(session) {
+            currentSession = session;
+            mapsLinkControl.handleSession(session);
+        }
+        mapsLinkControl.load();
 
         const safetyQuestions = [
             {
@@ -686,6 +747,7 @@ Yes, she is.</pre>
         };
         document.getElementById("quiz-login-btn")?.addEventListener("click", signInWithGoogle);
         supabase.auth.onAuthStateChange((_event, session) => {
+            handlePageSessionResolved(session);
             handleQuizAuthUpdate(session);
         });
         resolveSession().then(handleQuizAuthUpdate);
