@@ -113,6 +113,10 @@ function readStoredSession() {
     }
 }
 
+export function getStoredAccessToken() {
+    return readStoredSession()?.access_token ?? null;
+}
+
 export async function resolveSession() {
     for (let attempt = 0; attempt < 2; attempt += 1) {
         const { session } = await getSession();

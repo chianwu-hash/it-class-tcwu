@@ -1,8 +1,11 @@
 import {
     beginCentralizedLogin,
     getSession,
+    getStoredAccessToken,
     isTeacher,
     signOutAndReload,
+    SUPABASE_ANON_KEY,
+    SUPABASE_URL,
     supabase
 } from "./auth.js";
 
@@ -48,6 +51,7 @@ export function initTypingChallenge({
     let highestUnlockedLevel = 1;
     const messages = { ...DEFAULT_PROGRESS_MESSAGES, ...progressMessages };
     const celebration = { ...DEFAULT_CELEBRATION_CONTENT, ...celebrationContent };
+    const SAVE_TIMEOUT_MS = 10000;
 
     const authStatusEl = document.getElementById("auth-status");
     const progressStatusEl = document.getElementById("progress-status");
@@ -300,6 +304,52 @@ export function initTypingChallenge({
         return data;
     }
 
+    async function saveProgressDirect(payload, accessToken) {
+        if (!accessToken) {
+            return {
+                error: {
+                    message: "No access token available",
+                    status: "no_token"
+                }
+            };
+        }
+
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(() => controller.abort(), SAVE_TIMEOUT_MS);
+        const url = new URL(`${SUPABASE_URL}/rest/v1/student_progress`);
+        url.searchParams.set("on_conflict", "user_id,week_code,activity_key");
+
+        try {
+            const response = await fetch(url.toString(), {
+                method: "POST",
+                signal: controller.signal,
+                headers: {
+                    apikey: SUPABASE_ANON_KEY,
+                    Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "application/json",
+                    Prefer: "resolution=merge-duplicates,return=minimal"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                return { error: null };
+            }
+
+            return {
+                error: {
+                    message: await response.text(),
+                    status: response.status,
+                    statusText: response.statusText
+                }
+            };
+        } catch (error) {
+            return { error };
+        } finally {
+            window.clearTimeout(timeoutId);
+        }
+    }
+
     async function saveProgress(nextLevel, completed) {
         const user = await getActiveUser();
         if (!user) {
@@ -319,52 +369,35 @@ export function initTypingChallenge({
             updated_at: new Date().toISOString()
         };
 
-        let lastError = null;
+        const accessToken = currentSession?.access_token ?? getStoredAccessToken();
+        const { error } = await saveProgressDirect(payload, accessToken);
 
-        for (let attempt = 1; attempt <= 2; attempt += 1) {
-            const { error } = await supabase
-                .from("student_progress")
-                .upsert(payload, { onConflict: "user_id,week_code,activity_key" });
-
-            if (error) {
-                lastError = error;
-                console.error(`saveProgress failed on attempt ${attempt}`, error, payload);
-                continue;
-            }
-
-            const saved = await fetchSavedProgress(user.id);
-            if (saved?.current_level === nextLevel && saved?.completed === completed) {
-                highestUnlockedLevel = Math.max(highestUnlockedLevel, nextLevel);
-                if (progressStatusEl) {
-                    progressStatusEl.textContent = completed
-                        ? messages.saveCompleted
-                        : messages.saveNextLevel(nextLevel);
-                }
-                if (completed) {
-                    resetProgressBtn?.classList.remove("hidden");
-                } else {
-                    resetProgressBtn?.classList.add("hidden");
-                }
-                return true;
-            }
-
-            lastError = new Error("Saved state verification failed");
-            console.error(`saveProgress verification failed on attempt ${attempt}`, saved, payload);
-        }
-
-        if (lastError) {
-            console.error("saveProgress failed", lastError, payload);
+        if (!error) {
+            clearProgressDebug();
+            highestUnlockedLevel = Math.max(highestUnlockedLevel, nextLevel);
             if (progressStatusEl) {
-                progressStatusEl.textContent = messages.saveError;
+                progressStatusEl.textContent = completed
+                    ? messages.saveCompleted
+                    : messages.saveNextLevel(nextLevel);
             }
-            showProgressDebug("saveProgress", lastError, {
-                next_level: nextLevel,
-                completed,
-                expected: payload,
-                highest_unlocked: highestUnlockedLevel
-            });
+            if (completed) {
+                resetProgressBtn?.classList.remove("hidden");
+            } else {
+                resetProgressBtn?.classList.add("hidden");
+            }
+            return true;
         }
 
+        console.error("saveProgress failed", error, payload);
+        if (progressStatusEl) {
+            progressStatusEl.textContent = messages.saveError;
+        }
+        showProgressDebug("saveProgress", error, {
+            next_level: nextLevel,
+            completed,
+            expected: payload,
+            highest_unlocked: highestUnlockedLevel
+        });
         return false;
     }
 
