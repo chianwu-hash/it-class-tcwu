@@ -45,7 +45,7 @@
                     <div class="font-black">Admin Debug</div>
                     <div id="debug-meta" class="mt-1 text-xs font-bold text-amber-800"></div>
                 </div>
-                <div class="text-xs font-bold text-amber-700">debug=1 / noreload=1</div>
+                <div class="text-xs font-bold text-amber-700">debug=1</div>
             </div>
             <pre id="debug-log" class="mt-3 max-h-72 overflow-auto rounded-xl bg-white/80 p-3 text-xs leading-5 text-slate-700"></pre>
         </section>
@@ -170,7 +170,10 @@
     <script type="module">
         import {
             AUTH_STORAGE_KEY,
+            SUPABASE_ANON_KEY,
+            SUPABASE_URL,
             getAdminRedirectUrl,
+            getStoredAccessToken,
             isTeacher,
             resolveSession,
             signInWithGoogle as sharedSignInWithGoogle,
@@ -210,14 +213,12 @@
 
         const ADMIN_FILTERS_STORAGE_KEY = "admin-progress-filters";
         const ADMIN_DEBUG_STORAGE_KEY = "admin-progress-debug-log";
-        const ADMIN_DEBUG_RELOAD_REASON_KEY = "admin-progress-debug-reload-reason";
+        const ADMIN_ACTION_TIMEOUT_MS = 10000;
         const debugParams = new URLSearchParams(window.location.search);
         const debugEnabled = debugParams.get("debug") === "1";
-        const disableAutoReload = debugParams.get("noreload") === "1";
 
         let currentSession = null;
         let isSyncing = false;
-        let adminPageWasHidden = false;
         let studentProfilesByUserId = new Map();
         let currentPage = 1;
         let pageSize = 20;
@@ -297,17 +298,43 @@
             renderDebugPanel();
         }
 
-        function setReloadReason(reason) {
-            if (!debugEnabled) return;
-            window.sessionStorage.setItem(ADMIN_DEBUG_RELOAD_REASON_KEY, reason);
-        }
-
-        function consumeReloadReason() {
-            const reason = window.sessionStorage.getItem(ADMIN_DEBUG_RELOAD_REASON_KEY);
-            if (reason) {
-                window.sessionStorage.removeItem(ADMIN_DEBUG_RELOAD_REASON_KEY);
+        async function callAdminRpc(functionName, payload = {}, { accessToken = getStoredAccessToken() } = {}) {
+            if (!accessToken) {
+                throw new Error("missing access token");
             }
-            return reason;
+
+            const controller = new AbortController();
+            const timeoutId = window.setTimeout(() => controller.abort(), ADMIN_ACTION_TIMEOUT_MS);
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${functionName}`, {
+                    method: "POST",
+                    headers: {
+                        apikey: SUPABASE_ANON_KEY,
+                        Authorization: `Bearer ${accessToken}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload),
+                    signal: controller.signal
+                });
+
+                if (!response.ok) {
+                    const detail = await response.text().catch(() => "");
+                    const error = new Error(detail || `${functionName} failed with ${response.status}`);
+                    error.status = response.status;
+                    throw error;
+                }
+
+                const text = await response.text();
+                return text ? JSON.parse(text) : null;
+            } catch (error) {
+                if (error?.name === "AbortError") {
+                    throw new Error(`${functionName} timed out after ${ADMIN_ACTION_TIMEOUT_MS}ms`);
+                }
+                throw error;
+            } finally {
+                window.clearTimeout(timeoutId);
+            }
         }
 
         function formatTime(value) {
@@ -762,9 +789,11 @@
                 return;
             }
 
-            const { data, error } = await supabase.rpc("admin_list_week_visibility");
-            if (error) {
-                logDebug("load-visibility-error", { message: error.message, code: error.code || null, details: error.details || null });
+            let data = [];
+            try {
+                data = await callAdminRpc("admin_list_week_visibility");
+            } catch (error) {
+                logDebug("load-visibility-error", { message: error?.message || String(error), status: error?.status || null });
                 showNotice(`讀取卡片顯示設定失敗：${error.message}`, "error");
                 return;
             }
@@ -792,6 +821,19 @@
                 throw error;
             } finally {
                 isSyncing = false;
+                renderDebugPanel();
+            }
+        }
+
+        async function syncSessionOnly() {
+            logDebug('session-only-sync-start');
+            try {
+                currentSession = await resolveSession();
+                updateAuthUI();
+                logDebug('session-only-sync-done', { email: currentSession?.user?.email || null });
+            } catch (error) {
+                logDebug('session-only-sync-error', { message: error?.message || String(error) });
+            } finally {
                 renderDebugPanel();
             }
         }
@@ -835,14 +877,14 @@
             btn.textContent = "處理中...";
             logDebug("toggle-rpc-start", { grade, weekCode, nextVisible });
 
-            const { error } = await supabase.rpc("admin_set_week_visibility", {
-                p_grade: grade,
-                p_week_code: weekCode,
-                p_is_visible: nextVisible
-            });
-
-            if (error) {
-                logDebug("toggle-rpc-error", { message: error.message, code: error.code || null, details: error.details || null });
+            try {
+                await callAdminRpc("admin_set_week_visibility", {
+                    p_grade: grade,
+                    p_week_code: weekCode,
+                    p_is_visible: nextVisible
+                });
+            } catch (error) {
+                logDebug("toggle-rpc-error", { message: error?.message || String(error), status: error?.status || null });
                 showNotice(`更新卡片顯示設定失敗：${error.message}`, "error");
                 btn.disabled = false;
                 await loadWeekVisibility();
@@ -924,77 +966,37 @@
             loadProgress();
         });
 
-        window.addEventListener("pageshow", (event) => {
-            logDebug('pageshow', { persisted: event.persisted });
-            if (disableAutoReload) {
-                logDebug('pageshow-skip-sync', { reason: 'noreload-mode' });
-                return;
-            }
-            syncSessionAndRender();
-        });
-        document.addEventListener("visibilitychange", () => {
-            logDebug('visibilitychange', { hidden: document.hidden, state: document.visibilityState, adminPageWasHidden });
-            if (document.hidden) {
-                adminPageWasHidden = true;
-                return;
-            }
-
-            if (adminPageWasHidden && !disableAutoReload) {
-                adminPageWasHidden = false;
-                syncSessionAndRender();
-                return;
-            }
-
-            if (adminPageWasHidden && disableAutoReload) {
-                adminPageWasHidden = false;
-                logDebug('visibilitychange-skip-sync', { reason: 'noreload-mode' });
-                return;
-            }
-
-            syncSessionAndRender();
-        });
-        window.addEventListener("focus", () => {
-            logDebug('focus', { adminPageWasHidden });
-            if (adminPageWasHidden && !disableAutoReload) {
-                adminPageWasHidden = false;
-                syncSessionAndRender();
-                return;
-            }
-            if (adminPageWasHidden && disableAutoReload) {
-                adminPageWasHidden = false;
-                logDebug('focus-skip-sync', { reason: 'noreload-mode' });
-                return;
-            }
-            syncSessionAndRender();
-        });
         window.addEventListener("storage", (event) => {
             if (event.key === AUTH_STORAGE_KEY) {
-                syncSessionAndRender();
+                syncSessionOnly();
             }
         });
 
         initWeekOptions();
         applyFilterState();
-        const reloadReason = consumeReloadReason();
-        if (reloadReason) {
-            logDebug('reload-complete', { reason: reloadReason });
-        } else {
-            logDebug('page-init', { debugEnabled, disableAutoReload });
-        }
+        logDebug('page-init', { debugEnabled });
         renderDebugPanel();
         await syncSessionAndRender();
 
         supabase.auth.onAuthStateChange((event, session) => {
-            logDebug('auth-state-change', { event, email: session?.user?.email || null });
+            const previousUserId = currentSession?.user?.id || null;
+            const nextUserId = session?.user?.id || null;
             currentSession = session;
+            logDebug('auth-state-change', {
+                event,
+                email: session?.user?.email || null,
+                userChanged: previousUserId !== nextUserId
+            });
             updateAuthUI();
             renderDebugPanel();
 
-            window.setTimeout(() => {
-                syncSessionAndRender().catch((error) => {
-                    logDebug('auth-state-change-sync-error', { message: error?.message || String(error) });
-                });
-            }, 0);
+            if (event === "SIGNED_IN" && nextUserId && previousUserId !== nextUserId) {
+                window.setTimeout(() => {
+                    syncSessionAndRender().catch((error) => {
+                        logDebug('auth-state-change-sync-error', { message: error?.message || String(error) });
+                    });
+                }, 0);
+            }
         });
     </script>
 </body>

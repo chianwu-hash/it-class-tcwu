@@ -59,6 +59,18 @@
 
 ---
 
+## 5.1 Supabase 分頁切回 / refocus lifecycle
+
+**風險**：Supabase auth event 可能在分頁切回前景時重新觸發，尤其 `SIGNED_IN` 不只代表剛登入，也可能代表既有 session 被重新確認。若在 `onAuthStateChange`、`pageshow`、`visibilitychange`、`focus` 中無條件重讀資料或 reload，會造成後台表格閃爍、按鈕延遲、typing 進度保存 timeout。
+
+**修改後最低驗證**：
+- 切到別的分頁再切回，確認頁面沒有自動 `window.location.reload()`。
+- 後台表格切回後不應出現「讀取資料中...」，除非使用者明確按「重新整理」或改篩選條件。
+- 中英打闖關切分頁後送出，必須能寫入 `student_progress`。
+- 詳見 `supabase-tab-resume-incident.md`。
+
+---
+
 ## 6. `student_progress` 表的欄位 / RLS 政策
 
 **風險**：`student_progress` 的 unique constraint 是 `(user_id, week_code, activity_key)`。若新頁面使用重複的 `weekCode + activityKey`，會覆蓋其他活動的進度記錄。若 RLS 政策被修改，學生可能看到別人進度或寫入失敗。
@@ -90,14 +102,28 @@
 
 ---
 
+## 9. `shared/classroom-controls.js` 與 `classroom_controls` RPC
+
+**風險**：課堂即時開關會在同一頁面中依 Supabase 旗標鎖定或開放外部入口。若模組、RLS 或 RPC 改壞，可能導致老師按鈕不出現、學生無法同步開放狀態，或連結在不該開放時可點。
+
+**修改後最低驗證**：
+- 未登入開含課堂即時開關的頁面，確認老師按鈕隱藏、學生「更新狀態」按鈕可見
+- 教師帳號登入後，確認老師開關按鈕可見
+- 按一次開放，確認受控連結全部可點；按一次關閉，確認受控連結全部鎖住
+- 確認頁面沒有 `setInterval` 輪詢，console 沒有紅色錯誤
+
+---
+
 ## 風險等級對照
 
 | 風險項目 | 影響範圍 | 靜默失效 | 等級 |
 |----------|----------|----------|------|
 | grade3 navbar 重渲 / authBarHtml id | 全 grade3 週頁面 | **是**（`?.` 不報錯） | 🔴 高 |
 | auth.js beginCentralizedLogin | 全站所有登入 | **是**（跳到錯誤頁） | 🔴 高 |
+| Supabase 分頁切回 / auth lifecycle | typing、後台、navbar 登出 | **是**（閃爍、timeout、按鈕延遲） | 🔴 高 |
 | navbar-auth.js 事件代理 | 全站所有頁面 | **是** | 🔴 高 |
 | student_progress activityKey 衝突 | 受影響的兩頁 | **是**（資料被覆蓋） | 🔴 高 |
 | week-visibility 格式 | grade3 nav + 首頁 | **是**（全週顯示） | 🟡 中 |
 | grade6 activeWeeks 未更新 | grade6 nav | 否（肉眼可見） | 🟡 中 |
 | course-navbar.js HTML 結構 | 全站 nav 版面 | 否（版面明顯爛掉） | 🟡 中 |
+| classroom-controls / RPC | 使用課堂即時開關的頁面 | 否（按鈕或連結狀態可見） | 🟡 中 |

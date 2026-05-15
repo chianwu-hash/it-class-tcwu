@@ -49,6 +49,7 @@ grep -r "activityKey\|activity_key" grade3/ grade6/
 | 手刻 nav HTML | 使用 `navbar.js` |
 | 直接呼叫 `supabase.auth.signInWithOAuth()` | `beginCentralizedLogin()` |
 | 把 quiz / typing 進度直接 upsert `student_progress` | 使用模組的 save 函數 |
+| 課堂中才開放的連結自己寫 RPC / 輪詢 | `shared/classroom-controls.js` |
 | `navbar.js` 不加版本字串 | `navbar.js?v=YYYYMMDD` |
 
 ### 模組選用規則
@@ -62,12 +63,21 @@ grep -r "activityKey\|activity_key" grade3/ grade6/
 | 打字關卡進度 | `initTypingChallenge()` | localStorage + 自寫邏輯 |
 | 題組進度 | `quiz-module` + adapter | 自寫 supabase upsert |
 | 首頁週卡可見性 | `applyWeekVisibilityToCards()` | 自行查 DB |
+| 課堂即時開關 | `initClassroomLinkControl()` | 自寫 RPC / setInterval 輪詢 |
 
 **互動活動登入規則**：
 
 - 打字闖關必須先登入才能開始；未登入時要鎖定輸入框與檢查按鈕。
 - 測驗 / 小測驗只要有可點選作答 UI，就必須先登入才能作答，並寫入 `student_progress`。
 - 若只是教師口頭檢查，頁面只能放靜態題目文字，不可做成可點選答案的互動 quiz。
+
+**課堂即時開關規則**：
+
+- 若某些連結、影片、活動入口需要「老師講到這裡才開放」，功能名稱統一叫「課堂即時開關」（Classroom Control）。
+- 使用 `shared/classroom-controls.js` 搭配 `supabase/classroom_controls.sql`，不要在單一頁面重寫 Supabase RPC、老師判斷、鎖定樣式或點擊攔截。
+- 學生端採手動「更新狀態」按鈕同步，不使用 `setInterval` 輪詢，避免干擾同頁的登入、測驗與打字進度。
+- 每個控制項要設定清楚的 `controlKey`，例如 `maps_links`、`video_links`、`practice_links`，同一週內不可重複。
+- 此功能只控制「可不可點 / 可不可進入」，不寫入 `student_progress`。
 
 **可以自由寫的部分**（不碰 auth / progress / navbar）：
 - Spotlight 放大圖
@@ -117,22 +127,23 @@ initNavbarAuth();
 7. 故意輸入錯誤答案，確認提示能指出第幾行、第幾個字附近，或判斷可能少字/多字；不可只出現籠統提示，且不可把少字誤導成多打標點
 8. 繼續打完最後一關，確認 Supabase 有記錄（開後台查）
 9. **開新分頁**，同一頁面，確認進度自動接回（顯示「從第 N 關繼續」）
-10. 用重置按鈕重設，確認回到第 1 關
+10. **切到別的分頁再切回**，按「檢查答案」後仍要能寫入 `student_progress`；若失敗先讀 `supabase-tab-resume-incident.md`
+11. 用重置按鈕重設，確認回到第 1 關
 
 ### 測驗 / 小測驗（若有）
 
-11. 未登入時，只能看到登入鎖定區，不能看到或點選題目選項
-12. 登入後，測驗題目才出現
-13. 送出測驗後，確認 Supabase `student_progress` 有記錄（開後台查）
+12. 未登入時，只能看到登入鎖定區，不能看到或點選題目選項
+13. 登入後，測驗題目才出現
+14. 送出測驗後，確認 Supabase `student_progress` 有記錄（開後台查）
 
 ### 解鎖邏輯（若有）
 
-14. 完成最後一關後，確認解鎖區塊出現，鎖定區塊隱藏
-15. 重新整理頁面（已完成進度），確認解鎖狀態正確恢復
+15. 完成最後一關後，確認解鎖區塊出現，鎖定區塊隱藏
+16. 重新整理頁面（已完成進度），確認解鎖狀態正確恢復
 
 ### 後台
 
-16. 用教師帳號登入 `admin-progress.html`，確認此週此活動出現在進度清單
+17. 用教師帳號登入 `admin-progress.html`，確認此週此活動出現在進度清單
 
 ---
 

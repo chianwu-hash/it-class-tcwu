@@ -26,6 +26,7 @@
 **不可自行替代的理由**：
 - `beginCentralizedLogin()` 在跳轉前會把 `returnTo` 寫入 `localStorage`，OAuth 完成後 index.html 才能跳回正確頁面。自己呼叫 `supabase.auth.signInWithOAuth()` 會跳回 index.html 根目錄，不會回到原始頁面。
 - `requireHttpForAuth()` 在 `file://` 協定下會顯示警告並中止，防止 OAuth 在本機直接開檔案時靜默失敗。
+- 分頁切回前景時，Supabase 可能重新觸發 auth event 或 token refresh。不要在 `onAuthStateChange`、`pageshow`、`visibilitychange`、`focus` 中無條件重讀資料或 reload；詳見 `supabase-tab-resume-incident.md`。
 
 ---
 
@@ -98,7 +99,7 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 ```
 
-**不可自行替代的理由**：自寫邏輯容易只存 localStorage，後台看不到進度，且難以維護重置 / 接回進度的複雜狀態。
+**不可自行替代的理由**：自寫邏輯容易只存 localStorage，後台看不到進度，且難以維護重置 / 接回進度的複雜狀態。`student_progress` 保存是課堂核心路徑，必須能承受學生切到其他分頁後再回來送出；若保存邏輯要調整，先讀 `supabase-tab-resume-incident.md`。
 
 ---
 
@@ -133,6 +134,55 @@
 **匯出**：`initQuizModule({ questions, selectors, messages, loadProgress, saveProgress, getCurrentUser, onRequireLogin, onAfterSubmit })`
 
 **被誰 import**：`grade3/week06.quiz-adapter.js`、`grade3/week07.quiz-adapter.js`
+
+---
+
+## `shared/classroom-controls.js`
+
+**責任**：管理課堂即時控制旗標。適合老師上課時先鎖住外部連結、影片、活動入口，等進入指定階段再開放；學生端可用「更新狀態」按鈕手動同步，不需要輪詢。
+
+**匯出**：`initClassroomLinkControl({ supabase, isTeacher, grade, weekCode, controlKey, container, linkSelector, statusText, statusIcon, refreshButton, teacherToggleButton, messages, toggleButtonHtml })`
+
+**資料庫依賴**：`supabase/classroom_controls.sql`
+
+- `public.classroom_controls`
+- `public.get_classroom_control(p_grade, p_week_code, p_control_key)`
+- `public.admin_set_classroom_control(p_grade, p_week_code, p_control_key, p_is_enabled)`
+
+**被誰 import**：`grade3/week14.html`
+
+**使用時機**：
+- 景點、影片、外部網站等不想讓學生在課程前半段先點開。
+- 老師需要用同一頁面即時開放 / 關閉，但不想用自動輪詢干擾既有登入、測驗或打字進度。
+
+**使用規則**：
+- 頁面仍需呼叫 `initNavbarAuth({ onSessionResolved })`，並在 callback 中把 session 傳給 `control.handleSession(session)`，老師按鈕才會依 `isTeacher(session)` 顯示。
+- 學生端狀態更新採手動按鈕，不使用 `setInterval` 輪詢。
+- `controlKey` 需具有語意且同一週內唯一，例如 `maps_links`、`video_links`、`practice_links`。
+- 此模組只控制 UI 可點擊與 Supabase 開關旗標，不寫入 `student_progress`。
+
+**最小使用範例**：
+
+```javascript
+const linkControl = initClassroomLinkControl({
+    supabase,
+    isTeacher,
+    grade: "grade3",
+    weekCode: "14",
+    controlKey: "maps_links",
+    container: "#maps-body",
+    linkSelector: "a[target='_blank']",
+    statusText: "#maps-links-status",
+    statusIcon: "#maps-links-status-icon",
+    refreshButton: "#maps-refresh-btn",
+    teacherToggleButton: "#maps-teacher-toggle"
+});
+
+initNavbarAuth({
+    onSessionResolved: (session) => linkControl.handleSession(session)
+});
+linkControl.load();
+```
 
 ---
 
