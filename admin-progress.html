@@ -926,11 +926,6 @@
 
         window.addEventListener("pageshow", (event) => {
             logDebug('pageshow', { persisted: event.persisted });
-            if (event.persisted && !disableAutoReload) {
-                setReloadReason('pageshow:persisted');
-                window.location.reload();
-                return;
-            }
             if (disableAutoReload) {
                 logDebug('pageshow-skip-sync', { reason: 'noreload-mode' });
                 return;
@@ -946,8 +941,7 @@
 
             if (adminPageWasHidden && !disableAutoReload) {
                 adminPageWasHidden = false;
-                setReloadReason('visibilitychange:return');
-                window.location.reload();
+                syncSessionAndRender();
                 return;
             }
 
@@ -963,8 +957,7 @@
             logDebug('focus', { adminPageWasHidden });
             if (adminPageWasHidden && !disableAutoReload) {
                 adminPageWasHidden = false;
-                setReloadReason('focus:return');
-                window.location.reload();
+                syncSessionAndRender();
                 return;
             }
             if (adminPageWasHidden && disableAutoReload) {

@@ -83,7 +83,10 @@ export function beginCentralizedLogin({ returnTo = window.location.href, entryPa
 }
 
 export async function signOutAndReload() {
-    await supabase.auth.signOut();
+    supabase.auth.signOut().catch((error) => {
+        console.warn("Supabase sign out failed after local session was cleared.", error);
+    });
+    window.localStorage.removeItem(AUTH_STORAGE_KEY);
     window.location.reload();
 }
 
