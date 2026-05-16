@@ -75,7 +75,7 @@
 
 **匯出**：`initTypingChallenge({ weekCode, activityKey, levelsData, levelEncouragements, buildHint, getWrongAnswerHtml, progressMessages, celebrationContent, afterAuthUpdate })`
 
-**被誰 import**：`grade3/week04.html`、`week05.html`、`week06.html`、`week07.html`、`week10.html`
+**被誰 import**：`grade3/week04.html`、`week05.html`、`week06.html`、`week07.html`、`week10.html`、`week12.html`、`week13.html`、`week14.html`、`week15.html`
 
 **levelEncouragements 語氣**：三年級打字闖關需為每關提供阿德勒式鼓勵語，重點放在努力、策略、耐心、修正、檢查與進步，避免只寫「很棒」「太厲害」或單純宣布過關。
 
@@ -92,7 +92,7 @@
 
 **activityKey 命名規則**：`typing_task_N`（N 需符合後台顯示的總關卡數）。`student_progress` 的唯一鍵是 `user_id + week_code + activity_key`，所以不同週次可以使用相同 activityKey；重點是同一週內不要讓兩個活動共用相同 key。
 
-**內建的 listener 問題**：模組自身會對 `#login-btn` 等元素執行直接綁定（`loginBtn?.addEventListener`）。在 grade3 頁面，navbar 重渲後這些直接綁定會消失。**因此，所有使用 `initTypingChallenge` 的頁面，必須同時呼叫 `initNavbarAuth()`。**
+**Navbar auth 邊界**：模組可更新打字闖關所需的 auth 顯示與 reset-progress 狀態，但不直接綁定 `#login-btn`、`#logout-btn`。登入 / 登出點擊一律交給 `initNavbarAuth()` 的事件代理。**因此，所有使用 `initTypingChallenge` 的頁面，必須同時呼叫 `initNavbarAuth()`。**
 
 **未登入鎖定規則**：`initTypingChallenge` 必須在未登入時鎖定 `#typing-levels-container` 內的輸入框與 `checkLevel` 按鈕。學生不可在未登入狀態先完成關卡，避免完成後才發現沒有保存。
 
@@ -102,6 +102,24 @@
 ```
 
 **不可自行替代的理由**：自寫邏輯容易只存 localStorage，後台看不到進度，且難以維護重置 / 接回進度的複雜狀態。`student_progress` 保存是課堂核心路徑，必須能承受學生切到其他分頁後再回來送出；若保存邏輯要調整，先讀 `supabase-tab-resume-incident.md`。
+
+---
+
+## `shared/typing-tools.js`
+
+**責任**：提供三年級中英打闖關頁面共用的浮動輔助工具，包含「標點符號表」與「中英文鍵盤圖」。標點符號表需以兩頁切換顯示，避免一張圖上下擠在同一視窗裡太小；鍵盤圖需支援中文鍵盤與英文鍵盤切換。
+
+**匯出**：`initTypingTools({ showPunctuation, showKeyboard })`
+
+**被誰 import**：三年級所有有中英打闖關的週頁面，例如 `grade3/week04.html`、`week05.html`、`week06.html`、`week07.html`、`week10.html`、`week12.html`、`week13.html`、`week14.html`、`week15.html`。
+
+**使用規則**：
+- 有中英打闖關的三年級週頁面，需 `import { initTypingTools } from "../shared/typing-tools.js"` 並在 module script 中呼叫 `initTypingTools()`。
+- 預設同時顯示標點符號表與鍵盤圖；若特殊頁面只需要其中一項，可用 `showPunctuation: false` 或 `showKeyboard: false` 關閉。
+- 不要在單一週頁面複製浮動工具 HTML、`toggleFloatingKeyboard()`、`showKeyboardLayout()`、`toggleFloatingPunctuation()` 或 `showPunctuationPage()`。
+- 此模組只建立輔助圖表 UI，不負責登入、解鎖或進度保存；打字進度仍必須交給 `initTypingChallenge()`。
+
+**不可自行替代的理由**：鍵盤圖與標點符號表是跨週固定課堂工具，分散在各頁會造成圖片版本、裁切方式、手機顯示與事件綁定不一致，學生上課時容易遇到同一功能在不同週次行為不同。
 
 ---
 

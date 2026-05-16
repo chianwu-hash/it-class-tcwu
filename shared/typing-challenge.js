@@ -1,9 +1,7 @@
 import {
-    beginCentralizedLogin,
     getSession,
     getStoredAccessToken,
     isTeacher,
-    signOutAndReload,
     SUPABASE_ANON_KEY,
     SUPABASE_URL,
     supabase
@@ -430,14 +428,6 @@ export function initTypingChallenge({
         return false;
     }
 
-    async function signInWithGoogle() {
-        beginCentralizedLogin({ returnTo: window.location.href });
-    }
-
-    async function signOutUser() {
-        await signOutAndReload();
-    }
-
     async function resetProgress() {
         const user = await getActiveUser();
         if (!user) {
@@ -500,14 +490,6 @@ export function initTypingChallenge({
             pinyinEl.classList.remove("hidden");
             btnEl.innerHTML = "🙈 隱藏注音";
         }
-    };
-
-    window.toggleFloatingKeyboard = function toggleFloatingKeyboard() {
-        document.getElementById("floating-kb-panel")?.classList.toggle("hidden");
-    };
-
-    window.toggleFloatingPunctuation = function toggleFloatingPunctuation() {
-        document.getElementById("floating-punc-panel")?.classList.toggle("hidden");
     };
 
     window.checkLevel = async function checkLevel(levelIndex) {
@@ -660,10 +642,8 @@ export function initTypingChallenge({
         }, 250);
     }
 
-    loginBtn?.addEventListener("click", signInWithGoogle);
     bindResetProgressButton();
     window.addEventListener("course-navbar:rendered", refreshResetProgressButton);
-    logoutBtn?.addEventListener("click", signOutUser);
     configureTypingInputs();
 
     async function initialize() {
