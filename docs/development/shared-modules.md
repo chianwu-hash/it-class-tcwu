@@ -77,6 +77,8 @@
 
 **被誰 import**：`grade3/week04.html`、`week05.html`、`week06.html`、`week07.html`、`week10.html`
 
+**levelEncouragements 語氣**：三年級打字闖關需為每關提供阿德勒式鼓勵語，重點放在努力、策略、耐心、修正、檢查與進步，避免只寫「很棒」「太厲害」或單純宣布過關。
+
 **levelsData 格式**（容易寫錯）：
 ```javascript
 // 正確

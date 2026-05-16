@@ -649,6 +649,7 @@ It's a marker.</pre>
                 scoreLabel: (correct, total) => `答對：${correct} / ${total} 題`,
                 completedBanner: (score, total) => `你已完成網路沉迷小測驗，分數：${score ?? "?"} / ${total} 題。`,
                 unauthenticated: "登入 Google 後，才能開始網路沉迷小測驗。",
+                saveError: "測驗結果暫時沒有記錄成功，請不要關掉頁面，稍後再按一次送出測驗。",
                 resultMessages: {
                     perfect: ["太棒了", "你能分辨健康使用和需要留意的情況。"],
                     great: ["很接近", "再記得時間到就停止，遇到帳號問題找大人。"],
@@ -689,11 +690,11 @@ It's a marker.</pre>
         ];
 
         const levelMsg = {
-            1: "第 1 關完成，英文短句很穩。",
-            2: "第 2 關完成，中文句號也有注意到。",
-            3: "第 3 關完成，英文換行和句型都對了。",
-            4: "第 4 關完成，國語課文句子也能打好了。",
-            5: "5 關全部完成，今天的中英混打任務成功。"
+            1: "你願意先把簡單句打準，這是讓自己進入狀態的好方法。",
+            2: "你有注意到中文句子最後的句號，細節看清楚了，答案就更穩。",
+            3: "你把英文問答分成兩行完成，表示你有照著句型慢慢整理。",
+            4: "課文句子變長了，你仍然一行一行檢查，這份耐心很有用。",
+            5: "你完成了中文和英文的切換，靠的是專心檢查與持續修正。"
         };
 
         function buildHint(userVal, targetVal, levelIndex) {
@@ -753,10 +754,10 @@ It's a marker.</pre>
                 resetConfirm: "要重新開始 Week 13 打字練習嗎？這會把目前進度重設回第 1 關。"
             },
             celebrationContent: {
-                title: "5 關全部完成",
-                message: "你完成了英文、中文和中英混打，今天的打字任務成功。",
-                buttonText: "回到練習區",
-                buttonHref: ""
+                title: "魔王關完成",
+                message: "這一朵花是你一步一步練出來的。你願意檢查、修正，再試一次，努力樹又多了一份自己的累積。",
+                buttonText: "去看我的努力樹",
+                buttonHref: "/my-tree.html"
             }
         });
     </script>

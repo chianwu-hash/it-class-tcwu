@@ -549,6 +549,7 @@ It's a ruler.</pre>
                 scoreLabel: (correct, total) => `答對：${correct} / ${total} 題`,
                 completedBanner: (score, total) => `你已完成資訊安全小測驗，分數：${score ?? "?"} / ${total} 題。`,
                 unauthenticated: "登入 Google 後，才能開始資訊安全小測驗。",
+                saveError: "測驗結果暫時沒有記錄成功，請不要關掉頁面，稍後再按一次送出測驗。",
                 resultMessages: {
                     perfect: ["太棒了", "你很會查證網路與 AI 訊息。"],
                     great: ["很接近", "只差一點點，記得分享前先查證。"],
@@ -589,11 +590,11 @@ It's a ruler.</pre>
         ];
 
         const levelMsg = {
-            1: "第 1 關完成，英文短句很穩。",
-            2: "第 2 關完成，中文標點也有注意到。",
-            3: "第 3 關完成，換行和英文句型都對了。",
-            4: "第 4 關完成，國語課文句子也能打好了。",
-            5: "5 關全部完成，今天的中英混打任務成功。"
+            1: "你先從短句開始，穩穩完成第一步，這會讓後面的練習更有把握。",
+            2: "你有把中文句子和句號一起看清楚，這是在練習細心，不只是練速度。",
+            3: "你完成了換行和英文問答，代表你有照著格式一步一步檢查。",
+            4: "兩行課文比較長，你能慢慢對齊每一行，耐心正在變成能力。",
+            5: "你把中英混打整理完成，靠的是持續修正和不放棄，這份方法下次還能用。"
         };
 
         function buildHint(userVal, targetVal, levelIndex) {
@@ -653,10 +654,10 @@ It's a ruler.</pre>
                 resetConfirm: "要重新開始 Week 12 打字練習嗎？這會把目前進度重設回第 1 關。"
             },
             celebrationContent: {
-                title: "5 關全部完成",
-                message: "你完成了英文、中文和中英混打，今天的打字任務成功。",
-                buttonText: "回到練習區",
-                buttonHref: ""
+                title: "魔王關完成",
+                message: "這一朵花是你一步一步練出來的。你願意檢查、修正，再試一次，努力樹又多了一份自己的累積。",
+                buttonText: "去看我的努力樹",
+                buttonHref: "/my-tree.html"
             }
         });
     </script>

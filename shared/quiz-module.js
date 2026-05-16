@@ -11,7 +11,8 @@ const DEFAULT_MESSAGES = {
         retry: ["💪", "Keep trying."]
     },
     completedBanner: (score, total) => `Completed. Score: ${score ?? "?"} / ${total}`,
-    unauthenticated: "Not signed in."
+    unauthenticated: "Not signed in.",
+    saveError: "Progress was not saved. Please submit again in a moment."
 };
 
 function getElement(target) {
@@ -165,6 +166,34 @@ export function initQuizModule({
         buttonEl.classList.add("selected");
     }
 
+    function setSubmitButtonState({ disabled, text = null }) {
+        const submitButton = document.getElementById("quiz-submit-btn");
+        if (!submitButton) {
+            return;
+        }
+        submitButton.disabled = disabled;
+        submitButton.classList.toggle("opacity-50", disabled);
+        submitButton.classList.toggle("cursor-not-allowed", disabled);
+        if (text) {
+            submitButton.textContent = text;
+        }
+    }
+
+    function showSaveError() {
+        submitted = false;
+        setSubmitButtonState({ disabled: false, text: mergedMessages.submitButton });
+        if (statusBannerEl) {
+            statusBannerEl.classList.remove("hidden");
+        }
+        if (statusTextEl) {
+            statusTextEl.textContent = mergedMessages.saveError;
+        }
+        const msgEl = document.getElementById("quiz-result-msg");
+        if (msgEl) {
+            msgEl.textContent = mergedMessages.saveError;
+        }
+    }
+
     async function submit() {
         if (submitted) {
             return;
@@ -227,20 +256,32 @@ export function initQuizModule({
             msgEl.textContent = bucket[1];
         }
 
-        const submitButton = document.getElementById("quiz-submit-btn");
-        if (submitButton) {
-            submitButton.disabled = true;
-            submitButton.classList.add("opacity-50", "cursor-not-allowed");
-        }
+        setSubmitButtonState({ disabled: true });
 
         const user = typeof getCurrentUser === "function"
             ? await getCurrentUser()
             : null;
 
-        if (!user && typeof onRequireLogin === "function") {
-            await onRequireLogin();
-        } else if (user && typeof saveProgress === "function") {
-            await saveProgress(correct);
+        if (!user) {
+            if (typeof onRequireLogin === "function") {
+                await onRequireLogin();
+            }
+            showSaveError();
+            return;
+        }
+
+        if (typeof saveProgress === "function") {
+            try {
+                const saveResult = await saveProgress(correct);
+                if (saveResult === false) {
+                    showSaveError();
+                    return;
+                }
+            } catch (error) {
+                console.error("quiz saveProgress failed", error);
+                showSaveError();
+                return;
+            }
         }
 
         if (typeof onAfterSubmit === "function") {

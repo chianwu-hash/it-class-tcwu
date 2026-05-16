@@ -58,8 +58,33 @@ export function initTypingChallenge({
     const progressDebugEl = document.getElementById("progress-debug");
     const adminBtn = document.getElementById("admin-btn");
     const loginBtn = document.getElementById("login-btn");
-    const resetProgressBtn = document.getElementById("reset-progress-btn");
+    let resetProgressBtn = document.getElementById("reset-progress-btn");
     const logoutBtn = document.getElementById("logout-btn");
+    let progressCompleted = false;
+
+    function getResetProgressBtn() {
+        resetProgressBtn = document.getElementById("reset-progress-btn");
+        return resetProgressBtn;
+    }
+
+    function setResetProgressVisible(visible) {
+        const button = getResetProgressBtn();
+        button?.classList.toggle("hidden", !visible);
+    }
+
+    function bindResetProgressButton() {
+        const button = getResetProgressBtn();
+        if (!button) {
+            return;
+        }
+        button.removeEventListener("click", resetProgress);
+        button.addEventListener("click", resetProgress);
+    }
+
+    function refreshResetProgressButton() {
+        bindResetProgressButton();
+        setResetProgressVisible(Boolean(currentSession?.user && progressCompleted));
+    }
 
     function configureTypingInputs() {
         for (let level = 1; level <= maxLevel; level += 1) {
@@ -176,6 +201,7 @@ export function initTypingChallenge({
 
     function revealProgress(level, completed) {
         clearProgressDebug();
+        progressCompleted = Boolean(completed);
         highestUnlockedLevel = Math.max(1, Math.min(level, maxLevel));
         for (let i = 1; i <= highestUnlockedLevel; i += 1) {
             unlockLevel(i);
@@ -186,12 +212,12 @@ export function initTypingChallenge({
 
         if (completed) {
             markLevelAsCompleted(maxLevel);
-            resetProgressBtn?.classList.remove("hidden");
+            setResetProgressVisible(true);
             if (progressStatusEl) {
                 progressStatusEl.textContent = messages.completed;
             }
         } else if (highestUnlockedLevel > 1) {
-            resetProgressBtn?.classList.add("hidden");
+            setResetProgressVisible(false);
             if (progressStatusEl) {
                 progressStatusEl.textContent = messages.resumed(highestUnlockedLevel);
             }
@@ -199,7 +225,7 @@ export function initTypingChallenge({
                 document.getElementById(`block-level${highestUnlockedLevel}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
             }, 250);
         } else {
-            resetProgressBtn?.classList.add("hidden");
+            setResetProgressVisible(false);
             if (progressStatusEl) {
                 progressStatusEl.textContent = messages.firstLogin;
             }
@@ -223,7 +249,8 @@ export function initTypingChallenge({
             }
             clearProgressDebug();
             loginBtn?.classList.remove("hidden");
-            resetProgressBtn?.classList.add("hidden");
+            progressCompleted = false;
+            setResetProgressVisible(false);
             logoutBtn?.classList.add("hidden");
             adminBtn?.classList.add("hidden");
         }
@@ -276,6 +303,7 @@ export function initTypingChallenge({
 
         if (!data) {
             highestUnlockedLevel = 1;
+            progressCompleted = false;
             clearProgressDebug();
             if (progressStatusEl) {
                 progressStatusEl.textContent = messages.firstLogin;
@@ -380,10 +408,11 @@ export function initTypingChallenge({
                     ? messages.saveCompleted
                     : messages.saveNextLevel(nextLevel);
             }
+            progressCompleted = Boolean(completed);
             if (completed) {
-                resetProgressBtn?.classList.remove("hidden");
+                setResetProgressVisible(true);
             } else {
-                resetProgressBtn?.classList.add("hidden");
+                setResetProgressVisible(false);
             }
             return true;
         }
@@ -632,7 +661,8 @@ export function initTypingChallenge({
     }
 
     loginBtn?.addEventListener("click", signInWithGoogle);
-    resetProgressBtn?.addEventListener("click", resetProgress);
+    bindResetProgressButton();
+    window.addEventListener("course-navbar:rendered", refreshResetProgressButton);
     logoutBtn?.addEventListener("click", signOutUser);
     configureTypingInputs();
 

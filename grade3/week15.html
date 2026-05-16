@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三年級資訊課 - 第15週 我的上網時間表與外太空探索</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: #f7fbff;
+        }
+        .card-hover {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+        }
+        .spotlight-frame {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .spotlight-frame:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.18);
+        }
+        .section-toggle .toggle-chevron {
+            transition: transform 0.2s ease;
+        }
+        .section-toggle[aria-expanded="false"] .toggle-chevron {
+            transform: rotate(-90deg);
+        }
+        .locked-link {
+            pointer-events: none;
+            opacity: 0.52;
+            filter: grayscale(0.3);
+        }
+        .shake {
+            animation: shake 0.36s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pb-12">
+    <script src="navbar.js?v=20260516"></script>
+
+    <header class="bg-gradient-to-br from-sky-600 via-teal-500 to-amber-400 text-white shadow-xl rounded-b-[2.5rem] mb-10">
+        <div class="max-w-6xl mx-auto px-6 py-10 relative overflow-hidden">
+            <div class="relative z-10 max-w-4xl">
+                <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white font-black px-4 py-1.5 rounded-full text-sm mb-5 shadow-sm">
+                    <i class="fa-solid fa-calendar-check text-amber-100"></i>
+                    第 15 週
+                </div>
+                <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">我的上網時間表與外太空探索</h1>
+                <p class="text-lg md:text-xl text-sky-50 font-bold leading-relaxed">先安排上網時間，和家長取得共識；再用 Google Maps 探索外太空，截圖寄給老師和同學。</p>
+            </div>
+            <i class="fa-solid fa-earth-asia absolute text-white/20 text-[12rem] -right-10 -bottom-16"></i>
+            <i class="fa-solid fa-clock absolute text-white/20 text-8xl right-32 top-8 rotate-12"></i>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 space-y-8">
+        <section class="grid md:grid-cols-3 gap-4">
+            <div class="bg-white border-4 border-amber-200 rounded-3xl p-5 shadow-sm">
+                <div class="text-amber-500 text-3xl mb-3"><i class="fa-solid fa-clock"></i></div>
+                <h2 class="text-xl font-black text-amber-900 mb-2">資訊素養</h2>
+                <p class="font-bold text-slate-700 leading-relaxed">看懂 P.135「我的上網時間表」，知道要先安排、休息，也要和家長溝通。</p>
+            </div>
+            <div class="bg-white border-4 border-sky-200 rounded-3xl p-5 shadow-sm">
+                <div class="text-sky-500 text-3xl mb-3"><i class="fa-solid fa-rocket"></i></div>
+                <h2 class="text-xl font-black text-sky-900 mb-2">Google Maps</h2>
+                <p class="font-bold text-slate-700 leading-relaxed">開啟地球檢視模式，探索月球、火星或國際太空站，完成截圖寄信。</p>
+            </div>
+            <div class="bg-white border-4 border-indigo-200 rounded-3xl p-5 shadow-sm">
+                <div class="text-indigo-500 text-3xl mb-3"><i class="fa-solid fa-keyboard"></i></div>
+                <h2 class="text-xl font-black text-indigo-900 mb-2">中英打闖關</h2>
+                <p class="font-bold text-slate-700 leading-relaxed">延續 Week 14，改用國語第 10 課〈漁夫和金魚〉與英語 U4 職業句型。</p>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-md border-4 border-amber-200 overflow-hidden">
+            <button type="button" class="section-toggle w-full bg-amber-50 px-6 py-4 border-b-4 border-amber-100 flex items-center justify-between text-left" data-target="time-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-amber-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-hourglass-half"></i>
+                    </span>
+                    <span class="text-2xl font-black text-amber-900">資訊素養：我的上網時間表</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span class="hidden md:inline-flex bg-white text-amber-700 border border-amber-200 px-3 py-1 rounded-full text-sm font-black">課本 P.135</span>
+                    <i class="fa-solid fa-chevron-down text-amber-500 text-xl toggle-chevron"></i>
+                </span>
+            </button>
+            <div id="time-body" class="p-6 space-y-6">
+                <div class="grid lg:grid-cols-[1.15fr_0.85fr] gap-6 items-start">
+                    <div class="space-y-5">
+                        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-slate-700 font-bold leading-relaxed">
+                            <p><i class="fa-solid fa-book-open text-amber-500 mr-2"></i> P.135 的重點不是禁止上網，而是幫自己安排「什麼時間做什麼事」。時間表要和家長溝通、取得共識，才比較容易在家裡做到。</p>
+                        </div>
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div class="bg-white border-2 border-amber-100 rounded-2xl p-4">
+                                <h3 class="font-black text-amber-900 text-lg mb-2"><i class="fa-solid fa-list-check text-amber-500 mr-2"></i>先安排</h3>
+                                <p class="font-bold text-slate-700">先完成功課、吃飯、洗澡和整理書包，再安排上網時間。</p>
+                            </div>
+                            <div class="bg-white border-2 border-teal-100 rounded-2xl p-4">
+                                <h3 class="font-black text-teal-900 text-lg mb-2"><i class="fa-solid fa-person-walking text-teal-500 mr-2"></i>要休息</h3>
+                                <p class="font-bold text-slate-700">上網一段時間後離開螢幕、喝水、看遠方，睡覺前不一直看影片。</p>
+                            </div>
+                            <div class="bg-white border-2 border-sky-100 rounded-2xl p-4">
+                                <h3 class="font-black text-sky-900 text-lg mb-2"><i class="fa-solid fa-people-roof text-sky-500 mr-2"></i>有共識</h3>
+                                <p class="font-bold text-slate-700">和家長討論時間、原因和停止方式，不要自己偷偷決定。</p>
+                            </div>
+                            <div class="bg-white border-2 border-rose-100 rounded-2xl p-4">
+                                <h3 class="font-black text-rose-900 text-lg mb-2"><i class="fa-solid fa-hand-holding-heart text-rose-500 mr-2"></i>能求助</h3>
+                                <p class="font-bold text-slate-700">如果停不下來，可以請家人或老師幫忙提醒，練習照時間停止。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <figure>
+                        <img src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1778942214/it-class-tcwu/grade3/week15/week15-infographic-1920x1080-q80.webp" alt="我的上網時間表資訊圖表" class="spotlight-frame w-full rounded-2xl border-4 border-amber-100 bg-white cursor-zoom-in" onclick="openLightbox(this.src)">
+                        <figcaption class="mt-2 text-center text-sm font-bold text-slate-500">資訊圖表：先安排，再上網；和家長討論，取得共識。</figcaption>
+                    </figure>
+                </div>
+
+                <div class="bg-white border-2 border-amber-100 rounded-2xl p-5">
+                    <h3 class="text-xl font-black text-amber-900 mb-4"><i class="fa-solid fa-pen-to-square text-amber-500 mr-2"></i>我的簡短時間表</h3>
+                    <div class="grid md:grid-cols-2 gap-3 font-bold text-slate-700">
+                        <div class="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3">放學後先做：__________</div>
+                        <div class="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3">我可以上網的時間：__________</div>
+                        <div class="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3">上網後我要休息或做：__________</div>
+                        <div class="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3">我要和家長討論的是：__________</div>
+                    </div>
+                </div>
+
+                <div class="bg-orange-50 border border-orange-200 rounded-2xl p-5 text-slate-700 font-bold leading-relaxed">
+                    <p><i class="fa-solid fa-triangle-exclamation text-orange-500 mr-2"></i> 資訊素養小測驗會記錄完成狀態；請登入後再開始作答。</p>
+                </div>
+                <div id="quiz-lock" class="text-center py-12 bg-orange-50 rounded-2xl border-2 border-dashed border-orange-300">
+                    <div class="text-5xl text-orange-400 mb-4"><i class="fa-solid fa-lock"></i></div>
+                    <h4 class="text-2xl font-black text-orange-900 mb-3">登入後開始小測驗</h4>
+                    <p class="font-bold text-slate-600 mb-6">完成後會寫入學習進度，老師可以看到你已完成。</p>
+                    <button id="quiz-login-btn" class="bg-orange-500 hover:bg-orange-600 text-white font-black px-8 py-3 rounded-2xl shadow-md transition transform hover:scale-105">
+                        <i class="fa-brands fa-google mr-2"></i> Google 登入
+                    </button>
+                </div>
+                <div id="quiz-content" class="hidden">
+                    <div id="quiz-status-banner" class="hidden rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 mb-6">
+                        <div id="quiz-status-text" class="text-sm font-bold text-orange-800"></div>
+                    </div>
+                    <div id="quiz-container" class="space-y-6 max-w-3xl mx-auto"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-md border-4 border-sky-200 overflow-hidden">
+            <button type="button" class="section-toggle w-full bg-sky-50 px-6 py-4 border-b-4 border-sky-100 flex items-center justify-between text-left" data-target="space-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-sky-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-rocket"></i>
+                    </span>
+                    <span class="text-2xl font-black text-sky-900">Google Maps：外太空探索與 Email 截圖</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span class="hidden md:inline-flex bg-white text-sky-700 border border-sky-200 px-3 py-1 rounded-full text-sm font-black">P.101-P.107 / P.62-P.70</span>
+                    <i class="fa-solid fa-chevron-down text-sky-500 text-xl toggle-chevron"></i>
+                </span>
+            </button>
+            <div id="space-body" class="p-6 space-y-6">
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5">
+                        <div class="text-sky-600 text-3xl mb-3"><i class="fa-solid fa-earth-americas"></i></div>
+                        <h4 class="font-black text-sky-900 text-xl mb-2">開啟地球檢視</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">參考 P.101-P.102 的地圖、衛星與縮放概念；看不到外太空清單時，先檢查 Globe view。</p>
+                    </div>
+                    <div class="bg-violet-50 border border-violet-200 rounded-2xl p-5">
+                        <div class="text-violet-600 text-3xl mb-3"><i class="fa-solid fa-camera-retro"></i></div>
+                        <h4 class="font-black text-violet-900 text-xl mb-2">截圖貼上</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">截圖與貼上可參考 P.106-P.107；完成畫面後直接貼進 Gmail 內文。</p>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+                        <div class="text-emerald-600 text-3xl mb-3"><i class="fa-solid fa-paper-plane"></i></div>
+                        <h4 class="font-black text-emerald-900 text-xl mb-2">寄給老師與同學</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">Gmail 寄信參考 P.62-P.64；聯絡人與標籤參考 P.69-P.70。</p>
+                    </div>
+                </div>
+
+                <div id="space-links-control" class="flex flex-col gap-3 rounded-2xl border-2 border-sky-100 bg-sky-50 p-4 md:flex-row md:items-center md:justify-between">
+                    <div class="flex items-center gap-3 font-black text-sky-900">
+                        <span id="space-links-status-icon" class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-sky-600 shadow-sm">
+                            <i class="fa-solid fa-lock"></i>
+                        </span>
+                        <span id="space-links-status">正在確認外太空連結狀態...</span>
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <button id="space-teacher-toggle" type="button" class="hidden items-center gap-2 rounded-full bg-sky-600 px-4 py-2 text-sm font-black text-white shadow-md transition hover:bg-sky-700">
+                            <i class="fa-solid fa-lock-open"></i>
+                            <span>開放外太空連結</span>
+                        </button>
+                        <button id="space-refresh-btn" type="button" class="inline-flex items-center justify-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-black text-sky-700 shadow-sm ring-2 ring-sky-200 transition hover:bg-sky-100">
+                            <i class="fa-solid fa-rotate-right"></i>
+                            <span>更新連結狀態</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3" id="space-links-grid">
+                    <a class="space-link bg-white border-2 border-sky-200 hover:border-sky-500 rounded-2xl p-4 font-black text-slate-700 hover:text-sky-700 transition card-hover" href="https://www.google.com/maps/space/moon" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-moon mr-2 text-sky-500"></i>月球 Moon</a>
+                    <a class="space-link bg-white border-2 border-orange-200 hover:border-orange-500 rounded-2xl p-4 font-black text-slate-700 hover:text-orange-700 transition card-hover" href="https://www.google.com/maps/space/mars" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-circle mr-2 text-orange-500"></i>火星 Mars</a>
+                    <a class="space-link bg-white border-2 border-violet-200 hover:border-violet-500 rounded-2xl p-4 font-black text-slate-700 hover:text-violet-700 transition card-hover" href="https://www.google.com/maps/space/iss" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-satellite mr-2 text-violet-500"></i>國際太空站</a>
+                    <a class="space-link bg-white border-2 border-emerald-200 hover:border-emerald-500 rounded-2xl p-4 font-black text-slate-700 hover:text-emerald-700 transition card-hover" href="https://www.google.com/maps/space/earth" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-earth-asia mr-2 text-emerald-500"></i>地球 Earth</a>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-4">
+                    <div class="bg-white border-2 border-sky-100 rounded-2xl p-5">
+                        <h4 class="text-xl font-black text-sky-900 mb-3">入門組</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">選月球或火星其中一個，截一張畫面，寄給老師與一位同學。內文一句即可。</p>
+                    </div>
+                    <div class="bg-white border-2 border-violet-100 rounded-2xl p-5">
+                        <h4 class="text-xl font-black text-violet-900 mb-3">標準組</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">看兩個天體，選一張最喜歡的截圖，寄給老師與兩位同學，寫出看到的特徵。</p>
+                    </div>
+                    <div class="bg-white border-2 border-emerald-100 rounded-2xl p-5">
+                        <h4 class="text-xl font-black text-emerald-900 mb-3">挑戰組</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">探索國際太空站或兩個以上天體，附上畫面連結，寫出兩個天體的差異。</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                    <h4 class="text-xl font-black text-slate-900 mb-3"><i class="fa-solid fa-envelope-open-text text-sky-500 mr-2"></i>Email 繳交格式</h4>
+                    <div class="grid md:grid-cols-2 gap-3 font-bold text-slate-700">
+                        <div class="rounded-xl bg-white border border-slate-200 px-4 py-3">主旨：第15週外太空截圖-座號姓名</div>
+                        <div class="rounded-xl bg-white border border-slate-200 px-4 py-3">收件人：老師 + 至少一位同學</div>
+                        <div class="rounded-xl bg-white border border-slate-200 px-4 py-3">內文：我選的是____，因為我看到____。</div>
+                        <div class="rounded-xl bg-white border border-slate-200 px-4 py-3">提醒：不搜尋住家地址，不分享個人位置。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-md border-4 border-indigo-200 overflow-hidden">
+            <button type="button" class="section-toggle w-full bg-indigo-50 px-6 py-4 border-b-4 border-indigo-100 flex items-center justify-between text-left" data-target="typing-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-indigo-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-keyboard"></i>
+                    </span>
+                    <span class="text-2xl font-black text-indigo-900">中英打闖關</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span id="typing-badge" class="hidden md:inline-flex bg-indigo-600 text-white px-3 py-1 rounded-full text-sm font-black">彈性加練 5 關</span>
+                    <i class="fa-solid fa-chevron-down text-indigo-500 text-xl toggle-chevron"></i>
+                </span>
+            </button>
+            <div id="typing-body" class="p-8">
+                <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 mb-6 text-slate-700 font-bold space-y-2">
+                    <p><i class="fa-solid fa-circle-info text-indigo-500 mr-2"></i> 先完成老師指定任務的同學，先到這裡練習；本節課不要求全班完成 5 關。</p>
+                    <p><i class="fa-solid fa-hand text-indigo-500 mr-2"></i> 不能複製貼上。英文大小寫、標點、空格和換行都要一樣。</p>
+                    <p id="progress-status"><i class="fa-solid fa-flag-checkered text-indigo-500 mr-2"></i> 目前進度：第 1 關開始。</p>
+                    <pre id="progress-debug" class="hidden mt-3 overflow-auto rounded-xl bg-slate-900 p-4 text-left text-xs text-slate-100"></pre>
+                </div>
+
+                <div id="typing-levels-container" class="flex flex-col space-y-8 max-w-3xl mx-auto">
+                    <div id="block-level1" class="bg-cyan-50 border-4 border-cyan-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-cyan-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 1 關</div>
+                        <h4 class="text-xl font-black text-cyan-800 mb-2 flex items-center"><i class="fa-solid fa-language text-cyan-500 mr-2"></i> 英文暖身</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">先用最簡單的一句話開始。</p>
+                        <div class="text-2xl font-black text-center text-cyan-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-cyan-200 shadow-inner select-none pointer-events-none">
+                            I am a student.
+                        </div>
+                        <input type="text" id="input-level1" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full h-16 p-3 rounded-xl border-2 border-cyan-300 focus:outline-none focus:ring-4 focus:ring-cyan-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="點這裡開始打字">
+                        <button onclick="checkLevel(1)" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level1" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level2" class="hidden bg-emerald-50 border-4 border-emerald-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-emerald-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 2 關</div>
+                        <h4 class="text-xl font-black text-emerald-800 mb-2 flex items-center"><i class="fa-solid fa-book-open text-emerald-500 mr-2"></i> 中文一行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">國語第 10 課〈漁夫和金魚〉，記得句號。</p>
+                        <div class="text-2xl font-black text-center text-emerald-700 tracking-widest mb-4 bg-white py-3 px-3 rounded-xl border-2 border-emerald-200 shadow-inner select-none pointer-events-none">
+                            大海旁有一對快樂的老夫婦。
+                        </div>
+                        <input type="text" id="input-level2" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full h-16 p-3 rounded-xl border-2 border-emerald-300 focus:outline-none focus:ring-4 focus:ring-emerald-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="慢慢打，記得標點">
+                        <button onclick="checkLevel(2)" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level2" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level3" class="hidden bg-blue-50 border-4 border-blue-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-blue-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 3 關</div>
+                        <h4 class="text-xl font-black text-blue-800 mb-2 flex items-center"><i class="fa-solid fa-comment-dots text-blue-500 mr-2"></i> 英文二行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">兩行都要打，問號、逗號和句點也要一樣。</p>
+                        <pre class="text-2xl font-black text-center text-blue-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-blue-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">Are you a student?
+Yes, I am.</pre>
+                        <textarea id="input-level3" rows="3" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="第一行打完按 Enter 換行"></textarea>
+                        <button onclick="checkLevel(3)" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level3" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level4" class="hidden bg-orange-50 border-4 border-orange-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-orange-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 4 關</div>
+                        <h4 class="text-xl font-black text-orange-800 mb-2 flex items-center"><i class="fa-solid fa-water text-orange-500 mr-2"></i> 中文二行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">注意逗號、句號和換行。</p>
+                        <pre class="text-2xl font-black text-center text-orange-700 tracking-wider mb-4 bg-white py-3 px-3 rounded-xl border-2 border-orange-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">老公公拉出了水藻，拖上了海草，
+抓到了金魚。</pre>
+                        <textarea id="input-level4" rows="4" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-orange-300 focus:outline-none focus:ring-4 focus:ring-orange-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="兩行都要打完整"></textarea>
+                        <button onclick="checkLevel(4)" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level4" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level5" class="hidden bg-purple-50 border-4 border-purple-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-purple-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">魔王關</div>
+                        <h4 class="text-xl font-black text-purple-800 mb-2 flex items-center"><i class="fa-solid fa-layer-group text-purple-500 mr-2"></i> 中英混打三行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">中文、英文、標點與換行都要對。完成後去看看自己的努力樹。</p>
+                        <pre class="text-2xl font-black text-center text-purple-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-purple-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">老夫婦又回到原來的生活。
+Is she a driver?
+Yes, she is.</pre>
+                        <textarea id="input-level5" rows="5" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-purple-300 focus:outline-none focus:ring-4 focus:ring-purple-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="最後一關，三行都要打"></textarea>
+                        <button onclick="checkLevel(5)" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level5" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center mt-16 pb-8 text-gray-400 text-sm font-medium">
+        <p><i class="fa-solid fa-rocket mr-1"></i> 新北市頂溪國小資訊課 - 小小探險家系列</p>
+    </footer>
+
+    <div id="lightbox" class="hidden fixed inset-0 z-[80] bg-black/85 p-4 items-center justify-center" onclick="closeLightbox()">
+        <button type="button" class="absolute top-4 right-4 h-12 w-12 rounded-full bg-white/90 text-slate-800 text-2xl" aria-label="關閉圖片">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <img id="lightbox-img" src="" alt="圖片放大" class="max-h-[88vh] max-w-[94vw] rounded-2xl border-4 border-white bg-white object-contain">
+    </div>
+
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div id="floating-kb-panel" class="hidden mb-4 bg-white p-3 rounded-2xl shadow-2xl border-4 border-indigo-400 max-w-[90vw] md:max-w-[680px] transform transition-all origin-bottom-right">
+            <div class="flex justify-between items-center mb-2 px-2 border-b border-gray-100 pb-2 gap-3">
+                <span class="font-black text-indigo-800 text-lg"><i class="fa-solid fa-keyboard mr-2"></i>找字小幫手</span>
+                <button onclick="toggleFloatingKeyboard()" class="bg-gray-100 hover:bg-red-500 hover:text-white text-gray-600 rounded-full w-8 h-8 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mb-3">
+                <button id="keyboard-tab-zh" type="button" onclick="showKeyboardLayout('zh')" class="rounded-xl bg-indigo-600 text-white font-black py-2 shadow-sm transition">中文鍵盤</button>
+                <button id="keyboard-tab-en" type="button" onclick="showKeyboardLayout('en')" class="rounded-xl bg-slate-100 text-slate-700 font-black py-2 shadow-sm transition">英文鍵盤</button>
+            </div>
+            <img id="keyboard-img-zh" src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1773745139/postimages-migration/040_ytvyrx.png" alt="注音鍵盤圖" class="w-full rounded-xl border border-gray-200 shadow-sm">
+            <img id="keyboard-img-en" src="https://res.cloudinary.com/dmqmjfqng/image/upload/v1777287126/it-class-tcwu/grade3/week12/english-keyboard-071.png" alt="英文鍵盤圖" class="hidden w-full rounded-xl border border-gray-200 shadow-sm">
+        </div>
+        <button onclick="toggleFloatingKeyboard()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-3 rounded-full shadow-[0_4px_15px_rgba(79,70,229,0.5)] font-black text-lg flex items-center justify-center transform transition hover:scale-105 border-2 border-white">
+            <i class="fa-solid fa-keyboard mr-2 text-2xl"></i> 看鍵盤圖
+        </button>
+    </div>
+
+    <script>
+        document.querySelectorAll(".section-toggle").forEach((button) => {
+            button.addEventListener("click", () => {
+                const targetId = button.dataset.target;
+                const target = document.getElementById(targetId);
+                if (!target) return;
+                const expanded = button.getAttribute("aria-expanded") !== "false";
+                button.setAttribute("aria-expanded", expanded ? "false" : "true");
+                target.classList.toggle("hidden", expanded);
+            });
+        });
+
+        function openLightbox(src) {
+            const box = document.getElementById("lightbox");
+            const image = document.getElementById("lightbox-img");
+            if (!box || !image) return;
+            image.src = src;
+            box.classList.remove("hidden");
+            box.classList.add("flex");
+        }
+
+        function closeLightbox() {
+            const box = document.getElementById("lightbox");
+            if (!box) return;
+            box.classList.add("hidden");
+            box.classList.remove("flex");
+        }
+
+        function toggleFloatingKeyboard() {
+            const panel = document.getElementById("floating-kb-panel");
+            panel?.classList.toggle("hidden");
+        }
+
+        function showKeyboardLayout(layout) {
+            const zhImg = document.getElementById("keyboard-img-zh");
+            const enImg = document.getElementById("keyboard-img-en");
+            const zhTab = document.getElementById("keyboard-tab-zh");
+            const enTab = document.getElementById("keyboard-tab-en");
+            const showZh = layout === "zh";
+            zhImg?.classList.toggle("hidden", !showZh);
+            enImg?.classList.toggle("hidden", showZh);
+            zhTab?.classList.toggle("bg-indigo-600", showZh);
+            zhTab?.classList.toggle("text-white", showZh);
+            zhTab?.classList.toggle("bg-slate-100", !showZh);
+            zhTab?.classList.toggle("text-slate-700", !showZh);
+            enTab?.classList.toggle("bg-indigo-600", !showZh);
+            enTab?.classList.toggle("text-white", !showZh);
+            enTab?.classList.toggle("bg-slate-100", showZh);
+            enTab?.classList.toggle("text-slate-700", showZh);
+        }
+    </script>
+
+    <script type="module">
+        import {
+            beginCentralizedLogin,
+            isTeacher,
+            resolveSession,
+            supabase
+        } from "../shared/auth.js";
+        import { initClassroomLinkControl } from "../shared/classroom-controls.js";
+        import { initNavbarAuth } from "../shared/navbar-auth.js";
+        import { initQuizModule } from "../shared/quiz-module.js";
+        import { initTypingChallenge } from "../shared/typing-challenge.js";
+
+        const WEEK_CODE = "15";
+        const QUIZ_KEY = "screen_time_quiz_1";
+        let currentSession = null;
+
+        const spaceLinkControl = initClassroomLinkControl({
+            supabase,
+            isTeacher,
+            grade: "grade3",
+            weekCode: WEEK_CODE,
+            controlKey: "space_links",
+            container: "#space-body",
+            linkSelector: ".space-link",
+            statusText: "#space-links-status",
+            statusIcon: "#space-links-status-icon",
+            refreshButton: "#space-refresh-btn",
+            teacherToggleButton: "#space-teacher-toggle",
+            messages: {
+                loading: "正在確認外太空連結狀態...",
+                refreshing: "正在更新外太空連結狀態...",
+                open: "外太空連結已開放，可以點選後用新分頁探索。",
+                locked: "外太空連結尚未開放，請先聽老師示範。",
+                blockedClick: "老師還沒開放外太空連結，請先完成目前任務。",
+                loadError: "讀取外太空連結狀態失敗，請稍後再按一次更新。",
+                teacherOnly: "只有老師登入後可以開關外太空連結。",
+                opening: "正在開放外太空連結...",
+                closing: "正在關閉外太空連結...",
+                toggleError: (error) => {
+                    const parts = [error?.message, error?.code].filter(Boolean);
+                    return `開關外太空連結失敗：${parts.length ? parts.join(" / ") : "unknown error"}`;
+                }
+            },
+            toggleButtonHtml: {
+                open: '<i class="fa-solid fa-lock"></i><span>關閉外太空連結</span>',
+                locked: '<i class="fa-solid fa-lock-open"></i><span>開放外太空連結</span>'
+            }
+        });
+
+        initNavbarAuth({ onSessionResolved: handlePageSessionResolved });
+
+        function handlePageSessionResolved(session) {
+            currentSession = session;
+            spaceLinkControl.handleSession(session);
+        }
+        spaceLinkControl.load();
+
+        const quizQuestions = [
+            {
+                id: 1,
+                questionHtml: "小安放學後想先看影片，再寫功課。哪一個安排比較符合「我的上網時間表」？",
+                options: [
+                    { text: "A. 先寫功課，再安排 20 分鐘看影片", correct: true },
+                    { text: "B. 先看一集影片，看到想停的時候再寫功課", correct: false },
+                    { text: "C. 一邊看影片一邊寫功課，這樣兩件事一起完成", correct: false }
+                ]
+            },
+            {
+                id: 2,
+                questionHtml: "如果時間表寫「上網 20 分鐘後休息」，休息時最適合做什麼？",
+                options: [
+                    { text: "A. 換成玩另一個線上遊戲，眼睛比較不無聊", correct: false },
+                    { text: "B. 離開螢幕，喝水、走一走或看遠方", correct: true },
+                    { text: "C. 繼續滑手機，但把聲音關小一點", correct: false }
+                ]
+            },
+            {
+                id: 3,
+                questionHtml: "睡覺前還想再看短影音，哪一個做法比較能照顧睡眠？",
+                options: [
+                    { text: "A. 躺在床上看，眼睛累了自然會睡著", correct: false },
+                    { text: "B. 把影片亮度調暗，這樣就不算影響睡眠", correct: false },
+                    { text: "C. 停止看螢幕，改成整理書包或準備睡覺", correct: true }
+                ]
+            },
+            {
+                id: 4,
+                questionHtml: "小美說：「我今天功課很多，所以我把玩遊戲時間改到週末。」這代表她正在做什麼？",
+                options: [
+                    { text: "A. 她完全不能玩遊戲，所以時間表失敗了", correct: false },
+                    { text: "B. 她會依照今天的狀況調整上網安排", correct: true },
+                    { text: "C. 她只要週末玩久一點，就可以補回今天沒玩的時間", correct: false }
+                ]
+            },
+            {
+                id: 5,
+                questionHtml: "小杰想把每天上網時間改成 40 分鐘。哪一個做法最容易讓時間表真的執行？",
+                options: [
+                    { text: "A. 先和家長討論原因、時間和停止方式，取得共識後再執行", correct: true },
+                    { text: "B. 自己先偷偷改，等家長發現時再說明就好", correct: false },
+                    { text: "C. 只要自己在心裡決定 40 分鐘，不需要告訴任何人", correct: false }
+                ]
+            }
+        ];
+
+        function signInWithGoogle() {
+            beginCentralizedLogin({ returnTo: window.location.href });
+        }
+
+        async function handleQuizAuthUpdate(session) {
+            currentSession = session;
+            await quiz.handleAuthChange(session);
+        }
+
+        async function getQuizUser() {
+            if (currentSession?.user) return currentSession.user;
+            currentSession = await resolveSession();
+            await handleQuizAuthUpdate(currentSession);
+            return currentSession?.user ?? null;
+        }
+
+        async function loadQuizProgress() {
+            if (!currentSession?.user) return null;
+            const { data, error } = await supabase
+                .from("student_progress")
+                .select("completed, score")
+                .eq("user_id", currentSession.user.id)
+                .eq("week_code", WEEK_CODE)
+                .eq("activity_key", QUIZ_KEY)
+                .maybeSingle();
+            if (error || !data?.completed) return null;
+            return { completed: true, score: data.score };
+        }
+
+        async function saveQuizProgress(score) {
+            const user = await getQuizUser();
+            if (!user) return false;
+            const payload = {
+                user_id: user.id,
+                week_code: WEEK_CODE,
+                activity_key: QUIZ_KEY,
+                current_level: quizQuestions.length,
+                completed: true,
+                score,
+                updated_at: new Date().toISOString()
+            };
+            const { error } = await supabase
+                .from("student_progress")
+                .upsert(payload, { onConflict: "user_id,week_code,activity_key" });
+            return !error;
+        }
+
+        const quiz = initQuizModule({
+            questions: quizQuestions,
+            selectors: {
+                lock: "quiz-lock",
+                content: "quiz-content",
+                container: "quiz-container",
+                statusBanner: "quiz-status-banner",
+                statusText: "quiz-status-text"
+            },
+            messages: {
+                questionLabel: (index) => `第 ${index} 題`,
+                submitButton: "送出測驗",
+                submittedButton: "已完成",
+                unansweredAlert: (remaining) => `還有 ${remaining} 題還沒選，請先全部作答。`,
+                scoreLabel: (correct, total) => `答對：${correct} / ${total} 題`,
+                completedBanner: (score, total) => `你已完成上網時間表小測驗，分數：${score ?? "?"} / ${total} 題。`,
+                unauthenticated: "登入 Google 後，才能開始資訊素養小測驗。",
+                saveError: "測驗結果暫時沒有記錄成功，請不要關掉頁面，稍後再按一次送出測驗。",
+                resultMessages: {
+                    perfect: ["時間管理小達人", "你知道先安排、要休息，也記得和家長討論。"],
+                    great: ["很接近", "再記得睡前少看螢幕、停不下來就找大人幫忙。"],
+                    good: ["有進步", "把「先完成重要事、上網後休息、和家長有共識」再複習一次會更穩。"],
+                    retry: ["再試試", "時間表不是禁止上網，而是幫自己把上網、休息和生活排好。"]
+                }
+            },
+            loadProgress: loadQuizProgress,
+            saveProgress: saveQuizProgress,
+            getCurrentUser: getQuizUser,
+            onRequireLogin: signInWithGoogle,
+            onAfterSubmit: async ({ correct, total }) => {
+                if (correct === total) {
+                    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                }
+                document.getElementById("quiz-result")?.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        });
+
+        window.selectOption = function selectOption(qId, btnEl) {
+            quiz.selectOption(qId, btnEl);
+        };
+        window.submitQuiz = async function submitQuiz() {
+            await quiz.submit();
+        };
+        document.getElementById("quiz-login-btn")?.addEventListener("click", signInWithGoogle);
+        supabase.auth.onAuthStateChange((event, session) => {
+            const previousUserId = currentSession?.user?.id || null;
+            const nextUserId = session?.user?.id || null;
+            handlePageSessionResolved(session);
+            if (event === "SIGNED_OUT" || previousUserId !== nextUserId) {
+                handleQuizAuthUpdate(session);
+            }
+        });
+        resolveSession().then(handleQuizAuthUpdate);
+
+        const levelsData = [
+            { id: 1, ans: "I am a student." },
+            { id: 2, ans: "大海旁有一對快樂的老夫婦。" },
+            { id: 3, ans: "Are you a student?\nYes, I am." },
+            { id: 4, ans: "老公公拉出了水藻，拖上了海草，\n抓到了金魚。" },
+            { id: 5, ans: "老夫婦又回到原來的生活。\nIs she a driver?\nYes, she is." }
+        ];
+
+        const levelMsg = {
+            1: "你先從簡單句開始，穩穩打準第一步，這會幫你建立後面的信心。",
+            2: "你把中文句子和句號一起看清楚，這是在練習細心，不只是練速度。",
+            3: "你把英文問答分成兩行完成，表示你有照著格式慢慢檢查。",
+            4: "這一關有連續動作和標點，你能一行一行對好，耐心正在變成能力。",
+            5: "你完成了中文和英文的切換，靠的是願意修正、持續檢查和不放棄。"
+        };
+
+        function buildHint(userVal, targetVal, levelIndex) {
+            const userLines = userVal.split("\n");
+            const targetLines = targetVal.split("\n");
+            const maxLines = Math.max(userLines.length, targetLines.length);
+
+            for (let lineIndex = 0; lineIndex < maxLines; lineIndex += 1) {
+                const userLine = userLines[lineIndex] || "";
+                const targetLine = targetLines[lineIndex] || "";
+
+                if (userLine === targetLine) continue;
+                if (!userLine && targetLine) {
+                    return `提示：第 ${lineIndex + 1} 行還沒完成，看看是不是少了整行內容。`;
+                }
+                if (userLine && !targetLine) {
+                    return `提示：第 ${lineIndex + 1} 行多打了內容，檢查一下句尾。`;
+                }
+
+                const maxChars = Math.max(userLine.length, targetLine.length);
+                for (let charIndex = 0; charIndex < maxChars; charIndex += 1) {
+                    const userChar = userLine[charIndex];
+                    const targetChar = targetLine[charIndex];
+
+                    if (userChar === targetChar) continue;
+                    if (!userChar) {
+                        return `提示：第 ${lineIndex + 1} 行後面可能少字，從「${targetLine.slice(Math.max(0, charIndex - 2), charIndex + 3)}」附近再看一次。`;
+                    }
+                    if (!targetChar) {
+                        return `提示：第 ${lineIndex + 1} 行後面可能多打了，檢查一下句尾。`;
+                    }
+                    return `提示：第 ${lineIndex + 1} 行第 ${charIndex + 1} 個字附近不一樣，從「${targetLine.slice(Math.max(0, charIndex - 2), charIndex + 3)}」附近再看一次。`;
+                }
+            }
+
+            return levelIndex === 1 || levelIndex === 3 || levelIndex === 5
+                ? "提示：再檢查一下大小寫、問號、句點、逗號、縮寫符號或換行。"
+                : "提示：再檢查一下是不是多字、少字、標點或換行不同。";
+        }
+
+        initTypingChallenge({
+            weekCode: WEEK_CODE,
+            activityKey: "typing_task_5",
+            levelsData,
+            levelEncouragements: levelMsg,
+            buildHint,
+            getWrongAnswerHtml: ({ hint }) => `還差一點點。${hint}`,
+            progressMessages: {
+                completed: "5 關全部完成，今天的中英打闖關已經完成。",
+                resumed: (level) => `已接回 Week 15 打字進度，從第 ${level} 關繼續。`,
+                firstLogin: "已登入成功，這次的打字進度會自動記錄下來。",
+                unauthenticated: "請先登入 Google，才能開始打字闖關並記錄進度。",
+                saveCompleted: "已記下 5 關完整進度，今天的打字任務完成。",
+                saveNextLevel: (level) => `已記下進度，下次從第 ${level} 關繼續。`,
+                saveError: "進度暫時沒有記錄成功，請稍後再試一次。",
+                resetNoSession: "目前沒有登入，不能重新開始練習。",
+                resetConfirm: "要重新開始 Week 15 打字練習嗎？這會把目前進度重設回第 1 關。"
+            },
+            celebrationContent: {
+                title: "魔王關完成",
+                message: "這一朵花是你一步一步練出來的。你願意檢查、修正，再試一次，努力樹又多了一份自己的累積。",
+                buttonText: "去看我的努力樹",
+                buttonHref: "/my-tree.html"
+            }
+        });
+    </script>
+</body>
+</html>

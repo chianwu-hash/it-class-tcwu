@@ -97,6 +97,21 @@
 - `levelsData` 必須使用 `{ id, ans }`。
 - 進度必須寫入 `student_progress`，不可改用 `localStorage`。
 
+打字闖關每一關都要設定 `levelEncouragements`，並採用阿德勒式鼓勵語：
+
+- 鼓勵語要描述學生的努力、策略、耐心、修正、檢查或進步。
+- 避免只寫「很棒」「太厲害」「成功」等泛泛稱讚，也避免把學生互相比較。
+- 每關鼓勵語應對應該關卡的實際挑戰，例如英文換行、中文標點、長句耐心檢查、中英混打切換。
+- 最後一關可強調「靠方法完成」「下次也能使用同樣策略」，不要只寫「全部完成」。
+
+若打字闖關有最後一關、魔王關或 boss level，完成動畫／完成 overlay 要把努力樹納入回饋設計：
+
+- overlay 需顯示阿德勒式鼓勵語，說明這次完成是來自練習、檢查、修正與持續嘗試。
+- overlay 需提供「去看我的努力樹」或同等文字的主要行動連結，導向 `/my-tree.html`。
+- 引導語要強調努力樹呈現自己的學習累積，不鼓勵與同學比較。
+- 週頁面不應額外寫入努力樹資料；努力樹以既有 `student_progress` 等進度資料讀取呈現。
+- 若這是新導入的互動設計，教案中需註記是否要在新頁確認後回頭同步調整既有打字闖關頁。
+
 若教案包含「資訊素養互動小測驗」：
 
 - 預設 5 題時，至少要挑 2 題做成較困難、有挑戰性的題目。
@@ -115,6 +130,19 @@
 - 外部入口
 - 截圖繳交提醒
 - 課本頁碼對照（若有）
+
+### 4.2.1 判斷是否需要課堂即時開關
+
+「課堂即時開關」（Classroom Control）是指：某些連結、影片、活動入口或操作區塊，老師希望在課程進行到指定階段才開放，避免學生在前半段提早分心。
+
+需要時，在教案中明確寫出：
+
+- 哪個區塊需要先鎖住，例如景點連結、影片入口、練習網站。
+- 什麼時間點由老師開放。
+- 學生要按哪個「更新狀態」按鈕同步。
+- 對應的 `controlKey`，例如 `maps_links`、`video_links`、`practice_links`。
+
+網頁實作一律使用 `shared/classroom-controls.js` + `supabase/classroom_controls.sql`，不要在週頁面中重寫 RPC、老師判斷、鎖定樣式或輪詢。學生端採手動更新狀態，不使用 `setInterval`。
 
 ### 4.3 把教案存檔
 
@@ -335,6 +363,13 @@ npm.cmd run chatgpt:image-batch -- --cdp-url http://127.0.0.1:9333 --prompt-file
 - 原圖：`weekXX-infographic-source.png`
 - 正式圖：`weekXX-infographic-1920x1080-q80.webp`
 
+若一週有多張圖卡、案例卡或投影片式圖像，仍要套用同一原則：
+
+- 生成原圖可以暫存在 `gradeX/images/weekXX/` 或暫存資料夾，但不得直接成為頁面 runtime 引用資產。
+- 頁面引用檔應是壓縮後的 WebP，建議命名為 `weekXX-card-01-1920x1080-q80.webp` 這類可辨識格式。
+- 生成工具留下的 `*-01.png`、重複檔、metadata 或來源圖，不應被頁面引用，也不應混入正式上課資產清單。
+- 若頁面一次引用多張圖，需檢查所有被引用圖片的總量；避免十幾張 1-2 MB PNG 造成教室網路載入卡頓。
+
 ### 7.5 壓圖規格
 
 目前規格固定：
@@ -354,6 +389,8 @@ npm.cmd run chatgpt:image-batch -- --cdp-url http://127.0.0.1:9333 --prompt-file
 ```powershell
 npm.cmd run image:compress-infographic -- --input C:\Users\user\projects\tmp\week11-infographic-source.png --output C:\Users\user\projects\it-class-tcwu\grade6\images\week11\week11-infographic-1920x1080-q80.webp
 ```
+
+多張圖卡需逐張壓成 WebP 後再更新頁面引用。驗收時用 `rg` 或瀏覽器 Network 面板確認頁面沒有引用生成 PNG 原圖；若仍引用 `.png`，需明確確認那是小圖示、鍵盤圖或既有必要資產，不是大型生成圖卡。
 
 ### 7.6 Cloudinary
 
@@ -440,6 +477,14 @@ week11 已實測成功上傳，Cloudinary secure_url：
 - 收合功能只做 UI 導航優化，不要改動 auth、progress、quiz 等既有邏輯
 - 實作後要額外確認 RWD、鍵盤操作、以及 module 初始化不受影響
 
+若外部入口需要課堂中才開放，使用「課堂即時開關」：
+
+- 老師控制按鈕只在教師帳號登入後顯示。
+- 學生端保留「更新狀態」按鈕，不做自動輪詢。
+- 鎖定時應攔截點擊、加上 `aria-disabled="true"`，並以清楚文字提示尚未開放。
+- 開放時應恢復可點擊狀態，外部連結仍用新分頁開啟。
+- 同一週的 `controlKey` 不可重複，並要在教案或功能契約中記錄。
+
 ### 8.5 Spotlight 圖片放大
 
 如果有圖卡或教學截圖，可沿用既有 spotlight 模式。
@@ -509,6 +554,8 @@ navbar.js?v=YYYYMMDD
 6. 若本機有 auth 條件，實際點一次登入按鈕，確認有觸發 OAuth 或導向行為
 7. console 沒有紅字
 8. 若有外部連結，確認格式正常
+9. 若有課堂即時開關，確認未登入不顯示老師按鈕、教師登入可開關、學生按「更新狀態」可同步，且沒有 `setInterval` 輪詢
+10. 若頁面引用生成圖卡，確認引用的是壓縮後 WebP 或 Cloudinary 正式網址，不是生成 PNG 原圖；多張圖卡需檢查總載入量，避免上課網路卡頓
 
 ### 10.3 建議留驗證產物
 
