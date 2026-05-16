@@ -24,6 +24,7 @@
             showAuthBarOnWeekPages = false,
             showAuthBarOnHomePages = false,
             authBarHtml = "",
+            extraLinks = [],
             currentPath = window.location.pathname
         } = config;
 
@@ -36,11 +37,19 @@
                 <div class="${titleClassName}">
                     <i class="${titleIconClass} mr-2"></i> ${gradeLabel}
                 </div>
-                <div class="flex flex-wrap lg:flex-nowrap lg:justify-end gap-2 items-center">
+                <div class="flex flex-wrap lg:justify-end gap-2 items-center">
                     <a href="index.html" class="${linkClassName}">
                         <i class="fa-solid fa-house mr-1"></i> 課程首頁
                     </a>
         `;
+
+        extraLinks.forEach((link) => {
+            navHTML += `
+                    <a href="${link.href}" class="${linkClassName}">
+                        ${link.iconClass ? `<i class="${link.iconClass} mr-1"></i>` : ""}${link.label}
+                    </a>
+            `;
+        });
 
         if (currentWeek !== null) {
             navHTML += `<span class="${separatorClassName}">|</span>`;

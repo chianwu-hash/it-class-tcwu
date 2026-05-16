@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的努力樹</title>
+    <style>
+        :root {
+            --ink: #17253f;
+            --muted: #63738d;
+            --panel: rgba(255, 255, 255, 0.84);
+            --line: rgba(58, 99, 73, 0.16);
+            --leaf-a: #8bd65b;
+            --leaf-b: #2f9e57;
+            --leaf-c: #167044;
+            --quiz-a: #75dbca;
+            --quiz-b: #2590a4;
+            --flower-image: url("assets/reward-tree/flowers/flower-sunrise.png");
+            font-family: "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 17% 18%, rgba(255, 214, 112, 0.25), transparent 28rem),
+                radial-gradient(circle at 84% 10%, rgba(92, 185, 210, 0.22), transparent 26rem),
+                linear-gradient(180deg, #edf8fb 0%, #f8fbf3 47%, #f4efe2 100%);
+        }
+
+        button,
+        a {
+            font: inherit;
+        }
+
+        .page {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 24px 0 32px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(2rem, 5vw, 4.4rem);
+            line-height: 1;
+            letter-spacing: 0;
+        }
+
+        .subtitle {
+            margin: 10px 0 0;
+            color: var(--muted);
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 40px;
+            border: 1px solid rgba(23, 37, 63, 0.12);
+            border-radius: 999px;
+            padding: 0 15px;
+            background: rgba(255, 255, 255, 0.74);
+            color: #24374f;
+            box-shadow: 0 10px 24px rgba(31, 64, 49, 0.08);
+            font-weight: 900;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn.primary {
+            border-color: #2c965c;
+            background: #2f9e57;
+            color: white;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 290px;
+            gap: 18px;
+            align-items: stretch;
+        }
+
+        .tree-shell,
+        .side-panel,
+        .login-gate {
+            border: 1px solid var(--line);
+            background: var(--panel);
+            box-shadow: 0 18px 48px rgba(35, 70, 54, 0.12);
+            backdrop-filter: blur(14px);
+        }
+
+        .tree-shell {
+            position: relative;
+            overflow: hidden;
+            border-radius: 28px;
+            min-height: 720px;
+        }
+
+        .tree-stage {
+            position: relative;
+            min-height: 720px;
+            isolation: isolate;
+        }
+
+        .login-gate {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 4;
+            width: min(420px, calc(100% - 40px));
+            transform: translate(-50%, -50%);
+            border-radius: 22px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .login-gate.hidden,
+        .hidden {
+            display: none;
+        }
+
+        .login-gate h2 {
+            margin: 0 0 10px;
+            font-size: 1.55rem;
+        }
+
+        .login-gate p {
+            margin: 0 0 18px;
+            color: var(--muted);
+            font-weight: 800;
+            line-height: 1.6;
+        }
+
+        .tree-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center bottom;
+            padding: 4% 4% 0;
+            filter: drop-shadow(0 22px 24px rgba(95, 74, 31, 0.18));
+            z-index: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .ground-glow {
+            position: absolute;
+            left: 50%;
+            bottom: 4.5%;
+            width: min(560px, 70%);
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse, rgba(246, 193, 78, 0.36), transparent 68%);
+            transform: translateX(-50%);
+            z-index: 0;
+        }
+
+        .reward-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+        }
+
+        .reward {
+            position: absolute;
+            left: var(--x);
+            top: var(--y);
+            width: var(--size);
+            height: var(--size);
+            border: 0;
+            padding: 0;
+            background: transparent;
+            transform: translate(-50%, -50%) rotate(var(--rot, 0deg));
+            opacity: 0;
+            animation: popIn 520ms cubic-bezier(.17, .84, .38, 1.28) forwards;
+            animation-delay: calc(var(--i) * 28ms);
+            cursor: pointer;
+        }
+
+        .reward:focus-visible {
+            outline: 4px solid rgba(255, 193, 7, 0.7);
+            outline-offset: 6px;
+        }
+
+        .reward.leaf {
+            height: calc(var(--size) * 1.42);
+            border-radius: 78% 8% 72% 12%;
+            background:
+                linear-gradient(138deg, rgba(255, 255, 255, 0.54), transparent 38%),
+                radial-gradient(circle at 68% 72%, var(--leaf-c), transparent 34%),
+                linear-gradient(135deg, var(--leaf-a), var(--leaf-b));
+            box-shadow:
+                inset -2px -5px 8px rgba(12, 92, 51, 0.24),
+                0 8px 16px rgba(18, 98, 61, 0.24);
+        }
+
+        .reward.leaf::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 12%;
+            width: 2px;
+            height: 74%;
+            border-radius: 999px;
+            background: rgba(238, 255, 212, 0.68);
+            transform: translateX(-50%) rotate(-15deg);
+            transform-origin: bottom center;
+        }
+
+        .reward.leaf.quiz {
+            background:
+                linear-gradient(138deg, rgba(255, 255, 255, 0.52), transparent 36%),
+                radial-gradient(circle at 68% 72%, #176e82, transparent 36%),
+                linear-gradient(135deg, var(--quiz-a), var(--quiz-b));
+            box-shadow:
+                inset -2px -5px 8px rgba(21, 91, 105, 0.22),
+                0 8px 16px rgba(27, 111, 126, 0.2);
+        }
+
+        .reward.flower {
+            width: calc(var(--size) * 1.45);
+            height: calc(var(--size) * 1.45);
+            background-image: var(--flower-image);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            filter: drop-shadow(0 9px 12px rgba(122, 55, 92, 0.24));
+            animation-name: bloomIn;
+        }
+
+        .reward.ghost {
+            opacity: 0.38;
+            animation: none;
+            cursor: pointer;
+            filter: grayscale(0.4);
+        }
+
+        .reward.ghost.leaf,
+        .reward.ghost.flower {
+            border: 3px dashed rgba(43, 74, 56, 0.72);
+            background: rgba(255, 255, 255, 0.46);
+            box-shadow: none;
+        }
+
+        .reward.ghost:hover {
+            opacity: 0.58;
+            filter: grayscale(0.15);
+        }
+
+        .side-panel {
+            border-radius: 22px;
+            padding: 18px;
+        }
+
+        .student-card {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .student-name {
+            margin: 0 0 6px;
+            font-size: 1.5rem;
+            line-height: 1.15;
+        }
+
+        .student-meta,
+        .status-text {
+            color: var(--muted);
+            font-weight: 800;
+            line-height: 1.5;
+        }
+
+        .stats {
+            display: grid;
+            gap: 10px;
+            margin: 0 0 16px;
+        }
+
+        .stat {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10px;
+            align-items: center;
+            min-height: 68px;
+            padding: 12px;
+            border: 1px solid rgba(66, 104, 75, 0.14);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.58);
+        }
+
+        .stat-mark {
+            display: grid;
+            place-items: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            font-size: 1.35rem;
+            font-weight: 950;
+            color: #163a29;
+        }
+
+        .stat.leaves .stat-mark {
+            background: linear-gradient(135deg, #a7ec7b, #3faf67);
+        }
+
+        .stat.flowers .stat-mark {
+            background: linear-gradient(135deg, #ff97c4, #ffd56b);
+        }
+
+        .stat.colors .stat-mark {
+            background: linear-gradient(135deg, #7ed7ff, #b58cff 48%, #ff91bd);
+        }
+
+        .stat-label {
+            display: block;
+            color: var(--muted);
+            font-size: 0.85rem;
+            font-weight: 800;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.25rem;
+            font-weight: 950;
+            line-height: 1.2;
+        }
+
+        .palette-panel {
+            margin: 0 0 16px;
+            padding: 14px;
+            border: 1px solid rgba(66, 104, 75, 0.14);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.58);
+        }
+
+        .palette-title {
+            margin: 0 0 4px;
+            font-size: 1rem;
+            font-weight: 950;
+        }
+
+        .palette-status {
+            margin: 0 0 10px;
+            color: var(--muted);
+            font-size: 0.88rem;
+            font-weight: 800;
+            line-height: 1.4;
+        }
+
+        .palette-options {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .palette-option {
+            display: grid;
+            place-items: center;
+            width: 100%;
+            aspect-ratio: 1;
+            border: 2px solid transparent;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.68);
+            cursor: pointer;
+        }
+
+        .palette-option:disabled {
+            cursor: not-allowed;
+            opacity: 0.42;
+        }
+
+        .palette-option[aria-pressed="true"] {
+            border-color: #23344e;
+            box-shadow: 0 0 0 4px rgba(47, 158, 87, 0.14);
+        }
+
+        .palette-swatch {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.7);
+        }
+
+        .palette-swatch.sunrise {
+            background-image: url("assets/reward-tree/flowers/flower-sunrise.png");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 170%;
+        }
+
+        .palette-swatch.ocean {
+            background-image: url("assets/reward-tree/flowers/flower-ocean.png");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 170%;
+        }
+
+        .palette-swatch.candy {
+            background-image: url("assets/reward-tree/flowers/flower-candy.png");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 170%;
+        }
+
+        .palette-swatch.forest {
+            background-image: url("assets/reward-tree/flowers/flower-forest.png");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 170%;
+        }
+
+        .detail,
+        .debug-note {
+            min-height: 116px;
+            padding: 14px;
+            border: 1px solid rgba(37, 106, 75, 0.13);
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.42));
+        }
+
+        .debug-note {
+            min-height: 0;
+            margin-top: 12px;
+            color: #8a5b18;
+            background: rgba(255, 246, 211, 0.76);
+            font-size: 0.85rem;
+            font-weight: 800;
+            line-height: 1.5;
+        }
+
+        .detail-title {
+            margin: 0 0 6px;
+            font-size: 1.05rem;
+            line-height: 1.28;
+        }
+
+        .detail-text {
+            margin: 0;
+            color: var(--muted);
+            font-weight: 800;
+            line-height: 1.55;
+        }
+
+        .legend {
+            display: grid;
+            gap: 9px;
+            margin-top: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--muted);
+            font-size: 0.92rem;
+            font-weight: 800;
+        }
+
+        .legend-swatch {
+            width: 18px;
+            height: 18px;
+            flex: 0 0 auto;
+        }
+
+        .legend-swatch.leaf,
+        .legend-swatch.quiz {
+            border-radius: 78% 8% 72% 12%;
+            transform: rotate(-20deg);
+        }
+
+        .legend-swatch.leaf {
+            background: linear-gradient(135deg, var(--leaf-a), var(--leaf-b));
+        }
+
+        .legend-swatch.quiz {
+            background: linear-gradient(135deg, var(--quiz-a), var(--quiz-b));
+        }
+
+        .legend-swatch.flower {
+            border-radius: 50%;
+            background-image: url("assets/reward-tree/flowers/flower-sunrise.png");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 190%;
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(0.2);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1);
+            }
+        }
+
+        @keyframes bloomIn {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(0.12);
+            }
+            70% {
+                opacity: 1;
+                transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1.18);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1);
+            }
+        }
+
+        @media (max-width: 920px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .side-panel {
+                order: -1;
+            }
+
+            .tree-shell,
+            .tree-stage {
+                min-height: 76vw;
+            }
+        }
+
+        @media (max-width: 620px) {
+            .page {
+                width: min(100% - 20px, 1180px);
+                padding-top: 16px;
+            }
+
+            .topbar {
+                align-items: start;
+                flex-direction: column;
+            }
+
+            .actions {
+                justify-content: flex-start;
+            }
+
+            .tree-shell,
+            .tree-stage {
+                min-height: 112vw;
+                border-radius: 18px;
+            }
+
+            .tree-image {
+                padding: 2% 0 0;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reward {
+                opacity: 1;
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <header class="topbar">
+            <div>
+                <h1>我的努力樹</h1>
+                <p class="subtitle" id="page-subtitle">登入後會顯示自己的闖關成果</p>
+            </div>
+            <div class="actions">
+                <a class="btn" href="/index.html">回首頁</a>
+                <button class="btn primary" id="login-btn" type="button">Google 登入</button>
+                <button class="btn hidden" id="logout-btn" type="button">登出</button>
+            </div>
+        </header>
+
+        <section class="dashboard" aria-label="我的努力樹">
+            <div class="tree-shell">
+                <div class="tree-stage">
+                    <div class="ground-glow" aria-hidden="true"></div>
+                    <img class="tree-image" src="assets/reward-tree/empty-tree-base-v1.png" alt="努力樹">
+                    <div class="reward-layer" id="reward-layer" aria-label="獎勵位置"></div>
+                    <section class="login-gate" id="login-gate">
+                        <h2>先登入再看自己的樹</h2>
+                        <p>這一頁只會讀取你自己的闖關進度，不會顯示其他同學的資料。</p>
+                        <button class="btn primary" id="gate-login-btn" type="button">Google 登入</button>
+                    </section>
+                </div>
+            </div>
+
+            <aside class="side-panel">
+                <div class="student-card">
+                    <h2 class="student-name" id="student-name">尚未登入</h2>
+                    <div class="student-meta" id="student-meta">登入後顯示班級、座號與帳號</div>
+                    <div class="status-text" id="status-text">等待登入</div>
+                </div>
+
+                <div class="stats" aria-label="獎勵統計">
+                    <div class="stat leaves">
+                        <div class="stat-mark" id="leaf-count">0</div>
+                        <div>
+                            <span class="stat-label">葉子</span>
+                            <span class="stat-value">一般關卡與測驗</span>
+                        </div>
+                    </div>
+                    <div class="stat flowers">
+                        <div class="stat-mark" id="flower-count">0</div>
+                        <div>
+                            <span class="stat-label">花朵</span>
+                            <span class="stat-value">每週魔王關卡</span>
+                        </div>
+                    </div>
+                    <div class="stat colors">
+                        <div class="stat-mark">3+</div>
+                        <div>
+                            <span class="stat-label">花色</span>
+                            <span class="stat-value" id="color-unlock">集滿 3 朵解鎖</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="palette-panel" id="flower-palette-panel">
+                    <h3 class="palette-title">花色</h3>
+                    <p class="palette-status" id="flower-palette-status">集滿 3 朵花後可以更換。</p>
+                    <div class="palette-options" aria-label="花色選擇">
+                        <button class="palette-option" type="button" data-palette="sunrise" aria-label="暖陽花色">
+                            <span class="palette-swatch sunrise"></span>
+                        </button>
+                        <button class="palette-option" type="button" data-palette="ocean" aria-label="海洋花色">
+                            <span class="palette-swatch ocean"></span>
+                        </button>
+                        <button class="palette-option" type="button" data-palette="candy" aria-label="糖果花色">
+                            <span class="palette-swatch candy"></span>
+                        </button>
+                        <button class="palette-option" type="button" data-palette="forest" aria-label="森林花色">
+                            <span class="palette-swatch forest"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="detail" aria-live="polite">
+                    <h3 class="detail-title" id="detail-title">還沒有選擇獎勵</h3>
+                    <p class="detail-text" id="detail-text">點一片葉子或一朵花，可以看它代表哪一個任務。</p>
+                </div>
+                <div class="debug-note hidden" id="debug-note"></div>
+
+                <div class="legend" aria-label="圖例">
+                    <div class="legend-item"><span class="legend-swatch leaf"></span>打字關卡葉</div>
+                    <div class="legend-item"><span class="legend-swatch quiz"></span>測驗葉</div>
+                    <div class="legend-item"><span class="legend-swatch flower"></span>魔王花</div>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <script type="module">
+        import {
+            beginCentralizedLogin,
+            resolveSession,
+            signOutAndReload,
+            supabase
+        } from "./shared/auth.js";
+        import {
+            FLOWER_SLOTS,
+            LEAF_SLOTS,
+            REWARD_TREE_ACTIVITIES
+        } from "./shared/reward-tree-config.js";
+        import {
+            createFullCompletionRows,
+            deriveRewardTreeModel
+        } from "./shared/reward-tree-model.js";
+        import {
+            renderRewardTree,
+            selectReward
+        } from "./shared/reward-tree-renderer.js";
+
+        const loginBtn = document.getElementById("login-btn");
+        const gateLoginBtn = document.getElementById("gate-login-btn");
+        const logoutBtn = document.getElementById("logout-btn");
+        const loginGate = document.getElementById("login-gate");
+        const rewardLayer = document.getElementById("reward-layer");
+        const studentNameEl = document.getElementById("student-name");
+        const studentMetaEl = document.getElementById("student-meta");
+        const subtitleEl = document.getElementById("page-subtitle");
+        const statusTextEl = document.getElementById("status-text");
+        const leafCountEl = document.getElementById("leaf-count");
+        const flowerCountEl = document.getElementById("flower-count");
+        const colorUnlockEl = document.getElementById("color-unlock");
+        const detailTitleEl = document.getElementById("detail-title");
+        const detailTextEl = document.getElementById("detail-text");
+        const debugNoteEl = document.getElementById("debug-note");
+        const flowerPaletteStatusEl = document.getElementById("flower-palette-status");
+        const paletteButtons = Array.from(document.querySelectorAll("[data-palette]"));
+        const FLOWER_PALETTE_SESSION_KEY = "reward-tree-flower-palette";
+        const FLOWER_PALETTES = {
+            sunrise: {
+                "--flower-image": "url(\"assets/reward-tree/flowers/flower-sunrise.png\")"
+            },
+            ocean: {
+                "--flower-image": "url(\"assets/reward-tree/flowers/flower-ocean.png\")"
+            },
+            candy: {
+                "--flower-image": "url(\"assets/reward-tree/flowers/flower-candy.png\")"
+            },
+            forest: {
+                "--flower-image": "url(\"assets/reward-tree/flowers/flower-forest.png\")"
+            }
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        const mockMode = params.get("mock");
+        const localMockEnabled = ["full", "empty", "partial"].includes(mockMode)
+            && ["localhost", "127.0.0.1"].includes(window.location.hostname);
+
+        function startLogin() {
+            beginCentralizedLogin({ returnTo: window.location.href });
+        }
+
+        function setAuthButtons(isLoggedIn) {
+            loginBtn.classList.toggle("hidden", isLoggedIn);
+            logoutBtn.classList.toggle("hidden", !isLoggedIn);
+            loginGate.classList.toggle("hidden", isLoggedIn || localMockEnabled);
+        }
+
+        function setProfile(session, profile = null) {
+            const displayName = profile?.display_name || session?.user?.email || "我的努力樹";
+            const classSeat = profile?.class_code && profile?.seat_no
+                ? `班級 ${profile.class_code} · 座號 ${String(profile.seat_no).padStart(2, "0")}`
+                : "尚未建立班級座號";
+            const email = profile?.email || session?.user?.email || "";
+            studentNameEl.textContent = displayName;
+            studentMetaEl.textContent = email ? `${classSeat} · ${email}` : classSeat;
+            subtitleEl.textContent = `${displayName} 的闖關成果`;
+        }
+
+        function readFlowerPalette() {
+            try {
+                const value = window.sessionStorage.getItem(FLOWER_PALETTE_SESSION_KEY);
+                return FLOWER_PALETTES[value] ? value : "sunrise";
+            } catch {
+                return "sunrise";
+            }
+        }
+
+        function applyFlowerPalette(paletteName, shouldStore = false) {
+            const nextName = FLOWER_PALETTES[paletteName] ? paletteName : "sunrise";
+            Object.entries(FLOWER_PALETTES[nextName]).forEach(([name, value]) => {
+                document.documentElement.style.setProperty(name, value);
+            });
+            paletteButtons.forEach((button) => {
+                button.setAttribute("aria-pressed", String(button.dataset.palette === nextName));
+            });
+            if (shouldStore) {
+                try {
+                    window.sessionStorage.setItem(FLOWER_PALETTE_SESSION_KEY, nextName);
+                } catch {
+                    // Cosmetic state can safely remain in memory for this visit.
+                }
+            }
+        }
+
+        function setPaletteUnlocked(unlocked) {
+            paletteButtons.forEach((button) => {
+                button.disabled = !unlocked;
+            });
+            flowerPaletteStatusEl.textContent = unlocked
+                ? "已解鎖，這次瀏覽可以更換花色。"
+                : "集滿 3 朵花後可以更換。";
+            applyFlowerPalette(unlocked ? readFlowerPalette() : "sunrise", false);
+        }
+
+        function renderModel(model) {
+            renderRewardTree({
+                layer: rewardLayer,
+                leaves: model.leaves,
+                flowers: model.flowers,
+                pendingLeaves: model.pendingLeaves,
+                pendingFlowers: model.pendingFlowers,
+                leafSlots: LEAF_SLOTS,
+                flowerSlots: FLOWER_SLOTS,
+                onSelect: (reward) => selectReward(reward, detailTitleEl, detailTextEl)
+            });
+
+            leafCountEl.textContent = model.stats.leafCount;
+            flowerCountEl.textContent = model.stats.flowerCount;
+            colorUnlockEl.textContent = model.stats.colorUnlocked
+                ? "已解鎖換色"
+                : `還差 ${model.stats.nextFlowerUnlock} 朵`;
+            setPaletteUnlocked(model.stats.colorUnlocked);
+
+            if (model.stats.leafCount === 0 && model.stats.flowerCount === 0) {
+                detailTitleEl.textContent = "還在等待第一片葉子";
+                detailTextEl.textContent = "完成打字關卡或測驗後，這棵樹就會開始長出獎勵。";
+            } else {
+                detailTitleEl.textContent = "選一片葉子或一朵花";
+                detailTextEl.textContent = "點選獎勵可以看它代表哪一個任務。";
+            }
+
+            if (model.stats.unknownRowCount || model.stats.skippedActivityCount) {
+                debugNoteEl.textContent = `有 ${model.stats.unknownRowCount} 筆尚未加入努力樹設定的進度，已先略過。`;
+                debugNoteEl.classList.remove("hidden");
+            } else {
+                debugNoteEl.classList.add("hidden");
+            }
+        }
+
+        async function loadProfile(userId) {
+            const { data, error } = await supabase
+                .from("student_profiles")
+                .select("email, class_code, seat_no, display_name, student_code")
+                .eq("user_id", userId)
+                .maybeSingle();
+            if (error) {
+                console.warn("student profile unavailable", error);
+                return null;
+            }
+            return data;
+        }
+
+        async function loadProgress(userId) {
+            const { data, error } = await supabase
+                .from("student_progress")
+                .select("week_code, activity_key, current_level, completed, score, updated_at")
+                .eq("user_id", userId);
+            if (error) {
+                throw error;
+            }
+            return data || [];
+        }
+
+        async function initMockTree() {
+            setAuthButtons(true);
+            const session = { user: { email: "demo@apps.ntpc.edu.tw" } };
+            setProfile(session, {
+                email: "demo@apps.ntpc.edu.tw",
+                class_code: "302",
+                seat_no: 1,
+                display_name: "全通關示意"
+            });
+            const rows = mockMode === "full"
+                ? createFullCompletionRows(REWARD_TREE_ACTIVITIES)
+                : mockMode === "partial"
+                    ? [
+                        {
+                            week_code: "04",
+                            activity_key: "typing_task_2",
+                            current_level: 3,
+                            completed: false,
+                            score: null,
+                            updated_at: "2026-05-15T12:00:00.000Z"
+                        }
+                    ]
+                    : [];
+            statusTextEl.textContent = `本機 ${mockMode} mock 模式`;
+            renderModel(deriveRewardTreeModel(rows, REWARD_TREE_ACTIVITIES));
+        }
+
+        async function initTree() {
+            if (localMockEnabled) {
+                await initMockTree();
+                return;
+            }
+
+            setAuthButtons(false);
+            const session = await resolveSession();
+
+            if (!session?.user) {
+                studentNameEl.textContent = "尚未登入";
+                studentMetaEl.textContent = "登入後顯示班級、座號與帳號";
+                subtitleEl.textContent = "登入後會顯示自己的闖關成果";
+                statusTextEl.textContent = "請先登入";
+                renderModel(deriveRewardTreeModel([], REWARD_TREE_ACTIVITIES));
+                return;
+            }
+
+            setAuthButtons(true);
+            statusTextEl.textContent = "正在讀取你的努力樹";
+
+            try {
+                const [profile, progressRows] = await Promise.all([
+                    loadProfile(session.user.id),
+                    loadProgress(session.user.id)
+                ]);
+
+                setProfile(session, profile);
+                const model = deriveRewardTreeModel(progressRows, REWARD_TREE_ACTIVITIES);
+                renderModel(model);
+                statusTextEl.textContent = `已讀取 ${progressRows.length} 筆自己的進度`;
+            } catch (error) {
+                console.error("reward tree load failed", error);
+                statusTextEl.textContent = "努力樹暫時讀取失敗";
+                detailTitleEl.textContent = "讀取失敗";
+                detailTextEl.textContent = "請稍後重新整理，或先回到課程頁繼續練習。";
+            }
+        }
+
+        loginBtn.addEventListener("click", startLogin);
+        gateLoginBtn.addEventListener("click", startLogin);
+        logoutBtn.addEventListener("click", signOutAndReload);
+        paletteButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                if (button.disabled) {
+                    return;
+                }
+                applyFlowerPalette(button.dataset.palette, true);
+            });
+        });
+
+        initTree();
+    </script>
+</body>
+</html>

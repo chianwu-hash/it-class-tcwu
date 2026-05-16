@@ -62,7 +62,7 @@
                     </button>
                 </div>
 
-                <div class="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+                <div class="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-7">
                     <label class="block">
                         <span class="mb-1 block text-sm font-black text-slate-700">班級</span>
                         <select id="class-filter" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700">
@@ -91,6 +91,15 @@
                             <option value="">全部狀態</option>
                             <option value="false">進行中</option>
                             <option value="true">已完成</option>
+                        </select>
+                    </label>
+                    <label class="block">
+                        <span class="mb-1 block text-sm font-black text-slate-700">排序</span>
+                        <select id="sort-filter" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700">
+                            <option value="updated_desc">最後更新新到舊</option>
+                            <option value="updated_asc">最後更新舊到新</option>
+                            <option value="seat_asc">班級座號小到大</option>
+                            <option value="seat_desc">班級座號大到小</option>
                         </select>
                     </label>
                     <label class="block xl:col-span-2">
@@ -188,6 +197,7 @@
         const weekFilterEl = document.getElementById("week-filter");
         const activityFilterEl = document.getElementById("activity-filter");
         const completedFilterEl = document.getElementById("completed-filter");
+        const sortFilterEl = document.getElementById("sort-filter");
         const searchFilterEl = document.getElementById("search-filter");
         const refreshBtn = document.getElementById("refresh-btn");
         const tbodyEl = document.getElementById("progress-tbody");
@@ -214,12 +224,17 @@
         const ADMIN_FILTERS_STORAGE_KEY = "admin-progress-filters";
         const ADMIN_DEBUG_STORAGE_KEY = "admin-progress-debug-log";
         const ADMIN_ACTION_TIMEOUT_MS = 10000;
+        const PROFILES_ENABLED = true;
+        const UNCLASSIFIED_CLASS_FILTER_VALUE = "__unclassified__";
+        const DEFAULT_SORT_MODE = "updated_desc";
+        const sortCollator = new Intl.Collator("zh-Hant", { numeric: true, sensitivity: "base" });
         const debugParams = new URLSearchParams(window.location.search);
         const debugEnabled = debugParams.get("debug") === "1";
 
         let currentSession = null;
         let isSyncing = false;
         let studentProfilesByUserId = new Map();
+        let studentProfilesLoadFailed = false;
         let currentPage = 1;
         let pageSize = 20;
 
@@ -270,6 +285,7 @@
                 weekFilter: weekFilterEl?.value || '',
                 activityFilter: activityFilterEl?.value || '',
                 completedFilter: completedFilterEl?.value || '',
+                sortFilter: sortFilterEl?.value || '',
                 searchFilter: searchFilterEl?.value || ''
             };
         }
@@ -473,6 +489,7 @@
                 weekCode: weekFilterEl.value,
                 activityType: activityFilterEl.value,
                 completed: completedFilterEl.value,
+                sort: sortFilterEl.value,
                 search: searchFilterEl.value,
                 page: currentPage,
                 pageSize
@@ -493,6 +510,7 @@
             weekFilterEl.value = state.weekCode || '';
             activityFilterEl.value = state.activityType || '';
             completedFilterEl.value = state.completed || '';
+            sortFilterEl.value = state.sort || DEFAULT_SORT_MODE;
             searchFilterEl.value = state.search || '';
             classFilterEl.dataset.pendingValue = state.classCode || '';
             currentPage = Number.isFinite(Number(state.page)) && Number(state.page) > 0 ? Number(state.page) : 1;
@@ -500,22 +518,41 @@
             pageSizeSelectEl.value = String(pageSize);
         }
 
-        function populateClassOptions() {
+        function getProfileClassCode(row) {
+            const profile = studentProfilesByUserId.get(row.user_id);
+            return profile?.class_code || null;
+        }
+
+        function populateClassOptions(progressRows = []) {
             const pendingValue = classFilterEl.dataset.pendingValue || "";
             const currentValue = pendingValue || classFilterEl.value;
+
+            if (!PROFILES_ENABLED) {
+                classFilterEl.innerHTML = '<option value="">全部班級</option>';
+                classFilterEl.value = "";
+                classFilterEl.disabled = true;
+                classFilterEl.dataset.pendingValue = "";
+                return;
+            }
+
+            classFilterEl.disabled = false;
             const classCodes = Array.from(new Set(
                 Array.from(studentProfilesByUserId.values())
                     .map((profile) => profile.class_code)
                     .filter(Boolean)
             )).sort();
+            const hasUnclassifiedRows = progressRows.some((row) => !getProfileClassCode(row));
 
             classFilterEl.innerHTML = [
                 '<option value="">全部班級</option>',
-                ...classCodes.map((classCode) => `<option value="${escapeHtml(classCode)}">${escapeHtml(classCode)}</option>`)
+                ...classCodes.map((classCode) => `<option value="${escapeHtml(classCode)}">${escapeHtml(classCode)}</option>`),
+                hasUnclassifiedRows ? `<option value="${UNCLASSIFIED_CLASS_FILTER_VALUE}">未分班</option>` : ''
             ].join('');
 
-            if (currentValue && classCodes.includes(currentValue)) {
+            if (currentValue && (classCodes.includes(currentValue) || (currentValue === UNCLASSIFIED_CLASS_FILTER_VALUE && hasUnclassifiedRows))) {
                 classFilterEl.value = currentValue;
+            } else {
+                classFilterEl.value = "";
             }
             classFilterEl.dataset.pendingValue = "";
         }
@@ -543,7 +580,11 @@
             return rows.filter((row) => {
                 const profile = studentProfilesByUserId.get(row.user_id);
 
-                if (classCode && profile?.class_code !== classCode) {
+                if (classCode === UNCLASSIFIED_CLASS_FILTER_VALUE) {
+                    if (profile?.class_code) {
+                        return false;
+                    }
+                } else if (classCode && profile?.class_code !== classCode) {
                     return false;
                 }
 
@@ -559,6 +600,67 @@
                     .filter(Boolean)
                     .map((value) => String(value).toLowerCase());
                 return fallbackHaystacks.some((value) => value.includes(keyword));
+            });
+        }
+
+        function compareUpdatedAt(a, b) {
+            const aTime = Date.parse(a?.updated_at || '');
+            const bTime = Date.parse(b?.updated_at || '');
+            const safeATime = Number.isFinite(aTime) ? aTime : 0;
+            const safeBTime = Number.isFinite(bTime) ? bTime : 0;
+            return safeATime - safeBTime;
+        }
+
+        function getSeatSortKey(row) {
+            const profile = studentProfilesByUserId.get(row.user_id);
+            return {
+                hasProfile: !!profile,
+                classCode: profile?.class_code || '',
+                seatNo: Number.isFinite(Number(profile?.seat_no)) ? Number(profile.seat_no) : 999,
+                studentCode: profile?.student_code || '',
+                displayName: profile?.display_name || row.email || ''
+            };
+        }
+
+        function compareSeatIdentity(a, b, direction = "asc") {
+            const aKey = getSeatSortKey(a);
+            const bKey = getSeatSortKey(b);
+
+            if (aKey.hasProfile !== bKey.hasProfile) {
+                return aKey.hasProfile ? -1 : 1;
+            }
+
+            const classCompare = sortCollator.compare(aKey.classCode, bKey.classCode);
+            if (classCompare !== 0) {
+                return direction === "asc" ? classCompare : -classCompare;
+            }
+
+            const seatCompare = aKey.seatNo - bKey.seatNo;
+            if (seatCompare !== 0) {
+                return direction === "asc" ? seatCompare : -seatCompare;
+            }
+
+            const codeCompare = sortCollator.compare(aKey.studentCode, bKey.studentCode);
+            if (codeCompare !== 0) {
+                return direction === "asc" ? codeCompare : -codeCompare;
+            }
+
+            return sortCollator.compare(aKey.displayName, bKey.displayName);
+        }
+
+        function sortProgressRows(rows) {
+            const sortMode = sortFilterEl.value || DEFAULT_SORT_MODE;
+            return [...rows].sort((a, b) => {
+                if (sortMode === "updated_asc") {
+                    return compareUpdatedAt(a, b) || compareSeatIdentity(a, b, "asc");
+                }
+                if (sortMode === "seat_asc") {
+                    return compareSeatIdentity(a, b, "asc") || -compareUpdatedAt(a, b);
+                }
+                if (sortMode === "seat_desc") {
+                    return compareSeatIdentity(a, b, "desc") || -compareUpdatedAt(a, b);
+                }
+                return -compareUpdatedAt(a, b) || compareSeatIdentity(a, b, "asc");
             });
         }
 
@@ -710,7 +812,9 @@
 
 
         async function loadStudentProfiles() {
-            if (!currentSession?.user || !isTeacher(currentSession)) {
+            studentProfilesLoadFailed = false;
+
+            if (!PROFILES_ENABLED || !currentSession?.user || !isTeacher(currentSession)) {
                 studentProfilesByUserId = new Map();
                 return;
             }
@@ -722,12 +826,12 @@
 
             if (error) {
                 studentProfilesByUserId = new Map();
+                studentProfilesLoadFailed = true;
                 console.error('admin_list_student_profiles failed', error);
                 return;
             }
 
             studentProfilesByUserId = new Map((data || []).map((profile) => [profile.user_id, profile]));
-            populateClassOptions();
         }
 
 
@@ -778,7 +882,12 @@
                 return;
             }
 
-            renderRows(filterProgressRows(data || []));
+            const rows = data || [];
+            populateClassOptions(rows);
+            if (studentProfilesLoadFailed) {
+                showNotice("學生主檔讀取失敗，已暫時改用 email 顯示；進度資料仍可正常查看。", "info");
+            }
+            renderRows(sortProgressRows(filterProgressRows(rows)));
         }
 
         async function loadWeekVisibility() {
@@ -943,6 +1052,7 @@
         weekFilterEl.addEventListener("change", () => { resetPagination(); loadProgress(); });
         activityFilterEl.addEventListener("change", () => { resetPagination(); loadProgress(); });
         completedFilterEl.addEventListener("change", () => { resetPagination(); loadProgress(); });
+        sortFilterEl.addEventListener("change", () => { resetPagination(); loadProgress(); });
         searchFilterEl.addEventListener("input", () => {
             resetPagination();
             window.clearTimeout(searchFilterEl._debounceTimer);

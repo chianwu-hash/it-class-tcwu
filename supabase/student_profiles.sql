@@ -28,19 +28,16 @@ to authenticated
 using (auth.uid() = user_id);
 
 drop policy if exists "students_can_insert_own_profile" on public.student_profiles;
-create policy "students_can_insert_own_profile"
-on public.student_profiles
-for insert
-to authenticated
-with check (auth.uid() = user_id);
-
 drop policy if exists "students_can_update_own_profile" on public.student_profiles;
-create policy "students_can_update_own_profile"
-on public.student_profiles
-for update
-to authenticated
-using (auth.uid() = user_id)
-with check (auth.uid() = user_id);
+
+-- First release is teacher-maintained only. Do not allow students to edit
+-- class_code, seat_no, display_name, or role from the client.
+-- Emergency rollback for this additive feature:
+-- drop table if exists public.student_profiles cascade;
+-- drop function if exists public.refresh_student_code(text, smallint);
+-- drop function if exists public.student_profiles_set_defaults();
+-- drop function if exists public.admin_list_student_profiles(text, text);
+-- drop function if exists public.admin_upsert_student_profile(uuid, text, smallint, text, text);
 
 create or replace function public.refresh_student_code(
     p_class_code text,

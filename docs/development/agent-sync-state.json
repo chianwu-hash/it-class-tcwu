@@ -1,0 +1,17 @@
+{
+  "current_agent": "codex",
+  "status": "done",
+  "task": "build reward tree read-only live MVP",
+  "session_file": "docs/development/sessions/2026-05-15-reward-tree-live-mvp.md",
+  "conversation_mode": "direct-cli-review",
+  "limit_minutes": null,
+  "max_turns": 2,
+  "current_turn": 4,
+  "poll_interval_seconds": 120,
+  "next_check_at": null,
+  "last_checked_at": null,
+  "started_at": "2026-05-15T23:35:00+08:00",
+  "stop_reason": "flower_palette_and_pending_reward_links_implemented",
+  "updated_by": "codex",
+  "updated_at": "2026-05-16T09:05:00+08:00"
+}

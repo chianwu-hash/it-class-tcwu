@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>努力樹原型</title>
+  <style>
+    :root {
+      --ink: #17253f;
+      --muted: #6a7890;
+      --paper: #f7fbf7;
+      --panel: rgba(255, 255, 255, 0.82);
+      --line: rgba(71, 99, 78, 0.16);
+      --leaf-a: #8bd65b;
+      --leaf-b: #2f9e57;
+      --leaf-c: #167044;
+      --quiz-a: #75dbca;
+      --quiz-b: #2590a4;
+      --flower-a: #ff88b4;
+      --flower-b: #ffd36a;
+      --flower-c: #9d6cf2;
+      font-family: "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 17% 18%, rgba(255, 214, 112, 0.25), transparent 28rem),
+        radial-gradient(circle at 84% 10%, rgba(92, 185, 210, 0.22), transparent 26rem),
+        linear-gradient(180deg, #edf8fb 0%, #f8fbf3 47%, #f4efe2 100%);
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 32px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4.4rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .mode-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      border: 1px solid rgba(23, 37, 63, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: 0 10px 24px rgba(31, 64, 49, 0.08);
+      color: #355046;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 290px;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .tree-shell,
+    .side-panel {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: 0 18px 48px rgba(35, 70, 54, 0.12);
+      backdrop-filter: blur(14px);
+    }
+
+    .tree-shell {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      min-height: 720px;
+    }
+
+    .tree-stage {
+      position: relative;
+      min-height: 720px;
+      isolation: isolate;
+    }
+
+    .tree-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center bottom;
+      padding: 4% 4% 0;
+      filter: drop-shadow(0 22px 24px rgba(95, 74, 31, 0.18));
+      z-index: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .ground-glow {
+      position: absolute;
+      left: 50%;
+      bottom: 4.5%;
+      width: min(560px, 70%);
+      height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(246, 193, 78, 0.36), transparent 68%);
+      transform: translateX(-50%);
+      z-index: 0;
+    }
+
+    .reward-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
+
+    .reward {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      width: var(--size);
+      height: var(--size);
+      border: 0;
+      padding: 0;
+      background: transparent;
+      transform: translate(-50%, -50%) rotate(var(--rot, 0deg));
+      opacity: 0;
+      animation: popIn 520ms cubic-bezier(.17, .84, .38, 1.28) forwards;
+      animation-delay: calc(var(--i) * 28ms);
+      cursor: pointer;
+    }
+
+    .reward:focus-visible {
+      outline: 4px solid rgba(255, 193, 7, 0.7);
+      outline-offset: 6px;
+    }
+
+    .reward.leaf {
+      height: calc(var(--size) * 1.42);
+      border-radius: 78% 8% 72% 12%;
+      background:
+        linear-gradient(138deg, rgba(255, 255, 255, 0.54), transparent 38%),
+        radial-gradient(circle at 68% 72%, var(--leaf-c), transparent 34%),
+        linear-gradient(135deg, var(--leaf-a), var(--leaf-b));
+      box-shadow:
+        inset -2px -5px 8px rgba(12, 92, 51, 0.24),
+        0 8px 16px rgba(18, 98, 61, 0.24);
+    }
+
+    .reward.leaf::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 12%;
+      width: 2px;
+      height: 74%;
+      border-radius: 999px;
+      background: rgba(238, 255, 212, 0.68);
+      transform: translateX(-50%) rotate(-15deg);
+      transform-origin: bottom center;
+    }
+
+    .reward.leaf.quiz {
+      background:
+        linear-gradient(138deg, rgba(255, 255, 255, 0.52), transparent 36%),
+        radial-gradient(circle at 68% 72%, #176e82, transparent 36%),
+        linear-gradient(135deg, var(--quiz-a), var(--quiz-b));
+      box-shadow:
+        inset -2px -5px 8px rgba(21, 91, 105, 0.22),
+        0 8px 16px rgba(27, 111, 126, 0.2);
+    }
+
+    .reward.flower {
+      animation-name: bloomIn;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 50%, #ffe57a 0 15%, #e88f2d 16% 23%, transparent 24%),
+        radial-gradient(circle at 50% 16%, #ff9bc7 0 18%, transparent 19%),
+        radial-gradient(circle at 82% 33%, #ffb26f 0 18%, transparent 19%),
+        radial-gradient(circle at 70% 78%, #b994ff 0 18%, transparent 19%),
+        radial-gradient(circle at 30% 78%, #ff7fb0 0 18%, transparent 19%),
+        radial-gradient(circle at 18% 33%, #ffc55f 0 18%, transparent 19%);
+      box-shadow:
+        0 0 0 4px rgba(255, 255, 255, 0.42),
+        0 9px 16px rgba(122, 55, 92, 0.26);
+      filter: drop-shadow(0 9px 12px rgba(122, 55, 92, 0.22));
+    }
+
+    .petal,
+    .core {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform-origin: center;
+    }
+
+    .petal {
+      width: 42%;
+      height: 58%;
+      border-radius: 999px 999px 58% 58%;
+      background:
+        radial-gradient(circle at 35% 23%, rgba(255, 255, 255, 0.78), transparent 24%),
+        linear-gradient(180deg, var(--flower-a), var(--flower-c));
+      transform: translate(-50%, -90%) rotate(var(--petal-rot));
+      box-shadow: inset 0 -5px 7px rgba(112, 54, 137, 0.16);
+    }
+
+    .petal:nth-child(2n) {
+      background:
+        radial-gradient(circle at 36% 22%, rgba(255, 255, 255, 0.74), transparent 24%),
+        linear-gradient(180deg, #ff9ac8, #df6ca6);
+    }
+
+    .petal:nth-child(3n) {
+      background:
+        radial-gradient(circle at 36% 22%, rgba(255, 255, 255, 0.74), transparent 24%),
+        linear-gradient(180deg, #ffc66f, #f08b6b);
+    }
+
+    .core {
+      width: 38%;
+      height: 38%;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 28%, #fff8b8, transparent 23%),
+        radial-gradient(circle, var(--flower-b), #e88f2d 72%);
+      box-shadow: inset 0 -3px 5px rgba(110, 78, 21, 0.24);
+      transform: translate(-50%, -50%);
+    }
+
+    .reward.flower .petal,
+    .reward.flower .core {
+      display: none;
+    }
+
+    .reward.ghost {
+      opacity: 0.22;
+      animation: none;
+      filter: grayscale(0.4);
+      cursor: default;
+    }
+
+    .reward.ghost.leaf {
+      background: rgba(255, 255, 255, 0.34);
+      border: 2px dashed rgba(47, 95, 69, 0.5);
+      box-shadow: none;
+    }
+
+    .reward.ghost.flower {
+      background: rgba(255, 255, 255, 0.34);
+      border: 2px dashed rgba(123, 88, 140, 0.45);
+      box-shadow: none;
+    }
+
+    .side-panel {
+      border-radius: 22px;
+      padding: 18px;
+    }
+
+    .student-card {
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .student-name {
+      margin: 0 0 6px;
+      font-size: 1.5rem;
+      line-height: 1.15;
+    }
+
+    .student-meta {
+      color: var(--muted);
+      font-weight: 800;
+      line-height: 1.5;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      margin: 0 0 16px;
+    }
+
+    .stat {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: center;
+      min-height: 68px;
+      padding: 12px;
+      border: 1px solid rgba(66, 104, 75, 0.14);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.58);
+    }
+
+    .stat-mark {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #163a29;
+    }
+
+    .stat.leaves .stat-mark {
+      background: linear-gradient(135deg, #a7ec7b, #3faf67);
+    }
+
+    .stat.flowers .stat-mark {
+      background: linear-gradient(135deg, #ff97c4, #ffd56b);
+    }
+
+    .stat.colors .stat-mark {
+      background: linear-gradient(135deg, #7ed7ff, #b58cff 48%, #ff91bd);
+    }
+
+    .stat-label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 1.35rem;
+      font-weight: 950;
+      line-height: 1.12;
+    }
+
+    .detail {
+      min-height: 116px;
+      padding: 14px;
+      border: 1px solid rgba(37, 106, 75, 0.13);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.42));
+    }
+
+    .detail-title {
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+      line-height: 1.28;
+    }
+
+    .detail-text {
+      margin: 0;
+      color: var(--muted);
+      font-weight: 750;
+      line-height: 1.55;
+    }
+
+    .legend {
+      display: grid;
+      gap: 9px;
+      margin-top: 16px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+
+    .legend-swatch {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+    }
+
+    .legend-swatch.leaf {
+      border-radius: 78% 8% 72% 12%;
+      background: linear-gradient(135deg, var(--leaf-a), var(--leaf-b));
+      transform: rotate(-20deg);
+    }
+
+    .legend-swatch.quiz {
+      border-radius: 78% 8% 72% 12%;
+      background: linear-gradient(135deg, var(--quiz-a), var(--quiz-b));
+      transform: rotate(-20deg);
+    }
+
+    .legend-swatch.flower {
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--flower-b) 25%, var(--flower-a) 27%, var(--flower-c) 68%);
+    }
+
+    @keyframes popIn {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(0.2);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1);
+      }
+    }
+
+    @keyframes bloomIn {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(0.12);
+      }
+      70% {
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1.18);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1);
+      }
+    }
+
+    @media (max-width: 920px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      .side-panel {
+        order: -1;
+      }
+
+      .tree-shell,
+      .tree-stage {
+        min-height: 76vw;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        width: min(100% - 20px, 1180px);
+        padding-top: 16px;
+      }
+
+      .topbar {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .tree-shell,
+      .tree-stage {
+        min-height: 112vw;
+        border-radius: 18px;
+      }
+
+      .tree-image {
+        padding: 2% 0 0;
+      }
+
+      .reward {
+        transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(0.86);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reward {
+        opacity: 1;
+        animation: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div>
+        <h1>努力樹</h1>
+        <p class="subtitle">30201 鹿翔旭的全通關示意</p>
+      </div>
+      <div class="mode-pill">第一階段原型</div>
+    </header>
+
+    <section class="dashboard" aria-label="努力樹原型">
+      <div class="tree-shell">
+        <div class="tree-stage">
+          <div class="ground-glow" aria-hidden="true"></div>
+          <img class="tree-image" src="assets/reward-tree/empty-tree-base-v1.png" alt="空白努力樹">
+          <div class="reward-layer" id="rewardLayer" aria-label="獎勵位置"></div>
+        </div>
+      </div>
+
+      <aside class="side-panel">
+        <div class="student-card">
+          <h2 class="student-name">鹿翔旭</h2>
+          <div class="student-meta">班級 302 · 座號 01</div>
+        </div>
+
+        <div class="stats" aria-label="獎勵統計">
+          <div class="stat leaves">
+            <div class="stat-mark" id="leafCount">0</div>
+            <div>
+              <span class="stat-label">葉子</span>
+              <span class="stat-value">一般關卡與測驗</span>
+            </div>
+          </div>
+          <div class="stat flowers">
+            <div class="stat-mark" id="flowerCount">0</div>
+            <div>
+              <span class="stat-label">花朵</span>
+              <span class="stat-value">每週魔王關卡</span>
+            </div>
+          </div>
+          <div class="stat colors">
+            <div class="stat-mark">3+</div>
+            <div>
+              <span class="stat-label">花色</span>
+              <span class="stat-value" id="colorUnlock">尚未解鎖</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail" aria-live="polite">
+          <h3 class="detail-title" id="detailTitle">選一片葉子或一朵花</h3>
+          <p class="detail-text" id="detailText">這裡會顯示它代表的關卡、週次和獎勵類型。</p>
+        </div>
+
+        <div class="legend" aria-label="圖例">
+          <div class="legend-item"><span class="legend-swatch leaf"></span>打字關卡葉</div>
+          <div class="legend-item"><span class="legend-swatch quiz"></span>測驗葉</div>
+          <div class="legend-item"><span class="legend-swatch flower"></span>魔王花</div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const leafSlots = [
+      { x: 20, y: 58, s: 22, r: -60, kind: "typing", label: "第 3 週 第 1 關" },
+      { x: 25, y: 50, s: 20, r: -38, kind: "typing", label: "第 3 週 第 2 關" },
+      { x: 31, y: 43, s: 24, r: -22, kind: "quiz", label: "第 3 週 測驗" },
+      { x: 36, y: 35, s: 21, r: 18, kind: "typing", label: "第 4 週 第 1 關" },
+      { x: 42, y: 29, s: 23, r: -12, kind: "typing", label: "第 4 週 第 2 關" },
+      { x: 47, y: 22, s: 26, r: 22, kind: "typing", label: "第 4 週 第 3 關" },
+      { x: 53, y: 25, s: 21, r: -26, kind: "quiz", label: "第 4 週 測驗" },
+      { x: 61, y: 31, s: 22, r: 34, kind: "typing", label: "第 5 週 第 1 關" },
+      { x: 68, y: 38, s: 25, r: 48, kind: "typing", label: "第 5 週 第 2 關" },
+      { x: 74, y: 47, s: 22, r: 72, kind: "typing", label: "第 5 週 第 3 關" },
+      { x: 80, y: 55, s: 26, r: 52, kind: "quiz", label: "第 5 週 測驗" },
+      { x: 17, y: 66, s: 19, r: -84, kind: "typing", label: "第 6 週 第 1 關" },
+      { x: 24, y: 65, s: 24, r: -52, kind: "typing", label: "第 6 週 第 2 關" },
+      { x: 31, y: 58, s: 22, r: -35, kind: "typing", label: "第 7 週 第 1 關" },
+      { x: 38, y: 51, s: 27, r: -12, kind: "quiz", label: "第 7 週 測驗" },
+      { x: 45, y: 46, s: 21, r: 24, kind: "typing", label: "第 8 週 第 1 關" },
+      { x: 51, y: 42, s: 24, r: -18, kind: "typing", label: "第 8 週 第 2 關" },
+      { x: 58, y: 47, s: 22, r: 32, kind: "typing", label: "第 8 週 第 3 關" },
+      { x: 66, y: 52, s: 26, r: 58, kind: "quiz", label: "第 8 週 測驗" },
+      { x: 74, y: 61, s: 23, r: 70, kind: "typing", label: "第 9 週 第 1 關" },
+      { x: 82, y: 64, s: 20, r: 88, kind: "typing", label: "第 9 週 第 2 關" },
+      { x: 30, y: 29, s: 20, r: -42, kind: "typing", label: "第 10 週 第 1 關" },
+      { x: 36, y: 23, s: 23, r: -10, kind: "typing", label: "第 10 週 第 2 關" },
+      { x: 57, y: 20, s: 22, r: 24, kind: "typing", label: "第 11 週 第 1 關" },
+      { x: 63, y: 23, s: 26, r: 40, kind: "quiz", label: "第 11 週 測驗" },
+      { x: 70, y: 28, s: 20, r: 52, kind: "typing", label: "第 12 週 第 1 關" },
+      { x: 78, y: 34, s: 22, r: 64, kind: "typing", label: "第 12 週 第 2 關" },
+      { x: 22, y: 42, s: 23, r: -70, kind: "typing", label: "第 13 週 第 1 關" },
+      { x: 29, y: 36, s: 26, r: -48, kind: "quiz", label: "第 13 週 測驗" },
+      { x: 50, y: 34, s: 22, r: 8, kind: "typing", label: "第 14 週 第 1 關" },
+      { x: 57, y: 36, s: 25, r: 26, kind: "typing", label: "第 14 週 第 2 關" },
+      { x: 65, y: 40, s: 28, r: 44, kind: "typing", label: "第 14 週 第 3 關" }
+    ];
+
+    const flowerSlots = [
+      { x: 21, y: 35, s: 42, r: -18, label: "第 3 週 魔王關" },
+      { x: 35, y: 18, s: 46, r: 12, label: "第 4 週 魔王關" },
+      { x: 50, y: 14, s: 50, r: -6, label: "第 5 週 魔王關" },
+      { x: 64, y: 18, s: 44, r: 18, label: "第 6 週 魔王關" },
+      { x: 78, y: 31, s: 46, r: -14, label: "第 7 週 魔王關" },
+      { x: 27, y: 55, s: 40, r: 22, label: "第 8 週 魔王關" },
+      { x: 71, y: 59, s: 42, r: -10, label: "第 13 週 魔王關" },
+      { x: 83, y: 49, s: 48, r: 16, label: "第 14 週 魔王關" }
+    ];
+
+    const ghostLeaves = [
+      { x: 16, y: 49, s: 18, r: -76 },
+      { x: 40, y: 17, s: 18, r: -12 },
+      { x: 59, y: 14, s: 18, r: 28 },
+      { x: 84, y: 41, s: 18, r: 82 },
+      { x: 39, y: 63, s: 18, r: -22 },
+      { x: 54, y: 57, s: 18, r: 18 },
+      { x: 62, y: 62, s: 18, r: 36 },
+      { x: 79, y: 68, s: 18, r: 74 }
+    ];
+
+    const ghostFlowers = [
+      { x: 43, y: 13, s: 34, r: 0 },
+      { x: 87, y: 58, s: 34, r: 16 }
+    ];
+
+    const layer = document.querySelector("#rewardLayer");
+    const detailTitle = document.querySelector("#detailTitle");
+    const detailText = document.querySelector("#detailText");
+
+    function applyPosition(element, slot, index) {
+      element.style.setProperty("--x", `${slot.x}%`);
+      element.style.setProperty("--y", `${slot.y}%`);
+      element.style.setProperty("--size", `${slot.s}px`);
+      element.style.setProperty("--rot", `${slot.r}deg`);
+      element.style.setProperty("--i", index);
+    }
+
+    function createLeaf(slot, index, ghost = false) {
+      const leaf = document.createElement("button");
+      leaf.type = "button";
+      leaf.className = `reward leaf ${slot.kind === "quiz" ? "quiz" : ""} ${ghost ? "ghost" : ""}`.trim();
+      leaf.setAttribute("aria-label", ghost ? "尚未取得的葉子位置" : slot.label);
+      applyPosition(leaf, slot, index);
+      if (!ghost) {
+        leaf.addEventListener("click", () => {
+          detailTitle.textContent = slot.label;
+          detailText.textContent = slot.kind === "quiz"
+            ? "測驗完成後長出的藍綠色葉子。"
+            : "打字關卡完成後長出的葉子，葉片大小代表關卡難度。";
+        });
+      }
+      return leaf;
+    }
+
+    function createFlower(slot, index, ghost = false) {
+      const flower = document.createElement("button");
+      flower.type = "button";
+      flower.className = `reward flower ${ghost ? "ghost" : ""}`.trim();
+      flower.setAttribute("aria-label", ghost ? "尚未取得的花朵位置" : slot.label);
+      flower.innerHTML = `
+        <span class="petal" style="--petal-rot: 0deg"></span>
+        <span class="petal" style="--petal-rot: 60deg"></span>
+        <span class="petal" style="--petal-rot: 120deg"></span>
+        <span class="petal" style="--petal-rot: 180deg"></span>
+        <span class="petal" style="--petal-rot: 240deg"></span>
+        <span class="petal" style="--petal-rot: 300deg"></span>
+        <span class="core"></span>
+      `;
+      applyPosition(flower, slot, index);
+      if (!ghost) {
+        flower.addEventListener("click", () => {
+          detailTitle.textContent = slot.label;
+          detailText.textContent = "每週最後一關完成後開出的魔王花。集滿 3 朵以上可解鎖換色。";
+        });
+      }
+      return flower;
+    }
+
+    leafSlots.forEach((slot, index) => layer.appendChild(createLeaf(slot, index)));
+    flowerSlots.forEach((slot, index) => layer.appendChild(createFlower(slot, leafSlots.length + index)));
+    ghostLeaves.forEach((slot, index) => layer.appendChild(createLeaf(slot, 0, true)));
+    ghostFlowers.forEach((slot, index) => layer.appendChild(createFlower(slot, 0, true)));
+
+    document.querySelector("#leafCount").textContent = leafSlots.length;
+    document.querySelector("#flowerCount").textContent = flowerSlots.length;
+    document.querySelector("#colorUnlock").textContent = flowerSlots.length >= 3 ? "已解鎖換色" : "尚未解鎖";
+  </script>
+</body>
+</html>
