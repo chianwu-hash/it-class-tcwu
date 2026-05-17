@@ -53,27 +53,31 @@ npm run wayground:publish
 1. 藍圖先標記視覺需求：無、表格、輔助圖或必須圖。
 2. 必須圖需建立 figure spec，包含圖形型態、數值、單位、標籤、答案驗算與使用題號。
 3. 幾何圖、立體圖、展開圖、複合形體、切割圖、挖空形體與任何影響答案的圖表，進 imagegen 前必須先建立 `structureDraft`。
-4. `structureDraft` 可為 SVG、PNG 簡圖、座標草稿或其他可檢查的結構草圖；目標是固定幾何拓撲與標示位置，不追求美觀。
-5. 不得只用自然語言 prompt 直接進 imagegen 產生上述高風險圖型。
-6. 若 SVG 或簡圖成品不適合正式考題，可用 imagegen 依草圖重繪。
-7. imagegen prompt 需明確禁止不必要鋪色、陰影、漸層、局部色塊與額外文字，並保留 `structureDraft` 的幾何拓撲。
-8. 圖片上傳 Cloudinary 後，在題庫題目下方寫：
+4. 高風險精準圖的 `structureDraft` 階段必須納入 Gemini CLI：可由 Gemini CLI 直接產生 SVG 草圖，或由 Codex 先產草圖後請 Gemini CLI 做幾何/拓撲審查與修正建議。
+5. `structureDraft` 可為 SVG、PNG 簡圖、座標草稿或其他可檢查的結構草圖；目標是固定幾何拓撲與標示位置，不追求美觀。
+6. 不得只用自然語言 prompt 直接進 imagegen 產生上述高風險圖型。
+7. 若 SVG 或簡圖成品不適合正式考題，可用 imagegen 依草圖重繪。
+8. imagegen prompt 需明確禁止不必要鋪色、陰影、漸層、局部色塊與額外文字，並保留 `structureDraft` 的幾何拓撲。
+9. 圖片上傳 Cloudinary 後，在題庫題目下方寫：
 
 ```markdown
 圖片：https://res.cloudinary.com/...
 ```
 
-9. 匯入前跑 figure manifest 驗證，確認本地圖檔、Cloudinary URL、圖中標籤、驗算與 `structureDraft` 都完整。
-10. 使用 `wayground:import` 直接匯入。
-11. 匯入後跑 `wayground:check`，確認 `mediaMismatchCount` 為 0，再用畫面抽查裁切與圖題一致。
-12. 發布前產出 `automation/output/<bank-name>-visual-review.html`，集中呈現題目、圖片、figure spec、structureDraft、Gemini CLI / Claude CLI 視覺審查、Wayground 檢查結果與截圖或連結。
+10. 匯入前跑 figure manifest 驗證，確認本地圖檔、Cloudinary URL、圖中標籤、驗算與 `structureDraft` 都完整。
+11. 使用 `wayground:import` 直接匯入。
+12. 匯入後跑 `wayground:check`，確認 `mediaMismatchCount` 為 0，再用畫面抽查裁切與圖題一致。
+13. 發布前產出 `automation/output/<bank-name>-visual-review.html`，集中呈現題目、圖片、figure spec、structureDraft、Gemini CLI / Claude CLI 視覺審查、Wayground 檢查結果與截圖或連結。
 
 `structureDraft` 硬門檻：
 
 - figure manifest 必須記錄 `structureDraft.type` 與 `structureDraft.path`；若使用座標草稿，需記錄足以重建圖形的座標或結構描述。
+- 高風險精準圖必須在 visual review notes 或 manifest 記錄 Gemini CLI 的 `structureDraft` 參與結果：prompt 路徑、輸出草圖路徑、採用/不採用理由與人工審查狀態。
+- 若 Gemini CLI 逾時、額度不足、無法讀圖或輸出不完整，必須記錄 fallback 原因；除非人工明確核准，不得跳過 `structureDraft` gate 直接進 imagegen。
 - 高風險圖型缺少 `structureDraft` 時，狀態不得標為 `visual-review-passed`。
 - 若 validator 尚未支援 `structureDraft` 欄位，人工紀錄仍必須在 visual review notes 明確列出草圖路徑與草圖審查結果。
 - 三角柱、複合柱體、空心柱、半圓柱與展開圖不得只因標籤正確就通過；必須確認幾何物件本身成立。
+- 若同一高風險圖在 Gemini CLI 參與後仍連續兩輪人工 FAIL，停止盲目修圖，升級為題目設計審查：改投影方式、改 2D 圖、改文字題、換題，或尋找正確參考圖後重新建立草圖。
 
 圖表視覺驗收必查：
 

@@ -168,20 +168,24 @@ Cloudinary URL
 
 1. 先建立 figure spec，固定數值、單位、標籤與答案驗算。
 2. 幾何圖、立體圖、展開圖、複合形體、切割圖、挖空形體與任何影響答案的圖表，進 imagegen 前必須先建立 `structureDraft`。
-3. `structureDraft` 可為 SVG、PNG 簡圖、座標草稿或其他可檢查的結構草圖，只求資訊完整與幾何關係正確，不追求美觀。
-4. 不得只用自然語言 prompt 直接進 imagegen 產生上述高風險圖型。
-5. 若 SVG 或簡圖直接成品不適合正式考題，可用 imagegen 依草圖重繪成考卷級圖表。
-6. imagegen prompt 必須明確禁止不必要的視覺語意，例如多餘鋪色、陰影、漸層、局部色塊、額外文字。
-7. imagegen prompt 必須明確保留 `structureDraft` 的幾何拓撲，例如前後全等面、對應稜、共同高度、半徑方向、切面位置與展開圖構件。
-8. 最終圖上傳 Cloudinary，題庫以 `圖片：https://...` 記錄。
-9. Wayground 匯入或生成後，確認題目 media 真的掛入圖片。
+3. 高風險精準圖的 `structureDraft` 階段必須納入 Gemini CLI：可由 Gemini CLI 直接產生 SVG 草圖，或由 Codex 先產草圖後請 Gemini CLI 做幾何/拓撲審查與修正建議。
+4. `structureDraft` 可為 SVG、PNG 簡圖、座標草稿或其他可檢查的結構草圖，只求資訊完整與幾何關係正確，不追求美觀。
+5. 不得只用自然語言 prompt 直接進 imagegen 產生上述高風險圖型。
+6. 若 SVG 或簡圖直接成品不適合正式考題，可用 imagegen 依草圖重繪成考卷級圖表。
+7. imagegen prompt 必須明確禁止不必要的視覺語意，例如多餘鋪色、陰影、漸層、局部色塊、額外文字。
+8. imagegen prompt 必須明確保留 `structureDraft` 的幾何拓撲，例如前後全等面、對應稜、共同高度、半徑方向、切面位置與展開圖構件。
+9. 最終圖上傳 Cloudinary，題庫以 `圖片：https://...` 記錄。
+10. Wayground 匯入或生成後，確認題目 media 真的掛入圖片。
 
 `structureDraft` 硬門檻：
 
 - figure manifest 必須記錄 `structureDraft.type` 與 `structureDraft.path`；若使用座標草稿，需記錄足以重建圖形的座標或結構描述。
+- 高風險精準圖必須在 visual review notes 或 manifest 記錄 Gemini CLI 的 `structureDraft` 參與結果：prompt 路徑、輸出草圖路徑、採用/不採用理由與人工審查狀態。
+- 若 Gemini CLI 逾時、額度不足、無法讀圖或輸出不完整，必須記錄 fallback 原因；除非人工明確核准，不得跳過 `structureDraft` gate 直接進 imagegen。
 - 高風險圖型缺少 `structureDraft` 時，狀態不得標為 `visual-review-passed`。
 - 若 validator 尚未支援 `structureDraft` 欄位，人工紀錄仍必須在 visual review notes 明確列出草圖路徑與草圖審查結果。
 - Q6 / Q10 這類立體圖不得以「標籤存在」視為通過；必須先確認立體物件本身成立。
+- 若同一高風險圖在 Gemini CLI 參與後仍連續兩輪人工 FAIL，停止盲目修圖，升級為題目設計審查：改投影方式、改 2D 圖、改文字題、換題，或尋找正確參考圖後重新建立草圖。
 
 ### 圖表生成工具分流
 

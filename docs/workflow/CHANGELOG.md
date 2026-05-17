@@ -11,6 +11,7 @@
 - Documented the visual review sheet format and the initial policy that Gemini/Claude CLI visual review may reduce, but not yet eliminate, the human visual gate.
 - Clarified image-generation tool routing: precise math/science diagrams default to Codex built-in `imagegen`; ChatGPT browser image workflow is not the default for answer-critical diagrams.
 - Promoted math/science figure structure drafting from recommendation to hard gate: high-risk geometry, solid, net, composite, cut, and hollow figures must have a recorded `structureDraft` before imagegen, and review must check whether the geometric object itself is valid.
+- Required Gemini CLI participation in high-risk precise figure `structureDraft` work before imagegen, with recorded prompt/output paths, fallback reasons, and escalation to question-design review after repeated human failures.
 - Required Gemini second review and Claude third review before any formal Wayground publishing, with CLI-first review and Chrome CDP fallback only after CLI timeout or failure.
 - Clarified that review findings must be synthesized and resolved in the local bank before entering Wayground.
 - Standardized the workflow module on Bloom-only distribution as the default question-bank planning and review axis.
