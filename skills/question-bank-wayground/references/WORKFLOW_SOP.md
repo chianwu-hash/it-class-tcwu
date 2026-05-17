@@ -160,6 +160,7 @@ figure id
 圖中標籤
 本地圖檔路徑
 Cloudinary URL
+finalSource.type（imagegen / svg-export / manual-vector / reference-redraw）
 答案驗算
 是否必須看圖才能解
 ```
@@ -167,15 +168,16 @@ Cloudinary URL
 強制流程：
 
 1. 先建立 figure spec，固定數值、單位、標籤與答案驗算。
-2. 幾何圖、立體圖、展開圖、複合形體、切割圖、挖空形體與任何影響答案的圖表，進 imagegen 前必須先建立 `structureDraft`。
+2. 幾何圖、立體圖、展開圖、複合形體、切割圖、挖空形體與任何影響答案的圖表，進 imagegen 或正式輸出前必須先建立 `structureDraft`。
 3. 高風險精準圖的 `structureDraft` 階段必須納入 Gemini CLI：可由 Gemini CLI 直接產生 SVG 草圖，或由 Codex 先產草圖後請 Gemini CLI 做幾何/拓撲審查與修正建議。
 4. `structureDraft` 可為 SVG、PNG 簡圖、座標草稿或其他可檢查的結構草圖，只求資訊完整與幾何關係正確，不追求美觀。
 5. 不得只用自然語言 prompt 直接進 imagegen 產生上述高風險圖型。
 6. 若 SVG 或簡圖直接成品不適合正式考題，可用 imagegen 依草圖重繪成考卷級圖表。
-7. imagegen prompt 必須明確禁止不必要的視覺語意，例如多餘鋪色、陰影、漸層、局部色塊、額外文字。
-8. imagegen prompt 必須明確保留 `structureDraft` 的幾何拓撲，例如前後全等面、對應稜、共同高度、半徑方向、切面位置與展開圖構件。
-9. 最終圖上傳 Cloudinary，題庫以 `圖片：https://...` 記錄。
-10. Wayground 匯入或生成後，確認題目 media 真的掛入圖片。
+7. 若 Gemini CLI SVG 幾何正確，且只剩標籤位置、線寬、留白等可人工微調問題，可直接以 SVG / vector 作為正式圖源並輸出 PNG，不必再進 imagegen。
+8. imagegen prompt 必須明確禁止不必要的視覺語意，例如多餘鋪色、陰影、漸層、局部色塊、額外文字。
+9. imagegen prompt 必須明確保留 `structureDraft` 的幾何拓撲，例如前後全等面、對應稜、共同高度、半徑方向、切面位置與展開圖構件。
+10. 最終圖上傳 Cloudinary，題庫以 `圖片：https://...` 記錄。
+11. Wayground 匯入或生成後，確認題目 media 真的掛入圖片。
 
 `structureDraft` 硬門檻：
 
@@ -183,6 +185,7 @@ Cloudinary URL
 - 高風險精準圖必須在 visual review notes 或 manifest 記錄 Gemini CLI 的 `structureDraft` 參與結果：prompt 路徑、輸出草圖路徑、採用/不採用理由與人工審查狀態。
 - 若 Gemini CLI 逾時、額度不足、無法讀圖或輸出不完整，必須記錄 fallback 原因；除非人工明確核准，不得跳過 `structureDraft` gate 直接進 imagegen。
 - 高風險圖型缺少 `structureDraft` 時，狀態不得標為 `visual-review-passed`。
+- 正式圖源必須記錄 `finalSource.type`：`imagegen`、`svg-export`、`manual-vector` 或 `reference-redraw`。
 - 若 validator 尚未支援 `structureDraft` 欄位，人工紀錄仍必須在 visual review notes 明確列出草圖路徑與草圖審查結果。
 - Q6 / Q10 這類立體圖不得以「標籤存在」視為通過；必須先確認立體物件本身成立。
 - 若同一高風險圖在 Gemini CLI 參與後仍連續兩輪人工 FAIL，停止盲目修圖，升級為題目設計審查：改投影方式、改 2D 圖、改文字題、換題，或尋找正確參考圖後重新建立草圖。
@@ -197,6 +200,7 @@ Cloudinary URL
 - 高風險圖型的 prompt 必須同時引用 `structureDraft`，不得只引用 figure spec。
 - 一次先產一張圖，先審圖再進下一張；不得在新圖型尚未穩定時批量盲跑。
 - 每張圖都需比對 figure spec、題幹、答案驗算與圖中標籤。
+- 同一圖型若 imagegen 連續兩次出現幾何漂移、標示漂移、線條穿字或形體誤讀，立即停止 imagegen；改走 `svg-export` / `manual-vector`，或升級為題目設計審查。
 - 產物需移入 `automation/figures/<bank-name>/` 後，才可進 Gemini / Claude CLI 視覺審查與 Cloudinary。
 - 若同類型圖表已連續多批穩定，才可討論半批次生成；第一次使用的新圖型仍逐張處理。
 
