@@ -1,0 +1,52 @@
+# Gemini CLI 二審 Prompt：六年級社會畢業考第三單元
+
+請擔任「六年級社會畢業考 Wayground 題庫二審」。
+
+## 審查目標
+
+請審查下列檔案是否適合進入後續 Claude 三審與 Wayground：
+
+- `automation/output/grade6-social-graduation-prep-summary.md`
+- `automation/output/grade6-social-graduation-u3-blueprint.md`
+- `automation/question-banks/grade6-social-graduation-u3.md`
+- `automation/output/grade6-social-graduation-u3-local-review.md`
+
+## 背景
+
+- 年級：六年級
+- 科目：社會
+- 教材：南一六下社會
+- 範圍：第三單元「關懷臺灣與國際議題」
+- 題數：20 題
+- 題型：Wayground 單選題，A-D 四選一
+- 第四單元為探究實作單元，教材標示不安排紙筆評量，不列入本次正式題組。
+
+## 請檢查
+
+1. 是否有錯題、雙答案、答案不唯一或答案與教材概念不符。
+2. 是否有超出第三單元範圍，尤其是否誤納第四單元。
+3. 是否符合南一六下社會第三單元教材重點。
+4. 是否符合本校社會命題風格：敘述型判斷、細節辨識、情境應用，不是空泛價值題。
+5. 20 題配置是否合理，3-1、探究實作、3-2、3-3 是否都有覆蓋。
+6. 是否有題幹不自包含、用語不適合六年級、或誘答太弱。
+7. 視覺需求判斷是否合理；本輪暫判無圖、無表格。
+
+## 輸出格式
+
+請用繁體中文輸出：
+
+```text
+definite errors
+- ...
+
+likely issues
+- ...
+
+minor suggestions
+- ...
+
+final decision
+PASS / PASS WITH MINOR FIXES / REVISE BEFORE CLAUDE
+```
+
+若有需要修改，請列出題號、問題、建議修法。
