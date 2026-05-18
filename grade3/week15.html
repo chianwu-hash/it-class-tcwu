@@ -33,6 +33,25 @@
         .section-toggle[aria-expanded="false"] .toggle-chevron {
             transform: rotate(-90deg);
         }
+        .opt-btn {
+            transition: all 0.15s;
+        }
+        .opt-btn.selected {
+            border-color: #f59e0b;
+            background-color: #fffbeb;
+            color: #92400e;
+        }
+        .opt-btn.correct {
+            border-color: #16a34a !important;
+            background-color: #dcfce7 !important;
+            color: #15803d !important;
+        }
+        .opt-btn.wrong {
+            border-color: #dc2626 !important;
+            background-color: #fee2e2 !important;
+            color: #b91c1c !important;
+            text-decoration: line-through;
+        }
         .locked-link {
             pointer-events: none;
             opacity: 0.52;
