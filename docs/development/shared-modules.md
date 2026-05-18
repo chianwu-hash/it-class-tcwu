@@ -96,6 +96,8 @@
 
 **未登入鎖定規則**：`initTypingChallenge` 必須在未登入時鎖定 `#typing-levels-container` 內的輸入框與 `checkLevel` 按鈕。學生不可在未登入狀態先完成關卡，避免完成後才發現沒有保存。
 
+**題目 / 答案字型**：模組會在 `#typing-levels-container`（含舊頁面的 `#levels-container`）內統一題目顯示區與輸入框 / 文字區的 `font-family`，避免英打題目因 `<pre>` 預設等寬字型而和答案區看起來不一致。
+
 **需要的外部 CDN**：`canvas-confetti`，必須在 `<head>` 加入，否則完成動畫會報 ReferenceError：
 ```html
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>

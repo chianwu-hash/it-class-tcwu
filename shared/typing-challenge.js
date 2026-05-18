@@ -33,6 +33,28 @@ const DEFAULT_CELEBRATION_CONTENT = {
     buttonHref: ""
 };
 
+function ensureTypingChallengeTextStyle() {
+    if (document.getElementById("typing-challenge-text-style")) {
+        return;
+    }
+
+    const style = document.createElement("style");
+    style.id = "typing-challenge-text-style";
+    style.textContent = `
+        #typing-levels-container pre.select-none.pointer-events-none,
+        #typing-levels-container div.select-none.pointer-events-none,
+        #typing-levels-container input[id^="input-level"],
+        #typing-levels-container textarea[id^="input-level"],
+        #levels-container pre.select-none.pointer-events-none,
+        #levels-container div.select-none.pointer-events-none,
+        #levels-container input[id^="input-level"],
+        #levels-container textarea[id^="input-level"] {
+            font-family: inherit;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
 export function initTypingChallenge({
     weekCode,
     activityKey,
@@ -44,6 +66,8 @@ export function initTypingChallenge({
     celebrationContent = {},
     afterAuthUpdate = null
 }) {
+    ensureTypingChallengeTextStyle();
+
     const maxLevel = levelsData.length;
     let currentSession = null;
     let highestUnlockedLevel = 1;
