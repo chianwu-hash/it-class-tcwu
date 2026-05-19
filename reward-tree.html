@@ -259,8 +259,9 @@
     }
 
     .reward.ghost {
-      opacity: 0.22;
-      animation: none;
+      opacity: 0;
+      animation: ghostPopIn 520ms cubic-bezier(.17, .84, .38, 1.28) forwards;
+      animation-delay: calc(var(--i) * 28ms);
       filter: grayscale(0.4);
       cursor: default;
     }
@@ -440,6 +441,17 @@
       }
     }
 
+    @keyframes ghostPopIn {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(0.35);
+      }
+      100% {
+        opacity: 0.22;
+        transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1);
+      }
+    }
+
     @media (max-width: 920px) {
       .dashboard {
         grid-template-columns: 1fr;
@@ -503,7 +515,7 @@
       <div class="tree-shell">
         <div class="tree-stage">
           <div class="ground-glow" aria-hidden="true"></div>
-          <img class="tree-image" src="assets/reward-tree/empty-tree-base-v1.png" alt="空白努力樹">
+          <img class="tree-image" src="assets/reward-tree/empty-tree-base-v1-q80.webp" width="1254" height="1254" alt="空白努力樹" decoding="async" fetchpriority="high">
           <div class="reward-layer" id="rewardLayer" aria-label="獎勵位置"></div>
         </div>
       </div>
@@ -616,8 +628,10 @@
     ];
 
     const layer = document.querySelector("#rewardLayer");
+    const treeImage = document.querySelector(".tree-image");
     const detailTitle = document.querySelector("#detailTitle");
     const detailText = document.querySelector("#detailText");
+    const rewardRenderDelayMs = 180;
 
     function applyPosition(element, slot, index) {
       element.style.setProperty("--x", `${slot.x}%`);
@@ -668,10 +682,36 @@
       return flower;
     }
 
-    leafSlots.forEach((slot, index) => layer.appendChild(createLeaf(slot, index)));
-    flowerSlots.forEach((slot, index) => layer.appendChild(createFlower(slot, leafSlots.length + index)));
-    ghostLeaves.forEach((slot, index) => layer.appendChild(createLeaf(slot, 0, true)));
-    ghostFlowers.forEach((slot, index) => layer.appendChild(createFlower(slot, 0, true)));
+    function renderRewardsAfterTree() {
+      let rewardIndex = 0;
+      leafSlots.forEach((slot) => {
+        layer.appendChild(createLeaf(slot, rewardIndex));
+        rewardIndex += 1;
+      });
+      ghostLeaves.forEach((slot) => {
+        layer.appendChild(createLeaf(slot, rewardIndex, true));
+        rewardIndex += 1;
+      });
+      flowerSlots.forEach((slot) => {
+        layer.appendChild(createFlower(slot, rewardIndex));
+        rewardIndex += 1;
+      });
+      ghostFlowers.forEach((slot) => {
+        layer.appendChild(createFlower(slot, rewardIndex, true));
+        rewardIndex += 1;
+      });
+    }
+
+    function scheduleRewardsAfterTree() {
+      window.setTimeout(renderRewardsAfterTree, rewardRenderDelayMs);
+    }
+
+    if (!treeImage || (treeImage.complete && treeImage.naturalWidth > 0)) {
+      scheduleRewardsAfterTree();
+    } else {
+      treeImage.addEventListener("load", scheduleRewardsAfterTree, { once: true });
+      treeImage.addEventListener("error", scheduleRewardsAfterTree, { once: true });
+    }
 
     document.querySelector("#leafCount").textContent = leafSlots.length;
     document.querySelector("#flowerCount").textContent = flowerSlots.length;

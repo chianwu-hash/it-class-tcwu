@@ -253,8 +253,9 @@
         }
 
         .reward.ghost {
-            opacity: 0.38;
-            animation: none;
+            opacity: 0;
+            animation: ghostPopIn 520ms cubic-bezier(.17, .84, .38, 1.28) forwards;
+            animation-delay: calc(var(--i) * 28ms);
             cursor: pointer;
             filter: grayscale(0.4);
         }
@@ -535,6 +536,17 @@
             }
         }
 
+        @keyframes ghostPopIn {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(0.35);
+            }
+            100% {
+                opacity: 0.38;
+                transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1);
+            }
+        }
+
         @media (max-width: 920px) {
             .dashboard {
                 grid-template-columns: 1fr;
@@ -603,7 +615,7 @@
             <div class="tree-shell">
                 <div class="tree-stage">
                     <div class="ground-glow" aria-hidden="true"></div>
-                    <img class="tree-image" src="assets/reward-tree/empty-tree-base-v1.png" alt="努力樹">
+                    <img class="tree-image" src="assets/reward-tree/empty-tree-base-v1-q80.webp" width="1254" height="1254" alt="努力樹" decoding="async" fetchpriority="high">
                     <div class="reward-layer" id="reward-layer" aria-label="獎勵位置"></div>
                     <section class="login-gate" id="login-gate">
                         <h2>先登入再看自己的樹</h2>
@@ -705,6 +717,7 @@
         const backPageBtn = document.getElementById("back-page-btn");
         const loginGate = document.getElementById("login-gate");
         const rewardLayer = document.getElementById("reward-layer");
+        const treeImageEl = document.querySelector(".tree-image");
         const studentNameEl = document.getElementById("student-name");
         const studentMetaEl = document.getElementById("student-meta");
         const subtitleEl = document.getElementById("page-subtitle");
@@ -737,6 +750,20 @@
         const mockMode = params.get("mock");
         const localMockEnabled = ["full", "empty", "partial"].includes(mockMode)
             && ["localhost", "127.0.0.1"].includes(window.location.hostname);
+        const REWARD_RENDER_DELAY_MS = 180;
+        let renderToken = 0;
+
+        function waitForTreeImage() {
+            if (!treeImageEl || (treeImageEl.complete && treeImageEl.naturalWidth > 0)) {
+                return Promise.resolve();
+            }
+
+            return new Promise((resolve) => {
+                const finish = () => resolve();
+                treeImageEl.addEventListener("load", finish, { once: true });
+                treeImageEl.addEventListener("error", finish, { once: true });
+            });
+        }
 
         function startLogin() {
             beginCentralizedLogin({ returnTo: window.location.href });
@@ -813,17 +840,9 @@
         }
 
         function renderModel(model) {
-            renderRewardTree({
-                layer: rewardLayer,
-                leaves: model.leaves,
-                flowers: model.flowers,
-                pendingLeaves: model.pendingLeaves,
-                pendingFlowers: model.pendingFlowers,
-                leafSlots: LEAF_SLOTS,
-                flowerSlots: FLOWER_SLOTS,
-                onSelect: (reward) => selectReward(reward, detailTitleEl, detailTextEl)
-            });
-
+            const currentToken = ++renderToken;
+            rewardLayer.innerHTML = "";
+            rewardLayer.setAttribute("aria-busy", "true");
             leafCountEl.textContent = model.stats.leafCount;
             flowerCountEl.textContent = model.stats.flowerCount;
             colorUnlockEl.textContent = model.stats.colorUnlocked
@@ -845,6 +864,26 @@
             } else {
                 debugNoteEl.classList.add("hidden");
             }
+
+            waitForTreeImage().then(() => new Promise((resolve) => {
+                window.setTimeout(resolve, REWARD_RENDER_DELAY_MS);
+            })).then(() => {
+                if (currentToken !== renderToken) {
+                    return;
+                }
+
+                renderRewardTree({
+                    layer: rewardLayer,
+                    leaves: model.leaves,
+                    flowers: model.flowers,
+                    pendingLeaves: model.pendingLeaves,
+                    pendingFlowers: model.pendingFlowers,
+                    leafSlots: LEAF_SLOTS,
+                    flowerSlots: FLOWER_SLOTS,
+                    onSelect: (reward) => selectReward(reward, detailTitleEl, detailTextEl)
+                });
+                rewardLayer.removeAttribute("aria-busy");
+            });
         }
 
         async function loadProfile(userId) {

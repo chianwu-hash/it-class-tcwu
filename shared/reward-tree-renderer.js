@@ -74,27 +74,41 @@ export function renderRewardTree({
     layer.innerHTML = "";
     const selectHandler = typeof onSelect === "function" ? onSelect : () => {};
 
-    leaves.slice(0, leafSlots.length).forEach((reward, index) => {
-        layer.appendChild(createLeafElement(reward, leafSlots[index], index, selectHandler));
-    });
+    let rewardIndex = 0;
+    const earnedLeaves = leaves.slice(0, leafSlots.length);
+    const earnedFlowers = flowers.slice(0, flowerSlots.length);
 
-    flowers.slice(0, flowerSlots.length).forEach((reward, index) => {
-        layer.appendChild(createFlowerElement(reward, flowerSlots[index], leaves.length + index, selectHandler));
-    });
-
-    const firstGhostLeafSlot = leaves.length;
-    pendingLeaves.slice(0, ghostLeafCount).forEach((reward, index) => {
-        const slot = leafSlots[firstGhostLeafSlot + index];
+    earnedLeaves.forEach((reward) => {
+        const slot = leafSlots[rewardIndex];
         if (slot) {
-            layer.appendChild(createLeafElement(reward, slot, 0, selectHandler, true));
+            layer.appendChild(createLeafElement(reward, slot, rewardIndex, selectHandler));
+            rewardIndex += 1;
         }
     });
 
-    const firstGhostFlowerSlot = flowers.length;
+    const firstGhostLeafSlot = earnedLeaves.length;
+    pendingLeaves.slice(0, ghostLeafCount).forEach((reward, index) => {
+        const slot = leafSlots[firstGhostLeafSlot + index];
+        if (slot) {
+            layer.appendChild(createLeafElement(reward, slot, rewardIndex, selectHandler, true));
+            rewardIndex += 1;
+        }
+    });
+
+    earnedFlowers.forEach((reward, index) => {
+        const slot = flowerSlots[index];
+        if (slot) {
+            layer.appendChild(createFlowerElement(reward, slot, rewardIndex, selectHandler));
+            rewardIndex += 1;
+        }
+    });
+
+    const firstGhostFlowerSlot = earnedFlowers.length;
     pendingFlowers.slice(0, ghostFlowerCount).forEach((reward, index) => {
         const slot = flowerSlots[firstGhostFlowerSlot + index];
         if (slot) {
-            layer.appendChild(createFlowerElement(reward, slot, 0, selectHandler, true));
+            layer.appendChild(createFlowerElement(reward, slot, rewardIndex, selectHandler, true));
+            rewardIndex += 1;
         }
     });
 }
