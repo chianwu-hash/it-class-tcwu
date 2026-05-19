@@ -185,6 +185,132 @@
             z-index: 2;
         }
 
+        .tree-pet-track {
+            position: absolute;
+            left: 9%;
+            right: 9%;
+            bottom: 7%;
+            height: min(120px, 18vw);
+            z-index: 3;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 420ms ease;
+        }
+
+        .tree-pet-track.is-visible {
+            opacity: 1;
+        }
+
+        .tree-pet {
+            position: absolute;
+            left: 6%;
+            bottom: 4%;
+            width: clamp(74px, 9vw, 116px);
+            filter: drop-shadow(0 10px 10px rgba(73, 56, 32, 0.22));
+            animation:
+                petWalk 29s ease-in-out infinite,
+                petBodyMotion 29s ease-in-out infinite;
+        }
+
+        .pet-dog {
+            display: block;
+            width: 100%;
+            transform-origin: center bottom;
+            animation: petFace 29s steps(1, end) infinite;
+        }
+
+        .pet-bark {
+            position: absolute;
+            right: 2px;
+            top: -32px;
+            z-index: 4;
+            padding: 5px 10px 6px;
+            min-width: 46px;
+            border: 2px solid #8a6a3d;
+            border-radius: 999px;
+            background: #fffaf0;
+            color: #6b4a22;
+            font-family: "Noto Sans TC", sans-serif;
+            font-size: 0.9rem;
+            font-weight: 900;
+            line-height: 1.35;
+            text-align: center;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateY(8px) scale(0.82);
+            box-shadow: 0 6px 10px rgba(73, 56, 32, 0.16);
+            animation: petBark 29s ease-in-out infinite;
+        }
+
+        .pet-bark::after {
+            content: "";
+            position: absolute;
+            left: 10px;
+            bottom: -5px;
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid #8a6a3d;
+            border-bottom: 2px solid #8a6a3d;
+            background: #fffaf0;
+            transform: rotate(45deg);
+        }
+
+        .pet-head {
+            transform-box: fill-box;
+            transform-origin: center bottom;
+            animation: petLook 29s ease-in-out infinite;
+        }
+
+        .pet-body-main,
+        .pet-body-shine,
+        .pet-static-paw {
+            transform-box: fill-box;
+            transform-origin: center bottom;
+            animation: petSitPose 29s ease-in-out infinite;
+        }
+
+        .pet-face-front {
+            opacity: 0;
+            animation: petFrontFace 29s ease-in-out infinite;
+        }
+
+        .pet-face-side {
+            opacity: 1;
+            animation: petSideFace 29s ease-in-out infinite;
+        }
+
+        .pet-tail {
+            transform-box: fill-box;
+            transform-origin: 28px 35px;
+            animation: petTail 520ms ease-in-out infinite alternate;
+        }
+
+        .pet-paw {
+            transform-box: fill-box;
+            transform-origin: center top;
+        }
+
+        .pet-paw-a {
+            animation: petPawA 620ms ease-in-out infinite alternate;
+        }
+
+        .pet-paw-b {
+            animation: petPawB 620ms ease-in-out infinite alternate;
+        }
+
+        .pet-walk-paw-front {
+            animation:
+                petPawB 620ms ease-in-out infinite alternate,
+                petHideForScratch 29s ease-in-out infinite;
+        }
+
+        .pet-scratch-paw {
+            opacity: 0;
+            transform-box: view-box;
+            transform-origin: 106px 48px;
+            animation: petScratchPaw 29s ease-in-out infinite;
+        }
+
         .reward {
             position: absolute;
             left: var(--x);
@@ -547,6 +673,267 @@
             }
         }
 
+        @keyframes petWalk {
+            0% {
+                left: 6%;
+                bottom: 4%;
+                width: clamp(78px, 9.4vw, 120px);
+            }
+            7% {
+                left: 18%;
+                bottom: 9%;
+                width: clamp(70px, 8.2vw, 104px);
+            }
+            13% {
+                left: 34%;
+                bottom: 2%;
+                width: clamp(84px, 10vw, 128px);
+            }
+            18%, 24% {
+                left: 28%;
+                bottom: 1%;
+                width: clamp(84px, 10vw, 128px);
+            }
+            31% {
+                left: 48%;
+                bottom: 12%;
+                width: clamp(66px, 7.6vw, 98px);
+            }
+            37% {
+                left: 41%;
+                bottom: 6%;
+                width: clamp(76px, 9vw, 114px);
+            }
+            44% {
+                left: 63%;
+                bottom: 7%;
+                width: clamp(72px, 8.4vw, 108px);
+            }
+            51% {
+                left: 77%;
+                bottom: 1%;
+                width: clamp(86px, 10.2vw, 130px);
+            }
+            56%, 63% {
+                left: 72%;
+                bottom: 3%;
+                width: clamp(80px, 9.4vw, 120px);
+            }
+            70% {
+                left: 82%;
+                bottom: 8%;
+                width: clamp(70px, 8vw, 104px);
+            }
+            77% {
+                left: 58%;
+                bottom: 13%;
+                width: clamp(68px, 7.8vw, 100px);
+            }
+            84% {
+                left: 38%;
+                bottom: 8%;
+                width: clamp(74px, 8.8vw, 110px);
+            }
+            91% {
+                left: 18%;
+                bottom: 2%;
+                width: clamp(82px, 9.8vw, 124px);
+            }
+            100% {
+                left: 6%;
+                bottom: 4%;
+                width: clamp(78px, 9.4vw, 120px);
+            }
+        }
+
+        @keyframes petBodyMotion {
+            0%, 18%, 24%, 56%, 63%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            7% {
+                transform: translateY(-3px) rotate(3deg);
+            }
+            13% {
+                transform: translateY(1px) rotate(-5deg);
+            }
+            31% {
+                transform: translateY(-4px) rotate(5deg);
+            }
+            37% {
+                transform: translateY(-1px) rotate(-4deg);
+            }
+            44% {
+                transform: translateY(-2px) rotate(2deg);
+            }
+            51% {
+                transform: translateY(1px) rotate(-5deg);
+            }
+            70% {
+                transform: translateY(-3px) rotate(5deg);
+            }
+            77% {
+                transform: translateY(-4px) rotate(3deg);
+            }
+            84% {
+                transform: translateY(-2px) rotate(-4deg);
+            }
+            91% {
+                transform: translateY(1px) rotate(-3.5deg);
+            }
+        }
+
+        @keyframes petFace {
+            0%, 12%, 24%, 30%, 37%, 52%, 63%, 69% {
+                transform: scaleX(1);
+            }
+            13%, 23%, 31%, 36%, 53%, 62%, 70%, 100% {
+                transform: scaleX(-1);
+            }
+        }
+
+        @keyframes petLook {
+            0%, 16%, 26%, 54%, 65%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            18%, 24% {
+                transform: translateY(-4px) rotate(-5deg);
+            }
+            56%, 62% {
+                transform: translateY(-5px) rotate(8deg);
+            }
+        }
+
+        @keyframes petSitPose {
+            0%, 16%, 26%, 100% {
+                transform: translateY(0) rotate(0deg) scaleY(1);
+            }
+            18%, 24% {
+                transform: translateY(5px) rotate(-4deg) scaleY(0.92);
+            }
+        }
+
+        @keyframes petHideForScratch {
+            0%, 54%, 65%, 100% {
+                opacity: 1;
+            }
+            56%, 62% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes petScratchPaw {
+            0%, 54%, 65%, 100% {
+                opacity: 0;
+                transform: rotate(0deg);
+            }
+            56% {
+                opacity: 1;
+                transform: rotate(-16deg);
+            }
+            57% {
+                opacity: 1;
+                transform: rotate(12deg);
+            }
+            58% {
+                opacity: 1;
+                transform: rotate(-16deg);
+            }
+            59% {
+                opacity: 1;
+                transform: rotate(12deg);
+            }
+            60% {
+                opacity: 1;
+                transform: rotate(-16deg);
+            }
+            61%, 62% {
+                opacity: 1;
+                transform: rotate(6deg);
+            }
+            64% {
+                opacity: 0;
+                transform: rotate(0deg);
+            }
+        }
+
+        @keyframes petBark {
+            0%, 17%, 25%, 55%, 64%, 100% {
+                opacity: 0;
+                transform: translateY(8px) scale(0.82);
+            }
+            19%, 23%, 57%, 61% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            24%, 62% {
+                opacity: 0.72;
+                transform: translateY(-2px) scale(0.92);
+            }
+        }
+
+        @keyframes petFrontFace {
+            0%, 17%, 25%, 55%, 64%, 100% {
+                opacity: 0;
+            }
+            19%, 23%, 57%, 61% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes petSideFace {
+            0%, 17%, 25%, 55%, 64%, 100% {
+                opacity: 1;
+            }
+            19%, 23%, 57%, 61% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes petTail {
+            from {
+                transform: rotate(-16deg);
+            }
+            to {
+                transform: rotate(22deg);
+            }
+        }
+
+        @keyframes petPawA {
+            from {
+                transform: translateX(-2px) translateY(0);
+            }
+            to {
+                transform: translateX(2px) translateY(-1px);
+            }
+        }
+
+        @keyframes petPawB {
+            from {
+                transform: translateX(2px) translateY(-1px);
+            }
+            to {
+                transform: translateX(-2px) translateY(0);
+            }
+        }
+
+        @keyframes petWalkLegacy {
+            0%, 100% {
+                left: 6%;
+            }
+            45%, 55% {
+                left: 76%;
+            }
+        }
+
+        @keyframes petLookOld {
+            0%, 16%, 26%, 54%, 65%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            18%, 24%, 56%, 62% {
+                transform: translateY(-4px) rotate(-5deg);
+            }
+        }
+
         @media (max-width: 920px) {
             .dashboard {
                 grid-template-columns: 1fr;
@@ -586,11 +973,33 @@
             .tree-image {
                 padding: 2% 0 0;
             }
+
+            .tree-pet-track {
+                left: 6%;
+                right: 6%;
+                bottom: 6%;
+                height: 90px;
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
             .reward {
                 opacity: 1;
+                animation: none;
+            }
+
+            .tree-pet,
+            .pet-dog,
+            .pet-bark,
+            .pet-head,
+            .pet-face-front,
+            .pet-face-side,
+            .pet-body-main,
+            .pet-body-shine,
+            .pet-static-paw,
+            .pet-scratch-paw,
+            .pet-tail,
+            .pet-paw {
                 animation: none;
             }
         }
@@ -617,6 +1026,46 @@
                     <div class="ground-glow" aria-hidden="true"></div>
                     <img class="tree-image" src="assets/reward-tree/empty-tree-base-v1-q80.webp" width="1254" height="1254" alt="努力樹" decoding="async" fetchpriority="high">
                     <div class="reward-layer" id="reward-layer" aria-label="獎勵位置"></div>
+                    <div class="tree-pet-track" id="tree-pet-track" aria-hidden="true">
+                        <div class="tree-pet">
+                            <span class="pet-bark">汪！</span>
+                            <svg class="pet-dog" viewBox="0 0 150 90" role="img" aria-label="小狗在努力樹旁散步">
+                                <ellipse cx="74" cy="80" rx="48" ry="7" fill="rgba(55, 42, 24, 0.2)" />
+                                <path class="pet-tail" d="M33 39 C15 34 11 20 18 14 C28 15 32 27 36 38" fill="none" stroke="#f7e9cc" stroke-width="13" stroke-linecap="round" />
+                                <path class="pet-body-main" d="M37 44 C39 25 54 18 79 19 C103 20 119 31 119 48 C119 65 103 73 75 73 C49 73 35 63 37 44 Z" fill="#f7e9cc" stroke="#8a6a3d" stroke-width="4" stroke-linejoin="round" />
+                                <path class="pet-body-shine" d="M43 43 C45 29 59 24 81 24 C99 25 111 33 113 47 C101 42 83 39 64 43 C54 45 47 46 43 43 Z" fill="#fffaf0" opacity="0.95" />
+                                <g class="pet-head">
+                                    <circle cx="113" cy="34" r="21" fill="#f7e9cc" stroke="#8a6a3d" stroke-width="4" />
+                                    <path d="M101 18 C94 7 105 4 113 16" fill="#f7e9cc" stroke="#8a6a3d" stroke-width="4" stroke-linejoin="round" />
+                                    <path d="M124 20 C133 9 143 17 132 28" fill="#f7e9cc" stroke="#8a6a3d" stroke-width="4" stroke-linejoin="round" />
+                                    <g class="pet-face-side">
+                                        <circle cx="119" cy="32" r="3.6" fill="#263238" />
+                                        <circle cx="134" cy="41" r="5" fill="#263238" />
+                                        <circle cx="105" cy="42" r="5.2" fill="#f7a8ad" opacity="0.95" />
+                                        <path d="M121 47 Q115 52 109 47" fill="none" stroke="#263238" stroke-width="2.8" stroke-linecap="round" />
+                                    </g>
+                                    <g class="pet-face-front">
+                                        <circle cx="106" cy="32" r="3.5" fill="#263238" />
+                                        <circle cx="120" cy="32" r="3.5" fill="#263238" />
+                                        <circle cx="113" cy="40" r="4.2" fill="#263238" />
+                                        <circle cx="101" cy="42" r="4.8" fill="#f7a8ad" opacity="0.95" />
+                                        <circle cx="125" cy="42" r="4.8" fill="#f7a8ad" opacity="0.95" />
+                                        <path d="M113 45 Q107 51 101 45" fill="none" stroke="#263238" stroke-width="2.4" stroke-linecap="round" />
+                                        <path d="M113 45 Q119 51 125 45" fill="none" stroke="#263238" stroke-width="2.4" stroke-linecap="round" />
+                                    </g>
+                                </g>
+                                <rect class="pet-paw pet-paw-a" x="50" y="63" width="13" height="15" rx="6" fill="#f7e9cc" stroke="#8a6a3d" stroke-width="3" />
+                                <rect class="pet-paw pet-walk-paw-front" x="78" y="64" width="13" height="15" rx="6" fill="#f7e9cc" stroke="#8a6a3d" stroke-width="3" />
+                                <g class="pet-scratch-paw">
+                                    <path d="M101 52 Q107 47 111 41" fill="none" stroke="#f7e9cc" stroke-width="10" stroke-linecap="round" />
+                                    <path d="M101 52 Q107 47 111 41" fill="none" stroke="#8a6a3d" stroke-width="3" stroke-linecap="round" opacity="0.9" />
+                                    <circle cx="112" cy="40" r="4.5" fill="#f7e9cc" stroke="#8a6a3d" stroke-width="2.5" />
+                                </g>
+                                <rect class="pet-static-paw" x="36" y="61" width="11" height="14" rx="5.5" fill="#e5cfa5" stroke="#8a6a3d" stroke-width="2.5" opacity="0.95" />
+                                <rect class="pet-static-paw" x="100" y="61" width="11" height="14" rx="5.5" fill="#e5cfa5" stroke="#8a6a3d" stroke-width="2.5" opacity="0.95" />
+                            </svg>
+                        </div>
+                    </div>
                     <section class="login-gate" id="login-gate">
                         <h2>先登入再看自己的樹</h2>
                         <p>這一頁只會讀取你自己的闖關進度，不會顯示其他同學的資料。</p>
@@ -718,6 +1167,7 @@
         const loginGate = document.getElementById("login-gate");
         const rewardLayer = document.getElementById("reward-layer");
         const treeImageEl = document.querySelector(".tree-image");
+        const treePetTrackEl = document.getElementById("tree-pet-track");
         const studentNameEl = document.getElementById("student-name");
         const studentMetaEl = document.getElementById("student-meta");
         const subtitleEl = document.getElementById("page-subtitle");
@@ -764,6 +1214,10 @@
                 treeImageEl.addEventListener("error", finish, { once: true });
             });
         }
+
+        waitForTreeImage().then(() => {
+            treePetTrackEl?.classList.add("is-visible");
+        });
 
         function startLogin() {
             beginCentralizedLogin({ returnTo: window.location.href });
