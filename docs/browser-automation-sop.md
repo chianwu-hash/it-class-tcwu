@@ -265,16 +265,24 @@ npm.cmd run notebooklm:ask -- --cdp-url http://127.0.0.1:9333 --prompt-file auto
 用途：
 
 - 透過已登入 ChatGPT 分頁生成課程資訊圖卡、教學圖片或簡報主視覺
-- 特別適合需要使用 ChatGPT 圖像生成能力、或 Gemini 下載不穩時替代
+- 這是課程資訊圖卡的預設生圖流程
+- 不使用 Codex 內建 ImageGen 製作一般課程圖卡，避免在對話中消耗大量 token，且避免缺少本地 prompt、metadata、下載檔、壓圖與 Cloudinary 流程紀錄
 
 使用前先讀：
 
 - `skills/chatgpt-image-workflow/SKILL.md`
 - `docs/image-and-preview-card-sop.md`
 
-入口：
+優先入口：
 
 - `npm.cmd run chatgpt:image-batch`
+- 使用 CDP 連到已登入 ChatGPT 的 Chrome，預設 `http://127.0.0.1:9333`
+- 由 wrapper 送出 UTF-8 prompt file、等待生成、下載圖片並寫出 metadata
+
+Codex Chrome 擴充套件備援入口：
+
+- 只在 CDP Chrome 不可用、需要快速人工檢查、或使用者臨時指定時使用
+- 可操作已登入的 ChatGPT 分頁，但下載與 metadata 不如 CDP wrapper 穩定
 
 範例：
 
@@ -284,8 +292,11 @@ npm.cmd run chatgpt:image-batch -- --cdp-url http://127.0.0.1:9333 --prompt-file
 
 固定規則：
 
-- ChatGPT 頁面必須先由使用者手動登入並保持開啟
+- 優先使用 `chatgpt:image-batch`；ChatGPT 頁面必須先由使用者手動登入並保持開啟，且 `--cdp-url` 必須指向該 Chrome
+- 若 `9333` 未啟動，先開支援 CDP 的 Chrome，再跑 wrapper
+- Codex Chrome 擴充套件只作為臨時備援或人工檢查；若需要可靠下載與 metadata，回到 CDP wrapper 重跑
 - 中文提示詞一律放 UTF-8 `.txt`，用 `--prompt-file`
 - 不要把中文 prompt 放進 PowerShell inline / here-string
 - `--reuse-chat` 只在刻意延續同一段對話時使用
 - 生圖後檢查 metadata 與實際圖片檔，再接壓圖與 Cloudinary 流程
+- 只有使用者明確指定、或 ChatGPT / Gemini 瀏覽器流程不可用且使用者同意時，才例外使用內建 ImageGen；例外產物仍需接正式資產流程

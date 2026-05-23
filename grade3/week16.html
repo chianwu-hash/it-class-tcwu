@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三年級資訊課 - 第16週 網路作品尊重作者與景點推薦信</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: #f8fbff;
+        }
+        .card-hover {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+        }
+        .spotlight-frame {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .spotlight-frame:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.18);
+        }
+        .section-toggle .toggle-chevron {
+            transition: transform 0.2s ease;
+        }
+        .section-toggle[aria-expanded="false"] .toggle-chevron {
+            transform: rotate(-90deg);
+        }
+        .opt-btn {
+            transition: all 0.15s;
+        }
+        .opt-btn.selected {
+            border-color: #0ea5e9;
+            background-color: #e0f2fe;
+            color: #075985;
+        }
+        .opt-btn.correct {
+            border-color: #16a34a !important;
+            background-color: #dcfce7 !important;
+            color: #15803d !important;
+        }
+        .opt-btn.wrong {
+            border-color: #dc2626 !important;
+            background-color: #fee2e2 !important;
+            color: #b91c1c !important;
+            text-decoration: line-through;
+        }
+        .locked-link {
+            pointer-events: none;
+            opacity: 0.52;
+            filter: grayscale(0.3);
+        }
+        .shake {
+            animation: shake 0.36s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pb-12">
+    <script src="navbar.js?v=20260523"></script>
+
+    <header class="bg-gradient-to-br from-cyan-600 via-emerald-500 to-amber-400 text-white shadow-xl rounded-b-[2.5rem] mb-10">
+        <div class="max-w-6xl mx-auto px-6 py-10 relative overflow-hidden">
+            <div class="relative z-10 max-w-4xl">
+                <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white font-black px-4 py-1.5 rounded-full text-sm mb-5 shadow-sm">
+                    <i class="fa-solid fa-calendar-check text-amber-100"></i>
+                    第 16 週
+                </div>
+                <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">網路作品尊重作者與景點推薦信</h1>
+                <p class="text-lg md:text-xl text-cyan-50 font-bold leading-relaxed">看懂網路作品和 CC 授權的使用規則，再用 Google Maps 截圖自己推薦的公共景點，寄給老師和同學。</p>
+            </div>
+            <i class="fa-solid fa-copyright absolute text-white/20 text-[12rem] -right-10 -bottom-16"></i>
+            <i class="fa-solid fa-map-location-dot absolute text-white/20 text-8xl right-36 top-8 rotate-12"></i>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 space-y-8">
+        <section class="grid md:grid-cols-3 gap-4">
+            <div class="bg-white border-4 border-cyan-200 rounded-3xl p-5 shadow-sm">
+                <div class="text-cyan-500 text-3xl mb-3"><i class="fa-solid fa-scale-balanced"></i></div>
+                <h2 class="text-xl font-black text-cyan-900 mb-2">資訊素養</h2>
+                <p class="font-bold text-slate-700 leading-relaxed">網路上的圖片、音樂、影片和文字也有作者。使用前先看來源、作者與授權。</p>
+            </div>
+            <div class="bg-white border-4 border-emerald-200 rounded-3xl p-5 shadow-sm">
+                <div class="text-emerald-500 text-3xl mb-3"><i class="fa-solid fa-envelope-open-text"></i></div>
+                <h2 class="text-xl font-black text-emerald-900 mb-2">景點推薦信</h2>
+                <p class="font-bold text-slate-700 leading-relaxed">到 Google Maps 找公共景點截圖，用 Gmail 同時寄給老師和一位同學。</p>
+            </div>
+            <div class="bg-white border-4 border-indigo-200 rounded-3xl p-5 shadow-sm">
+                <div class="text-indigo-500 text-3xl mb-3"><i class="fa-solid fa-keyboard"></i></div>
+                <h2 class="text-xl font-black text-indigo-900 mb-2">中英打闖關</h2>
+                <p class="font-bold text-slate-700 leading-relaxed">看 Week 15 進度分流，延續國語第 11 課和英語 U4 職業句型練習。</p>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-md border-4 border-cyan-200 overflow-hidden">
+            <button type="button" class="section-toggle w-full bg-cyan-50 px-6 py-4 border-b-4 border-cyan-100 flex items-center justify-between text-left" data-target="literacy-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-cyan-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </span>
+                    <span class="text-2xl font-black text-cyan-900">資訊素養：網路作品與 CC 授權</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span class="hidden md:inline-flex bg-white text-cyan-700 border border-cyan-200 px-3 py-1 rounded-full text-sm font-black">課本 P.80-P.81</span>
+                    <i class="fa-solid fa-chevron-down text-cyan-500 text-xl toggle-chevron"></i>
+                </span>
+            </button>
+            <div id="literacy-body" class="p-6 space-y-6">
+                <div class="grid lg:grid-cols-2 gap-6 items-start">
+                    <figure>
+                        <img src="images/week16/week16-info-literacy-1920x1080-q80.webp" alt="網路作品要尊重作者資訊圖表" class="spotlight-frame w-full rounded-2xl border-4 border-cyan-100 bg-white cursor-zoom-in" onclick="openLightbox(this.src)">
+                        <figcaption class="mt-2 text-center text-sm font-bold text-slate-500">資訊圖表：看得到，不等於可以隨便用。</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/week16/week16-cc-license-1920x1080-q80.webp" alt="CC 授權是什麼資訊圖表" class="spotlight-frame w-full rounded-2xl border-4 border-emerald-100 bg-white cursor-zoom-in" onclick="openLightbox(this.src)">
+                        <figcaption class="mt-2 text-center text-sm font-bold text-slate-500">資訊圖表：CC 授權是作者給大家的使用規則。</figcaption>
+                    </figure>
+                </div>
+
+                <div class="grid md:grid-cols-4 gap-4">
+                    <div class="bg-cyan-50 border border-cyan-200 rounded-2xl p-4">
+                        <h3 class="font-black text-cyan-900 text-lg mb-2"><i class="fa-solid fa-magnifying-glass text-cyan-500 mr-2"></i>先看來源</h3>
+                        <p class="font-bold text-slate-700">知道作品從哪裡來，不把來源不明的內容當成自己的。</p>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+                        <h3 class="font-black text-emerald-900 text-lg mb-2"><i class="fa-solid fa-user-pen text-emerald-500 mr-2"></i>認識作者</h3>
+                        <p class="font-bold text-slate-700">圖片、音樂、影片、文字通常都有人創作。</p>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+                        <h3 class="font-black text-amber-900 text-lg mb-2"><i class="fa-solid fa-list-check text-amber-500 mr-2"></i>檢查授權</h3>
+                        <p class="font-bold text-slate-700">有 CC 也要看條件，可能要標作者、不能修改或不能商業使用。</p>
+                    </div>
+                    <div class="bg-rose-50 border border-rose-200 rounded-2xl p-4">
+                        <h3 class="font-black text-rose-900 text-lg mb-2"><i class="fa-solid fa-hand text-rose-500 mr-2"></i>不確定就問</h3>
+                        <p class="font-bold text-slate-700">不確定能不能用時，問老師，或改用自己創作的內容。</p>
+                    </div>
+                </div>
+
+                <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5 text-slate-700 font-bold leading-relaxed">
+                    <p><i class="fa-solid fa-circle-info text-sky-500 mr-2"></i> 資訊素養小測驗會記錄完成狀態；請登入後再開始作答。</p>
+                </div>
+                <div id="quiz-lock" class="text-center py-12 bg-sky-50 rounded-2xl border-2 border-dashed border-sky-300">
+                    <div class="text-5xl text-sky-400 mb-4"><i class="fa-solid fa-lock"></i></div>
+                    <h4 class="text-2xl font-black text-sky-900 mb-3">登入後開始小測驗</h4>
+                    <p class="font-bold text-slate-600 mb-6">完成後會寫入學習進度，老師可以看到你已完成。</p>
+                    <button id="quiz-login-btn" class="bg-sky-500 hover:bg-sky-600 text-white font-black px-8 py-3 rounded-2xl shadow-md transition transform hover:scale-105">
+                        <i class="fa-brands fa-google mr-2"></i> Google 登入
+                    </button>
+                </div>
+                <div id="quiz-content" class="hidden">
+                    <div id="quiz-status-banner" class="hidden rounded-xl border border-sky-200 bg-sky-50 px-4 py-3 mb-6">
+                        <div id="quiz-status-text" class="text-sm font-bold text-sky-800"></div>
+                    </div>
+                    <div id="quiz-container" class="space-y-6 max-w-3xl mx-auto"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-md border-4 border-emerald-200 overflow-hidden">
+            <button type="button" class="section-toggle w-full bg-emerald-50 px-6 py-4 border-b-4 border-emerald-100 flex items-center justify-between text-left" data-target="maps-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-emerald-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                    </span>
+                    <span class="text-2xl font-black text-emerald-900">Google Maps：景點推薦信</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span class="hidden md:inline-flex bg-white text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full text-sm font-black">Maps + Gmail + 聯絡人</span>
+                    <i class="fa-solid fa-chevron-down text-emerald-500 text-xl toggle-chevron"></i>
+                </span>
+            </button>
+            <div id="maps-body" class="p-6 space-y-6">
+                <div class="grid md:grid-cols-4 gap-4">
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+                        <div class="text-emerald-600 text-3xl mb-3"><i class="fa-solid fa-location-dot"></i></div>
+                        <h4 class="font-black text-emerald-900 text-xl mb-2">找公共景點</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">搜尋公園、圖書館、博物館、車站或世界地標，不搜尋住家地址。</p>
+                    </div>
+                    <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5">
+                        <div class="text-sky-600 text-3xl mb-3"><i class="fa-solid fa-camera-retro"></i></div>
+                        <h4 class="font-black text-sky-900 text-xl mb-2">截圖畫面</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">調整地圖角度後截圖，Windows 可用 Win + Shift + S。</p>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                        <div class="text-amber-600 text-3xl mb-3"><i class="fa-solid fa-address-book"></i></div>
+                        <h4 class="font-black text-amber-900 text-xl mb-2">使用聯絡人</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">若找不到老師或同學，先到 Google 聯絡人建立學校帳號資料。</p>
+                    </div>
+                    <div class="bg-violet-50 border border-violet-200 rounded-2xl p-5">
+                        <div class="text-violet-600 text-3xl mb-3"><i class="fa-solid fa-paper-plane"></i></div>
+                        <h4 class="font-black text-violet-900 text-xl mb-2">寄給兩位</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">Gmail 收件人要同時有老師和一位同學，寄出前再檢查。</p>
+                    </div>
+                </div>
+
+                <div id="maps-mail-links-control" class="flex flex-col gap-3 rounded-2xl border-2 border-emerald-100 bg-emerald-50 p-4 md:flex-row md:items-center md:justify-between">
+                    <div class="flex items-center gap-3 font-black text-emerald-900">
+                        <span id="maps-mail-links-status-icon" class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-emerald-600 shadow-sm">
+                            <i class="fa-solid fa-lock"></i>
+                        </span>
+                        <span id="maps-mail-links-status">正在確認景點推薦任務連結狀態...</span>
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <button id="maps-mail-teacher-toggle" type="button" class="hidden items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-sm font-black text-white shadow-md transition hover:bg-emerald-700">
+                            <i class="fa-solid fa-lock-open"></i>
+                            <span>開放任務連結</span>
+                        </button>
+                        <button id="maps-mail-refresh-btn" type="button" class="inline-flex items-center justify-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-black text-emerald-700 shadow-sm ring-2 ring-emerald-200 transition hover:bg-emerald-100">
+                            <i class="fa-solid fa-rotate-right"></i>
+                            <span>更新連結狀態</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3" id="maps-mail-links-grid">
+                    <a class="maps-mail-link bg-white border-2 border-emerald-200 hover:border-emerald-500 rounded-2xl p-4 font-black text-slate-700 hover:text-emerald-700 transition card-hover" href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-map-location-dot mr-2 text-emerald-500"></i>Google Maps</a>
+                    <a class="maps-mail-link bg-white border-2 border-sky-200 hover:border-sky-500 rounded-2xl p-4 font-black text-slate-700 hover:text-sky-700 transition card-hover" href="https://mail.google.com/mail/u/0/#inbox?compose=new" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-envelope mr-2 text-sky-500"></i>Gmail 寄信</a>
+                    <a class="maps-mail-link bg-white border-2 border-amber-200 hover:border-amber-500 rounded-2xl p-4 font-black text-slate-700 hover:text-amber-700 transition card-hover" href="https://contacts.google.com/" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-address-book mr-2 text-amber-500"></i>Google 聯絡人</a>
+                    <a class="maps-mail-link bg-white border-2 border-violet-200 hover:border-violet-500 rounded-2xl p-4 font-black text-slate-700 hover:text-violet-700 transition card-hover" href="https://www.google.com/maps/search/%E5%8F%B0%E5%8C%97%E5%B8%82%E5%85%AC%E5%9C%92" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-tree-city mr-2 text-violet-500"></i>公共景點範例</a>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                    <h4 class="text-xl font-black text-slate-900 mb-3"><i class="fa-solid fa-envelope-open-text text-emerald-500 mr-2"></i>推薦信格式</h4>
+                    <div class="grid md:grid-cols-2 gap-3 font-bold text-slate-700">
+                        <div class="rounded-xl bg-white border border-slate-200 px-4 py-3">收件人：老師 + 一位同學</div>
+                        <div class="rounded-xl bg-white border border-slate-200 px-4 py-3">主旨：我推薦的景點：__________</div>
+                        <div class="rounded-xl bg-white border border-slate-200 px-4 py-3 md:col-span-2">內文：老師和同學好，我推薦的景點是__________。我推薦它的原因是__________。這是我在 Google Maps 看到並截圖的畫面。</div>
+                        <div class="rounded-xl bg-white border border-slate-200 px-4 py-3">截圖：貼在信件內文，或用附件加入</div>
+                        <div class="rounded-xl bg-white border border-slate-200 px-4 py-3">提醒：不寄住家地址、不交換私人信箱電話</div>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-4">
+                    <div class="bg-white border-2 border-emerald-100 rounded-2xl p-5">
+                        <h4 class="text-xl font-black text-emerald-900 mb-3">入門組</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">使用老師指定或網頁範例景點，完成一張截圖、一句推薦理由，寄給老師和一位同學。</p>
+                    </div>
+                    <div class="bg-white border-2 border-sky-100 rounded-2xl p-5">
+                        <h4 class="text-xl font-black text-sky-900 mb-3">標準組</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">自己搜尋公共景點，必要時先建立聯絡人。信件要有主旨、問候、景點、理由和截圖。</p>
+                    </div>
+                    <div class="bg-white border-2 border-violet-100 rounded-2xl p-5">
+                        <h4 class="text-xl font-black text-violet-900 mb-3">挑戰組</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">比較兩個景點後選一個推薦，可加入第二張截圖或補充特色、交通與適合誰去看。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-md border-4 border-indigo-200 overflow-hidden">
+            <button type="button" class="section-toggle w-full bg-indigo-50 px-6 py-4 border-b-4 border-indigo-100 flex items-center justify-between text-left" data-target="typing-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-indigo-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-keyboard"></i>
+                    </span>
+                    <span class="text-2xl font-black text-indigo-900">中英打闖關</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span id="typing-badge" class="hidden md:inline-flex bg-indigo-600 text-white px-3 py-1 rounded-full text-sm font-black">暖身 / 緩衝 / 延伸 5 關</span>
+                    <i class="fa-solid fa-chevron-down text-indigo-500 text-xl toggle-chevron"></i>
+                </span>
+            </button>
+            <div id="typing-body" class="p-8">
+                <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 mb-6 text-slate-700 font-bold space-y-2">
+                    <p><i class="fa-solid fa-circle-info text-indigo-500 mr-2"></i> 先完成老師指定任務的同學，到這裡接著練習；老師會看 Week 15 進度協助分流。</p>
+                    <p><i class="fa-solid fa-hand text-indigo-500 mr-2"></i> 不能複製貼上。英文大小寫、標點、空格和換行都要一樣。</p>
+                    <p id="progress-status"><i class="fa-solid fa-flag-checkered text-indigo-500 mr-2"></i> 目前進度：第 1 關開始。</p>
+                    <pre id="progress-debug" class="hidden mt-3 overflow-auto rounded-xl bg-slate-900 p-4 text-left text-xs text-slate-100"></pre>
+                </div>
+
+                <div id="typing-levels-container" class="flex flex-col space-y-8 max-w-3xl mx-auto">
+                    <div id="block-level1" class="bg-cyan-50 border-4 border-cyan-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-cyan-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 1 關</div>
+                        <h4 class="text-xl font-black text-cyan-800 mb-2 flex items-center"><i class="fa-solid fa-language text-cyan-500 mr-2"></i> 英文暖身</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">英語 U4 職業單字，先找回手感。</p>
+                        <div class="text-2xl font-black text-center text-cyan-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-cyan-200 shadow-inner select-none pointer-events-none">I am a cook.</div>
+                        <input type="text" id="input-level1" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full h-16 p-3 rounded-xl border-2 border-cyan-300 focus:outline-none focus:ring-4 focus:ring-cyan-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="點這裡開始打字">
+                        <button onclick="checkLevel(1)" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95"><i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案</button>
+                        <p id="msg-level1" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level2" class="hidden bg-emerald-50 border-4 border-emerald-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-emerald-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 2 關</div>
+                        <h4 class="text-xl font-black text-emerald-800 mb-2 flex items-center"><i class="fa-solid fa-book-open text-emerald-500 mr-2"></i> 中文一行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">國語第 11 課〈聰明的鼠鹿〉，記得句號。</p>
+                        <div class="text-2xl font-black text-center text-emerald-700 tracking-widest mb-4 bg-white py-3 px-3 rounded-xl border-2 border-emerald-200 shadow-inner select-none pointer-events-none">鼠鹿在河邊遇到了老虎。</div>
+                        <input type="text" id="input-level2" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full h-16 p-3 rounded-xl border-2 border-emerald-300 focus:outline-none focus:ring-4 focus:ring-emerald-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="慢慢打，記得標點">
+                        <button onclick="checkLevel(2)" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95"><i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案</button>
+                        <p id="msg-level2" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level3" class="hidden bg-blue-50 border-4 border-blue-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-blue-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 3 關</div>
+                        <h4 class="text-xl font-black text-blue-800 mb-2 flex items-center"><i class="fa-solid fa-comment-dots text-blue-500 mr-2"></i> 英文二行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">兩行都要打，問號、逗號、句點和縮寫符號都要一樣。</p>
+                        <pre class="text-2xl font-black text-center text-blue-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-blue-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">Is he a teacher?
+No, he's not.</pre>
+                        <textarea id="input-level3" rows="3" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="第一行打完按 Enter 換行"></textarea>
+                        <button onclick="checkLevel(3)" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95"><i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案</button>
+                        <p id="msg-level3" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level4" class="hidden bg-orange-50 border-4 border-orange-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-orange-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 4 關</div>
+                        <h4 class="text-xl font-black text-orange-800 mb-2 flex items-center"><i class="fa-solid fa-water text-orange-500 mr-2"></i> 中文二行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">注意逗號、換行和句號。</p>
+                        <pre class="text-2xl font-black text-center text-orange-700 tracking-wider mb-4 bg-white py-3 px-3 rounded-xl border-2 border-orange-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">只有冷靜想辦法，
+才可以化解危機。</pre>
+                        <textarea id="input-level4" rows="4" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-orange-300 focus:outline-none focus:ring-4 focus:ring-orange-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="兩行都要打完整"></textarea>
+                        <button onclick="checkLevel(4)" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95"><i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案</button>
+                        <p id="msg-level4" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level5" class="hidden bg-purple-50 border-4 border-purple-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-purple-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">魔王關</div>
+                        <h4 class="text-xl font-black text-purple-800 mb-2 flex items-center"><i class="fa-solid fa-layer-group text-purple-500 mr-2"></i> 中英混打三行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">中文、英文、標點與換行都要對。完成後去看看自己的努力樹。</p>
+                        <pre class="text-2xl font-black text-center text-purple-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-purple-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">聰明的鼠鹿跑得遠遠的。
+Are you a doctor?
+No, I'm not.</pre>
+                        <textarea id="input-level5" rows="5" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-purple-300 focus:outline-none focus:ring-4 focus:ring-purple-400 font-bold text-gray-800 text-2xl text-center mb-4 transition-colors placeholder:text-lg placeholder-gray-400" placeholder="最後一關，三行都要打"></textarea>
+                        <button onclick="checkLevel(5)" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95"><i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案</button>
+                        <p id="msg-level5" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center mt-16 pb-8 text-gray-400 text-sm font-medium">
+        <p><i class="fa-solid fa-rocket mr-1"></i> 新北市頂溪國小資訊課 - 小小探險家系列</p>
+    </footer>
+
+    <div id="lightbox" class="hidden fixed inset-0 z-[80] bg-black/85 p-4 items-center justify-center" onclick="closeLightbox()">
+        <button type="button" class="absolute top-4 right-4 h-12 w-12 rounded-full bg-white/90 text-slate-800 text-2xl" aria-label="關閉圖片">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <img id="lightbox-img" src="" alt="圖片放大" class="max-h-[88vh] max-w-[94vw] rounded-2xl border-4 border-white bg-white object-contain">
+    </div>
+
+    <script>
+        document.querySelectorAll(".section-toggle").forEach((button) => {
+            button.addEventListener("click", () => {
+                const targetId = button.dataset.target;
+                const target = document.getElementById(targetId);
+                if (!target) return;
+                const expanded = button.getAttribute("aria-expanded") !== "false";
+                button.setAttribute("aria-expanded", expanded ? "false" : "true");
+                target.classList.toggle("hidden", expanded);
+            });
+        });
+
+        function openLightbox(src) {
+            const box = document.getElementById("lightbox");
+            const image = document.getElementById("lightbox-img");
+            if (!box || !image) return;
+            image.src = src;
+            box.classList.remove("hidden");
+            box.classList.add("flex");
+        }
+
+        function closeLightbox() {
+            const box = document.getElementById("lightbox");
+            if (!box) return;
+            box.classList.add("hidden");
+            box.classList.remove("flex");
+        }
+    </script>
+
+    <script type="module">
+        import {
+            beginCentralizedLogin,
+            isTeacher,
+            resolveSession,
+            supabase
+        } from "../shared/auth.js";
+        import { initClassroomLinkControl } from "../shared/classroom-controls.js";
+        import { initNavbarAuth } from "../shared/navbar-auth.js";
+        import { initQuizModule } from "../shared/quiz-module.js";
+        import { initTypingChallenge } from "../shared/typing-challenge.js";
+        import { initTypingTools } from "../shared/typing-tools.js";
+
+        const WEEK_CODE = "16";
+        const QUIZ_KEY = "copyright_cc_quiz_1";
+        let currentSession = null;
+
+        const mapsMailLinkControl = initClassroomLinkControl({
+            supabase,
+            isTeacher,
+            grade: "grade3",
+            weekCode: WEEK_CODE,
+            controlKey: "maps_mail_links",
+            container: "#maps-body",
+            linkSelector: ".maps-mail-link",
+            statusText: "#maps-mail-links-status",
+            statusIcon: "#maps-mail-links-status-icon",
+            refreshButton: "#maps-mail-refresh-btn",
+            teacherToggleButton: "#maps-mail-teacher-toggle",
+            messages: {
+                loading: "正在確認景點推薦任務連結狀態...",
+                refreshing: "正在更新景點推薦任務連結狀態...",
+                open: "任務連結已開放，可以用新分頁開始景點推薦信。",
+                locked: "任務連結尚未開放，請先聽老師示範資訊素養與寄信步驟。",
+                blockedClick: "老師還沒開放景點推薦任務連結，請先完成目前任務。",
+                loadError: "讀取景點推薦任務連結狀態失敗，請稍後再按一次更新。",
+                teacherOnly: "只有老師登入後可以開關景點推薦任務連結。",
+                opening: "正在開放景點推薦任務連結...",
+                closing: "正在關閉景點推薦任務連結...",
+                toggleError: (error) => {
+                    const parts = [error?.message, error?.code].filter(Boolean);
+                    return `開關景點推薦任務連結失敗：${parts.length ? parts.join(" / ") : "unknown error"}`;
+                }
+            },
+            toggleButtonHtml: {
+                open: '<i class="fa-solid fa-lock"></i><span>關閉任務連結</span>',
+                locked: '<i class="fa-solid fa-lock-open"></i><span>開放任務連結</span>'
+            }
+        });
+
+        initNavbarAuth({ onSessionResolved: handlePageSessionResolved });
+        initTypingTools();
+
+        function handlePageSessionResolved(session) {
+            currentSession = session;
+            mapsMailLinkControl.handleSession(session);
+        }
+        mapsMailLinkControl.load();
+
+        const quizQuestions = [
+            {
+                id: 1,
+                questionHtml: "小安在網路上找到一張很漂亮的照片，想放到自己的作業封面。最合適的第一步是什麼？",
+                options: [
+                    { text: "A. 先看照片來源、作者和授權規定，再決定能不能使用", correct: true },
+                    { text: "B. 只要照片很漂亮，就可以直接當成自己的封面", correct: false },
+                    { text: "C. 把照片裁小一點，別人就不會知道是從網路來的", correct: false },
+                    { text: "D. 先下載到電腦，之後想怎麼用都可以", correct: false }
+                ]
+            },
+            {
+                id: 2,
+                questionHtml: "哪一個說法最符合「網路認知智慧」？",
+                options: [
+                    { text: "A. 能在 Google 找到的圖片，一定都是免費、自由使用", correct: false },
+                    { text: "B. 網路作品通常有創作者，使用前要尊重授權和規定", correct: true },
+                    { text: "C. 只要不是拿去賣，就一定可以把別人的作品改成自己的", correct: false },
+                    { text: "D. 只有影片需要注意授權，圖片和音樂不用注意", correct: false }
+                ]
+            },
+            {
+                id: 3,
+                questionHtml: "小美看到一張圖片有 CC 授權圖示，她應該怎麼想？",
+                options: [
+                    { text: "A. 有 CC 就代表完全沒有規定，可以刪掉作者名字", correct: false },
+                    { text: "B. 有 CC 代表作者提供使用規則，要看清楚條件再使用", correct: true },
+                    { text: "C. 有 CC 代表只能老師使用，學生一定不能用", correct: false },
+                    { text: "D. 有 CC 代表圖片一定比較漂亮，所以可以優先下載", correct: false }
+                ]
+            },
+            {
+                id: 4,
+                questionHtml: "小杰想把網路上找到的音樂加到自己的影片，然後傳給全班看。哪一個做法比較安全？",
+                options: [
+                    { text: "A. 先確認音樂授權是否允許使用，必要時標示來源或改用可授權素材", correct: true },
+                    { text: "B. 只要影片是作業，不管音樂來源都可以直接加進去", correct: false },
+                    { text: "C. 把音樂剪短成 10 秒，就不需要管作者或授權", correct: false },
+                    { text: "D. 用很小聲播放，別人聽不清楚就不算使用", correct: false }
+                ]
+            },
+            {
+                id: 5,
+                questionHtml: "本週要寄出 Google Maps 景點截圖。哪一個做法最符合今天的資訊素養提醒？",
+                options: [
+                    { text: "A. 截自己在 Google Maps 操作後看到的公共景點畫面，信中說明這是自己的推薦", correct: true },
+                    { text: "B. 搜尋別人拍的景點照片，直接貼到信裡並說是自己拍的", correct: false },
+                    { text: "C. 截出自己家門口的位置，寄給同學讓大家知道住在哪裡", correct: false },
+                    { text: "D. 看到圖片上有作者名字時，把名字塗掉再寄出", correct: false }
+                ]
+            }
+        ];
+
+        function signInWithGoogle() {
+            beginCentralizedLogin({ returnTo: window.location.href });
+        }
+
+        async function handleQuizAuthUpdate(session) {
+            currentSession = session;
+            await quiz.handleAuthChange(session);
+        }
+
+        async function getQuizUser() {
+            if (currentSession?.user) return currentSession.user;
+            currentSession = await resolveSession();
+            await handleQuizAuthUpdate(currentSession);
+            return currentSession?.user ?? null;
+        }
+
+        async function loadQuizProgress() {
+            if (!currentSession?.user) return null;
+            const { data, error } = await supabase
+                .from("student_progress")
+                .select("completed, score")
+                .eq("user_id", currentSession.user.id)
+                .eq("week_code", WEEK_CODE)
+                .eq("activity_key", QUIZ_KEY)
+                .maybeSingle();
+            if (error || !data?.completed) return null;
+            return { completed: true, score: data.score };
+        }
+
+        async function saveQuizProgress(score) {
+            const user = await getQuizUser();
+            if (!user) return false;
+            const payload = {
+                user_id: user.id,
+                week_code: WEEK_CODE,
+                activity_key: QUIZ_KEY,
+                current_level: quizQuestions.length,
+                completed: true,
+                score,
+                updated_at: new Date().toISOString()
+            };
+            const { error } = await supabase
+                .from("student_progress")
+                .upsert(payload, { onConflict: "user_id,week_code,activity_key" });
+            return !error;
+        }
+
+        const quiz = initQuizModule({
+            questions: quizQuestions,
+            selectors: {
+                lock: "quiz-lock",
+                content: "quiz-content",
+                container: "quiz-container",
+                statusBanner: "quiz-status-banner",
+                statusText: "quiz-status-text"
+            },
+            messages: {
+                questionLabel: (index) => `第 ${index} 題`,
+                submitButton: "送出測驗",
+                submittedButton: "已完成",
+                unansweredAlert: (remaining) => `還有 ${remaining} 題還沒選，請先全部作答。`,
+                scoreLabel: (correct, total) => `答對：${correct} / ${total} 題`,
+                completedBanner: (score, total) => `你已完成網路作品與 CC 授權小測驗，分數：${score ?? "?"} / ${total} 題。`,
+                unauthenticated: "登入 Google 後，才能開始資訊素養小測驗。",
+                saveError: "測驗結果暫時沒有記錄成功，請不要關掉頁面，稍後再按一次送出測驗。",
+                resultMessages: {
+                    perfect: ["尊重作者小達人", "你知道看來源、看授權，也記得不確定就問老師。"],
+                    great: ["很接近", "再記得有 CC 也要看條件，不能想怎麼用就怎麼用。"],
+                    good: ["有進步", "把「先看來源、認識作者、檢查授權」再複習一次會更穩。"],
+                    retry: ["再試試", "看得到不等於可以隨便用，網路作品也需要尊重作者和規則。"]
+                }
+            },
+            loadProgress: loadQuizProgress,
+            saveProgress: saveQuizProgress,
+            getCurrentUser: getQuizUser,
+            onRequireLogin: signInWithGoogle,
+            onAfterSubmit: async ({ correct, total }) => {
+                if (correct === total) {
+                    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                }
+                document.getElementById("quiz-status-banner")?.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        });
+
+        window.selectOption = function selectOption(qId, btnEl) {
+            quiz.selectOption(qId, btnEl);
+        };
+        window.submitQuiz = async function submitQuiz() {
+            await quiz.submit();
+        };
+        document.getElementById("quiz-login-btn")?.addEventListener("click", signInWithGoogle);
+        supabase.auth.onAuthStateChange((event, session) => {
+            const previousUserId = currentSession?.user?.id || null;
+            const nextUserId = session?.user?.id || null;
+            handlePageSessionResolved(session);
+            if (event === "SIGNED_OUT" || previousUserId !== nextUserId) {
+                handleQuizAuthUpdate(session);
+            }
+        });
+        resolveSession().then(handleQuizAuthUpdate);
+
+        const levelsData = [
+            { id: 1, ans: "I am a cook." },
+            { id: 2, ans: "鼠鹿在河邊遇到了老虎。" },
+            { id: 3, ans: "Is he a teacher?\nNo, he's not." },
+            { id: 4, ans: "只有冷靜想辦法，\n才可以化解危機。" },
+            { id: 5, ans: "聰明的鼠鹿跑得遠遠的。\nAre you a doctor?\nNo, I'm not." }
+        ];
+
+        const levelMsg = {
+            1: "你先用短句把手感找回來，願意重新開始也是一種穩定的練習策略。",
+            2: "你把中文句子和句號一起完成，代表你有慢慢看清楚題目。",
+            3: "你把英文問句和回答分行檢查，這是在練習格式，也是在練習耐心。",
+            4: "這一關有中文換行和逗號，你能停下來對照，修正能力正在累積。",
+            5: "你完成了中文、英文和標點的切換，靠的是一步一步檢查，不是和別人比速度。"
+        };
+
+        function buildHint(userVal, targetVal, levelIndex) {
+            const userLines = userVal.split("\n");
+            const targetLines = targetVal.split("\n");
+            const maxLines = Math.max(userLines.length, targetLines.length);
+
+            for (let lineIndex = 0; lineIndex < maxLines; lineIndex += 1) {
+                const userLine = userLines[lineIndex] || "";
+                const targetLine = targetLines[lineIndex] || "";
+
+                if (userLine === targetLine) continue;
+                if (!userLine && targetLine) {
+                    return `提示：第 ${lineIndex + 1} 行還沒完成，看看是不是少了整行內容。`;
+                }
+                if (userLine && !targetLine) {
+                    return `提示：第 ${lineIndex + 1} 行多打了內容，檢查一下句尾。`;
+                }
+
+                const maxChars = Math.max(userLine.length, targetLine.length);
+                for (let charIndex = 0; charIndex < maxChars; charIndex += 1) {
+                    const userChar = userLine[charIndex];
+                    const targetChar = targetLine[charIndex];
+
+                    if (userChar === targetChar) continue;
+                    if (!userChar) {
+                        return `提示：第 ${lineIndex + 1} 行後面可能少字，從「${targetLine.slice(Math.max(0, charIndex - 2), charIndex + 3)}」附近再看一次。`;
+                    }
+                    if (!targetChar) {
+                        return `提示：第 ${lineIndex + 1} 行後面可能多打了，檢查一下句尾。`;
+                    }
+                    return `提示：第 ${lineIndex + 1} 行第 ${charIndex + 1} 個字附近不一樣，從「${targetLine.slice(Math.max(0, charIndex - 2), charIndex + 3)}」附近再看一次。`;
+                }
+            }
+
+            return levelIndex === 1 || levelIndex === 3 || levelIndex === 5
+                ? "提示：再檢查一下大小寫、問號、句點、逗號、縮寫符號或換行。"
+                : "提示：再檢查一下是不是多字、少字、標點或換行不同。";
+        }
+
+        initTypingChallenge({
+            weekCode: WEEK_CODE,
+            activityKey: "typing_task_5",
+            levelsData,
+            levelEncouragements: levelMsg,
+            buildHint,
+            getWrongAnswerHtml: ({ hint }) => `還差一點點。${hint}`,
+            progressMessages: {
+                completed: "5 關全部完成，今天的中英打闖關已經完成。",
+                resumed: (level) => `已接回 Week 16 打字進度，從第 ${level} 關繼續。`,
+                firstLogin: "已登入成功，這次的打字進度會自動記錄下來。",
+                unauthenticated: "請先登入 Google，才能開始打字闖關並記錄進度。",
+                saveCompleted: "已記下 5 關完整進度，今天的打字任務完成。",
+                saveNextLevel: (level) => `已記下進度，下次從第 ${level} 關繼續。`,
+                saveError: "進度暫時沒有記錄成功，請稍後再試一次。",
+                resetNoSession: "目前沒有登入，不能重新開始練習。",
+                resetConfirm: "要重新開始 Week 16 打字練習嗎？這會把目前進度重設回第 1 關。"
+            },
+            celebrationContent: {
+                title: "魔王關完成",
+                message: "這一朵花是你一步一步練出來的。你願意檢查、修正，再試一次，努力樹又多了一份自己的累積。",
+                buttonText: "去看我的努力樹",
+                buttonHref: "/my-tree.html"
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,12 +1,71 @@
 # Skill: chat-mode
 
-Codex skill file for bounded agent-to-agent collaboration.
-
-Full protocol: `docs/development/chat-mode-skill.md`
+Use this skill when the user asks two coding agents, such as Codex and Claude Code, to collaborate for a bounded number of turns or a bounded time window. The protocol is meant to let either agent start the collaboration; it is not meant to make the current agent invoke a second CLI copy of itself.
 
 ---
 
 ## Quick Reference
+
+### Trigger Decision
+
+When the user says `chat-mode`, `暢聊模式`, or asks for a bounded Codex/Claude multi-round session, this is a request to run the chat-mode protocol, not just smoke tests.
+
+If `tools/chat-mode-run.ps1` exists, use it only when a fully detached orchestrated session is explicitly desired or when the current agent is acting as an external orchestrator rather than as one of the participants. Smoke tests are only verification helpers and are not a substitute for a chat-mode session.
+
+### Self-Invocation Rule
+
+Do not invoke a CLI copy of the current agent merely to create that agent's chat-mode turn.
+
+Examples:
+
+- If Codex is already active and has completed the Codex-side analysis, do not run a runner session that starts with `codex`; write/summarize Codex's side directly, then invoke Claude only if a second opinion is needed.
+- If Claude is already active and has completed the Claude-side analysis, do not run a runner session that starts with `claude`; write/summarize Claude's side directly, then invoke Codex only if needed.
+- Use the full runner with both workers only when the user explicitly asks for a detached replayable transcript from both CLIs, or when the initiating process is not itself one of the participating agents.
+
+### Host Repo Selection
+
+Before checking `.chat-mode/config.json`, reading state, or starting a new session, resolve the host repo root that owns the runner:
+
+1. If the user gives a path, `cd` to that path when it contains `tools/chat-mode-run.ps1`.
+2. Otherwise, use the current working directory only if it contains `tools/chat-mode-run.ps1`.
+3. If the current directory does not contain the runner, search one directory level down for `*/tools/chat-mode-run.ps1`; if exactly one match exists, `cd` to that directory.
+4. If no runner or multiple runners are found, stop and ask which repo to use.
+
+Do not inspect or reuse a parent repo's `.chat-mode` directory unless that same repo also contains the runner.
+
+### Runner Mode: Detached And Fully Automated
+
+If the host project contains `tools/chat-mode-run.ps1` and the user asks for detached CLI orchestration, or the current process is not one of the participating agents, use the runner:
+
+```powershell
+pwsh -NoProfile -File .\tools\chat-mode-run.ps1 `
+  -NewSession `
+  -Topic "<task>" `
+  -TaskSummary "<ascii-task-summary>" `
+  -MaxTurns 4 `
+  -FirstMover codex
+```
+
+The runner invokes worker CLIs as subprocesses, writes the transcript, and updates state. It is appropriate for a fresh, reproducible two-agent transcript, but it can be wasteful when one participating agent is already doing the work in the current chat.
+
+In runner mode:
+
+- Do not generate or print a mirrored prompt for the user to copy.
+- Do not ask the user to switch to Codex or Claude.
+- Do not use ScheduleWakeup or manual polling.
+- Do not simulate the other agent's rounds.
+- Do not replace the runner with `tests/smoke.ps1` or `tests/run-smoke.ps1`.
+- If the user says "you start" / `你先開始` and the current agent is a participant, write the current agent's first round directly instead of spawning the same agent CLI. Then hand off to or invoke the other agent according to the chosen mode.
+
+If `.chat-mode/config.json` is missing, run `tools/chat-mode-setup.ps1` from Codex first. If setup cannot be run from the current agent, stop and tell the user to start setup from Codex.
+
+If the runner fails, report the error and stop. Do not continue by roleplaying the missing worker output.
+
+On Windows, Codex worker calls may bypass sandbox even in review mode because Codex sandbox modes can block file inspection. The runner records `diff_stat_after` and `git status` after each worker call; inspect those results before recommending a commit or push.
+
+### Manual Fallback Only
+
+Use the rest of this document only when `tools/chat-mode-run.ps1` is unavailable or the user explicitly asks for manual file-backed handoff. It does not apply to runner mode.
 
 ### Priority Rule
 
@@ -14,82 +73,97 @@ In chat-mode, polling is the primary responsibility after each round.
 
 A round is not complete until:
 
-1. Round content is written to the session file at `session_file`
-2. `agent-sync-state.json` is updated
-3. ScheduleWakeup has been scheduled
-4. the first scheduled poll has actually executed
-5. state and session file have been re-read after that poll
+1. Round content is written to the session file at `session_file`.
+2. The shared state file is updated.
+3. ScheduleWakeup has been scheduled.
+4. The first scheduled poll has actually executed.
+5. The state file and session file have been re-read after that poll.
 
 Do not send a final or completion-style user message before step 4.
 If round content is written but polling has not started, the turn is still incomplete.
+
+### Default Layout
+
+The companion scripts default to this host-project layout:
+
+```text
+.chat-mode/
+  agent-sync-state.json
+  sessions/
+    YYYY-MM-DD-{slug}.md
+  wakeup-logs/
+```
+
+Scripts may override paths with `-StatePath`, `-SessionDir`, and `-LogDir`.
 
 ### Round Completion Checklist
 
 After writing round content, complete these steps in order before ending the response:
 
-1. Write round content to the session file at `session_file`, not to `agent-handoff.md`.
-2. Update `current_turn`, `current_agent`, `poll_interval_seconds`, `next_check_at`, and `updated_at` in `agent-sync-state.json`.
-3. Schedule ScheduleWakeup using the same interval as `poll_interval_seconds`. Always schedule it because the user is not present during chat-mode sessions.
+1. Write round content to the session file at `session_file`.
+2. Update `current_turn`, `current_agent`, `poll_interval_seconds`, `next_check_at`, and `updated_at` in the shared state file.
+3. Schedule ScheduleWakeup using the same interval as `poll_interval_seconds`.
 4. Announce in commentary: `Round written. State updated. Wakeup scheduled. Entering polling loop now.`
 5. If the turn limit has not been reached, start the polling retry loop and do not end the response before the first poll.
-6. Re-read `agent-sync-state.json` and the session file at `session_file` after the first poll.
+6. Re-read the shared state file and the session file at `session_file` after the first poll.
 7. If the turn limit has been reached, set `status=done`, `current_agent=user`, and `stop_reason=turn_limit_reached`.
 
 Skipping any step means the other agent cannot proceed autonomously.
 
 ---
 
-### Activation Checklist
+## Manual Activation Checklist
 
 Activation must show the mirrored prompt before any long-running work, then continue the session in the same response when the receiving agent is the first mover. This lets the user copy the prompt immediately without delaying round 1.
 
-**Immediate prompt and setup:**
+### Immediate Prompt And Setup
 
 - [ ] Parse: mode, turn/time limit, first mover, topic.
 - [ ] Generate the mirrored start line and display it to the user before writing round content.
-- [ ] Write `agent-sync-state.json` with `status: in_progress`, `current_turn: 0`, and `current_agent` set to the first mover.
-- [ ] Create the session file skeleton at `docs/development/sessions/YYYY-MM-DD-{slug}.md`.
+- [ ] Write the shared state file with `status: in_progress`, `current_turn: 0`, and `current_agent` set to the first mover.
+- [ ] Create the session file skeleton.
+- [ ] Treat setup as bootstrap only; do not imply round 1 exists until it is present in the session file.
 
-**If this agent is the first mover, continue immediately in the same response:**
+### If This Agent Is The First Mover
 
-- [ ] Re-read `agent-sync-state.json` to confirm `current_agent` is still self.
+- [ ] Re-read the shared state file to confirm `current_agent` is still self.
 - [ ] Write round 1 content to the session file.
+- [ ] Choose the next polling interval based on the next agent's expected work.
 - [ ] Update `current_turn`, `current_agent`, `poll_interval_seconds`, `next_check_at`, and `updated_at` in state.
-- [ ] Schedule ScheduleWakeup for the next polling interval.
+- [ ] Schedule ScheduleWakeup using the same interval as `poll_interval_seconds`.
 - [ ] Announce: `Round 1 written. State updated. Wakeup scheduled. Entering polling loop now.`
 - [ ] Enter the polling retry loop.
 
-If this agent is not the first mover, end after prompt/setup. The other agent writes round 1 after receiving the mirrored prompt.
+If this agent is not the first mover, end after prompt/setup. Do not write round 1 on behalf of the first mover. If a local wakeup mechanism is available, schedule a passive recheck so this agent can resume after the first mover updates state; the passive recheck must only read state/session and must not create round content until `current_agent` is self.
 
 Do not proceed if any step cannot be completed.
 
 ---
 
-### Mirrored-Start Rule
+## Manual Mirrored-Start Rule
 
-When the user starts a session with Codex, generate a copy-ready message for Claude Code.
+When the user starts a session with one agent, generate a copy-ready message for the other agent.
 
 - Preserve the original first mover.
 - Mirror only the addressee and agent names.
-- Keep the chat-mode trigger phrase verbatim; without it, the other agent may not recognize the request as chat-mode.
+- Keep the user's chat-mode trigger phrase verbatim when one is provided.
 - Wrap the message in a code block so it is copy-pasteable.
+- Display the mirrored prompt before writing round content.
 
-If Codex is the first mover, display the mirrored prompt first, then continue in the same response to write round 1 and start polling. Do not make the user wait for round 1 before seeing the mirrored prompt.
+If the receiving agent is the first mover, display the mirrored prompt first, then continue in the same response to write round 1 and start polling.
 
 ---
 
-### State File
+## State File
 
-`docs/development/agent-sync-state.json`
-
-Write on session start:
+The companion starter writes a JSON file like this:
 
 ```json
 {
   "current_agent": "codex | claude | user",
   "status": "waiting | in_progress | done | interrupted",
   "task": "English one-line task summary",
-  "session_file": "docs/development/sessions/YYYY-MM-DD-slug.md",
+  "session_file": ".chat-mode/sessions/YYYY-MM-DD-slug.md",
   "conversation_mode": "turn-based | timed | hybrid",
   "limit_minutes": null,
   "max_turns": 4,
@@ -99,18 +173,18 @@ Write on session start:
   "last_checked_at": "YYYY-MM-DDTHH:MM:SS+08:00",
   "started_at": "YYYY-MM-DDTHH:MM:SS+08:00",
   "stop_reason": null,
-  "updated_by": "codex",
+  "updated_by": "codex | claude",
   "updated_at": "YYYY-MM-DDTHH:MM:SS+08:00"
 }
 ```
 
-Keep all values in English / ASCII. Chinese belongs in markdown prose only.
+Keep all machine-oriented JSON values in English / ASCII. Put user-facing prose in the session markdown file.
 
 ---
 
-### Polling Defaults
+## Polling Defaults
 
-Choose interval based on what the next agent is expected to do:
+Choose the interval based on what the next agent is expected to do:
 
 | Next task type | Interval | Max retries | Total wait |
 | --- | --- | --- | --- |
@@ -125,10 +199,10 @@ After completing a turn, run this retry loop:
 3. Schedule ScheduleWakeup using that same interval.
 4. Announce that the wakeup is scheduled and polling is starting.
 5. Wait the interval in-turn; do not end the response before polling.
-6. Re-read `agent-sync-state.json` and the session file at `session_file`.
-7. If `current_agent == codex`, it is Codex's turn to act. Respond and close if the turn limit has been reached.
-8. If `current_agent != codex` and retry < max, increment retry and continue polling.
-9. If retry == max, set `status=interrupted`, `stop_reason=codex_timeout`, and `current_agent=user`.
+6. Re-read the state file and the session file at `session_file`.
+7. If `current_agent == self`, act on the session and close if the turn limit has been reached.
+8. If `current_agent != self` and retry < max, increment retry and continue polling.
+9. If retry == max, set `status=interrupted`, `stop_reason={agent}_timeout`, and `current_agent=user`.
 
 Do not stop after one wait. Repeat until ownership changes or retries are exhausted.
 Do not treat "round content written" as the turn boundary. Polling is the real turn boundary.
@@ -137,12 +211,12 @@ Wakeup interval must match `poll_interval_seconds`; do not use an independent ti
 Wakeup prompt pattern:
 
 ```text
-[Retry N/MAX, Xs] Read state, then open session_file. If my turn, respond. If not my turn and retry < max, wait Xs and recheck. Else timeout.
+[Retry N/MAX, Xs] Read the shared state file, then open session_file. If my turn, respond. If not my turn and retry < max, wait Xs and recheck. Else timeout.
 ```
 
 ---
 
-### End State
+## End State
 
 When the turn limit, time limit, or manual stop is reached:
 
@@ -158,15 +232,16 @@ Always reset `current_agent` to `user` when closing.
 
 ---
 
-### Known Failure Modes
+## Known Failure Modes
 
 1. **Mirrored start accidentally changes first mover** - check that the mirrored message names the same first mover as the original.
-2. **Single wait instead of retry loop** - waiting once and reporting back to the user is not enough.
-3. **Chinese in state JSON values** - keep task and all state fields in English / ASCII.
-4. **Session closes without resetting current_agent to user** - always set `current_agent: user` on close.
-5. **Polling before other agent finishes** - read the session file to confirm what was done before acting.
-6. **Mistaking content completion for turn completion** - if the first poll has not run, the turn is not complete.
-7. **`session_file` missing or unreadable** - stop and report; do not fall back to `agent-handoff.md`.
-8. **`current_turn` in state does not match round count in session file** - report mismatch and pause for resolution; do not auto-repair.
-9. **`updated_at` is stale (>30 min) and status is `in_progress`** - surface a warning before writing anything; do not treat as an automatic stop.
-10. **ScheduleWakeup fires but expected round is absent from session file** - re-read state and session file. If `current_turn` is N but the session file does not contain a completed Round N, do not infer, continue, or repair; report the mismatch and pause for resolution.
+2. **Mirrored start claims round 1 exists before it is written** - bootstrap only creates state and session files; the current agent must verify the session before continuing.
+3. **Single wait instead of retry loop** - waiting once and reporting back to the user is not enough.
+4. **Non-ASCII state JSON values** - keep task and all state fields in English / ASCII.
+5. **Session closes without resetting current_agent to user** - always set `current_agent: user` on close.
+6. **Polling before other agent finishes** - read the session file to confirm what was done before acting.
+7. **Mistaking content completion for turn completion** - if the first poll has not run, the turn is not complete.
+8. **`session_file` missing or unreadable** - stop and report; do not fall back to another file.
+9. **`current_turn` in state does not match round count in session file** - report mismatch and pause for resolution; do not auto-repair.
+10. **`updated_at` is stale and status is `in_progress`** - if `updated_at` is more than 30 minutes old, surface a warning before writing anything; do not treat it as an automatic stop.
+11. **ScheduleWakeup fires but expected round is absent from session file** - if `current_turn` is N but the session file does not contain a completed Round N, do not infer, continue, or repair; report the mismatch and pause for resolution.

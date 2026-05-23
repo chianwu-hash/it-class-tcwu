@@ -1,0 +1,52 @@
+Create a polished 16:9 educational infographic for Taiwanese elementary grade 3 students.
+
+Topic:
+CC 授權是什麼？
+
+Main message:
+CC 授權不是「完全隨便用」，而是作者先告訴大家可以怎麼使用作品。
+
+Required visible Traditional Chinese text:
+- CC 授權是作者給大家的使用規則
+- 先看來源
+- 看清楚圖示
+- 遵守使用條件
+- 不確定就問老師
+- 可使用，不等於想怎麼用都可以
+- 標示作者
+- 不亂修改
+- 不拿去賣
+- 相同方式分享
+
+Text accuracy requirement:
+- All Traditional Chinese text must be proofread and correct.
+- Use the exact phrase 「可使用，不等於想怎麼用都可以」.
+- Use the exact phrase 「CC 授權是作者給大家的使用規則」.
+- If any Chinese word is uncertain, omit that small label instead of inventing text.
+- Do not invent official-looking Creative Commons logos. Use simple classroom-safe icon metaphors instead.
+
+Visual direction:
+- Bright, friendly, classroom-safe infographic style for Taiwanese grade 3 students.
+- Use a clean 1920x1080 horizontal layout with one large title and four clear content blocks.
+- Show a child choosing a picture for homework while checking a rule card beside the image.
+- Use simple icon metaphors:
+  1. 人像或名牌 = 標示作者
+  2. 鉛筆加禁止符號 = 不亂修改
+  3. 錢幣加禁止符號 = 不拿去賣
+  4. 分享箭頭 = 相同方式分享
+- Include a small checklist flow: 先看來源 -> 看清楚圖示 -> 遵守條件 -> 不確定就問老師.
+- Make the mood supportive and practical, not scary, not legalistic, not adult-like.
+
+Content blocks:
+1. 什麼是 CC：作者先說明作品可以怎麼被使用。
+2. 要看條件：有些要標示作者，有些不能修改，有些不能拿去賣。
+3. 使用前檢查：先看來源、圖示和文字說明。
+4. 不確定怎麼辦：問老師或改用自己創作的圖片。
+
+Design rules:
+- Large readable Traditional Chinese text.
+- Keep text short; no long paragraphs.
+- Use clear icons and simple illustrations suitable for grade 3.
+- Use warm colors with good contrast, not a single-color palette.
+- Avoid tiny legal text, real website screenshots, brand logos, or complex license tables.
+- Avoid dark mood, punishment scenes, court imagery, police imagery, or scary copyright warnings.

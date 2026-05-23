@@ -4,6 +4,13 @@ This file defines the shared chat-mode protocol for Codex and Claude Code.
 
 The goal is to let two agents collaborate through `agent-sync-state.json` and a per-session markdown file without asking the user to manually relay every step.
 
+Important intent:
+
+- Chat mode lets either Codex or Claude Code start a bounded collaboration.
+- It does not require the active agent to invoke a CLI copy of itself.
+- If the active agent is already one participant in the discussion, that agent should write or summarize its own round directly, then hand off to the other agent or invoke only the other agent's CLI when needed.
+- A full runner session that invokes both CLIs is for detached orchestration or explicit replayable two-worker runs, not the default way for an active participant to ask for the other agent's opinion.
+
 ## Priority Rule
 
 In chat-mode, polling is the primary responsibility after each round.
@@ -35,6 +42,23 @@ Before starting a chat-mode session:
 If this agent is not the first mover, end after prompt/setup. The other agent writes round 1 after receiving the mirrored prompt.
 
 Do not proceed if any step cannot be completed.
+
+## Activation Mode Selection
+
+Use the mode that matches who is starting the work:
+
+1. **Active participant mode**
+   - Use when the current chat is already Codex or Claude and that agent is participating in the discussion.
+   - The active agent writes its own round directly.
+   - The active agent must not invoke its own CLI just to create a second copy of itself.
+   - If a second opinion is needed, invoke or hand off only to the other agent.
+
+2. **Detached runner mode**
+   - Use when the user explicitly wants a fully automated transcript from both CLIs, or when the process starting chat-mode is not one of the participating agents.
+   - The runner may invoke both Codex and Claude worker CLIs.
+   - The session file should make clear that the output came from worker subprocesses.
+
+Example: if Codex has just implemented a page and the user asks to discuss it with Claude CLI, Codex should not run a session that invokes `codex` first. Codex should record/summarize its own review context, then ask Claude CLI to review that context.
 
 ## 1. Purpose
 

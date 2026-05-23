@@ -59,7 +59,7 @@
 ## 4. 後台可見性
 
 - [ ] 有進度記錄 → 確認 `admin-progress.html` 能看到此頁進度（weekCode + activityKey 正確）
-- [ ] 有測驗 / 小測驗 → 使用 `shared/quiz-module.js` 或既有 quiz adapter，未登入時顯示登入鎖定區，不可手寫未登入可作答的前端 quiz
+- [ ] 有測驗 / 小測驗 → 使用 `shared/quiz-module.js` 或既有 quiz adapter，未登入時顯示登入鎖定區，不可手寫未登入可作答的前端 quiz；頁面端可提供 `loadProgress` / `saveProgress` adapter 寫入 `student_progress`，但不可重寫題目 UI、評分或登入鎖定流程
 - [ ] 有測驗 / 小測驗 → 完成後需寫入 `student_progress`；若教案明確要求純口頭活動，必須只做靜態文字，不做可點選作答 UI
 - [ ] 測試方式：用教師帳號登入後台，確認此週此活動出現在清單中
 - [ ] **此頁無進度記錄** → 標記 N/A
