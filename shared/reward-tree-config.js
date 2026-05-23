@@ -119,6 +119,21 @@ export const REWARD_TREE_ACTIVITIES = [
         activityKey: "screen_time_quiz_1",
         pageHref: "/grade3/week15.html",
         label: "第 15 週 上網時間表測驗"
+    },
+    {
+        type: "typing",
+        weekCode: "16",
+        activityKey: "typing_task_5",
+        totalLevels: 5,
+        pageHref: "/grade3/week16.html",
+        label: "第 16 週 打字闖關"
+    },
+    {
+        type: "quiz",
+        weekCode: "16",
+        activityKey: "copyright_cc_quiz_1",
+        pageHref: "/grade3/week16.html",
+        label: "第 16 週 網路作品與 CC 授權測驗"
     }
 ];
 

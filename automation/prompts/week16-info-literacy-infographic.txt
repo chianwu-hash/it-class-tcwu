@@ -1,0 +1,44 @@
+Create a polished 16:9 educational infographic for Taiwanese elementary grade 3 students.
+
+Topic:
+網路作品要尊重作者
+
+Main message:
+網路上的圖片、音樂、影片和文字作品也有人創作；看得到、下載得到，不代表可以隨便使用。
+
+Required visible Traditional Chinese text:
+- 網路作品要尊重作者
+- 看得到，不等於可以隨便用
+- 先看來源
+- 認識作者
+- 檢查授權
+- 不確定就問老師
+- 自己創作最安心
+- 圖片、音樂、影片、文字都有作者
+
+Text accuracy requirement:
+- All Traditional Chinese text must be proofread and correct.
+- Use the exact phrase 「看得到，不等於可以隨便用」.
+- Use the exact phrase 「圖片、音樂、影片、文字都有作者」.
+- If any Chinese word is uncertain, omit that small label instead of inventing text.
+
+Visual direction:
+- Bright, friendly, classroom-safe infographic style for Taiwanese grade 3 students.
+- Use a clean 1920x1080 horizontal layout with one large title and four clear content blocks.
+- Show elementary students doing homework on a computer, pausing before using an online picture, and checking a simple source/license card.
+- Include simple visual symbols: picture, music note, play button, document, author name tag, checklist, teacher question bubble.
+- Make the mood supportive and practical, not scary, not blaming, not legalistic.
+
+Content blocks:
+1. 網路作品也有人創作：圖片、音樂、影片、文字都有作者。
+2. 不能只因為找得到就使用：下載得到不代表可以當成自己的。
+3. 使用前先檢查：來源、作者、授權或使用規則。
+4. 不確定時怎麼辦：問老師、找可授權素材，或改用自己創作的內容。
+
+Design rules:
+- Large readable Traditional Chinese text.
+- Keep text short; no long paragraphs.
+- Use clear icons and simple illustrations suitable for grade 3.
+- Use warm colors with good contrast, not a single-color palette.
+- Avoid tiny legal text, real website screenshots, brand logos, court imagery, police imagery, or scary warning scenes.
+- Do not draw official-looking Creative Commons logos in this overview image; leave detailed CC symbols for a separate CC infographic.

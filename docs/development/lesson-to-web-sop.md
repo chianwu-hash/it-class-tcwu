@@ -321,7 +321,39 @@ npm.cmd run notebooklm:page-refs -- --input C:\Users\user\projects\it-class-tcwu
 - 藍綠邊框與柔和陰影
 - 適合教室投影
 
-### 7.3 生圖：Gemini 或 ChatGPT
+### 7.3 生圖：預設使用網頁 ChatGPT + CDP wrapper
+
+課程資訊圖卡、案例卡、投影圖預設使用「網頁 ChatGPT + CDP wrapper 生圖」，也就是 `npm.cmd run chatgpt:image-batch`。不要使用 Codex 內建 ImageGen。原因是內建 ImageGen 會在對話中消耗大量 token，且不會自然留下本專案需要的 prompt file、metadata、下載檔、壓圖與 Cloudinary 流程紀錄；CDP wrapper 則能穩定接上這些正式資產流程。
+
+ChatGPT 生圖先讀：
+
+- `skills/chatgpt-image-workflow/SKILL.md`
+
+ChatGPT 優先方式：
+
+1. 啟動或確認已存在支援 CDP 的 Chrome，預設使用 `http://127.0.0.1:9333`。
+2. 在該 Chrome 開啟 `https://chatgpt.com/`，確認是登入後畫面，例如有聊天歷程、專案、圖庫或輸入框。
+3. 將提示詞寫成 UTF-8 prompt file。
+4. 執行 `npm.cmd run chatgpt:image-batch` 送出 prompt、等待生圖、下載圖片並寫出 metadata。
+5. 確認 metadata 與實際圖片檔後，再接 WebP 壓圖與 Cloudinary 流程。
+
+CDP batch wrapper 指令：
+
+```powershell
+npm.cmd run chatgpt:image-batch -- --cdp-url http://127.0.0.1:9333 --prompt-file automation/prompts/week12-safety-card.txt --count 1 --min-images 1 --output-dir grade3/images/week12 --output-prefix week12-safety-card --meta automation/output/week12-safety-card.json
+```
+
+固定規則：
+
+- 中文提示詞一律先存成 UTF-8 檔案
+- 不要用 PowerShell inline / here-string 直接塞中文 prompt
+- ChatGPT 若非刻意延續對話，也不要沿用舊對話脈絡；只有需要上下文連續時才使用 `--reuse-chat`
+- 生圖後要確認 metadata 與實際圖片檔，再進入壓圖與 Cloudinary 流程
+- 需確認 `--cdp-url` 指向已登入 ChatGPT 的 Chrome；若 `9333` 未啟動，先開 CDP Chrome，不要改用內建 ImageGen
+- Codex Chrome 擴充套件只作為 CDP 不可用時的臨時備援或人工檢查；若需要可靠下載與 metadata，回到 CDP wrapper 重跑
+- 若使用者明確指定「用內建 ImageGen」，或 ChatGPT / Gemini 瀏覽器流程不可用且使用者同意，才可例外使用內建 ImageGen；例外產物仍需進入同一套 WebP / Cloudinary 正式資產流程
+
+Gemini 是備援工具，不是課程資訊圖卡的預設首選。
 
 Gemini 已驗證工具：
 
@@ -333,23 +365,9 @@ Gemini 使用方式：
 npm.cmd run gemini:generate-image -- --prompt-file C:\Users\user\projects\tmp\week11-gemini-prompt.txt --out-dir C:\Users\user\projects\tmp --output-name week11-infographic-source.png
 ```
 
-ChatGPT 生圖先讀：
-
-- `skills/chatgpt-image-workflow/SKILL.md`
-
-ChatGPT 使用方式：
-
-```powershell
-npm.cmd run chatgpt:image-batch -- --cdp-url http://127.0.0.1:9333 --prompt-file automation/prompts/week12-safety-card.txt --count 1 --min-images 1 --output-dir grade3/images/week12 --output-prefix week12-safety-card --meta automation/output/week12-safety-card.json
-```
-
 注意：
 
-- 生圖前先切到 Gemini 的「新對話」，不要沿用舊對話脈絡，避免上一張圖卡或其他任務內容殘留，導致生錯主題
-- ChatGPT 若非刻意延續對話，也不要沿用舊對話脈絡；只有需要上下文連續時才使用 `--reuse-chat`
-- 中文提示詞一律先存成 UTF-8 檔案
-- 不要用 PowerShell inline / here-string 直接塞中文 prompt
-- 生圖後要確認 metadata 與實際圖片檔，再進入壓圖與 Cloudinary 流程
+- 使用 Gemini 前先切到 Gemini 的「新對話」，不要沿用舊對話脈絡，避免上一張圖卡或其他任務內容殘留，導致生錯主題
 
 ### 7.4 圖卡資產落點
 

@@ -155,6 +155,8 @@
 
 **匯出**：`initQuizModule({ questions, selectors, messages, loadProgress, saveProgress, getCurrentUser, onRequireLogin, onAfterSubmit })`
 
+**Adapter 規則**：`quiz-module.js` 負責 UI 與評分流程，頁面可提供 `loadProgress` / `saveProgress` / `getCurrentUser` adapter 讀寫 `student_progress`。這種頁面端 callback 是目前允許的整合方式，不視為繞過共用模組；但 adapter 不應重寫題目渲染、選項選取、評分或未登入鎖定 UI。若同一種 adapter 在多週重複，優先抽成週頁共用 adapter 檔。
+
 **被誰 import**：`grade3/week06.quiz-adapter.js`、`grade3/week07.quiz-adapter.js`
 
 ---
