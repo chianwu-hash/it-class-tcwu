@@ -625,10 +625,10 @@ No, I'm not.</pre>
             getCurrentUser: getQuizUser,
             onRequireLogin: signInWithGoogle,
             onAfterSubmit: async ({ correct, total }) => {
-                if (correct === total && typeof confetti === "function") {
+                if (correct === total) {
                     confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
                 }
-                document.getElementById("quiz-result")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                document.getElementById("quiz-status-banner")?.scrollIntoView({ behavior: "smooth", block: "center" });
             }
         });
 
