@@ -34,6 +34,12 @@ function shuffleArray(items) {
     return result;
 }
 
+const OPTION_LABELS = ["A", "B", "C", "D", "E", "F"];
+
+function removeStoredOptionLabel(text) {
+    return String(text ?? "").replace(/^\s*[A-FＡ-Ｆ][.．、]\s*/i, "");
+}
+
 export function initQuizModule({
     questions,
     selectors,
@@ -110,15 +116,19 @@ export function initQuizModule({
         shuffledQuestions.forEach((question, index) => {
             const shuffledOptions = shuffleArray(question.options);
             const optionsHtml = shuffledOptions
-                .map((option) => `
+                .map((option, optionIndex) => {
+                    const displayLabel = OPTION_LABELS[optionIndex] ?? String(optionIndex + 1);
+                    const displayText = removeStoredOptionLabel(option.text);
+                    return `
                     <button
                         type="button"
                         class="opt-btn text-left p-4 rounded-xl border-2 border-gray-200 bg-white font-bold text-gray-700 hover:border-rose-400 hover:bg-rose-50"
                         data-qid="${question.id}"
                         data-correct="${option.correct}"
                         onclick="selectOption(${question.id}, this)"
-                    >${option.text}</button>
-                `)
+                    ><span class="option-label">${displayLabel}.</span> ${displayText}</button>
+                `;
+                })
                 .join("");
 
             html += `
