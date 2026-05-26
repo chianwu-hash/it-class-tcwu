@@ -86,7 +86,7 @@ as $$
         sp.activity_key,
         case
             when sp.activity_key like 'typing%' then 'typing'
-            when sp.activity_key like 'quiz%' then 'quiz'
+            when sp.activity_key like 'quiz%' or sp.activity_key like '%\_quiz\_%' escape '\' or sp.activity_key like '%\_quiz' escape '\' then 'quiz'
             when sp.activity_key like 'project%' then 'project'
             else 'other'
         end as activity_type,
@@ -102,7 +102,7 @@ as $$
             p_activity_type is null
             or case
                 when sp.activity_key like 'typing%' then 'typing'
-                when sp.activity_key like 'quiz%' then 'quiz'
+                when sp.activity_key like 'quiz%' or sp.activity_key like '%\_quiz\_%' escape '\' or sp.activity_key like '%\_quiz' escape '\' then 'quiz'
                 when sp.activity_key like 'project%' then 'project'
                 else 'other'
                end = p_activity_type

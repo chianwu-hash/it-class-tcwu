@@ -34,6 +34,21 @@ function shuffleArray(items) {
     return result;
 }
 
+const OPTION_LABELS = ["A", "B", "C", "D", "E", "F"];
+
+function removeStoredOptionLabel(text) {
+    return String(text ?? "").replace(/^\s*[A-FＡ-Ｆ][.．、]\s*/i, "");
+}
+
+function formatOptionText(option, optionIndex, optionLabelMode) {
+    if (optionLabelMode !== "display-order") {
+        return option.text;
+    }
+
+    const displayLabel = OPTION_LABELS[optionIndex] ?? String(optionIndex + 1);
+    return `<span class="option-label">${displayLabel}.</span> ${removeStoredOptionLabel(option.text)}`;
+}
+
 export function initQuizModule({
     questions,
     selectors,
@@ -42,7 +57,8 @@ export function initQuizModule({
     saveProgress = null,
     getCurrentUser = null,
     onRequireLogin = null,
-    onAfterSubmit = null
+    onAfterSubmit = null,
+    optionLabelMode = "stored"
 }) {
     const mergedMessages = {
         ...DEFAULT_MESSAGES,
@@ -110,14 +126,14 @@ export function initQuizModule({
         shuffledQuestions.forEach((question, index) => {
             const shuffledOptions = shuffleArray(question.options);
             const optionsHtml = shuffledOptions
-                .map((option) => `
+                .map((option, optionIndex) => `
                     <button
                         type="button"
                         class="opt-btn text-left p-4 rounded-xl border-2 border-gray-200 bg-white font-bold text-gray-700 hover:border-rose-400 hover:bg-rose-50"
                         data-qid="${question.id}"
                         data-correct="${option.correct}"
                         onclick="selectOption(${question.id}, this)"
-                    >${option.text}</button>
+                    >${formatOptionText(option, optionIndex, optionLabelMode)}</button>
                 `)
                 .join("");
 

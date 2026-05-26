@@ -439,9 +439,12 @@ No, I'm not.</pre>
     <script type="module">
         import {
             beginCentralizedLogin,
+            getStoredAccessToken,
             isTeacher,
             resolveSession,
-            supabase
+            supabase,
+            SUPABASE_ANON_KEY,
+            SUPABASE_URL
         } from "../shared/auth.js";
         import { initClassroomLinkControl } from "../shared/classroom-controls.js";
         import { initNavbarAuth } from "../shared/navbar-auth.js";
@@ -451,6 +454,7 @@ No, I'm not.</pre>
 
         const WEEK_CODE = "16";
         const QUIZ_KEY = "copyright_cc_quiz_1";
+        const QUIZ_SAVE_TIMEOUT_MS = 10000;
         let currentSession = null;
 
         const mapsMailLinkControl = initClassroomLinkControl({
@@ -577,6 +581,52 @@ No, I'm not.</pre>
             return { completed: true, score: data.score };
         }
 
+        async function saveQuizProgressDirect(payload, accessToken) {
+            if (!accessToken) {
+                return {
+                    error: {
+                        message: "No access token available",
+                        status: "no_token"
+                    }
+                };
+            }
+
+            const controller = new AbortController();
+            const timeoutId = window.setTimeout(() => controller.abort(), QUIZ_SAVE_TIMEOUT_MS);
+            const url = new URL(`${SUPABASE_URL}/rest/v1/student_progress`);
+            url.searchParams.set("on_conflict", "user_id,week_code,activity_key");
+
+            try {
+                const response = await fetch(url.toString(), {
+                    method: "POST",
+                    signal: controller.signal,
+                    headers: {
+                        apikey: SUPABASE_ANON_KEY,
+                        Authorization: `Bearer ${accessToken}`,
+                        "Content-Type": "application/json",
+                        Prefer: "resolution=merge-duplicates,return=minimal"
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    return { error: null };
+                }
+
+                return {
+                    error: {
+                        message: await response.text(),
+                        status: response.status,
+                        statusText: response.statusText
+                    }
+                };
+            } catch (error) {
+                return { error };
+            } finally {
+                window.clearTimeout(timeoutId);
+            }
+        }
+
         async function saveQuizProgress(score) {
             const user = await getQuizUser();
             if (!user) return false;
@@ -589,10 +639,13 @@ No, I'm not.</pre>
                 score,
                 updated_at: new Date().toISOString()
             };
-            const { error } = await supabase
-                .from("student_progress")
-                .upsert(payload, { onConflict: "user_id,week_code,activity_key" });
-            return !error;
+            const accessToken = currentSession?.access_token ?? getStoredAccessToken();
+            const { error } = await saveQuizProgressDirect(payload, accessToken);
+            if (error) {
+                console.error("saveQuizProgress failed", error, payload);
+                return false;
+            }
+            return true;
         }
 
         const quiz = initQuizModule({
@@ -624,11 +677,12 @@ No, I'm not.</pre>
             saveProgress: saveQuizProgress,
             getCurrentUser: getQuizUser,
             onRequireLogin: signInWithGoogle,
+            optionLabelMode: "display-order",
             onAfterSubmit: async ({ correct, total }) => {
-                if (correct === total) {
+                if (correct === total && typeof confetti === "function") {
                     confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
                 }
-                document.getElementById("quiz-status-banner")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                document.getElementById("quiz-result")?.scrollIntoView({ behavior: "smooth", block: "center" });
             }
         });
 
