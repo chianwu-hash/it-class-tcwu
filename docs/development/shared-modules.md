@@ -153,11 +153,19 @@
 
 **登入規則**：只要是課程頁中的可點選測驗 / 小測驗，預設必須使用登入鎖定。未登入時顯示 lock 區塊，不渲染可作答題目；登入後才顯示 quiz content。若只是口頭檢查，請做成靜態文字，不做互動選項。
 
-**匯出**：`initQuizModule({ questions, selectors, messages, loadProgress, saveProgress, getCurrentUser, onRequireLogin, onAfterSubmit })`
+**匯出**：`initQuizModule({ questions, selectors, messages, loadProgress, saveProgress, getCurrentUser, onRequireLogin, onAfterSubmit, optionLabelMode })`
 
 **Adapter 規則**：`quiz-module.js` 負責 UI 與評分流程，頁面可提供 `loadProgress` / `saveProgress` / `getCurrentUser` adapter 讀寫 `student_progress`。這種頁面端 callback 是目前允許的整合方式，不視為繞過共用模組；但 adapter 不應重寫題目渲染、選項選取、評分或未登入鎖定 UI。若同一種 adapter 在多週重複，優先抽成週頁共用 adapter 檔。
 
-**被誰 import**：`grade3/week06.quiz-adapter.js`、`grade3/week07.quiz-adapter.js`
+**被誰 import**：
+- `grade3/week06.quiz-adapter.js`
+- `grade3/week07.quiz-adapter.js`
+- `grade3/week11.quiz-adapter.js`
+- `grade3/week12.html`
+- `grade3/week13.html`
+- `grade3/week14.html`
+- `grade3/week15.html`
+- `grade3/week16.html`
 
 ---
 

@@ -114,6 +114,24 @@
 
 ---
 
+## 10. `shared/quiz-module.js` 的渲染、評分與保存橋接
+
+**風險**：`quiz-module.js` 被多個三年級週頁面共用，負責測驗選項顯示、選取、送出、評分、未登入鎖定與頁面 adapter 的 `student_progress` 寫入橋接。改動看似只影響畫面標號，也可能造成正確答案對應錯亂、未登入可作答、送出後沒有保存、重整後無法接回完成狀態，或後台看不到紀錄。
+
+**修改前必查**：
+- `rg -l "initQuizModule" grade3 grade6 shared`
+- 讀取所有 import 使用方，確認哪些頁面直接呼叫、哪些頁面透過 adapter 呼叫
+- 若只要調整單一週頁面，優先使用 opt-in 參數或頁面 adapter，不要讓既有頁面預設行為改變
+
+**修改後最低驗證**：
+- 未登入開測驗頁，只能看到登入鎖定區，不能看到或點選題目選項
+- 測試「選項打亂後顯示標號」與「正確答案判定」仍一致
+- 送出測驗後，`saveProgress` 實際被呼叫且失敗時會顯示保存錯誤
+- 已完成測驗重新整理後，`loadProgress` 能顯示完成狀態與分數
+- 後台以「全部」與「quiz」篩選都看得到對應 activity_key 的紀錄
+
+---
+
 ## 風險等級對照
 
 | 風險項目 | 影響範圍 | 靜默失效 | 等級 |
@@ -121,6 +139,7 @@
 | grade3 navbar 重渲 / authBarHtml id | 全 grade3 週頁面 | **是**（`?.` 不報錯） | 🔴 高 |
 | auth.js beginCentralizedLogin | 全站所有登入 | **是**（跳到錯誤頁） | 🔴 高 |
 | Supabase 分頁切回 / auth lifecycle | typing、後台、navbar 登出 | **是**（閃爍、timeout、按鈕延遲） | 🔴 高 |
+| quiz-module 渲染 / 評分 / 保存橋接 | 全部互動測驗頁 | **是**（選項、分數或保存錯但畫面可能仍像成功） | 🔴 高 |
 | navbar-auth.js 事件代理 | 全站所有頁面 | **是** | 🔴 高 |
 | student_progress activityKey 衝突 | 受影響的兩頁 | **是**（資料被覆蓋） | 🔴 高 |
 | week-visibility 格式 | grade3 nav + 首頁 | **是**（全週顯示） | 🟡 中 |
