@@ -104,6 +104,59 @@
             </div>
         </section>
 
+        <section class="bg-white rounded-3xl shadow-sm border-4 border-slate-200 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b-4 border-slate-100 flex items-center justify-between gap-4">
+                <h2 class="text-2xl font-black text-slate-800 flex items-center">
+                    <i class="fa-solid fa-book-open-reader text-slate-500 mr-3"></i>
+                    技能與課本頁碼對照
+                </h2>
+                <span class="hidden md:inline-flex bg-white text-slate-600 border border-slate-200 px-3 py-1 rounded-full text-sm font-black">Week 16</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm md:text-base">
+                    <thead class="bg-white text-slate-500 font-black">
+                        <tr>
+                            <th class="px-5 py-3 whitespace-nowrap">本週技能</th>
+                            <th class="px-5 py-3 whitespace-nowrap">課本頁碼</th>
+                            <th class="px-5 py-3 min-w-[16rem]">上課怎麼用</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 font-bold text-slate-700">
+                        <tr>
+                            <td class="px-5 py-3 text-cyan-800">網路作品與著作權</td>
+                            <td class="px-5 py-3 whitespace-nowrap">P.80</td>
+                            <td class="px-5 py-3">認識圖片、音樂、影片、文字也有作者。</td>
+                        </tr>
+                        <tr>
+                            <td class="px-5 py-3 text-emerald-800">CC 授權條件</td>
+                            <td class="px-5 py-3 whitespace-nowrap">P.81</td>
+                            <td class="px-5 py-3">理解可使用仍要看來源、作者與授權規則。</td>
+                        </tr>
+                        <tr>
+                            <td class="px-5 py-3 text-sky-800">Google Maps 搜尋景點</td>
+                            <td class="px-5 py-3 whitespace-nowrap">P.100-P.106</td>
+                            <td class="px-5 py-3">搜尋公共景點，調整地圖、街景或照片畫面。</td>
+                        </tr>
+                        <tr>
+                            <td class="px-5 py-3 text-amber-800">截圖與貼上</td>
+                            <td class="px-5 py-3 whitespace-nowrap">P.106-P.107</td>
+                            <td class="px-5 py-3">把自己操作出的景點畫面截圖，放進 Gmail 推薦信。</td>
+                        </tr>
+                        <tr>
+                            <td class="px-5 py-3 text-rose-800">Gmail 與聯絡人</td>
+                            <td class="px-5 py-3 whitespace-nowrap">P.58-P.69</td>
+                            <td class="px-5 py-3">建立或使用聯絡人，同時寄給老師和同學。</td>
+                        </tr>
+                        <tr>
+                            <td class="px-5 py-3 text-indigo-800">中英打闖關</td>
+                            <td class="px-5 py-3 whitespace-nowrap">國語第 11 課、英語 U4</td>
+                            <td class="px-5 py-3">延續語文教材句子，完成本週 5 關練習。</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
         <section class="bg-white rounded-3xl shadow-md border-4 border-cyan-200 overflow-hidden">
             <button type="button" class="section-toggle w-full bg-cyan-50 px-6 py-4 border-b-4 border-cyan-100 flex items-center justify-between text-left" data-target="literacy-body" aria-expanded="true">
                 <span class="flex items-center">
@@ -118,7 +171,7 @@
                 </span>
             </button>
             <div id="literacy-body" class="p-6 space-y-6">
-                <div class="grid lg:grid-cols-2 gap-6 items-start">
+                <div class="grid lg:grid-cols-3 gap-6 items-start">
                     <figure>
                         <img src="images/week16/week16-info-literacy-1920x1080-q80.webp" alt="網路作品要尊重作者資訊圖表" class="spotlight-frame w-full rounded-2xl border-4 border-cyan-100 bg-white cursor-zoom-in" onclick="openLightbox(this.src)">
                         <figcaption class="mt-2 text-center text-sm font-bold text-slate-500">資訊圖表：看得到，不等於可以隨便用。</figcaption>
@@ -126,6 +179,10 @@
                     <figure>
                         <img src="images/week16/week16-cc-license-1920x1080-q80.webp" alt="CC 授權是什麼資訊圖表" class="spotlight-frame w-full rounded-2xl border-4 border-emerald-100 bg-white cursor-zoom-in" onclick="openLightbox(this.src)">
                         <figcaption class="mt-2 text-center text-sm font-bold text-slate-500">資訊圖表：CC 授權是作者給大家的使用規則。</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/week16/week16-copyright-case-extension-1920x1080-q80.webp" alt="著作權真實案例延伸說明資訊圖表" class="spotlight-frame w-full rounded-2xl border-4 border-amber-100 bg-white cursor-zoom-in" onclick="openLightbox(this.src)">
+                        <figcaption class="mt-2 text-center text-sm font-bold text-slate-500">延伸圖卡：真實案例提醒我們分享前先確認。</figcaption>
                     </figure>
                 </div>
 
