@@ -110,6 +110,12 @@ function readStoredSession() {
         if (Array.isArray(parsed)) {
             return parsed[0] ?? null;
         }
+        if (parsed?.currentSession) {
+            return parsed.currentSession;
+        }
+        if (parsed?.session) {
+            return parsed.session;
+        }
         return parsed;
     } catch {
         return null;
