@@ -1,0 +1,380 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六年級資訊課 - 第 17 週 畢業前自主任務站</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background:
+                radial-gradient(circle at 12% 8%, rgba(14, 165, 233, 0.15), transparent 28%),
+                radial-gradient(circle at 86% 12%, rgba(244, 114, 182, 0.13), transparent 24%),
+                linear-gradient(180deg, #f8fafc 0%, #eef9ff 42%, #f7f7fb 100%);
+        }
+
+        .task-card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .task-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 34px rgba(15, 23, 42, 0.13);
+        }
+
+        .task-number {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+
+        .anchor-chip {
+            transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .anchor-chip:hover {
+            background-color: #0f172a;
+            color: #fff;
+            border-color: #0f172a;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pb-12">
+
+    <script src="navbar.js?v=20260601"></script>
+
+    <header class="bg-gradient-to-r from-slate-900 via-sky-800 to-rose-700 text-white shadow-xl mb-8">
+        <div class="max-w-6xl mx-auto px-6 py-12 relative overflow-hidden">
+            <div class="relative z-10 grid lg:grid-cols-[1.15fr,0.85fr] gap-8 items-center">
+                <div>
+                    <p class="text-sky-100 font-black mb-3">六年級資訊課 114學年度第二學期 第 17-18 週</p>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">畢業前自主任務站</h1>
+                    <p class="text-xl md:text-2xl text-slate-100 font-black leading-relaxed">
+                        從五張任務卡中自己選、自己做、自己整理。<br>
+                        重點不是做最多，而是安靜完成並留下學習證明。
+                    </p>
+                </div>
+                <div class="bg-white/10 border border-white/15 rounded-2xl p-5 backdrop-blur-sm">
+                    <div class="text-sm font-black text-sky-100 mb-3">今天的課堂規則</div>
+                    <ul class="space-y-3 text-lg font-black">
+                        <li><i class="fa-solid fa-check text-sky-200 mr-2"></i>至少選一項任務開始</li>
+                        <li><i class="fa-solid fa-check text-sky-200 mr-2"></i>選定後專注 10 分鐘以上</li>
+                        <li><i class="fa-solid fa-check text-sky-200 mr-2"></i>完成後留下證明</li>
+                        <li><i class="fa-solid fa-check text-sky-200 mr-2"></i>可以接續，也可以換任務</li>
+                    </ul>
+                </div>
+            </div>
+            <i class="fa-solid fa-route absolute text-white opacity-10 text-9xl -bottom-10 right-8"></i>
+            <i class="fa-solid fa-heart absolute text-white opacity-10 text-8xl -top-5 -left-4 -rotate-12"></i>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 space-y-8">
+
+        <section class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="bg-slate-100 px-6 py-4 border-b border-slate-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-map text-slate-700 text-2xl mr-3"></i>
+                    <h2 class="text-2xl font-black text-slate-900">任務快速選單</h2>
+                </div>
+                <span class="bg-slate-900 text-white text-xs px-3 py-1 rounded-full font-bold">五選一開始</span>
+            </div>
+            <nav class="p-6 flex flex-wrap gap-3" aria-label="任務快速連結">
+                <a href="#typing-task" class="anchor-chip border border-slate-300 rounded-full px-4 py-2 font-black text-slate-700"><i class="fa-solid fa-keyboard mr-2"></i>中英打</a>
+                <a href="#reading-task" class="anchor-chip border border-slate-300 rounded-full px-4 py-2 font-black text-slate-700"><i class="fa-solid fa-book-open-reader mr-2"></i>線上閱讀</a>
+                <a href="#canva-task" class="anchor-chip border border-slate-300 rounded-full px-4 py-2 font-black text-slate-700"><i class="fa-solid fa-envelope-open-text mr-2"></i>Canva 心意卡</a>
+                <a href="#code-task" class="anchor-chip border border-slate-300 rounded-full px-4 py-2 font-black text-slate-700"><i class="fa-solid fa-code mr-2"></i>Code.org</a>
+                <a href="#wayground-task" class="anchor-chip border border-slate-300 rounded-full px-4 py-2 font-black text-slate-700"><i class="fa-solid fa-layer-group mr-2"></i>Wayground</a>
+            </nav>
+        </section>
+
+        <section class="grid lg:grid-cols-[1fr,1fr] gap-6">
+            <article id="typing-task" class="task-card bg-white rounded-3xl border-4 border-cyan-200 shadow-md overflow-hidden">
+                <div class="bg-cyan-100 px-6 py-5 border-b border-cyan-200 flex items-start justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="task-number rounded-full bg-cyan-600 text-white flex items-center justify-center font-black">1</div>
+                        <div>
+                            <p class="text-sm font-black text-cyan-700 mb-1">練習型任務</p>
+                            <h2 class="text-3xl font-black text-cyan-950">中英打練習</h2>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-keyboard text-4xl text-cyan-600"></i>
+                </div>
+                <div class="p-6 space-y-5">
+                    <p class="text-lg font-black text-slate-800 leading-relaxed">
+                        打字不是一下子變快，而是一次一次把手指、眼睛和腦袋配合起來。少錯幾個字、多撐幾分鐘、找到自己的節奏，就是進步。
+                    </p>
+                    <div>
+                        <h3 class="text-xl font-black text-cyan-900 mb-3">開始練習</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <a href="https://it-class-tcwu.vercel.app/kidztype.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center min-h-[46px] rounded-lg bg-cyan-600 px-5 py-2 font-black text-white shadow-md hover:bg-cyan-700 transition">
+                                英打練習 <i class="fa-solid fa-arrow-up-right-from-square ml-2"></i>
+                            </a>
+                            <a href="https://contest.hlc.edu.tw/typing/content.asp?lang=6" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center min-h-[46px] rounded-lg bg-slate-900 px-5 py-2 font-black text-white shadow-md hover:bg-slate-800 transition">
+                                中打練習 <i class="fa-solid fa-arrow-up-right-from-square ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900 mb-3">完成證明</h3>
+                        <ul class="space-y-2 font-bold text-slate-700">
+                            <li><i class="fa-solid fa-circle-check text-cyan-600 mr-2"></i>今天練習的是英打或中打</li>
+                            <li><i class="fa-solid fa-circle-check text-cyan-600 mr-2"></i>最高分、正確率，或練習時間</li>
+                            <li><i class="fa-solid fa-circle-check text-cyan-600 mr-2"></i>一句話：我今天進步的地方</li>
+                        </ul>
+                    </div>
+                </div>
+            </article>
+
+            <article id="reading-task" class="task-card bg-white rounded-3xl border-4 border-emerald-200 shadow-md overflow-hidden">
+                <div class="bg-emerald-100 px-6 py-5 border-b border-emerald-200 flex items-start justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="task-number rounded-full bg-emerald-600 text-white flex items-center justify-center font-black">2</div>
+                        <div>
+                            <p class="text-sm font-black text-emerald-700 mb-1">閱讀型任務</p>
+                            <h2 class="text-3xl font-black text-emerald-950">線上閱讀</h2>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-book-open-reader text-4xl text-emerald-600"></i>
+                </div>
+                <div class="p-6 space-y-5">
+                    <p class="text-lg font-black text-slate-800 leading-relaxed">
+                        閱讀不是只看完文字，而是讓自己多認識一點世界。讀完一篇文章，整理重點，提出問題，就是很重要的學習能力。
+                    </p>
+                    <div>
+                        <h3 class="text-xl font-black text-emerald-900 mb-3">開始閱讀</h3>
+                        <a href="https://pts.ntpc.edu.tw/app/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center min-h-[46px] rounded-lg bg-emerald-600 px-5 py-2 font-black text-white shadow-md hover:bg-emerald-700 transition">
+                            開啟親師生平台 <i class="fa-solid fa-arrow-up-right-from-square ml-2"></i>
+                        </a>
+                        <p class="mt-3 font-bold text-slate-600">登入後請進入閱讀專區，選一篇自己有興趣的文章。</p>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900 mb-3">完成證明</h3>
+                        <ul class="space-y-2 font-bold text-slate-700">
+                            <li><i class="fa-solid fa-circle-check text-emerald-600 mr-2"></i>文章標題</li>
+                            <li><i class="fa-solid fa-circle-check text-emerald-600 mr-2"></i>三句重點摘要</li>
+                            <li><i class="fa-solid fa-circle-check text-emerald-600 mr-2"></i>一句我印象最深的內容</li>
+                            <li><i class="fa-solid fa-circle-check text-emerald-600 mr-2"></i>一個我想問的問題</li>
+                            <li><i class="fa-solid fa-paper-plane text-emerald-600 mr-2"></i>完成後在 LoiLoNote 用卡片傳送給老師</li>
+                        </ul>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <article id="canva-task" class="task-card bg-white rounded-3xl border-4 border-rose-200 shadow-md overflow-hidden">
+            <div class="bg-rose-100 px-6 py-5 border-b border-rose-200 flex items-start justify-between gap-4 flex-wrap">
+                <div class="flex items-center gap-4">
+                    <div class="task-number rounded-full bg-rose-600 text-white flex items-center justify-center font-black">3</div>
+                    <div>
+                        <p class="text-sm font-black text-rose-700 mb-1">創作與分享型任務</p>
+                        <h2 class="text-3xl font-black text-rose-950">Canva 心意卡</h2>
+                    </div>
+                </div>
+                <a href="https://www.canva.com/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center min-h-[46px] rounded-lg bg-rose-600 px-5 py-2 font-black text-white shadow-md hover:bg-rose-700 transition">
+                    打開 Canva <i class="fa-solid fa-arrow-up-right-from-square ml-2"></i>
+                </a>
+            </div>
+            <div class="p-6 space-y-6">
+                <p class="text-lg font-black text-slate-800 leading-relaxed">
+                    畢業前，有些話現在不說，以後可能就很難找到剛好的時機。心意卡不需要華麗，最重要的是具體、真誠。
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-5">
+                    <div>
+                        <h3 class="text-xl font-black text-rose-900 mb-3">可以這樣開始寫</h3>
+                        <ul class="space-y-2 font-bold text-slate-700">
+                            <li><i class="fa-solid fa-heart text-rose-500 mr-2"></i>謝謝你曾經......</li>
+                            <li><i class="fa-solid fa-heart text-rose-500 mr-2"></i>我記得有一次......</li>
+                            <li><i class="fa-solid fa-heart text-rose-500 mr-2"></i>祝你未來......</li>
+                            <li><i class="fa-solid fa-heart text-rose-500 mr-2"></i>我想把這句話送給你......</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900 mb-3">完成證明</h3>
+                        <ul class="space-y-2 font-bold text-slate-700">
+                            <li><i class="fa-solid fa-circle-check text-rose-600 mr-2"></i>完成一張 Canva 心意卡</li>
+                            <li><i class="fa-solid fa-circle-check text-rose-600 mr-2"></i>文字沒有錯字或不禮貌內容</li>
+                            <li><i class="fa-solid fa-circle-check text-rose-600 mr-2"></i>學會分享連結、下載圖片，或依老師指定方式傳給對象</li>
+                            <li><i class="fa-solid fa-circle-check text-rose-600 mr-2"></i>補一句：我想把這張卡送給誰，原因是什麼</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <section class="border-t border-rose-200 pt-5">
+                    <div class="flex items-center justify-between gap-4 flex-wrap mb-4">
+                        <h3 class="text-2xl font-black text-rose-900">技能參考課本頁碼</h3>
+                        <span class="bg-rose-600 text-white text-xs px-3 py-1 rounded-full font-bold">Canva 操作對照</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full min-w-[760px] border-collapse text-left">
+                            <thead>
+                                <tr class="bg-rose-50 text-rose-950">
+                                    <th class="border border-rose-200 px-4 py-3 font-black">技能</th>
+                                    <th class="border border-rose-200 px-4 py-3 font-black">頁碼</th>
+                                    <th class="border border-rose-200 px-4 py-3 font-black">使用重點</th>
+                                </tr>
+                            </thead>
+                            <tbody class="font-bold text-slate-700">
+                                <tr>
+                                    <td class="border border-rose-100 px-4 py-3">搜尋或套用範本</td>
+                                    <td class="border border-rose-100 px-4 py-3">P.117-P.118</td>
+                                    <td class="border border-rose-100 px-4 py-3">找卡片、感謝、畢業、祝福範本，再改成自己的內容。</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-rose-100 px-4 py-3">新增與編輯文字</td>
+                                    <td class="border border-rose-100 px-4 py-3">P.23、P.25、P.119、P.121</td>
+                                    <td class="border border-rose-100 px-4 py-3">修改範本文字，寫出具體感謝、祝福或回憶。</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-rose-100 px-4 py-3">調整文字樣式</td>
+                                    <td class="border border-rose-100 px-4 py-3">P.26、P.46-P.47</td>
+                                    <td class="border border-rose-100 px-4 py-3">調整字型、字級、字色與位置，讓文字清楚可讀。</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-rose-100 px-4 py-3">邊框與裝飾元素</td>
+                                    <td class="border border-rose-100 px-4 py-3">P.18、P.21-P.22</td>
+                                    <td class="border border-rose-100 px-4 py-3">可加簡單裝飾，但不要讓裝飾搶走文字。</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-rose-100 px-4 py-3">照片與邊框</td>
+                                    <td class="border border-rose-100 px-4 py-3">P.60、P.70、P.86、P.148</td>
+                                    <td class="border border-rose-100 px-4 py-3">可上傳照片、拖入邊框，必要時雙擊微調位置。</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-rose-100 px-4 py-3">下載作品</td>
+                                    <td class="border border-rose-100 px-4 py-3">P.95</td>
+                                    <td class="border border-rose-100 px-4 py-3">參考分享 / 下載入口；心意卡請依老師示範選 PNG、JPG 或 PDF。</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-rose-100 px-4 py-3">分享連結與權限</td>
+                                    <td class="border border-rose-100 px-4 py-3">課本未明確對應</td>
+                                    <td class="border border-rose-100 px-4 py-3">由老師示範取得分享連結、設定可查看，或改用下載圖片傳送。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="border-t border-rose-200 pt-5">
+                    <h3 class="text-xl font-black text-slate-900 mb-3">分享前檢查</h3>
+                    <div class="grid md:grid-cols-2 gap-3 font-bold text-slate-700">
+                        <div><i class="fa-solid fa-circle-check text-rose-600 mr-2"></i>這張卡會讓對方感到被尊重嗎？</div>
+                        <div><i class="fa-solid fa-circle-check text-rose-600 mr-2"></i>文字是否具體，不只是空泛祝福？</div>
+                        <div><i class="fa-solid fa-circle-check text-rose-600 mr-2"></i>有沒有玩笑、綽號或照片讓人不舒服？</div>
+                        <div><i class="fa-solid fa-circle-check text-rose-600 mr-2"></i>分享權限是否設定正確？</div>
+                    </div>
+                </section>
+            </div>
+        </article>
+
+        <section class="grid lg:grid-cols-[1fr,1fr] gap-6">
+            <article id="code-task" class="task-card bg-white rounded-3xl border-4 border-violet-200 shadow-md overflow-hidden">
+                <div class="bg-violet-100 px-6 py-5 border-b border-violet-200 flex items-start justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="task-number rounded-full bg-violet-600 text-white flex items-center justify-center font-black">4</div>
+                        <div>
+                            <p class="text-sm font-black text-violet-700 mb-1">探索型任務</p>
+                            <h2 class="text-3xl font-black text-violet-950">Code.org 探索</h2>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-code text-4xl text-violet-600"></i>
+                </div>
+                <div class="p-6 space-y-5">
+                    <p class="text-lg font-black text-slate-800 leading-relaxed">
+                        探索程式可以從一個小任務開始。試一個積木、改一個角色、完成一個關卡，每一次嘗試都在累積解決問題的能力。
+                    </p>
+                    <div>
+                        <h3 class="text-xl font-black text-violet-900 mb-3">推薦任務</h3>
+                        <div class="grid sm:grid-cols-2 gap-3">
+                            <a href="https://studio.code.org/hoc/1" target="_blank" rel="noopener noreferrer" class="rounded-xl border border-violet-200 px-4 py-3 font-black text-violet-800 hover:bg-violet-50 transition">Classic Maze</a>
+                            <a href="https://studio.code.org/courses/flappy/units/1" target="_blank" rel="noopener noreferrer" class="rounded-xl border border-violet-200 px-4 py-3 font-black text-violet-800 hover:bg-violet-50 transition">Flappy Code</a>
+                            <a href="https://code.org/dance" target="_blank" rel="noopener noreferrer" class="rounded-xl border border-violet-200 px-4 py-3 font-black text-violet-800 hover:bg-violet-50 transition">Dance Party</a>
+                            <a href="https://code.org/minecraft" target="_blank" rel="noopener noreferrer" class="rounded-xl border border-violet-200 px-4 py-3 font-black text-violet-800 hover:bg-violet-50 transition">Minecraft</a>
+                            <a href="https://studio.code.org/s/frozen/lessons/1/levels/1" target="_blank" rel="noopener noreferrer" class="rounded-xl border border-violet-200 px-4 py-3 font-black text-violet-800 hover:bg-violet-50 transition">Frozen / Artist</a>
+                            <a href="https://code.org/student/elementary?nt=1" target="_blank" rel="noopener noreferrer" class="rounded-xl border border-violet-200 px-4 py-3 font-black text-violet-800 hover:bg-violet-50 transition">更多 Hour of Code</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900 mb-3">完成證明</h3>
+                        <ul class="space-y-2 font-bold text-slate-700">
+                            <li><i class="fa-solid fa-circle-check text-violet-600 mr-2"></i>今天選的活動名稱</li>
+                            <li><i class="fa-solid fa-circle-check text-violet-600 mr-2"></i>截圖或展示完成畫面</li>
+                            <li><i class="fa-solid fa-circle-check text-violet-600 mr-2"></i>一句話：我今天學到的程式概念或解決方式</li>
+                        </ul>
+                    </div>
+                </div>
+            </article>
+
+            <article id="wayground-task" class="task-card bg-white rounded-3xl border-4 border-amber-200 shadow-md overflow-hidden">
+                <div class="bg-amber-100 px-6 py-5 border-b border-amber-200 flex items-start justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="task-number rounded-full bg-amber-500 text-white flex items-center justify-center font-black">5</div>
+                        <div>
+                            <p class="text-sm font-black text-amber-700 mb-1">複習型任務</p>
+                            <h2 class="text-3xl font-black text-amber-950">Wayground 題組</h2>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-layer-group text-4xl text-amber-500"></i>
+                </div>
+                <div class="p-6 space-y-5">
+                    <p class="text-lg font-black text-slate-800 leading-relaxed">
+                        畢業考結束了，題組仍然可以幫你整理基礎。錯題不是失敗，是提醒你哪裡還可以補起來。
+                    </p>
+                    <div>
+                        <h3 class="text-xl font-black text-amber-900 mb-3">開始練習</h3>
+                        <a href="wayground.html" class="inline-flex items-center justify-center min-h-[46px] rounded-lg bg-amber-500 px-5 py-2 font-black text-white shadow-md hover:bg-amber-600 transition">
+                            開啟題組入口 <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900 mb-3">完成證明</h3>
+                        <ul class="space-y-2 font-bold text-slate-700">
+                            <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>完成一份題組或一定題數</li>
+                            <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>記下正確率或完成狀態</li>
+                            <li><i class="fa-solid fa-circle-check text-amber-500 mr-2"></i>寫下 1 題錯題提醒：我下次要注意什麼</li>
+                        </ul>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="bg-slate-900 rounded-3xl shadow-xl text-white p-6 md:p-8">
+            <div class="grid lg:grid-cols-[1.05fr,0.95fr] gap-6 items-start">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-white/10 px-4 py-1.5 rounded-full text-sm font-black mb-4">
+                        <i class="fa-solid fa-flag-checkered"></i> 課末收整
+                    </div>
+                    <h2 class="text-3xl font-black mb-4 text-sky-200">完成不是只有做過，要能留下痕跡</h2>
+                    <p class="text-slate-100 text-lg font-bold leading-relaxed">
+                        下課前請回到你選的任務卡，看清楚完成證明。截圖、作品、摘要、分數紀錄或一句心得，都可以讓老師知道你今天真的完成了什麼。
+                    </p>
+                </div>
+                <div class="border border-white/15 rounded-2xl p-5">
+                    <h3 class="text-xl font-black text-sky-100 mb-3">今天至少做到</h3>
+                    <ul class="space-y-3 text-lg font-black">
+                        <li><i class="fa-solid fa-check text-sky-300 mr-2"></i>選一張任務卡</li>
+                        <li><i class="fa-solid fa-check text-sky-300 mr-2"></i>專注完成一段任務時間</li>
+                        <li><i class="fa-solid fa-check text-sky-300 mr-2"></i>留下對應完成證明</li>
+                        <li><i class="fa-solid fa-check text-sky-300 mr-2"></i>說得出我今天做了什麼</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { initNavbarAuth } from "../shared/navbar-auth.js";
+
+        initNavbarAuth();
+    </script>
+
+    <footer class="text-center mt-16 pb-8 text-gray-500 text-sm font-medium">
+        <p><i class="fa-solid fa-graduation-cap mr-1"></i> 新北市頂溪國小資訊課 - 六年級畢業前自主任務站</p>
+    </footer>
+
+</body>
+</html>
