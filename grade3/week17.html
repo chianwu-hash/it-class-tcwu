@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三年級資訊課 - 第17週 期末複習與自主練習</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background:
+                linear-gradient(135deg, rgba(14, 165, 233, 0.16), transparent 32%),
+                linear-gradient(225deg, rgba(16, 185, 129, 0.16), transparent 32%),
+                #f8fafc;
+        }
+        .card-hover {
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
+        }
+        .section-toggle .toggle-chevron {
+            transition: transform 0.2s ease;
+        }
+        .section-toggle[aria-expanded="false"] .toggle-chevron {
+            transform: rotate(-90deg);
+        }
+        .locked-link {
+            pointer-events: none;
+            opacity: 0.52;
+            filter: grayscale(0.25);
+        }
+        .shake {
+            animation: shake 0.36s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pb-12">
+    <script src="navbar.js?v=20260602"></script>
+
+    <header class="bg-gradient-to-br from-sky-700 via-emerald-600 to-amber-400 text-white shadow-xl rounded-b-[2.5rem] mb-10">
+        <div class="max-w-6xl mx-auto px-6 py-10 relative overflow-hidden">
+            <div class="relative z-10 max-w-4xl">
+                <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white font-black px-4 py-1.5 rounded-full text-sm mb-5 shadow-sm">
+                    <i class="fa-solid fa-calendar-check text-amber-100"></i>
+                    第 17 週
+                </div>
+                <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">期末複習與自主練習</h1>
+                <p class="text-lg md:text-xl text-sky-50 font-bold leading-relaxed">先登入並回到前面週次補中英打闖關，再跟著老師完成 Wayground 即時測驗；最後至少完成一次自選題庫練習，再決定繼續練題或回去打字闖關。</p>
+            </div>
+            <i class="fa-solid fa-layer-group absolute text-white/20 text-[12rem] -right-10 -bottom-16"></i>
+            <i class="fa-solid fa-keyboard absolute text-white/20 text-8xl right-36 top-8 rotate-12"></i>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 space-y-8">
+        <section class="grid md:grid-cols-3 gap-4">
+            <div class="bg-white border-4 border-sky-200 rounded-3xl p-5 shadow-sm">
+                <div class="text-sky-500 text-3xl mb-3"><i class="fa-solid fa-right-to-bracket"></i></div>
+                <h2 class="text-xl font-black text-sky-900 mb-2">登入與回補</h2>
+                <p class="font-bold text-slate-700 leading-relaxed">確認 Google 登入狀態，回到前面週次補完成或繼續挑戰中英打闖關。</p>
+            </div>
+            <div class="bg-white border-4 border-emerald-200 rounded-3xl p-5 shadow-sm">
+                <div class="text-emerald-500 text-3xl mb-3"><i class="fa-solid fa-bolt"></i></div>
+                <h2 class="text-xl font-black text-emerald-900 mb-2">即時測驗</h2>
+                <p class="font-bold text-slate-700 leading-relaxed">登入 Wayground，等老師開啟同一場 Live Quiz，全班一起作答與講解。</p>
+            </div>
+            <div class="bg-white border-4 border-amber-200 rounded-3xl p-5 shadow-sm">
+                <div class="text-amber-500 text-3xl mb-3"><i class="fa-solid fa-route"></i></div>
+                <h2 class="text-xl font-black text-amber-900 mb-2">自主分流</h2>
+                <p class="font-bold text-slate-700 leading-relaxed">至少完成一次自選題庫練習，再選擇繼續練題或回前面週次打字闖關。</p>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border-4 border-sky-200 shadow-md overflow-hidden">
+            <button type="button" class="section-toggle w-full bg-sky-50 px-6 py-4 border-b-4 border-sky-100 flex items-center justify-between text-left" data-target="typing-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-sky-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-keyboard"></i>
+                    </span>
+                    <span class="text-2xl font-black text-sky-900">任務一：登入後回到前面週次闖關</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span class="hidden md:inline-flex bg-white text-sky-700 border border-sky-200 px-3 py-1 rounded-full text-sm font-black">暖身 + 補進度</span>
+                    <i class="fa-solid fa-chevron-down text-sky-500 text-xl toggle-chevron"></i>
+                </span>
+            </button>
+            <div id="typing-body" class="p-6 space-y-6">
+                <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5 text-slate-700 font-bold leading-relaxed">
+                    <p><i class="fa-solid fa-circle-info text-sky-500 mr-2"></i> 這週不新增中英打關卡。請先登入 Google，再回到前面週次補完成或繼續挑戰；前面週次的打字進度會照原本的頁面記錄。</p>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                    <a href="week12.html#typing-levels-container" class="card-hover bg-white border-2 border-sky-200 hover:border-sky-500 rounded-2xl p-4 font-black text-slate-700 hover:text-sky-700">
+                        <div class="text-sm text-sky-600 mb-1">Week 12</div>
+                        <div><i class="fa-solid fa-map-location-dot mr-2 text-sky-500"></i>網路識讀</div>
+                    </a>
+                    <a href="week13.html#typing-levels-container" class="card-hover bg-white border-2 border-emerald-200 hover:border-emerald-500 rounded-2xl p-4 font-black text-slate-700 hover:text-emerald-700">
+                        <div class="text-sm text-emerald-600 mb-1">Week 13</div>
+                        <div><i class="fa-solid fa-address-book mr-2 text-emerald-500"></i>通訊錄</div>
+                    </a>
+                    <a href="week14.html#typing-levels-container" class="card-hover bg-white border-2 border-amber-200 hover:border-amber-500 rounded-2xl p-4 font-black text-slate-700 hover:text-amber-700">
+                        <div class="text-sm text-amber-600 mb-1">Week 14</div>
+                        <div><i class="fa-solid fa-user-secret mr-2 text-amber-500"></i>安全偵探</div>
+                    </a>
+                    <a href="week15.html#typing-levels-container" class="card-hover bg-white border-2 border-violet-200 hover:border-violet-500 rounded-2xl p-4 font-black text-slate-700 hover:text-violet-700">
+                        <div class="text-sm text-violet-600 mb-1">Week 15</div>
+                        <div><i class="fa-solid fa-rocket mr-2 text-violet-500"></i>外太空探索</div>
+                    </a>
+                    <a href="week16.html#typing-levels-container" class="card-hover bg-white border-2 border-cyan-200 hover:border-cyan-500 rounded-2xl p-4 font-black text-slate-700 hover:text-cyan-700">
+                        <div class="text-sm text-cyan-600 mb-1">Week 16</div>
+                        <div><i class="fa-solid fa-copyright mr-2 text-cyan-500"></i>尊重作者</div>
+                    </a>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-white border-2 border-sky-100 rounded-2xl p-5">
+                        <h3 class="text-xl font-black text-sky-900 mb-2">還沒完成很多週</h3>
+                        <p class="font-bold text-slate-700 leading-relaxed">先挑一個最接近完成的週次補完，不要同時開太多頁。</p>
+                    </div>
+                    <div class="bg-white border-2 border-emerald-100 rounded-2xl p-5">
+                        <h3 class="text-xl font-black text-emerald-900 mb-2">已完成一部分</h3>
+                        <p class="font-bold text-slate-700 leading-relaxed">回最近一週，或選自己還沒完成的週次繼續往下推進。</p>
+                    </div>
+                    <div class="bg-white border-2 border-amber-100 rounded-2xl p-5">
+                        <h3 class="text-xl font-black text-amber-900 mb-2">已完成多數週</h3>
+                        <p class="font-bold text-slate-700 leading-relaxed">看努力樹確認成果，準備進入 Wayground 題庫練習。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border-4 border-emerald-200 shadow-md overflow-hidden">
+            <button type="button" class="section-toggle w-full bg-emerald-50 px-6 py-4 border-b-4 border-emerald-100 flex items-center justify-between text-left" data-target="wayground-body" aria-expanded="true">
+                <span class="flex items-center">
+                    <span class="bg-emerald-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md mr-4">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </span>
+                    <span class="text-2xl font-black text-emerald-900">任務二、三：Wayground 即時測驗與自選題庫</span>
+                </span>
+                <span class="flex items-center gap-3">
+                    <span class="hidden md:inline-flex bg-white text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full text-sm font-black">Live Quiz + Practice</span>
+                    <i class="fa-solid fa-chevron-down text-emerald-500 text-xl toggle-chevron"></i>
+                </span>
+            </button>
+            <div id="wayground-body" class="p-6 space-y-6">
+                <div id="wayground-links-control" class="flex flex-col gap-3 rounded-2xl border-2 border-emerald-100 bg-emerald-50 p-4 md:flex-row md:items-center md:justify-between">
+                    <div class="flex items-center gap-3 font-black text-emerald-900">
+                        <span id="wayground-links-status-icon" class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-emerald-600 shadow-sm">
+                            <i class="fa-solid fa-lock"></i>
+                        </span>
+                        <span id="wayground-links-status">正在確認 Wayground 入口狀態...</span>
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <button id="wayground-teacher-toggle" type="button" class="hidden items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-sm font-black text-white shadow-md transition hover:bg-emerald-700">
+                            <i class="fa-solid fa-lock-open"></i>
+                            <span>開放 Wayground 入口</span>
+                        </button>
+                        <button id="wayground-refresh-btn" type="button" class="inline-flex items-center justify-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-black text-emerald-700 shadow-sm ring-2 ring-emerald-200 transition hover:bg-emerald-100">
+                            <i class="fa-solid fa-rotate-right"></i>
+                            <span>更新入口狀態</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-[1fr_1fr] gap-5">
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+                        <h3 class="text-2xl font-black text-emerald-900 mb-3"><i class="fa-solid fa-bolt text-emerald-500 mr-2"></i>全班即時測驗</h3>
+                        <ol class="space-y-2 font-bold text-slate-700 leading-relaxed list-decimal list-inside">
+                            <li>先登入 Wayground。</li>
+                            <li>等待老師開啟同一場 Live Quiz。</li>
+                            <li>照老師口令進入測驗，不先亂點其他題庫。</li>
+                            <li>測驗後聽老師講解錯得較多的題目。</li>
+                        </ol>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                        <h3 class="text-2xl font-black text-amber-900 mb-3"><i class="fa-solid fa-route text-amber-500 mr-2"></i>自選題庫後分流</h3>
+                        <ol class="space-y-2 font-bold text-slate-700 leading-relaxed list-decimal list-inside">
+                            <li>先自選一份題庫，完成一次練習。</li>
+                            <li>完成後，可以繼續練習題庫。</li>
+                            <li>完成後，也可以回前面週次繼續中英打闖關。</li>
+                            <li>朋友對戰等老師開放後再進行。</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-white border-2 border-emerald-100 rounded-2xl p-5">
+                        <h4 class="text-xl font-black text-emerald-900 mb-2">入門組</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">選自己最需要補強的一份題庫，完成一次練習後，再決定繼續練題或回去補打字。</p>
+                    </div>
+                    <div class="bg-white border-2 border-sky-100 rounded-2xl p-5">
+                        <h4 class="text-xl font-black text-sky-900 mb-2">標準組</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">完成一次練習後，可換第二份不同科目題庫，也可回前面週次繼續中英打。</p>
+                    </div>
+                    <div class="bg-white border-2 border-violet-100 rounded-2xl p-5">
+                        <h4 class="text-xl font-black text-violet-900 mb-2">挑戰組</h4>
+                        <p class="font-bold text-slate-700 leading-relaxed">完成一次練習後，可挑戰另一份題庫、朋友對戰，或回去補還沒完成的打字關卡。</p>
+                    </div>
+                </div>
+
+                <div class="grid sm:grid-cols-2 gap-3" id="wayground-links-grid">
+                    <a class="wayground-link card-hover bg-white border-2 border-emerald-200 hover:border-emerald-500 rounded-2xl p-5 font-black text-slate-700 hover:text-emerald-700" href="wayground.html" target="_blank" rel="noopener noreferrer">
+                        <i class="fa-solid fa-layer-group mr-2 text-emerald-500"></i>Wayground 題組入口
+                    </a>
+                    <a class="wayground-link card-hover bg-white border-2 border-amber-200 hover:border-amber-500 rounded-2xl p-5 font-black text-slate-700 hover:text-amber-700" href="wayground-final.html" target="_blank" rel="noopener noreferrer">
+                        <i class="fa-solid fa-clipboard-check mr-2 text-amber-500"></i>期末考題組
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border-4 border-slate-200 shadow-sm overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b-4 border-slate-100 flex items-center justify-between gap-4">
+                <h2 class="text-2xl font-black text-slate-800 flex items-center">
+                    <i class="fa-solid fa-flag-checkered text-slate-500 mr-3"></i>
+                    今天完成標準
+                </h2>
+                <span class="hidden md:inline-flex bg-white text-slate-600 border border-slate-200 px-3 py-1 rounded-full text-sm font-black">Week 17</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-2 gap-4">
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 font-bold text-slate-700"><i class="fa-solid fa-circle-check text-emerald-500 mr-2"></i>完成 Google 與 Wayground 登入確認。</div>
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 font-bold text-slate-700"><i class="fa-solid fa-circle-check text-emerald-500 mr-2"></i>回到至少一個前面週次中英打頁，補完成或確認進度。</div>
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 font-bold text-slate-700"><i class="fa-solid fa-circle-check text-emerald-500 mr-2"></i>參與老師開啟的 Wayground 即時測驗。</div>
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 font-bold text-slate-700"><i class="fa-solid fa-circle-check text-emerald-500 mr-2"></i>至少完成一次自選題庫練習，再選擇後續分流。</div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center mt-16 pb-8 text-gray-400 text-sm font-medium">
+        <p><i class="fa-solid fa-rocket mr-1"></i> 新北市頂溪國小資訊課 - 小小探險家系列</p>
+    </footer>
+
+    <script>
+        document.querySelectorAll(".section-toggle").forEach((button) => {
+            button.addEventListener("click", () => {
+                const targetId = button.dataset.target;
+                const target = document.getElementById(targetId);
+                if (!target) return;
+                const expanded = button.getAttribute("aria-expanded") !== "false";
+                button.setAttribute("aria-expanded", expanded ? "false" : "true");
+                target.classList.toggle("hidden", expanded);
+            });
+        });
+    </script>
+
+    <script type="module">
+        import { isTeacher, supabase } from "../shared/auth.js";
+        import { initClassroomLinkControl } from "../shared/classroom-controls.js";
+        import { initNavbarAuth } from "../shared/navbar-auth.js";
+
+        const waygroundLinkControl = initClassroomLinkControl({
+            supabase,
+            isTeacher,
+            grade: "grade3",
+            weekCode: "17",
+            controlKey: "wayground_links",
+            container: "#wayground-body",
+            linkSelector: ".wayground-link",
+            statusText: "#wayground-links-status",
+            statusIcon: "#wayground-links-status-icon",
+            refreshButton: "#wayground-refresh-btn",
+            teacherToggleButton: "#wayground-teacher-toggle",
+            messages: {
+                loading: "正在確認 Wayground 入口狀態...",
+                refreshing: "正在更新 Wayground 入口狀態...",
+                open: "Wayground 入口已開放，可以依老師指示進入。",
+                locked: "Wayground 入口尚未開放，請先完成登入與前面週次中英打任務。",
+                blockedClick: "老師還沒開放 Wayground 入口，請先完成目前任務。",
+                loadError: "讀取 Wayground 入口狀態失敗，請稍後再按一次更新。",
+                teacherOnly: "只有老師登入後可以開關 Wayground 入口。",
+                opening: "正在開放 Wayground 入口...",
+                closing: "正在關閉 Wayground 入口...",
+                toggleError: (error) => {
+                    const parts = [error?.message, error?.code].filter(Boolean);
+                    return `開關 Wayground 入口失敗：${parts.length ? parts.join(" / ") : "unknown error"}`;
+                }
+            },
+            toggleButtonHtml: {
+                open: '<i class="fa-solid fa-lock"></i><span>關閉 Wayground 入口</span>',
+                locked: '<i class="fa-solid fa-lock-open"></i><span>開放 Wayground 入口</span>'
+            }
+        });
+
+        initNavbarAuth({
+            onSessionResolved: (session) => waygroundLinkControl.handleSession(session)
+        });
+        waygroundLinkControl.load();
+    </script>
+</body>
+</html>
