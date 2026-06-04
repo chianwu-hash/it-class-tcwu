@@ -132,6 +132,27 @@
 
 ---
 
+## 11. `shared/typing-challenge.js` 的手動草稿暫存
+
+**風險**：草稿功能會在打字頁插入「儲存草稿 / 回復上次草稿」UI，並讀寫 `typing_drafts`。若誤把草稿寫入 `student_progress`、改用 `localStorage`、或加入自動存檔 / focus 事件同步，可能污染正式進度、造成學生以為草稿等於過關，或重演分頁切回後請求卡住的問題。
+
+**使用邊界**：
+- 草稿只存 `typing_drafts`，不寫入 `student_progress`。
+- `draftOptions` 預設關閉；頁面需明確設定 `draftOptions: { enabled: true }`。
+- 草稿只做手動儲存與手動回復，不做自動存檔。
+- 回復草稿不可自動覆蓋學生已輸入的內容。
+- 草稿讀寫使用 direct REST fetch + access token + timeout，失敗不得阻塞 `checkLevel()` 或 `student_progress` 保存。
+
+**修改後最低驗證**：
+- 未登入時，草稿按鈕不可使用，輸入框與檢查按鈕仍維持鎖定。
+- 登入後輸入部分文字，按「儲存草稿」，重新整理後能按「回復上次草稿」取回文字。
+- 輸入框已有文字時按回復，必須先出現確認，不可直接覆蓋。
+- 過關成功後，`student_progress` 正常寫入，該關草稿被刪除或至少不再顯示為可回復。
+- 重置進度驗證成功後，該週該活動草稿同步清除。
+- 切換分頁再切回時，不應自動 reload，也不應自動發出草稿保存請求。
+
+---
+
 ## 風險等級對照
 
 | 風險項目 | 影響範圍 | 靜默失效 | 等級 |
@@ -142,6 +163,7 @@
 | quiz-module 渲染 / 評分 / 保存橋接 | 全部互動測驗頁 | **是**（選項、分數或保存錯但畫面可能仍像成功） | 🔴 高 |
 | navbar-auth.js 事件代理 | 全站所有頁面 | **是** | 🔴 高 |
 | student_progress activityKey 衝突 | 受影響的兩頁 | **是**（資料被覆蓋） | 🔴 高 |
+| typing_drafts 手動草稿暫存 | 全部啟用 `draftOptions` 的打字頁 | 是（草稿失敗不能影響正式進度） | 🟡 中 |
 | week-visibility 格式 | grade3 nav + 首頁 | **是**（全週顯示） | 🟡 中 |
 | grade6 activeWeeks 未更新 | grade6 nav | 否（肉眼可見） | 🟡 中 |
 | course-navbar.js HTML 結構 | 全站 nav 版面 | 否（版面明顯爛掉） | 🟡 中 |

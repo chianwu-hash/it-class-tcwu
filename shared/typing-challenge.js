@@ -64,6 +64,7 @@ export function initTypingChallenge({
     getWrongAnswerHtml = null,
     progressMessages = {},
     celebrationContent = {},
+    draftOptions = {},
     afterAuthUpdate = null
 }) {
     ensureTypingChallengeTextStyle();
@@ -74,6 +75,10 @@ export function initTypingChallenge({
     const messages = { ...DEFAULT_PROGRESS_MESSAGES, ...progressMessages };
     const celebration = { ...DEFAULT_CELEBRATION_CONTENT, ...celebrationContent };
     const SAVE_TIMEOUT_MS = 10000;
+    const DRAFT_TIMEOUT_MS = 5000;
+    const draftsEnabled = Boolean(draftOptions?.enabled);
+    const draftStateByLevel = new Map();
+    let draftLoadKey = "";
 
     const authStatusEl = document.getElementById("auth-status");
     const progressStatusEl = document.getElementById("progress-status");
@@ -134,6 +139,349 @@ export function initTypingChallenge({
             buttonEl.classList.toggle("opacity-60", locked);
             buttonEl.classList.toggle("cursor-not-allowed", locked);
         });
+        syncAllDraftControls();
+    }
+
+    function getDraftControl(level) {
+        return document.getElementById(`typing-draft-ctrl-${level}`);
+    }
+
+    function getDraftSaveButton(level) {
+        return document.getElementById(`typing-draft-save-${level}`);
+    }
+
+    function getDraftRestoreButton(level) {
+        return document.getElementById(`typing-draft-restore-${level}`);
+    }
+
+    function getDraftStatus(level) {
+        return document.getElementById(`typing-draft-status-${level}`);
+    }
+
+    function formatDraftTime(value) {
+        if (!value) {
+            return "";
+        }
+        try {
+            return new Date(value).toLocaleTimeString("zh-TW", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false
+            });
+        } catch (_error) {
+            return "";
+        }
+    }
+
+    function setDraftStatus(level, text, tone = "muted") {
+        const statusEl = getDraftStatus(level);
+        if (!statusEl) {
+            return;
+        }
+
+        statusEl.textContent = text;
+        statusEl.className = "text-xs font-bold";
+        if (tone === "success") {
+            statusEl.classList.add("text-emerald-700");
+        } else if (tone === "warning") {
+            statusEl.classList.add("text-amber-700");
+        } else if (tone === "error") {
+            statusEl.classList.add("text-red-600");
+        } else {
+            statusEl.classList.add("text-slate-500");
+        }
+    }
+
+    function updateDraftControlFromState(level) {
+        const state = draftStateByLevel.get(level);
+        const restoreButton = getDraftRestoreButton(level);
+        const savedTime = formatDraftTime(state?.saved_at);
+
+        restoreButton?.classList.toggle("hidden", !state?.draft_text);
+        setDraftStatus(
+            level,
+            state?.draft_text && savedTime ? `上次草稿：${savedTime}` : "尚未儲存草稿"
+        );
+        syncDraftControlState(level);
+    }
+
+    function syncDraftControlState(level) {
+        if (!draftsEnabled) {
+            return;
+        }
+
+        const control = getDraftControl(level);
+        const inputEl = document.getElementById(`input-level${level}`);
+        if (!control || !inputEl) {
+            return;
+        }
+
+        const isCompleted = inputEl.readOnly;
+        const isLocked = !currentSession?.user || inputEl.disabled || isCompleted;
+        control.classList.toggle("hidden", isCompleted);
+        [getDraftSaveButton(level), getDraftRestoreButton(level)].forEach((button) => {
+            if (!button) {
+                return;
+            }
+            button.disabled = isLocked;
+            button.classList.toggle("opacity-50", isLocked);
+            button.classList.toggle("cursor-not-allowed", isLocked);
+        });
+    }
+
+    function syncAllDraftControls() {
+        if (!draftsEnabled) {
+            return;
+        }
+        for (let level = 1; level <= maxLevel; level += 1) {
+            syncDraftControlState(level);
+        }
+    }
+
+    function createDraftControls() {
+        if (!draftsEnabled) {
+            return;
+        }
+
+        for (let level = 1; level <= maxLevel; level += 1) {
+            const inputEl = document.getElementById(`input-level${level}`);
+            if (!inputEl || getDraftControl(level)) {
+                continue;
+            }
+
+            const control = document.createElement("div");
+            control.id = `typing-draft-ctrl-${level}`;
+            control.className = "mb-4 flex flex-col gap-2 rounded-xl border border-slate-200 bg-white/80 px-3 py-2 text-left shadow-sm sm:flex-row sm:items-center sm:justify-between";
+            control.innerHTML = `
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" id="typing-draft-save-${level}" class="rounded-lg bg-slate-700 px-3 py-2 text-sm font-black text-white transition hover:bg-slate-800">儲存草稿</button>
+                    <button type="button" id="typing-draft-restore-${level}" class="hidden rounded-lg bg-indigo-600 px-3 py-2 text-sm font-black text-white transition hover:bg-indigo-700">回復上次草稿</button>
+                </div>
+                <span id="typing-draft-status-${level}" class="text-xs font-bold text-slate-500">尚未儲存草稿</span>
+            `;
+            inputEl.insertAdjacentElement("afterend", control);
+
+            getDraftSaveButton(level)?.addEventListener("click", () => saveDraft(level));
+            getDraftRestoreButton(level)?.addEventListener("click", () => restoreDraft(level));
+            syncDraftControlState(level);
+        }
+    }
+
+    function getDraftAccessToken() {
+        return currentSession?.access_token ?? getStoredAccessToken();
+    }
+
+    async function requestDrafts({ method, query = {}, body = null, prefer = null }) {
+        const accessToken = getDraftAccessToken();
+        if (!accessToken) {
+            return {
+                data: null,
+                error: { message: "No access token available", status: "no_token" }
+            };
+        }
+
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(() => controller.abort(), DRAFT_TIMEOUT_MS);
+        const url = new URL(`${SUPABASE_URL}/rest/v1/typing_drafts`);
+        Object.entries(query).forEach(([key, value]) => {
+            url.searchParams.set(key, value);
+        });
+
+        try {
+            const headers = {
+                apikey: SUPABASE_ANON_KEY,
+                Authorization: `Bearer ${accessToken}`
+            };
+            if (body !== null) {
+                headers["Content-Type"] = "application/json";
+            }
+            if (prefer) {
+                headers.Prefer = prefer;
+            }
+
+            const response = await fetch(url.toString(), {
+                method,
+                signal: controller.signal,
+                headers,
+                body: body === null ? null : JSON.stringify(body)
+            });
+
+            if (response.ok) {
+                if (response.status === 204) {
+                    return { data: null, error: null };
+                }
+                const text = await response.text();
+                return { data: text ? JSON.parse(text) : null, error: null };
+            }
+
+            return {
+                data: null,
+                error: {
+                    message: await response.text(),
+                    status: response.status,
+                    statusText: response.statusText
+                }
+            };
+        } catch (error) {
+            return { data: null, error };
+        } finally {
+            window.clearTimeout(timeoutId);
+        }
+    }
+
+    function getDraftBaseFilters(userId) {
+        return {
+            user_id: `eq.${userId}`,
+            week_code: `eq.${weekCode}`,
+            activity_key: `eq.${activityKey}`
+        };
+    }
+
+    async function loadDraftsOnce() {
+        if (!draftsEnabled || !currentSession?.user) {
+            return;
+        }
+
+        const key = `${currentSession.user.id}:${weekCode}:${activityKey}`;
+        if (draftLoadKey === key) {
+            return;
+        }
+        draftLoadKey = key;
+
+        const { data, error } = await requestDrafts({
+            method: "GET",
+            query: {
+                select: "level_id,draft_text,saved_at",
+                ...getDraftBaseFilters(currentSession.user.id)
+            }
+        });
+
+        if (error) {
+            draftLoadKey = "";
+            console.warn("load typing drafts failed", error);
+            for (let level = 1; level <= maxLevel; level += 1) {
+                setDraftStatus(level, "草稿暫時讀取不到", "warning");
+            }
+            return;
+        }
+
+        draftStateByLevel.clear();
+        (Array.isArray(data) ? data : []).forEach((row) => {
+            draftStateByLevel.set(Number(row.level_id), row);
+        });
+        for (let level = 1; level <= maxLevel; level += 1) {
+            updateDraftControlFromState(level);
+        }
+    }
+
+    async function saveDraft(level) {
+        const inputEl = document.getElementById(`input-level${level}`);
+        const user = await getActiveUser();
+        if (!draftsEnabled || !inputEl || !user) {
+            return;
+        }
+
+        if (inputEl.disabled || inputEl.readOnly) {
+            return;
+        }
+
+        const draftText = inputEl.value;
+        if (!draftText.trim()) {
+            setDraftStatus(level, "目前沒有內容可儲存", "warning");
+            return;
+        }
+
+        const payload = {
+            user_id: user.id,
+            week_code: weekCode,
+            activity_key: activityKey,
+            level_id: level,
+            draft_text: draftText,
+            saved_at: new Date().toISOString()
+        };
+
+        setDraftStatus(level, "正在儲存草稿...", "muted");
+        const { data, error } = await requestDrafts({
+            method: "POST",
+            query: {
+                on_conflict: "user_id,week_code,activity_key,level_id"
+            },
+            body: payload,
+            prefer: "resolution=merge-duplicates,return=representation"
+        });
+
+        if (error) {
+            console.warn("save typing draft failed", error, payload);
+            setDraftStatus(level, "草稿暫時沒有儲存成功", "error");
+            return;
+        }
+
+        const saved = Array.isArray(data) ? data[0] : payload;
+        draftStateByLevel.set(level, saved || payload);
+        const savedTime = formatDraftTime(saved?.saved_at || payload.saved_at);
+        getDraftRestoreButton(level)?.classList.remove("hidden");
+        setDraftStatus(level, savedTime ? `草稿已儲存：${savedTime}` : "草稿已儲存", "success");
+        syncDraftControlState(level);
+    }
+
+    function restoreDraft(level) {
+        const inputEl = document.getElementById(`input-level${level}`);
+        const state = draftStateByLevel.get(level);
+        if (!inputEl || !state?.draft_text || inputEl.disabled || inputEl.readOnly) {
+            return;
+        }
+
+        if (inputEl.value.trim()) {
+            const shouldOverwrite = window.confirm("要用上次草稿覆蓋目前輸入的內容嗎？");
+            if (!shouldOverwrite) {
+                return;
+            }
+        }
+
+        inputEl.value = state.draft_text;
+        inputEl.focus();
+        setDraftStatus(level, "已回復上次草稿", "success");
+    }
+
+    async function deleteDraft(level) {
+        if (!draftsEnabled || !currentSession?.user) {
+            return;
+        }
+
+        const { error } = await requestDrafts({
+            method: "DELETE",
+            query: {
+                ...getDraftBaseFilters(currentSession.user.id),
+                level_id: `eq.${level}`
+            }
+        });
+
+        if (error) {
+            console.warn("delete typing draft failed", error, { level });
+            return;
+        }
+
+        draftStateByLevel.delete(level);
+        updateDraftControlFromState(level);
+    }
+
+    async function deleteAllDraftsForActivity() {
+        if (!draftsEnabled || !currentSession?.user) {
+            return;
+        }
+
+        const { error } = await requestDrafts({
+            method: "DELETE",
+            query: getDraftBaseFilters(currentSession.user.id)
+        });
+
+        if (error) {
+            console.warn("delete typing drafts failed", error);
+            return;
+        }
+
+        draftStateByLevel.clear();
+        draftLoadKey = "";
     }
 
     function clearProgressDebug() {
@@ -219,6 +567,7 @@ export function initTypingChallenge({
         if (btnEl) {
             btnEl.style.display = "none";
         }
+        syncDraftControlState(level);
     }
 
     function revealProgress(level, completed) {
@@ -272,6 +621,11 @@ export function initTypingChallenge({
             clearProgressDebug();
             loginBtn?.classList.remove("hidden");
             progressCompleted = false;
+            draftStateByLevel.clear();
+            draftLoadKey = "";
+            for (let level = 1; level <= maxLevel; level += 1) {
+                updateDraftControlFromState(level);
+            }
             setResetProgressVisible(false);
             logoutBtn?.classList.add("hidden");
             adminBtn?.classList.add("hidden");
@@ -330,10 +684,12 @@ export function initTypingChallenge({
             if (progressStatusEl) {
                 progressStatusEl.textContent = messages.firstLogin;
             }
+            await loadDraftsOnce();
             return;
         }
 
         revealProgress(data.current_level, data.completed);
+        await loadDraftsOnce();
     }
 
     async function fetchSavedProgress(userId) {
@@ -493,6 +849,7 @@ export function initTypingChallenge({
         }
 
         clearProgressDebug();
+        await deleteAllDraftsForActivity();
         window.location.reload();
     }
 
@@ -555,6 +912,7 @@ export function initTypingChallenge({
             inputEl.classList.remove("shake", "border-red-400", "border-red-500", "border-orange-300", "border-pink-300", "border-cyan-300", "border-emerald-300", "border-purple-400");
             inputEl.classList.add("border-green-400", "bg-green-50", "text-green-800");
             inputEl.readOnly = true;
+            syncDraftControlState(levelIndex);
 
             const btnEl = document.getElementById(`btn-pinyin-${levelIndex}`);
             if (btnEl) {
@@ -569,12 +927,14 @@ export function initTypingChallenge({
                     inputEl.readOnly = false;
                     inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800");
                     inputEl.classList.add("border-amber-400", "bg-amber-50", "text-amber-800");
+                    syncDraftControlState(levelIndex);
                     if (btnEl) {
                         btnEl.style.display = "";
                     }
                     return;
                 }
 
+                void deleteDraft(levelIndex);
                 const nextBlock = document.getElementById(`block-level${levelIndex + 1}`);
                 nextBlock?.classList.remove("hidden");
                 setTimeout(() => {
@@ -593,12 +953,14 @@ export function initTypingChallenge({
                 inputEl.readOnly = false;
                 inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800");
                 inputEl.classList.add("border-amber-400", "bg-amber-50", "text-amber-800");
+                syncDraftControlState(levelIndex);
                 if (btnEl) {
                     btnEl.style.display = "";
                 }
                 return;
             }
 
+            void deleteDraft(levelIndex);
             triggerUltimateCelebration();
         } else {
             const fallbackHint = typeof buildHint === "function"
@@ -669,6 +1031,7 @@ export function initTypingChallenge({
     bindResetProgressButton();
     window.addEventListener("course-navbar:rendered", refreshResetProgressButton);
     configureTypingInputs();
+    createDraftControls();
 
     async function initialize() {
         const { session } = await getSession();

@@ -51,6 +51,9 @@
 - [ ] 有打字闖關且為 grade3 → **同時呼叫 `initNavbarAuth()`**（防止 navbar 重渲後 listener 消失）
 - [ ] 有打字闖關 → 錯字提示必須沿用或等效於既有精準提示邏輯（可指出第幾行、第幾個字附近、可能少字/多字），不可只給籠統提示
 - [ ] 有打字闖關 → 每關設定 `levelEncouragements`，且使用阿德勒式鼓勵語：描述努力、策略、耐心、修正與進步，不只寫泛泛稱讚
+- [ ] 有打字闖關且需要草稿暫存 → 使用 `draftOptions: { enabled: true }`，草稿只存 `typing_drafts`，不可寫入 `student_progress` 或 `localStorage`
+- [ ] 有草稿暫存 → 只做手動「儲存草稿 / 回復上次草稿」，不可加入自動存檔、`setInterval`、`focus` / `visibilitychange` / `beforeunload` 存檔
+- [ ] 有草稿暫存 → 回復草稿必須由學生主動按鈕觸發，若輸入框已有文字需先確認，不可自動覆蓋
 - [ ] 有三年級中英打闖關 → 使用 `shared/typing-tools.js` 的 `initTypingTools()` 顯示共用標點符號表與中英文鍵盤圖，不在頁面內複製浮動工具 HTML 或切換函式
 - [ ] **此頁無打字闖關** → 標記 N/A：`___`
 

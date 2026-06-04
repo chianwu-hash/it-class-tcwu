@@ -71,11 +71,11 @@
 
 ## `shared/typing-challenge.js`
 
-**責任**：管理多關卡打字練習的完整生命週期：session 解析、進度讀取（Supabase `student_progress`）、關卡解鎖、答案驗證、進度儲存、進度重置、慶祝動畫、auth UI 更新。
+**責任**：管理多關卡打字練習的完整生命週期：session 解析、進度讀取（Supabase `student_progress`）、關卡解鎖、答案驗證、進度儲存、進度重置、慶祝動畫、auth UI 更新，以及 opt-in 的手動草稿暫存 / 回復。
 
-**匯出**：`initTypingChallenge({ weekCode, activityKey, levelsData, levelEncouragements, buildHint, getWrongAnswerHtml, progressMessages, celebrationContent, afterAuthUpdate })`
+**匯出**：`initTypingChallenge({ weekCode, activityKey, levelsData, levelEncouragements, buildHint, getWrongAnswerHtml, progressMessages, celebrationContent, draftOptions, afterAuthUpdate })`
 
-**被誰 import**：`grade3/week04.html`、`week05.html`、`week06.html`、`week07.html`、`week10.html`、`week12.html`、`week13.html`、`week14.html`、`week15.html`
+**被誰 import**：`grade3/week04.html`、`week05.html`、`week06.html`、`week07.html`、`week10.html`、`week12.html`、`week13.html`、`week14.html`、`week15.html`、`week16.html`
 
 **levelEncouragements 語氣**：三年級打字闖關需為每關提供阿德勒式鼓勵語，重點放在努力、策略、耐心、修正、檢查與進步，避免只寫「很棒」「太厲害」或單純宣布過關。
 
@@ -95,6 +95,8 @@
 **Navbar auth 邊界**：模組可更新打字闖關所需的 auth 顯示與 reset-progress 狀態，但不直接綁定 `#login-btn`、`#logout-btn`。登入 / 登出點擊一律交給 `initNavbarAuth()` 的事件代理。**因此，所有使用 `initTypingChallenge` 的頁面，必須同時呼叫 `initNavbarAuth()`。**
 
 **未登入鎖定規則**：`initTypingChallenge` 必須在未登入時鎖定 `#typing-levels-container` 內的輸入框與 `checkLevel` 按鈕。學生不可在未登入狀態先完成關卡，避免完成後才發現沒有保存。
+
+**手動草稿暫存**：三年級打字頁可用 `draftOptions: { enabled: true }` 啟用「儲存草稿 / 回復上次草稿」。草稿存到 `typing_drafts`，只保存學生尚未過關的輸入文字，不寫入 `student_progress`，不進入後台、成績或努力樹計算。第一版只允許手動儲存與手動回復；不可加入自動存檔、`setInterval`、`focus` / `visibilitychange` / `beforeunload` 存檔，避免和老師指令下的手動存檔打架。回復草稿必須由學生主動按鈕觸發，若輸入框已有文字需先確認，不可自動覆蓋。
 
 **題目 / 答案字型**：模組會在 `#typing-levels-container`（含舊頁面的 `#levels-container`）內統一題目顯示區與輸入框 / 文字區的 `font-family`，避免英打題目因 `<pre>` 預設等寬字型而和答案區看起來不一致。
 
