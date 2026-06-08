@@ -22,6 +22,13 @@
         linkClassName: "px-3 py-1.5 text-sm font-bold text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition whitespace-nowrap",
         currentWeekClassName: "px-3 py-1.5 text-sm font-bold bg-purple-100 text-purple-800 rounded-lg shadow-sm whitespace-nowrap cursor-default",
         separatorClassName: "text-gray-300 mx-1",
+        extraLinks: [
+            {
+                href: "/my-tree.html",
+                iconClass: "fa-solid fa-seedling",
+                label: "努力樹"
+            }
+        ],
         showAuthBarOnHomePages: false
     });
 
