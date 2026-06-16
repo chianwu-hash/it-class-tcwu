@@ -95,6 +95,46 @@
       "range": "第三單元：關懷臺灣與國際議題",
       "count": 20,
       "bank": "automation/question-banks/grade6-social-graduation-u3.md"
+    },
+    {
+      "id": "6a30d5c4cb97350c0fbcf9c4",
+      "title": "三年級國語期末題庫：302考前加練",
+      "subject": "國語",
+      "range": "第7-12課考前混合複習",
+      "count": 30,
+      "bank": "automation/question-banks/grade3-chinese-final-extra-302.md"
+    },
+    {
+      "id": "6a30d5d83e3ec7c55ef6730f",
+      "title": "三年級英語期末題庫：302考前加練",
+      "subject": "英語",
+      "range": "Unit 3、Unit 4、Review 2 考前混合複習",
+      "count": 30,
+      "bank": "automation/question-banks/grade3-english-final-extra-302.md"
+    },
+    {
+      "id": "6a30d5ebf60567232f17d7fd",
+      "title": "三年級數學期末題庫：302考前加練",
+      "subject": "數學",
+      "range": "第6-10單元考前混合複習",
+      "count": 30,
+      "bank": "automation/question-banks/grade3-math-final-extra-302.md"
+    },
+    {
+      "id": "6a30d601f60567232f17d803",
+      "title": "三年級自然期末題庫：302考前加練",
+      "subject": "自然",
+      "range": "第3-4單元考前混合複習",
+      "count": 30,
+      "bank": "automation/question-banks/grade3-science-final-extra-302.md"
+    },
+    {
+      "id": "6a30d615b8f1859ab51bb78d",
+      "title": "三年級社會期末題庫：302考前加練",
+      "subject": "社會",
+      "range": "第4-6單元考前混合複習",
+      "count": 30,
+      "bank": "automation/question-banks/grade3-social-final-extra-302.md"
     }
   ]
 }
