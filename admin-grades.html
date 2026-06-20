@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教師後台 | 成績處理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Noto Sans TC", sans-serif;
+            background: linear-gradient(180deg, #f8fbff 0%, #eef7ff 100%);
+        }
+
+        .score-input {
+            width: 4.5rem;
+        }
+
+        .description-input {
+            min-width: 18rem;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+    <header class="sticky top-0 z-40 border-b border-sky-100 bg-white/90 backdrop-blur-md shadow-sm">
+        <div class="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+                <div class="text-sm font-black tracking-wide text-sky-600">Teacher Admin</div>
+                <h1 class="text-2xl font-black text-slate-900 md:text-3xl">成績處理</h1>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="/admin-progress.html" class="rounded-xl border border-slate-200 bg-white px-4 py-2 font-black text-slate-700 transition hover:bg-slate-50">
+                    <i class="fa-solid fa-list-check mr-1"></i> 進度管理
+                </a>
+                <a href="/index.html" class="rounded-xl border border-slate-200 bg-white px-4 py-2 font-black text-slate-700 transition hover:bg-slate-50">
+                    <i class="fa-solid fa-house mr-1"></i> 回首頁
+                </a>
+                <div id="auth-status" class="rounded-full border border-sky-100 bg-sky-50 px-3 py-2 text-sm font-bold text-slate-700">尚未登入</div>
+                <button id="login-btn" type="button" class="rounded-xl border-2 border-sky-300 px-4 py-2 font-black text-sky-700 transition hover:bg-sky-50">
+                    <i class="fa-brands fa-google mr-1"></i> Google 登入
+                </button>
+                <button id="logout-btn" type="button" class="hidden rounded-xl bg-slate-800 px-4 py-2 font-black text-white transition hover:bg-slate-700">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i> 登出
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="mx-auto max-w-7xl space-y-6 px-6 py-8">
+        <section id="notice-panel" class="hidden rounded-2xl border px-5 py-4 text-sm font-bold"></section>
+
+        <section class="overflow-hidden rounded-3xl border border-sky-100 bg-white shadow-sm">
+            <div class="grid gap-6 px-6 py-6 lg:grid-cols-[1.2fr_0.8fr]">
+                <div>
+                    <h2 class="text-xl font-black text-slate-900">新北校務成績匯入檔</h2>
+                    <p class="mt-1 text-sm font-bold text-slate-500">上傳校務系統下載的 `.xlsx` 範本，系統只會填入 D/E/F：學期成績、努力程度、文字描述。</p>
+                    <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+                        <input id="template-file-input" type="file" accept=".xlsx,.xls" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 sm:max-w-xl">
+                        <button id="load-and-calc-btn" type="button" class="rounded-xl bg-sky-600 px-4 py-3 font-black text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-50">
+                            <i class="fa-solid fa-calculator mr-1"></i> 讀取並計算
+                        </button>
+                    </div>
+                    <div id="template-summary" class="mt-4 text-sm font-bold text-slate-500">尚未讀取範本</div>
+                </div>
+
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-5">
+                    <h3 class="text-base font-black text-slate-900">計算規則</h3>
+                    <div class="mt-3 grid grid-cols-2 gap-3 text-sm">
+                        <div class="rounded-xl bg-white p-3">
+                            <div class="font-black text-slate-500">Quiz</div>
+                            <div class="mt-1 text-2xl font-black text-sky-700">40%</div>
+                        </div>
+                        <div class="rounded-xl bg-white p-3">
+                            <div class="font-black text-slate-500">Typing</div>
+                            <div class="mt-1 text-2xl font-black text-teal-700">60%</div>
+                        </div>
+                    </div>
+                    <p class="mt-3 text-sm font-bold leading-6 text-slate-500">各項分數為 80 基本分加班內 PR 20 分；免評學生不參與 PR，匯出時保持空白。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+            <div class="rounded-3xl border border-sky-100 bg-white p-6 shadow-sm">
+                <h2 class="text-xl font-black text-slate-900">免評名單</h2>
+                <p class="mt-1 text-sm font-bold text-slate-500">每行一個 student code。這些學生會保留在範本中，但 D/E/F 不填。</p>
+                <textarea id="exempt-codes-input" rows="5" class="mt-4 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-mono text-sm font-bold text-slate-700"></textarea>
+                <button id="apply-exempt-btn" type="button" class="mt-3 rounded-xl border border-slate-200 px-4 py-2 font-black text-slate-700 transition hover:bg-slate-50">
+                    套用免評名單
+                </button>
+            </div>
+
+            <div class="rounded-3xl border border-sky-100 bg-white p-6 shadow-sm">
+                <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                    <div>
+                        <h2 class="text-xl font-black text-slate-900">產生結果</h2>
+                        <p id="summary-text" class="mt-1 text-sm font-bold text-slate-500">請先登入並上傳範本</p>
+                    </div>
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                        <label class="block">
+                            <span class="mb-1 block text-sm font-black text-slate-700">班級</span>
+                            <select id="class-filter" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700">
+                                <option value="">全部班級</option>
+                            </select>
+                        </label>
+                        <button id="export-btn" type="button" class="rounded-xl bg-emerald-600 px-4 py-3 font-black text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50" disabled>
+                            <i class="fa-solid fa-file-export mr-1"></i> 匯出 .xlsx
+                        </button>
+                    </div>
+                </div>
+                <div id="stats-grid" class="mt-5 grid gap-3 sm:grid-cols-4"></div>
+            </div>
+        </section>
+
+        <section class="overflow-hidden rounded-3xl border border-sky-100 bg-white shadow-sm">
+            <div class="border-b border-slate-100 px-6 py-5">
+                <h2 class="text-xl font-black text-slate-900">預覽與微調</h2>
+                <p class="mt-1 text-sm font-bold text-slate-500">可在匯出前逐列修改學期成績、努力程度與文字描述。</p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead class="bg-slate-50 text-slate-600">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-black">學生</th>
+                            <th class="px-4 py-3 text-left font-black">Quiz</th>
+                            <th class="px-4 py-3 text-left font-black">Typing</th>
+                            <th class="px-4 py-3 text-left font-black">學期成績</th>
+                            <th class="px-4 py-3 text-left font-black">努力程度</th>
+                            <th class="px-4 py-3 text-left font-black">文字描述</th>
+                            <th class="px-4 py-3 text-left font-black">狀態</th>
+                        </tr>
+                    </thead>
+                    <tbody id="grades-tbody" class="divide-y divide-slate-100">
+                        <tr>
+                            <td colspan="7" class="px-4 py-12 text-center font-bold text-slate-400">尚未產生成績</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import {
+            AUTH_STORAGE_KEY,
+            isTeacher,
+            resolveSession,
+            signInWithGoogle as sharedSignInWithGoogle,
+            signOutAndReload,
+            supabase
+        } from "./shared/auth.js";
+        import { GRADE3_GRADING_CONFIG } from "./shared/grade3-grading-config.js";
+        import { calculateGrade3Grades } from "./shared/grade3-grading.js";
+
+        const XLSX = window.XLSX;
+        const authStatusEl = document.getElementById("auth-status");
+        const loginBtn = document.getElementById("login-btn");
+        const logoutBtn = document.getElementById("logout-btn");
+        const noticePanelEl = document.getElementById("notice-panel");
+        const templateFileInputEl = document.getElementById("template-file-input");
+        const loadAndCalcBtn = document.getElementById("load-and-calc-btn");
+        const templateSummaryEl = document.getElementById("template-summary");
+        const exemptCodesInputEl = document.getElementById("exempt-codes-input");
+        const applyExemptBtn = document.getElementById("apply-exempt-btn");
+        const classFilterEl = document.getElementById("class-filter");
+        const exportBtn = document.getElementById("export-btn");
+        const summaryTextEl = document.getElementById("summary-text");
+        const statsGridEl = document.getElementById("stats-grid");
+        const gradesTbodyEl = document.getElementById("grades-tbody");
+
+        const EXEMPT_STORAGE_KEY = "admin-grades-exempt-codes";
+        const GRADE3_CLASSES = ["301", "302", "303", "304", "305", "306"];
+
+        let currentSession = null;
+        let templateState = null;
+        let profileRows = [];
+        let progressRows = [];
+        let calculatedRows = [];
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#39;");
+        }
+
+        function showNotice(message, tone = "info") {
+            const toneClass = {
+                info: "bg-sky-50 border-sky-200 text-sky-700",
+                error: "bg-rose-50 border-rose-200 text-rose-700",
+                success: "bg-emerald-50 border-emerald-200 text-emerald-700"
+            };
+            noticePanelEl.className = `rounded-2xl border px-5 py-4 text-sm font-bold ${toneClass[tone] || toneClass.info}`;
+            noticePanelEl.textContent = message;
+            noticePanelEl.classList.remove("hidden");
+        }
+
+        function hideNotice() {
+            noticePanelEl.classList.add("hidden");
+            noticePanelEl.textContent = "";
+        }
+
+        function readExemptCodes() {
+            return exemptCodesInputEl.value
+                .split(/\r?\n|,|;/)
+                .map((code) => code.trim())
+                .filter(Boolean);
+        }
+
+        function initExemptCodes() {
+            const storedValue = window.sessionStorage.getItem(EXEMPT_STORAGE_KEY);
+            exemptCodesInputEl.value = storedValue || GRADE3_GRADING_CONFIG.exemptStudentCodes.join("\n");
+        }
+
+        function saveExemptCodes() {
+            window.sessionStorage.setItem(EXEMPT_STORAGE_KEY, readExemptCodes().join("\n"));
+        }
+
+        function updateAuthUI() {
+            if (!currentSession?.user) {
+                authStatusEl.textContent = "尚未登入";
+                loginBtn.classList.remove("hidden");
+                logoutBtn.classList.add("hidden");
+                summaryTextEl.textContent = "請先登入教師帳號";
+                return;
+            }
+
+            authStatusEl.textContent = currentSession.user.email || "Google 使用者";
+            loginBtn.classList.add("hidden");
+            logoutBtn.classList.remove("hidden");
+        }
+
+        async function signInWithGoogle() {
+            const { error } = await sharedSignInWithGoogle({
+                redirectTo: `${window.location.origin}/admin-grades.html`
+            });
+            if (error) {
+                showNotice(`登入失敗：${error.message}`, "error");
+            }
+        }
+
+        function classCodeFromSheet(sheetName, firstRow = []) {
+            const f1 = String(firstRow[5] || "");
+            const idMatch = f1.match(/114_2_(\d{3})_/);
+            if (idMatch) return idMatch[1];
+
+            const sheetMatch = String(sheetName || "").match(/三年([一二三四五六])班/);
+            const classMap = { "一": "301", "二": "302", "三": "303", "四": "304", "五": "305", "六": "306" };
+            return classMap[sheetMatch?.[1]] || "";
+        }
+
+        function parseSeatNo(value) {
+            const match = String(value ?? "").trim().match(/^(\d{1,2})$/);
+            return match ? Number(match[1]) : null;
+        }
+
+        async function parseTemplateFile(file) {
+            if (!XLSX) {
+                throw new Error("XLSX library not loaded");
+            }
+            const arrayBuffer = await file.arrayBuffer();
+            const workbook = XLSX.read(arrayBuffer, { type: "array", cellDates: false });
+            const rosterRows = [];
+            const sheetSummaries = [];
+
+            workbook.SheetNames.forEach((sheetName, sheetIndex) => {
+                const sheet = workbook.Sheets[sheetName];
+                const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "", raw: false });
+                const classCode = classCodeFromSheet(sheetName, rows[0] || []);
+                let studentCount = 0;
+
+                rows.forEach((row, rowIndex) => {
+                    if (rowIndex < 3) return;
+                    const seatNo = parseSeatNo(row[0]);
+                    const name = String(row[1] || "").trim();
+                    if (!seatNo || !name || !classCode) return;
+                    studentCount += 1;
+                    rosterRows.push({
+                        sheetName,
+                        sheetIndex,
+                        rowIndex,
+                        rowNumber: rowIndex + 1,
+                        classCode,
+                        seatNo,
+                        studentCode: `${classCode}${String(seatNo).padStart(2, "0")}`,
+                        name,
+                        gender: String(row[2] || "").trim()
+                    });
+                });
+
+                sheetSummaries.push({
+                    sheetName,
+                    classCode,
+                    studentCount,
+                    importId: String(rows[0]?.[5] || "")
+                });
+            });
+
+            return { file, arrayBuffer, workbook, rosterRows, sheetSummaries };
+        }
+
+        function isIncludedActivity(row) {
+            const key = String(row.activity_key || "").toLowerCase();
+            const week = String(row.week_code || "").padStart(2, "0");
+            return [
+                ...GRADE3_GRADING_CONFIG.quiz,
+                ...GRADE3_GRADING_CONFIG.typing
+            ].some((activity) => activity.counted && activity.weekCode === week && activity.activityKey === key);
+        }
+
+        async function loadAllRpcRows(functionName, payload = {}) {
+            const pageSize = 1000;
+            const rows = [];
+
+            for (let page = 0; page < 20; page += 1) {
+                const from = page * pageSize;
+                const to = from + pageSize - 1;
+                const { data, error } = await supabase.rpc(functionName, payload).range(from, to);
+
+                if (error) throw error;
+
+                const batch = data || [];
+                rows.push(...batch);
+
+                if (batch.length < pageSize) {
+                    return rows;
+                }
+            }
+
+            throw new Error(`${functionName} returned more than 20000 rows; narrow the RPC filter.`);
+        }
+
+        async function loadGradeDataFromDedicatedRpc() {
+            const rows = await loadAllRpcRows("admin_list_grade3_grading_data");
+            return {
+                profiles: rows.filter((row) => row.record_type === "profile"),
+                progress: rows.filter((row) => row.record_type === "progress")
+            };
+        }
+
+        async function loadGradeDataFromFallbackRpcs() {
+            const [profiles, progress] = await Promise.all([
+                loadAllRpcRows("admin_list_student_profiles", { p_class_code: null, p_search: null }),
+                loadAllRpcRows("admin_list_progress", {
+                    p_week_code: null,
+                    p_activity_type: null,
+                    p_search: null,
+                    p_completed: null
+                })
+            ]);
+
+            const grade3Profiles = profiles.filter((profile) => GRADE3_CLASSES.includes(String(profile.class_code || "")));
+            const grade3UserIds = new Set(grade3Profiles.map((profile) => profile.user_id));
+            return {
+                profiles: grade3Profiles,
+                progress: progress.filter((row) => grade3UserIds.has(row.user_id) && isIncludedActivity(row))
+            };
+        }
+
+        async function loadGradeData() {
+            try {
+                const data = await loadGradeDataFromDedicatedRpc();
+                return { ...data, source: "dedicated" };
+            } catch (error) {
+                console.warn("admin_list_grade3_grading_data unavailable, falling back", error);
+                const data = await loadGradeDataFromFallbackRpcs();
+                return { ...data, source: "fallback" };
+            }
+        }
+
+        function populateClassFilter(rows) {
+            const current = classFilterEl.value;
+            const classes = Array.from(new Set(rows.map((row) => row.classCode).filter(Boolean))).sort();
+            classFilterEl.innerHTML = [
+                '<option value="">全部班級</option>',
+                ...classes.map((classCode) => `<option value="${escapeHtml(classCode)}">${escapeHtml(classCode)}</option>`)
+            ].join("");
+            classFilterEl.value = classes.includes(current) ? current : "";
+        }
+
+        function renderTemplateSummary() {
+            if (!templateState) {
+                templateSummaryEl.textContent = "尚未讀取範本";
+                return;
+            }
+            const sheetSummary = templateState.sheetSummaries
+                .map((sheet) => `${sheet.classCode || sheet.sheetName}：${sheet.studentCount} 人`)
+                .join("，");
+            templateSummaryEl.textContent = `${templateState.file.name}，${templateState.sheetSummaries.length} 張工作表，${templateState.rosterRows.length} 位學生。${sheetSummary}`;
+        }
+
+        function formatNumber(value, digits = 1) {
+            return Number.isFinite(Number(value)) ? Number(value).toFixed(digits) : "-";
+        }
+
+        function renderStats(rows) {
+            const nonExemptRows = rows.filter((row) => !row.isExempt);
+            const exemptRows = rows.filter((row) => row.isExempt);
+            const average = nonExemptRows.length
+                ? nonExemptRows.reduce((sum, row) => sum + row.termScore, 0) / nonExemptRows.length
+                : 0;
+            const items = [
+                ["名冊人數", rows.length],
+                ["計分人數", nonExemptRows.length],
+                ["免評人數", exemptRows.length],
+                ["平均成績", formatNumber(average, 1)]
+            ];
+            statsGridEl.innerHTML = items.map(([label, value]) => `
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                    <div class="text-xs font-black text-slate-500">${escapeHtml(label)}</div>
+                    <div class="mt-1 text-2xl font-black text-slate-900">${escapeHtml(value)}</div>
+                </div>
+            `).join("");
+        }
+
+        function visibleRows() {
+            const classCode = classFilterEl.value;
+            return classCode
+                ? calculatedRows.filter((row) => row.classCode === classCode)
+                : calculatedRows;
+        }
+
+        function renderRows() {
+            const rows = visibleRows();
+            if (!rows.length) {
+                gradesTbodyEl.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-4 py-12 text-center font-bold text-slate-400">尚未產生成績</td>
+                    </tr>
+                `;
+                exportBtn.disabled = true;
+                return;
+            }
+
+            gradesTbodyEl.innerHTML = rows.map((row) => {
+                const rowId = row.studentCode;
+                const warningText = row.isExempt ? "免評" : row.warnings.join("、");
+                const statusClass = row.isExempt
+                    ? "bg-slate-100 text-slate-600"
+                    : row.warnings.length
+                        ? "bg-amber-100 text-amber-700"
+                        : "bg-emerald-100 text-emerald-700";
+                const statusText = row.isExempt ? "免評" : (warningText || "可匯出");
+                return `
+                    <tr>
+                        <td class="px-4 py-4 align-top">
+                            <div class="font-black text-slate-800">${escapeHtml(row.studentCode)} ${escapeHtml(row.name)}</div>
+                            <div class="text-xs font-bold text-slate-400">${escapeHtml(row.classCode)} 座號 ${String(row.seatNo).padStart(2, "0")}・${escapeHtml(row.email || "未匹配帳號")}</div>
+                        </td>
+                        <td class="px-4 py-4 align-top font-bold text-slate-700">
+                            <div>${escapeHtml(row.quizCorrect)} / ${escapeHtml(row.quizTotal)}</div>
+                            <div class="text-xs text-slate-400">PR ${row.quizPR == null ? "-" : formatNumber(row.quizPR, 1)}・${row.quizScore == null ? "-" : formatNumber(row.quizScore, 1)}</div>
+                        </td>
+                        <td class="px-4 py-4 align-top font-bold text-slate-700">
+                            <div>${escapeHtml(row.typingPoints)} / ${escapeHtml(row.typingTotal)}</div>
+                            <div class="text-xs text-slate-400">PR ${row.typingPR == null ? "-" : formatNumber(row.typingPR, 1)}・${row.typingScore == null ? "-" : formatNumber(row.typingScore, 1)}</div>
+                        </td>
+                        <td class="px-4 py-4 align-top">
+                            <input
+                                class="score-input rounded-xl border border-slate-200 px-3 py-2 font-black text-slate-700 disabled:bg-slate-100 disabled:text-slate-400"
+                                type="number"
+                                min="0"
+                                max="100"
+                                value="${row.termScore ?? ""}"
+                                data-student-code="${escapeHtml(rowId)}"
+                                data-field="termScore"
+                                ${row.isExempt ? "disabled" : ""}>
+                        </td>
+                        <td class="px-4 py-4 align-top">
+                            <select
+                                class="rounded-xl border border-slate-200 px-3 py-2 font-black text-slate-700 disabled:bg-slate-100 disabled:text-slate-400"
+                                data-student-code="${escapeHtml(rowId)}"
+                                data-field="effort"
+                                ${row.isExempt ? "disabled" : ""}>
+                                <option value=""></option>
+                                <option value="1" ${row.effort === "1" ? "selected" : ""}>1 表現良好</option>
+                                <option value="2" ${row.effort === "2" ? "selected" : ""}>2 表現尚可</option>
+                                <option value="3" ${row.effort === "3" ? "selected" : ""}>3 需再加油</option>
+                            </select>
+                        </td>
+                        <td class="px-4 py-4 align-top">
+                            <input
+                                class="description-input rounded-xl border border-slate-200 px-3 py-2 font-bold text-slate-700 disabled:bg-slate-100 disabled:text-slate-400"
+                                type="text"
+                                maxlength="${GRADE3_GRADING_CONFIG.descriptionMaxLength}"
+                                value="${escapeHtml(row.description || "")}"
+                                data-student-code="${escapeHtml(rowId)}"
+                                data-field="description"
+                                ${row.isExempt ? "disabled" : ""}>
+                        </td>
+                        <td class="px-4 py-4 align-top">
+                            <span class="inline-flex rounded-full px-3 py-1 text-xs font-black ${statusClass}">${escapeHtml(statusText)}</span>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+            exportBtn.disabled = false;
+            summaryTextEl.textContent = `目前顯示 ${rows.length} 位；總計 ${calculatedRows.length} 位。`;
+        }
+
+        function updateCalculatedField(target) {
+            const studentCode = target.dataset.studentCode;
+            const field = target.dataset.field;
+            const row = calculatedRows.find((item) => item.studentCode === studentCode);
+            if (!row || !field || row.isExempt) return;
+
+            if (field === "termScore") {
+                row.termScore = Math.round(clamp(target.value, 0, 100));
+                target.value = row.termScore;
+            } else if (field === "effort") {
+                row.effort = target.value;
+            } else if (field === "description") {
+                row.description = String(target.value || "").slice(0, GRADE3_GRADING_CONFIG.descriptionMaxLength);
+                target.value = row.description;
+            }
+        }
+
+        function clamp(value, min, max) {
+            const numberValue = Number(value);
+            if (!Number.isFinite(numberValue)) return min;
+            return Math.min(Math.max(numberValue, min), max);
+        }
+
+        async function calculateFromInputs() {
+            if (!currentSession?.user || !isTeacher(currentSession)) {
+                showNotice("請先用教師帳號登入。", "error");
+                return;
+            }
+            const file = templateFileInputEl.files?.[0];
+            if (!file) {
+                showNotice("請先選擇校務系統匯出的範本檔。", "error");
+                return;
+            }
+
+            loadAndCalcBtn.disabled = true;
+            loadAndCalcBtn.textContent = "讀取中...";
+            hideNotice();
+
+            try {
+                templateState = await parseTemplateFile(file);
+                renderTemplateSummary();
+                const gradeData = await loadGradeData();
+                profileRows = gradeData.profiles;
+                progressRows = gradeData.progress;
+                saveExemptCodes();
+
+                const result = calculateGrade3Grades({
+                    rosterRows: templateState.rosterRows,
+                    profiles: profileRows,
+                    progressRows,
+                    exemptStudentCodes: readExemptCodes()
+                });
+                calculatedRows = result.rows;
+                populateClassFilter(calculatedRows);
+                renderStats(calculatedRows);
+                renderRows();
+                const warningCount = calculatedRows.filter((row) => row.warnings.length > 0).length;
+                const sourceLabel = gradeData.source === "dedicated" ? "專用 RPC" : "現有 RPC fallback";
+                showNotice(
+                    warningCount > 0
+                        ? `已完成計算。資料來源：${sourceLabel}。有 ${warningCount} 位學生帶有警示，請匯出前確認。`
+                        : `已完成計算。資料來源：${sourceLabel}。`,
+                    warningCount > 0 ? "info" : "success"
+                );
+            } catch (error) {
+                console.error(error);
+                showNotice(`產生成績失敗：${error.message || error}`, "error");
+            } finally {
+                loadAndCalcBtn.disabled = false;
+                loadAndCalcBtn.innerHTML = '<i class="fa-solid fa-calculator mr-1"></i> 讀取並計算';
+            }
+        }
+
+        function exportWorkbook() {
+            if (!templateState || !calculatedRows.length) return;
+            const invalidRows = calculatedRows.filter((row) => (
+                !row.isExempt
+                && (
+                    !Number.isFinite(Number(row.termScore))
+                    || Number(row.termScore) < 0
+                    || Number(row.termScore) > 100
+                    || !["1", "2", "3"].includes(String(row.effort))
+                )
+            ));
+            if (invalidRows.length > 0) {
+                showNotice(`有 ${invalidRows.length} 位非免評學生缺少有效的學期成績或努力程度，請修正後再匯出。`, "error");
+                return;
+            }
+
+            const workbook = XLSX.read(templateState.arrayBuffer, { type: "array", cellDates: false });
+
+            for (const row of calculatedRows) {
+                const sheet = workbook.Sheets[row.sheetName];
+                if (!sheet) continue;
+
+                const scoreCell = XLSX.utils.encode_cell({ r: row.rowIndex, c: 3 });
+                const effortCell = XLSX.utils.encode_cell({ r: row.rowIndex, c: 4 });
+                const descriptionCell = XLSX.utils.encode_cell({ r: row.rowIndex, c: 5 });
+
+                if (row.isExempt) {
+                    delete sheet[scoreCell];
+                    delete sheet[effortCell];
+                    delete sheet[descriptionCell];
+                    continue;
+                }
+
+                sheet[scoreCell] = { t: "n", v: Number(row.termScore) || 0 };
+                sheet[effortCell] = { t: "n", v: Number(row.effort) || 3 };
+                sheet[descriptionCell] = { t: "s", v: String(row.description || "").slice(0, GRADE3_GRADING_CONFIG.descriptionMaxLength) };
+            }
+
+            const stamp = new Date().toISOString().slice(0, 10).replaceAll("-", "");
+            XLSX.writeFile(workbook, `grade3-term-grades-${stamp}.xlsx`, { bookType: "xlsx" });
+        }
+
+        async function syncSessionAndRender() {
+            currentSession = await resolveSession();
+            updateAuthUI();
+            if (!currentSession?.user) {
+                return;
+            }
+            if (!isTeacher(currentSession)) {
+                showNotice("此帳號不是教師白名單，無法讀取學生資料。", "error");
+            }
+        }
+
+        loginBtn.addEventListener("click", signInWithGoogle);
+        logoutBtn.addEventListener("click", signOutAndReload);
+        loadAndCalcBtn.addEventListener("click", calculateFromInputs);
+        applyExemptBtn.addEventListener("click", () => {
+            saveExemptCodes();
+            if (templateState && profileRows.length) {
+                const result = calculateGrade3Grades({
+                    rosterRows: templateState.rosterRows,
+                    profiles: profileRows,
+                    progressRows,
+                    exemptStudentCodes: readExemptCodes()
+                });
+                calculatedRows = result.rows;
+                renderStats(calculatedRows);
+                renderRows();
+            }
+        });
+        classFilterEl.addEventListener("change", renderRows);
+        exportBtn.addEventListener("click", exportWorkbook);
+        gradesTbodyEl.addEventListener("change", (event) => {
+            if (event.target?.dataset?.studentCode) {
+                updateCalculatedField(event.target);
+            }
+        });
+        gradesTbodyEl.addEventListener("input", (event) => {
+            if (event.target?.dataset?.field === "description") {
+                updateCalculatedField(event.target);
+            }
+        });
+
+        window.addEventListener("storage", (event) => {
+            if (event.key === AUTH_STORAGE_KEY) {
+                syncSessionAndRender();
+            }
+        });
+
+        initExemptCodes();
+        await syncSessionAndRender();
+
+        supabase.auth.onAuthStateChange((event, session) => {
+            currentSession = session;
+            updateAuthUI();
+            if (event === "SIGNED_IN") {
+                syncSessionAndRender();
+            }
+        });
+    </script>
+</body>
+</html>
