@@ -17,7 +17,7 @@
 ### ??? week08
 
 ?????? GitHub?
-- `grade6/LessonPlan/Week 08.md`
+- `grade6/LessonPlan/114-2/Week 08.md`
 - `grade6/week08.html`
 - `grade6/index.html`
 - `grade6/navbar.js`
@@ -42,7 +42,7 @@ Cloudinary?
 ### ??? week08
 
 ?????? GitHub?
-- `grade3/LessonPlan/Week 08.md`
+- `grade3/LessonPlan/114-2/Week 08.md`
 - `grade3/week08.html`
 - `grade3/index.html`
 - `grade3/navbar.js`
@@ -159,8 +159,8 @@ Cloudinary?
 
 1. `docs/SESSION_MEMORY_2026-03-31.md`
 2. `docs/image-and-preview-card-sop.md`
-3. `grade3/LessonPlan/Week 08.md`
-4. `grade6/LessonPlan/Week 08.md`
+3. `grade3/LessonPlan/114-2/Week 08.md`
+4. `grade6/LessonPlan/114-2/Week 08.md`
 5. `shared/week-visibility.js`
 6. `grade3/index.html`
 7. `grade6/index.html`

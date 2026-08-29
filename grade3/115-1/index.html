@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三年級資訊課｜115 學年度上學期</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: #ecfeff;
+        }
+        .card-hover {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 24px rgba(15, 118, 110, 0.14);
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pb-12">
+    <script src="navbar.js?v=20260829"></script>
+
+    <header class="bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 text-white shadow-xl rounded-b-[2.5rem] mb-10">
+        <div class="max-w-5xl mx-auto px-6 py-10 text-center">
+            <div class="inline-flex items-center gap-2 bg-white/20 text-white font-black px-4 py-2 rounded-full text-sm mb-4 shadow-sm">
+                <i class="fa-solid fa-calendar-days"></i>
+                115 學年度上學期
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black tracking-tight mb-4 drop-shadow-md">三年級資訊課</h1>
+            <p class="text-xl md:text-2xl text-cyan-50 font-bold drop-shadow">先學會有秩序，再一起探索電腦教室。</p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6">
+        <section class="mb-10">
+            <div class="flex items-center mb-6 border-b-2 border-cyan-200 pb-2">
+                <i class="fa-solid fa-map text-3xl text-cyan-600 mr-3"></i>
+                <h2 class="text-3xl font-black text-slate-800">115-1 課程進度</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <a href="week01.html" class="block bg-white rounded-2xl shadow-md border-4 border-cyan-300 overflow-hidden card-hover">
+                    <div class="h-32 bg-gradient-to-r from-cyan-500 to-emerald-500 relative flex items-center justify-center">
+                        <i class="fa-solid fa-computer text-6xl text-white/60"></i>
+                        <div class="absolute top-4 left-4 bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full font-bold text-sm">第 01 週</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-black text-slate-800 mb-2">第一次上資訊課</h3>
+                        <p class="text-slate-600 font-bold mb-5">認識老師、學會進電腦教室流程，完成管理規則闖關。</p>
+                        <div class="inline-flex items-center rounded-xl bg-cyan-600 text-white px-4 py-2 font-black">
+                            進入第 01 週
+                            <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <section class="bg-white border-2 border-slate-200 rounded-2xl p-6">
+            <h2 class="text-xl font-black text-slate-800 mb-3">
+                <i class="fa-solid fa-box-archive text-slate-500 mr-2"></i>
+                舊學期資料
+            </h2>
+            <p class="text-slate-600 font-bold mb-4">114 學年度下學期的舊課程保留在原本位置，供老師備查。</p>
+            <a href="../index.html" class="inline-flex items-center bg-slate-700 hover:bg-slate-600 text-white px-5 py-3 rounded-xl font-black transition">
+                查看 114-2 三年級舊課程
+                <i class="fa-solid fa-arrow-right ml-2"></i>
+            </a>
+        </section>
+    </main>
+
+    <footer class="text-center mt-16 pb-8 text-slate-400 text-sm font-bold">
+        <p><i class="fa-solid fa-rocket mr-1"></i> 新北市頂溪國小資訊課 - 115 學年度上學期</p>
+    </footer>
+</body>
+</html>

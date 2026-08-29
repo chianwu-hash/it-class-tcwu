@@ -8,8 +8,8 @@
 
 適用情境：
 
-- 新增 `grade3/weekXX.html`
-- 新增 `grade6/weekXX.html`
+- 新增目前學年度週頁，例如 `grade3/115-1/weekXX.html`
+- 新增其他年級目前學年度週頁，例如 `grade6/115-1/weekXX.html`
 - 需要同步教案、資訊圖卡、首頁週卡、navbar 週次
 - 需要補課本頁碼參考或 NotebookLM 查詢
 
@@ -148,8 +148,9 @@
 
 路徑：
 
-- `grade3/LessonPlan/Week XX.md`
-- `grade6/LessonPlan/Week XX.md`
+- `grade3/LessonPlan/115-1/Week XX.md`（目前 115 學年度上學期）
+- `grade6/LessonPlan/115-1/Week XX.md`（若本學期有六年級新教案）
+- 舊學年度教案放入對應資料夾，例如 `grade3/LessonPlan/114-2/Week XX.md`
 
 ---
 
@@ -270,7 +271,7 @@ NotebookLM 的結果至少存一份文字輸出，避免只留在聊天或瀏覽
 使用方式：
 
 ```powershell
-npm.cmd run notebooklm:page-refs -- --input C:\Users\user\projects\it-class-tcwu\automation\output\notebooklm-week11-page-refs.txt --json-out C:\Users\user\projects\it-class-tcwu\automation\output\notebooklm-week11-page-refs.json --markdown-out C:\Users\user\projects\it-class-tcwu\automation\output\notebooklm-week11-page-refs.md --html-out C:\Users\user\projects\it-class-tcwu\automation\output\notebooklm-week11-page-refs.html --lesson-target "C:\Users\user\projects\it-class-tcwu\grade6\LessonPlan\Week 11.md" --html-target C:\Users\user\projects\it-class-tcwu\grade6\week11.html
+npm.cmd run notebooklm:page-refs -- --input C:\Users\user\projects\it-class-tcwu\automation\output\notebooklm-week11-page-refs.txt --json-out C:\Users\user\projects\it-class-tcwu\automation\output\notebooklm-week11-page-refs.json --markdown-out C:\Users\user\projects\it-class-tcwu\automation\output\notebooklm-week11-page-refs.md --html-out C:\Users\user\projects\it-class-tcwu\automation\output\notebooklm-week11-page-refs.html --lesson-target "C:\Users\user\projects\it-class-tcwu\grade6\LessonPlan\114-2\Week 11.md" --html-target C:\Users\user\projects\it-class-tcwu\grade6\week11.html
 ```
 
 回寫前提：
@@ -292,7 +293,7 @@ npm.cmd run notebooklm:page-refs -- --input C:\Users\user\projects\it-class-tcwu
 
 1. 先建立 UTF-8 提示詞：`automation/output/notebooklm-week13-prompt.txt`
 2. 用 `notebooklm:ask` 連到 CDP `9333` 的 NotebookLM 筆記本，輸出：`automation/output/notebooklm-week13-page-refs.txt`
-3. 用 `notebooklm:page-refs` 產生 JSON / Markdown / HTML snippet，並回寫 `grade6/LessonPlan/Week 13.md`
+3. 用 `notebooklm:page-refs` 產生 JSON / Markdown / HTML snippet，並回寫對應學年度教案，例如 `grade6/LessonPlan/114-2/Week 13.md`
 4. 若 NotebookLM 第一次卡住，可請使用者重新整理 NotebookLM 後重送同一份 prompt file
 
 ---
@@ -374,7 +375,7 @@ npm.cmd run gemini:generate-image -- --prompt-file C:\Users\user\projects\tmp\we
 本地原圖與正式頁資產要分開：
 
 - 暫存原圖：`C:\Users\user\projects\tmp`
-- 專案資產：`gradeX/images/weekXX/`
+- 專案資產：目前學年度使用 `gradeX/115-1/images/weekXX/`；舊 114 學年度資產若仍留在 `gradeX/images/weekXX/`，新頁不得直接引用，除非確認是跨學年度共用素材。
 
 命名：
 
@@ -383,7 +384,7 @@ npm.cmd run gemini:generate-image -- --prompt-file C:\Users\user\projects\tmp\we
 
 若一週有多張圖卡、案例卡或投影片式圖像，仍要套用同一原則：
 
-- 生成原圖可以暫存在 `gradeX/images/weekXX/` 或暫存資料夾，但不得直接成為頁面 runtime 引用資產。
+- 生成原圖可以暫存在 `gradeX/115-1/images/weekXX/` 或暫存資料夾，但不得直接成為頁面 runtime 引用資產。
 - 頁面引用檔應是壓縮後的 WebP，建議命名為 `weekXX-card-01-1920x1080-q80.webp` 這類可辨識格式。
 - 生成工具留下的 `*-01.png`、重複檔、metadata 或來源圖，不應被頁面引用，也不應混入正式上課資產清單。
 - 若頁面一次引用多張圖，需檢查所有被引用圖片的總量；避免十幾張 1-2 MB PNG 造成教室網路載入卡頓。
@@ -447,8 +448,9 @@ week11 已實測成功上傳，Cloudinary secure_url：
 
 路徑：
 
-- `grade3/weekXX.html`
-- `grade6/weekXX.html`
+- `grade3/115-1/weekXX.html`（目前 115 學年度上學期）
+- `grade6/115-1/weekXX.html`（若本學期有六年級新頁）
+- 舊 114 學年度頁面目前仍保留在 `grade3/`、`grade6/` 根目錄，避免破壞已發布連結；不要把 115 新頁新增到舊根目錄。
 
 ### 8.2 一律用對應年級 navbar
 
@@ -560,7 +562,7 @@ navbar.js?v=YYYYMMDD
 
 使用：
 
-- `http://localhost:3000/gradeX/weekXX.html`
+- `http://localhost:3000/gradeX/115-1/weekXX.html`（目前 115 學年度上學期）
 
 ### 10.2 至少驗這些
 
@@ -630,7 +632,7 @@ navbar.js?v=YYYYMMDD
 
 這次已實際完成的對應範例：
 
-- 教案：`grade6/LessonPlan/Week 11.md`
+- 教案：`grade6/LessonPlan/114-2/Week 11.md`
 - 週頁：`grade6/week11.html`
 - 首頁：`grade6/index.html`
 - navbar：`grade6/navbar.js`

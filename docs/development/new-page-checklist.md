@@ -8,10 +8,10 @@
 ## 基本資訊
 
 ```
-頁面名稱：___________（例如 week11.html）
+頁面名稱：___________（例如 grade3/115-1/week01.html）
 年級：grade3 / grade6
 類型：A 首頁 / B 說明頁 / C 打字闖關 / D 題組入口 / E 後台
-參考頁面：___________（找同類型最近的一頁，例如 grade3/week10.html）
+參考頁面：___________（找同類型最近的一頁，例如 grade3/week10.html；若參考舊 114 頁，實作時要改成 115-1 巢狀路徑）
 ```
 
 ---
@@ -20,8 +20,10 @@
 
 - [ ] 使用 `navbar.js`（不手刻 nav HTML）
 - [ ] `navbar.js` 有版本字串，格式 `navbar.js?v=YYYYMMDD`，日期為開發當天
-- [ ] 若 grade3 週頁面：確認 `navbar.js` 的 `activeWeeks` 陣列已加入這週的週碼
-- [ ] 若 grade6 週頁面：確認 `grade6/navbar.js` 的 `activeWeeks` 陣列已加入
+- [ ] 115 學年度新週頁放在對應學年度資料夾，例如 `grade3/115-1/weekXX.html`，不要新增到舊的 `grade3/weekXX.html`
+- [ ] 根目錄 `index.html` 的主入口已指向目前學年度首頁，例如 `grade3/115-1/index.html`；舊學年度入口只放在封存/備查區
+- [ ] 若 grade3 115-1 週頁面：確認 `grade3/115-1/navbar.js` 的 `activeWeeks` 陣列已加入這週的週碼
+- [ ] 若 grade6 115-1 週頁面：確認對應學年度 navbar 的 `activeWeeks` 陣列已加入
 
 ---
 
@@ -62,8 +64,9 @@
 ## 4. 後台可見性
 
 - [ ] 有進度記錄 → 確認 `admin-progress.html` 能看到此頁進度（weekCode + activityKey 正確）
-- [ ] 有測驗 / 小測驗 → 使用 `shared/quiz-module.js` 或既有 quiz adapter，未登入時顯示登入鎖定區，不可手寫未登入可作答的前端 quiz；頁面端可提供 `loadProgress` / `saveProgress` adapter 寫入 `student_progress`，但不可重寫題目 UI、評分或登入鎖定流程
-- [ ] 有測驗 / 小測驗 → 完成後需寫入 `student_progress`；若教案明確要求純口頭活動，必須只做靜態文字，不做可點選作答 UI
+- [ ] 有測驗 / 小測驗且不屬於首週規則闖關例外 → 使用 `shared/quiz-module.js` 或既有 quiz adapter，未登入時顯示登入鎖定區，不可手寫未登入可作答的前端 quiz；頁面端可提供 `loadProgress` / `saveProgress` adapter 寫入 `student_progress`，但不可重寫題目 UI、評分或登入鎖定流程
+- [ ] 有測驗 / 小測驗且不屬於首週規則闖關例外 → 完成後需寫入 `student_progress`；若教案明確要求純口頭活動，必須只做靜態文字，不做可點選作答 UI
+- [ ] **首週規則闖關例外** → 若教案明確要求第一週免登入、只做電腦教室規則確認與滑鼠點選練習，可做不登入純前端闖關；需確認不寫入 `student_progress`、不使用正式 quiz 保存流程，並在頁面寫清楚本週不用登入
 - [ ] 測試方式：用教師帳號登入後台，確認此週此活動出現在清單中
 - [ ] **此頁無進度記錄** → 標記 N/A
 
@@ -72,8 +75,8 @@
 ## 5. 週次可見性
 
 - [ ] 此頁為首頁 → 使用 `applyWeekVisibilityToCards(grade)` 控制週卡顯示
-- [ ] 此頁為 grade3 週頁面 → 確認 `grade3/navbar.js` 的 `activeWeeks` 已更新（navbar 週次同步）
-- [ ] 此頁為 grade6 週頁面 → 確認 `grade6/navbar.js` 的 `activeWeeks` 已更新（grade6 nav 不讀 DB，要手動更新）
+- [ ] 此頁為 grade3 115-1 週頁面 → 確認 `grade3/115-1/navbar.js` 的 `activeWeeks` 已更新
+- [ ] 此頁為 grade6 115-1 週頁面 → 確認對應學年度 navbar 的 `activeWeeks` 已更新
 - [ ] **此頁不需要週次可見性控制** → 標記 N/A
 
 ---

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三年級資訊課｜第 01 週 第一次上資訊課</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(250, 204, 21, 0.22), transparent 30%),
+                radial-gradient(circle at bottom right, rgba(45, 212, 191, 0.22), transparent 28%),
+                linear-gradient(180deg, #ecfeff 0%, #f7fee7 100%);
+        }
+        .quiz-option {
+            transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, background-color 0.16s ease;
+        }
+        .quiz-option:hover,
+        .quiz-option:focus-visible {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px rgba(15, 118, 110, 0.14);
+            outline: none;
+        }
+        .quiz-option[aria-pressed="true"] {
+            border-color: #0891b2;
+            background: #cffafe;
+        }
+        .quiz-option.correct {
+            border-color: #16a34a;
+            background: #dcfce7;
+        }
+        .quiz-option.wrong {
+            border-color: #f97316;
+            background: #ffedd5;
+        }
+        .quiz-option.locked-correct {
+            cursor: default;
+        }
+        .infographic-card {
+            transition: transform 0.16s ease, box-shadow 0.16s ease;
+        }
+        .infographic-card:hover,
+        .infographic-card:focus-visible {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 28px rgba(15, 118, 110, 0.2);
+            outline: none;
+        }
+        ruby rt {
+            font-size: 0.46em;
+            font-weight: 900;
+            color: #94a3b8;
+            letter-spacing: 0;
+            line-height: 1;
+            font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+        }
+        .zhuyin-off rt {
+            display: none;
+        }
+        .zhuyin-on #rules-quiz ruby {
+            margin-inline: 1px;
+            line-height: 2.15;
+        }
+        .zhuyin-on #quiz-intro,
+        .zhuyin-on #quiz-feedback,
+        .zhuyin-on .quiz-option {
+            font-size: 1rem;
+            line-height: 2.05;
+        }
+        .zhuyin-on #quiz-question {
+            font-size: 1.65rem;
+            line-height: 2;
+        }
+        .zhuyin-on #rules-quiz rt {
+            font-size: 0.38em;
+        }
+        @media (min-width: 768px) {
+            .zhuyin-on #quiz-question {
+                font-size: 2rem;
+            }
+            .zhuyin-on .quiz-option {
+                font-size: 1.125rem;
+            }
+        }
+        .success-pop {
+            animation: successPop 0.58s ease both;
+        }
+        .try-shake {
+            animation: tryShake 0.34s ease both;
+        }
+        .complete-glow {
+            animation: completeGlow 1.05s ease both;
+        }
+        .mini-celebration {
+            pointer-events: none;
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: #047857;
+            opacity: 0;
+            transform: scale(0.8);
+            z-index: 260;
+        }
+        .mini-celebration.show {
+            animation: miniPass 0.85s ease both;
+        }
+        @keyframes successPop {
+            0% { transform: scale(1); }
+            45% { transform: scale(1.035); }
+            100% { transform: scale(1); }
+        }
+        @keyframes tryShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+        @keyframes completeGlow {
+            0% { transform: translateY(10px); box-shadow: 0 0 0 rgba(22, 163, 74, 0); }
+            60% { transform: translateY(0); box-shadow: 0 24px 45px rgba(22, 163, 74, 0.24); }
+            100% { box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12); }
+        }
+        @keyframes miniPass {
+            0% { opacity: 0; transform: scale(0.75) translateY(8px); }
+            20% { opacity: 1; }
+            80% { opacity: 1; transform: scale(1.06) translateY(0); }
+            100% { opacity: 0; transform: scale(1.12) translateY(-8px); }
+        }
+    </style>
+</head>
+<body class="zhuyin-off text-slate-800 antialiased pb-12">
+    <script src="navbar.js?v=20260829"></script>
+
+    <div id="lightbox" class="fixed inset-0 bg-black/85 z-[200] items-center justify-center p-4 cursor-zoom-out hidden" onclick="closeLightbox()">
+        <div class="relative max-w-6xl w-full">
+            <img id="lightbox-img" src="" alt="圖卡放大" class="w-full max-h-[88vh] object-contain rounded-2xl shadow-2xl bg-white">
+            <button type="button" onclick="closeLightbox()" class="absolute -top-4 -right-4 bg-white text-slate-800 rounded-full w-10 h-10 flex items-center justify-center shadow-xl font-black text-xl hover:bg-rose-500 hover:text-white transition" aria-label="關閉放大檢視">x</button>
+        </div>
+    </div>
+
+    <canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-[260] w-full h-full"></canvas>
+
+    <div id="mini-celebration" class="mini-celebration text-3xl md:text-5xl">
+        <span class="rounded-full bg-white/95 border-4 border-green-200 px-6 py-4 shadow-xl">
+            <i class="fa-solid fa-seedling text-green-500 mr-2"></i>
+            <span id="mini-celebration-text">你有用方法完成這一步</span>
+        </span>
+    </div>
+
+    <header class="bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 text-white shadow-xl mb-8">
+        <div class="max-w-6xl mx-auto px-6 py-10">
+            <div class="grid lg:grid-cols-[1fr_1.05fr] gap-8 items-center">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-white/20 text-white font-black px-4 py-2 rounded-full text-sm mb-4 shadow-sm">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        三年級資訊課｜第 01 週
+                    </div>
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tight mb-4 drop-shadow-md">第一次上資訊課</h1>
+                    <p class="text-xl md:text-2xl text-cyan-50 font-bold leading-relaxed drop-shadow">
+                        先學會進教室、坐好、聽指令，再一起完成規則闖關。
+                    </p>
+                </div>
+                <button
+                    type="button"
+                    class="infographic-card group relative block w-full rounded-2xl border-4 border-white bg-white shadow-2xl cursor-zoom-in overflow-hidden"
+                    onclick="openLightbox('images/week01/week01-computer-lab-rules-1920x1080-cover-q80.webp')"
+                    aria-label="放大檢視電腦教室管理規則資訊圖卡"
+                >
+                    <img
+                        src="images/week01/week01-computer-lab-rules-1920x1080-cover-q80.webp"
+                        alt="電腦教室管理規則資訊圖卡"
+                        class="w-full"
+                    >
+                    <span class="hidden sm:inline-flex absolute right-3 top-3 items-center gap-2 rounded-full bg-cyan-700/95 px-3 py-1.5 text-xs font-black text-white shadow-lg">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                        點圖可放大
+                    </span>
+                    <span class="sm:hidden flex items-center justify-center gap-2 bg-cyan-700 px-3 py-2 text-xs font-black text-white">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                        點圖可放大
+                    </span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 space-y-8">
+        <section class="bg-white border-4 border-cyan-200 rounded-2xl shadow-md overflow-hidden">
+            <div class="bg-cyan-100 px-6 py-4 border-b-4 border-cyan-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-route text-cyan-700 text-2xl mr-3"></i>
+                    <h2 class="text-2xl font-black text-cyan-950">今天要完成的 3 件事</h2>
+                </div>
+                <span class="bg-cyan-600 text-white text-xs px-3 py-1 rounded-full font-black">先聽懂，再操作</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-3 gap-4">
+                <div class="bg-cyan-50 border-2 border-cyan-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-cyan-700 mb-2">第一件</div>
+                    <h3 class="text-xl font-black text-cyan-950 mb-2">認識老師</h3>
+                    <p class="font-bold text-slate-700 leading-relaxed">課本寫好班級、座號、姓名，也把老師姓名寫在第一頁。</p>
+                </div>
+                <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-emerald-700 mb-2">第二件</div>
+                    <h3 class="text-xl font-black text-emerald-950 mb-2">學會進教室</h3>
+                    <p class="font-bold text-slate-700 leading-relaxed">帶課本和鉛筆盒，水杯放走廊座椅，安靜整隊進教室。</p>
+                </div>
+                <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-amber-700 mb-2">第三件</div>
+                    <h3 class="text-xl font-black text-amber-950 mb-2">完成規則闖關</h3>
+                    <p class="font-bold text-slate-700 leading-relaxed">今天不用登入帳號，只要用滑鼠點選答案，確認自己聽懂規則。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white border-4 border-emerald-200 rounded-2xl shadow-md overflow-hidden">
+            <div class="bg-emerald-100 px-6 py-4 border-b-4 border-emerald-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-list-check text-emerald-700 text-2xl mr-3"></i>
+                    <h2 class="text-2xl font-black text-emerald-950">電腦教室 5 個重要規則</h2>
+                </div>
+            </div>
+            <div class="p-6 grid md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div class="bg-white border-2 border-emerald-200 rounded-2xl p-4 text-center">
+                    <i class="fa-solid fa-book-open text-3xl text-emerald-600 mb-3"></i>
+                    <p class="font-black text-slate-800">帶課本和鉛筆盒</p>
+                </div>
+                <div class="bg-white border-2 border-sky-200 rounded-2xl p-4 text-center">
+                    <i class="fa-solid fa-bottle-water text-3xl text-sky-600 mb-3"></i>
+                    <p class="font-black text-slate-800">水杯放走廊座椅</p>
+                </div>
+                <div class="bg-white border-2 border-violet-200 rounded-2xl p-4 text-center">
+                    <i class="fa-solid fa-people-line text-3xl text-violet-600 mb-3"></i>
+                    <p class="font-black text-slate-800">走廊安靜整隊</p>
+                </div>
+                <div class="bg-white border-2 border-orange-200 rounded-2xl p-4 text-center">
+                    <i class="fa-solid fa-hand text-3xl text-orange-600 mb-3"></i>
+                    <p class="font-black text-slate-800">沒指令，不動手</p>
+                </div>
+                <div class="bg-white border-2 border-rose-200 rounded-2xl p-4 text-center">
+                    <i class="fa-solid fa-volume-xmark text-3xl text-rose-600 mb-3"></i>
+                    <p class="font-black text-slate-800">廣播時，不出聲</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="rules-quiz" class="bg-white border-4 border-amber-300 rounded-2xl shadow-md overflow-hidden">
+            <div class="bg-amber-100 px-6 py-4 border-b-4 border-amber-300 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-computer-mouse text-amber-700 text-2xl mr-3"></i>
+                    <h2 class="text-2xl font-black text-amber-950">規則闖關</h2>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button id="zhuyin-toggle" type="button" class="min-h-[40px] rounded-full bg-white px-4 py-2 text-sm font-black text-amber-800 shadow-sm border-2 border-amber-200 hover:bg-amber-50 transition" aria-pressed="false">
+                        <i class="fa-solid fa-language mr-2"></i>開啟注音
+                    </button>
+                    <span id="quiz-count" class="bg-amber-500 text-white text-sm px-4 py-2 rounded-full font-black">第 1 / 5 題</span>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div class="bg-lime-50 border-2 border-lime-200 rounded-2xl p-5 mb-6">
+                    <p id="quiz-intro" class="font-black text-lime-900 text-lg leading-relaxed">
+                        <i class="fa-solid fa-circle-check mr-2"></i>
+                        本週不用登入。請看題目，用滑鼠點選你認為正確的答案。
+                    </p>
+                </div>
+
+                <div class="grid lg:grid-cols-[0.9fr_1.1fr] gap-6 items-start">
+                    <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-slate-500 mb-2">題目</div>
+                        <h3 id="quiz-question" class="text-2xl md:text-3xl font-black text-slate-900 leading-snug"></h3>
+                        <p id="quiz-feedback" class="mt-5 min-h-[88px] rounded-2xl bg-white border-2 border-slate-200 p-4 text-lg font-black leading-relaxed text-slate-700">
+                            選一個答案後，老師會看到你有沒有抓到今天的規則重點。
+                        </p>
+                    </div>
+
+                    <div id="quiz-options" class="grid gap-4"></div>
+                </div>
+
+                <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-between">
+                    <button id="prev-btn" type="button" class="min-h-[52px] px-6 rounded-2xl bg-slate-200 text-slate-700 font-black hover:bg-slate-300 transition disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-arrow-left mr-2"></i>上一題
+                    </button>
+                    <button id="next-btn" type="button" class="min-h-[52px] px-6 rounded-2xl bg-cyan-600 text-white font-black hover:bg-cyan-500 transition disabled:opacity-40 disabled:cursor-not-allowed">
+                        下一題<i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="quiz-complete" class="hidden bg-white border-4 border-green-300 rounded-2xl shadow-md overflow-hidden">
+            <div class="bg-green-100 px-6 py-4 border-b-4 border-green-300 flex items-center">
+                <i class="fa-solid fa-award text-green-700 text-2xl mr-3"></i>
+                <h2 class="text-2xl font-black text-green-950">闖關完成</h2>
+            </div>
+            <div class="p-6 grid md:grid-cols-[1fr_auto] gap-6 items-center">
+                <div>
+                    <p id="final-score" class="text-3xl font-black text-green-800 mb-3"></p>
+                    <p class="text-lg font-bold text-slate-700 leading-relaxed">
+                        你已經把今天的電腦教室規則練習過一次。等老師檢查時，請安靜坐好。
+                    </p>
+                </div>
+                <button id="restart-btn" type="button" class="min-h-[56px] px-8 rounded-2xl bg-green-600 text-white font-black hover:bg-green-500 transition">
+                    <i class="fa-solid fa-rotate-left mr-2"></i>再闖一次
+                </button>
+            </div>
+        </section>
+
+        <section class="bg-white border-4 border-slate-200 rounded-2xl shadow-md overflow-hidden">
+            <div class="bg-slate-100 px-6 py-4 border-b-4 border-slate-200 flex items-center">
+                <i class="fa-solid fa-door-open text-slate-600 text-2xl mr-3"></i>
+                <h2 class="text-2xl font-black text-slate-800">下課整理檢查</h2>
+            </div>
+            <div class="p-6 grid md:grid-cols-4 gap-4">
+                <div class="bg-white border-2 border-slate-200 rounded-2xl p-4 font-black text-slate-800"><i class="fa-solid fa-check text-green-600 mr-2"></i>不用關機</div>
+                <div class="bg-white border-2 border-slate-200 rounded-2xl p-4 font-black text-slate-800"><i class="fa-solid fa-check text-green-600 mr-2"></i>椅子靠好</div>
+                <div class="bg-white border-2 border-slate-200 rounded-2xl p-4 font-black text-slate-800"><i class="fa-solid fa-check text-green-600 mr-2"></i>鍵盤滑鼠歸位</div>
+                <div class="bg-white border-2 border-slate-200 rounded-2xl p-4 font-black text-slate-800"><i class="fa-solid fa-check text-green-600 mr-2"></i>帶走自己的物品</div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center mt-16 pb-8 text-slate-400 text-sm font-bold">
+        <p><i class="fa-solid fa-rocket mr-1"></i> 新北市頂溪國小資訊課 - 115 學年度上學期</p>
+    </footer>
+
+    <script>
+        const questions = [
+            {
+                question: "資訊課要帶哪些東西？",
+                answer: "課本和鉛筆盒。",
+                encouragement: "答對了。你有把上課工具準備好，進教室時就比較不會慌張。",
+                miniEncouragement: "你有先準備好工具",
+                options: [
+                    "課本和鉛筆盒。",
+                    "只帶課本，鉛筆可以跟同學借。",
+                    "帶課本、鉛筆盒和水杯一起進電腦教室。",
+                    "如果今天只是用電腦，就不用帶課本。"
+                ]
+            },
+            {
+                question: "水杯可以放在哪裡？",
+                answer: "放在電腦教室走廊座椅上靠牆擺好。",
+                encouragement: "答對了。你有想到水杯要離電腦遠一點，也要擺整齊。",
+                miniEncouragement: "你有注意安全和整齊",
+                options: [
+                    "放在走廊座椅上，但課本和鉛筆盒也可以一起放著。",
+                    "放在自己的電腦桌旁邊，口渴時比較方便。",
+                    "放在電腦教室走廊座椅上靠牆擺好。",
+                    "放在鞋櫃旁邊，只要不要帶進教室就好。"
+                ]
+            },
+            {
+                question: "老師還沒下指令前，可以做什麼？",
+                answer: "安靜坐好，看老師，等待指令。",
+                encouragement: "答對了。你願意先停下來等指令，這是會保護設備的好習慣。",
+                miniEncouragement: "你有練習先等待指令",
+                options: [
+                    "先把滑鼠移一移，確認自己的電腦能不能用。",
+                    "先戴好耳機麥克風，等一下上課比較快。",
+                    "安靜坐好，看老師，等待指令。",
+                    "先小聲問旁邊同學今天要做什麼。"
+                ]
+            },
+            {
+                question: "螢幕廣播時要怎麼做？",
+                answer: "保持安靜；看到同學忘記安靜時，用手勢提醒，不出聲。",
+                encouragement: "答對了。你知道提醒同學也可以很安靜，這樣全班比較容易一起聽懂。",
+                miniEncouragement: "你有想到安靜提醒的方法",
+                options: [
+                    "一邊聽老師講，一邊把剛剛沒做完的步驟做完。",
+                    "如果已經會了，可以低頭先做下一步。",
+                    "小聲提醒旁邊同學，不然他可能會跟不上。",
+                    "保持安靜；看到同學忘記安靜時，用手勢提醒，不出聲。"
+                ]
+            },
+            {
+                question: "操作有問題時，可以怎麼請求協助？",
+                answer: "請已完成的同學示範，不請同學代做；需要老師時，安靜舉手等待。",
+                encouragement: "答對了。你會請同學示範，不請同學代做；舉手時也會安靜等待老師。",
+                miniEncouragement: "你有選擇負責任的求助方式",
+                options: [
+                    "先多按幾次看看，說不定就成功了。",
+                    "請已完成的同學示範，不請同學代做；需要老師時，安靜舉手等待。",
+                    "立刻請旁邊同學幫我按，這樣比較快。",
+                    "馬上大聲叫老師，讓老師知道我卡住了。"
+                ]
+            }
+        ];
+
+        const introText = "本週不用登入。請看題目，用滑鼠點選你認為正確的答案。答錯可以再試一次，答對才會進到下一題。";
+        const zhuyinMap = {
+            "本": "ㄅㄣˇ", "週": "ㄓㄡ", "不": "ㄅㄨˋ", "用": "ㄩㄥˋ", "登": "ㄉㄥ", "入": "ㄖㄨˋ",
+            "請": "ㄑㄧㄥˇ", "看": "ㄎㄢˋ", "題": "ㄊㄧˊ", "目": "ㄇㄨˋ", "滑": "ㄏㄨㄚˊ", "鼠": "ㄕㄨˇ",
+            "點": "ㄉㄧㄢˇ", "選": "ㄒㄩㄢˇ", "你": "ㄋㄧˇ", "認": "ㄖㄣˋ", "為": "ㄨㄟˊ", "正": "ㄓㄥˋ",
+            "確": "ㄑㄩㄝˋ", "的": "˙ㄉㄜ", "答": "ㄉㄚˊ", "案": "ㄢˋ", "錯": "ㄘㄨㄛˋ", "可": "ㄎㄜˇ",
+            "以": "ㄧˇ", "再": "ㄗㄞˋ", "試": "ㄕˋ", "一": "ㄧ", "次": "ㄘˋ", "才": "ㄘㄞˊ",
+            "會": "ㄏㄨㄟˋ", "進": "ㄐㄧㄣˋ", "到": "ㄉㄠˋ", "下": "ㄒㄧㄚˋ", "課": "ㄎㄜˋ",
+            "資": "ㄗ", "訊": "ㄒㄩㄣˋ", "要": "ㄧㄠˋ", "帶": "ㄉㄞˋ", "哪": "ㄋㄚˇ", "些": "ㄒㄧㄝ",
+            "東": "ㄉㄨㄥ", "西": "ㄒㄧ", "和": "ㄏㄢˋ", "鉛": "ㄑㄧㄢ", "筆": "ㄅㄧˇ", "盒": "ㄏㄜˊ",
+            "只": "ㄓˇ", "跟": "ㄍㄣ", "同": "ㄊㄨㄥˊ", "學": "ㄒㄩㄝˊ", "借": "ㄐㄧㄝˋ", "水": "ㄕㄨㄟˇ",
+            "杯": "ㄅㄟ", "起": "ㄑㄧˇ", "電": "ㄉㄧㄢˋ", "腦": "ㄋㄠˇ", "教": "ㄐㄧㄠˋ", "室": "ㄕˋ",
+            "如": "ㄖㄨˊ", "果": "ㄍㄨㄛˇ", "今": "ㄐㄧㄣ", "天": "ㄊㄧㄢ", "是": "ㄕˋ", "就": "ㄐㄧㄡˋ",
+            "放": "ㄈㄤˋ", "在": "ㄗㄞˋ", "裡": "ㄌㄧˇ", "走": "ㄗㄡˇ", "廊": "ㄌㄤˊ", "座": "ㄗㄨㄛˋ",
+            "椅": "ㄧˇ", "上": "ㄕㄤˋ", "靠": "ㄎㄠˋ", "牆": "ㄑㄧㄤˊ", "擺": "ㄅㄞˇ", "好": "ㄏㄠˇ",
+            "但": "ㄉㄢˋ", "也": "ㄧㄝˇ", "著": "˙ㄓㄜ", "自": "ㄗˋ", "己": "ㄐㄧˇ", "桌": "ㄓㄨㄛ",
+            "旁": "ㄆㄤˊ", "邊": "ㄅㄧㄢ", "口": "ㄎㄡˇ", "渴": "ㄎㄜˇ", "時": "ㄕˊ", "比": "ㄅㄧˇ",
+            "較": "ㄐㄧㄠˋ", "方": "ㄈㄤ", "便": "ㄅㄧㄢˋ", "鞋": "ㄒㄧㄝˊ", "櫃": "ㄍㄨㄟˋ",
+            "老": "ㄌㄠˇ", "師": "ㄕ", "還": "ㄏㄞˊ", "沒": "ㄇㄟˊ", "指": "ㄓˇ", "令": "ㄌㄧㄥˋ",
+            "前": "ㄑㄧㄢˊ", "做": "ㄗㄨㄛˋ", "什": "ㄕㄣˊ", "麼": "˙ㄇㄜ", "安": "ㄢ", "靜": "ㄐㄧㄥˋ",
+            "坐": "ㄗㄨㄛˋ", "等": "ㄉㄥˇ", "待": "ㄉㄞˋ", "把": "ㄅㄚˇ", "移": "ㄧˊ", "確": "ㄑㄩㄝˋ",
+            "能": "ㄋㄥˊ", "戴": "ㄉㄞˋ", "耳": "ㄦˇ", "機": "ㄐㄧ", "麥": "ㄇㄞˋ", "克": "ㄎㄜˋ",
+            "風": "ㄈㄥ", "小": "ㄒㄧㄠˇ", "聲": "ㄕㄥ", "問": "ㄨㄣˋ", "螢": "ㄧㄥˊ", "幕": "ㄇㄨˋ",
+            "廣": "ㄍㄨㄤˇ", "播": "ㄅㄛˋ", "怎": "ㄗㄣˇ", "保": "ㄅㄠˇ", "持": "ㄔˊ", "忘": "ㄨㄤˋ",
+            "記": "ㄐㄧˋ", "手": "ㄕㄡˇ", "勢": "ㄕˋ", "提": "ㄊㄧˊ", "醒": "ㄒㄧㄥˇ", "出": "ㄔㄨ",
+            "聽": "ㄊㄧㄥ", "講": "ㄐㄧㄤˇ", "剛": "ㄍㄤ", "剛": "ㄍㄤ", "完": "ㄨㄢˊ", "步": "ㄅㄨˋ",
+            "驟": "ㄗㄡˋ", "已": "ㄧˇ", "經": "ㄐㄧㄥ", "了": "˙ㄌㄜ", "低": "ㄉㄧ", "頭": "ㄊㄡˊ",
+            "先": "ㄒㄧㄢ", "操": "ㄘㄠ", "作": "ㄗㄨㄛˋ", "有": "ㄧㄡˇ", "第": "ㄉㄧˋ", "應": "ㄧㄥ",
+            "該": "ㄍㄞ", "觀": "ㄍㄨㄢ", "察": "ㄔㄚˊ", "示": "ㄕˋ", "範": "ㄈㄢˋ", "懂": "ㄉㄨㄥˇ",
+            "舉": "ㄐㄩˇ", "多": "ㄉㄨㄛ", "按": "ㄢˋ", "幾": "ㄐㄧˇ", "說": "ㄕㄨㄛ", "定": "ㄉㄧㄥˋ",
+            "成": "ㄔㄥˊ", "功": "ㄍㄨㄥ", "立": "ㄌㄧˋ", "刻": "ㄎㄜˋ", "幫": "ㄅㄤ", "我": "ㄨㄛˇ",
+            "馬": "ㄇㄚˇ", "大": "ㄉㄚˋ", "叫": "ㄐㄧㄠˋ", "讓": "ㄖㄤˋ", "知": "ㄓ", "道": "ㄉㄠˋ",
+            "卡": "ㄎㄚˇ", "住": "ㄓㄨˋ", "抓": "ㄓㄨㄚ", "重": "ㄓㄨㄥˋ", "規": "ㄍㄨㄟ", "則": "ㄗㄜˊ",
+            "恭": "ㄍㄨㄥ", "喜": "ㄒㄧˇ", "關": "ㄍㄨㄢ", "通": "ㄊㄨㄥ", "過": "ㄍㄨㄛˋ", "再": "ㄗㄞˋ",
+            "想": "ㄒㄧㄤˇ", "很": "ㄏㄣˇ", "棒": "ㄅㄤˋ", "求": "ㄑㄧㄡˊ", "協": "ㄒㄧㄝˊ",
+            "助": "ㄓㄨˋ", "若": "ㄖㄨㄛˋ", "旁": "ㄆㄤˊ", "完": "ㄨㄢˊ", "替": "ㄊㄧˋ",
+            "代": "ㄉㄞˋ", "需": "ㄒㄩ", "忙": "ㄇㄤˊ", "別": "ㄅㄧㄝˊ"
+        };
+
+        let currentQuestion = 0;
+        let zhuyinEnabled = false;
+        const selectedAnswers = Array(questions.length).fill(null);
+        const lastTriedAnswers = Array(questions.length).fill(null);
+        const wrongSelections = questions.map(() => new Set());
+        let shuffledOptions = questions.map((item) => [...item.options]);
+
+        const questionEl = document.getElementById("quiz-question");
+        const optionsEl = document.getElementById("quiz-options");
+        const feedbackEl = document.getElementById("quiz-feedback");
+        const introEl = document.getElementById("quiz-intro");
+        const miniCelebrationEl = document.getElementById("mini-celebration");
+        const miniCelebrationTextEl = document.getElementById("mini-celebration-text");
+        const countEl = document.getElementById("quiz-count");
+        const prevBtn = document.getElementById("prev-btn");
+        const nextBtn = document.getElementById("next-btn");
+        const completeEl = document.getElementById("quiz-complete");
+        const finalScoreEl = document.getElementById("final-score");
+        const restartBtn = document.getElementById("restart-btn");
+        const zhuyinToggle = document.getElementById("zhuyin-toggle");
+        const confettiCanvas = document.getElementById("confetti-canvas");
+        const fireConfetti = typeof confetti === "function"
+            ? confetti.create(confettiCanvas, { resize: true, useWorker: true })
+            : null;
+
+        function escapeHtml(text) {
+            return text.replace(/[&<>"']/g, (char) => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;"
+            }[char]));
+        }
+
+        function textWithZhuyin(text) {
+            if (!zhuyinEnabled) return escapeHtml(text);
+            return [...text].map((char) => {
+                const zhuyin = zhuyinMap[char];
+                return zhuyin
+                    ? `<ruby>${escapeHtml(char)}<rt>${zhuyin}</rt></ruby>`
+                    : escapeHtml(char);
+            }).join("");
+        }
+
+        function renderIntro() {
+            introEl.innerHTML = `<i class="fa-solid fa-circle-check mr-2"></i>${textWithZhuyin(introText)}`;
+        }
+
+        function shuffleOptions() {
+            shuffledOptions = questions.map((item) => {
+                const options = [...item.options];
+                for (let index = options.length - 1; index > 0; index -= 1) {
+                    const swapIndex = Math.floor(Math.random() * (index + 1));
+                    [options[index], options[swapIndex]] = [options[swapIndex], options[index]];
+                }
+                return options;
+            });
+        }
+
+        function playSmallPass(message) {
+            miniCelebrationTextEl.textContent = message;
+            miniCelebrationEl.classList.remove("show");
+            void miniCelebrationEl.offsetWidth;
+            miniCelebrationEl.classList.add("show");
+            if (fireConfetti) {
+                fireConfetti({
+                    particleCount: 38,
+                    spread: 58,
+                    startVelocity: 26,
+                    origin: { y: 0.56 },
+                    colors: ["#22c55e", "#06b6d4", "#facc15", "#fb923c"]
+                });
+            }
+        }
+
+        function playFinalPass() {
+            completeEl.classList.remove("complete-glow");
+            void completeEl.offsetWidth;
+            completeEl.classList.add("complete-glow");
+            if (fireConfetti) {
+                fireConfetti({ particleCount: 80, spread: 80, origin: { x: 0.25, y: 0.7 } });
+                fireConfetti({ particleCount: 80, spread: 80, origin: { x: 0.75, y: 0.7 } });
+                setTimeout(() => fireConfetti({ particleCount: 120, spread: 110, origin: { y: 0.62 } }), 220);
+            }
+        }
+
+        function renderQuestion() {
+            const item = questions[currentQuestion];
+            const passed = selectedAnswers[currentQuestion] === item.answer;
+            const lastTried = lastTriedAnswers[currentQuestion];
+            questionEl.innerHTML = textWithZhuyin(item.question);
+            countEl.textContent = `第 ${currentQuestion + 1} / ${questions.length} 題`;
+            optionsEl.innerHTML = "";
+            renderIntro();
+
+            shuffledOptions[currentQuestion].forEach((option, index) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "quiz-option min-h-[68px] w-full text-left bg-white border-4 border-slate-200 rounded-2xl px-5 py-4 text-lg md:text-xl font-black text-slate-800";
+                button.setAttribute("aria-pressed", lastTried === option ? "true" : "false");
+                button.dataset.option = option;
+                button.innerHTML = `<span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-700 mr-3 align-middle">${index + 1}</span>${textWithZhuyin(option)}`;
+
+                if (passed) {
+                    if (option === item.answer) {
+                        button.classList.add("correct", "locked-correct");
+                    }
+                    button.disabled = true;
+                } else if (wrongSelections[currentQuestion].has(option)) {
+                    button.classList.add("wrong");
+                    if (lastTried === option) {
+                        button.classList.add("try-shake");
+                    }
+                }
+
+                button.addEventListener("click", () => selectAnswer(option));
+                optionsEl.appendChild(button);
+            });
+
+            if (passed) {
+                feedbackEl.className = "mt-5 min-h-[88px] rounded-2xl bg-green-50 border-2 border-green-200 p-4 text-lg font-black leading-relaxed text-green-800 success-pop";
+                feedbackEl.innerHTML = `<i class="fa-solid fa-circle-check mr-2"></i>${textWithZhuyin(item.encouragement)}`;
+            } else if (!lastTried) {
+                feedbackEl.className = "mt-5 min-h-[88px] rounded-2xl bg-white border-2 border-slate-200 p-4 text-lg font-black leading-relaxed text-slate-700";
+                feedbackEl.innerHTML = textWithZhuyin("選一個答案後，老師會看到你有沒有抓到今天的規則重點。");
+            } else {
+                feedbackEl.className = "mt-5 min-h-[88px] rounded-2xl bg-orange-50 border-2 border-orange-200 p-4 text-lg font-black leading-relaxed text-orange-800 try-shake";
+                feedbackEl.innerHTML = `<i class="fa-solid fa-rotate-right mr-2"></i>${textWithZhuyin("再想一下，換一個答案試試看。")}`;
+            }
+
+            prevBtn.disabled = currentQuestion === 0;
+            nextBtn.disabled = !passed;
+            nextBtn.innerHTML = currentQuestion === questions.length - 1
+                ? '完成闖關<i class="fa-solid fa-flag-checkered ml-2"></i>'
+                : '下一題<i class="fa-solid fa-arrow-right ml-2"></i>';
+        }
+
+        function selectAnswer(option) {
+            const item = questions[currentQuestion];
+            if (selectedAnswers[currentQuestion] === item.answer) return;
+            lastTriedAnswers[currentQuestion] = option;
+
+            if (option === item.answer) {
+                selectedAnswers[currentQuestion] = option;
+                renderQuestion();
+                playSmallPass(item.miniEncouragement);
+                return;
+            }
+
+            wrongSelections[currentQuestion].add(option);
+            renderQuestion();
+        }
+
+        function showComplete() {
+            const allPassed = selectedAnswers.every((answer, index) => answer === questions[index].answer);
+            if (!allPassed) return;
+            finalScoreEl.textContent = `你靠著嘗試和修正，完成 ${questions.length} / ${questions.length} 題。`;
+            completeEl.classList.remove("hidden");
+            playFinalPass();
+            completeEl.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
+        prevBtn.addEventListener("click", () => {
+            if (currentQuestion > 0) {
+                currentQuestion -= 1;
+                renderQuestion();
+            }
+        });
+
+        nextBtn.addEventListener("click", () => {
+            if (selectedAnswers[currentQuestion] !== questions[currentQuestion].answer) return;
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion += 1;
+                renderQuestion();
+            } else {
+                showComplete();
+            }
+        });
+
+        restartBtn.addEventListener("click", () => {
+            selectedAnswers.fill(null);
+            lastTriedAnswers.fill(null);
+            wrongSelections.forEach((set) => set.clear());
+            shuffleOptions();
+            currentQuestion = 0;
+            completeEl.classList.add("hidden");
+            renderQuestion();
+            document.getElementById("rules-quiz").scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+
+        zhuyinToggle.addEventListener("click", () => {
+            zhuyinEnabled = !zhuyinEnabled;
+            document.body.classList.toggle("zhuyin-off", !zhuyinEnabled);
+            document.body.classList.toggle("zhuyin-on", zhuyinEnabled);
+            zhuyinToggle.setAttribute("aria-pressed", zhuyinEnabled ? "true" : "false");
+            zhuyinToggle.innerHTML = zhuyinEnabled
+                ? '<i class="fa-solid fa-language mr-2"></i>關閉注音'
+                : '<i class="fa-solid fa-language mr-2"></i>開啟注音';
+            renderQuestion();
+        });
+
+        window.openLightbox = function(src) {
+            const lightbox = document.getElementById("lightbox");
+            const image = document.getElementById("lightbox-img");
+            image.src = src;
+            lightbox.classList.remove("hidden");
+            lightbox.classList.add("flex");
+        };
+
+        window.closeLightbox = function() {
+            const lightbox = document.getElementById("lightbox");
+            lightbox.classList.add("hidden");
+            lightbox.classList.remove("flex");
+        };
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") closeLightbox();
+        });
+
+        shuffleOptions();
+        renderQuestion();
+    </script>
+</body>
+</html>
