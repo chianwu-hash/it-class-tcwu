@@ -49,6 +49,113 @@
             box-shadow: 0 18px 28px rgba(15, 118, 110, 0.2);
             outline: none;
         }
+        .image-lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 300;
+            display: grid;
+            place-items: center;
+            padding: 1dvh 1vw;
+            overflow: hidden;
+            overscroll-behavior: contain;
+            background: rgba(6, 21, 28, 0.88);
+            backdrop-filter: blur(10px);
+        }
+        .image-lightbox.hidden {
+            display: none;
+        }
+        .image-lightbox-panel {
+            position: relative;
+            width: min(98vw, 1280px);
+            height: 98dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-radius: 18px;
+            background: #dce7e7;
+            box-shadow: 0 30px 100px rgba(0, 0, 0, 0.45);
+        }
+        .image-lightbox-stage {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: grab;
+            touch-action: none;
+        }
+        .image-lightbox-stage.is-zoomed {
+            cursor: grabbing;
+        }
+        .image-lightbox-img {
+            display: block;
+            width: calc(100% - 24px);
+            height: calc(100% - 24px);
+            max-width: none;
+            max-height: none;
+            object-fit: contain;
+            user-select: none;
+            pointer-events: none;
+            transform-origin: center center;
+            transition: transform 0.08s ease-out;
+        }
+        .image-lightbox-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            max-width: calc(100% - 20px);
+            padding: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            border-radius: 999px;
+            background: rgba(16, 42, 54, 0.88);
+            box-shadow: 0 12px 35px rgba(16, 42, 54, 0.28);
+            backdrop-filter: blur(12px);
+        }
+        .image-lightbox-controls button,
+        .image-lightbox-controls span {
+            min-width: 38px;
+            height: 34px;
+            display: inline-grid;
+            place-items: center;
+            border: 0;
+            border-radius: 999px;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.12);
+            font-size: 13px;
+            font-weight: 900;
+        }
+        .image-lightbox-controls button {
+            cursor: pointer;
+        }
+        .image-lightbox-controls button:hover,
+        .image-lightbox-controls button:focus-visible {
+            background: #ffd166;
+            color: #102a36;
+            outline: none;
+        }
+        .image-lightbox-scale {
+            min-width: 55px;
+            color: #ffd166;
+            background: transparent;
+        }
+        .image-lightbox-hint {
+            position: absolute;
+            left: 12px;
+            bottom: 10px;
+            z-index: 2;
+            margin: 0;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(16, 42, 54, 0.72);
+            color: rgba(255, 255, 255, 0.88);
+            font-size: 12px;
+            pointer-events: none;
+        }
         ruby rt {
             font-size: 0.46em;
             font-weight: 900;
@@ -136,10 +243,20 @@
 <body class="zhuyin-off text-slate-800 antialiased pb-12">
     <script src="navbar.js?v=20260829"></script>
 
-    <div id="lightbox" class="fixed inset-0 bg-black/85 z-[200] items-center justify-center p-4 cursor-zoom-out hidden" onclick="closeLightbox()">
-        <div class="relative max-w-6xl w-full">
-            <img id="lightbox-img" src="" alt="圖卡放大" class="w-full max-h-[88vh] object-contain rounded-2xl shadow-2xl bg-white">
-            <button type="button" onclick="closeLightbox()" class="absolute -top-4 -right-4 bg-white text-slate-800 rounded-full w-10 h-10 flex items-center justify-center shadow-xl font-black text-xl hover:bg-rose-500 hover:text-white transition" aria-label="關閉放大檢視">x</button>
+    <div id="lightbox" class="image-lightbox hidden" role="dialog" aria-modal="true" aria-label="圖片放大檢視">
+        <div class="image-lightbox-panel">
+            <div class="image-lightbox-controls" aria-label="圖片縮放控制">
+                <button id="lightbox-zoom-out" type="button" aria-label="縮小圖片">-</button>
+                <span id="lightbox-scale" class="image-lightbox-scale">100%</span>
+                <button id="lightbox-zoom-in" type="button" aria-label="放大圖片">+</button>
+                <button id="lightbox-reset" type="button" aria-label="重設圖片縮放">重設</button>
+                <button id="lightbox-center" type="button" aria-label="置中圖片">置中</button>
+                <button id="lightbox-close" type="button" aria-label="關閉圖片燈箱">關閉</button>
+            </div>
+            <div id="lightbox-stage" class="image-lightbox-stage">
+                <img id="lightbox-img" src="" alt="圖卡放大" class="image-lightbox-img" draggable="false">
+            </div>
+            <p class="image-lightbox-hint">滾輪縮放・拖曳平移・雙擊放大・手機雙指縮放</p>
         </div>
     </div>
 
@@ -217,6 +334,48 @@
             </div>
         </section>
 
+        <section class="bg-white border-4 border-sky-200 rounded-2xl shadow-md overflow-hidden">
+            <div class="bg-sky-100 px-6 py-4 border-b-4 border-sky-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-map-signs text-sky-700 text-2xl mr-3"></i>
+                    <h2 class="text-2xl font-black text-sky-950">完整上課流程海報</h2>
+                </div>
+                <span class="bg-sky-600 text-white text-xs px-3 py-1 rounded-full font-black">點圖可放大</span>
+            </div>
+            <div class="p-6 grid lg:grid-cols-[0.72fr_1fr] gap-6 items-center">
+                <button
+                    type="button"
+                    class="infographic-card group relative block w-full max-w-md mx-auto rounded-2xl border-4 border-white bg-white shadow-xl cursor-zoom-in overflow-hidden"
+                    onclick="openLightbox('images/week01/week01-computer-lab-full-process-poster-portrait-v6-1080x1350-q82.webp', '電腦教室上課流程海報')"
+                    aria-label="放大檢視電腦教室上課流程海報"
+                >
+                    <img
+                        src="images/week01/week01-computer-lab-full-process-poster-portrait-v6-1080x1350-q82.webp"
+                        alt="電腦教室上課流程海報"
+                        class="w-full"
+                    >
+                    <span class="absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-sky-700/95 px-3 py-1.5 text-xs font-black text-white shadow-lg">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                        放大
+                    </span>
+                </button>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-sky-700 mb-2">進教室前</div>
+                        <p class="font-bold text-slate-700 leading-relaxed">看第 1 到 5 步：帶用品、走廊排好、鞋子水杯放好，聽口令進教室。</p>
+                    </div>
+                    <div class="bg-teal-50 border-2 border-teal-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-teal-700 mb-2">進教室後</div>
+                        <p class="font-bold text-slate-700 leading-relaxed">看第 6 到 11 步：坐定位、等指令、保持安靜，有問題先觀察再舉手。</p>
+                    </div>
+                    <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-5 sm:col-span-2">
+                        <div class="text-sm font-black text-amber-700 mb-2">下課前</div>
+                        <p class="font-bold text-slate-700 leading-relaxed">看第 12 步：鍵盤滑鼠擺好，椅子推靠桌，值日生留下整理教室。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="bg-white border-4 border-emerald-200 rounded-2xl shadow-md overflow-hidden">
             <div class="bg-emerald-100 px-6 py-4 border-b-4 border-emerald-200 flex items-center justify-between gap-4 flex-wrap">
                 <div class="flex items-center">
@@ -244,6 +403,48 @@
                 <div class="bg-white border-2 border-rose-200 rounded-2xl p-4 text-center">
                     <i class="fa-solid fa-volume-xmark text-3xl text-rose-600 mb-3"></i>
                     <p class="font-black text-slate-800">廣播時，不出聲</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white border-4 border-blue-200 rounded-2xl shadow-md overflow-hidden">
+            <div class="bg-blue-100 px-6 py-4 border-b-4 border-blue-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-computer-mouse text-blue-700 text-2xl mr-3"></i>
+                    <h2 class="text-2xl font-black text-blue-950">滑鼠操作提示圖</h2>
+                </div>
+                <span class="bg-blue-600 text-white text-xs px-3 py-1 rounded-full font-black">點圖可放大</span>
+            </div>
+            <div class="p-6 grid lg:grid-cols-[1.2fr_0.8fr] gap-6 items-center">
+                <button
+                    type="button"
+                    class="infographic-card group relative block w-full rounded-2xl border-4 border-white bg-white shadow-xl cursor-zoom-in overflow-hidden"
+                    onclick="openLightbox('images/week01/week01-mouse-basics-card-chatgpt-final-1672x941-q82.webp', '滑鼠操作提示圖')"
+                    aria-label="放大檢視滑鼠操作提示圖"
+                >
+                    <img
+                        src="images/week01/week01-mouse-basics-card-chatgpt-final-1672x941-q82.webp"
+                        alt="滑鼠操作提示圖：左鍵、滾輪、右鍵和移動滑鼠"
+                        class="w-full"
+                    >
+                    <span class="absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-blue-700/95 px-3 py-1.5 text-xs font-black text-white shadow-lg">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                        放大
+                    </span>
+                </button>
+                <div class="grid gap-4">
+                    <div class="bg-teal-50 border-2 border-teal-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-teal-700 mb-2">點選答案</div>
+                        <p class="font-bold text-slate-700 leading-relaxed">食指輕輕按左鍵，不用用力敲。</p>
+                    </div>
+                    <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-blue-700 mb-2">看完整頁面</div>
+                        <p class="font-bold text-slate-700 leading-relaxed">滾輪可以上下滑動，找到還沒看到的內容。</p>
+                    </div>
+                    <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-5">
+                        <div class="text-sm font-black text-amber-700 mb-2">慢慢移動</div>
+                        <p class="font-bold text-slate-700 leading-relaxed">眼睛看箭頭，手慢慢移到要點的地方。</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -634,22 +835,170 @@
             renderQuestion();
         });
 
-        window.openLightbox = function(src) {
-            const lightbox = document.getElementById("lightbox");
-            const image = document.getElementById("lightbox-img");
-            image.src = src;
-            lightbox.classList.remove("hidden");
-            lightbox.classList.add("flex");
+        const lightboxEl = document.getElementById("lightbox");
+        const lightboxStage = document.getElementById("lightbox-stage");
+        const lightboxImage = document.getElementById("lightbox-img");
+        const lightboxScale = document.getElementById("lightbox-scale");
+        const lightboxClose = document.getElementById("lightbox-close");
+        const lightboxZoomOut = document.getElementById("lightbox-zoom-out");
+        const lightboxZoomIn = document.getElementById("lightbox-zoom-in");
+        const lightboxReset = document.getElementById("lightbox-reset");
+        const lightboxCenter = document.getElementById("lightbox-center");
+        const lightboxPointers = new Map();
+        const lightboxState = {
+            scale: 1,
+            x: 0,
+            y: 0,
+            dragging: false,
+            lastX: 0,
+            lastY: 0,
+            initialPinchDistance: 0,
+            initialPinchScale: 1,
+            previousOverflow: ""
+        };
+
+        function applyLightboxTransform() {
+            lightboxImage.style.transform = `translate(${lightboxState.x}px, ${lightboxState.y}px) scale(${lightboxState.scale})`;
+            lightboxScale.textContent = `${Math.round(lightboxState.scale * 100)}%`;
+            lightboxStage.classList.toggle("is-zoomed", lightboxState.scale > 1);
+        }
+
+        function setLightboxScale(nextScale) {
+            lightboxState.scale = Math.max(1, Math.min(5, nextScale));
+            if (lightboxState.scale <= 1) {
+                lightboxState.x = 0;
+                lightboxState.y = 0;
+            }
+            applyLightboxTransform();
+        }
+
+        function zoomLightboxBy(delta) {
+            setLightboxScale(lightboxState.scale + delta);
+        }
+
+        function resetLightboxTransform() {
+            lightboxState.scale = 1;
+            lightboxState.x = 0;
+            lightboxState.y = 0;
+            applyLightboxTransform();
+        }
+
+        function getPointerDistance() {
+            const pointers = Array.from(lightboxPointers.values());
+            if (pointers.length < 2) return 0;
+            return Math.hypot(pointers[0].x - pointers[1].x, pointers[0].y - pointers[1].y);
+        }
+
+        window.openLightbox = function(src, altText = "圖卡放大") {
+            lightboxImage.src = src;
+            lightboxImage.alt = altText;
+            lightboxEl.setAttribute("aria-label", altText);
+            lightboxState.previousOverflow = document.body.style.overflow;
+            document.body.style.overflow = "hidden";
+            resetLightboxTransform();
+            lightboxEl.classList.remove("hidden");
+            lightboxClose.focus();
         };
 
         window.closeLightbox = function() {
-            const lightbox = document.getElementById("lightbox");
-            lightbox.classList.add("hidden");
-            lightbox.classList.remove("flex");
+            lightboxEl.classList.add("hidden");
+            lightboxImage.src = "";
+            lightboxPointers.clear();
+            document.body.style.overflow = lightboxState.previousOverflow || "";
+            lightboxState.previousOverflow = "";
+            resetLightboxTransform();
         };
 
+        lightboxEl.addEventListener("mousedown", (event) => {
+            if (event.target === lightboxEl) closeLightbox();
+        });
+
+        [lightboxClose, lightboxZoomOut, lightboxZoomIn, lightboxReset, lightboxCenter].forEach((button) => {
+            button.addEventListener("click", (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+            });
+        });
+        lightboxClose.addEventListener("click", closeLightbox);
+        lightboxZoomOut.addEventListener("click", () => zoomLightboxBy(-0.35));
+        lightboxZoomIn.addEventListener("click", () => zoomLightboxBy(0.35));
+        lightboxReset.addEventListener("click", resetLightboxTransform);
+        lightboxCenter.addEventListener("click", () => {
+            lightboxState.x = 0;
+            lightboxState.y = 0;
+            applyLightboxTransform();
+        });
+
+        lightboxStage.addEventListener("wheel", (event) => {
+            if (lightboxEl.classList.contains("hidden")) return;
+            event.preventDefault();
+            zoomLightboxBy(event.deltaY > 0 ? -0.18 : 0.18);
+        }, { passive: false });
+
+        lightboxStage.addEventListener("dblclick", (event) => {
+            event.preventDefault();
+            if (lightboxState.scale > 1.05) {
+                resetLightboxTransform();
+            } else {
+                setLightboxScale(2.2);
+            }
+        });
+
+        lightboxStage.addEventListener("pointerdown", (event) => {
+            if (lightboxEl.classList.contains("hidden")) return;
+            event.preventDefault();
+            lightboxStage.setPointerCapture?.(event.pointerId);
+            lightboxPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+            if (lightboxPointers.size === 1) {
+                lightboxState.dragging = true;
+                lightboxState.lastX = event.clientX;
+                lightboxState.lastY = event.clientY;
+            } else if (lightboxPointers.size === 2) {
+                lightboxState.dragging = false;
+                lightboxState.initialPinchDistance = getPointerDistance();
+                lightboxState.initialPinchScale = lightboxState.scale;
+            }
+        });
+
+        lightboxStage.addEventListener("pointermove", (event) => {
+            if (!lightboxPointers.has(event.pointerId)) return;
+            event.preventDefault();
+            lightboxPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+            if (lightboxPointers.size === 2) {
+                const distance = getPointerDistance();
+                if (lightboxState.initialPinchDistance > 0) {
+                    setLightboxScale(lightboxState.initialPinchScale * distance / lightboxState.initialPinchDistance);
+                }
+                return;
+            }
+
+            if (!lightboxState.dragging || lightboxState.scale <= 1) return;
+            lightboxState.x += event.clientX - lightboxState.lastX;
+            lightboxState.y += event.clientY - lightboxState.lastY;
+            lightboxState.lastX = event.clientX;
+            lightboxState.lastY = event.clientY;
+            applyLightboxTransform();
+        });
+
+        function endLightboxPointer(event) {
+            lightboxPointers.delete(event.pointerId);
+            if (lightboxPointers.size === 0) {
+                lightboxState.dragging = false;
+            } else if (lightboxPointers.size === 1) {
+                const pointer = Array.from(lightboxPointers.values())[0];
+                lightboxState.dragging = true;
+                lightboxState.lastX = pointer.x;
+                lightboxState.lastY = pointer.y;
+            }
+        }
+
+        lightboxStage.addEventListener("pointerup", endLightboxPointer);
+        lightboxStage.addEventListener("pointercancel", endLightboxPointer);
+
         document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape") closeLightbox();
+            if (event.key === "Escape" && !lightboxEl.classList.contains("hidden")) closeLightbox();
         });
 
         shuffleOptions();
