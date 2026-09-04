@@ -15,6 +15,7 @@ Desktop.ini
 *.temp
 node_modules/
 .claude/
+.chat-mode/
 
 # OAuth / secrets
 client_secret_*.json

@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六年級資訊課｜第 01 週 課堂準備與快手任務</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(221, 214, 254, 0.42), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(153, 246, 228, 0.28), transparent 25%),
+                linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+        }
+        .card-hover {
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 26px rgba(51, 65, 85, 0.14);
+        }
+        .image-lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 300;
+            display: grid;
+            place-items: center;
+            padding: 1dvh 1vw;
+            overflow: hidden;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+        }
+        .image-lightbox.hidden {
+            display: none;
+        }
+        .image-lightbox-panel {
+            position: relative;
+            width: min(98vw, 1320px);
+            height: 98dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-radius: 18px;
+            background: #e2e8f0;
+            box-shadow: 0 30px 100px rgba(0, 0, 0, 0.45);
+        }
+        .image-lightbox-stage {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: grab;
+            touch-action: none;
+        }
+        .image-lightbox-stage.is-zoomed {
+            cursor: grabbing;
+        }
+        .image-lightbox-img {
+            display: block;
+            width: calc(100% - 24px);
+            height: calc(100% - 24px);
+            max-width: none;
+            max-height: none;
+            object-fit: contain;
+            user-select: none;
+            pointer-events: none;
+            transform-origin: center center;
+            transition: transform 0.08s ease-out;
+        }
+        .image-lightbox-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            max-width: calc(100% - 20px);
+            padding: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.88);
+            box-shadow: 0 12px 35px rgba(15, 23, 42, 0.28);
+            backdrop-filter: blur(12px);
+        }
+        .image-lightbox-controls button,
+        .image-lightbox-controls span {
+            min-width: 38px;
+            height: 34px;
+            display: inline-grid;
+            place-items: center;
+            border: 0;
+            border-radius: 999px;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.12);
+            font-size: 13px;
+            font-weight: 900;
+        }
+        .image-lightbox-controls button {
+            cursor: pointer;
+        }
+        .image-lightbox-controls button:hover,
+        .image-lightbox-controls button:focus-visible {
+            background: #fbbf24;
+            color: #111827;
+            outline: none;
+        }
+        .image-lightbox-scale {
+            min-width: 55px;
+            color: #fbbf24;
+            background: transparent;
+        }
+        .image-lightbox-hint {
+            position: absolute;
+            left: 12px;
+            bottom: 10px;
+            z-index: 2;
+            margin: 0;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.72);
+            color: rgba(255, 255, 255, 0.88);
+            font-size: 12px;
+            pointer-events: none;
+        }
+        @media (max-width: 640px) {
+            #typing-tools-root [data-typing-tool-toggle] {
+                width: 48px;
+                height: 48px;
+                padding: 0;
+                border-radius: 999px;
+                font-size: 0;
+            }
+            #typing-tools-root [data-typing-tool-toggle] i {
+                margin: 0;
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pb-12">
+    <script src="navbar.js?v=20260904"></script>
+
+    <div id="lightbox" class="image-lightbox hidden" role="dialog" aria-modal="true" aria-label="圖片放大檢視">
+        <div class="image-lightbox-panel">
+            <div class="image-lightbox-controls" aria-label="圖片縮放控制">
+                <button id="lightbox-zoom-out" type="button" aria-label="縮小圖片">-</button>
+                <span id="lightbox-scale" class="image-lightbox-scale">100%</span>
+                <button id="lightbox-zoom-in" type="button" aria-label="放大圖片">+</button>
+                <button id="lightbox-reset" type="button" aria-label="重設圖片縮放">重設</button>
+                <button id="lightbox-center" type="button" aria-label="置中圖片">置中</button>
+                <button id="lightbox-close" type="button" aria-label="關閉圖片燈箱">關閉</button>
+            </div>
+            <div id="lightbox-stage" class="image-lightbox-stage">
+                <img id="lightbox-img" src="" alt="圖卡放大" class="image-lightbox-img" draggable="false">
+            </div>
+            <p class="image-lightbox-hint">滾輪縮放・拖曳平移・雙擊放大・手機雙指縮放</p>
+        </div>
+    </div>
+
+    <header class="bg-gradient-to-r from-violet-600 via-indigo-600 to-teal-500 text-white shadow-xl mb-8">
+        <div class="max-w-6xl mx-auto px-6 py-10">
+            <div class="grid lg:grid-cols-[0.95fr_1.05fr] gap-8 items-center">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-white/20 text-white font-black px-4 py-2 rounded-full text-sm mb-4 shadow-sm">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        六年級資訊課｜第 01 週
+                    </div>
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tight mb-4 drop-shadow-md">課堂準備與快手任務</h1>
+                    <p class="text-xl md:text-2xl text-violet-50 font-bold leading-relaxed drop-shadow">
+                        先認識本學期的課程入口與帳號流程；完成主線後，回到課程網站做指定練習。
+                    </p>
+                </div>
+                <button
+                    type="button"
+                    class="card-hover group relative block w-full rounded-2xl border-4 border-white bg-white shadow-2xl cursor-zoom-in overflow-hidden"
+                    onclick="openLightbox('images/week01/week01-grade6-course-start-hero-1672x941-q82.webp', '第一週課堂準備摘要圖卡')"
+                    aria-label="放大檢視第一週課堂準備摘要圖卡"
+                >
+                    <img
+                        src="images/week01/week01-grade6-course-start-hero-1672x941-q82.webp"
+                        alt="第一週課堂準備摘要圖卡"
+                        class="w-full"
+                    >
+                    <span class="hidden sm:inline-flex absolute right-3 top-3 items-center gap-2 rounded-full bg-violet-700/95 px-3 py-1.5 text-xs font-black text-white shadow-lg">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                        點圖可放大
+                    </span>
+                    <span class="sm:hidden flex items-center justify-center gap-2 bg-violet-700 px-3 py-2 text-xs font-black text-white">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                        點圖可放大
+                    </span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 space-y-8">
+        <section class="grid md:grid-cols-3 gap-4">
+            <div class="bg-white border-4 border-violet-200 rounded-2xl p-5 shadow-sm">
+                <div class="text-violet-500 text-3xl mb-3"><i class="fa-solid fa-chair"></i></div>
+                <h2 class="text-xl font-black text-violet-900 mb-2">課程入口</h2>
+                <p class="font-bold text-slate-700 leading-relaxed">先確認自己能進入資訊課網站，知道本學期每週任務會放在哪裡。</p>
+            </div>
+            <div class="bg-white border-4 border-teal-200 rounded-2xl p-5 shadow-sm">
+                <div class="text-teal-500 text-3xl mb-3"><i class="fa-solid fa-id-card"></i></div>
+                <h2 class="text-xl font-black text-teal-900 mb-2">帳號與 Canva</h2>
+                <p class="font-bold text-slate-700 leading-relaxed">登入親師生平台，開啟 Gmail，使用學校帳號加入老師指定的 Canva 教育版班級。</p>
+            </div>
+            <div class="bg-white border-4 border-amber-200 rounded-2xl p-5 shadow-sm">
+                <div class="text-amber-500 text-3xl mb-3"><i class="fa-solid fa-keyboard"></i></div>
+                <h2 class="text-xl font-black text-amber-900 mb-2">快手任務</h2>
+                <p class="font-bold text-slate-700 leading-relaxed">完成主線後不自由上網，先回到課程網站做本週中英打，再依老師指示線上閱讀。</p>
+            </div>
+        </section>
+
+        <section class="bg-white border-4 border-slate-200 rounded-2xl shadow-md overflow-hidden">
+            <div class="bg-slate-100 px-6 py-4 border-b-4 border-slate-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-list-check text-slate-700 text-2xl mr-3"></i>
+                    <h2 class="text-2xl font-black text-slate-900">今天主線任務</h2>
+                </div>
+                <span class="bg-slate-700 text-white text-xs px-3 py-1 rounded-full font-black">完成後才進入快手任務</span>
+            </div>
+            <div class="p-6 grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-violet-50 border-2 border-violet-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-violet-700 mb-2">第一步</div>
+                    <h3 class="text-xl font-black text-violet-950 mb-2">課程入口</h3>
+                    <p class="font-bold text-slate-700 leading-relaxed">開啟資訊課網站，找到六年級 115-1 的課程位置。</p>
+                </div>
+                <div class="bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-indigo-700 mb-2">第二步</div>
+                    <h3 class="text-xl font-black text-indigo-950 mb-2">課本資料</h3>
+                    <p class="font-bold text-slate-700 leading-relaxed">寫上班級、座號、姓名，並寫上老師姓名。</p>
+                </div>
+                <div class="bg-teal-50 border-2 border-teal-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-teal-700 mb-2">第三步</div>
+                    <h3 class="text-xl font-black text-teal-950 mb-2">平台與 Gmail</h3>
+                    <p class="font-bold text-slate-700 leading-relaxed">確認登入的是自己的學校帳號，能開啟學校 Gmail。</p>
+                </div>
+                <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-5">
+                    <div class="text-sm font-black text-amber-700 mb-2">第四步</div>
+                    <h3 class="text-xl font-black text-amber-950 mb-2">Canva 開通</h3>
+                    <p class="font-bold text-slate-700 leading-relaxed">找到邀請信，加入老師建立的 Canva 教育版班級。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white border-4 border-emerald-200 rounded-2xl shadow-md overflow-hidden">
+            <div class="bg-emerald-100 px-6 py-4 border-b-4 border-emerald-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-shield-halved text-emerald-700 text-2xl mr-3"></i>
+                    <h2 class="text-2xl font-black text-emerald-950">電腦教室管理規則</h2>
+                </div>
+                <span class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-full font-black">點圖可放大閱讀</span>
+            </div>
+            <div class="p-6 grid lg:grid-cols-[0.9fr_1.1fr] gap-6 items-center">
+                <button
+                    type="button"
+                    class="card-hover group relative block w-full max-w-[420px] mx-auto rounded-2xl border-4 border-white bg-white shadow-xl cursor-zoom-in overflow-hidden"
+                    onclick="openLightbox('images/week01/week01-grade6-computer-lab-rules-poster-final-1080x1350-q82.webp', '電腦教室使用規則圖卡')"
+                    aria-label="放大檢視電腦教室使用規則圖卡"
+                >
+                    <img
+                        src="images/week01/week01-grade6-computer-lab-rules-poster-final-1080x1350-q82.webp"
+                        alt="電腦教室使用規則圖卡"
+                        class="w-full"
+                    >
+                    <span class="absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-emerald-700/95 px-3 py-1.5 text-xs font-black text-white shadow-lg">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                        放大
+                    </span>
+                </button>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div class="bg-white border-2 border-emerald-200 rounded-2xl p-4 text-center">
+                        <i class="fa-solid fa-ear-listen text-3xl text-emerald-600 mb-3"></i>
+                        <p class="font-black text-slate-800">聽老師說明</p>
+                    </div>
+                    <div class="bg-white border-2 border-sky-200 rounded-2xl p-4 text-center">
+                        <i class="fa-solid fa-user-lock text-3xl text-sky-600 mb-3"></i>
+                        <p class="font-black text-slate-800">使用自己的帳號</p>
+                    </div>
+                    <div class="bg-white border-2 border-violet-200 rounded-2xl p-4 text-center">
+                        <i class="fa-solid fa-route text-3xl text-violet-600 mb-3"></i>
+                        <p class="font-black text-slate-800">跟著課程步驟</p>
+                    </div>
+                    <div class="bg-white border-2 border-amber-200 rounded-2xl p-4 text-center">
+                        <i class="fa-solid fa-list-check text-3xl text-amber-600 mb-3"></i>
+                        <p class="font-black text-slate-800">完成指定任務</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="typing-section" class="bg-white border-4 border-indigo-200 rounded-2xl shadow-md overflow-hidden">
+            <div class="bg-indigo-100 px-6 py-4 border-b-4 border-indigo-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-keyboard text-indigo-700 text-2xl mr-3"></i>
+                    <h2 class="text-2xl font-black text-indigo-950">快手任務：本週中英打闖關</h2>
+                </div>
+                <span class="bg-indigo-600 text-white text-xs px-3 py-1 rounded-full font-black">完成主線後開始</span>
+            </div>
+            <div class="p-8">
+                <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 mb-6 text-slate-700 font-bold space-y-2">
+                    <p><i class="fa-solid fa-circle-info text-indigo-500 mr-2"></i> 這是先完成同學的快手任務；第一週不要求全班完成 5 關。</p>
+                    <p><i class="fa-solid fa-lock text-indigo-500 mr-2"></i> 請先登入 Google，才能開始打字闖關並記錄進度。</p>
+                    <p><i class="fa-solid fa-hand text-indigo-500 mr-2"></i> 不能複製貼上。英文大小寫、標點、空格和換行都要一樣。</p>
+                    <p id="progress-status"><i class="fa-solid fa-flag-checkered text-indigo-500 mr-2"></i> 目前進度：第 1 關開始。</p>
+                    <pre id="progress-debug" class="hidden mt-3 overflow-auto rounded-xl bg-slate-900 p-4 text-left text-xs text-slate-100"></pre>
+                </div>
+
+                <div id="typing-levels-container" class="flex flex-col space-y-8 max-w-3xl mx-auto">
+                    <div id="block-level1" class="bg-cyan-50 border-4 border-cyan-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-cyan-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 1 關</div>
+                        <h4 class="text-xl font-black text-cyan-800 mb-2 flex items-center"><i class="fa-solid fa-comment-dots text-cyan-500 mr-2"></i> 英文問答暖身</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">兩行都要打，問號、縮寫符號和句點要一樣。</p>
+                        <pre class="text-lg sm:text-2xl font-black text-center text-cyan-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-cyan-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">Where are you from?
+I'm from Taiwan.</pre>
+                        <textarea id="input-level1" rows="3" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-cyan-300 focus:outline-none focus:ring-4 focus:ring-cyan-400 font-bold text-gray-800 text-lg sm:text-2xl text-center mb-4 transition-colors placeholder:text-base sm:placeholder:text-lg placeholder-gray-400" placeholder="第一行打完按 Enter 換行"></textarea>
+                        <button onclick="checkLevel(1)" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level1" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level2" class="hidden bg-emerald-50 border-4 border-emerald-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-emerald-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 2 關</div>
+                        <h4 class="text-xl font-black text-emerald-800 mb-2 flex items-center"><i class="fa-solid fa-language text-emerald-500 mr-2"></i> 英文三行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">注意每一句開頭大寫、句點和換行。</p>
+                        <pre class="text-lg sm:text-2xl font-black text-center text-emerald-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-emerald-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">I'm Kevin.
+I'm from Taiwan.
+I like to read English books.</pre>
+                        <textarea id="input-level2" rows="4" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-emerald-300 focus:outline-none focus:ring-4 focus:ring-emerald-400 font-bold text-gray-800 text-lg sm:text-2xl text-center mb-4 transition-colors placeholder:text-base sm:placeholder:text-lg placeholder-gray-400" placeholder="三行都要打完整"></textarea>
+                        <button onclick="checkLevel(2)" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level2" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level3" class="hidden bg-blue-50 border-4 border-blue-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-blue-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 3 關</div>
+                        <h4 class="text-xl font-black text-blue-800 mb-2 flex items-center"><i class="fa-solid fa-book-open text-blue-500 mr-2"></i> 中文二行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">句號和換行都要對。</p>
+                        <pre class="text-lg sm:text-2xl font-black text-center text-blue-700 tracking-wider mb-4 bg-white py-3 px-3 rounded-xl border-2 border-blue-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">接力賽就是團隊精神的表現。
+每位選手都要盡心盡力。</pre>
+                        <textarea id="input-level3" rows="4" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-400 font-bold text-gray-800 text-lg sm:text-2xl text-center mb-4 transition-colors placeholder:text-base sm:placeholder:text-lg placeholder-gray-400" placeholder="兩行都要打完整"></textarea>
+                        <button onclick="checkLevel(3)" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level3" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level4" class="hidden bg-orange-50 border-4 border-orange-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-orange-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 4 關</div>
+                        <h4 class="text-xl font-black text-orange-800 mb-2 flex items-center"><i class="fa-solid fa-people-group text-orange-500 mr-2"></i> 中文四行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">逗號、驚嘆號、換行都要一起檢查。</p>
+                        <pre class="text-lg sm:text-2xl font-black text-center text-orange-700 tracking-wider mb-4 bg-white py-3 px-3 rounded-xl border-2 border-orange-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">為了班上的榮譽，
+我們一起加油！
+團結就是力量，
+大家一條心向前跑。</pre>
+                        <textarea id="input-level4" rows="6" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-orange-300 focus:outline-none focus:ring-4 focus:ring-orange-400 font-bold text-gray-800 text-lg sm:text-2xl text-center mb-4 transition-colors placeholder:text-base sm:placeholder:text-lg placeholder-gray-400" placeholder="四行都要打完整"></textarea>
+                        <button onclick="checkLevel(4)" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level4" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level5" class="hidden bg-purple-50 border-4 border-purple-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-purple-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">魔王關</div>
+                        <h4 class="text-xl font-black text-purple-800 mb-2 flex items-center"><i class="fa-solid fa-layer-group text-purple-500 mr-2"></i> 中英混打五行</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">中英切換、標點與換行都要對。完成後可以去看自己的努力樹。</p>
+                        <pre class="text-lg sm:text-2xl font-black text-center text-purple-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-purple-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">Where are you from?
+I'm from Taiwan.
+I like to read English books.
+當大家互相支持，
+再大的挑戰也能克服。</pre>
+                        <textarea id="input-level5" rows="7" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-purple-300 focus:outline-none focus:ring-4 focus:ring-purple-400 font-bold text-gray-800 text-lg sm:text-2xl text-center mb-4 transition-colors placeholder:text-base sm:placeholder:text-lg placeholder-gray-400" placeholder="最後一關，五行都要打"></textarea>
+                        <button onclick="checkLevel(5)" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level5" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center mt-16 pb-8 text-slate-400 text-sm font-bold">
+        <p><i class="fa-solid fa-graduation-cap mr-1"></i> 新北市頂溪國小資訊課 - 115 學年度上學期</p>
+    </footer>
+
+    <script>
+        const lightboxEl = document.getElementById("lightbox");
+        const lightboxStage = document.getElementById("lightbox-stage");
+        const lightboxImage = document.getElementById("lightbox-img");
+        const lightboxScale = document.getElementById("lightbox-scale");
+        const lightboxClose = document.getElementById("lightbox-close");
+        const lightboxZoomOut = document.getElementById("lightbox-zoom-out");
+        const lightboxZoomIn = document.getElementById("lightbox-zoom-in");
+        const lightboxReset = document.getElementById("lightbox-reset");
+        const lightboxCenter = document.getElementById("lightbox-center");
+        const lightboxPointers = new Map();
+        const lightboxState = {
+            scale: 1,
+            x: 0,
+            y: 0,
+            dragging: false,
+            lastX: 0,
+            lastY: 0,
+            initialPinchDistance: 0,
+            initialPinchScale: 1,
+            previousOverflow: ""
+        };
+
+        function applyLightboxTransform() {
+            lightboxImage.style.transform = `translate(${lightboxState.x}px, ${lightboxState.y}px) scale(${lightboxState.scale})`;
+            lightboxScale.textContent = `${Math.round(lightboxState.scale * 100)}%`;
+            lightboxStage.classList.toggle("is-zoomed", lightboxState.scale > 1);
+        }
+
+        function setLightboxScale(nextScale) {
+            lightboxState.scale = Math.max(1, Math.min(5, nextScale));
+            if (lightboxState.scale <= 1) {
+                lightboxState.x = 0;
+                lightboxState.y = 0;
+            }
+            applyLightboxTransform();
+        }
+
+        function zoomLightboxBy(delta) {
+            setLightboxScale(lightboxState.scale + delta);
+        }
+
+        function resetLightboxTransform() {
+            lightboxState.scale = 1;
+            lightboxState.x = 0;
+            lightboxState.y = 0;
+            applyLightboxTransform();
+        }
+
+        function getPointerDistance() {
+            const pointers = Array.from(lightboxPointers.values());
+            if (pointers.length < 2) return 0;
+            return Math.hypot(pointers[0].x - pointers[1].x, pointers[0].y - pointers[1].y);
+        }
+
+        window.openLightbox = function(src, altText = "圖卡放大") {
+            lightboxImage.src = src;
+            lightboxImage.alt = altText;
+            lightboxEl.setAttribute("aria-label", altText);
+            lightboxState.previousOverflow = document.body.style.overflow;
+            document.body.style.overflow = "hidden";
+            resetLightboxTransform();
+            lightboxEl.classList.remove("hidden");
+            lightboxClose.focus();
+        };
+
+        window.closeLightbox = function() {
+            lightboxEl.classList.add("hidden");
+            lightboxImage.src = "";
+            lightboxPointers.clear();
+            document.body.style.overflow = lightboxState.previousOverflow || "";
+            lightboxState.previousOverflow = "";
+            resetLightboxTransform();
+        };
+
+        lightboxEl.addEventListener("mousedown", (event) => {
+            if (event.target === lightboxEl) closeLightbox();
+        });
+
+        [lightboxClose, lightboxZoomOut, lightboxZoomIn, lightboxReset, lightboxCenter].forEach((button) => {
+            button.addEventListener("click", (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+            });
+        });
+        lightboxClose.addEventListener("click", closeLightbox);
+        lightboxZoomOut.addEventListener("click", () => zoomLightboxBy(-0.35));
+        lightboxZoomIn.addEventListener("click", () => zoomLightboxBy(0.35));
+        lightboxReset.addEventListener("click", resetLightboxTransform);
+        lightboxCenter.addEventListener("click", () => {
+            lightboxState.x = 0;
+            lightboxState.y = 0;
+            applyLightboxTransform();
+        });
+
+        lightboxStage.addEventListener("wheel", (event) => {
+            if (lightboxEl.classList.contains("hidden")) return;
+            event.preventDefault();
+            zoomLightboxBy(event.deltaY > 0 ? -0.18 : 0.18);
+        }, { passive: false });
+
+        lightboxStage.addEventListener("dblclick", (event) => {
+            event.preventDefault();
+            if (lightboxState.scale > 1.05) {
+                resetLightboxTransform();
+            } else {
+                setLightboxScale(2.2);
+            }
+        });
+
+        lightboxStage.addEventListener("pointerdown", (event) => {
+            if (lightboxEl.classList.contains("hidden")) return;
+            event.preventDefault();
+            lightboxStage.setPointerCapture?.(event.pointerId);
+            lightboxPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+            if (lightboxPointers.size === 1) {
+                lightboxState.dragging = true;
+                lightboxState.lastX = event.clientX;
+                lightboxState.lastY = event.clientY;
+            } else if (lightboxPointers.size === 2) {
+                lightboxState.dragging = false;
+                lightboxState.initialPinchDistance = getPointerDistance();
+                lightboxState.initialPinchScale = lightboxState.scale;
+            }
+        });
+
+        lightboxStage.addEventListener("pointermove", (event) => {
+            if (!lightboxPointers.has(event.pointerId)) return;
+            event.preventDefault();
+            lightboxPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+            if (lightboxPointers.size === 2) {
+                const distance = getPointerDistance();
+                if (lightboxState.initialPinchDistance > 0) {
+                    setLightboxScale(lightboxState.initialPinchScale * distance / lightboxState.initialPinchDistance);
+                }
+                return;
+            }
+
+            if (!lightboxState.dragging || lightboxState.scale <= 1) return;
+            lightboxState.x += event.clientX - lightboxState.lastX;
+            lightboxState.y += event.clientY - lightboxState.lastY;
+            lightboxState.lastX = event.clientX;
+            lightboxState.lastY = event.clientY;
+            applyLightboxTransform();
+        });
+
+        function endLightboxPointer(event) {
+            lightboxPointers.delete(event.pointerId);
+            if (lightboxPointers.size === 0) {
+                lightboxState.dragging = false;
+            } else if (lightboxPointers.size === 1) {
+                const pointer = Array.from(lightboxPointers.values())[0];
+                lightboxState.dragging = true;
+                lightboxState.lastX = pointer.x;
+                lightboxState.lastY = pointer.y;
+            }
+        }
+
+        lightboxStage.addEventListener("pointerup", endLightboxPointer);
+        lightboxStage.addEventListener("pointercancel", endLightboxPointer);
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && !lightboxEl.classList.contains("hidden")) closeLightbox();
+        });
+    </script>
+
+    <script type="module">
+        import { initNavbarAuth } from "../../shared/navbar-auth.js";
+        import { initTypingChallenge } from "../../shared/typing-challenge.js";
+        import { initTypingTools } from "../../shared/typing-tools.js";
+
+        const WEEK_CODE = "01";
+
+        initNavbarAuth();
+        initTypingTools();
+        const typingToolsRoot = document.getElementById("typing-tools-root");
+        const typingSection = document.getElementById("typing-section");
+
+        if (typingToolsRoot && typingSection && "IntersectionObserver" in window) {
+            typingToolsRoot.classList.add("hidden");
+            const typingToolsObserver = new IntersectionObserver((entries) => {
+                typingToolsRoot.classList.toggle("hidden", !entries.some((entry) => entry.isIntersecting));
+            }, { rootMargin: "120px 0px 120px 0px" });
+            typingToolsObserver.observe(typingSection);
+        }
+
+        const levelsData = [
+            { id: 1, ans: "Where are you from?\nI'm from Taiwan." },
+            { id: 2, ans: "I'm Kevin.\nI'm from Taiwan.\nI like to read English books." },
+            { id: 3, ans: "接力賽就是團隊精神的表現。\n每位選手都要盡心盡力。" },
+            { id: 4, ans: "為了班上的榮譽，\n我們一起加油！\n團結就是力量，\n大家一條心向前跑。" },
+            { id: 5, ans: "Where are you from?\nI'm from Taiwan.\nI like to read English books.\n當大家互相支持，\n再大的挑戰也能克服。" }
+        ];
+
+        const levelMsg = {
+            1: "你先把英文問答分成兩行完成，這是在練習照格式慢慢檢查。",
+            2: "你把三行英文一行一行打準，表示你有耐心看清楚大小寫和標點。",
+            3: "你把中文句子和句號一起完成，這是在練習細心，不只是練速度。",
+            4: "這一關有換行和中文標點，你能逐行比對，方法比快更重要。",
+            5: "你完成了中英切換和長句檢查，靠的是願意修正、持續確認和不放棄。"
+        };
+
+        function buildHint(userVal, targetVal, levelIndex) {
+            const userLines = userVal.split("\n");
+            const targetLines = targetVal.split("\n");
+            const maxLines = Math.max(userLines.length, targetLines.length);
+
+            for (let lineIndex = 0; lineIndex < maxLines; lineIndex += 1) {
+                const userLine = userLines[lineIndex] || "";
+                const targetLine = targetLines[lineIndex] || "";
+
+                if (userLine === targetLine) continue;
+                if (!userLine && targetLine) {
+                    return `提示：第 ${lineIndex + 1} 行還沒完成，看看是不是少了整行內容。`;
+                }
+                if (userLine && !targetLine) {
+                    return `提示：第 ${lineIndex + 1} 行多打了內容，檢查一下句尾。`;
+                }
+
+                const maxChars = Math.max(userLine.length, targetLine.length);
+                for (let charIndex = 0; charIndex < maxChars; charIndex += 1) {
+                    const userChar = userLine[charIndex];
+                    const targetChar = targetLine[charIndex];
+
+                    if (userChar === targetChar) continue;
+                    if (!userChar) {
+                        return `提示：第 ${lineIndex + 1} 行後面可能少字，從「${targetLine.slice(Math.max(0, charIndex - 2), charIndex + 3)}」附近再看一次。`;
+                    }
+                    if (!targetChar) {
+                        return `提示：第 ${lineIndex + 1} 行後面可能多打了，檢查一下句尾。`;
+                    }
+                    return `提示：第 ${lineIndex + 1} 行第 ${charIndex + 1} 個字附近不一樣，從「${targetLine.slice(Math.max(0, charIndex - 2), charIndex + 3)}」附近再看一次。`;
+                }
+            }
+
+            return levelIndex <= 2 || levelIndex === 5
+                ? "提示：再檢查一下大小寫、問號、句點、逗號、縮寫符號或換行。"
+                : "提示：再檢查一下是不是多字、少字、中文標點或換行不同。";
+        }
+
+        initTypingChallenge({
+            weekCode: WEEK_CODE,
+            activityKey: "typing_task_5",
+            levelsData,
+            levelEncouragements: levelMsg,
+            buildHint,
+            getWrongAnswerHtml: ({ hint }) => `還差一點點。${hint}`,
+            progressMessages: {
+                completed: "5 關全部完成，今天的中英打快手任務已經完成。",
+                resumed: (level) => `已接回 Week 01 打字進度，從第 ${level} 關繼續。`,
+                firstLogin: "已登入成功，這次的打字進度會自動記錄下來。",
+                unauthenticated: "請先登入 Google，才能開始打字闖關並記錄進度。",
+                saveCompleted: "已記下 5 關完整進度，今天的打字任務完成。",
+                saveNextLevel: (level) => `已記下進度，下次從第 ${level} 關繼續。`,
+                saveError: "進度暫時沒有記錄成功，請稍後再試一次。",
+                resetNoSession: "目前沒有登入，不能重新開始練習。",
+                resetConfirm: "要重新開始 Week 01 打字練習嗎？這會把目前進度重設回第 1 關。"
+            },
+            celebrationContent: {
+                title: "魔王關完成",
+                message: "你用檢查、修正和耐心完成了第一週快手任務。努力樹記錄的是自己的累積，不是和別人比快。",
+                buttonText: "去看我的努力樹",
+                buttonHref: "/my-tree.html"
+            }
+        });
+    </script>
+</body>
+</html>
