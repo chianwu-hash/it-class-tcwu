@@ -276,6 +276,7 @@
         let studentProfilesByUserId = new Map();
         let annualRoster = [];
         let progressLoadVersion = 0;
+        let visibilityRows = null;
         let studentProfilesLoadFailed = false;
         let currentPage = 1;
         let pageSize = 20;
@@ -755,15 +756,19 @@
         }
 
         function renderVisibilityControls(rows) {
-            const byKey = new Map(rows.map((row) => [`${row.course_id}-${row.week_code}`, row]));
+            const ready = Array.isArray(rows) && !!currentSession?.user && isTeacher(currentSession);
+            const byKey = new Map((rows || []).map((row) => [`${row.course_id}-${row.week_code}`, row]));
 
             Object.keys(visibilityLists).forEach((grade) => {
-                const courses = visibilityDefaults.filter((item) => item.grade === grade);
+                const courses = visibilityDefaults.filter((item) => item.grade === grade
+                    && getCourseDefinition(item.courseId).schoolYear === schoolYearFilterEl.value
+                    && (!courseFilterEl.value || item.courseId === courseFilterEl.value));
+                visibilityLists[grade].parentElement.classList.toggle('hidden', !courses.length);
                 visibilityLists[grade].innerHTML = courses.map((course) => {
                     const cards = course.weeks.map((weekCode) => {
                         const row = byKey.get(`${course.courseId}-${weekCode}`);
                         const isVisible = row ? row.is_visible : true;
-                        const updatedAt = row ? formatTime(row.updated_at) : "尚未設定";
+                        const updatedAt = row ? formatTime(row.updated_at) : "預設顯示";
                         const stateClass = isVisible
                             ? "bg-emerald-100 text-emerald-700"
                             : "bg-slate-200 text-slate-600";
@@ -780,17 +785,18 @@
                                 </div>
                                 <div class="flex items-center gap-3">
                                     <span class="inline-flex rounded-full px-3 py-1 text-sm font-black ${stateClass}">
-                                        ${isVisible ? "顯示中" : "隱藏中"}
+                                        ${ready ? (isVisible ? "顯示中" : "隱藏中") : "尚未讀取"}
                                     </span>
                                     <button
                                         type="button"
+                                        ${ready ? '' : 'disabled'}
                                         onclick="window.__adminHandleVisibilityToggle(this)"
                                         class="rounded-xl px-3 py-2 font-black text-white transition ${btnClass}"
                                         data-course-id="${course.courseId}"
                                         data-grade="${course.grade}"
                                         data-week-code="${weekCode}"
                                         data-next-visible="${(!isVisible).toString()}">
-                                        ${btnLabel}
+                                        ${ready ? btnLabel : '無法操作'}
                                     </button>
                                 </div>
                             </div>
@@ -885,7 +891,8 @@
                     </tr>
                 `;
                 summaryTextEl.textContent = "請先登入教師帳號";
-                renderVisibilityControls([]);
+                visibilityRows = null;
+                renderVisibilityControls(null);
                 return;
             }
 
@@ -1010,12 +1017,15 @@
         async function loadWeekVisibility() {
             logDebug("load-visibility-start", { hasUser: !!currentSession?.user, isTeacher: !!currentSession && isTeacher(currentSession) });
             if (!currentSession?.user || !isTeacher(currentSession)) {
-                renderVisibilityControls([]);
+                visibilityRows = null;
+                renderVisibilityControls(null);
                 logDebug("load-visibility-skip", { reason: "not-teacher-or-no-session" });
                 return;
             }
 
             let data = [];
+            visibilityRows = null;
+            renderVisibilityControls(null);
             try {
                 data = await callAdminRpc("admin_list_week_visibility");
             } catch (error) {
@@ -1024,7 +1034,8 @@
                 return;
             }
 
-            renderVisibilityControls(data || []);
+            visibilityRows = data || [];
+            renderVisibilityControls(visibilityRows);
             logDebug("load-visibility-done", { count: (data || []).length });
         }
 
@@ -1170,12 +1181,17 @@
         refreshBtn.addEventListener("click", syncSessionAndRender);
         schoolYearFilterEl.addEventListener("change", () => {
             initCourseOptions();
+            renderVisibilityControls(visibilityRows);
             classFilterEl.value = '';
             classFilterEl.dataset.pendingValue = '';
             resetPagination();
             loadProgress();
         });
-        courseFilterEl.addEventListener("change", () => { resetPagination(); loadProgress(); });
+        courseFilterEl.addEventListener("change", () => {
+            renderVisibilityControls(visibilityRows);
+            resetPagination();
+            loadProgress();
+        });
         classFilterEl.addEventListener("change", () => { resetPagination(); loadProgress(); });
         weekFilterEl.addEventListener("change", () => { resetPagination(); loadProgress(); });
         activityFilterEl.addEventListener("change", () => { resetPagination(); loadProgress(); });

@@ -11,6 +11,7 @@ const getAdminRedirectUrl=()=>'', getStoredAccessToken=()=>null;
 const isTeacher=()=>true, resolveSession=async()=>({user:{id:'teacher',email:'test@example.invalid'}});
 const sharedSignInWithGoogle=()=>{}, signOutAndReload=()=>{};
 window.testCalls=[];
+window.mockVisibility=[{course_id:'grade3-115-1',week_code:'01',is_visible:true},{course_id:'grade6-115-1',week_code:'01',is_visible:true},{course_id:'grade3-114-2',week_code:'03',is_visible:false}];
 const supabase={auth:{onAuthStateChange:()=>{}},rpc(name,args){
  window.testCalls.push({name,args});
  if(name==='admin_list_student_enrollments')return Promise.resolve({data:[
@@ -26,7 +27,15 @@ const supabase={auth:{onAuthStateChange:()=>{}},rpc(name,args){
 `;
 let html = fs.readFileSync(path.join(root, 'admin-progress.html'), 'utf8');
 html = html.replace(/import\s*\{[\s\S]*?\}\s*from "\.\/shared\/auth.js";/, () => stub)
-    .replace('from "./shared/course-context.js"', 'from "/shared/course-context.js"');
+    .replace('from "./shared/course-context.js"', 'from "/shared/course-context.js"')
+    .replace('if (!accessToken) {', `
+        if(functionName==='admin_list_week_visibility')return window.mockVisibility;
+        if(functionName==='admin_set_week_visibility'){
+            window.testCalls.push({name:functionName,args:payload});
+            window.mockVisibility.find(r=>r.course_id===payload.p_course_id && r.week_code===payload.p_week_code).is_visible=payload.p_is_visible;
+            return null;
+        }
+        if (!accessToken) {`);
 fs.writeFileSync(path.join(output, 'verify.html'), html, 'utf8');
 
 async function main() {
@@ -70,15 +79,25 @@ async function main() {
         assert(!current.classes.includes('301'));
         assert(current.roster.includes('2') && current.roster.includes('1'));
         assert(current.body.includes('60301'));
+        assert.deepEqual(await evaluate(`[...document.querySelectorAll('[data-next-visible]')].map(b=>b.dataset.courseId)`),['grade3-115-1','grade6-115-1']);
+        await evaluate(`document.querySelector('[data-course-id="grade6-115-1"][data-next-visible]').click()`);
+        await waitFor(`document.querySelector('[data-course-id="grade6-115-1"][data-next-visible]')?.dataset.nextVisible==='true'`);
+        const saved=await evaluate(`window.testCalls.find(c=>c.name==='admin_set_week_visibility').args`);
+        assert.deepEqual(saved,{p_course_id:'grade6-115-1',p_grade:'grade6',p_week_code:'01',p_is_visible:false});
+        assert.equal(await evaluate(`window.mockVisibility.find(r=>r.course_id==='grade3-115-1').is_visible`),true);
         fs.writeFileSync(path.join(output,'desktop.png'),Buffer.from((await send('Page.captureScreenshot',{format:'png'})).data,'base64'));
         await evaluate(`document.querySelector('#school-year-filter').value='114';document.querySelector('#school-year-filter').dispatchEvent(new Event('change'));`);
         await waitFor(`document.querySelector('#progress-tbody')?.textContent.includes('30101')`);
         const previous=await evaluate(`({courses:[...document.querySelector('#course-filter').options].map(o=>o.value),classes:[...document.querySelector('#class-filter').options].map(o=>o.value)})`);
         assert(previous.classes.includes('301') && !previous.classes.includes('603'));
         assert(previous.courses.filter(Boolean).every(c=>c.includes('-114-')));
+        assert(await evaluate(`[...document.querySelectorAll('[data-next-visible]')].every(b=>b.dataset.courseId.includes('-114-'))`));
+        await evaluate(`document.querySelector('#course-filter').value='grade3-114-2';document.querySelector('#course-filter').dispatchEvent(new Event('change'))`);
+        assert(await evaluate(`document.querySelector('#grade6-visibility-list').parentElement.classList.contains('hidden')`));
+        assert(await evaluate(`document.querySelector('[data-course-id="grade3-114-2"][data-week-code="03"]').dataset.nextVisible==='true'`));
         await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
         assert.equal(await evaluate('document.documentElement.scrollWidth > innerWidth'),false);
-        console.log('PASS: 115 default, pending students, 1001-row pagination, 114 historical identity, mobile width.');
+        console.log('PASS: annual rosters, pagination, year/course week-card filters, scoped toggle payload, preserved old visibility, mobile width.');
     } finally {
         ws.close();
         await fetch(`http://127.0.0.1:9232/json/close/${tab.id}`);

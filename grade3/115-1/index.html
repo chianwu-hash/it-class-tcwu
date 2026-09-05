@@ -76,5 +76,9 @@
     <footer class="text-center mt-16 pb-8 text-slate-400 text-sm font-bold">
         <p><i class="fa-solid fa-rocket mr-1"></i> 新北市頂溪國小資訊課 - 115 學年度上學期</p>
     </footer>
+    <script type="module">
+        import { applyWeekVisibilityToCards } from "../../shared/week-visibility.js";
+        applyWeekVisibilityToCards("grade3", document.querySelector("main"), "grade3-115-1");
+    </script>
 </body>
 </html>
