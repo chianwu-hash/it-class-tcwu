@@ -486,6 +486,7 @@ It's a marker.</pre>
             supabase
         } from "../shared/auth.js";
         import { initNavbarAuth } from "../shared/navbar-auth.js";
+        import { getCurrentCourseId } from "../shared/course-context.js";
         import { initQuizModule } from "../shared/quiz-module.js";
         import { initTypingChallenge } from "../shared/typing-challenge.js";
         import { initTypingTools } from "../shared/typing-tools.js";
@@ -495,6 +496,7 @@ It's a marker.</pre>
 
         const WEEK_CODE = "13";
         const QUIZ_KEY = "internet_addiction_quiz_1";
+        const COURSE_ID = getCurrentCourseId();
         let currentSession = null;
 
         const addictionQuestions = [
@@ -572,6 +574,7 @@ It's a marker.</pre>
                 .from("student_progress")
                 .select("completed, score")
                 .eq("user_id", currentSession.user.id)
+                .eq("course_id", COURSE_ID)
                 .eq("week_code", WEEK_CODE)
                 .eq("activity_key", QUIZ_KEY)
                 .maybeSingle();
@@ -584,6 +587,7 @@ It's a marker.</pre>
             if (!user) return false;
             const payload = {
                 user_id: user.id,
+                course_id: COURSE_ID,
                 week_code: WEEK_CODE,
                 activity_key: QUIZ_KEY,
                 current_level: addictionQuestions.length,
@@ -593,7 +597,7 @@ It's a marker.</pre>
             };
             const { error } = await supabase
                 .from("student_progress")
-                .upsert(payload, { onConflict: "user_id,week_code,activity_key" });
+                .upsert(payload, { onConflict: "user_id,course_id,week_code,activity_key" });
             return !error;
         }
 
@@ -701,6 +705,7 @@ It's a marker.</pre>
         }
 
         initTypingChallenge({
+            courseId: COURSE_ID,
             weekCode: "13",
             activityKey: "typing_task_5",
             draftOptions: { enabled: true },
@@ -723,7 +728,7 @@ It's a marker.</pre>
                 title: "魔王關完成",
                 message: "這一朵花是你一步一步練出來的。你願意檢查、修正，再試一次，努力樹又多了一份自己的累積。",
                 buttonText: "去看我的努力樹",
-                buttonHref: "/my-tree.html"
+                buttonHref: "/my-tree.html?course=grade3-114-2"
             }
         });
     </script>

@@ -24,7 +24,7 @@
         separatorClassName: "text-gray-300 mx-1",
         extraLinks: [
             {
-                href: "/my-tree.html",
+                href: "/my-tree.html?course=grade3-115-1",
                 iconClass: "fa-solid fa-seedling",
                 label: "努力樹"
             }

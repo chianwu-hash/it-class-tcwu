@@ -65,7 +65,20 @@
                     </button>
                 </div>
 
-                <div class="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-7">
+                <div class="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-8">
+                    <label class="block">
+                        <span class="mb-1 block text-sm font-black text-slate-700">學年度</span>
+                        <select id="school-year-filter" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700">
+                            <option value="115">115 學年度</option>
+                            <option value="114">114 學年度</option>
+                        </select>
+                    </label>
+                    <label class="block">
+                        <span class="mb-1 block text-sm font-black text-slate-700">課程</span>
+                        <select id="course-filter" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700">
+                            <option value="">全部課程</option>
+                        </select>
+                    </label>
                     <label class="block">
                         <span class="mb-1 block text-sm font-black text-slate-700">班級</span>
                         <select id="class-filter" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700">
@@ -115,6 +128,7 @@
             <div class="border-t border-slate-100 px-6 py-4">
                 <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                     <p id="summary-text" class="text-sm font-bold text-slate-500">請先登入教師帳號</p>
+                    <p id="roster-summary" class="text-sm font-bold text-slate-500"></p>
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
                         <div id="pagination-summary" class="text-sm font-bold text-slate-400">尚未讀取資料</div>
                         <div class="flex flex-wrap items-center gap-3">
@@ -141,6 +155,7 @@
                     <thead class="bg-slate-50 text-slate-600">
                         <tr>
                             <th class="px-4 py-3 text-left font-black">學生</th>
+                            <th class="px-4 py-3 text-left font-black">課程</th>
                             <th class="px-4 py-3 text-left font-black">週次</th>
                             <th class="px-4 py-3 text-left font-black">活動</th>
                             <th class="px-4 py-3 text-left font-black">類型</th>
@@ -153,7 +168,7 @@
                     </thead>
                     <tbody id="progress-tbody" class="divide-y divide-slate-100">
                         <tr>
-                            <td colspan="9" class="px-4 py-12 text-center font-bold text-slate-400">請先登入教師帳號</td>
+                            <td colspan="10" class="px-4 py-12 text-center font-bold text-slate-400">請先登入教師帳號</td>
                         </tr>
                     </tbody>
                 </table>
@@ -192,10 +207,14 @@
             signOutAndReload,
             supabase
         } from "./shared/auth.js";
+        import { COURSE_DEFINITIONS, getCourseDefinition } from "./shared/course-context.js";
 
         const authStatusEl = document.getElementById("auth-status");
         const loginBtn = document.getElementById("login-btn");
         const logoutBtn = document.getElementById("logout-btn");
+        const courseFilterEl = document.getElementById("course-filter");
+        const schoolYearFilterEl = document.getElementById("school-year-filter");
+        const rosterSummaryEl = document.getElementById("roster-summary");
         const classFilterEl = document.getElementById("class-filter");
         const weekFilterEl = document.getElementById("week-filter");
         const activityFilterEl = document.getElementById("activity-filter");
@@ -219,12 +238,30 @@
             grade6: document.getElementById("grade6-visibility-list")
         };
 
-        const visibilityDefaults = {
-            grade3: ["03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "20"],
-            grade6: ["03", "04", "05", "06", "07", "08", "10", "11", "12", "13"]
-        };
+        const visibilityDefaults = [
+            {
+                courseId: "grade3-114-2",
+                grade: "grade3",
+                weeks: ["03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "20"]
+            },
+            {
+                courseId: "grade3-115-1",
+                grade: "grade3",
+                weeks: ["01"]
+            },
+            {
+                courseId: "grade6-114-2",
+                grade: "grade6",
+                weeks: ["03", "04", "05", "06", "07", "08", "10", "11", "12", "13", "17"]
+            },
+            {
+                courseId: "grade6-115-1",
+                grade: "grade6",
+                weeks: ["01"]
+            }
+        ];
 
-        const ADMIN_FILTERS_STORAGE_KEY = "admin-progress-filters";
+        const ADMIN_FILTERS_STORAGE_KEY = "admin-progress-filters-v2";
         const ADMIN_DEBUG_STORAGE_KEY = "admin-progress-debug-log";
         const ADMIN_ACTION_TIMEOUT_MS = 10000;
         const PROFILES_ENABLED = true;
@@ -237,6 +274,8 @@
         let currentSession = null;
         let isSyncing = false;
         let studentProfilesByUserId = new Map();
+        let annualRoster = [];
+        let progressLoadVersion = 0;
         let studentProfilesLoadFailed = false;
         let currentPage = 1;
         let pageSize = 20;
@@ -284,6 +323,7 @@
                 hidden: document.hidden,
                 visibility: document.visibilityState,
                 email: currentSession?.user?.email || null,
+                courseFilter: courseFilterEl?.value || '',
                 classFilter: classFilterEl?.value || '',
                 weekFilter: weekFilterEl?.value || '',
                 activityFilter: activityFilterEl?.value || '',
@@ -368,6 +408,19 @@
                     hour: "2-digit",
                     minute: "2-digit"
                 });
+        }
+
+        function courseLabel(courseId) {
+            return getCourseDefinition(courseId)?.label || courseId || "未標示課程";
+        }
+
+        function initCourseOptions() {
+            courseFilterEl.innerHTML = [
+                '<option value="">全部課程</option>',
+                ...COURSE_DEFINITIONS.filter((course) => course.schoolYear === schoolYearFilterEl.value).map((course) => (
+                    `<option value="${escapeHtml(course.id)}">${escapeHtml(course.label)}</option>`
+                ))
+            ].join("");
         }
 
         function normalizedActivityType(row) {
@@ -490,6 +543,8 @@
 
         function saveFilterState() {
             const payload = {
+                schoolYear: schoolYearFilterEl.value,
+                courseId: courseFilterEl.value,
                 classCode: classFilterEl.value,
                 weekCode: weekFilterEl.value,
                 activityType: activityFilterEl.value,
@@ -512,6 +567,10 @@
 
         function applyFilterState() {
             const state = loadFilterState();
+            schoolYearFilterEl.value = state.schoolYear === '114' ? '114' : '115';
+            initCourseOptions();
+            courseFilterEl.value = state.courseId || '';
+            if (courseFilterEl.selectedIndex < 0) courseFilterEl.value = '';
             weekFilterEl.value = state.weekCode || '';
             activityFilterEl.value = state.activityType || '';
             completedFilterEl.value = state.completed || '';
@@ -542,7 +601,7 @@
 
             classFilterEl.disabled = false;
             const classCodes = Array.from(new Set(
-                Array.from(studentProfilesByUserId.values())
+                annualRoster
                     .map((profile) => profile.class_code)
                     .filter(Boolean)
             )).sort();
@@ -585,6 +644,9 @@
 
             return rows.filter((row) => {
                 const profile = studentProfilesByUserId.get(row.user_id);
+                if (!classCode && annualRoster.length && !profile) {
+                    return false;
+                }
                 if (activityType && normalizedActivityType(row) !== activityType) {
                     return false;
                 }
@@ -693,44 +755,55 @@
         }
 
         function renderVisibilityControls(rows) {
-            const byKey = new Map(rows.map((row) => [`${row.grade}-${row.week_code}`, row]));
+            const byKey = new Map(rows.map((row) => [`${row.course_id}-${row.week_code}`, row]));
 
-            Object.entries(visibilityDefaults).forEach(([grade, weeks]) => {
-                visibilityLists[grade].innerHTML = weeks.map((weekCode) => {
-                    const row = byKey.get(`${grade}-${weekCode}`);
-                    const isVisible = row ? row.is_visible : true;
-                    const updatedAt = row ? formatTime(row.updated_at) : "尚未設定";
-                    const stateClass = isVisible
-                        ? "bg-emerald-100 text-emerald-700"
-                        : "bg-slate-200 text-slate-600";
-                    const btnClass = isVisible
-                        ? "bg-rose-500 hover:bg-rose-400"
-                        : "bg-emerald-500 hover:bg-emerald-400";
-                    const btnLabel = isVisible ? "隱藏" : "顯示";
+            Object.keys(visibilityLists).forEach((grade) => {
+                const courses = visibilityDefaults.filter((item) => item.grade === grade);
+                visibilityLists[grade].innerHTML = courses.map((course) => {
+                    const cards = course.weeks.map((weekCode) => {
+                        const row = byKey.get(`${course.courseId}-${weekCode}`);
+                        const isVisible = row ? row.is_visible : true;
+                        const updatedAt = row ? formatTime(row.updated_at) : "尚未設定";
+                        const stateClass = isVisible
+                            ? "bg-emerald-100 text-emerald-700"
+                            : "bg-slate-200 text-slate-600";
+                        const btnClass = isVisible
+                            ? "bg-rose-500 hover:bg-rose-400"
+                            : "bg-emerald-500 hover:bg-emerald-400";
+                        const btnLabel = isVisible ? "隱藏" : "顯示";
+
+                        return `
+                            <div class="flex items-center justify-between gap-3 rounded-2xl border border-white bg-white/80 px-4 py-3">
+                                <div>
+                                    <div class="font-black text-slate-800">第 ${weekCode} 週</div>
+                                    <div class="text-xs font-bold text-slate-400">最後更新：${updatedAt}</div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="inline-flex rounded-full px-3 py-1 text-sm font-black ${stateClass}">
+                                        ${isVisible ? "顯示中" : "隱藏中"}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        onclick="window.__adminHandleVisibilityToggle(this)"
+                                        class="rounded-xl px-3 py-2 font-black text-white transition ${btnClass}"
+                                        data-course-id="${course.courseId}"
+                                        data-grade="${course.grade}"
+                                        data-week-code="${weekCode}"
+                                        data-next-visible="${(!isVisible).toString()}">
+                                        ${btnLabel}
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join("");
 
                     return `
-                        <div class="flex items-center justify-between gap-3 rounded-2xl border border-white bg-white/80 px-4 py-3">
-                            <div>
-                                <div class="font-black text-slate-800">第 ${weekCode} 週</div>
-                                <div class="text-xs font-bold text-slate-400">最後更新：${updatedAt}</div>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="inline-flex rounded-full px-3 py-1 text-sm font-black ${stateClass}">
-                                    ${isVisible ? "顯示中" : "隱藏中"}
-                                </span>
-                                <button
-                                    type="button"
-                                    onclick="window.__adminHandleVisibilityToggle(this)"
-                                    class="rounded-xl px-3 py-2 font-black text-white transition ${btnClass}"
-                                    data-grade="${grade}"
-                                    data-week-code="${weekCode}"
-                                    data-next-visible="${(!isVisible).toString()}">
-                                    ${btnLabel}
-                                </button>
-                            </div>
+                        <div class="space-y-3">
+                            <div class="text-sm font-black text-slate-500">${escapeHtml(courseLabel(course.courseId))}</div>
+                            ${cards}
                         </div>
                     `;
-                }).join("");
+                }).join('<div class="h-px bg-white/80"></div>');
             });
         }
 
@@ -744,7 +817,7 @@
             if (!totalRows) {
                 tbodyEl.innerHTML = `
                     <tr>
-                        <td colspan="9" class="px-4 py-12 text-center font-bold text-slate-400">目前沒有符合條件的資料</td>
+                        <td colspan="10" class="px-4 py-12 text-center font-bold text-slate-400">目前沒有符合條件的資料</td>
                     </tr>
                 `;
                 summaryTextEl.textContent = "目前沒有符合條件的資料";
@@ -756,6 +829,7 @@
             tbodyEl.innerHTML = paginatedRows.map((row) => `
                 <tr class="hover:bg-slate-50">
                     <td class="px-4 py-4">${renderStudentCell(row)}</td>
+                    <td class="px-4 py-4 font-bold text-slate-600">${escapeHtml(courseLabel(row.course_id))}</td>
                     <td class="px-4 py-4 font-bold text-slate-600">${row.week_code}</td>
                     <td class="px-4 py-4">
                         <div class="font-black text-slate-800">${activityLabel(row.activity_key)}</div>
@@ -772,6 +846,7 @@
                             onclick="window.__adminHandleProgressReset(this)"
                             class="rounded-xl bg-rose-500 px-3 py-2 font-black text-white transition hover:bg-rose-400"
                             data-user-id="${row.user_id}"
+                            data-course-id="${row.course_id || ""}"
                             data-week-code="${row.week_code}"
                             data-activity-key="${row.activity_key}">
                             重設
@@ -806,7 +881,7 @@
                 logoutBtn.classList.add("hidden");
                 tbodyEl.innerHTML = `
                     <tr>
-                        <td colspan="9" class="px-4 py-12 text-center font-bold text-slate-400">請先登入教師帳號</td>
+                        <td colspan="10" class="px-4 py-12 text-center font-bold text-slate-400">請先登入教師帳號</td>
                     </tr>
                 `;
                 summaryTextEl.textContent = "請先登入教師帳號";
@@ -820,7 +895,7 @@
         }
 
 
-        async function loadStudentProfiles() {
+        async function loadStudentProfiles(version, schoolYear) {
             studentProfilesLoadFailed = false;
 
             if (!PROFILES_ENABLED || !currentSession?.user || !isTeacher(currentSession)) {
@@ -828,10 +903,20 @@
                 return;
             }
 
-            const { data, error } = await supabase.rpc('admin_list_student_profiles', {
-                p_class_code: null,
-                p_search: null
+            annualRoster = [];
+            rosterSummaryEl.textContent = '';
+            let { data, error } = await supabase.rpc('admin_list_student_enrollments', {
+                p_school_year: Number(schoolYear)
             });
+
+            if (error?.code === 'PGRST202' && schoolYear === '114') {
+                ({ data, error } = await supabase.rpc('admin_list_student_profiles', {
+                    p_class_code: null,
+                    p_search: null
+                }));
+            }
+
+            if (version !== progressLoadVersion) return;
 
             if (error) {
                 studentProfilesByUserId = new Map();
@@ -840,17 +925,24 @@
                 return;
             }
 
-            studentProfilesByUserId = new Map((data || []).map((profile) => [profile.user_id, profile]));
+            annualRoster = data || [];
+            studentProfilesByUserId = new Map(annualRoster.filter((profile) => profile.user_id).map((profile) => [profile.user_id, profile]));
+            const pending = annualRoster.filter((profile) => !profile.user_id).length;
+            rosterSummaryEl.textContent = `${schoolYear} 名冊 ${annualRoster.length} 人，已登入 ${annualRoster.length - pending} 人，尚未登入 ${pending} 人`;
         }
 
 
         async function loadProgress() {
+            const version = ++progressLoadVersion;
+            const schoolYear = schoolYearFilterEl.value;
+            const courseId = courseFilterEl.value;
+            const weekCode = weekFilterEl.value || null;
             if (!currentSession?.user) return;
 
             if (!isTeacher(currentSession)) {
                 tbodyEl.innerHTML = `
                     <tr>
-                        <td colspan="9" class="px-4 py-12 text-center font-bold text-rose-400">此帳號不是教師白名單，無法讀取學生資料。</td>
+                        <td colspan="10" class="px-4 py-12 text-center font-bold text-rose-400">此帳號不是教師白名單，無法讀取學生資料。</td>
                     </tr>
                 `;
                 summaryTextEl.textContent = "此帳號沒有教師權限";
@@ -863,7 +955,7 @@
             summaryTextEl.textContent = "讀取資料中...";
             tbodyEl.innerHTML = `
                 <tr>
-                    <td colspan="9" class="px-4 py-12 text-center font-bold text-slate-400">讀取資料中...</td>
+                    <td colspan="10" class="px-4 py-12 text-center font-bold text-slate-400">讀取資料中...</td>
                 </tr>
             `;
 
@@ -871,19 +963,35 @@
                 ? null
                 : completedFilterEl.value === "true";
 
-            await loadStudentProfiles();
+            await loadStudentProfiles(version, schoolYear);
+            if (version !== progressLoadVersion) return;
 
-            const { data, error } = await supabase.rpc("admin_list_progress", {
-                p_week_code: weekFilterEl.value || null,
-                p_activity_type: null,
-                p_search: null,
-                p_completed: completedFilterValue
-            });
+            const data = [];
+            let error = null;
+            const courses = COURSE_DEFINITIONS.filter((course) =>
+                course.schoolYear === schoolYear
+                && (!courseId || course.id === courseId));
+            for (const course of courses) {
+                for (let from = 0; ; from += 1000) {
+                    const result = await supabase.rpc("admin_list_progress", {
+                        p_course_id: course.id,
+                        p_week_code: weekCode,
+                        p_activity_type: null,
+                        p_search: null,
+                        p_completed: completedFilterValue
+                    }).range(from, from + 999);
+                    if (version !== progressLoadVersion) return;
+                    if (result.error) { error = result.error; break; }
+                    data.push(...(result.data || []));
+                    if ((result.data || []).length < 1000) break;
+                }
+                if (error) break;
+            }
 
             if (error) {
                 tbodyEl.innerHTML = `
                     <tr>
-                        <td colspan="9" class="px-4 py-12 text-center font-bold text-rose-400">讀取資料失敗</td>
+                        <td colspan="10" class="px-4 py-12 text-center font-bold text-rose-400">讀取資料失敗</td>
                     </tr>
                 `;
                 summaryTextEl.textContent = "讀取失敗";
@@ -976,7 +1084,7 @@
         }
 
         window.__adminHandleVisibilityToggle = async (btn) => {
-            logDebug("click-visibility-toggle", { grade: btn?.dataset?.grade, weekCode: btn?.dataset?.weekCode, nextVisible: btn?.dataset?.nextVisible, disabled: !!btn?.disabled });
+            logDebug("click-visibility-toggle", { courseId: btn?.dataset?.courseId, grade: btn?.dataset?.grade, weekCode: btn?.dataset?.weekCode, nextVisible: btn?.dataset?.nextVisible, disabled: !!btn?.disabled });
             const session = await getSessionForAdminAction();
             currentSession = session;
             updateAuthUI();
@@ -988,15 +1096,17 @@
                 return;
             }
 
+            const courseId = btn.dataset.courseId;
             const grade = btn.dataset.grade;
             const weekCode = btn.dataset.weekCode;
             const nextVisible = btn.dataset.nextVisible === "true";
             btn.disabled = true;
             btn.textContent = "處理中...";
-            logDebug("toggle-rpc-start", { grade, weekCode, nextVisible });
+            logDebug("toggle-rpc-start", { courseId, grade, weekCode, nextVisible });
 
             try {
                 await callAdminRpc("admin_set_week_visibility", {
+                    p_course_id: courseId,
                     p_grade: grade,
                     p_week_code: weekCode,
                     p_is_visible: nextVisible
@@ -1010,15 +1120,14 @@
                 return;
             }
 
-            logDebug("toggle-rpc-success", { grade, weekCode, nextVisible });
-            const gradeLabel = grade === "grade3" ? "三年級" : "六年級";
-            showNotice(`已更新 ${gradeLabel} 第 ${weekCode} 週卡片狀態。`, "success");
+            logDebug("toggle-rpc-success", { courseId, grade, weekCode, nextVisible });
+            showNotice(`已更新 ${courseLabel(courseId)} 第 ${weekCode} 週卡片狀態。`, "success");
             await loadWeekVisibility();
-            logDebug("toggle-refresh-done", { grade, weekCode });
+            logDebug("toggle-refresh-done", { courseId, grade, weekCode });
         };
 
         window.__adminHandleProgressReset = async (btn) => {
-            logDebug("click-progress-reset", { userId: btn?.dataset?.userId, weekCode: btn?.dataset?.weekCode, activityKey: btn?.dataset?.activityKey });
+            logDebug("click-progress-reset", { userId: btn?.dataset?.userId, courseId: btn?.dataset?.courseId, weekCode: btn?.dataset?.weekCode, activityKey: btn?.dataset?.activityKey });
             const session = await getSessionForAdminAction();
             currentSession = session;
             updateAuthUI();
@@ -1029,9 +1138,10 @@
             }
 
             const userId = btn.dataset.userId;
+            const courseId = btn.dataset.courseId;
             const weekCode = btn.dataset.weekCode;
             const activityKey = btn.dataset.activityKey;
-            const confirmed = window.confirm(`確定要重設 ${weekCode} 週 / ${activityKey} 的進度嗎？`);
+            const confirmed = window.confirm(`確定要重設 ${courseLabel(courseId)} / 第 ${weekCode} 週 / ${activityKey} 的進度嗎？`);
             if (!confirmed) return;
 
             btn.disabled = true;
@@ -1039,6 +1149,7 @@
 
             const { error } = await supabase.rpc("admin_reset_progress", {
                 p_user_id: userId,
+                p_course_id: courseId,
                 p_week_code: weekCode,
                 p_activity_key: activityKey
             });
@@ -1057,6 +1168,14 @@
         loginBtn.addEventListener("click", signInWithGoogle);
         logoutBtn.addEventListener("click", signOut);
         refreshBtn.addEventListener("click", syncSessionAndRender);
+        schoolYearFilterEl.addEventListener("change", () => {
+            initCourseOptions();
+            classFilterEl.value = '';
+            classFilterEl.dataset.pendingValue = '';
+            resetPagination();
+            loadProgress();
+        });
+        courseFilterEl.addEventListener("change", () => { resetPagination(); loadProgress(); });
         classFilterEl.addEventListener("change", () => { resetPagination(); loadProgress(); });
         weekFilterEl.addEventListener("change", () => { resetPagination(); loadProgress(); });
         activityFilterEl.addEventListener("change", () => { resetPagination(); loadProgress(); });
@@ -1091,6 +1210,7 @@
             }
         });
 
+        initCourseOptions();
         initWeekOptions();
         applyFilterState();
         logDebug('page-init', { debugEnabled });

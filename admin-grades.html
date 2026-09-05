@@ -304,6 +304,9 @@
         }
 
         function isIncludedActivity(row) {
+            if (row.course_id && row.course_id !== GRADE3_GRADING_CONFIG.courseId) {
+                return false;
+            }
             const key = String(row.activity_key || "").toLowerCase();
             const week = String(row.week_code || "").padStart(2, "0");
             return [
@@ -346,6 +349,7 @@
             const [profiles, progress] = await Promise.all([
                 loadAllRpcRows("admin_list_student_profiles", { p_class_code: null, p_search: null }),
                 loadAllRpcRows("admin_list_progress", {
+                    p_course_id: GRADE3_GRADING_CONFIG.courseId,
                     p_week_code: null,
                     p_activity_type: null,
                     p_search: null,

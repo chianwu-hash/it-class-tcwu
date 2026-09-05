@@ -413,6 +413,7 @@
             supabase
         } from "../shared/auth.js";
         import { initNavbarAuth } from "../shared/navbar-auth.js";
+        import { getCurrentCourseId } from "../shared/course-context.js";
         import { initTypingChallenge } from "../shared/typing-challenge.js";
         import { initTypingTools } from "../shared/typing-tools.js";
         import { initWeek06QuizAdapter } from "./week06.quiz-adapter.js";
@@ -423,6 +424,7 @@
         const WEEK_CODE = "06";
         const TYPING_KEY = "typing_task_4";
         const QUIZ_KEY = "safety_quiz_1";
+        const COURSE_ID = getCurrentCourseId();
 
         // ── Typing Data ──────────────────────────────────────────────────────
         const levelsData = [
@@ -573,6 +575,7 @@
                 .from("student_progress")
                 .select("completed, score")
                 .eq("user_id", currentSession.user.id)
+                .eq("course_id", COURSE_ID)
                 .eq("week_code", WEEK_CODE)
                 .eq("activity_key", QUIZ_KEY)
                 .maybeSingle();
@@ -591,6 +594,7 @@
             if (!user) return false;
             const payload = {
                 user_id: user.id,
+                course_id: COURSE_ID,
                 week_code: WEEK_CODE,
                 activity_key: QUIZ_KEY,
                 current_level: 5,
@@ -600,7 +604,7 @@
             };
             const { error } = await supabase
                 .from("student_progress")
-                .upsert(payload, { onConflict: "user_id,week_code,activity_key" });
+                .upsert(payload, { onConflict: "user_id,course_id,week_code,activity_key" });
             if (error) {
                 console.error("saveQuizProgress failed", error);
                 return false;
@@ -695,6 +699,7 @@
         document.getElementById("quiz-login-btn").addEventListener("click", signInWithGoogle);
 
         initTypingChallenge({
+            courseId: COURSE_ID,
             weekCode: WEEK_CODE,
             activityKey: TYPING_KEY,
             draftOptions: { enabled: true },

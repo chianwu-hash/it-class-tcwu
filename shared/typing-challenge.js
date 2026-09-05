@@ -6,6 +6,7 @@ import {
     SUPABASE_URL,
     supabase
 } from "./auth.js";
+import { getCurrentCourseId } from "./course-context.js";
 
 const DEFAULT_PROGRESS_MESSAGES = {
     completed: "你已經把整套練習走完了，今天可以直接複習，或重新再練一次。",
@@ -56,6 +57,7 @@ function ensureTypingChallengeTextStyle() {
 }
 
 export function initTypingChallenge({
+    courseId = null,
     weekCode,
     activityKey,
     levelsData,
@@ -70,6 +72,7 @@ export function initTypingChallenge({
     ensureTypingChallengeTextStyle();
 
     const maxLevel = levelsData.length;
+    const resolvedCourseId = getCurrentCourseId(courseId);
     let currentSession = null;
     let highestUnlockedLevel = 1;
     const messages = { ...DEFAULT_PROGRESS_MESSAGES, ...progressMessages };
@@ -271,6 +274,18 @@ export function initTypingChallenge({
         return currentSession?.access_token ?? getStoredAccessToken();
     }
 
+    function isMissingCourseIdError(error) {
+        const message = String(error?.message || error?.details || error || "").toLowerCase();
+        return message.includes("course_id")
+            && (message.includes("does not exist") || message.includes("schema cache") || message.includes("column"));
+    }
+
+    function withoutCourseId(payload) {
+        const clone = { ...(payload || {}) };
+        delete clone.course_id;
+        return clone;
+    }
+
     async function requestDrafts({ method, query = {}, body = null, prefer = null }) {
         const accessToken = getDraftAccessToken();
         if (!accessToken) {
@@ -329,12 +344,16 @@ export function initTypingChallenge({
         }
     }
 
-    function getDraftBaseFilters(userId) {
-        return {
+    function getDraftBaseFilters(userId, includeCourseId = true) {
+        const filters = {
             user_id: `eq.${userId}`,
             week_code: `eq.${weekCode}`,
             activity_key: `eq.${activityKey}`
         };
+        if (includeCourseId) {
+            filters.course_id = `eq.${resolvedCourseId}`;
+        }
+        return filters;
     }
 
     async function loadDraftsOnce() {
@@ -342,19 +361,29 @@ export function initTypingChallenge({
             return;
         }
 
-        const key = `${currentSession.user.id}:${weekCode}:${activityKey}`;
+        const key = `${currentSession.user.id}:${resolvedCourseId}:${weekCode}:${activityKey}`;
         if (draftLoadKey === key) {
             return;
         }
         draftLoadKey = key;
 
-        const { data, error } = await requestDrafts({
+        let { data, error } = await requestDrafts({
             method: "GET",
             query: {
                 select: "level_id,draft_text,saved_at",
                 ...getDraftBaseFilters(currentSession.user.id)
             }
         });
+
+        if (error && isMissingCourseIdError(error)) {
+            ({ data, error } = await requestDrafts({
+                method: "GET",
+                query: {
+                    select: "level_id,draft_text,saved_at",
+                    ...getDraftBaseFilters(currentSession.user.id, false)
+                }
+            }));
+        }
 
         if (error) {
             draftLoadKey = "";
@@ -393,6 +422,7 @@ export function initTypingChallenge({
 
         const payload = {
             user_id: user.id,
+            course_id: resolvedCourseId,
             week_code: weekCode,
             activity_key: activityKey,
             level_id: level,
@@ -401,14 +431,25 @@ export function initTypingChallenge({
         };
 
         setDraftStatus(level, "正在儲存草稿...", "muted");
-        const { data, error } = await requestDrafts({
+        let { data, error } = await requestDrafts({
             method: "POST",
             query: {
-                on_conflict: "user_id,week_code,activity_key,level_id"
+                on_conflict: "user_id,course_id,week_code,activity_key,level_id"
             },
             body: payload,
             prefer: "resolution=merge-duplicates,return=representation"
         });
+
+        if (error && isMissingCourseIdError(error)) {
+            ({ data, error } = await requestDrafts({
+                method: "POST",
+                query: {
+                    on_conflict: "user_id,week_code,activity_key,level_id"
+                },
+                body: withoutCourseId(payload),
+                prefer: "resolution=merge-duplicates,return=representation"
+            }));
+        }
 
         if (error) {
             console.warn("save typing draft failed", error, payload);
@@ -520,6 +561,7 @@ export function initTypingChallenge({
             `hint: ${formatProgressDebugValue(error?.hint)}`,
             `user: ${formatProgressDebugValue(user?.email ?? user?.id)}`,
             `online: ${formatProgressDebugValue(navigator.onLine)}`,
+            `course: ${resolvedCourseId}`,
             `week: ${weekCode}`,
             `activity: ${activityKey}`,
             `href: ${window.location.href}`
@@ -661,13 +703,24 @@ export function initTypingChallenge({
             return;
         }
 
-        const { data, error } = await supabase
+        let { data, error } = await supabase
             .from("student_progress")
             .select("current_level, completed")
             .eq("user_id", currentSession.user.id)
+            .eq("course_id", resolvedCourseId)
             .eq("week_code", weekCode)
             .eq("activity_key", activityKey)
             .maybeSingle();
+
+        if (error && isMissingCourseIdError(error)) {
+            ({ data, error } = await supabase
+                .from("student_progress")
+                .select("current_level, completed")
+                .eq("user_id", currentSession.user.id)
+                .eq("week_code", weekCode)
+                .eq("activity_key", activityKey)
+                .maybeSingle());
+        }
 
         if (error) {
             if (progressStatusEl) {
@@ -693,13 +746,24 @@ export function initTypingChallenge({
     }
 
     async function fetchSavedProgress(userId) {
-        const { data, error } = await supabase
+        let { data, error } = await supabase
             .from("student_progress")
             .select("current_level, completed")
             .eq("user_id", userId)
+            .eq("course_id", resolvedCourseId)
             .eq("week_code", weekCode)
             .eq("activity_key", activityKey)
             .maybeSingle();
+
+        if (error && isMissingCourseIdError(error)) {
+            ({ data, error } = await supabase
+                .from("student_progress")
+                .select("current_level, completed")
+                .eq("user_id", userId)
+                .eq("week_code", weekCode)
+                .eq("activity_key", activityKey)
+                .maybeSingle());
+        }
 
         if (error) {
             console.error("fetchSavedProgress failed", error);
@@ -710,7 +774,7 @@ export function initTypingChallenge({
         return data;
     }
 
-    async function saveProgressDirect(payload, accessToken) {
+    async function saveProgressDirect(payload, accessToken, includeCourseId = true) {
         if (!accessToken) {
             return {
                 error: {
@@ -723,7 +787,10 @@ export function initTypingChallenge({
         const controller = new AbortController();
         const timeoutId = window.setTimeout(() => controller.abort(), SAVE_TIMEOUT_MS);
         const url = new URL(`${SUPABASE_URL}/rest/v1/student_progress`);
-        url.searchParams.set("on_conflict", "user_id,week_code,activity_key");
+        url.searchParams.set(
+            "on_conflict",
+            includeCourseId ? "user_id,course_id,week_code,activity_key" : "user_id,week_code,activity_key"
+        );
 
         try {
             const response = await fetch(url.toString(), {
@@ -735,7 +802,7 @@ export function initTypingChallenge({
                     "Content-Type": "application/json",
                     Prefer: "resolution=merge-duplicates,return=minimal"
                 },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(includeCourseId ? payload : withoutCourseId(payload))
             });
 
             if (response.ok) {
@@ -768,6 +835,7 @@ export function initTypingChallenge({
 
         const payload = {
             user_id: user.id,
+            course_id: resolvedCourseId,
             week_code: weekCode,
             activity_key: activityKey,
             current_level: nextLevel,
@@ -776,7 +844,10 @@ export function initTypingChallenge({
         };
 
         const accessToken = currentSession?.access_token ?? getStoredAccessToken();
-        const { error } = await saveProgressDirect(payload, accessToken);
+        let { error } = await saveProgressDirect(payload, accessToken);
+        if (error && isMissingCourseIdError(error)) {
+            ({ error } = await saveProgressDirect(payload, accessToken, false));
+        }
 
         if (!error) {
             clearProgressDebug();
@@ -822,12 +893,22 @@ export function initTypingChallenge({
             return;
         }
 
-        const { error } = await supabase
+        let { error } = await supabase
             .from("student_progress")
             .delete()
             .eq("user_id", user.id)
+            .eq("course_id", resolvedCourseId)
             .eq("week_code", weekCode)
             .eq("activity_key", activityKey);
+
+        if (error && isMissingCourseIdError(error)) {
+            ({ error } = await supabase
+                .from("student_progress")
+                .delete()
+                .eq("user_id", user.id)
+                .eq("week_code", weekCode)
+                .eq("activity_key", activityKey));
+        }
 
         if (error) {
             console.error("resetProgress failed", error);

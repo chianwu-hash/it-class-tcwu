@@ -240,6 +240,7 @@
             supabase
         } from "../shared/auth.js";
         import { initNavbarAuth } from "../shared/navbar-auth.js";
+        import { getCurrentCourseId } from "../shared/course-context.js";
         import { initWeek11QuizAdapter } from "./week11.quiz-adapter.js";
 
         initNavbarAuth();
@@ -247,6 +248,7 @@
 
         const WEEK_CODE = "11";
         const QUIZ_KEY = "etiquette_quiz_1";
+        const COURSE_ID = getCurrentCourseId();
         let currentSession = null;
 
         function initCollapsibleSections() {
@@ -285,6 +287,7 @@
                 .from("student_progress")
                 .select("completed, score")
                 .eq("user_id", currentSession.user.id)
+                .eq("course_id", COURSE_ID)
                 .eq("week_code", WEEK_CODE)
                 .eq("activity_key", QUIZ_KEY)
                 .maybeSingle();
@@ -297,6 +300,7 @@
             if (!user) return false;
             const payload = {
                 user_id: user.id,
+                course_id: COURSE_ID,
                 week_code: WEEK_CODE,
                 activity_key: QUIZ_KEY,
                 current_level: 5,
@@ -304,7 +308,7 @@
                 score,
                 updated_at: new Date().toISOString()
             };
-            const { error } = await supabase.from("student_progress").upsert(payload, { onConflict: "user_id,week_code,activity_key" });
+            const { error } = await supabase.from("student_progress").upsert(payload, { onConflict: "user_id,course_id,week_code,activity_key" });
             return !error;
         }
 

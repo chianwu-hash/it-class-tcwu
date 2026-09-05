@@ -1,4 +1,5 @@
 export const GRADE3_GRADING_CONFIG = {
+    courseId: "grade3-114-2",
     grade: "grade3",
     schoolYear: "114",
     semester: "2",

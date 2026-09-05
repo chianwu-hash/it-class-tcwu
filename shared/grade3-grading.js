@@ -14,8 +14,13 @@ function normalizeText(value) {
     return String(value ?? "").trim().normalize("NFC");
 }
 
-function progressKey(userId, weekCode, activityKey) {
-    return `${userId || ""}|${String(weekCode || "").padStart(2, "0")}|${String(activityKey || "").toLowerCase()}`;
+function progressKey(userId, courseId, weekCode, activityKey) {
+    return [
+        userId || "",
+        String(courseId || "").toLowerCase(),
+        String(weekCode || "").padStart(2, "0"),
+        String(activityKey || "").toLowerCase()
+    ].join("|");
 }
 
 function triangularPoints(levels) {
@@ -47,7 +52,7 @@ function buildProfilesByStudentCode(profiles = []) {
 
 function buildProgressByUserWeekActivity(progressRows = []) {
     return new Map(progressRows.map((row) => [
-        progressKey(row.user_id, row.week_code, row.activity_key),
+        progressKey(row.user_id, row.course_id, row.week_code, row.activity_key),
         row
     ]));
 }
@@ -109,7 +114,7 @@ function calculateQuizCorrect(profile, progressByKey, config) {
     return config.quiz
         .filter((activity) => activity.counted)
         .reduce((sum, activity) => {
-            const progress = progressByKey.get(progressKey(profile.user_id, activity.weekCode, activity.activityKey));
+            const progress = progressByKey.get(progressKey(profile.user_id, config.courseId, activity.weekCode, activity.activityKey));
             if (!progress?.completed) return sum;
             return sum + clamp(progress.score, 0, activity.totalQuestions);
         }, 0);
@@ -121,7 +126,7 @@ function calculateTypingPoints(profile, progressByKey, config) {
     return config.typing
         .filter((activity) => activity.counted)
         .reduce((sum, activity) => {
-            const progress = progressByKey.get(progressKey(profile.user_id, activity.weekCode, activity.activityKey));
+            const progress = progressByKey.get(progressKey(profile.user_id, config.courseId, activity.weekCode, activity.activityKey));
             const passedLevels = passedTypingLevels(progress, activity.totalLevels);
             return sum + triangularPoints(passedLevels);
         }, 0);
@@ -134,7 +139,7 @@ function progressCountForProfile(profile, progressByKey, config) {
         ...config.typing.filter((activity) => activity.counted)
     ];
     return countedActivities.filter((activity) => (
-        progressByKey.has(progressKey(profile.user_id, activity.weekCode, activity.activityKey))
+        progressByKey.has(progressKey(profile.user_id, config.courseId, activity.weekCode, activity.activityKey))
     )).length;
 }
 

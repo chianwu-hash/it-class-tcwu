@@ -1,3 +1,5 @@
+drop function if exists public.admin_list_grade3_grading_data();
+
 create or replace function public.admin_list_grade3_grading_data()
 returns table (
     record_type text,
@@ -8,6 +10,7 @@ returns table (
     display_name text,
     student_code text,
     role text,
+    course_id text,
     week_code text,
     activity_key text,
     activity_type text,
@@ -66,6 +69,7 @@ as $$
         gp.display_name,
         gp.student_code,
         gp.role,
+        null::text as course_id,
         null::text as week_code,
         null::text as activity_key,
         null::text as activity_type,
@@ -86,6 +90,7 @@ as $$
         gp.display_name,
         gp.student_code,
         gp.role,
+        sp.course_id,
         sp.week_code,
         sp.activity_key,
         ca.activity_type,
@@ -98,8 +103,9 @@ as $$
     join counted_activities ca
       on ca.week_code = sp.week_code
      and ca.activity_key = sp.activity_key
+    where sp.course_id = 'grade3-114-2'
 
-    order by record_type asc, class_code asc nulls last, seat_no asc nulls last, week_code asc nulls last, activity_key asc nulls last;
+    order by record_type asc, class_code asc nulls last, seat_no asc nulls last, course_id asc nulls last, week_code asc nulls last, activity_key asc nulls last;
 $$;
 
 grant execute on function public.admin_list_grade3_grading_data() to authenticated;

@@ -1,4 +1,4 @@
-export const REWARD_TREE_ACTIVITIES = [
+const GRADE3_114_2_ACTIVITIES = [
     {
         type: "typing",
         weekCode: "04",
@@ -137,6 +137,64 @@ export const REWARD_TREE_ACTIVITIES = [
     }
 ];
 
+const GRADE6_115_1_ACTIVITIES = [
+    {
+        type: "typing",
+        weekCode: "01",
+        activityKey: "typing_task_5",
+        totalLevels: 5,
+        pageHref: "/grade6/115-1/week01.html",
+        label: "第 1 週 快手任務"
+    }
+];
+
+function withCourseId(courseId, activities) {
+    return activities.map((activity) => ({
+        ...activity,
+        courseId
+    }));
+}
+
+export const REWARD_TREE_COURSES = [
+    {
+        id: "grade3-114-2",
+        label: "三年級 114 下",
+        activities: withCourseId("grade3-114-2", GRADE3_114_2_ACTIVITIES)
+    },
+    {
+        id: "grade3-115-1",
+        label: "三年級 115 上",
+        activities: []
+    },
+    {
+        id: "grade6-114-2",
+        label: "六年級 114 下",
+        activities: []
+    },
+    {
+        id: "grade6-115-1",
+        label: "六年級 115 上",
+        activities: withCourseId("grade6-115-1", GRADE6_115_1_ACTIVITIES)
+    }
+];
+
+export const DEFAULT_REWARD_TREE_COURSE_ID = "grade3-114-2";
+export const REWARD_TREE_ACTIVITIES = REWARD_TREE_COURSES
+    .find((course) => course.id === DEFAULT_REWARD_TREE_COURSE_ID)
+    .activities;
+
+export function getRewardTreeCourses() {
+    return REWARD_TREE_COURSES.map((course) => ({
+        ...course,
+        activities: [...course.activities]
+    }));
+}
+
+export function getRewardTreeCourse(courseId) {
+    return REWARD_TREE_COURSES.find((course) => course.id === courseId)
+        || REWARD_TREE_COURSES.find((course) => course.id === DEFAULT_REWARD_TREE_COURSE_ID);
+}
+
 export const LEAF_SLOTS = [
     { x: 20, y: 58, s: 22, r: -60 },
     { x: 25, y: 50, s: 20, r: -38 },
@@ -197,6 +255,6 @@ export const FLOWER_SLOTS = [
     { x: 87, y: 58, s: 34, r: 16 }
 ];
 
-export function getActivityId(weekCode, activityKey) {
-    return `${weekCode}:${activityKey}`;
+export function getActivityId(weekCode, activityKey, courseId = "") {
+    return courseId ? `${courseId}:${weekCode}:${activityKey}` : `${weekCode}:${activityKey}`;
 }

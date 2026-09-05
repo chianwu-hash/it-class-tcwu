@@ -1,19 +1,47 @@
 create table if not exists public.student_progress (
     user_id uuid not null references auth.users(id) on delete cascade,
+    course_id text not null default 'grade3-114-2',
     week_code text not null,
     activity_key text not null,
     current_level integer not null default 1 check (current_level between 1 and 5),
     completed boolean not null default false,
     updated_at timestamptz not null default now(),
     score smallint,
-    primary key (user_id, week_code, activity_key)
+    primary key (user_id, course_id, week_code, activity_key)
 );
+
+alter table public.student_progress
+    add column if not exists course_id text not null default 'grade3-114-2';
 
 alter table public.student_progress
     add column if not exists score smallint;
 
+update public.student_progress
+set course_id = 'grade6-115-1'
+where course_id = 'grade3-114-2'
+  and week_code = '01'
+  and activity_key = 'typing_task_5';
+
+do $$
+begin
+    if exists (
+        select 1
+        from pg_constraint
+        where conrelid = 'public.student_progress'::regclass
+          and conname = 'student_progress_pkey'
+          and pg_get_constraintdef(oid) = 'PRIMARY KEY (user_id, week_code, activity_key)'
+    ) then
+        alter table public.student_progress drop constraint student_progress_pkey;
+        alter table public.student_progress
+            add constraint student_progress_pkey primary key (user_id, course_id, week_code, activity_key);
+    end if;
+end $$;
+
 create index if not exists student_progress_updated_at_idx
 on public.student_progress (updated_at desc);
+
+create index if not exists student_progress_course_week_idx
+on public.student_progress (course_id, week_code, activity_key);
 
 alter table public.student_progress enable row level security;
 
@@ -59,6 +87,7 @@ as $$
 $$;
 
 create or replace function public.admin_list_progress(
+    p_course_id text default null,
     p_week_code text default null,
     p_activity_type text default null,
     p_search text default null,
@@ -67,6 +96,7 @@ create or replace function public.admin_list_progress(
 returns table (
     user_id uuid,
     email text,
+    course_id text,
     week_code text,
     activity_key text,
     activity_type text,
@@ -82,6 +112,7 @@ as $$
     select
         sp.user_id,
         au.email::text,
+        sp.course_id,
         sp.week_code,
         sp.activity_key,
         case
@@ -97,6 +128,7 @@ as $$
     from public.student_progress sp
     join auth.users au on au.id = sp.user_id
     where public.is_teacher()
+      and (p_course_id is null or sp.course_id = p_course_id)
       and (p_week_code is null or sp.week_code = p_week_code)
       and (
             p_activity_type is null
@@ -116,10 +148,11 @@ as $$
     order by sp.updated_at desc, au.email asc, sp.week_code asc, sp.activity_key asc;
 $$;
 
-grant execute on function public.admin_list_progress(text, text, text, boolean) to authenticated;
+grant execute on function public.admin_list_progress(text, text, text, text, boolean) to authenticated;
 
 create or replace function public.admin_reset_progress(
     p_user_id uuid,
+    p_course_id text,
     p_week_code text,
     p_activity_key text
 )
@@ -135,20 +168,47 @@ begin
 
     delete from public.student_progress
     where user_id = p_user_id
+      and course_id = p_course_id
       and week_code = p_week_code
       and activity_key = p_activity_key;
 end;
 $$;
 
-grant execute on function public.admin_reset_progress(uuid, text, text) to authenticated;
+grant execute on function public.admin_reset_progress(uuid, text, text, text) to authenticated;
 
 create table if not exists public.week_visibility (
+    course_id text not null default 'grade3-114-2',
     grade text not null check (grade in ('grade3', 'grade6')),
     week_code text not null,
     is_visible boolean not null default true,
     updated_at timestamptz not null default now(),
-    primary key (grade, week_code)
+    primary key (course_id, week_code)
 );
+
+alter table public.week_visibility
+    add column if not exists course_id text not null default 'grade3-114-2';
+
+update public.week_visibility
+set course_id = case grade
+    when 'grade6' then 'grade6-114-2'
+    else 'grade3-114-2'
+end
+where course_id = 'grade3-114-2';
+
+do $$
+begin
+    if exists (
+        select 1
+        from pg_constraint
+        where conrelid = 'public.week_visibility'::regclass
+          and conname = 'week_visibility_pkey'
+          and pg_get_constraintdef(oid) = 'PRIMARY KEY (grade, week_code)'
+    ) then
+        alter table public.week_visibility drop constraint week_visibility_pkey;
+        alter table public.week_visibility
+            add constraint week_visibility_pkey primary key (course_id, week_code);
+    end if;
+end $$;
 
 alter table public.week_visibility enable row level security;
 
@@ -167,8 +227,11 @@ to authenticated
 using (public.is_teacher())
 with check (public.is_teacher());
 
+drop function if exists public.admin_list_week_visibility();
+
 create or replace function public.admin_list_week_visibility()
 returns table (
+    course_id text,
     grade text,
     week_code text,
     is_visible boolean,
@@ -179,18 +242,20 @@ security definer
 set search_path = public, auth
 as $$
     select
+        wv.course_id,
         wv.grade,
         wv.week_code,
         wv.is_visible,
         wv.updated_at
     from public.week_visibility wv
     where public.is_teacher()
-    order by wv.grade asc, wv.week_code asc;
+    order by wv.course_id asc, wv.week_code asc;
 $$;
 
 grant execute on function public.admin_list_week_visibility() to authenticated;
 
 create or replace function public.admin_set_week_visibility(
+    p_course_id text,
     p_grade text,
     p_week_code text,
     p_is_visible boolean
@@ -205,13 +270,14 @@ begin
         raise exception 'not authorized';
     end if;
 
-    insert into public.week_visibility (grade, week_code, is_visible, updated_at)
-    values (p_grade, p_week_code, p_is_visible, now())
-    on conflict (grade, week_code)
+    insert into public.week_visibility (course_id, grade, week_code, is_visible, updated_at)
+    values (p_course_id, p_grade, p_week_code, p_is_visible, now())
+    on conflict (course_id, week_code)
     do update set
+        grade = excluded.grade,
         is_visible = excluded.is_visible,
         updated_at = now();
 end;
 $$;
 
-grant execute on function public.admin_set_week_visibility(text, text, boolean) to authenticated;
+grant execute on function public.admin_set_week_visibility(text, text, text, boolean) to authenticated;

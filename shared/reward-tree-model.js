@@ -29,10 +29,11 @@ function createReward({ kind, source = {}, activity, index, total, earned = true
     const isQuiz = kind === "quiz-leaf";
     const isFlower = kind === "flower";
     return {
-        id: `${getActivityId(activity.weekCode, activity.activityKey)}:${kind}:${index}`,
+        id: `${getActivityId(activity.weekCode, activity.activityKey, activity.courseId)}:${kind}:${index}`,
         kind,
         earned,
         href,
+        courseId: activity.courseId || source.course_id || "",
         weekCode: activity.weekCode,
         activityKey: activity.activityKey,
         label: activity.label,
@@ -80,18 +81,19 @@ function buildQuizHref(activity) {
 export function deriveRewardTreeModel(progressRows, activities) {
     const rows = Array.isArray(progressRows) ? progressRows : [];
     const rowByActivity = new Map(
-        rows.map((row) => [getActivityId(row.week_code, row.activity_key), row])
+        rows.map((row) => [getActivityId(row.week_code, row.activity_key, row.course_id), row])
     );
     const knownIds = new Set(
-        activities.map((activity) => getActivityId(activity.weekCode, activity.activityKey))
+        activities.map((activity) => getActivityId(activity.weekCode, activity.activityKey, activity.courseId))
     );
     const rewards = [];
     const pendingRewards = [];
     const skippedActivities = [];
-    const unknownRows = rows.filter((row) => !knownIds.has(getActivityId(row.week_code, row.activity_key)));
+    const unknownRows = rows.filter((row) => !knownIds.has(getActivityId(row.week_code, row.activity_key, row.course_id)));
 
     activities.forEach((activity) => {
-        const row = rowByActivity.get(getActivityId(activity.weekCode, activity.activityKey)) || {
+        const row = rowByActivity.get(getActivityId(activity.weekCode, activity.activityKey, activity.courseId)) || {
+            course_id: activity.courseId || "",
             week_code: activity.weekCode,
             activity_key: activity.activityKey,
             current_level: 0,
@@ -210,6 +212,7 @@ export function deriveRewardTreeModel(progressRows, activities) {
 
 export function createFullCompletionRows(activities) {
     return activities.map((activity) => ({
+        course_id: activity.courseId || "",
         week_code: activity.weekCode,
         activity_key: activity.activityKey,
         current_level: activity.type === "typing" ? activity.totalLevels : 5,
