@@ -1,0 +1,35 @@
+# Local and deployment metadata
+.git/
+.github/
+.githooks/
+.claude/
+.chat-mode/
+.vercel/
+.vscode/
+.idea/
+
+# Agent and project-local instructions
+AGENTS.md
+CLAUDE.md
+README.md
+
+# Development-only material
+docs/
+automation/
+skills/
+project-modules/
+templates/
+textbooks/
+tmp/
+.tmp/
+output/
+wayground/
+tools/
+chat-mode-skill/
+1/
+
+# Local scripts and transient files
+*.ps1
+*.bak
+*.tmp
+*.log
