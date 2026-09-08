@@ -139,6 +139,7 @@ Implemented from the consensus:
 - Verified `node automation/check-vercelignore-references.js`.
 - Verified `git ls-files 'tmp/**' '.tmp/**'` returns no tracked files.
 - Verified `git diff --check -- .vercelignore automation/check-vercelignore-references.js docs/development/sessions/2026-09-08-vercel-deployment-storage-plan.md`.
+- After deploying commit `51b805b`, Vercel Resources for the new production deployment showed Static Assets reduced from 574 to 182. `AGENTS.md`, `CLAUDE.md`, and `docs/references/**` were no longer visible in the first Resources listing. `/.editorconfig` was still visible, so `.editorconfig` and `.gitignore` were added to `.vercelignore` for the follow-up deployment.
 
 Deferred decisions:
 

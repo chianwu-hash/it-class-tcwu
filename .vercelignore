@@ -7,6 +7,8 @@
 .vercel/
 .vscode/
 .idea/
+.editorconfig
+.gitignore
 
 # Agent and project-local instructions
 AGENTS.md
