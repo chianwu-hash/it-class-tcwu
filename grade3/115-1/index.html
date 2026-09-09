@@ -3,78 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>三年級資訊課｜115 學年度上學期</title>
+    <title>三年級資訊課｜電腦小小兵 115-1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            background: #ecfeff;
-        }
-        .card-hover {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 14px 24px rgba(15, 118, 110, 0.14);
-        }
+        body { font-family: 'Noto Sans TC', sans-serif; background: #f0fdfa; }
+        .card-hover { transition: all .25s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(15, 118, 110, .14); }
     </style>
 </head>
-<body class="text-slate-800 antialiased pb-12">
-    <script src="navbar.js?v=20260829"></script>
+<body class="text-gray-800 antialiased pb-12">
+    <script src="navbar.js?v=20260908"></script>
 
-    <header class="bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 text-white shadow-xl rounded-b-[2.5rem] mb-10">
-        <div class="max-w-5xl mx-auto px-6 py-10 text-center">
-            <div class="inline-flex items-center gap-2 bg-white/20 text-white font-black px-4 py-2 rounded-full text-sm mb-4 shadow-sm">
-                <i class="fa-solid fa-calendar-days"></i>
-                115 學年度上學期
+    <header class="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white shadow-xl rounded-b-[3rem] mb-10">
+        <div class="max-w-5xl mx-auto px-6 py-12 relative overflow-hidden">
+            <div class="relative z-10 text-center">
+                <div class="inline-block bg-yellow-300 text-yellow-900 font-black px-4 py-1.5 rounded-full text-sm mb-4 shadow-sm">
+                    <i class="fa-solid fa-star mr-1 text-white"></i> 115 學年度上學期
+                </div>
+                <h1 class="text-4xl md:text-6xl font-black tracking-tight mb-4 drop-shadow-md">電腦小小兵 🚀</h1>
+                <p class="text-xl md:text-2xl text-cyan-50 font-black drop-shadow">先會點、會看、會慢慢練，再一起打開電腦世界！</p>
             </div>
-            <h1 class="text-4xl md:text-6xl font-black tracking-tight mb-4 drop-shadow-md">三年級資訊課</h1>
-            <p class="text-xl md:text-2xl text-cyan-50 font-bold drop-shadow">先學會有秩序，再一起探索電腦教室。</p>
+            <i class="fa-solid fa-computer-mouse absolute text-white opacity-10 text-9xl -top-6 -left-6 -rotate-12"></i>
+            <i class="fa-solid fa-keyboard absolute text-white opacity-20 text-8xl -bottom-6 right-10 rotate-12"></i>
         </div>
     </header>
 
     <main class="max-w-5xl mx-auto px-6">
-        <section class="mb-10">
-            <div class="flex items-center mb-6 border-b-2 border-cyan-200 pb-2">
-                <i class="fa-solid fa-map text-3xl text-cyan-600 mr-3"></i>
-                <h2 class="text-3xl font-black text-slate-800">115-1 課程進度</h2>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <a href="week01.html" class="block bg-white rounded-2xl shadow-md border-4 border-cyan-300 overflow-hidden card-hover">
-                    <div class="h-32 bg-gradient-to-r from-cyan-500 to-emerald-500 relative flex items-center justify-center">
-                        <i class="fa-solid fa-computer text-6xl text-white/60"></i>
-                        <div class="absolute top-4 left-4 bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full font-bold text-sm">第 01 週</div>
+        <section class="bg-white rounded-3xl shadow-md overflow-hidden card-hover border-4 border-emerald-200 mb-10">
+            <a href="/my-tree.html?course=grade3-115-1" class="block p-6 md:flex items-center justify-between">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <div class="bg-emerald-100 p-4 rounded-full mr-5 shadow-inner">
+                        <i class="fa-solid fa-seedling text-emerald-600 text-3xl"></i>
                     </div>
-                    <div class="p-6">
-                        <h3 class="text-2xl font-black text-slate-800 mb-2">第一次上資訊課</h3>
-                        <p class="text-slate-600 font-bold mb-5">認識老師、學會進電腦教室流程，完成管理規則闖關。</p>
-                        <div class="inline-flex items-center rounded-xl bg-cyan-600 text-white px-4 py-2 font-black">
-                            進入第 01 週
-                            <i class="fa-solid fa-arrow-right ml-2"></i>
-                        </div>
+                    <div>
+                        <h2 class="text-2xl font-black text-gray-800 mb-1">我的努力樹</h2>
+                        <p class="text-gray-600 font-bold">完成任務就留下紀錄，看看自己的小樹長到哪裡了！</p>
                     </div>
-                </a>
-            </div>
+                </div>
+                <div class="bg-emerald-500 text-white px-8 py-3 rounded-full font-black text-lg shadow-lg flex items-center justify-center hover:bg-emerald-400 transition">
+                    去看努力樹 <i class="fa-solid fa-arrow-right ml-2"></i>
+                </div>
+            </a>
         </section>
 
-        <section class="bg-white border-2 border-slate-200 rounded-2xl p-6">
-            <h2 class="text-xl font-black text-slate-800 mb-3">
-                <i class="fa-solid fa-box-archive text-slate-500 mr-2"></i>
-                舊學期資料
-            </h2>
-            <p class="text-slate-600 font-bold mb-4">114 學年度下學期的舊課程保留在原本位置，供老師備查。</p>
-            <a href="../index.html" class="inline-flex items-center bg-slate-700 hover:bg-slate-600 text-white px-5 py-3 rounded-xl font-black transition">
-                查看 114-2 三年級舊課程
-                <i class="fa-solid fa-arrow-right ml-2"></i>
+        <div class="flex items-center mb-8 border-b-2 border-cyan-200 pb-2">
+            <i class="fa-solid fa-map text-3xl text-cyan-600 mr-3"></i>
+            <h2 class="text-3xl font-black text-gray-800">任務地圖（課程進度）</h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 week-card-grid">
+            <a href="week02.html" data-week="02" class="block bg-white rounded-3xl shadow-md border-4 border-emerald-300 overflow-hidden card-hover group">
+                <div class="h-32 bg-gradient-to-r from-emerald-400 to-teal-500 relative flex items-center justify-center">
+                    <i class="fa-solid fa-i-cursor text-6xl text-white opacity-60 group-hover:scale-110 transition"></i>
+                    <div class="absolute top-4 left-4 bg-white/25 backdrop-blur-sm text-white px-3 py-1 rounded-full font-black text-sm">第 02 週</div>
+                    <div class="absolute top-4 right-4 bg-yellow-300 text-yellow-900 px-3 py-1 rounded-full font-black text-sm">本週</div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-black text-gray-800 mb-2 group-hover:text-emerald-600 transition">先點再打，電腦聽我的！</h3>
+                    <p class="text-gray-600 font-bold mb-4">找到文字游標、練習數字鍵，再把視窗找回來。</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-black">文字游標</span>
+                        <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-black">數字鍵</span>
+                        <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md font-black">視窗按鈕</span>
+                    </div>
+                </div>
             </a>
+
+            <a href="week01.html" data-week="01" class="block bg-white rounded-3xl shadow-md border-4 border-transparent hover:border-cyan-300 overflow-hidden card-hover group">
+                <div class="h-32 bg-gradient-to-r from-cyan-400 to-blue-500 relative flex items-center justify-center">
+                    <i class="fa-solid fa-computer text-6xl text-white opacity-60 group-hover:scale-110 transition"></i>
+                    <div class="absolute top-4 left-4 bg-white/25 backdrop-blur-sm text-white px-3 py-1 rounded-full font-black text-sm">第 01 週</div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-black text-gray-800 mb-2 group-hover:text-cyan-600 transition">第一次上資訊課</h3>
+                    <p class="text-gray-600 font-bold mb-4">認識座位、教室規則、滑鼠左鍵與雙擊。</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs bg-cyan-50 text-cyan-700 border border-cyan-200 px-2 py-1 rounded-md font-black">教室規則</span>
+                        <span class="text-xs bg-cyan-50 text-cyan-700 border border-cyan-200 px-2 py-1 rounded-md font-black">滑鼠練習</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <section class="bg-white rounded-3xl shadow-sm border-4 border-amber-100 mt-10 overflow-hidden">
+            <div class="bg-amber-100 px-6 py-4 border-b border-amber-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center"><i class="fa-solid fa-box-archive text-amber-700 text-2xl mr-3"></i><h2 class="text-2xl font-black text-amber-900">舊學期資料</h2></div>
+                <span class="bg-amber-400 text-amber-950 text-xs px-3 py-1 rounded-full font-black">老師備查</span>
+            </div>
+            <div class="p-6 md:flex items-center justify-between gap-4">
+                <p class="text-gray-600 font-bold mb-4 md:mb-0">114 學年度下學期的三年級課程保留在原本位置。</p>
+                <a href="../index.html" class="inline-flex items-center bg-amber-500 text-white px-6 py-3 rounded-full font-black shadow hover:bg-amber-400 transition">查看舊課程 <i class="fa-solid fa-arrow-right ml-2"></i></a>
+            </div>
         </section>
     </main>
 
-    <footer class="text-center mt-16 pb-8 text-slate-400 text-sm font-bold">
-        <p><i class="fa-solid fa-rocket mr-1"></i> 新北市頂溪國小資訊課 - 115 學年度上學期</p>
+    <footer class="text-center mt-16 pb-8 text-gray-500 text-sm font-bold">
+        <p><i class="fa-solid fa-rocket mr-1"></i> 新北市頂溪國小資訊課 - 電腦小小兵系列</p>
     </footer>
     <script type="module">
         import { applyWeekVisibilityToCards } from "../../shared/week-visibility.js";

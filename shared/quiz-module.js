@@ -1,3 +1,5 @@
+import { initQuizPractice } from './quiz-practice.js';
+
 const DEFAULT_MESSAGES = {
     questionLabel: (index) => `Q${index}`,
     submitButton: "Submit",
@@ -55,11 +57,16 @@ export function initQuizModule({
     messages = {},
     loadProgress = null,
     saveProgress = null,
+    loadGuestProgress = null,
+    saveGuestProgress = null,
     getCurrentUser = null,
     onRequireLogin = null,
     onAfterSubmit = null,
-    optionLabelMode = "stored"
+    requireAuth = true,
+    optionLabelMode = "stored",
+    mode = "scored"
 }) {
+    if (mode === 'practice') return initQuizPractice({ questions, selectors, messages, loadProgress, saveProgress, loadGuestProgress, saveGuestProgress, getCurrentUser, onAfterSubmit, requireAuth });
     const mergedMessages = {
         ...DEFAULT_MESSAGES,
         ...messages,

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>三年級資訊課 - 第 2 週 先點再打</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { corePlugins: { preflight: false } };</script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="week02.css?v=20260909">
+</head>
+<body class="week02-no-login">
+  <script src="navbar.js?v=20260909"></script>
+  <main class="lesson-shell">
+    <header class="lesson-hero">
+      <div>
+        <p class="week-label">115 上學期 · 三年級 · 第 02 週</p>
+        <h1>先點再打 🚀</h1>
+        <p class="hero-line">今天要學會電腦教室很重要的口訣：先點框、找直線、再打字。</p>
+      </div>
+    </header>
+
+    <nav class="lesson-route" aria-label="本週活動">
+      <a href="#cursor-task">① 找到游標</a>
+      <a href="#posture-task">② 坐好休息</a>
+      <a href="#window-task">③ 視窗找回來</a>
+    </nav>
+
+    <p id="boot-status" class="status-note" role="status">正在準備活動；若等候太久，請重新整理或告訴老師。</p>
+
+    <section class="lesson-card warmup" aria-labelledby="warmup-title">
+      <div class="card-title-row">
+        <div>
+          <p class="section-label">暖身任務 · 跟老師做一次</p>
+          <h2 id="warmup-title">數字鍵與修理站</h2>
+        </div>
+        <p class="teacher-note">這段只練一次，不另外闖關。</p>
+      </div>
+      <div class="warmup-grid">
+        <div>
+          <h3>先找到數字鍵</h3>
+          <p>看鍵盤右邊，找到 0～9。打不出數字時，先看 Num Lock，再請老師幫忙。</p>
+          <p class="reference">課本 p.101。</p>
+        </div>
+        <div class="numpad-wrap">
+          <div class="numlock-status" id="numlock-status" aria-live="polite">
+            <span class="numlock-light on" id="numlock-light" aria-hidden="true"></span>
+            <span id="numlock-text">Num Lock 燈亮：可以輸入數字</span>
+          </div>
+          <div class="numpad" aria-label="右側數字鍵區示意">
+            <button type="button" class="key key-numlock wide active" id="numlock-toggle" aria-pressed="true">Num Lock</button><kbd>÷</kbd>
+            <kbd>7</kbd><kbd>8</kbd><kbd>9</kbd>
+            <kbd>4</kbd><kbd>5</kbd><kbd>6</kbd>
+            <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd>
+            <kbd class="wide">0</kbd><kbd>.</kbd>
+          </div>
+        </div>
+        <div class="repair-box">
+          <h3>數字修理站</h3>
+          <p>點框輸入 123，按一下 <span class="key-hint" tabindex="0" aria-label="Backspace 鍵在鍵盤數字列的最右邊"><kbd>Backspace</kbd><span class="keyboard-popover" role="tooltip" aria-hidden="true"><span class="keyboard-popover-title">Backspace 在數字列最右邊</span><span class="keyboard-main" aria-hidden="true"><span class="keyboard-row function-row"><span>Esc</span><span>F1</span><span>F2</span><span>F3</span><span>F4</span><span>F5</span><span>F6</span><span>F7</span><span>F8</span><span>F9</span><span>F10</span><span>F11</span><span>F12</span></span><span class="keyboard-row number-row"><span>~</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>-</span><span>=</span><span class="key-backspace">← Backspace</span></span><span class="keyboard-row letter-row"><span class="key-tab">Tab</span><span>Q</span><span>W</span><span>E</span><span>R</span><span>T</span><span>Y</span><span>U</span><span>I</span><span>O</span><span>P</span><span>[</span><span>]</span></span><span class="keyboard-row letter-row"><span class="key-caps">Caps</span><span>A</span><span>S</span><span>D</span><span>F</span><span>G</span><span>H</span><span>J</span><span>K</span><span>L</span><span>;</span><span class="key-enter">Enter</span></span><span class="keyboard-row letter-row"><span class="key-shift">Shift</span><span>Z</span><span>X</span><span>C</span><span>V</span><span>B</span><span>N</span><span>M</span><span>,</span><span>.</span><span>/</span><span class="key-shift">Shift</span></span><span class="keyboard-row bottom-row"><span>Ctrl</span><span>Win</span><span>Alt</span><span class="key-space">Space</span><span>Alt</span><span>Ctrl</span></span></span></span></span>，再輸入 8，變成 128。</p>
+          <label for="repair-input">跟做練習</label>
+          <input id="repair-input" type="text" inputmode="numeric" autocomplete="off">
+          <p class="small-tip">打錯可以修，不必全部重來。</p>
+          <p class="reference">課本 p.100、p.110。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="cursor-task" class="lesson-card" aria-labelledby="cursor-title">
+      <div class="card-title-row">
+        <div>
+          <p class="section-label">第一關 · 今天一定要完成</p>
+          <h2 id="cursor-title">找到游標，解鎖密碼</h2>
+        </div>
+        <p class="teacher-note">四關；不計時、不排名。</p>
+      </div>
+      <p class="motto">先點框 → 找直線 → 再打字</p>
+      <p>滑鼠箭頭是用來找位置的；框裡閃爍的小直線，才是文字要出現的地方。</p>
+      <p id="progress-status" class="status-note" role="status">先練會「點框、找直線、再打字」；今天不用登入 Google。</p>
+      <div id="typing-levels-container"></div>
+      <p id="focus-hint" class="status-note" role="status"></p>
+      <p class="reference">課本 p.35–36、p.101、p.107、p.110；移動輸入框為自編練習。</p>
+    </section>
+
+    <section id="posture-task" class="lesson-card rest-card" aria-labelledby="posture-title">
+      <div class="card-title-row">
+        <div>
+          <p class="section-label">中場休息 · 全班一起</p>
+          <h2 id="posture-title">坐好再出發</h2>
+        </div>
+        <p class="teacher-note">影片約 1 分 37 秒。</p>
+      </div>
+      <p>老師播放影片時，手先離開鍵盤和滑鼠。看完回來答五題，答錯可以再想一次。</p>
+      <a class="video-link" href="https://book.eduweb.com.tw/11edu5/vips088/games/play_single.html#a24.mp4" target="_blank" rel="noopener">老師播放影片：使用電腦的正確姿勢</a>
+      <div id="quiz-lock" class="lock-box hidden">看完影片後，回來答題。</div>
+      <div id="quiz-content" class="hidden"><div class="quiz-tools"><button id="zhuyin-toggle" class="soft-button" aria-pressed="false">顯示題目注音</button></div><div id="quiz-container"></div></div>
+      <p class="reference">課本 p.25；五題依影片自編，距離與休息分鐘數以影片內容為準。</p>
+    </section>
+
+    <section id="window-task" class="lesson-card" aria-labelledby="window-title">
+      <div class="card-title-row">
+        <div>
+          <p class="section-label">第二關 · 視窗變變看</p>
+          <h2 id="window-title">視窗找回來</h2>
+        </div>
+        <p class="teacher-note">五步；之後操作真正的檔案總管。</p>
+      </div>
+      <p>先在練習桌面試一次：最大化、還原、最小化、從工作列找回、關閉。</p>
+      <div id="window-lock" class="lock-box hidden">跟著老師操作視窗按鈕。</div>
+      <div id="window-content" class="hidden">
+        <p id="window-instruction" class="motto" role="status"></p>
+        <div class="desktop">
+          <div class="desktop-label">練習桌面</div>
+          <div id="practice-window" class="practice-window">
+            <div class="titlebar"><span>我的小花園</span><div><button id="win-min" aria-label="最小化" title="最小化">─</button><button id="win-size" aria-label="最大化" title="最大化">□</button><button id="win-close" aria-label="關閉" title="關閉">×</button></div></div>
+            <div class="garden" aria-label="花園插圖"><span aria-hidden="true">🌤️<br>🌱 🌷 🌻 🌷 🌱</span><p>看看視窗變大、收起來、再回來。</p></div>
+          </div>
+          <button id="win-reopen" class="soft-button hidden">重新開啟練習視窗</button>
+          <div class="taskbar"><span>工作列</span><button id="win-taskbar" aria-label="從工作列找回小花園">🌼 小花園<i></i></button></div>
+        </div>
+        <p id="window-feedback" class="status-note" role="status"></p>
+        <button id="window-next" class="hidden">下一個任務</button>
+      </div>
+      <p class="reference">課本 p.38：最大化、還原大小。p.39：最小化、工作列找回、關閉。</p>
+      <details><summary>老師提醒：真正的 Windows 視窗</summary><p>開啟檔案總管，依序最大化、還原、最小化、從工作列找回，最後關閉檔案總管。課程網頁要留著。</p><p>如果時間緊，先確保每位學生至少做過「先點再打」與「最小化後找回」。</p></details>
+    </section>
+
+    <section class="lesson-card bonus" id="fast-task">
+      <p class="section-label">完成後挑戰 · 提早完成再開</p>
+      <h2>數字投遞員</h2>
+      <p>換一個信箱，也要重新點框。沒有計時，不比快。</p>
+      <div class="unlock-progress" aria-labelledby="unlock-title">
+        <p id="unlock-title" class="small-tip">完成三個主要活動後開放。</p>
+        <div class="unlock-track" aria-hidden="true"><span id="unlock-fill"></span></div>
+        <ul class="unlock-list" id="unlock-list">
+          <li data-unlock-item="typing"><span class="unlock-icon">○</span><span data-unlock-label="typing">找到游標 0/4</span></li>
+          <li data-unlock-item="quiz"><span class="unlock-icon">○</span><span data-unlock-label="quiz">坐好再出發 0/5</span></li>
+          <li data-unlock-item="windows"><span class="unlock-icon">○</span><span data-unlock-label="windows">視窗找回來 0/5</span></li>
+        </ul>
+        <p id="fast-lock" class="small-tip" role="status">還差 3 個任務。</p>
+      </div>
+      <a id="fast-link" class="button hidden" href="week02-mail.html">進入動物郵局 →</a>
+      <p class="reference">課本 p.101、p.107、p.110；多信箱活動為自編延伸。</p>
+    </section>
+
+    <footer class="lesson-footer">收尾：椅子靠好，鍵盤滑鼠歸位，帶齊物品。</footer>
+  </main>
+  <script type="module" src="week02.js?v=20260909-localprogress"></script>
+</body>
+</html>
+
+
+
+

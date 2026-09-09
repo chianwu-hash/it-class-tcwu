@@ -8,76 +8,77 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            background:
-                radial-gradient(circle at top left, rgba(196, 181, 253, 0.28), transparent 28%),
-                radial-gradient(circle at bottom right, rgba(45, 212, 191, 0.18), transparent 26%),
-                linear-gradient(180deg, #f8fafc 0%, #f5f3ff 100%);
-        }
-        .card-hover {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 28px rgba(76, 29, 149, 0.14);
-        }
+        body { font-family: 'Noto Sans TC', sans-serif; background: #f8fafc; }
+        .card-hover { transition: all .25s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(79, 70, 229, .14); }
     </style>
 </head>
-<body class="text-slate-800 antialiased pb-12">
-    <script src="navbar.js?v=20260904"></script>
+<body class="text-gray-800 antialiased pb-12">
+    <script src="navbar.js?v=20260908"></script>
 
-    <header class="bg-gradient-to-r from-violet-600 via-indigo-600 to-teal-500 text-white shadow-xl rounded-b-[2.5rem] mb-10">
-        <div class="max-w-6xl mx-auto px-6 py-10 text-center">
-            <div class="inline-flex items-center gap-2 bg-white/20 text-white font-black px-4 py-2 rounded-full text-sm mb-4 shadow-sm">
-                <i class="fa-solid fa-calendar-days"></i>
-                115 學年度上學期
+    <header class="bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-500 text-white shadow-xl rounded-b-[3rem] mb-10">
+        <div class="max-w-5xl mx-auto px-6 py-12 relative overflow-hidden">
+            <div class="relative z-10 text-center">
+                <div class="inline-block bg-yellow-300 text-yellow-900 font-black px-4 py-1.5 rounded-full text-sm mb-4 shadow-sm">
+                    <i class="fa-solid fa-star mr-1 text-white"></i> 115 學年度上學期
+                </div>
+                <h1 class="text-4xl md:text-6xl font-black tracking-tight mb-4 drop-shadow-md">六年級任務站 🎓</h1>
+                <p class="text-xl md:text-2xl text-indigo-50 font-black drop-shadow">把工具用穩，把作品做清楚，也練習自己安排進度。</p>
             </div>
-            <h1 class="text-4xl md:text-6xl font-black tracking-tight mb-4 drop-shadow-md">六年級資訊課</h1>
-            <p class="text-xl md:text-2xl text-violet-50 font-bold drop-shadow">第一週先完成課程入口、帳號流程與快手任務準備。</p>
+            <i class="fa-solid fa-wand-magic-sparkles absolute text-white opacity-10 text-9xl -top-6 -left-6 -rotate-12"></i>
+            <i class="fa-solid fa-clapperboard absolute text-white opacity-20 text-8xl -bottom-6 right-10 rotate-12"></i>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-6">
-        <section class="mb-10">
-            <div class="flex items-center mb-6 border-b-2 border-violet-200 pb-2">
-                <i class="fa-solid fa-map text-3xl text-violet-600 mr-3"></i>
-                <h2 class="text-3xl font-black text-slate-800">115-1 課程進度</h2>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <a href="week01.html" class="block bg-white rounded-2xl shadow-md border-4 border-violet-300 overflow-hidden card-hover">
-                    <div class="h-32 bg-gradient-to-r from-violet-600 to-teal-500 relative flex items-center justify-center">
-                        <i class="fa-solid fa-computer text-6xl text-white/60"></i>
-                        <div class="absolute top-4 left-4 bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full font-bold text-sm">第 01 週</div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-2xl font-black text-slate-800 mb-2">第一週課堂準備與快手任務</h3>
-                        <p class="text-slate-600 font-bold mb-5">認識課程入口、確認帳號與 Canva 教育版開通，完成後進入中英打闖關。</p>
-                        <div class="inline-flex items-center rounded-xl bg-violet-600 text-white px-4 py-2 font-black">
-                            進入第 01 週
-                            <i class="fa-solid fa-arrow-right ml-2"></i>
-                        </div>
-                    </div>
-                </a>
-            </div>
+    <main class="max-w-5xl mx-auto px-6">
+        <section class="bg-white rounded-3xl shadow-md overflow-hidden card-hover border-4 border-indigo-200 mb-10">
+            <a href="/my-tree.html?course=grade6-115-1" class="block p-6 md:flex items-center justify-between">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <div class="bg-indigo-100 p-4 rounded-full mr-5 shadow-inner"><i class="fa-solid fa-seedling text-indigo-600 text-3xl"></i></div>
+                    <div><h2 class="text-2xl font-black text-gray-800 mb-1">我的努力樹</h2><p class="text-gray-600 font-bold">任務完成後，回來看看自己的學習紀錄。</p></div>
+                </div>
+                <div class="bg-indigo-600 text-white px-8 py-3 rounded-full font-black text-lg shadow-lg flex items-center justify-center hover:bg-indigo-500 transition">去看努力樹 <i class="fa-solid fa-arrow-right ml-2"></i></div>
+            </a>
         </section>
 
-        <section class="bg-white border-2 border-slate-200 rounded-2xl p-6">
-            <h2 class="text-xl font-black text-slate-800 mb-3">
-                <i class="fa-solid fa-box-archive text-slate-500 mr-2"></i>
-                舊學期資料
-            </h2>
-            <p class="text-slate-600 font-bold mb-4">114 學年度下學期的舊課程保留在原本位置，供老師備查。</p>
-            <a href="../index.html" class="inline-flex items-center bg-slate-700 hover:bg-slate-600 text-white px-5 py-3 rounded-xl font-black transition">
-                查看 114-2 六年級舊課程
-                <i class="fa-solid fa-arrow-right ml-2"></i>
+        <div class="flex items-center mb-8 border-b-2 border-violet-200 pb-2">
+            <i class="fa-solid fa-map text-3xl text-violet-600 mr-3"></i>
+            <h2 class="text-3xl font-black text-gray-800">課程進度列表</h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 week-card-grid">
+            <a href="week01.html" data-week="01" class="block bg-white rounded-3xl shadow-md border-4 border-violet-300 overflow-hidden card-hover group">
+                <div class="h-32 bg-gradient-to-r from-violet-600 to-cyan-500 relative flex items-center justify-center">
+                    <i class="fa-solid fa-list-check text-6xl text-white opacity-60 group-hover:scale-110 transition"></i>
+                    <div class="absolute top-4 left-4 bg-white/25 backdrop-blur-sm text-white px-3 py-1 rounded-full font-black text-sm">第 01 週</div>
+                    <div class="absolute top-4 right-4 bg-yellow-300 text-yellow-900 px-3 py-1 rounded-full font-black text-sm">本週</div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-black text-gray-800 mb-2 group-hover:text-violet-600 transition">課堂準備與快手任務</h3>
+                    <p class="text-gray-600 font-bold mb-4">確認課程入口、帳號流程與 Canva 教育版，完成後進入中英打闖關。</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2 py-1 rounded-md font-black">帳號確認</span>
+                        <span class="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2 py-1 rounded-md font-black">Canva</span>
+                        <span class="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2 py-1 rounded-md font-black">快手任務</span>
+                    </div>
+                </div>
             </a>
+        </div>
+
+        <section class="bg-white rounded-3xl shadow-sm border-4 border-amber-100 mt-10 overflow-hidden">
+            <div class="bg-amber-100 px-6 py-4 border-b border-amber-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center"><i class="fa-solid fa-box-archive text-amber-700 text-2xl mr-3"></i><h2 class="text-2xl font-black text-amber-900">舊學期資料</h2></div>
+                <span class="bg-amber-400 text-amber-950 text-xs px-3 py-1 rounded-full font-black">老師備查</span>
+            </div>
+            <div class="p-6 md:flex items-center justify-between gap-4">
+                <p class="text-gray-600 font-bold mb-4 md:mb-0">114 學年度下學期的六年級課程保留在原本位置。</p>
+                <a href="../index.html" class="inline-flex items-center bg-amber-500 text-white px-6 py-3 rounded-full font-black shadow hover:bg-amber-400 transition">查看舊課程 <i class="fa-solid fa-arrow-right ml-2"></i></a>
+            </div>
         </section>
     </main>
 
-    <footer class="text-center mt-16 pb-8 text-slate-400 text-sm font-bold">
-        <p><i class="fa-solid fa-graduation-cap mr-1"></i> 新北市頂溪國小資訊課 - 115 學年度上學期</p>
+    <footer class="text-center mt-16 pb-8 text-gray-500 text-sm font-bold">
+        <p><i class="fa-solid fa-graduation-cap mr-1"></i> 新北市頂溪國小資訊課 - 六年級任務站</p>
     </footer>
     <script type="module">
         import { applyWeekVisibilityToCards } from "../../shared/week-visibility.js";

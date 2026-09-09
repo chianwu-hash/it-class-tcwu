@@ -67,7 +67,9 @@ export function initTypingChallenge({
     progressMessages = {},
     celebrationContent = {},
     draftOptions = {},
-    afterAuthUpdate = null
+    afterAuthUpdate = null,
+    requireAuth = true,
+    guestProgress = null
 }) {
     ensureTypingChallengeTextStyle();
 
@@ -658,7 +660,7 @@ export function initTypingChallenge({
                 authStatusEl.textContent = "未登入";
             }
             if (progressStatusEl) {
-                progressStatusEl.textContent = messages.unauthenticated;
+                progressStatusEl.textContent = requireAuth ? messages.unauthenticated : (messages.guestReady || messages.unauthenticated);
             }
             clearProgressDebug();
             loginBtn?.classList.remove("hidden");
@@ -673,7 +675,7 @@ export function initTypingChallenge({
             adminBtn?.classList.add("hidden");
         }
 
-        setTypingLocked(!session?.user);
+        setTypingLocked(requireAuth && !session?.user);
 
         if (typeof afterAuthUpdate === "function") {
             await afterAuthUpdate(session);
@@ -699,6 +701,13 @@ export function initTypingChallenge({
 
     async function loadProgress() {
         if (!currentSession?.user) {
+            if (!requireAuth && guestProgress && typeof guestProgress.load === "function") {
+                const progress = await guestProgress.load();
+                if (progress) {
+                    revealProgress(progress.current_level, progress.completed);
+                    return;
+                }
+            }
             highestUnlockedLevel = 1;
             return;
         }
@@ -826,6 +835,21 @@ export function initTypingChallenge({
     async function saveProgress(nextLevel, completed) {
         const user = await getActiveUser();
         if (!user) {
+            if (!requireAuth) {
+                highestUnlockedLevel = Math.max(highestUnlockedLevel, nextLevel);
+                progressCompleted = Boolean(completed);
+                if (progressStatusEl) {
+                    progressStatusEl.textContent = completed
+                        ? (messages.guestCompleted || messages.saveCompleted)
+                        : (typeof messages.guestNextLevel === "function" ? messages.guestNextLevel(nextLevel) : messages.saveNextLevel(nextLevel));
+                }
+                if (guestProgress && typeof guestProgress.save === "function") {
+                    await guestProgress.save({ current_level: nextLevel, completed: Boolean(completed) });
+                }
+                setResetProgressVisible(false);
+                clearProgressDebug();
+                return true;
+            }
             if (progressStatusEl) {
                 progressStatusEl.textContent = messages.saveNoSession;
             }
@@ -974,7 +998,7 @@ export function initTypingChallenge({
         }
 
         const user = await getActiveUser();
-        if (!user) {
+        if (!user && requireAuth) {
             msgEl.textContent = messages.loginRequired;
             msgEl.className = "text-center font-black mt-4 min-h-12 text-base md:text-lg text-amber-600 leading-relaxed";
             inputEl.classList.remove("shake");
