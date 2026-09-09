@@ -35,3 +35,12 @@ chat-mode-skill/
 *.bak
 *.tmp
 *.log
+
+# Large public reference/source assets kept in repo but not served by Vercel
+# Runtime pages should use compressed webp/images or external links instead.
+grade3/S091-Google網路AI好幫手-PDF/
+grade6/S092-Canva魔法工作室PDF/
+**/*-source.png
+**/*-source-*.png
+**/*-original.png
+**/*photo-draft.png
