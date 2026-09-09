@@ -1,6 +1,6 @@
 # 共用模組說明
 
-> 基於實際程式碼，最後更新：2026-04-15
+> 基於實際程式碼，最後更新：2026-09-09
 >
 > **原則**：修改任何共用模組前，先看「高風險變更清單」（`high-risk-changes.md`）。
 
@@ -71,9 +71,9 @@
 
 ## `shared/typing-challenge.js`
 
-**責任**：管理多關卡打字練習的完整生命週期：session 解析、進度讀取（Supabase `student_progress`）、關卡解鎖、答案驗證、進度儲存、進度重置、慶祝動畫、auth UI 更新，以及 opt-in 的手動草稿暫存 / 回復。
+**責任**：管理多關卡打字練習的完整生命週期：session 解析、進度讀取、關卡解鎖、答案驗證、進度儲存、進度重置、慶祝動畫、auth UI 更新，以及 opt-in 的手動草稿暫存 / 回復。一般 Google 登入頁讀寫 Supabase `student_progress`；三年級 Google 登入前的課堂身分卡分支可透過 `guestProgress` adapter 讀寫 `guest_progress`。
 
-**匯出**：`initTypingChallenge({ weekCode, activityKey, levelsData, levelEncouragements, buildHint, getWrongAnswerHtml, progressMessages, celebrationContent, draftOptions, afterAuthUpdate })`
+**匯出**：`initTypingChallenge({ weekCode, activityKey, levelsData, levelEncouragements, buildHint, getWrongAnswerHtml, progressMessages, celebrationContent, draftOptions, afterAuthUpdate, requireAuth, guestProgress })`
 
 **被誰 import**：`grade3/week04.html`、`week05.html`、`week06.html`、`week07.html`、`week10.html`、`week12.html`、`week13.html`、`week14.html`、`week15.html`、`week16.html`
 
@@ -90,11 +90,11 @@
 
 **weekCode 格式**：兩位數字串，`"04"`、`"07"`、`"10"`，不是數字 `4`、`7`、`10`。
 
-**activityKey 命名規則**：`typing_task_N`（N 需符合後台顯示的總關卡數）。`student_progress` 的唯一鍵是 `user_id + week_code + activity_key`，所以不同週次可以使用相同 activityKey；重點是同一週內不要讓兩個活動共用相同 key。
+**activityKey 命名規則**：`typing_task_N`（N 需符合後台顯示的總關卡數）。`student_progress` 的唯一鍵是 `user_id + week_code + activity_key`；`guest_progress` 的唯一鍵是 `profile_id + course_id + week_code + activity_key`。不同週次可以使用相同 activityKey；重點是同一週內不要讓兩個活動共用相同 key。
 
-**Navbar auth 邊界**：模組可更新打字闖關所需的 auth 顯示與 reset-progress 狀態，但不直接綁定 `#login-btn`、`#logout-btn`。登入 / 登出點擊一律交給 `initNavbarAuth()` 的事件代理。**因此，所有使用 `initTypingChallenge` 的頁面，必須同時呼叫 `initNavbarAuth()`。**
+**Navbar auth 邊界**：模組可更新打字闖關所需的 auth 顯示與 reset-progress 狀態，但不直接綁定 `#login-btn`、`#logout-btn`。登入 / 登出點擊一律交給 `initNavbarAuth()` 的事件代理。**因此，所有使用 `initTypingChallenge` 的頁面，必須同時呼叫 `initNavbarAuth()`。**課堂身分卡分支仍可呼叫 `initNavbarAuth()`，但 `initTypingChallenge({ requireAuth: false, guestProgress })` 不得讀取背景 Google session 或寫入 `student_progress`。
 
-**未登入鎖定規則**：`initTypingChallenge` 必須在未登入時鎖定 `#typing-levels-container` 內的輸入框與 `checkLevel` 按鈕。學生不可在未登入狀態先完成關卡，避免完成後才發現沒有保存。
+**未確認身分鎖定規則**：一般 Google 登入頁必須在未登入時鎖定 `#typing-levels-container` 內的輸入框與 `checkLevel` 按鈕。課堂身分卡分支須由頁面端在未確認身分卡前鎖定互動 UI，並把 `guestProgress` 傳入 `initTypingChallenge()`。`requireAuth: false` 時 shared typing 不會自動鎖定輸入框，頁面端必須用 `inert`、`disabled` 或等效橋接確實鎖住。學生不可在未確認身分狀態先完成關卡，避免完成後才發現沒有保存。
 
 **手動草稿暫存**：三年級打字頁可用 `draftOptions: { enabled: true }` 啟用「儲存草稿 / 回復上次草稿」。草稿存到 `typing_drafts`，只保存學生尚未過關的輸入文字，不寫入 `student_progress`，不進入後台、成績或努力樹計算。第一版只允許手動儲存與手動回復；不可加入自動存檔、`setInterval`、`focus` / `visibilitychange` / `beforeunload` 存檔，避免和老師指令下的手動存檔打架。回復草稿必須由學生主動按鈕觸發，若輸入框已有文字需先確認，不可自動覆蓋。
 
@@ -105,7 +105,33 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 ```
 
-**不可自行替代的理由**：自寫邏輯容易只存 localStorage，後台看不到進度，且難以維護重置 / 接回進度的複雜狀態。`student_progress` 保存是課堂核心路徑，必須能承受學生切到其他分頁後再回來送出；若保存邏輯要調整，先讀 `supabase-tab-resume-incident.md`。
+**不可自行替代的理由**：自寫邏輯容易只存 localStorage，後台看不到進度，且難以維護重置 / 接回進度的複雜狀態。一般頁的 `student_progress` 與課堂身分卡分支的 `guest_progress` 都是課堂核心路徑，必須能承受學生切到其他分頁後再回來送出；若一般 Google 登入頁保存邏輯要調整，先讀 `supabase-tab-resume-incident.md`。
+
+---
+
+## `shared/class-card-auth.js`
+
+**責任**：提供三年級 Google 登入前的「課堂身分卡」入口，在 navbar 右上角取代 Google 登入，用班級座號與生日四碼確認目前使用電腦的學生。
+
+**匯出**：`initClassCardAuth({ courseId, mode, fallbackRosterUrl, verifyStrategy, storagePrefix, onIdentityChanged })`
+
+**使用規則**：
+- 只用於學生尚未學會 Google 登入的低風險課堂練習頁。
+- 同一頁 navbar 只能顯示課堂身分卡或 Google 登入其中一種。
+- 身分卡可用 localStorage 保存臨時身分，讓學生不小心關閉或重開頁面後接回；活動進度不可存在 localStorage。
+- 若使用生日四碼作為 RPC 驗證與後續進度寫入憑證，需在頁面文字清楚標示這不是 Google 登入，並在登出身分時清除 localStorage 身分。
+
+---
+
+## `shared/class-card-progress.js`
+
+**責任**：提供課堂身分卡分支的進度 adapter。`createClassCardProgress({ courseId, weekCode, activityKey, total, getIdentity })` 回傳 `load()` / `save()`，經由 `get_guest_progress`、`upsert_guest_progress` RPC 讀寫 `guest_progress`。
+
+**使用規則**：
+- 只搭配 `initClassCardAuth()` 使用；沒有身分時不得保存進度。
+- 不可退回 `student_progress`，也不可把活動進度寫進 localStorage。
+- 教師後台要能查詢與重設對應 `guest_progress`；重設後學生頁重新整理應回到未完成。
+- 若頁面曾使用 localStorage 暫存進度，改用本模組時要清除舊鍵。
 
 ---
 
@@ -151,13 +177,17 @@
 
 ## `shared/quiz-module.js`
 
+2026-09-07 新增 opt-in `mode: "practice"`（第 2 週使用）：交由 `shared/quiz-practice.js` 逐題呈現，答錯提示重選，答對保存後手動下一題。`saveProgress(correctCount)` 在每題答對時呼叫；`loadProgress()` 回傳 `{ score, completed }` 接回。保存失敗停留原題重試，讀取失敗顯示重試按鈕。同一使用者重複 auth 通知不重畫。未指定 mode 的所有既有頁保留原本一次送出、評分流程。
+
+`shared/activity-progress.js` 提供 `createActivityProgress({ courseId, weekCode, activityKey, total, getSession })` 的 `load()` / `save(score)`，供一般 Google 登入頁的逐題測驗和操作活動使用。明確限定 course_id，使用現有 auth token、RLS REST 寫入與 10 秒 timeout；不退回缺 course_id 的舊資料格式。課堂身分卡分支改用 `createClassCardProgress()`；打字仍使用 `initTypingChallenge()`。
+
 **責任**：通用題目問答 UI 邏輯（選項顯示、作答、送出、評分）。不直接操作 Supabase，由使用方的 adapter 負責讀寫。
 
-**登入規則**：只要是課程頁中的可點選測驗 / 小測驗，預設必須使用登入鎖定。未登入時顯示 lock 區塊，不渲染可作答題目；登入後才顯示 quiz content。若只是口頭檢查，請做成靜態文字，不做互動選項。
+**登入規則**：只要是課程頁中的可點選測驗 / 小測驗，預設必須使用登入鎖定。一般頁未登入時顯示 lock 區塊，不渲染可作答題目；課堂身分卡分支未確認身分時也要鎖定。若只是口頭檢查，請做成靜態文字，不做互動選項。
 
 **匯出**：`initQuizModule({ questions, selectors, messages, loadProgress, saveProgress, getCurrentUser, onRequireLogin, onAfterSubmit, optionLabelMode })`
 
-**Adapter 規則**：`quiz-module.js` 負責 UI 與評分流程，頁面可提供 `loadProgress` / `saveProgress` / `getCurrentUser` adapter 讀寫 `student_progress`。這種頁面端 callback 是目前允許的整合方式，不視為繞過共用模組；但 adapter 不應重寫題目渲染、選項選取、評分或未登入鎖定 UI。若同一種 adapter 在多週重複，優先抽成週頁共用 adapter 檔。
+**Adapter 規則**：`quiz-module.js` 負責 UI 與評分流程，頁面可提供 `loadProgress` / `saveProgress` / `getCurrentUser` adapter 讀寫進度。一般 Google 登入頁寫入 `student_progress`；課堂身分卡分支寫入 `guest_progress`。這種頁面端 callback 是目前允許的整合方式，不視為繞過共用模組；但 adapter 不應重寫題目渲染、選項選取、評分或未登入鎖定 UI。若同一種 adapter 在多週重複，優先抽成週頁共用 adapter 檔。
 
 **被誰 import**：
 - `grade3/week06.quiz-adapter.js`

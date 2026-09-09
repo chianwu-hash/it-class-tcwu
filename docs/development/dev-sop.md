@@ -1,6 +1,6 @@
 # 課程網頁開發 SOP
 
-> 最後更新：2026-04-15
+> 最後更新：2026-09-09
 >
 > 目標：避免「上課才發現功能壞掉」。
 
@@ -91,10 +91,28 @@ grep -r "activityKey\|activity_key" grade3/ grade6/
 
 **互動活動登入規則**：
 
-- 打字闖關必須先登入才能開始；未登入時要鎖定輸入框與檢查按鈕。
-- 測驗 / 小測驗只要有可點選作答 UI，就必須先登入才能作答，並寫入 `student_progress`。
+- 一般 Google 登入頁的打字闖關必須先登入才能開始；未登入時要鎖定輸入框與檢查按鈕。
+- 一般 Google 登入頁的測驗 / 小測驗只要有可點選作答 UI，就必須先登入才能作答，並寫入 `student_progress`。
+- 三年級 Google 登入前的課堂身分卡頁不走 Google 登入，改用下方分支 SOP；未確認課堂身分卡前同樣必須鎖定互動 UI。
 - 若只是教師口頭檢查，頁面只能放靜態題目文字，不可做成可點選答案的互動 quiz。
 - **首週規則闖關例外**：若是第一週、內容僅為電腦教室規則確認與滑鼠點選練習、不作為成績或個人進度，且教案明確要求不登入，則可做成不登入也能作答的純前端規則闖關。這類闖關不得寫入 `student_progress`、不得使用正式 quiz 保存流程，頁面需明確標註「本週不用登入」。
+- **三年級 Google 登入前的課堂身分卡例外**：115 三上三年級在正式教 Google 登入前，可用「課堂身分卡」取代 navbar 的 Google 登入入口。課堂身分卡只能用於低風險課堂練習與闖關，UI 必須明確標示這不是 Google 登入。進度不得寫入正式 `student_progress`；若要記錄課堂進度，需透過受控 Supabase RPC 寫入獨立的 `guest_progress`。同一頁 navbar 只能出現課堂身分卡或 Google 登入其中一種。
+
+**三年級 Google 登入前分支 SOP（課堂身分卡頁）**：
+
+適用條件：學生尚未學會 Google 登入，但本週互動任務需要保存進度、重開瀏覽器後接回，或需要在教師後台查看與重設。
+
+必做規則：
+
+1. Navbar 身分入口使用 `initClassCardAuth({ courseId, mode: 'required' })`，並保留 `initNavbarAuth()` 只負責 navbar 事件代理與教師後台入口；頁面不得同時呈現 Google 登入與課堂身分卡。
+2. 課堂身分卡可用 localStorage 保存「目前這台電腦是哪位同學」的臨時身分，包含再次呼叫 RPC 保存進度所需的生日四碼；這只適用於會重開機還原的電腦教室情境。闖關、測驗、視窗練習等活動進度不得存在 localStorage。
+3. 進度一律使用 `createClassCardProgress()` 經由 `get_guest_progress` / `upsert_guest_progress` 寫入 `guest_progress`，不可寫入 `student_progress`。
+4. 同一頁若使用 `initTypingChallenge()`，需設定 `requireAuth: false` 與 `guestProgress`，並確認 shared typing 流程不會讀取背景 Google session 或 `student_progress`。
+5. 測驗與其他互動模組需提供 `loadGuestProgress` / `saveGuestProgress`，且未確認課堂身分卡前必須隱藏或鎖定可作答 UI。
+6. 後台必須能列出 `guest_progress`、顯示課堂身分卡來源、支援重設；重設後回到學生頁重新整理，應回到未完成狀態。若學生頁仍顯示完成，優先檢查是否仍有舊 localStorage 進度或 shared module 誤讀 `student_progress`。
+7. 若頁面曾經用 localStorage 暫存進度，正式改用 `guest_progress` 時要主動清掉舊進度鍵，避免舊瀏覽器狀態誤導畫面。
+8. 努力樹若尚未支援 `guest_progress`，課堂身分卡頁不可用「去看我的努力樹」作為完成後主要行動；改用「回到本週課程」或「完成本週任務」，避免學生以為 Google 進度也已累積。
+9. 上課前 smoke test 需額外測：有教師 Google session 的電腦仍只讀課堂身分卡進度；登出/登入課堂身分卡、教師後台重設、學生刷新後狀態一致。
 
 **課堂即時開關規則**：
 
@@ -140,26 +158,26 @@ initNavbarAuth();
 
 ### 基本 auth 流程
 
-1. **未登入**：開啟頁面，navbar 出現 Google 圖示按鈕（grade3）
+1. **一般 Google 登入頁未登入**：開啟頁面，navbar 出現 Google 圖示按鈕（grade3）；若為課堂身分卡分支，navbar 應出現「先輸入課堂身分」且不顯示 Google 登入
 2. **點登入**：跳轉 Google OAuth，完成後跳回原頁（不是首頁）
 3. **登入後**：email 顯示在 navbar，登入按鈕消失，教師帳號出現後台按鈕
 4. **登出**：點登出，email 消失，登入按鈕重新出現
 
 ### 打字闖關（若有）
 
-5. 未登入時，確認輸入框與檢查按鈕不可使用，不能先闖關
+5. 未登入或未確認課堂身分卡時，確認輸入框與檢查按鈕不可使用，不能先闖關
 6. 登入後，輸入第 1 關正確答案，過關動畫出現，第 2 關出現
 7. 故意輸入錯誤答案，確認提示能指出第幾行、第幾個字附近，或判斷可能少字/多字；不可只出現籠統提示，且不可把少字誤導成多打標點
 8. 繼續打完最後一關，確認 Supabase 有記錄（開後台查）
 9. **開新分頁**，同一頁面，確認進度自動接回（顯示「從第 N 關繼續」）
-10. **切到別的分頁再切回**，按「檢查答案」後仍要能寫入 `student_progress`；若失敗先讀 `supabase-tab-resume-incident.md`
+10. **切到別的分頁再切回**，按「檢查答案」後仍要能寫入對應進度表；一般頁為 `student_progress`，課堂身分卡分支為 `guest_progress`。一般頁若失敗先讀 `supabase-tab-resume-incident.md`
 11. 用重置按鈕重設，確認回到第 1 關
 
 ### 測驗 / 小測驗（若有）
 
-12. 未登入時，只能看到登入鎖定區，不能看到或點選題目選項
+12. 未登入或未確認課堂身分卡時，只能看到鎖定區，不能看到或點選題目選項
 13. 登入後，測驗題目才出現
-14. 送出測驗後，確認 Supabase `student_progress` 有記錄（開後台查）
+14. 送出測驗後，確認 Supabase 對應進度表有記錄（一般頁為 `student_progress`，課堂身分卡分支為 `guest_progress`，開後台查）
 
 ### 解鎖邏輯（若有）
 
@@ -177,9 +195,9 @@ initNavbarAuth();
 ```
 □ 確認是用 http:// 開啟（不是 file://）
 □ 點一下 navbar 登入按鈕，確認有反應（跳 Google 授權或跳 alert）
-□ 若有打字闖關：未登入時確認不能輸入與過關
+□ 若有打字闖關：未登入或未確認課堂身分卡時確認不能輸入與過關
 □ 若有打字闖關：登入後輸入一個正確答案，確認過關訊息出現
-□ 若有測驗：未登入時確認只能看到登入鎖，不能看到題目選項
+□ 若有測驗：未登入或未確認課堂身分卡時確認只能看到鎖定區，不能看到題目選項
 □ 若有打字闖關：故意少打一兩個字，確認錯誤提示方向正確且能指出附近位置
 □ 若有解鎖邏輯：（若可以）打完最後一關，確認解鎖區塊出現
 □ Console 無紅色錯誤（F12 打開看一眼）
@@ -196,7 +214,7 @@ initNavbarAuth();
 | 症狀 | 最可能原因 | 修法 |
 |------|-----------|------|
 | 登入按鈕點了沒反應 | 沒呼叫 `initNavbarAuth()`，或 grade3 navbar 重渲後 listener 消失 | 確認 `initNavbarAuth()` 有被呼叫；若頁面有 `initTypingChallenge`，兩個都要呼叫 |
-| 打了字過關，但後台看不到進度 | 打字邏輯用 localStorage 實作，沒有接 `initTypingChallenge` | 改用 `initTypingChallenge`，`activityKey` 要有值 |
+| 打了字過關，但後台看不到進度 | 打字邏輯用 localStorage 實作，沒有接 `initTypingChallenge`；或課堂身分卡分支沒有接 `guest_progress` | 一般頁改用 `initTypingChallenge` + `student_progress`；課堂身分卡分支使用 `guestProgress` + `createClassCardProgress()`，`activityKey` 要有值 |
 | 刷新頁面進度不見 | 同上，或 `weekCode` / `activityKey` 格式錯誤 | 確認 `weekCode` 是兩位數字串、`activityKey` 不重複 |
 | 打字錯誤提示方向不對，例如少字卻提示多打標點 | 新頁沒有沿用精準 `buildHint`，只寫了籠統提示 | 參考 week06/week07/week10 的逐行逐字比對提示，至少能指出第幾行與錯誤附近文字 |
 | 完成最後一關，解鎖區塊沒出現 | 解鎖 UI 依賴 module 完成狀態，但沒有橋接 | 加 MutationObserver 監聽 `#progress-status`，參考 week10 寫法 |

@@ -1,15 +1,19 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
-import { initTypingChallenge } from '../../shared/typing-challenge.js';
+import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20260909-class-card-branch-sop';
 import { initQuizModule } from '../../shared/quiz-module.js';
-import { createActivityProgress } from '../../shared/activity-progress.js';
-import { connectTypingUI, digitHint, typingMessages, randomDigits } from './week02-typing-ui.js?v=20260909';
+import { initClassCardAuth } from '../../shared/class-card-auth.js';
+import { createClassCardProgress } from '../../shared/class-card-progress.js?v=20260909-class-card-branch-sop';
+import { connectTypingUI, digitHint, typingMessages, randomDigits } from './week02-typing-ui.js?v=20260909-login-required';
 import { initReadingAid } from './week02-reading.js?v=20260909';
 import { initWindowPractice } from './week02-window.js?v=20260909';
 
 const COURSE_ID = 'grade3-115-1';
-const TEMP_PROGRESS_KEY = `${COURSE_ID}:week02:local-practice:v1`;
-const defaultTempProgress = {
-    levelsData: null,
+const WEEK_CODE = '02';
+const classCardAuth = initClassCardAuth({
+    courseId: COURSE_ID,
+    mode: 'required'
+});
+const defaultProgressState = {
     typingLevel: 1,
     typingCompleted: false,
     quizScore: 0,
@@ -17,106 +21,84 @@ const defaultTempProgress = {
     windowScore: 0,
     windowCompleted: false
 };
-let tempProgress = loadTempProgress();
-let session = null, authResolvedOnce = false, typingDone = Boolean(tempProgress.typingCompleted), quizDone = Boolean(tempProgress.quizCompleted), windowsDone = Boolean(tempProgress.windowCompleted);
+let progressState = { ...defaultProgressState };
+let authResolvedOnce = false, typingDone = false, quizDone = false, windowsDone = false;
 
-function loadTempProgress() {
+function clearLegacyLocalPracticeProgress() {
     try {
-        const raw = window.localStorage?.getItem(TEMP_PROGRESS_KEY);
-        if (!raw) return { ...defaultTempProgress };
-        const parsed = JSON.parse(raw);
-        return { ...defaultTempProgress, ...parsed };
-    } catch (error) {
-        console.warn('week02 temp progress load failed', error);
-        return { ...defaultTempProgress };
-    }
-}
-
-function saveTempProgress(patch) {
-    tempProgress = { ...defaultTempProgress, ...tempProgress, ...patch };
-    try {
-        window.localStorage?.setItem(TEMP_PROGRESS_KEY, JSON.stringify(tempProgress));
-        return true;
-    } catch (error) {
-        console.warn('week02 temp progress save failed', error);
-        return false;
-    }
-}
-
-function isSavedLevelsData(value) {
-    return Array.isArray(value)
-        && value.length === 4
-        && value.every((level, index) => level?.id === index + 1 && /^[0-9]{3}$/.test(String(level?.ans || '')));
-}
-
-function restoreTypingTempProgress(levelsData) {
-    const completed = Boolean(tempProgress.typingCompleted);
-    const savedLevel = Math.max(1, Math.min(levelsData.length, Number(tempProgress.typingLevel) || 1));
-    const completedThrough = completed ? levelsData.length : savedLevel - 1;
-    for (let id = 1; id <= levelsData.length; id += 1) {
-        const block = document.getElementById(`block-level${id}`);
-        const input = document.getElementById(`input-level${id}`);
-        const msg = document.getElementById(`msg-level${id}`);
-        if (!block || !input || !msg) continue;
-        if (id <= savedLevel || completed) block.classList.remove('hidden');
-        block.classList.toggle('current', id === savedLevel && !completed);
-        if (id <= completedThrough) {
-            input.value = levelsData[id - 1].ans;
-            input.readOnly = true;
-            input.disabled = false;
-            input.classList.add('bg-green-50', 'text-green-800');
-            msg.textContent = id === levelsData.length ? '四關完成！' : '這一關完成了。';
-            msg.className = 'level-message text-emerald-600';
+        const storage = window.localStorage;
+        if (!storage) return;
+        const staleKeys = new Set(Object.keys(storage));
+        for (let index = 0; index < storage.length; index += 1) {
+            const key = storage.key(index);
+            if (key) staleKeys.add(key);
         }
+        Array.from(staleKeys)
+            .filter(key => key.startsWith(`${COURSE_ID}:week02:local-practice:`) || key.startsWith(`${COURSE_ID}:week02-mail:local-practice:`))
+            .forEach(key => storage.removeItem(key));
+    } catch (error) {
+        console.warn('clearLegacyLocalPracticeProgress failed', error);
     }
-    typingDone = completed;
+}
+
+clearLegacyLocalPracticeProgress();
+
+function applyProgressPatch(patch = {}) {
+    progressState = { ...defaultProgressState, ...progressState, ...patch };
+    typingDone = Boolean(progressState.typingCompleted);
+    const repairInput = document.getElementById('repair-input');
+    if (repairInput) repairInput.disabled = false;
+    quizDone = Boolean(progressState.quizCompleted);
+    windowsDone = Boolean(progressState.windowCompleted);
     updateUnlock();
 }
 
-function getTypingGuestProgress() {
-    if (!tempProgress.typingCompleted && (Number(tempProgress.typingLevel) || 1) <= 1) return null;
-    return {
-        current_level: tempProgress.typingCompleted ? levelsData.length : Math.max(1, Math.min(levelsData.length, Number(tempProgress.typingLevel) || 1)),
-        completed: Boolean(tempProgress.typingCompleted)
-    };
-}
-
-function saveTypingGuestProgress(progress) {
+function rememberTypingProgress(progress) {
     const currentLevel = Math.max(1, Math.min(levelsData.length, Number(progress?.current_level) || 1));
-    typingDone = Boolean(progress?.completed);
-    const saved = saveTempProgress({ typingLevel: currentLevel, typingCompleted: typingDone });
-    updateUnlock();
-    return saved;
+    applyProgressPatch({ typingLevel: currentLevel, typingCompleted: Boolean(progress?.completed) });
+    return true;
 }
 
-function loadQuizGuestProgress() {
-    return { score: Number(tempProgress.quizScore) || 0, completed: Boolean(tempProgress.quizCompleted) };
+async function loadQuizGuestProgress() {
+    const remote = await quizGuestStore.load();
+    const next = remote
+        ? { quizScore: Number(remote.score) || 0, quizCompleted: Boolean(remote.completed) }
+        : { quizScore: 0, quizCompleted: false };
+    applyProgressPatch(next);
+    return { score: Number(progressState.quizScore) || 0, completed: Boolean(progressState.quizCompleted) };
 }
 
-function saveQuizGuestProgress(score) {
+async function saveQuizGuestProgress(score) {
+    if (!classCardAuth.hasIdentity()) return false;
     const nextScore = Math.max(0, Math.min(5, Number(score) || 0));
-    quizDone = nextScore >= 5;
-    const saved = saveTempProgress({ quizScore: nextScore, quizCompleted: quizDone });
-    updateUnlock();
-    return saved;
+    const saved = await quizGuestStore.save(nextScore);
+    if (saved === false) return false;
+    applyProgressPatch({ quizScore: nextScore, quizCompleted: nextScore >= 5 });
+    return true;
 }
 
-function loadWindowGuestProgress() {
-    return { score: Number(tempProgress.windowScore) || 0, completed: Boolean(tempProgress.windowCompleted) };
+async function loadWindowGuestProgress() {
+    const remote = await windowGuestStore.load();
+    const next = remote
+        ? { windowScore: Number(remote.score) || 0, windowCompleted: Boolean(remote.completed) }
+        : { windowScore: 0, windowCompleted: false };
+    applyProgressPatch(next);
+    return { score: Number(progressState.windowScore) || 0, completed: Boolean(progressState.windowCompleted) };
 }
 
-function saveWindowGuestProgress(score) {
+async function saveWindowGuestProgress(score) {
+    if (!classCardAuth.hasIdentity()) return false;
     const nextScore = Math.max(0, Math.min(5, Number(score) || 0));
-    windowsDone = nextScore >= 5;
-    const saved = saveTempProgress({ windowScore: nextScore, windowCompleted: windowsDone });
-    updateUnlock();
-    return saved;
+    const saved = await windowGuestStore.save(nextScore);
+    if (saved === false) return false;
+    applyProgressPatch({ windowScore: nextScore, windowCompleted: nextScore >= 5 });
+    return true;
 }
 
 function updateUnlock() {
-    const typingScore = tempProgress.typingCompleted ? 4 : Math.max(0, Math.min(4, (Number(tempProgress.typingLevel) || 1) - 1));
-    const quizScore = Math.max(0, Math.min(5, Number(tempProgress.quizScore) || 0));
-    const windowScore = Math.max(0, Math.min(5, Number(tempProgress.windowScore) || 0));
+    const typingScore = progressState.typingCompleted ? 4 : Math.max(0, Math.min(4, (Number(progressState.typingLevel) || 1) - 1));
+    const quizScore = Math.max(0, Math.min(5, Number(progressState.quizScore) || 0));
+    const windowScore = Math.max(0, Math.min(5, Number(progressState.windowScore) || 0));
     const states = { typing: typingDone, quiz: quizDone, windows: windowsDone };
     const doneCount = Object.values(states).filter(Boolean).length;
     const stepCount = typingScore + quizScore + windowScore;
@@ -165,8 +147,9 @@ function initNumLockLight() {
     setOn(true);
 }
 
-const progress = (activityKey, total) => createActivityProgress({ courseId: COURSE_ID, weekCode: '02', activityKey, total, getSession: () => session });
-const quizStore = progress('quiz_posture_5', 5);
+const classCardProgress = (activityKey, total) => createClassCardProgress({ courseId: COURSE_ID, weekCode: WEEK_CODE, activityKey, total, getIdentity: () => classCardAuth.getIdentity() });
+const quizGuestStore = classCardProgress('quiz_posture_5', 5);
+const windowGuestStore = classCardProgress('window_practice_5', 5);
 const question = (id, title, options, correct, feedback) => ({ id, questionHtml: title, options: options.map((text, i) => ({ text, correct: i === correct })), hint: feedback, feedback });
 const quiz = initQuizModule({
     mode: 'practice',
@@ -178,36 +161,70 @@ const quiz = initQuizModule({
         question(5, '看螢幕 30 分鐘後，怎麼做符合影片提醒？', ['休息 1 分鐘，伸個懶腰後繼續操作。', '停止打字，留在螢幕前看影片 5 分鐘。', '離開螢幕休息至少 5 分鐘，看看遠處。'], 2, '停止打字不等於眼睛休息，要讓視線離開螢幕。')
     ],
     selectors: { lock: 'quiz-lock', content: 'quiz-content', container: 'quiz-container' },
-    loadProgress: quizStore.load, saveProgress: quizStore.save,
     loadGuestProgress: loadQuizGuestProgress, saveGuestProgress: saveQuizGuestProgress,
-    getCurrentUser: () => session?.user,
+    getCurrentUser: () => null,
     requireAuth: false,
     onAfterSubmit: ({ correct, total }) => { quizDone = correct === total; updateUnlock(); }
 });
 initNumLockLight();
 const windows = initWindowPractice({
-    store: progress('window_practice_5', 5),
+    store: null,
     requireAuth: false,
     loadGuestProgress: loadWindowGuestProgress,
     saveGuestProgress: saveWindowGuestProgress,
     onComplete: done => {
-        if (done) {
-            windowsDone = true;
-            saveTempProgress({ windowCompleted: true, windowScore: 5 });
-        } else {
-            windowsDone = Boolean(tempProgress.windowCompleted);
-        }
+        windowsDone = done || Boolean(progressState.windowCompleted);
         updateUnlock();
     }
 });
 
+function hasClassCardIdentity() {
+    return classCardAuth.hasIdentity();
+}
+
+function updateClassCardReadyState() {
+    document.body.classList.toggle('class-card-ready', hasClassCardIdentity());
+}
+
+function lockTasksUntilClassCard() {
+    updateClassCardReadyState();
+    const message = '請先在右上角輸入課堂身分卡，再開始闖關。';
+    const progressStatus = document.getElementById('progress-status');
+    if (progressStatus) progressStatus.textContent = message;
+    const quizLock = document.getElementById('quiz-lock');
+    const quizContent = document.getElementById('quiz-content');
+    if (quizLock) {
+        quizLock.textContent = '先輸入課堂身分卡，再開始答題。';
+        quizLock.classList.remove('hidden');
+    }
+    quizContent?.classList.add('hidden');
+    const windowLock = document.getElementById('window-lock');
+    const windowContent = document.getElementById('window-content');
+    if (windowLock) {
+        windowLock.textContent = '先輸入課堂身分卡，再練習視窗按鈕。';
+        windowLock.classList.remove('hidden');
+    }
+    windowContent?.classList.add('hidden');
+    const typingContainer = document.getElementById('typing-levels-container');
+    typingContainer?.setAttribute('inert', '');
+    typingContainer?.querySelectorAll('input, button').forEach(control => { control.disabled = true; });
+    const repairInput = document.getElementById('repair-input');
+    if (repairInput) repairInput.disabled = true;
+    updateUnlock();
+}
+
 function initializeGuestTasks() {
     if (authResolvedOnce) return;
     authResolvedOnce = true;
-    session = null;
-    document.getElementById('repair-input').disabled = false;
-    quizDone = Boolean(tempProgress.quizCompleted);
-    windowsDone = Boolean(tempProgress.windowCompleted);
+    updateClassCardReadyState();
+    if (!hasClassCardIdentity()) {
+        lockTasksUntilClassCard();
+        return;
+    }
+    const repairInput = document.getElementById('repair-input');
+    if (repairInput) repairInput.disabled = false;
+    quizDone = Boolean(progressState.quizCompleted);
+    windowsDone = Boolean(progressState.windowCompleted);
     void quiz.handleAuthChange(null);
     void windows.handleSession(null);
     updateUnlock();
@@ -215,29 +232,12 @@ function initializeGuestTasks() {
 
 initializeGuestTasks();
 
-initNavbarAuth({ onSessionResolved: next => {
-    if (session?.user && session.user.id !== next?.user?.id) { window.location.reload(); return; }
-    const changed = session?.user?.id !== next?.user?.id;
-    authResolvedOnce = true;
-    session = next;
-    document.getElementById('repair-input').disabled = false;
-    if (changed) {
-        if (!next?.user) {
-            quizDone = Boolean(tempProgress.quizCompleted);
-            windowsDone = Boolean(tempProgress.windowCompleted);
-        } else {
-            quizDone = false;
-            windowsDone = false;
-        }
-        // No await inside the auth event callback; same-user refocus does not reload.
-        void quiz.handleAuthChange(next); void windows.handleSession(next);
-    }
-    updateUnlock();
+initNavbarAuth({ onSessionResolved: () => {
+    // Week02 uses the classroom identity card path; ignore any existing Google session.
+    initializeGuestTasks();
 } });
 
-const savedLevelsData = isSavedLevelsData(tempProgress.levelsData) ? tempProgress.levelsData : null;
-const levelsData = savedLevelsData || Array.from({ length: 4 }, (_, i) => ({ id: i + 1, ans: randomDigits() }));
-if (!savedLevelsData) saveTempProgress({ levelsData });
+const levelsData = Array.from({ length: 4 }, (_, i) => ({ id: i + 1, ans: randomDigits() }));
 document.getElementById('typing-levels-container').innerHTML = levelsData.map(({ id, ans }) => `
     <div id="block-level${id}" class="stage ${id > 1 ? 'hidden' : 'current'}" data-level="${id}">
       <div class="stage-top"><strong>第 ${id} 關 / 4</strong><span>本關代碼</span><span class="code">${ans}</span></div>
@@ -246,22 +246,41 @@ document.getElementById('typing-levels-container').innerHTML = levelsData.map(({
       <button id="next-${id}" data-next="${id + 1}" class="secondary hidden">下一關 →</button>
       <p id="msg-level${id}" class="level-message" role="status"></p>
     </div>`).join('');
-initTypingChallenge({ courseId: COURSE_ID, weekCode: '02', activityKey: 'typing_task_4', levelsData,
+const typingGuestStore = classCardProgress('typing_task_4', 4);
+async function loadTypingClassCardProgress() {
+    if (!hasClassCardIdentity()) return null;
+    const remote = await typingGuestStore.load();
+    const next = remote
+        ? { typingLevel: Number(remote.current_level) || 1, typingCompleted: Boolean(remote.completed) }
+        : { typingLevel: 1, typingCompleted: false };
+    applyProgressPatch(next);
+    return { current_level: next.typingLevel, completed: next.typingCompleted };
+}
+async function saveTypingClassCardProgress(progress) {
+    if (!classCardAuth.hasIdentity()) return false;
+    const saved = await typingGuestStore.save(progress);
+    if (saved === false) return false;
+    return rememberTypingProgress(progress);
+}
+
+initTypingChallenge({ courseId: COURSE_ID, weekCode: WEEK_CODE, activityKey: 'typing_task_4', levelsData,
     levelEncouragements: { 1: '你先找到框，再把數字放進去了。', 2: '位置換了，你仍記得先點框。', 3: '少了提示，你也能自己找位置。', 4: '你用先點再打的方法，完成了四關。努力正在累積！' },
     buildHint: digitHint, getWrongAnswerHtml: ({ hint }) => hint,
     progressMessages: {
         ...typingMessages,
-        unauthenticated: '先練會「點框、找直線、再打字」；今天不用登入 Google。',
-        guestReady: '今天先在課堂練習，不用登入 Google。',
+        unauthenticated: '請先在右上角輸入課堂身分卡，再開始闖關。',
+        firstLogin: '已確認課堂身分卡，先找到框，按一下左鍵。',
+        guestReady: '請先在右上角輸入課堂身分卡，再開始闖關。',
         guestNextLevel: level => `第 ${level - 1} 關完成，往下一關前進。`,
-        guestCompleted: '四關完成！今天不用登入 Google，請舉手讓老師看看。'
+        guestCompleted: '四關完成！請確認右上角課堂身分卡是不是自己。'
     },
     requireAuth: false,
-    guestProgress: { load: getTypingGuestProgress, save: saveTypingGuestProgress },
+    guestProgress: { load: loadTypingClassCardProgress, save: saveTypingClassCardProgress },
     celebrationContent: { title: '四關完成！', message: '你學會先點再打。接著跟老師一起看影片。', buttonText: '回到課程' }
 });
-restoreTypingTempProgress(levelsData);
-connectTypingUI({ total: 4, onComplete: done => { typingDone = done; saveTempProgress({ typingCompleted: done, typingLevel: done ? 4 : Number(tempProgress.typingLevel) || 1 }); updateUnlock(); } });
+connectTypingUI({ total: 4, isReady: hasClassCardIdentity, onComplete: done => { typingDone = done || Boolean(progressState.typingCompleted); updateUnlock(); } });
+updateClassCardReadyState();
+if (!hasClassCardIdentity()) lockTasksUntilClassCard();
 document.addEventListener('keydown', event => {
     if (!/^[0-9]$/.test(event.key)) return;
     const task = document.getElementById('cursor-task');
@@ -273,5 +292,3 @@ document.addEventListener('keydown', event => {
 document.getElementById('typing-levels-container').addEventListener('focusin', () => document.getElementById('focus-hint').textContent = '找到框了，看看小直線在哪裡。');
 initReadingAid();
 document.getElementById('boot-status').hidden = true;
-
-

@@ -1,5 +1,5 @@
 // UI bridge only: validation/persistence/reset remain in initTypingChallenge.
-export function connectTypingUI({ total, onComplete = () => {} }) {
+export function connectTypingUI({ total, onComplete = () => {}, isReady = () => true }) {
     let current = 1, checking = false, awaitingNext = false, progressReady = false;
     const container = document.getElementById('typing-levels-container');
     container.inert = true;
@@ -17,10 +17,14 @@ export function connectTypingUI({ total, onComplete = () => {} }) {
         status.querySelectorAll('rt').forEach(rt => rt.remove());
         const message = status.textContent;
         if (message === typingMessages.unauthenticated || message === typingMessages.loadError) progressReady = false;
-        else if (message === typingMessages.firstLogin || message === typingMessages.completed || message === typingMessages.saveCompleted || message.includes('不用登入 Google') || message.startsWith('第 ') || message.startsWith('接回進度：') || message.startsWith('進度已保存。')) progressReady = true;
-        container.inert = !progressReady;
+        else if (message === typingMessages.firstLogin || message === typingMessages.completed || message === typingMessages.saveCompleted || message.includes('不用登入 Google') || message.includes('課堂身分卡') || message.startsWith('第 ') || message.startsWith('接回進度：') || message.startsWith('進度已保存。')) progressReady = true;
+        const canInteract = progressReady && isReady();
+        container.inert = !canInteract;
+        if (!canInteract) {
+            container.querySelectorAll('input, button').forEach(control => { control.disabled = true; });
+        }
         retry.classList.toggle('hidden', message !== typingMessages.loadError);
-        onComplete(progressReady && document.getElementById(`input-level${total}`)?.readOnly === true && !checking);
+        onComplete(canInteract && document.getElementById(`input-level${total}`)?.readOnly === true && !checking);
         if (checking || awaitingNext) return;
         const unlocked = [...container.querySelectorAll('.stage:not(.hidden)')];
         const active = unlocked.find(stage => !stage.querySelector('[id^="input-level"]').readOnly);
@@ -31,7 +35,7 @@ export function connectTypingUI({ total, onComplete = () => {} }) {
     observer.observe(document.getElementById('progress-status'), { childList: true, subtree: true, characterData: true });
     const original = window.checkLevel;
     window.checkLevel = async (id) => {
-        if (checking || !progressReady || id !== current) return;
+        if (checking || !progressReady || !isReady() || id !== current) return;
         const input = document.getElementById(`input-level${id}`);
         if (input.disabled) return;
         if (!input.readOnly && !/^[0-9]+(?:\n[0-9]+)*$/.test(input.value)) {
@@ -84,4 +88,3 @@ export const typingMessages = {
 export function randomDigits(length = 3) {
     return [...crypto.getRandomValues(new Uint32Array(length))].map(n => n % 10).join('');
 }
-

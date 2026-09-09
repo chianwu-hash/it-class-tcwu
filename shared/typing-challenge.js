@@ -82,6 +82,7 @@ export function initTypingChallenge({
     const SAVE_TIMEOUT_MS = 10000;
     const DRAFT_TIMEOUT_MS = 5000;
     const draftsEnabled = Boolean(draftOptions?.enabled);
+    const useGuestProgress = Boolean(guestProgress && !requireAuth);
     const draftStateByLevel = new Map();
     let draftLoadKey = "";
 
@@ -591,6 +592,51 @@ export function initTypingChallenge({
         document.getElementById(`block-level${level}`)?.classList.remove("hidden");
     }
 
+    function resetRenderedProgress() {
+        for (let level = 1; level <= maxLevel; level += 1) {
+            const blockEl = document.getElementById(`block-level${level}`);
+            const inputEl = document.getElementById(`input-level${level}`);
+            const msgEl = document.getElementById(`msg-level${level}`);
+            const checkBtnEl = document.getElementById(`check-${level}`);
+            const nextBtnEl = document.getElementById(`next-${level}`);
+            const pinyinBtnEl = document.getElementById(`btn-pinyin-${level}`);
+
+            blockEl?.classList.toggle("hidden", level !== 1);
+            blockEl?.classList.toggle("current", level === 1);
+            if (inputEl) {
+                inputEl.readOnly = false;
+                inputEl.disabled = false;
+                inputEl.value = "";
+                inputEl.classList.remove(
+                    "border-orange-300",
+                    "border-pink-300",
+                    "border-cyan-300",
+                    "border-emerald-300",
+                    "border-purple-400",
+                    "border-red-500",
+                    "border-green-400",
+                    "bg-green-50",
+                    "text-green-800",
+                    "shake",
+                    "opacity-60",
+                    "cursor-not-allowed"
+                );
+            }
+            if (msgEl) {
+                msgEl.textContent = "";
+                msgEl.className = "level-message";
+            }
+            if (checkBtnEl) {
+                checkBtnEl.disabled = false;
+                checkBtnEl.style.display = "";
+                checkBtnEl.classList.remove("opacity-60", "cursor-not-allowed");
+            }
+            nextBtnEl?.classList.add("hidden");
+            if (pinyinBtnEl) pinyinBtnEl.style.display = "";
+            syncDraftControlState(level);
+        }
+    }
+
     function markLevelAsCompleted(level) {
         const inputEl = document.getElementById(`input-level${level}`);
         const msgEl = document.getElementById(`msg-level${level}`);
@@ -616,6 +662,7 @@ export function initTypingChallenge({
 
     function revealProgress(level, completed) {
         clearProgressDebug();
+        resetRenderedProgress();
         progressCompleted = Boolean(completed);
         highestUnlockedLevel = Math.max(1, Math.min(level, maxLevel));
         for (let i = 1; i <= highestUnlockedLevel; i += 1) {
@@ -683,6 +730,9 @@ export function initTypingChallenge({
     }
 
     async function getActiveUser() {
+        if (!requireAuth && guestProgress) {
+            return null;
+        }
         if (currentSession?.user) {
             return currentSession.user;
         }
@@ -740,12 +790,7 @@ export function initTypingChallenge({
         }
 
         if (!data) {
-            highestUnlockedLevel = 1;
-            progressCompleted = false;
-            clearProgressDebug();
-            if (progressStatusEl) {
-                progressStatusEl.textContent = messages.firstLogin;
-            }
+            revealProgress(1, false);
             await loadDraftsOnce();
             return;
         }
@@ -1139,6 +1184,13 @@ export function initTypingChallenge({
     createDraftControls();
 
     async function initialize() {
+        if (useGuestProgress) {
+            currentSession = null;
+            await updateAuthUI(null);
+            await loadProgress();
+            return;
+        }
+
         const { session } = await getSession();
         currentSession = session;
         await updateAuthUI(currentSession);

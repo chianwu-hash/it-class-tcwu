@@ -1,6 +1,6 @@
 # 高風險變更清單
 
-> 最後更新：2026-04-15
+> 最後更新：2026-09-09
 >
 > 以下任何改動都可能牽動多頁。修改前先看清風險，修改後執行指定的最低驗證。
 
@@ -153,6 +153,20 @@
 
 ---
 
+## 12. 三年級課堂身分卡與 `guest_progress` 分支
+
+**風險**：課堂身分卡頁是 Google 登入前的例外路徑。若 shared module 誤讀背景 Google session，學生會看到老師或其他 Google 帳號的 `student_progress`；若進度仍存在 localStorage，教師後台重設後學生端可能繼續顯示完成；若 navbar 同時顯示 Google 登入與課堂身分卡，三年級學生會混淆該用哪一個。
+
+**修改最低測試**：
+- 在教師 Google session 存在的瀏覽器開課堂身分卡頁，確認頁面只顯示課堂身分卡入口，不讀取 `student_progress`。
+- 未輸入課堂身分卡時，打字、測驗、視窗練習與延伸任務都不能操作；特別檢查 `requireAuth: false` 的 typing 頁面是否由頁面端明確加上 `inert` / `disabled` 橋接。
+- 輸入有效班級座號與生日四碼後，完成一關，教師後台可看到 `guest_progress`。
+- 教師後台重設該筆 `guest_progress` 後，學生頁重新整理回到未完成。
+- 檢查是否清除舊 localStorage 進度鍵，避免重設後仍顯示完成。
+- 若有完成 overlay 或努力樹入口，確認不承諾尚未支援的 Google 努力樹累積。
+
+---
+
 ## 風險等級對照
 
 | 風險項目 | 影響範圍 | 靜默失效 | 等級 |
@@ -163,6 +177,7 @@
 | quiz-module 渲染 / 評分 / 保存橋接 | 全部互動測驗頁 | **是**（選項、分數或保存錯但畫面可能仍像成功） | 🔴 高 |
 | navbar-auth.js 事件代理 | 全站所有頁面 | **是** | 🔴 高 |
 | student_progress activityKey 衝突 | 受影響的兩頁 | **是**（資料被覆蓋） | 🔴 高 |
+| 課堂身分卡 guest_progress 分支 | 三年級 Google 登入前頁面、後台 | **是**（進度誤讀、重設無效、學生身分混淆） | 🔴 高 |
 | typing_drafts 手動草稿暫存 | 全部啟用 `draftOptions` 的打字頁 | 是（草稿失敗不能影響正式進度） | 🟡 中 |
 | week-visibility 格式 | grade3 nav + 首頁 | **是**（全週顯示） | 🟡 中 |
 | grade6 activeWeeks 未更新 | grade6 nav | 否（肉眼可見） | 🟡 中 |

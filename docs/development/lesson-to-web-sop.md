@@ -1,6 +1,6 @@
 # 從教案討論到網頁完成 SOP
 
-最後更新：2026-05-04
+最後更新：2026-09-09
 
 ## 1. 目的
 
@@ -93,9 +93,19 @@
 即使打字闖關不是全班必完任務，只要頁面有打字闖關進度，技術契約仍不可降低：
 
 - 必須使用 `initTypingChallenge()`。
-- 未登入時必須鎖定輸入框與檢查按鈕。
+- 一般 Google 登入頁未登入時必須鎖定輸入框與檢查按鈕；課堂身分卡分支未確認身分時也必須鎖定。
 - `levelsData` 必須使用 `{ id, ans }`。
-- 進度必須寫入 `student_progress`，不可改用 `localStorage`。
+- 一般登入頁的進度必須寫入 `student_progress`，不可改用 `localStorage`。
+- 若屬於「三年級 Google 登入前的課堂身分卡例外」，進度必須寫入 `guest_progress`，不可混用 `student_progress` 或 localStorage 進度。
+
+若教案頁面屬於三年級 Google 登入前的課堂身分卡分支，教案轉網頁時要先寫清楚：
+
+- 本週使用「課堂身分卡」，不是 Google 登入。
+- Navbar 只出現課堂身分卡；Google 登入入口不得同頁出現。
+- 每個互動活動的 `activityKey`、總關卡數與完成標準。
+- 進度寫入 `guest_progress`，教師後台可查詢與重設。
+- 未輸入課堂身分卡前，打字、測驗、視窗操作與延伸任務都必須鎖定。
+- 若從 localStorage 暫存版本改版而來，要列入清除舊暫存鍵的需求。
 
 打字闖關每一關都要設定 `levelEncouragements`，並採用阿德勒式鼓勵語：
 
@@ -109,7 +119,8 @@
 - overlay 需顯示阿德勒式鼓勵語，說明這次完成是來自練習、檢查、修正與持續嘗試。
 - overlay 需提供「去看我的努力樹」或同等文字的主要行動連結，導向 `/my-tree.html`。
 - 引導語要強調努力樹呈現自己的學習累積，不鼓勵與同學比較。
-- 週頁面不應額外寫入努力樹資料；努力樹以既有 `student_progress` 等進度資料讀取呈現。
+- 週頁面不應額外寫入努力樹資料；努力樹以既有進度資料讀取呈現。
+- 若頁面屬於三年級 Google 登入前的課堂身分卡分支，且努力樹尚未讀取 `guest_progress`，完成 overlay 不應導向 `/my-tree.html`，改用回到本週課程或下一個任務，避免學生誤以為 Google 努力樹已累積。
 - 若這是新導入的互動設計，教案中需註記是否要在新頁確認後回頭同步調整既有打字闖關頁。
 
 若教案包含「資訊素養互動小測驗」：
@@ -185,8 +196,8 @@
 - 是否有 `navbar.js`
 - 是否有 `initNavbarAuth()`
 - 是否有進度寫入
-- 若有打字闖關：未登入是否鎖定輸入框與檢查按鈕
-- 若有測驗 / 小測驗：是否使用 `shared/quiz-module.js` 或既有 adapter，未登入是否只顯示登入鎖定區
+- 若有打字闖關：一般頁未登入是否鎖定輸入框與檢查按鈕；課堂身分卡分支未確認身分是否鎖定
+- 若有測驗 / 小測驗：是否使用 `shared/quiz-module.js` 或既有 adapter，未登入或未確認課堂身分卡是否只顯示鎖定區
 - 是否有 spotlight 放大圖
 - 是否有外部連結卡
 - 是否有週卡首頁入口同步
@@ -200,7 +211,7 @@
 ### 6.1 前置條件
 
 - 已開啟支援 CDP 的正式 Chrome
-- 已登入 Google
+- 已登入 Google，或已確認課堂身分卡（依頁面分支而定）
 - 已打開對應的 NotebookLM 筆記本
 
 ### 6.2 問 NotebookLM 的提示詞格式
@@ -533,14 +544,16 @@ week11 已實測成功上傳，Cloudinary secure_url：
 
 更新：
 
-- `grade3/index.html`
-- `grade6/index.html`
+- `grade3/index.html` / `grade3/115-1/index.html`
+- `grade6/index.html` / `grade6/115-1/index.html`
+- `admin-progress.html` 的 `visibilityDefaults`，讓老師後台「首頁週卡片顯示管理」也看得到新週卡
 
 通常要做：
 
 1. 新增本週卡片
 2. 把上一週的「本週最新」移除
 3. 把這週卡片改為 `data-latest-week="true"`
+4. 在 `admin-progress.html` 對應 `courseId` 的 `visibilityDefaults.weeks` 加入本週週碼，例如 `"02"`
 
 ### 9.3 navbar 版本字串一起更新
 

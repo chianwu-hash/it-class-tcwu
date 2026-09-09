@@ -1,48 +1,30 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
-import { initTypingChallenge } from '../../shared/typing-challenge.js';
+import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20260909-class-card-branch-sop';
+import { initClassCardAuth } from '../../shared/class-card-auth.js';
+import { createClassCardProgress } from '../../shared/class-card-progress.js?v=20260909-class-card-branch-sop';
 import { connectTypingUI, digitHint, typingMessages, randomDigits } from './week02-typing-ui.js?v=20260909';
 
-const UNLOCK_KEY = 'grade3-115-1:week02:local-practice:v1';
-const MAIL_KEY = 'grade3-115-1:week02-mail:local-practice:v2';
+const COURSE_ID = 'grade3-115-1';
+const WEEK_CODE = '02';
+const classCardAuth = initClassCardAuth({
+    courseId: COURSE_ID,
+    mode: 'required'
+});
+const mailGuestStore = createClassCardProgress({ courseId: COURSE_ID, weekCode: WEEK_CODE, activityKey: 'typing_task_5', total: 5, getIdentity: () => classCardAuth.getIdentity() });
+const unlockStores = {
+    typing: createClassCardProgress({ courseId: COURSE_ID, weekCode: WEEK_CODE, activityKey: 'typing_task_4', total: 4, getIdentity: () => classCardAuth.getIdentity() }),
+    quiz: createClassCardProgress({ courseId: COURSE_ID, weekCode: WEEK_CODE, activityKey: 'quiz_posture_5', total: 5, getIdentity: () => classCardAuth.getIdentity() }),
+    windows: createClassCardProgress({ courseId: COURSE_ID, weekCode: WEEK_CODE, activityKey: 'window_practice_5', total: 5, getIdentity: () => classCardAuth.getIdentity() })
+};
+let mailProgress = { current_level: 1, completed: false };
 let session = null, started = false, checking = false;
 const $ = id => document.getElementById(id);
 const animals = ['🐰 兔子', '🐻 小熊', '🐱 小貓', '🐶 小狗', '🐼 熊貓'];
 const counts = [2, 3, 3, 3, 5];
 const delivered = new Set();
 
-function loadJson(key, fallback = null) {
-    try {
-        const raw = window.localStorage?.getItem(key);
-        return raw ? JSON.parse(raw) : fallback;
-    } catch {
-        return fallback;
-    }
-}
-
-function saveMailProgress(patch) {
-    const current = loadJson(MAIL_KEY, {}) || {};
-    try {
-        window.localStorage?.setItem(MAIL_KEY, JSON.stringify({ ...current, ...patch }));
-        return true;
-    } catch {
-        return false;
-    }
-}
-
-function isSavedCodes(value) {
-    return Array.isArray(value)
-        && value.length === counts.length
-        && value.every((items, levelIndex) => Array.isArray(items)
-            && items.length === counts[levelIndex]
-            && items.every(code => /^[0-9]{3,4}$/.test(String(code))));
-}
-
 function makeCodes() {
-    const saved = loadJson(MAIL_KEY, {}) || {};
-    if (isSavedCodes(saved.codes)) return saved.codes;
-    const nextCodes = counts.map((count, index) => Array.from({ length: count }, () => randomDigits(index === 2 ? 4 : 3)));
-    saveMailProgress({ codes: nextCodes });
-    return nextCodes;
+    return counts.map((count, index) => Array.from({ length: count }, () => randomDigits(index === 2 ? 4 : 3)));
 }
 
 function makeWrongCode(code, level, index) {
@@ -55,13 +37,17 @@ function makeWrongCode(code, level, index) {
 }
 
 function loadMailProgress() {
-    const progress = loadJson(MAIL_KEY, {}) || {};
-    return { current_level: Number(progress.current_level) || 1, completed: Boolean(progress.completed) };
+    return { ...mailProgress };
 }
 
-function hasWeek02Unlock() {
-    const progress = loadJson(UNLOCK_KEY, {}) || {};
-    return Boolean(progress.typingCompleted && progress.quizCompleted && progress.windowCompleted);
+async function hasWeek02Unlock() {
+    if (!classCardAuth.hasIdentity()) return false;
+    const [typing, quiz, windows] = await Promise.all([
+        unlockStores.typing.load(),
+        unlockStores.quiz.load(),
+        unlockStores.windows.load()
+    ]);
+    return Boolean(typing?.completed && quiz?.completed && windows?.completed);
 }
 
 const codes = makeCodes();
@@ -97,6 +83,26 @@ function mailboxHint({ levelIndex, userVal, targetVal, hint }) {
     }
     if (userItems.length !== targetItems.length) return '信箱數量不一樣，請檢查是不是有漏填。';
     return hint || '對照每個信箱的代碼，修好再試。';
+}
+
+
+async function loadMailProgressWithClassCard() {
+    const remote = await mailGuestStore.load();
+    mailProgress = remote
+        ? { current_level: Number(remote.current_level) || 1, completed: Boolean(remote.completed) }
+        : { current_level: 1, completed: false };
+    return loadMailProgress();
+}
+
+async function saveMailProgressWithClassCard(progress) {
+    if (!classCardAuth.hasIdentity()) return false;
+    const saved = await mailGuestStore.save(progress);
+    if (saved === false) return false;
+    mailProgress = {
+        current_level: Number(progress?.current_level) || mailProgress.current_level || 1,
+        completed: Boolean(progress?.completed)
+    };
+    return true;
 }
 
 function start() {
@@ -175,8 +181,8 @@ function start() {
     }));
 
     initTypingChallenge({
-        courseId: 'grade3-115-1',
-        weekCode: '02',
+        courseId: COURSE_ID,
+        weekCode: WEEK_CODE,
         activityKey: 'typing_task_5',
         levelsData,
         levelEncouragements: {
@@ -190,10 +196,10 @@ function start() {
         getWrongAnswerHtml: mailboxHint,
         afterAuthUpdate: () => document.querySelectorAll('.mail-answer,[data-deliver]').forEach(el => el.disabled = false),
         requireAuth: false,
-        guestProgress: { load: loadMailProgress, save: progress => saveMailProgress(progress) },
+        guestProgress: { load: loadMailProgressWithClassCard, save: saveMailProgressWithClassCard },
         progressMessages: {
             ...typingMessages,
-            guestReady: '快手任務已開放，今天不用登入 Google。',
+            guestReady: '快手任務已開放，請確認右上角課堂身分卡是不是自己。',
             guestNextLevel: level => `第 ${level - 1} 關完成，繼續投遞。`,
             guestCompleted: '投遞完成！請舉手讓老師看看。'
         },
@@ -223,24 +229,21 @@ async function verifyUnlock() {
     if (checking) return;
     checking = true;
     $('mail-retry').disabled = true;
-    const unlocked = hasWeek02Unlock();
+    const unlocked = await hasWeek02Unlock();
     $('mail-content').classList.toggle('hidden', !unlocked);
     $('mail-lock-panel').classList.toggle('hidden', unlocked);
     if (unlocked) {
         start();
     } else {
-        $('mail-lock').textContent = '先回本週課程，完成游標、坐姿答題與視窗練習，再來投遞。';
+        $('mail-lock').textContent = classCardAuth.hasIdentity() ? '先回本週課程，完成游標、坐姿答題與視窗練習，再來投遞。' : '請先在右上角輸入課堂身分卡，再確認是否開放快手任務。';
     }
     checking = false;
     $('mail-retry').disabled = false;
 }
 
-initNavbarAuth({ onSessionResolved: next => {
-    if (session?.user && session.user.id !== next?.user?.id) {
-        window.location.reload();
-        return;
-    }
-    session = next;
+initNavbarAuth({ onSessionResolved: () => {
+    // This fast task follows the Week02 classroom identity card path, not Google auth.
+    session = null;
     void verifyUnlock();
 }});
 

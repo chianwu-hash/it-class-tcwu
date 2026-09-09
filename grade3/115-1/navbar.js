@@ -13,7 +13,7 @@
     }
 
     const navConfig = {
-        activeWeeks: [1],
+        activeWeeks: [1, 2],
         gradeLabel: "三年級資訊課｜115-1",
         titleIconClass: "fa-solid fa-rocket text-cyan-600",
         titleClassName: "font-black text-gray-800 flex items-center text-lg tracking-wide whitespace-nowrap",
@@ -29,11 +29,31 @@
                 label: "努力樹"
             }
         ],
-        showAuthBarOnWeekPages: false,
-        showAuthBarOnHomePages: false
+        showAuthBarOnWeekPages: !/week01\.html$/.test(location.pathname),
+        showAuthBarOnHomePages: false,
+        authBarHtml: `
+            <div id="nav-auth-bar" class="flex items-center gap-2">
+                <span id="auth-status" class="text-sm truncate max-w-[180px]">未登入</span>
+                <a id="admin-btn" href="/admin-progress.html?course=grade3-115-1" class="hidden text-sm" aria-label="教師後台">後台</a>
+                <button id="login-btn" class="w-10 h-10 rounded-full border-2 border-cyan-300" title="Google 登入" aria-label="Google 登入"><i class="fa-brands fa-google"></i></button>
+                <button id="reset-progress-btn" class="hidden w-10 h-10 rounded-full bg-amber-500" title="重新闖關" aria-label="重新闖關"><i class="fa-solid fa-rotate-left"></i></button>
+                <button id="logout-btn" class="hidden w-10 h-10 rounded-full bg-slate-700 text-white" title="登出" aria-label="登出"><i class="fa-solid fa-right-from-bracket"></i></button>
+            </div>`
     };
 
     const navHTML = window.__buildCourseNavbarHtml(navConfig);
     currentScript.insertAdjacentHTML("beforebegin", navHTML);
     currentScript.remove();
+
+    // Match the semester home cards; never apply the previous semester's visibility.
+    import('../../shared/week-visibility.js').then(async ({ loadWeekVisibility }) => {
+        const rows = await loadWeekVisibility('grade3', 'grade3-115-1');
+        if (!rows) return;
+        const hidden = new Set(rows.filter(row => row.is_visible === false).map(row => Number(row.week_code)));
+        const current = Number(location.pathname.match(/week(\d+)/)?.[1]);
+        const activeWeeks = navConfig.activeWeeks.filter(week => !hidden.has(week) || week === current);
+        const nav = document.querySelector('body > nav');
+        if (nav) nav.outerHTML = window.__buildCourseNavbarHtml({ ...navConfig, activeWeeks });
+        window.dispatchEvent(new CustomEvent('course-navbar:rendered'));
+    }).catch(error => console.warn('Semester navigation visibility unavailable', error));
 })();

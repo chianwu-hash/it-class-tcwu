@@ -8,7 +8,7 @@
   <script>tailwind.config = { corePlugins: { preflight: false } };</script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="stylesheet" href="week02.css?v=20260909-guest-init">
+  <link rel="stylesheet" href="week02.css?v=20260909-stage-unlock-fix">
 </head>
 <body class="week02-no-login">
   <script src="navbar.js?v=20260909"></script>
@@ -77,8 +77,12 @@
         <p class="teacher-note">四關；不計時、不排名。</p>
       </div>
       <p class="motto">先點框 → 找直線 → 再打字</p>
+      <div id="class-card-required-hint" class="class-card-required-hint" role="status">
+        <span aria-hidden="true">🔑</span>
+        <div><strong>先輸入課堂身分卡，才可以闖關。</strong><br>請到右上角按「先輸入課堂身分」，確認是自己再開始。</div>
+      </div>
       <p>滑鼠箭頭是用來找位置的；框裡閃爍的小直線，才是文字要出現的地方。</p>
-      <p id="progress-status" class="status-note" role="status">先練會「點框、找直線、再打字」；今天不用登入 Google。</p>
+      <p id="progress-status" class="status-note" role="status">請先在右上角輸入課堂身分卡，再開始闖關。</p>
       <div id="typing-levels-container"></div>
       <p id="focus-hint" class="status-note" role="status"></p>
       <p class="reference">課本 p.35–36、p.101、p.107、p.110；移動輸入框為自編練習。</p>
@@ -147,10 +151,6 @@
 
     <footer class="lesson-footer">收尾：椅子靠好，鍵盤滑鼠歸位，帶齊物品。</footer>
   </main>
-  <script type="module" src="week02.js?v=20260909-guest-init"></script>
+  <script type="module" src="week02.js?v=20260909-class-card-lock-fix"></script>
 </body>
 </html>
-
-
-
-
