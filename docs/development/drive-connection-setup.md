@@ -62,7 +62,7 @@
 - Deno：`npx deno check supabase/functions/drive-connect/index.ts` 通過。
 - 公開資產引用檢查：`node automation/check-vercelignore-references.js` 通過；新 `supabase/` 排除規則未切斷公開頁面引用。
 - 正式上線驗收：未登入 / 學生拒絕、教師正確帳號、錯誤學校帳號、取消、重新連接、重複 callback、切分頁不輪詢、不洩漏 token。
-- 真實 Google 授權仍待教師操作；線上部署狀態見下節。
+- 真實 Google 授權已由教師完成；背景存取與授權紀錄持久化驗證通過，詳見下節。
 
 ## 2026-09-09 線上部署紀錄
 
@@ -76,8 +76,10 @@
 - 網站從乾淨 `3609aac5b86df4eec3fe45c941f19f081469b63d` 發布副本加入四個網站變更，不包含工作區其他未提交內容。
 - Vercel deployment：`dpl_38wvKhbtjpMwPB2egiNKdCM9zsfR`，已 promote 到正式網域。
 - 正式頁、JS、CSS、六年級 Week 01、既有 auth 模組均 HTTP 200；`/supabase/functions/drive-connect/handler.mjs` 為 404，不公開後端來源。
-- 正式連接頁目前顯示「未登入」，連接按鈕停用。等待使用者先以網站教師帳號登入，再自行選學校 Google 帳號授權。
-- 部署不代表已取得 Google grant；尚未有已驗證的真實 Drive 連接，也未建立學生收件區。
+- 教師已自行完成 Google 授權；正式頁顯示「學校 Drive 已連接成功，背景存取已驗證」。網站教師帳號為 `chianwu@gmail.com`，授權收件帳號為 `th990821@mail.thps.ntpc.edu.tw`。
+- 真實回呼已通過後端 Google 身分、refresh token 更新與 Drive about 帳號驗證，並保存加密授權。連接時間為 2026/9/9 下午 4:16:16（Asia/Taipei）。
+- 手動更新狀態與整頁重新整理後，皆顯示已保存上述學校帳號的授權；網址沒有殘留回呼參數。驗收只讀取頁面狀態，未擷取 token 或資料庫密文。
+- 學校 Drive 連接已完成；學生上傳、教師評比與努力樹串接尚未實作。
 
 ### Dashboard 編輯器注意事項
 
