@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex,nofollow">
+  <title>教師 Drive 連接｜頂溪資訊課</title>
+  <script>
+    // Scrub Google OAuth codes before shared Supabase auth or any other resource loads.
+    const callback = new URLSearchParams(location.search);
+    window.__driveOAuthResult = callback.has('state') ? {
+      state: callback.get('state'), code: callback.get('code'), error: callback.get('error')
+    } : null;
+    if (callback.has('state') || callback.has('code') || callback.has('error')) {
+      history.replaceState(null, '', location.pathname);
+    }
+  </script>
+  <link rel="stylesheet" href="shared/admin-drive.css">
+</head>
+<body>
+  <main>
+    <a href="/admin-progress.html">← 回教師後台</a>
+    <h1>連接作業收件 Drive</h1>
+    <p>先用網站教師帳號登入，再授權學校雲端硬碟保存作業。</p>
+    <section class="account" aria-label="網站登入">
+      <span id="auth-status">正在確認登入狀態…</span>
+      <button id="login-btn">登入網站</button>
+      <button id="logout-btn" class="hidden">登出網站</button>
+    </section>
+    <section>
+      <h2>學校收件帳號</h2>
+      <p class="email">th990821@mail.thps.ntpc.edu.tw</p>
+      <p>授權時請選擇上方學校帳號。系統只會管理透過本應用程式使用的檔案。</p>
+      <p id="drive-status" role="status" aria-live="polite">請先登入網站教師帳號。</p>
+      <div class="actions">
+        <button id="connect-drive" disabled>連接學校 Drive</button>
+        <button id="refresh-drive" disabled>更新連接狀態</button>
+      </div>
+      <p class="note">這一步只設定收件授權。學生上傳區、作業評比與努力樹整合尚未開放。</p>
+    </section>
+  </main>
+  <script type="module" src="shared/admin-drive.js"></script>
+</body>
+</html>
