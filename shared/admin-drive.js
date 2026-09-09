@@ -85,7 +85,7 @@ async function complete() {
   if (callback.error) throw new Error('你已取消或未完成 Google 授權，可以重新連接。');
   status.textContent = '正在確認學校帳號與背景存取權…';
   await api({ action: 'complete', code: callback.code, state: callback.state, proof: pending.proof });
-  status.textContent = '學校 Drive 已連接成功，背景存取已驗證。作業上傳區尚未開放。';
+  status.textContent = '學校 Drive 已連接成功，背景存取已驗證。可到作業收件後台管理作業。';
 }
 
 initNavbarAuth({ onSessionResolved: (nextSession) => {

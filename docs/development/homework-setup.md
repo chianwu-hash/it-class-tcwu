@@ -28,6 +28,9 @@
 - Deno check 與公開資產引用檢查通過。
 - Supabase SQL Editor 已成功套用 homework.sql；homework Edge Function 已發布，內部使用 Auth /user 和 RPC 身分驗證，legacy JWT gateway 關閉並保存。
 - 尚無真實学生交件紀錄；正式站部署後需用名冊中的學生帳號完成第一筆實際影片上傳驗收。
+- 正式站版本 `6b1a7b1`，Vercel deployment `dpl_8RcHKj4hwhD5nRexkjxgBpLmpGkg` 已 Ready 並指向主網域。老師頁實際以 chianwu@gmail.com 顯示 0 份作業與 100 MB 上限。
+- 線上五個 homework_* 表皆以公開 key、無登入測試，HTTP 401 / SQLSTATE 42501。Edge 無登入回覆 401 login_required，錯誤 Origin 回覆 403 origin_not_allowed。
+- 沒有建立測試作業、修改學生名冊或代替學生送出真實作品。首次真實學生試交仍待進行，不能把模擬影片測試當成完整線上驗收。
 
 ### 維運與範圍
 

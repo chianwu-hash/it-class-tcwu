@@ -68,7 +68,7 @@ create or replace function public.homework_action(p_action text,p_data jsonb def
 language plpgsql security definer set search_path='' as $$
 #variable_conflict use_column
 declare
- uid uuid:=auth.uid(); teacher boolean:=public.is_teacher();
+ uid uuid:=auth.uid(); teacher boolean:=coalesce(public.is_teacher(),false);
  v_email text; cls text; a public.homework_assignments; s public.homework_submissions; result jsonb;
 begin
  if uid is null then raise exception 'login_required'; end if;
