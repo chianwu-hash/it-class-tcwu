@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>作業收件與評比｜教師後台</title><link rel="stylesheet" href="shared/homework.css"></head>
+<body><main><a href="/admin-progress.html">← 教師後台</a><h1>作業收件與評比</h1>
+<div class="toolbar"><span id="auth-status">確認登入中…</span><button id="login-btn">登入網站</button><button id="logout-btn" class="hidden">登出</button><a href="/admin-drive.html">學校 Drive 連接</a><a href="/grade6/115-1/homework.html">學生交作業頁</a></div>
+<p id="homework-status" class="status" role="status" aria-live="polite">請先登入網站教師帳號。</p>
+<section id="teacher-tools" hidden><details class="card"><summary>新增六年級作業</summary>
+<form id="create-homework"><fieldset id="create-fields"><div class="grid"><div><label for="week">週次</label><input id="week" type="number" min="1" max="22" value="1" required></div><div><label for="class-code">班級</label><input id="class-code" value="*" pattern="\*|6[0-9]{2}" required><p class="note">* 代表全部六年級；也可填 601 等班級。</p></div></div>
+<label for="title">作業名稱</label><input id="title" maxlength="100" required><label for="instructions">繳交說明</label><textarea id="instructions" maxlength="3000"></textarea><button type="submit">儲存草稿</button><p class="note">草稿不會出現在學生頁。開放收件時才建立學校 Drive 作業資料夾。</p></fieldset></form></details>
+<div class="toolbar"><button id="refresh-homework">更新作業與收件</button></div><div id="assignment-list"></div>
+<section id="roster-panel" class="card" hidden><h2 id="roster-title"></h2><p class="note">檔案請用 th990821@mail.thps.ntpc.edu.tw 的學校 Drive 開啟。重交會改為待評，保留舊檔。</p><div id="roster-summary" class="summary"></div>
+<label for="status-filter">顯示</label><select id="status-filter"><option value="all">全部學生</option><option value="missing">未繳交</option><option value="submitted">待評</option><option value="needs_revision">需要修改</option><option value="passed">過關</option></select><div id="roster-list"></div></section>
+</section></main><script type="module" src="shared/homework-teacher.js"></script></body></html>

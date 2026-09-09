@@ -23,6 +23,7 @@
         currentWeekClassName: "px-3 py-1.5 text-sm font-bold bg-violet-100 text-violet-800 rounded-lg shadow-sm whitespace-nowrap cursor-default",
         separatorClassName: "text-gray-300 mx-1",
         extraLinks: [
+            { href: "homework.html", iconClass: "fa-solid fa-file-arrow-up", label: "交作業" },
             {
                 href: "/my-tree.html?course=grade6-115-1",
                 iconClass: "fa-solid fa-seedling",
@@ -30,7 +31,7 @@
             }
         ],
         showAuthBarOnWeekPages: true,
-        showAuthBarOnHomePages: false,
+        showAuthBarOnHomePages: currentScript.dataset.homework === "true",
         authBarHtml: `
                     <span class="text-gray-300 mx-1 hidden md:inline">|</span>
                     <div id="nav-auth-bar" class="flex flex-nowrap items-center gap-2 lg:ml-2 shrink-0">

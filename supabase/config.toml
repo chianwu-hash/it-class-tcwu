@@ -1,5 +1,8 @@
 project_id = "it-class-tcwu"
 
+[functions.homework]
+verify_jwt = false
+
 [functions.drive-connect]
 # Every POST is authenticated with Auth /user plus the existing is_teacher RPC.
 # Do not replace this with browser-side role checks.

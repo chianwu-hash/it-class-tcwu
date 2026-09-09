@@ -496,6 +496,7 @@
         } from "./shared/reward-tree-config.js";
         import { createFullCompletionRows, deriveRewardTreeModel } from "./shared/reward-tree-model.js";
         import { renderRewardTree, selectReward } from "./shared/reward-tree-renderer.js";
+        import { homeworkRequest, homeworkTreeData } from "./shared/homework-api.js";
 
         const subtitleEl = document.getElementById("subtitle");
         const courseHomeLinkEl = document.getElementById("course-home-link");
@@ -715,14 +716,23 @@
             updateAuthUi();
 
             const course = getRewardTreeCourse(selectedCourseId);
-            const activities = course.activities || [];
-            if (!activities.length) {
-                renderEmptyCourse(course);
-                return;
-            }
-
             try {
+                const loadingCourse = selectedCourseId;
+                const loadingUser = currentSession?.user?.id;
+                const activities = [...(course.activities || [])];
+                if (!activities.length && loadingCourse !== 'grade6-115-1') { renderEmptyCourse(course); return; }
                 const rows = await loadProgressRows();
+                if (loadingCourse === 'grade6-115-1' && currentSession?.user && !mockMode) {
+                    try {
+                        const data = await homeworkRequest(currentSession, 'list');
+                        const homework = homeworkTreeData(data.assignments.filter(a => a.state !== 'draft'));
+                        activities.push(...homework.activities); rows.push(...homework.rows);
+                    } catch (error) {
+                        showNotice(`作業紀錄暫時無法讀取：${error.message} 其他闖關成果仍會顯示。`, 'info');
+                    }
+                }
+                if (selectedCourseId !== loadingCourse || currentSession?.user?.id !== loadingUser) return;
+                if (!activities.length) { renderEmptyCourse(course); return; }
                 const model = deriveRewardTreeModel(rows, activities);
                 renderModel(model, activities);
             } catch (error) {
