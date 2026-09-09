@@ -200,14 +200,28 @@ const windows = initWindowPractice({
         updateUnlock();
     }
 });
+
+function initializeGuestTasks() {
+    if (authResolvedOnce) return;
+    authResolvedOnce = true;
+    session = null;
+    document.getElementById('repair-input').disabled = false;
+    quizDone = Boolean(tempProgress.quizCompleted);
+    windowsDone = Boolean(tempProgress.windowCompleted);
+    void quiz.handleAuthChange(null);
+    void windows.handleSession(null);
+    updateUnlock();
+}
+
+initializeGuestTasks();
+
 initNavbarAuth({ onSessionResolved: next => {
     if (session?.user && session.user.id !== next?.user?.id) { window.location.reload(); return; }
-    const firstResolution = !authResolvedOnce;
     const changed = session?.user?.id !== next?.user?.id;
     authResolvedOnce = true;
     session = next;
     document.getElementById('repair-input').disabled = false;
-    if (firstResolution || changed) {
+    if (changed) {
         if (!next?.user) {
             quizDone = Boolean(tempProgress.quizCompleted);
             windowsDone = Boolean(tempProgress.windowCompleted);
