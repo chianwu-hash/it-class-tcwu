@@ -12,3 +12,5 @@
 @media(max-width:760px){.mail-grid{grid-template-columns:1fr}.one-link{grid-template-columns:1fr}}
 
 .mailbox.needs-repair{background:#fff7ed;border-color:#fdba74}.mailbox.needs-repair input{border-color:#f59e0b;background:#fffbeb}.mailbox.needs-repair.readonly{background:#ecfdf5;border-color:#22c55e}.mailbox.needs-repair.readonly input{border-color:#14b8a6;background:#f0fdf4}
+
+.extra-hint{margin-top:-6px!important;color:#789189;font-size:14px;font-weight:700;line-height:1.6}
