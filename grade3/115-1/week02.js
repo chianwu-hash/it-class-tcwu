@@ -46,8 +46,6 @@ clearLegacyLocalPracticeProgress();
 function applyProgressPatch(patch = {}) {
     progressState = { ...defaultProgressState, ...progressState, ...patch };
     typingDone = Boolean(progressState.typingCompleted);
-    const repairInput = document.getElementById('repair-input');
-    if (repairInput) repairInput.disabled = false;
     quizDone = Boolean(progressState.quizCompleted);
     windowsDone = Boolean(progressState.windowCompleted);
     updateUnlock();
@@ -208,8 +206,7 @@ function lockTasksUntilClassCard() {
     const typingContainer = document.getElementById('typing-levels-container');
     typingContainer?.setAttribute('inert', '');
     typingContainer?.querySelectorAll('input, button').forEach(control => { control.disabled = true; });
-    const repairInput = document.getElementById('repair-input');
-    if (repairInput) repairInput.disabled = true;
+    // The repair station is a pre-login warmup, not a saved challenge.
     updateUnlock();
 }
 
@@ -221,8 +218,6 @@ function initializeGuestTasks() {
         lockTasksUntilClassCard();
         return;
     }
-    const repairInput = document.getElementById('repair-input');
-    if (repairInput) repairInput.disabled = false;
     quizDone = Boolean(progressState.quizCompleted);
     windowsDone = Boolean(progressState.windowCompleted);
     void quiz.handleAuthChange(null);
