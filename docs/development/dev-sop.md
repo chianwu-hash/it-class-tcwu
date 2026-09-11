@@ -8,6 +8,8 @@
 
 ## 階段 0：給 AI 的提示規範
 
+撰寫或修訂週次教案時，先讀 `docs/development/lesson-plan-sop.md`，確認教材來源、活動定位、評量方式與中英打素材來源已寫清楚。教案定稿後再依本文件與 `lesson-to-web-sop.md` 製作課程網頁。
+
 在把任何新頁面任務交給 Codex 或 Claude 之前，prompt 必須包含以下三件事：
 
 1. **指定參考頁面**：「請參考 `grade3/week10.html` 的結構，不可只仿版面」

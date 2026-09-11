@@ -1,10 +1,15 @@
+import { initReading } from './reading-ui.js';
+import { makeHomeworkThumbnail } from './homework-thumbnails.js?v=20260910-stored';
 import { initNavbarAuth } from './navbar-auth.js';
 import { isTeacher } from './auth.js';
-import { homeworkRequest, homeworkStatus } from './homework-api.js';
+import { homeworkRequest, homeworkStatus } from './homework-api.js?v=20260910-stored';
+import { createHomeworkReview } from './homework-review-ui.js?v=20260910-stored';
 const status = document.getElementById('homework-status');
 const list = document.getElementById('homework-list');
 const refresh = document.getElementById('refresh-homework');
+const reading=initReading({root:document.getElementById('reading-body')});
 let session = null, busy = false, generation = 0, maxSize = 104857600, pendingStorageKey = null;
+const reviewUI=createHomeworkReview({request:async(action,data,edge,review)=>{const g=generation;const r=await homeworkRequest(session,action,data,edge,review);if(g!==generation)throw new Error('登入帳號已變更');return r;},isTeacher:()=>false});
 function el(tag, text, cls) { const n = document.createElement(tag); if (text) n.textContent = text; if (cls) n.className = cls; return n; }
 function lock() { refresh.disabled = busy || !session?.user; list.querySelectorAll('fieldset').forEach(n => { n.disabled = busy || !session?.user; }); }
 async function run(task) {
@@ -28,20 +33,22 @@ async function load(g) {
   status.textContent = data.assignments.length ? `每份作業一個檔案，最多 ${Math.floor(maxSize/1048576)} MB。可交 Canva 影片、圖片、文件或 Scratch。` : '目前還沒有老師開放的作業。';
   if (data.teacher) status.textContent = '你目前是老師帳號；請至收件後台管理作業。學生使用名冊中的學校帳號交件。';
   for (const a of data.assignments) {
-    const card = el('section', '', 'card'); card.append(el('h2', `第 ${Number(a.week_code)} 週・${a.title}`));
+    const card = el('section', '', 'card assignment-file'); card.append(el('h2', `第 ${Number(a.week_code)} 週・${a.title}`));
     card.append(el('p', a.instructions, 'feedback'));
     const s = a.submission;
     card.append(el('span', homeworkStatus[s?.status || 'missing'], `badge ${s?.status || ''}`));
     if (s) card.append(el('p', `${s.file_name} · ${new Date(s.submitted_at).toLocaleString('zh-TW')}`, 'file-name'));
     if (s?.feedback) card.append(el('p', `老師回饋：${s.feedback}`, 'feedback'));
+    if(s){const history=el('button','查看作品、批註與繳交歷史','secondary');history.type='button';history.onclick=()=>reviewUI.openHistory(a,null,'我的作品');card.append(history);}
     if (a.state !== 'open' || data.teacher) { card.append(el('p', a.state === 'closed' ? '老師已關閉收件。' : '請使用學生帳號繳交。', 'note')); list.append(card); continue; }
+    const details=el('details','','submission-details');details.append(el('summary',s?'修改作品／重新繳交':'開啟上傳區'));
     const form = el('form'), field = el('fieldset'), input = el('input'); input.type = 'file'; input.required = true;
     input.accept = '.mp4,.webm,.mov,.pdf,.png,.jpg,.jpeg,.webp,.gif,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.odt,.odp,.ods,.sb3,.txt,.zip';
     input.id = `file-${a.id}`; const label = el('label', s ? '選擇新的作品版本' : '選擇作品檔案'); label.htmlFor = input.id;
     const button = el('button', s ? '重交／接續重試' : '上傳／接續重試'); button.type = 'submit';
     const progress = el('progress'); progress.max = 100; progress.value = 0; progress.setAttribute('aria-label','上傳進度');
     const note = el('p', '中斷時保留此頁，按同一按鈕接續。重整後可在 24 小時內重新選相同檔案。', 'note');
-    field.append(label,input,el('p',s ? '重交會保留舊檔，最新版本將重新等待老師評比。' : '', 'note'),button); form.append(field,progress,note); card.append(form); list.append(card);
+    field.append(label,input,el('p',s ? '重交會保留舊檔，最新版本將重新等待老師評比。' : '', 'note'),button); form.append(field,progress,note); details.append(form);card.append(details); list.append(card);
     form.addEventListener('submit', e => { e.preventDefault(); run(async current => {
       const file = input.files[0]; if (!file) return;
       if (!file.size || file.size > maxSize) throw new Error(`請選擇非空白且不超過 ${Math.floor(maxSize/1048576)} MB 的檔案。`);
@@ -66,17 +73,26 @@ async function load(g) {
         const next = await call('chunk', form, true, current);
         stalls = next.offset <= result.offset ? stalls+1 : 0; result = next;
       }
-      sessionStorage.removeItem(key); progress.value = 100; await load(current);
-      status.textContent = '已繳交，雲端檔案已確認完整！等待老師評比。';
+      sessionStorage.removeItem(key); progress.value = 100;
+      let thumbnailFailed=false;
+      if(/\.(png|jpe?g|webp|gif)$/i.test(file.name)) {
+        status.textContent='作業已繳交，正在準備預覽縮圖…';
+        try {const thumbnail=await makeHomeworkThumbnail(file);await call('thumbnail_save',{assignment_id:a.id,upload_id:pending.id,file:thumbnail},false,current)}
+        catch {thumbnailFailed=true}
+      }
+      await load(current);
+      status.textContent = '已繳交，雲端檔案已確認完整！等待老師評比。'+(thumbnailFailed?' 縮圖稍後補建，不必重交。':'');
     }); });
   }
   lock();
 }
-refresh.addEventListener('click', () => run(load));
+refresh.addEventListener('click', () => {run(load);reading.refresh();});
 initNavbarAuth({ onSessionResolved(next) {
   const changed = session?.user?.id !== next?.user?.id; session = next;
+  if(changed)reviewUI.reset();
   document.getElementById('teacher-homework').classList.toggle('hidden',!isTeacher(session));
   if (changed) { generation++; list.replaceChildren(); }
+  if (changed || !session?.user) reading.setSession(isTeacher(session)?null:session);
   lock();
   if (!session?.user) { status.textContent = '請先登入學校 Google 帳號。'; return; }
   if (changed) setTimeout(() => run(load),0);

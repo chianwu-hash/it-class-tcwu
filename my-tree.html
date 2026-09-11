@@ -494,8 +494,9 @@
             getRewardTreeCourse,
             getRewardTreeCourses
         } from "./shared/reward-tree-config.js";
-        import { createFullCompletionRows, deriveRewardTreeModel } from "./shared/reward-tree-model.js";
+        import { createFullCompletionRows, deriveRewardTreeModel } from "./shared/reward-tree-model.js?v=20260911-two-leaves";
         import { renderRewardTree, selectReward } from "./shared/reward-tree-renderer.js";
+        import { readingRequest, readingTreeData } from './shared/reading-api.js';
         import { homeworkRequest, homeworkTreeData } from "./shared/homework-api.js";
 
         const subtitleEl = document.getElementById("subtitle");
@@ -730,6 +731,7 @@
                     } catch (error) {
                         showNotice(`作業紀錄暫時無法讀取：${error.message} 其他闖關成果仍會顯示。`, 'info');
                     }
+                    try { const reading=readingTreeData((await readingRequest(currentSession,'list')).periods); activities.push(...reading.activities); rows.push(...reading.rows); } catch(error) { showNotice(`閱讀紀錄暫時無法讀取：${error.message}`, 'info'); }
                 }
                 if (selectedCourseId !== loadingCourse || currentSession?.user?.id !== loadingUser) return;
                 if (!activities.length) { renderEmptyCourse(course); return; }

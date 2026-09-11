@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第 02 週｜電子閱讀與班級名牌</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; background: #f8fafc; }
+        .card-hover { transition: transform .25s ease, box-shadow .25s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(79, 70, 229, .14); }
+        .step-line::before {
+            content: "";
+            position: absolute;
+            left: 1.35rem;
+            top: 3.25rem;
+            bottom: -1rem;
+            width: 4px;
+            border-radius: 999px;
+            background: #ddd6fe;
+        }
+        .step-line:last-child::before { display: none; }
+        details > summary { cursor: pointer; list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        details > summary::after { content: '＋ 展開'; font-size: .875rem; font-weight: 700; margin-left: auto; }
+        details[open] > summary::after { content: '－ 收合'; }
+        summary:focus-visible, a:focus-visible { outline: 3px solid #7c3aed; outline-offset: 4px; }
+        .lesson-steps { list-style: decimal; padding-left: 1.4rem; line-height: 1.9; }
+        .lesson-steps li + li { margin-top: .4rem; }
+        main { overflow-wrap: anywhere; }
+        @media (max-width: 640px) {
+            #typing-tools-root [data-typing-tool-toggle] {
+                width: 48px;
+                height: 48px;
+                padding: 0;
+                border-radius: 999px;
+                font-size: 0;
+            }
+            #typing-tools-root [data-typing-tool-toggle] i {
+                margin: 0;
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pb-12">
+    <script src="navbar.js?v=20260910"></script>
+
+    <header class="bg-gradient-to-r from-violet-600 via-fuchsia-600 to-rose-500 text-white shadow-xl mb-8">
+        <div class="max-w-6xl mx-auto px-6 py-10">
+            <div class="grid lg:grid-cols-[1.05fr_0.95fr] gap-8 items-center">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-white/20 text-white font-black px-4 py-2 rounded-full text-sm mb-4 shadow-sm">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        六年級資訊課｜第 02 週
+                    </div>
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tight mb-4 drop-shadow-md">電子閱讀與班級名牌</h1>
+                    <p class="text-xl md:text-2xl text-fuchsia-50 font-bold leading-relaxed drop-shadow">
+                        先認識親師生平台與本校數位圖書館，再依課本步驟完成 Canva「我們的班級名牌」並上傳作業。
+                    </p>
+                </div>
+                <div class="bg-white/15 border-4 border-white/40 rounded-3xl p-6 shadow-2xl backdrop-blur-sm">
+                    <h2 class="text-2xl font-black mb-4 flex items-center">
+                        <i class="fa-solid fa-route mr-3"></i>
+                        今天的完成順序
+                    </h2>
+                    <ol class="space-y-3 text-lg font-black leading-relaxed">
+                        <li class="flex gap-3"><span class="bg-white text-violet-700 rounded-full w-8 h-8 flex items-center justify-center shrink-0">1</span><span>認識親師生平台與本校數位圖書館。</span></li>
+                        <li class="flex gap-3"><span class="bg-white text-violet-700 rounded-full w-8 h-8 flex items-center justify-center shrink-0">2</span><span>照課本 p.22～28 做完班級名牌。</span></li>
+                        <li class="flex gap-3"><span class="bg-white text-violet-700 rounded-full w-8 h-8 flex items-center justify-center shrink-0">3</span><span>下載 PNG，到課程網站交作業。</span></li>
+                        <li class="flex gap-3"><span class="bg-white text-violet-700 rounded-full w-8 h-8 flex items-center justify-center shrink-0">4</span><span>完成者挑戰本週中英打 5 關。</span></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 space-y-8">
+        <section class="grid md:grid-cols-3 gap-4">
+            <a href="https://pts.ntpc.edu.tw/" target="_blank" rel="noopener noreferrer" class="bg-white border-4 border-sky-200 rounded-2xl p-5 shadow-sm card-hover block">
+                <div class="text-sky-500 text-3xl mb-3"><i class="fa-solid fa-book-open-reader"></i></div>
+                <h2 class="text-xl font-black text-sky-900 mb-2">閱讀資源入口</h2>
+                <p class="font-bold text-slate-700 leading-relaxed">使用學校帳號進入新北市親師生平台，依老師示範找到閱讀專區或指定閱讀服務。</p>
+            </a>
+            <a href="https://www.canva.com/" target="_blank" rel="noopener noreferrer" class="bg-white border-4 border-violet-200 rounded-2xl p-5 shadow-sm card-hover block">
+                <div class="text-violet-500 text-3xl mb-3"><i class="fa-solid fa-palette"></i></div>
+                <h2 class="text-xl font-black text-violet-900 mb-2">Canva 主線任務</h2>
+                <p class="font-bold text-slate-700 leading-relaxed">依課本 p.22～28 加入圖像、放大邊框、修改文字模板，做出「我們的班級名牌」。</p>
+            </a>
+            <a href="homework.html" class="bg-white border-4 border-emerald-200 rounded-2xl p-5 shadow-sm card-hover block">
+                <div class="text-emerald-500 text-3xl mb-3"><i class="fa-solid fa-file-arrow-up"></i></div>
+                <h2 class="text-xl font-black text-emerald-900 mb-2">交作業</h2>
+                <p class="font-bold text-slate-700 leading-relaxed">作品下載成 PNG 後，回到課程網站上傳。繳交後會長葉，老師評為過關後再長一片葉子。</p>
+            </a>
+        </section>
+
+        <details open id="reading-section" class="bg-white border-4 border-sky-200 rounded-2xl shadow-md overflow-hidden">
+            <summary class="bg-sky-100 px-6 py-4 flex items-center gap-4 flex-wrap"><h2 class="text-2xl font-black text-sky-950">1．一起認識電子閱讀</h2></summary>
+            <div class="px-6 pt-6 grid md:grid-cols-2 gap-4">
+                <a href="https://pts.ntpc.edu.tw/" target="_blank" rel="noopener noreferrer" class="block rounded-2xl border-2 border-sky-200 bg-sky-50 p-5 card-hover"><h3 class="text-xl font-black text-sky-900">新北市親師生平台 ↗</h3><p class="mt-2 font-bold text-slate-700">登入平台，跟著老師找到閱讀專區與指定閱讀資源。</p></a>
+                <a href="https://thpsntpc.ebook.hyread.com.tw/" target="_blank" rel="noopener noreferrer" class="block rounded-2xl border-2 border-teal-200 bg-teal-50 p-5 card-hover"><h3 class="text-xl font-black text-teal-900">頂溪國小數位圖書館 ↗</h3><p class="mt-2 font-bold text-slate-700">從學校首頁上方「數位圖書館」也能進入。跟著老師認識找書與開啟書籍的方式。</p></a>
+            </div>
+            <div class="p-6">
+                <ol class="lesson-steps font-bold text-slate-700">
+                    <li>點上方「閱讀資源入口」，使用學校帳號登入新北市親師生平台。</li>
+                    <li>跟著老師示範，找到「閱讀專區」，開啟老師今天介紹的電子閱讀資源。</li>
+                    <li>再從學校首頁上方「數位圖書館」進入本校書庫；需要登入時，依老師示範操作。</li>
+                    <li>從老師指定的閱讀資源挑選一本有興趣的書，試著開啟閱讀或試閱、翻頁，再回到書籍列表。</li>
+                </ol>
+            </div>
+        </details>
+
+        <details open id="canva-section" class="bg-white border-4 border-violet-200 rounded-2xl shadow-md overflow-hidden">
+            <summary class="bg-violet-100 px-6 py-4 border-b-4 border-violet-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-list-check text-violet-700 text-2xl mr-3"></i>
+                    <h2 class="text-2xl font-black text-violet-950">2．照課本 p.22～28 完成 Canva 名牌</h2>
+                </div>
+                <span class="bg-violet-700 text-white text-xs px-3 py-1 rounded-full font-black">操作步驟要相同</span>
+            </summary>
+            <p class="px-6 pt-6 font-bold text-slate-600">課本參考：S092《Canva 魔法工作室》第 1 課，p.22～28。先開啟上次的名牌設計；尚未建立畫布的同學，先依課本 p.20～21 完成準備。</p>
+            <div class="p-6 grid lg:grid-cols-[1.05fr_0.95fr] gap-8">
+                <div class="space-y-6">
+                    <div class="relative step-line pl-16">
+                        <div class="absolute left-0 top-0 w-12 h-12 rounded-full bg-violet-600 text-white flex items-center justify-center font-black shadow-md">A</div>
+                        <h3 class="text-xl font-black text-violet-900 mb-2">p.22：邊框底圖</h3>
+                        <p class="font-bold text-slate-700 leading-relaxed">在元素搜尋結果先點「圖像」類，往下滑找可愛邊框；找不到同款時搜尋 <span class="bg-violet-50 text-violet-800 px-2 py-0.5 rounded font-black">border text cute</span>。加入後拖曳四角圓形控點，把邊框放大到接近名牌邊緣。</p>
+                    </div>
+                    <div class="relative step-line pl-16">
+                        <div class="absolute left-0 top-0 w-12 h-12 rounded-full bg-fuchsia-600 text-white flex items-center justify-center font-black shadow-md">B</div>
+                        <h3 class="text-xl font-black text-fuchsia-900 mb-2">p.23：兔子與蘿蔔圖像</h3>
+                        <p class="font-bold text-slate-700 leading-relaxed">搜尋 <span class="bg-fuchsia-50 text-fuchsia-800 px-2 py-0.5 rounded font-black">兔子 蘿蔔</span>，確認仍在「圖像」類中找素材。若沒有課本同款，可換成同類型的抱蘿蔔白兔，縮放後放在右下角附近。</p>
+                    </div>
+                    <div class="relative step-line pl-16">
+                        <div class="absolute left-0 top-0 w-12 h-12 rounded-full bg-rose-600 text-white flex items-center justify-center font-black shadow-md">C</div>
+                        <h3 class="text-xl font-black text-rose-900 mb-2">p.23～25：文字模板</h3>
+                        <ol class="lesson-steps font-bold text-slate-700"><li>點左側「文字」，往下滑找 <strong>Glow up</strong> 文字模板並加入畫布。</li><li>先用四角控點調整大小，移到名牌上方中央。</li><li>連按兩下文字，再拖曳選取 <strong>Glow</strong>，改成 <strong>Our</strong>。</li><li>同樣把 <strong>up</strong> 改成 <strong>Class</strong>，最後點空白處取消選取。</li></ol>
+                        <p class="mt-3 text-sm text-rose-800 bg-rose-50 p-3 rounded-xl">找不到模板時，依課本搜尋：Glow up Text Effect in Light Blue Pink Cute Style。</p>
+                    </div>
+                    <div class="relative step-line pl-16">
+                        <div class="absolute left-0 top-0 w-12 h-12 rounded-full bg-amber-500 text-white flex items-center justify-center font-black shadow-md">D</div>
+                        <h3 class="text-xl font-black text-amber-900 mb-2">p.25～27：班級文字與美化</h3>
+                        <ol class="lesson-steps font-bold text-slate-700"><li>新增文字方塊，輸入自己的班級，例如「六年三班」。</li><li>拖曳四角圓形控點，放大文字並調整位置。</li><li>點字型欄位，依課本選「可画方糖体-繁」（搜尋名稱沿用介面字形）。</li><li>點「文字顏色」的 A 圖示，選黃色或自己喜歡的顏色，確認文字清楚可讀。</li></ol>
+                    </div>
+                    <div class="relative pl-16">
+                        <div class="absolute left-0 top-0 w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black shadow-md">E</div>
+                        <h3 class="text-xl font-black text-emerald-900 mb-2">p.27～28：命名、下載、繳交</h3>
+                        <ol class="lesson-steps font-bold text-slate-700"><li>設計名稱改成 <strong>01-我們的班級名牌</strong>。</li><li>按右上角「分享」→「下載」，確認檔案類型為 <strong>PNG</strong>，再按「下載」。</li><li>下載完成後，從瀏覽器的下載訊息開啟所在資料夾；預設位置是電腦的「下載」資料夾。</li><li>找到 <strong>01-我們的班級名牌.png</strong>，接著依下方指引交作業。</li></ol>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-amber-50 border-4 border-amber-200 rounded-2xl p-5">
+                        <h3 class="text-xl font-black text-amber-900 mb-3 flex items-center"><i class="fa-solid fa-triangle-exclamation mr-2"></i> 最容易漏掉的地方</h3>
+                        <ul class="space-y-2 font-bold text-slate-700 leading-relaxed">
+                            <li><i class="fa-solid fa-check text-amber-600 mr-2"></i> 搜尋元素後要先點「圖像」類。</li>
+                            <li><i class="fa-solid fa-check text-amber-600 mr-2"></i> 找不到素材時要往下滑，不只看第一排。</li>
+                            <li><i class="fa-solid fa-check text-amber-600 mr-2"></i> 放大邊框要拖四個角的圓形控點。</li>
+                            <li><i class="fa-solid fa-check text-amber-600 mr-2"></i> 兔子找不到同款可以替換，但操作步驟要一樣。</li>
+                        </ul>
+                    </div>
+                    <div class="bg-emerald-50 border-4 border-emerald-200 rounded-2xl p-5">
+                        <h3 class="text-xl font-black text-emerald-900 mb-3 flex items-center"><i class="fa-solid fa-clipboard-check mr-2"></i> 作業完成標準</h3>
+                        <ul class="space-y-2 font-bold text-slate-700 leading-relaxed">
+                            <li>作品有邊框、抱蘿蔔的兔子、Our Class、自己的班級文字。</li>
+                            <li>邊框放大後像名牌主體，不是小貼紙。</li>
+                            <li>文字清楚可讀，沒有被圖案遮住。</li>
+                            <li>已下載 PNG，並在交作業頁完成上傳。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <details open id="submission-section" class="bg-white border-4 border-emerald-200 rounded-2xl shadow-md overflow-hidden">
+            <summary class="bg-emerald-100 px-6 py-4 flex items-center gap-4 flex-wrap"><h2 class="text-2xl font-black text-emerald-950">3．交作業，再看老師的回饋</h2></summary>
+            <div class="p-6 grid md:grid-cols-2 gap-6">
+                <ol class="lesson-steps font-bold text-slate-700"><li>進入「交作業」，確認登入的是自己的學校帳號。</li><li>找到「第 2 週・我們的班級名牌」，選取剛下載的 PNG，送出上傳。</li><li>等待上傳完成，確認畫面出現「已繳交・待評」及自己的檔案，再離開頁面。</li></ol>
+                <div class="bg-emerald-50 rounded-2xl p-5 space-y-3"><p><strong>已繳交：</strong>努力樹長出葉子，等待老師評比。</p><p><strong>過關：</strong>努力樹再長一片葉子，繼續下一個挑戰。</p><p><strong>再努力：</strong>點作品看老師的批註與文字回饋，回 Canva 修改、重新下載，再繳交新版本。可從「繳交歷史」查看前後作品。</p></div>
+            </div>
+            <div class="px-6 pb-6"><a href="homework.html" class="inline-flex bg-emerald-700 text-white rounded-xl px-6 py-3 font-bold">開啟交作業頁 →</a></div>
+        </details>
+
+        <details open id="typing-section" class="bg-white border-4 border-indigo-200 rounded-2xl shadow-md overflow-hidden">
+            <summary class="bg-indigo-100 px-6 py-4 border-b-4 border-indigo-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-keyboard text-indigo-700 text-2xl mr-3"></i>
+                    <h2 class="text-2xl font-black text-indigo-950">4．第 02 週中英打闖關</h2>
+                </div>
+                <span class="bg-indigo-700 text-white text-xs px-3 py-1 rounded-full font-black">完成主線後挑戰</span>
+            </summary>
+            <div class="p-6 space-y-6">
+                <div class="bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-5 font-bold text-slate-700 leading-relaxed space-y-2">
+                    <p><i class="fa-solid fa-book text-indigo-500 mr-2"></i> 文本來源：國語六上康軒第 2 課〈朱子治家格言選〉、英語六上康軒 Wonder World 7 Unit 1 Reading 後段。</p>
+                    <p><i class="fa-solid fa-circle-info text-indigo-500 mr-2"></i> 延續上週課文閱讀，練習較長段落、換行及中英切換。這是完成 Canva 名牌並繳交後的快手任務；依自己的速度挑戰，不排名、不計時。</p>
+                    <p><i class="fa-solid fa-lock text-indigo-500 mr-2"></i> 請先登入 Google，才能開始打字闖關並記錄進度。</p>
+                    <p><i class="fa-solid fa-hand text-indigo-500 mr-2"></i> 不能複製貼上。英文大小寫、標點、空格和換行都要一樣。</p>
+                    <p id="progress-status"><i class="fa-solid fa-flag-checkered text-indigo-500 mr-2"></i> 目前進度：第 1 關開始。</p>
+                    <pre id="progress-debug" class="hidden mt-3 overflow-auto rounded-xl bg-slate-900 p-4 text-left text-xs text-slate-100"></pre>
+                </div>
+
+                <noscript>請啟用 JavaScript 並重新整理，才能登入及記錄闖關進度。</noscript>
+                <div id="typing-levels-container" class="flex flex-col space-y-8 max-w-3xl mx-auto">
+                    <div id="block-level1" class="bg-cyan-50 border-4 border-cyan-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-cyan-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 1 關</div>
+                        <h4 class="text-xl font-black text-cyan-800 mb-2 flex items-center"><i class="fa-solid fa-futbol text-cyan-500 mr-2"></i> Joe 的自我介紹</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">三行英文都要打，縮寫符號、句點和大小寫要一樣。</p>
+                        <pre class="text-lg sm:text-2xl font-black text-center text-cyan-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-cyan-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">I'm Joe.
+I'm from the UK.
+I play football after school.</pre>
+                        <textarea disabled id="input-level1" rows="4" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-cyan-300 focus:outline-none focus:ring-4 focus:ring-cyan-400 font-bold text-gray-800 text-lg sm:text-2xl text-center mb-4 transition-colors placeholder:text-base sm:placeholder:text-lg placeholder-gray-400" placeholder="三行都要打完整"></textarea>
+                        <button disabled onclick="checkLevel(1)" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level1" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level2" class="bg-emerald-50 border-4 border-emerald-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-emerald-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 2 關</div>
+                        <h4 class="text-xl font-black text-emerald-800 mb-2 flex items-center"><i class="fa-solid fa-bus text-emerald-500 mr-2"></i> May 的上學方式</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">四行英文，注意 Saturdays 最後有 s。</p>
+                        <pre class="text-lg sm:text-2xl font-black text-center text-emerald-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-emerald-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">My name is May.
+I'm from the USA.
+I go to school by bus.
+I play baseball on Saturdays.</pre>
+                        <textarea disabled id="input-level2" rows="5" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-emerald-300 focus:outline-none focus:ring-4 focus:ring-emerald-400 font-bold text-gray-800 text-lg sm:text-2xl text-center mb-4 transition-colors placeholder:text-base sm:placeholder:text-lg placeholder-gray-400" placeholder="四行都要打完整"></textarea>
+                        <button disabled onclick="checkLevel(2)" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level2" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level3" class="bg-blue-50 border-4 border-blue-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-blue-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 3 關</div>
+                        <h4 class="text-xl font-black text-blue-800 mb-2 flex items-center"><i class="fa-solid fa-bowl-rice text-blue-500 mr-2"></i> 朱子治家格言選</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">兩行中文，逗號、句號和換行都要對。</p>
+                        <pre class="text-lg sm:text-2xl font-black text-center text-blue-700 tracking-wider mb-4 bg-white py-3 px-3 rounded-xl border-2 border-blue-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">一粥一飯，當思來處不易。
+半絲半縷，恆念物力維艱。</pre>
+                        <textarea disabled id="input-level3" rows="4" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-400 font-bold text-gray-800 text-lg sm:text-2xl text-center mb-4 transition-colors placeholder:text-base sm:placeholder:text-lg placeholder-gray-400" placeholder="兩行都要打完整"></textarea>
+                        <button disabled onclick="checkLevel(3)" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level3" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level4" class="bg-orange-50 border-4 border-orange-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-orange-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 4 關</div>
+                        <h4 class="text-xl font-black text-orange-800 mb-2 flex items-center"><i class="fa-solid fa-cloud-rain text-orange-500 mr-2"></i> 未雨綢繆</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">四行中文古文，注意「毋」和中文標點。</p>
+                        <pre class="text-lg sm:text-2xl font-black text-center text-orange-700 tracking-wider mb-4 bg-white py-3 px-3 rounded-xl border-2 border-orange-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">宜未雨而綢繆，
+毋臨渴而掘井。
+施惠勿念，
+受恩莫忘。</pre>
+                        <textarea disabled id="input-level4" rows="6" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-orange-300 focus:outline-none focus:ring-4 focus:ring-orange-400 font-bold text-gray-800 text-lg sm:text-2xl text-center mb-4 transition-colors placeholder:text-base sm:placeholder:text-lg placeholder-gray-400" placeholder="四行都要打完整"></textarea>
+                        <button disabled onclick="checkLevel(4)" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level4" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+
+                    <div id="block-level5" class="bg-purple-50 border-4 border-purple-200 rounded-2xl p-6 shadow-sm relative transition transform hover:-translate-y-1">
+                        <div class="absolute -top-4 -left-4 bg-purple-500 text-white px-4 py-1 rounded-full font-black shadow-md transform -rotate-6">第 5 關</div>
+                        <h4 class="text-xl font-black text-purple-800 mb-2 flex items-center"><i class="fa-solid fa-crown text-purple-500 mr-2"></i> 中英混打魔王關</h4>
+                        <p class="text-gray-600 font-bold text-sm mb-3">英文三行加中文兩行，切換輸入法時也要慢慢檢查。</p>
+                        <pre class="text-lg sm:text-2xl font-black text-center text-purple-700 tracking-wide mb-4 bg-white py-3 px-3 rounded-xl border-2 border-purple-200 shadow-inner select-none pointer-events-none whitespace-pre-wrap">I'm Mia.
+I'm from Australia.
+I love koalas.
+凡事當留餘地，
+得意不宜再往。</pre>
+                        <textarea disabled id="input-level5" rows="7" onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" class="w-full p-3 rounded-xl border-2 border-purple-300 focus:outline-none focus:ring-4 focus:ring-purple-400 font-bold text-gray-800 text-lg sm:text-2xl text-center mb-4 transition-colors placeholder:text-base sm:placeholder:text-lg placeholder-gray-400" placeholder="最後一關，五行都要打"></textarea>
+                        <button disabled onclick="checkLevel(5)" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-black text-lg py-3 rounded-xl shadow-md transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 檢查答案
+                        </button>
+                        <p id="msg-level5" class="text-center font-bold mt-4 min-h-12 text-base leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </details>
+    </main>
+
+    <footer class="text-center mt-16 pb-8 text-gray-500 text-sm font-bold">
+        <p><i class="fa-solid fa-graduation-cap mr-1"></i> 新北市頂溪國小資訊課 - 六年級第 02 週</p>
+    </footer>
+
+    <script type="module">
+        import { initNavbarAuth } from "../../shared/navbar-auth.js";
+        import { initTypingChallenge } from "../../shared/typing-challenge.js";
+        import { initTypingTools } from "../../shared/typing-tools.js";
+
+        const WEEK_CODE = "02";
+
+        initNavbarAuth();
+        initTypingTools();
+        const typingToolsRoot = document.getElementById("typing-tools-root");
+        const typingSection = document.getElementById("typing-section");
+
+        if (typingToolsRoot && typingSection && "IntersectionObserver" in window) {
+            typingToolsRoot.classList.add("hidden");
+            const typingToolsObserver = new IntersectionObserver((entries) => {
+                typingToolsRoot.classList.toggle("hidden", !entries.some((entry) => entry.isIntersecting));
+            }, { rootMargin: "120px 0px 120px 0px" });
+            typingToolsObserver.observe(typingSection);
+        }
+
+        const levelsData = [
+            { id: 1, ans: "I'm Joe.\nI'm from the UK.\nI play football after school." },
+            { id: 2, ans: "My name is May.\nI'm from the USA.\nI go to school by bus.\nI play baseball on Saturdays." },
+            { id: 3, ans: "一粥一飯，當思來處不易。\n半絲半縷，恆念物力維艱。" },
+            { id: 4, ans: "宜未雨而綢繆，\n毋臨渴而掘井。\n施惠勿念，\n受恩莫忘。" },
+            { id: 5, ans: "I'm Mia.\nI'm from Australia.\nI love koalas.\n凡事當留餘地，\n得意不宜再往。" }
+        ];
+
+        const levelMsg = {
+            1: "你把英文三行逐行打準，這是在練習看清楚大小寫、縮寫和句點。",
+            2: "你能把較長的英文段落分行完成，表示你願意慢下來檢查細節。",
+            3: "你把國語課文中的中文標點一起完成，這是在練習精準比對。",
+            4: "這一關有古文詞語與換行，你用耐心確認每一行，方法很穩。",
+            5: "你完成了中英切換與長句檢查，靠的是修正、比對和持續嘗試。"
+        };
+
+        function buildHint(userVal, targetVal, levelIndex) {
+            const userLines = userVal.split("\n");
+            const targetLines = targetVal.split("\n");
+            const maxLines = Math.max(userLines.length, targetLines.length);
+
+            for (let lineIndex = 0; lineIndex < maxLines; lineIndex += 1) {
+                const userLine = userLines[lineIndex] || "";
+                const targetLine = targetLines[lineIndex] || "";
+
+                if (userLine === targetLine) continue;
+                if (!userLine && targetLine) {
+                    return `提示：第 ${lineIndex + 1} 行還沒完成，看看是不是少了整行內容。`;
+                }
+                if (userLine && !targetLine) {
+                    return `提示：第 ${lineIndex + 1} 行多打了內容，檢查一下句尾。`;
+                }
+
+                const maxChars = Math.max(userLine.length, targetLine.length);
+                for (let charIndex = 0; charIndex < maxChars; charIndex += 1) {
+                    const userChar = userLine[charIndex];
+                    const targetChar = targetLine[charIndex];
+
+                    if (userChar === targetChar) continue;
+                    if (!userChar) {
+                        return `提示：第 ${lineIndex + 1} 行後面可能少字，從「${targetLine.slice(Math.max(0, charIndex - 2), charIndex + 3)}」附近再看一次。`;
+                    }
+                    if (!targetChar) {
+                        return `提示：第 ${lineIndex + 1} 行後面可能多打了，檢查一下句尾。`;
+                    }
+                    return `提示：第 ${lineIndex + 1} 行第 ${charIndex + 1} 個字附近不一樣，從「${targetLine.slice(Math.max(0, charIndex - 2), charIndex + 3)}」附近再看一次。`;
+                }
+            }
+
+            return levelIndex <= 2 || levelIndex === 5
+                ? "提示：再檢查一下大小寫、問號、句點、逗號、縮寫符號或換行。"
+                : "提示：再檢查一下是不是多字、少字、中文標點或換行不同。";
+        }
+
+        initTypingChallenge({
+            weekCode: WEEK_CODE,
+            courseId: "grade6-115-1",
+            activityKey: "typing_task_5",
+            draftOptions: { enabled: true },
+            levelsData,
+            levelEncouragements: levelMsg,
+            buildHint,
+            getWrongAnswerHtml: ({ hint }) => `還差一點點。${hint}`,
+            progressMessages: {
+                completed: "5 關全部完成，今天的中英打快手任務已經完成。",
+                resumed: (level) => `已接回 Week 02 打字進度，從第 ${level} 關繼續。`,
+                firstLogin: "已登入成功，這次的打字進度會自動記錄下來。",
+                unauthenticated: "請先登入 Google，才能開始打字闖關並記錄進度。",
+                saveCompleted: "已記下 5 關完整進度，今天的打字任務完成。",
+                saveNextLevel: (level) => `已記下進度，下次從第 ${level} 關繼續。`,
+                saveError: "進度暫時沒有記錄成功，請稍後再試一次。",
+                resetNoSession: "目前沒有登入，不能重新開始練習。",
+                resetConfirm: "要重新開始 Week 02 打字練習嗎？這會把目前進度重設回第 1 關。"
+            },
+            celebrationContent: {
+                title: "第 02 週魔王關完成",
+                message: "你用逐行檢查、修正錯字和中英切換完成了今天的快手任務。努力樹記錄的是自己的累積，不是和別人比快。",
+                buttonText: "去看我的努力樹",
+                buttonHref: "/my-tree.html?course=grade6-115-1"
+            }
+        });
+    </script>
+</body>
+</html>

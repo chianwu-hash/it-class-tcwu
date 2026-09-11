@@ -56,8 +56,9 @@ export function createHandler({ env, fetcher = fetch }) {
     const headers = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', Vary: 'Origin' };
     const respond = (data, status = 200) => new Response(JSON.stringify(data), { headers, status });
     try {
-      const origin = new URL(required('DRIVE_REDIRECT_URI')).origin;
-      if (req.headers.get('Origin') !== origin) fail('origin_not_allowed', 403);
+      const origins = new Set([new URL(required('DRIVE_REDIRECT_URI')).origin, 'http://127.0.0.1:8126']);
+      const origin = req.headers.get('Origin');
+      if (!origins.has(origin)) fail('origin_not_allowed', 403);
       headers['Access-Control-Allow-Origin'] = origin;
       if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: { ...headers, 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'authorization,apikey,content-type' } });
       if (req.method !== 'POST') fail('invalid_request', 405);
@@ -83,8 +84,11 @@ export function createHandler({ env, fetcher = fetch }) {
         if (!req.headers.get('Content-Type')?.startsWith('application/json') || raw.size > 8192) fail('invalid_request');
         try { body = JSON.parse(await raw.text()); } catch { fail('invalid_request'); }
       }
-      if (!body || !uuid(body.assignment_id) || !['open','prepare','chunk','resume'].includes(body.action)) fail('invalid_request');
-      const assignment = await rpc(body.action === 'open' ? 'context' : 'upload_context', { assignment_id: body.assignment_id });
+      if (!body || !uuid(body.assignment_id) || !['open','prepare','chunk','resume','preview'].includes(body.action)) fail('invalid_request');
+      if (body.action === 'preview' && !uuid(body.upload_id)) fail('invalid_request');
+      const assignment = body.action === 'preview'
+        ? await json(`${url}/rest/v1/rpc/homework_review`, { method:'POST', headers:userHeaders, body:JSON.stringify({p_action:'media_context',p_data:{assignment_id:body.assignment_id,upload_id:body.upload_id}}) })
+        : await rpc(body.action === 'open' ? 'context' : 'upload_context', { assignment_id: body.assignment_id });
       let access;
       async function token() {
         if (access) return access;
@@ -101,6 +105,38 @@ export function createHandler({ env, fetcher = fetch }) {
       const drive = async (path, options = {}) => request(`https://www.googleapis.com/${path}`, {
         ...options, headers: { Authorization: `Bearer ${await token()}`, ...options.headers },
       });
+      if (body.action === 'preview') {
+        if (body.size !== undefined && body.size !== 'thumbnail') fail('invalid_request');
+        if (body.size === 'thumbnail') {
+          // Resolve the short-lived thumbnail only after media_context authorization.
+          const meta = await drive(`drive/v3/files/${encodeURIComponent(assignment.drive_file_id)}?fields=thumbnailLink`);
+          if (!meta.ok) fail('drive_unavailable', 502);
+          let link = (await meta.json()).thumbnailLink;
+          if (!link) fail('thumbnail_pending', 404);
+          let response;
+          for (let redirects = 0; redirects <= 3; redirects++) {
+            const target = new URL(link);
+            if (target.protocol !== 'https:' || target.username || target.password || target.port ||
+                !(target.hostname === 'googleusercontent.com' || target.hostname.endsWith('.googleusercontent.com'))) fail('preview_unavailable');
+            response = await request(target.href, { headers: { Authorization: `Bearer ${await token()}` } });
+            if (![301,302,303,307,308].includes(response.status)) break;
+            link = new URL(response.headers.get('Location') || '', target).href;
+          }
+          if (!response.ok) fail('thumbnail_pending', 404);
+          const mime = response.headers.get('Content-Type')?.split(';')[0];
+          if (!['image/png','image/jpeg','image/webp','image/gif'].includes(mime)) fail('preview_unavailable');
+          // Bound thumbnail downloads; never fall back to downloading the original.
+          const reader = response.body.getReader(), chunks = []; let bytes = 0;
+          for (;;) { const {done,value} = await reader.read(); if (done) break; bytes += value.length;
+            if (bytes > 2*1024*1024) { await reader.cancel(); fail('preview_unavailable'); } chunks.push(value); }
+          return new Response(new Blob(chunks), {headers:{...headers,'Content-Type':mime,'X-Content-Type-Options':'nosniff'}});
+        }
+        const mime = {png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',webp:'image/webp',gif:'image/gif'}[assignment.file_name?.split('.').pop().toLowerCase()];
+        if (!mime || assignment.file_size > 30*1024*1024) fail('preview_unavailable', 400);
+        const r = await drive(`drive/v3/files/${encodeURIComponent(assignment.drive_file_id)}?alt=media`);
+        if (!r.ok) fail('drive_unavailable',502);
+        return new Response(r.body,{headers:{...headers,'Content-Type':mime,'X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'none'",'Cache-Control':'no-store'}});
+      }
       const newId = async () => {
         const r = await drive('drive/v3/files/generateIds?count=1&space=drive&type=files');
         if (!r.ok) fail('drive_unavailable', 502);

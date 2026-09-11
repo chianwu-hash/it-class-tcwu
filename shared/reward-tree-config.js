@@ -145,6 +145,14 @@ const GRADE6_115_1_ACTIVITIES = [
         totalLevels: 5,
         pageHref: "/grade6/115-1/week01.html",
         label: "第 1 週 快手任務"
+    },
+    {
+        type: "typing",
+        weekCode: "02",
+        activityKey: "typing_task_5",
+        totalLevels: 5,
+        pageHref: "/grade6/115-1/week02.html",
+        label: "第 2 週 中英打闖關"
     }
 ];
 

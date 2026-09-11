@@ -1,6 +1,6 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>作業收件與評比｜教師後台</title><link rel="stylesheet" href="shared/homework.css"></head>
-<body><main><a href="/admin-progress.html">← 教師後台</a><h1>作業收件與評比</h1>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>作業收件與評比｜教師後台</title><link rel="stylesheet" href="shared/homework.css"><link rel="stylesheet" href="shared/homework-gallery.css?v=20260910-retract"><link rel="stylesheet" href="shared/homework-portal.css?v=20260911"></head>
+<body><main><a href="/admin-progress.html">← 教師後台</a><header class="portal-hero"><div><span>六年級任務站 / 教師工作區</span><h1>看見作品，也看見進步。</h1><p>管理老師指派的作品，回應孩子每週的閱讀發現。</p></div><span class="portal-teacher-mark" aria-hidden="true">✓</span></header>
 <div class="toolbar"><span id="auth-status">確認登入中…</span><button id="login-btn">登入網站</button><button id="logout-btn" class="hidden">登出</button><a href="/admin-drive.html">學校 Drive 連接</a><a href="/grade6/115-1/homework.html">學生交作業頁</a></div>
 <p id="homework-status" class="status" role="status" aria-live="polite">請先登入網站教師帳號。</p>
 <section id="teacher-tools" hidden><details class="card"><summary>新增六年級作業</summary>
@@ -8,5 +8,6 @@
 <label for="title">作業名稱</label><input id="title" maxlength="100" required><label for="instructions">繳交說明</label><textarea id="instructions" maxlength="3000"></textarea><button type="submit">儲存草稿</button><p class="note">草稿不會出現在學生頁。開放收件時才建立學校 Drive 作業資料夾。</p></fieldset></form></details>
 <div class="toolbar"><button id="refresh-homework">更新作業與收件</button></div><div id="assignment-list"></div>
 <section id="roster-panel" class="card" hidden><h2 id="roster-title"></h2><p class="note">檔案請用 th990821@mail.thps.ntpc.edu.tw 的學校 Drive 開啟。重交會改為待評，保留舊檔。</p><div id="roster-summary" class="summary"></div>
-<label for="status-filter">顯示</label><select id="status-filter"><option value="all">全部學生</option><option value="missing">未繳交</option><option value="submitted">待評</option><option value="needs_revision">需要修改</option><option value="passed">過關</option></select><div id="roster-list"></div></section>
-</section></main><script type="module" src="shared/homework-teacher.js"></script></body></html>
+<div class="hw-filters"><label for="class-filter">班級</label><select id="class-filter"></select><label for="student-search">搜尋</label><input id="student-search" placeholder="姓名或座號"><label for="status-filter">顯示</label><select id="status-filter"><option value="all">全部學生</option><option value="missing">未繳交</option><option value="submitted">待評</option><option value="needs_revision">再努力</option><option value="passed">過關</option></select></div><div id="roster-list" class="hw-gallery"></div></section>
+<section class="card reading-panel"><span class="portal-kicker">固定每週・鼓勵分享</span><h2>閱讀與回饋</h2><div id="reading-teacher-body"></div></section>
+</section></main><script type="module" src="shared/homework-teacher.js?v=20260911-reading"></script></body></html>

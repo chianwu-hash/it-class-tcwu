@@ -105,10 +105,10 @@ export function deriveRewardTreeModel(progressRows, activities) {
         if (activity.type === "homework") {
             for (const passed of [false, true]) {
                 const earned = passed ? row.completed === true : row.submitted === true;
-                const reward = createReward({ kind: passed ? 'flower' : 'homework-leaf', source: row, activity,
+                const reward = createReward({ kind: 'homework-leaf', source: row, activity,
                     index: passed ? 2 : 1, total: 2, earned, href: earned ? '' : activity.pageHref });
-                reward.title = `${activity.label} ${passed ? '過關花' : '繳交葉'}`;
-                reward.reason = passed ? (earned ? '老師評為過關，開出一朵花。' : '老師評為過關後，就會開花。')
+                reward.title = `${activity.label} ${passed ? '過關葉' : '繳交葉'}`;
+                reward.reason = passed ? (earned ? '老師評為過關，再長出一片葉子。' : '老師評為過關後，再長出一片葉子。')
                     : (earned ? '已繳交作品，長出一片葉子。' : '繳交作品後，就會長出葉子。');
                 reward.detail = row.feedback || (passed ? '以最新版本的老師評比為準。' : '同一份作業重交不會重複累積。');
                 (earned ? rewards : pendingRewards).push(reward);

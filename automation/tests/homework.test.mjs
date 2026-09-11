@@ -31,6 +31,20 @@ test('Edge rejects wrong origin, unauthenticated requests and forged identities'
  assert.equal(calls,1);
 });
 
+test('local homework preview passes preflight but still requires login; other origins denied',async()=>{
+ const h=createHandler({env:n=>({DRIVE_REDIRECT_URI:'https://school.test/admin-drive.html',SUPABASE_URL:'https://db.test',SUPABASE_ANON_KEY:'public',SUPABASE_SERVICE_ROLE_KEY:'service'}[n]),fetcher:async()=>{throw new Error('Must not access upstream');}});
+ for(const origin of ['https://school.test','http://127.0.0.1:8126']) {
+  const r=await h(new Request('https://edge.test',{method:'OPTIONS',headers:{Origin:origin}}));
+  assert.equal(r.status,204);assert.equal(r.headers.get('Access-Control-Allow-Origin'),origin);
+  const denied=await h(new Request('https://edge.test',{method:'POST',headers:{Origin:origin}}));
+  assert.equal(denied.status,401);assert.equal(denied.headers.get('Access-Control-Allow-Origin'),origin);
+ }
+ for(const origin of ['https://evil.test','http://127.0.0.1:8127','http://127.0.0.1:8126.evil.test','null']) {
+  const r=await h(new Request('https://edge.test',{method:'OPTIONS',headers:{Origin:origin}}));
+  assert.equal(r.status,403);assert.equal(r.headers.get('Access-Control-Allow-Origin'),null);
+ }
+});
+
 test('real handler proxies resumable chunks, checks hash, survives lost response, finalizes once verified',async()=>{
  const user='00000000-0000-0000-0000-000000000002',owner='00000000-0000-0000-0000-000000000001',id='10000000-0000-0000-0000-000000000001';
  const key=btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32))));
