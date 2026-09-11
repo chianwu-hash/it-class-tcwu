@@ -47,13 +47,15 @@ async function load(g) {
     input.accept = '.mp4,.webm,.mov,.pdf,.png,.jpg,.jpeg,.webp,.gif,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.odt,.odp,.ods,.sb3,.txt,.zip';
     input.id = `file-${a.id}`; const label = el('label', s ? '選擇新的作品版本' : '選擇作品檔案'); label.htmlFor = input.id;
     const button = el('button', s ? '重交／接續重試' : '上傳／接續重試'); button.type = 'submit';
-    const progress = el('progress'); progress.max = 100; progress.value = 0; progress.setAttribute('aria-label','上傳進度');
+    const progress = el('progress'); progress.max = 100; progress.value = 0; progress.hidden = true; progress.setAttribute('aria-label','上傳進度');
     const note = el('p', '中斷時保留此頁，按同一按鈕接續。重整後可在 24 小時內重新選相同檔案。', 'note');
     const dropzone = createHomeworkDropzone(input, { isLocked: () => busy || field.disabled || !session?.user, maxBytes: () => maxSize });
     field.append(label,dropzone,el('p',s ? '重交會保留舊檔，最新版本將重新等待老師評比。' : '', 'note'),button); form.append(field,progress,note); details.append(form);card.append(details); list.append(card);
     form.addEventListener('submit', e => { e.preventDefault(); run(async current => {
       const file = input.files[0]; if (!file) return;
       if (!file.size || file.size > maxSize) throw new Error(`請選擇非空白且不超過 ${Math.floor(maxSize/1048576)} MB 的檔案。`);
+      progress.hidden = false; progress.value = 0; note.textContent = '準備上傳中（0%）…';
+      try {
       status.textContent = '正在確認檔案，請稍候…';
       const digest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', await file.arrayBuffer())), x => x.toString(16).padStart(2,'0')).join('');
       const key = `homework-upload:${session.user.id}:${a.id}`;
@@ -75,7 +77,7 @@ async function load(g) {
         const next = await call('chunk', form, true, current);
         stalls = next.offset <= result.offset ? stalls+1 : 0; result = next;
       }
-      sessionStorage.removeItem(key); progress.value = 100;
+      sessionStorage.removeItem(key); progress.value = 100; note.textContent = '上傳完成（100%）';
       let thumbnailFailed=false;
       if(/\.(png|jpe?g|webp|gif)$/i.test(file.name)) {
         status.textContent='作業已繳交，正在準備預覽縮圖…';
@@ -83,7 +85,12 @@ async function load(g) {
         catch {thumbnailFailed=true}
       }
       await load(current);
-      status.textContent = '已繳交，雲端檔案已確認完整！等待老師評比。'+(thumbnailFailed?' 縮圖稍後補建，不必重交。':'');
+      status.textContent = '上傳完成！已繳交，雲端檔案已確認完整！等待老師評比。'+(thumbnailFailed?' 縮圖稍後補建，不必重交。':'');
+      } catch (error) {
+        progress.hidden = true;
+        note.textContent = '這次上傳尚未確認完成，請更新繳交狀態，或按上方按鈕接續重試。';
+        throw error;
+      }
     }); });
   }
   lock();
