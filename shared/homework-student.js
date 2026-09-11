@@ -1,4 +1,5 @@
 import { initReading } from './reading-ui.js';
+import { createHomeworkDropzone } from './homework-dropzone.js';
 import { makeHomeworkThumbnail } from './homework-thumbnails.js?v=20260910-stored';
 import { initNavbarAuth } from './navbar-auth.js';
 import { isTeacher } from './auth.js';
@@ -48,7 +49,8 @@ async function load(g) {
     const button = el('button', s ? '重交／接續重試' : '上傳／接續重試'); button.type = 'submit';
     const progress = el('progress'); progress.max = 100; progress.value = 0; progress.setAttribute('aria-label','上傳進度');
     const note = el('p', '中斷時保留此頁，按同一按鈕接續。重整後可在 24 小時內重新選相同檔案。', 'note');
-    field.append(label,input,el('p',s ? '重交會保留舊檔，最新版本將重新等待老師評比。' : '', 'note'),button); form.append(field,progress,note); details.append(form);card.append(details); list.append(card);
+    const dropzone = createHomeworkDropzone(input, { isLocked: () => busy || field.disabled || !session?.user, maxBytes: () => maxSize });
+    field.append(label,dropzone,el('p',s ? '重交會保留舊檔，最新版本將重新等待老師評比。' : '', 'note'),button); form.append(field,progress,note); details.append(form);card.append(details); list.append(card);
     form.addEventListener('submit', e => { e.preventDefault(); run(async current => {
       const file = input.files[0]; if (!file) return;
       if (!file.size || file.size > maxSize) throw new Error(`請選擇非空白且不超過 ${Math.floor(maxSize/1048576)} MB 的檔案。`);

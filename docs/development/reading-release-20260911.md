@@ -40,3 +40,9 @@ Browser tests require the shared AI browser on port 9232, the existing local CDP
 ## Ownership / handoff
 
 Codex is the only implementation writer for this release. Claude's earlier read-only design discussion is recorded separately. Unrelated working-tree assets and automation changes are deliberately excluded. Next routine action: teacher configures further academic-week reading periods as needed.
+
+## Follow-up: file drop area
+
+The student file selector now has a large, full-width 190px minimum drop area. A native file input preserves keyboard/touch/file-picker support. Dropping selects one file and displays its name/size; the student still presses the upload button. Multi-file, unsupported-format, empty and oversized files are rejected. Custom drops cannot replace files while an upload is busy. Existing resumable upload and server validation remain in use.
+
+`automation/tests/homework-browser.cjs` passed file-picker change, drag highlight/drop, multi-file/format rejection, no auto-upload and busy selection lock, followed by the existing 9 MB interruption/resume and teacher review regression. Browser screenshot inspected; no live student records changed.
