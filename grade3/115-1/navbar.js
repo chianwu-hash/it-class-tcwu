@@ -13,7 +13,7 @@
     }
 
     const navConfig = {
-        activeWeeks: [1, 2],
+        activeWeeks: [1, 2, 3],
         gradeLabel: "三年級資訊課｜115-1",
         titleIconClass: "fa-solid fa-rocket text-cyan-600",
         titleClassName: "font-black text-gray-800 flex items-center text-lg tracking-wide whitespace-nowrap",
@@ -22,13 +22,9 @@
         linkClassName: "px-3 py-1.5 text-sm font-bold text-gray-600 hover:text-cyan-600 hover:bg-cyan-50 rounded-lg transition whitespace-nowrap",
         currentWeekClassName: "px-3 py-1.5 text-sm font-bold bg-cyan-100 text-cyan-800 rounded-lg shadow-sm whitespace-nowrap cursor-default",
         separatorClassName: "text-gray-300 mx-1",
-        extraLinks: [
-            {
-                href: "/my-tree.html?course=grade3-115-1",
-                iconClass: "fa-solid fa-seedling",
-                label: "努力樹"
-            }
-        ],
+        // 115-1 三年級目前使用課堂身分卡與 guest_progress；
+        // 努力樹尚未支援這條進度來源，因此先不顯示入口。
+        extraLinks: [],
         showAuthBarOnWeekPages: !/week01\.html$/.test(location.pathname),
         showAuthBarOnHomePages: false,
         authBarHtml: `
