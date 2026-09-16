@@ -66,7 +66,7 @@ export function initQuizModule({
     optionLabelMode = "stored",
     mode = "scored"
 }) {
-    if (mode === 'practice') return initQuizPractice({ questions, selectors, messages, loadProgress, saveProgress, loadGuestProgress, saveGuestProgress, getCurrentUser, onAfterSubmit, requireAuth });
+    if (mode === 'practice') return initQuizPractice({ questions, selectors, messages, loadProgress, saveProgress, loadGuestProgress, saveGuestProgress, getCurrentUser, onAfterSubmit, requireAuth, optionLabelMode });
     const mergedMessages = {
         ...DEFAULT_MESSAGES,
         ...messages,
@@ -111,11 +111,16 @@ export function initQuizModule({
     }
 
     async function hydrateProgress() {
-        if (typeof loadProgress !== "function") {
+        const loader = typeof loadProgress === "function"
+            ? loadProgress
+            : typeof loadGuestProgress === "function"
+                ? loadGuestProgress
+                : null;
+        if (!loader) {
             return;
         }
 
-        const progress = await loadProgress();
+        const progress = await loader();
         if (progress?.completed) {
             setCompletedState(progress.score);
         }
@@ -285,7 +290,19 @@ export function initQuizModule({
             ? await getCurrentUser()
             : null;
 
-        if (!user) {
+        if (!user && !requireAuth && typeof saveGuestProgress === "function") {
+            try {
+                const saveResult = await saveGuestProgress(correct);
+                if (saveResult === false) {
+                    showSaveError();
+                    return;
+                }
+            } catch (error) {
+                console.error("quiz saveGuestProgress failed", error);
+                showSaveError();
+                return;
+            }
+        } else if (!user) {
             if (typeof onRequireLogin === "function") {
                 await onRequireLogin();
             }
@@ -313,7 +330,7 @@ export function initQuizModule({
     }
 
     async function handleAuthChange(session) {
-        if (session?.user) {
+        if (session?.user || !requireAuth) {
             lockEl?.classList.add("hidden");
             contentEl?.classList.remove("hidden");
             render();

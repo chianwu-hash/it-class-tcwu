@@ -1,5 +1,5 @@
 // Optional, sequential mastery practice. The default scored quiz stays unchanged.
-export function initQuizPractice({ questions, selectors, messages = {}, loadProgress, saveProgress, loadGuestProgress = null, saveGuestProgress = null, getCurrentUser, onAfterSubmit, requireAuth = true }) {
+export function initQuizPractice({ questions, selectors, messages = {}, loadProgress, saveProgress, loadGuestProgress = null, saveGuestProgress = null, getCurrentUser, onAfterSubmit, requireAuth = true, optionLabelMode = 'stored' }) {
     const el = (key) => typeof selectors[key] === 'string' ? document.getElementById(selectors[key]) : selectors[key];
     let userId = null, count = 0, busy = false, ready = false, generation = 0;
     const container = el('container');
@@ -21,8 +21,19 @@ export function initQuizPractice({ questions, selectors, messages = {}, loadProg
         title.innerHTML = `${count + 1} / ${questions.length}　${question.questionHtml}`;
         readingScope.append(title);
         const options = document.createElement('div'); options.className = 'practice-options';
-        question.options.forEach((option) => {
+        question.options.forEach((option, optionIndex) => {
             const button = document.createElement('button'); button.type = 'button'; button.innerHTML = option.text;
+            if (optionLabelMode === 'display-order') {
+                const label = document.createElement('span');
+                label.className = 'practice-option-label';
+                label.textContent = ['A', 'B', 'C', 'D', 'E', 'F'][optionIndex] || String(optionIndex + 1);
+                label.setAttribute('aria-hidden', 'true');
+                const text = document.createElement('span');
+                text.className = 'practice-option-text';
+                text.innerHTML = option.text;
+                button.replaceChildren(label, text);
+                button.setAttribute('aria-label', `${label.textContent}，${text.textContent}`);
+            }
             button.addEventListener('click', () => choose(option)); options.append(button);
         });
         readingScope.append(options);
