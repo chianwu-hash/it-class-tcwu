@@ -1,6 +1,6 @@
 # 共用模組說明
 
-> 基於實際程式碼，最後更新：2026-09-09
+> 基於實際程式碼，最後更新：2026-09-15
 >
 > **原則**：修改任何共用模組前，先看「高風險變更清單」（`high-risk-changes.md`）。
 
@@ -58,13 +58,14 @@
 **匯出**：`initNavbarAuth({ onResetProgress, onSessionResolved })`
 
 **被誰 import**：
-- grade3：`wayground.html`、`week03–10.html`（全部週頁面）
-- grade6：`wayground.html`、`week03–08.html`、`week10.html`
+- grade3：舊學期週頁及 `grade3/115-1` 課堂身分卡週頁；身分卡頁保留它處理 navbar 事件，但不以 Google session 保存活動進度
+- grade6：舊學期週頁、`grade6/115-1` 週頁與學期共用交作業入口
 
 **關鍵設計**：使用 `document.addEventListener('click', handleClick)` 事件代理，**不是直接綁在按鈕元素上**，因此 grade3 navbar 重渲後 listener 不會消失。
 
 **使用限制**：
-- grade6 的 `navbar.js` 未定義 `authBarHtml`，nav 裡沒有 `#login-btn` 等元素，呼叫 `initNavbarAuth()` 在 grade6 頁面上是**空轉**（不報錯，但無作用）。若 grade6 未來需要登入按鈕，要先修 `grade6/navbar.js`。
+- 舊 `grade6/navbar.js` 未定義 `authBarHtml`，但 `grade6/115-1/navbar.js` 已提供完整 auth bar。判斷時必須看學期資料夾，不能把舊學期限制套到 115-1。
+- 三年級 115-1 課堂身分卡頁會由 `initClassCardAuth()` 隱藏 Google UI 並插入身分卡；不得讓背景 Google session 取代課堂身分卡或寫入 `student_progress`。
 - 不可和自己手寫的 `#login-btn.addEventListener` 並存，會觸發兩次登入流程。
 
 ---
@@ -75,7 +76,7 @@
 
 **匯出**：`initTypingChallenge({ weekCode, activityKey, levelsData, levelEncouragements, buildHint, getWrongAnswerHtml, progressMessages, celebrationContent, draftOptions, afterAuthUpdate, requireAuth, guestProgress })`
 
-**被誰 import**：`grade3/week04.html`、`week05.html`、`week06.html`、`week07.html`、`week10.html`、`week12.html`、`week13.html`、`week14.html`、`week15.html`、`week16.html`
+**被誰 import**：舊學期多個三年級週頁、`grade3/115-1/week02.html`、`week03.html`，以及 `grade6/115-1/week01.html`、`week02.html` 等打字頁。
 
 **levelEncouragements 語氣**：三年級打字闖關需為每關提供阿德勒式鼓勵語，重點放在努力、策略、耐心、修正、檢查與進步，避免只寫「很棒」「太厲害」或單純宣布過關。
 
@@ -100,6 +101,8 @@
 
 **題目 / 答案字型**：模組會在 `#typing-levels-container`（含舊頁面的 `#levels-container`）內統一題目顯示區與輸入框 / 文字區的 `font-family`，避免英打題目因 `<pre>` 預設等寬字型而和答案區看起來不一致。
 
+**禁止複製貼上**：這是週頁既有的 HTML 契約，不另外在 `typing-challenge.js` 造第二套攔截器。題目範例區使用 `select-none pointer-events-none`；輸入框／文字區使用 `onpaste="return false;" ondrop="return false;"`，並在學生可見說明明示需逐字輸入。自動測試要同時確認範例 `user-select: none`、paste/drop 事件被取消，以及一般鍵盤輸入仍正常。
+
 **需要的外部 CDN**：`canvas-confetti`，必須在 `<head>` 加入，否則完成動畫會報 ReferenceError：
 ```html
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -120,6 +123,7 @@
 - 同一頁 navbar 只能顯示課堂身分卡或 Google 登入其中一種。
 - 身分卡可用 localStorage 保存臨時身分，讓學生不小心關閉或重開頁面後接回；活動進度不可存在 localStorage。
 - 若使用生日四碼作為 RPC 驗證與後續進度寫入憑證，需在頁面文字清楚標示這不是 Google 登入，並在登出身分時清除 localStorage 身分。
+- localStorage 可能殘留學生加入正式名冊前的 `sample-roster` 身分。初始化時應以同一張身分卡重新嘗試 RPC；若已可取得正式資料，自動升級為 `source: "rpc"` 再保存進度，避免 navbar 顯示姓名但 `createClassCardProgress()` 拒絕寫入。
 
 ---
 
@@ -139,13 +143,18 @@
 
 **責任**：提供三年級中英打闖關頁面共用的浮動輔助工具，包含「標點符號表」與「中英文鍵盤圖」。標點符號表需以兩頁切換顯示，避免一張圖上下擠在同一視窗裡太小；鍵盤圖需支援中文鍵盤與英文鍵盤切換。
 
-**匯出**：`initTypingTools({ showPunctuation, showKeyboard })`
+**匯出**：
 
-**被誰 import**：三年級所有有中英打闖關的週頁面，例如 `grade3/week04.html`、`week05.html`、`week06.html`、`week07.html`、`week10.html`、`week12.html`、`week13.html`、`week14.html`、`week15.html`。
+- `initTypingTools({ showPunctuation, showKeyboard, keyboardGuide, getKeyboardTarget })`
+- `renderEnglishKeyboardGuide(container, { target })`
+
+**被誰 import**：三年級多數中英打闖關頁，以及 `grade6/115-1/week01.html`、`week02.html` 等目前學期六年級打字頁。
 
 **使用規則**：
-- 有中英打闖關的三年級週頁面，需 `import { initTypingTools } from "../shared/typing-tools.js"` 並在 module script 中呼叫 `initTypingTools()`。
+- 教案要求鍵盤圖或標點表的中英打頁，需依實際巢狀路徑 import 並呼叫 `initTypingTools()`；115-1 週頁通常使用 `../../shared/typing-tools.js`。
 - 預設同時顯示標點符號表與鍵盤圖；若特殊頁面只需要其中一項，可用 `showPunctuation: false` 或 `showKeyboard: false` 關閉。
+- 初學英打頁若要讓「看鍵盤圖」依目前題目標出按鍵，使用 `keyboardGuide: true`，並以 `getKeyboardTarget()` 回傳目前單字。工具每次開啟都會重新讀取目標，不能把單字寫死在共用模組。
+- 頁面內嵌的英文字母位置提示也必須優先呼叫 `renderEnglishKeyboardGuide(container, { target })`，不要複製另一份 QWERTY 鍵盤 HTML。此函式同時顯示鍵帽大寫、輸入小寫、黃色目標鍵與輸入順序。
 - 不要在單一週頁面複製浮動工具 HTML、`toggleFloatingKeyboard()`、`showKeyboardLayout()`、`toggleFloatingPunctuation()` 或 `showPunctuationPage()`。
 - 此模組只建立輔助圖表 UI，不負責登入、解鎖或進度保存；打字進度仍必須交給 `initTypingChallenge()`。
 
@@ -160,16 +169,18 @@
 **匯出**：
 - `extractWeekCodeFromHref(href)`
 - `collectWeekCards(root)`
-- `loadWeekVisibility(grade)`
+- `loadWeekVisibility(grade, courseId = null)`
 - `applyWeekVisibilityRows(weekCards, rows)`
 - `prioritizeLatestVisibleWeekCard(weekCards)`
-- `applyWeekVisibilityToCards(grade, root)`（主入口）
+- `applyWeekVisibilityToCards(grade, root = document, courseId = null)`（主入口）
 
 **被誰 import**：
-- `grade3/index.html`（首頁週卡）
-- `grade6/index.html`（首頁週卡）
-- `grade3/navbar.js`（navbar 週次過濾，**這是觸發 navbar 重渲的來源**）
-- grade6/navbar.js：**沒有整合**，grade6 nav 週次是寫死的
+- `grade3/index.html`、`grade6/index.html`（舊學期首頁週卡；使用相容查詢）
+- `grade3/115-1/index.html`、`grade6/115-1/index.html`（傳入明確 `courseId`）
+- `grade3/navbar.js` 與 `grade3/115-1/navbar.js`（navbar 週次過濾，**這是觸發 navbar 重渲的來源**）
+- 六年級 navbar：目前 `activeWeeks` 仍由各學期 navbar 明確設定；首頁週卡另由 `week_visibility` 控制
+
+**學期隔離**：新學期一律傳入完整 `courseId`，例如 `loadWeekVisibility("grade3", "grade3-115-1")` 或 `applyWeekVisibilityToCards("grade6", root, "grade6-115-1")`。省略參數只供舊學期相容。
 
 **重要注意**：grade3 navbar 在非同步載入 week-visibility 後會完整重渲 nav（`existingNav.remove()` + `insertAdjacentHTML`）。這會移除所有直接綁定在 nav 元素上的事件 listener。
 
@@ -185,7 +196,9 @@
 
 **登入規則**：只要是課程頁中的可點選測驗 / 小測驗，預設必須使用登入鎖定。一般頁未登入時顯示 lock 區塊，不渲染可作答題目；課堂身分卡分支未確認身分時也要鎖定。若只是口頭檢查，請做成靜態文字，不做互動選項。
 
-**匯出**：`initQuizModule({ questions, selectors, messages, loadProgress, saveProgress, getCurrentUser, onRequireLogin, onAfterSubmit, optionLabelMode })`
+**匯出**：`initQuizModule({ questions, selectors, messages, loadProgress, saveProgress, loadGuestProgress, saveGuestProgress, getCurrentUser, onRequireLogin, onAfterGrade, onAfterSubmit, optionLabelMode })`
+
+**評分與保存回呼**：`onAfterGrade({ correct, total })` 在畫面完成評分後觸發，適合滿分動畫等只依賴答題結果的回饋；`onAfterSubmit({ correct, total })` 只在保存成功後觸發，適合完成 banner、重玩入口或其他需要確認已入帳的行為。保存失敗只能更新保存狀態提示，不得覆蓋既有分數、正誤或滿分訊息。
 
 **Adapter 規則**：`quiz-module.js` 負責 UI 與評分流程，頁面可提供 `loadProgress` / `saveProgress` / `getCurrentUser` adapter 讀寫進度。一般 Google 登入頁寫入 `student_progress`；課堂身分卡分支寫入 `guest_progress`。這種頁面端 callback 是目前允許的整合方式，不視為繞過共用模組；但 adapter 不應重寫題目渲染、選項選取、評分或未登入鎖定 UI。若同一種 adapter 在多週重複，優先抽成週頁共用 adapter 檔。
 
@@ -250,6 +263,62 @@ linkControl.load();
 
 ---
 
+## 六年級 115-1 作業收件模組
+
+**入口**：學生使用 `grade6/115-1/homework.html`，教師使用 `admin-homework.html`。
+
+**主要模組**：
+
+- `shared/homework-student.js`：列出作業、處理單檔選取、分段上傳、接續重試、縮圖與學生版本紀錄。
+- `shared/homework-api.js`：統一呼叫 `homework_action`、`homework_review` 與 homework Edge Function；並提供 `homeworkTreeData()`。
+- `shared/homework-dropzone.js`：檔案選擇與拖放 UI，不負責保存完成狀態。
+- `shared/homework-review-ui.js`：作品預覽、批註、文字回饋及版本歷史。
+- `shared/homework-thumbnails.js`：圖片縮圖產生、保存與讀取。
+
+**功能契約**：
+
+- 作業資料使用獨立 `homework_*` 表，不寫入 `student_progress` 或 localStorage。
+- 學生必須使用名冊中的六年級學校 Google 帳號；教師帳號不能代替學生交件。
+- 作業由教師在後台建立草稿並明確開放。週頁不得自動建立作業，也不得寫死 assignment ID。
+- 同一作業重交會保留版本，最新版重新待評；網路重試不得產生重複作業或重複獎勵。
+- 週頁只連向學期共用入口，並寫清楚「第幾週、作業名稱、檔名／格式、完成狀態」。不可在每個週頁複製上傳 UI 或直接呼叫 RPC。
+- 努力樹由 `homeworkTreeData()` 依目前狀態推導：繳交一葉、最新版本過關再一葉，不產生花朵。
+
+---
+
+## 六年級 115-1 閱讀小卡模組
+
+**主要模組**：
+
+- `shared/reading-ui.js`：學生分享／修改、歷史版本、教師週次設定、班級檢視與評比。
+- `shared/reading-api.js`：統一呼叫 `reading_action`，並提供 `readingTreeData()`。
+
+**功能契約**：
+
+- 閱讀小卡與作業共用 `grade6/115-1/homework.html#reading`，不是獨立週頁應自行重做的表單。
+- 教師依行事曆建立明確週次與日期；沒上課的週保持缺號，已開放的舊週可補分享，除非教師暫停。
+- 每位學生每個閱讀週次只有一張目前小卡；修改會保留不可變的歷史版本，不增加額外卡片或獎勵。
+- 閱讀目前是自由分享制度：不列缺交、不顯示未分享人數、不使用逾期字眼。課堂可以安排全班共同體驗，但不可改變後台的自願參與語意。
+- 努力樹由 `readingTreeData()` 推導：分享一葉、老師評為過關再一葉。`reading_<period_id>` 由模組產生，不在週頁硬寫。
+- `chianwu@apps.ntpc.edu.tw` 是唯一可由教師後台清除閱讀測試紀錄的學生帳號。重設必須透過教師限定 RPC，在同一交易清除該帳號指定週次的事件、目前小卡與歷史版本，保留閱讀週次並寫入 `reading_test_resets` 稽核紀錄；一般學生不得顯示或呼叫此功能。
+- 不在交作業頁嵌入第二棵努力樹；學生仍從年級 navbar 的共同入口查看。
+
+---
+
+## `shared/reward-tree-model.js` 與六年級動態資料
+
+**責任**：把打字、測驗、作業與閱讀的既有資料轉成葉片／花朵顯示。週頁不得直接寫入努力樹資料。
+
+六年級 115-1 載入方式：
+
+- 靜態設定提供中英打等 `student_progress` 活動。
+- `homeworkTreeData()` 動態加入非草稿作業與目前學生提交狀態。
+- `readingTreeData()` 只為已分享的小卡建立活動，未分享的自由閱讀週不產生待完成活動。
+
+三年級 115-1 目前不適用：課堂身分卡進度在 `guest_progress`，努力樹尚未讀取此資料來源，因此不得顯示入口或在完成提示中承諾會長葉。
+
+---
+
 ## grade3/navbar.js vs grade6/navbar.js 差異對照
 
 | 項目 | grade3/navbar.js | grade6/navbar.js |
@@ -263,3 +332,10 @@ linkControl.load();
 | activeWeeks | `[3,4,5,6,7,8,9,10]` | `[3,4,5,6,7,8,10]` |
 
 **結論**：grade3 navbar 架構遠比 grade6 複雜。所有 grade3 auth 問題都要考慮「重渲後 listener 是否還在」。
+
+上表描述舊學期根目錄 navbar。115-1 必須另看同學期檔案：
+
+| 課程 | Navbar 身分現況 | 努力樹／作業入口 |
+|---|---|---|
+| `grade3-115-1` | 週頁先提供 auth 容器，再由 `initClassCardAuth()` 隱藏 Google UI、換成課堂身分卡；navbar 仍會因週次可見性重渲 | 努力樹入口暫時隱藏；沒有六年級作業入口 |
+| `grade6-115-1` | `authBarHtml` 與 `showAuthBarOnWeekPages: true` 已啟用，使用學校 Google 登入 | 顯示交作業與努力樹入口 |

@@ -1,6 +1,6 @@
 # 課程網頁開發 SOP
 
-> 最後更新：2026-09-09
+> 最後更新：2026-09-15
 >
 > 目標：避免「上課才發現功能壞掉」。
 
@@ -42,20 +42,27 @@
 - `navbar.js?v=YYYYMMDD` 仍使用同層 `navbar.js`，但應為該學年度資料夾內的 navbar
 - 圖片優先放在該學年度資料夾下，例如 `images/week01/...`
 
-注意：現有 `week_visibility` 尚未區分學年度。115 新首頁若要做週卡可見性控制，需先決定是否擴充資料表或暫時不用舊的 `applyWeekVisibilityToCards("grade3")`，避免 Week 03 這類週碼和 114 學年度互相干擾。
+注意：現行 `week_visibility` 已用 `course_id` 區分課程。115-1 首頁與 navbar 必須明確傳入 `grade3-115-1` 或 `grade6-115-1`；省略 `course_id` 只供舊學期相容，不可作為新學期實作方式，以免相同週碼互相干擾。
 
-### 1.1 確認頁面類型
+### 1.1 先確認年級身分分支
+
+- **三年級 115-1**：除教案明確的首週免身分例外外，課堂身分卡取代 Google 登入，互動進度寫入 `guest_progress`。目前不使用六年級作業／閱讀服務，努力樹尚未支援 guest progress，首頁、navbar 與完成提示不得顯示努力樹入口。
+- **六年級 115-1**：使用學校 Google 帳號；學生還要符合六年級名冊。中英打使用 `student_progress`，作業與閱讀使用各自的 homework／reading 資料與共用入口。自第 02 週起，只要建立正式任務週卡，就必須在同一次製作流程建立同週閱讀 period；沒有上課、沒有建立週卡的週次才保持缺號。
+
+不可以只看年級名稱，也要確認學年度資料夾；舊 `grade6/navbar.js` 與 `grade6/115-1/navbar.js` 的登入能力不同。
+
+### 1.2 確認頁面類型
 對照 `page-types.md`，確認這頁屬於 A / B / C / D / E 哪種類型。
 
-### 1.2 找最近的同類型參考頁
+### 1.3 找最近的同類型參考頁
 - 打字闖關（類型 C）→ 參考 `grade3/week10.html`（最新）
 - 一般說明頁（類型 B）→ grade3 參考 `week09.html`，grade6 參考 `week10.html`
 - **不要參考最早的頁面**，早期頁面可能缺少後來加入的架構修正
 
-### 1.3 填寫功能契約 Checklist
+### 1.4 填寫功能契約 Checklist
 把 `new-page-checklist.md` 複製一份，逐項填寫。不確定的項目先查程式碼再填，不可留空。
 
-### 1.4 確認 activityKey 不重複（若有進度記錄）
+### 1.5 確認 activityKey 不重複（若有進度記錄）
 ```bash
 grep -r "activityKey\|activity_key" grade3/ grade6/
 ```
@@ -76,6 +83,9 @@ grep -r "activityKey\|activity_key" grade3/ grade6/
 | 直接呼叫 `supabase.auth.signInWithOAuth()` | `beginCentralizedLogin()` |
 | 把 quiz / typing 進度直接 upsert `student_progress` | 使用模組的 save 函數 |
 | 課堂中才開放的連結自己寫 RPC / 輪詢 | `shared/classroom-controls.js` |
+| 在週頁複制作業上傳或閱讀小卡表單 | 六年級連到 `grade6/115-1/homework.html` 或 `#reading` |
+| 跨週續作另建同名新作業 | 指向原作業週次與名稱，保留同一份作業版本史 |
+| 在週頁硬寫 `homework_<id>`／`reading_<id>` | 由 `homeworkTreeData()`／`readingTreeData()` 動態產生 |
 | `navbar.js` 不加版本字串 | `navbar.js?v=YYYYMMDD` |
 
 ### 模組選用規則
@@ -90,6 +100,9 @@ grep -r "activityKey\|activity_key" grade3/ grade6/
 | 題組進度 | `quiz-module` + adapter | 自寫 supabase upsert |
 | 首頁週卡可見性 | `applyWeekVisibilityToCards()` | 自行查 DB |
 | 課堂即時開關 | `initClassroomLinkControl()` | 自寫 RPC / setInterval 輪詢 |
+| 六年級正式作業 | `homework.html` + homework 共用模組 | 週頁自製 upload / 直接呼叫 RPC |
+| 六年級閱讀小卡 | `homework.html#reading` + reading 共用模組 | 週頁自製表單 / 硬寫 period ID |
+| 作業／閱讀努力樹 | `homeworkTreeData()` / `readingTreeData()` | 週頁直接寫獎勵或 `student_progress` |
 
 **互動活動登入規則**：
 
@@ -132,16 +145,19 @@ grep -r "activityKey\|activity_key" grade3/ grade6/
 
 ### Grade3 打字闖關頁的固定樣板
 
-每次新增 grade3 打字闖關頁，`<script type="module">` 最開頭必須是：
+舊學期 Google 登入頁與 115-1 課堂身分卡頁不可共用同一段初始化。115-1 三年級頁的 module script 至少要包含：
 
 ```javascript
-import { initNavbarAuth } from "../shared/navbar-auth.js";
-import { initTypingChallenge } from "../shared/typing-challenge.js";
+import { initNavbarAuth } from "../../shared/navbar-auth.js";
+import { initClassCardAuth } from "../../shared/class-card-auth.js";
+import { createClassCardProgress } from "../../shared/class-card-progress.js";
+import { initTypingChallenge } from "../../shared/typing-challenge.js";
 
 initNavbarAuth();
+const classCardAuth = initClassCardAuth({ courseId: "grade3-115-1", mode: "required" });
 ```
 
-然後才是 `levelsData`、`initTypingChallenge({...})`。
+然後建立 `createClassCardProgress()` adapter，並以 `initTypingChallenge({ requireAuth: false, guestProgress })` 初始化。舊學期頁面依該頁原有 Google auth 契約處理。
 
 ### `navbar.js` 版本字串
 
@@ -175,20 +191,51 @@ initNavbarAuth();
 10. **切到別的分頁再切回**，按「檢查答案」後仍要能寫入對應進度表；一般頁為 `student_progress`，課堂身分卡分支為 `guest_progress`。一般頁若失敗先讀 `supabase-tab-resume-incident.md`
 11. 用重置按鈕重設，確認回到第 1 關
 
+### 六年級作業繳交（若有）
+
+- 教師後台確認目標作業的週次、名稱、班級與收件狀態；跨週續作不得另建同名作業
+- 匿名、教師與未列名冊帳號不可用學生身分上傳
+- 名冊學生選檔後仍需按上傳；完成後顯示「已繳交・待評」與實際檔名
+- 重整後狀態仍在；重交保留舊版本且最新版回到待評
+- 教師評為過關、再努力、收回評比時，最新版與努力樹第二片葉同步變化
+
+### 六年級閱讀小卡（115-1 第 02 週起有任務週卡即必做）
+
+- 六年級 115-1 自第 02 週起，有正式任務週卡就視為「有閱讀小卡」，不得標記 N/A
+- 製作週頁與週卡的同一次工作中，使用教師後台建立正確週次與日期的 reading period；沒有上課、沒有週卡的週次才保持缺號
+- 建立前核對目前登入的教師帳號、課程、週次與日期；建立後由學生入口確認本週小卡可見
+- 名冊學生可分享本週小卡、修改並查看版本；歷週開放項目可補分享
+- 教師只列已分享者，不顯示缺交或未分享人數
+- 分享後努力樹有繳交葉；過關後再有一葉；修改同週小卡不重複增加
+
+### 三年級 115-1 額外確認
+
+- 課堂身分卡頁只顯示身分卡，不顯示 Google 登入
+- 進度寫入 `guest_progress`，後台可查詢／重設，重設後學生重新整理回到未完成
+- 首頁、navbar、完成 overlay 都不顯示或承諾尚未支援的努力樹
+- 課堂身分來源為 `rpc`；舊 `sample-roster` 身分在正式名冊已存在時能自動升級，完成活動後後台確實讀得到紀錄
+
 ### 測驗 / 小測驗（若有）
 
 12. 未登入或未確認課堂身分卡時，只能看到鎖定區，不能看到或點選題目選項
 13. 登入後，測驗題目才出現
 14. 送出測驗後，確認 Supabase 對應進度表有記錄（一般頁為 `student_progress`，課堂身分卡分支為 `guest_progress`，開後台查）
+15. 點選後有明顯已選狀態；滿分回饋可見；模擬保存失敗時只顯示保存警告，不覆蓋分數與正誤結果
+
+### 滑鼠操作模擬與再練習（若有）
+
+16. 使用實際 mouse／pointer 動作完成拖曳、左右方向框選、`Ctrl` 增減選取、空白取消與整群搬移；拖曳預覽要跟隨游標
+17. 按「再練習一次／換一題」後，上一輪狀態全部清除，且題目、目標、排列、方向或資料組至少改變一項
+18. 打字活動確認題目不可反白複製，輸入框不可貼上或拖入文字，但正常逐字輸入不受影響
 
 ### 解鎖邏輯（若有）
 
-15. 完成最後一關後，確認解鎖區塊出現，鎖定區塊隱藏
-16. 重新整理頁面（已完成進度），確認解鎖狀態正確恢復
+19. 完成最後一關後，確認解鎖區塊出現，鎖定區塊隱藏
+20. 重新整理頁面（已完成進度），確認解鎖狀態正確恢復
 
 ### 後台
 
-17. 用教師帳號登入 `admin-progress.html`，確認此週此活動出現在進度清單
+21. 用教師帳號登入 `admin-progress.html`，確認此週此活動出現在進度清單
 
 ---
 
@@ -201,10 +248,18 @@ initNavbarAuth();
 □ 若有打字闖關：登入後輸入一個正確答案，確認過關訊息出現
 □ 若有測驗：未登入或未確認課堂身分卡時確認只能看到鎖定區，不能看到題目選項
 □ 若有打字闖關：故意少打一兩個字，確認錯誤提示方向正確且能指出附近位置
+□ 若有打字闖關：範例不能反白複製，貼上／拖入文字被阻擋，逐字輸入正常
+□ 若有滑鼠操作：用真實滑鼠完成拖曳、框選、Ctrl 多選、取消與選取後拖曳
+□ 若有再練習：清除舊狀態且新一輪內容確實改變
+□ 若有測驗：已選狀態明顯；滿分回饋正常；保存失敗不覆蓋答題結果
 □ 若有解鎖邏輯：（若可以）打完最後一關，確認解鎖區塊出現
 □ Console 無紅色錯誤（F12 打開看一眼）
 □ 手機或小螢幕快速確認版面不爛
 □ 所有外連連結（外部網站）能開啟
+□ 三年級 115-1：只顯示課堂身分卡，首頁／navbar／完成提示沒有努力樹入口
+□ 六年級有作業：教師已確認原始週次、名稱與收件狀態，學生入口能看到正確作業
+□ 六年級 115-1 第 02 週起：有任務週卡就已在同一次製作流程建立 reading period，學生入口能看到本週小卡
+□ 六年級作業／閱讀：努力樹文案與實際規則都是繳交一葉、過關再一葉
 ```
 
 如果 smoke test 有任何一項失敗：**先修好再上課，不要帶著 bug 進教室**。

@@ -1,6 +1,6 @@
 # 從教案討論到網頁完成 SOP
 
-最後更新：2026-09-09
+最後更新：2026-09-15
 
 ## 1. 目的
 
@@ -56,6 +56,25 @@
 
 如果其中任何一項還不清楚，不要直接做 HTML。
 
+### 3.1 先選年級身分分支
+
+115-1 的三、六年級不能共用同一個登入與資料假設：
+
+- **三年級 `grade3-115-1`**：除教案明確的首週免身分例外外，使用課堂身分卡與 `guest_progress`。目前不使用六年級作業／閱讀入口，努力樹也尚未讀取 `guest_progress`，因此頁面與 navbar 不顯示努力樹入口。
+- **六年級 `grade6-115-1`**：使用學校 Google 帳號，學生還必須符合六年級名冊。中英打使用 `student_progress`；作品與閱讀分別使用 homework、reading 專用資料。
+
+先決定分支，再選 A～E 頁型。頁型描述主要互動；作業、閱讀與努力樹是可以疊加到六年級週頁的功能契約，不另在週頁重做服務。
+
+### 3.2 六年級週卡與閱讀小卡綁定規則
+
+自 `grade6-115-1` 第 02 週起，正式任務週卡與閱讀 period 採一對一預設：
+
+- 有建立任務週頁與首頁週卡，就必須在同一次製作流程建立相同週次的閱讀 period。
+- 沒有上課、沒有建立週卡的週次不補號，也不建立空白閱讀 period。
+- 週頁仍只連到 `grade6/115-1/homework.html#reading`；「建立 period」是教師後台的外部狀態操作，不代表可在週頁寫死 period ID 或另做閱讀表單。
+- 建立前先核對可見的教師帳號、課程、週次、日期範圍與填寫權限；日期範圍只代表本週顯示期間，填寫權限另決定能否新增或修改。建立後必須從學生入口確認本週小卡已出現。
+- 若當次工作無法登入教師後台或缺少正確日期，不得把週頁交付標成全部完成；需明確列為未完成外部狀態。
+
 ---
 
 ## 4. 第 1 階段：教案討論與定稿
@@ -72,7 +91,33 @@
 - 課後或當堂繳交方式
 - 下一週銜接
 
-#### 4.1.1 打字闖關的課堂定位
+#### 4.1.1 若包含六年級作業繳交
+
+教案必須再寫清楚：
+
+- 是建立新作業，還是續作／補交舊週作業。
+- 作業原始週次、名稱、適用班級、檔名、格式與學生可見成果。
+- 教師何時在 `admin-homework.html` 建立草稿與開放收件。
+- 上傳完成判準：學生看見「已繳交・待評」與自己的檔案。
+- 重交、老師回饋、再努力與版本歷史如何處理。
+- 收件尚未開放、已關閉或服務異常時的備援。
+
+跨週續作不得自動建立同名新作業。例如第 03 週補交第 02 週名牌，仍指定「第 2 週・我們的班級名牌」。
+
+#### 4.1.2 六年級閱讀小卡（115-1 第 02 週起預設必有）
+
+教案必須再寫清楚：
+
+- 本週主要閱讀入口與閱讀時間。
+- 是否為全班共同體驗；即使共同體驗，系統仍維持自由分享、不列缺交。
+- 閱讀小卡最低內容：來源、書名、自己的發現或問題。
+- 教師需在 `admin-homework.html` 設定的學期週次與日期。
+- 沒有當週 period、平台異常或學生尚未分享時的備援。
+- 分享一葉、老師評為過關再一葉；修改同週小卡不重複增加獎勵。
+
+若本週會建立六年級 115-1 任務週卡，以上內容不得因原始教案未特別提到閱讀而省略；應在教案定稿時補入閱讀時間、最低分享內容與備援。
+
+#### 4.1.3 打字闖關的課堂定位
 
 三年級週頁若包含中英打或中打闖關，不要預設它一定是「全班同一時間、當堂必須完成全部關卡」的主流程。實際課堂常有登入帳號、開啟網頁、進入外部工具、繳交作業等操作速度差；打字闖關常用來吸收這些差異。
 
@@ -127,10 +172,13 @@
 
 若教案包含「資訊素養互動小測驗」：
 
+- 題目若來自影片，必須先核對實際影片內容再出題，不可只依標題、封面或既有常識推測。
 - 預設 5 題時，至少要挑 2 題做成較困難、有挑戰性的題目。
 - 這 2 題應使用情境判斷或概念辨析，讓學生需要聽過課堂重點才比較容易答對。
 - 選項要有誘答性，避免三個選項明顯荒謬、只靠常識或語氣就能猜出答案。
 - 困難題仍要符合年級程度，不用恐嚇、羞辱或過度抽象的表述。
+- 三年級題目若文字較長，需評估注音顯示／隱藏功能；注音是閱讀輔助，不可改變題目或答案判定。
+- 教案定稿時先列出每個會保存的活動：`activityKey`、總題數／關卡數、完成標準、是否列入過關紀錄，以及「再練習」是否更新正式紀錄。純操作練習不要因為畫面有完成提示就自動當成後台進度。
 
 ### 4.2 先決定哪些內容要上網頁
 
@@ -141,8 +189,11 @@
 - 分流或完成標準
 - 使用提醒
 - 外部入口
-- 截圖繳交提醒
+- 截圖或正式作業繳交提醒；若為六年級正式收件，需寫出原始週次與作業名稱
+- 閱讀小卡入口與自由分享說明（若有）
 - 課本頁碼對照（若有）
+
+學生頁只呈現能幫助學生理解、操作或確認完成的資訊。教案中的分鐘配置、活動流程表、教師觀察重點、備課檢核，以及只供教師掌握的「本節至少完成幾項」摘要，預設不搬到學生網頁；若確實需要呈現，必須改寫成學生看得懂且能立即採取行動的提示。
 
 ### 4.2.1 判斷是否需要課堂即時開關
 
@@ -204,6 +255,8 @@
 - 是否有外部連結卡
 - 是否有週卡首頁入口同步
 
+參考舊頁時不能只仿配色或卡片外觀；要把「學生操作契約」一起列出，例如選取狀態、取消方式、拖曳方向、重玩後是否換題、登入鎖定、完成回饋及保存失敗狀態。新頁和參考頁差異很大時，先說明差異理由，不可在沒有教學需求的情況下自行換掉既有互動模式。
+
 ---
 
 ## 6. 第 3 階段：課本頁碼查詢（NotebookLM）
@@ -237,14 +290,14 @@
 重要規則：
 
 - 中文提示詞一律先存成 UTF-8 `.txt` 檔，不要用 PowerShell inline / here-string 傳中文。
-- 若使用者指定 CDP `9333`，就明確加上 `--cdp-url http://127.0.0.1:9333`。
+- 本機 AI Work Browser 使用共用 CDP `9232`；實際工作明確加上 `--cdp-url http://127.0.0.1:9232`。
 - 回答若停在 `Consulting your sources...` 或 `Reviewing the content...`，代表 NotebookLM 尚未完成，需等待、重新整理 NotebookLM，或重新送出提示詞，不可把 placeholder 當成答案。
 - 頁碼表格請要求欄位固定為「技能 / 可參考頁碼 / 頁碼重點」，方便後續 `notebooklm:page-refs` 解析。
 
 範例：
 
 ```powershell
-npm.cmd run notebooklm:ask -- --cdp-url http://127.0.0.1:9333 --prompt-file automation/output/notebooklm-week13-prompt.txt --out automation/output/notebooklm-week13-page-refs.txt --screenshot automation/output/notebooklm-week13-page-refs.png --stable-checks 4 --poll-ms 3000 --timeout-ms 300000
+npm.cmd run notebooklm:ask -- --cdp-url http://127.0.0.1:9232 --prompt-file automation/output/notebooklm-week13-prompt.txt --out automation/output/notebooklm-week13-page-refs.txt --screenshot automation/output/notebooklm-week13-page-refs.png --stable-checks 4 --poll-ms 3000 --timeout-ms 300000
 ```
 
 ### 6.3 回收答案後要做的事
@@ -305,7 +358,7 @@ npm.cmd run notebooklm:page-refs -- --input C:\Users\user\projects\it-class-tcwu
 第 13 週已實測成功的流程：
 
 1. 先建立 UTF-8 提示詞：`automation/output/notebooklm-week13-prompt.txt`
-2. 用 `notebooklm:ask` 連到 CDP `9333` 的 NotebookLM 筆記本，輸出：`automation/output/notebooklm-week13-page-refs.txt`
+2. 用 `notebooklm:ask` 連到共用 CDP `9232` 的 NotebookLM 筆記本，輸出：`automation/output/notebooklm-week13-page-refs.txt`
 3. 用 `notebooklm:page-refs` 產生 JSON / Markdown / HTML snippet，並回寫對應學年度教案，例如 `grade6/LessonPlan/114-2/Week 13.md`
 4. 若 NotebookLM 第一次卡住，可請使用者重新整理 NotebookLM 後重送同一份 prompt file
 
@@ -345,7 +398,7 @@ ChatGPT 生圖先讀：
 
 ChatGPT 優先方式：
 
-1. 啟動或確認已存在支援 CDP 的 Chrome，預設使用 `http://127.0.0.1:9333`。
+1. 透過 `ai-browser-launch` 啟動或確認共用 AI Work Browser，使用 `http://127.0.0.1:9232`。
 2. 在該 Chrome 開啟 `https://chatgpt.com/`，確認是登入後畫面，例如有聊天歷程、專案、圖庫或輸入框。
 3. 將提示詞寫成 UTF-8 prompt file。
 4. 執行 `npm.cmd run chatgpt:image-batch` 送出 prompt、等待生圖、下載圖片並寫出 metadata。
@@ -354,7 +407,7 @@ ChatGPT 優先方式：
 CDP batch wrapper 指令：
 
 ```powershell
-npm.cmd run chatgpt:image-batch -- --cdp-url http://127.0.0.1:9333 --prompt-file automation/prompts/week12-safety-card.txt --count 1 --min-images 1 --output-dir grade3/images/week12 --output-prefix week12-safety-card --meta automation/output/week12-safety-card.json
+npm.cmd run chatgpt:image-batch -- --cdp-url http://127.0.0.1:9232 --prompt-file automation/prompts/week12-safety-card.txt --count 1 --min-images 1 --output-dir grade3/images/week12 --output-prefix week12-safety-card --meta automation/output/week12-safety-card.json
 ```
 
 固定規則：
@@ -363,7 +416,8 @@ npm.cmd run chatgpt:image-batch -- --cdp-url http://127.0.0.1:9333 --prompt-file
 - 不要用 PowerShell inline / here-string 直接塞中文 prompt
 - ChatGPT 若非刻意延續對話，也不要沿用舊對話脈絡；只有需要上下文連續時才使用 `--reuse-chat`
 - 生圖後要確認 metadata 與實際圖片檔，再進入壓圖與 Cloudinary 流程
-- 需確認 `--cdp-url` 指向已登入 ChatGPT 的 Chrome；若 `9333` 未啟動，先開 CDP Chrome，不要改用內建 ImageGen
+- 生圖成果需人工檢查主體辨識度、肢體／器官數量與方向、物件彼此關係、文字及不自然細節；「檔案已下載」不等於可直接上課。發現魚、動物、人物或配對場景結構怪異時，先重生成或修圖，不要用 CSS 裁切掩蓋內容問題。
+- 需確認 `--cdp-url` 指向 `ai-browser-launch` 管理、已登入 ChatGPT 的共用 Chrome；不要另開 profile 或改用其他除錯連接埠
 - Codex Chrome 擴充套件只作為 CDP 不可用時的臨時備援或人工檢查；若需要可靠下載與 metadata，回到 CDP wrapper 重跑
 - 若使用者明確指定「用內建 ImageGen」，或 ChatGPT / Gemini 瀏覽器流程不可用且使用者同意，才可例外使用內建 ImageGen；例外產物仍需進入同一套 WebP / Cloudinary 正式資產流程
 
@@ -481,10 +535,12 @@ week11 已實測成功上傳，Cloudinary secure_url：
 
 ```html
 <script type="module">
-  import { initNavbarAuth } from "../shared/navbar-auth.js";
+  import { initNavbarAuth } from "../../shared/navbar-auth.js";
   initNavbarAuth();
 </script>
 ```
+
+上例適用 115-1 巢狀週頁；舊學期根目錄週頁才使用 `../shared/...`。三年級 115-1 課堂身分卡頁還需依契約初始化 `initClassCardAuth()`，不得只接 Google auth。
 
 ### 8.4 頁面內容常用區塊
 
@@ -499,6 +555,25 @@ week11 已實測成功上傳，Cloudinary secure_url：
 - 外部入口
 - 截圖或作業繳交提醒
 - 課本頁碼區塊
+
+若頁面模擬桌面滑鼠操作，行為要貼近學生之後會遇到的真實介面：
+
+- 普通點擊只能留下單一選取；按住 `Ctrl` 點擊可增加或取消單項。
+- 點空白處可取消全部選取；從空白處拖曳可框選多個物件。
+- 已選取物件可整群拖曳；拖曳預覽需跟隨游標，不能停留在原處造成「是否有拖到」的誤解。
+- 題目若要求不同方向或數量，要把「從左／右開始、框幾個、哪些不要框」寫進學生指示，不可只存在教案備註。
+
+所有「再練習一次／換一題」都要同時做到兩件事：完整清除上一輪的選取、拖曳、完成與提示狀態；並更換至少一個有意義的條件（題目、目標、排列、方向或資料組）。只把同一題復原不算換題練習。
+
+### 8.4.1 六年級作業／閱讀整合邊界
+
+六年級週頁只負責教學指引與入口：
+
+- 作業連到 `grade6/115-1/homework.html`，文字寫清楚目標週次與作業名稱。
+- 閱讀連到 `grade6/115-1/homework.html#reading`。
+- 不複製 `homework-student.js`、上傳 dropzone、閱讀 editor 或教師評比 UI。
+- 不直接呼叫 homework／reading RPC，不寫死 assignment ID、period ID 或動態 activity key。
+- 頁面若同時有中英打，仍依 C 類契約使用 `initTypingChallenge()`；作業／閱讀不共用 `student_progress`。
 
 如果頁面有 2 個以上的大型任務卡，或單一卡片內容已長到會讓學生來回捲動、難以快速找到其他區段，評估是否加上「可收合卡片」。
 
@@ -591,6 +666,14 @@ navbar.js?v=YYYYMMDD
 8. 若有外部連結，確認格式正常
 9. 若有課堂即時開關，確認未登入不顯示老師按鈕、教師登入可開關、學生按「更新狀態」可同步，且沒有 `setInterval` 輪詢
 10. 若頁面引用生成圖卡，確認引用的是壓縮後 WebP 或 Cloudinary 正式網址，不是生成 PNG 原圖；多張圖卡需檢查總載入量，避免上課網路卡頓
+11. 三年級 115-1：教師 Google session 存在時仍只顯示課堂身分卡；進度寫入 `guest_progress`；頁面、首頁與 navbar 不顯示努力樹入口
+12. 六年級作業：以匿名、教師與名冊學生三種角色驗證權限；確認正確作業週次／名稱、上傳完成狀態、重整接回與重交版本
+13. 六年級閱讀：確認教師已設定本週 period；學生可分享／修改、歷週可補分享，教師只列已分享者
+14. 六年級努力樹：作業與閱讀均為繳交一葉、過關再一葉；重交／再努力不重複累積
+15. 滑鼠操作活動以實際 pointer／mouse 動作測試，不只直接呼叫函式或人工派發 `drop`；至少驗證拖曳跟手、左右方向框選、`Ctrl` 增減選取、空白取消與整群搬移
+16. 有「再練習」時，確認狀態已清空且題目／方向／排列真的改變
+17. 打字活動確認範例不能反白複製，輸入框無法貼上或拖入文字，且一般鍵盤逐字輸入仍正常
+18. 測驗同時驗證：選項有明顯已選狀態、滿分回饋／動畫可見、保存失敗不會覆蓋答題結果、正式資料表可讀回完成紀錄
 
 ### 10.3 建議留驗證產物
 
@@ -609,10 +692,12 @@ navbar.js?v=YYYYMMDD
 2. 週頁 HTML 已完成
 3. 首頁週卡已更新
 4. navbar 入口已更新
-5. 資訊圖卡資產已落位
+5. 若教案需要資訊圖卡，資產已落位；不需要時標記 N/A
 6. 課本頁碼（若有）已回寫
 7. 本機已驗證
 8. 若為正式上站頁面，資訊圖卡優先改用 Cloudinary 正式網址，或已確認目標網路環境可穩定存取本機資產
+9. 六年級 115-1 自第 02 週起，若已建立任務週卡，同週 reading period 也已在本次工作建立，並從學生入口驗證可見；若因帳號或日期資訊不足未完成，交付狀態必須明確標示尚未完成
+10. 若含正式作品作業，教師端所需作業草稿／開放狀態已建立或明確列出未完成項目；程式碼完成不等於外部狀態已設定
 
 ---
 
