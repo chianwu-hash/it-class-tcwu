@@ -61,6 +61,7 @@ export function initQuizModule({
     saveGuestProgress = null,
     getCurrentUser = null,
     onRequireLogin = null,
+    onAfterGrade = null,
     onAfterSubmit = null,
     requireAuth = true,
     optionLabelMode = "stored",
@@ -216,10 +217,6 @@ export function initQuizModule({
         if (statusTextEl) {
             statusTextEl.textContent = mergedMessages.saveError;
         }
-        const msgEl = document.getElementById("quiz-result-msg");
-        if (msgEl) {
-            msgEl.textContent = mergedMessages.saveError;
-        }
     }
 
     async function submit() {
@@ -282,6 +279,14 @@ export function initQuizModule({
         }
         if (msgEl) {
             msgEl.textContent = bucket[1];
+        }
+
+        if (typeof onAfterGrade === "function") {
+            try {
+                await onAfterGrade({ correct, total });
+            } catch (error) {
+                console.warn("quiz onAfterGrade failed", error);
+            }
         }
 
         setSubmitButtonState({ disabled: true });

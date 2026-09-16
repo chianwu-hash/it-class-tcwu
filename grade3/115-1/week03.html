@@ -8,111 +8,91 @@
   <script>tailwind.config = { corePlugins: { preflight: false } };</script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="stylesheet" href="week03.css?v=20260916-3">
+  <link rel="stylesheet" href="week03.css?v=20260916-9">
 </head>
 <body class="class-card-not-ready">
   <script src="navbar.js?v=20260915"></script>
   <main class="lesson-shell">
     <header class="lesson-hero">
-      <p class="week-label">115 上學期 · 三年級 · 第 03 週</p>
-      <h1>滑鼠選一選 🖱️</h1>
-      <p class="hero-line">先學會滑鼠三招，再看影片、答問題，最後挑戰英文小打字。</p>
+      <div class="hero-copy"><p class="week-label">三年級資訊課｜第 03 週</p><h1>滑鼠選一選</h1><p class="hero-line">練習拖曳、框選、Ctrl 多選，再完成影片題和英文打字。</p></div>
+      <div class="hero-mouse" aria-hidden="true"><i class="fa-solid fa-computer-mouse"></i></div>
     </header>
-
     <p id="boot-status" class="status-note" role="status">正在準備活動；若等候太久，請告訴老師。</p>
+    <div class="class-card-required-hint page-identity-hint"><i class="fa-solid fa-id-card"></i> 先在右上角輸入課堂身分卡，才能操作與保存進度。這不是 Google 登入。</div>
 
-    <div class="class-card-required-hint page-identity-hint">🔑 先在右上角輸入課堂身分卡，才能操作與保存進度。這不是 Google 登入。</div>
+    <section class="activity-section theme-yellow" id="quick-start">
+      <header class="activity-header"><div class="activity-heading"><span class="activity-icon"><i class="fa-solid fa-keyboard"></i></span><div><p class="section-label">暖身</p><h2>先複習數字，再找英文字母</h2></div></div><span class="activity-count">共 4 題</span></header>
+      <div class="activity-body">
+        <div class="instruction-box"><i class="fa-solid fa-circle-info"></i><span>先完成兩題數字，再找英文按鍵，最後輸入一個英文單字。每題都要先點輸入框。</span></div>
+        <div class="warmup-progress" aria-label="暖身進度"><span class="current">1 數字</span><span>2 數字</span><span>3 字母</span><span>4 單字</span></div>
+        <article class="challenge-card challenge-yellow">
+          <span id="warmup-stage-badge" class="challenge-badge">第 1 題</span>
+          <div class="warmup-practice"><label id="warmup-label" for="warmup-input"><span>照著輸入</span><strong>123</strong></label><div class="warmup-answer-box"><span>點一下白色框，再輸入答案</span><input id="warmup-input" type="text" inputmode="numeric" maxlength="3" autocomplete="off" spellcheck="false" placeholder="答案打在這裡" aria-describedby="warmup-feedback" disabled></div><button id="warmup-check" class="primary-action" type="button" disabled>檢查第 1 題</button></div>
+          <div id="letter-key-guide" class="letter-key-guide hidden" aria-live="polite"></div>
+          <p id="warmup-feedback" class="feedback" role="status">第 1 題：點一下輸入框，看到小直線後，使用右邊的數字鍵輸入 123。</p>
+          <button id="warmup-replay" class="replay-button hidden" type="button"><i class="fa-solid fa-rotate-right"></i> 換一題再練習</button>
+        </article>
+      </div>
+    </section>
 
-    <section class="lesson-card quick-start-card" id="quick-start">
-      <div class="card-title-row"><div><p class="section-label">暖身 · 0～4 分鐘</p><h2>先複習數字，再找英文字母</h2></div><p class="teacher-note">4 小題，照順序完成</p></div>
-      <p>先接續上週的數字輸入，完成兩題後，先找英文字母，再輸入一個英文單字。</p>
-      <div class="warmup-progress" aria-label="暖身進度"><span class="current">1 數字</span><span>2 數字</span><span>3 字母</span><span>4 單字</span></div>
-      <div class="warmup-practice">
-        <label id="warmup-label" for="warmup-input"><span>第 1 題｜照著輸入</span><strong>123</strong></label>
-        <div class="warmup-answer-box">
-          <span>👇 點這裡輸入答案</span>
-          <input id="warmup-input" type="text" inputmode="numeric" maxlength="3" autocomplete="off" spellcheck="false" placeholder="點一下，再輸入" aria-describedby="warmup-feedback" disabled>
+    <section class="activity-section theme-green" id="mouse-move">
+      <header class="activity-header"><div class="activity-heading"><span class="activity-icon"><i class="fa-solid fa-hand-pointer"></i></span><div><p class="section-label">第一站</p><h2>拖曳搬家</h2></div></div><span class="activity-count">共 3 關</span></header>
+      <div class="activity-body">
+        <div class="instruction-box"><i class="fa-solid fa-circle-info"></i><span>按住卡片、移動到圖片的家、到達後才放開。三關會練習不同方向。</span></div>
+        <div class="move-progress" aria-label="拖曳關卡進度"><span class="current">1 斜向右下</span><span>2 水平向左</span><span>3 反向左上</span></div>
+        <article class="challenge-card challenge-green"><span id="move-stage-badge" class="challenge-badge">第 1 關</span><h3 class="challenge-title">把單字卡送回圖片的家</h3><div class="move-arena move-stage move-diagonal" data-move-arena aria-label="第 1 關：斜向右下拖曳"><div class="move-card" draggable="true" data-word="fish"><img class="move-illustration" src="../images/week03/fish-v2.webp" alt="" draggable="false"><strong>fish</strong></div><div class="move-path-hint" aria-hidden="true">↘</div><div class="drop-target" data-drop-word="fish"><img class="move-home-image" src="../images/week03/fish-home-v2.webp" alt="" draggable="false"><span>魚的珊瑚洞</span></div></div><p id="move-feedback" class="feedback" role="status">第 1 關：把 fish 往右下方拖到魚的家。</p><button id="move-next" class="move-next hidden" type="button">前往第 2 關</button></article>
+        <p class="reference">課本參考：S088 p.40「拖曳、移動」。</p>
+      </div>
+    </section>
+
+    <section class="activity-section theme-cyan" id="mouse-select">
+      <header class="activity-header"><div class="activity-heading"><span class="activity-icon"><i class="fa-regular fa-object-group"></i></span><div><p class="section-label">第二站</p><h2>框選，再整群搬家</h2></div></div><span class="activity-count">1 個任務</span></header>
+      <div class="activity-body">
+        <div class="instruction-box"><i class="fa-solid fa-circle-info"></i><span id="box-instruction">從空白處按住左鍵，框住 <strong>mia、abu、fine</strong> 三張卡。放開完成框選後，再從黃色卡片拖到目標區。</span></div>
+        <article class="challenge-card challenge-cyan"><span class="challenge-badge">框選挑戰</span><h3 id="box-challenge-title" class="challenge-title">只選 3 張，不要選到 name、team</h3><p class="selection-cancel-tip"><i class="fa-solid fa-arrow-pointer"></i> 選錯了？點一下卡片旁邊的空白處，就會取消選取。</p><div class="selection-arena" data-selection-arena="box"><div class="select-card-item" data-item="mia">mia</div><div class="select-card-item" data-item="abu">abu</div><div class="select-card-item" data-item="fine">fine</div><div class="select-card-item" data-item="name">name</div><div class="select-card-item" data-item="team">team</div><div class="selection-target">框選後，把整群拖到這裡</div><div class="selection-rect" hidden></div></div><p id="box-feedback" class="feedback" role="status">只選 mia、abu、fine，共 3 張；不要選到 name、team，再把整群拖進目標區。</p><button id="box-replay" class="replay-button hidden" type="button"><i class="fa-solid fa-rotate-right"></i> 換一題再練習</button></article>
+        <p class="reference">課本參考：S088 p.42「框選與移動物件」。</p>
+      </div>
+    </section>
+
+    <section class="activity-section theme-orange" id="video-task">
+      <header class="activity-header"><div class="activity-heading"><span class="activity-icon"><i class="fa-solid fa-film"></i></span><div><p class="section-label">第三站</p><h2>看影片，再完成五題闖關</h2></div></div><span class="activity-count">共 5 題</span></header>
+      <div class="activity-body">
+        <div class="instruction-box"><i class="fa-solid fa-circle-info"></i><span>先把手離開鍵盤和滑鼠，專心看完約 55 秒的影片。再完成五題，最後一起送出答案。</span></div>
+        <a class="video-link" href="https://book.eduweb.com.tw/11edu5/vips088/games/play_single.html#a23.mp4" target="_blank" rel="noopener"><i class="fa-solid fa-circle-play"></i><span><small>老師播放影片</small>使用手機、平板的注意事項</span></a>
+        <div id="quiz-lock" class="lock-box">先輸入課堂身分卡，再開始影片答題。</div>
+        <div id="quiz-content" class="hidden"><div class="quiz-tools"><button id="zhuyin-toggle" type="button" aria-pressed="false" aria-controls="quiz-container"><i class="fa-solid fa-language"></i> 顯示題目注音</button></div><div id="quiz-status-banner" class="hidden status-banner"><span id="quiz-status-text"></span></div><div id="quiz-container" class="quiz-container"></div><button id="quiz-replay" class="replay-button hidden" type="button"><i class="fa-solid fa-rotate-right"></i> 換一組題目再練習</button></div>
+        <p class="rest-reminder"><i class="fa-regular fa-eye"></i> 答完後抬頭、伸展肩膀，讓眼睛離開螢幕 30～60 秒。</p>
+      </div>
+    </section>
+
+    <section class="activity-section theme-blue" id="ctrl-select">
+      <header class="activity-header"><div class="activity-heading"><span class="activity-icon"><i class="fa-solid fa-computer-mouse"></i></span><div><p class="section-label">第四站</p><h2>Ctrl 多選，再整群搬家</h2></div></div><span class="activity-count">1 個任務</span></header>
+      <div class="activity-body">
+        <div class="instruction-box"><i class="fa-solid fa-circle-info"></i><span>這裡模擬電腦的選取方式：普通點擊是單選，按住 <kbd>Ctrl</kbd> 可以增加或取消單項，也可以從空白處拖曳框選。</span></div>
+        <article class="challenge-card challenge-blue"><span class="challenge-badge">多選挑戰</span><h3 id="ctrl-challenge-title" class="challenge-title">只選 mia、fish、name</h3><p id="ctrl-target-instruction" class="selection-cancel-tip"><i class="fa-solid fa-bullseye"></i> 本題請選 mia、fish、name。</p><ol class="student-steps"><li>不按 <kbd>Ctrl</kbd> 點卡片，只會留下 1 張。</li><li>按住 <kbd>Ctrl</kbd> 點卡片，可增加或取消該張。</li><li>從空白處拖曳，也可以框選多張。</li><li>點一下空白處，可全部取消選取。</li></ol><div class="selection-arena" data-selection-arena="ctrl"><div class="select-card-item" data-item="mia">mia</div><div class="select-card-item" data-item="fish">fish</div><div class="select-card-item" data-item="hat">hat</div><div class="select-card-item" data-item="name">name</div><div class="select-card-item" data-item="goat">goat</div><div class="selection-target">選好後，把整群拖到這裡</div><div class="selection-rect" hidden></div></div><p id="ctrl-feedback" class="feedback" role="status">先試試單選、Ctrl 多選或拖曳框選；最後只留下 mia、fish、name。</p><button id="ctrl-replay" class="replay-button hidden" type="button"><i class="fa-solid fa-rotate-right"></i> 換一題再練習</button></article>
+        <p class="reference">補充操作。口訣：框選選一群，Ctrl 選分散。</p>
+      </div>
+    </section>
+
+    <section class="activity-section theme-purple" id="typing-task">
+      <header class="activity-header"><div class="activity-heading"><span class="activity-icon"><i class="fa-solid fa-keyboard"></i></span><div><p class="section-label">第五站</p><h2>把 Unit 1 單字打出來</h2></div></div><span class="activity-count">共 6 關</span></header>
+      <div class="activity-body">
+        <div class="instruction-box"><i class="fa-solid fa-circle-info"></i><span>看英文範例，先點白色輸入框，看到閃爍的小直線後再打字。不能複製貼上，要用鍵盤逐字輸入。</span></div>
+        <p id="progress-status" class="status-note" role="status">請先在右上角輸入課堂身分卡，再開始闖關。</p>
+        <div id="typing-levels-container" class="typing-levels">
+          <article class="typing-stage stage-cyan" id="block-level1"><span class="challenge-badge">第 1 關</span><h3><i class="fa-solid fa-font"></i> 英文三字</h3><p class="stage-hint">照著範例輸入小寫字母。</p><div class="typing-prompt select-none pointer-events-none"><span class="word">mia</span></div><label for="input-level1">答案輸入框</label><input id="input-level1" type="text" disabled onpaste="return false;" ondrop="return false;" autocomplete="off" spellcheck="false"><button onclick="checkLevel(1)" disabled>檢查答案</button><button id="next-1" data-next="2" class="secondary hidden">下一關</button><p id="msg-level1" class="level-message" role="status"></p></article>
+          <article class="typing-stage stage-green hidden" id="block-level2"><span class="challenge-badge">第 2 關</span><h3><i class="fa-solid fa-font"></i> 英文三字</h3><p class="stage-hint">看清楚字母順序再輸入。</p><div class="typing-prompt select-none pointer-events-none"><span class="word">hat</span></div><label for="input-level2">答案輸入框</label><input id="input-level2" type="text" disabled onpaste="return false;" ondrop="return false;" autocomplete="off" spellcheck="false"><button onclick="checkLevel(2)" disabled>檢查答案</button><button id="next-2" data-next="3" class="secondary hidden">下一關</button><p id="msg-level2" class="level-message" role="status"></p></article>
+          <article class="typing-stage stage-blue hidden" id="block-level3"><span class="challenge-badge">第 3 關</span><h3><i class="fa-solid fa-font"></i> 英文四字</h3><p class="stage-hint">單字變長了，慢慢逐字輸入。</p><div class="typing-prompt select-none pointer-events-none"><span class="word">fish</span></div><label for="input-level3">答案輸入框</label><input id="input-level3" type="text" disabled onpaste="return false;" ondrop="return false;" autocomplete="off" spellcheck="false"><button onclick="checkLevel(3)" disabled>檢查答案</button><button id="next-3" data-next="4" class="secondary hidden">下一關</button><p id="msg-level3" class="level-message" role="status"></p></article>
+          <article class="typing-stage stage-orange hidden" id="block-level4"><span class="challenge-badge">第 4 關</span><h3><i class="fa-solid fa-star"></i> 挑戰四字</h3><p class="stage-hint">先點框，再看著範例輸入。</p><div class="typing-prompt select-none pointer-events-none"><span class="word">name</span></div><label for="input-level4">答案輸入框</label><input id="input-level4" type="text" disabled onpaste="return false;" ondrop="return false;" autocomplete="off" spellcheck="false"><button onclick="checkLevel(4)" disabled>檢查答案</button><button id="next-4" data-next="5" class="secondary hidden">下一關</button><p id="msg-level4" class="level-message" role="status"></p></article>
+          <article class="typing-stage stage-pink hidden" id="block-level5"><span class="challenge-badge">第 5 關</span><h3><i class="fa-solid fa-star"></i> 挑戰四字</h3><p class="stage-hint">輸入後，記得自己檢查一次。</p><div class="typing-prompt select-none pointer-events-none"><span class="word">fine</span></div><label for="input-level5">答案輸入框</label><input id="input-level5" type="text" disabled onpaste="return false;" ondrop="return false;" autocomplete="off" spellcheck="false"><button onclick="checkLevel(5)" disabled>檢查答案</button><button id="next-5" data-next="6" class="secondary hidden">下一關</button><p id="msg-level5" class="level-message" role="status"></p></article>
+          <article class="typing-stage stage-purple hidden" id="block-level6"><span class="challenge-badge">第 6 關</span><h3><i class="fa-solid fa-trophy"></i> 最後挑戰</h3><p class="stage-hint">完成最後一個四字單字。</p><div class="typing-prompt select-none pointer-events-none"><span class="word">goat</span></div><label for="input-level6">答案輸入框</label><input id="input-level6" type="text" disabled onpaste="return false;" ondrop="return false;" autocomplete="off" spellcheck="false"><button onclick="checkLevel(6)" disabled>檢查答案</button><p id="msg-level6" class="level-message" role="status"></p></article>
         </div>
-        <button id="warmup-check" type="button" disabled>檢查第 1 題</button>
+        <button id="typing-replay" class="replay-button hidden" type="button"><i class="fa-solid fa-rotate-right"></i> 換順序再練習</button>
+        <p class="reference">英語來源：翰林 Here We Go 1 第一冊 Unit 1，學生課本 p.12～19；S088 英文鍵盤 p.98～100。</p>
       </div>
-      <div id="letter-key-guide" class="letter-key-guide hidden" aria-live="polite">
-        <div><strong>先找按鍵位置：</strong>鍵盤上找到 <b>A、B、C</b> 這三個鍵，今天輸入 <b>abc</b>。直接按對應的按鍵。</div>
-        <div class="mini-keyboard" aria-label="A、B、C 按鍵位置示意">
-          <div class="mini-keyboard-row"><kbd data-key="q">Q</kbd><kbd data-key="w">W</kbd><kbd data-key="e">E</kbd><kbd data-key="r">R</kbd><kbd data-key="t">T</kbd><kbd data-key="y">Y</kbd><kbd data-key="u">U</kbd><kbd data-key="i">I</kbd><kbd data-key="o">O</kbd><kbd data-key="p">P</kbd></div>
-          <div class="mini-keyboard-row row-middle"><kbd data-key="a">A</kbd><kbd data-key="s">S</kbd><kbd data-key="d">D</kbd><kbd data-key="f">F</kbd><kbd data-key="g">G</kbd><kbd data-key="h">H</kbd><kbd data-key="j">J</kbd><kbd data-key="k">K</kbd><kbd data-key="l">L</kbd></div>
-          <div class="mini-keyboard-row row-bottom"><kbd data-key="z">Z</kbd><kbd data-key="x">X</kbd><kbd data-key="c">C</kbd><kbd data-key="v">V</kbd><kbd data-key="b">B</kbd><kbd data-key="n">N</kbd><kbd data-key="m">M</kbd></div>
-        </div>
-        <p id="letter-key-locations">找法：<b>A 在中間排左邊</b>、<b>C 在下排左邊</b>、<b>B 在下排中間</b>。看清楚範例後，再照順序輸入。</p>
-      </div>
-      <p id="warmup-feedback" class="feedback" role="status">第 1 題：點一下輸入框，看到小直線後，使用右邊的數字鍵輸入 123。</p>
     </section>
-
-    <section class="lesson-card warmup" id="mouse-move">
-      <div class="card-title-row"><div><p class="section-label">第一站 · 4～11 分鐘</p><h2>拖曳搬家</h2></div><p class="teacher-note">按住、移動、放開</p></div>
-      <p>每關把一張單字卡拖到圖片的家，練習三種不同方向。完成後，再按「下一關」。</p>
-      <div class="move-progress" aria-label="拖曳關卡進度"><span class="current">1 斜向右下</span><span>2 水平向左</span><span>3 反向左上</span></div>
-      <div class="move-arena move-stage move-diagonal" data-move-arena aria-label="第 1 關：斜向右下拖曳">
-        <div class="move-card" draggable="true" data-word="fish"><img class="move-illustration" src="../images/week03/fish-v2.webp" alt="" draggable="false"><strong>fish</strong></div>
-        <div class="move-path-hint" aria-hidden="true">↘</div>
-        <div class="drop-target" data-drop-word="fish"><img class="move-home-image" src="../images/week03/fish-home-v2.webp" alt="" draggable="false"><span>魚的珊瑚洞</span></div>
-      </div>
-      <button id="move-next" class="move-next hidden" type="button">前往第 2 關</button>
-      <p id="move-feedback" class="feedback" role="status">第 1 關：把 fish 往右下方拖到魚的家。</p>
-      <p class="reference">課本參考：S088 p.40「拖曳、移動」。</p>
-    </section>
-
-    <section class="lesson-card select-card" id="mouse-select">
-      <div class="card-title-row"><div><p class="section-label">第二站 · 11～17 分鐘</p><h2>框選，再整群搬家</h2></div><p class="teacher-note">先放開完成框選，再拖一次</p></div>
-      <p><strong>框選：</strong>請從空白處按住左鍵，框選 <strong>mia、abu、fine 這三張卡</strong>，不要選到 name、team。放開滑鼠後，再從任一張已選取的卡片，將整群拖到目標區。</p>
-      <div class="selection-arena" data-selection-arena="box">
-        <div class="select-card-item" data-item="mia">mia</div><div class="select-card-item" data-item="abu">abu</div><div class="select-card-item" data-item="fine">fine</div><div class="select-card-item" data-item="name">name</div><div class="select-card-item" data-item="team">team</div>
-        <div class="selection-target">框選後，把整群拖到這裡</div><div class="selection-rect" hidden></div>
-      </div>
-      <p id="box-feedback" class="feedback" role="status">只選 mia、abu、fine，共 3 張；不要選到 name、team，再把整群拖進目標區。</p>
-      <p class="reference">課本參考：S088 p.42「框選與移動物件」。`Ctrl` 多選是本課補充操作。</p>
-    </section>
-
-    <section class="lesson-card video-card" id="video-task">
-      <div class="card-title-row"><div><p class="section-label">第三站 · 17～27 分鐘 · 全班一起</p><h2>看影片，再逐題闖關</h2></div><p class="teacher-note">影片約 55 秒</p></div>
-      <p><strong>先把手離開鍵盤和滑鼠。</strong>看完影片後一次回答一題；答錯可以依提示再選。</p>
-      <a class="video-link" href="https://book.eduweb.com.tw/11edu5/vips088/games/play_single.html#a23.mp4" target="_blank" rel="noopener"><i class="fa-solid fa-play mr-2"></i>老師播放：使用手機、平板的注意事項</a>
-      <div id="quiz-lock" class="lock-box">先輸入課堂身分卡，再開始影片答題。</div>
-      <div id="quiz-content" class="hidden">
-        <div class="quiz-tools"><button id="zhuyin-toggle" type="button" aria-pressed="false" aria-controls="quiz-container">顯示題目注音</button></div>
-        <div id="quiz-status-banner" class="hidden status-banner"><span id="quiz-status-text"></span></div>
-        <div id="quiz-container" class="quiz-container"></div>
-      </div>
-      <p class="rest-reminder">答完後抬頭、伸展肩膀，讓眼睛離開螢幕 30～60 秒。</p>
-      <p class="reference">影片內容：昏暗環境、行進中使用、低頭姿勢、連續使用 30 分鐘後休息 5～10 分鐘。</p>
-    </section>
-
-    <section class="lesson-card ctrl-card" id="ctrl-select">
-      <div class="card-title-row"><div><p class="section-label">第四站 · 27～33 分鐘</p><h2>Ctrl 多選，再整群搬家</h2></div><p class="teacher-note">選分散的物件</p></div>
-      <ol class="student-steps"><li>按住 <kbd>Ctrl</kbd> 不放。</li><li>依序點 mia、fish、name。</li><li>三張都變黃色後，放開 <kbd>Ctrl</kbd>。</li><li>再從其中一張按住左鍵，把整群拖到目標區。</li></ol>
-      <div class="selection-arena" data-selection-arena="ctrl">
-        <div class="select-card-item" data-item="mia">mia</div><div class="select-card-item" data-item="fish">fish</div><div class="select-card-item" data-item="hat">hat</div><div class="select-card-item" data-item="name">name</div><div class="select-card-item" data-item="goat">goat</div>
-        <div class="selection-target">Ctrl 多選後，把整群拖到這裡</div>
-      </div>
-      <p id="ctrl-feedback" class="feedback" role="status">按住 Ctrl，只選 mia、fish、name；放開 Ctrl 後再拖曳。</p>
-      <p class="reference">補充操作。口訣：框選選一群，Ctrl 選分散。</p>
-    </section>
-
-    <section class="lesson-card typing-card" id="typing-task">
-      <div class="card-title-row"><div><p class="section-label">第五站 · 33～38 分鐘</p><h2>把 Unit 1 單字打出來</h2></div><p class="teacher-note">前 3 關是基本；後 3 關是挑戰</p></div>
-      <p>看著英文範例，先點輸入框，找到閃爍的小直線，再逐字輸入。完成前 3 關是本週基本目標。</p>
-      <p id="progress-status" class="status-note" role="status">請先在右上角輸入課堂身分卡，再開始闖關。</p>
-      <div id="typing-levels-container" class="typing-levels">
-        <div class="typing-stage" id="block-level1"><strong>第 1 關／6</strong><span class="word">mia</span><input id="input-level1" type="text" disabled aria-label="第 1 關"><button onclick="checkLevel(1)" disabled>檢查答案</button><button id="next-1" data-next="2" class="secondary hidden">下一關</button><p id="msg-level1" class="level-message"></p></div>
-        <div class="typing-stage hidden" id="block-level2"><strong>第 2 關／6</strong><span class="word">hat</span><input id="input-level2" type="text" disabled aria-label="第 2 關"><button onclick="checkLevel(2)" disabled>檢查答案</button><button id="next-2" data-next="3" class="secondary hidden">下一關</button><p id="msg-level2" class="level-message"></p></div>
-        <div class="typing-stage hidden" id="block-level3"><strong>第 3 關／6</strong><span class="word">fish</span><input id="input-level3" type="text" disabled aria-label="第 3 關"><button onclick="checkLevel(3)" disabled>檢查答案</button><button id="next-3" data-next="4" class="secondary hidden">下一關</button><p id="msg-level3" class="level-message"></p></div>
-        <div class="typing-stage hidden" id="block-level4"><strong>第 4 關／6</strong><span class="word">name</span><input id="input-level4" type="text" disabled aria-label="第 4 關"><button onclick="checkLevel(4)" disabled>檢查答案</button><button id="next-4" data-next="5" class="secondary hidden">下一關</button><p id="msg-level4" class="level-message"></p></div>
-        <div class="typing-stage hidden" id="block-level5"><strong>第 5 關／6</strong><span class="word">fine</span><input id="input-level5" type="text" disabled aria-label="第 5 關"><button onclick="checkLevel(5)" disabled>檢查答案</button><button id="next-5" data-next="6" class="secondary hidden">下一關</button><p id="msg-level5" class="level-message"></p></div>
-        <div class="typing-stage hidden" id="block-level6"><strong>第 6 關／6</strong><span class="word">goat</span><input id="input-level6" type="text" disabled aria-label="第 6 關"><button onclick="checkLevel(6)" disabled>檢查答案</button><p id="msg-level6" class="level-message"></p></div>
-      </div>
-      <p class="reference">英語來源：翰林 Here We Go 1 第一冊 Unit 1，學生課本 p.12～19；S088 英文鍵盤 p.98～100。</p>
-    </section>
-    <footer class="lesson-footer"><strong>下課前說一次：</strong>拖曳是「按住、移動、放開」；框選從空白處開始；Ctrl 可以選分散的物件。椅子靠好，鍵盤滑鼠歸位。</footer>
+    <footer class="lesson-footer"><strong>下課前說一次：</strong>拖曳是「按住、移動、放開」；框選從空白處開始；Ctrl 可以選分散的物件。</footer>
   </main>
-  <script type="module" src="week03.js?v=20260916-4"></script>
+  <script type="module" src="week03.js?v=20260916-13"></script>
 </body>
 </html>

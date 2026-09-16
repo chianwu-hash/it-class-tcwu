@@ -302,6 +302,23 @@ export function initClassCardAuth({
         renderNav();
     }
 
+    // A sample-roster identity may remain in storage after that student has
+    // been added to the real class-card table. Upgrade it automatically so
+    // cloud progress can be loaded and saved without asking the child to
+    // enter the same card again.
+    if (identity?.source !== 'rpc' && identity?.birthdayCode) {
+        queueMicrotask(async () => {
+            const upgradedIdentity = await verifyIdentity({
+                classCode: identity.classCode,
+                seatNo: identity.seatNo,
+                birthdayCode: identity.birthdayCode
+            });
+            if (upgradedIdentity?.source === 'rpc') {
+                saveIdentity(upgradedIdentity, { reload: true });
+            }
+        });
+    }
+
     return {
         getIdentity: () => identity,
         hasIdentity: () => Boolean(identity),
