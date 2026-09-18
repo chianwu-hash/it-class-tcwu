@@ -59,7 +59,7 @@ async function run() {
         await check("閱讀、作業與努力樹入口符合共用契約", async () => {
             assert.equal(await page.$$eval('main a[href="homework.html#reading"]', (links) => links.length), 3);
             assert.equal(await page.$$eval('main a[href="homework.html"]', (links) => links.length), 2);
-            assert.equal(await page.$$eval('main a[href="/my-tree.html?course=grade6-115-1"]', (links) => links.length), 2);
+            assert.equal(await page.$$eval('main a[href^="/my-tree.html?course=grade6-115-1&returnTo="]', (links) => links.length), 2);
             assert.equal(await page.$$eval("form", (forms) => forms.length), 0);
             assert.equal(await page.$$eval('input[type="file"]', (inputs) => inputs.length), 0);
         });
@@ -89,6 +89,24 @@ async function run() {
             assert.match(text, /安靜休息/);
             assert.match(text, /學校電腦只做老師指定的事/);
             assert.match(text, /不能代打、代畫或代交/);
+        });
+
+        await check("努力樹顯示明確返回目的地且重新整理後保留", async () => {
+            await page.goto(
+                `${origin}/my-tree.html?course=grade6-115-1&returnTo=%2Fgrade6%2F115-1%2Fweek03.html`,
+                { waitUntil: "networkidle2", timeout: 30000 }
+            );
+            assert.equal(await page.$eval("#back-page-btn", (el) => el.textContent.trim()), "回第 03 週");
+            assert.equal(await page.$eval("#back-page-btn", (el) => el.getAttribute("href")), "/grade6/115-1/week03.html");
+            assert.equal(await page.$eval("#back-page-btn", (el) => Boolean(el.getClientRects().length)), true);
+            assert.equal(await page.$eval("#course-home-link", (el) => el.getAttribute("href")), "/grade6/115-1/index.html");
+            await page.reload({ waitUntil: "networkidle2", timeout: 30000 });
+            assert.equal(await page.$eval("#back-page-btn", (el) => el.textContent.trim()), "回第 03 週");
+            await Promise.all([
+                page.waitForNavigation({ waitUntil: "networkidle2", timeout: 30000 }),
+                page.click("#back-page-btn")
+            ]);
+            assert.equal(new URL(page.url()).pathname, "/grade6/115-1/week03.html");
         });
 
         await safeScreenshot(page, {

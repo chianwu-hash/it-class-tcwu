@@ -412,7 +412,7 @@
                 <p id="subtitle" class="subtitle">登入後讀取自己的闖關成果</p>
             </div>
             <div class="actions">
-                <button class="btn" id="back-page-btn" type="button">回上頁</button>
+                <a class="btn hidden" id="back-page-btn" href="/">返回來源頁</a>
                 <a class="btn" id="course-home-link" href="/grade3/index.html">回課程首頁</a>
                 <button class="btn" id="login-btn" type="button">Google 登入</button>
                 <button class="btn hidden" id="logout-btn" type="button">登出</button>
@@ -521,9 +521,39 @@
         const mockMode = query.get("mock") === "full";
         const COURSE_STORAGE_KEY = "reward-tree-course-id";
         const FLOWER_STORAGE_KEY = "reward-tree-flower-style";
+        const RETURN_TO_PARAM = "returnTo";
 
         let currentSession = null;
+        let currentEnrollment = null;
         let selectedCourseId = resolveInitialCourseId();
+        const returnTarget = resolveReturnTarget();
+
+        function safeReturnTarget(value) {
+            if (!value) return null;
+            try {
+                const url = new URL(value, window.location.origin);
+                if (url.origin !== window.location.origin || url.pathname === "/my-tree.html") return null;
+                return `${url.pathname}${url.search}${url.hash}`;
+            } catch {
+                return null;
+            }
+        }
+
+        function resolveReturnTarget() {
+            const fromQuery = safeReturnTarget(query.get(RETURN_TO_PARAM));
+            if (fromQuery) return fromQuery;
+            return safeReturnTarget(document.referrer);
+        }
+
+        function returnTargetLabel(target) {
+            const url = new URL(target, window.location.origin);
+            const weekMatch = url.pathname.match(/\/week(\d+)\.html$/i);
+            if (weekMatch) return `回第 ${weekMatch[1].padStart(2, "0")} 週`;
+            if (url.pathname.endsWith("/homework.html")) return "回交作業";
+            if (url.pathname.endsWith("/index.html")) return "回原課程首頁";
+            if (url.pathname === "/") return "回網站首頁";
+            return "返回來源頁";
+        }
 
         function referrerCourseId() {
             try {
@@ -556,6 +586,11 @@
         function updateCourseUrl() {
             const url = new URL(window.location.href);
             url.searchParams.set("course", selectedCourseId);
+            if (returnTarget) {
+                url.searchParams.set(RETURN_TO_PARAM, returnTarget);
+            } else {
+                url.searchParams.delete(RETURN_TO_PARAM);
+            }
             if (mockMode) {
                 url.searchParams.set("mock", "full");
             }
@@ -566,6 +601,12 @@
             const course = getCourseDefinition(selectedCourseId);
             subtitleEl.textContent = `${course.label} 的闖關成果`;
             courseHomeLinkEl.href = course.homeHref;
+            const showReturn = returnTarget && returnTarget !== course.homeHref;
+            backPageBtn.classList.toggle("hidden", !showReturn);
+            if (showReturn) {
+                backPageBtn.href = returnTarget;
+                backPageBtn.textContent = returnTargetLabel(returnTarget);
+            }
         }
 
         function initCourseSelect() {
@@ -590,10 +631,34 @@
             const email = currentSession?.user?.email || "";
             loginBtn.classList.toggle("hidden", !!email);
             logoutBtn.classList.toggle("hidden", !email);
-            profileTitleEl.textContent = email || "尚未登入";
-            profileMetaEl.textContent = email
-                ? `${getCourseDefinition(selectedCourseId).label}，已讀取自己的進度。`
-                : "請先登入 Google，努力樹才會讀取自己的進度。";
+            if (!email) {
+                profileTitleEl.textContent = "尚未登入";
+                profileMetaEl.textContent = "請先登入 Google，努力樹才會讀取自己的進度。";
+                return;
+            }
+
+            if (currentEnrollment) {
+                const seat = String(currentEnrollment.seat_no).padStart(2, "0");
+                profileTitleEl.textContent = currentEnrollment.display_name || email;
+                profileMetaEl.textContent = `${currentEnrollment.class_code} 班 ${seat} 號・${email}`;
+                return;
+            }
+
+            profileTitleEl.textContent = email;
+            profileMetaEl.textContent = `${getCourseDefinition(selectedCourseId).label}・尚未找到本學年名冊資料`;
+        }
+
+        async function loadCurrentEnrollment(courseId) {
+            if (!currentSession?.user || mockMode) return null;
+            const course = getCourseDefinition(courseId);
+            const { data, error } = await supabase.rpc("get_my_student_enrollment", {
+                p_school_year: Number(course.schoolYear)
+            });
+            if (error) {
+                console.warn("student enrollment unavailable", error);
+                return null;
+            }
+            return Array.isArray(data) ? (data[0] || null) : (data || null);
         }
 
         function isMissingCourseIdError(error) {
@@ -714,6 +779,7 @@
         async function loadAndRender() {
             hideNotice();
             updateCourseChrome();
+            currentEnrollment = null;
             updateAuthUi();
 
             const course = getRewardTreeCourse(selectedCourseId);
@@ -721,8 +787,14 @@
                 const loadingCourse = selectedCourseId;
                 const loadingUser = currentSession?.user?.id;
                 const activities = [...(course.activities || [])];
+                const [rows, enrollment] = await Promise.all([
+                    loadProgressRows(),
+                    loadCurrentEnrollment(loadingCourse)
+                ]);
+                if (selectedCourseId !== loadingCourse || currentSession?.user?.id !== loadingUser) return;
+                currentEnrollment = enrollment;
+                updateAuthUi();
                 if (!activities.length && loadingCourse !== 'grade6-115-1') { renderEmptyCourse(course); return; }
-                const rows = await loadProgressRows();
                 if (loadingCourse === 'grade6-115-1' && currentSession?.user && !mockMode) {
                     try {
                         const data = await homeworkRequest(currentSession, 'list');
@@ -742,23 +814,6 @@
                 showNotice(`讀取努力樹失敗：${error.message}`, "error");
             }
         }
-
-        backPageBtn.addEventListener("click", () => {
-            let canUseReferrer = false;
-            try {
-                canUseReferrer = document.referrer
-                    && new URL(document.referrer).origin === window.location.origin;
-            } catch {
-                canUseReferrer = false;
-            }
-
-            if (canUseReferrer) {
-                window.history.back();
-                return;
-            }
-
-            window.location.href = "/";
-        });
 
         loginBtn.addEventListener("click", () => {
             signInWithGoogle({ redirectTo: window.location.href });
