@@ -22,6 +22,7 @@ const supabase={auth:{onAuthStateChange:()=>{}},rpc(name,args){
  const count=args.p_course_id==='grade6-115-1'?1001:args.p_course_id==='grade3-114-2'?1:0;
  return {data:Array.from({length:Math.max(0,Math.min(to+1,count)-from)},(_,i)=>({user_id:'student',email:'student@example.invalid',course_id:args.p_course_id,week_code:'01',activity_key:'typing_task_'+(from+i),activity_type:'typing',current_level:2,completed:false,updated_at:'2026-09-05T01:00:00Z'}))};
  }};
+ if(name==='admin_list_guest_progress')return {range:async()=>({data:[],error:null})};
  throw Error('Unexpected RPC: '+name);
 }};
 `;
@@ -79,7 +80,7 @@ async function main() {
         assert(!current.classes.includes('301'));
         assert(current.roster.includes('2') && current.roster.includes('1'));
         assert(current.body.includes('60301'));
-        assert.deepEqual(await evaluate(`[...document.querySelectorAll('[data-next-visible]')].map(b=>b.dataset.courseId)`),['grade3-115-1','grade6-115-1']);
+        assert.deepEqual(await evaluate(`[...document.querySelectorAll('[data-week-code="03"]')].map(b=>b.dataset.courseId)`),['grade3-115-1','grade6-115-1']);
         await evaluate(`document.querySelector('[data-course-id="grade6-115-1"][data-next-visible]').click()`);
         await waitFor(`document.querySelector('[data-course-id="grade6-115-1"][data-next-visible]')?.dataset.nextVisible==='true'`);
         const saved=await evaluate(`window.testCalls.find(c=>c.name==='admin_set_week_visibility').args`);
