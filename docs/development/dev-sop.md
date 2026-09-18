@@ -44,6 +44,14 @@
 
 注意：現行 `week_visibility` 已用 `course_id` 區分課程。115-1 首頁與 navbar 必須明確傳入 `grade3-115-1` 或 `grade6-115-1`；省略 `course_id` 只供舊學期相容，不可作為新學期實作方式，以免相同週碼互相干擾。
 
+新增正式週卡時，必須完成「週卡三處同步」，缺一不可：
+
+1. 對應學年度首頁新增週卡並設定最新週標記。
+2. 對應學年度 `navbar.js` 的 `activeWeeks` 加入本週。
+3. `admin-progress.html` 對應 `courseId` 的 `visibilityDefaults.weeks` 加入本週兩位數週碼，讓教師後台可以管理該卡片。
+
+完成後要用教師帳號確認後台出現新週次，並實際切換一次隱藏／顯示，確認只影響相同 `course_id` 的首頁週卡；驗證後恢復預定狀態。只完成首頁或 navbar，不算完成新週頁發布流程。
+
 ### 1.1 先確認年級身分分支
 
 - **三年級 115-1**：除教案明確的首週免身分例外外，課堂身分卡取代 Google 登入，互動進度寫入 `guest_progress`。目前不使用六年級作業／閱讀服務，努力樹尚未支援 guest progress，首頁、navbar 與完成提示不得顯示努力樹入口。
@@ -256,6 +264,8 @@ const classCardAuth = initClassCardAuth({ courseId: "grade3-115-1", mode: "requi
 □ Console 無紅色錯誤（F12 打開看一眼）
 □ 手機或小螢幕快速確認版面不爛
 □ 所有外連連結（外部網站）能開啟
+□ 新增正式週卡：首頁、navbar `activeWeeks`、教師後台 `visibilityDefaults` 三處都已同步
+□ 新增正式週卡：教師後台可看到本週，並已實測隱藏／顯示會讓對應學年度首頁週卡消失／恢復
 □ 三年級 115-1：只顯示課堂身分卡，首頁／navbar／完成提示沒有努力樹入口
 □ 六年級有作業：教師已確認原始週次、名稱與收件狀態，學生入口能看到正確作業
 □ 六年級 115-1 第 02 週起：有任務週卡就已在同一次製作流程建立 reading period，學生入口能看到本週小卡

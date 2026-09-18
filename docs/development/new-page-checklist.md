@@ -141,6 +141,9 @@
 - [ ] 此頁為首頁 → 使用 `applyWeekVisibilityToCards(grade, root, courseId)` 控制週卡顯示；新學期不得省略 `courseId`
 - [ ] 此頁為 grade3 115-1 週頁面 → 確認 `grade3/115-1/navbar.js` 的 `activeWeeks` 已更新
 - [ ] 此頁為 grade6 115-1 週頁面 → 確認對應學年度 navbar 的 `activeWeeks` 已更新
+- [ ] 新增正式週卡 → 已在 `admin-progress.html` 對應 `courseId` 的 `visibilityDefaults.weeks` 加入本週兩位數週碼
+- [ ] 教師後台「首頁週卡片顯示管理」已顯示本週，且年級、學年度與預設「顯示中」狀態正確
+- [ ] 已實際切換一次「隱藏／顯示」，確認對應學年度首頁週卡會同步消失／恢復；驗證後已恢復預定狀態
 - [ ] **此頁不需要週次可見性控制** → 標記 N/A
 
 ---
