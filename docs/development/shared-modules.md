@@ -74,7 +74,9 @@
 
 **責任**：管理多關卡打字練習的完整生命週期：session 解析、進度讀取、關卡解鎖、答案驗證、進度儲存、進度重置、慶祝動畫、auth UI 更新，以及 opt-in 的手動草稿暫存 / 回復。一般 Google 登入頁讀寫 Supabase `student_progress`；三年級 Google 登入前的課堂身分卡分支可透過 `guestProgress` adapter 讀寫 `guest_progress`。
 
-**匯出**：`initTypingChallenge({ weekCode, activityKey, levelsData, levelEncouragements, buildHint, getWrongAnswerHtml, progressMessages, celebrationContent, draftOptions, afterAuthUpdate, requireAuth, guestProgress })`
+**匯出**：`initTypingChallenge({ weekCode, activityKey, levelsData, levelEncouragements, buildHint, getWrongAnswerHtml, progressMessages, celebrationContent, draftOptions, afterAuthUpdate, autoScrollNext, requireAuth, guestProgress })`
+
+**關卡完成後導覽**：`autoScrollNext` 預設為 `true`，維持既有「答對後自動移到下一關」行為。頁面若提供每關「再練習一次／前往下一關」雙按鈕，可設為 `false`，讓學生先在原卡片選擇；頁面端仍須自行顯示下一關按鈕，不能讓流程失去出口。
 
 **被誰 import**：舊學期多個三年級週頁、`grade3/115-1/week02.html`、`week03.html`，以及 `grade6/115-1/week01.html`、`week02.html` 等打字頁。
 

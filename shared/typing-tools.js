@@ -31,6 +31,110 @@ function ensureEnglishKeyboardGuideStyles() {
     document.head.appendChild(style);
 }
 
+function ensureKeyLocationHintStyles() {
+    if (document.getElementById("typing-key-location-hint-styles")) return;
+    const style = document.createElement("style");
+    style.id = "typing-key-location-hint-styles";
+    style.textContent = `
+        .typing-key-hint{position:relative;display:inline-block;vertical-align:middle;cursor:help}
+        .typing-key-hint>kbd{border-color:#8fc9b8;border-bottom-color:#6fa997;background:#f8fffb;color:#17423b;font-size:1.02em;padding:3px 10px}
+        .typing-key-hint:hover>kbd,.typing-key-hint:focus>kbd,.typing-key-hint:focus-within>kbd{background:#fef3c7;border-color:#f59e0b;border-bottom-color:#d97706;color:#78350f;outline:4px solid #fde68a;outline-offset:2px}
+        .typing-key-popover{position:absolute;z-index:30;bottom:calc(100% + 13px);left:50%;transform:translate(-50%,-6px);width:min(620px,88vw);padding:14px 16px 16px;background:#0faaa0;border:3px solid #f59e0b;border-radius:18px;box-shadow:0 16px 32px rgba(120,53,15,.24);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .15s ease,transform .15s ease}
+        .typing-key-popover:before{content:"";position:absolute;bottom:-12px;left:50%;width:18px;height:18px;background:#0faaa0;border-right:3px solid #f59e0b;border-bottom:3px solid #f59e0b;transform:translateX(-50%) rotate(45deg)}
+        .typing-key-hint:hover .typing-key-popover,.typing-key-hint:focus .typing-key-popover,.typing-key-hint:focus-within .typing-key-popover{opacity:1;visibility:visible;transform:translate(-50%,0)}
+        .typing-key-popover-title{display:block;margin:0 0 10px;color:#fff7ed;font-size:17px;font-weight:900;text-align:center;text-shadow:0 1px 0 rgba(0,0,0,.2)}
+        .typing-keyboard-strip{display:grid;gap:7px}
+        .typing-keyboard-strip-row{display:grid;gap:6px}
+        .typing-keyboard-strip-row.function{grid-template-columns:1.2fr repeat(12,1fr)}
+        .typing-keyboard-strip-row.number{grid-template-columns:repeat(13,1fr) 2.5fr}
+        .typing-keyboard-strip-row.letters{grid-template-columns:1.5fr repeat(10,1fr)}
+        .typing-keyboard-strip-row.home{grid-template-columns:2fr repeat(9,1fr) 2fr}
+        .typing-keyboard-strip-row span{display:flex;align-items:center;justify-content:center;min-height:34px;border:1px solid #cbd5e1;border-bottom:4px solid #94a3b8;border-radius:7px;background:#fff;color:#111827;font-size:13px;font-weight:900;line-height:1}
+        .typing-keyboard-strip-row .is-backspace{border:4px solid #1d4ed8;border-bottom-color:#1d4ed8;background:#fff;color:#111827;font-size:16px;box-shadow:0 0 0 3px #dbeafe inset}
+        .typing-keyboard-strip-row .is-capslock{border:4px solid #1d4ed8;border-bottom-color:#1d4ed8;background:#fff;color:#111827;font-size:15px;box-shadow:0 0 0 3px #dbeafe inset}
+        .typing-key-popover.is-below-left{top:calc(100% + 13px);bottom:auto;left:0;transform:translateY(-6px)}
+        .typing-key-popover.is-below-left:before{top:-12px;bottom:auto;left:64px;border:0;border-left:3px solid #f59e0b;border-top:3px solid #f59e0b}
+        .typing-key-hint:hover .typing-key-popover.is-below-left,.typing-key-hint:focus .typing-key-popover.is-below-left,.typing-key-hint:focus-within .typing-key-popover.is-below-left{transform:translateY(0)}
+        .typing-key-popover.is-below-center{top:calc(100% + 13px);bottom:auto}
+        .typing-key-popover.is-below-center:before{top:-12px;bottom:auto;border:0;border-left:3px solid #f59e0b;border-top:3px solid #f59e0b}
+        .typing-key-popover-help{display:block;margin-top:10px;color:#ecfeff;font-size:14px;font-weight:900;text-align:center}
+        @media(max-width:760px){.typing-key-popover,.typing-key-popover.is-below-left,.typing-key-popover.is-below-center{position:fixed;top:var(--typing-key-popover-mobile-top,142px);bottom:auto;left:50%;right:auto;transform:translate(-50%,-6px);width:min(500px,92vw);max-height:calc(100vh - var(--typing-key-popover-mobile-top,142px) - 12px);overflow:auto;padding:11px}.typing-key-popover:before,.typing-key-popover.is-below-left:before,.typing-key-popover.is-below-center:before{display:none}.typing-key-hint:hover .typing-key-popover,.typing-key-hint:focus .typing-key-popover,.typing-key-hint:focus-within .typing-key-popover,.typing-key-hint:hover .typing-key-popover.is-below-left,.typing-key-hint:focus .typing-key-popover.is-below-left,.typing-key-hint:focus-within .typing-key-popover.is-below-left,.typing-key-hint:hover .typing-key-popover.is-below-center,.typing-key-hint:focus .typing-key-popover.is-below-center,.typing-key-hint:focus-within .typing-key-popover.is-below-center{transform:translate(-50%,0)}.typing-keyboard-strip-row{gap:3px}.typing-keyboard-strip-row span{min-height:28px;font-size:10px}.typing-keyboard-strip-row .is-backspace,.typing-keyboard-strip-row .is-capslock{font-size:11px}}
+    `;
+    document.head.appendChild(style);
+}
+
+function setupKeyLocationHintPositioning(hint, preferredPlacement = "above") {
+    const popover = hint?.querySelector(".typing-key-popover");
+    if (!hint || !popover) return hint;
+
+    const updatePosition = () => {
+        const isMobile = window.matchMedia("(max-width: 760px)").matches;
+        if (isMobile) {
+            const navBottom = document.querySelector("body > nav")?.getBoundingClientRect().bottom ?? 0;
+            popover.style.setProperty("--typing-key-popover-mobile-top", `${Math.max(12, Math.ceil(navBottom) + 12)}px`);
+            popover.classList.remove("is-below-center");
+            return;
+        }
+
+        popover.style.removeProperty("--typing-key-popover-mobile-top");
+        if (preferredPlacement === "above") {
+            const requiredSpace = popover.offsetHeight + 24;
+            popover.classList.toggle("is-below-center", hint.getBoundingClientRect().top < requiredSpace);
+        }
+    };
+
+    hint.addEventListener("pointerenter", updatePosition);
+    hint.addEventListener("focusin", updatePosition);
+    hint.addEventListener("touchstart", updatePosition, { passive: true });
+    window.addEventListener("resize", updatePosition, { passive: true });
+    window.addEventListener("scroll", () => {
+        if (hint.matches(":hover, :focus, :focus-within")) updatePosition();
+    }, { passive: true });
+    updatePosition();
+    return hint;
+}
+
+export function renderBackspaceKeyHint(container) {
+    if (!container) return null;
+    ensureKeyLocationHintStyles();
+    container.innerHTML = `
+        <span class="typing-key-hint" tabindex="0" aria-label="Backspace 鍵在鍵盤數字列的最右邊">
+            <kbd>Backspace</kbd>
+            <span class="typing-key-popover" role="tooltip" aria-hidden="true">
+                <span class="typing-key-popover-title">Backspace 在數字列最右邊</span>
+                <span class="typing-keyboard-strip" aria-hidden="true">
+                    <span class="typing-keyboard-strip-row function"><span>Esc</span><span>F1</span><span>F2</span><span>F3</span><span>F4</span><span>F5</span><span>F6</span><span>F7</span><span>F8</span><span>F9</span><span>F10</span><span>F11</span><span>F12</span></span>
+                    <span class="typing-keyboard-strip-row number"><span>~</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>-</span><span>=</span><span class="is-backspace">← Backspace</span></span>
+                    <span class="typing-keyboard-strip-row letters"><span>Tab</span><span>Q</span><span>W</span><span>E</span><span>R</span><span>T</span><span>Y</span><span>U</span><span>I</span><span>O</span><span>P</span></span>
+                </span>
+                <span class="typing-key-popover-help">滑鼠移到這裡，或用鍵盤選到提示，就能確認位置。</span>
+            </span>
+        </span>
+    `;
+    return setupKeyLocationHintPositioning(container.querySelector('.typing-key-hint'), 'above');
+}
+
+export function renderCapsLockKeyHint(container) {
+    if (!container) return null;
+    ensureKeyLocationHintStyles();
+    container.innerHTML = `
+        <span class="typing-key-hint caps-lock-location-hint" tabindex="0" aria-label="Caps Lock 鍵在鍵盤左側，位於 Tab 鍵下方">
+            <kbd>Caps Lock</kbd>
+            <span class="typing-key-popover is-below-left" role="tooltip" aria-hidden="true">
+                <span class="typing-key-popover-title">Caps Lock 在鍵盤左側、A 鍵旁邊</span>
+                <span class="typing-keyboard-strip" aria-hidden="true">
+                    <span class="typing-keyboard-strip-row function"><span>Esc</span><span>F1</span><span>F2</span><span>F3</span><span>F4</span><span>F5</span><span>F6</span><span>F7</span><span>F8</span><span>F9</span><span>F10</span><span>F11</span><span>F12</span></span>
+                    <span class="typing-keyboard-strip-row number"><span>~</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>-</span><span>=</span><span>← Backspace</span></span>
+                    <span class="typing-keyboard-strip-row letters"><span>Tab</span><span>Q</span><span>W</span><span>E</span><span>R</span><span>T</span><span>Y</span><span>U</span><span>I</span><span>O</span><span>P</span></span>
+                    <span class="typing-keyboard-strip-row home"><span class="is-capslock">Caps Lock</span><span>A</span><span>S</span><span>D</span><span>F</span><span>G</span><span>H</span><span>J</span><span>K</span><span>L</span><span>Enter</span></span>
+                </span>
+                <span class="typing-key-popover-help">滑鼠移到 Caps Lock，或用鍵盤選到它，就能確認位置。</span>
+            </span>
+        </span>
+    `;
+    return setupKeyLocationHintPositioning(container.querySelector('.typing-key-hint'), 'below');
+}
+
 function escapeHtml(value) {
     return String(value ?? "")
         .replaceAll("&", "&amp;")

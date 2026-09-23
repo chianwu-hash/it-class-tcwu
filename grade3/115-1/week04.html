@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三年級資訊課 - 第 04 週 彩虹精靈任務箱</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="week04.css?v=20260923-2">
+</head>
+<body class="class-card-not-ready text-slate-800 antialiased pb-12">
+    <script src="navbar.js?v=20260922"></script>
+
+    <header class="bg-gradient-to-r from-teal-500 via-cyan-500 to-sky-500 text-white shadow-xl mb-8">
+        <div class="max-w-5xl mx-auto px-6 py-12 relative overflow-hidden">
+            <div class="relative z-10 flex items-center justify-between gap-6">
+                <div>
+                    <p class="text-xl font-bold text-cyan-100 mb-2">三年級資訊課 ｜ 第 04 週</p>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 drop-shadow-md">彩虹精靈任務箱</h1>
+                    <p class="text-xl md:text-2xl text-cyan-50 font-black leading-relaxed">先看著步驟練習 Mia，再用 Leo 正式過關，<br class="hidden md:block">接著到真正的 Windows 找出彩虹通關密語。</p>
+                </div>
+                <div class="hidden md:block text-7xl opacity-80 transform rotate-6 drop-shadow-lg" aria-hidden="true">
+                    <i class="fa-solid fa-id-card text-amber-200"></i>
+                </div>
+            </div>
+            <i class="fa-solid fa-window-restore absolute text-white opacity-10 text-9xl -bottom-10 right-4" aria-hidden="true"></i>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 space-y-8">
+        <p id="boot-status" class="rounded-2xl border-2 border-cyan-200 bg-cyan-50 px-5 py-4 font-bold text-cyan-900" role="status">正在準備活動；若等候太久，請告訴老師。</p>
+        <div class="class-card-required-hint rounded-2xl border-4 border-dashed border-amber-300 bg-amber-50 px-5 py-4 font-black text-amber-900">
+            <i class="fa-solid fa-id-card mr-2"></i>先在右上角輸入課堂身分卡，才能練習並保存英文通行證進度。這不是 Google 登入。
+        </div>
+
+        <section class="bg-white rounded-3xl border-4 border-orange-200 shadow-md overflow-hidden">
+            <div class="bg-orange-100 px-6 py-4 border-b-4 border-orange-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-rotate-left text-orange-700 text-2xl mr-3"></i>
+                    <div>
+                        <p class="text-sm font-black text-orange-700">第 1 站｜把舊技能找回來</p>
+                        <h2 class="text-2xl font-black text-orange-950">小寫 mia 與 Backspace 暖身</h2>
+                    </div>
+                </div>
+                <span class="bg-orange-500 text-white text-xs px-3 py-1 rounded-full font-bold">共 2 關</span>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <div class="mission-path">
+                    <article class="mission-step mission-warmup mission-last">
+                        <span class="mission-number">0</span>
+                        <div class="mission-content">
+                            <p class="mission-label"><span id="warmup-stage-label">暖身第 1 關</span><span class="warmup-count">共 2 關</span></p>
+                            <h3 id="warmup-title">先輸入小寫 mia</h3>
+                            <div class="warmup-progress-pills" aria-label="暖身關卡進度">
+                                <span id="warmup-progress-1" class="current">1 輸入 mia</span>
+                                <span id="warmup-progress-2">2 修正 Abw</span>
+                            </div>
+                            <p id="warmup-instruction">彩虹精靈守衛先檢查基本功：點白色輸入框，照著輸入三個小寫字母 <strong>mia</strong>。</p>
+                            <div class="warmup-row">
+                                <label for="warmup-input" class="sr-only">小寫 mia 暖身輸入框</label>
+                                <input id="warmup-input" type="text" maxlength="3" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" onpaste="return false;" ondrop="return false;" placeholder="在這裡輸入 mia" disabled>
+                                <button id="warmup-check" type="button" disabled><i class="fa-solid fa-check mr-2"></i>檢查第 1 關</button>
+                            </div>
+                            <p id="warmup-feedback" class="warmup-feedback" role="status">先輸入課堂身分卡，再開始暖身。</p>
+                        </div>
+                    </article>
+                </div>
+                <p class="mt-5 rounded-2xl bg-orange-50 px-5 py-4 font-bold text-orange-900"><i class="fa-solid fa-arrow-right mr-2"></i>通過守衛的兩關暖身後，往下用 Caps Lock 把 <code>mia</code> 變成 <code>Mia</code>，取得進入任務箱的姓名通行證。</p>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl border-4 border-amber-200 shadow-md overflow-hidden">
+            <div class="bg-amber-100 px-6 py-4 border-b-4 border-amber-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-keyboard text-amber-700 text-2xl mr-3"></i>
+                    <div>
+                        <p class="text-sm font-black text-amber-700">第 2 站｜今天的新技能</p>
+                        <h2 class="text-2xl font-black text-amber-950">用 Caps Lock 輸入姓名第一個大寫字母</h2>
+                    </div>
+                </div>
+                <span class="bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold">暫時不使用 Shift</span>
+            </div>
+            <div class="p-6 md:p-8">
+                <p class="mb-5 rounded-2xl bg-amber-50 px-5 py-4 font-bold text-amber-900"><i class="fa-solid fa-key mr-2"></i>光精靈要先確認你會輸入姓名第一個大寫字母，才會發出尋寶通行證。</p>
+                <div class="grid lg:grid-cols-[1.1fr_.9fr] gap-6 items-stretch">
+                    <div class="rounded-2xl border-2 border-amber-200 bg-amber-50 p-5">
+                        <h3 class="text-2xl font-black text-amber-900 mb-4">輸入 Mia 的四步驟</h3>
+                        <ol class="caps-steps">
+                            <li><span class="caps-lock-key-hint"></span><span>按一下，開啟大寫</span></li>
+                            <li><kbd>M</kbd><span>輸入第一個大寫字母</span></li>
+                            <li><span class="caps-lock-key-hint"></span><span>再按一下，關閉大寫</span></li>
+                            <li><kbd>I</kbd><kbd>A</kbd><span>直接按，輸入小寫 ia</span></li>
+                        </ol>
+                    </div>
+                    <div class="rounded-2xl border-2 border-sky-200 bg-sky-50 p-5">
+                        <h3 class="text-2xl font-black text-sky-900 mb-4">看結果判斷狀態</h3>
+                        <div class="name-compare"><span>mia</span><b>三個都是小寫</b></div>
+                        <div class="name-compare correct"><span>Mia</span><b>姓名第一字大寫</b></div>
+                        <div class="name-compare"><span>MIA</span><b>大寫忘了關閉</b></div>
+                        <p class="mt-4 font-bold text-sky-900">鍵盤沒有指示燈也沒關係，看輸入結果就能檢查。完成後記得把 Caps Lock 關閉。</p>
+                    </div>
+                </div>
+                <div class="caps-practice-card">
+                    <div class="caps-practice-heading">
+                        <span class="caps-practice-icon" aria-hidden="true"><i class="fa-solid fa-keyboard"></i></span>
+                        <div>
+                            <p>現在就看著上面的四步驟練習</p>
+                            <h3>在這裡輸入 <code>Mia</code></h3>
+                        </div>
+                        <span class="caps-practice-note">練習框，不記錄進度</span>
+                    </div>
+                    <label for="caps-practice-input">Mia 練習輸入框</label>
+                    <div class="caps-practice-row">
+                        <input id="caps-practice-input" type="text" maxlength="3" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" onpaste="return false;" ondrop="return false;" placeholder="在這裡輸入 Mia">
+                        <button id="caps-practice-check" type="button"><i class="fa-solid fa-check mr-2"></i>檢查 Mia</button>
+                    </div>
+                    <p id="caps-practice-feedback" class="caps-practice-feedback" role="status">可以一邊看四步驟，一邊輸入；完成後再換一個姓名正式過關。</p>
+                    <button id="mia-input-jump" type="button" class="mia-input-jump hidden">
+                        <span class="mia-input-jump-icon" aria-hidden="true"><i class="fa-solid fa-arrow-down"></i></span>
+                        <span class="mia-input-jump-copy">
+                            <small>Mia 練習完成，接著換一個姓名獨立完成</small>
+                            <strong>前往「主線第 1 關」輸入 Leo</strong>
+                        </span>
+                        <span class="mia-input-jump-action">前往輸入 Leo <i class="fa-solid fa-keyboard ml-2"></i></span>
+                    </button>
+                </div>
+                <div class="mt-5 rounded-2xl border-2 border-rose-200 bg-rose-50 px-5 py-4 font-bold text-rose-900">
+                    <i class="fa-solid fa-circle-info mr-2"></i>本週不教 Shift：它還會連結中英文切換和其他符號，現在先把 Caps Lock 的開、關練穩。
+                </div>
+                <p class="mt-5 text-sm font-bold text-slate-600"><i class="fa-solid fa-book-open mr-2 text-amber-700"></i>課本參考：p.100 打字鍵區與 Backspace、p.101 Caps Lock 與狀態指示燈；Mia、Abu 與句型參考翰林 Here We Go 1 Unit 1，p.12～19，Leo、Ben 為本課補充練習姓名。</p>
+            </div>
+        </section>
+
+        <section id="typing-task" class="bg-white rounded-3xl border-4 border-indigo-200 shadow-md overflow-hidden">
+            <div class="bg-indigo-100 px-6 py-4 border-b-4 border-indigo-200 flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-id-card-clip text-indigo-700 text-2xl mr-3"></i>
+                    <div>
+                        <p class="text-sm font-black text-indigo-700">第 3 站｜彩虹精靈通行證</p>
+                        <h2 class="text-2xl font-black text-indigo-950">把 Mia 的方法用在 Leo，再解鎖彩虹精靈尋寶</h2>
+                    </div>
+                </div>
+                <span class="bg-indigo-600 text-white text-xs px-3 py-1 rounded-full font-bold">主線 2 關＋快手 4 關</span>
+            </div>
+            <div class="p-6 md:p-8">
+                <div class="rounded-2xl border-2 border-indigo-200 bg-indigo-50 p-5 mb-6 font-bold text-indigo-950 leading-relaxed">
+                    <p><i class="fa-solid fa-bullseye mr-2"></i><strong>先完成第 1 關：</strong>把剛才練習 <code>Mia</code> 的方法用在新姓名 <code>Leo</code>，彩虹精靈尋寶才會解鎖。</p>
+                    <p class="mt-2"><i class="fa-brands fa-windows mr-2"></i><strong>本週主線：</strong>依座號取得算式，到老師課前放在桌面的「第04關任務箱」找答案，再回來完成第 2 關。</p>
+                    <p class="mt-2"><i class="fa-solid fa-forward mr-2"></i>主線完成後，第 3～6 關是彩虹精靈追加的快手任務。</p>
+                    <p class="mt-2"><i class="fa-solid fa-rotate-right mr-2"></i><strong>每一關答對後：</strong>可以選「再練習一次」，系統會換成同技能的不同題目；也可以前往下一關。</p>
+                    <p class="mt-2"><i class="fa-solid fa-hand mr-2"></i>不能複製貼上，請看著範例逐字輸入。</p>
+                </div>
+
+                <p id="progress-status" class="rounded-2xl border-2 border-indigo-200 bg-white px-5 py-4 font-black text-indigo-800" role="status">請先在右上角輸入課堂身分卡，再開始闖關。</p>
+                <pre id="progress-debug" class="hidden mt-4 overflow-auto rounded-xl bg-slate-900 p-4 text-xs text-white"></pre>
+
+                <div id="treasure-unlocked" class="hidden mt-5 rounded-2xl border-4 border-amber-300 bg-amber-50 p-5 text-amber-950" role="status">
+                    <h3 class="text-2xl font-black"><i class="fa-solid fa-unlock-keyhole mr-2"></i>鍵盤準備完成：彩虹精靈尋寶已解鎖！</h3>
+                    <p class="mt-2 font-bold">你已經把方法換到新姓名 Leo。請看第 2 關的分組算式，再前往桌面的「第04關任務箱」。</p>
+                </div>
+
+                <div id="mainline-complete" class="hidden mt-5 rounded-2xl border-4 border-emerald-300 bg-emerald-50 p-5 text-emerald-900" role="status">
+                    <h3 class="text-2xl font-black"><i class="fa-solid fa-circle-check mr-2"></i>主線完成：你找到了彩虹通關密語！</h3>
+                    <p class="mt-2 font-bold">你靠雙擊、右鍵、拖曳、滾輪和工作列找到線索，也完成了精靈算式的數字答案。</p>
+                </div>
+
+                <div id="typing-levels-container" class="mt-8 flex flex-col space-y-8 max-w-3xl mx-auto">
+                    <article id="block-level1" class="typing-level theme-cyan">
+                        <span class="level-badge">主線第 1 關</span>
+                        <h3><i class="fa-solid fa-signature mr-2"></i>新的英文姓名</h3>
+                        <p class="level-hint">不要照抄剛才的 Mia；把相同方法換到 Leo：姓名第一個字母大寫，其餘小寫。</p>
+                        <div class="typing-prompt select-none pointer-events-none"><span class="word">Leo</span></div>
+                        <label for="input-level1">答案輸入框</label>
+                        <input id="input-level1" type="text" disabled onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="逐字輸入 Leo">
+                        <button id="check-1" type="button" onclick="checkLevel(1)" disabled><i class="fa-solid fa-paper-plane mr-2"></i>檢查答案</button>
+                        <p id="msg-level1" class="level-message" role="status"></p>
+                    </article>
+
+                    <article id="block-level2" class="typing-level theme-emerald treasure-level hidden">
+                        <span class="level-badge">主線第 2 關</span>
+                        <h3><i class="fa-solid fa-map-location-dot mr-2"></i>彩虹精靈尋寶</h3>
+                        <p class="level-hint">先看自己的算式，再到真正的 Windows 找藏寶圖。網頁不會告訴你精靈的數值。</p>
+
+                        <div class="treasure-expression-card select-none pointer-events-none">
+                            <span id="treasure-group-label">第 1 組線索</span>
+                            <strong id="treasure-expression">光精靈 ＋ 火精靈 ＝ ？</strong>
+                        </div>
+
+                        <ol class="treasure-steps">
+                            <li><span>1</span><div><b>前往桌面</b><p>最小化課程網頁。桌面上的「第04關任務箱」是老師上課前用電腦教室管理系統放好的，不用自己新增或改名字。</p></div></li>
+                            <li><span>2</span><div><b>雙擊開箱</b><p>在「第04關任務箱」上同一個位置快速點兩下，打開檔案總管。</p></div></li>
+                            <li><span>3</span><div><b>整理視窗</b><p>拖曳標題列搬位置，再從角落拖曳改大小；游標放在內容區，用滾輪找到「藏寶圖」。</p></div></li>
+                            <li><span>4</span><div><b>請守衛現身，再打開圖</b><p>先在「藏寶圖」按一下右鍵，觀察功能表後點空白處收起；接著雙擊「藏寶圖」，記住算式中兩位精靈的數字。</p></div></li>
+                            <li><span>5</span><div><b>回來交答案</b><p>從工作列按一下瀏覽器回到這頁，算出答案後只輸入數字，不用再輸入 <code>Mia</code>。</p></div></li>
+                        </ol>
+
+                        <p class="treasure-book-ref"><i class="fa-solid fa-book-open mr-2"></i>課本參考：p.39 右鍵與最小化、p.40 雙擊與移動視窗、p.41 調整大小與滾輪。</p>
+
+                        <div class="typing-prompt select-none pointer-events-none"><span class="word treasure-passphrase-format">只輸入數字</span></div>
+                        <label for="input-level2">數字答案輸入框</label>
+                        <input id="input-level2" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" disabled onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="只輸入算式答案">
+                        <button id="check-2" type="button" onclick="checkLevel(2)" disabled><i class="fa-solid fa-paper-plane mr-2"></i>檢查答案</button>
+                        <p id="msg-level2" class="level-message" role="status"></p>
+                    </article>
+
+                    <article id="block-level3" class="typing-level theme-blue hidden">
+                        <span class="level-badge">第 3 關｜快手任務 1</span>
+                        <h3><i class="fa-solid fa-user mr-2"></i>精靈朋友的另一個姓名</h3>
+                        <p class="level-hint">再做一次「開大寫、打一字、關大寫」。</p>
+                        <div class="typing-prompt select-none pointer-events-none"><span class="word">Abu</span></div>
+                        <label for="input-level3">答案輸入框</label>
+                        <input id="input-level3" type="text" disabled onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="逐字輸入 Abu">
+                        <button id="check-3" type="button" onclick="checkLevel(3)" disabled><i class="fa-solid fa-paper-plane mr-2"></i>檢查答案</button>
+                        <p id="msg-level3" class="level-message" role="status"></p>
+                    </article>
+
+                    <article id="block-level4" class="typing-level theme-orange hidden">
+                        <span class="level-badge">第 4 關｜快手任務 2</span>
+                        <h3><i class="fa-solid fa-passport mr-2"></i>精靈任務的全大寫代碼</h3>
+                        <p class="level-hint">開啟 Caps Lock 連續輸入，完成後再關閉。</p>
+                        <div class="typing-prompt select-none pointer-events-none"><span class="word">MIA</span></div>
+                        <label for="input-level4">答案輸入框</label>
+                        <input id="input-level4" type="text" disabled onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="逐字輸入 MIA">
+                        <button id="check-4" type="button" onclick="checkLevel(4)" disabled><i class="fa-solid fa-paper-plane mr-2"></i>檢查答案</button>
+                        <p id="msg-level4" class="level-message" role="status"></p>
+                    </article>
+
+                    <article id="block-level5" class="typing-level theme-pink hidden">
+                        <span class="level-badge">第 5 關｜快手任務 3</span>
+                        <h3><i class="fa-solid fa-user-group mr-2"></i>精靈同行姓名清單</h3>
+                        <p class="level-hint">逗號後面要留一個空格；逗號不需要按 Shift。</p>
+                        <div class="typing-prompt select-none pointer-events-none"><span class="word">Mia, Abu</span></div>
+                        <label for="input-level5">答案輸入框</label>
+                        <input id="input-level5" type="text" disabled onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="逐字輸入 Mia, Abu">
+                        <button id="check-5" type="button" onclick="checkLevel(5)" disabled><i class="fa-solid fa-paper-plane mr-2"></i>檢查答案</button>
+                        <p id="msg-level5" class="level-message" role="status"></p>
+                    </article>
+
+                    <article id="block-level6" class="typing-level theme-purple hidden">
+                        <span class="level-badge">第 6 關｜快手任務 4</span>
+                        <h3><i class="fa-solid fa-trophy mr-2"></i>向彩虹精靈完整介紹自己</h3>
+                        <p class="level-hint">注意兩個大寫位置、三個空格和最後的英文句點。</p>
+                        <div class="typing-prompt select-none pointer-events-none"><span class="word">My name is Mia.</span></div>
+                        <label for="input-level6">答案輸入框</label>
+                        <input id="input-level6" type="text" disabled onpaste="return false;" ondrop="return false;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="逐字輸入完整句子">
+                        <button id="check-6" type="button" onclick="checkLevel(6)" disabled><i class="fa-solid fa-paper-plane mr-2"></i>檢查答案</button>
+                        <p id="msg-level6" class="level-message" role="status"></p>
+                    </article>
+                </div>
+
+                <div class="mt-7 rounded-2xl border-2 border-amber-300 bg-amber-50 px-5 py-4 font-black text-amber-950">
+                    <i class="fa-solid fa-lightbulb mr-2"></i>下課前最後檢查：再按一次 Caps Lock，確認下一個字母會是小寫。
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center mt-12 pb-8 text-gray-500 text-sm font-bold">
+        <p><i class="fa-solid fa-rocket mr-1"></i> 新北市頂溪國小資訊課 - 電腦小小兵系列</p>
+    </footer>
+
+    <script type="module" src="week04.js?v=20260923-4"></script>
+</body>
+</html>

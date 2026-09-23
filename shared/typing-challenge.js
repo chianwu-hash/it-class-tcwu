@@ -68,6 +68,7 @@ export function initTypingChallenge({
     celebrationContent = {},
     draftOptions = {},
     afterAuthUpdate = null,
+    autoScrollNext = true,
     requireAuth = true,
     guestProgress = null
 }) {
@@ -881,15 +882,27 @@ export function initTypingChallenge({
         const user = await getActiveUser();
         if (!user) {
             if (!requireAuth) {
+                if (guestProgress && typeof guestProgress.save === "function") {
+                    let didSave = false;
+                    try {
+                        didSave = await guestProgress.save({ current_level: nextLevel, completed: Boolean(completed) });
+                    } catch (error) {
+                        console.error("saveGuestProgress failed", error, { next_level: nextLevel, completed });
+                        showProgressDebug("saveGuestProgress", error, { next_level: nextLevel, completed });
+                    }
+                    if (didSave === false) {
+                        if (progressStatusEl) {
+                            progressStatusEl.textContent = messages.saveError;
+                        }
+                        return false;
+                    }
+                }
                 highestUnlockedLevel = Math.max(highestUnlockedLevel, nextLevel);
                 progressCompleted = Boolean(completed);
                 if (progressStatusEl) {
                     progressStatusEl.textContent = completed
                         ? (messages.guestCompleted || messages.saveCompleted)
                         : (typeof messages.guestNextLevel === "function" ? messages.guestNextLevel(nextLevel) : messages.saveNextLevel(nextLevel));
-                }
-                if (guestProgress && typeof guestProgress.save === "function") {
-                    await guestProgress.save({ current_level: nextLevel, completed: Boolean(completed) });
                 }
                 setResetProgressVisible(false);
                 clearProgressDebug();
@@ -1087,9 +1100,11 @@ export function initTypingChallenge({
                 void deleteDraft(levelIndex);
                 const nextBlock = document.getElementById(`block-level${levelIndex + 1}`);
                 nextBlock?.classList.remove("hidden");
-                setTimeout(() => {
-                    nextBlock?.scrollIntoView({ behavior: "smooth", block: "center" });
-                }, 1200);
+                if (autoScrollNext) {
+                    setTimeout(() => {
+                        nextBlock?.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }, 1200);
+                }
                 setTimeout(() => {
                     confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
                 }, 500);
