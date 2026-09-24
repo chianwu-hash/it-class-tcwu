@@ -49,16 +49,18 @@ function ensureKeyLocationHintStyles() {
         .typing-keyboard-strip-row.number{grid-template-columns:repeat(13,1fr) 2.5fr}
         .typing-keyboard-strip-row.letters{grid-template-columns:1.5fr repeat(10,1fr)}
         .typing-keyboard-strip-row.home{grid-template-columns:2fr repeat(9,1fr) 2fr}
+        .typing-keyboard-strip-row.bottom{grid-template-columns:2.4fr repeat(7,1fr) 2.4fr}
         .typing-keyboard-strip-row span{display:flex;align-items:center;justify-content:center;min-height:34px;border:1px solid #cbd5e1;border-bottom:4px solid #94a3b8;border-radius:7px;background:#fff;color:#111827;font-size:13px;font-weight:900;line-height:1}
         .typing-keyboard-strip-row .is-backspace{border:4px solid #1d4ed8;border-bottom-color:#1d4ed8;background:#fff;color:#111827;font-size:16px;box-shadow:0 0 0 3px #dbeafe inset}
         .typing-keyboard-strip-row .is-capslock{border:4px solid #1d4ed8;border-bottom-color:#1d4ed8;background:#fff;color:#111827;font-size:15px;box-shadow:0 0 0 3px #dbeafe inset}
+        .typing-keyboard-strip-row .is-shift{border:4px solid #1d4ed8;border-bottom-color:#1d4ed8;background:#fff;color:#111827;font-size:15px;box-shadow:0 0 0 3px #dbeafe inset}
         .typing-key-popover.is-below-left{top:calc(100% + 13px);bottom:auto;left:0;transform:translateY(-6px)}
         .typing-key-popover.is-below-left:before{top:-12px;bottom:auto;left:64px;border:0;border-left:3px solid #f59e0b;border-top:3px solid #f59e0b}
         .typing-key-hint:hover .typing-key-popover.is-below-left,.typing-key-hint:focus .typing-key-popover.is-below-left,.typing-key-hint:focus-within .typing-key-popover.is-below-left{transform:translateY(0)}
         .typing-key-popover.is-below-center{top:calc(100% + 13px);bottom:auto}
         .typing-key-popover.is-below-center:before{top:-12px;bottom:auto;border:0;border-left:3px solid #f59e0b;border-top:3px solid #f59e0b}
         .typing-key-popover-help{display:block;margin-top:10px;color:#ecfeff;font-size:14px;font-weight:900;text-align:center}
-        @media(max-width:760px){.typing-key-popover,.typing-key-popover.is-below-left,.typing-key-popover.is-below-center{position:fixed;top:var(--typing-key-popover-mobile-top,142px);bottom:auto;left:50%;right:auto;transform:translate(-50%,-6px);width:min(500px,92vw);max-height:calc(100vh - var(--typing-key-popover-mobile-top,142px) - 12px);overflow:auto;padding:11px}.typing-key-popover:before,.typing-key-popover.is-below-left:before,.typing-key-popover.is-below-center:before{display:none}.typing-key-hint:hover .typing-key-popover,.typing-key-hint:focus .typing-key-popover,.typing-key-hint:focus-within .typing-key-popover,.typing-key-hint:hover .typing-key-popover.is-below-left,.typing-key-hint:focus .typing-key-popover.is-below-left,.typing-key-hint:focus-within .typing-key-popover.is-below-left,.typing-key-hint:hover .typing-key-popover.is-below-center,.typing-key-hint:focus .typing-key-popover.is-below-center,.typing-key-hint:focus-within .typing-key-popover.is-below-center{transform:translate(-50%,0)}.typing-keyboard-strip-row{gap:3px}.typing-keyboard-strip-row span{min-height:28px;font-size:10px}.typing-keyboard-strip-row .is-backspace,.typing-keyboard-strip-row .is-capslock{font-size:11px}}
+        @media(max-width:760px){.typing-key-popover,.typing-key-popover.is-below-left,.typing-key-popover.is-below-center{position:fixed;top:var(--typing-key-popover-mobile-top,142px);bottom:auto;left:50%;right:auto;transform:translate(-50%,-6px);width:min(500px,92vw);max-height:calc(100vh - var(--typing-key-popover-mobile-top,142px) - 12px);overflow:auto;padding:11px}.typing-key-popover:before,.typing-key-popover.is-below-left:before,.typing-key-popover.is-below-center:before{display:none}.typing-key-hint:hover .typing-key-popover,.typing-key-hint:focus .typing-key-popover,.typing-key-hint:focus-within .typing-key-popover,.typing-key-hint:hover .typing-key-popover.is-below-left,.typing-key-hint:focus .typing-key-popover.is-below-left,.typing-key-hint:focus-within .typing-key-popover.is-below-left,.typing-key-hint:hover .typing-key-popover.is-below-center,.typing-key-hint:focus .typing-key-popover.is-below-center,.typing-key-hint:focus-within .typing-key-popover.is-below-center{transform:translate(-50%,0)}.typing-keyboard-strip-row{gap:3px}.typing-keyboard-strip-row span{min-height:28px;font-size:10px}.typing-keyboard-strip-row .is-backspace,.typing-keyboard-strip-row .is-capslock,.typing-keyboard-strip-row .is-shift{font-size:11px}}
     `;
     document.head.appendChild(style);
 }
@@ -129,6 +131,27 @@ export function renderCapsLockKeyHint(container) {
                     <span class="typing-keyboard-strip-row home"><span class="is-capslock">Caps Lock</span><span>A</span><span>S</span><span>D</span><span>F</span><span>G</span><span>H</span><span>J</span><span>K</span><span>L</span><span>Enter</span></span>
                 </span>
                 <span class="typing-key-popover-help">滑鼠移到 Caps Lock，或用鍵盤選到它，就能確認位置。</span>
+            </span>
+        </span>
+    `;
+    return setupKeyLocationHintPositioning(container.querySelector('.typing-key-hint'), 'below');
+}
+
+export function renderShiftKeyHint(container) {
+    if (!container) return null;
+    ensureKeyLocationHintStyles();
+    container.innerHTML = `
+        <span class="typing-key-hint shift-location-hint" tabindex="0" aria-label="Shift 鍵在鍵盤最下排的左右兩側">
+            <kbd>Shift</kbd>
+            <span class="typing-key-popover is-below-left" role="tooltip" aria-hidden="true">
+                <span class="typing-key-popover-title">Shift 在鍵盤最下排字母列的左右兩側</span>
+                <span class="typing-keyboard-strip" aria-hidden="true">
+                    <span class="typing-keyboard-strip-row number"><span>~</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>-</span><span>=</span><span>← Backspace</span></span>
+                    <span class="typing-keyboard-strip-row letters"><span>Tab</span><span>Q</span><span>W</span><span>E</span><span>R</span><span>T</span><span>Y</span><span>U</span><span>I</span><span>O</span><span>P</span></span>
+                    <span class="typing-keyboard-strip-row home"><span>Caps Lock</span><span>A</span><span>S</span><span>D</span><span>F</span><span>G</span><span>H</span><span>J</span><span>K</span><span>L</span><span>Enter</span></span>
+                    <span class="typing-keyboard-strip-row bottom"><span class="is-shift">⇧ Shift</span><span>Z</span><span>X</span><span>C</span><span>V</span><span>B</span><span>N</span><span>M</span><span class="is-shift">Shift ⇧</span></span>
+                </span>
+                <span class="typing-key-popover-help">左邊或右邊的 Shift 都可以；本週只按一下切換中、英文。</span>
             </span>
         </span>
     `;

@@ -2,7 +2,7 @@ import { initNavbarAuth } from '../../shared/navbar-auth.js';
 import { initClassCardAuth } from '../../shared/class-card-auth.js?v=20260916-1';
 import { createClassCardProgress } from '../../shared/class-card-progress.js';
 import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20260923-1';
-import { initTypingTools, renderBackspaceKeyHint, renderCapsLockKeyHint } from '../../shared/typing-tools.js?v=20260923-1';
+import { initTypingTools, renderBackspaceKeyHint, renderCapsLockKeyHint, renderShiftKeyHint } from '../../shared/typing-tools.js?v=20260924-1';
 
 const COURSE_ID = 'grade3-115-1';
 const WEEK_CODE = '04';
@@ -46,12 +46,14 @@ const PRACTICE_BANKS = {
 };
 const practiceBankIndices = new Map(Object.keys(PRACTICE_BANKS).map(level => [Number(level), 0]));
 const retryingLevels = new Set();
+let activeKeyboardTarget;
 
 const typingTools = initTypingTools({
     showPunctuation: false,
     showKeyboard: true,
     keyboardGuide: true,
     getKeyboardTarget: () => {
+        if (activeKeyboardTarget !== undefined) return activeKeyboardTarget;
         const visibleLevels = [...document.querySelectorAll('.typing-level:not(.hidden)')];
         const currentLevel = visibleLevels.at(-1);
         if (currentLevel?.id === 'block-level2') return '';
@@ -59,8 +61,41 @@ const typingTools = initTypingTools({
     }
 });
 
+function setActiveKeyboardTarget(target) {
+    activeKeyboardTarget = target;
+    typingTools?.refreshKeyboardGuide?.();
+}
+
+function connectInputToKeyboardGuide(input, getTarget) {
+    if (!input) return;
+    input.addEventListener('focus', () => {
+        const target = typeof getTarget === 'function' ? getTarget() : getTarget;
+        setActiveKeyboardTarget(target ?? '');
+    });
+}
+
+levelsData.forEach(({ id }, index) => {
+    const block = document.getElementById(`block-level${id}`);
+    const getTarget = () => index === 1 ? '' : levelsData[index]?.ans ?? '';
+    connectInputToKeyboardGuide(
+        document.getElementById(`input-level${id}`),
+        getTarget
+    );
+    if (block) {
+        new MutationObserver(() => {
+            if (!block.classList.contains('hidden')) {
+                setActiveKeyboardTarget(getTarget());
+            }
+        }).observe(block, { attributes: true, attributeFilter: ['class'] });
+    }
+});
+
 document.querySelectorAll('.caps-lock-key-hint').forEach(container => {
     renderCapsLockKeyHint(container);
+});
+
+document.querySelectorAll('.shift-key-hint').forEach(container => {
+    renderShiftKeyHint(container);
 });
 
 function renderTreasureAssignment() {
@@ -300,6 +335,7 @@ function setupWarmup() {
     let stage = 1;
     let correctionStep = 0;
     let correctionPathValid = true;
+    connectInputToKeyboardGuide(input, () => stage === 1 ? 'mia' : 'Abu');
 
     input.addEventListener('keydown', event => {
         if (stage !== 2) return;
@@ -352,6 +388,7 @@ function setupWarmup() {
         button.innerHTML = '<i class="fa-solid fa-check mr-2"></i>檢查第 2 關';
         feedback.textContent = '第 1 關完成。現在不要整個清空：用 Backspace 把 Abw 改成 Abu。';
         feedback.className = 'warmup-feedback';
+        setActiveKeyboardTarget('Abu');
         input.focus();
         input.setSelectionRange(input.value.length, input.value.length);
     }
@@ -404,6 +441,7 @@ function setupCapsPractice() {
     if (!input || !button || !feedback || !jumpButton) return;
 
     let completed = false;
+    connectInputToKeyboardGuide(input, 'Mia');
 
     function setFeedback(message, state = '') {
         feedback.textContent = message;

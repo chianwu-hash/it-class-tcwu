@@ -149,6 +149,7 @@
 
 - `initTypingTools({ showPunctuation, showKeyboard, keyboardGuide, getKeyboardTarget })`
 - `renderEnglishKeyboardGuide(container, { target })`
+- `renderBackspaceKeyHint(container)`、`renderCapsLockKeyHint(container)`、`renderShiftKeyHint(container)`
 
 **被誰 import**：三年級多數中英打闖關頁，以及 `grade6/115-1/week01.html`、`week02.html` 等目前學期六年級打字頁。
 
@@ -157,6 +158,7 @@
 - 預設同時顯示標點符號表與鍵盤圖；若特殊頁面只需要其中一項，可用 `showPunctuation: false` 或 `showKeyboard: false` 關閉。
 - 初學英打頁若要讓「看鍵盤圖」依目前題目標出按鍵，使用 `keyboardGuide: true`，並以 `getKeyboardTarget()` 回傳目前單字。工具每次開啟都會重新讀取目標，不能把單字寫死在共用模組。
 - 頁面內嵌的英文字母位置提示也必須優先呼叫 `renderEnglishKeyboardGuide(container, { target })`，不要複製另一份 QWERTY 鍵盤 HTML。此函式同時顯示鍵帽大寫、輸入小寫、黃色目標鍵與輸入順序。
+- 需要提示 Backspace、Caps Lock 或 Shift 的位置時，使用對應的 `render*KeyHint()`；提示支援滑鼠移入、鍵盤焦點與手機觸控，頁面不要另畫一套鍵盤位置圖。
 - 不要在單一週頁面複製浮動工具 HTML、`toggleFloatingKeyboard()`、`showKeyboardLayout()`、`toggleFloatingPunctuation()` 或 `showPunctuationPage()`。
 - 此模組只建立輔助圖表 UI，不負責登入、解鎖或進度保存；打字進度仍必須交給 `initTypingChallenge()`。
 

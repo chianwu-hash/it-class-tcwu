@@ -87,8 +87,30 @@ async function createPage(connection, seatNo, viewport = { width: 1366, height: 
                 results.groups.push({ seat, expression });
 
                 if (seat === 1) {
+                    const inputModeReminder = await page.$eval('#input-mode-reminder', element => element.textContent.replace(/\s+/g, ' ').trim());
+                    assert(inputModeReminder.includes('右下角顯示「中」'));
+                    assert(inputModeReminder.includes('切成「英」再輸入'));
+                    assert(inputModeReminder.includes('不用 Shift＋字母'));
+                    await page.$eval('.shift-key-hint .typing-key-hint', element => element.focus({ preventScroll: true }));
+                    await page.waitForFunction(() => getComputedStyle(document.querySelector('.shift-key-hint .typing-key-popover')).visibility === 'visible');
+                    assert.equal(await page.$$eval('.shift-key-hint .is-shift', elements => elements.length), 2);
+                    assert((await page.$eval('.shift-key-hint .typing-key-popover-title', element => element.textContent)).includes('左右兩側'));
                     await page.type('#warmup-input', 'mia');
+                    await page.click('[data-typing-tool-toggle="keyboard"]');
+                    assert.equal(await page.$eval('#floating-letter-key-guide .typing-letter-sequence', element => element.textContent.trim()), 'M → I → A');
+                    assert.deepEqual(
+                        await page.$$eval('#floating-letter-key-guide .typing-letter-key.is-target', elements => elements.map(element => element.dataset.key).sort()),
+                        ['a', 'i', 'm']
+                    );
+                    await page.click('[data-typing-tool-close="keyboard"]');
                     await page.click('#warmup-check');
+                    await page.click('[data-typing-tool-toggle="keyboard"]');
+                    assert.equal(await page.$eval('#floating-letter-key-guide .typing-letter-sequence', element => element.textContent.trim()), 'A → B → U');
+                    assert.deepEqual(
+                        await page.$$eval('#floating-letter-key-guide .typing-letter-key.is-target', elements => elements.map(element => element.dataset.key).sort()),
+                        ['a', 'b', 'u']
+                    );
+                    await page.click('[data-typing-tool-close="keyboard"]');
                     await page.waitForSelector('#warmup-backspace-hint .typing-key-hint');
                     await page.$eval('#warmup-backspace-hint .typing-key-hint', element => {
                         const navHeight = document.querySelector('body > nav')?.getBoundingClientRect().height ?? 0;
@@ -150,6 +172,7 @@ async function createPage(connection, seatNo, viewport = { width: 1366, height: 
                         treasureInitiallyLocked: true,
                         backspaceHintFlipsBelowNearNavbar: true,
                         capsLockLocationHint: true,
+                        shiftInputModeReminderAndLocationHint: true,
                         keyboardGuideDoesNotTargetLetters: true,
                         wrongAnswerHintHidesAnswer: true
                     };
@@ -351,6 +374,13 @@ async function createPage(connection, seatNo, viewport = { width: 1366, height: 
             assert.equal(await progressPage.$$eval('.level-retry-button', elements => elements.length), 6);
             assert.equal(await progressPage.$eval('#mia-input-jump', element => element.classList.contains('hidden')), true);
             await fillProgressInput('#caps-practice-input', 'mia');
+            await progressPage.click('[data-typing-tool-toggle="keyboard"]');
+            assert.equal(await progressPage.$eval('#floating-letter-key-guide .typing-letter-sequence', element => element.textContent.trim()), 'M → I → A');
+            assert.deepEqual(
+                await progressPage.$$eval('#floating-letter-key-guide .typing-letter-key.is-target', elements => elements.map(element => element.dataset.key).sort()),
+                ['a', 'i', 'm']
+            );
+            await progressPage.click('[data-typing-tool-close="keyboard"]');
             await progressPage.click('#caps-practice-check');
             assert((await progressPage.$eval('#caps-practice-feedback', element => element.textContent)).includes('第一個字母還是小寫'));
             await fillProgressInput('#caps-practice-input', 'MIA');
