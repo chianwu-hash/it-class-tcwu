@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>三年級資訊課｜第 05 週 鍵盤辨字偵探</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link rel="stylesheet" href="week05.css?v=20260929-2">
+</head>
+<body class="class-card-not-ready">
+  <script src="navbar.js?v=20260929"></script>
+  <header class="hero">
+    <div class="page-width hero-inner">
+      <p class="eyebrow">三年級資訊課｜第 05 週</p>
+      <h1>鍵盤辨字偵探</h1>
+      <p>看清楚、找對鍵、打錯會修改。今天先練自己的帳號，再用虛構題目預習密碼格式。</p>
+      <div class="hero-steps" aria-label="今日任務順序"><span>① 辨字</span><span>② Shift 暫時大寫</span><span>③ 英數修正</span><span>④ 英打快手預習</span></div>
+    </div>
+  </header>
+
+  <main class="page-width">
+    <p id="boot-status" class="notice" role="status">正在準備活動；如果等候太久，請告訴老師。</p>
+    <p class="class-card-required-hint notice warning"><i class="fa-solid fa-id-card" aria-hidden="true"></i> 先在右上角輸入課堂身分卡，才能開始練習。這不是 Google 登入。</p>
+
+    <section class="card intro-card" aria-labelledby="start-title">
+      <p class="section-kicker">開始前</p>
+      <h2 id="start-title">按住 Shift，暫時輸入一個大寫字母</h2>
+      <div class="shift-grid">
+        <div class="shift-note"><strong>第 04 週：切換輸入法、認識 Caps Lock</strong><p>先看 Windows 右下角；若顯示「中」，按一下 Shift 切成「英」。要連續輸入一串大寫字母（如 ABC），可使用上週認識的 Caps Lock；結束後再按一次關閉。</p></div>
+        <div class="shift-note accent"><strong>第 05 週：按住 Shift，暫時大寫</strong><p>確認已是「英」後，按住 Shift，點一下字母，再放開 Shift；只有這個字母暫時變大寫。適合英文名字的開頭（如 Amy 的 A）或英文句首。</p></div>
+      </div>
+      <p class="key-chant">一個字母要大寫：先看「英」→ 按住 Shift → 點字母 → 放開 Shift。連續大寫：想想 Caps Lock。</p>
+      <div class="key-map" aria-label="鍵盤按鍵位置示意">
+        <div class="key-map-row"><span class="row-label">數字在上排</span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd><kbd>5</kbd><kbd>6</kbd><kbd>7</kbd><kbd>8</kbd><kbd>9</kbd><kbd class="target-number">0</kbd><kbd class="long-key">← Backspace</kbd></div>
+        <div class="key-map-row"><span class="row-label">字母在下面</span><kbd>Q</kbd><kbd>W</kbd><kbd>E</kbd><kbd>R</kbd><kbd>T</kbd><kbd>Y</kbd><kbd>U</kbd><kbd>I</kbd><kbd class="target-letter">O</kbd><kbd>P</kbd><kbd class="target-letter">L</kbd></div>
+        <div class="key-map-row"><span class="row-label">Shift 在左、右</span><kbd class="long-key shift-key">⇧ Shift</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><kbd>F</kbd><kbd>G</kbd><kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd class="long-key shift-key">Shift ⇧</kbd></div>
+      </div>
+      <div class="confusion-grid" aria-label="易混淆字元說明">
+        <div><b>l</b><span>小寫 L｜字母鍵 L</span></div><div><b>1</b><span>數字一｜上排 1</span></div>
+        <div><b>o</b><span>小寫 O｜字母鍵 O</span></div><div><b>0</b><span>數字零｜上排 0</span></div>
+      </div>
+    </section>
+
+    <section class="card windows-card" aria-labelledby="windows-title">
+      <p class="section-kicker">今天的 Windows 實作</p>
+      <h2 id="windows-title">幫電腦換一套佈景主題</h2>
+      <p>沿用上週的最小化、桌面右鍵與工作列找回。先記住原來的佈景主題，再選一套 Windows 已提供的主題，觀察桌布與色彩的變化；下課前依老師指示改回原設定。</p>
+      <ol class="windows-steps">
+        <li><b>回到桌面</b><span>將課程網頁最小化，在桌面空白處按滑鼠右鍵。</span></li>
+        <li><b>開啟佈景主題</b><span>選「個人化」→「佈景主題」（有些畫面顯示「主題」）。</span></li>
+        <li><b>選一套主題</b><span>從電腦已有的主題縮圖選一套，觀察預覽圖、桌布與色彩。</span></li>
+        <li><b>觀察並回來</b><span>最小化設定視窗，看看桌面有何改變，再從工作列找回課程網頁。</span></li>
+      </ol>
+      <div class="windows-extension">
+        <h3>延伸任務｜到 Microsoft Store 找更多佈景主題</h3>
+        <p>完成主線且老師確認 Store 可用時，在「佈景主題」頁選「瀏覽主題／取得更多佈景主題」。找一套免費主題，按「取得」或「安裝」，再回到佈景主題頁套用。若出現登入、付費或受學校限制的畫面，就停下來告訴老師。</p>
+      </div>
+      <p class="windows-note">若「個人化」被教室電腦鎖定，請告訴老師，改用老師的畫面觀察操作。</p>
+      <p class="book-ref">課本參考：第 3 課「自訂我的桌面」p.56～57 更換佈景主題；p.61 提到從 Microsoft Store 取得更多佈景主題。</p>
+    </section>
+
+    <section class="card" aria-labelledby="challenge-title">
+      <p class="section-kicker">鍵盤第 1～3 關｜我的帳號第 4 關｜格式延伸第 5～6 關</p>
+      <h2 id="challenge-title">鍵盤練習與英打快手</h2>
+      <p>本週不發帳號密碼條。第 1～3 關與密碼格式題使用虛構字串；確認課堂身分卡後，第 4 關會顯示你的學校帳號，讓你親手反覆練習。本週不輸入自己的身分證字號，也不設定新密碼。</p>
+      <p id="progress-status" class="progress-status" role="status">請先輸入課堂身分卡，再開始闖關。</p>
+      <pre id="progress-debug" class="hidden" aria-live="polite"></pre>
+      <div id="typing-levels-container" class="levels" inert>
+        <article id="block-level1" class="level" aria-labelledby="level1-title">
+          <span class="level-tag">主線 1｜辨字</span><h3 id="level1-title">字母和數字找不同</h3>
+          <p>看清楚：小寫 L、數字 1、小寫 O、數字 0。鍵盤上的字母鍵印著大寫，直接按會輸入小寫。</p>
+          <div class="target-text select-none pointer-events-none" aria-label="練習字串，小寫 L、數字一、小寫 O、數字零"><span>l</span><span>1</span><span>o</span><span>0</span></div>
+          <p class="target-labels">字母 l　數字 1　字母 o　數字 0</p>
+          <label for="input-level1">在這裡依序輸入四碼</label><input id="input-level1" type="text" disabled maxlength="4" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onpaste="return false" ondrop="return false">
+          <button id="check-1" type="button" onclick="checkLevel(1)" disabled>檢查第 1 關</button><p id="msg-level1" class="level-message" role="status"></p>
+          <div class="replay-zone hidden" data-replay-zone="1"></div>
+        </article>
+        <article id="block-level2" class="level hidden" aria-labelledby="level2-title">
+          <span class="level-tag">主線 2｜暫時大寫</span><h3 id="level2-title">按住 Shift 打一個大寫</h3>
+          <p>先確認是「英」。按住 Shift 點 H，放開後直接點 I。</p><div class="target-text word-target select-none pointer-events-none" aria-label="大寫 H，小寫 i">Hi</div>
+          <label for="input-level2">輸入 Hi</label><input id="input-level2" type="text" disabled maxlength="2" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onpaste="return false" ondrop="return false">
+          <button id="check-2" type="button" onclick="checkLevel(2)" disabled>檢查第 2 關</button><p id="msg-level2" class="level-message" role="status"></p>
+          <div class="replay-zone hidden" data-replay-zone="2"></div>
+        </article>
+        <article id="block-level3" class="level hidden" aria-labelledby="level3-title">
+          <span class="level-tag">主線 3｜英數修正</span><h3 id="level3-title">大寫、字母和數字混合</h3>
+          <p>先用 Shift 輸入大寫 A，再分清上排數字 0、小寫 o 與數字 1；打錯用 Backspace 修正。</p><div class="target-text word-target select-none pointer-events-none" aria-label="大寫 A，數字零，小寫 o，數字一">A0o1</div>
+          <label for="input-level3">依序輸入四碼</label><input id="input-level3" type="text" disabled maxlength="4" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onpaste="return false" ondrop="return false">
+          <button id="check-3" type="button" onclick="checkLevel(3)" disabled>檢查第 3 關</button><p id="msg-level3" class="level-message" role="status"></p>
+          <div class="replay-zone hidden" data-replay-zone="3"></div>
+        </article>
+        <article id="block-level4" class="level hidden" aria-labelledby="level4-title">
+          <span class="level-tag">必做快手 4｜我的帳號</span><h3 id="level4-title">親手輸入自己的學校帳號</h3>
+          <p>只看自己的畫面，逐碼分辨小寫字母與數字。這是帳號練習，不是親師生平台登入；不要把帳號念出來，也不要使用複製貼上。</p>
+          <p id="account-load-status" class="account-status" role="status">正在確認這張課堂身分卡的帳號…</p>
+          <div id="account-target" class="target-text word-target select-none pointer-events-none" aria-label="自己的學校帳號"></div>
+          <label for="input-level4">看上方帳號，自己輸入一次</label><input id="input-level4" type="text" disabled maxlength="24" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onpaste="return false" ondrop="return false">
+          <button id="check-4" type="button" onclick="checkLevel(4)" disabled>檢查第 4 關</button><p id="msg-level4" class="level-message" role="status"></p>
+          <div class="replay-zone hidden" data-replay-zone="4"></div>
+        </article>
+        <article id="block-level5" class="level extension hidden" aria-labelledby="level5-title">
+          <span class="level-tag">英打快手 5｜預設密碼格式</span><h3 id="level5-title">一碼大寫，加九個數字</h3>
+          <p>這串是虛構格式題，不是任何人的身分證字號；第一碼用 Shift，後九碼用上排數字鍵。</p><div class="target-text word-target select-none pointer-events-none">A123456780</div>
+          <label for="input-level5">輸入虛構格式題</label><input id="input-level5" type="text" disabled maxlength="10" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onpaste="return false" ondrop="return false">
+          <button id="check-5" type="button" onclick="checkLevel(5)" disabled>檢查第 5 關</button><p id="msg-level5" class="level-message" role="status"></p>
+          <div class="replay-zone hidden" data-replay-zone="5"></div>
+        </article>
+        <article id="block-level6" class="level extension hidden" aria-labelledby="level6-title">
+          <span class="level-tag">英打快手 6｜新密碼格式</span><h3 id="level6-title">小寫英文單字加數字</h3>
+          <p>這只是公開範例，不能直接當自己的新密碼；今天不設定新密碼。</p><div class="target-text word-target select-none pointer-events-none">apple1234</div>
+          <label for="input-level6">輸入格式範例</label><input id="input-level6" type="text" disabled maxlength="9" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onpaste="return false" ondrop="return false">
+          <button id="check-6" type="button" onclick="checkLevel(6)" disabled>檢查第 6 關</button><p id="msg-level6" class="level-message" role="status"></p>
+          <div class="replay-zone hidden" data-replay-zone="6"></div>
+        </article>
+      </div>
+    </section>
+    <p class="book-ref">課本參考：巨岩《Windows 11 電腦小小兵》第 5 課，p.100 英數鍵與 Backspace、p.101 Caps Lock、p.107 Shift＋字母、p.110 修改文字。辨字與虛構帳密題型為本課補充活動。</p>
+  </main>
+  <script type="module" src="week05.js?v=20260929-2"></script>
+</body>
+</html>
