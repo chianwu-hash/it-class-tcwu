@@ -1165,6 +1165,8 @@ export function initTypingChallenge({
         trophy.className = "text-center transform scale-0 transition-transform duration-1000";
 
         overlay.appendChild(trophy);
+        // 同頁錨點不會換頁，必須先移除遮罩，學生才能繼續操作。
+        trophy.querySelector("a")?.addEventListener("click", () => overlay.remove());
         document.body.appendChild(overlay);
 
         setTimeout(() => {
