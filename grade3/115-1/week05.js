@@ -89,6 +89,7 @@ const warmupBanks = {
   ],
   confusion: [
     { ans:'lone', context:'像帳號的練習題：lone。第一個是小寫 l，第二個是小寫 o。' },
+    { ans:'I1o0', context:'像編號的練習題：I1o0。先用 Shift 打大寫 I，再打數字 1、小寫 o、數字 0。' },
     { ans:'login', context:'電腦上常看到 login。第一個是小寫 l，第二個是小寫 o。' },
     { ans:'lone01', context:'像帳號的練習題：lone01。最後兩個是數字 0、1。' }
   ]
@@ -99,6 +100,7 @@ function warmupKeyHint(kind, character) {
   if (/\d/.test(character)) return `下一個是數字 ${character}，找最上面那排的 ${character} 鍵。`;
   const key = character.toUpperCase();
   if (kind === 'caps') return `下一個是大寫 ${key}。先按 A 左邊的 Caps Lock，再按 ${key}。打完記得再按一次 Caps Lock。`;
+  if (character === 'I') return '下一個是大寫 I。按住 Shift，再按字母 I；不是小寫 l，也不是數字 1。';
   if (character === key) return `下一個是大寫 ${key}。按住最下面一排的 Shift，再按 ${key}，然後放開 Shift。`;
   if (character === 'l') return '下一個是小寫 l。按字母 L，不是數字 1。';
   if (character === 'o') return '下一個是小寫 o。按字母 O，不是數字 0。';
@@ -127,9 +129,18 @@ function initWarmupTask(task) {
   const bank = warmupBanks[kind];
   const input = task.querySelector('[data-warmup-input]');
   const feedback = task.querySelector('[data-warmup-feedback]');
+  const nextButton = task.querySelector('[data-warmup-next]');
   let questionIndex = 0;
   const current = () => bank[questionIndex];
+  const resetSolved = () => {
+    task.dataset.warmupSolved = 'false';
+    nextButton.disabled = true;
+    task.classList.remove('is-celebrating');
+    feedback.classList.remove('is-success');
+  };
+  resetSolved();
   const showQuestion = () => {
+    resetSolved();
     task.querySelector('[data-warmup-context]').textContent = current().context;
     task.querySelector('[data-warmup-target]').textContent = current().ans;
     input.value = '';
@@ -145,10 +156,36 @@ function initWarmupTask(task) {
     typingTools?.refreshKeyboardGuide?.();
     updateWarmupKeyGuide(kind, current().ans, input.value, task);
   });
-  input.addEventListener('input', () => updateWarmupKeyGuide(kind, current().ans, input.value, task));
+  input.addEventListener('input', () => {
+    if (input.value !== current().ans) resetSolved();
+    updateWarmupKeyGuide(kind, current().ans, input.value, task);
+  });
   task.querySelector('[data-warmup-check]').addEventListener('click', () => {
     const target = current().ans;
     if (input.value === target) {
+      if (task.dataset.warmupSolved !== 'true') {
+        task.dataset.warmupSolved = 'true';
+        nextButton.disabled = false;
+        task.classList.remove('is-celebrating');
+        void task.offsetWidth;
+        task.classList.add('is-celebrating');
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && typeof window.confetti === 'function') {
+          const bounds = task.getBoundingClientRect();
+          window.confetti({
+            particleCount: 36,
+            spread: 58,
+            startVelocity: 24,
+            ticks: 110,
+            scalar: 0.85,
+            colors: ['#fbbf24', '#14b8a6', '#60a5fa', '#fb7185'],
+            origin: {
+              x: Math.min(0.95, Math.max(0.05, (bounds.left + bounds.width / 2) / window.innerWidth)),
+              y: Math.min(0.95, Math.max(0.05, (bounds.top + 60) / window.innerHeight))
+            }
+          });
+        }
+      }
+      feedback.classList.add('is-success');
       feedback.textContent = kind === 'caps'
         ? '打對了！再按一次 Caps Lock，回到小寫。'
         : kind === 'shift'
@@ -156,13 +193,15 @@ function initWarmupTask(task) {
           : '打對了！你分清字母和數字了。想挑戰就按「換一題」。';
       return;
     }
+    resetSolved();
     let position = 0;
     while (position < Math.min(input.value.length, target.length) && input.value[position] === target[position]) position += 1;
     feedback.textContent = position === target.length
       ? '後面多打了，按 Backspace 刪掉再試一次。'
       : `第 ${position + 1} 個再看一看。${warmupKeyHint(kind, target[position])}`;
   });
-  task.querySelector('[data-warmup-next]').addEventListener('click', () => {
+  nextButton.addEventListener('click', () => {
+    if (nextButton.disabled || task.dataset.warmupSolved !== 'true') return;
     questionIndex = (questionIndex + 1) % bank.length;
     showQuestion();
     input.focus();
@@ -209,7 +248,10 @@ function refreshIdentityLock() {
   document.body.classList.toggle('class-card-not-ready', !ready);
   document.querySelectorAll('#warmup-uppercase, #warmup-confusion').forEach(warmup => {
     warmup.inert = !ready;
-    warmup.querySelectorAll('input, button').forEach(control => { control.disabled = !ready; });
+    warmup.querySelectorAll('input, [data-warmup-check]').forEach(control => { control.disabled = !ready; });
+    warmup.querySelectorAll('[data-warmup-next]').forEach(button => {
+      button.disabled = !ready || button.closest('[data-warmup]').dataset.warmupSolved !== 'true';
+    });
   });
   const challenge = document.getElementById('typing-levels-container');
   challenge.inert = !ready;
@@ -321,6 +363,14 @@ function setupReplay(level) {
 
 levelsData.forEach(({ id }) => setupReplay(id));
 function clearAccountFromPage() {
+  document.querySelectorAll('[data-warmup]').forEach(task => {
+    task.dataset.warmupSolved = 'false';
+    task.classList.remove('is-celebrating');
+    task.querySelector('[data-warmup-next]').disabled = true;
+    task.querySelector('[data-warmup-feedback]').classList.remove('is-success');
+    task.querySelector('[data-warmup-feedback]').textContent = '';
+    task.querySelector('[data-warmup-input]').value = '';
+  });
   practiceAccount = '';
   levelsData[3].ans = '\u0000';
   replayBanks[4].length = 0;

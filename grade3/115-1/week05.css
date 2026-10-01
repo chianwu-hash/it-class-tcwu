@@ -50,6 +50,11 @@ main { display:grid; grid-template-columns:minmax(0,1fr); gap:24px; min-width:0;
 .warmup-task button { min-height:48px; padding:8px 17px; border:0; border-radius:11px; background:#087d8b; color:white; font-weight:900; cursor:pointer; box-shadow:0 4px 0 #075865; }
 .warmup-task [data-warmup-next] { background:#315fa2; }
 .warmup-feedback { min-height:27px; font-weight:900; }
+.warmup-feedback.is-success { color:#087647; font-size:18px; }
+.warmup-feedback.is-success::before { content:'★'; display:inline-block; margin-right:6px; color:#e9a514; }
+.warmup-task.is-celebrating { animation:warmup-celebrate .65s ease-out; }
+@keyframes warmup-celebrate { 0%,100% { transform:scale(1); } 35% { transform:scale(1.015); box-shadow:0 0 0 7px #fde68a,0 9px 24px #e9a51455; } }
+@media(prefers-reduced-motion:reduce) { .warmup-task.is-celebrating { animation:none; } }
 .keyboard-hint-status { margin:11px 0 0; padding:10px 13px; border-radius:10px; background:#e9f7f5; font-weight:800; }
 .key-map { overflow-x:auto; padding:14px; margin-top:12px; border-radius:16px; background:#ecf3f7; }
 .key-map-row { display:flex; gap:5px; align-items:center; min-width:740px; margin:5px 0; }
