@@ -1,0 +1,14 @@
+topic: 六年級英打基礎十二關
+date: '2026-10-02'
+time_range: 不限時間，以目前官方課程為準
+items:
+  - KidzType
+  - Typing.com 六年級課綱
+  - TypingClub
+  - Ratatype
+  - Touch Typing Study
+execution:
+  batch_size: 1
+  items_per_agent: 5
+  output_dir: docs/development
+report: docs/development/typing-foundation-curriculum.md

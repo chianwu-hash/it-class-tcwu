@@ -102,6 +102,15 @@ export function deriveRewardTreeModel(progressRows, activities) {
             updated_at: ""
         };
 
+        if (activity.type === 'foundation') {
+            const earned=row.completed === true;
+            const reward=createReward({kind:'foundation-leaf',source:row,activity,index:1,total:1,earned,href:earned ? '' : activity.pageHref});
+            reward.title=`${activity.label} ${earned ? '過關葉' : '尚未取得的過關葉'}`;
+            reward.reason=earned ? '基礎練習大關正式過關，長出一片葉子。' : '完成小關與兩次綜合確認後，長出一片葉子。';
+            reward.detail='獨立於週次作業；重練不重複累積，教師重置後同步收回。';
+            (earned ? rewards : pendingRewards).push(reward);
+            return;
+        }
         if (activity.type === "homework") {
             for (const passed of [false, true]) {
                 const earned = passed ? row.completed === true : row.submitted === true;

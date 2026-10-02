@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第一關・手指的暖身運動｜小小打字探險家</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./course-theme.css?v=20261002-intro">
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead"><div class="brand"><span class="brand-icon" aria-hidden="true">⌨</span> 謙大叔的電腦教室 <span class="divider">／</span><span class="muted">英打基礎練習</span></div><span class="badge">第一關試玩版</span></header>
+    <section class="heading"><div><p class="eyebrow">🚀 小小打字探險家 · 第 1 / 12 關</p><h1>手指的暖身運動</h1><p class="subtitle">從 F、J 的小凸點出發，一起認識基準列！</p></div><div class="goal"><span>🎯 今天的小任務</span><strong>先打準，再打得順</strong><small id="goal-rule">初練 90% · 過關 95%＋8 WPM，連續兩次</small></div></section>
+    <section class="lesson-settings" aria-label="練習標準"><label for="grade">先選年級 <select id="grade"><option value="3">三年級</option><option value="6">六年級</option></select></label><label id="starter-label" hidden><input id="starter" type="checkbox"> 六年級初學起步：8 WPM</label><p id="policy-note">初練不限速度；綜合挑戰 95%＋8 WPM，連續兩組新題達標。</p></section>
+    <section class="finger-intro" aria-labelledby="finger-intro-title">
+      <div><h2 id="finger-intro-title">練習前，先認識正確指法</h2><p>先觀看指法介紹，再回到這裡開始練習；需要複習時也可以隨時觀看。</p><small>外部教材：巨岩資訊教育網。影片會在新分頁開啟，不計入過關成果。</small></div>
+      <a id="finger-intro-link" class="quiet" href="https://book.eduweb.com.tw/TGame/video/m3.mp4" target="_blank" rel="noopener noreferrer">觀看指法介紹 ↗<span class="finger-intro-newtab">（開啟新分頁）</span></a>
+    </section>
+    <div class="layout">
+      <aside class="journey"><p class="eyebrow">第一關的 6 個小步驟</p><ol id="steps"></ol><div class="growth"><svg viewBox="0 0 170 130" role="img" aria-label="等待長葉的小樹苗"><ellipse cx="85" cy="116" rx="55" ry="7" fill="#dce9d8"/><path d="M85 112 V60 M85 84 Q63 80 55 61 M85 92 Q108 85 119 64" fill="none" stroke="#80966a" stroke-width="5" stroke-linecap="round"/><path d="M85 69 Q57 56 68 31 Q94 33 85 69" fill="#a4caa0"/><path id="reward-leaf" d="M85 85 Q95 48 127 49 Q126 79 85 85" fill="#dfe9de" stroke="#a4b99c" stroke-dasharray="4 4"/></svg><strong id="tree-title">留一個位置，給你的努力</strong><p id="tree-note">完成第一關，預覽長出一片葉子。</p><small>努力樹效果示意</small></div></aside>
+      <section class="practice-card" aria-label="英打練習">
+        <div class="practice-top"><span id="stage-label">01 · 食指定位</span><span id="count">準備出發</span></div>
+        <button id="return-progress" type="button" class="quiet return-progress" hidden>回到目前進度 →</button>
+        <div class="progress-track"><div id="progress"></div></div>
+        <div id="intro" class="intro">
+          <div class="intro-symbol" aria-hidden="true">f <span>＋</span> j</div>
+          <h2>先摸摸 F、J 上的小凸點</h2><p>左手食指放 F，右手食指放 J。<br>其他手指輕放在 A S D 和 K L ;，拇指準備按空白鍵。</p>
+          <div class="instructions"><span>① 切到英文輸入</span><span>② 關閉大寫鎖定</span><span>③ 跟著亮起的按鍵</span></div>
+          <button id="start" class="primary">手指就位，開始練習 <span>→</span></button><small class="device-note">請使用電腦實體鍵盤；畫面上的鍵盤只提供提示。</small>
+        </div>
+        <div id="exercise" hidden>
+          <p id="attempt-rule" class="attempt-rule"></p>
+          <div class="stats"><div>正確率 <strong id="accuracy">—</strong></div><div>速度 <strong id="speed">—</strong><small> WPM</small></div><div>時間 <strong id="time">0:00</strong></div><div class="streak-stat">連續正確 <strong id="streak">0</strong></div><button id="pause" class="quiet">暫停</button></div>
+          <div id="finger-controls" class="finger-controls"><label for="show-fingers"><input id="show-fingers" type="checkbox" checked aria-controls="target-line finger-guide" aria-describedby="finger-controls-note"> 顯示手指圖</label><span id="finger-controls-note">從自己上方看雙手</span></div>
+          <div id="typing-area" tabindex="0" role="group" aria-label="打字練習區，依序按下畫面提示的按鍵" aria-describedby="feedback">
+            <p class="overline">照順序打小寫字母，␣ 代表空白鍵</p><div id="prompt" aria-label="本段題目"></div>
+            <div id="target-line" class="target-line"><kbd id="target">F</kbd><div id="finger-guide" class="finger-guide"></div><div class="target-caption"><span>下一個按鍵</span><strong id="finger">左手食指</strong><small id="finger-note">亮起的手指負責這個鍵。</small></div></div>
+          </div>
+          <p id="feedback" role="status" aria-live="polite">慢慢來，先找到亮起的按鍵。</p>
+        </div>
+        <section id="result" class="result" hidden aria-labelledby="result-title"><span id="result-icon" class="result-icon" aria-hidden="true">✓</span><h2 id="result-title"></h2><p id="result-text"></p><div id="result-stats"></div><button id="continue" class="primary" aria-describedby="result-keyboard-hint"></button><button id="retry" class="quiet" hidden aria-describedby="result-keyboard-hint">再練這一段</button><p id="result-keyboard-hint" class="keyboard-controls">方向鍵 ← → 或 Tab 切換按鈕，Enter 或空白鍵確認。</p></section>
+        <section id="paused" class="intro" hidden><div class="intro-symbol" aria-hidden="true">Ⅱ</div><h2>休息一下，手指放鬆</h2><p id="pause-note">進度留在這裡。準備好後再繼續。</p><button id="resume" class="primary">繼續練習 →</button></section>
+        <div class="keyboard-zone"><div class="keyboard-heading"><span>基準列 · 手指的家</span><small>鍵帽大寫，輸入小寫</small></div><div id="keyboard"></div><div class="finger-legend"><span>左手：A 小指 · S 無名指 · D 中指 · F/G 食指</span><span>右手：H/J 食指 · K 中指 · L 無名指 · ; 小指</span></div></div>
+      </section>
+    </div>
+    <footer><p>試玩版：重新整理會重新開始，尚未儲存正式進度或發放努力樹獎勵。</p><p>第一關結構參考 <a href="https://www.kidztype.com/html5/dmt-v3/level1/" target="_blank" rel="noopener noreferrer">KidzType 第一關</a>；十二關課程、題目與介面為本課程重新設計。指法參考：巨岩《Windows 11 電腦小小兵》，p.102。</p></footer>
+    <dialog id="switch-practice" aria-labelledby="switch-title"><form method="dialog"><h2 id="switch-title">要切換練習嗎？</h2><p>切換後，本次未完成的練習將重新開始；已儲存的過關成果不受影響。</p><button id="switch-cancel" class="quiet" value="cancel" autofocus>留在這裡</button><button id="switch-confirm" class="primary" value="switch">切換練習</button></form></dialog>
+  </main>
+  <script type="module" src="./app.js?v=20261002-course"></script>
+</body>
+</html>

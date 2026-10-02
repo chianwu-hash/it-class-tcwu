@@ -494,10 +494,12 @@
             getRewardTreeCourse,
             getRewardTreeCourses
         } from "./shared/reward-tree-config.js";
-        import { createFullCompletionRows, deriveRewardTreeModel } from "./shared/reward-tree-model.js?v=20260911-two-leaves";
+        import { createFullCompletionRows, deriveRewardTreeModel } from "./shared/reward-tree-model.js?v=20261001-foundation";
         import { renderRewardTree, selectReward } from "./shared/reward-tree-renderer.js";
         import { readingRequest, readingTreeData } from './shared/reading-api.js';
         import { homeworkRequest, homeworkTreeData } from "./shared/homework-api.js";
+        import {createFoundationProgress} from './shared/typing-foundation-progress.js?v=20261002-course';
+        import {foundationTreeData} from './shared/typing-foundation-rewards.js?v=20261002-course';
 
         const subtitleEl = document.getElementById("subtitle");
         const courseHomeLinkEl = document.getElementById("course-home-link");
@@ -796,6 +798,10 @@
                 updateAuthUi();
                 if (!activities.length && loadingCourse !== 'grade6-115-1') { renderEmptyCourse(course); return; }
                 if (loadingCourse === 'grade6-115-1' && currentSession?.user && !mockMode) {
+                    try {
+                        const foundation=foundationTreeData(await createFoundationProgress({courseId:loadingCourse,getSession:()=>currentSession}).list(),loadingCourse);
+                        activities.push(...foundation.activities); rows.push(...foundation.rows);
+                    } catch(error) { showNotice(`基礎練習成果暫時無法讀取：${error.message}`, 'info'); }
                     try {
                         const data = await homeworkRequest(currentSession, 'list');
                         const homework = homeworkTreeData(data.assignments.filter(a => a.state !== 'draft'));

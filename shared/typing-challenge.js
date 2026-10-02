@@ -70,8 +70,11 @@ export function initTypingChallenge({
     afterAuthUpdate = null,
     autoScrollNext = true,
     requireAuth = true,
-    guestProgress = null
+    guestProgress = null,
+    foundation = null
 }) {
+    // Opt-in independent, keystroke-based foundation curriculum; legacy stays unchanged.
+    if (foundation) return import('./typing-foundation-progress.js?v=20261002-course').then(({createFoundationProgress}) => createFoundationProgress(foundation));
     ensureTypingChallengeTextStyle();
 
     const maxLevel = levelsData.length;

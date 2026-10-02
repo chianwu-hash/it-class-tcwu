@@ -1,0 +1,13 @@
+fields:
+  - name: 鍵位順序與累積範圍
+    detail_level: detailed
+  - name: 關內練習與複習
+    detail_level: detailed
+  - name: 正確率與速度門檻
+    detail_level: detailed
+  - name: 解鎖與重練
+    detail_level: moderate
+  - name: 大小寫與對側 Shift
+    detail_level: moderate
+uncertain:
+  - 未查得臺灣六年級統一 WPM 過關標準，採本課程暫定值。
