@@ -259,7 +259,7 @@
             {
                 courseId: "grade6-115-1",
                 grade: "grade6",
-                weeks: ["01", "02", "03"]
+                weeks: ["01", "02", "03", "05"]
             }
         ];
 
@@ -440,6 +440,8 @@
 
         function activityLabel(activityKey) {
             const key = String(activityKey || '').toLowerCase();
+            if (key === 'typing_boss_zh_1') return '國語進階魔王';
+            if (key === 'typing_boss_en_1') return '英語進階魔王';
             if (key.startsWith('typing')) return '中打闖關';
             if (key.startsWith('quiz') || key.includes('_quiz_') || key.endsWith('_quiz') || key.startsWith('safety_quiz')) return '測驗';
             if (key.startsWith('project')) return '專案';
@@ -475,6 +477,10 @@
         function typingTotalLevels(row) {
             const weekCode = String(row?.week_code || '').padStart(2, '0');
             const activityKey = String(row?.activity_key || '').toLowerCase();
+            if (row?.course_id === 'grade6-115-1') {
+                if (['typing_boss_zh_1', 'typing_boss_en_1'].includes(activityKey)) return 1;
+                if (weekCode === '05' && activityKey === 'typing_task_5') return 5;
+            }
             const configuredTotal = typingTotalLevelsByWeekAndKey[`${weekCode}:${activityKey}`];
             if (Number.isFinite(configuredTotal) && configuredTotal > 0) {
                 return Math.max(Number(row?.current_level) || 0, configuredTotal);

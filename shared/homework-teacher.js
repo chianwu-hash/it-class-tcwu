@@ -1,4 +1,4 @@
-import { initReading } from './reading-ui.js';
+import { initReading } from './reading-ui.js?v=20261002-bulk-review';
 import { initNavbarAuth } from './navbar-auth.js';
 import { isTeacher } from './auth.js';
 import { homeworkRequest, homeworkStatus } from './homework-api.js?v=20260910-stored';

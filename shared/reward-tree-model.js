@@ -117,6 +117,16 @@ export function deriveRewardTreeModel(progressRows, activities) {
         }
 
         if (activity.type === "typing") {
+            // A standalone advanced challenge earns one flower, with no prerequisite leaves.
+            if (activity.rewardMode === "boss" && activity.totalLevels === 1) {
+                const earned = row.completed === true;
+                const reward = createReward({ kind: "flower", source: row, activity,
+                    index: 1, total: 1, earned, href: earned ? "" : buildTypingHref(activity, 1) });
+                reward.reason = earned ? "完整通過這個進階魔王，開出一朵花。" : "完整通過這個進階魔王，就能開出一朵花。";
+                reward.detail = "每個進階魔王獨立記錄；再次檢查不會重複增加花朵。";
+                (earned ? rewards : pendingRewards).push(reward);
+                return;
+            }
             const totalLevels = Number(activity.totalLevels);
             if (!Number.isInteger(totalLevels) || totalLevels < 2) {
                 skippedActivities.push(activity);

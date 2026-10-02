@@ -13,7 +13,7 @@
     }
 
     const navHTML = window.__buildCourseNavbarHtml({
-        activeWeeks: [1, 2, 3],
+        activeWeeks: [1, 2, 3, 5],
         gradeLabel: "六年級資訊課｜115-1",
         titleIconClass: "fa-solid fa-graduation-cap text-violet-700",
         titleClassName: "font-black text-slate-800 flex items-center text-lg tracking-wide whitespace-nowrap",
@@ -23,6 +23,7 @@
         currentWeekClassName: "px-3 py-1.5 text-sm font-bold bg-violet-100 text-violet-800 rounded-lg shadow-sm whitespace-nowrap cursor-default",
         separatorClassName: "text-gray-300 mx-1",
         extraLinks: [
+            { href: 'boss-garden.html', iconClass: 'fa-solid fa-crown', label: '魔王花園' },
             { href: "homework.html", iconClass: "fa-solid fa-file-arrow-up", label: "交作業" },
             {
                 href: "/my-tree.html?course=grade6-115-1",
