@@ -5,17 +5,23 @@ const config=dataUrl(await readFile(new URL('../shared/reward-tree-config.js',im
 const modelSource=(await readFile(new URL('../shared/reward-tree-model.js',import.meta.url),'utf8')).replace('"./reward-tree-config.js"',JSON.stringify(config));
 const {deriveRewardTreeModel}=await import(dataUrl(modelSource));
 const curriculum=dataUrl(await readFile(new URL('../shared/typing-foundation-curriculum.mjs',import.meta.url),'utf8'));
-const {foundationTreeData}=await import(dataUrl((await readFile(new URL('../shared/typing-foundation-rewards.js',import.meta.url),'utf8')).replace("'./typing-foundation-curriculum.mjs'",JSON.stringify(curriculum))));
+const zhuyin=dataUrl(await readFile(new URL('../shared/zhuyin-foundation-curriculum.mjs',import.meta.url),'utf8'));
+const {foundationTreeData}=await import(dataUrl((await readFile(new URL('../shared/typing-foundation-rewards.js',import.meta.url),'utf8')).replace("'./typing-foundation-curriculum.mjs'",JSON.stringify(curriculum)).replace("'./zhuyin-foundation-curriculum.mjs'",JSON.stringify(zhuyin))));
 const {lessons}=await import(curriculum);
 const full=foundationTreeData(lessons.map(l=>({lesson_key:l.key,completed:true,checkpoint:5})),'grade6-115-1');
 assert.equal(deriveRewardTreeModel(full.rows,full.activities).stats.leafCount,12);
 assert.equal(deriveRewardTreeModel([...full.rows,...full.rows],full.activities).stats.leafCount,12);
+const {zhuyinLessons}=await import(zhuyin);
+const mixed=foundationTreeData([...lessons,...zhuyinLessons].map(l=>({lesson_key:l.key,completed:true,checkpoint:5})),'grade6-115-1');
+assert.equal(deriveRewardTreeModel(mixed.rows,mixed.activities).stats.leafCount,24);
+assert.equal(deriveRewardTreeModel([...mixed.rows,...mixed.rows],mixed.activities).stats.leafCount,24);
+assert.equal(deriveRewardTreeModel(mixed.rows.filter(r=>r.activity_key!==zhuyinLessons[0].key),mixed.activities).stats.leafCount,23);
 for(const course of ['grade3-115-1','grade6-115-1']){
  for(const completed of [false,true]){
   const data=foundationTreeData({checkpoint:5,completed},course);
   const model=deriveRewardTreeModel(data.rows,data.activities);
   assert.equal(model.stats.leafCount,completed?1:0);assert.equal(model.stats.flowerCount,0);
-  assert.equal(model.stats.pendingLeafCount,completed?11:12);
+  assert.equal(model.stats.pendingLeafCount,completed?23:24);
   const repeated=deriveRewardTreeModel([...data.rows,...data.rows],data.activities);assert.equal(repeated.stats.leafCount,completed?1:0);
  }
  const reset=foundationTreeData({checkpoint:0,completed:false},course);assert.equal(deriveRewardTreeModel(reset.rows,reset.activities).stats.leafCount,0);

@@ -2,6 +2,7 @@ import {initNavbarAuth} from './navbar-auth.js';
 import {resolveSession} from './auth.js';
 
 const grade = document.body.dataset.foundationGrade;
+const zhuyin=document.body.dataset.foundationTrack==='zhuyin';
 const courseId = `grade${grade}-115-1`;
 let session = await resolveSession();
 let authReady=false;
@@ -28,8 +29,9 @@ try {
   document.querySelector('.practice-card').inert=true;
   document.getElementById('grade').value=grade;
   document.getElementById('grade').disabled=true;
-  window.foundationConfig={grade,courseId,lessonKey:new URLSearchParams(location.search).get('lesson')||'english-home-row-v1',getSession:() => session};
-  await import('/prototypes/typing-foundation/level1/app.js?v=20261002-course');
+  window.foundationConfig={grade,courseId,lessonKey:new URLSearchParams(location.search).get('lesson')||(zhuyin?'zhuyin-home-v1':'english-home-row-v1'),getSession:() => session};
+  if(zhuyin)await import('/shared/zhuyin-foundation-app.js?v=20261002');
+  else await import('/prototypes/typing-foundation/level1/app.js?v=20261002-course');
 } catch {
   document.getElementById('foundation-root').textContent='練習介面暫時無法讀取，請重新整理。';
 }

@@ -25,6 +25,7 @@
         extraLinks: [
             { href: 'boss-garden.html', iconClass: 'fa-solid fa-crown', label: '魔王花園' },
             { href:'typing-foundation.html',iconClass:'fa-solid fa-keyboard',label:'英打基礎' },
+            { href:'zhuyin-foundation.html',iconClass:'fa-solid fa-keyboard',label:'中打基礎' },
             { href: "homework.html", iconClass: "fa-solid fa-file-arrow-up", label: "交作業" },
             {
                 href: "/my-tree.html?course=grade6-115-1",

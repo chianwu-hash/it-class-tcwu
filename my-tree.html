@@ -499,7 +499,7 @@
         import { readingRequest, readingTreeData } from './shared/reading-api.js';
         import { homeworkRequest, homeworkTreeData } from "./shared/homework-api.js";
         import {createFoundationProgress} from './shared/typing-foundation-progress.js?v=20261002-course';
-        import {foundationTreeData} from './shared/typing-foundation-rewards.js?v=20261002-course';
+        import {foundationTreeData} from './shared/typing-foundation-rewards.js?v=20261002-zhuyin';
 
         const subtitleEl = document.getElementById("subtitle");
         const courseHomeLinkEl = document.getElementById("course-home-link");
@@ -799,7 +799,7 @@
                 if (!activities.length && loadingCourse !== 'grade6-115-1') { renderEmptyCourse(course); return; }
                 if (loadingCourse === 'grade6-115-1' && currentSession?.user && !mockMode) {
                     try {
-                        const foundation=foundationTreeData(await createFoundationProgress({courseId:loadingCourse,getSession:()=>currentSession}).list(),loadingCourse);
+                        const foundation=foundationTreeData(await createFoundationProgress({courseId:loadingCourse,getSession:()=>currentSession}).request('list',{include_zhuyin:true}),loadingCourse);
                         activities.push(...foundation.activities); rows.push(...foundation.rows);
                     } catch(error) { showNotice(`基礎練習成果暫時無法讀取：${error.message}`, 'info'); }
                     try {

@@ -4,7 +4,7 @@ create table if not exists public.typing_foundation_lessons (
  lesson_key text primary key, ordinal integer unique not null,
  speed integer not null, starter_speed integer not null, counts integer[] not null
 );
-insert into public.typing_foundation_lessons values
+insert into public.typing_foundation_lessons(lesson_key,ordinal,speed,starter_speed,counts) values
  ('english-home-row-v1',1,12,8,array[67,67,67,67,67,117]),
  ('english-top-row-v1',2,12,8,array[67,67,67,67,67,117]),
  ('english-bottom-row-v1',3,12,8,array[67,67,67,67,67,117]),
@@ -19,6 +19,22 @@ insert into public.typing_foundation_lessons values
  ('english-finale-v1',12,15,10,array[67,67,83,67,67,86])
  on conflict(lesson_key) do update set speed=excluded.speed,starter_speed=excluded.starter_speed,counts=excluded.counts;
 alter table public.typing_foundation_lessons enable row level security;
+alter table public.typing_foundation_lessons add column if not exists track text not null default 'english';
+alter table public.typing_foundation_lessons add column if not exists rate_unit text not null default 'wpm';
+insert into public.typing_foundation_lessons(lesson_key,ordinal,speed,starter_speed,counts,track,rate_unit) values
+ ('zhuyin-home-v1',13,0,0,array[56,56,56,56,56,96],'zhuyin','keys_per_minute'),
+ ('zhuyin-top-v1',14,0,0,array[56,56,56,56,56,96],'zhuyin','keys_per_minute'),
+ ('zhuyin-bottom-v1',15,0,0,array[56,56,56,56,56,96],'zhuyin','keys_per_minute'),
+ ('zhuyin-number-v1',16,0,0,array[56,56,56,56,56,96],'zhuyin','keys_per_minute'),
+ ('zhuyin-all-v1',17,0,0,array[56,56,56,56,56,96],'zhuyin','keys_per_minute'),
+ ('zhuyin-sounds-v1',18,0,0,array[54,54,54,54,72,81],'zhuyin','keys_per_minute'),
+ ('zhuyin-words-v1',19,0,0,array[18,18,18,18,18,36],'zhuyin','characters_per_minute'),
+ ('zhuyin-choose-v1',20,0,0,array[18,18,18,18,18,36],'zhuyin','characters_per_minute'),
+ ('zhuyin-sentences-v1',21,0,0,array[21,21,21,21,21,21],'zhuyin','characters_per_minute'),
+ ('zhuyin-punctuation-v1',22,0,0,array[24,27,24,24,27,27],'zhuyin','characters_per_minute'),
+ ('zhuyin-edit-v1',23,0,0,array[18,21,27,21,21,21],'zhuyin','characters_per_minute'),
+ ('zhuyin-finale-v1',24,0,0,array[39,39,39,39,39,39],'zhuyin','characters_per_minute')
+ on conflict(lesson_key) do update set counts=excluded.counts;
 revoke all on public.typing_foundation_lessons from anon,authenticated;
 create table if not exists public.typing_foundation_progress (
   id uuid primary key default gen_random_uuid(),
@@ -66,6 +82,8 @@ create table if not exists public.typing_foundation_resets (
   previous_completed boolean not null,
   reset_at timestamptz not null default now()
 );
+alter table public.typing_foundation_events add column if not exists cpm numeric;
+alter table public.typing_foundation_events add column if not exists rate_unit text not null default 'wpm';
 alter table public.typing_foundation_progress enable row level security;
 alter table public.typing_foundation_events enable row level security;
 alter table public.typing_foundation_resets enable row level security;
@@ -88,9 +106,12 @@ begin
     if p_action='admin_list' then
       select coalesce(jsonb_agg(to_jsonb(x) order by x.learner_key),'[]'::jsonb) into out_rows
       from (select p.*,
+        l.rate_unit,
+        (select max(coalesce(e.cpm,e.wpm)) from public.typing_foundation_events e where e.progress_id=p.id and e.revision=p.revision and e.stage=6 and e.passed) as best_rate,
         (select max(e.wpm) from public.typing_foundation_events e where e.progress_id=p.id and e.revision=p.revision and e.stage=6 and e.passed) as best_wpm,
         (select max(e.accuracy) from public.typing_foundation_events e where e.progress_id=p.id and e.revision=p.revision and e.stage=6 and e.passed) as best_accuracy
-        from public.typing_foundation_progress p where p.course_id=p_course_id) x;
+        from public.typing_foundation_progress p join public.typing_foundation_lessons l on l.lesson_key=p.lesson_key
+        where p.course_id=p_course_id and (l.track='english' or coalesce((p_payload->>'include_zhuyin')::boolean,false))) x;
       return out_rows;
     end if;
     select * into r from public.typing_foundation_progress p where p.id=(p_payload->>'id')::uuid and p.course_id=p_course_id;
@@ -113,12 +134,13 @@ begin
     if learner is null then raise exception 'roster_required'; end if;
   perform pg_advisory_xact_lock(hashtextextended(p_course_id||learner,0));
   if p_action='list' then
-   select coalesce(jsonb_agg(to_jsonb(p)),'[]'::jsonb) into out_rows from public.typing_foundation_progress p where p.course_id=p_course_id and p.learner_key=learner;
+   select coalesce(jsonb_agg(to_jsonb(p)),'[]'::jsonb) into out_rows from public.typing_foundation_progress p where p.course_id=p_course_id and p.learner_key=learner
+    and (coalesce((p_payload->>'include_zhuyin')::boolean,false) or (p.lesson_key like 'zhuyin-%')=(lesson like 'zhuyin-%'));
    return out_rows;
   end if;
   select * into curriculum from public.typing_foundation_lessons where lesson_key=lesson;
   if not found then raise exception 'invalid_lesson'; end if;
-  if exists(select 1 from public.typing_foundation_lessons l where l.ordinal<curriculum.ordinal and not exists(
+  if exists(select 1 from public.typing_foundation_lessons l where l.track=curriculum.track and l.ordinal<curriculum.ordinal and not exists(
    select 1 from public.typing_foundation_progress p where p.course_id=p_course_id and p.learner_key=learner and p.lesson_key=l.lesson_key and p.completed)) then raise exception 'lesson_locked'; end if;
   select * into r from public.typing_foundation_progress p where p.course_id=p_course_id and p.learner_key=learner and p.lesson_key=lesson for update;
   if p_action='load' then return case when r.id is null then 'null'::jsonb else to_jsonb(r) end; end if;
@@ -151,9 +173,10 @@ begin
   acc := correct_no::numeric/(correct_no+error_no)*100;
   speed := correct_no::numeric*12000/ms;
   target := case when p_course_id='grade6-115-1' and not r.starter then curriculum.speed else curriculum.starter_speed end;
-  passed := case when stage_no=6 then acc>=95 and speed>=target and not interrupted else acc>=90 end;
+  passed := case when stage_no=6 then acc>=95 and (curriculum.track='zhuyin' or (speed>=target and not interrupted)) else acc>=90 end;
   insert into public.typing_foundation_events(id,progress_id,revision,stage,correct,errors,elapsed_ms,interrupted,accuracy,wpm,passed)
-    values(event_id,r.id,r.revision,stage_no,correct_no,error_no,ms,interrupted,acc,speed,passed);
+    values(event_id,r.id,r.revision,stage_no,correct_no,error_no,ms,interrupted,acc,case when curriculum.track='english' then speed else 0 end,passed);
+  if curriculum.track='zhuyin' then update public.typing_foundation_events set cpm=correct_no::numeric*60000/ms,rate_unit=curriculum.rate_unit where id=event_id;end if;
   if stage_no<6 and passed then
     update public.typing_foundation_progress set checkpoint=greatest(checkpoint,stage_no),updated_at=now() where id=r.id;
   elsif stage_no=6 then

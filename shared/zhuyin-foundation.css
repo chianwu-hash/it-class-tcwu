@@ -1,0 +1,12 @@
+.zhuyin-page #keyboard .typing-letter-row{display:flex;justify-content:center;gap:4px;margin:5px 0}
+.zhuyin-page #keyboard kbd{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:1px solid #cbd5e1;border-bottom-width:3px;border-radius:7px;padding:4px;min-width:0;width:clamp(22px,3vw,44px);height:auto;min-height:54px;line-height:1.2}
+.zhuyin-page #keyboard small{display:block;font-size:10px;line-height:1.2}
+.zhuyin-page #prompt{flex-wrap:wrap;user-select:none}
+.zhuyin-page #zh-editor{max-width:620px;margin:20px auto 0;text-align:left}
+.zhuyin-page #zh-input{display:block;width:100%;box-sizing:border-box;border:2px solid #0891b2;border-radius:12px;background:white;padding:12px;font:24px/1.6 'Microsoft JhengHei',sans-serif;resize:vertical;margin:8px 0}
+.zhuyin-page #zh-input:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}
+.zhuyin-page #zh-input-help{font-size:13px;line-height:1.6;color:#526174}
+.zhuyin-page #zh-check{margin-top:12px;min-height:44px}
+.zhuyin-page .zh-operation-help{padding:10px 24px;background:#f0f9ff;color:#155e75;font-size:14px;line-height:1.7}
+.zhuyin-page .zh-operation-help summary{cursor:pointer;font-weight:700}
+.zhuyin-page .zh-operation-help a{text-decoration:underline}

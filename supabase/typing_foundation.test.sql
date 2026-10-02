@@ -87,4 +87,40 @@ begin
  perform set_config('request.jwt.claims','{"sub":"cbb41c53-97a1-483c-897b-8337a0e10227","email":"foundation-synthetic-20261001@example.invalid","role":"authenticated"}',true);
  begin perform public.typing_foundation_action('save','grade6-115-1',p);raise exception 'reset_unlock_failed';exception when others then if sqlerrm<>'lesson_locked' then raise;end if;end;
 end $$;
+-- Chinese starts independently even though English lesson 1 was reset above.
+do $$
+declare keys text[]:=array['zhuyin-home-v1','zhuyin-top-v1','zhuyin-bottom-v1','zhuyin-number-v1','zhuyin-all-v1','zhuyin-sounds-v1','zhuyin-words-v1','zhuyin-choose-v1','zhuyin-sentences-v1','zhuyin-punctuation-v1','zhuyin-edit-v1','zhuyin-finale-v1'];
+ counts jsonb:='[[56,56,56,56,56,96],[56,56,56,56,56,96],[56,56,56,56,56,96],[56,56,56,56,56,96],[56,56,56,56,56,96],[54,54,54,54,72,81],[18,18,18,18,18,36],[18,18,18,18,18,36],[21,21,21,21,21,21],[24,27,24,24,27,27],[18,21,27,21,21,21],[39,39,39,39,39,39]]';
+ i integer;s integer;p jsonb;r jsonb;first_record jsonb;english_before jsonb;
+begin
+ perform set_config('request.jwt.claims','{"sub":"cbb41c53-97a1-483c-897b-8337a0e10227","email":"foundation-synthetic-20261001@example.invalid","role":"authenticated"}',true);
+ english_before:=public.typing_foundation_action('list','grade6-115-1');
+ begin perform public.typing_foundation_action('start','grade6-115-1',jsonb_build_object('lesson_key',keys[2],'session_id',gen_random_uuid()));raise exception 'zhuyin_locked_lesson_allowed';exception when others then if sqlerrm<>'lesson_locked' then raise;end if;end;
+ for i in 1..12 loop
+  p:=jsonb_build_object('lesson_key',keys[i],'session_id',gen_random_uuid());
+  r:=public.typing_foundation_action('start','grade6-115-1',p);
+  -- Very slow and paused attempts still pass Chinese accuracy-only policy.
+  p:=p||jsonb_build_object('revision',r->'revision','errors',0,'elapsed_ms',600000,'interrupted',true);
+  for s in 1..7 loop
+   p:=p||jsonb_build_object('stage',least(s,6),'correct',(counts->(i-1)->>(least(s,6)-1))::integer,'event_id',gen_random_uuid(),'fingerprint',repeat(s::text,64));
+   r:=public.typing_foundation_action('save','grade6-115-1',p);
+  end loop;
+  if not (r->>'completed')::boolean then raise exception 'zhuyin_completion_failed: %',i;end if;
+  if i=1 then first_record:=r;end if;
+ end loop;
+ if public.typing_foundation_action('list','grade6-115-1')<>english_before then raise exception 'english_changed';end if;
+ if jsonb_array_length(public.typing_foundation_action('list','grade6-115-1','{"lesson_key":"zhuyin-home-v1"}'))<>12 then raise exception 'zhuyin_list_failed';end if;
+ if jsonb_array_length(public.typing_foundation_action('list','grade6-115-1','{"include_zhuyin":true}'))<>24 then raise exception 'combined_list_failed';end if;
+ perform set_config('request.jwt.claims','{"sub":"cbb41c53-97a1-483c-897b-8337a0e10227","email":"chianwu@gmail.com","role":"authenticated"}',true);
+ perform public.typing_foundation_action('admin_reset','grade6-115-1',first_record);
+ perform set_config('request.jwt.claims','{"sub":"cbb41c53-97a1-483c-897b-8337a0e10227","email":"foundation-synthetic-20261001@example.invalid","role":"authenticated"}',true);
+ if public.typing_foundation_action('list','grade6-115-1')<>english_before then raise exception 'zhuyin_reset_changed_english';end if;
+ begin perform public.typing_foundation_action('save','grade6-115-1',p);raise exception 'zhuyin_reset_unlock_failed';exception when others then if sqlerrm<>'lesson_locked' then raise;end if;end;
+end $$;
+reset role;
+do $$ begin
+ if exists(select 1 from public.typing_foundation_events e join public.typing_foundation_progress p on p.id=e.progress_id
+ where p.learner_key='google:cbb41c53-97a1-483c-897b-8337a0e10227' and p.lesson_key like 'zhuyin-%'
+ and (e.cpm is null or e.wpm<>0 or e.rate_unit not in ('keys_per_minute','characters_per_minute'))) then raise exception 'zhuyin_rate_unit_failed';end if;
+end $$;
 rollback;

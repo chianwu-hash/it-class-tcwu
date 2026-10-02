@@ -5,8 +5,12 @@ const fs=require('node:fs');
  const url=source.match(/SUPABASE_URL = "([^"]+)"/)[1],key=source.match(/SUPABASE_ANON_KEY = "([^"]+)"/)[1];
  for(const [action,course,payload,expected] of [
   ['load','grade6-115-1',{},'student_required'],
+  ['load','grade6-115-1',{lesson_key:'zhuyin-home-v1'},'student_required'],
+  ['list','grade6-115-1',{include_zhuyin:true},'student_required'],
+  ['admin_list','grade6-115-1',{include_zhuyin:true},'teacher_required'],
   ['admin_list','grade3-115-1',{},'teacher_required'],
   ['load','grade3-115-1',{},'course_not_open'],
+  ['load','grade3-115-1',{lesson_key:'zhuyin-home-v1'},'course_not_open'],
   ['start','grade3-115-1',{class_code:'999',seat_no:99,birthday_code:'0000'},'course_not_open']
  ]){
   const response=await fetch(url+'/rest/v1/rpc/typing_foundation_action',{method:'POST',headers:{apikey:key,Authorization:`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({p_action:action,p_course_id:course,p_payload:payload})});
