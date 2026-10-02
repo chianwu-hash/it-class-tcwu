@@ -30,6 +30,10 @@
 
 ---
 
+## `shared/image-lightbox.js` / `shared/image-lightbox.css`
+
+**責任**：資訊圖卡同頁放大，視覺與操作取自六年級115-1第01週。新頁載入CSS，匯入並呼叫一次 `initImageLightbox()`，圖卡連結加 `data-image-lightbox`。模組提供縮放、百分比、拖曳、雙擊、雙指縮放、重設、置中、Esc／遮罩／按鈕關閉，以及焦點與捲動復原。不得依賴登入初始化或寫入進度。實作範例為 `grade6/115-1/week05.html`；驗收見 `lesson-to-web-sop.md` 第8.5節。
+
 ## `shared/course-navbar.js`
 
 **責任**：純 HTML 字串生成。根據 config 產生 nav 的 HTML，不做 DOM 操作，不做 auth。定義 `window.__buildCourseNavbarHtml()`。
