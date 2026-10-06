@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="week04.css?v=20260923-2">
 </head>
 <body class="class-card-not-ready text-slate-800 antialiased pb-12">
-    <script src="navbar.js?v=20260922"></script>
+    <script src="navbar.js?v=20261007-identity"></script>
 
     <header class="bg-gradient-to-r from-teal-500 via-cyan-500 to-sky-500 text-white shadow-xl mb-8">
         <div class="max-w-5xl mx-auto px-6 py-12 relative overflow-hidden">
@@ -31,7 +31,7 @@
     <main class="max-w-5xl mx-auto px-6 space-y-8">
         <p id="boot-status" class="rounded-2xl border-2 border-cyan-200 bg-cyan-50 px-5 py-4 font-bold text-cyan-900" role="status">正在準備活動；若等候太久，請告訴老師。</p>
         <div class="class-card-required-hint rounded-2xl border-4 border-dashed border-amber-300 bg-amber-50 px-5 py-4 font-black text-amber-900">
-            <i class="fa-solid fa-id-card mr-2"></i>先在右上角輸入課堂身分卡，才能練習並保存英文通行證進度。這不是 Google 登入。
+            <i class="fa-solid fa-id-card mr-2"></i>先在右上角登入學校 Google 帳號，才能練習並保存英文通行證進度。登入後會接回自己的舊成果。
         </div>
 
         <div id="input-mode-reminder" class="rounded-3xl border-4 border-sky-300 bg-white px-5 py-5 shadow-md text-sky-950">
@@ -74,7 +74,7 @@
                                 <input id="warmup-input" type="text" maxlength="3" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" onpaste="return false;" ondrop="return false;" placeholder="在這裡輸入 mia" disabled>
                                 <button id="warmup-check" type="button" disabled><i class="fa-solid fa-check mr-2"></i>檢查第 1 關</button>
                             </div>
-                            <p id="warmup-feedback" class="warmup-feedback" role="status">先輸入課堂身分卡，再開始暖身。</p>
+                            <p id="warmup-feedback" class="warmup-feedback" role="status">先登入學校 Google 帳號，再開始暖身。</p>
                         </div>
                     </article>
                 </div>
@@ -164,7 +164,7 @@
                     <p class="mt-2"><i class="fa-solid fa-hand mr-2"></i>不能複製貼上，請看著範例逐字輸入。</p>
                 </div>
 
-                <p id="progress-status" class="rounded-2xl border-2 border-indigo-200 bg-white px-5 py-4 font-black text-indigo-800" role="status">請先在右上角輸入課堂身分卡，再開始闖關。</p>
+                <p id="progress-status" class="rounded-2xl border-2 border-indigo-200 bg-white px-5 py-4 font-black text-indigo-800" role="status">請先在右上角登入學校 Google 帳號，再開始闖關。</p>
                 <pre id="progress-debug" class="hidden mt-4 overflow-auto rounded-xl bg-slate-900 p-4 text-xs text-white"></pre>
 
                 <div id="treasure-unlocked" class="hidden mt-5 rounded-2xl border-4 border-amber-300 bg-amber-50 p-5 text-amber-950" role="status">
@@ -272,6 +272,6 @@
         <p><i class="fa-solid fa-rocket mr-1"></i> 新北市頂溪國小資訊課 - 電腦小小兵系列</p>
     </footer>
 
-    <script type="module" src="week04.js?v=20260924-2"></script>
+    <script type="module" src="week04.js?v=20261007-identity"></script>
 </body>
 </html>

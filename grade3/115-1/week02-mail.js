@@ -1,12 +1,12 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
-import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20260909-class-card-branch-sop';
-import { initClassCardAuth } from '../../shared/class-card-auth.js';
-import { createClassCardProgress } from '../../shared/class-card-progress.js?v=20260909-class-card-branch-sop';
+import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261006';
+import { initGoogleCourseAuth as initClassCardAuth } from '../../shared/grade3-google-course.js?v=20261007-identity';
+import { createGoogleCourseProgress as createClassCardProgress } from '../../shared/grade3-google-course.js?v=20261007-identity';
 import { connectTypingUI, digitHint, typingMessages, randomDigits } from './week02-typing-ui.js?v=20260909';
 
 const COURSE_ID = 'grade3-115-1';
 const WEEK_CODE = '02';
-const classCardAuth = initClassCardAuth({
+const classCardAuth = await initClassCardAuth({
     courseId: COURSE_ID,
     mode: 'required'
 });
@@ -196,10 +196,10 @@ function start() {
         getWrongAnswerHtml: mailboxHint,
         afterAuthUpdate: () => document.querySelectorAll('.mail-answer,[data-deliver]').forEach(el => el.disabled = false),
         requireAuth: false,
-        guestProgress: { load: loadMailProgressWithClassCard, save: saveMailProgressWithClassCard },
+        progressAdapter: { load: loadMailProgressWithClassCard, save: saveMailProgressWithClassCard },
         progressMessages: {
             ...typingMessages,
-            guestReady: '快手任務已開放，請確認右上角課堂身分卡是不是自己。',
+            guestReady: '快手任務已開放，請確認右上角學校 Google 帳號是不是自己。',
             guestNextLevel: level => `第 ${level - 1} 關完成，繼續投遞。`,
             guestCompleted: '投遞完成！請舉手讓老師看看。'
         },
@@ -235,14 +235,14 @@ async function verifyUnlock() {
     if (unlocked) {
         start();
     } else {
-        $('mail-lock').textContent = classCardAuth.hasIdentity() ? '先回本週課程，完成游標、坐姿答題與視窗練習，再來投遞。' : '請先在右上角輸入課堂身分卡，再確認是否開放快手任務。';
+        $('mail-lock').textContent = classCardAuth.hasIdentity() ? '先回本週課程，完成游標、坐姿答題與視窗練習，再來投遞。' : '請先在右上角登入學校 Google 帳號，再確認是否開放快手任務。';
     }
     checking = false;
     $('mail-retry').disabled = false;
 }
 
 initNavbarAuth({ onSessionResolved: () => {
-    // This fast task follows the Week02 classroom identity card path, not Google auth.
+    // The verified Google controller and formal progress adapters own readiness.
     session = null;
     void verifyUnlock();
 }});

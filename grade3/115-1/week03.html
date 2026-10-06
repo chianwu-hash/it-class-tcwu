@@ -11,14 +11,14 @@
   <link rel="stylesheet" href="week03.css?v=20260916-9">
 </head>
 <body class="class-card-not-ready">
-  <script src="navbar.js?v=20260915"></script>
+  <script src="navbar.js?v=20261007-identity"></script>
   <main class="lesson-shell">
     <header class="lesson-hero">
       <div class="hero-copy"><p class="week-label">三年級資訊課｜第 03 週</p><h1>滑鼠選一選</h1><p class="hero-line">練習拖曳、框選、Ctrl 多選，再完成影片題和英文打字。</p></div>
       <div class="hero-mouse" aria-hidden="true"><i class="fa-solid fa-computer-mouse"></i></div>
     </header>
     <p id="boot-status" class="status-note" role="status">正在準備活動；若等候太久，請告訴老師。</p>
-    <div class="class-card-required-hint page-identity-hint"><i class="fa-solid fa-id-card"></i> 先在右上角輸入課堂身分卡，才能操作與保存進度。這不是 Google 登入。</div>
+    <div class="class-card-required-hint page-identity-hint"><i class="fa-solid fa-id-card"></i> 先在右上角登入學校 Google 帳號，才能操作與保存進度。登入後會接回自己的舊成果。</div>
 
     <section class="activity-section theme-yellow" id="quick-start">
       <header class="activity-header"><div class="activity-heading"><span class="activity-icon"><i class="fa-solid fa-keyboard"></i></span><div><p class="section-label">暖身</p><h2>先複習數字，再找英文字母</h2></div></div><span class="activity-count">共 4 題</span></header>
@@ -59,7 +59,7 @@
       <div class="activity-body">
         <div class="instruction-box"><i class="fa-solid fa-circle-info"></i><span>先把手離開鍵盤和滑鼠，專心看完約 55 秒的影片。再完成五題，最後一起送出答案。</span></div>
         <a class="video-link" href="https://book.eduweb.com.tw/11edu5/vips088/games/play_single.html#a23.mp4" target="_blank" rel="noopener"><i class="fa-solid fa-circle-play"></i><span><small>老師播放影片</small>使用手機、平板的注意事項</span></a>
-        <div id="quiz-lock" class="lock-box">先輸入課堂身分卡，再開始影片答題。</div>
+        <div id="quiz-lock" class="lock-box">先登入學校 Google 帳號，再開始影片答題。</div>
         <div id="quiz-content" class="hidden"><div class="quiz-tools"><button id="zhuyin-toggle" type="button" aria-pressed="false" aria-controls="quiz-container"><i class="fa-solid fa-language"></i> 顯示題目注音</button></div><div id="quiz-status-banner" class="hidden status-banner"><span id="quiz-status-text"></span></div><div id="quiz-container" class="quiz-container"></div><button id="quiz-replay" class="replay-button hidden" type="button"><i class="fa-solid fa-rotate-right"></i> 換一組題目再練習</button></div>
         <p class="rest-reminder"><i class="fa-regular fa-eye"></i> 答完後抬頭、伸展肩膀，讓眼睛離開螢幕 30～60 秒。</p>
       </div>
@@ -78,7 +78,7 @@
       <header class="activity-header"><div class="activity-heading"><span class="activity-icon"><i class="fa-solid fa-keyboard"></i></span><div><p class="section-label">第五站</p><h2>把 Unit 1 單字打出來</h2></div></div><span class="activity-count">共 6 關</span></header>
       <div class="activity-body">
         <div class="instruction-box"><i class="fa-solid fa-circle-info"></i><span>看英文範例，先點白色輸入框，看到閃爍的小直線後再打字。不能複製貼上，要用鍵盤逐字輸入。</span></div>
-        <p id="progress-status" class="status-note" role="status">請先在右上角輸入課堂身分卡，再開始闖關。</p>
+        <p id="progress-status" class="status-note" role="status">請先在右上角登入學校 Google 帳號，再開始闖關。</p>
         <div id="typing-levels-container" class="typing-levels">
           <article class="typing-stage stage-cyan" id="block-level1"><span class="challenge-badge">第 1 關</span><h3><i class="fa-solid fa-font"></i> 英文三字</h3><p class="stage-hint">照著範例輸入小寫字母。</p><div class="typing-prompt select-none pointer-events-none"><span class="word">mia</span></div><label for="input-level1">答案輸入框</label><input id="input-level1" type="text" disabled onpaste="return false;" ondrop="return false;" autocomplete="off" spellcheck="false"><button onclick="checkLevel(1)" disabled>檢查答案</button><button id="next-1" data-next="2" class="secondary hidden">下一關</button><p id="msg-level1" class="level-message" role="status"></p></article>
           <article class="typing-stage stage-green hidden" id="block-level2"><span class="challenge-badge">第 2 關</span><h3><i class="fa-solid fa-font"></i> 英文三字</h3><p class="stage-hint">看清楚字母順序再輸入。</p><div class="typing-prompt select-none pointer-events-none"><span class="word">hat</span></div><label for="input-level2">答案輸入框</label><input id="input-level2" type="text" disabled onpaste="return false;" ondrop="return false;" autocomplete="off" spellcheck="false"><button onclick="checkLevel(2)" disabled>檢查答案</button><button id="next-2" data-next="3" class="secondary hidden">下一關</button><p id="msg-level2" class="level-message" role="status"></p></article>
@@ -93,6 +93,6 @@
     </section>
     <footer class="lesson-footer"><strong>下課前說一次：</strong>拖曳是「按住、移動、放開」；框選從空白處開始；Ctrl 可以選分散的物件。</footer>
   </main>
-  <script type="module" src="week03.js?v=20260916-13"></script>
+  <script type="module" src="week03.js?v=20261007-identity"></script>
 </body>
 </html>

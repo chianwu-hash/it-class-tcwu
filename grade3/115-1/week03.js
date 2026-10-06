@@ -1,14 +1,14 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
-import { initClassCardAuth } from '../../shared/class-card-auth.js?v=20260916-1';
-import { createClassCardProgress } from '../../shared/class-card-progress.js';
+import { initGoogleCourseAuth as initClassCardAuth } from '../../shared/grade3-google-course.js?v=20261007-identity';
+import { createGoogleCourseProgress as createClassCardProgress } from '../../shared/grade3-google-course.js?v=20261007-identity';
 import { initQuizModule } from '../../shared/quiz-module.js?v=20260916-1';
-import { initTypingChallenge } from '../../shared/typing-challenge.js';
+import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261006';
 import { initTypingTools, renderEnglishKeyboardGuide } from '../../shared/typing-tools.js?v=20260916-1';
 import { initQuizReadingAid } from './week03-reading.js?v=20260916-3';
 
 const COURSE_ID = 'grade3-115-1';
 const WEEK_CODE = '03';
-const classCardAuth = initClassCardAuth({ courseId: COURSE_ID, mode: 'required' });
+const classCardAuth = await initClassCardAuth({ courseId: COURSE_ID, mode: 'required' });
 initNavbarAuth();
 initTypingTools({
     showPunctuation: false,
@@ -159,7 +159,7 @@ function createQuiz(isReplay = false) {
                 retry: ['💪', '先看看正確答案，再按「再練習一次」。']
             },
             completedBanner: (score, total) => `影片闖關已完成：答對 ${score ?? '?'} / ${total} 題。`,
-            unauthenticated: '請先輸入課堂身分卡。',
+            unauthenticated: '請先登入學校 Google 帳號。',
             saveError: '答題結果已完成，但過關記錄尚未儲存；請重新送出一次。'
         }
     });
@@ -228,15 +228,15 @@ initTypingChallenge({
     getWrongAnswerHtml: ({ hint }) => `❌ 再對照一次單字。<br>${hint}`,
     progressMessages: {
         completed: '六關完成，英文單字輸入進度已接回。',
-        firstLogin: '已確認課堂身分卡，先點輸入框再開始。',
+        firstLogin: '已確認學校 Google 帳號，先點輸入框再開始。',
         resumed: level => `接回進度：從第 ${level} 關繼續。`,
-        unauthenticated: '請先在右上角輸入課堂身分卡，再開始闖關。',
-        guestReady: '已確認課堂身分卡，先點輸入框再開始。',
+        unauthenticated: '請先在右上角登入學校 Google 帳號，再開始闖關。',
+        guestReady: classCardAuth.hasIdentity() ? '已確認學校 Google 帳號，先點輸入框再開始。' : '請先登入並確認本人帳號，再開始闖關。',
         saveNextLevel: level => `進度已保存，準備好後前往第 ${level} 關。`,
         saveCompleted: '六關完成，進度已保存。'
     },
     requireAuth: false,
-    guestProgress: {
+    progressAdapter: {
         load: () => typingPracticeMode ? Promise.resolve(null) : typingStore.load(),
         save: progress => typingPracticeMode && !progress.completed ? Promise.resolve(true) : typingStore.save(progress)
     },
@@ -686,7 +686,12 @@ function refreshIdentity() {
     if (!ready) typingContainer?.querySelectorAll('input, button').forEach(control => { control.disabled = true; });
     document.getElementById('quiz-lock').classList.toggle('hidden', ready);
     document.getElementById('quiz-content').classList.toggle('hidden', !ready);
-    if (ready) void quiz.handleAuthChange(null);
+    if (ready) void quiz.handleAuthChange(null).catch(error => {
+        document.getElementById('quiz-content')?.setAttribute('inert', '');
+        document.getElementById('quiz-content')?.classList.add('hidden');
+        const lock = document.getElementById('quiz-lock');
+        if (lock) { lock.textContent = error.message; lock.classList.remove('hidden'); }
+    });
 }
 
 refreshIdentity();

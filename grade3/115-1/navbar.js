@@ -13,23 +13,26 @@
     }
 
     const navConfig = {
-        activeWeeks: [1, 2, 3, 4, 5],
+        activeWeeks: [1, 2, 3, 4, 5, 6],
         gradeLabel: "三年級資訊課｜115-1",
         titleIconClass: "fa-solid fa-rocket text-cyan-600",
         titleClassName: "font-black text-gray-800 flex items-center text-lg tracking-wide whitespace-nowrap",
         navClassName: "bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-cyan-200 shadow-sm",
-        containerClassName: "max-w-5xl mx-auto px-6 py-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3",
+        containerClassName: "max-w-screen-2xl mx-auto px-4 py-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3",
         linkClassName: "px-3 py-1.5 text-sm font-bold text-gray-600 hover:text-cyan-600 hover:bg-cyan-50 rounded-lg transition whitespace-nowrap",
         currentWeekClassName: "px-3 py-1.5 text-sm font-bold bg-cyan-100 text-cyan-800 rounded-lg shadow-sm whitespace-nowrap cursor-default",
         separatorClassName: "text-gray-300 mx-1",
-        // 115-1 三年級目前使用課堂身分卡與 guest_progress；
-        // 努力樹尚未支援這條進度來源，因此先不顯示入口。
-        extraLinks: [],
+        // Google 身分及正式成果由受控接回 RPC 核對。
+        extraLinks: [
+            { href: 'typing-foundation.html', label: '英打基礎', iconClass: 'fa-solid fa-keyboard' },
+            { href: 'zhuyin-foundation.html', label: '中打基礎', iconClass: 'fa-solid fa-keyboard' },
+            { href: '/my-tree.html?course=grade3-115-1', label: '我的努力樹', iconClass: 'fa-solid fa-tree' }
+        ],
         showAuthBarOnWeekPages: !/week01\.html$/.test(location.pathname),
-        showAuthBarOnHomePages: false,
+        showAuthBarOnHomePages: true,
         authBarHtml: `
-            <div id="nav-auth-bar" class="flex items-center gap-2">
-                <span id="auth-status" class="text-sm truncate max-w-[180px]">未登入</span>
+            <div id="nav-auth-bar" class="flex shrink-0 items-center gap-2">
+                <span id="auth-status" class="text-sm font-bold tracking-wide text-cyan-900 bg-cyan-50 border border-cyan-200 rounded-full px-3 py-1.5 whitespace-nowrap truncate max-w-[180px]" style="font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; font-variant-numeric: tabular-nums;">未登入</span>
                 <a id="admin-btn" href="/admin-progress.html?course=grade3-115-1" class="hidden text-sm" aria-label="教師後台">後台</a>
                 <button id="login-btn" class="w-10 h-10 rounded-full border-2 border-cyan-300" title="Google 登入" aria-label="Google 登入"><i class="fa-brands fa-google"></i></button>
                 <button id="reset-progress-btn" class="hidden w-10 h-10 rounded-full bg-amber-500" title="重新闖關" aria-label="重新闖關"><i class="fa-solid fa-rotate-left"></i></button>

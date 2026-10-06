@@ -1,7 +1,7 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
-import { initClassCardAuth } from '../../shared/class-card-auth.js?v=20260916-1';
-import { createClassCardProgress } from '../../shared/class-card-progress.js';
-import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20260923-1';
+import { initGoogleCourseAuth as initClassCardAuth } from '../../shared/grade3-google-course.js?v=20261007-identity';
+import { createGoogleCourseProgress as createClassCardProgress } from '../../shared/grade3-google-course.js?v=20261007-identity';
+import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261006';
 import { initTypingTools } from '../../shared/typing-tools.js?v=20260924-1';
 import { supabase } from '../../shared/auth.js';
 
@@ -27,26 +27,13 @@ const replayBanks = {
   6: ['peach5678', 'lemon2468']
 };
 
-const classCardAuth = initClassCardAuth({ courseId: COURSE_ID, mode: 'required' });
+const classCardAuth = await initClassCardAuth({ courseId: COURSE_ID, mode: 'required' });
 initNavbarAuth();
 
 let practiceAccount = '';
 async function loadPracticeAccount() {
   const identity = classCardAuth.getIdentity();
-  if (!identity?.birthdayCode || identity.source !== 'rpc') return;
-  try {
-    const { data, error } = await supabase.rpc('get_class_card_practice_account', {
-      p_course_id: COURSE_ID,
-      p_class_code: identity.classCode,
-      p_seat_no: identity.seatNo,
-      p_birthday_code: identity.birthdayCode
-    });
-    if (!error && typeof data === 'string' && /^[a-z][a-z0-9]*$/.test(data)) {
-      practiceAccount = data;
-    }
-  } catch {
-    // Keep the personal account level unavailable when the database cannot be reached.
-  }
+  practiceAccount = identity?.practiceAccount || '';
 }
 
 await loadPracticeAccount();
@@ -59,7 +46,7 @@ document.getElementById('account-load-status').textContent = practiceAccount
   ? '這是你的學校帳號。一個一個看、一個一個打；過關後還能按「再練習一次」。'
   : classCardAuth.hasIdentity()
     ? '現在找不到你的帳號，請告訴老師；不要猜別人的帳號。'
-    : '先輸入課堂身分卡，才會顯示自己的帳號。';
+    : '先登入學校 Google 帳號，才會顯示自己的帳號。';
 if (practiceAccount) document.getElementById('input-level4').maxLength = practiceAccount.length;
 
 let activeKeyboardTarget = '';
@@ -277,8 +264,8 @@ initTypingChallenge({
   progressMessages: {
     firstLogin: '準備好了！從第 1 關開始。',
     resumed: level => `上次做到第 ${level} 關，從這裡繼續。`,
-    unauthenticated: '先輸入課堂身分卡，再開始鍵盤與帳號練習。',
-    guestReady: classCardAuth.hasIdentity() ? '準備好了！從第 1 關開始。' : '先輸入課堂身分卡，再開始鍵盤與帳號練習。',
+    unauthenticated: '先登入學校 Google 帳號，再開始鍵盤與帳號練習。',
+    guestReady: classCardAuth.hasIdentity() ? '準備好了！從第 1 關開始。' : '先登入學校 Google 帳號，再開始鍵盤與帳號練習。',
     guestNextLevel: level => `這一關已經記下來了，接著玩第 ${level} 關。`,
     guestCompleted: '六關都完成了！下週拿到紙條，再學怎麼登入。',
     saveCompleted: '六關都完成了！下週拿到紙條，再學怎麼登入。'
@@ -289,7 +276,7 @@ initTypingChallenge({
     buttonText: '回到本週課程'
   },
   requireAuth: false,
-  guestProgress: { load: () => typingStore.load(), save: progress => typingStore.save(progress) },
+  progressAdapter: { load: () => typingStore.load(), save: progress => typingStore.save(progress) },
   afterAuthUpdate: refreshIdentityLock,
   autoScrollNext: false
 });

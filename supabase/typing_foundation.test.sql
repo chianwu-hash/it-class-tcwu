@@ -56,9 +56,9 @@ begin
   perform set_config('request.jwt.claims',case when course='grade6-115-1' then '{"sub":"cbb41c53-97a1-483c-897b-8337a0e10227","email":"foundation-synthetic-20261001@example.invalid","role":"authenticated"}' else '{}' end,true);
   begin perform public.typing_foundation_action('save',course,p);raise exception 'stale_save_allowed';exception when others then if sqlerrm<>'stale_revision' then raise;end if;end;
  end loop;
- -- Even valid classroom credentials cannot open the reserved Grade 3 course.
+ -- Classroom credentials cannot replace a trusted Grade 3 Google binding.
  for course in select unnest(array['load','start','save']) loop
- begin perform public.typing_foundation_action(course,'grade3-115-1','{"class_code":"999","seat_no":99,"birthday_code":"0000"}');raise exception 'reserved_course_allowed';exception when others then if sqlerrm<>'course_not_open' then raise;end if;end;
+ begin perform public.typing_foundation_action(course,'grade3-115-1','{"class_code":"999","seat_no":99,"birthday_code":"0000"}');raise exception 'unbound_course_allowed';exception when others then if sqlerrm<>'course_identity_required' then raise;end if;end;
  end loop;
 end $$;
 -- All twelve lessons: server-enforced unlocks and exact per-stage counts.
@@ -108,13 +108,13 @@ begin
   if not (r->>'completed')::boolean then raise exception 'zhuyin_completion_failed: %',i;end if;
   if i=1 then first_record:=r;end if;
  end loop;
- if public.typing_foundation_action('list','grade6-115-1')<>english_before then raise exception 'english_changed';end if;
+ if (select jsonb_agg(x order by x->>'lesson_key') from jsonb_array_elements(public.typing_foundation_action('list','grade6-115-1')) x)<>(select jsonb_agg(x order by x->>'lesson_key') from jsonb_array_elements(english_before) x) then raise exception 'english_changed';end if;
  if jsonb_array_length(public.typing_foundation_action('list','grade6-115-1','{"lesson_key":"zhuyin-home-v1"}'))<>12 then raise exception 'zhuyin_list_failed';end if;
  if jsonb_array_length(public.typing_foundation_action('list','grade6-115-1','{"include_zhuyin":true}'))<>24 then raise exception 'combined_list_failed';end if;
  perform set_config('request.jwt.claims','{"sub":"cbb41c53-97a1-483c-897b-8337a0e10227","email":"chianwu@gmail.com","role":"authenticated"}',true);
  perform public.typing_foundation_action('admin_reset','grade6-115-1',first_record);
  perform set_config('request.jwt.claims','{"sub":"cbb41c53-97a1-483c-897b-8337a0e10227","email":"foundation-synthetic-20261001@example.invalid","role":"authenticated"}',true);
- if public.typing_foundation_action('list','grade6-115-1')<>english_before then raise exception 'zhuyin_reset_changed_english';end if;
+ if (select jsonb_agg(x order by x->>'lesson_key') from jsonb_array_elements(public.typing_foundation_action('list','grade6-115-1')) x)<>(select jsonb_agg(x order by x->>'lesson_key') from jsonb_array_elements(english_before) x) then raise exception 'zhuyin_reset_changed_english';end if;
  begin perform public.typing_foundation_action('save','grade6-115-1',p);raise exception 'zhuyin_reset_unlock_failed';exception when others then if sqlerrm<>'lesson_locked' then raise;end if;end;
 end $$;
 reset role;

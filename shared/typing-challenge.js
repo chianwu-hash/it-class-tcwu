@@ -71,10 +71,16 @@ export function initTypingChallenge({
     autoScrollNext = true,
     requireAuth = true,
     guestProgress = null,
+    progressAdapter = null,
     foundation = null
 }) {
     // Opt-in independent, keystroke-based foundation curriculum; legacy stays unchanged.
-    if (foundation) return import('./typing-foundation-progress.js?v=20261002-course').then(({createFoundationProgress}) => createFoundationProgress(foundation));
+    if (foundation) return import('./typing-foundation-progress.js?v=20261006-google').then(({createFoundationProgress}) => createFoundationProgress(foundation));
+    // Opt-in authenticated RPC adapter. Its roster controller owns identity/UI.
+    if (progressAdapter) {
+        guestProgress = progressAdapter;
+        requireAuth = false;
+    }
     ensureTypingChallengeTextStyle();
 
     const maxLevel = levelsData.length;
@@ -105,11 +111,13 @@ export function initTypingChallenge({
     }
 
     function setResetProgressVisible(visible) {
+        if (progressAdapter) return;
         const button = getResetProgressBtn();
         button?.classList.toggle("hidden", !visible);
     }
 
     function bindResetProgressButton() {
+        if (progressAdapter) return;
         const button = getResetProgressBtn();
         if (!button) {
             return;
@@ -699,6 +707,11 @@ export function initTypingChallenge({
     }
 
     async function updateAuthUI(session) {
+        if (progressAdapter) {
+            if (progressStatusEl) progressStatusEl.textContent = messages.guestReady || messages.unauthenticated;
+            if (typeof afterAuthUpdate === 'function') await afterAuthUpdate(session);
+            return;
+        }
         if (session?.user) {
             if (authStatusEl) {
                 authStatusEl.textContent = session.user.email || "Google 使用者";
@@ -887,23 +900,25 @@ export function initTypingChallenge({
             if (!requireAuth) {
                 if (guestProgress && typeof guestProgress.save === "function") {
                     let didSave = false;
+                    let saveFailureMessage = messages.saveError;
                     try {
                         didSave = await guestProgress.save({ current_level: nextLevel, completed: Boolean(completed) });
                     } catch (error) {
+                        if (progressAdapter && error?.message) saveFailureMessage = error.message;
                         console.error("saveGuestProgress failed", error, { next_level: nextLevel, completed });
                         showProgressDebug("saveGuestProgress", error, { next_level: nextLevel, completed });
                     }
                     if (didSave === false) {
                         if (progressStatusEl) {
-                            progressStatusEl.textContent = messages.saveError;
+                            progressStatusEl.textContent = saveFailureMessage;
                         }
                         return false;
                     }
                 }
                 highestUnlockedLevel = Math.max(highestUnlockedLevel, nextLevel);
-                progressCompleted = Boolean(completed);
+                progressCompleted = progressAdapter ? progressCompleted || Boolean(completed) : Boolean(completed);
                 if (progressStatusEl) {
-                    progressStatusEl.textContent = completed
+                    progressStatusEl.textContent = progressCompleted
                         ? (messages.guestCompleted || messages.saveCompleted)
                         : (typeof messages.guestNextLevel === "function" ? messages.guestNextLevel(nextLevel) : messages.saveNextLevel(nextLevel));
                 }
@@ -1089,6 +1104,7 @@ export function initTypingChallenge({
                 const didSave = await saveProgress(levelIndex + 1, false);
                 if (!didSave) {
                     msgEl.innerHTML = "⚠️ 你已經完成這一關了，但進度還沒記錄成功，請再按一次或稍後再試。";
+                    if (progressAdapter) msgEl.textContent = `⚠️ ${progressStatusEl?.textContent || messages.saveError}`;
                     msgEl.className = "text-center font-bold mt-4 h-6 text-sm text-amber-600";
                     inputEl.readOnly = false;
                     inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800");
@@ -1117,6 +1133,7 @@ export function initTypingChallenge({
             const didSave = await saveProgress(maxLevel, true);
             if (!didSave) {
                 msgEl.innerHTML = "⚠️ 你已經把最後一關完成了，但完整進度還沒記錄成功，請再按一次或稍後再試。";
+                if (progressAdapter) msgEl.textContent = `⚠️ ${progressStatusEl?.textContent || messages.saveError}`;
                 msgEl.className = "text-center font-bold mt-4 h-6 text-sm text-amber-600";
                 inputEl.readOnly = false;
                 inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800");
@@ -1225,5 +1242,12 @@ export function initTypingChallenge({
         });
     }
 
-    initialize();
+    initialize().catch(error => {
+        console.error('typing initialization failed', error);
+        if (progressAdapter) {
+            const container = document.getElementById('typing-levels-container');
+            if (container) container.inert = true;
+        }
+        if (progressStatusEl) progressStatusEl.textContent = progressAdapter && error?.message ? error.message : messages.loadError;
+    });
 }

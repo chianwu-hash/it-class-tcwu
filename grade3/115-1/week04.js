@@ -1,14 +1,14 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
-import { initClassCardAuth } from '../../shared/class-card-auth.js?v=20260916-1';
-import { createClassCardProgress } from '../../shared/class-card-progress.js';
-import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20260923-1';
+import { initGoogleCourseAuth as initClassCardAuth } from '../../shared/grade3-google-course.js?v=20261007-identity';
+import { createGoogleCourseProgress as createClassCardProgress } from '../../shared/grade3-google-course.js?v=20261007-identity';
+import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261006';
 import { initTypingTools, renderBackspaceKeyHint, renderCapsLockKeyHint, renderShiftKeyHint } from '../../shared/typing-tools.js?v=20260924-1';
 
 const COURSE_ID = 'grade3-115-1';
 const WEEK_CODE = '04';
 const ACTIVITY_KEY = 'typing_task_6';
 
-const classCardAuth = initClassCardAuth({ courseId: COURSE_ID, mode: 'required' });
+const classCardAuth = await initClassCardAuth({ courseId: COURSE_ID, mode: 'required' });
 initNavbarAuth();
 
 const TREASURE_GROUPS = [
@@ -104,7 +104,7 @@ function renderTreasureAssignment() {
     if (!groupLabel || !expression) return;
 
     if (!identity) {
-        groupLabel.textContent = '完成課堂身分卡後取得線索';
+        groupLabel.textContent = '完成學校 Google 帳號後取得線索';
         expression.textContent = '先完成第 1 關 Leo';
         return;
     }
@@ -184,19 +184,19 @@ initTypingChallenge({
     getWrongAnswerHtml: getTypingWrongAnswerHtml,
     progressMessages: {
         completed: '六關已完成；可以重新看任務路線，並確認 Caps Lock 已關閉。',
-        firstLogin: '已確認課堂身分卡，先練習 Mia，再從第 1 關 Leo 開始。',
+        firstLogin: '已確認學校 Google 帳號，先練習 Mia，再從第 1 關 Leo 開始。',
         resumed: level => `已接回進度，從第 ${level} 關繼續。`,
-        unauthenticated: '請先在右上角輸入課堂身分卡，才可以闖關。',
+        unauthenticated: '請先在右上角輸入學校 Google 帳號，才可以闖關。',
         guestReady: classCardAuth.hasIdentity()
-            ? '已確認課堂身分卡，先練習 Mia，再從第 1 關 Leo 開始。'
-            : '請先在右上角輸入課堂身分卡，才可以闖關。',
+            ? '已確認學校 Google 帳號，先練習 Mia，再從第 1 關 Leo 開始。'
+            : '請先在右上角輸入學校 Google 帳號，才可以闖關。',
         guestNextLevel: level => `進度已保存，準備好後挑戰第 ${level} 關。`,
         guestCompleted: '六關完成，進度已保存；最後確認 Caps Lock 已關閉。',
         saveNextLevel: level => `進度已保存，準備好後挑戰第 ${level} 關。`,
         saveCompleted: '六關完成，進度已保存；最後確認 Caps Lock 已關閉。'
     },
     requireAuth: false,
-    guestProgress: {
+    progressAdapter: {
         load: () => typingStore.load(),
         save: progress => typingStore.save(progress)
     },
@@ -517,7 +517,7 @@ function refreshIdentityLock() {
     const warmupButton = document.getElementById('warmup-check');
     if (warmupInput && !warmupInput.readOnly) warmupInput.disabled = !ready;
     if (warmupButton && !warmupInput?.readOnly) warmupButton.disabled = !ready;
-    if (ready && document.getElementById('warmup-feedback')?.textContent.includes('先輸入課堂身分卡')) {
+    if (ready && document.getElementById('warmup-feedback')?.textContent.includes('先登入學校 Google 帳號')) {
         document.getElementById('warmup-feedback').textContent = '第 1 關：先照著輸入三個小寫字母 mia。';
     }
 
@@ -527,7 +527,7 @@ function refreshIdentityLock() {
     if (capsPracticeInput && !capsPracticeInput.readOnly) capsPracticeInput.disabled = !ready;
     if (capsPracticeButton) capsPracticeButton.disabled = !ready;
     if (!ready && capsPracticeFeedback) {
-        capsPracticeFeedback.textContent = '先在右上角輸入課堂身分卡，再使用這個練習框。';
+        capsPracticeFeedback.textContent = '先在右上角輸入學校 Google 帳號，再使用這個練習框。';
     } else if (ready && capsPracticeFeedback?.textContent.includes('先在右上角')) {
         capsPracticeFeedback.textContent = '可以一邊看四步驟，一邊輸入；完成後再換一個姓名正式過關。';
     }

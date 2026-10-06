@@ -102,6 +102,15 @@ export function deriveRewardTreeModel(progressRows, activities) {
             updated_at: ""
         };
 
+        if (activity.type === 'practical') {
+            const earned=row.completed === true;
+            const reward=createReward({kind:'practical-leaf',source:row,activity,index:1,total:1,earned,href:earned ? '' : activity.pageHref});
+            reward.title=`${activity.label} ${earned ? '完成葉' : '尚未取得的完成葉'}`;
+            reward.reason=earned ? '完成整套操作練習，長出一片葉子。' : '完成整套操作練習，就能長出一片葉子。';
+            reward.detail='同一活動只計一次；重練不會重複增加。';
+            (earned ? rewards : pendingRewards).push(reward);
+            return;
+        }
         if (activity.type === 'foundation') {
             const earned=row.completed === true;
             const reward=createReward({kind:'foundation-leaf',source:row,activity,index:1,total:1,earned,href:earned ? '' : activity.pageHref});

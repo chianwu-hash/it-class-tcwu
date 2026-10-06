@@ -1,5 +1,5 @@
 import {resolveSession,isTeacher,beginCentralizedLogin} from './auth.js';
-import {createFoundationProgress} from './typing-foundation-progress.js';
+import {createFoundationProgress} from './typing-foundation-progress.js?v=20261006-google';
 import {getLesson} from './typing-foundation-curriculum.mjs';
 import {getZhuyinLesson} from './zhuyin-foundation-curriculum.mjs';
 let records=[],session=null,busy=false,loadedCourse=null;
@@ -16,7 +16,7 @@ async function load(){
    const zh=row.lesson_key.startsWith('zhuyin-'),lesson=zh?getZhuyinLesson(row.lesson_key):getLesson(row.lesson_key);const lessonLabel=`${zh?'中打':'英打'}第 ${lesson.number} 關：${lesson.title}`;
    const tr=document.createElement('tr');tr.className='border-b';
    const rate=row.best_rate??row.best_wpm,unit=zh?(lesson.mode==='ime'?'字元／分':'鍵／分'):'WPM';
-   const values=[`${row.display_name}（${row.learner_key}）`,lessonLabel,`${row.checkpoint}/5`,row.completed?'過關・1 片葉':'未過關',zh?'95%，速度僅記錄':`95%＋${row.starter?lesson.starterSpeed:lesson.speed} WPM`,row.completed_at?new Date(row.completed_at).toLocaleString('zh-TW'):'—',rate==null?'—':`${Number(rate).toFixed(1)} ${unit}`];
+   const values=[`${row.display_name}（${row.learner_key}）`,lessonLabel,`${row.checkpoint}/5`,row.completed?'過關・1 片葉':'未過關',zh?'95%，速度僅記錄':`95%＋${courseId==='grade3-115-1'||row.starter?lesson.starterSpeed:lesson.speed} WPM`,row.completed_at?new Date(row.completed_at).toLocaleString('zh-TW'):'—',rate==null?'—':`${Number(rate).toFixed(1)} ${unit}`];
    for(const value of values){const td=document.createElement('td');td.className='p-3';td.textContent=value;tr.append(td);}
    const td=document.createElement('td'),button=document.createElement('button');button.textContent='重置這一關';button.className='border border-red-300 text-red-700 rounded p-2';
    button.onclick=async()=>{

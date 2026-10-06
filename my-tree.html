@@ -498,9 +498,10 @@
         import { renderRewardTree, selectReward } from "./shared/reward-tree-renderer.js";
         import { readingRequest, readingTreeData } from './shared/reading-api.js';
         import { homeworkRequest, homeworkTreeData } from "./shared/homework-api.js";
-        import {createFoundationProgress} from './shared/typing-foundation-progress.js?v=20261002-course';
+        import {createFoundationProgress} from './shared/typing-foundation-progress.js?v=20261006-google';
         import {foundationTreeData} from './shared/typing-foundation-rewards.js?v=20261002-zhuyin';
 
+        import { reconnectGrade3Progress } from './shared/grade3-google-course.js?v=20261007-identity';
         const subtitleEl = document.getElementById("subtitle");
         const courseHomeLinkEl = document.getElementById("course-home-link");
         const backPageBtn = document.getElementById("back-page-btn");
@@ -527,6 +528,7 @@
 
         let currentSession = null;
         let currentEnrollment = null;
+        let treeLoadVersion = 0;
         let selectedCourseId = resolveInitialCourseId();
         const returnTarget = resolveReturnTarget();
 
@@ -678,13 +680,14 @@
                 return [];
             }
 
+            if (selectedCourseId === 'grade3-115-1') await reconnectGrade3Progress();
             let { data, error } = await supabase
                 .from("student_progress")
                 .select("course_id,week_code,activity_key,current_level,completed,score,updated_at")
                 .eq("user_id", currentSession.user.id)
                 .eq("course_id", selectedCourseId);
 
-            if (error && isMissingCourseIdError(error)) {
+            if (selectedCourseId !== "grade3-115-1" && error && isMissingCourseIdError(error)) {
                 ({ data, error } = await supabase
                     .from("student_progress")
                     .select("week_code,activity_key,current_level,completed,score,updated_at")
@@ -779,7 +782,13 @@
         }
 
         async function loadAndRender() {
+            const version = ++treeLoadVersion;
             hideNotice();
+            rewardLayerEl.replaceChildren();
+            leafCountEl.textContent = '0';
+            flowerCountEl.textContent = '0';
+            detailTitleEl.textContent = '正在確認本人的成果';
+            detailTextEl.textContent = '';
             updateCourseChrome();
             currentEnrollment = null;
             updateAuthUi();
@@ -793,15 +802,17 @@
                     loadProgressRows(),
                     loadCurrentEnrollment(loadingCourse)
                 ]);
-                if (selectedCourseId !== loadingCourse || currentSession?.user?.id !== loadingUser) return;
+                if (version !== treeLoadVersion || selectedCourseId !== loadingCourse || currentSession?.user?.id !== loadingUser) return;
                 currentEnrollment = enrollment;
                 updateAuthUi();
                 if (!activities.length && loadingCourse !== 'grade6-115-1') { renderEmptyCourse(course); return; }
-                if (loadingCourse === 'grade6-115-1' && currentSession?.user && !mockMode) {
+                if (['grade3-115-1','grade6-115-1'].includes(loadingCourse) && currentSession?.user && !mockMode) {
                     try {
                         const foundation=foundationTreeData(await createFoundationProgress({courseId:loadingCourse,getSession:()=>currentSession}).request('list',{include_zhuyin:true}),loadingCourse);
                         activities.push(...foundation.activities); rows.push(...foundation.rows);
                     } catch(error) { showNotice(`基礎練習成果暫時無法讀取：${error.message}`, 'info'); }
+                }
+                if (loadingCourse === 'grade6-115-1' && currentSession?.user && !mockMode) {
                     try {
                         const data = await homeworkRequest(currentSession, 'list');
                         const homework = homeworkTreeData(data.assignments.filter(a => a.state !== 'draft'));
@@ -811,11 +822,12 @@
                     }
                     try { const reading=readingTreeData((await readingRequest(currentSession,'list')).periods); activities.push(...reading.activities); rows.push(...reading.rows); } catch(error) { showNotice(`閱讀紀錄暫時無法讀取：${error.message}`, 'info'); }
                 }
-                if (selectedCourseId !== loadingCourse || currentSession?.user?.id !== loadingUser) return;
+                if (version !== treeLoadVersion || selectedCourseId !== loadingCourse || currentSession?.user?.id !== loadingUser) return;
                 if (!activities.length) { renderEmptyCourse(course); return; }
                 const model = deriveRewardTreeModel(rows, activities);
                 renderModel(model, activities);
             } catch (error) {
+                if (version !== treeLoadVersion) return;
                 console.error("reward tree load failed", error);
                 showNotice(`讀取努力樹失敗：${error.message}`, "error");
             }
@@ -839,6 +851,16 @@
         updateCourseUrl();
         setFlowerStyle(window.localStorage.getItem(FLOWER_STORAGE_KEY));
         currentSession = await resolveSession();
+        supabase.auth.onAuthStateChange((_event, session) => {
+            if ((session?.user?.id ?? null) === (currentSession?.user?.id ?? null)) return;
+            currentSession = session;
+            treeLoadVersion++;
+            currentEnrollment = null;
+            rewardLayerEl.replaceChildren();
+            leafCountEl.textContent = '0';
+            flowerCountEl.textContent = '0';
+            setTimeout(loadAndRender, 0);
+        });
         await loadAndRender();
     </script>
 </body>

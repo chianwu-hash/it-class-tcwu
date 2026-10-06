@@ -1,5 +1,40 @@
 # Agent Handoff
 
+## Grade3 homepage identity/navbar fix — 2026-10-07
+
+- Follow-up current-week marker: restored yellow rounded 本週 badge at Week06 card's top-right, matching Grade6 semester badge. Removed duplicate inline 本週 wording. Homepage-only release dpl_v688uLc8E4CkVvJQJtSCGADFdKFC promoted; production source SHA256 matches, yellow badge placement/no overflow verified at1280/390 on production. Local probe did not find card DOM, so verification used production rather than claiming local pass. No auth/progress changes.
+
+- Follow-up user preference: display `30130 姓名` without slash. Shared Grade3 Google controller uses trusted studentCode; identity badge uses bold Noto Sans TC/JhengHei, spaced/tabular digits, cyan pill styling. Runtime changes limited to controller/navbar;23-file release includes cache-only updates through callers. Repeated actual30130 home/week03/week06 single-row1280/1366/1440 and390 no overflow, auth/rerender/failure tests passed; screenshot inspected. Promoted dpl_5bast6hTUNQUdBz1gBsJspu84t5y,23 production SHA256 matches. Private release grade3-navbar-identity-20261007. No SQL changes or student progress saved.
+
+- User clarified two defects: homepage displayed email instead of class/seat/name and desktop navigation wrapped into two rows.
+- Fixed homepage to initialize existing initGoogleCourseAuth rather than generic initNavbarAuth. Grade3 navbar container now max-w-screen-2xl with compact side padding, nonshrinking auth group and nonwrapping identity. Shared navbar/auth modules unchanged.
+- Grade3 navbar consumers received v20261007 cache version; only index/navbar behavior changed. Scoped release based on previous foundation release, preserves Google/history/foundation work. No SQL changes, no student progress tests that persist data.
+- Passed actual30130 home/week03/week06 identity and single-row1280/1366/1440,390 no horizontal overflow; synthetic navbar rerender retains name, login/logout once, anonymous and failed-identity states. Desktop screenshot inspected. Test: automation/tests/grade3-home-navbar-browser.cjs.
+- Promoted dpl_5J53vS11SreD7PnfTWxj16BjX6o1;14 production file SHA256 matches. Manifest/release private under grade3-navbar-20261007. No commit/push; old main redeployment still unsafe until earlier scoped work integrated into Git.
+
+## Grade 3 semester foundation entrances — 2026-10-06
+
+- Goal: enable existing English/Chinese foundation for Grade3 via the semester navbar, matching Grade6 placement. User corrected scope: do not add foundation content to Week06.
+- Codex sole writer; Claude read-only review. Files: Grade3 navbar/English/Chinese/legacy-tree entries, shared foundation page/progress, foundation dynamic import in typing-challenge, my-tree foundation read branch, foundation SQL auth branch plus function-only upgrade, targeted tests/docs.
+- Preserve Grade3 easier policy: English lessons1–9 8 WPM,10–12 10 WPM; Chinese no speed gate; 90% practice/95% final, two different final groups. Foundation one completed big lesson = one leaf, no flower; weekly grading untouched.
+- Passed: PGlite updated RPC trusted-course readiness/roster/teacher denial, separate tracks completion/unlock, Grade6 regression; isolated browser both grades/tracks start/save/course routing, navbar,390/1280,Grade3 tree2 leaves/0flowers.
+- Production preflight:24 lessons,Grade3 foundation0/Grade6 foundation10,legacy592/weekly9; previous RPC privately backed up. Function-only upgrade guard old hash acd92b9b1e6ddd943f6ca77821e306a4. Previous Google release preserved in isolated frontend release.
+- State: production function-only upgrade and14-file frontend released/promoted as dpl_GumDNy7EF7nb4ijqg3ck2xYB9mVP. Primary site14 SHA256 checks passed. Grade6 entry versions/shared initialization changed but curriculum preserved; Grade3 teacher selector/8–10WPM display enabled.
+- Claude: first candidate rejected after Codex changed tests during review; fixed-baseline second round completed, no P0/P1. Post-review cache dependency/full SQL dependency guard/test ordering fixes verified by Codex. See grade3-foundation-release-20261006.md for exact scope and limitations.
+- Actual30130 read-only browser: English/Chinese enabled, correct own301/30 and Grade3 policy, tree11 leaves/2flowers unchanged. ActualDB start/save/complete/unlock both tracks at Grade3 policy ROLLBACK passed; foundation3=0/6=10,source592/weekly9 preserved. No fake student成果 retained.
+- Exact next action: integrate these14 files plus previous21-file Google release and SQL/contracts into Git without unrelated dirty work; avoid redeploying old main. Classroom IME/full-class concurrency and fresh production-origin OAuth remain user classroom checks. Local HTTP server3036 remains running.
+
+## Grade 3 Week 06 Google transition — 2026-10-06
+
+- Goal: deliver the Week 06 lesson, Google login, trusted historical progress import and effort tree; user requested Claude review.
+- State: user explicitly authorized production transition; SQL and Vercel released, 129 approvals, 592 source rows preserved, 30130 imported6 with11 leaves/2flowers and unlocked typing. No main-project commit/push. See grade3-week06-release.md.
+- Ownership: Codex is sole writer. Claude receives Read/Glob/Grep only, no shell/network/credentials/deployment/external paths.
+- Scope: grade3/115-1 Week 02–06 pages/controllers, semester home/navbar, shared/grade3-google-course.js, opt-in typing adapter, reward config/model, my-tree.html, Grade 3 admin progress branch, additive SQL/preflight, tests and related SOP notes. Preserve unrelated dirty files.
+- Session: docs/development/sessions/2026-10-06-grade3-week06-google.md. Legacy agent-sync-state.json points to a separate June grading handoff; do not overwrite that task.
+- Review completed: four Claude read-only rounds; verified findings repaired. See grade3-week06-review.md for actual coverage and post-review Codex fixes.
+- Exact next action: integrate the21 released frontend files plus SQL/contracts into Git without unrelated dirty work; old-main redeploy would overwrite the Google frontend. First-time platform opening/OAuth selection and other students remain classroom verification; real save/read/RLS/teacher reset/visibility and30130tree verified.
+
+
 > Shared handoff file for Codex, Claude Code, and the user.
 >
 > Use this file when one agent needs to brief the other inside the same VS Code project. Keep entries short, factual, and based on actual file state.

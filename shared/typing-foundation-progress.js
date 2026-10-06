@@ -6,7 +6,6 @@ export function createFoundationProgress({courseId, lessonKey='english-home-row-
   let current = null;
   async function request(action, payload = {}) {
     const session = getSession();
-    if (courseId === 'grade3-115-1' && !action.startsWith('admin_')) throw new Error('三年級基礎練習尚未開放，將在改用 Google 帳號後啟用。');
     if (!session?.user) throw new Error('請先登入 Google。');
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10000);
@@ -22,9 +21,9 @@ export function createFoundationProgress({courseId, lessonKey='english-home-row-
         if (body.message?.includes('lesson_locked')) throw new Error('請先完成前面的關卡，再開啟這一關。');
         if (body.message?.includes('stale_revision')) throw new Error('進度已被教師重置，請重新整理後再開始。');
         if (body.message?.includes('session_changed')) throw new Error('另一個頁面已開始練習，請重新整理後再開始。');
-        if (body.message?.includes('student_required')) throw new Error('請使用六年級測試學生的學校 Google 帳號登入；教師帳號不能代闖關。');
-        if (body.message?.includes('roster_required')) throw new Error('目前 Google 帳號不在 115 學年度六年級名冊，請確認測試帳號。');
-        if (body.message?.includes('course_not_open')) throw new Error('三年級基礎練習尚未開放，將在改用 Google 帳號後啟用。');
+        if (body.message?.includes('student_required')) throw new Error('請使用學生自己的學校 Google 帳號登入；教師帳號不能代闖關。');
+        if (body.message?.includes('roster_required')) throw new Error(`目前 Google 帳號不在 115 學年度${courseId.startsWith('grade3') ? '三' : '六'}年級名冊，請確認自己的帳號。`);
+        if (body.message?.includes('course_identity_required')) throw new Error('目前帳號尚未通過三年級本人身分確認；請確認使用自己的三年級學校 Google 帳號，回課程首頁接回舊成果。');
         throw new Error(`基礎練習連線失敗（${response.status}），請確認身分與資料庫設定後重試。`);
       }
       return await response.json();

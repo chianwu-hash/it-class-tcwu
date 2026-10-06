@@ -250,7 +250,7 @@
             {
                 courseId: "grade3-115-1",
                 grade: "grade3",
-                weeks: ["01", "02", "03", "04", "05"]
+                weeks: ["01", "02", "03", "04", "05", "06"]
             },
             {
                 courseId: "grade6-114-2",
@@ -1039,6 +1039,9 @@
                 }
                 if (error) break;
 
+                // Google progress is authoritative after Grade 3 transition.
+                // Preserve guest history in DB, without double counting/resetting it.
+                if (course.id === 'grade3-115-1') continue;
                 for (let from = 0; ; from += 1000) {
                     const result = await supabase.rpc("admin_list_guest_progress", {
                         p_course_id: course.id,

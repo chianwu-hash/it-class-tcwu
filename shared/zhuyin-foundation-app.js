@@ -1,7 +1,7 @@
 import {zhuyinLessons as lessons,getZhuyinLesson,zhuyinKeys,generateZhuyin,textDistance,zhuyinCount} from './zhuyin-foundation-curriculum.mjs';
 import {createTypingFingerGuide,fingerLabel} from './typing-finger-guide.mjs';
 import {createClock} from '../prototypes/typing-foundation/level1/grading.mjs';
-import {initTypingChallenge} from './typing-challenge.js?v=20261002-course';
+import {initTypingChallenge} from './typing-challenge.js?v=20261006-google';
 const $=id=>document.getElementById(id),config=window.foundationConfig;
 const lesson=getZhuyinLesson(config.lessonKey),ime=lesson.mode==='ime';
 let cloud,records=[],saved=null,started=false,stage=0,rows=[],row=0,pos=0,correct=0,errors=0,confirmations=0;

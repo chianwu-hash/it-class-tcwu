@@ -14,7 +14,7 @@
     </style>
 </head>
 <body class="text-gray-800 antialiased pb-12">
-    <script src="navbar.js?v=20260925"></script>
+    <script src="navbar.js?v=20261007-identity"></script>
 
     <header class="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white shadow-xl rounded-b-[3rem] mb-10">
         <div class="max-w-5xl mx-auto px-6 py-12 relative overflow-hidden">
@@ -37,11 +37,14 @@
         </div>
 
         <div class="grid md:grid-cols-2 gap-8 week-card-grid">
-            <a href="week05.html" data-week="05" data-latest-week="true" class="block bg-white rounded-3xl shadow-md border-4 border-cyan-300 overflow-hidden card-hover group">
+            <a href="week06.html" data-week="06" data-latest-week="true" class="block bg-white rounded-3xl shadow-md border-4 border-emerald-300 overflow-hidden card-hover group">
+              <div class="h-32 bg-gradient-to-r from-teal-500 to-emerald-500 relative flex items-center justify-center text-white text-5xl"><i class="fa-solid fa-tree" aria-hidden="true"></i><div class="absolute top-4 right-4 bg-yellow-300 text-yellow-900 px-3 py-1 rounded-full font-black text-sm">本週</div></div>
+              <div class="p-6"><p class="font-black text-teal-700">第 06 週</p><h3 class="text-2xl font-black mb-2">登入 Google，看看我的努力樹</h3><p class="font-bold text-gray-600">貼好帳密條、改密碼，從親師生平台開啟谷歌服務；登入課程網站，找回自己的努力成果，再挑戰快手任務。</p></div>
+            </a>
+            <a href="week05.html" data-week="05"  class="block bg-white rounded-3xl shadow-md border-4 border-cyan-300 overflow-hidden card-hover group">
                 <div class="h-32 bg-gradient-to-r from-sky-500 to-teal-500 relative flex items-center justify-center">
                     <i class="fa-solid fa-keyboard text-6xl text-white opacity-60 group-hover:scale-110 transition"></i>
                     <div class="absolute top-4 left-4 bg-white/25 backdrop-blur-sm text-white px-3 py-1 rounded-full font-black text-sm">第 05 週</div>
-                    <div class="absolute top-4 right-4 bg-yellow-300 text-yellow-900 px-3 py-1 rounded-full font-black text-sm">本週</div>
                 </div>
                 <div class="p-6">
                     <h3 class="text-2xl font-black text-gray-800 mb-2 group-hover:text-cyan-600 transition">鍵盤辨字偵探</h3>
@@ -134,7 +137,9 @@
         <p><i class="fa-solid fa-rocket mr-1"></i> 新北市頂溪國小資訊課 - 電腦小小兵系列</p>
     </footer>
     <script type="module">
+        import {initGoogleCourseAuth} from "../../shared/grade3-google-course.js?v=20261007-identity";
         import { applyWeekVisibilityToCards } from "../../shared/week-visibility.js";
+        await initGoogleCourseAuth({courseId: "grade3-115-1"});
         applyWeekVisibilityToCards("grade3", document.querySelector("main"), "grade3-115-1");
     </script>
 </body>

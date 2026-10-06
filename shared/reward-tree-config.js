@@ -1,3 +1,78 @@
+const GRADE3_115_1_ACTIVITIES = [
+    {
+        "type": "typing",
+        "weekCode": "02",
+        "activityKey": "typing_task_4",
+        "totalLevels": 4,
+        "pageHref": "/grade3/115-1/week02.html",
+        "label": "第 2 週 游標打字"
+    },
+    {
+        "type": "quiz",
+        "weekCode": "02",
+        "activityKey": "quiz_posture_5",
+        "totalLevels": 5,
+        "pageHref": "/grade3/115-1/week02.html",
+        "label": "第 2 週 坐姿測驗"
+    },
+    {
+        "type": "practical",
+        "weekCode": "02",
+        "activityKey": "window_practice_5",
+        "totalLevels": 5,
+        "pageHref": "/grade3/115-1/week02.html",
+        "label": "第 2 週 視窗練習"
+    },
+    {
+        "type": "typing",
+        "weekCode": "02",
+        "activityKey": "typing_task_5",
+        "totalLevels": 5,
+        "pageHref": "/grade3/115-1/week02-mail.html",
+        "label": "第 2 週 快手投遞"
+    },
+    {
+        "type": "quiz",
+        "weekCode": "03",
+        "activityKey": "quiz_device_safety_5",
+        "totalLevels": 5,
+        "pageHref": "/grade3/115-1/week03.html",
+        "label": "第 3 週 設備安全測驗"
+    },
+    {
+        "type": "typing",
+        "weekCode": "03",
+        "activityKey": "typing_task_6",
+        "totalLevels": 6,
+        "pageHref": "/grade3/115-1/week03.html",
+        "label": "第 3 週 英打闖關"
+    },
+    {
+        "type": "typing",
+        "weekCode": "04",
+        "activityKey": "typing_task_6",
+        "totalLevels": 6,
+        "pageHref": "/grade3/115-1/week04.html",
+        "label": "第 4 週 英打尋寶"
+    },
+    {
+        "type": "typing",
+        "weekCode": "05",
+        "activityKey": "typing_task_5",
+        "totalLevels": 6,
+        "pageHref": "/grade3/115-1/week05.html",
+        "label": "第 5 週 鍵盤辨字"
+    },
+    {
+        "type": "typing",
+        "weekCode": "06",
+        "activityKey": "typing_task_5",
+        "totalLevels": 5,
+        "pageHref": "/grade3/115-1/week06.html",
+        "label": "第 6 週 登入快手"
+    }
+];
+
 const GRADE3_114_2_ACTIVITIES = [
     {
         type: "typing",
@@ -192,7 +267,7 @@ export const REWARD_TREE_COURSES = [
     {
         id: "grade3-115-1",
         label: "三年級 115 上",
-        activities: []
+        activities: withCourseId("grade3-115-1", GRADE3_115_1_ACTIVITIES)
     },
     {
         id: "grade6-114-2",

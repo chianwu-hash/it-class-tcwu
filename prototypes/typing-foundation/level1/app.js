@@ -376,7 +376,7 @@ if (cloudConfig) {
   const connect=async () => {
     $('cloud-retry').hidden=true;
     try {
-      const {initTypingChallenge}=await import('../../../shared/typing-challenge.js?v=20261002-course');
+      const {initTypingChallenge}=await import('../../../shared/typing-challenge.js?v=20261006-google');
       cloud=await initTypingChallenge({foundation:cloudConfig});
       const records=await cloud.list();courseRecords=Array.isArray(records)?records:[];renderCourseMap();
       const saved=await cloud.load();

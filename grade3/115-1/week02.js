@@ -1,15 +1,15 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
-import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20260909-class-card-branch-sop';
+import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261006';
 import { initQuizModule } from '../../shared/quiz-module.js';
-import { initClassCardAuth } from '../../shared/class-card-auth.js';
-import { createClassCardProgress } from '../../shared/class-card-progress.js?v=20260909-class-card-branch-sop';
+import { initGoogleCourseAuth as initClassCardAuth } from '../../shared/grade3-google-course.js?v=20261007-identity';
+import { createGoogleCourseProgress as createClassCardProgress } from '../../shared/grade3-google-course.js?v=20261007-identity';
 import { connectTypingUI, digitHint, typingMessages, randomDigits } from './week02-typing-ui.js?v=20260909-login-required';
 import { initReadingAid } from './week02-reading.js?v=20260909';
 import { initWindowPractice } from './week02-window.js?v=20260909';
 
 const COURSE_ID = 'grade3-115-1';
 const WEEK_CODE = '02';
-const classCardAuth = initClassCardAuth({
+const classCardAuth = await initClassCardAuth({
     courseId: COURSE_ID,
     mode: 'required'
 });
@@ -186,20 +186,20 @@ function updateClassCardReadyState() {
 
 function lockTasksUntilClassCard() {
     updateClassCardReadyState();
-    const message = '請先在右上角輸入課堂身分卡，再開始闖關。';
+    const message = '請先在右上角登入學校 Google 帳號，再開始闖關。';
     const progressStatus = document.getElementById('progress-status');
     if (progressStatus) progressStatus.textContent = message;
     const quizLock = document.getElementById('quiz-lock');
     const quizContent = document.getElementById('quiz-content');
     if (quizLock) {
-        quizLock.textContent = '先輸入課堂身分卡，再開始答題。';
+        quizLock.textContent = '先登入學校 Google 帳號，再開始答題。';
         quizLock.classList.remove('hidden');
     }
     quizContent?.classList.add('hidden');
     const windowLock = document.getElementById('window-lock');
     const windowContent = document.getElementById('window-content');
     if (windowLock) {
-        windowLock.textContent = '先輸入課堂身分卡，再練習視窗按鈕。';
+        windowLock.textContent = '先登入學校 Google 帳號，再練習視窗按鈕。';
         windowLock.classList.remove('hidden');
     }
     windowContent?.classList.add('hidden');
@@ -228,7 +228,7 @@ function initializeGuestTasks() {
 initializeGuestTasks();
 
 initNavbarAuth({ onSessionResolved: () => {
-    // Week02 uses the classroom identity card path; ignore any existing Google session.
+    // The trusted Google controller owns roster/import readiness.
     initializeGuestTasks();
 } });
 
@@ -263,14 +263,14 @@ initTypingChallenge({ courseId: COURSE_ID, weekCode: WEEK_CODE, activityKey: 'ty
     buildHint: digitHint, getWrongAnswerHtml: ({ hint }) => hint,
     progressMessages: {
         ...typingMessages,
-        unauthenticated: '請先在右上角輸入課堂身分卡，再開始闖關。',
-        firstLogin: '已確認課堂身分卡，先找到框，按一下左鍵。',
-        guestReady: '請先在右上角輸入課堂身分卡，再開始闖關。',
+        unauthenticated: '請先在右上角登入學校 Google 帳號，再開始闖關。',
+        firstLogin: '已確認學校 Google 帳號，先找到框，按一下左鍵。',
+        guestReady: classCardAuth.hasIdentity() ? '已確認本人帳號，先點輸入框再開始。' : '請先在右上角登入學校 Google 帳號，再開始闖關。',
         guestNextLevel: level => `第 ${level - 1} 關完成，往下一關前進。`,
-        guestCompleted: '四關完成！請確認右上角課堂身分卡是不是自己。'
+        guestCompleted: '四關完成！請確認右上角學校 Google 帳號是不是自己。'
     },
     requireAuth: false,
-    guestProgress: { load: loadTypingClassCardProgress, save: saveTypingClassCardProgress },
+    progressAdapter: { load: loadTypingClassCardProgress, save: saveTypingClassCardProgress },
     celebrationContent: { title: '四關完成！', message: '你學會先點再打。接著跟老師一起看影片。', buttonText: '回到課程' }
 });
 connectTypingUI({ total: 4, isReady: hasClassCardIdentity, onComplete: done => { typingDone = done || Boolean(progressState.typingCompleted); updateUnlock(); } });
