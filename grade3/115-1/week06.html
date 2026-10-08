@@ -1,9 +1,41 @@
 <!DOCTYPE html>
-<html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第 06 週｜登入 Google，看看我的努力樹</title><script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"><script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script><link rel="stylesheet" href="week06.css?v=20261006"></head>
+<html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第 06 週｜登入 Google，看看我的努力樹</title><script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"><script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script><link rel="stylesheet" href="week06.css?v=20261008-slip"></head>
 <body><script src="navbar.js?v=20261007-identity"></script>
 <header class="hero"><div class="page-width"><span class="badge">三年級｜第 06 週</span><h1>登入 Google，看看我的努力樹</h1><p>貼好紙條 → 改密碼 → 開谷歌服務 → 登入課程網站。<br>先找回自己的努力成果，快手們再挑戰鍵盤任務！</p><i class="fa-solid fa-tree hero-icon" aria-hidden="true"></i></div></header>
 <main class="page-width"><nav class="section-links" aria-label="本週任務"><a href="#slip">貼紙條</a><a href="#password">改密碼</a><a href="#login">登入四步驟</a><a href="#tree">看努力樹</a><a href="#fast">快手闖關</a></nav>
-<section id="slip" class="card"><h2><span class="icon"><i class="fa-solid fa-book" aria-hidden="true"></i></span>一上課，先貼好帳密條</h2><p>核對自己的班級、座號和姓名，把紙條貼在課本內側。紙條上的「帳號」用來登入親師生平台，不加 @apps.ntpc.edu.tw；完整 Google 帳號另列在紙條上。</p><div class="notice">紙條只給自己看；用課本遮好，不唸出密碼。老師還原完成、說可以開始後，才使用紙條的預設密碼登入。</div></section>
+<section id="slip" class="card"><h2><span class="icon"><i class="fa-solid fa-book" aria-hidden="true"></i></span>一上課，先貼好帳密條</h2><p>核對自己的班級、座號和姓名，把紙條貼在課本內側。紙條上的「帳號」用來登入親師生平台，不加 @apps.ntpc.edu.tw；完整 Google 帳號另列在紙條上。</p>
+<figure class="account-slip-demo" aria-labelledby="account-slip-caption">
+  <figcaption id="account-slip-caption"><span>帳號密碼條示意</span><strong>全部是假資料，不能用來登入</strong></figcaption>
+  <div class="account-slip-scroll" tabindex="0" role="region" aria-label="紙條原版型假資料示意，小螢幕可左右滑動">
+    <svg class="account-slip-paper" viewBox="0 0 527 64" role="img" aria-labelledby="slip-image-title slip-image-description" xmlns="http://www.w3.org/2000/svg">
+      <title id="slip-image-title">學生帳號密碼條，原列印版型的假資料示意</title>
+      <desc id="slip-image-description">左上為301班99號示範同學，左側依序是親師生平台帳號demo0001、預設密碼A000000000、Google帳號demo0001@apps.ntpc.edu.tw。右側提醒先登入平台再開Google服務、登入只填短帳號，並保留新密碼手寫空白線。所有資料皆為虛構。</desc>
+      <rect x="0.5" y="0.5" width="526" height="63" fill="white" stroke="#999" stroke-width="0.5" stroke-dasharray="2 2"/>
+      <g fill="#111" font-family="'Microsoft JhengHei','Noto Sans TC',sans-serif">
+        <text x="11.4" y="15" font-size="11" font-weight="700">301 班 99 號｜示範同學</text>
+        <text x="249.5" y="15" font-size="9">先登入親師生平台，再開啟 Google 服務</text>
+        <text x="11.4" y="30" font-size="10">親師生平台帳號：</text>
+        <text x="269.3" y="30" font-size="8">登入只填短帳號，不加電子郵件後綴</text>
+        <text x="11.4" y="44" font-size="10">預設密碼：</text>
+        <text x="255.1" y="44" font-size="10">新密碼：</text>
+        <text x="11.4" y="59" font-size="9">Google 帳號（平台內開啟）：</text>
+      </g>
+      <g fill="#111" font-family="'Courier New',monospace">
+        <text x="99.2" y="30" font-size="14" font-weight="700">demo0001</text>
+        <text x="73.7" y="44" font-size="14" font-weight="700">A000000000</text>
+        <text x="136.1" y="59" font-size="11">demo0001@apps.ntpc.edu.tw</text>
+      </g>
+      <line x1="304" y1="47" x2="504" y2="47" stroke="#777" stroke-width="0.5"/>
+    </svg>
+  </div>
+  <p class="slip-scroll-hint">小螢幕可左右滑動，看完整張紙條。</p>
+</figure>
+<ol class="slip-explanations">
+  <li><strong>帳號：</strong>登入親師生平台時，只輸入 <code>demo0001</code> 這一段，不加後面的電子郵件後綴。</li>
+  <li><strong>預設密碼：</strong>老師還原後，第一次登入時使用這一欄；開頭的英文字母要大寫。上面的字串只是虛構格式示意。</li>
+  <li><strong>新密碼：</strong>先在自己的紙條上寫好預計密碼；修改成功後，再確認寫的是最後設定的密碼。以後登入使用新密碼。</li>
+</ol>
+<div class="notice">上面只看欄位位置，實際登入要看自己的紙條。紙條只給自己看；用課本遮好，不唸出密碼。老師還原完成、說可以開始後，才使用紙條的預設密碼登入。</div></section>
 <section id="password" class="card"><h2><span class="icon"><i class="fa-solid fa-key" aria-hidden="true"></i></span>先修改自己的密碼</h2><div class="notice"><h3>新密碼怎麼想？</h3><p><strong>小寫英文＋數字。</strong>先想一個自己記得住的英文單字，例如動物、食物或物品，再加上一組自己選的數字。看看上學期的組合範例：</p><div class="password-examples" aria-label="英文加數字的密碼組合範例"><div class="password-example"><span>老虎＋數字</span><code>tiger358</code></div><div class="password-example"><span>貓熊＋數字</span><code>panda427</code></div><div class="password-example"><span>蘋果＋數字</span><code>apple682</code></div><div class="password-example"><span>開心＋數字</span><code>happy274</code></div><div class="password-example"><span>芒果＋數字</span><code>mango563</code></div><div class="password-example"><span>小貓＋數字</span><code>kitty836</code></div><div class="password-example"><span>機器人＋數字</span><code>robot419</code></div><div class="password-example"><span>餅乾＋數字</span><code>cookie748</code></div><div class="password-example"><span>小兔子＋數字</span><code>bunny521</code></div><div class="password-example"><span>火箭＋數字</span><code>rocket394</code></div></div><p><strong>字母和數字也可以穿插：</strong>例如把 <code>tiger</code> 和 <code>358</code> 穿插成 <code>ti3g5er8</code>。選自己記得住的排列方式。</p><p><strong>範例只看組合方法，請換成自己的單字與數字，不要直接使用這些公開密碼。</strong>想好後，私下寫在紙條「新密碼」欄。</p><p>不要用姓名、生日、身分證號、帳號或連續數字；不要照抄網頁題目，也不要和同學用一樣的密碼。字數、大小寫或符號要求，依改密碼畫面與老師示範調整。</p><p>輸入前先確認是「英」；新密碼與確認新密碼要完全相同，大小寫也要相同。</p></div><ol class="list-decimal pl-6"><li>依老師示範的現行規則，私下在紙條「新密碼」欄寫好預計密碼。</li><li>老師還原後，開啟校務系統，用短帳號與紙條預設密碼登入。</li><li>依畫面修改密碼：舊密碼填預設密碼，新密碼與確認新密碼填相同內容。</li><li>看到修改成功後，用新密碼登入親師生平台。若修改失敗，先告訴老師，修正紙條再試。</li></ol><a class="action" href="https://esa.ntpc.edu.tw/" target="_blank" rel="noopener noreferrer">開啟校務系統 <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a><p>密碼只寫在自己的紙條，不輸入本課程的練習欄位。下方的公開題目都是虛構練習，不能拿來當新密碼。</p></section>
 <section id="login" class="card"><h2><span class="icon"><i class="fa-brands fa-google" aria-hidden="true"></i></span>改好密碼後，照這四步登入</h2><div class="steps">
 <article class="step"><h3><b>1</b>登入親師生平台</h3><p>使用紙條上的短帳號與剛改好的新密碼。帳號不加電子郵件後綴。</p><a class="action" href="https://pts.ntpc.edu.tw/" target="_blank" rel="noopener noreferrer">開啟親師生平台</a></article>
