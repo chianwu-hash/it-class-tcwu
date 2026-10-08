@@ -683,7 +683,7 @@ function refreshIdentity() {
     if (warmupInput && !warmupInput.readOnly) warmupInput.disabled = !ready;
     if (warmupButton && !warmupInput?.readOnly) warmupButton.disabled = !ready;
     typingContainer?.toggleAttribute('inert', !ready);
-    if (!ready) typingContainer?.querySelectorAll('input, button').forEach(control => { control.disabled = true; });
+    typingContainer?.querySelectorAll('input, button').forEach(control => { control.disabled = !ready; });
     document.getElementById('quiz-lock').classList.toggle('hidden', ready);
     document.getElementById('quiz-content').classList.toggle('hidden', !ready);
     if (ready) void quiz.handleAuthChange(null).catch(error => {

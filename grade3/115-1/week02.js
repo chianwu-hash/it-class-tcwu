@@ -3,7 +3,7 @@ import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261006
 import { initQuizModule } from '../../shared/quiz-module.js';
 import { initGoogleCourseAuth as initClassCardAuth } from '../../shared/grade3-google-course.js?v=20261007-identity';
 import { createGoogleCourseProgress as createClassCardProgress } from '../../shared/grade3-google-course.js?v=20261007-identity';
-import { connectTypingUI, digitHint, typingMessages, randomDigits } from './week02-typing-ui.js?v=20260909-login-required';
+import { connectTypingUI, digitHint, typingMessages, randomDigits } from './week02-typing-ui.js?v=20261008-google-unlock';
 import { initReadingAid } from './week02-reading.js?v=20260909';
 import { initWindowPractice } from './week02-window.js?v=20260909';
 
@@ -242,13 +242,16 @@ document.getElementById('typing-levels-container').innerHTML = levelsData.map(({
       <p id="msg-level${id}" class="level-message" role="status"></p>
     </div>`).join('');
 const typingGuestStore = classCardProgress('typing_task_4', 4);
+let typingProgressReady = false;
 async function loadTypingClassCardProgress() {
+    typingProgressReady = false;
     if (!hasClassCardIdentity()) return null;
     const remote = await typingGuestStore.load();
     const next = remote
         ? { typingLevel: Number(remote.current_level) || 1, typingCompleted: Boolean(remote.completed) }
         : { typingLevel: 1, typingCompleted: false };
     applyProgressPatch(next);
+    typingProgressReady = true;
     return { current_level: next.typingLevel, completed: next.typingCompleted };
 }
 async function saveTypingClassCardProgress(progress) {
@@ -273,7 +276,7 @@ initTypingChallenge({ courseId: COURSE_ID, weekCode: WEEK_CODE, activityKey: 'ty
     progressAdapter: { load: loadTypingClassCardProgress, save: saveTypingClassCardProgress },
     celebrationContent: { title: '四關完成！', message: '你學會先點再打。接著跟老師一起看影片。', buttonText: '回到課程' }
 });
-connectTypingUI({ total: 4, isReady: hasClassCardIdentity, onComplete: done => { typingDone = done || Boolean(progressState.typingCompleted); updateUnlock(); } });
+connectTypingUI({ total: 4, isReady: hasClassCardIdentity, isProgressReady: () => typingProgressReady, onComplete: done => { typingDone = done || Boolean(progressState.typingCompleted); updateUnlock(); } });
 updateClassCardReadyState();
 if (!hasClassCardIdentity()) lockTasksUntilClassCard();
 document.addEventListener('keydown', event => {

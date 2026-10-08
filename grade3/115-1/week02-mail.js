@@ -2,7 +2,7 @@ import { initNavbarAuth } from '../../shared/navbar-auth.js';
 import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261006';
 import { initGoogleCourseAuth as initClassCardAuth } from '../../shared/grade3-google-course.js?v=20261007-identity';
 import { createGoogleCourseProgress as createClassCardProgress } from '../../shared/grade3-google-course.js?v=20261007-identity';
-import { connectTypingUI, digitHint, typingMessages, randomDigits } from './week02-typing-ui.js?v=20260909';
+import { connectTypingUI, digitHint, typingMessages, randomDigits } from './week02-typing-ui.js?v=20261008-google-unlock';
 
 const COURSE_ID = 'grade3-115-1';
 const WEEK_CODE = '02';
@@ -17,6 +17,7 @@ const unlockStores = {
     windows: createClassCardProgress({ courseId: COURSE_ID, weekCode: WEEK_CODE, activityKey: 'window_practice_5', total: 5, getIdentity: () => classCardAuth.getIdentity() })
 };
 let mailProgress = { current_level: 1, completed: false };
+let mailProgressReady = false;
 let session = null, started = false, checking = false;
 const $ = id => document.getElementById(id);
 const animals = ['🐰 兔子', '🐻 小熊', '🐱 小貓', '🐶 小狗', '🐼 熊貓'];
@@ -87,10 +88,12 @@ function mailboxHint({ levelIndex, userVal, targetVal, hint }) {
 
 
 async function loadMailProgressWithClassCard() {
+    mailProgressReady = false;
     const remote = await mailGuestStore.load();
     mailProgress = remote
         ? { current_level: Number(remote.current_level) || 1, completed: Boolean(remote.completed) }
         : { current_level: 1, completed: false };
+    mailProgressReady = true;
     return loadMailProgress();
 }
 
@@ -207,7 +210,7 @@ function start() {
     });
 
     restoreMailFields();
-    connectTypingUI({ total: 5 });
+    connectTypingUI({ total: 5, isReady: () => classCardAuth.hasIdentity(), isProgressReady: () => mailProgressReady });
     const check = window.checkLevel;
     window.checkLevel = async level => {
         if (level === 4 && delivered.size !== 3 && !$('input-level4').readOnly) {
@@ -229,16 +232,25 @@ async function verifyUnlock() {
     if (checking) return;
     checking = true;
     $('mail-retry').disabled = true;
-    const unlocked = await hasWeek02Unlock();
-    $('mail-content').classList.toggle('hidden', !unlocked);
-    $('mail-lock-panel').classList.toggle('hidden', unlocked);
-    if (unlocked) {
-        start();
-    } else {
-        $('mail-lock').textContent = classCardAuth.hasIdentity() ? '先回本週課程，完成游標、坐姿答題與視窗練習，再來投遞。' : '請先在右上角登入學校 Google 帳號，再確認是否開放快手任務。';
+    try {
+        const unlocked = await hasWeek02Unlock();
+        $('mail-content').classList.toggle('hidden', !unlocked);
+        $('mail-lock-panel').classList.toggle('hidden', unlocked);
+        if (unlocked) {
+            start();
+        } else {
+            $('mail-lock').textContent = classCardAuth.hasIdentity() ? '先回本週課程，完成游標、坐姿答題與視窗練習，再來投遞。' : '請先在右上角登入學校 Google 帳號，再確認是否開放快手任務。';
+        }
+    } catch (error) {
+        mailProgressReady = false;
+        $('typing-levels-container').inert = true;
+        $('mail-content').classList.add('hidden');
+        $('mail-lock-panel').classList.remove('hidden');
+        $('mail-lock').textContent = error?.message || '進度讀取失敗，請重新確認或找老師。';
+    } finally {
+        checking = false;
+        $('mail-retry').disabled = false;
     }
-    checking = false;
-    $('mail-retry').disabled = false;
 }
 
 initNavbarAuth({ onSessionResolved: () => {

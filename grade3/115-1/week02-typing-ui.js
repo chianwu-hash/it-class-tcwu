@@ -1,5 +1,5 @@
 // UI bridge only: validation/persistence/reset remain in initTypingChallenge.
-export function connectTypingUI({ total, onComplete = () => {}, isReady = () => true }) {
+export function connectTypingUI({ total, onComplete = () => {}, isReady = () => true, isProgressReady }) {
     let current = 1, checking = false, awaitingNext = false, progressReady = false;
     const container = document.getElementById('typing-levels-container');
     container.inert = true;
@@ -16,12 +16,12 @@ export function connectTypingUI({ total, onComplete = () => {}, isReady = () => 
         const status = document.getElementById('progress-status').cloneNode(true);
         status.querySelectorAll('rt').forEach(rt => rt.remove());
         const message = status.textContent;
-        if (message === typingMessages.unauthenticated || message === typingMessages.loadError) progressReady = false;
-        else if (message === typingMessages.firstLogin || message === typingMessages.completed || message === typingMessages.saveCompleted || message.includes('不用登入 Google') || message.includes('課堂身分卡') || message.startsWith('第 ') || message.startsWith('接回進度：') || message.startsWith('進度已保存。')) progressReady = true;
+        // Readiness comes from the verified adapter, never from editable teaching copy.
+        progressReady = Boolean(isProgressReady());
         const canInteract = progressReady && isReady();
         container.inert = !canInteract;
-        if (!canInteract) {
-            container.querySelectorAll('input, button').forEach(control => { control.disabled = true; });
+        if (!checking || !canInteract) {
+            container.querySelectorAll('input, button').forEach(control => { control.disabled = !canInteract; });
         }
         retry.classList.toggle('hidden', message !== typingMessages.loadError);
         onComplete(canInteract && document.getElementById(`input-level${total}`)?.readOnly === true && !checking);

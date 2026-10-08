@@ -507,11 +507,9 @@ function refreshIdentityLock() {
 
     const typingContainer = document.getElementById('typing-levels-container');
     typingContainer?.toggleAttribute('inert', !ready);
-    if (!ready) {
-        typingContainer?.querySelectorAll('input, button').forEach(control => {
-            control.disabled = true;
-        });
-    }
+    typingContainer?.querySelectorAll('input, button').forEach(control => {
+        control.disabled = !ready;
+    });
 
     const warmupInput = document.getElementById('warmup-input');
     const warmupButton = document.getElementById('warmup-check');
