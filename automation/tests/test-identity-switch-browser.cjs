@@ -1,4 +1,4 @@
-// Semester home pages: the teacher test-identity switch is shown only to the
+// Site home and semester home pages: the teacher test-identity switch is shown only to the
 // test account, calls only its own RPC and leaves every other visitor untouched.
 // Runs a throwaway static server and a local headless Chrome; shared/auth.js is
 // replaced by the synthetic fixture, so no real login or production data is used.
@@ -10,10 +10,11 @@ const baseFixture=eval(fs.readFileSync(path.join(root,'automation/tests/grade3-w
 const marker="if(name==='reconnect_grade3_progress')";
 assert.ok(baseFixture.includes(marker));
 const fixture=baseFixture.replace(marker,`if(name==='switch_test_identity'){window.fixtureSwitchCalls=(window.fixtureSwitchCalls||[]).concat([args.p_grade]);if(window.fixtureSwitchFail&&args.p_grade)return {error:{message:'test'}};if(args.p_grade)sessionStorage.setItem('fixture-grade',args.p_grade);return {data:[(sessionStorage.getItem('fixture-grade')||'grade6')==='grade3'?{class_code:'307',seat_no:30,display_name:'合成小謙'}:{class_code:'609',seat_no:30,display_name:'測試學生'}]};}
-`+marker);
+`+marker)+`
+export const consumePendingRedirect=()=>{},getHomeRedirectUrl=()=>location.origin+'/index.html';`;
 const tester={user:{id:'synthetic-t',email:'Chianwu@apps.ntpc.edu.tw'},access_token:'synthetic'};
 const student={user:{id:'synthetic-a',email:'synthetic@apps.ntpc.edu.tw'},access_token:'synthetic'};
-const homes=['/grade3/115-1/index.html','/grade6/115-1/index.html'];
+const homes=['/grade3/115-1/index.html','/grade6/115-1/index.html'],site='/index.html';
 (async()=>{
  const server=http.createServer((req,res)=>{
   const file=path.join(root,decodeURIComponent(new URL(req.url,'http://x').pathname));
@@ -32,12 +33,12 @@ const homes=['/grade3/115-1/index.html','/grade6/115-1/index.html'];
    const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(String(e)));
    return {ctx,page,errors};
   };
-  const settle=async page=>{await page.waitForFunction(()=>document.querySelectorAll('main a[data-week]').length>0);await page.waitForTimeout(500);};
+  const settle=async page=>{await page.waitForFunction(()=>document.querySelectorAll('main a[data-week],main .course-grid a').length>0);await page.waitForTimeout(500);};
   const overflow=page=>page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);
   // Anonymous visitors and ordinary students: no switch, no RPC.
   for(const user of [null,student]){
    const {ctx,page,errors}=await open(user);
-   for(const home of homes){
+   for(const home of [site,...homes]){
     await page.goto(base+home,{waitUntil:'load'});await settle(page);
     assert.equal(await page.locator('#test-identity-switch').count(),0,`${home}: switch leaked`);
     assert.equal(await page.evaluate(()=>(window.fixtureSwitchCalls||[]).length),0,`${home}: unexpected RPC`);
@@ -58,6 +59,13 @@ const homes=['/grade3/115-1/index.html','/grade6/115-1/index.html'];
    await button.click();await page.waitForURL(u=>u.pathname===homes[1]);await button.waitFor();
    assert.match(await status.textContent(),/目前是六年級 609 班 30 號 測試學生/);assert.equal(await button.textContent(),'切到三年級');
    await settle(page);assert.equal(await overflow(page),false,`${width}: grade6 horizontal overflow`);
+   // Site home: mounted between the banner and the grade cards; switching lands on the grade home.
+   await page.goto(base+site,{waitUntil:'load'});await button.waitFor();
+   assert.match(await status.textContent(),/目前是六年級 609 班 30 號 測試學生/);
+   assert.deepEqual(await page.evaluate(()=>{const bar=document.querySelector('#test-identity-switch');return [bar.previousElementSibling.className,bar.nextElementSibling.className];}),['home-heading','course-grid']);
+   await settle(page);assert.equal(await overflow(page),false,`${width}: site home horizontal overflow`);
+   await button.click();await page.waitForURL(u=>u.pathname===homes[0]);await button.waitFor();
+   assert.match(await status.textContent(),/目前是三年級 307 班 30 號 合成小謙/);
    assert.deepEqual(errors,[]);await ctx.close();
   }
   // A failed switch stays on the page, says so and can be retried.
@@ -69,6 +77,6 @@ const homes=['/grade3/115-1/index.html','/grade6/115-1/index.html'];
    assert.equal(new URL(page.url()).pathname,homes[1]);assert.equal(await button.isDisabled(),false);
    assert.deepEqual(await page.evaluate(()=>window.fixtureSwitchCalls),[null,'grade3']);await ctx.close();
   }
-  console.log('PASS: switch hidden and silent for anonymous/student on both homes; test account status, both-direction switch and landing page at 1280/390 without overflow; failed switch stays put and is retryable.');
+  console.log('PASS: switch hidden and silent for anonymous/student on site and both semester homes; test account status, both-direction switch and landing page at 1280/390 without overflow, site home placement; failed switch stays put and is retryable.');
  }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

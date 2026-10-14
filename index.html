@@ -149,5 +149,9 @@
             }
         });
     </script>
+    <script type="module">
+        import { initTestIdentitySwitch } from "./shared/test-identity-switch.js?v=20261014b";
+        initTestIdentitySwitch({ after: document.querySelector(".home-heading") });
+    </script>
 </body>
 </html>

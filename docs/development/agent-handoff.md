@@ -9,7 +9,7 @@
 - 驗證：PGlite `grade3-google-transition.test.mjs`、`grade3-foundation-google.test.mjs` 共 4 項通過（含新增 307 案例）。正式庫以 authenticated 身分模擬該帳號 reconnect／ready／save 07 typing_task_5／get，結果正確後整筆 ROLLBACK，未留下綁定或進度。
 - 未驗證：真實瀏覽器 Google 登入後的第07週頁面與努力樹，待使用者本人登入確認。
 - Supabase CLI：本機 `supabase-personal`（D:\local-bin，2.120.0）已 link `upxgyusodibaqcrocdzj`。`db query --linked` 以 postgres 角色執行、繞過 RLS，不能當權限驗證。
-- 首頁切換鍵（函式已套用正式庫，前端隨本次提交部署）：`supabase/test_identity_switch.sql` 新增 `switch_test_identity(p_grade)`，僅該測試帳號可呼叫、只能寫 609-30／307-30；`shared/test-identity-switch.js` 以信箱 SHA-256 在瀏覽器端判斷是否顯示，其他人不發任何請求；只掛在 `grade3/115-1/index.html` 與 `grade6/115-1/index.html`，未動 navbar 與共用 auth。測試：PGlite 同檔新增權限與雙向切換斷言；`automation/tests/test-identity-switch-browser.cjs`（本機 headless Chrome＋合成 auth）驗證匿名／一般學生不顯示且不呼叫、雙向切換與落點、1280／390 無水平溢出、失敗可重試。真實登入尚待使用者確認。
+- 首頁切換鍵（函式已套用正式庫，前端隨本次提交部署）：`supabase/test_identity_switch.sql` 新增 `switch_test_identity(p_grade)`，僅該測試帳號可呼叫、只能寫 609-30／307-30；`shared/test-identity-switch.js` 以信箱 SHA-256 在瀏覽器端判斷是否顯示，其他人不發任何請求；掛在網站總首頁 `index.html`（橫幅與年級卡片之間）及 `grade3/115-1/index.html`、`grade6/115-1/index.html`，未動 navbar 與共用 auth。測試：PGlite 同檔新增權限與雙向切換斷言；`automation/tests/test-identity-switch-browser.cjs`（本機 headless Chrome＋合成 auth）驗證匿名／一般學生不顯示且不呼叫、雙向切換與落點、1280／390 無水平溢出、失敗可重試。真實登入尚待使用者確認。
 
 ## 三年級第07週正式交付與Git同步 — 2026-10-14
 

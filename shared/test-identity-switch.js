@@ -18,8 +18,9 @@ function gradeOfClass(classCode) {
     return String(classCode || '').startsWith('3') ? 'grade3' : 'grade6';
 }
 
-export async function initTestIdentitySwitch({ container = document.querySelector('main') } = {}) {
-    if (!container || !globalThis.crypto?.subtle) return;
+// Mounted at the top of `container`, or right after `after` when one is given.
+export async function initTestIdentitySwitch({ container = document.querySelector('main'), after = null } = {}) {
+    if (!(after || container) || !globalThis.crypto?.subtle) return;
     const { session } = await getSession();
     const email = session?.user?.email?.trim().toLowerCase();
     if (!email || await sha256Hex(email) !== TEST_ACCOUNT_SHA256) return;
@@ -36,7 +37,7 @@ export async function initTestIdentitySwitch({ container = document.querySelecto
     button.hidden = true;
     button.className = 'rounded-full bg-amber-500 px-5 py-2 font-black text-white shadow hover:bg-amber-600 focus-visible:outline focus-visible:outline-4 focus-visible:outline-amber-300 disabled:cursor-wait disabled:opacity-60';
     bar.append(status, button);
-    container.prepend(bar);
+    if (after) after.after(bar); else container.prepend(bar);
 
     const call = async (grade) => {
         const { data, error } = await supabase.rpc('switch_test_identity', { p_grade: grade });
