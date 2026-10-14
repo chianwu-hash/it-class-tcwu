@@ -122,14 +122,18 @@ const delay = ms => new Promise(r => setTimeout(r, ms));
         const saved=await page.evaluate(()=>fixtureProgress);await scenario({user:synthetic,progress:saved});
         await page.waitForFunction(()=>document.querySelector('#progress-status').textContent.includes('第 2 關'));
         const answers=['tree246','Tree246!','Hi, I am Tom.',"Hi, I am Tom.\nWhat's your name?"];
-        for(let i=2;i<=5;i++){await page.$eval('#input-level'+i,(e,text)=>{e.value=text;e.dispatchEvent(new Event('input',{bubbles:true}));},answers[i-2]);await page.evaluate(n=>checkLevel(n),i);}
+        for(let i=2;i<=5;i++){
+            // A long wrong-answer message must push the key hint down, not overlap it.
+            if(i===3){await page.$eval('#input-level3',e=>{e.value='tree';e.dispatchEvent(new Event('input',{bubbles:true}));});await page.evaluate(()=>checkLevel(3));
+                assert.equal(await page.evaluate(()=>{const msg=document.querySelector('#msg-level3'),hint=document.querySelector('#block-level3 .key-help');return msg.textContent.length>20&&msg.scrollHeight<=msg.clientHeight+1&&msg.getBoundingClientRect().bottom<=hint.getBoundingClientRect().top+1;}),true);}
+            await page.$eval('#input-level'+i,(e,text)=>{e.value=text;e.dispatchEvent(new Event('input',{bubbles:true}));},answers[i-2]);await page.evaluate(n=>checkLevel(n),i);}
         assert.equal(await page.evaluate(()=>fixtureProgress.completed),true);assert.equal(await page.evaluate(()=>fixtureSaves.at(-1).p_score),5);
         const completed=await page.evaluate(()=>fixtureProgress);await scenario({user:synthetic,progress:completed});
         await page.waitForFunction(()=>document.querySelector('#input-level5').readOnly);
-        // Key hints for levels 3-5 sit between the target and the input once unlocked.
+        // Key hints for levels 3-5 sit below the answer area once unlocked.
         for (const width of [1280, 390]) { await page.setViewport({ width, height: 900 });
             assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `key hint overflow at ${width}`);
-            assert.deepEqual(await page.$$eval('.level', nodes => nodes.map(e => { const hint = e.querySelector('.key-help'); if (!hint) return 0; const box = hint.getBoundingClientRect(); return box.height > 0 && box.right <= innerWidth && Boolean(hint.previousElementSibling?.matches('.target')) ? 1 : -1; })), [0, 0, 1, 1, 1]); }
+            assert.deepEqual(await page.$$eval('.level', nodes => nodes.map(e => { const hint = e.querySelector('.key-help'); if (!hint) return 0; const box = hint.getBoundingClientRect(); return box.height > 0 && box.right <= innerWidth && Boolean(hint.previousElementSibling?.matches('[id^="msg-level"]') && hint.previousElementSibling.scrollHeight <= hint.previousElementSibling.clientHeight + 1 && !hint.nextElementSibling) ? 1 : -1; })), [0, 0, 1, 1, 1]); }
         await page.$eval('[data-replay="5"]',e=>e.click());assert.equal(await page.$eval('#input-level5',e=>e.readOnly),false);
         assert.equal(await page.evaluate(()=>fixtureSaves.length),0);
         await page.evaluate(()=>{videoTest={};const v=document.querySelector('video');v.play=async()=>{};v.load=()=>{Object.defineProperty(v,'readyState',{value:1,configurable:true});v.dispatchEvent(new Event('loadedmetadata'));};document.querySelector('[data-video-time="169.266667"]').click();});
