@@ -12,6 +12,10 @@
         }
     }
 
+    // Compact link: icon + one character; full name stays as tooltip and for screen readers.
+    const iconLabel = (iconClass, short, full) =>
+        `<span title="${full}" class="inline-flex items-center gap-1"><i class="${iconClass}" aria-hidden="true"></i><span aria-hidden="true">${short}</span><span class="sr-only">${full}</span></span>`;
+
     const navConfig = {
         activeWeeks: [1, 2, 3, 4, 5, 6, 7],
         gradeLabel: "三年級資訊課｜115-1",
@@ -22,11 +26,12 @@
         linkClassName: "px-3 py-1.5 text-sm font-bold text-gray-600 hover:text-cyan-600 hover:bg-cyan-50 rounded-lg transition whitespace-nowrap",
         currentWeekClassName: "px-3 py-1.5 text-sm font-bold bg-cyan-100 text-cyan-800 rounded-lg shadow-sm whitespace-nowrap cursor-default",
         separatorClassName: "text-gray-300 mx-1",
+        homeLabel: iconLabel('fa-solid fa-house', '首', '課程首頁'),
         // Google 身分及正式成果由受控接回 RPC 核對。
         extraLinks: [
-            { href: 'typing-foundation.html', label: '英打基礎', iconClass: 'fa-solid fa-keyboard' },
-            { href: 'zhuyin-foundation.html', label: '中打基礎', iconClass: 'fa-solid fa-keyboard' },
-            { href: '/my-tree.html?course=grade3-115-1', label: '我的努力樹', iconClass: 'fa-solid fa-tree' }
+            { href: 'typing-foundation.html', label: iconLabel('fa-solid fa-keyboard', '英', '英打基礎') },
+            { href: 'zhuyin-foundation.html', label: iconLabel('fa-solid fa-keyboard', '中', '中打基礎') },
+            { href: '/my-tree.html?course=grade3-115-1', label: iconLabel('fa-solid fa-tree', '樹', '我的努力樹') }
         ],
         showAuthBarOnWeekPages: !/week01\.html$/.test(location.pathname),
         showAuthBarOnHomePages: true,

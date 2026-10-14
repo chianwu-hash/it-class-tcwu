@@ -12,6 +12,10 @@
         }
     }
 
+    // Compact link: icon + one character; full name stays as tooltip and for screen readers.
+    const iconLabel = (iconClass, short, full) =>
+        `<span title="${full}" class="inline-flex items-center gap-1"><i class="${iconClass}" aria-hidden="true"></i><span aria-hidden="true">${short}</span><span class="sr-only">${full}</span></span>`;
+
     const navHTML = window.__buildCourseNavbarHtml({
         activeWeeks: [1, 2, 3, 5, 7],
         gradeLabel: "六年級資訊課｜115-1",
@@ -22,16 +26,13 @@
         linkClassName: "px-2 py-1.5 text-sm font-bold text-gray-600 hover:text-violet-700 hover:bg-violet-50 rounded-lg transition whitespace-nowrap",
         currentWeekClassName: "px-2 py-1.5 text-sm font-bold bg-violet-100 text-violet-800 rounded-lg shadow-sm whitespace-nowrap cursor-default",
         separatorClassName: "text-gray-300 mx-1",
+        homeLabel: iconLabel('fa-solid fa-house', '首', '課程首頁'),
         extraLinks: [
-            { href: 'boss-garden.html', iconClass: 'fa-solid fa-crown', label: '魔王花園' },
-            { href:'typing-foundation.html', label: '<span title="英打基礎" class="inline-flex items-center gap-0.5"><i class="fa-solid fa-keyboard" aria-hidden="true"></i><span aria-hidden="true" class="text-[11px] font-black leading-none">英</span><span class="sr-only">英打基礎</span></span>' },
-            { href:'zhuyin-foundation.html', label: '<span title="中打基礎" class="inline-flex items-center gap-0.5"><i class="fa-solid fa-keyboard" aria-hidden="true"></i><span aria-hidden="true" class="text-[11px] font-black leading-none">中</span><span class="sr-only">中打基礎</span></span>' },
-            { href: "homework.html", iconClass: "fa-solid fa-file-arrow-up", label: "交作業" },
-            {
-                href: "/my-tree.html?course=grade6-115-1",
-                iconClass: "fa-solid fa-seedling",
-                label: "努力樹"
-            }
+            { href: 'boss-garden.html', label: iconLabel('fa-solid fa-crown', '魔', '魔王花園') },
+            { href: 'typing-foundation.html', label: iconLabel('fa-solid fa-keyboard', '英', '英打基礎') },
+            { href: 'zhuyin-foundation.html', label: iconLabel('fa-solid fa-keyboard', '中', '中打基礎') },
+            { href: 'homework.html', label: iconLabel('fa-solid fa-file-arrow-up', '交', '交作業') },
+            { href: '/my-tree.html?course=grade6-115-1', label: iconLabel('fa-solid fa-seedling', '樹', '努力樹') }
         ],
         showAuthBarOnWeekPages: true,
         showAuthBarOnHomePages: currentScript.dataset.homework === "true",
