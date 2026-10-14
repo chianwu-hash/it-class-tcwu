@@ -145,3 +145,56 @@ test('historical seats remain distinct; malformed snapshots fail atomically; tea
   }finally{await legacy.close();}
  }
 });
+
+test('teacher test identity: 307 upgrade is list-only and switching rosters suspends Grade 3 without losing progress',async()=>{
+ const t='00000000-0000-0000-0000-000000000004',mail='chianwu@apps.ntpc.edu.tw';
+ const read=name=>readFile(new URL(`../../supabase/${name}`,import.meta.url),'utf8');
+ const source=await read('grade3_google_transition.sql'),setup=await read('grade3_test_identity_307.sql');
+ const toGrade3=await read('test_identity_to_grade3.sql'),toGrade6=await read('test_identity_to_grade6.sql');
+ // Start from the deployed shape: only 301-306 are accepted.
+ const deployed=source.replace(",'306','307')",",'306')");assert.notEqual(deployed,source);
+ const db=await baseDb();try{
+  await db.exec(deployed);
+  await db.exec(`create function typing_foundation_action(p_action text,p_course_id text,p_payload jsonb) returns boolean language sql as $$select p_course_id in ('301','302','303','304','305','306')$$;
+   insert into auth.users values('${t}','${mail}',now());
+   insert into student_enrollments values(115,'${mail}','609',30,'合成測試');
+   insert into class_card_students(course_id,class_code,seat_no,student_code,display_name,active) values('grade3-115-1','307',30,'30730','舊卡名',true);`);
+  const as=async uid=>{await db.exec('reset role');await db.query("select set_config('test.uid',$1,false)",[uid]);await db.exec('set role authenticated');};
+  const admin=async sql=>{await db.exec('reset role');await db.exec(sql);};
+  const reconnect=()=>db.query('select * from reconnect_grade3_progress()');
+  const save=score=>db.query("select save_grade3_progress('06','typing_task_5',$1)",[score]);
+  const before=(await db.query("select pg_get_functiondef('reconnect_grade3_progress()'::regprocedure) d")).rows[0].d;
+  await admin(toGrade3);await as(t);await assert.rejects(reconnect(),/名冊不一致/);
+  await admin(toGrade6);await admin(setup);await admin(setup);
+  const after=(await db.query("select pg_get_functiondef('reconnect_grade3_progress()'::regprocedure) d")).rows[0].d;
+  assert.equal(after,before.replace("'306')","'306','307')"));
+  assert.equal((await db.query("select typing_foundation_action('x','307','{}') ok")).rows[0].ok,true);
+  assert.deepEqual((await db.query("select display_name,practice_account from class_card_students where student_code='30730'")).rows[0],{display_name:'舊卡名',practice_account:'chianwu'});
+  // Still enrolled in 609: Grade 3 stays closed.
+  await as(t);await assert.rejects(reconnect(),/名冊不一致/);await assert.rejects(save(1),/本人舊成果/);
+  await admin(toGrade3);await as(t);assert.deepEqual((({student_code,display_name})=>({student_code,display_name}))((await reconnect()).rows[0]),{student_code:'30730',display_name:'舊卡名'});
+  await save(3);assert.equal((await db.query("select * from get_grade3_progress('06','typing_task_5')")).rows[0].score,3);
+  await admin(toGrade6);assert.deepEqual((await db.query("select class_code,display_name from student_enrollments where email=$1",[mail])).rows[0],{class_code:'609',display_name:'測試學生'});
+  await as(t);await assert.rejects(save(4),/本人舊成果/);await assert.rejects(reconnect(),/名冊不一致/);
+  await admin(toGrade3);await admin(toGrade3);await as(t);await reconnect();
+  assert.equal((await db.query("select * from get_grade3_progress('06','typing_task_5')")).rows[0].score,3);
+  await db.exec('reset role');
+  assert.equal((await db.query('select * from grade3_google_bindings where user_id=$1',[t])).rows.length,1);
+  assert.equal((await db.query('select * from grade3_google_imports')).rows.length,0);
+  // Real classes keep the unchanged approval gate.
+  await as(a);await assert.rejects(reconnect(),/尚未核對你的歷史名冊/);
+  // Self-service switch used by the semester home pages: test account only.
+  await admin(await read('test_identity_switch.sql'));
+  const sw=grade=>db.query('select * from switch_test_identity($1)',[grade]);
+  await db.exec('reset role');await db.query("select set_config('test.uid','',false)");await db.exec('set role anon');await assert.rejects(sw(null),/permission denied/);
+  for(const other of [a,x]){await as(other);await assert.rejects(sw(null),/not_test_account/);await assert.rejects(sw('grade3'),/not_test_account/);}
+  await as(t);assert.deepEqual((await sw(null)).rows,[{class_code:'307',seat_no:30,display_name:'舊卡名'}]);
+  await assert.rejects(sw('grade4'),/invalid_grade/);
+  assert.deepEqual((await sw('grade6')).rows,[{class_code:'609',seat_no:30,display_name:'測試學生'}]);
+  await assert.rejects(save(4),/本人舊成果/);
+  assert.equal((await sw('grade6')).rows[0].class_code,'609');
+  assert.deepEqual((await sw('grade3')).rows,[{class_code:'307',seat_no:30,display_name:'舊卡名'}]);
+  await reconnect();assert.equal((await db.query("select * from get_grade3_progress('06','typing_task_5')")).rows[0].score,3);
+  await db.exec('reset role');assert.equal((await db.query("select count(*)::int n from student_enrollments where class_code in ('301','302')")).rows[0].n,2);
+ }finally{await db.close();}
+});

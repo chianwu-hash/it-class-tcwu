@@ -1,5 +1,16 @@
 # Agent Handoff
 
+## 三年級教師測試身分 307-30 與 Supabase CLI — 2026-10-14
+
+- Ownership：使用者改由 Claude Code 主寫；本段由 Claude 記錄。Codex 的第07週交付見下一段。
+- 目的：教師唯一的學校 Google 帳號原為 609-30，需同時能測三年級。`student_enrollments` 一學年一帳號只能一班，採 609 ⇄ 307 切換。
+- 正式資料庫已套用 `supabase/grade3_test_identity_307.sql`：`reconnect_grade3_progress()` 與 `typing_foundation_action()` 的班級清單加入 307（把 307 移除後 md5 與套用前相同：8a525685…／d12dde3d…，SECURITY DEFINER、search_path 與 grants 不變）；307-30 身分卡補練習帳號；新增一筆 approvals（30730，無歷史成果）。approvals 130→131，bindings 35 不變，三年級名冊 130 不變。
+- 切換：`supabase-personal db query --linked -f supabase/test_identity_to_grade3.sql`（307-30 吳小謙）／`test_identity_to_grade6.sql`（609-30 測試學生）。兩邊進度與綁定保留，同一時間只有一個年級認得該帳號。目前狀態：307。
+- 驗證：PGlite `grade3-google-transition.test.mjs`、`grade3-foundation-google.test.mjs` 共 4 項通過（含新增 307 案例）。正式庫以 authenticated 身分模擬該帳號 reconnect／ready／save 07 typing_task_5／get，結果正確後整筆 ROLLBACK，未留下綁定或進度。
+- 未驗證：真實瀏覽器 Google 登入後的第07週頁面與努力樹，待使用者本人登入確認。
+- Supabase CLI：本機 `supabase-personal`（D:\local-bin，2.120.0）已 link `upxgyusodibaqcrocdzj`。`db query --linked` 以 postgres 角色執行、繞過 RLS，不能當權限驗證。
+- 首頁切換鍵（函式已套用正式庫，前端隨本次提交部署）：`supabase/test_identity_switch.sql` 新增 `switch_test_identity(p_grade)`，僅該測試帳號可呼叫、只能寫 609-30／307-30；`shared/test-identity-switch.js` 以信箱 SHA-256 在瀏覽器端判斷是否顯示，其他人不發任何請求；只掛在 `grade3/115-1/index.html` 與 `grade6/115-1/index.html`，未動 navbar 與共用 auth。測試：PGlite 同檔新增權限與雙向切換斷言；`automation/tests/test-identity-switch-browser.cjs`（本機 headless Chrome＋合成 auth）驗證匿名／一般學生不顯示且不呼叫、雙向切換與落點、1280／390 無水平溢出、失敗可重試。真實登入尚待使用者確認。
+
 ## 三年級第07週正式交付與Git同步 — 2026-10-14
 
 - Git同步完成：主提交f10f7c8已push至origin/main；自動正式部署dpl_BCZGiiN9Fc2ufXVsxseBDJaDM3Rb已READY，五個主要檔案與提交一致。其餘工作區修改保持；本次補記只改交接文件。

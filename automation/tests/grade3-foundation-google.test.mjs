@@ -33,6 +33,11 @@ test('foundation: trusted Grade3 Google binding, independent tracks, server unlo
  assert.equal((await rpc('list','grade3-115-1',{include_zhuyin:true})).length,2);
  await rpc('start','grade3-115-1',{lesson_key:'english-top-row-v1',session_id:randomUUID()});
  await rpc('start','grade3-115-1',{lesson_key:'zhuyin-top-v1',session_id:randomUUID()});
+ // Teacher test account: class 307 passes the Grade 3 roster check, never Grade 6.
+ const t=randomUUID();await db.query("insert into auth.users values($1,'tester@apps.ntpc.edu.tw')",[t]);
+ await db.exec("insert into student_enrollments values(115,'tester@apps.ntpc.edu.tw','307','合成測試')");
+ await as(t,true);assert.deepEqual(await rpc('list','grade3-115-1',{include_zhuyin:true}),[]);
+ await assert.rejects(rpc('list','grade6-115-1'),/roster_required/);
  await as(b);assert.deepEqual(await rpc('list','grade6-115-1',{include_zhuyin:true}),[]);
  await rpc('start','grade6-115-1',{session_id:randomUUID()});
  await assert.rejects(rpc('start','grade3-115-1',{session_id:randomUUID()}),/course_identity_required/);

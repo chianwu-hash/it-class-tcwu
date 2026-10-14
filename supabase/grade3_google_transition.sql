@@ -90,7 +90,7 @@ begin
    and cs.class_code=en.class_code and cs.seat_no=en.seat_no and cs.active
    and trim(cs.display_name)=trim(en.display_name)
    and lower(cs.practice_account || '@apps.ntpc.edu.tw')=en.email
- where en.school_year=115 and en.class_code in ('301','302','303','304','305','306');
+ where en.school_year=115 and en.class_code in ('301','302','303','304','305','306','307');
  if not found then raise exception '學校帳號與三年級名冊不一致，請找老師。'; end if;
  c:=e.class_code || lpad(e.seat_no::text,2,'0');
  perform pg_advisory_xact_lock(hashtextextended('grade3-google:' || c,0));

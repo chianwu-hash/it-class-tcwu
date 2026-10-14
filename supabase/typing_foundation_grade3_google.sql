@@ -46,7 +46,7 @@ begin
     if p_course_id='grade3-115-1' and not public.grade3_google_ready() then raise exception 'course_identity_required'; end if;
     select 'google:'||u.id::text,e.display_name into learner,label from auth.users u
       join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115
-        and ((p_course_id='grade3-115-1' and e.class_code in ('301','302','303','304','305','306'))
+        and ((p_course_id='grade3-115-1' and e.class_code in ('301','302','303','304','305','306','307'))
           or (p_course_id='grade6-115-1' and e.class_code like '6%'))
       where u.id=auth.uid();
     if learner is null then raise exception 'roster_required'; end if;

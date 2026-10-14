@@ -146,5 +146,9 @@
         await initGoogleCourseAuth({courseId: "grade3-115-1"});
         applyWeekVisibilityToCards("grade3", document.querySelector("main"), "grade3-115-1");
     </script>
+    <script type="module">
+        import { initTestIdentitySwitch } from "../../shared/test-identity-switch.js?v=20261014";
+        initTestIdentitySwitch();
+    </script>
 </body>
 </html>
