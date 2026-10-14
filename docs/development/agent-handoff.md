@@ -2,6 +2,8 @@
 
 ## 三年級第07週正式交付與Git同步 — 2026-10-14
 
+- Git同步完成：主提交f10f7c8已push至origin/main；自動正式部署dpl_BCZGiiN9Fc2ufXVsxseBDJaDM3Rb已READY，五個主要檔案與提交一致。其餘工作區修改保持；本次補記只改交接文件。
+
 - 狀態：第07週網頁、教案、完整影片、獨立鍵盤五關及努力樹已正式發布；本次使用者授權commit與push，把本週內容同步到main。
 - 正式入口：https://it-class-tcwu.vercel.app/grade3/115-1/week07.html 。部署dpl_7jaL8GiQPwbH86FfBZBGRTGVXRgm；正式21檔內容核對一致，197檔原內容保留。
 - 活動：grade3-115-1／07／typing_task_5／total 5；可信Google本人RPC保存至student_progress，課前密碼狀態與本人能登入分開檢核。第06週原進度保留。
