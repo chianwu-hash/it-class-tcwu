@@ -126,6 +126,10 @@ const delay = ms => new Promise(r => setTimeout(r, ms));
         assert.equal(await page.evaluate(()=>fixtureProgress.completed),true);assert.equal(await page.evaluate(()=>fixtureSaves.at(-1).p_score),5);
         const completed=await page.evaluate(()=>fixtureProgress);await scenario({user:synthetic,progress:completed});
         await page.waitForFunction(()=>document.querySelector('#input-level5').readOnly);
+        // Key hints for levels 3-5 sit between the target and the input once unlocked.
+        for (const width of [1280, 390]) { await page.setViewport({ width, height: 900 });
+            assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `key hint overflow at ${width}`);
+            assert.deepEqual(await page.$$eval('.level', nodes => nodes.map(e => { const hint = e.querySelector('.key-help'); if (!hint) return 0; const box = hint.getBoundingClientRect(); return box.height > 0 && box.right <= innerWidth && Boolean(hint.previousElementSibling?.matches('.target')) ? 1 : -1; })), [0, 0, 1, 1, 1]); }
         await page.$eval('[data-replay="5"]',e=>e.click());assert.equal(await page.$eval('#input-level5',e=>e.readOnly),false);
         assert.equal(await page.evaluate(()=>fixtureSaves.length),0);
         await page.evaluate(()=>{videoTest={};const v=document.querySelector('video');v.play=async()=>{};v.load=()=>{Object.defineProperty(v,'readyState',{value:1,configurable:true});v.dispatchEvent(new Event('loadedmetadata'));};document.querySelector('[data-video-time="169.266667"]').click();});
