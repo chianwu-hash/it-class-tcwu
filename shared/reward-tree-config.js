@@ -70,7 +70,8 @@ const GRADE3_115_1_ACTIVITIES = [
         "totalLevels": 5,
         "pageHref": "/grade3/115-1/week06.html",
         "label": "第 6 週 登入快手"
-    }
+    },
+    { "type": "typing", "weekCode": "07", "activityKey": "typing_task_5", "totalLevels": 5, "pageHref": "/grade3/115-1/week07.html", "label": "第 7 週 鍵盤五關" }
 ];
 
 const GRADE3_114_2_ACTIVITIES = [

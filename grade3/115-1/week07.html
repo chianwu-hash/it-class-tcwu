@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第 07 週｜改好我的密碼，再登入一次</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="week07.css?v=20261013-video-typing">
+</head>
+<body>
+    <a class="skip-link" href="#main">跳到本週任務</a>
+    <script src="navbar.js?v=20261014-week07"></script>
+    <header class="hero">
+        <div class="page-width">
+            <span class="badge"><i class="fa-solid fa-key" aria-hidden="true"></i> 三年級｜第 07 週</span>
+            <h1>改好我的密碼，<br class="mobile-break">再登入一次</h1>
+            <p>還沒改好，就一步一步完成。<br>已經改好，就用新密碼登入，請老師確認！</p>
+            <i class="fa-solid fa-shield-halved hero-icon" aria-hidden="true"></i>
+        </div>
+    </header>
+    <main id="main" class="page-width">
+        <nav class="section-links" aria-label="本週任務導覽">
+            <a href="#video-guide"><i class="fa-solid fa-circle-play" aria-hidden="true"></i> 操作影片</a>
+            <a href="#fast"><i class="fa-solid fa-keyboard" aria-hidden="true"></i> 本週打字闖關</a>
+            <a href="#password"><i class="fa-solid fa-key" aria-hidden="true"></i> 改密碼</a>
+            <a href="#verify"><i class="fa-solid fa-check" aria-hidden="true"></i> 再登入一次</a>
+            <a href="#google"><i class="fa-brands fa-google" aria-hidden="true"></i> 平台與谷歌</a>
+            <a href="#help"><i class="fa-solid fa-hand" aria-hidden="true"></i> 卡關怎麼辦</a>
+        </nav>
+
+        <section class="routes" aria-labelledby="route-title">
+            <h2 id="route-title" class="route-title">今天，我從哪裡開始？</h2>
+            <a class="route route-amber" href="#password"><i class="fa-solid fa-key" aria-hidden="true"></i><div><h3>我還沒改好密碼</h3><p>先到校務系統，跟老師一起改。</p></div><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a>
+            <a class="route route-teal" href="#verify"><i class="fa-solid fa-circle-check" aria-hidden="true"></i><div><h3>我已經改好密碼</h3><p>不用重改，直接登入親師生平台。</p></div><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a>
+        </section>
+        <p class="public-note"><i class="fa-solid fa-book-open" aria-hidden="true"></i> 還沒登入電腦教室也沒關係，這裡的步驟和兩個平台入口都可以直接看、直接開。</p>
+
+        <section id="video-guide" class="card card-sky">
+            <div class="card-heading"><span class="icon"><i class="fa-solid fa-circle-play" aria-hidden="true"></i></span><div><span class="eyebrow">先看示範｜隨時暫停跟做</span><h2>從第07週開始，一路登入自己的努力樹</h2></div></div>
+            <div class="card-body"><p>影片約5分7秒。依老師指示看一段、暫停做一步；已改密碼的人可以直接看第2段。</p>
+                <video id="login-guide-video" class="lesson-player" controls playsinline preload="none" aria-label="第07週登入操作教學影片">
+                    <source src="https://res.cloudinary.com/dmqmjfqng/video/upload/v1791901968/it-class-tcwu/grade3/115-1/week07/login-guide-20261013.mp4" type="video/mp4">
+                    <track kind="subtitles" src="images/week07/login-guide.vtt" srclang="zh-TW" label="繁體中文">
+                    你的瀏覽器無法播放影片，請用下方連結開啟。
+                </video>
+                <div class="video-chapters" aria-label="影片章節">
+                    <button type="button" data-video-time="0">1. 校務改密碼</button><button type="button" data-video-time="98.666667">2. 平台登入／不用了，謝謝</button><button type="button" data-video-time="169.266667">3. 第一次Google啟用</button><button type="button" data-video-time="239.833333">4. 登入謙大叔／努力樹</button>
+                </div><p id="video-play-status" role="status"></p><a class="text-link" href="https://res.cloudinary.com/dmqmjfqng/video/upload/v1791901968/it-class-tcwu/grade3/115-1/week07/login-guide-20261013.mp4" target="_blank" rel="noopener noreferrer">另開影片觀看</a>
+            </div>
+        </section>
+
+        <section id="password" class="card card-amber">
+            <div class="card-heading"><span class="icon"><i class="fa-solid fa-key" aria-hidden="true"></i></span><div><span class="eyebrow">第一站｜還沒改好的人</span><h2>從校務系統開始改密碼</h2></div></div>
+            <div class="card-body">
+                <p class="lead">拿出自己的帳密條，先確認班級、座號和姓名。</p>
+                <a id="school-system-link" class="action action-amber" href="https://esa.ntpc.edu.tw/" target="_blank" rel="noopener noreferrer">開啟校務系統 <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i><span class="link-note">另開分頁</span></a>
+                <div id="lesson-video" class="lesson-guide">
+                    <h3><i class="fa-solid fa-list-ol" aria-hidden="true"></i> 先看步驟，再跟著老師做</h3>
+                    <a class="text-link" href="#video-guide">先看操作影片，再回來做這一步</a>
+                    <ol class="steps">
+                        <li><span class="number">1</span><div><h4>用目前有效的密碼登入</h4><p>帳號填紙條上的短帳號，不加 <span class="email-suffix">@apps.ntpc.edu.tw</span>。如果老師協助還原過，先等老師說明要用哪一組密碼。</p></div></li>
+                        <li><span class="number">2</span><div><h4>看到「自訂密碼未設定」，點「前往設定」</h4><p>第一次登入可能先出現安全性檢查。跟著老師進入「自訂密碼」畫面；若畫面不同，先停下來找老師。</p></div></li>
+                        <li><span class="number">3</span><div><h4>新密碼，填兩次</h4><p>第一格填自己想好的新密碼，第二格再填一次相同的新密碼。<br>這次示範畫面只有這兩格，不需要填舊密碼。依畫面規則，密碼要包含大寫英文、小寫英文與數字。</p></div></li>
+                        <li><span class="number">4</span><div><h4>看清楚，再按「確定」</h4><p>確認兩次新密碼完全相同，大小寫也相同。不用帳號、身分證號碼或民國年生日當密碼。送出後停在結果畫面，跟老師確認，再到親師生平台驗證。</p></div></li>
+                    </ol>
+                </div>
+                <div class="notice"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i><p>這次示範按「確定」後回到校務系統，出現「連線逾期，請重新登入」。依老師指示，接著開親師生平台，用剛才的新密碼登入確認；不要因此再改一次密碼。其他步驟出現逾期訊息時，先問老師。</p></div>
+                <div class="notice"><i class="fa-solid fa-lock" aria-hidden="true"></i><p>密碼只給自己看，不念出來、不請同學代打。新密碼自己記好；如果記在自己的紙條上，要遮蓋、收好。字數與符號要求依官方畫面和老師說明。</p></div>
+                <a class="text-link" href="#verify">改好後，前往「再登入一次」 <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a>
+            </div>
+        </section>
+
+        <section id="verify" class="card card-teal">
+            <div class="card-heading"><span class="icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span><div><span class="eyebrow">共同目標｜每個人都要確認</span><h2>用新密碼，登入親師生平台</h2></div></div>
+            <div class="card-body">
+                <p class="lead">已經改好的人，不用再修改，也不用請老師重新還原。</p>
+                <ol class="steps compact">
+                    <li><span class="number">1</span><div><h4>開啟親師生平台</h4><p>已改好的人，不用再登入校務系統。到親師生平台需要輸入帳密的畫面；若直接進去、沒有重新輸入密碼，請告訴老師。</p></div></li>
+                    <li><span class="number">2</span><div><h4>自己輸入新密碼</h4><p>已改好的人，用上次成功設定的新密碼；今天剛改好的人，用剛才的新密碼。若Chrome問「要儲存密碼嗎？」，選「不用了，謝謝」，不要儲存在教室共用電腦。</p></div></li>
+                    <li><span class="number">3</span><div><h4>看到自己，舉手確認</h4><p>登入成功後，停在顯示本人姓名的畫面，請老師確認。老師看的是登入結果，不是你的密碼。</p></div></li>
+                </ol>
+                <a id="verify-platform-link" class="action action-teal" href="https://pts.ntpc.edu.tw/" target="_blank" rel="noopener noreferrer">開啟親師生平台，驗證登入 <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i><span class="link-note">另開分頁</span></a>
+                <div class="notice"><i class="fa-solid fa-eye" aria-hidden="true"></i><p><strong>看到原本已登入的畫面，不等於新密碼已驗證。</strong>登入失敗先檢查帳號與輸入，仍不行再找老師。老師確認需要還原後，才回校務系統重新改密碼。</p></div>
+            </div>
+        </section>
+
+        <section id="google" class="card card-sky">
+            <div class="card-heading"><span class="icon"><i class="fa-brands fa-google" aria-hidden="true"></i></span><div><span class="eyebrow">老師確認後｜接著登入電腦教室</span><h2>先到親師生平台，再開谷歌服務</h2></div></div>
+            <div class="card-body">
+                <p class="lead">這一段依老師安排接續。還沒開通谷歌的人，跟著老師做；不要自己註冊私人帳號。</p>
+                <a id="parent-platform-link" class="action action-sky" href="https://pts.ntpc.edu.tw/" target="_blank" rel="noopener noreferrer">開啟親師生平台 <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i><span class="link-note">另開分頁</span></a>
+                <ol class="login-steps">
+                    <li><span class="number">1</span><h3>登入親師生平台</h3><p>剛才已在平台驗證成功，就直接做第2步。尚未登入者，填短帳號和已改好的新密碼，不加電子郵件後綴。</p></li>
+                    <li><span class="number">2</span><h3>開啟谷歌服務</h3><p>在平台裡找「谷歌服務／Google 服務」，依老師示範開啟。看Google網頁右上角帳號，確認是自己的學校電子郵件。</p></li>
+                    <li><span class="number">3</span><h3>第一次使用，先完成Google啟用</h3><p>若出現「驗證您的身分」，核對是自己的學校帳號，再按「繼續」。第一次使用會看到「歡迎使用新帳戶」；跟老師看說明，往下捲動，再按「我瞭解了」。進入服務後核對學校帳號；已啟用的人直接往下做。</p></li>
+                    <li><span class="number">4</span><h3>略過 Chrome 同步</h3><p>如果出現「登入 Chrome」或「開啟同步」，選「略過／不用了」，依實際按鈕操作。只登入谷歌網頁服務。</p></li>
+                    <li><span class="number">5</span><h3>回這一頁，點上方「登入」</h3><p>完成Google啟用後，點網站導覽列的Google圖示「登入」按鈕，選自己的學校帳號。回到第07週後，核對上方班級、座號與姓名。</p></li>
+                </ol>
+                <p class="flow">親師生平台 → 谷歌服務 → 首次Google啟用 → 回第07週 → 網站上方登入</p>
+                <p id="course-identity-status" class="identity-note" role="status">網站登入後請核對本人身分；改密碼是否完成，仍要請老師確認。</p>
+                <div class="notice"><i class="fa-solid fa-hand" aria-hidden="true"></i><p>新密碼在平台還不能用、看到別人的帳號，或出現不熟悉的驗證畫面：先停下來找老師，不連續猜密碼，也不急著再改一次。</p></div>
+            </div>
+        </section>
+
+        <section id="help" class="card card-slate">
+            <div class="card-heading"><span class="icon"><i class="fa-solid fa-hand" aria-hidden="true"></i></span><div><span class="eyebrow">慢慢檢查，就能往前走</span><h2>卡關時，先看這裡</h2></div></div>
+            <div class="card-body">
+                <div class="tip-grid">
+                    <article class="tip"><h3><i class="fa-solid fa-keyboard" aria-hidden="true"></i> 帳密不正確</h3><p>看輸入法是不是「英」，檢查 <span class="keycap">Caps Lock</span>、漏字與空白。仔細修正一次，仍失敗就舉手。</p></article>
+                    <article class="tip"><h3><i class="fa-solid fa-spell-check" aria-hidden="true"></i> 大小寫或字太像</h3><p>需要一個大寫字母時，按住 <span class="keycap">Shift</span> 再按字母；打錯用 <span class="keycap">Backspace</span>。分清小寫 l／數字1、小寫o／數字0。</p></article>
+                    <article class="tip"><h3><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> 修改失敗或忘記密碼</h3><p>先私下看自己的密碼記錄，確認是成功設定的那一組；仍不行就停在訊息畫面找老師。不一直按儲存，不借同學的密碼，也不要求同學代登入。</p></article>
+                    <article class="tip"><h3><i class="fa-solid fa-clock" aria-hidden="true"></i> 等待老師時</h3><p>在課本找找Shift、Backspace與Caps Lock。口頭或紙上練習辨字，不在練習欄位輸入真實密碼。</p></article>
+                </div>
+                <p class="book-ref">課本參考：巨岩《Windows 11 電腦小小兵》第5課「英文打字ABC」，p.100英數鍵與Backspace、p.101 Caps Lock、p.107 Shift輸入大寫。學校登入與改密碼為老師補充。</p>
+            </div>
+        </section>
+
+        <section id="fast" class="card card-teal">
+            <div class="card-heading"><span class="icon"><i class="fa-solid fa-keyboard" aria-hidden="true"></i></span><div><span class="eyebrow">快手任務｜老師確認完成登入後</span><h2>第07週鍵盤五關</h2></div></div>
+            <div class="card-body"><p class="lead">新密碼已驗證，網站顯示本人身分後，再依老師指示開始。</p><p>全部是練習文字，不是真實帳號或密碼，<strong>不要在闖關框輸入自己的密碼</strong>。題目要逐字輸入，不能複製、貼上或拖入。</p>
+                <p id="progress-status" role="status">請先登入學校Google帳號並核對本人身分，才能開始打字闖關及記錄進度。</p>
+                <div id="typing-levels-container" inert><article id="block-level1" class="level"><h3>第 1 關｜小寫字母</h3><p>切到英文輸入，慢慢找 t、r、e 的位置。</p><pre class="target select-none pointer-events-none">tree</pre><label for="input-level1">逐字輸入題目</label><input id="input-level1" type="text" disabled autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onpaste="return false" ondrop="return false"><button type="button" onclick="checkLevel(1)" disabled>檢查第 1 關</button><button type="button" data-replay="1" disabled>再練習一次</button><p id="msg-level1" class="level-message" role="status"></p></article>
+<article id="block-level2" class="level hidden"><h3>第 2 關｜字母加數字</h3><p>先打字母，再接上數字；不要多打空格。</p><pre class="target select-none pointer-events-none">tree246</pre><label for="input-level2">逐字輸入題目</label><input id="input-level2" type="text" disabled autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onpaste="return false" ondrop="return false"><button type="button" onclick="checkLevel(2)" disabled>檢查第 2 關</button><button type="button" data-replay="2" disabled>再練習一次</button><p id="msg-level2" class="level-message" role="status"></p></article>
+<article id="block-level3" class="level hidden"><h3>第 3 關｜大寫與符號</h3><p>按住 Shift 打大寫 T；驚嘆號也要用 Shift。</p><pre class="target select-none pointer-events-none">Tree246!</pre><label for="input-level3">逐字輸入題目</label><input id="input-level3" type="text" disabled autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onpaste="return false" ondrop="return false"><button type="button" onclick="checkLevel(3)" disabled>檢查第 3 關</button><button type="button" data-replay="3" disabled>再練習一次</button><p id="msg-level3" class="level-message" role="status"></p></article>
+<article id="block-level4" class="level hidden"><h3>第 4 關｜一句話</h3><p>注意 H、I、T 大寫，逗號後空一格，最後有句點。</p><pre class="target select-none pointer-events-none">Hi, I am Tom.</pre><label for="input-level4">逐字輸入題目</label><input id="input-level4" type="text" disabled autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onpaste="return false" ondrop="return false"><button type="button" onclick="checkLevel(4)" disabled>檢查第 4 關</button><button type="button" data-replay="4" disabled>再練習一次</button><p id="msg-level4" class="level-message" role="status"></p></article>
+<article id="block-level5" class="level hidden"><h3>第 5 關｜兩行對話</h3><p>第一句打完按 Enter 換行；注意單引號與問號。</p><pre class="target select-none pointer-events-none">Hi, I am Tom.
+What&#x27;s your name?</pre><label for="input-level5">逐字輸入題目</label><textarea id="input-level5" rows="2" disabled autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onpaste="return false" ondrop="return false"></textarea><button type="button" onclick="checkLevel(5)" disabled>檢查第 5 關</button><button type="button" data-replay="5" disabled>再練習一次</button><p id="msg-level5" class="level-message" role="status"></p></article>
+</div>
+                <p class="book-ref">課本參考：巨岩《Windows 11 電腦小小兵》第5課，p.109 英文短句、換行與標點；第1～3關為教師自編的英數及大小寫練習。</p><p>老師說停就停，下次登入可以接著做。五關完成可累積四片葉、一朵花；再練習不重複增加成果。</p>
+                <div class="action-row"><a class="action action-emerald" href="/my-tree.html?course=grade3-115-1&amp;returnTo=%2Fgrade3%2F115-1%2Fweek07.html">看看我的努力樹 <i class="fa-solid fa-tree" aria-hidden="true"></i></a><a class="text-link" href="week06.html#fast">補做第06週原關卡</a></div>
+            </div>
+        </section>
+
+        <section id="finish" class="finish"><span class="icon"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i></span><div><h2>下課前，登出自己的帳號</h2><p>依老師指示，登出校務系統、親師生平台、Google服務與電腦教室。使用訪客視窗時關閉全部訪客視窗；收好課本，遮蓋帳密條。</p></div></section>
+    </main>
+    <footer>新北市頂溪國小資訊課｜一步一步，完成自己的任務。</footer>
+    <script type="module" src="week07.js?v=20261013-video-typing"></script>
+</body>
+</html>

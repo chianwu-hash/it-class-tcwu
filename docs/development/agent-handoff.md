@@ -1,5 +1,15 @@
 # Agent Handoff
 
+## 三年級第07週正式交付與Git同步 — 2026-10-14
+
+- 狀態：第07週網頁、教案、完整影片、獨立鍵盤五關及努力樹已正式發布；本次使用者授權commit與push，把本週內容同步到main。
+- 正式入口：https://it-class-tcwu.vercel.app/grade3/115-1/week07.html 。部署dpl_7jaL8GiQPwbH86FfBZBGRTGVXRgm；正式21檔內容核對一致，197檔原內容保留。
+- 活動：grade3-115-1／07／typing_task_5／total 5；可信Google本人RPC保存至student_progress，課前密碼狀態與本人能登入分開檢核。第06週原進度保留。
+- 驗證：影片實際播放／有聲音／章節跳轉、五關保存／部分及完整重整接回、努力樹本週4葉1花／重整、再練不重複均通過。示範測試成果保留，不在交接寫學生身分、帳密或截圖。
+- Ownership：Codex只提交第07週頁面／共用登記與navbar快取、本週教案／發布契約／驗收與本段交接；其他dirty或untracked保留。沒有提交影片原檔、私人工作瀏覽器資料或想法成影工程。
+- 依據：grade3/LessonPlan/115-1/Week 07.md、docs/development/grade3-week07-contract.md、grade3-week07-release.md、sessions/2026-10-13-grade3-week07-film.md。教案已更新為正式狀態與分章教學安排。
+- 後續：上課前重新查自訂密碼與本人登入，課堂觀察影片節奏；只有新問題才增加修訂及測試。Git推送後需核對正式入口，若Git整合觸發新部署，確認正式頁仍為本週內容。
+
 ## Grade3 homepage identity/navbar fix — 2026-10-07
 
 - Follow-up current-week marker: restored yellow rounded 本週 badge at Week06 card's top-right, matching Grade6 semester badge. Removed duplicate inline 本週 wording. Homepage-only release dpl_v688uLc8E4CkVvJQJtSCGADFdKFC promoted; production source SHA256 matches, yellow badge placement/no overflow verified at1280/390 on production. Local probe did not find card DOM, so verification used production rather than claiming local pass. No auth/progress changes.
