@@ -24,5 +24,28 @@ const asModule = s => 'data:text/javascript;base64,' + Buffer.from(s).toString('
     assert.equal(challenges.regular.levels.length, 5);
     assert.equal(challenges.zh.levels[0].ans.split('\n').length, 25);
     assert.equal(challenges.en.levels[0].ans.split('\n').length, 9);
-    console.log('PASS: ordinary rewards, independent bosses, deduplication, reset, course isolation, question data');
+    // Week 07 reuses the boss activity keys under weekCode 07; it must be counted separately from week 05.
+    const week07 = [...all, row('typing_task_5', true, '07'), row('typing_boss_zh_1', true, '07'), row('typing_boss_en_1', true, '07')];
+    const model07 = deriveRewardTreeModel(week07, activities);
+    assert.equal(model07.stats.flowerCount, 7);
+    assert.equal(model07.stats.unknownRowCount, 0);
+    assert.equal(deriveRewardTreeModel([...week07, row('typing_boss_zh_1', true, '07')], activities).stats.flowerCount, 7);
+    assert.equal(deriveRewardTreeModel([...all, row('typing_boss_en_1', true, '07')], activities).stats.flowerCount, 5);
+    assert.equal(activities.filter(a => a.rewardMode === 'boss').length, 4);
+    const w07 = (await import(asModule(fs.readFileSync('grade6/115-1/week07-typing-data.js','utf8')))).challenges;
+    assert.deepEqual(Object.values(w07).map(c=>c.key), ['typing_task_5','typing_boss_zh_1','typing_boss_en_1']);
+    assert.equal(w07.regular.levels.length, 5);
+    assert.deepEqual(w07.regular.levels.map(l=>l.id), [1,2,3,4,5]);
+    assert.equal(w07.zh.levels[0].ans.split('\n').length, 10);
+    assert.equal(w07.en.levels[0].ans.split('\n').length, 9);
+    for (const c of Object.values(w07)) for (const l of c.levels) {
+        assert.ok(!/[’‘“”]/.test(l.ans), `curly quote in ${c.key} ${l.id}`);
+        assert.equal(l.ans, l.ans.trim());
+        assert.ok(!l.ans.includes('\n\n'));
+    }
+    const used05 = new Set(Object.values(challenges).flatMap(c=>c.levels.flatMap(l=>l.ans.split('\n'))));
+    const reused = Object.values(w07).flatMap(c=>c.levels.flatMap(l=>l.ans.split('\n'))).filter(line=>used05.has(line));
+    // Story panels 7–8 intentionally review the Sentence B pattern from week 05.
+    assert.deepEqual(reused, ['Does he have a fever?', 'Yes, he does.']);
+    console.log('PASS: ordinary rewards, independent bosses, deduplication, reset, course isolation, question data, week07 separation');
 })().catch(e => {console.error(e);process.exitCode=1;});

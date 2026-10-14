@@ -1,13 +1,15 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
 import { SUPABASE_URL, SUPABASE_ANON_KEY, getStoredAccessToken } from '../../shared/auth.js';
-import { getRewardTreeCourse, getActivityId } from '../../shared/reward-tree-config.js';
+import { getRewardTreeCourse, getActivityId } from '../../shared/reward-tree-config.js?v=20261014-g6w07';
 import { deriveRewardTreeModel } from '../../shared/reward-tree-model.js';
 
 const courseId = 'grade6-115-1';
 const activities = getRewardTreeCourse(courseId).activities.filter(a => a.rewardMode === 'boss');
 const descriptions = {
     '05:typing_boss_zh_1': { title: '臺灣美食詩選', icon: '🍜', schoolYear: '115', publisher: '康軒', subject: '國語', lesson: '第4課', text: '〈鼎邊趖〉＋〈肉圓〉，共25行。兩首全部完成，開出1朵花。' },
-    '05:typing_boss_en_1': { title: 'Seeing a Doctor', icon: '🩺', schoolYear: '115', publisher: '康軒', subject: '英語', lesson: 'Unit 2', text: '完整Reading分成9行，練習Joe的完整分享，完成開出1朵花。' }
+    '05:typing_boss_en_1': { title: 'Seeing a Doctor', icon: '🩺', schoolYear: '115', publisher: '康軒', subject: '英語', lesson: 'Unit 2', text: '完整Reading分成9行，練習Joe的完整分享，完成開出1朵花。' },
+    '07:typing_boss_zh_1': { title: '李子果醬', icon: '🫙', schoolYear: '115', publisher: '康軒', subject: '國語', lesson: '第5課', text: '〈最好的味覺禮物〉第三、四段，共10行。全文完成，開出1朵花。' },
+    '07:typing_boss_en_1': { title: 'Home Remedy', icon: '🍯', schoolYear: '115', publisher: '康軒', subject: '英語', lesson: 'Unit 2', text: 'More to Learn全文分成9行，認識各地感冒居家療法，完成開出1朵花。' }
 };
 const cards = new Map();
 for (const activity of activities) {

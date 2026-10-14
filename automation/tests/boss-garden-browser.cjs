@@ -30,7 +30,7 @@ const { connectCdp } = require('D:/projects/cdp-tools/packages/cdp-safe-client')
  const text=sel=>p.$eval(sel,e=>e.textContent);
  const row=key=>({course_id:'grade6-115-1',week_code:'05',activity_key:key,completed:true,level_id:1});
  try{
-  await open();assert.equal(calls.length,0);assert((await text('#garden-status')).includes('請從上方登入'));assert.equal(await p.$$eval('.garden-card',a=>a.length),2);
+  await open();assert.equal(calls.length,0);assert((await text('#garden-status')).includes('請從上方登入'));assert.equal(await p.$$eval('.garden-card',a=>a.length),4);
   logged=true;await open();await done();assert((await text('#flower-count')).includes('0 朵'), JSON.stringify({count:await text('#flower-count'),status:await text('#garden-status'),errors,calls:calls.map(String)}));assert((await text('.card-state')).includes('尚未挑戰'));
   progress=[row('typing_boss_zh_1'),row('typing_boss_zh_1'),{...row('typing_boss_en_1'),course_id:'grade3-115-1'}];drafts=[row('typing_boss_zh_1'),row('typing_boss_en_1')];
   await p.click('#refresh-garden');await done();assert((await text('#flower-count')).includes('1 朵'));assert((await text('.garden-card:first-child .card-state')).includes('已開花'));assert((await text('.english .card-state')).includes('已有草稿'));
