@@ -22,7 +22,7 @@ challenge.levels.forEach(({ id, title, ans }, index) => {
     const label = document.createElement('label'); label.htmlFor = `input-level${id}`; label.className = 'typing-label'; label.textContent = '✍️ 我的輸入';
     const input = document.createElement('textarea'); input.id = `input-level${id}`; input.className = 'typing-input'; input.disabled = true;
     input.rows = challenge.boss ? Math.max(14, ans.split('\n').length + 1) : Math.min(8, ans.split('\n').length + 1);
-    input.placeholder = '先登入學校Google帳號，再逐字輸入。';
+    input.placeholder = '照著題目逐字輸入，換行也要一致。';
     input.spellcheck = false; input.autocomplete = 'off'; input.setAttribute('autocapitalize', 'off'); input.setAttribute('autocorrect', 'off');
     input.setAttribute('onpaste', 'return false;'); input.setAttribute('ondrop', 'return false;');
     const button = document.createElement('button'); button.type = 'button'; button.className = 'typing-check'; button.disabled = true;

@@ -18,14 +18,14 @@
         titleIconClass: "fa-solid fa-graduation-cap text-violet-700",
         titleClassName: "font-black text-slate-800 flex items-center text-lg tracking-wide whitespace-nowrap",
         navClassName: "bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-violet-200 shadow-sm",
-        containerClassName: "max-w-6xl mx-auto px-6 py-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3",
-        linkClassName: "px-3 py-1.5 text-sm font-bold text-gray-600 hover:text-violet-700 hover:bg-violet-50 rounded-lg transition whitespace-nowrap",
-        currentWeekClassName: "px-3 py-1.5 text-sm font-bold bg-violet-100 text-violet-800 rounded-lg shadow-sm whitespace-nowrap cursor-default",
+        containerClassName: "max-w-screen-2xl mx-auto px-4 py-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3",
+        linkClassName: "px-2 py-1.5 text-sm font-bold text-gray-600 hover:text-violet-700 hover:bg-violet-50 rounded-lg transition whitespace-nowrap",
+        currentWeekClassName: "px-2 py-1.5 text-sm font-bold bg-violet-100 text-violet-800 rounded-lg shadow-sm whitespace-nowrap cursor-default",
         separatorClassName: "text-gray-300 mx-1",
         extraLinks: [
             { href: 'boss-garden.html', iconClass: 'fa-solid fa-crown', label: '魔王花園' },
-            { href:'typing-foundation.html',iconClass:'fa-solid fa-keyboard',label:'英打基礎' },
-            { href:'zhuyin-foundation.html',iconClass:'fa-solid fa-keyboard',label:'中打基礎' },
+            { href:'typing-foundation.html', label: '<span title="英打基礎" class="inline-flex items-center gap-0.5"><i class="fa-solid fa-keyboard" aria-hidden="true"></i><span aria-hidden="true" class="text-[11px] font-black leading-none">英</span><span class="sr-only">英打基礎</span></span>' },
+            { href:'zhuyin-foundation.html', label: '<span title="中打基礎" class="inline-flex items-center gap-0.5"><i class="fa-solid fa-keyboard" aria-hidden="true"></i><span aria-hidden="true" class="text-[11px] font-black leading-none">中</span><span class="sr-only">中打基礎</span></span>' },
             { href: "homework.html", iconClass: "fa-solid fa-file-arrow-up", label: "交作業" },
             {
                 href: "/my-tree.html?course=grade6-115-1",
@@ -38,7 +38,7 @@
         authBarHtml: `
                     <span class="text-gray-300 mx-1 hidden md:inline">|</span>
                     <div id="nav-auth-bar" class="flex flex-nowrap items-center gap-2 lg:ml-2 shrink-0">
-                        <div id="auth-status" class="max-w-[140px] md:max-w-[170px] px-3 py-1.5 rounded-full bg-violet-50 text-slate-700 text-sm font-bold border border-violet-100 truncate" title="登入狀態">未登入</div>
+                        <div id="auth-status" class="max-w-[140px] md:max-w-[150px] px-3 py-1.5 rounded-full bg-violet-50 text-slate-700 text-sm font-bold border border-violet-100 truncate" title="登入狀態">未登入</div>
                         <a id="admin-btn" href="/admin-progress.html" class="hidden px-3 py-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800 font-black transition whitespace-nowrap" title="教師後台" aria-label="教師後台">
                             <i class="fa-solid fa-user-shield md:mr-1"></i><span class="hidden md:inline">後台</span>
                         </a>
