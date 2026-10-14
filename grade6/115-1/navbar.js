@@ -58,4 +58,8 @@
 
     currentScript.insertAdjacentHTML("beforebegin", navHTML);
     currentScript.remove();
+
+    // Show roster class/seat/name instead of the email once signed in.
+    import('../../shared/grade6-nav-identity.js?v=20261014').then(({ initGrade6NavIdentity }) => initGrade6NavIdentity())
+        .catch(error => console.warn('grade6 navbar identity unavailable', error));
 })();

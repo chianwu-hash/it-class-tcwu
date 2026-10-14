@@ -23,8 +23,8 @@ begin
      where c.course_id='grade3-115-1' and c.class_code='307' and c.seat_no=30 and c.active
        and e.school_year=115 and e.email=mail and e.seat_no=30 and e.class_code in ('609','307');
    elsif p_grade='grade6' then
-     -- The escaped literal reads "test student" in Chinese.
-     update public.student_enrollments e set class_code='609',display_name=U&'\6E2C\8A66\5B78\751F'
+     -- The escaped literal is the test student name 吳小謙 (same as 307-30).
+     update public.student_enrollments e set class_code='609',display_name=U&'\5433\5C0F\8B19'
      where e.school_year=115 and e.email=mail and e.seat_no=30 and e.class_code in ('609','307');
    else
      raise exception 'invalid_grade';

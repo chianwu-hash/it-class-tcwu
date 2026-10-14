@@ -174,7 +174,7 @@ test('teacher test identity: 307 upgrade is list-only and switching rosters susp
   await as(t);await assert.rejects(reconnect(),/名冊不一致/);await assert.rejects(save(1),/本人舊成果/);
   await admin(toGrade3);await as(t);assert.deepEqual((({student_code,display_name})=>({student_code,display_name}))((await reconnect()).rows[0]),{student_code:'30730',display_name:'舊卡名'});
   await save(3);assert.equal((await db.query("select * from get_grade3_progress('06','typing_task_5')")).rows[0].score,3);
-  await admin(toGrade6);assert.deepEqual((await db.query("select class_code,display_name from student_enrollments where email=$1",[mail])).rows[0],{class_code:'609',display_name:'測試學生'});
+  await admin(toGrade6);assert.deepEqual((await db.query("select class_code,display_name from student_enrollments where email=$1",[mail])).rows[0],{class_code:'609',display_name:'吳小謙'});
   await as(t);await assert.rejects(save(4),/本人舊成果/);await assert.rejects(reconnect(),/名冊不一致/);
   await admin(toGrade3);await admin(toGrade3);await as(t);await reconnect();
   assert.equal((await db.query("select * from get_grade3_progress('06','typing_task_5')")).rows[0].score,3);
@@ -190,7 +190,7 @@ test('teacher test identity: 307 upgrade is list-only and switching rosters susp
   for(const other of [a,x]){await as(other);await assert.rejects(sw(null),/not_test_account/);await assert.rejects(sw('grade3'),/not_test_account/);}
   await as(t);assert.deepEqual((await sw(null)).rows,[{class_code:'307',seat_no:30,display_name:'舊卡名'}]);
   await assert.rejects(sw('grade4'),/invalid_grade/);
-  assert.deepEqual((await sw('grade6')).rows,[{class_code:'609',seat_no:30,display_name:'測試學生'}]);
+  assert.deepEqual((await sw('grade6')).rows,[{class_code:'609',seat_no:30,display_name:'吳小謙'}]);
   await assert.rejects(save(4),/本人舊成果/);
   assert.equal((await sw('grade6')).rows[0].class_code,'609');
   assert.deepEqual((await sw('grade3')).rows,[{class_code:'307',seat_no:30,display_name:'舊卡名'}]);

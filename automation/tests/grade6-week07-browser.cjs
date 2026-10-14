@@ -10,7 +10,7 @@ const authModule=logged=>`
 export const SUPABASE_URL=location.origin+'/__mock',SUPABASE_ANON_KEY='synthetic';
 const session=${logged?JSON.stringify({user:{id:'00000000-0000-0000-0000-000000000007',email:'synthetic@example.invalid'},access_token:'synthetic'}):'null'};
 export const getSession=async()=>({session,error:null}),resolveSession=async()=>session,getStoredAccessToken=()=>session?'synthetic':null,isTeacher=()=>false,beginCentralizedLogin=()=>{},signOutAndReload=()=>{};
-export const supabase={auth:{onAuthStateChange(){return {data:{subscription:{unsubscribe(){}}}}}},from(table){const filters={};let method='GET';const q={select(){return q},eq(k,v){filters[k]=v;return q},delete(){method='DELETE';return q},maybeSingle(){return run()},then(a,b){return run().then(a,b)}};async function run(){const u=new URL(SUPABASE_URL+'/query');u.searchParams.set('table',table);u.searchParams.set('filters',JSON.stringify(filters));return (await fetch(u,{method})).json()}return q}};
+export const supabase={auth:{onAuthStateChange(){return {data:{subscription:{unsubscribe(){}}}}}},rpc:async(name)=>name==='get_my_student_enrollment'&&session?{data:[{class_code:'609',seat_no:30,display_name:'合成學生',student_code:'60930'}],error:null}:{data:[],error:null},from(table){const filters={};let method='GET';const q={select(){return q},eq(k,v){filters[k]=v;return q},delete(){method='DELETE';return q},maybeSingle(){return run()},then(a,b){return run().then(a,b)}};async function run(){const u=new URL(SUPABASE_URL+'/query');u.searchParams.set('table',table);u.searchParams.set('filters',JSON.stringify(filters));return (await fetch(u,{method})).json()}return q}};
 `;
 (async()=>{
  const server=http.createServer((req,res)=>{
@@ -56,6 +56,7 @@ export const supabase={auth:{onAuthStateChange(){return {data:{subscription:{uns
   // Anonymous: page readable, typing locked.
   await open('week07.html');
   assert(await p.$eval('#input-level1',e=>e.disabled));
+  assert.equal((await p.$eval('#auth-status',e=>e.textContent)).trim(),'未登入');
   assert.equal(await p.locator('#typing-levels-container article').count(),5);
   for(const width of [1280,390]){await p.setViewportSize({width,height:1000});await p.waitForTimeout(200);assert(await noOverflow(),`week07 overflow ${width}`);await p.screenshot({path:path.join(shots,`g6w07-week07-${width}.png`),fullPage:true});}
   await p.setViewportSize({width:1280,height:1000});
@@ -64,6 +65,9 @@ export const supabase={auth:{onAuthStateChange(){return {data:{subscription:{uns
   await open('week07-boss-zh.html');
   assert(!await p.$eval('#input-level1',e=>e.disabled));
   assert.equal((await p.$eval('.typing-target',e=>e.textContent)).split('\n').length,10);
+  // Navbar shows roster identity instead of the email; details on hover.
+  await p.waitForFunction(()=>document.querySelector('#auth-status').textContent.trim()==='60930 合成學生');
+  assert.equal(await p.$eval('#auth-status',e=>e.title),'609 班 30 號 合成學生\nsynthetic@example.invalid');
   await p.type('#input-level1','媽媽和鄰居');await p.click('#typing-draft-save-1');await p.waitForTimeout(400);
   assert.equal(drafts.size,1);assert.equal([...drafts.values()][0].week_code,'07');
   await p.reload({waitUntil:'load'});await p.waitForSelector('#typing-draft-restore-1:not(.hidden)');await p.click('#typing-draft-restore-1');await p.waitForTimeout(300);
