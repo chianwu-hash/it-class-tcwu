@@ -117,8 +117,16 @@ const week = '/grade3/115-1/week08.html';
         const saved = await page.evaluate(() => fixtureProgress);
         await scenario({ user: synthetic, progress: saved });
         await page.waitForFunction(() => document.querySelector('#progress-status').textContent.includes('第 2 關'));
-        const answers = ['心的小船', '心是一葉舟', '小船上要什麼呢？', '一起去看美麗新世界！'];
-        for (let i = 2; i <= 5; i++) { await setValue('#input-level' + i, answers[i - 2]); await page.evaluate(n => checkLevel(n), i); }
+        const boss = '心的小船上，還是讓我載著你，\n讓你變成您，一起去看美麗新世界！';
+        const answers = ['心的小船', '心是一葉舟', '小船上要什麼呢？', boss];
+        for (let i = 2; i <= 4; i++) { await setValue('#input-level' + i, answers[i - 2]); await page.evaluate(n => checkLevel(n), i); }
+        // Boss: two lines; missing Enter and a wrong second-line character get line-aware hints.
+        assert.equal(await page.$eval('#input-level5', e => e.tagName), 'TEXTAREA');
+        await setValue('#input-level5', '心的小船上，還是讓我載著你，讓你'); await page.evaluate(() => checkLevel(5));
+        assert.match(await page.$eval('#msg-level5', e => e.textContent), /按 Enter 換到第二行/);
+        await setValue('#input-level5', '心的小船上，還是讓我載著你，\n讓你便成您'); await page.evaluate(() => checkLevel(5));
+        assert.match(await page.$eval('#msg-level5', e => e.textContent), /第 2 行第 3 個字/);
+        await setValue('#input-level5', boss); await page.evaluate(() => checkLevel(5));
         assert.equal(await page.evaluate(() => fixtureProgress.completed), true);
         assert.equal(await page.evaluate(() => fixtureSaves.at(-1).p_score), 5);
         const completed = await page.evaluate(() => fixtureProgress);

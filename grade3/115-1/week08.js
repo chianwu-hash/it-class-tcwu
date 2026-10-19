@@ -6,12 +6,12 @@ import { initTypingTools } from '../../shared/typing-tools.js?v=20261019-zhuyin-
 // Source: 康軒國語三上第一課〈字的小旅行〉課文與「我會認字」。
 const levelsData = [
     { id: 1, ans: '心情' }, { id: 2, ans: '心的小船' }, { id: 3, ans: '心是一葉舟' },
-    { id: 4, ans: '小船上要什麼呢？' }, { id: 5, ans: '一起去看美麗新世界！' }
+    { id: 4, ans: '小船上要什麼呢？' }, { id: 5, ans: '心的小船上，還是讓我載著你，\n讓你變成您，一起去看美麗新世界！' }
 ];
 // Key-guide pronunciations, one syllable per character (一 typed as first tone).
 const levelZhuyin = {
     1: 'ㄒㄧㄣ ㄑㄧㄥˊ', 2: 'ㄒㄧㄣ ㄉㄜ˙ ㄒㄧㄠˇ ㄔㄨㄢˊ', 3: 'ㄒㄧㄣ ㄕˋ ㄧ ㄧㄝˋ ㄓㄡ',
-    4: 'ㄒㄧㄠˇ ㄔㄨㄢˊ ㄕㄤˋ ㄧㄠˋ ㄕㄣˊ ㄇㄜ˙ ㄋㄜ˙', 5: 'ㄧ ㄑㄧˇ ㄑㄩˋ ㄎㄢˋ ㄇㄟˇ ㄌㄧˋ ㄒㄧㄣ ㄕˋ ㄐㄧㄝˋ'
+    4: 'ㄒㄧㄠˇ ㄔㄨㄢˊ ㄕㄤˋ ㄧㄠˋ ㄕㄣˊ ㄇㄜ˙ ㄋㄜ˙', 5: 'ㄒㄧㄣ ㄉㄜ˙ ㄒㄧㄠˇ ㄔㄨㄢˊ ㄕㄤˋ ㄏㄞˊ ㄕˋ ㄖㄤˋ ㄨㄛˇ ㄗㄞˋ ㄓㄜ˙ ㄋㄧˇ ㄖㄤˋ ㄋㄧˇ ㄅㄧㄢˋ ㄔㄥˊ ㄋㄧㄣˊ ㄧ ㄑㄧˇ ㄑㄩˋ ㄎㄢˋ ㄇㄟˇ ㄌㄧˋ ㄒㄧㄣ ㄕˋ ㄐㄧㄝˋ'
 };
 let keyboardTarget = null;
 let tools = null;
@@ -36,9 +36,15 @@ function describeMismatch(answer, value) {
     if (/[A-Za-z]/.test(value)) return '出現英文字母了：按一下 Shift 切到「中」，擦掉再打。';
     let index = 0;
     while (index < value.length && index < answer.length && value[index] === answer[index]) index++;
-    if (index === value.length && value.length < answer.length) return `前面都對，還少 ${answer.length - value.length} 個字，接著打完。`;
+    if (answer[index] === '\n') return '第一行打完了：按 Enter 換到第二行，再接著打。';
+    const missing = answer.slice(index).replace(/\n/g, '').length;
+    if (index === value.length && value.length < answer.length) return `前面都對，還少 ${missing} 個字，接著打完。`;
     if (index === answer.length && value.length > answer.length) return `多了 ${value.length - answer.length} 個字，用 Backspace 擦掉多的。`;
-    return `第 ${index + 1} 個字不一樣：還有虛線就按 ↓ 換字；已確認的用 Backspace 擦掉重打。`;
+    const prefix = answer.slice(0, index);
+    const where = answer.includes('\n')
+        ? `第 ${prefix.split('\n').length} 行第 ${prefix.length - prefix.lastIndexOf('\n')} 個字`
+        : `第 ${index + 1} 個字`;
+    return `${where}不一樣：還有虛線就按 ↓ 換字；已確認的用 Backspace 擦掉重打。`;
 }
 
 function setupWarmup() {
@@ -154,7 +160,7 @@ initTypingChallenge({ courseId: 'grade3-115-1', weekCode: '08', activityKey: 'ty
     levelEncouragements: {
         1: '你切到注音，把兩個字都選對了。', 2: '你記得輕聲的打法，四個字一個一個檢查完成。',
         3: '你看到選錯的字，用 ↓ 換成正確的字，這就是選字的方法。', 4: '你連問號也用中文模式打出來，句子很完整。',
-        5: '你耐心打完課文最後一句，一邊打一邊檢查選字和驚嘆號。'
+        5: '你耐心打完課文最後一整段，記得用 Enter 換行，也一邊檢查選字和標點。'
     },
     progressMessages: { guestReady: auth.hasIdentity() ? '已接回本人身分，可以開始第一課闖關。' : auth.getIdentityError() || '請先登入學校 Google 帳號並接回舊成果，才可以闖關。',
         loadError: '進度暫時讀取不到，請重新整理或告訴老師。' },
