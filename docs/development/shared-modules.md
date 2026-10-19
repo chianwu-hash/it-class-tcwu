@@ -153,7 +153,7 @@
 
 **匯出**：
 
-- `initTypingTools({ showPunctuation, showKeyboard, keyboardGuide, getKeyboardTarget })`
+- `initTypingTools({ showPunctuation, showKeyboard, keyboardGuide, getKeyboardTarget, getZhuyinTarget })`
 - `renderEnglishKeyboardGuide(container, { target })`
 - `renderBackspaceKeyHint(container)`、`renderCapsLockKeyHint(container)`、`renderShiftKeyHint(container)`
 
@@ -163,6 +163,7 @@
 - 教案要求鍵盤圖或標點表的中英打頁，需依實際巢狀路徑 import 並呼叫 `initTypingTools()`；115-1 週頁通常使用 `../../shared/typing-tools.js`。
 - 預設同時顯示標點符號表與鍵盤圖；若特殊頁面只需要其中一項，可用 `showPunctuation: false` 或 `showKeyboard: false` 關閉。
 - 初學英打頁若要讓「看鍵盤圖」依目前題目標出按鍵，使用 `keyboardGuide: true`，並以 `getKeyboardTarget()` 回傳目前單字。工具每次開啟都會重新讀取目標，不能把單字寫死在共用模組。
+- 中打頁若要讓「看鍵盤圖」依目前題目標出注音鍵，傳入 `getZhuyinTarget()`，回傳 `{ text, zhuyin }`，`zhuyin` 為每字一個音節、以空白分隔（例如 `{ text: '小星', zhuyin: 'ㄒㄧㄠˇ ㄒㄧㄥ' }`）；沒有聲調符號的音節會自動標出空白鍵（一聲）。鍵位沿用 `zhuyin-foundation-curriculum.mjs` 的大千式 `zhuyinKeys`；注音由週頁提供並人工核對。未傳此參數的頁面仍顯示原本的靜態中／英鍵盤圖。2026-10-19 首次用於三年級第 08 週。
 - 頁面內嵌的英文字母位置提示也必須優先呼叫 `renderEnglishKeyboardGuide(container, { target })`，不要複製另一份 QWERTY 鍵盤 HTML。此函式同時顯示鍵帽大寫、輸入小寫、黃色目標鍵與輸入順序。
 - 需要提示 Backspace、Caps Lock 或 Shift 的位置時，使用對應的 `render*KeyHint()`；提示支援滑鼠移入、鍵盤焦點與手機觸控，頁面不要另畫一套鍵盤位置圖。
 - 不要在單一週頁面複製浮動工具 HTML、`toggleFloatingKeyboard()`、`showKeyboardLayout()`、`toggleFloatingPunctuation()` 或 `showPunctuationPage()`。

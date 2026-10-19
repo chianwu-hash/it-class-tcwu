@@ -1,4 +1,6 @@
-const ZH_KEYBOARD_URL = "https://res.cloudinary.com/dmqmjfqng/image/upload/v1773745139/postimages-migration/040_ytvyrx.png";
+import { zhuyinKeys } from "./zhuyin-foundation-curriculum.mjs";
+
+const ZH_KEYBOARD_URL ="https://res.cloudinary.com/dmqmjfqng/image/upload/v1773745139/postimages-migration/040_ytvyrx.png";
 const EN_KEYBOARD_URL = "https://res.cloudinary.com/dmqmjfqng/image/upload/v1777287126/it-class-tcwu/grade3/week12/english-keyboard-071.png";
 const PUNCTUATION_PAGE_1_URL = "https://res.cloudinary.com/dmqmjfqng/image/upload/c_crop,w_1188,h_490,x_0,y_0/v1773745152/postimages-migration/101_ngog8m.png";
 const PUNCTUATION_PAGE_2_URL = "https://res.cloudinary.com/dmqmjfqng/image/upload/c_crop,w_1188,h_546,x_0,y_490/v1773745152/postimages-migration/101_ngog8m.png";
@@ -188,6 +190,71 @@ export function renderEnglishKeyboardGuide(container, options = {}) {
     return container.querySelector("[data-english-keyboard-guide]");
 }
 
+// Standard (大千) zhuyin layout; key labels come from the zhuyin foundation curriculum.
+const ZHUYIN_KEY_ROWS = ["1234567890-", "qwertyuiop", "asdfghjkl;", "zxcvbnm,./"];
+const ZHUYIN_TONE_MARKS = "ˊˇˋ˙";
+const ZHUYIN_SYMBOL_TO_KEY = Object.fromEntries(Object.entries(zhuyinKeys).map(([key, symbol]) => [symbol, key]));
+
+function ensureZhuyinKeyboardGuideStyles() {
+    ensureEnglishKeyboardGuideStyles();
+    if (document.getElementById("zhuyin-keyboard-guide-styles")) return;
+    const style = document.createElement("style");
+    style.id = "zhuyin-keyboard-guide-styles";
+    style.textContent = `
+        .typing-zhuyin-keyboard{container-type:inline-size;overflow-x:hidden;--k:min(50px,calc((100cqw - 66px) / 11.3))}
+        .typing-zhuyin-keyboard .typing-letter-row{min-width:0;gap:6px;padding-left:0}
+        .typing-zhuyin-keyboard .typing-letter-row:nth-child(2){padding-left:calc(var(--k) * .5)}
+        .typing-zhuyin-keyboard .typing-letter-row:nth-child(3){padding-left:calc(var(--k) * .75)}
+        .typing-zhuyin-keyboard .typing-letter-row:nth-child(4){padding-left:calc(var(--k) * 1.25)}
+        .typing-zhuyin-keyboard .typing-letter-row:nth-child(5){padding-left:calc(var(--k) * 3)}
+        .typing-zhuyin-keyboard .typing-letter-key{width:var(--k);height:calc(var(--k) * 1.08);flex:none}
+        .typing-zhuyin-keyboard .typing-letter-key span{font-size:min(19px,calc(var(--k) * .42))}
+        .typing-zhuyin-keyboard .typing-letter-key small{font-size:min(13px,calc(var(--k) * .3))}
+        .typing-zhuyin-keyboard .typing-zhuyin-space{width:calc(var(--k) * 5.3)}
+        .typing-zhuyin-steps{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:6px}
+        .typing-zhuyin-steps li{background:#fff;border:2px solid #a5f3fc;border-radius:12px;padding:6px 12px;font-size:17px;line-height:1.6}
+        .typing-zhuyin-steps strong{color:#0f766e;font-size:20px;margin-right:8px}
+    `;
+    document.head.appendChild(style);
+}
+
+function zhuyinSyllableKeys(syllable) {
+    const symbols = [...syllable];
+    const needsSpace = !ZHUYIN_TONE_MARKS.includes(symbols.at(-1));
+    return { symbols, needsSpace };
+}
+
+// target: { text: "小星", zhuyin: "ㄒㄧㄠˇ ㄒㄧㄥ" } — one space-separated syllable per character.
+export function renderZhuyinKeyboardGuide(container, target = {}) {
+    if (!container) return null;
+    ensureZhuyinKeyboardGuideStyles();
+    const characters = [...String(target.text ?? "")].filter(char => /\p{Script=Han}/u.test(char));
+    const syllables = String(target.zhuyin ?? "").trim().split(/\s+/).filter(Boolean);
+    const targetKeys = new Set();
+    const steps = syllables.map((syllable, index) => {
+        const { symbols, needsSpace } = zhuyinSyllableKeys(syllable);
+        symbols.forEach(symbol => { if (ZHUYIN_SYMBOL_TO_KEY[symbol]) targetKeys.add(ZHUYIN_SYMBOL_TO_KEY[symbol]); });
+        if (needsSpace) targetKeys.add(" ");
+        const keys = [...symbols, ...(needsSpace ? ["空白鍵（一聲）"] : [])].join(" → ");
+        return `<li><strong>${escapeHtml(characters[index] ?? "")}</strong>${escapeHtml(keys)}</li>`;
+    });
+    const keyHtml = key => {
+        const symbol = zhuyinKeys[key] ?? "";
+        const isTarget = targetKeys.has(key);
+        return `<kbd class="typing-letter-key${isTarget ? " is-target" : ""}" data-key="${escapeHtml(key)}" aria-label="${escapeHtml(symbol)}，鍵盤 ${escapeHtml(key.toUpperCase())}${isTarget ? "，本題需要" : ""}"><span>${escapeHtml(symbol)}</span><small>${escapeHtml(key.toUpperCase())}</small></kbd>`;
+    };
+    const rowsHtml = ZHUYIN_KEY_ROWS.map(row => `<div class="typing-letter-row">${[...row].map(keyHtml).join("")}</div>`).join("")
+        + `<div class="typing-letter-row"><kbd class="typing-letter-key typing-zhuyin-space${targetKeys.has(" ") ? " is-target" : ""}" data-key="space" aria-label="空白鍵，一聲${targetKeys.has(" ") ? "，本題需要" : ""}"><span>空白鍵</span><small>一聲</small></kbd></div>`;
+    container.innerHTML = `
+        <div class="typing-letter-guide" data-zhuyin-keyboard-guide>
+            <p class="typing-letter-guide-intro"><strong>先切到「中」：</strong>黃色是這一題要按的鍵。一聲按空白鍵；二、三、四聲和輕聲按數字列的聲調鍵。</p>
+            <div class="typing-letter-keyboard typing-zhuyin-keyboard" aria-label="注音鍵盤按鍵位置示意">${rowsHtml}</div>
+            ${steps.length ? `<ol class="typing-zhuyin-steps" aria-label="依序按鍵">${steps.join("")}</ol>` : `<p class="typing-letter-guide-help">點一下題目的輸入框，這裡就會顯示要按的鍵。</p>`}
+        </div>
+    `;
+    return container.querySelector("[data-zhuyin-keyboard-guide]");
+}
+
 function setActiveTab(activeButton, inactiveButton, isActive) {
     activeButton?.classList.toggle("bg-rose-600", isActive);
     activeButton?.classList.toggle("text-white", isActive);
@@ -213,7 +280,8 @@ function setKeyboardActiveTab(activeButton, inactiveButton, isActive) {
 function buildTypingToolsHtml(options = {}) {
     const keyboard = options.showKeyboard ?? options.keyboard ?? true;
     const punctuation = options.showPunctuation ?? options.punctuation ?? true;
-    const guidedKeyboard = options.keyboardGuide === true || typeof options.getKeyboardTarget === "function";
+    const guidedKeyboard = options.keyboardGuide === true || typeof options.getKeyboardTarget === "function"
+        || typeof options.getZhuyinTarget === "function";
 
     return `
         ${punctuation ? `
@@ -271,9 +339,14 @@ export function initTypingTools(options = {}) {
     root.id = "typing-tools-root";
     root.innerHTML = buildTypingToolsHtml(options);
     document.body.appendChild(root);
-    const guidedKeyboard = options.keyboardGuide === true || typeof options.getKeyboardTarget === "function";
+    const zhuyinGuided = typeof options.getZhuyinTarget === "function";
+    const guidedKeyboard = options.keyboardGuide === true || typeof options.getKeyboardTarget === "function" || zhuyinGuided;
     const refreshKeyboardGuide = () => {
         if (!guidedKeyboard) return;
+        if (zhuyinGuided) {
+            renderZhuyinKeyboardGuide(document.getElementById("floating-letter-key-guide"), options.getZhuyinTarget() || {});
+            return;
+        }
         const target = typeof options.getKeyboardTarget === "function"
             ? options.getKeyboardTarget()
             : options.keyboardTarget;
