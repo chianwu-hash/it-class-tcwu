@@ -262,6 +262,18 @@ const GRADE6_115_1_ACTIVITIES = [
     {
         type: "typing", rewardMode: "boss", weekCode: "07", activityKey: "typing_boss_en_1", totalLevels: 1,
         pageHref: "/grade6/115-1/week07-boss-en.html", label: "第 7 週 英語進階魔王"
+    },
+    {
+        type: "typing", weekCode: "08", activityKey: "typing_task_5", totalLevels: 5,
+        pageHref: "/grade6/115-1/week08.html", label: "第 8 週 中英打闖關"
+    },
+    {
+        type: "typing", rewardMode: "boss", weekCode: "08", activityKey: "typing_boss_zh_1", totalLevels: 1,
+        pageHref: "/grade6/115-1/week08-boss-zh.html", label: "第 8 週 國語進階魔王"
+    },
+    {
+        type: "typing", rewardMode: "boss", weekCode: "08", activityKey: "typing_boss_en_1", totalLevels: 1,
+        pageHref: "/grade6/115-1/week08-boss-en.html", label: "第 8 週 英語進階魔王"
     }
 ];
 
