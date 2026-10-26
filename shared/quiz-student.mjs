@@ -7,13 +7,14 @@ initImageLightbox({ root: document.getElementById('server-quiz'), selector: 'img
 const params = new URLSearchParams(location.search), sessionId = params.get('session');
 const local = params.get('local') === '1' && ['127.0.0.1', 'localhost'].includes(location.hostname);
 const cloud = !local && params.get('cloud') === '1';
+if (cloud) document.body.classList.add('quiz-skin');
 const gradeRoute = cloud ? await import('./quiz-grade-route.mjs') : null;
 if (cloud) {
   const grade = gradeRoute.quizPageGrade(location.pathname);
   document.title = `${grade === 3 ? '三' : '六'}年級考前練功房`;
   document.querySelector('.hero h1').textContent = document.title;
   document.querySelector('#quiz-lock p').textContent = '請使用名冊中的學生 Google 帳號登入，讀取並保存自己的雲端作答。';
-  const back = document.createElement('a'); back.href = 'quiz-library.html'; back.textContent = '← 返回單元選卷';
+  const back = document.createElement('a'); back.className = 'quiz-back-link'; back.href = 'quiz-library.html'; back.textContent = '← 返回單元選卷';
   document.querySelector('.hero .wrap').append(back);
 }
 let currentSession = null;
@@ -37,12 +38,15 @@ async function start() {
   if (cloud) script.dataset.quiz = 'true';
   await new Promise((resolve, reject) => { script.onload = resolve; script.onerror = () => reject(new Error('導覽未能載入，請重新整理。')); document.getElementById('quiz-navbar').append(script); });
   const { initNavbarAuth } = await import('./navbar-auth.js');
-  let authGeneration = 0, validatedUser = null, validatingUser = null;
+  let authGeneration = 0, validatedUser = null, validatingUser = null, practiceRole = null;
   initNavbarAuth({ onSessionResolved(session) {
     const previousId = currentSession?.user?.id || null;
     currentSession = session;
     const id = session?.user?.id || null;
-    document.getElementById('quiz-identity').textContent = session?.user?.email ? session.user.email + (cloud ? '｜進度會保存到你的帳號' : '') : '請先登入 Google 帳號';
+    if (previousId !== id) practiceRole = null;
+    document.getElementById('quiz-identity').textContent = session?.user?.email
+      ? cloud ? (practiceRole === 'teacher' ? '教師試答｜送出後保存進度' : practiceRole === 'student' ? '學生練習｜送出後保存進度' : '正在確認年級與保存紀錄…') : session.user.email
+      : '請先登入 Google 帳號';
     if (!cloud) { quiz.handleAuthChange(session).catch(e => { document.getElementById('entry-status').textContent = e.message; }); return; }
     if (id && previousId === id && (validatedUser === id || validatingUser === id)) return;
     const token = ++authGeneration; validatedUser = null; validatingUser = id;
@@ -55,10 +59,12 @@ async function start() {
         if (token !== authGeneration || currentSession?.user?.id !== id) return;
         const redirect = gradeRoute.quizStudentRedirect(identity, location.pathname, location.search);
         if (redirect) { location.replace(redirect); return; }
+        practiceRole = identity.role;
+        document.getElementById('quiz-identity').textContent = `${practiceRole === 'teacher' ? '教師試答' : '學生練習'}｜送出後保存進度`;
         validatedUser = id; validatingUser = null;
         document.getElementById('entry-status').textContent = '';
         await quiz.handleAuthChange(currentSession);
-      } catch (e) { if (token === authGeneration) { validatingUser = null; document.getElementById('entry-status').textContent = e.message; } }
+      } catch (e) { if (token === authGeneration) { validatingUser = null; document.getElementById('quiz-identity').textContent = '年級或保存紀錄尚未確認'; document.getElementById('entry-status').textContent = e.message; } }
     }, 0);
   } });
 }

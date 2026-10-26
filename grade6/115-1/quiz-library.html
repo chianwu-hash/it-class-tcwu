@@ -3,19 +3,24 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex"><title>六年級考前練功房</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="stylesheet" href="../../shared/quiz-library.css">
-</head><body>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap">
+  <link rel="stylesheet" href="../../shared/quiz-theme.css?v=20261026-style">
+  <link rel="stylesheet" href="../../shared/quiz-library.css?v=20261026-style">
+</head><body class="quiz-skin quiz-library-page" data-grade="6">
   <script src="navbar.js?v=20261026" data-homework="true" data-quiz="true"></script>
-  <header><span class="badge">六年級・考前練功房</span><h1>選個單元，開始練功！</h1>
-    <p>各科單元練習，每次 10 題。送出後會保存進度，在學校或家裡都能接著練。</p>
-    <p id="cloud-identity" role="status">正在確認登入狀態…</p>
+  <header class="library-hero"><div class="library-hero-inner">
+    <div class="library-hero-copy"><a class="library-parent" href="/index.html">謙大叔的電腦教室</a><span class="library-grade">六年級</span>
+      <h1><i class="fa-solid fa-dumbbell" aria-hidden="true"></i>考前練功房</h1>
+      <p class="library-description">各科單元練習，每次 10 題。送出後會保存進度，在學校或家裡都能接著練。</p>
+      <p id="cloud-identity" role="status">正在確認登入狀態…</p>
+    </div><i class="fa-solid fa-dumbbell hero-ornament" aria-hidden="true"></i></div>
   </header>
   <main>
-    <section id="cloud-lock" class="panel"><h2>先登入，再開始</h2><p>請點上方的 Google 登入按鈕，使用名冊中的學生帳號登入。</p><p>登入後就能看見所屬年級的單元卷與已保存的進度。教師帳號可進入教師試答。</p></section>
+    <section id="cloud-lock" class="panel"><h2><i class="fa-solid fa-user-lock" aria-hidden="true"></i>先登入，再開始</h2><p>請點上方的 Google 登入按鈕，使用名冊中的學生帳號登入。</p><p>登入後就能看見所屬年級的單元卷與已保存的進度。教師帳號可進入教師試答。</p></section>
     <section id="cloud-library" hidden>
       <div class="filters"><label id="grade-filter-label" hidden>教師檢視年級 <select id="grade-filter"><option value="3">三年級</option><option value="6">六年級</option></select></label>
       <label>科目 <select id="subject-filter"><option value="">全部科目</option><option>國語</option><option>英語</option><option>數學</option><option>社會</option><option>自然</option></select></label>
-      <button id="refresh-library">更新雲端進度</button></div>
+      <button id="refresh-library"><i class="fa-solid fa-rotate-right" aria-hidden="true"></i>更新雲端進度</button></div>
       <p id="cloud-status" role="status" aria-live="polite"></p><div id="cloud-papers" class="papers"></div>
     </section>
   </main>

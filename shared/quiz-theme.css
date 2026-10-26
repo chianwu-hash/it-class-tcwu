@@ -1,0 +1,66 @@
+/* 練功房專用外觀；不改課堂原模式或全站導覽。 */
+.quiz-skin {
+  --quiz-primary:#0f766e; --quiz-primary-dark:#115e59;
+  --quiz-hero-start:#0e7490; --quiz-hero-end:#047857;
+  --quiz-tint:#ecfeff; --quiz-border:#a5f3fc; --quiz-page:#f0fdfa;
+  --quiz-amber:#fbbf24; --quiz-amber-text:#451a03;
+  margin:0; color:#243c35; background:radial-gradient(ellipse at 12% 0%,#cffafe80,transparent 48%),var(--quiz-page);
+  font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif; line-height:1.65;
+}
+.quiz-skin[data-grade="6"] {
+  --quiz-primary:#6d28d9; --quiz-primary-dark:#4c1d95;
+  --quiz-hero-start:#6d28d9; --quiz-hero-end:#4338ca;
+  --quiz-tint:#f5f3ff; --quiz-border:#ddd6fe; --quiz-page:#f8fafc;
+  color:#29334b; background:radial-gradient(ellipse at 85% 0%,#ede9fe90,transparent 48%),var(--quiz-page);
+}
+.quiz-skin *, .quiz-skin *::before, .quiz-skin *::after {box-sizing:border-box}
+.quiz-skin [hidden],.quiz-skin .hidden {display:none!important}
+.quiz-skin button,.quiz-skin select,.quiz-skin input,.quiz-skin textarea {font:inherit}
+.quiz-skin a:focus-visible,.quiz-skin button:focus-visible,.quiz-skin select:focus-visible {outline:3px solid var(--quiz-primary);outline-offset:4px}
+.quiz-skin nav {background:#ffffffed;border-bottom:1px solid var(--quiz-border);padding:0;box-shadow:0 1px 5px #153c3210}
+.quiz-skin nav>div {max-width:1440px;margin:auto;min-height:64px;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.quiz-skin nav>div>div:first-child {display:flex;align-items:center;gap:8px;font-size:18px;font-weight:900;white-space:nowrap}
+.quiz-skin nav>div>div:first-child>i {color:var(--quiz-primary)}
+.quiz-skin nav>div>div:last-child {display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
+.quiz-skin nav a {color:#475569;text-decoration:none;font-size:14px;font-weight:700;padding:8px 10px;border-radius:12px;white-space:nowrap;margin:0}
+.quiz-skin nav a:hover {color:var(--quiz-primary);background:var(--quiz-tint)}
+.quiz-skin #nav-auth-bar {display:flex;align-items:center;gap:8px;min-width:0;flex-wrap:nowrap}
+.quiz-skin #auth-status {max-width:210px;min-width:0;padding:6px 12px;border:1px solid var(--quiz-border);background:var(--quiz-tint);color:var(--quiz-primary-dark);font-size:13px;font-weight:700;border-radius:99px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.quiz-skin nav #login-btn,.quiz-skin nav #logout-btn,.quiz-skin nav #reset-progress-btn {display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:42px;height:42px;min-height:42px;padding:0;border:2px solid var(--quiz-border);border-radius:50%;background:white;color:var(--quiz-primary);cursor:pointer;font-size:16px;box-shadow:none}
+.quiz-skin nav #logout-btn {background:var(--quiz-primary);color:white;border-color:var(--quiz-primary)}
+.quiz-skin nav #admin-btn {background:var(--quiz-tint);color:var(--quiz-primary);border:1px solid var(--quiz-border)}
+.quiz-skin nav .sr-only {position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.quiz-skin #quiz-navbar nav {padding:0}
+.quiz-skin #quiz-navbar nav a {margin:0}
+.quiz-skin #quiz-navbar nav>div {flex-wrap:nowrap}
+.quiz-skin #quiz-navbar nav>div>div {flex-wrap:nowrap}
+
+/* 保留滿版題目、選項四色及對綠錯橘；只同步年級主色。 */
+.quiz-student-page.quiz-skin .hero {padding:7px 0;background:var(--quiz-tint);border-bottom:1px solid var(--quiz-border)}
+.quiz-student-page.quiz-skin .hero>.wrap {min-height:36px;gap:12px}
+.quiz-student-page.quiz-skin .hero h1 {font-size:18px;color:var(--quiz-primary-dark);font-weight:900}
+.quiz-student-page.quiz-skin .quiz-mascot {width:36px;height:36px}
+.quiz-student-page.quiz-skin #quiz-identity {color:var(--quiz-primary-dark);font-size:12px}
+.quiz-student-page.quiz-skin .quiz-back-link {color:var(--quiz-primary);font-weight:700;text-underline-offset:4px}
+.quiz-student-page.quiz-skin #quiz-navbar:has(nav)~.hero .quiz-back-link {display:none}
+.quiz-student-page.quiz-skin .quiz-heading progress {accent-color:var(--quiz-primary)}
+.quiz-student-page.quiz-skin .quiz-heading progress::-webkit-progress-bar {background:var(--quiz-border)}
+.quiz-student-page.quiz-skin .quiz-heading progress::-webkit-progress-value {background:var(--quiz-primary)}
+.quiz-student-page.quiz-skin .quiz-heading h2,.quiz-student-page.quiz-skin .quiz-heading .progress-label {color:var(--quiz-primary-dark)}
+.quiz-student-page.quiz-skin #server-quiz .quiz-primary {background:var(--quiz-primary);border-color:var(--quiz-primary);box-shadow:0 4px 0 var(--quiz-primary-dark)}
+.quiz-student-page.quiz-skin #server-quiz .quiz-refresh {color:var(--quiz-primary);background:var(--quiz-tint)}
+.quiz-student-page.quiz-skin #server-quiz .student-option:has(input:checked):not([data-result]) {border-color:var(--quiz-primary);outline-color:var(--quiz-primary);background:var(--quiz-tint)}
+.quiz-student-page.quiz-skin #server-quiz .student-option:has(input:focus-visible) {outline-color:var(--quiz-primary-dark)}
+.quiz-student-page.quiz-skin #server-quiz .answer-preview:focus {outline-color:var(--quiz-primary)}
+@media(max-width:700px) {
+  .quiz-skin nav>div {padding:9px 16px;gap:6px;flex-wrap:wrap}
+  .quiz-skin #quiz-navbar nav>div {flex-wrap:wrap}
+  .quiz-skin nav>div>div:first-child {font-size:15px;line-height:24px}
+  .quiz-skin nav>div>div:last-child {width:100%;justify-content:flex-start;gap:6px;flex-wrap:nowrap}
+  .quiz-skin nav a {font-size:13px;padding:7px 8px}
+  .quiz-skin #nav-auth-bar {flex:1;gap:6px;justify-content:flex-end}
+  .quiz-skin #auth-status {flex:0 1 auto;max-width:150px;padding:5px 8px;font-size:11px}
+  .quiz-student-page.quiz-skin .hero>.wrap {display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:2px 12px;padding:0 14px}
+  .quiz-student-page.quiz-skin .hero h1 {font-size:16px}
+  .quiz-student-page.quiz-skin #quiz-identity {max-width:none;padding:0;font-size:11px;line-height:1.35}
+}
