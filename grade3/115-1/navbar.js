@@ -1,5 +1,6 @@
 (function () {
     const currentScript = document.currentScript;
+    const quizMode = currentScript.dataset.quiz === 'true';
 
     if (!window.__buildCourseNavbarHtml) {
         const request = new XMLHttpRequest();
@@ -17,8 +18,8 @@
         `<span title="${full}" class="inline-flex items-center gap-1"><i class="${iconClass}" aria-hidden="true"></i><span aria-hidden="true">${short}</span><span class="sr-only">${full}</span></span>`;
 
     const navConfig = {
-        activeWeeks: [1, 2, 3, 4, 5, 6, 7, 8],
-        gradeLabel: "三年級資訊課｜115-1",
+        activeWeeks: quizMode ? [] : [1, 2, 3, 4, 5, 6, 7, 8],
+        gradeLabel: quizMode ? "考前練功房｜三年級" : "三年級資訊課｜115-1",
         titleIconClass: "fa-solid fa-rocket text-cyan-600",
         titleClassName: "font-black text-gray-800 flex items-center text-lg tracking-wide whitespace-nowrap",
         navClassName: "bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-cyan-200 shadow-sm",
@@ -26,9 +27,11 @@
         linkClassName: "px-3 py-1.5 text-sm font-bold text-gray-600 hover:text-cyan-600 hover:bg-cyan-50 rounded-lg transition whitespace-nowrap",
         currentWeekClassName: "px-3 py-1.5 text-sm font-bold bg-cyan-100 text-cyan-800 rounded-lg shadow-sm whitespace-nowrap cursor-default",
         separatorClassName: "text-gray-300 mx-1",
-        homeLabel: iconLabel('fa-solid fa-house', '首', '課程首頁'),
+        homeLabel: quizMode ? '單元選卷' : iconLabel('fa-solid fa-house', '首', '課程首頁'),
+        homeHref: quizMode ? 'quiz-library.html' : 'index.html',
         // Google 身分及正式成果由受控接回 RPC 核對。
-        extraLinks: [
+        extraLinks: quizMode ? [{ href: 'index.html', label: '課程首頁' }] : [
+            { href: 'quiz-library.html', label: iconLabel('fa-solid fa-dumbbell', '練功', '考前練功房') },
             { href: 'typing-foundation.html', label: iconLabel('fa-solid fa-keyboard', '英', '英打基礎') },
             { href: 'zhuyin-foundation.html', label: iconLabel('fa-solid fa-keyboard', '中', '中打基礎') },
             { href: '/my-tree.html?course=grade3-115-1', label: iconLabel('fa-solid fa-tree', '樹', '我的努力樹') }
@@ -48,6 +51,7 @@
     const navHTML = window.__buildCourseNavbarHtml(navConfig);
     currentScript.insertAdjacentHTML("beforebegin", navHTML);
     currentScript.remove();
+    if (quizMode) return;
 
     // Match the semester home cards; never apply the previous semester's visibility.
     import('../../shared/week-visibility.js').then(async ({ loadWeekVisibility }) => {

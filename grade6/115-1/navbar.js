@@ -1,5 +1,6 @@
 (function () {
     const currentScript = document.currentScript;
+    const quizMode = currentScript.dataset.quiz === 'true';
 
     if (!window.__buildCourseNavbarHtml) {
         const request = new XMLHttpRequest();
@@ -17,8 +18,8 @@
         `<span title="${full}" class="inline-flex items-center gap-1"><i class="${iconClass}" aria-hidden="true"></i><span aria-hidden="true">${short}</span><span class="sr-only">${full}</span></span>`;
 
     const navHTML = window.__buildCourseNavbarHtml({
-        activeWeeks: [1, 2, 3, 5, 7, 8],
-        gradeLabel: "六年級資訊課｜115-1",
+        activeWeeks: quizMode ? [] : [1, 2, 3, 5, 7, 8],
+        gradeLabel: quizMode ? "考前練功房｜六年級" : "六年級資訊課｜115-1",
         titleIconClass: "fa-solid fa-graduation-cap text-violet-700",
         titleClassName: "font-black text-slate-800 flex items-center text-lg tracking-wide whitespace-nowrap",
         navClassName: "bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-violet-200 shadow-sm",
@@ -26,8 +27,10 @@
         linkClassName: "px-2 py-1.5 text-sm font-bold text-gray-600 hover:text-violet-700 hover:bg-violet-50 rounded-lg transition whitespace-nowrap",
         currentWeekClassName: "px-2 py-1.5 text-sm font-bold bg-violet-100 text-violet-800 rounded-lg shadow-sm whitespace-nowrap cursor-default",
         separatorClassName: "text-gray-300 mx-1",
-        homeLabel: iconLabel('fa-solid fa-house', '首', '課程首頁'),
-        extraLinks: [
+        homeLabel: quizMode ? '單元選卷' : iconLabel('fa-solid fa-house', '首', '課程首頁'),
+        homeHref: quizMode ? 'quiz-library.html' : 'index.html',
+        extraLinks: quizMode ? [{ href: 'index.html', label: '課程首頁' }] : [
+            { href: 'quiz-library.html', label: iconLabel('fa-solid fa-dumbbell', '練功', '考前練功房') },
             { href: 'boss-garden.html', label: iconLabel('fa-solid fa-crown', '魔', '魔王花園') },
             { href: 'typing-foundation.html', label: iconLabel('fa-solid fa-keyboard', '英', '英打基礎') },
             { href: 'zhuyin-foundation.html', label: iconLabel('fa-solid fa-keyboard', '中', '中打基礎') },

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-Hant"><head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex"><title>三年級考前練功房</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="../../shared/quiz-library.css">
+</head><body>
+  <script src="navbar.js?v=20261026" data-homework="true" data-quiz="true"></script>
+  <header><span class="badge">三年級・考前練功房</span><h1>選個單元，開始練功！</h1>
+    <p>各科單元練習，每次 10 題。送出後會保存進度，在學校或家裡都能接著練。</p>
+    <p id="cloud-identity" role="status">正在確認登入狀態…</p>
+  </header>
+  <main>
+    <section id="cloud-lock" class="panel"><h2>先登入，再開始</h2><p>請點上方的 Google 登入按鈕，使用名冊中的學生帳號登入。</p><p>登入後就能看見所屬年級的單元卷與已保存的進度。教師帳號可進入教師試答。</p></section>
+    <section id="cloud-library" hidden>
+      <div class="filters"><label id="grade-filter-label" hidden>教師檢視年級 <select id="grade-filter"><option value="3">三年級</option><option value="6">六年級</option></select></label>
+      <label>科目 <select id="subject-filter"><option value="">全部科目</option><option>國語</option><option>英語</option><option>數學</option><option>社會</option><option>自然</option></select></label>
+      <button id="refresh-library">更新雲端進度</button></div>
+      <p id="cloud-status" role="status" aria-live="polite"></p><div id="cloud-papers" class="papers"></div>
+    </section>
+  </main>
+  <script type="module" src="../../shared/quiz-library.mjs"></script>
+</body></html>

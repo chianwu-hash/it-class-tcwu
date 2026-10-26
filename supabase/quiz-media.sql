@@ -1,4 +1,4 @@
--- 候選 migration：先 quiz.sql，再本檔。未套用正式資料庫。
+-- 先 quiz.sql，再本檔；2026-10-26 已依使用者授權套用於本人雲端試答。
 begin;
 create table if not exists public.quiz_media_assets (
  url text primary key, owner_id uuid not null references auth.users(id),

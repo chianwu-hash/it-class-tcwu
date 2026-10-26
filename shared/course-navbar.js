@@ -26,6 +26,7 @@
             authBarHtml = "",
             extraLinks = [],
             homeLabel = '<i class="fa-solid fa-house mr-1"></i> 課程首頁',
+            homeHref = 'index.html',
             currentPath = window.location.pathname
         } = config;
 
@@ -39,7 +40,7 @@
                     <i class="${titleIconClass} mr-2"></i> ${gradeLabel}
                 </div>
                 <div class="flex flex-wrap lg:justify-end gap-2 items-center">
-                    <a href="index.html" class="${linkClassName}">
+                    <a href="${homeHref}" class="${linkClassName}">
                         ${homeLabel}
                     </a>
         `;

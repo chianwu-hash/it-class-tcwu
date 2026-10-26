@@ -9,7 +9,8 @@
     "scripts":  {
                     "quiz:setup": "npm install --prefix tmp/quiz-runtime --no-audit --no-fund @electric-sql/pglite@0.3.14 katex@0.16.22",
                     "quiz:dev": "node automation/quiz-local-server.mjs",
-                    "quiz:test": "node --test automation/tests/quiz.test.mjs automation/tests/quiz-auth-media.test.mjs automation/tests/quiz-native-content.test.mjs",
+                    "quiz:test": "node --test automation/tests/quiz.test.mjs automation/tests/quiz-auth-media.test.mjs automation/tests/quiz-native-content.test.mjs automation/tests/quiz-personal.test.mjs automation/tests/quiz-student-library.test.mjs automation/tests/quiz-grade-route.test.mjs",
+                    "quiz:cloud": "node automation/quiz-cloud-server.mjs",
                     "test":  "echo \"Error: no test specified\" \u0026\u0026 exit 1",
                     "browser:smoke":  "node automation/browser-smoke.js",
                     "chatgpt:image-batch": "node ..\\browser-automation-workflow\\scripts\\chatgpt-image-batch.js",

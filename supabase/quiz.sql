@@ -1,4 +1,4 @@
--- 本機可驗證的候選 migration；未授權套用正式資料庫。
+-- 測驗場次與本人作答；2026-10-26 使用者授權接上真實 Supabase 保存。
 begin;
 
 create table if not exists public.quiz_banks (
@@ -25,9 +25,15 @@ create table if not exists public.quiz_sessions (
  reveal text not null check(reveal in ('immediate','complete')),
  shuffle_questions boolean not null,
  shuffle_options boolean not null,
+ access_mode text not null default 'classroom' check(access_mode in ('classroom','personal','practice')),
  status text not null default 'open' check(status in ('open','closed')),
  created_at timestamptz not null default now()
 );
+alter table public.quiz_sessions add column if not exists access_mode text not null default 'classroom'
+ check(access_mode in ('classroom','personal','practice'));
+alter table public.quiz_sessions drop constraint if exists quiz_sessions_access_mode_check;
+alter table public.quiz_sessions add constraint quiz_sessions_access_mode_check
+ check(access_mode in ('classroom','personal','practice'));
 create table if not exists public.quiz_attempts (
  id uuid primary key default gen_random_uuid(),
  session_id uuid not null references public.quiz_sessions(id),
@@ -191,10 +197,29 @@ declare
  uid uuid:=auth.uid(); teacher boolean:=coalesce(public.is_teacher(),false); v_email text;
  bank public.quiz_banks; ver public.quiz_versions; sess public.quiz_sessions; att public.quiz_attempts; ans public.quiz_answers;
  d jsonb; b jsonb; q jsonb; o jsonb; qo jsonb; oo jsonb:='{}'; result jsonb; reviews jsonb:='[]'; responses jsonb;
- target uuid; qid text; response jsonb; correct boolean; done boolean; groupdone boolean; n integer; cls text;
+ target uuid; qid text; response jsonb; correct boolean; done boolean; groupdone boolean; n integer; cls text; mode text; student_grade integer;
 begin
  if uid is null then raise exception 'login_required'; end if;
- if p_action in ('list','get','save','publish','versions','open','monitor','close','sessions') and not teacher then raise exception 'teacher_required'; end if;
+ if p_action in ('list','get','save','publish','versions','open','monitor','close','sessions','personal_sessions') and not teacher then raise exception 'teacher_required'; end if;
+ if p_action in ('personal_sessions','library_sessions') then
+  if not teacher then
+   select lower(u.email) into v_email from auth.users u where u.id=uid and u.email_confirmed_at is not null;
+   select left(e.class_code,1)::integer into student_grade from public.student_enrollments e
+    where e.email=v_email and e.school_year=115 and e.class_code ~ '^[36][0-9]{2}$';
+   if student_grade is null then raise exception 'roster_required'; end if;
+  end if;
+  select coalesce(jsonb_agg(jsonb_build_object('id',s.id,'version_id',s.version_id,'title',v.document->>'title',
+   'catalog',v.document->'catalog','status',s.status,
+   'total',(select count(*) from jsonb_array_elements(v.document->'blocks') b,lateral jsonb_array_elements(b->'questions') q),
+   'answered',(select count(*) from public.quiz_answers x join public.quiz_attempts a on a.id=x.attempt_id where a.session_id=s.id and a.user_id=uid),
+   'correct',(select count(*) from public.quiz_answers x join public.quiz_attempts a on a.id=x.attempt_id where a.session_id=s.id and a.user_id=uid and x.correct)
+   ) order by v.document->'catalog'->>'volume',v.document->'catalog'->>'subject',v.document->'catalog'->>'unit'),'[]') into result
+   from public.quiz_sessions s join public.quiz_versions v on v.id=s.version_id
+   where (teacher and s.owner_id=uid and s.access_mode='personal')
+    or (not teacher and s.access_mode='practice' and exists(select 1 from public.student_enrollments e
+     where e.email=v_email and e.school_year=s.school_year and s.class_codes ? e.class_code));
+  return jsonb_build_object('sessions',result,'role',case when teacher then 'teacher' else 'student' end,'grade',student_grade);
+ end if;
  if p_action='sessions' then
   select coalesce(jsonb_agg(to_jsonb(s)||jsonb_build_object('title',v.document->>'title','revision',v.revision) order by s.created_at desc),'[]') into result
    from public.quiz_sessions s join public.quiz_versions v on v.id=s.version_id where s.owner_id=uid;
@@ -242,17 +267,19 @@ begin
  if p_action='open' then
   select v.* into ver from public.quiz_versions v join public.quiz_banks k on k.id=v.bank_id where v.id=(p_data->>'version_id')::uuid and k.owner_id=uid;
   if ver.id is null then raise exception 'version_unavailable'; end if;
-  if jsonb_typeof(p_data->'class_codes') is distinct from 'array' then raise exception 'invalid_session'; end if;
-  if jsonb_array_length(p_data->'class_codes') not between 1 and 20 or (p_data->>'school_year')::integer not between 100 and 200
+  mode:=coalesce(p_data->>'access_mode','classroom');
+  if mode not in ('classroom','personal','practice') or jsonb_typeof(p_data->'class_codes') is distinct from 'array' then raise exception 'invalid_session'; end if;
+  if (mode in ('classroom','practice') and jsonb_array_length(p_data->'class_codes') not between 1 and 20)
+   or (mode='personal' and jsonb_array_length(p_data->'class_codes')<>0) or (p_data->>'school_year')::integer not between 100 and 200
    or exists(select 1 from jsonb_array_elements_text(p_data->'class_codes') c where c !~ '^[36][0-9]{2}$')
    or coalesce(p_data->>'reveal','') not in ('immediate','complete') then raise exception 'invalid_session'; end if;
-  insert into public.quiz_sessions(id,owner_id,version_id,school_year,class_codes,reveal,shuffle_questions,shuffle_options)
+  insert into public.quiz_sessions(id,owner_id,version_id,school_year,class_codes,reveal,shuffle_questions,shuffle_options,access_mode)
    values((p_data->>'session_id')::uuid,uid,ver.id,(p_data->>'school_year')::integer,p_data->'class_codes',p_data->>'reveal',
-    coalesce((p_data->>'shuffle_questions')::boolean,false),coalesce((p_data->>'shuffle_options')::boolean,false)) on conflict(id) do nothing;
+    coalesce((p_data->>'shuffle_questions')::boolean,false),coalesce((p_data->>'shuffle_options')::boolean,false),mode) on conflict(id) do nothing;
   select * into sess from public.quiz_sessions where id=(p_data->>'session_id')::uuid;
   if sess.owner_id<>uid or sess.version_id<>ver.id or sess.class_codes<>p_data->'class_codes' or sess.school_year<>(p_data->>'school_year')::integer
    or sess.reveal<>p_data->>'reveal' or sess.shuffle_questions<>coalesce((p_data->>'shuffle_questions')::boolean,false)
-   or sess.shuffle_options<>coalesce((p_data->>'shuffle_options')::boolean,false) then raise exception 'session_conflict'; end if;
+   or sess.shuffle_options<>coalesce((p_data->>'shuffle_options')::boolean,false) or sess.access_mode<>mode then raise exception 'session_conflict'; end if;
   return to_jsonb(sess);
  end if;
  select * into sess from public.quiz_sessions where id=(p_data->>'session_id')::uuid for update;
@@ -269,16 +296,20 @@ begin
   return jsonb_build_object('status',sess.status,'students',result);
  end if;
  if p_action not in ('join','resume','submit') then raise exception 'invalid_action'; end if;
- if teacher then raise exception 'student_required'; end if;
- select lower(u.email) into v_email from auth.users u where u.id=uid and u.email_confirmed_at is not null;
- select e.class_code into cls from public.student_enrollments e where e.email=v_email and e.school_year=sess.school_year and sess.class_codes ? e.class_code;
- if cls is null then raise exception 'roster_required'; end if;
+ if sess.access_mode='personal' then
+  if not teacher or sess.owner_id<>uid then raise exception 'session_unavailable'; end if;
+ else
+  if teacher then raise exception 'student_required'; end if;
+  select lower(u.email) into v_email from auth.users u where u.id=uid and u.email_confirmed_at is not null;
+  select e.class_code into cls from public.student_enrollments e where e.email=v_email and e.school_year=sess.school_year and sess.class_codes ? e.class_code;
+  if cls is null then raise exception 'roster_required'; end if;
+ end if;
  select * into ver from public.quiz_versions where id=sess.version_id;d:=ver.document;
  select * into att from public.quiz_attempts where session_id=sess.id and user_id=uid;
  if att.id is null then
   if p_action<>'join' or sess.status<>'open' then raise exception 'attempt_unavailable'; end if;
   select count(*) into n from public.quiz_attempts where session_id=sess.id;
-  if n>=29 then raise exception 'session_full'; end if;
+  if sess.access_mode='classroom' and n>=29 then raise exception 'session_full'; end if;
   -- 暫定：題組位置固定，只在單題區塊的既有位置間亂序。
   with blocks as (select value b, ordinality pos from jsonb_array_elements(d->'blocks') with ordinality),
    singles as (select b,row_number() over(order by case when sess.shuffle_questions then random() else pos::float end) rn from blocks where jsonb_array_length(b->'questions')=1),
