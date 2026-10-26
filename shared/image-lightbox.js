@@ -1,5 +1,5 @@
 // Based on grade6/115-1/week01.html; no auth or progress dependencies.
-export function initImageLightbox() {
+export function initImageLightbox({ root = document, selector = '[data-image-lightbox]', initialScale = 1, minScale = 1, zoomStep = 0.35 } = {}) {
     if (document.getElementById('lightbox')) return;
     document.body.insertAdjacentHTML('beforeend', `<div id="lightbox" class="image-lightbox hidden" role="dialog" aria-modal="true" aria-label="圖片放大檢視">
         <div class="image-lightbox-panel">
@@ -29,7 +29,7 @@ export function initImageLightbox() {
         let previousFocus = null;
         const lightboxPointers = new Map();
         const lightboxState = {
-            scale: 1,
+            scale: initialScale,
             x: 0,
             y: 0,
             dragging: false,
@@ -47,7 +47,7 @@ export function initImageLightbox() {
         }
 
         function setLightboxScale(nextScale) {
-            lightboxState.scale = Math.max(1, Math.min(5, nextScale));
+            lightboxState.scale = Math.max(minScale, Math.min(5, nextScale));
             if (lightboxState.scale <= 1) {
                 lightboxState.x = 0;
                 lightboxState.y = 0;
@@ -60,7 +60,7 @@ export function initImageLightbox() {
         }
 
         function resetLightboxTransform() {
-            lightboxState.scale = 1;
+            lightboxState.scale = initialScale;
             lightboxState.x = 0;
             lightboxState.y = 0;
             applyLightboxTransform();
@@ -105,8 +105,8 @@ export function initImageLightbox() {
             });
         });
         lightboxClose.addEventListener("click", closeLightbox);
-        lightboxZoomOut.addEventListener("click", () => zoomLightboxBy(-0.35));
-        lightboxZoomIn.addEventListener("click", () => zoomLightboxBy(0.35));
+        lightboxZoomOut.addEventListener("click", () => zoomLightboxBy(-zoomStep));
+        lightboxZoomIn.addEventListener("click", () => zoomLightboxBy(zoomStep));
         lightboxReset.addEventListener("click", resetLightboxTransform);
         lightboxCenter.addEventListener("click", () => {
             lightboxState.x = 0;
@@ -122,7 +122,7 @@ export function initImageLightbox() {
 
         lightboxStage.addEventListener("dblclick", (event) => {
             event.preventDefault();
-            if (lightboxState.scale > 1.05) {
+            if (lightboxState.scale > initialScale + 0.05) {
                 resetLightboxTransform();
             } else {
                 setLightboxScale(2.2);
@@ -191,11 +191,31 @@ export function initImageLightbox() {
             if (event.key === "Escape" && !lightboxEl.classList.contains("hidden")) closeLightbox();
         });
 
-    document.querySelectorAll('[data-image-lightbox]').forEach(trigger => {
-        trigger.addEventListener('click', event => {
-            event.preventDefault();
-            const image = trigger.querySelector('img');
-            openLightbox(trigger.href || image.src, image.alt);
+    // 事件代理支援逐題重繪及稍後才揭露的解析，不複製或另存授權網址。
+    function prepareImages() {
+        root.querySelectorAll(selector).forEach(trigger => {
+            if (!trigger.matches('img')) return;
+            trigger.tabIndex = 0;
+            trigger.setAttribute('role', 'button');
+            trigger.setAttribute('aria-label', `${trigger.alt || '題目圖片'}，點擊放大`);
+            trigger.title = '點擊放大圖片';
         });
-    });
+    }
+    function activateImage(event) {
+        const trigger = event.target.closest?.(selector);
+        if (!trigger || !root.contains(trigger)) return;
+        if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
+        const image = trigger.matches('img') ? trigger : trigger.querySelector('img');
+        if (!image?.src || !image.complete || !image.naturalWidth) return;
+        event.preventDefault();
+        // 選項中的圖片只開燈箱，不觸發 label 的選答行為。
+        event.stopPropagation();
+        trigger.focus();
+        openLightbox(trigger.matches('a') ? trigger.href : image.currentSrc || image.src, image.alt || '圖片放大檢視');
+    }
+    prepareImages();
+    root.addEventListener('click', activateImage, true);
+    root.addEventListener('keydown', activateImage, true);
+    const observer = new MutationObserver(prepareImages);
+    observer.observe(root, { childList: true, subtree: true });
 }

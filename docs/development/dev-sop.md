@@ -1,5 +1,7 @@
 # 課程網頁開發 SOP
 
+> **2026-10-24 測驗場次例外（使用者已核准）**：`initQuizModule({ mode: 'server' })` 的個人進度測驗由後端判分與揭答，正式作答使用 `quiz_attempts/quiz_answers`；暫不映射 `student_progress` 或努力樹。此例外只適用新場次模式，既有 scored／practice 週頁契約不變。見 [實作與驗收](quiz-implementation-20261024.md)。
+
 > **2026-10-06 三年級轉換更新**：教師已指定第 06 週接 Google 登入與努力樹。第 02～06 週改用本人名冊核對、一次性舊成果接回與正式 `student_progress`；下文身分卡／不顯示努力樹的敘述僅適用轉換前。第 01 週免身分例外保留。以 [三年級 Google 契約](grade3-google-course.md) 與已填驗收契約為準；正式 SQL 與網站已於2026-10-06獲授權後完成切換；詳見 [正式切換紀錄](grade3-week06-release.md)。
 
 > 最後更新：2026-10-01

@@ -1,5 +1,7 @@
 # 新頁面功能契約 Checklist
 
+> **2026-10-24 使用者核准的新場次模式**：對 `initQuizModule({ mode: 'server' })`，下方「測驗寫入 student_progress」項目改驗 `quiz_attempts/quiz_answers` 的本人作答、教師監看與重整接回；暫不映射努力樹。須額外驗證 API／DOM 未提前含答案、題組延後揭答、固定版本、冪等與網路失敗。既有週頁 scored／practice 不套用此例外。
+
 > **2026-10-06 三年級轉換更新**：教師已指定第 06 週接 Google 登入與努力樹。第 02～06 週改用本人名冊核對、一次性舊成果接回與正式 `student_progress`；下文身分卡／不顯示努力樹的敘述僅適用轉換前。第 01 週免身分例外保留。以 [三年級 Google 契約](grade3-google-course.md) 與已填驗收契約為準；正式 SQL 與網站已於2026-10-06獲授權後完成切換；詳見 [正式切換紀錄](grade3-week06-release.md)。
 
 > 每次新增課程頁面前，將此表複製並填寫。

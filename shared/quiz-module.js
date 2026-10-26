@@ -1,4 +1,5 @@
 import { initQuizPractice } from './quiz-practice.js';
+import { initServerQuiz } from './quiz-server.mjs';
 
 const DEFAULT_MESSAGES = {
     questionLabel: (index) => `Q${index}`,
@@ -65,8 +66,10 @@ export function initQuizModule({
     onAfterSubmit = null,
     requireAuth = true,
     optionLabelMode = "stored",
-    mode = "scored"
+    mode = "scored",
+    server = null
 }) {
+    if (mode === 'server') return initServerQuiz({ selectors, server });
     if (mode === 'practice') return initQuizPractice({ questions, selectors, messages, loadProgress, saveProgress, loadGuestProgress, saveGuestProgress, getCurrentUser, onAfterSubmit, requireAuth, optionLabelMode });
     const mergedMessages = {
         ...DEFAULT_MESSAGES,

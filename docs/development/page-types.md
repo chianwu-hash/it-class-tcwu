@@ -1,5 +1,7 @@
 # 課程網頁類型盤點
 
+> **2026-10-24 新場次共用入口**：`grade6/115-1/quiz.html` 為個人進度場次入口，使用 navbar＋`initNavbarAuth` 與 `initQuizModule({ mode: 'server' })`。正式作答採使用者已核准的 `quiz_attempts/quiz_answers`，不當作舊週頁小測驗、不映射努力樹。教師在 `admin-quiz.html` 開場及監看；其餘既有頁型不變。見 [功能契約與驗證](quiz-implementation-20261024.md)。
+
 > **2026-10-06 三年級轉換更新**：教師已指定第 06 週接 Google 登入與努力樹。第 02～06 週改用本人名冊核對、一次性舊成果接回與正式 `student_progress`；下文身分卡／不顯示努力樹的敘述僅適用轉換前。第 01 週免身分例外保留。以 [三年級 Google 契約](grade3-google-course.md) 與已填驗收契約為準；正式 SQL 與網站已於2026-10-06獲授權後完成切換；詳見 [正式切換紀錄](grade3-week06-release.md)。
 
 > 基於實際程式碼，最後更新：2026-04-15

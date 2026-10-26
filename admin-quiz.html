@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>題庫備課工作臺</title>
+  <link rel="stylesheet" href="shared/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="shared/quiz-author.css">
+  <link rel="stylesheet" href="shared/quiz-student.css">
+  <script defer src="shared/vendor/katex/katex.min.js"></script>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap"><a href="index.html" class="back">← 課程首頁</a>
+      <div class="hero-row"><div><span class="eyebrow">教師工作臺 · 題庫與測驗</span><h1>把好題目，準備好。</h1>
+      <p>從一份草稿開始，把共用材料、公式與解說留在同一處。</p></div><div id="identity">正在確認身分…</div></div>
+      <p id="environment" class="notice" hidden></p>
+    </div>
+  </header>
+  <main class="wrap">
+    <p id="status" role="status" aria-live="polite">正在準備工作臺…</p>
+    <div id="locked" class="card" hidden><h2>請先使用教師帳號登入</h2><p>題庫草稿、正解與版本只供建立這份題庫的老師存取。</p><button id="quiz-login">使用 Google 登入</button></div>
+    <div id="workspace" hidden>
+      <div class="layout">
+        <aside class="card library"><h2>▦ 我的題庫</h2>
+          <form id="search-form"><label for="search">搜尋題名、編目或題目文字</label><div class="inline"><input id="search" type="search"><button class="secondary">搜尋</button></div></form>
+          <button id="new-bank" class="full">＋ 建立測驗</button>
+          <label class="file-button">匯入 Markdown 題庫<input id="import-md" type="file" accept=".md,.txt" hidden></label>
+          <label class="file-button">匯入題庫備份<input id="import-json" type="file" accept=".json" hidden></label>
+          <div id="bank-list" class="bank-list"></div>
+        </aside>
+        <section class="card editor" aria-labelledby="editor-heading">
+          <div class="section-head"><h2 id="editor-heading">✎ 編輯測驗</h2><span id="revision" class="pill">尚未儲存</span></div>
+          <div class="toolbar"><button id="save">儲存草稿</button><button id="preview" class="secondary">教師預覽</button><button id="publish" class="secondary">固定此版本</button><button id="export" class="quiet">下載備份</button></div>
+          <p class="hint">修改草稿不會改動已固定版本。公式用 $…$ 或 $$…$$，例如：<code>\frac{1}{2}</code>。</p>
+          <div id="editor-fields"></div>
+          <div class="toolbar"><button id="add-single" class="secondary">＋ 單題區塊</button><button id="add-group" class="secondary">＋ 共用材料題組</button></div>
+          <details id="history"><summary>已固定的版本</summary><div id="versions"></div></details>
+        </section>
+      </div>
+      <section id="quiz-sessions" class="card"></section>
+    </div>
+  </main>
+  <dialog id="preview-dialog"><div class="section-head"><h2 id="preview-title">教師預覽</h2><button id="close-preview" class="secondary">關閉預覽</button></div>
+    <p class="notice">教師專用預覽，包含正解與解析。這裡不記錄學生作答。</p><div id="preview-body"></div></dialog>
+  <script type="module" src="shared/quiz-author.mjs"></script>
+</body>
+</html>

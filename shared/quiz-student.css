@@ -1,0 +1,689 @@
+.student-wrap{max-width:960px;margin:24px auto 60px}.student-wrap fieldset{border:0;padding:0;margin:20px 0}.student-wrap legend{font-weight:700;margin-bottom:12px}.student-option{display:flex;gap:14px;align-items:center;padding:16px;border:2px solid #d9d9e7;border-radius:16px;margin:12px 0;cursor:pointer;font-size:1rem}.student-option:has(input:checked){border:3px solid #6c55b4;background:#eeebff}.student-option input{width:22px;height:22px;flex-shrink:0;accent-color:#6650ae;margin:0}.student-option .preview-content{display:inline-block}.student-option>div{min-width:0}.student-wrap .material{background:#f4f1fd;border-radius:16px;padding:18px;margin:18px 0}.student-wrap .material h4{margin:0 0 10px}.student-wrap [role=status][data-error=true]{color:#a22a3d;font-weight:700}.progress-label{font-weight:700;color:#61517e}.session-card{border:1px solid #ded7ee;border-radius:16px;padding:20px;margin-top:18px}.session-card table{width:100%;border-collapse:collapse;margin-top:16px}.session-card th,.session-card td{text-align:left;border-bottom:1px solid #e6e4ed;padding:10px}.join-link{overflow-wrap:anywhere;font-weight:700}.session-monitor{overflow-x:auto}#quiz-navbar .hidden{display:none}#quiz-navbar nav{padding:14px;background:white}#quiz-navbar nav a{margin-right:12px}#quiz-navbar .flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap}#quiz-navbar nav>div{justify-content:space-between}#quiz-navbar button{font-size:.9rem}#quiz-navbar .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}@media(max-width:480px){.student-wrap .card{padding:14px}.student-option{padding:12px}.session-card{padding:14px}}
+.session-card a{color:#55429b}#quiz-sessions input[type=checkbox]{width:22px;height:22px;display:inline-block;vertical-align:middle;margin:0 0 0 12px}
+
+/* 學生場次專用；教師組卷與監看頁沿用原有樣式。 */
+.quiz-student-page{background:#f6f4fc;color:#302d45}
+.quiz-student-page .hero{background:white;padding:8px 0;border-bottom:1px solid #e8e3f1;color:#302d45}
+.quiz-student-page .hero>.wrap{max-width:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 24px}
+.quiz-brand{display:flex;align-items:center;gap:10px;min-width:0}
+.quiz-mascot{display:block;width:44px;height:44px;flex-shrink:0}.quiz-mascot svg{display:block;width:100%;height:100%}
+.quiz-student-page .hero h1{font-size:1.1rem;margin:0;font-weight:900;letter-spacing:0}
+.quiz-student-page #quiz-identity{font-size:.8rem;margin:0;color:#655e77;overflow-wrap:anywhere}
+.quiz-student-page .student-wrap{max-width:none;padding:0 24px;margin:14px auto 28px;min-width:0}
+.quiz-student-page #entry-status:empty{display:none}
+.quiz-student-page #quiz-content{background:transparent;border:0;box-shadow:none;padding:0;min-width:0}
+#server-quiz{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;min-width:0}
+#server-quiz>[role=status]{margin:0;font-size:.9rem;overflow-wrap:anywhere}
+#server-quiz>[role=status]:empty{display:none}
+.quiz-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 20px}
+.quiz-heading h2{font-size:1rem;margin:0;line-height:1.5;overflow-wrap:anywhere}
+.quiz-heading .progress-label{margin:0;font-size:.85rem;color:#66547f;white-space:nowrap}
+.quiz-heading progress{grid-column:1/-1;width:100%;height:7px;accent-color:#8262ce;border:0;border-radius:10px;overflow:hidden}
+.quiz-heading progress::-webkit-progress-bar{background:#e5def3}.quiz-heading progress::-webkit-progress-value{background:#8262ce;border-radius:10px}
+#server-quiz .question{border:0;background:white;border-radius:24px;margin:0;padding:20px 24px 0;min-width:0;box-shadow:0 5px 20px #44335f08}
+#server-quiz .question h3{font-size:.85rem;color:#76658e;margin:0 0 10px;font-weight:700}
+#server-quiz .question>.preview-content{font-size:clamp(1.35rem,2.1vw,1.9rem);font-weight:700;line-height:1.7;min-width:0}
+#server-quiz .question>.preview-content .quiz-rich-paragraph{line-height:1.65;margin:8px 0}
+#server-quiz .quiz-rich-content .quiz-image-row{flex-wrap:wrap}
+#server-quiz .quiz-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0 22px;min-width:0}
+#server-quiz .quiz-choices legend{font-size:.9rem;color:#655b78;margin-bottom:10px}
+#server-quiz .quiz-choices.long-options{grid-template-columns:minmax(0,1fr)}
+#server-quiz .student-option{position:relative;display:grid;grid-template-columns:42px minmax(0,1fr);gap:12px;margin:0;padding:16px;min-height:94px;border:2px solid #b8d1ef;border-radius:18px;background:#edf5ff;box-shadow:0 4px 0 #d4e3f5;color:#302d45;line-height:1.65;align-items:center;transition:border-color .15s,background .15s}
+#server-quiz .student-option:nth-of-type(2){background:#fff6df;border-color:#edce8b;box-shadow:0 4px 0 #f0e0b9}
+#server-quiz .student-option:nth-of-type(3){background:#f2edff;border-color:#d0bdf0;box-shadow:0 4px 0 #e3d9f6}
+#server-quiz .student-option:nth-of-type(4){background:#fff0f5;border-color:#e9bfd1;box-shadow:0 4px 0 #f1dce5}
+#server-quiz .student-option input{position:absolute;width:1px;height:1px;opacity:0}
+#server-quiz .student-option:has(input:checked){border:2px solid #7250b9;outline:2px solid #7250b9;outline-offset:1px;background:#eae0ff}
+#server-quiz .student-option:has(input:focus-visible){outline:3px solid #392266;outline-offset:4px}
+#server-quiz .option-badge{display:grid;place-items:center;width:42px;height:44px;background:#fff;border-radius:12px;font-size:1.2rem;font-weight:900;border:1px solid #ffffff}
+#server-quiz .option-body{min-width:0;font-size:clamp(1.15rem,1.8vw,1.6rem);font-weight:700}
+#server-quiz .option-body .quiz-rich-paragraph{margin:0;line-height:1.65}
+#server-quiz .student-option .preview-content{display:block}
+#server-quiz .option-result{grid-column:2;font-size:.85rem;font-weight:700}
+#server-quiz .student-option[data-result=correct],#server-quiz .student-option[data-result=correct]:has(input:checked){background:#e7f6ed;border-color:#32815c;outline:none;box-shadow:0 4px 0 #cce7d6}
+#server-quiz .student-option[data-result=incorrect],#server-quiz .student-option[data-result=incorrect]:has(input:checked){background:#fff1e6;border-color:#b55c2c;outline:none;box-shadow:0 4px 0 #f0d9c7}
+#server-quiz fieldset[data-locked="true"] .student-option{cursor:default;opacity:1}
+#server-quiz .answer-preview{border:2px solid #e0b17b;border-radius:18px;background:#fff6e9;color:#513b2d;padding:20px;margin:12px 0 20px;min-width:0;font-size:1.15rem;line-height:1.8}
+#server-quiz .answer-preview[data-correct=true]{background:#eff9f2;border-color:#8abca0;color:#284d39}
+#server-quiz .answer-preview>strong{font-size:1.25rem;display:block}
+#server-quiz .answer-preview:focus{outline:3px solid #8464b7;outline-offset:3px}
+#server-quiz .quiz-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;background:#fff;border-top:1px solid #eee8f5;margin:0 -24px;padding:16px 24px;border-radius:0 0 24px 24px}
+#server-quiz button{min-height:48px;font:inherit;font-size:1rem;border-radius:14px;font-weight:700}
+#server-quiz .quiz-primary{background:#7651bd;color:white;border:2px solid #7651bd;padding:12px 30px;box-shadow:0 4px 0 #543488;order:2;margin-left:auto}
+#server-quiz .quiz-primary:disabled{opacity:.65;cursor:wait}
+#server-quiz .quiz-refresh{font-size:.85rem;color:#6e647f;background:#f5f2fa;border-color:#e9e3f1;order:1}
+#server-quiz .notice{font-size:.9rem;margin:0;padding:12px 16px;border-radius:12px;background:#eee8f8;line-height:1.7}
+#server-quiz textarea{width:100%;min-width:0;min-height:120px;font:inherit;font-size:1.3rem}
+#server-quiz .quiz-choices:has(textarea){grid-template-columns:minmax(0,1fr)}
+#server-quiz .is-review{min-width:0}
+@media(min-width:900px){.quiz-student-page #server-quiz:not(.is-review)>.question{min-height:calc(100dvh - 172px);display:flex;flex-direction:column}.quiz-student-page #server-quiz .quiz-actions{margin-top:auto}#server-quiz .question>.quiz-rich-content{flex:1}}
+@media(max-width:700px){.quiz-student-page .hero>.wrap{padding:0 14px;align-items:flex-start}.quiz-student-page #quiz-identity{max-width:46%;font-size:.7rem;padding-top:6px}.quiz-student-page .student-wrap{padding:0 12px;margin-top:12px}.quiz-heading{gap:6px 10px}.quiz-heading h2{font-size:.9rem}.quiz-heading .progress-label{font-size:.75rem}#server-quiz .question{padding:16px 14px 0;border-radius:18px}#server-quiz .quiz-choices{grid-template-columns:minmax(0,1fr);gap:12px}#server-quiz .student-option{padding:12px;min-height:80px}#server-quiz .quiz-actions{margin:0 -14px;padding:14px;gap:10px}#server-quiz .quiz-actions button{flex:0 1 auto}#server-quiz .quiz-actions .quiz-primary{flex:1 0 100%;margin:0}#server-quiz .answer-preview{padding:16px;font-size:1.05rem}}
+@media(prefers-reduced-motion:reduce){#server-quiz .student-option{transition:none}}
+
+/* 答對慶祝、答錯陪伴：只播放一次，文字與解析不等待動畫。 */
+#server-quiz .feedback-intro{display:flex;align-items:center;gap:18px;margin-bottom:12px;min-width:0}
+#server-quiz .feedback-character{position:relative;flex:0 0 72px;width:72px;height:80px;display:grid;place-items:center;isolation:isolate}
+#server-quiz .feedback-character svg{display:block;width:64px;height:64px;overflow:visible;transform-origin:50% 85%}
+#server-quiz .feedback-symbol{font-size:2.5rem;color:#7251ad}
+#server-quiz .feedback-message{min-width:0}
+#server-quiz .feedback-message>strong{display:block;font-size:1.25rem;line-height:1.6}
+#server-quiz .feedback-encouragement{margin:6px 0 0;font-size:1.05rem;line-height:1.8;font-weight:400}
+#server-quiz .feedback-spark{position:absolute;width:8px;height:8px;border-radius:3px;background:#b08bda;opacity:0;pointer-events:none}
+#server-quiz .spark-one{top:4px;left:2px;--spark-x:-8px;--spark-y:-10px}
+#server-quiz .spark-two{top:0;right:4px;--spark-x:9px;--spark-y:-8px;background:#dea342}
+#server-quiz .spark-three{bottom:15px;right:0;--spark-x:12px;--spark-y:4px;background:#70a58b}
+#server-quiz .feedback-fresh[data-correct=true] .feedback-character svg{animation:quiz-happy-hop 850ms ease-in-out 1}
+#server-quiz .feedback-fresh[data-correct=true] .feedback-spark{animation:quiz-spark 950ms ease-out 1}
+#server-quiz .feedback-fresh[data-correct=false] .feedback-character svg{animation:quiz-friendly-nod 1100ms ease-in-out 1}
+#server-quiz .feedback-fresh[data-correct=false] .feedback-character::before{content:'';position:absolute;inset:5px;border:2px solid #d9bfea;border-radius:50%;opacity:0;animation:quiz-warm-ring 1100ms ease-out 1;z-index:-1}
+@keyframes quiz-happy-hop{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-13px) rotate(-7deg)}50%{transform:translateY(0) rotate(0)}72%{transform:translateY(-6px) rotate(5deg)}}
+@keyframes quiz-spark{0%{opacity:0;transform:scale(.4)}30%{opacity:1}100%{opacity:0;transform:translate(var(--spark-x),var(--spark-y)) rotate(70deg) scale(1.2)}}
+@keyframes quiz-friendly-nod{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(4px) rotate(-5deg)}65%{transform:translateY(0) rotate(4deg)}}
+@keyframes quiz-warm-ring{0%{opacity:.8;transform:scale(.85)}100%{opacity:0;transform:scale(1.25)}}
+@media(max-width:480px){#server-quiz .feedback-intro{gap:12px;align-items:flex-start}#server-quiz .feedback-character{flex-basis:52px;width:52px;height:64px}#server-quiz .feedback-character svg{width:50px;height:50px}#server-quiz .feedback-message>strong{font-size:1.1rem}#server-quiz .feedback-encouragement{font-size:1rem}}
+@media(prefers-reduced-motion:reduce){#server-quiz .feedback-fresh[data-correct] .feedback-character svg,#server-quiz .feedback-fresh[data-correct] .feedback-spark,#server-quiz .feedback-fresh[data-correct] .feedback-character::before{animation:none}#server-quiz .feedback-fresh[data-correct] .feedback-character::before{display:none}}
+
+
+/* 2026-10-26：Claude Opus 5.5 四套新增回饋動畫。 */
+#server-quiz .feedback-character.qfm-character{flex:0 0 112px;width:112px;height:104px}
+#server-quiz .qfm-character .qfm-actor{width:112px;min-width:0;max-width:112px}
+#server-quiz .feedback-character.qfm-character svg{width:100%;height:auto;overflow:visible}
+#server-quiz .feedback-fresh[data-correct] .feedback-character.qfm-character svg{animation:none}
+#server-quiz .feedback-fresh[data-correct] .feedback-character.qfm-character::before{display:none;animation:none}
+@media(max-width:480px){#server-quiz .feedback-character.qfm-character{flex-basis:84px;width:84px;height:80px}#server-quiz .qfm-character .qfm-actor{width:84px;max-width:84px}}
+/* ============ QuizFeedbackMotion：只作用在 .qfm-actor 之下 ============ */
+.qfm-actor{display:block;width:100%;max-width:240px;min-width:120px;line-height:0}
+.qfm-actor svg{display:block;width:100%;height:auto;overflow:visible}
+.qfm-actor svg g{transform-box:fill-box;transform-origin:50% 50%}
+.qfm-actor .qfm-whole{transform-origin:50% 100%}
+.qfm-actor .qfm-arm{transform-origin:50% 0%}
+.qfm-actor .qfm-ear,.qfm-actor .qfm-stem,.qfm-actor .qfm-spark,.qfm-actor .qfm-flag{transform-origin:50% 100%}
+.qfm-actor .qfm-newleaf{transform-origin:0% 100%}
+.qfm-actor .qfm-map{transform-origin:0% 50%}
+.qfm-actor .qfm-sentinel{opacity:0}
+/* 播放中共同設定：只播一次、填滿首尾 */
+.qfm-actor.qfm-playing svg *{animation-duration:var(--qfm-dur,2s);animation-timing-function:cubic-bezier(.45,0,.35,1);animation-fill-mode:both;animation-iteration-count:1}
+@keyframes qfm-end-star{from{opacity:0}to{opacity:0}}
+@keyframes qfm-end-garden{from{opacity:0}to{opacity:0}}
+@keyframes qfm-end-puzzle{from{opacity:0}to{opacity:0}}
+@keyframes qfm-end-plane{from{opacity:0}to{opacity:0}}
+.qfm-actor.qfm-playing.qfm-v-star .qfm-sentinel{animation-name:qfm-end-star}
+.qfm-actor.qfm-playing.qfm-v-garden .qfm-sentinel{animation-name:qfm-end-garden}
+.qfm-actor.qfm-playing.qfm-v-puzzle .qfm-sentinel{animation-name:qfm-end-puzzle}
+.qfm-actor.qfm-playing.qfm-v-plane .qfm-sentinel{animation-name:qfm-end-plane}
+@media (prefers-reduced-motion:reduce){.qfm-actor.qfm-playing svg *:not(.qfm-sentinel){animation:none!important}}
+
+/* 共用眨眼 */
+@keyframes qfm-blink-late{0%,82%{transform:scaleY(1)}87%{transform:scaleY(.15)}92%,100%{transform:scaleY(1)}}
+@keyframes qfm-blink-mid{0%,46%{transform:scaleY(1)}51%{transform:scaleY(.15)}56%,100%{transform:scaleY(1)}}
+
+/* ---------- 1. 星光夥伴（star）---------- */
+/* 靜態結果姿勢 */
+.qfm-actor.qfm-v-star.qfm-r-correct .qfm-arm-l{transform:rotate(-35deg)}
+.qfm-actor.qfm-v-star.qfm-r-correct .qfm-arm-r{transform:rotate(-140deg)}
+.qfm-actor.qfm-v-star .qfm-palm,.qfm-actor.qfm-v-star .qfm-spark{opacity:0}
+.qfm-actor.qfm-v-star.qfm-r-incorrect .qfm-arm-l{transform:rotate(-20deg)}
+.qfm-actor.qfm-v-star.qfm-r-incorrect .qfm-arm-r{transform:rotate(-50deg)}
+.qfm-actor.qfm-v-star.qfm-r-incorrect .qfm-eyes{transform:translate(3px,3px)}
+.qfm-actor.qfm-v-star .qfm-ring{opacity:.9}
+/* 答對：接住星星→擊掌 */
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-correct .qfm-whole{animation-name:qfm-sc-whole}
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-correct .qfm-arm-l{animation-name:qfm-sc-arml}
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-correct .qfm-arm-r{animation-name:qfm-sc-armr}
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-correct .qfm-eyes{animation-name:qfm-sc-eyes}
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-correct .qfm-lid{animation-name:qfm-blink-late}
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-correct .qfm-ear-l{animation-name:qfm-sc-earl}
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-correct .qfm-ear-r{animation-name:qfm-sc-earr}
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-correct .qfm-star{animation-name:qfm-sc-star}
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-correct .qfm-palm{animation-name:qfm-sc-palm}
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-correct .qfm-spark{animation-name:qfm-sc-spark}
+@keyframes qfm-sc-whole{0%{transform:translateY(0) scale(1,1)}16%{transform:translateY(0) scale(1.04,.95)}30%{transform:translateY(-7px) scale(1,1)}42%{transform:translateY(0) scale(1.06,.93)}52%{transform:translateY(0) scale(1,1)}74%{transform:translateY(-4px) scale(1,1)}84%,100%{transform:translateY(0) scale(1,1)}}
+@keyframes qfm-sc-arml{0%{transform:rotate(8deg)}22%,50%{transform:rotate(212deg)}68%,100%{transform:rotate(-35deg)}}
+@keyframes qfm-sc-armr{0%{transform:rotate(-8deg)}22%,50%{transform:rotate(-212deg)}64%{transform:rotate(-150deg)}74%{transform:rotate(-128deg)}82%{transform:rotate(-143deg)}100%{transform:rotate(-140deg)}}
+@keyframes qfm-sc-eyes{0%{transform:translate(0,0)}14%,46%{transform:translate(0,-4px)}60%{transform:translate(-3px,1px)}74%{transform:translate(3px,-2px)}100%{transform:translate(0,0)}}
+@keyframes qfm-sc-earl{0%,78%{transform:rotate(0)}84%{transform:rotate(-10deg)}90%{transform:rotate(7deg)}96%{transform:rotate(-3deg)}100%{transform:rotate(0)}}
+@keyframes qfm-sc-earr{0%,78%{transform:rotate(0)}84%{transform:rotate(10deg)}90%{transform:rotate(-7deg)}96%{transform:rotate(3deg)}100%{transform:rotate(0)}}
+@keyframes qfm-sc-star{0%{transform:translate(24px,-190px) rotate(-120deg) scale(.8)}32%{transform:translate(24px,-76px) rotate(0deg) scale(1)}40%{transform:translate(24px,-70px) rotate(0deg) scale(1.25)}50%{transform:translate(24px,-72px) rotate(0deg) scale(1)}68%{transform:translate(0,0) rotate(-20deg) scale(1)}100%{transform:translate(0,0) rotate(0deg) scale(1)}}
+@keyframes qfm-sc-palm{0%,56%{opacity:0;transform:translate(30px,10px)}66%{opacity:1;transform:translate(0,0)}74%{opacity:1;transform:translate(-4px,2px)}86%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(24px,8px)}}
+@keyframes qfm-sc-spark{0%,70%{opacity:0;transform:scale(.4)}76%{opacity:1;transform:scale(1.1)}90%,100%{opacity:0;transform:scale(1.3)}}
+/* 答錯：拿放大鏡找線索 */
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-incorrect .qfm-whole{animation-name:qfm-si-whole}
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-incorrect .qfm-arm-l{animation-name:qfm-si-arml}
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-incorrect .qfm-arm-r{animation-name:qfm-si-armr}
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-incorrect .qfm-eyes{animation-name:qfm-si-eyes}
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-incorrect .qfm-lid{animation-name:qfm-blink-mid}
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-incorrect .qfm-ear{animation-name:qfm-si-ear}
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-incorrect .qfm-mag{animation-name:qfm-si-mag}
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-incorrect .qfm-clue{animation-name:qfm-si-clue}
+.qfm-actor.qfm-playing.qfm-v-star.qfm-r-incorrect .qfm-ring{animation-name:qfm-si-ring}
+@keyframes qfm-si-whole{0%,76%{transform:translateY(0)}82%{transform:translateY(3px)}88%{transform:translateY(0)}94%{transform:translateY(3px)}100%{transform:translateY(0)}}
+@keyframes qfm-si-arml{0%{transform:rotate(6deg)}30%,100%{transform:rotate(-20deg)}}
+@keyframes qfm-si-armr{0%{transform:rotate(0deg)}25%{transform:rotate(15deg)}55%{transform:rotate(-80deg)}72%,100%{transform:rotate(-50deg)}}
+@keyframes qfm-si-mag{0%{transform:translate(-24px,11px)}25%{transform:translate(-32px,10px)}55%{transform:translate(5px,-14px)}72%,100%{transform:translate(0,0)}}
+@keyframes qfm-si-eyes{0%{transform:translate(0,0)}25%{transform:translate(-4px,3px)}55%{transform:translate(5px,1px)}72%,100%{transform:translate(3px,3px)}}
+@keyframes qfm-si-ear{0%{transform:scale(1,1)}12%{transform:scale(1,1.15)}25%,100%{transform:scale(1,1)}}
+@keyframes qfm-si-clue{0%,68%{transform:scale(1)}78%{transform:scale(1.1)}88%,100%{transform:scale(1)}}
+@keyframes qfm-si-ring{0%,68%{opacity:0;transform:scale(.6)}80%{opacity:1;transform:scale(1.1)}100%{opacity:.9;transform:scale(1)}}
+
+/* ---------- 2. 小小花園（garden）---------- */
+.qfm-actor.qfm-v-garden.qfm-r-correct .qfm-arm-l{transform:rotate(160deg)}
+.qfm-actor.qfm-v-garden.qfm-r-correct .qfm-arm-r{transform:rotate(-160deg)}
+.qfm-actor.qfm-v-garden .qfm-drops{opacity:0}
+.qfm-actor.qfm-v-garden.qfm-r-incorrect .qfm-whole{transform:translate(0,5px) rotate(6deg)}
+.qfm-actor.qfm-v-garden.qfm-r-incorrect .qfm-arm-l{transform:rotate(-14deg)}
+.qfm-actor.qfm-v-garden.qfm-r-incorrect .qfm-arm-r{transform:rotate(-34deg)}
+.qfm-actor.qfm-v-garden.qfm-r-incorrect .qfm-eyes{transform:translate(4px,4px)}
+/* 答對：澆水開花→伸展 */
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-correct .qfm-whole{animation-name:qfm-gc-whole}
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-correct .qfm-arm-l{animation-name:qfm-gc-arml}
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-correct .qfm-arm-r{animation-name:qfm-gc-armr}
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-correct .qfm-eyes{animation-name:qfm-gc-eyes}
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-correct .qfm-lid{animation-name:qfm-gc-lid}
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-correct .qfm-ear-l{animation-name:qfm-gc-earl}
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-correct .qfm-ear-r{animation-name:qfm-gc-earr}
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-correct .qfm-can{animation-name:qfm-gc-can}
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-correct .qfm-drops{animation-name:qfm-gc-drops}
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-correct .qfm-stem{animation-name:qfm-gc-stem}
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-correct .qfm-bloom{animation-name:qfm-gc-bloom}
+@keyframes qfm-gc-whole{0%,70%{transform:translateY(0) scale(1,1)}80%{transform:translateY(-3px) scale(.98,1.06)}90%{transform:translateY(0) scale(1.02,.98)}100%{transform:translateY(0) scale(1,1)}}
+@keyframes qfm-gc-arml{0%,70%{transform:rotate(12deg)}86%{transform:rotate(168deg)}100%{transform:rotate(160deg)}}
+@keyframes qfm-gc-armr{0%,58%{transform:rotate(-125deg)}68%{transform:rotate(-45deg)}74%{transform:rotate(-30deg)}88%{transform:rotate(-168deg)}100%{transform:rotate(-160deg)}}
+@keyframes qfm-gc-eyes{0%{transform:translate(4px,-2px)}50%{transform:translate(5px,0)}60%{transform:translate(5px,1px)}76%,100%{transform:translate(0,0)}}
+@keyframes qfm-gc-lid{0%,78%{transform:scaleY(1)}84%,93%{transform:scaleY(.3)}100%{transform:scaleY(1)}}
+@keyframes qfm-gc-earl{0%,76%{transform:rotate(0)}86%{transform:rotate(-12deg)}94%{transform:rotate(6deg)}100%{transform:rotate(0)}}
+@keyframes qfm-gc-earr{0%,76%{transform:rotate(0)}86%{transform:rotate(12deg)}94%{transform:rotate(-6deg)}100%{transform:rotate(0)}}
+@keyframes qfm-gc-can{0%{transform:translate(0,-48px) rotate(0deg)}12%,48%{transform:translate(0,-48px) rotate(30deg)}58%{transform:translate(0,-48px) rotate(0deg)}70%,100%{transform:translate(0,0) rotate(0deg)}}
+@keyframes qfm-gc-drops{0%,12%{opacity:0;transform:translateY(0)}14%{opacity:1;transform:translateY(0)}30%{opacity:1;transform:translateY(8px)}31%{opacity:1;transform:translateY(0)}46%{opacity:1;transform:translateY(8px)}50%,100%{opacity:0;transform:translateY(8px)}}
+@keyframes qfm-gc-stem{0%,28%{transform:scaleY(.35)}55%{transform:scaleY(1.05)}62%,100%{transform:scaleY(1)}}
+@keyframes qfm-gc-bloom{0%,45%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.18) rotate(20deg)}70%,100%{transform:scale(1) rotate(0deg)}}
+/* 答錯：照顧幼苗、低頭看新芽 */
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-incorrect .qfm-whole{animation-name:qfm-gi-whole}
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-incorrect .qfm-arm-l{animation-name:qfm-gi-arml}
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-incorrect .qfm-arm-r{animation-name:qfm-gi-armr}
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-incorrect .qfm-eyes{animation-name:qfm-gi-eyes}
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-incorrect .qfm-lid{animation-name:qfm-gi-lid}
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-incorrect .qfm-ear-l{animation-name:qfm-gi-earl}
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-incorrect .qfm-ear-r{animation-name:qfm-gi-earr}
+.qfm-actor.qfm-playing.qfm-v-garden.qfm-r-incorrect .qfm-newleaf{animation-name:qfm-gi-leaf}
+@keyframes qfm-gi-whole{0%{transform:translate(0,0) rotate(0deg)}24%,62%{transform:translate(0,5px) rotate(6deg)}70%{transform:translate(0,7px) rotate(8deg)}78%{transform:translate(0,5px) rotate(6deg)}86%{transform:translate(0,7px) rotate(8deg)}94%,100%{transform:translate(0,5px) rotate(6deg)}}
+@keyframes qfm-gi-arml{0%{transform:rotate(8deg)}24%,100%{transform:rotate(-14deg)}}
+@keyframes qfm-gi-armr{0%{transform:rotate(8deg)}24%{transform:rotate(-34deg)}32%{transform:rotate(-26deg)}40%{transform:rotate(-36deg)}48%{transform:rotate(-26deg)}56%,100%{transform:rotate(-34deg)}}
+@keyframes qfm-gi-eyes{0%{transform:translate(0,0)}24%,100%{transform:translate(4px,4px)}}
+@keyframes qfm-gi-lid{0%,58%{transform:scaleY(1)}62%{transform:scaleY(.15)}66%,100%{transform:scaleY(1)}}
+@keyframes qfm-gi-earl{0%{transform:rotate(0)}30%{transform:rotate(-6deg)}60%{transform:rotate(5deg)}85%{transform:rotate(-3deg)}100%{transform:rotate(0)}}
+@keyframes qfm-gi-earr{0%{transform:rotate(0)}30%{transform:rotate(6deg)}60%{transform:rotate(-5deg)}85%{transform:rotate(3deg)}100%{transform:rotate(0)}}
+@keyframes qfm-gi-leaf{0%,50%{transform:scale(0)}72%{transform:scale(1.15)}82%,100%{transform:scale(1)}}
+
+/* ---------- 3. 拼圖發現（puzzle）---------- */
+.qfm-actor.qfm-v-puzzle.qfm-r-correct .qfm-arm-l{transform:rotate(155deg)}
+.qfm-actor.qfm-v-puzzle.qfm-r-correct .qfm-arm-r{transform:rotate(-155deg)}
+.qfm-actor.qfm-v-puzzle .qfm-click,.qfm-actor.qfm-v-puzzle .qfm-turn-arrow{opacity:0}
+.qfm-actor.qfm-v-puzzle.qfm-r-incorrect .qfm-whole{transform:rotate(-3deg)}
+.qfm-actor.qfm-v-puzzle.qfm-r-incorrect .qfm-eyes{transform:translate(-4px,2px)}
+.qfm-actor.qfm-v-puzzle.qfm-r-incorrect .qfm-arm-l{transform:rotate(55deg)}
+.qfm-actor.qfm-v-puzzle.qfm-r-incorrect .qfm-arm-r{transform:rotate(-100deg)}
+.qfm-actor.qfm-v-puzzle .qfm-piece-turn{transform:translate(0,0) rotate(90deg)}
+/* 答對：兩塊拼圖拼合 */
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-correct .qfm-whole{animation-name:qfm-pc-whole}
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-correct .qfm-arm-l{animation-name:qfm-pc-arml}
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-correct .qfm-arm-r{animation-name:qfm-pc-armr}
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-correct .qfm-eyes{animation-name:qfm-pc-eyes}
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-correct .qfm-lid{animation-name:qfm-blink-late}
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-correct .qfm-ear{animation-name:qfm-pc-ear}
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-correct .qfm-piece-a{animation-name:qfm-pc-pa}
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-correct .qfm-piece-b{animation-name:qfm-pc-pb}
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-correct .qfm-joined{animation-name:qfm-pc-joined}
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-correct .qfm-click{animation-name:qfm-pc-click}
+@keyframes qfm-pc-whole{0%,44%{transform:translateY(0) scale(1,1)}52%{transform:translateY(0) scale(1.05,.94)}64%{transform:translateY(-10px) scale(1,1)}76%{transform:translateY(0) scale(1.04,.95)}86%,100%{transform:translateY(0) scale(1,1)}}
+@keyframes qfm-pc-arml{0%{transform:rotate(10deg)}20%{transform:rotate(115deg)}44%{transform:rotate(165deg)}56%{transform:rotate(150deg)}68%{transform:rotate(190deg)}80%{transform:rotate(150deg)}100%{transform:rotate(155deg)}}
+@keyframes qfm-pc-armr{0%{transform:rotate(-10deg)}20%{transform:rotate(-115deg)}44%{transform:rotate(-165deg)}56%{transform:rotate(-150deg)}68%{transform:rotate(-190deg)}80%{transform:rotate(-150deg)}100%{transform:rotate(-155deg)}}
+@keyframes qfm-pc-eyes{0%{transform:translate(-4px,-3px)}22%{transform:translate(4px,-3px)}44%{transform:translate(0,-5px)}70%{transform:translate(0,-4px)}100%{transform:translate(0,0)}}
+@keyframes qfm-pc-ear{0%,58%{transform:scale(1)}66%{transform:scale(1.12)}76%,100%{transform:scale(1)}}
+@keyframes qfm-pc-pa{0%{transform:translate(-80px,50px) rotate(-35deg)}38%{transform:translate(-10px,0) rotate(-4deg)}48%,100%{transform:translate(0,0) rotate(0deg)}}
+@keyframes qfm-pc-pb{0%{transform:translate(80px,50px) rotate(35deg)}38%{transform:translate(10px,0) rotate(4deg)}48%,100%{transform:translate(0,0) rotate(0deg)}}
+@keyframes qfm-pc-joined{0%,48%{opacity:0}58%,100%{opacity:1}}
+@keyframes qfm-pc-click{0%,47%{opacity:0;transform:scale(.5)}54%{opacity:1;transform:scale(1)}68%,100%{opacity:0;transform:scale(1.3)}}
+/* 答錯：旋轉拼圖片、看另一個方向 */
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-incorrect .qfm-whole{animation-name:qfm-pi-whole}
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-incorrect .qfm-arm-l{animation-name:qfm-pi-arml}
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-incorrect .qfm-arm-r{animation-name:qfm-pi-armr}
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-incorrect .qfm-eyes{animation-name:qfm-pi-eyes}
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-incorrect .qfm-lid{animation-name:qfm-blink-mid}
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-incorrect .qfm-ear{animation-name:qfm-pi-ear}
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-incorrect .qfm-piece-turn{animation-name:qfm-pi-turn}
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-incorrect .qfm-turn-arrow{animation-name:qfm-pi-arrow}
+.qfm-actor.qfm-playing.qfm-v-puzzle.qfm-r-incorrect .qfm-slot{animation-name:qfm-pi-slot}
+@keyframes qfm-pi-whole{0%{transform:rotate(0deg)}20%,40%{transform:rotate(4deg)}60%{transform:rotate(-5deg)}80%{transform:rotate(-3deg)}88%{transform:rotate(-5deg)}96%,100%{transform:rotate(-3deg)}}
+@keyframes qfm-pi-arml{0%,55%{transform:rotate(10deg)}72%{transform:rotate(62deg)}100%{transform:rotate(55deg)}}
+@keyframes qfm-pi-armr{0%{transform:rotate(-20deg)}15%,100%{transform:rotate(-100deg)}}
+@keyframes qfm-pi-eyes{0%{transform:translate(0,0)}20%{transform:translate(4px,-2px)}42%{transform:translate(5px,-1px)}60%,100%{transform:translate(-4px,2px)}}
+@keyframes qfm-pi-ear{0%,52%{transform:scale(1,1)}58%{transform:scale(1.1,1.14)}66%,100%{transform:scale(1,1)}}
+@keyframes qfm-pi-turn{0%{transform:translate(-17px,36px) rotate(0deg)}15%,18%{transform:translate(0,0) rotate(0deg)}42%{transform:translate(0,0) rotate(95deg)}50%,100%{transform:translate(0,0) rotate(90deg)}}
+@keyframes qfm-pi-arrow{0%,10%{opacity:0}18%,46%{opacity:1}58%,100%{opacity:0}}
+@keyframes qfm-pi-slot{0%,56%{opacity:0;transform:scale(.85)}72%{opacity:1;transform:scale(1.05)}80%,100%{opacity:1;transform:scale(1)}}
+
+/* ---------- 4. 紙飛機探索（plane）---------- */
+.qfm-actor.qfm-v-plane.qfm-r-correct .qfm-arm-l{transform:rotate(20deg)}
+.qfm-actor.qfm-v-plane.qfm-r-correct .qfm-arm-r{transform:rotate(-140deg)}
+.qfm-actor.qfm-v-plane .qfm-plane{transform:translate(0,0) rotate(-20deg) scale(.6)}
+.qfm-actor.qfm-v-plane .qfm-trail{opacity:.6}
+.qfm-actor.qfm-v-plane.qfm-r-incorrect .qfm-whole{transform:translateY(0) rotate(3deg)}
+.qfm-actor.qfm-v-plane.qfm-r-incorrect .qfm-arm-l{transform:rotate(-12deg)}
+.qfm-actor.qfm-v-plane.qfm-r-incorrect .qfm-arm-r{transform:rotate(-100deg)}
+.qfm-actor.qfm-v-plane.qfm-r-incorrect .qfm-eyes{transform:translate(5px,0)}
+.qfm-actor.qfm-v-plane .qfm-route{stroke-dashoffset:0}
+/* 答對：送出紙飛機→揮手 */
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-correct .qfm-whole{animation-name:qfm-ac-whole}
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-correct .qfm-arm-l{animation-name:qfm-ac-arml}
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-correct .qfm-arm-r{animation-name:qfm-ac-armr}
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-correct .qfm-eyes{animation-name:qfm-ac-eyes}
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-correct .qfm-lid{animation-name:qfm-blink-late}
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-correct .qfm-ear-l{animation-name:qfm-ac-earl}
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-correct .qfm-ear-r{animation-name:qfm-ac-earr}
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-correct .qfm-plane{animation-name:qfm-ac-plane}
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-correct .qfm-trail{animation-name:qfm-ac-trail}
+@keyframes qfm-ac-whole{0%{transform:translateY(0) scale(1,1)}16%{transform:translateY(2px) scale(1.02,.97)}30%{transform:translateY(-4px) scale(1,1)}42%,100%{transform:translateY(0) scale(1,1)}}
+@keyframes qfm-ac-arml{0%{transform:rotate(15deg)}30%{transform:rotate(35deg)}50%,100%{transform:rotate(20deg)}}
+@keyframes qfm-ac-armr{0%{transform:rotate(-150deg)}16%{transform:rotate(-175deg)}30%{transform:rotate(-105deg)}44%{transform:rotate(-125deg)}58%{transform:rotate(-150deg)}66%{transform:rotate(-122deg)}74%{transform:rotate(-150deg)}82%{transform:rotate(-122deg)}90%{transform:rotate(-145deg)}100%{transform:rotate(-140deg)}}
+@keyframes qfm-ac-eyes{0%{transform:translate(0,0)}30%{transform:translate(3px,-2px)}55%{transform:translate(5px,-5px)}80%{transform:translate(4px,-4px)}100%{transform:translate(0,0)}}
+@keyframes qfm-ac-earl{0%{transform:rotate(0)}30%{transform:rotate(-14deg)}44%{transform:rotate(8deg)}58%{transform:rotate(-3deg)}70%,100%{transform:rotate(0)}}
+@keyframes qfm-ac-earr{0%{transform:rotate(0)}30%{transform:rotate(-10deg)}44%{transform:rotate(10deg)}58%{transform:rotate(-2deg)}70%,100%{transform:rotate(0)}}
+@keyframes qfm-ac-plane{0%{transform:translate(-45px,76px) rotate(-10deg) scale(1)}16%{transform:translate(-56px,72px) rotate(-30deg) scale(1)}30%{transform:translate(-38px,72px) rotate(-15deg) scale(1)}50%{transform:translate(-18px,30px) rotate(-25deg) scale(.85)}72%{transform:translate(-4px,4px) rotate(-22deg) scale(.7)}100%{transform:translate(0,0) rotate(-20deg) scale(.6)}}
+@keyframes qfm-ac-trail{0%,30%{opacity:0}60%{opacity:.8}100%{opacity:.6}}
+/* 答錯：攤開小地圖、指下一步 */
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-incorrect .qfm-whole{animation-name:qfm-ai-whole}
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-incorrect .qfm-arm-l{animation-name:qfm-ai-arml}
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-incorrect .qfm-arm-r{animation-name:qfm-ai-armr}
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-incorrect .qfm-eyes{animation-name:qfm-ai-eyes}
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-incorrect .qfm-lid{animation-name:qfm-ai-lid}
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-incorrect .qfm-ear{animation-name:qfm-ai-ear}
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-incorrect .qfm-map{animation-name:qfm-ai-map}
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-incorrect .qfm-route{animation-name:qfm-ai-route}
+.qfm-actor.qfm-playing.qfm-v-plane.qfm-r-incorrect .qfm-flag{animation-name:qfm-ai-flag}
+@keyframes qfm-ai-whole{0%{transform:translateY(0) rotate(0deg)}30%{transform:translateY(0) rotate(4deg)}72%{transform:translateY(0) rotate(3deg)}80%{transform:translateY(3px) rotate(3deg)}88%{transform:translateY(0) rotate(3deg)}94%{transform:translateY(2px) rotate(3deg)}100%{transform:translateY(0) rotate(3deg)}}
+@keyframes qfm-ai-arml{0%{transform:rotate(10deg)}30%,100%{transform:rotate(-12deg)}}
+@keyframes qfm-ai-armr{0%{transform:rotate(-10deg)}26%{transform:rotate(-30deg)}36%,50%{transform:rotate(-68deg)}72%{transform:rotate(-102deg)}100%{transform:rotate(-100deg)}}
+@keyframes qfm-ai-eyes{0%{transform:translate(0,0)}30%,50%{transform:translate(4px,3px)}72%,100%{transform:translate(5px,0)}}
+@keyframes qfm-ai-lid{0%,36%{transform:scaleY(1)}40%{transform:scaleY(.15)}44%,100%{transform:scaleY(1)}}
+@keyframes qfm-ai-ear{0%{transform:scale(1,1)}16%{transform:scale(1,1.12)}28%,100%{transform:scale(1,1)}}
+@keyframes qfm-ai-map{0%{transform:scaleX(.08);opacity:.3}26%{transform:scaleX(1.04);opacity:1}32%,100%{transform:scaleX(1);opacity:1}}
+@keyframes qfm-ai-route{0%,30%{stroke-dashoffset:100}70%,100%{stroke-dashoffset:0}}
+@keyframes qfm-ai-flag{0%,68%{transform:scale(0)}80%{transform:scale(1.2)}88%,100%{transform:scale(1)}}
+
+/* 第五套：首輪Opus完整紫色角色；部位樣式獨立命名。 */
+.qfm-o-mascot *{transform-box:fill-box;transform-origin:50% 50%}
+  .qfm-o-m-lean,.qfm-o-m-body,.qfm-o-m-ear{transform-origin:50% 100%}
+  .qfm-o-m-arm{transform-origin:50% 10%}
+  .qfm-o-m-shadow{fill:#e6def7}
+  .qfm-o-m-ear-out{fill:#b9a2f3;stroke:#8a6dd3;stroke-width:2;stroke-linejoin:round}
+  .qfm-o-m-ear-in{fill:#f7c4dc}
+  .qfm-o-m-torso{fill:#cbb9ff;stroke:#8a6dd3;stroke-width:2.5}
+  .qfm-o-m-belly{fill:#e6dcff}
+  .qfm-o-m-arm ellipse{fill:#b9a2f3;stroke:#8a6dd3;stroke-width:2}
+  .qfm-o-m-eye-white{fill:#fff}
+  .qfm-o-m-pupils circle{fill:#2f2448}
+  .qfm-o-m-pupils .qfm-o-m-glint{fill:#fff}
+  .qfm-o-m-eyes-happy{opacity:0}
+  .qfm-o-m-eyes-happy path{fill:none;stroke:#2f2448;stroke-width:3.2;stroke-linecap:round}
+  .qfm-o-m-cheeks{fill:#ff9cc2;opacity:.45}
+  .qfm-o-m-mouth{fill:none;stroke:#2f2448;stroke-width:2.8;stroke-linecap:round}
+  .qfm-o-m-mouth-big{fill:#7a3f6e;stroke:#2f2448;stroke-width:2;stroke-linejoin:round;opacity:0}
+  .qfm-o-m-clue{opacity:0}
+  .qfm-o-m-bulb{fill:#ffe7a3;stroke:#d9a441;stroke-width:2}
+  .qfm-o-m-bulb-base{fill:#c8b8e8}
+  .qfm-o-m-clue-rays path{fill:none;stroke:#e9b54a;stroke-width:2.4;stroke-linecap:round}
+  .qfm-o-m-spark{opacity:0}
+  .qfm-o-mascot .s1{fill:#f2b84b}.qfm-o-mascot .s2{fill:#f59ac0}.qfm-o-mascot .s3{fill:#6cc3a0}.qfm-o-mascot .s4{fill:#7cb8f2}.qfm-o-mascot .s5{fill:#a98af0}
+
+  /* ── 最後靜態姿勢（也是減少動態時看到的樣子） ── */
+  .qfm-actor.qfm-v-original[data-result=correct] .qfm-o-m-eyes{opacity:0}
+  .qfm-actor.qfm-v-original[data-result=correct] .qfm-o-m-eyes-happy{opacity:1}
+  .qfm-actor.qfm-v-original[data-result=correct] .qfm-o-m-mouth{opacity:0}
+  .qfm-actor.qfm-v-original[data-result=correct] .qfm-o-m-mouth-big{opacity:1}
+  .qfm-actor.qfm-v-original[data-result=correct] .qfm-o-m-cheeks{opacity:.85}
+  .qfm-actor.qfm-v-original[data-result=correct] .qfm-o-m-arm-r{transform:rotate(-30deg)}
+  .qfm-actor.qfm-v-original[data-result=incorrect] .qfm-o-m-lean{transform:rotate(4deg)}
+  .qfm-actor.qfm-v-original[data-result=incorrect] .qfm-o-m-pupils{transform:translate(2px,1.5px)}
+  .qfm-actor.qfm-v-original[data-result=incorrect] .qfm-o-m-ear-r{transform:rotate(-6deg)}
+  .qfm-actor.qfm-v-original[data-result=incorrect] .qfm-o-m-arm-r{transform:rotate(-60deg)}
+  .qfm-actor.qfm-v-original[data-result=incorrect] .qfm-o-m-clue{opacity:1}
+
+  /* ── 答對：約 1.3 秒 ── */
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .qfm-o-m-hop{animation:qfm-o-c-hop 1300ms ease-in-out}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .qfm-o-m-body{animation:qfm-o-c-squash 1300ms ease-in-out}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .qfm-o-m-shadow{animation:qfm-o-c-shadow 1300ms ease-in-out}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .qfm-o-m-ear-l{animation:qfm-o-c-ear-l 1300ms ease-in-out}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .qfm-o-m-ear-r{animation:qfm-o-c-ear-r 1300ms ease-in-out}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .qfm-o-m-eyes{animation:qfm-o-c-eyes 1300ms linear}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .qfm-o-m-eyes-happy{animation:qfm-o-c-eyes-happy 1300ms linear}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .qfm-o-m-mouth{animation:qfm-o-c-mouth 1300ms linear}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .qfm-o-m-mouth-big{animation:qfm-o-c-mouth-big 1300ms linear}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .qfm-o-m-cheeks{animation:qfm-o-c-cheeks 1300ms ease-out}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .qfm-o-m-arm-l{animation:qfm-o-c-arm-l 1300ms ease-in-out}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .qfm-o-m-arm-r{animation:qfm-o-c-arm-r 1300ms ease-in-out}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .qfm-o-m-spark{animation:qfm-o-c-spark 700ms ease-out both}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .s1{animation-delay:280ms}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .s2{animation-delay:330ms}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .s3{animation-delay:380ms}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .s4{animation-delay:430ms}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .s5{animation-delay:480ms}
+  .qfm-actor.qfm-v-original[data-result=correct].qfm-playing .qfm-o-m-sentinel{animation:mascot-done-correct 1300ms linear}
+
+  @keyframes qfm-o-c-hop{0%,9%{transform:translateY(0);animation-timing-function:cubic-bezier(.2,.7,.3,1)}32%{transform:translateY(-18px);animation-timing-function:cubic-bezier(.6,0,.9,.5)}40%{transform:translateY(0)}47%{transform:translateY(-4px)}54%,100%{transform:translateY(0)}}
+  @keyframes qfm-o-c-squash{0%{transform:scale(1,1)}9%{transform:scale(1.08,.88)}18%{transform:scale(.94,1.08)}32%{transform:scale(1,1)}40%{transform:scale(1.1,.86)}47%{transform:scale(.97,1.04)}54%{transform:scale(1.02,.98)}62%,100%{transform:scale(1,1)}}
+  @keyframes qfm-o-c-shadow{0%{transform:scale(1);opacity:1}9%{transform:scale(1.08)}32%{transform:scale(.62);opacity:.5}40%{transform:scale(1.1);opacity:1}47%{transform:scale(.92)}54%,100%{transform:scale(1);opacity:1}}
+  @keyframes qfm-o-c-ear-l{0%{transform:rotate(0)}12%{transform:rotate(-10deg)}30%{transform:rotate(12deg)}44%{transform:rotate(-14deg)}56%{transform:rotate(8deg)}68%{transform:rotate(-4deg)}80%,100%{transform:rotate(0)}}
+  @keyframes qfm-o-c-ear-r{0%{transform:rotate(0)}12%{transform:rotate(10deg)}30%{transform:rotate(-12deg)}44%{transform:rotate(14deg)}56%{transform:rotate(-8deg)}68%{transform:rotate(4deg)}80%,100%{transform:rotate(0)}}
+  @keyframes qfm-o-c-eyes{0%,12%{opacity:1}18%,100%{opacity:0}}
+  @keyframes qfm-o-c-eyes-happy{0%,12%{opacity:0}18%,100%{opacity:1}}
+  @keyframes qfm-o-c-mouth{0%,14%{opacity:1}20%,100%{opacity:0}}
+  @keyframes qfm-o-c-mouth-big{0%,14%{opacity:0}20%,100%{opacity:1}}
+  @keyframes qfm-o-c-cheeks{0%{opacity:.45}40%,100%{opacity:.85}}
+  @keyframes qfm-o-c-arm-l{0%,12%{transform:rotate(0)}30%{transform:rotate(35deg)}42%,100%{transform:rotate(0)}}
+  @keyframes qfm-o-c-arm-r{0%,38%{transform:rotate(0)}48%{transform:rotate(-140deg)}56%{transform:rotate(-112deg)}64%{transform:rotate(-140deg)}72%{transform:rotate(-112deg)}86%,100%{transform:rotate(-30deg)}}
+  @keyframes qfm-o-c-spark{0%{opacity:0;transform:translate(0,0) scale(.3) rotate(0)}25%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.1) rotate(90deg)}}
+  @keyframes mascot-done-correct{from{opacity:0}to{opacity:.01}}
+
+  /* ── 答錯：約 1.4 秒，好奇、陪伴，不做懲罰動作 ── */
+  .qfm-actor.qfm-v-original[data-result=incorrect].qfm-playing .qfm-o-m-lean{animation:qfm-o-i-lean 1400ms ease-in-out}
+  .qfm-actor.qfm-v-original[data-result=incorrect].qfm-playing .qfm-o-m-pupils{animation:qfm-o-i-pupils 1400ms ease-in-out}
+  .qfm-actor.qfm-v-original[data-result=incorrect].qfm-playing .qfm-o-m-ear-r{animation:qfm-o-i-ear-r 1400ms ease-in-out}
+  .qfm-actor.qfm-v-original[data-result=incorrect].qfm-playing .qfm-o-m-ear-l{animation:qfm-o-i-ear-l 1400ms ease-in-out}
+  .qfm-actor.qfm-v-original[data-result=incorrect].qfm-playing .qfm-o-m-arm-r{animation:qfm-o-i-arm-r 1400ms ease-in-out}
+  .qfm-actor.qfm-v-original[data-result=incorrect].qfm-playing .qfm-o-m-clue{animation:qfm-o-i-clue 1400ms ease-out}
+  .qfm-actor.qfm-v-original[data-result=incorrect].qfm-playing .qfm-o-m-clue-rays{animation:qfm-o-i-ray 1400ms linear}
+  .qfm-actor.qfm-v-original[data-result=incorrect].qfm-playing .qfm-o-m-face{animation:qfm-o-i-face 1400ms ease-in-out}
+  .qfm-actor.qfm-v-original[data-result=incorrect].qfm-playing .qfm-o-m-body{animation:qfm-o-i-body 1400ms ease-in-out}
+  .qfm-actor.qfm-v-original[data-result=incorrect].qfm-playing .qfm-o-m-eyes{animation:qfm-o-i-blink 1400ms linear}
+  .qfm-actor.qfm-v-original[data-result=incorrect].qfm-playing .qfm-o-m-sentinel{animation:mascot-done-incorrect 1400ms linear}
+
+  @keyframes qfm-o-i-lean{0%{transform:rotate(0)}18%{transform:rotate(5deg)}30%,100%{transform:rotate(4deg)}}
+  @keyframes qfm-o-i-pupils{0%,14%{transform:translate(0,0)}32%,100%{transform:translate(2px,1.5px)}}
+  @keyframes qfm-o-i-ear-r{0%,14%{transform:rotate(0)}26%{transform:rotate(-10deg)}36%{transform:rotate(-3deg)}46%,100%{transform:rotate(-6deg)}}
+  @keyframes qfm-o-i-ear-l{0%,20%{transform:rotate(0)}34%{transform:rotate(5deg)}48%,100%{transform:rotate(0)}}
+  @keyframes qfm-o-i-arm-r{0%,20%{transform:rotate(0)}40%{transform:rotate(-68deg)}52%,100%{transform:rotate(-60deg)}}
+  @keyframes qfm-o-i-clue{0%,28%{opacity:0;transform:scale(.2)}44%{opacity:1;transform:scale(1.15)}56%,100%{opacity:1;transform:scale(1)}}
+  @keyframes qfm-o-i-ray{0%,44%{opacity:0}56%{opacity:1}70%{opacity:.5}84%,100%{opacity:1}}
+  @keyframes qfm-o-i-face{0%,57%{transform:translateY(0)}67%{transform:translateY(3px)}77%{transform:translateY(0)}82%{transform:translateY(1px)}88%,100%{transform:translateY(0)}}
+  @keyframes qfm-o-i-body{0%,57%{transform:scale(1,1)}67%{transform:scale(1.03,.96)}77%,100%{transform:scale(1,1)}}
+  @keyframes qfm-o-i-blink{0%,82%{transform:scaleY(1)}86%{transform:scaleY(.1)}91%,100%{transform:scaleY(1)}}
+  @keyframes mascot-done-incorrect{from{opacity:0}to{opacity:.01}}
+
+  /* ── 減少動態：系統設定或勾選框，一律不播放，只顯示最後姿勢 ── */
+  html.motion-reduced .qfm-o-mascot *,html.motion-reduced .qfm-o-m-sentinel{animation:none!important}
+  @media (prefers-reduced-motion:reduce){
+    .qfm-o-mascot *,.qfm-o-m-sentinel{animation:none!important}
+  }
+
+.qfm-actor.qfm-v-original.qfm-playing .qfm-sentinel{animation:qfm-end-original var(--qfm-dur) linear}
+@keyframes qfm-end-original{from{opacity:0}to{opacity:.01}}
+
+/* 第二批五套；元件根部限定qfm-second，保留獨立部位及keyframes。 */
+.qfm-actor.qfm-second{display:block;width:100%;max-width:100%;aspect-ratio:240/224;line-height:0}
+.qfm-actor.qfm-second svg{display:block;width:100%;height:100%;overflow:hidden}
+.qfm-actor.qfm-second svg *{transform-box:view-box}
+.qfm-actor.qfm-second .qfm2-sentinel{opacity:0}
+.qfm-actor.qfm-second .qfm2-ma{opacity:0}
+.qfm-actor.qfm-second.qfm-playing svg *{animation-duration:var(--qfm-dur,2s);animation-timing-function:cubic-bezier(.45,0,.35,1);animation-fill-mode:both;animation-iteration-count:1;animation-delay:0s}
+.qfm-actor.qfm-second.qfm-playing .qfm2-sentinel{animation-timing-function:linear}
+@media (prefers-reduced-motion:reduce){.qfm-actor.qfm-second.qfm-playing svg *:not(.qfm2-sentinel){animation:none!important}}
+@keyframes qfm2-end-painter{from{opacity:0}to{opacity:0}}
+@keyframes qfm2-end-chef{from{opacity:0}to{opacity:0}}
+@keyframes qfm2-end-reader{from{opacity:0}to{opacity:0}}
+@keyframes qfm2-end-xylo{from{opacity:0}to{opacity:0}}
+@keyframes qfm2-end-builder{from{opacity:0}to{opacity:0}}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter .qfm2-sentinel{animation-name:qfm2-end-painter}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef .qfm2-sentinel{animation-name:qfm2-end-chef}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader .qfm2-sentinel{animation-name:qfm2-end-reader}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo .qfm2-sentinel{animation-name:qfm2-end-xylo}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder .qfm2-sentinel{animation-name:qfm2-end-builder}
+/* 共用：眨眼、表情交叉淡換（緩慢，不閃爍） */
+@keyframes qfm2-blink-late{0%,80%{transform:scale(1,1)}85%{transform:scale(1,.12)}90%,100%{transform:scale(1,1)}}
+@keyframes qfm2-blink-mid{0%,44%{transform:scale(1,1)}49%{transform:scale(1,.12)}54%,100%{transform:scale(1,1)}}
+@keyframes qfm2-out-mid{0%,48%{opacity:1}60%,100%{opacity:0}}
+@keyframes qfm2-in-mid{0%,48%{opacity:0}60%,100%{opacity:1}}
+@keyframes qfm2-out-late{0%,64%{opacity:1}76%,100%{opacity:0}}
+@keyframes qfm2-in-late{0%,64%{opacity:0}76%,100%{opacity:1}}
+
+/* ---------- 1. 刺蝟小畫家 painter ---------- */
+.qfm-actor.qfm-second.qfm-v-painter .qfm2-pt-stroke{stroke-dashoffset:0}
+.qfm-actor.qfm-second.qfm-v-painter.qfm-r-correct .qfm2-whole{transform:translate(0px,0px) rotate(-3deg)}
+.qfm-actor.qfm-second.qfm-v-painter.qfm-r-correct .qfm2-arm-l{transform:rotate(100deg)}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-correct .qfm2-whole{animation-name:qfm2-pc-whole}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-correct .qfm2-arm-r{animation-name:qfm2-pc-armr}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-correct .qfm2-arm-l{animation-name:qfm2-pc-arml}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-correct .qfm2-pt-stroke{animation-name:qfm2-pc-stroke}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-correct .qfm2-pt-sun{animation-name:qfm2-pc-sun}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-correct .qfm2-hat{animation-name:qfm2-pc-hat}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-correct .qfm2-eyes{animation-name:qfm2-pc-eyes}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-correct .qfm2-lid{animation-name:qfm2-blink-late}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-correct .qfm2-spikes{animation-name:qfm2-pc-spikes}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-correct .qfm2-ma{animation-name:qfm2-out-late}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-correct .qfm2-mb{animation-name:qfm2-in-late}
+@keyframes qfm2-pc-whole{0%{transform:translate(0px,0px) rotate(0deg)}15%,60%{transform:translate(2px,0px) rotate(3deg)}72%{transform:translate(0px,0px) rotate(-4deg)}82%{transform:translate(0px,-4px) rotate(-2deg)}90%,100%{transform:translate(0px,0px) rotate(-3deg)}}
+@keyframes qfm2-pc-armr{0%{transform:rotate(0deg)}12%{transform:rotate(-52.5deg)}60%{transform:rotate(-1.5deg)}72%,100%{transform:rotate(0deg)}}
+@keyframes qfm2-pc-arml{0%,62%{transform:rotate(0deg)}80%{transform:rotate(112deg)}88%{transform:rotate(96deg)}100%{transform:rotate(100deg)}}
+@keyframes qfm2-pc-stroke{0%,12%{stroke-dashoffset:100}60%,100%{stroke-dashoffset:0}}
+@keyframes qfm2-pc-sun{0%,60%{transform:scale(0)}70%{transform:scale(1.15)}78%,100%{transform:scale(1)}}
+@keyframes qfm2-pc-hat{0%,72%{transform:rotate(0deg)}80%{transform:rotate(-10deg)}90%{transform:rotate(5deg)}100%{transform:rotate(0deg)}}
+@keyframes qfm2-pc-eyes{0%,62%{transform:translate(4px,-3px)}75%,100%{transform:translate(0px,0px)}}
+@keyframes qfm2-pc-spikes{0%,72%{transform:scale(1)}80%{transform:scale(1.06)}92%,100%{transform:scale(1)}}
+
+.qfm-actor.qfm-second.qfm-v-painter.qfm-r-incorrect .qfm2-whole{transform:translate(0px,0px) rotate(2deg)}
+.qfm-actor.qfm-second.qfm-v-painter.qfm-r-incorrect .qfm2-arm-r{transform:rotate(-30deg)}
+.qfm-actor.qfm-second.qfm-v-painter.qfm-r-incorrect .qfm2-eyes{transform:translate(4px,-3px)}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-incorrect .qfm2-whole{animation-name:qfm2-pi-whole}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-incorrect .qfm2-arm-r{animation-name:qfm2-pi-armr}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-incorrect .qfm2-arm-l{animation-name:qfm2-pi-arml}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-incorrect .qfm2-eyes{animation-name:qfm2-pi-eyes}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-incorrect .qfm2-lid{animation-name:qfm2-blink-late}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-incorrect .qfm2-lid.qfm2-lid-r{animation-name:qfm2-pi-squint}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-incorrect .qfm2-pt-guide{animation-name:qfm2-pi-guide}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-incorrect .qfm2-hat{animation-name:qfm2-pi-hat}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-incorrect .qfm2-ma{animation-name:qfm2-out-late}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-painter.qfm-r-incorrect .qfm2-mb{animation-name:qfm2-in-late}
+@keyframes qfm2-pi-whole{0%{transform:translate(0px,0px) rotate(0deg)}20%,60%{transform:translate(-4px,0px) rotate(-5deg)}75%,100%{transform:translate(0px,0px) rotate(2deg)}}
+@keyframes qfm2-pi-armr{0%{transform:rotate(0deg)}22%,50%{transform:rotate(-66.5deg)}70%,100%{transform:rotate(-30deg)}}
+@keyframes qfm2-pi-arml{0%{transform:rotate(0deg)}30%{transform:rotate(14deg)}100%{transform:rotate(0deg)}}
+@keyframes qfm2-pi-eyes{0%{transform:translate(0px,0px)}20%,100%{transform:translate(4px,-3px)}}
+@keyframes qfm2-pi-squint{0%,20%{transform:scale(1,1)}26%,48%{transform:scale(1,.45)}54%,100%{transform:scale(1,1)}}
+@keyframes qfm2-pi-guide{0%,55%{opacity:0}75%,100%{opacity:1}}
+@keyframes qfm2-pi-hat{0%{transform:rotate(0deg)}15%,50%{transform:rotate(-8deg)}70%,100%{transform:rotate(0deg)}}
+
+/* ---------- 2. 章魚小廚師 chef ---------- */
+.qfm-actor.qfm-second.qfm-v-chef .qfm2-ch-steam{opacity:.85}
+.qfm-actor.qfm-second.qfm-v-chef.qfm-r-correct .qfm2-arm-r{transform:rotate(-48deg)}
+.qfm-actor.qfm-second.qfm-v-chef.qfm-r-correct .qfm2-arm-l{transform:rotate(60deg)}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-correct .qfm2-whole{animation-name:qfm2-cc-whole}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-correct .qfm2-arm-r{animation-name:qfm2-cc-armr}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-correct .qfm2-arm-l{animation-name:qfm2-cc-arml}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-correct .qfm2-ch-steam{animation-name:qfm2-cc-steam}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-correct .qfm2-ch-heart{animation-name:qfm2-cc-heart}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-correct .qfm2-hat{animation-name:qfm2-cc-hat}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-correct .qfm2-eyes{animation-name:qfm2-cc-eyes}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-correct .qfm2-lid{animation-name:qfm2-blink-late}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-correct .qfm2-ch-skirt{animation-name:qfm2-cc-skirt}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-correct .qfm2-ma{animation-name:qfm2-out-mid}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-correct .qfm2-mb{animation-name:qfm2-in-mid}
+@keyframes qfm2-cc-whole{0%{transform:translate(0px,0px) rotate(0deg)}10%{transform:translate(0px,0px) rotate(-2deg)}20%{transform:translate(0px,0px) rotate(2deg)}30%{transform:translate(0px,0px) rotate(-2deg)}40%{transform:translate(0px,0px) rotate(0deg)}55%{transform:translate(0px,-5px) rotate(0deg)}66%,100%{transform:translate(0px,0px) rotate(0deg)}}
+@keyframes qfm2-cc-armr{0%{transform:rotate(0deg)}8%{transform:rotate(-6deg)}16%{transform:rotate(5deg)}24%{transform:rotate(-6deg)}32%{transform:rotate(5deg)}40%{transform:rotate(0deg)}55%{transform:rotate(-52deg)}62%{transform:rotate(-45deg)}70%,100%{transform:rotate(-48deg)}}
+@keyframes qfm2-cc-arml{0%,55%{transform:rotate(0deg)}68%{transform:rotate(70deg)}76%{transform:rotate(50deg)}84%{transform:rotate(68deg)}100%{transform:rotate(60deg)}}
+@keyframes qfm2-cc-steam{0%,10%{opacity:0;transform:translate(0px,10px)}40%,100%{opacity:.85;transform:translate(0px,0px)}}
+@keyframes qfm2-cc-heart{0%,58%{transform:scale(0)}70%{transform:scale(1.15)}78%,100%{transform:scale(1)}}
+@keyframes qfm2-cc-hat{0%,50%{transform:rotate(0deg)}60%{transform:rotate(-8deg)}72%{transform:rotate(4deg)}82%,100%{transform:rotate(0deg)}}
+@keyframes qfm2-cc-eyes{0%,45%{transform:translate(4px,3px)}60%,100%{transform:translate(0px,0px)}}
+@keyframes qfm2-cc-skirt{0%,50%{transform:scale(1,1)}58%{transform:scale(1.04,.97)}68%,100%{transform:scale(1,1)}}
+
+.qfm-actor.qfm-second.qfm-v-chef.qfm-r-incorrect .qfm2-whole{transform:translate(0px,0px) rotate(1deg)}
+.qfm-actor.qfm-second.qfm-v-chef.qfm-r-incorrect .qfm2-arm-l{transform:rotate(30deg)}
+.qfm-actor.qfm-second.qfm-v-chef.qfm-r-incorrect .qfm2-eyes{transform:translate(3px,2px)}
+.qfm-actor.qfm-second.qfm-v-chef.qfm-r-incorrect .qfm2-hat{transform:rotate(6deg)}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-incorrect .qfm2-whole{animation-name:qfm2-ci-whole}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-incorrect .qfm2-arm-l{animation-name:qfm2-ci-arml}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-incorrect .qfm2-arm-r{animation-name:qfm2-ci-armr}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-incorrect .qfm2-ch-card{animation-name:qfm2-ci-card}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-incorrect .qfm2-ch-mark{animation-name:qfm2-ci-mark}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-incorrect .qfm2-ch-arrow{animation-name:qfm2-ci-arrow}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-incorrect .qfm2-hat{animation-name:qfm2-ci-hat}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-incorrect .qfm2-eyes{animation-name:qfm2-ci-eyes}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-incorrect .qfm2-lid{animation-name:qfm2-blink-mid}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-incorrect .qfm2-ma{animation-name:qfm2-out-late}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-chef.qfm-r-incorrect .qfm2-mb{animation-name:qfm2-in-late}
+@keyframes qfm2-ci-whole{0%{transform:translate(0px,0px) rotate(0deg)}30%,60%{transform:translate(0px,0px) rotate(-3deg)}75%{transform:translate(0px,0px) rotate(2deg)}100%{transform:translate(0px,0px) rotate(1deg)}}
+@keyframes qfm2-ci-arml{0%{transform:rotate(0deg)}30%,100%{transform:rotate(30deg)}}
+@keyframes qfm2-ci-armr{0%,60%{transform:rotate(0deg)}72%{transform:rotate(5deg)}84%{transform:rotate(-5deg)}96%,100%{transform:rotate(0deg)}}
+@keyframes qfm2-ci-card{0%{opacity:0;transform:translate(20px,30px) scale(.3)}30%{opacity:1;transform:translate(0px,0px) scale(1.05)}38%,100%{opacity:1;transform:translate(0px,0px) scale(1)}}
+@keyframes qfm2-ci-mark{0%,40%{opacity:0}52%,100%{opacity:1}}
+@keyframes qfm2-ci-arrow{0%,55%{opacity:0}70%,100%{opacity:1}}
+@keyframes qfm2-ci-hat{0%{transform:rotate(0deg)}25%,100%{transform:rotate(6deg)}}
+@keyframes qfm2-ci-eyes{0%{transform:translate(0px,0px)}30%{transform:translate(-4px,-2px)}42%{transform:translate(-6px,-1px)}54%{transform:translate(-4px,-2px)}70%,100%{transform:translate(3px,2px)}}
+
+/* ---------- 3. 貓頭鷹讀書會 reader ---------- */
+.qfm-actor.qfm-second.qfm-v-reader.qfm-r-correct .qfm2-rd-cover{transform:scale(0,1)}
+.qfm-actor.qfm-second.qfm-v-reader.qfm-r-correct .qfm2-rd-book{transform:translate(0px,-4px) scale(1.06)}
+.qfm-actor.qfm-second.qfm-v-reader.qfm-r-correct .qfm2-wing-l{transform:rotate(12deg)}
+.qfm-actor.qfm-second.qfm-v-reader.qfm-r-correct .qfm2-wing-r{transform:rotate(-12deg)}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-correct .qfm2-whole{animation-name:qfm2-rc-whole}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-correct .qfm2-rd-cover{animation-name:qfm2-rc-cover}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-correct .qfm2-rd-lpage{animation-name:qfm2-rc-lpage}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-correct .qfm2-rd-book{animation-name:qfm2-rc-book}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-correct .qfm2-rd-bulb{animation-name:qfm2-rc-bulb}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-correct .qfm2-tufts{animation-name:qfm2-rc-tufts}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-correct .qfm2-wing-l{animation-name:qfm2-rc-wingl}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-correct .qfm2-wing-r{animation-name:qfm2-rc-wingr}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-correct .qfm2-eyes{animation-name:qfm2-rc-eyes}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-correct .qfm2-lid{animation-name:qfm2-blink-mid}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-correct .qfm2-ma{animation-name:qfm2-out-late}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-correct .qfm2-mb{animation-name:qfm2-in-late}
+@keyframes qfm2-rc-whole{0%,45%{transform:translate(0px,0px)}55%{transform:translate(0px,2px)}66%{transform:translate(0px,-6px)}78%,100%{transform:translate(0px,0px)}}
+@keyframes qfm2-rc-cover{0%,12%{transform:scale(1,1)}30%,100%{transform:scale(0,1)}}
+@keyframes qfm2-rc-lpage{0%,28%{transform:scale(0,1)}44%{transform:scale(1.04,1)}50%,100%{transform:scale(1,1)}}
+@keyframes qfm2-rc-book{0%,55%{transform:translate(0px,0px) scale(1)}68%{transform:translate(0px,-6px) scale(1.08)}80%,100%{transform:translate(0px,-4px) scale(1.06)}}
+@keyframes qfm2-rc-bulb{0%,40%{opacity:0;transform:translate(-70px,80px) scale(.3)}62%{opacity:1;transform:translate(0px,0px) scale(1.1)}72%,100%{opacity:1;transform:translate(0px,0px) scale(1)}}
+@keyframes qfm2-rc-tufts{0%,45%{transform:scale(1,1)}58%{transform:scale(1,1.14)}70%,100%{transform:scale(1,1)}}
+@keyframes qfm2-rc-wingl{0%,55%{transform:rotate(0deg)}70%{transform:rotate(18deg)}100%{transform:rotate(12deg)}}
+@keyframes qfm2-rc-wingr{0%,55%{transform:rotate(0deg)}70%{transform:rotate(-18deg)}100%{transform:rotate(-12deg)}}
+@keyframes qfm2-rc-eyes{0%,50%{transform:translate(0px,4px)}62%,100%{transform:translate(0px,0px)}}
+
+.qfm-actor.qfm-second.qfm-v-reader.qfm-r-incorrect .qfm2-whole{transform:translate(0px,0px) rotate(2deg)}
+.qfm-actor.qfm-second.qfm-v-reader.qfm-r-incorrect .qfm2-rd-flip{transform:scale(-1,1)}
+.qfm-actor.qfm-second.qfm-v-reader.qfm-r-incorrect .qfm2-eyes{transform:translate(3px,5px)}
+.qfm-actor.qfm-second.qfm-v-reader.qfm-r-incorrect .qfm2-tufts{transform:rotate(-6deg)}
+.qfm-actor.qfm-second.qfm-v-reader.qfm-r-incorrect .qfm2-wing-r{transform:rotate(28deg)}
+.qfm-actor.qfm-second.qfm-v-reader.qfm-r-incorrect .qfm2-rd-bookmark{transform:translate(0px,-5px)}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-incorrect .qfm2-whole{animation-name:qfm2-ri-whole}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-incorrect .qfm2-wing-r{animation-name:qfm2-ri-wingr}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-incorrect .qfm2-glasses{animation-name:qfm2-ri-glasses}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-incorrect .qfm2-rd-flip{animation-name:qfm2-ri-flip}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-incorrect .qfm2-eyes{animation-name:qfm2-ri-eyes}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-incorrect .qfm2-lid{animation-name:qfm2-blink-mid}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-incorrect .qfm2-tufts{animation-name:qfm2-ri-tufts}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-incorrect .qfm2-rd-hl{animation-name:qfm2-ri-hl}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-reader.qfm-r-incorrect .qfm2-rd-bookmark{animation-name:qfm2-ri-bookmark}
+@keyframes qfm2-ri-whole{0%{transform:translate(0px,0px) rotate(0deg)}20%{transform:translate(0px,0px) rotate(-3deg)}50%{transform:translate(0px,0px) rotate(2deg)}80%{transform:translate(0px,2px) rotate(2deg)}90%,100%{transform:translate(0px,0px) rotate(2deg)}}
+@keyframes qfm2-ri-wingr{0%{transform:rotate(0deg)}18%,30%{transform:rotate(-140deg)}45%{transform:rotate(-20deg)}55%{transform:rotate(-10deg)}75%,100%{transform:rotate(28deg)}}
+@keyframes qfm2-ri-glasses{0%,16%{transform:translate(0px,0px)}22%,30%{transform:translate(0px,-4px)}36%,100%{transform:translate(0px,0px)}}
+@keyframes qfm2-ri-flip{0%,36%{transform:scale(1,1)}52%,100%{transform:scale(-1,1)}}
+@keyframes qfm2-ri-eyes{0%{transform:translate(0px,0px)}12%{transform:translate(2px,-3px)}40%{transform:translate(0px,4px)}70%,100%{transform:translate(3px,5px)}}
+@keyframes qfm2-ri-tufts{0%{transform:rotate(0deg)}10%,40%{transform:rotate(-8deg)}100%{transform:rotate(-6deg)}}
+@keyframes qfm2-ri-hl{0%,64%{opacity:0;transform:scale(.7)}80%{opacity:1;transform:scale(1.05)}88%,100%{opacity:1;transform:scale(1)}}
+@keyframes qfm2-ri-bookmark{0%,60%{transform:translate(0px,0px)}74%{transform:translate(0px,-7px)}100%{transform:translate(0px,-5px)}}
+
+/* ---------- 4. 企鵝木琴手 xylo ---------- */
+.qfm-actor.qfm-second.qfm-v-xylo.qfm-r-correct .qfm2-whole{transform:translate(0px,0px) rotate(-2deg)}
+.qfm-actor.qfm-second.qfm-v-xylo.qfm-r-correct .qfm2-arm-l{transform:rotate(30deg)}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-correct .qfm2-whole{animation-name:qfm2-xc-whole}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-correct .qfm2-arm-r{animation-name:qfm2-xc-armr}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-correct .qfm2-arm-l{animation-name:qfm2-xc-arml}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-correct .qfm2-xy-bar2{animation-name:qfm2-xc-bar2}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-correct .qfm2-xy-bar3{animation-name:qfm2-xc-bar3}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-correct .qfm2-xy-note1{animation-name:qfm2-xc-note1}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-correct .qfm2-xy-note2{animation-name:qfm2-xc-note2}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-correct .qfm2-hat{animation-name:qfm2-xc-hat}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-correct .qfm2-eyes{animation-name:qfm2-xc-eyes}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-correct .qfm2-lid{animation-name:qfm2-blink-late}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-correct .qfm2-ma{animation-name:qfm2-out-mid}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-correct .qfm2-mb{animation-name:qfm2-in-mid}
+@keyframes qfm2-xc-whole{0%{transform:translate(0px,0px) rotate(0deg)}18%{transform:translate(0px,1.5px) rotate(0deg)}24%{transform:translate(0px,0px) rotate(0deg)}34%{transform:translate(0px,1.5px) rotate(0deg)}40%{transform:translate(0px,0px) rotate(0deg)}60%{transform:translate(0px,-5px) rotate(-2deg)}70%,100%{transform:translate(0px,0px) rotate(-2deg)}}
+@keyframes qfm2-xc-armr{0%{transform:rotate(0deg)}10%{transform:rotate(-12deg)}18%{transform:rotate(10deg)}26%{transform:rotate(-8deg)}34%{transform:rotate(12deg)}42%{transform:rotate(-4deg)}50%,100%{transform:rotate(0deg)}}
+@keyframes qfm2-xc-arml{0%,50%{transform:rotate(0deg)}64%{transform:rotate(40deg)}72%{transform:rotate(24deg)}80%{transform:rotate(38deg)}88%{transform:rotate(26deg)}100%{transform:rotate(30deg)}}
+@keyframes qfm2-xc-bar2{0%,16%{transform:translate(0px,0px)}19%{transform:translate(0px,2px)}26%,100%{transform:translate(0px,0px)}}
+@keyframes qfm2-xc-bar3{0%,32%{transform:translate(0px,0px)}36%{transform:translate(0px,2px)}44%,100%{transform:translate(0px,0px)}}
+@keyframes qfm2-xc-note1{0%,20%{opacity:0;transform:translate(-14px,34px) scale(.6)}46%,100%{opacity:1;transform:translate(0px,0px) scale(1)}}
+@keyframes qfm2-xc-note2{0%,36%{opacity:0;transform:translate(-14px,34px) scale(.6)}62%,100%{opacity:1;transform:translate(0px,0px) scale(1)}}
+@keyframes qfm2-xc-hat{0%,55%{transform:rotate(0deg)}65%{transform:rotate(-10deg)}75%{transform:rotate(6deg)}85%{transform:rotate(-3deg)}100%{transform:rotate(0deg)}}
+@keyframes qfm2-xc-eyes{0%,50%{transform:translate(4px,3px)}60%,100%{transform:translate(0px,0px)}}
+
+.qfm-actor.qfm-second.qfm-v-xylo.qfm-r-incorrect .qfm2-arm-l{transform:rotate(-20deg)}
+.qfm-actor.qfm-second.qfm-v-xylo.qfm-r-incorrect .qfm2-arm-r{transform:rotate(-6deg)}
+.qfm-actor.qfm-second.qfm-v-xylo.qfm-r-incorrect .qfm2-eyes{transform:translate(5px,3px)}
+.qfm-actor.qfm-second.qfm-v-xylo.qfm-r-incorrect .qfm2-hat{transform:rotate(5deg)}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-incorrect .qfm2-whole{animation-name:qfm2-xi-whole}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-incorrect .qfm2-arm-l{animation-name:qfm2-xi-arml}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-incorrect .qfm2-arm-r{animation-name:qfm2-xi-armr}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-incorrect .qfm2-xy-card{animation-name:qfm2-xi-card}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-incorrect .qfm2-xy-ring{animation-name:qfm2-xi-ring}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-incorrect .qfm2-xy-mark{animation-name:qfm2-xi-mark}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-incorrect .qfm2-hat{animation-name:qfm2-xi-hat}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-incorrect .qfm2-eyes{animation-name:qfm2-xi-eyes}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-incorrect .qfm2-lid{animation-name:qfm2-blink-mid}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-incorrect .qfm2-ma{animation-name:qfm2-out-late}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-xylo.qfm-r-incorrect .qfm2-mb{animation-name:qfm2-in-late}
+@keyframes qfm2-xi-whole{0%{transform:translate(0px,0px) rotate(0deg)}25%,55%{transform:translate(0px,0px) rotate(4deg)}70%{transform:translate(0px,0px) rotate(0deg)}80%{transform:translate(0px,2px) rotate(0deg)}88%{transform:translate(0px,0px) rotate(0deg)}94%{transform:translate(0px,1.5px) rotate(0deg)}100%{transform:translate(0px,0px) rotate(0deg)}}
+@keyframes qfm2-xi-arml{0%{transform:rotate(0deg)}25%,55%{transform:rotate(-100deg)}72%,100%{transform:rotate(-20deg)}}
+@keyframes qfm2-xi-armr{0%{transform:rotate(0deg)}30%,60%{transform:rotate(-18deg)}76%,100%{transform:rotate(-6deg)}}
+@keyframes qfm2-xi-card{0%{opacity:0;transform:translate(0px,12px) scale(.85)}26%,100%{opacity:1;transform:translate(0px,0px) scale(1)}}
+@keyframes qfm2-xi-ring{0%,40%{opacity:0}54%,100%{opacity:1}}
+@keyframes qfm2-xi-mark{0%,58%{opacity:0}74%,100%{opacity:1}}
+@keyframes qfm2-xi-hat{0%{transform:rotate(0deg)}25%{transform:rotate(8deg)}100%{transform:rotate(5deg)}}
+@keyframes qfm2-xi-eyes{0%{transform:translate(0px,0px)}20%,50%{transform:translate(5px,-4px)}70%,100%{transform:translate(5px,3px)}}
+
+/* ---------- 5. 烏龜小建築師 builder ---------- */
+.qfm-actor.qfm-second.qfm-v-builder.qfm-r-correct .qfm2-arm-r{transform:rotate(-35deg)}
+.qfm-actor.qfm-second.qfm-v-builder.qfm-r-correct .qfm2-arm-l{transform:rotate(38deg)}
+.qfm-actor.qfm-second.qfm-v-builder.qfm-r-correct .qfm2-head{transform:translate(0px,-5px) rotate(-3deg)}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-correct .qfm2-whole{animation-name:qfm2-bc-whole}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-correct .qfm2-bd-roof{animation-name:qfm2-bc-roof}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-correct .qfm2-arm-r{animation-name:qfm2-bc-armr}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-correct .qfm2-arm-l{animation-name:qfm2-bc-arml}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-correct .qfm2-bd-win{animation-name:qfm2-bc-win}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-correct .qfm2-head{animation-name:qfm2-bc-head}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-correct .qfm2-eyes{animation-name:qfm2-bc-eyes}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-correct .qfm2-lid{animation-name:qfm2-blink-late}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-correct .qfm2-ma{animation-name:qfm2-out-mid}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-correct .qfm2-mb{animation-name:qfm2-in-mid}
+@keyframes qfm2-bc-whole{0%,50%{transform:translate(0px,0px) scale(1,1)}58%{transform:translate(0px,2px) scale(1.03,.97)}68%{transform:translate(0px,-3px) scale(1,1)}78%,100%{transform:translate(0px,0px) scale(1,1)}}
+@keyframes qfm2-bc-roof{0%{transform:translate(-20px,-14px) rotate(-6deg) scale(1,1)}15%{transform:translate(-18px,-20px) rotate(-4deg) scale(1,1)}40%{transform:translate(0px,-6px) rotate(0deg) scale(1,1)}50%{transform:translate(0px,0px) rotate(0deg) scale(1,1)}54%{transform:translate(0px,1.5px) rotate(0deg) scale(1.03,.95)}60%,100%{transform:translate(0px,0px) rotate(0deg) scale(1,1)}}
+@keyframes qfm2-bc-armr{0%{transform:rotate(-100deg)}15%{transform:rotate(-108deg)}40%{transform:rotate(-78deg)}50%,58%{transform:rotate(-70deg)}72%{transform:rotate(-30deg)}100%{transform:rotate(-35deg)}}
+@keyframes qfm2-bc-arml{0%,60%{transform:rotate(0deg)}72%{transform:rotate(45deg)}80%{transform:rotate(30deg)}88%{transform:rotate(42deg)}100%{transform:rotate(38deg)}}
+@keyframes qfm2-bc-win{0%,56%{transform:scale(0)}68%{transform:scale(1.15)}76%,100%{transform:scale(1)}}
+@keyframes qfm2-bc-head{0%,50%{transform:translate(0px,-2px) rotate(6deg)}66%{transform:translate(0px,-7px) rotate(-4deg)}78%{transform:translate(0px,-4px) rotate(-3deg)}100%{transform:translate(0px,-5px) rotate(-3deg)}}
+@keyframes qfm2-bc-eyes{0%,50%{transform:translate(4px,-3px)}65%,100%{transform:translate(0px,0px)}}
+
+.qfm-actor.qfm-second.qfm-v-builder.qfm-r-incorrect .qfm2-whole{transform:translate(0px,0px) rotate(2deg)}
+.qfm-actor.qfm-second.qfm-v-builder.qfm-r-incorrect .qfm2-arm-r{transform:rotate(-45deg)}
+.qfm-actor.qfm-second.qfm-v-builder.qfm-r-incorrect .qfm2-arm-l{transform:rotate(-20deg)}
+.qfm-actor.qfm-second.qfm-v-builder.qfm-r-incorrect .qfm2-head{transform:translate(0px,-3px) rotate(0deg)}
+.qfm-actor.qfm-second.qfm-v-builder.qfm-r-incorrect .qfm2-eyes{transform:translate(4px,-4px)}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-incorrect .qfm2-whole{animation-name:qfm2-bi-whole}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-incorrect .qfm2-arm-r{animation-name:qfm2-bi-armr}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-incorrect .qfm2-arm-l{animation-name:qfm2-bi-arml}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-incorrect .qfm2-bd-case{animation-name:qfm2-bi-case}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-incorrect .qfm2-bd-tape{animation-name:qfm2-bi-tape}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-incorrect .qfm2-bd-outline{animation-name:qfm2-bi-outline}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-incorrect .qfm2-head{animation-name:qfm2-bi-head}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-incorrect .qfm2-eyes{animation-name:qfm2-bi-eyes}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-incorrect .qfm2-lid{animation-name:qfm2-blink-mid}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-incorrect .qfm2-ma{animation-name:qfm2-out-late}
+.qfm-actor.qfm-second.qfm-playing.qfm-v-builder.qfm-r-incorrect .qfm2-mb{animation-name:qfm2-in-late}
+@keyframes qfm2-bi-whole{0%{transform:translate(0px,0px) rotate(0deg)}22%,100%{transform:translate(0px,0px) rotate(2deg)}}
+@keyframes qfm2-bi-armr{0%{transform:rotate(0deg)}30%,100%{transform:rotate(-45deg)}}
+@keyframes qfm2-bi-arml{0%{transform:rotate(0deg)}30%{transform:rotate(-30deg)}100%{transform:rotate(-20deg)}}
+@keyframes qfm2-bi-case{0%{transform:translate(-21px,17px)}30%,100%{transform:translate(0px,0px)}}
+@keyframes qfm2-bi-tape{0%,32%{transform:scale(0,1)}56%{transform:scale(1.05,1)}62%,100%{transform:scale(1,1)}}
+@keyframes qfm2-bi-outline{0%,62%{opacity:0;transform:translate(0px,-4px)}80%,100%{opacity:1;transform:translate(0px,0px)}}
+@keyframes qfm2-bi-head{0%{transform:translate(0px,0px) rotate(0deg)}22%,55%{transform:translate(0px,0px) rotate(8deg)}72%{transform:translate(0px,-4px) rotate(0deg)}82%{transform:translate(0px,-1px) rotate(0deg)}90%{transform:translate(0px,-4px) rotate(0deg)}100%{transform:translate(0px,-3px) rotate(0deg)}}
+@keyframes qfm2-bi-eyes{0%{transform:translate(0px,0px)}22%,60%{transform:translate(4px,2px)}76%,100%{transform:translate(4px,-4px)}}
+/* 題庫原圖可直接放大，公式與表格維持網頁內容。 */
+#server-quiz img[role="button"]{cursor:zoom-in}
+#server-quiz img[role="button"]:focus-visible{outline:3px solid #7853c5;outline-offset:4px;border-radius:4px}

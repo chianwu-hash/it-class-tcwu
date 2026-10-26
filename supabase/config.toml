@@ -3,6 +3,10 @@ project_id = "it-class-tcwu"
 [functions.homework]
 verify_jwt = false
 
+# 候選函式仍在 handler 透過 Auth /user 驗證本人 JWT；本機工作不部署此設定。
+[functions.quiz-media]
+verify_jwt = false
+
 [functions.drive-connect]
 # Every POST is authenticated with Auth /user plus the existing is_teacher RPC.
 # Do not replace this with browser-side role checks.
