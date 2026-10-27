@@ -15,7 +15,7 @@ if (cloud) {
   const grade = gradeRoute.quizPageGrade(location.pathname);
   document.title = `${grade === 3 ? '三' : '六'}年級考前練功房`;
   document.querySelector('.hero h1').textContent = document.title;
-  document.querySelector('#quiz-lock p').textContent = '請使用名冊中的學生 Google 帳號登入，讀取並保存自己的雲端作答。';
+  document.querySelector('#quiz-lock p').textContent = '請使用名冊中的學生 Google 帳號登入，讀取並儲存自己的雲端作答。';
   const back = document.createElement('a'); back.className = 'quiz-back-link'; back.href = 'quiz-library.html'; back.textContent = '← 返回單元選卷';
   document.querySelector('.hero .wrap').append(back);
 }
@@ -56,7 +56,7 @@ async function start() {
       delete document.getElementById('server-quiz').dataset.subject;
     }
     document.getElementById('quiz-identity').textContent = session?.user?.email
-      ? cloud ? (practiceRole === 'teacher' ? '教師試答｜送出後保存進度' : practiceRole === 'student' ? '學生練習｜送出後保存進度' : '正在確認年級與保存紀錄…') : session.user.email
+      ? cloud ? (practiceRole === 'teacher' ? '教師試答｜送出後儲存進度' : practiceRole === 'student' ? '學生練習｜送出後儲存進度' : '正在確認年級與儲存紀錄…') : session.user.email
       : '請先登入 Google 帳號';
     if (!cloud) { quiz.handleAuthChange(session).catch(e => { document.getElementById('entry-status').textContent = e.message; }); return; }
     if (id && previousId === id && (validatedUser === id || validatingUser === id)) return;
@@ -73,11 +73,11 @@ async function start() {
         practiceRole = identity.role;
         document.getElementById('server-quiz').dataset.subject = identity.sessions
           ?.find(paper => paper.id === sessionId)?.catalog?.subject || '';
-        document.getElementById('quiz-identity').textContent = `${practiceRole === 'teacher' ? '教師試答' : '學生練習'}｜送出後保存進度`;
+        document.getElementById('quiz-identity').textContent = `${practiceRole === 'teacher' ? '教師試答' : '學生練習'}｜送出後儲存進度`;
         validatedUser = id; validatingUser = null;
         document.getElementById('entry-status').textContent = '';
         await quiz.handleAuthChange(currentSession);
-      } catch (e) { if (token === authGeneration) { validatingUser = null; document.getElementById('quiz-identity').textContent = '年級或保存紀錄尚未確認'; document.getElementById('entry-status').textContent = e.message; } }
+      } catch (e) { if (token === authGeneration) { validatingUser = null; document.getElementById('quiz-identity').textContent = '年級或儲存紀錄尚未確認'; document.getElementById('entry-status').textContent = e.message; } }
     }, 0);
   } });
 }

@@ -223,6 +223,8 @@ begin
   select coalesce(jsonb_agg(jsonb_build_object('id',s.id,'version_id',s.version_id,'title',v.document->>'title',
    'catalog',v.document->'catalog','status',s.status,
    'generated',s.access_mode='self','display_name',g.display_name,'saved_at',g.created_at,
+   'generated_kind',g.config->>'kind','unit_ids',g.config->'units','distribution',g.actual_distribution,
+   'learning_point',case when g.config->>'kind'='extension' then regexp_replace(v.document->'catalog'->>'unit','^同重點再練習[：:]\s*','') else null end,
    'total',(select count(*) from jsonb_array_elements(v.document->'blocks') b,lateral jsonb_array_elements(b->'questions') q),
    'answered',(select count(*) from public.quiz_answers x join public.quiz_attempts a on a.id=x.attempt_id where a.session_id=s.id and a.user_id=uid),
    'correct',(select count(*) from public.quiz_answers x join public.quiz_attempts a on a.id=x.attempt_id where a.session_id=s.id and a.user_id=uid and x.correct)

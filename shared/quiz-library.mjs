@@ -3,6 +3,7 @@ import { createQuizRequest } from './quiz-api.mjs?v=20261027-delete';
 import { quizPageGrade, quizLibraryPath, quizStudentRedirect } from './quiz-grade-route.mjs';
 import { initWrongQuestions } from './quiz-wrong-questions.mjs';
 import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs';
+import {comparePapers,paperRange,paperTitle,paperMix,isExtension} from './quiz-paper-display.mjs';
 
 let currentSession = null, generation = 0, papers = [], busy = false, studentView=false;
 const el = id => document.getElementById(id);
@@ -16,6 +17,8 @@ ownSection.innerHTML='<header class="collection-heading"><span class="collection
 const presetSection=document.createElement('section');presetSection.id='system-papers-section';presetSection.className='paper-collection collection-preset';presetSection.setAttribute('aria-labelledby','system-papers-title');
 presetSection.innerHTML='<header class="collection-heading"><span class="collection-label">已準備好的練習</span><h2 id="system-papers-title">系統預設卷 <span id="system-papers-count" class="collection-count"></span></h2><p>各科單元卷已經準備好，選一份就能開始練習。</p></header><p id="system-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的系統預設卷。</p>';
 el('cloud-papers').before(presetSection);presetSection.append(el('cloud-papers'));presetSection.before(ownSection);
+const jumps=document.createElement('div');jumps.id='paper-jumps';jumps.className='paper-jumps';jumps.setAttribute('role','navigation');jumps.setAttribute('aria-label','前往試卷區塊');jumps.hidden=true;
+for(const [id,label] of [['my-papers-section','我的自組卷'],['system-papers-section','系統預設卷']]){const link=document.createElement('a');link.href='#'+id;link.textContent=label;jumps.append(link);document.getElementById(id).tabIndex=-1;}el('cloud-library').prepend(jumps);
 document.addEventListener('quiz-paper-saved',()=>load({refreshComposer:false}));
 const wrongQuestions = initWrongQuestions({request,pageGrade,getUserId:()=>currentSession?.user?.id,onExtension:composer?.extend,canExtend:()=>document.getElementById('quiz-composer')?.dataset.available==='true'});
 const node = (tag, text, className) => {
@@ -26,37 +29,41 @@ const subjectIcons = { '國語':'fa-book-open', '英語':'fa-language', '數學'
 function render() {
   el('cloud-papers').replaceChildren();
   el('my-papers').replaceChildren();ownSection.dataset.enabled=String(Boolean(composer&&studentView));ownSection.hidden=ownSection.dataset.enabled!=='true';
+  jumps.dataset.enabled=ownSection.dataset.enabled;jumps.hidden=ownSection.hidden;
   const subject = el('subject-filter').value;
   const shown = papers.filter(p => p.catalog?.volume?.startsWith(String(pageGrade)) && (!subject || p.catalog?.subject === subject));
-  shown.sort((a,b)=>Date.parse(b.saved_at||0)-Date.parse(a.saved_at||0));
+  shown.sort(comparePapers);
   el('my-papers-empty').hidden=shown.some(p=>p.generated);
   const ownCount=shown.filter(p=>p.generated).length;
   el('my-papers-count').textContent=`${ownCount}卷`;el('system-papers-count').textContent=`${shown.length-ownCount}卷`;el('system-papers-empty').hidden=shown.length>ownCount;
   for (const p of shown) {
     const a = node('article', undefined, 'paper-card'); a.dataset.subject = p.catalog?.subject || '';
     a.dataset.source=p.generated?'own':'preset';
+    a.dataset.kind=isExtension(p)?'extension':p.generated?'self':'preset';
     a.dataset.sessionId=p.id;
     const header = node('div', undefined, 'paper-card-header'), icon = node('span', undefined, 'subject-icon');
     const symbol = node('i', undefined, `fa-solid ${subjectIcons[p.catalog?.subject] || 'fa-book'}`); symbol.setAttribute('aria-hidden','true'); icon.append(symbol);
-    const title = node('div'); title.append(node('span',p.generated?'自組卷':'系統預設卷','paper-source-label'),node('p', p.catalog?.subject || '單元練習', 'paper-subject'), node('h2', p.generated ? p.display_name||p.title : p.catalog?.unit || p.title));
+    const title = node('div'); title.append(node('span',isExtension(p)?'錯題延伸':p.generated?'自組卷':'系統預設卷','paper-source-label'),node('p', p.catalog?.subject || '單元練習', 'paper-subject'), node('h2', p.generated ? paperTitle(p) : p.catalog?.unit || p.title));
     header.append(icon,title); a.append(header);
     const body = node('div', undefined, 'paper-card-body');
-    body.append(node('p', `${p.catalog?.volume || ''}・${p.catalog?.publisher || ''}・${p.total} 題`, 'meta'));
+    body.append(node('p', `${p.catalog?.volume || ''}・${p.total} 題`, 'meta'));
+    if(p.generated)body.append(node('p',paperRange(p),'paper-range'));
     const progress = node('progress'); progress.max = p.total; progress.value = p.answered;
     progress.setAttribute('aria-label', `已答 ${p.answered} 題，共 ${p.total} 題`);
-    body.append(node('p', `已保存 ${p.answered}／${p.total} 題${p.answered ? `・答對 ${p.correct} 題` : ''}`, 'paper-progress-label'), progress);
-    if (p.catalog?.difficulty) body.append(node('p', p.catalog.difficulty, 'meta'));
+    body.append(node('p', `已作答 ${p.answered}／${p.total} 題${p.answered ? `・答對 ${p.correct} 題` : ''}`, 'paper-progress-label'), progress);
+    const mix=paperMix(p);if(mix)body.append(node('p',mix,'meta paper-mix'));
     const link = node('a', p.answered === p.total ? '查看作答與解析' : p.answered ? '接續練功 →' : '開始練功 →', 'paper-start');
     link.href = paperUrl(p.id,localContext); body.append(link);
     if(p.generated){
-      body.append(node('p',p.catalog?.unit||'','meta'),node('p',`已儲存｜${new Date(p.saved_at).toLocaleString('zh-TW')}`,'meta'));
-      const form=node('form',undefined,'paper-rename'),label=node('label','試卷名稱'),input=node('input');input.type='text';input.maxLength=60;input.required=true;input.value=p.display_name||p.title;input.setAttribute('aria-label','試卷名稱');label.append(input);
-      const save=node('button','儲存名稱'),status=node('p');save.type='submit';status.setAttribute('role','status');form.append(label,save,status);body.append(form);
+      const manage=node('details',undefined,'paper-manage'),summary=node('summary','整理試卷');manage.append(summary);body.append(manage);
+      manage.append(node('p',`試卷已儲存｜${new Date(p.saved_at).toLocaleString('zh-TW')}`,'meta'));
+      const form=node('form',undefined,'paper-rename'),label=node('label','試卷名稱'),input=node('input');input.type='text';input.maxLength=60;input.required=true;input.value=paperTitle(p);input.setAttribute('aria-label','試卷名稱');label.append(input);
+      const save=node('button','儲存名稱'),status=node('p');save.type='submit';status.setAttribute('role','status');form.append(label,save,status);manage.append(form);
       form.addEventListener('submit',async e=>{e.preventDefault();const name=input.value.trim();if(!name){status.textContent='請輸入試卷名稱。';return;}const uid=currentSession?.user?.id,token=generation;save.disabled=true;input.disabled=true;status.textContent='正在儲存名稱…';try{const r=await request('rename_paper',{session_id:p.id,name});if(token!==generation||currentSession?.user?.id!==uid)return;p.display_name=r.display_name;title.querySelector('h2').textContent=r.display_name;input.value=r.display_name;status.textContent='名稱已儲存。';}catch(e){if(token===generation)status.textContent=e.message;}finally{if(token===generation){save.disabled=false;input.disabled=false;}}});
-      const remove=node('button','刪除試卷','paper-delete');remove.type='button';body.append(remove);
+      const remove=node('button','刪除試卷','paper-delete');remove.type='button';manage.append(remove);
       remove.addEventListener('click',async()=>{
         if(remove.disabled||save.disabled)return;
-        if(!confirm(`要刪除「${p.display_name||p.title}」嗎？\n試卷會從「我的自組卷」移除，已保存的作答與錯題紀錄會保留。`))return;
+        if(!confirm(`要刪除「${paperTitle(p)}」嗎？\n試卷會從「我的自組卷」移除，已儲存的作答與錯題紀錄會保留。`))return;
         const uid=currentSession?.user?.id,token=generation;remove.disabled=true;save.disabled=true;input.disabled=true;status.textContent='正在移除試卷…';
         try{await request('delete_paper',{session_id:p.id});if(token!==generation||currentSession?.user?.id!==uid)return;
           papers=papers.filter(x=>x.id!==p.id);render();el('cloud-status').textContent='已從「我的自組卷」移除試卷；作答與錯題紀錄已保留。';
@@ -102,11 +109,11 @@ if (localContext) {
 } else initNavbarAuth({ onSessionResolved(session) {
   const same = (session?.user?.id || null) === (currentSession?.user?.id || null);
   currentSession = session;
-  el('cloud-identity').textContent = session?.user ? '已登入｜送出答案後會保存練習進度' : '尚未登入・登入後才能讀取及保存作答';
+  el('cloud-identity').textContent = session?.user ? '已登入｜送出答案後會儲存練習進度' : '尚未登入・登入後才能讀取及儲存作答';
   el('cloud-lock').hidden = Boolean(session?.user); el('cloud-library').hidden = !session?.user;
   if (same) return;
   generation++; busy = false; papers = []; el('cloud-papers').replaceChildren(); el('cloud-status').textContent = '';
-  studentView=false;el('my-papers').replaceChildren();ownSection.hidden=true;ownSection.dataset.enabled='false';
+  studentView=false;el('my-papers').replaceChildren();ownSection.hidden=true;ownSection.dataset.enabled='false';jumps.hidden=true;jumps.dataset.enabled='false';
   wrongQuestions.reset();
   composer?.reset();
   el('grade-filter-label').hidden = true;

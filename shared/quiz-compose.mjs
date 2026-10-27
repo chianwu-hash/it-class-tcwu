@@ -1,3 +1,4 @@
+import {grade3MathUnits} from './quiz-paper-display.mjs';
 const make=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
 export function localPoolContext(){
  if(!['localhost','127.0.0.1'].includes(location.hostname)||document.querySelector('meta[name="quiz-pool-local"]')?.content!=='1'||new URLSearchParams(location.search).get('local')!=='1')return null;
@@ -13,7 +14,7 @@ export function initComposer({request,context}){
  const updateMix=()=>{const n=Number(document.getElementById('compose-count').value);document.getElementById('compose-mix').textContent=`目前中等難度；${n}題以${n/5}題易、${n*3/5}題中、${n/5}題難為目標，實際題量與配比會清楚列出。`;};
  document.getElementById('compose-count').addEventListener('change',updateMix);updateMix();
  document.addEventListener('quiz-paper-removed',e=>{const a=result.querySelector('a');if(a&&new URL(a.href).searchParams.get('session')===e.detail.sessionId){pending=null;result.replaceChildren();status.textContent='這份卷已從清單移除，可以重新組一份新卷。';}});
- const labels=['10000以內的數','10000以內的加減','毫米與數線','乘法','角與形狀','除法','公斤與公克','分數','列表與規律'];
+ const labels=grade3MathUnits;
  async function ready(){
   const g=++generation;
   try{const d=await request('pool_catalog');if(g!==generation)return;panel.dataset.available=String(d.available);panel.hidden=!d.available;if(!d.available)return;

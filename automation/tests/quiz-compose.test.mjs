@@ -38,6 +38,7 @@ test('命名自組卷立即入清單；本人改名保留未答卷、原版本�
  const config={request_id:crypto.randomUUID(),kind:'self',count:5,units:[1],name:'  分數複習 <我的卷>  '};
  const made=await rpc(db,studentId(1),'quiz_compose',config);
  let paper=(await quizCall(db,studentId(1),'library_sessions')).sessions.find(x=>x.id===made.session_id);assert.equal(paper.generated,true);assert.equal(paper.display_name,'分數複習 <我的卷>');assert.equal(paper.answered,0);assert.ok(paper.saved_at);
+ assert.equal(paper.generated_kind,'self');assert.deepEqual(paper.unit_ids,[1]);assert.deepEqual(paper.distribution,made.distribution);assert.equal(paper.learning_point,null);
  const args={session_id:made.session_id},joined=await quizCall(db,studentId(1),'join',args),q=joined.document.questions[0];assert.equal(joined.document.title,paper.display_name);
  const saved=await quizCall(db,studentId(1),'submit',{...args,question_id:q.id,response:'b',request_id:crypto.randomUUID()});
  const original=JSON.stringify((await db.query('select * from public.quiz_versions order by id')).rows);
@@ -63,6 +64,9 @@ test('學生自組：私有卷、固定版本、冪等、亂序、來源池與�
  const wrong=await rpc(db,studentId(1),'quiz_wrong_questions');assert.equal(wrong.total,1);assert.equal((await rpc(db,studentId(2),'quiz_wrong_questions')).total,0);
  const ext=await rpc(db,studentId(1),'quiz_compose',{kind:'extension',count:3,request_id:crypto.randomUUID(),attempt_id:joined.attempt_id,question_id:q.id});
  const extended=await quizCall(db,studentId(1),'join',{session_id:ext.session_id});assert.ok(!extended.document.questions.some(x=>x.id===q.id));assert.ok(extended.document.questions.length>0);
+ const listed=(await quizCall(db,studentId(1),'library_sessions')).sessions.find(x=>x.id===ext.session_id);
+ assert.equal(listed.generated_kind,'extension');assert.equal(listed.learning_point,'knowledge_1');assert.equal(listed.display_name,'同重點再練：knowledge_1');assert.equal(extended.document.title,listed.display_name);
+ await rpc(db,studentId(1),'quiz_rename_paper',{session_id:ext.session_id,name:'我想再練一次'});assert.equal((await quizCall(db,studentId(1),'resume',{session_id:ext.session_id})).document.title,'我想再練一次');
  const frozen=JSON.stringify((await quizCall(db,studentId(1),'resume',args)).document);await db.query("update public.quiz_question_pool set question=jsonb_set(question,'{prompt,text}','\"新版來源\"')");assert.equal(JSON.stringify((await quizCall(db,studentId(1),'resume',args)).document),frozen);
 }finally{await db.close();}});
 test('組卷拒絕偽造與未揭答錯題、名冊及教師越權，難度不足如實記錄',async()=>{const db=await setup();try{

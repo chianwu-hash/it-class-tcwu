@@ -77,6 +77,7 @@ begin
   blocks:=blocks||jsonb_build_array(jsonb_build_object('id','b_'||chosen.source_item_id,'material',jsonb_build_object('text','','media','[]'::jsonb),'questions',jsonb_build_array(chosen.question)));
  end loop;
  select jsonb_build_object('requested',amount,'actual',cardinality(selected),'easy',count(*) filter(where p.difficulty=-3),'medium',count(*) filter(where p.difficulty=0),'hard',count(*) filter(where p.difficulty=3)) into distribution from public.quiz_question_pool p where p.question_id=any(selected);
+ if kind='extension' and paper_name is null then paper_name:='同重點再練：'||left(source.knowledge_name,50);end if;
  doc:=jsonb_build_object('schema',1,'title',case when kind='extension' then '數學同重點延伸練習' else '我的數學自組卷' end,
   'catalog',jsonb_build_object('school_year','115','volume','3年級上學期','subject','數學','publisher','翰林','unit',case when kind='extension' then '同重點再練習：'||source.knowledge_name else '自選單元：'||units::text end),'blocks',blocks);
  perform public.quiz_validate(doc);

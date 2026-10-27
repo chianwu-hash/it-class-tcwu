@@ -82,3 +82,13 @@
 .quiz-library-page #quiz-composer h2{color:#5b3b83}
 .quiz-library-page #compose-units label{border-color:#d9cdec}
 .quiz-library-page #compose-units input{accent-color:#7955a3}
+.quiz-library-page .paper-range{margin:0;color:#334155;font-size:14px;font-weight:700;line-height:1.7;overflow-wrap:anywhere}
+.quiz-library-page .paper-manage{margin-top:8px;border-top:1px solid var(--collection-border);padding-top:10px}
+.quiz-library-page .paper-manage summary{cursor:pointer;font-weight:700;color:var(--collection-ink);padding:8px 2px;min-height:28px}
+.quiz-library-page .paper-manage[open] summary{margin-bottom:8px}
+.quiz-library-page .paper-jumps{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 20px}
+.quiz-library-page .paper-jumps[hidden]{display:none!important}
+.quiz-library-page .paper-jumps a{display:inline-flex;align-items:center;padding:11px 16px;border-radius:99px;background:#f6f1ff;border:1px solid #c6b4e5;color:#5b3b83;font-size:14px;font-weight:700;text-decoration:none}
+.quiz-library-page .paper-jumps a:last-child{background:#eef7ff;border-color:#a6cbe8;color:#155681}
+.quiz-library-page .paper-jumps a:focus-visible,.quiz-library-page .paper-manage summary:focus-visible{outline:3px solid #0f766e;outline-offset:3px}
+.quiz-library-page .paper-collection{scroll-margin-top:90px}

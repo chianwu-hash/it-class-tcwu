@@ -547,7 +547,7 @@ quizFeedbackMotion.register({
   Object.values(variants).forEach(def => quizFeedbackMotion.register(def));
 })();
 
-// 選用後端模式不接收答案資料，不執行前端評分，不呼叫舊進度保存。
+// 選用後端模式不接收答案資料，不執行前端評分，不呼叫舊進度儲存。
 export function initServerQuiz({ selectors, server }) {
   if (!server?.request || !server?.sessionId) throw new Error('缺少測驗場次或後端連線。');
   const el = key => typeof selectors?.[key] === 'string' ? document.getElementById(selectors[key]) : selectors?.[key];
@@ -588,7 +588,7 @@ export function initServerQuiz({ selectors, server }) {
   function say(text, error = false) { const n = root.querySelector('[role="status"]'); if (n) { n.textContent = text; n.dataset.error = String(error); } }
   function renderReview(article, q) {
     const review = state.reviews.find(r => r.question_id === q.id);
-    if (!review) { article.append(make('p', '已保存；正解與解析會在符合本場次揭答條件後顯示。', 'notice')); return; }
+    if (!review) { article.append(make('p', '已儲存；正解與解析會在符合本場次揭答條件後顯示。', 'notice')); return; }
     const box = make('div', undefined, 'answer-preview');
     box.dataset.correct = String(review.correct);
     box.tabIndex = -1;
@@ -634,11 +634,11 @@ export function initServerQuiz({ selectors, server }) {
     const questions = state.document.questions;
     const count = Object.keys(state.responses).length;
     const heading = make('div', undefined, 'quiz-heading');
-    heading.append(make('h2', state.document.title), make('p', `已保存 ${count} / ${questions.length} 題`, 'progress-label'));
+    heading.append(make('h2', state.document.title), make('p', `已作答 ${count} / ${questions.length} 題`, 'progress-label'));
     const progress = make('progress'); progress.max = questions.length; progress.value = count; progress.setAttribute('aria-label', '測驗作答進度');
     heading.append(progress); root.append(heading);
     root.classList.toggle('is-review', state.complete && showFullReview);
-    if (state.status === 'closed') root.append(make('p', '老師已結束本場次。已保存紀錄仍可查看。', 'notice'));
+    if (state.status === 'closed') root.append(make('p', '老師已結束本場次。已儲存紀錄仍可查看。', 'notice'));
     if (state.complete && showFullReview) {
       root.append(make('p', '你已完成整份測驗，可以依自己的步調回看題目與解析。', 'notice'));
       root.append(button('回看最後一題', () => { showFullReview = false; cursor = questions.length - 1; render(); }, 'secondary'));
@@ -652,7 +652,7 @@ export function initServerQuiz({ selectors, server }) {
       }
       return;
     }
-    if (state.complete) root.append(make('p', '所有答案已保存。先確認這一題的結果，再查看整份作答與解析。', 'notice'));
+    if (state.complete) root.append(make('p', '所有答案已儲存。先確認這一題的結果，再查看整份作答與解析。', 'notice'));
     cursor = Math.min(cursor, questions.length - 1);
     const q = questions[cursor], saved = answered(q);
     const review = state.reviews.find(r => r.question_id === q.id);
@@ -696,17 +696,17 @@ export function initServerQuiz({ selectors, server }) {
     const actions = make('div', undefined, 'toolbar quiz-actions');
     if (saved) renderReview(article, q);
     else if (state.status === 'open') {
-      const submitButton = button(busy ? '正在保存…' : pending ? '以相同答案重試保存' : '送出答案', submit, 'quiz-primary'); submitButton.disabled = busy; submitButton.id = 'server-submit'; actions.append(submitButton);
+      const submitButton = button(busy ? '正在儲存…' : pending ? '以相同答案重試儲存' : '送出答案', submit, 'quiz-primary'); submitButton.disabled = busy; submitButton.id = 'server-submit'; actions.append(submitButton);
     }
     if (cursor > 0 && !pending) actions.append(button('回看前一題', () => { cursor--; selected = ''; render(); }, 'secondary'));
     if (saved && cursor < questions.length - 1) actions.append(button('下一題', () => { cursor++; selected = ''; render(); root.querySelector('.question')?.scrollIntoView({ block: 'start' }); }, 'quiz-primary'));
     if (state.complete) actions.append(button('查看整份作答與解析', () => { showFullReview = true; render(); }, 'quiz-primary'));
-    actions.append(button('更新保存狀態', () => load('resume', true), 'secondary quiz-refresh')); article.append(actions); root.append(article);
-    if (pending) say('這次答案的保存狀態尚未確認，請以相同答案重試或更新狀態。', true);
+    actions.append(button('更新儲存狀態', () => load('resume', true), 'secondary quiz-refresh')); article.append(actions); root.append(article);
+    if (pending) say('這次答案的儲存狀態尚未確認，請以相同答案重試或更新狀態。', true);
   }
   async function load(action, preserveCursor = false) {
     if (busy || !userId) return;
-    const token = generation; busy = true; say('正在讀取保存紀錄…');
+    const token = generation; busy = true; say('正在讀取儲存紀錄…');
     try {
       const next = await server.request(action, { session_id: server.sessionId });
       if (generation !== token) return;
@@ -726,13 +726,13 @@ export function initServerQuiz({ selectors, server }) {
       if (!selected.trim()) return say('請先選擇選項或填入答案。', true);
       pending = { question_id: q.id, response: selected, request_id: crypto.randomUUID() };
     }
-    const token = generation; busy = true; render(); say('正在保存答案…');
+    const token = generation; busy = true; render(); say('正在儲存答案…');
     try {
       const next = await server.request('submit', { session_id: server.sessionId, ...pending });
       if (generation !== token) return;
       // 只在送答成功、後端允許揭答後播放；回看、重整與整卷檢視不反覆播放。
       feedbackAnimation = next.reviews.some(r => r.question_id === q.id) ? q.id : null;
-      state = next; pending = null; busy = false; render(); say('答案已保存。');
+      state = next; pending = null; busy = false; render(); say('答案已儲存。');
       root.querySelector('.answer-preview')?.focus();
     } catch (e) { if (generation === token) { busy = false; render(); say(e.message, true); } }
     finally { if (generation === token) { busy = false; const b = root.querySelector('#server-submit'); if (b) b.disabled = false; } }
