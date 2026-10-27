@@ -70,7 +70,7 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
       el('wrong-list').hidden=true;el('wrong-pages').hidden=true;el('wrong-detail').hidden=false;message('可以慢慢核對題目、當時答案與解析。');el('wrong-title').focus();
     }catch(e){if(current(g,uid))message(e.message);}finally{if(current(g,uid))locked(false);}
   }
-  function activate(value){if(busy)return;active=value;panel.hidden=!value;for(const id of ['cloud-papers','cloud-status'])el(id).hidden=value;library.querySelector('.filters').hidden=value;const composer=document.getElementById('quiz-composer');if(composer)composer.hidden=value||composer.dataset.available!=='true';papersButton.setAttribute('aria-pressed',String(!value));wrongButton.setAttribute('aria-pressed',String(value));if(value)load();}
+  function activate(value){if(busy)return;active=value;panel.hidden=!value;for(const id of ['cloud-papers','cloud-status','my-papers-section'])if(el(id))el(id).hidden=value||(id==='my-papers-section'&&el(id).dataset.enabled!=='true');library.querySelector('.filters').hidden=value;const composer=document.getElementById('quiz-composer');if(composer)composer.hidden=value||composer.dataset.available!=='true';papersButton.setAttribute('aria-pressed',String(!value));wrongButton.setAttribute('aria-pressed',String(value));if(value)load();}
   papersButton.addEventListener('click',()=>{history.replaceState(null,'',location.pathname+location.search);activate(false);});
   wrongButton.addEventListener('click',()=>{history.replaceState(null,'',location.pathname+location.search+'#wrong');activate(true);});
   el('wrong-subject').addEventListener('change',()=>{el('wrong-unit').value='';units();page=0;load();});el('wrong-unit').addEventListener('change',()=>{page=0;load();});

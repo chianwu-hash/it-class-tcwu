@@ -44,7 +44,7 @@ export async function createQuizRequest({ getSession, localStudent = null, local
       return result;
     }
     try {
-      const specialized = {wrong_questions:'quiz_wrong_questions',compose:'quiz_compose',pool_catalog:'quiz_pool_catalog'}[action];
+      const specialized = {wrong_questions:'quiz_wrong_questions',compose:'quiz_compose',rename_paper:'quiz_rename_paper',pool_catalog:'quiz_pool_catalog'}[action];
       const result = await transport(action === 'publish' ? '/functions/v1/quiz-media' : specialized ? '/rest/v1/rpc/'+specialized : '/rest/v1/rpc/quiz_action',
         action === 'publish' ? { action: 'freeze', data } : action === 'pool_catalog' ? {} : specialized ? { p_data: data } : { p_action: action, p_data: data });
       if (result.attempt_id) attemptId = result.attempt_id;

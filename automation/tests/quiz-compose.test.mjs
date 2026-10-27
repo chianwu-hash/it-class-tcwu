@@ -6,6 +6,23 @@ import {newQuestion,content} from '../../shared/quiz-document.mjs';
 async function rpc(db,uid,name,data={}){return db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid||'']);await tx.exec('set local role authenticated');return (await tx.query(`select public.${name}($1) result`,[JSON.stringify(data)])).rows[0].result;});}
 async function setup(){const db=await createQuizDb();await db.exec(await readFile('supabase/quiz-wrong-questions.sql','utf8'));await db.exec(await readFile('supabase/quiz-pool.sql','utf8'));await db.query("update public.student_enrollments set class_code='301' where email in ('student1@example.invalid','student2@example.invalid')");
  for(let i=0;i<24;i++){const q=newQuestion();q.id='pool_'+i;q.prompt=content('合成獨立題 '+i);q.explanation=content('合成解析');await db.query('insert into public.quiz_question_pool values($1,$2,$2,$3,$4,$4,$5,$6,true,$7,$8,true)',[q.id,'source_'+i,JSON.stringify([i<12?1:2]),'knowledge_1',[-3,0,3][i%3],'version1',JSON.stringify(q),'{}']);}return db;}
+
+test('命名自組卷立即入清單；本人改名保留未答卷、原版本、選項與已存答案',async()=>{const db=await setup();try{
+ const config={request_id:crypto.randomUUID(),kind:'self',count:5,units:[1],name:'  分數複習 <我的卷>  '};
+ const made=await rpc(db,studentId(1),'quiz_compose',config);
+ let paper=(await quizCall(db,studentId(1),'library_sessions')).sessions.find(x=>x.id===made.session_id);assert.equal(paper.generated,true);assert.equal(paper.display_name,'分數複習 <我的卷>');assert.equal(paper.answered,0);assert.ok(paper.saved_at);
+ const args={session_id:made.session_id},joined=await quizCall(db,studentId(1),'join',args),q=joined.document.questions[0];assert.equal(joined.document.title,paper.display_name);
+ const saved=await quizCall(db,studentId(1),'submit',{...args,question_id:q.id,response:'b',request_id:crypto.randomUUID()});
+ const original=JSON.stringify((await db.query('select * from public.quiz_versions order by id')).rows);
+ await assert.rejects(rpc(db,studentId(2),'quiz_rename_paper',{...args,name:'他人改名'}),/session_unavailable/);
+ for(const name of ['', '  ', 'a'.repeat(61), '兩行\n名稱'])await assert.rejects(rpc(db,studentId(1),'quiz_rename_paper',{...args,name}),/invalid_request/);
+ await assert.rejects(rpc(db,null,'quiz_rename_paper',{...args,name:'匿名'}),/login_required/);
+ await rpc(db,studentId(1),'quiz_rename_paper',{...args,name:'期中再練一次'});
+ assert.equal(JSON.stringify((await db.query('select * from public.quiz_versions order by id')).rows),original);
+ const resumed=await quizCall(db,studentId(1),'resume',args);assert.equal(resumed.document.title,'期中再練一次');assert.deepEqual(resumed.responses,saved.responses);assert.deepEqual(resumed.document.questions,joined.document.questions);
+ assert.equal((await rpc(db,studentId(1),'quiz_compose',config)).session_id,made.session_id);
+ paper=(await quizCall(db,studentId(1),'library_sessions')).sessions.find(x=>x.id===made.session_id);assert.equal(paper.display_name,'期中再練一次');assert.equal(paper.answered,1);
+}finally{await db.close();}});
 test('學生自組：私有卷、固定版本、冪等、亂序、來源池與他人紀錄隔離',async()=>{const db=await setup();try{
  const data={request_id:crypto.randomUUID(),kind:'self',count:10,units:[1,2]};const made=await rpc(db,studentId(1),'quiz_compose',data);assert.equal(made.distribution.actual,10);assert.deepEqual([made.distribution.easy,made.distribution.medium,made.distribution.hard],[2,6,2]);
  const again=await rpc(db,studentId(1),'quiz_compose',data);assert.equal(again.session_id,made.session_id);assert.equal(again.reused,true);

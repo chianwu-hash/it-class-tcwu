@@ -6,12 +6,33 @@ export function localPoolContext(){
 export function paperUrl(id,context){return `quiz.html?${context?`local=1&student=${context.student}`:'cloud=1'}&session=${encodeURIComponent(id)}`;}
 export function initComposer({request,context}){
  const library=document.getElementById('cloud-library'),panel=make('section');panel.id='quiz-composer';panel.className='panel';panel.hidden=true;
- panel.innerHTML='<h2>自己選範圍練習</h2><p>勾選想複習的單元，系統會幫你準備一份自己的練習卷。</p><form id="compose-form"><fieldset id="compose-units"><legend>選擇單元（可複選）</legend></fieldset><label>題數 <select id="compose-count"><option value="10">10題一般練習</option><option value="5">5題短練習</option></select></label><p>預設中等難度；10題以2題易、6題中、2題難為目標，實際題量與配比會清楚列出。</p><button type="submit">準備我的練習卷</button></form><p id="compose-status" role="status" aria-live="polite"></p><div id="compose-result"></div>';
- library.insertBefore(panel,library.querySelector('.filters'));let generation=0,busy=false,pending=null;
+ panel.innerHTML='<h2>自己選範圍練習</h2><p>組卷成功就會自動儲存到「我的自組卷」，不必先作答。</p><form id="compose-form"><label>試卷名稱（選填）<input id="compose-name" type="text" maxlength="60" placeholder="例如：我的分數複習卷"></label><fieldset id="compose-units"><legend>選擇單元（可複選）</legend></fieldset><label>題數 <select id="compose-count"><option value="10">10題一般練習</option><option value="5">5題短練習</option></select></label><p>預設中等難度；10題以2題易、6題中、2題難為目標，實際題量與配比會清楚列出。</p><button type="submit">組卷並儲存</button></form><p id="compose-status" role="status" aria-live="polite"></p><div id="compose-result"></div>';
+ library.insertBefore(panel,library.querySelector('.filters'));
+ let generation=0,busy=false,pending=null;
+ const status=document.getElementById('compose-status'),result=document.getElementById('compose-result');
  const labels=['10000以內的數','10000以內的加減','毫米與數線','乘法','角與形狀','除法','公斤與公克','分數','列表與規律'];
- async function ready(){const g=++generation;try{const d=await request('pool_catalog');if(g!==generation)return;panel.dataset.available=String(d.available);panel.hidden=!d.available;if(!d.available)return;const box=document.getElementById('compose-units');box.replaceChildren(make('legend','選擇單元（可複選）'));for(const u of d.units){const label=make('label'),input=make('input');input.type='checkbox';input.value=u.id;label.append(input,make('span',`${u.id}. ${labels[u.id-1]}（${u.count}題）`));box.append(label);}}catch(e){if(g===generation)panel.hidden=true;}}
- panel.querySelector('form').addEventListener('change',()=>{pending=null;document.getElementById('compose-result').replaceChildren();});
- panel.querySelector('form').addEventListener('submit',async e=>{e.preventDefault();if(busy)return;const units=[...panel.querySelectorAll('input:checked')].map(n=>Number(n.value)),count=Number(document.getElementById('compose-count').value),status=document.getElementById('compose-status');if(!units.length){status.textContent='先勾選至少一個想複習的單元。';return;}
-  pending??={kind:'self',count,units,request_id:crypto.randomUUID()};const g=generation;busy=true;panel.querySelectorAll('button,input,select').forEach(n=>n.disabled=true);status.textContent='正在準備你的練習卷…';try{const r=await request('compose',pending);if(g!==generation)return;const d=r.distribution;status.textContent=`已準備${d.actual}題：易${d.easy}、中${d.medium}、難${d.hard}。${d.actual<count?'這個範圍目前適合的題目較少，先練這幾題。':''}`;const a=make('a',`開始這${d.actual}題 →`);a.className='paper-start';a.href=paperUrl(r.session_id,context);document.getElementById('compose-result').replaceChildren(a);}catch(e){if(g===generation)status.textContent=e.message;}finally{if(g===generation){busy=false;panel.querySelectorAll('button,input,select').forEach(n=>n.disabled=false);}}});
- return {ready,reset(){generation++;busy=false;pending=null;panel.hidden=true;panel.dataset.available='false';document.getElementById('compose-result').replaceChildren();document.getElementById('compose-status').textContent='';},async extend(item){const r=await request('compose',{kind:'extension',count:3,request_id:item.request_id,attempt_id:item.attempt_id,question_id:item.question_id});return {...r,url:paperUrl(r.session_id,context)};}};
+ async function ready(){
+  const g=++generation;
+  try{const d=await request('pool_catalog');if(g!==generation)return;panel.dataset.available=String(d.available);panel.hidden=!d.available;if(!d.available)return;
+   const box=document.getElementById('compose-units');box.replaceChildren(make('legend','選擇單元（可複選）'));
+   for(const u of d.units){const label=make('label'),input=make('input');input.type='checkbox';input.value=u.id;label.append(input,make('span',`${u.id}. ${labels[u.id-1]}（${u.count}題）`));box.append(label);}
+  }catch{if(g===generation){panel.dataset.available='false';panel.hidden=true;}}
+ }
+ panel.querySelector('form').addEventListener('input',()=>{pending=null;result.replaceChildren();status.textContent='';});
+ panel.querySelector('form').addEventListener('submit',async e=>{
+  e.preventDefault();if(busy)return;
+  const units=[...panel.querySelectorAll('input:checked')].map(n=>Number(n.value)),count=Number(document.getElementById('compose-count').value),name=document.getElementById('compose-name').value.trim();
+  if(!units.length){status.textContent='先勾選至少一個想複習的單元。';return;}
+  pending??={kind:'self',count,units,name,request_id:crypto.randomUUID()};const g=generation;
+  busy=true;panel.querySelectorAll('button,input,select').forEach(n=>n.disabled=true);status.textContent='正在組卷並儲存…';
+  try{
+   const r=await request('compose',pending);if(g!==generation)return;const d=r.distribution;
+   status.textContent=`✓ 已儲存到「我的自組卷」。${name?`名稱：${name}。`:''}共${d.actual}題：易${d.easy}、中${d.medium}、難${d.hard}。${d.actual<count?'這個範圍目前適合的題目較少，先練這幾題。':''}`;
+   const a=make('a',`開始這${d.actual}題 →`);a.className='paper-start';a.href=paperUrl(r.session_id,context);
+   const more=make('button','再組一份新卷');more.type='button';more.addEventListener('click',()=>{pending=null;result.replaceChildren();status.textContent='原卷已保留在「我的自組卷」。可以調整名稱和範圍，再組一份。';document.getElementById('compose-name').focus();});
+   result.replaceChildren(a,more);document.dispatchEvent(new CustomEvent('quiz-paper-saved'));
+  }catch(e){if(g===generation)status.textContent=e.message;}
+  finally{if(g===generation){busy=false;panel.querySelectorAll('button,input,select').forEach(n=>n.disabled=false);}}
+ });
+ return {ready,reset(){generation++;busy=false;pending=null;panel.hidden=true;panel.dataset.available='false';panel.querySelector('form').reset();result.replaceChildren();status.textContent='';},async extend(item){const r=await request('compose',{kind:'extension',count:3,request_id:item.request_id,attempt_id:item.attempt_id,question_id:item.question_id});return {...r,url:paperUrl(r.session_id,context)};}};
 }

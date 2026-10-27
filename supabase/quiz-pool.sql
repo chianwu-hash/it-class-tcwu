@@ -18,14 +18,16 @@ declare
  amount integer; units jsonb; seed text; conf jsonb; old public.quiz_generated_papers;
  selected text[]:='{}'; chosen public.quiz_question_pool; source public.quiz_question_pool;
  reviewed jsonb; blocks jsonb:='[]'; distribution jsonb; doc jsonb; b_id uuid; v_id uuid; s_id uuid;
- request uuid; d integer; quota integer; count_now integer; result jsonb;
+ request uuid; d integer; quota integer; count_now integer; result jsonb; paper_name text;
 begin
  if uid is null then raise exception 'login_required'; end if;
  if coalesce(public.is_teacher(),false) then raise exception 'student_required'; end if;
  select lower(u.email) into v_email from auth.users u where u.id=uid and u.email_confirmed_at is not null;
  select e.class_code into cls from public.student_enrollments e where e.email=v_email and e.school_year=115 and e.class_code ~ '^3[0-9]{2}$';
  if cls is null then raise exception 'roster_required'; end if;
- if jsonb_typeof(p_data) is distinct from 'object' or exists(select 1 from jsonb_object_keys(p_data) k where k not in ('kind','count','units','request_id','attempt_id','question_id')) then raise exception 'invalid_request'; end if;
+ if jsonb_typeof(p_data) is distinct from 'object' or exists(select 1 from jsonb_object_keys(p_data) k where k not in ('kind','count','units','request_id','attempt_id','question_id','name')) then raise exception 'invalid_request'; end if;
+ if p_data ? 'name' and (jsonb_typeof(p_data->'name') is distinct from 'string' or length(trim(p_data->>'name'))>60 or (p_data->>'name') ~ '[[:cntrl:]]') then raise exception 'invalid_request';end if;
+ paper_name:=nullif(trim(p_data->>'name'),'');
  if kind not in ('self','extension') or coalesce(p_data->>'count','') !~ '^[0-9]{1,2}$' then raise exception 'invalid_request'; end if;
  amount:=(p_data->>'count')::integer;
  if (kind='self' and amount not in (5,10)) or (kind='extension' and amount not in (3,5)) then raise exception 'invalid_request'; end if;
@@ -35,6 +37,7 @@ begin
  select coalesce(jsonb_agg(n order by n),'[]') into units from (select distinct value n from jsonb_array_elements(units)) t;
  if kind='self' and (jsonb_array_length(units)=0 or p_data ? 'question_id' or p_data ? 'attempt_id') then raise exception 'invalid_request'; end if;
  conf:=jsonb_build_object('kind',kind,'count',amount,'units',units,'attempt_id',p_data->>'attempt_id','question_id',p_data->>'question_id');
+ if paper_name is not null then conf:=conf||jsonb_build_object('name',paper_name);end if;
  perform pg_advisory_xact_lock(hashtextextended(uid::text||request::text,0));
  select * into old from public.quiz_generated_papers g where g.user_id=uid and g.request_id=request;
  if old.session_id is not null then
@@ -80,11 +83,31 @@ begin
  insert into public.quiz_banks(id,owner_id,draft) values(b_id,uid,doc);
  insert into public.quiz_versions(id,bank_id,revision,document) values(v_id,b_id,1,doc);
  insert into public.quiz_sessions(id,owner_id,version_id,school_year,class_codes,reveal,shuffle_questions,shuffle_options,access_mode) values(s_id,uid,v_id,115,jsonb_build_array(cls),'immediate',false,true,'self');
- insert into public.quiz_generated_papers(session_id,user_id,request_id,config,actual_distribution) values(s_id,uid,request,conf,distribution);
+ insert into public.quiz_generated_papers(session_id,user_id,request_id,config,actual_distribution,display_name) values(s_id,uid,request,conf,distribution,paper_name);
  return jsonb_build_object('session_id',s_id,'distribution',distribution,'reused',false);
 end $$;
 revoke all on function public.quiz_compose(jsonb) from public,anon;
 grant execute on function public.quiz_compose(jsonb) to authenticated;
+-- Mutable personal label; never overwrite the frozen document or answers.
+create or replace function public.quiz_rename_paper(p_data jsonb) returns jsonb
+language plpgsql security definer set search_path='' as $$
+declare uid uuid:=auth.uid(); identity jsonb; paper uuid; label text;
+begin
+ if uid is null then raise exception 'login_required';end if;
+ identity:=public.quiz_action('library_sessions');
+ if identity->>'role'<>'student' then raise exception 'student_required';end if;
+ if jsonb_typeof(p_data) is distinct from 'object' or exists(select 1 from jsonb_object_keys(p_data) k where k not in ('session_id','name'))
+  or jsonb_typeof(p_data->'name') is distinct from 'string' then raise exception 'invalid_request';end if;
+ label:=trim(p_data->>'name');
+ if length(label) not between 1 and 60 or label ~ '[[:cntrl:]]' then raise exception 'invalid_request';end if;
+ paper:=(p_data->>'session_id')::uuid;
+ if not exists(select 1 from jsonb_array_elements(identity->'sessions') s where s->>'id'=paper::text and s->>'generated'='true') then raise exception 'session_unavailable';end if;
+ update public.quiz_generated_papers set display_name=label where session_id=paper and user_id=uid;
+ if not found then raise exception 'session_unavailable';end if;
+ return jsonb_build_object('session_id',paper,'display_name',label,'saved',true);
+end $$;
+revoke all on function public.quiz_rename_paper(jsonb) from public,anon;
+grant execute on function public.quiz_rename_paper(jsonb) to authenticated;
 create or replace function public.quiz_pool_catalog() returns jsonb
 language plpgsql security definer set search_path='' as $$
 declare identity jsonb; result jsonb;

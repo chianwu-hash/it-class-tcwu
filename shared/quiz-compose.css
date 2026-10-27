@@ -9,3 +9,6 @@
 #quiz-composer :disabled,.wrong-extension :disabled{opacity:.6;cursor:wait}
 #compose-result a,.wrong-extension a{display:inline-block;margin-top:.7rem}
 .wrong-extension{margin-top:1rem;padding:1rem;background:#f0faf7;border-radius:1rem}
+#compose-name,.paper-rename input{display:block;box-sizing:border-box;max-width:100%;width:100%;padding:.7rem;border:1px solid #9abebb;border-radius:.5rem;font:inherit;margin:.5rem 0}
+.paper-rename{margin-top:1rem}.paper-rename label{font-weight:700}.paper-rename button{padding:.6rem 1rem;font:inherit;border-radius:.5rem;border:1px solid #0f766e;background:#f0faf7;color:#115e59;cursor:pointer}
+#my-papers-section{margin:1.5rem 0}#my-papers-section>h2{color:#115e59}#compose-result button{margin-left:.7rem}#my-papers-section[hidden]{display:none!important}

@@ -61,6 +61,8 @@ create table if not exists public.quiz_generated_papers (
  unique(user_id,request_id)
 );
 alter table public.quiz_generated_papers enable row level security;
+alter table public.quiz_generated_papers add column if not exists display_name text
+ check(display_name is null or length(trim(display_name)) between 1 and 60);
 revoke all on public.quiz_generated_papers from public,anon,authenticated;
 grant all on public.quiz_generated_papers to service_role;
 alter table public.quiz_banks enable row level security;
@@ -219,11 +221,13 @@ begin
   end if;
   select coalesce(jsonb_agg(jsonb_build_object('id',s.id,'version_id',s.version_id,'title',v.document->>'title',
    'catalog',v.document->'catalog','status',s.status,
+   'generated',s.access_mode='self','display_name',g.display_name,'saved_at',g.created_at,
    'total',(select count(*) from jsonb_array_elements(v.document->'blocks') b,lateral jsonb_array_elements(b->'questions') q),
    'answered',(select count(*) from public.quiz_answers x join public.quiz_attempts a on a.id=x.attempt_id where a.session_id=s.id and a.user_id=uid),
    'correct',(select count(*) from public.quiz_answers x join public.quiz_attempts a on a.id=x.attempt_id where a.session_id=s.id and a.user_id=uid and x.correct)
    ) order by v.document->'catalog'->>'volume',v.document->'catalog'->>'subject',v.document->'catalog'->>'unit'),'[]') into result
    from public.quiz_sessions s join public.quiz_versions v on v.id=s.version_id
+   left join public.quiz_generated_papers g on g.session_id=s.id and g.user_id=uid
    where (teacher and s.owner_id=uid and s.access_mode='personal')
     or (not teacher and s.access_mode in ('practice','self') and (s.access_mode<>'self' or exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id and g.user_id=uid)) and exists(select 1 from public.student_enrollments e
      where e.email=v_email and e.school_year=s.school_year and s.class_codes ? e.class_code));
@@ -367,6 +371,10 @@ begin
    end loop;
   end if;
  end loop;
+ if sess.access_mode='self' then
+  select display_name into cls from public.quiz_generated_papers where session_id=sess.id and user_id=uid;
+  if cls is not null then d:=jsonb_set(d,'{title}',to_jsonb(cls));end if;
+ end if;
  return jsonb_build_object('attempt_id',att.id,'session_id',sess.id,'version_id',sess.version_id,'status',sess.status,'complete',done,
   'document',public.quiz_student_document(d,att.question_order,att.option_orders),'responses',responses,'reviews',reviews);
 end $$;
