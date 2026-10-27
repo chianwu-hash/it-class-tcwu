@@ -7,6 +7,17 @@ async function rpc(db,uid,name,data={}){return db.transaction(async tx=>{await t
 async function setup(){const db=await createQuizDb();await db.exec(await readFile('supabase/quiz-wrong-questions.sql','utf8'));await db.exec(await readFile('supabase/quiz-pool.sql','utf8'));await db.query("update public.student_enrollments set class_code='301' where email in ('student1@example.invalid','student2@example.invalid')");
  for(let i=0;i<24;i++){const q=newQuestion();q.id='pool_'+i;q.prompt=content('合成獨立題 '+i);q.explanation=content('合成解析');await db.query('insert into public.quiz_question_pool values($1,$2,$2,$3,$4,$4,$5,$6,true,$7,$8,true)',[q.id,'source_'+i,JSON.stringify([i<12?1:2]),'knowledge_1',[-3,0,3][i%3],'version1',JSON.stringify(q),'{}']);}return db;}
 
+test('自組卷5／10／15／20題依比例抽選且不重複，超過20或非法題數拒絕',async()=>{const db=await setup();try{
+ for(let i=24;i<36;i++){const q=newQuestion();q.id='pool_'+i;q.prompt=content('新增中等題 '+i);await db.query('insert into public.quiz_question_pool values($1,$2,$2,$3,$4,$4,0,$5,true,$6,$7,true)',[q.id,'source_'+i,'[1,2]','knowledge_1','version1',JSON.stringify(q),'{}']);}
+ for(const count of [5,10,15,20]){
+  const r=await rpc(db,studentId(1),'quiz_compose',{kind:'self',count,units:[1,2],request_id:crypto.randomUUID()});assert.deepEqual([r.distribution.easy,r.distribution.medium,r.distribution.hard],[count/5,count*3/5,count/5]);
+  const joined=await quizCall(db,studentId(1),'join',{session_id:r.session_id});assert.equal(joined.document.questions.length,count);assert.equal(new Set(joined.document.questions.map(q=>q.id)).size,count);
+  if(count===20){for(const q of joined.document.questions)await quizCall(db,studentId(1),'submit',{session_id:r.session_id,question_id:q.id,response:'a',request_id:crypto.randomUUID()});const resumed=await quizCall(db,studentId(1),'resume',{session_id:r.session_id});assert.equal(resumed.complete,true);assert.equal(Object.keys(resumed.responses).length,20);assert.equal(resumed.reviews.length,20);}
+ }
+ for(const count of [0,1,19,21,25,100])await assert.rejects(rpc(db,studentId(1),'quiz_compose',{kind:'self',count,units:[1],request_id:crypto.randomUUID()}),/invalid_request/);
+ await assert.rejects(rpc(db,studentId(1),'quiz_compose',{kind:'extension',count:20,request_id:crypto.randomUUID()}),/invalid_request/);
+}finally{await db.close();}});
+
 test('刪除僅移除本人清單、可安全重試，保留原卷答案與錯題',async()=>{const db=await setup();try{
  const config={request_id:crypto.randomUUID(),kind:'self',count:5,units:[1],name:'待整理卷'},made=await rpc(db,studentId(1),'quiz_compose',config),args={session_id:made.session_id};
  const joined=await quizCall(db,studentId(1),'join',args),q=joined.document.questions[0];await quizCall(db,studentId(1),'submit',{...args,question_id:q.id,response:'b',request_id:crypto.randomUUID()});

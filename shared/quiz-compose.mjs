@@ -6,10 +6,12 @@ export function localPoolContext(){
 export function paperUrl(id,context){return `quiz.html?${context?`local=1&student=${context.student}`:'cloud=1'}&session=${encodeURIComponent(id)}`;}
 export function initComposer({request,context}){
  const library=document.getElementById('cloud-library'),panel=make('section');panel.id='quiz-composer';panel.className='panel';panel.hidden=true;
- panel.innerHTML='<h2>自己選範圍練習</h2><p>組卷成功就會自動儲存到「我的自組卷」，不必先作答。</p><form id="compose-form"><label>試卷名稱（選填）<input id="compose-name" type="text" maxlength="60" placeholder="例如：我的分數複習卷"></label><fieldset id="compose-units"><legend>選擇單元（可複選）</legend></fieldset><label>題數 <select id="compose-count"><option value="10">10題一般練習</option><option value="5">5題短練習</option></select></label><p>預設中等難度；10題以2題易、6題中、2題難為目標，實際題量與配比會清楚列出。</p><button type="submit">組卷並儲存</button></form><p id="compose-status" role="status" aria-live="polite"></p><div id="compose-result"></div>';
+ panel.innerHTML='<h2>自己選範圍練習</h2><p>組卷成功就會自動儲存到「我的自組卷」，不必先作答。</p><form id="compose-form"><label>試卷名稱（選填）<input id="compose-name" type="text" maxlength="60" placeholder="例如：我的分數複習卷"></label><fieldset id="compose-units"><legend>選擇單元（可複選）</legend></fieldset><label>題數（最多20題） <select id="compose-count"><option value="5">5題</option><option value="10" selected>10題</option><option value="15">15題</option><option value="20">20題</option></select></label><p id="compose-mix"></p><button type="submit">組卷並儲存</button></form><p id="compose-status" role="status" aria-live="polite"></p><div id="compose-result"></div>';
  library.insertBefore(panel,library.querySelector('.filters'));
  let generation=0,busy=false,pending=null;
  const status=document.getElementById('compose-status'),result=document.getElementById('compose-result');
+ const updateMix=()=>{const n=Number(document.getElementById('compose-count').value);document.getElementById('compose-mix').textContent=`目前中等難度；${n}題以${n/5}題易、${n*3/5}題中、${n/5}題難為目標，實際題量與配比會清楚列出。`;};
+ document.getElementById('compose-count').addEventListener('change',updateMix);updateMix();
  document.addEventListener('quiz-paper-removed',e=>{const a=result.querySelector('a');if(a&&new URL(a.href).searchParams.get('session')===e.detail.sessionId){pending=null;result.replaceChildren();status.textContent='這份卷已從清單移除，可以重新組一份新卷。';}});
  const labels=['10000以內的數','10000以內的加減','毫米與數線','乘法','角與形狀','除法','公斤與公克','分數','列表與規律'];
  async function ready(){
@@ -35,5 +37,5 @@ export function initComposer({request,context}){
   }catch(e){if(g===generation)status.textContent=e.message;}
   finally{if(g===generation){busy=false;panel.querySelectorAll('button,input,select').forEach(n=>n.disabled=false);}}
  });
- return {ready,reset(){generation++;busy=false;pending=null;panel.hidden=true;panel.dataset.available='false';panel.querySelector('form').reset();result.replaceChildren();status.textContent='';},async extend(item){const r=await request('compose',{kind:'extension',count:3,request_id:item.request_id,attempt_id:item.attempt_id,question_id:item.question_id});return {...r,url:paperUrl(r.session_id,context)};}};
+ return {ready,reset(){generation++;busy=false;pending=null;panel.hidden=true;panel.dataset.available='false';panel.querySelector('form').reset();updateMix();result.replaceChildren();status.textContent='';},async extend(item){const r=await request('compose',{kind:'extension',count:3,request_id:item.request_id,attempt_id:item.attempt_id,question_id:item.question_id});return {...r,url:paperUrl(r.session_id,context)};}};
 }

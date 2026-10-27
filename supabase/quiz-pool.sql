@@ -30,7 +30,7 @@ begin
  paper_name:=nullif(trim(p_data->>'name'),'');
  if kind not in ('self','extension') or coalesce(p_data->>'count','') !~ '^[0-9]{1,2}$' then raise exception 'invalid_request'; end if;
  amount:=(p_data->>'count')::integer;
- if (kind='self' and amount not in (5,10)) or (kind='extension' and amount not in (3,5)) then raise exception 'invalid_request'; end if;
+ if (kind='self' and amount not in (5,10,15,20)) or (kind='extension' and amount not in (3,5)) then raise exception 'invalid_request'; end if;
  request:=(p_data->>'request_id')::uuid;if request is null then raise exception 'invalid_request'; end if;
  units:=coalesce(p_data->'units','[]');
  if jsonb_typeof(units) is distinct from 'array' or jsonb_array_length(units)>9 or exists(select 1 from jsonb_array_elements(units) u where u::text !~ '^[1-9]$') then raise exception 'invalid_request'; end if;
@@ -53,7 +53,7 @@ begin
  seed:=request::text;
  -- Three passes use the target mix; an honest fill pass handles scarce difficulty buckets.
  for d in select unnest(array[-3,0,3,99]) loop
-  quota:=case when kind='extension' then amount when d=-3 then case amount when 10 then 2 else 1 end when d=0 then case amount when 10 then 6 else 3 end when d=3 then case amount when 10 then 2 else 1 end else amount-cardinality(selected) end;
+  quota:=case when kind='extension' then amount when d=-3 then amount/5 when d=0 then amount*3/5 when d=3 then amount/5 else amount-cardinality(selected) end;
   for count_now in 1..greatest(quota,0) loop
    exit when cardinality(selected)>=amount;
    select p.* into chosen from public.quiz_question_pool p where p.usable and not(p.question_id=any(selected))
