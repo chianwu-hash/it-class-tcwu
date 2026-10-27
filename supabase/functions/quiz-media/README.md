@@ -1,5 +1,7 @@
 # 測驗媒體版本保存
 
+2026-10-27 正式圖片讀取已切為 Google Drive＋Cloudflare Worker。`read` 仍先透過 Supabase Auth 與原 `quiz_media_access` 驗證本人及揭答權限；圖片回傳五分鐘 HMAC 票證網址，圖片位元組由 Worker 提供。音檔及教師 `freeze` 維持原路徑，舊 Storage 圖片保留備援。詳見 [正式切換紀錄](../../../docs/development/quiz-drive-production-20261027.md)。下列較早日期的描述保留作歷史紀錄。
+
 2026-10-26 更新：使用者另行授權登入後將作答保存至 Supabase，已套用 `quiz.sql`、`quiz-media.sql`，並部署本函式。新增 `personal` 場次僅允許教師本人試答，頁面仍在本機，並未公開發布。實際 OAuth 與本人作答的最終驗收待使用者登入。詳見 `docs/development/quiz-cloud-login-20261026.md`。下文 2026-10-24／25 為當時候選階段紀錄；桶維持既有私有設定，本次未套用 `quiz-storage.sql` 改動其限制。
 
 2026-10-24候選開發階段未套用正式SQL、未建立正式儲存桶、未部署Edge Function或網站。2026-10-25使用者另行授權單張Storage試傳：真實私有`quiz-media`桶已建立，單張上傳／簽署下載及未授權拒絕通過；尚未套用下述候選桶限制、正式SQL或本函式，亦非學生OAuth／揭答的完整整合驗收。詳見`docs/development/supabase-storage-smoke-20261025.md`。

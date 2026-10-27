@@ -42,7 +42,7 @@ export async function handleMedia(request,env,ctx={waitUntil(){}},{fetcher=fetch
   const cap=JSON.parse(new TextDecoder().decode(decode(parts[0]))),now=Math.floor(Date.now()/1000);
   if(cap.aud!==(env.MEDIA_AUDIENCE||'quiz-drive-media-poc')||cap.hash!==match[1]||!Number.isInteger(cap.exp)||cap.exp<=now||cap.exp>now+900||!['prompt','option','explanation','material'].includes(cap.role))return fail(401,'invalid_ticket');
   const assets=env.MEDIA_ASSETS?JSON.parse(env.MEDIA_ASSETS):libraryAssets,asset=assets[cap.hash];
-  if(!asset||asset.fileId!==cap.fileId||asset.mime!==cap.mime||asset.bytes!==cap.bytes)return fail(403,'asset_not_allowed');
+  if(!asset||(cap.fileId!==undefined&&asset.fileId!==cap.fileId)||asset.mime!==cap.mime||asset.bytes!==cap.bytes)return fail(403,'asset_not_allowed');
   stage='cache';
   const cacheKey=new Request(`${url.origin}/__private-cache/${cap.hash}`);
   let stored=cache?await cache.match(cacheKey):null,cacheStatus=stored?'HIT':'MISS';

@@ -1,3 +1,4 @@
+import { signDriveImage } from './drive-ticket.mjs';
 const BUCKET = 'quiz-media', MAX = 8388608, TOTAL = 33554432;
 const uuid = x => typeof x === 'string' && /^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(x);
 const fail = code => { throw new Error(code); };
@@ -57,6 +58,10 @@ export function createHandler({ env, fetcher = fetch }) {
       const storageHeaders = { apikey: service, ...(service.startsWith('sb_secret_') ? {} : { Authorization: `Bearer ${service}` }) };
       if (body.action === 'read') {
         const asset = await rpc('quiz_media_access', { p_url: body.url, p_attempt: body.attempt_id || null });
+        if (env('QUIZ_IMAGE_BACKEND') === 'drive' && asset.mime?.startsWith('image/')) {
+          if (asset.url !== body.url) fail('media_unavailable');
+          return send(200, { url: await signDriveImage(asset, env) });
+        }
         const signed = await call(`${base}/storage/v1/object/sign/${BUCKET}/${asset.object_path}`, { method: 'POST',
           headers: { ...storageHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ expiresIn: 60 }) });
         if (!signed.ok) fail('media_unavailable');
