@@ -1,6 +1,7 @@
 (function () {
     const currentScript = document.currentScript;
     const quizMode = currentScript.dataset.quiz === 'true';
+    const quizPage = /\/quiz\.html$/.test(location.pathname);
 
     if (!window.__buildCourseNavbarHtml) {
         const request = new XMLHttpRequest();
@@ -27,10 +28,13 @@
         linkClassName: "px-3 py-1.5 text-sm font-bold text-gray-600 hover:text-cyan-600 hover:bg-cyan-50 rounded-lg transition whitespace-nowrap",
         currentWeekClassName: "px-3 py-1.5 text-sm font-bold bg-cyan-100 text-cyan-800 rounded-lg shadow-sm whitespace-nowrap cursor-default",
         separatorClassName: "text-gray-300 mx-1",
-        homeLabel: quizMode ? '單元選卷' : iconLabel('fa-solid fa-house', '首', '課程首頁'),
+        homeLabel: quizMode ? (quizPage ? '← 回上頁' : '單元選卷') : iconLabel('fa-solid fa-house', '首', '課程首頁'),
         homeHref: quizMode ? 'quiz-library.html' : 'index.html',
         // Google 身分及正式成果由受控接回 RPC 核對。
-        extraLinks: quizMode ? [{ href: 'index.html', label: '課程首頁' }] : [
+        extraLinks: quizMode ? [
+            { href: '/my-tree.html?course=grade3-115-1', label: '努力樹', iconClass: 'fa-solid fa-tree' },
+            { href: 'index.html', label: '課程首頁' }
+        ] : [
             { href: 'quiz-library.html', label: iconLabel('fa-solid fa-dumbbell', '練功', '考前練功房') },
             { href: 'typing-foundation.html', label: iconLabel('fa-solid fa-keyboard', '英', '英打基礎') },
             { href: 'zhuyin-foundation.html', label: iconLabel('fa-solid fa-keyboard', '中', '中打基礎') },

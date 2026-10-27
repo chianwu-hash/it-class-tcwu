@@ -42,7 +42,7 @@ async function start() {
     await quiz.handleAuthChange({ user: { id: `demo-student-${student}` } }); return;
   }
   // 課程導覽與 OAuth 仍由既有 navbar／navbar-auth 管理。
-  const script = document.createElement('script'); script.src = 'navbar.js?v=20261026'; script.dataset.homework = 'true';
+  const script = document.createElement('script'); script.src = 'navbar.js?v=20261028-nav'; script.dataset.homework = 'true';
   if (cloud) script.dataset.quiz = 'true';
   await new Promise((resolve, reject) => { script.onload = resolve; script.onerror = () => reject(new Error('導覽未能載入，請重新整理。')); document.getElementById('quiz-navbar').append(script); });
   const { initNavbarAuth } = await import('./navbar-auth.js');

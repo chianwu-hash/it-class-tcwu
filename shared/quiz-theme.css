@@ -56,9 +56,10 @@
   .quiz-skin nav>div {padding:9px 16px;gap:6px;flex-wrap:wrap}
   .quiz-skin #quiz-navbar nav>div {flex-wrap:wrap}
   .quiz-skin nav>div>div:first-child {font-size:15px;line-height:24px}
-  .quiz-skin nav>div>div:last-child {width:100%;justify-content:flex-start;gap:6px;flex-wrap:nowrap}
+  .quiz-skin nav>div>div:last-child {width:100%;justify-content:flex-start;gap:6px;flex-wrap:wrap}
+  .quiz-skin #quiz-navbar nav>div>div:last-child {flex-wrap:wrap}
   .quiz-skin nav a {font-size:13px;padding:7px 8px}
-  .quiz-skin #nav-auth-bar {flex:1;gap:6px;justify-content:flex-end}
+  .quiz-skin #nav-auth-bar {flex:1 0 100%;gap:6px;justify-content:flex-end}
   .quiz-skin #auth-status {flex:0 1 auto;max-width:150px;padding:5px 8px;font-size:11px}
   .quiz-student-page.quiz-skin .hero>.wrap {display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:2px 12px;padding:0 14px}
   .quiz-student-page.quiz-skin .hero h1 {font-size:16px}

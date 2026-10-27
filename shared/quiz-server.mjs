@@ -641,7 +641,12 @@ export function initServerQuiz({ selectors, server }) {
     heading.append(progress); root.append(heading);
     if(state.complete&&state.leaf?.reason!=='not_eligible'){
      const messages={short_paper:'這份少於10題，不計葉片。',accuracy:'完成至少10題、正確率達60%，可長出1片葉子。先核對這次的解析，再繼續練習。',timing_unverified:'作答紀錄已保留；本次閱讀時間紀錄不完整，不追溯計葉。',same_content_already_earned:'這組題目已領過葉片，複習不重複計葉。'};
-     if(state.leaf?.earned)root.append(make('p','🌿 努力樹已長出1片葉子！','quiz-leaf-state'));
+     if(state.leaf?.earned){
+      const notice=make('p',undefined,'quiz-leaf-state');notice.append(make('span','🌿 努力樹已長出1片葉子！'));
+      const grade=location.pathname.match(/^\/grade([36])\/115-1\//)?.[1];
+      if(grade){const link=make('a','查看努力樹 →','quiz-tree-link');link.href=`/my-tree.html?course=grade${grade}-115-1`;notice.append(link);}
+      root.append(notice);
+     }
      else if(messages[state.leaf?.reason])root.append(make('p',messages[state.leaf.reason],'quiz-leaf-state'));
     }
     root.classList.toggle('is-review', state.complete && showFullReview);
