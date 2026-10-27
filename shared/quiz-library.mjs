@@ -1,5 +1,5 @@
 import { initNavbarAuth } from './navbar-auth.js';
-import { createQuizRequest } from './quiz-api.mjs?v=20261027-named';
+import { createQuizRequest } from './quiz-api.mjs?v=20261027-delete';
 import { quizPageGrade, quizLibraryPath, quizStudentRedirect } from './quiz-grade-route.mjs';
 import { initWrongQuestions } from './quiz-wrong-questions.mjs';
 import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs';
@@ -48,6 +48,17 @@ function render() {
       const form=node('form',undefined,'paper-rename'),label=node('label','試卷名稱'),input=node('input');input.type='text';input.maxLength=60;input.required=true;input.value=p.display_name||p.title;input.setAttribute('aria-label','試卷名稱');label.append(input);
       const save=node('button','儲存名稱'),status=node('p');save.type='submit';status.setAttribute('role','status');form.append(label,save,status);body.append(form);
       form.addEventListener('submit',async e=>{e.preventDefault();const name=input.value.trim();if(!name){status.textContent='請輸入試卷名稱。';return;}const uid=currentSession?.user?.id,token=generation;save.disabled=true;input.disabled=true;status.textContent='正在儲存名稱…';try{const r=await request('rename_paper',{session_id:p.id,name});if(token!==generation||currentSession?.user?.id!==uid)return;p.display_name=r.display_name;title.querySelector('h2').textContent=r.display_name;input.value=r.display_name;status.textContent='名稱已儲存。';}catch(e){if(token===generation)status.textContent=e.message;}finally{if(token===generation){save.disabled=false;input.disabled=false;}}});
+      const remove=node('button','刪除試卷','paper-delete');remove.type='button';body.append(remove);
+      remove.addEventListener('click',async()=>{
+        if(remove.disabled||save.disabled)return;
+        if(!confirm(`要刪除「${p.display_name||p.title}」嗎？\n試卷會從「我的自組卷」移除，已保存的作答與錯題紀錄會保留。`))return;
+        const uid=currentSession?.user?.id,token=generation;remove.disabled=true;save.disabled=true;input.disabled=true;status.textContent='正在移除試卷…';
+        try{await request('delete_paper',{session_id:p.id});if(token!==generation||currentSession?.user?.id!==uid)return;
+          papers=papers.filter(x=>x.id!==p.id);render();el('cloud-status').textContent='已從「我的自組卷」移除試卷；作答與錯題紀錄已保留。';
+          document.dispatchEvent(new CustomEvent('quiz-paper-removed',{detail:{sessionId:p.id}}));
+        }catch(e){if(token===generation)status.textContent=e.message;}
+        finally{if(token===generation){remove.disabled=false;save.disabled=false;input.disabled=false;}}
+      });
     }
     a.append(body); (p.generated?el('my-papers'):el('cloud-papers')).append(a);
   }

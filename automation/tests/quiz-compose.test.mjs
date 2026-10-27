@@ -7,6 +7,22 @@ async function rpc(db,uid,name,data={}){return db.transaction(async tx=>{await t
 async function setup(){const db=await createQuizDb();await db.exec(await readFile('supabase/quiz-wrong-questions.sql','utf8'));await db.exec(await readFile('supabase/quiz-pool.sql','utf8'));await db.query("update public.student_enrollments set class_code='301' where email in ('student1@example.invalid','student2@example.invalid')");
  for(let i=0;i<24;i++){const q=newQuestion();q.id='pool_'+i;q.prompt=content('合成獨立題 '+i);q.explanation=content('合成解析');await db.query('insert into public.quiz_question_pool values($1,$2,$2,$3,$4,$4,$5,$6,true,$7,$8,true)',[q.id,'source_'+i,JSON.stringify([i<12?1:2]),'knowledge_1',[-3,0,3][i%3],'version1',JSON.stringify(q),'{}']);}return db;}
 
+test('刪除僅移除本人清單、可安全重試，保留原卷答案與錯題',async()=>{const db=await setup();try{
+ const config={request_id:crypto.randomUUID(),kind:'self',count:5,units:[1],name:'待整理卷'},made=await rpc(db,studentId(1),'quiz_compose',config),args={session_id:made.session_id};
+ const joined=await quizCall(db,studentId(1),'join',args),q=joined.document.questions[0];await quizCall(db,studentId(1),'submit',{...args,question_id:q.id,response:'b',request_id:crypto.randomUUID()});
+ const before=JSON.stringify((await db.query('select * from public.quiz_versions order by id')).rows),answers=JSON.stringify((await db.query('select * from public.quiz_answers')).rows);
+ await assert.rejects(rpc(db,studentId(2),'quiz_delete_paper',args),/session_unavailable/);
+ await assert.rejects(rpc(db,null,'quiz_delete_paper',args),/login_required/);await assert.rejects(rpc(db,TEACHER,'quiz_delete_paper',args),/student_required/);
+ await assert.rejects(rpc(db,studentId(1),'quiz_delete_paper',{...args,user_id:studentId(2)}),/invalid_request/);
+ assert.equal((await rpc(db,studentId(1),'quiz_delete_paper',args)).removed,true);assert.equal((await rpc(db,studentId(1),'quiz_delete_paper',args)).removed,true);
+ assert.equal((await quizCall(db,studentId(1),'library_sessions')).sessions.length,0);
+ assert.equal(JSON.stringify((await db.query('select * from public.quiz_versions order by id')).rows),before);assert.equal(JSON.stringify((await db.query('select * from public.quiz_answers')).rows),answers);
+ assert.equal((await rpc(db,studentId(1),'quiz_wrong_questions')).total,1);
+ const detail=await rpc(db,studentId(1),'quiz_wrong_questions',{action:'detail',attempt_id:joined.attempt_id,question_id:q.id});assert.equal(detail.review.correct,false);
+ await assert.rejects(rpc(db,studentId(1),'quiz_compose',config),/paper_removed/);await assert.rejects(rpc(db,studentId(1),'quiz_rename_paper',{...args,name:'不復原'}),/session_unavailable/);
+ const empty=await rpc(db,studentId(1),'quiz_compose',{...config,request_id:crypto.randomUUID()});await rpc(db,studentId(1),'quiz_delete_paper',{session_id:empty.session_id});assert.equal((await quizCall(db,studentId(1),'library_sessions')).sessions.length,0);
+}finally{await db.close();}});
+
 test('命名自組卷立即入清單；本人改名保留未答卷、原版本、選項與已存答案',async()=>{const db=await setup();try{
  const config={request_id:crypto.randomUUID(),kind:'self',count:5,units:[1],name:'  分數複習 <我的卷>  '};
  const made=await rpc(db,studentId(1),'quiz_compose',config);

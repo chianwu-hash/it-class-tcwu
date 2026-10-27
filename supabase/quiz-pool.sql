@@ -41,6 +41,7 @@ begin
  perform pg_advisory_xact_lock(hashtextextended(uid::text||request::text,0));
  select * into old from public.quiz_generated_papers g where g.user_id=uid and g.request_id=request;
  if old.session_id is not null then
+  if old.deleted_at is not null then raise exception 'paper_removed';end if;
   if old.config<>conf then raise exception 'submission_conflict'; end if;
   return jsonb_build_object('session_id',old.session_id,'distribution',old.actual_distribution,'reused',true);
  end if;
@@ -108,6 +109,23 @@ begin
 end $$;
 revoke all on function public.quiz_rename_paper(jsonb) from public,anon;
 grant execute on function public.quiz_rename_paper(jsonb) to authenticated;
+-- Remove only from the student's list. Preserve versions, attempts and wrong-answer review.
+create or replace function public.quiz_delete_paper(p_data jsonb) returns jsonb
+language plpgsql security definer set search_path='' as $$
+declare uid uuid:=auth.uid(); identity jsonb; paper uuid;
+begin
+ if uid is null then raise exception 'login_required';end if;
+ identity:=public.quiz_action('library_sessions');
+ if identity->>'role'<>'student' then raise exception 'student_required';end if;
+ if jsonb_typeof(p_data) is distinct from 'object' or exists(select 1 from jsonb_object_keys(p_data) k where k<>'session_id') then raise exception 'invalid_request';end if;
+ paper:=(p_data->>'session_id')::uuid;
+ update public.quiz_generated_papers g set deleted_at=coalesce(g.deleted_at,now())
+  where g.session_id=paper and g.user_id=uid and exists(select 1 from public.quiz_sessions s where s.id=g.session_id and s.owner_id=uid and s.access_mode='self');
+ if not found then raise exception 'session_unavailable';end if;
+ return jsonb_build_object('session_id',paper,'removed',true);
+end $$;
+revoke all on function public.quiz_delete_paper(jsonb) from public,anon;
+grant execute on function public.quiz_delete_paper(jsonb) to authenticated;
 create or replace function public.quiz_pool_catalog() returns jsonb
 language plpgsql security definer set search_path='' as $$
 declare identity jsonb; result jsonb;

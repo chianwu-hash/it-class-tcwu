@@ -10,6 +10,7 @@ export function initComposer({request,context}){
  library.insertBefore(panel,library.querySelector('.filters'));
  let generation=0,busy=false,pending=null;
  const status=document.getElementById('compose-status'),result=document.getElementById('compose-result');
+ document.addEventListener('quiz-paper-removed',e=>{const a=result.querySelector('a');if(a&&new URL(a.href).searchParams.get('session')===e.detail.sessionId){pending=null;result.replaceChildren();status.textContent='這份卷已從清單移除，可以重新組一份新卷。';}});
  const labels=['10000以內的數','10000以內的加減','毫米與數線','乘法','角與形狀','除法','公斤與公克','分數','列表與規律'];
  async function ready(){
   const g=++generation;

@@ -1,6 +1,7 @@
 import { createAuthenticatedTransport } from './quiz-transport.mjs';
 import { configureQuizMedia } from './quiz-media.mjs';
 const errors = {
+  paper_removed: '這份卷已從清單移除，請重新組一份新卷。',
   pool_empty: '這個範圍目前沒有可用的延伸題，可以先回看這題的解析或選其他單元。', extension_unavailable: '這題目前還沒有可用的同重點延伸題。',
   media_freeze_required: '媒體需先完成版本保存。', media_source_denied: '媒體來源未列入允許清單，請確認來源設定。',
   media_invalid: '媒體格式或大小不符，未固定版本。', media_unavailable: '媒體尚未開放或無法載入。',
@@ -44,7 +45,7 @@ export async function createQuizRequest({ getSession, localStudent = null, local
       return result;
     }
     try {
-      const specialized = {wrong_questions:'quiz_wrong_questions',compose:'quiz_compose',rename_paper:'quiz_rename_paper',pool_catalog:'quiz_pool_catalog'}[action];
+      const specialized = {wrong_questions:'quiz_wrong_questions',compose:'quiz_compose',rename_paper:'quiz_rename_paper',delete_paper:'quiz_delete_paper',pool_catalog:'quiz_pool_catalog'}[action];
       const result = await transport(action === 'publish' ? '/functions/v1/quiz-media' : specialized ? '/rest/v1/rpc/'+specialized : '/rest/v1/rpc/quiz_action',
         action === 'publish' ? { action: 'freeze', data } : action === 'pool_catalog' ? {} : specialized ? { p_data: data } : { p_action: action, p_data: data });
       if (result.attempt_id) attemptId = result.attempt_id;

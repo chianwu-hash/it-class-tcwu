@@ -12,3 +12,4 @@
 #compose-name,.paper-rename input{display:block;box-sizing:border-box;max-width:100%;width:100%;padding:.7rem;border:1px solid #9abebb;border-radius:.5rem;font:inherit;margin:.5rem 0}
 .paper-rename{margin-top:1rem}.paper-rename label{font-weight:700}.paper-rename button{padding:.6rem 1rem;font:inherit;border-radius:.5rem;border:1px solid #0f766e;background:#f0faf7;color:#115e59;cursor:pointer}
 #my-papers-section{margin:1.5rem 0}#my-papers-section>h2{color:#115e59}#compose-result button{margin-left:.7rem}#my-papers-section[hidden]{display:none!important}
+.quiz-library-page .paper-delete{align-self:flex-start;margin-top:1rem;padding:.6rem 1rem;border:1px solid #b45344;border-radius:.5rem;color:#963c30;background:#fff6f3;font:inherit;cursor:pointer}.quiz-library-page .paper-delete:disabled{opacity:.6;cursor:wait}

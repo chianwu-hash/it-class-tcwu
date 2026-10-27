@@ -63,6 +63,7 @@ create table if not exists public.quiz_generated_papers (
 alter table public.quiz_generated_papers enable row level security;
 alter table public.quiz_generated_papers add column if not exists display_name text
  check(display_name is null or length(trim(display_name)) between 1 and 60);
+alter table public.quiz_generated_papers add column if not exists deleted_at timestamptz;
 revoke all on public.quiz_generated_papers from public,anon,authenticated;
 grant all on public.quiz_generated_papers to service_role;
 alter table public.quiz_banks enable row level security;
@@ -229,7 +230,7 @@ begin
    from public.quiz_sessions s join public.quiz_versions v on v.id=s.version_id
    left join public.quiz_generated_papers g on g.session_id=s.id and g.user_id=uid
    where (teacher and s.owner_id=uid and s.access_mode='personal')
-    or (not teacher and s.access_mode in ('practice','self') and (s.access_mode<>'self' or exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id and g.user_id=uid)) and exists(select 1 from public.student_enrollments e
+    or (not teacher and s.access_mode in ('practice','self') and (s.access_mode<>'self' or exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id and g.user_id=uid and g.deleted_at is null)) and exists(select 1 from public.student_enrollments e
      where e.email=v_email and e.school_year=s.school_year and s.class_codes ? e.class_code));
   return jsonb_build_object('sessions',result,'role',case when teacher then 'teacher' else 'student' end,'grade',student_grade);
  end if;

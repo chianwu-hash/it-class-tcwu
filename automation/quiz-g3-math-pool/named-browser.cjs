@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs/promises'),{createRequire}=require('node:module');
 const runtime=createRequire('D:/projects/cdp-tools/package.json'),{connectCdp,safeScreenshot}=require('D:/projects/cdp-tools/packages/cdp-safe-client');
 (async()=>{
- const url=process.env.QUIZ_BROWSER_URL,local=new URL(url).hostname==='127.0.0.1',dir='automation/output/quiz/hanlin-g3-math-pool/qa';
+ const url=process.env.QUIZ_BROWSER_URL,local=new URL(url).hostname==='127.0.0.1',dir='automation/output/quiz/hanlin-g3-math-pool/qa',deleting=process.env.QUIZ_DELETE_TEST==='1';
  const {browser}=await connectCdp({cdpUrl:process.env.CDP_URL,targetUrl:url,puppeteer:runtime('puppeteer-core')});const report={local,checks:[],errors:[]};
  try{
   const target=browser.targets().find(t=>t._targetId===process.argv[2]);assert.ok(target);const page=await target.page();page.setDefaultTimeout(25000);page.on('pageerror',e=>report.errors.push(e.message));
@@ -16,12 +16,25 @@ const runtime=createRequire('D:/projects/cdp-tools/package.json'),{connectCdp,sa
   const input=await page.$(selector+' input');await input.focus();await page.keyboard.down('Control');await page.keyboard.press('A');await page.keyboard.up('Control');await page.keyboard.press('Backspace');await input.type(renamed);await page.click(selector+' .paper-rename button');await page.waitForFunction(s=>document.querySelector(s+' [role="status"]').textContent.includes('名稱已儲存'),{polling:5000},selector);
   await page.reload({waitUntil:'networkidle0'});await page.waitForSelector(selector);assert.equal(await page.$eval(selector+' h2',e=>e.textContent),renamed);report.checks.push('改名並重整後仍在我的自組卷');
   await page.goto(paperUrl,{waitUntil:'networkidle0'});await page.waitForSelector('#server-submit');assert.equal(await page.$eval('.quiz-heading h2',e=>e.textContent),renamed);
-  const order=await page.$$eval('.student-option input',xs=>xs.map(x=>x.value));await page.click('.student-option input');await page.click('#server-submit');await page.waitForSelector('.answer-preview');
+  const order=await page.$$eval('.student-option input',xs=>xs.map(x=>x.value));
+  if(deleting){const pool=JSON.parse(await fs.readFile('automation/output/quiz/hanlin-g3-math-pool/pool.json','utf8')),id=await page.$eval('.question',e=>e.dataset.questionId),right=pool.find(r=>r.question_id===id).question.answer.option_id;await page.click(`.student-option input[value="${order.find(x=>x!==right)}"]`);}else await page.click('.student-option input');
+  await page.click('#server-submit');await page.waitForSelector('.answer-preview');
   await page.goto(url,{waitUntil:'networkidle0'});await page.waitForSelector(selector);assert.match(await page.$eval(selector,e=>e.textContent),/已保存 1／5/);
   await page.click(selector+' .paper-start');await page.waitForSelector('#server-submit');assert.match(await page.$eval('.question h3',e=>e.textContent),/第 2 題/);report.checks.push('改名卷可送答、保存1題，返回可接續第2題');
   report.optionCount=order.length;
-  await page.goto(url,{waitUntil:'networkidle0'});await page.waitForSelector(selector);await page.$eval('#my-papers-section',e=>e.scrollIntoView());await safeScreenshot(page,{path:dir+(local?'/named-local.png':'/named-production.png'),fullPage:false});
+  await page.goto(url,{waitUntil:'networkidle0'});await page.waitForSelector(selector);
+  if(deleting){
+   page.once('dialog',d=>d.dismiss());await page.click(selector+' .paper-delete');assert.ok(await page.$(selector));report.checks.push('取消刪除仍保留原卷');
+   page.once('dialog',async d=>{assert.match(d.message(),/作答與錯題紀錄會保留/);await d.accept();});await page.click(selector+' .paper-delete');await page.waitForFunction(s=>!document.querySelector(s),{polling:5000},selector);assert.match(await page.$eval('#cloud-status',e=>e.textContent),/作答與錯題紀錄已保留/);
+   await page.reload({waitUntil:'networkidle0'});await page.waitForSelector('#compose-name');assert.equal(await page.$(selector),null);
+   const retained=await page.evaluate(async({local,sid})=>{
+    let endpoint='/__quiz-rpc',headers={'Content-Type':'application/json'},body={action:'wrong_questions',data:{action:'list',grade:3}};
+    if(local)headers['X-Quiz-Demo-Student']=new URLSearchParams(location.search).get('student');else{const a=await import('/shared/auth.js'),s=(await a.supabase.auth.getSession()).data.session;endpoint=a.SUPABASE_URL+'/rest/v1/rpc/quiz_wrong_questions';headers={...headers,apikey:a.SUPABASE_ANON_KEY,Authorization:'Bearer '+s.access_token};body={p_data:{action:'list',grade:3}};}
+    const r=await fetch(endpoint,{method:'POST',headers,body:JSON.stringify(body)}),d=await r.json();return r.ok&&d.items.some(i=>i.session_id===sid);
+   },{local,sid});assert.ok(retained);report.checks.push('確認刪除立即移除、重整不再出現，錯題仍保留');report.deleted=true;
+  }
+  await page.$eval('#my-papers-section',e=>e.scrollIntoView());await safeScreenshot(page,{path:dir+(deleting?'/delete':'/named')+(local?'-local.png':'-production.png'),fullPage:false});
   await page.setViewport({width:390,height:844});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));report.checks.push('手機390px無溢出');await page.setViewport({width:1280,height:950});
   assert.deepEqual(report.errors,[]);report.passed=true;console.log(JSON.stringify(report));
- }finally{await fs.writeFile(dir+(local?'/named-local.json':'/named-production.json'),JSON.stringify(report,null,2),'utf8');await browser.disconnect();}
+ }finally{await fs.writeFile(dir+(deleting?'/delete':'/named')+(local?'-local.json':'-production.json'),JSON.stringify(report,null,2),'utf8');await browser.disconnect();}
 })().catch(e=>{console.error(e.message);process.exitCode=1;});

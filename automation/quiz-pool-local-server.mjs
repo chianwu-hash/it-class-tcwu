@@ -33,7 +33,7 @@ const server=http.createServer(async(req,res)=>{
    let body='';for await(const c of req){body+=c;if(Buffer.byteLength(body)>16000)return send(413,{error:'invalid_request'});}const {action,data={}}=JSON.parse(body);
    if(u.pathname==='/__quiz-media'){if(action!=='read')return send(403,{error:'teacher_required'});const r=await media.call(JSON.parse(body),`student-${student}`);return send(r.status,r.result);}
    if(['library_sessions','join','resume','submit'].includes(action))return send(200,await quizCall(db,studentId(student),action,data));
-   const functions={compose:'quiz_compose',rename_paper:'quiz_rename_paper',pool_catalog:'quiz_pool_catalog',wrong_questions:'quiz_wrong_questions'};if(!functions[action])return send(403,{error:'invalid_action'});
+   const functions={compose:'quiz_compose',rename_paper:'quiz_rename_paper',delete_paper:'quiz_delete_paper',pool_catalog:'quiz_pool_catalog',wrong_questions:'quiz_wrong_questions'};if(!functions[action])return send(403,{error:'invalid_action'});
    const result=await db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[studentId(student)]);await tx.exec('set local role authenticated');return (await tx.query(action==='pool_catalog'?`select public.${functions[action]}() result`:`select public.${functions[action]}($1) result`,action==='pool_catalog'?[]:[JSON.stringify(data)])).rows[0].result;});return send(200,result);
   }
   if(req.method!=='GET')return send(405,{error:'method_not_allowed'});
