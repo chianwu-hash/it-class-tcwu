@@ -37,4 +37,16 @@
 
 正式圖片新增243張、重用131張，使用中374張均對應已驗證私有Drive檔。既有library Worker擴充至5777張；跨9單元27張原圖實際下載SHA256相符、未簽票401。Supabase正式出題池516筆／514家族，學生不能直接SELECT題池或組卷記錄、匿名不能呼叫組卷RPC。匯入前後原有答案、試卷版本摘要相同。
 
-來源與可重跑程式見 [處理流程](../../automation/quiz-g3-math-pool/README.md)。私人產出、原始文件、Drive file ID、短效網址及測試學生識別皆只存Git忽略的output，不提交原題或憑證。正式前端發布與瀏覽器結果會在本文件追加。
+來源與可重跑程式見 [處理流程](../../automation/quiz-g3-math-pool/README.md)。私人產出、原始文件、Drive file ID、短效網址及測試學生識別皆只存Git忽略的output，不提交原題或憑證。
+
+## 正式前端與端到端驗收
+
+功能提交 `00e65c8` 已push至main，Vercel production部署 `dpl_4fTAGHC1942wYmq83DtWcovLmErA` 為READY，正式入口 `https://it-class-tcwu.vercel.app/grade3/115-1/quiz-library.html`。
+
+以既有指定測試學生核對畫面帳號後，新組第8、9單元10題卷：2易6中2難，未答投影無答案／解析。交錯送答，最後一題故意答錯後仍停在該題正誤及原解析；重整保存10／10，選項順序固定。14處公式、1處原生表格、圖片及解析顯示正常，燈箱80%→70%→重設80%。
+
+從新錯題詳情建立同重點延伸卷，符合條件者2題，介面如實顯示2題，未重複原題內容家族，兩題均有解析且難度不高於原題。完成後合計12筆新測試答案，兩份卷在本人清單接回正確。390px無橫向溢出，頁面錯誤0。
+
+正式瀏覽器42次圖片回應皆為Worker且來源標頭 `google-drive-via-cloudflare`；Supabase圖片回應0、本機媒體端點請求0。新流程驗收只對兩份新測試卷送答，沒有修改原單元卷。詳細證據在ignored `cloud/browser-validation.json`、`cloud/save-proof.json`。
+
+提交檢查曾被原hook掃到ignored暫存腳本及無關原型的非ASCII字元擋住；未改那些檔案或專案hook設定。已依實際提交快照執行相同PowerShell與agent-state檢查，7份PowerShell皆ASCII、state通過；不是把無關工作一起提交。既有26組測試及新增去重／無解析候選排除1組，共27組通過。

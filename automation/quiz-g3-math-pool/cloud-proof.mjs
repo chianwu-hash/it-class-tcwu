@@ -1,0 +1,13 @@
+import {readFile,writeFile} from 'node:fs/promises';
+import {execFileSync} from 'node:child_process';
+const dir='automation/output/quiz/hanlin-g3-math-pool',qa=JSON.parse(await readFile(dir+'/cloud/browser-validation.json','utf8')),before=JSON.parse(await readFile(dir+'/cloud/before.json','utf8'));
+if(!qa.passed)throw Error('browser_validation_required');
+const ids=[qa.selfSession,qa.extensionSession];if(!ids.every(s=>/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(s)))throw Error('session_ids_required');
+const selected=ids.map(s=>"'"+s+"'").join(',');
+const query=sql=>{const args=['db','query','--linked','--project-ref','upxgyusodibaqcrocdzj',sql,'--output','json'];let raw;try{raw=execFileSync('pwsh',['-NoProfile','-NonInteractive','-Command','& supabase-personal '+args.map(s=>"'"+s.replaceAll("'","''")+"'").join(' ')],{encoding:'utf8',windowsHide:true,timeout:90000,stdio:['ignore','pipe','pipe']});}catch{throw Error('proof_query_failed');}return JSON.parse(raw.slice(raw.indexOf('{'))).rows;};
+const after=query(`select (select count(*)::int from public.quiz_answers a where a.attempt_id not in(select id from public.quiz_attempts where session_id in (${selected}))) answers,(select count(*)::int from public.quiz_versions v where v.id not in(select version_id from public.quiz_sessions where id in (${selected}))) versions,(select md5(coalesce(string_agg(row_to_json(a)::text,'' order by a.attempt_id,a.question_id),'')) from public.quiz_answers a where a.attempt_id not in(select id from public.quiz_attempts where session_id in (${selected}))) answer_digest,(select md5(coalesce(string_agg(row_to_json(v)::text,'' order by v.id),'')) from public.quiz_versions v where v.id not in(select version_id from public.quiz_sessions where id in (${selected}))) version_digest`)[0];
+for(const key of ['answers','versions','answer_digest','version_digest'])if(before[key]!==after[key])throw Error('existing_data_changed_or_concurrent_write_review_required');
+const saved=query(`select s.id,count(x.question_id)::int answers from public.quiz_sessions s join public.quiz_attempts a on a.session_id=s.id join public.quiz_answers x on x.attempt_id=a.id where s.id in (${selected}) group by s.id`);
+if(saved.reduce((sum,s)=>sum+s.answers,0)!==qa.savedAnswers)throw Error('saved_answer_count_mismatch');
+const report={at:new Date().toISOString(),passed:true,originalAnswersUnchanged:true,originalVersionsUnchanged:true,originalAnswers:before.answers,originalVersions:before.versions,newTestAnswers:qa.savedAnswers,newTestPapers:saved.length};
+await writeFile(dir+'/cloud/save-proof.json',JSON.stringify(report,null,2),'utf8');console.log(JSON.stringify(report));
