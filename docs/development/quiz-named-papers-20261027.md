@@ -11,3 +11,5 @@
 - 正式schema更新只增加名稱metadata／RPC／投影，未重匯題池或圖片。更新前後原答案與版本摘要相同，匿名rename權限關閉。證據在ignored `automation/output/quiz/hanlin-g3-math-pool/names/`；本機畫面證據在 `qa/named-local.json`。
 
 重跑：`node --test automation/tests/quiz-compose.test.mjs`；本機 `node automation/quiz-pool-local-server.mjs`；瀏覽器 `named-browser.cjs` 需透過AI工作瀏覽器租約、精確TargetId與唯一 `QUIZ_BROWSER_URL`。正式驗收限定原指定測試學生，新增試卷，不改其他學生資料。
+
+正式功能commit `d95fec6` 已push，Vercel production `dpl_3rgv1fpJY3zJxPYjBxQdVQiVmray` 為READY。正式瀏覽器同樣完成「未答即列出→改名→重整保留→送1題→返回接續第2題」，且題目頁顯示新名稱。390px無溢出、頁面錯誤0；畫面已檢視，證據在ignored `qa/named-production.json`／PNG。這次正式試答只對原指定測試學生新建一份5題卷並保存1筆答案。
