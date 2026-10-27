@@ -30,4 +30,6 @@
 - 27項自動檢查通過，包含三模式×四題數、10種缺題組合、單元／內容去重、跨卷可再練、無適用題、非法參數、重試與隔離、固定版本、既有錯題及揭答權限。
 - 本機瀏覽器通過：易卷第9單元20題=7／13／0；中卷第4單元10題=2／7／1；難卷第8單元20題=0／15／5；難卷第4單元10題=0／9／1。確認題源限定單元、同卷家族不重複、難度及實際配比重整保存。
 - 本機難卷故意答錯後能看到解析，返回清單保存1題，再進入接續第2題；390px無溢出、pageerror為0。驗收卷完成後只移除本次新建清單，保留其作答／錯題；不操作既有卷。
-- 正式驗收完成後補記；測試證據位於 ignored `automation/output/quiz/hanlin-g3-math-pool/qa/difficulty-*.json`、相應截圖及 `difficulty/deployment.json`。
+- 功能commit `e95a9ac` 已push至main，Vercel production `dpl_GfxoPhwVBxChyYgPbM6quTXzzukW` 為READY，三／六年級入口均確認 `20261027-difficulty`。六年級仍未開放自組，沒有代替六年級學生作答。
+- 正式以已核對的測試學生帳號、新建試卷重跑上述四個情境，實際配比皆一致；題源／去重、重整、答錯解析、儲存1題及接續第2題、390px均通過，pageerror為0。本次新建驗收卷已移除清單，既有試卷未操作。
+- 正式資料庫更新前後原答案與版本的筆數及摘要一致；沒有重新匯入題池或媒體。測試證據位於 ignored `automation/output/quiz/hanlin-g3-math-pool/qa/difficulty-*.json`、相應截圖及 `difficulty/deployment.json`。

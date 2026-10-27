@@ -10,7 +10,7 @@ export function initComposer({request,context}){
  const library=document.getElementById('cloud-library'),panel=make('section');panel.id='quiz-composer';panel.className='panel';panel.hidden=true;
  panel.innerHTML='<h2>自己選範圍練習</h2><p>組卷成功就會自動儲存到「我的自組卷」，不必先作答。</p><form id="compose-form"><label>試卷名稱（選填）<input id="compose-name" type="text" maxlength="60" placeholder="例如：我的分數複習卷"></label><fieldset id="compose-units"><legend>選擇單元（可複選）</legend></fieldset><label>題數（最多20題） <select id="compose-count"><option value="5">5題</option><option value="10" selected>10題</option><option value="15">15題</option><option value="20">20題</option></select></label><p id="compose-mix"></p><button type="submit">組卷並儲存</button></form><p id="compose-status" role="status" aria-live="polite"></p><div id="compose-result"></div>';
  library.insertBefore(panel,library.querySelector('.filters'));
- const difficultyLabel=make('label','試卷難度 '),difficulty=make('select');difficulty.id='compose-difficulty';
+ const difficultyLabel=make('label','試卷難度 '),difficulty=make('select');difficultyLabel.className='compose-difficulty';difficulty.id='compose-difficulty';
  for(const [value,m] of Object.entries(difficultyModes)){const o=make('option',m.label);o.value=value;o.defaultSelected=value==='medium';difficulty.append(o);}difficultyLabel.append(difficulty);document.getElementById('compose-mix').before(difficultyLabel);
  let generation=0,busy=false,pending=null;
  const status=document.getElementById('compose-status'),result=document.getElementById('compose-result');

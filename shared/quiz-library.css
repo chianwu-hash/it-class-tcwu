@@ -80,6 +80,7 @@
 .quiz-library-page .collection-empty{margin:0;padding:18px;border:1px dashed var(--collection-border);border-radius:16px;color:var(--collection-ink);line-height:1.8;background:#ffffffb3}
 .quiz-library-page #quiz-composer{border-color:#c6b4e5;background:#f6f1ff;color:#49365e}
 .quiz-library-page #quiz-composer h2{color:#5b3b83}
+.quiz-library-page #compose-form .compose-difficulty{display:flex;align-items:center;gap:10px;margin:12px 0}
 .quiz-library-page #compose-units label{border-color:#d9cdec}
 .quiz-library-page #compose-units input{accent-color:#7955a3}
 .quiz-library-page .paper-range{margin:0;color:#334155;font-size:14px;font-weight:700;line-height:1.7;overflow-wrap:anywhere}
