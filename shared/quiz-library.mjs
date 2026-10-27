@@ -1,5 +1,5 @@
 import { initNavbarAuth } from './navbar-auth.js';
-import { createQuizRequest } from './quiz-api.mjs?v=20261027-difficulty';
+import { createQuizRequest } from './quiz-api.mjs?v=20261027-all-subjects';
 import { quizPageGrade, quizLibraryPath, quizStudentRedirect } from './quiz-grade-route.mjs';
 import { initWrongQuestions } from './quiz-wrong-questions.mjs';
 import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs';
@@ -12,7 +12,7 @@ const pageGrade = quizPageGrade(location.pathname);
 el('grade-filter').value = String(pageGrade);
 const localContext = localPoolContext();
 const request = await createQuizRequest({ getSession: () => currentSession, local: Boolean(localContext), localStudent: localContext?.student });
-const composer = pageGrade === 3 ? initComposer({request,context:localContext}) : null;
+const composer = initComposer({request,context:localContext});
 const ownSection=document.createElement('section');ownSection.id='my-papers-section';ownSection.className='paper-collection collection-own';ownSection.hidden=true;ownSection.setAttribute('aria-labelledby','my-papers-title');
 ownSection.innerHTML='<header class="collection-heading"><span class="collection-label">自己選範圍</span><h2 id="my-papers-title">我的自組卷 <span id="my-papers-count" class="collection-count"></span></h2><p>自己組的卷與錯題延伸卷，可以改名、整理，並接著作答。</p></header><p id="my-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的自組卷，可以從上方選擇範圍組一份。</p><div id="my-papers" class="papers"></div>';
 const presetSection=document.createElement('section');presetSection.id='system-papers-section';presetSection.className='paper-collection collection-preset';presetSection.setAttribute('aria-labelledby','system-papers-title');
@@ -21,7 +21,7 @@ el('cloud-papers').before(presetSection);presetSection.append(el('cloud-papers')
 const jumps=document.createElement('div');jumps.id='paper-jumps';jumps.className='paper-jumps';jumps.setAttribute('role','navigation');jumps.setAttribute('aria-label','前往試卷區塊');jumps.hidden=true;
 for(const [id,label] of [['my-papers-section','我的自組卷'],['system-papers-section','系統預設卷']]){const link=document.createElement('a');link.href='#'+id;link.textContent=label;jumps.append(link);document.getElementById(id).tabIndex=-1;}el('cloud-library').prepend(jumps);
 document.addEventListener('quiz-paper-saved',()=>load({refreshComposer:false}));
-const wrongQuestions = initWrongQuestions({request,pageGrade,getUserId:()=>currentSession?.user?.id,onExtension:composer?.extend,canExtend:()=>document.getElementById('quiz-composer')?.dataset.available==='true'});
+const wrongQuestions = initWrongQuestions({request,pageGrade,getUserId:()=>currentSession?.user?.id,onExtension:composer?.extend,canExtend:catalog=>composer?.canExtend(catalog)});
 const node = (tag, text, className) => {
   const n = document.createElement(tag); if (text !== undefined) n.textContent = text;
   if (className) n.className = className; return n;
@@ -104,7 +104,7 @@ if (localContext) {
   const localInfo = await fetch('/__quiz-local').then(r=>r.json());
   if (!localInfo.pool) throw new Error('本機題庫服務尚未啟動。');
   currentSession = localContext.session;
-  document.querySelector('.library-description').textContent='三上數學全冊：自己選單元組卷，從錯題找同一個重點再練。此處為本機試作。';
+  document.querySelector('.library-description').textContent='各科期中練習：自己選範圍與難度組卷，核對答案與解析。此處使用合成身分與本機測試資料庫。';
   document.querySelector('.library-parent').href='quiz-library.html?local=1&student='+localContext.student;
   el('refresh-library').textContent='更新本機進度';
   el('cloud-lock').hidden=true;el('cloud-library').hidden=false;

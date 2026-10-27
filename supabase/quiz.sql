@@ -210,6 +210,7 @@ declare
  bank public.quiz_banks; ver public.quiz_versions; sess public.quiz_sessions; att public.quiz_attempts; ans public.quiz_answers;
  d jsonb; b jsonb; q jsonb; o jsonb; qo jsonb; oo jsonb:='{}'; result jsonb; reviews jsonb:='[]'; responses jsonb;
  target uuid; qid text; response jsonb; correct boolean; done boolean; groupdone boolean; n integer; cls text; mode text; student_grade integer;
+ new_answer boolean:=false; leaf jsonb:='{}';
 begin
  if uid is null then raise exception 'login_required'; end if;
  if p_action in ('list','get','save','publish','versions','open','monitor','close','sessions','personal_sessions') and not teacher then raise exception 'teacher_required'; end if;
@@ -312,7 +313,7 @@ begin
    where a.session_id=sess.id;
   return jsonb_build_object('status',sess.status,'students',result);
  end if;
- if p_action not in ('join','resume','submit') then raise exception 'invalid_action'; end if;
+ if p_action not in ('join','resume','submit','view_question') then raise exception 'invalid_action'; end if;
  if sess.access_mode='personal' then
   if not teacher or sess.owner_id<>uid then raise exception 'session_unavailable'; end if;
  else
@@ -342,6 +343,13 @@ begin
   end loop;
   insert into public.quiz_attempts(session_id,user_id,question_order,option_orders) values(sess.id,uid,qo,oo) returning * into att;
  end if;
+ if p_action='view_question' then
+  qid:=p_data->>'question_id';
+  select value#>>'{}' into cls from jsonb_array_elements(att.question_order) x(value) where not exists(select 1 from public.quiz_answers a where a.attempt_id=att.id and a.question_id=x.value#>>'{}') limit 1;
+  if cls is distinct from qid then raise exception 'question_order';end if;
+  if to_regprocedure('public.quiz_answer_guard(uuid,text,boolean)') is not null then perform public.quiz_answer_guard(att.id,qid,false);end if;
+  return jsonb_build_object('viewed',true);
+ end if;
  if p_action='submit' then
   qid:=p_data->>'question_id';response:=p_data->'response';
   select bx,qx into b,q from jsonb_array_elements(d->'blocks') bx,lateral jsonb_array_elements(bx->'questions') qx where qx->>'id'=qid;
@@ -353,6 +361,9 @@ begin
    if sess.status<>'open' then raise exception 'session_closed'; end if;
    select value#>>'{}' into cls from jsonb_array_elements(att.question_order) x(value) where not exists(select 1 from public.quiz_answers a where a.attempt_id=att.id and a.question_id=x.value#>>'{}') limit 1;
    if cls is distinct from qid then raise exception 'question_order'; end if;
+   if to_regprocedure('public.quiz_answer_guard(uuid,text,boolean)') is not null then
+    result:=public.quiz_answer_guard(att.id,qid,true);if result ? 'warning' then return result;end if;
+   end if;
    if jsonb_typeof(response) is distinct from 'string' or length(response#>>'{}') not between 1 and 2000 or (p_data->>'request_id')::uuid is null then raise exception 'invalid_response'; end if;
    if q->>'type'='single' then
     if not exists(select 1 from jsonb_array_elements(q->'options') opt where opt->>'id'=response#>>'{}') then raise exception 'invalid_response'; end if;
@@ -362,6 +373,7 @@ begin
     correct:=exists(select 1 from jsonb_array_elements_text(q->'answer'->'accepted') a where trim(a)=trim(response#>>'{}'));
    end if;
    insert into public.quiz_answers(attempt_id,question_id,request_id,response,correct) values(att.id,qid,(p_data->>'request_id')::uuid,response,correct);
+   new_answer:=true;
   end if;
  end if;
  select count(*)=jsonb_array_length(att.question_order),coalesce(jsonb_object_agg(a.question_id,a.response),'{}') into done,responses from public.quiz_answers a where a.attempt_id=att.id;
@@ -378,7 +390,8 @@ begin
   select display_name into cls from public.quiz_generated_papers where session_id=sess.id and user_id=uid;
   if cls is not null then d:=jsonb_set(d,'{title}',to_jsonb(cls));end if;
  end if;
- return jsonb_build_object('attempt_id',att.id,'session_id',sess.id,'version_id',sess.version_id,'status',sess.status,'complete',done,
+ if to_regprocedure('public.quiz_leaf_result(uuid,boolean)') is not null then leaf:=public.quiz_leaf_result(att.id,new_answer);end if;
+ return jsonb_build_object('attempt_id',att.id,'session_id',sess.id,'version_id',sess.version_id,'status',sess.status,'complete',done,'leaf',leaf,
   'document',public.quiz_student_document(d,att.question_order,att.option_orders),'responses',responses,'reviews',reviews);
 end $$;
 revoke all on function public.quiz_valid_runs(jsonb,jsonb),public.quiz_valid_content(jsonb),public.quiz_validate(jsonb),public.quiz_student_document(jsonb,jsonb,jsonb) from public,anon,authenticated;

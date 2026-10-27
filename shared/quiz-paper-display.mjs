@@ -31,6 +31,7 @@ export const learningPoint=p=>String(p.learning_point||String(p.catalog?.unit||'
 export function paperRange(p){
  if(isExtension(p))return '學習重點：'+learningPoint(p);
  if(!p.generated)return p.catalog?.unit||'';
+ if(p.catalog?.course_id&&!(p.catalog?.subject==='數學'&&String(p.catalog?.volume).startsWith('3')))return p.catalog.unit||'自選範圍';
  let units=p.unit_ids;
  if(!Array.isArray(units)){const match=String(p.catalog?.unit||'').match(/^自選單元[：:]\s*(\[[\d,\s]+\])$/);try{units=match?JSON.parse(match[1]):[];}catch{units=[];}}
  units=[...new Set(units)].filter(n=>Number.isInteger(n)&&n>=1&&n<=9).sort((a,b)=>a-b);

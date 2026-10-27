@@ -12,7 +12,11 @@ export function initComposer({request,context}){
  library.insertBefore(panel,library.querySelector('.filters'));
  const difficultyLabel=make('label','試卷難度 '),difficulty=make('select');difficultyLabel.className='compose-difficulty';difficulty.id='compose-difficulty';
  for(const [value,m] of Object.entries(difficultyModes)){const o=make('option',m.label);o.value=value;o.defaultSelected=value==='medium';difficulty.append(o);}difficultyLabel.append(difficulty);document.getElementById('compose-mix').before(difficultyLabel);
- let generation=0,busy=false,pending=null;
+ const courseLabel=make('label','科目 '),courseSelect=make('select');courseSelect.id='compose-course';courseLabel.append(courseSelect);panel.querySelector('form').prepend(courseLabel);
+ const rewardsHint=make('p','完成實際10題以上、正確率達60%，可為努力樹增加1片葉子。5題短練習不計葉；相同題目組合不重複計葉。');rewardsHint.className='compose-reward-hint';panel.querySelector('form').before(rewardsHint);
+ let generation=0,busy=false,pending=null,courses=[];
+ function fillUnits(){const course=courses.find(c=>c.id===courseSelect.value);const box=document.getElementById('compose-units');box.replaceChildren(make('legend','選擇單元（可複選）'));for(const u of course?.units||[]){const label=make('label'),input=make('input');input.type='checkbox';input.value=u.id;label.append(input,make('span',`${u.id}. ${u.title||grade3MathUnits[u.id-1]||'單元'}（${u.count}題）`));box.append(label);}}
+ courseSelect.addEventListener('change',fillUnits);
  const status=document.getElementById('compose-status'),result=document.getElementById('compose-result');
  const updateMix=()=>{const n=Number(document.getElementById('compose-count').value),m=difficultyModes[difficulty.value],d=difficultyTarget(difficulty.value,n);document.getElementById('compose-mix').textContent=`${m.label}；${n}題以${d.easy}題易、${d.medium}題中、${d.hard}題難為目標。${m.rule}組卷後顯示實際配比。`;};
  document.getElementById('compose-count').addEventListener('change',updateMix);difficulty.addEventListener('change',updateMix);updateMix();
@@ -21,8 +25,7 @@ export function initComposer({request,context}){
  async function ready(){
   const g=++generation;
   try{const d=await request('pool_catalog');if(g!==generation)return;panel.dataset.available=String(d.available);panel.hidden=!d.available;if(!d.available)return;
-   const box=document.getElementById('compose-units');box.replaceChildren(make('legend','選擇單元（可複選）'));
-   for(const u of d.units){const label=make('label'),input=make('input');input.type='checkbox';input.value=u.id;label.append(input,make('span',`${u.id}. ${labels[u.id-1]}（${u.count}題）`));box.append(label);}
+   courses=d.courses||[{id:'115-1-hanlin-g3-math',subject:'數學',units:d.units}];const old=courseSelect.value;courseSelect.replaceChildren(...courses.map(c=>new Option(c.subject,c.id)));if(courses.some(c=>c.id===old))courseSelect.value=old;else if(courses.some(c=>c.id==='115-1-hanlin-g3-math'))courseSelect.value='115-1-hanlin-g3-math';fillUnits();
   }catch{if(g===generation){panel.dataset.available='false';panel.hidden=true;}}
  }
  panel.querySelector('form').addEventListener('input',()=>{pending=null;result.replaceChildren();status.textContent='';});
@@ -30,7 +33,7 @@ export function initComposer({request,context}){
   e.preventDefault();if(busy)return;
   const units=[...panel.querySelectorAll('input:checked')].map(n=>Number(n.value)),count=Number(document.getElementById('compose-count').value),name=document.getElementById('compose-name').value.trim();
   if(!units.length){status.textContent='先勾選至少一個想複習的單元。';return;}
-  pending??={kind:'self',count,units,name,difficulty:difficulty.value,request_id:crypto.randomUUID()};const g=generation;
+  pending??={kind:'self',count,units,name,course_id:courseSelect.value,difficulty:difficulty.value,request_id:crypto.randomUUID()};const g=generation;
   busy=true;panel.querySelectorAll('button,input,select').forEach(n=>n.disabled=true);status.textContent='正在組卷並儲存…';
   try{
    const r=await request('compose',pending);if(g!==generation)return;const d=r.distribution;
@@ -41,5 +44,5 @@ export function initComposer({request,context}){
   }catch(e){if(g===generation)status.textContent=e.message;}
   finally{if(g===generation){busy=false;panel.querySelectorAll('button,input,select').forEach(n=>n.disabled=false);}}
  });
- return {ready,reset(){generation++;busy=false;pending=null;panel.hidden=true;panel.dataset.available='false';panel.querySelector('form').reset();updateMix();result.replaceChildren();status.textContent='';},async extend(item){const r=await request('compose',{kind:'extension',count:3,request_id:item.request_id,attempt_id:item.attempt_id,question_id:item.question_id});return {...r,url:paperUrl(r.session_id,context)};}};
+ return {ready,canExtend(catalog){return courses.some(c=>c.subject===catalog?.subject&&String(c.grade||3)===String(catalog?.volume||'').slice(0,1)&&c.extension_available!==false);},reset(){generation++;busy=false;pending=null;courses=[];panel.hidden=true;panel.dataset.available='false';panel.querySelector('form').reset();updateMix();result.replaceChildren();status.textContent='';},async extend(item){const r=await request('compose',{kind:'extension',count:3,request_id:item.request_id,attempt_id:item.attempt_id,question_id:item.question_id});return {...r,url:paperUrl(r.session_id,context)};}};
 }

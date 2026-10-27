@@ -32,6 +32,9 @@ export function renderContent(container, content, { strict = false, loadMedia = 
         table.append(body); wrapper.append(table); box.append(wrapper);
       }
     }
+    // Audio is not an inline image run; retain it when rich text/table layout is present.
+    const audios=(content.media||[]).filter(m=>m.kind==='audio');
+    if(audios.length)renderContent(box,{text:'',media:audios},{strict,loadMedia,imageLoading});
     container.append(box); return box;
   }
   const text = content?.text || ''; let end = 0;

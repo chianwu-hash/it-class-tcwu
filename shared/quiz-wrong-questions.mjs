@@ -62,7 +62,7 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
       if(q.type!=='single'){explanation.append(make('p',`你的答案：${data.response}`),make('p',`可接受的答案：${data.review.answer.accepted.join('、')}`));}
       else explanation.append(make('p',`正確選項：${String.fromCharCode(65+q.options.findIndex(o=>o.id===data.review.answer.option_id))}`));
       content(explanation,data.review.explanation);article.append(explanation);detail.append(article);
-      if(onExtension&&canExtend()&&data.catalog?.subject==='數學'){
+      if(onExtension&&canExtend(data.catalog)){
         const section=make('section',undefined,'wrong-extension'),button=make('button','再練3題同一個重點'),status=make('p');status.setAttribute('role','status');section.append(button,status);detail.append(section);
         const requestId=crypto.randomUUID();
         button.addEventListener('click',async()=>{if(busy)return;locked(true);status.textContent='正在找同一個重點的題目…';try{const result=await onExtension({...item,request_id:requestId});if(!current(g,uid)||!active)return;const d=result.distribution;status.textContent=`已找到${d.actual}題（易${d.easy}、中${d.medium}、難${d.hard}），不會重複剛才那題。${d.actual<3?'這個重點目前可用題較少，先練這幾題。':''}`;section.querySelector('a')?.remove();const a=make('a','開始同重點練習 →','paper-start');a.href=result.url;section.append(a);}catch(e){if(current(g,uid))status.textContent=e.message;}finally{if(current(g,uid))locked(false);}});

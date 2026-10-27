@@ -547,6 +547,7 @@ quizFeedbackMotion.register({
   Object.values(variants).forEach(def => quizFeedbackMotion.register(def));
 })();
 
+import {celebrateQuizLeaf,quizReadingWarning,stopQuizLeafCelebration} from './quiz-leaf-celebration.mjs';
 // 選用後端模式不接收答案資料，不執行前端評分，不呼叫舊進度儲存。
 export function initServerQuiz({ selectors, server }) {
   if (!server?.request || !server?.sessionId) throw new Error('缺少測驗場次或後端連線。');
@@ -563,6 +564,7 @@ export function initServerQuiz({ selectors, server }) {
   }, { imageLoading: 'eager' });
   let userId = null, generation = 0, state = null, cursor = 0, pending = null, selected = '', busy = false, loadError = '', showFullReview = false;
   let feedbackAnimation = null;
+  let seenQuestion=null;
   // 依鼓勵原則撰寫的原創短句，不是阿德勒名言，也不推測孩子是否努力或用了哪個方法。
   const encouragement = {
     correct: [
@@ -637,6 +639,11 @@ export function initServerQuiz({ selectors, server }) {
     heading.append(make('h2', state.document.title), make('p', `已作答 ${count} / ${questions.length} 題`, 'progress-label'));
     const progress = make('progress'); progress.max = questions.length; progress.value = count; progress.setAttribute('aria-label', '測驗作答進度');
     heading.append(progress); root.append(heading);
+    if(state.complete&&state.leaf?.reason!=='not_eligible'){
+     const messages={short_paper:'這份少於10題，不計葉片。',accuracy:'完成至少10題、正確率達60%，可長出1片葉子。先核對這次的解析，再繼續練習。',timing_unverified:'作答紀錄已保留；本次閱讀時間紀錄不完整，不追溯計葉。',same_content_already_earned:'這組題目已領過葉片，複習不重複計葉。'};
+     if(state.leaf?.earned)root.append(make('p','🌿 努力樹已長出1片葉子！','quiz-leaf-state'));
+     else if(messages[state.leaf?.reason])root.append(make('p',messages[state.leaf.reason],'quiz-leaf-state'));
+    }
     root.classList.toggle('is-review', state.complete && showFullReview);
     if (state.status === 'closed') root.append(make('p', '老師已結束本場次。已儲存紀錄仍可查看。', 'notice'));
     if (state.complete && showFullReview) {
@@ -655,6 +662,7 @@ export function initServerQuiz({ selectors, server }) {
     if (state.complete) root.append(make('p', '所有答案已儲存。先確認這一題的結果，再查看整份作答與解析。', 'notice'));
     cursor = Math.min(cursor, questions.length - 1);
     const q = questions[cursor], saved = answered(q);
+    if(!saved&&state.status==='open'&&seenQuestion!==q.id){seenQuestion=q.id;const g=generation;server.request('view_question',{session_id:server.sessionId,question_id:q.id}).catch(()=>{if(g===generation)seenQuestion=null;});}
     const review = state.reviews.find(r => r.question_id === q.id);
     const article = make('article', undefined, 'question'); article.dataset.questionId = q.id;
     article.append(make('h3', `第 ${cursor + 1} 題 / ${questions.length} 題`));
@@ -733,14 +741,16 @@ export function initServerQuiz({ selectors, server }) {
       // 只在送答成功、後端允許揭答後播放；回看、重整與整卷檢視不反覆播放。
       feedbackAnimation = next.reviews.some(r => r.question_id === q.id) ? q.id : null;
       state = next; pending = null; busy = false; render(); say('答案已儲存。');
+      if(next.leaf?.earned_now)celebrateQuizLeaf();
       root.querySelector('.answer-preview')?.focus();
-    } catch (e) { if (generation === token) { busy = false; render(); say(e.message, true); } }
+    } catch (e) { if (generation === token) { busy = false;if(e.code==='answer_too_fast'){pending=null;quizReadingWarning();} render(); say(e.message, true); } }
     finally { if (generation === token) { busy = false; const b = root.querySelector('#server-submit'); if (b) b.disabled = false; } }
   }
   async function handleAuthChange(session) {
     const id = session?.user?.id || null;
     if (id === userId) return;
-    generation++; userId = id; busy = false; state = null; selected = ''; pending = null; loadError = ''; cursor = 0; showFullReview = false; feedbackAnimation = null;
+    stopQuizLeafCelebration();
+    generation++; userId = id; busy = false; state = null; selected = ''; pending = null; loadError = ''; cursor = 0; showFullReview = false; feedbackAnimation = null;seenQuestion=null;
     if (lock) { lock.hidden = Boolean(id); lock.classList.toggle('hidden', Boolean(id)); }
     if (content) { content.hidden = !id; content.classList.toggle('hidden', !id); }
     render(); if (id) await load('join');

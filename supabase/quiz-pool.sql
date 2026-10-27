@@ -1,4 +1,4 @@
--- Candidate schema: local validation first; no production migration is performed by this file.
+-- Private question pool and course-scoped composition; validate locally before authorized deployment.
 begin;
 create table if not exists public.quiz_question_pool (
  question_id text primary key, source_item_id text not null, group_key text not null,
@@ -11,6 +11,25 @@ alter table public.quiz_question_pool enable row level security;
 revoke all on public.quiz_question_pool from public,anon,authenticated;
 grant all on public.quiz_question_pool to service_role;
 
+create table if not exists public.quiz_courses (
+ id text primary key, grade integer not null check(grade in (3,6)), definition jsonb not null, enabled boolean not null default false
+);
+create table if not exists public.quiz_pool_membership (
+ question_id text primary key references public.quiz_question_pool(question_id) on delete cascade,
+ course_id text not null references public.quiz_courses(id), knowledge_reliable boolean not null default false
+);
+create table if not exists public.quiz_pool_aliases (
+ version_id uuid not null references public.quiz_versions(id), legacy_question_id text not null,
+ question_id text not null references public.quiz_question_pool(question_id), primary key(version_id,legacy_question_id)
+);
+alter table public.quiz_courses enable row level security;
+alter table public.quiz_pool_membership enable row level security;
+alter table public.quiz_pool_aliases enable row level security;
+revoke all on public.quiz_courses,public.quiz_pool_membership,public.quiz_pool_aliases from public,anon,authenticated;
+grant all on public.quiz_courses,public.quiz_pool_membership,public.quiz_pool_aliases to service_role;
+insert into public.quiz_courses values('115-1-hanlin-g3-math',3,'{"school_year":"115","volume":"3年級上學期","subject":"數學","publisher":"翰林","units":{"1":"10000以內的數","2":"10000以內的加減","3":"毫米與數線","4":"乘法","5":"角與形狀","6":"除法","7":"公斤與公克","8":"分數","9":"列表與規律"}}',true) on conflict(id) do nothing;
+create index if not exists quiz_pool_course_idx on public.quiz_pool_membership(course_id,question_id);
+
 create or replace function public.quiz_compose(p_data jsonb default '{}') returns jsonb
 language plpgsql security definer set search_path='' as $$
 declare
@@ -21,13 +40,19 @@ declare
  request uuid; d integer; quota integer; count_now integer; result jsonb; paper_name text;
  mode text:=coalesce(p_data->>'difficulty','medium'); passes integer[]; pass integer;
  target_easy integer; target_medium integer; target_hard integer; shortages jsonb;
+ selected_course text:=coalesce(p_data->>'course_id','115-1-hanlin-g3-math'); course public.quiz_courses; source_version_id uuid;
 begin
  if uid is null then raise exception 'login_required'; end if;
  if coalesce(public.is_teacher(),false) then raise exception 'student_required'; end if;
  select lower(u.email) into v_email from auth.users u where u.id=uid and u.email_confirmed_at is not null;
- select e.class_code into cls from public.student_enrollments e where e.email=v_email and e.school_year=115 and e.class_code ~ '^3[0-9]{2}$';
+ select e.class_code into cls from public.student_enrollments e where e.email=v_email and e.school_year=115 and e.class_code ~ '^[36][0-9]{2}$';
  if cls is null then raise exception 'roster_required'; end if;
- if jsonb_typeof(p_data) is distinct from 'object' or exists(select 1 from jsonb_object_keys(p_data) k where k not in ('kind','count','units','request_id','attempt_id','question_id','name','difficulty')) then raise exception 'invalid_request'; end if;
+ if kind='self' then
+  select * into course from public.quiz_courses c where c.id=selected_course and c.enabled and c.grade=left(cls,1)::integer;
+  if course.id is null then raise exception '%',case when not(p_data ? 'course_id') then 'roster_required' else 'course_unavailable' end;end if;
+ end if;
+ if jsonb_typeof(p_data) is distinct from 'object' or exists(select 1 from jsonb_object_keys(p_data) k where k not in ('kind','count','units','request_id','attempt_id','question_id','name','difficulty','course_id')) then raise exception 'invalid_request'; end if;
+ if p_data ? 'course_id' and (kind<>'self' or jsonb_typeof(p_data->'course_id') is distinct from 'string') then raise exception 'invalid_request';end if;
  if p_data ? 'difficulty' and (kind<>'self' or jsonb_typeof(p_data->'difficulty') is distinct from 'string' or mode not in ('easy','medium','hard')) then raise exception 'invalid_request';end if;
  if p_data ? 'name' and (jsonb_typeof(p_data->'name') is distinct from 'string' or length(trim(p_data->>'name'))>60 or (p_data->>'name') ~ '[[:cntrl:]]') then raise exception 'invalid_request';end if;
  paper_name:=nullif(trim(p_data->>'name'),'');
@@ -36,13 +61,14 @@ begin
  if (kind='self' and amount not in (5,10,15,20)) or (kind='extension' and amount not in (3,5)) then raise exception 'invalid_request'; end if;
  request:=(p_data->>'request_id')::uuid;if request is null then raise exception 'invalid_request'; end if;
  units:=coalesce(p_data->'units','[]');
- if jsonb_typeof(units) is distinct from 'array' or jsonb_array_length(units)>9 or exists(select 1 from jsonb_array_elements(units) u where u::text !~ '^[1-9]$') then raise exception 'invalid_request'; end if;
+ if jsonb_typeof(units) is distinct from 'array' or jsonb_array_length(units)>30 or exists(select 1 from jsonb_array_elements(units) u where u::text !~ '^[1-9][0-9]?$' or (kind='self' and not(course.definition->'units' ? (u#>>'{}')))) then raise exception 'invalid_request'; end if;
  select coalesce(jsonb_agg(n order by n),'[]') into units from (select distinct value n from jsonb_array_elements(units)) t;
  if kind='self' and (jsonb_array_length(units)=0 or p_data ? 'question_id' or p_data ? 'attempt_id') then raise exception 'invalid_request'; end if;
  conf:=jsonb_build_object('kind',kind,'count',amount,'units',units,'attempt_id',p_data->>'attempt_id','question_id',p_data->>'question_id');
  if paper_name is not null then conf:=conf||jsonb_build_object('name',paper_name);end if;
  -- Keep omitted difficulty compatible with already-saved legacy request IDs.
  if p_data ? 'difficulty' then conf:=conf||jsonb_build_object('difficulty',mode);end if;
+ if p_data ? 'course_id' then conf:=conf||jsonb_build_object('course_id',selected_course);end if;
  perform pg_advisory_xact_lock(hashtextextended(uid::text||request::text,0));
  select * into old from public.quiz_generated_papers g where g.user_id=uid and g.request_id=request;
  if old.session_id is not null then
@@ -52,8 +78,17 @@ begin
  end if;
  if kind='extension' then
   reviewed:=public.quiz_wrong_questions(jsonb_build_object('action','detail','attempt_id',p_data->>'attempt_id','question_id',p_data->>'question_id'));
-  select * into source from public.quiz_question_pool p where p.question_id=reviewed->'question'->>'id' or 'midterm_'||p.source_item_id=reviewed->'question'->>'id';
+  select s.version_id into source_version_id from public.quiz_sessions s where s.id=(reviewed->>'session_id')::uuid;
+  select p.* into source from public.quiz_question_pool p where p.question_id=reviewed->'question'->>'id';
+  if source.question_id is null then select p.* into source from public.quiz_pool_aliases a join public.quiz_question_pool p on p.question_id=a.question_id where a.version_id=source_version_id and a.legacy_question_id=reviewed->'question'->>'id';end if;
+  -- Legacy source alias is restricted to the already-existing three-up math pool.
+  if source.question_id is null and reviewed->'catalog'->>'subject'='數學' and left(reviewed->'catalog'->>'volume',1)='3' then
+   select p.* into source from public.quiz_question_pool p where 'midterm_'||p.source_item_id=reviewed->'question'->>'id' and not exists(select 1 from public.quiz_pool_membership m where m.question_id=p.question_id);
+  end if;
   if source.question_id is null then raise exception 'extension_unavailable'; end if;
+  select coalesce(m.course_id,'115-1-hanlin-g3-math') into selected_course from public.quiz_question_pool p left join public.quiz_pool_membership m on m.question_id=p.question_id where p.question_id=source.question_id and coalesce(m.knowledge_reliable,true);
+  select * into course from public.quiz_courses c where c.id=selected_course and c.enabled and c.grade=left(cls,1)::integer;
+  if course.id is null then raise exception 'extension_unavailable';end if;
  end if;
  seed:=request::text;
  -- Reserve all target buckets before filling shortages in the agreed order.
@@ -67,10 +102,11 @@ begin
   for count_now in 1..greatest(quota,0) loop
    exit when cardinality(selected)>=amount;
    select p.* into chosen from public.quiz_question_pool p where p.usable and not(p.question_id=any(selected))
+    and coalesce((select m.course_id from public.quiz_pool_membership m where m.question_id=p.question_id),'115-1-hanlin-g3-math')=selected_course
     and (kind='extension' or p.difficulty=d)
     and not exists(select 1 from public.quiz_question_pool x where x.question_id=any(selected) and x.group_key=p.group_key)
     and ((kind='self' and exists(select 1 from jsonb_array_elements(units) u where p.unit_ids @> jsonb_build_array(u)))
-     or (kind='extension' and p.publisher_explanation and p.knowledge_code=source.knowledge_code and p.group_key<>source.group_key and p.difficulty<=source.difficulty))
+     or (kind='extension' and p.publisher_explanation and coalesce((select m.knowledge_reliable from public.quiz_pool_membership m where m.question_id=p.question_id),true) and p.knowledge_code=source.knowledge_code and p.group_key<>source.group_key and p.difficulty<=source.difficulty))
     order by
      case when kind='extension' and p.publisher_explanation then 0 when kind='extension' then 1 else 0 end,
      (select count(*) from public.quiz_answers a join public.quiz_attempts at on at.id=a.attempt_id where at.user_id=uid and a.question_id=p.question_id),
@@ -94,8 +130,9 @@ begin
  select jsonb_build_object('requested',amount,'actual',cardinality(selected),'easy',count(*) filter(where p.difficulty=-3),'medium',count(*) filter(where p.difficulty=0),'hard',count(*) filter(where p.difficulty=3)) into distribution from public.quiz_question_pool p where p.question_id=any(selected);
  if kind='self' then distribution:=distribution||jsonb_build_object('difficulty',mode,'target',jsonb_build_object('easy',target_easy,'medium',target_medium,'hard',target_hard),'shortages',shortages);end if;
  if kind='extension' and paper_name is null then paper_name:='同重點再練：'||left(source.knowledge_name,50);end if;
- doc:=jsonb_build_object('schema',1,'title',case when kind='extension' then '數學同重點延伸練習' else '我的數學自組卷' end,
-  'catalog',jsonb_build_object('school_year','115','volume','3年級上學期','subject','數學','publisher','翰林','unit',case when kind='extension' then '同重點再練習：'||source.knowledge_name else '自選單元：'||units::text end),'blocks',blocks);
+ doc:=jsonb_build_object('schema',1,'title',case when kind='extension' then (course.definition->>'subject')||'同重點延伸練習' else '我的'||(course.definition->>'subject')||'自組卷' end,
+  'catalog',jsonb_build_object('school_year','115','volume',course.definition->>'volume','subject',course.definition->>'subject','publisher',course.definition->>'publisher','course_id',selected_course,
+   'unit',case when kind='extension' then '同重點再練習：'||source.knowledge_name else (select string_agg((case when course.definition->>'subject' in ('國語','英語') then '' else '第'||(u#>>'{}')||'單元：' end)||(course.definition->'units'->>(u#>>'{}')),'、' order by (u#>>'{}')::integer) from jsonb_array_elements(units) u) end),'blocks',blocks);
  perform public.quiz_validate(doc);
  b_id:=gen_random_uuid();v_id:=gen_random_uuid();s_id:=gen_random_uuid();
  insert into public.quiz_banks(id,owner_id,draft) values(b_id,uid,doc);
@@ -145,13 +182,20 @@ revoke all on function public.quiz_delete_paper(jsonb) from public,anon;
 grant execute on function public.quiz_delete_paper(jsonb) to authenticated;
 create or replace function public.quiz_pool_catalog() returns jsonb
 language plpgsql security definer set search_path='' as $$
-declare identity jsonb; result jsonb;
+declare identity jsonb; result jsonb; courses jsonb; c public.quiz_courses; units jsonb; total integer;
 begin
  identity:=public.quiz_action('library_sessions');
- if identity->>'role'<>'student' or identity->>'grade'<>'3' then return jsonb_build_object('available',false,'units','[]'::jsonb);end if;
- select coalesce(jsonb_agg(jsonb_build_object('id',n,'count',total) order by n),'[]') into result from (
- select n::integer,count(*) total from public.quiz_question_pool p,jsonb_array_elements_text(p.unit_ids) u(n) where p.usable group by n) t;
- return jsonb_build_object('available',true,'units',result,'total',(select count(*) from public.quiz_question_pool where usable));
+ if identity->>'role'<>'student' then return jsonb_build_object('available',false,'units','[]'::jsonb,'courses','[]'::jsonb);end if;
+ courses:='[]';
+ for c in select * from public.quiz_courses where enabled and grade=(identity->>'grade')::integer order by id loop
+  select coalesce(jsonb_agg(jsonb_build_object('id',u.n::integer,'title',c.definition->'units'->>u.n,'count',u.num) order by u.n::integer),'[]') into units from (
+   select value n,count(*) num from public.quiz_question_pool p left join public.quiz_pool_membership m on m.question_id=p.question_id,lateral jsonb_array_elements_text(p.unit_ids)
+   where p.usable and coalesce(m.course_id,'115-1-hanlin-g3-math')=c.id group by value) u;
+  select count(*) into total from public.quiz_question_pool p left join public.quiz_pool_membership m on m.question_id=p.question_id where p.usable and coalesce(m.course_id,'115-1-hanlin-g3-math')=c.id;
+  if total>0 then courses:=courses||jsonb_build_array(jsonb_build_object('id',c.id,'subject',c.definition->>'subject','grade',c.grade,'volume',c.definition->>'volume','units',units,'total',total,'extension_available',exists(select 1 from public.quiz_question_pool p left join public.quiz_pool_membership m on m.question_id=p.question_id where p.usable and coalesce(m.course_id,'115-1-hanlin-g3-math')=c.id and coalesce(m.knowledge_reliable,true))));end if;
+ end loop;
+ result:=coalesce((select value from jsonb_array_elements(courses) where value->>'id'='115-1-hanlin-g3-math'),courses->0,'{}');
+ return result||jsonb_build_object('available',jsonb_array_length(courses)>0,'courses',courses,'units',coalesce(result->'units','[]'));
 end $$;
 revoke all on function public.quiz_pool_catalog() from public,anon;
 grant execute on function public.quiz_pool_catalog() to authenticated;

@@ -2,6 +2,8 @@ import { createAuthenticatedTransport } from './quiz-transport.mjs';
 import { configureQuizMedia } from './quiz-media.mjs';
 const errors = {
   self_pool_empty: '這個範圍目前沒有符合所選難度的題目，請選其他單元或難度。',
+  course_unavailable: '這個科目目前尚未開放，請選擇自己年級可用的科目。',
+  answer_too_fast: '請看清題目和選項再作答。',
   paper_removed: '這份卷已從清單移除，請重新組一份新卷。',
   pool_empty: '這個範圍目前沒有可用的延伸題，可以先回看這題的解析或選其他單元。', extension_unavailable: '這題目前還沒有可用的同重點延伸題。',
   media_freeze_required: '媒體需先完成版本保存。', media_source_denied: '媒體來源未列入允許清單，請確認來源設定。',
@@ -42,14 +44,16 @@ export async function createQuizRequest({ getSession, localStudent = null, local
   return async (action, data = {}) => {
     if (local) {
       const result = await localCall(action === 'publish' ? '/__quiz-media' : '/__quiz-rpc', { action: action === 'publish' ? 'freeze' : action, data });
+      if(result.warning){const e=new Error(quizError(result.warning));e.code=result.warning;e.retryAfter=result.retry_after;throw e;}
       if (result.attempt_id) attemptId = result.attempt_id;
       return result;
     }
     try {
-      const specialized = {wrong_questions:'quiz_wrong_questions',compose:'quiz_compose',rename_paper:'quiz_rename_paper',delete_paper:'quiz_delete_paper',pool_catalog:'quiz_pool_catalog'}[action];
+      const specialized = {rewards:'quiz_rewards',wrong_questions:'quiz_wrong_questions',compose:'quiz_compose',rename_paper:'quiz_rename_paper',delete_paper:'quiz_delete_paper',pool_catalog:'quiz_pool_catalog'}[action];
       const result = await transport(action === 'publish' ? '/functions/v1/quiz-media' : specialized ? '/rest/v1/rpc/'+specialized : '/rest/v1/rpc/quiz_action',
         action === 'publish' ? { action: 'freeze', data } : action === 'pool_catalog' ? {} : specialized ? { p_data: data } : { p_action: action, p_data: data });
       if (result.attempt_id) attemptId = result.attempt_id;
+      if(result.warning){const e=new Error(quizError(result.warning));e.code=result.warning;e.retryAfter=result.retry_after;throw e;}
       return result;
     } catch (e) { if (e.code) e.message = quizError(e.code); throw e; }
   };
