@@ -12,7 +12,9 @@ const {connectCdp,safeScreenshot}=require('D:/projects/cdp-tools/packages/cdp-sa
   const session=await page.target().createCDPSession();session.grantForegroundOnce('Page.bringToFront','驗證錯題整理及既有圖文燈箱');await session.send('Page.bringToFront');await session.detach();
   page.on('pageerror',e=>report.pageErrors.push(e.message));page.on('request',r=>{if(r.url().includes('/rpc/quiz_action')&&/"p_action":"(submit|join)"/.test(r.postData()||''))report.writes++;});
   page.on('response',r=>{const host=new URL(r.url()).hostname,mime=r.headers()['content-type']||'';if(mime.startsWith('image/')){if(host.endsWith('workers.dev'))report.workerImages++;if(host.endsWith('supabase.co'))report.supabaseImages++;}});
-  await page.goto(origin+'/grade3/115-1/quiz-library.html#wrong',{waitUntil:'domcontentloaded'});await page.waitForSelector('.wrong-card',{timeout:45000});
+  await page.goto(origin+'/grade3/115-1/quiz-library.html#wrong',{waitUntil:'domcontentloaded'});
+  // Reusing the already-open hash URL can be same-document navigation and retain old modules.
+  await page.reload({waitUntil:'domcontentloaded'});await page.waitForSelector('.wrong-card',{timeout:45000});
   const user=await page.evaluate(async()=>{const a=await import('/shared/auth.js');return (await a.supabase.auth.getSession()).data.session?.user.id;});assert.equal(user,qa.testUserId);
   assert.equal(await page.$eval('#cloud-papers',e=>getComputedStyle(e).display),'none');
   await page.waitForFunction(()=>!document.getElementById('wrong-unit').disabled,{polling:5000,timeout:30000});
