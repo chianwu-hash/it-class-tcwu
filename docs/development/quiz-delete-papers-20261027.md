@@ -12,3 +12,5 @@
 正式schema更新使用 `node automation/quiz-g3-math-pool/names-deploy.mjs --delete`，只更新metadata／RPC，不重匯題庫與圖片；前後比對原答案、原版本摘要。正式瀏覽器只對原指定測試學生新組的測試卷操作，不刪其他既有試卷。
 
 瀏覽器重跑：AI工作瀏覽器租約＋精確TargetId，設定 `QUIZ_BROWSER_URL` 及 `QUIZ_DELETE_TEST=1` 執行 `named-browser.cjs`；證據寫入ignored `qa/delete-local.json` 或 `qa/delete-production.json`。schema結果在ignored `deletion/deployment.json`。
+
+正式功能commit `b87dc4d` 已push，production部署 `dpl_HsP6QodbU75wqCPw6Q4iBJt4VhYr` READY。指定測試學生新組5題卷、改名、儲存1題錯答，再測取消刪除與確認刪除；卡片立即消失、重整後不再列出，後端錯題投影仍保留該卷錯題。390px無溢出，頁面錯誤0，正式畫面已檢視。沒有刪除其他既有試卷。
