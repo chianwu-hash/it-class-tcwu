@@ -9,3 +9,5 @@
 - 本機瀏覽器用全冊9單元組20題，確認4易12中4難、未答即儲存、清單20題、改名與重整、送1題後接續第2題，以及390px無溢出、頁面錯誤0。
 
 正式schema更新重用 `names-deploy.mjs --twenty`，不重匯題庫或圖片，前後比對原答案／版本摘要。瀏覽器透過AI工作瀏覽器租約執行 `named-browser.cjs`，設定 `QUIZ_PAPER_COUNT=20`；本機／正式證據存於ignored `qa/twenty-local.json`、`qa/twenty-production.json`，schema證據在 `twenty/deployment.json`。
+
+功能commit `1b8010c` 已push，production部署 `dpl_8yirgpCV3srFVueTZCy1ajr72b6N` READY。正式指定測試學生以全冊範圍組20題（4／12／4），未答即出現個人清單；改名重整、送1題後返回接續第2題均通過，390px無溢出、頁面錯誤0。只對新建測試卷操作，schema更新前後原答案與版本摘要不變。
