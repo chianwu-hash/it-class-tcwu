@@ -11,9 +11,11 @@ el('grade-filter').value = String(pageGrade);
 const localContext = localPoolContext();
 const request = await createQuizRequest({ getSession: () => currentSession, local: Boolean(localContext), localStudent: localContext?.student });
 const composer = pageGrade === 3 ? initComposer({request,context:localContext}) : null;
-const ownSection=document.createElement('section');ownSection.id='my-papers-section';ownSection.hidden=true;
-ownSection.innerHTML='<h2>我的自組卷</h2><p>自己組的卷和錯題延伸卷都會自動儲存。可以改名，之後回來接著作答。</p><p id="my-papers-empty" hidden>還沒有自組卷，先從上方選擇想複習的單元。</p><div id="my-papers" class="papers"></div>';
-el('cloud-papers').before(ownSection);
+const ownSection=document.createElement('section');ownSection.id='my-papers-section';ownSection.className='paper-collection collection-own';ownSection.hidden=true;ownSection.setAttribute('aria-labelledby','my-papers-title');
+ownSection.innerHTML='<header class="collection-heading"><span class="collection-label">自己選範圍</span><h2 id="my-papers-title">我的自組卷 <span id="my-papers-count" class="collection-count"></span></h2><p>自己組的卷與錯題延伸卷，可以改名、整理，並接著作答。</p></header><p id="my-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的自組卷，可以從上方選擇範圍組一份。</p><div id="my-papers" class="papers"></div>';
+const presetSection=document.createElement('section');presetSection.id='system-papers-section';presetSection.className='paper-collection collection-preset';presetSection.setAttribute('aria-labelledby','system-papers-title');
+presetSection.innerHTML='<header class="collection-heading"><span class="collection-label">已準備好的練習</span><h2 id="system-papers-title">系統預設卷 <span id="system-papers-count" class="collection-count"></span></h2><p>各科單元卷已經準備好，選一份就能開始練習。</p></header><p id="system-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的系統預設卷。</p>';
+el('cloud-papers').before(presetSection);presetSection.append(el('cloud-papers'));presetSection.before(ownSection);
 document.addEventListener('quiz-paper-saved',()=>load({refreshComposer:false}));
 const wrongQuestions = initWrongQuestions({request,pageGrade,getUserId:()=>currentSession?.user?.id,onExtension:composer?.extend,canExtend:()=>document.getElementById('quiz-composer')?.dataset.available==='true'});
 const node = (tag, text, className) => {
@@ -28,12 +30,15 @@ function render() {
   const shown = papers.filter(p => p.catalog?.volume?.startsWith(String(pageGrade)) && (!subject || p.catalog?.subject === subject));
   shown.sort((a,b)=>Date.parse(b.saved_at||0)-Date.parse(a.saved_at||0));
   el('my-papers-empty').hidden=shown.some(p=>p.generated);
+  const ownCount=shown.filter(p=>p.generated).length;
+  el('my-papers-count').textContent=`${ownCount}卷`;el('system-papers-count').textContent=`${shown.length-ownCount}卷`;el('system-papers-empty').hidden=shown.length>ownCount;
   for (const p of shown) {
     const a = node('article', undefined, 'paper-card'); a.dataset.subject = p.catalog?.subject || '';
+    a.dataset.source=p.generated?'own':'preset';
     a.dataset.sessionId=p.id;
     const header = node('div', undefined, 'paper-card-header'), icon = node('span', undefined, 'subject-icon');
     const symbol = node('i', undefined, `fa-solid ${subjectIcons[p.catalog?.subject] || 'fa-book'}`); symbol.setAttribute('aria-hidden','true'); icon.append(symbol);
-    const title = node('div'); title.append(node('p', p.catalog?.subject || '單元練習', 'paper-subject'), node('h2', p.generated ? p.display_name||p.title : p.catalog?.unit || p.title));
+    const title = node('div'); title.append(node('span',p.generated?'自組卷':'系統預設卷','paper-source-label'),node('p', p.catalog?.subject || '單元練習', 'paper-subject'), node('h2', p.generated ? p.display_name||p.title : p.catalog?.unit || p.title));
     header.append(icon,title); a.append(header);
     const body = node('div', undefined, 'paper-card-body');
     body.append(node('p', `${p.catalog?.volume || ''}・${p.catalog?.publisher || ''}・${p.total} 題`, 'meta'));

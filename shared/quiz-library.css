@@ -64,3 +64,21 @@
   .quiz-library-page .paper-card {transition:none}
   .quiz-library-page .paper-card:hover {transform:none}
 }
+
+/* 顏色區分卷的來源；科目仍保留文字與圖示，不只靠顏色辨識。 */
+.quiz-library-page .paper-collection{--collection-ink:#5b3b83;--collection-tint:#f6f1ff;--collection-border:#c6b4e5;margin:26px 0;padding:clamp(16px,2.5vw,26px);border:2px solid var(--collection-border);border-top-width:7px;border-radius:26px;background:var(--collection-tint)}
+.quiz-library-page .collection-preset{--collection-ink:#155681;--collection-tint:#eef7ff;--collection-border:#a6cbe8;margin-top:38px}
+.quiz-library-page .paper-collection[hidden],.quiz-library-page .paper-collection [hidden]{display:none!important}
+.quiz-library-page .collection-heading{margin-bottom:20px;color:var(--collection-ink)}
+.quiz-library-page .collection-heading h2{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0;font-size:clamp(23px,3vw,28px);line-height:1.4;color:var(--collection-ink)}
+.quiz-library-page .collection-heading p{margin:6px 0;line-height:1.8;font-size:14px}
+.quiz-library-page .collection-label,.quiz-library-page .collection-count,.quiz-library-page .paper-source-label{display:inline-block;border-radius:99px;background:white;color:var(--collection-ink);padding:4px 11px;font-size:12px;font-weight:700;line-height:1.6}
+.quiz-library-page .collection-count{border:1px solid var(--collection-border);font-size:13px}
+.quiz-library-page .paper-collection .paper-card{border-color:var(--collection-border);border-width:2px}
+.quiz-library-page .paper-collection .paper-card-header{background:var(--collection-tint);border-bottom-color:var(--collection-border)}
+.quiz-library-page .paper-source-label{margin-bottom:6px;border:1px solid var(--collection-border)}
+.quiz-library-page .collection-empty{margin:0;padding:18px;border:1px dashed var(--collection-border);border-radius:16px;color:var(--collection-ink);line-height:1.8;background:#ffffffb3}
+.quiz-library-page #quiz-composer{border-color:#c6b4e5;background:#f6f1ff;color:#49365e}
+.quiz-library-page #quiz-composer h2{color:#5b3b83}
+.quiz-library-page #compose-units label{border-color:#d9cdec}
+.quiz-library-page #compose-units input{accent-color:#7955a3}
