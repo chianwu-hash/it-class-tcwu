@@ -12,3 +12,5 @@
 本機已檢查獨立同層容器、不同計算底色、來源標籤、錯題切換及390px無橫向溢出；頁面錯誤0。本機合成資料沒有系統預設卷，因此預設區驗空狀態，正式網站再核對實際預設卡片。
 
 驗收程式：`automation/quiz-g3-math-pool/sections-browser.cjs`，使用AI工作瀏覽器租約、精確TargetId與唯一 `QUIZ_BROWSER_URL`。ignored證據：`qa/sections-local.json`、`qa/sections-production.json` 及各區截圖。
+
+功能commit `6f99485` 已push，production `dpl_D3kg2Nx8znHwBsAAFYGin1P4AGLU` READY。正式唯讀驗收看到6份自組卷與16份預設卷，各自正確分類、底色不同、卡片來源標籤完整；兩個獨立同層區塊，錯題切換與390px通過，頁面錯誤0。正式兩區桌面截圖已檢視，沒有新增或更動作答。
