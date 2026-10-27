@@ -6,6 +6,7 @@ const errors = {
   revision_changed: '草稿已更新，請重新開啟後再固定版本。', bank_unavailable: '無法開啟這份題庫。',
   login_required: '請先登入學校帳號。', teacher_required: '只有教師可以操作。', student_required: '請使用學生帳號加入。',
   roster_required: '這個帳號不在本場次的班級名冊中，請老師確認。', session_unavailable: '找不到這個場次，請確認加入連結。',
+  wrong_question_unavailable: '目前無法查看這題錯題，請更新紀錄後重試。', invalid_request: '資料格式不符，請更新後重試。',
   attempt_unavailable: '場次已結束或尚未加入，請老師確認。', session_closed: '老師已結束場次，這次答案尚未送出。',
   session_full: '本場次的學生名額已滿，請老師確認。', submission_conflict: '這題已有保存紀錄，請更新狀態確認。',
   question_order: '作答順序已更新，請更新狀態後接續。', invalid_response: '請先選擇選項或填入答案（最多 2000 字）。',
@@ -42,8 +43,8 @@ export async function createQuizRequest({ getSession, localStudent = null, local
       return result;
     }
     try {
-      const result = await transport(action === 'publish' ? '/functions/v1/quiz-media' : '/rest/v1/rpc/quiz_action',
-        action === 'publish' ? { action: 'freeze', data } : { p_action: action, p_data: data });
+      const result = await transport(action === 'publish' ? '/functions/v1/quiz-media' : action === 'wrong_questions' ? '/rest/v1/rpc/quiz_wrong_questions' : '/rest/v1/rpc/quiz_action',
+        action === 'publish' ? { action: 'freeze', data } : action === 'wrong_questions' ? { p_data: data } : { p_action: action, p_data: data });
       if (result.attempt_id) attemptId = result.attempt_id;
       return result;
     } catch (e) { if (e.code) e.message = quizError(e.code); throw e; }

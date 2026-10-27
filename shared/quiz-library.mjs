@@ -1,12 +1,14 @@
 import { initNavbarAuth } from './navbar-auth.js';
 import { createQuizRequest } from './quiz-api.mjs';
 import { quizPageGrade, quizLibraryPath, quizStudentRedirect } from './quiz-grade-route.mjs';
+import { initWrongQuestions } from './quiz-wrong-questions.mjs';
 
 let currentSession = null, generation = 0, papers = [], busy = false;
 const el = id => document.getElementById(id);
 const pageGrade = quizPageGrade(location.pathname);
 el('grade-filter').value = String(pageGrade);
 const request = await createQuizRequest({ getSession: () => currentSession });
+const wrongQuestions = initWrongQuestions({request,pageGrade,getUserId:()=>currentSession?.user?.id});
 const node = (tag, text, className) => {
   const n = document.createElement(tag); if (text !== undefined) n.textContent = text;
   if (className) n.className = className; return n;
@@ -45,6 +47,7 @@ async function load() {
     papers = data.sessions;
     el('cloud-identity').textContent = data.role === 'teacher' ? '教師試答｜可切換年級檢視' : '學生練習｜進度已從雲端讀取';
     render();
+    wrongQuestions.ready();
   } catch (e) { if (token === generation) el('cloud-status').textContent = e.message; }
   finally { if (token === generation) { busy = false; el('refresh-library').disabled = false; } }
 }
@@ -58,6 +61,7 @@ initNavbarAuth({ onSessionResolved(session) {
   el('cloud-lock').hidden = Boolean(session?.user); el('cloud-library').hidden = !session?.user;
   if (same) return;
   generation++; busy = false; papers = []; el('cloud-papers').replaceChildren(); el('cloud-status').textContent = '';
+  wrongQuestions.reset();
   el('grade-filter-label').hidden = true;
   if (session?.user) setTimeout(load, 0);
 } });
