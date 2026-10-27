@@ -23,6 +23,9 @@
 - 本機瀏覽器通過命名→即時入列→收合／展開管理→改名重整→答一題→接續第二題→取消與確認刪除→錯題仍可回看→組延伸卷→名稱與答題頁一致。
 - 本機分區、中文範圍、跳轉、錯題切換及 390px 手機畫面通過，沒有頁面錯誤。課次純函式測試包含中文第1／2／3／10／11課與英語 Unit 1／2／10，六上無編號單元對照亦已測試。
 - 正式資料庫更新以更新前後原答案、原版本筆數及摘要核對；證據放在 ignored `automation/output/quiz/hanlin-g3-math-pool/usability/deployment.json`。
-- 正式瀏覽器驗收與部署狀態完成後補記於本文件；目前本機驗證已通過。
+- 正式部署 `a711149` 已 push 至 main，Vercel production `dpl_7iXMT827uNdyQnYAmK97MHrRKmR4` 為 READY；三／六年級入口均讀到 `20261027-usability`。
+- 正式瀏覽器以已核對的測試學生帳號、新建測試卷完成同一本機流程：改名、答一題與接續、取消／確認刪除、保留錯題、從錯題組延伸卷及名稱一致。沒有操作既有學生卷。
+- 正式三年級 16 份預設卷中，國語第一到第六課順序已核對；完整本人清單、管理預設收合、範圍中文化、跳轉／錯題切換及 390px 均通過，沒有頁面錯誤。六年級本次驗證為正式入口更新與對照資料排序測試，沒有代替六年級學生作答。
+- 瀏覽器證據：ignored `qa/delete-local.json`、`qa/delete-production.json`（含延伸卷驗收），`qa/sections-local.json`、`qa/sections-production.json` 與相應截圖。資料庫更新前後原答案及版本摘要皆一致。
 
 相關設計依據：[Claude 討論紀錄](quiz-current-design-claude-review-20261027.md)。該紀錄描述討論當時的狀態，本文件只接受上述四項範圍。
