@@ -1,0 +1,42 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {createQuizDb,quizCall,studentId,TEACHER} from '../lib/quiz-local-db.mjs';
+import {newQuestion,content} from '../../shared/quiz-document.mjs';
+async function rpc(db,uid,name,data={}){return db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid||'']);await tx.exec('set local role authenticated');return (await tx.query(`select public.${name}($1) result`,[JSON.stringify(data)])).rows[0].result;});}
+async function setup(){const db=await createQuizDb();await db.exec(await readFile('supabase/quiz-wrong-questions.sql','utf8'));await db.exec(await readFile('supabase/quiz-pool.sql','utf8'));await db.query("update public.student_enrollments set class_code='301' where email in ('student1@example.invalid','student2@example.invalid')");
+ for(let i=0;i<24;i++){const q=newQuestion();q.id='pool_'+i;q.prompt=content('合成獨立題 '+i);q.explanation=content('合成解析');await db.query('insert into public.quiz_question_pool values($1,$2,$2,$3,$4,$4,$5,$6,true,$7,$8,true)',[q.id,'source_'+i,JSON.stringify([i<12?1:2]),'knowledge_1',[-3,0,3][i%3],'version1',JSON.stringify(q),'{}']);}return db;}
+test('學生自組：私有卷、固定版本、冪等、亂序、來源池與他人紀錄隔離',async()=>{const db=await setup();try{
+ const data={request_id:crypto.randomUUID(),kind:'self',count:10,units:[1,2]};const made=await rpc(db,studentId(1),'quiz_compose',data);assert.equal(made.distribution.actual,10);assert.deepEqual([made.distribution.easy,made.distribution.medium,made.distribution.hard],[2,6,2]);
+ const again=await rpc(db,studentId(1),'quiz_compose',data);assert.equal(again.session_id,made.session_id);assert.equal(again.reused,true);
+ await assert.rejects(rpc(db,studentId(1),'quiz_compose',{...data,count:5}),/submission_conflict/);
+ const args={session_id:made.session_id};const joined=await quizCall(db,studentId(1),'join',args);assert.doesNotMatch(JSON.stringify(joined),/option_id|合成解析/);assert.equal(joined.document.questions.length,10);
+ assert.equal((await quizCall(db,studentId(1),'library_sessions')).sessions.length,1);assert.equal((await quizCall(db,studentId(2),'library_sessions')).sessions.length,0);
+ await assert.rejects(quizCall(db,studentId(2),'join',args),/session_unavailable/);
+ await assert.rejects(quizCall(db,studentId(2),'resume',args),/session_unavailable/);
+ await assert.rejects(db.transaction(async tx=>{await tx.exec('set local role authenticated');await tx.query('select * from public.quiz_question_pool');}),/permission denied/);
+ const q=joined.document.questions[0];const saved=await quizCall(db,studentId(1),'submit',{...args,question_id:q.id,response:'b',request_id:crypto.randomUUID()});assert.equal(saved.reviews[0].correct,false);
+ const wrong=await rpc(db,studentId(1),'quiz_wrong_questions');assert.equal(wrong.total,1);assert.equal((await rpc(db,studentId(2),'quiz_wrong_questions')).total,0);
+ const ext=await rpc(db,studentId(1),'quiz_compose',{kind:'extension',count:3,request_id:crypto.randomUUID(),attempt_id:joined.attempt_id,question_id:q.id});
+ const extended=await quizCall(db,studentId(1),'join',{session_id:ext.session_id});assert.ok(!extended.document.questions.some(x=>x.id===q.id));assert.ok(extended.document.questions.length>0);
+ const frozen=JSON.stringify((await quizCall(db,studentId(1),'resume',args)).document);await db.query("update public.quiz_question_pool set question=jsonb_set(question,'{prompt,text}','\"新版來源\"')");assert.equal(JSON.stringify((await quizCall(db,studentId(1),'resume',args)).document),frozen);
+}finally{await db.close();}});
+test('組卷拒絕偽造與未揭答錯題、名冊及教師越權，難度不足如實記錄',async()=>{const db=await setup();try{
+ const good={request_id:crypto.randomUUID(),kind:'self',count:5,units:[1]};
+ for(const change of [{question_id:'pool_1'},{user_id:studentId(2)},{units:[10]},{count:100},{units:[]},{units:['1']}])await assert.rejects(rpc(db,studentId(1),'quiz_compose',{...good,...change}),/invalid_request/);
+ await assert.rejects(rpc(db,null,'quiz_compose',good),/login_required/);await assert.rejects(rpc(db,TEACHER,'quiz_compose',good),/student_required/);await assert.rejects(rpc(db,studentId(3),'quiz_compose',good),/roster_required/);
+ await assert.rejects(rpc(db,studentId(1),'quiz_compose',{kind:'extension',count:3,request_id:crypto.randomUUID(),attempt_id:crypto.randomUUID(),question_id:'pool_1'}),/wrong_question_unavailable/);
+ await db.query('delete from public.quiz_question_pool where difficulty<>0');const small=await rpc(db,studentId(1),'quiz_compose',good);assert.equal(small.distribution.actual,4);assert.equal(small.distribution.medium,4);assert.equal(small.distribution.hard,0);
+ const privateSession=await quizCall(db,studentId(1),'join',{session_id:small.session_id});const a=privateSession.attempt_id;const q=privateSession.document.questions[0];
+ await db.query("update public.quiz_sessions set reveal='complete' where id=$1",[small.session_id]);await quizCall(db,studentId(1),'submit',{session_id:small.session_id,question_id:q.id,response:'b',request_id:crypto.randomUUID()});
+ await assert.rejects(rpc(db,studentId(1),'quiz_compose',{kind:'extension',count:3,request_id:crypto.randomUUID(),attempt_id:a,question_id:q.id}),/wrong_question_unavailable/);
+}finally{await db.close();}});
+test('完全相同內容不湊題，延伸不加入沒有解析的候選',async()=>{const db=await setup();try{
+ await db.query("update public.quiz_question_pool set group_key='same-content'");
+ const made=await rpc(db,studentId(1),'quiz_compose',{kind:'self',count:10,units:[1,2],request_id:crypto.randomUUID()});assert.equal(made.distribution.actual,1);
+ const joined=await quizCall(db,studentId(1),'join',{session_id:made.session_id}),q=joined.document.questions[0];
+ await quizCall(db,studentId(1),'submit',{session_id:made.session_id,question_id:q.id,response:'b',request_id:crypto.randomUUID()});
+ await db.query('update public.quiz_question_pool set group_key=question_id,publisher_explanation=false');
+ await assert.rejects(rpc(db,studentId(1),'quiz_compose',{kind:'extension',count:3,request_id:crypto.randomUUID(),attempt_id:joined.attempt_id,question_id:q.id}),/pool_empty/);
+ const catalog=await db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[studentId(1)]);await tx.exec('set local role authenticated');return (await tx.query('select public.quiz_pool_catalog() result')).rows[0].result;});assert.equal(catalog.total,24);assert.equal(catalog.available,true);
+}finally{await db.close();}});

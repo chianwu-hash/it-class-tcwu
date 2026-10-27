@@ -25,15 +25,15 @@ create table if not exists public.quiz_sessions (
  reveal text not null check(reveal in ('immediate','complete')),
  shuffle_questions boolean not null,
  shuffle_options boolean not null,
- access_mode text not null default 'classroom' check(access_mode in ('classroom','personal','practice')),
+ access_mode text not null default 'classroom' check(access_mode in ('classroom','personal','practice','self')),
  status text not null default 'open' check(status in ('open','closed')),
  created_at timestamptz not null default now()
 );
 alter table public.quiz_sessions add column if not exists access_mode text not null default 'classroom'
- check(access_mode in ('classroom','personal','practice'));
+ check(access_mode in ('classroom','personal','practice','self'));
 alter table public.quiz_sessions drop constraint if exists quiz_sessions_access_mode_check;
 alter table public.quiz_sessions add constraint quiz_sessions_access_mode_check
- check(access_mode in ('classroom','personal','practice'));
+ check(access_mode in ('classroom','personal','practice','self'));
 create table if not exists public.quiz_attempts (
  id uuid primary key default gen_random_uuid(),
  session_id uuid not null references public.quiz_sessions(id),
@@ -54,6 +54,15 @@ create table if not exists public.quiz_answers (
  unique(attempt_id,request_id)
 );
 
+create table if not exists public.quiz_generated_papers (
+ session_id uuid primary key references public.quiz_sessions(id),
+ user_id uuid not null references auth.users(id), request_id uuid not null,
+ config jsonb not null, actual_distribution jsonb not null, created_at timestamptz not null default now(),
+ unique(user_id,request_id)
+);
+alter table public.quiz_generated_papers enable row level security;
+revoke all on public.quiz_generated_papers from public,anon,authenticated;
+grant all on public.quiz_generated_papers to service_role;
 alter table public.quiz_banks enable row level security;
 alter table public.quiz_versions enable row level security;
 alter table public.quiz_sessions enable row level security;
@@ -216,7 +225,7 @@ begin
    ) order by v.document->'catalog'->>'volume',v.document->'catalog'->>'subject',v.document->'catalog'->>'unit'),'[]') into result
    from public.quiz_sessions s join public.quiz_versions v on v.id=s.version_id
    where (teacher and s.owner_id=uid and s.access_mode='personal')
-    or (not teacher and s.access_mode='practice' and exists(select 1 from public.student_enrollments e
+    or (not teacher and s.access_mode in ('practice','self') and (s.access_mode<>'self' or exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id and g.user_id=uid)) and exists(select 1 from public.student_enrollments e
      where e.email=v_email and e.school_year=s.school_year and s.class_codes ? e.class_code));
   return jsonb_build_object('sessions',result,'role',case when teacher then 'teacher' else 'student' end,'grade',student_grade);
  end if;
@@ -284,6 +293,7 @@ begin
  end if;
  select * into sess from public.quiz_sessions where id=(p_data->>'session_id')::uuid for update;
  if sess.id is null then raise exception 'session_unavailable'; end if;
+ if sess.access_mode='self' and not exists(select 1 from public.quiz_generated_papers g where g.session_id=sess.id and g.user_id=uid) then raise exception 'session_unavailable'; end if;
  if p_action in ('monitor','close') then
   if sess.owner_id<>uid then raise exception 'session_unavailable'; end if;
   if p_action='close' then update public.quiz_sessions set status='closed' where id=sess.id;return jsonb_build_object('ok',true); end if;

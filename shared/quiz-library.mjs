@@ -1,14 +1,17 @@
 import { initNavbarAuth } from './navbar-auth.js';
-import { createQuizRequest } from './quiz-api.mjs?v=20261027-wrong';
+import { createQuizRequest } from './quiz-api.mjs?v=20261027-pool';
 import { quizPageGrade, quizLibraryPath, quizStudentRedirect } from './quiz-grade-route.mjs';
 import { initWrongQuestions } from './quiz-wrong-questions.mjs';
+import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs';
 
 let currentSession = null, generation = 0, papers = [], busy = false;
 const el = id => document.getElementById(id);
 const pageGrade = quizPageGrade(location.pathname);
 el('grade-filter').value = String(pageGrade);
-const request = await createQuizRequest({ getSession: () => currentSession });
-const wrongQuestions = initWrongQuestions({request,pageGrade,getUserId:()=>currentSession?.user?.id});
+const localContext = localPoolContext();
+const request = await createQuizRequest({ getSession: () => currentSession, local: Boolean(localContext), localStudent: localContext?.student });
+const composer = pageGrade === 3 ? initComposer({request,context:localContext}) : null;
+const wrongQuestions = initWrongQuestions({request,pageGrade,getUserId:()=>currentSession?.user?.id,onExtension:composer?.extend,canExtend:()=>document.getElementById('quiz-composer')?.dataset.available==='true'});
 const node = (tag, text, className) => {
   const n = document.createElement(tag); if (text !== undefined) n.textContent = text;
   if (className) n.className = className; return n;
@@ -31,9 +34,9 @@ function render() {
     body.append(node('p', `已保存 ${p.answered}／${p.total} 題${p.answered ? `・答對 ${p.correct} 題` : ''}`, 'paper-progress-label'), progress);
     if (p.catalog?.difficulty) body.append(node('p', p.catalog.difficulty, 'meta'));
     const link = node('a', p.answered === p.total ? '查看作答與解析' : p.answered ? '接續練功 →' : '開始練功 →', 'paper-start');
-    link.href = `quiz.html?cloud=1&session=${encodeURIComponent(p.id)}`; body.append(link); a.append(body); el('cloud-papers').append(a);
+    link.href = paperUrl(p.id,localContext); body.append(link); a.append(body); el('cloud-papers').append(a);
   }
-  el('cloud-status').textContent = `顯示 ${shown.length} 卷・進度已從雲端讀取`;
+  el('cloud-status').textContent = `顯示 ${shown.length} 卷・進度已從${localContext?'本機測試資料庫':'雲端'}讀取`;
 }
 async function load() {
   if (!currentSession?.user || busy) return;
@@ -45,8 +48,9 @@ async function load() {
     if (redirect) { location.replace(redirect); return; }
     el('grade-filter-label').hidden = data.role !== 'teacher';
     papers = data.sessions;
-    el('cloud-identity').textContent = data.role === 'teacher' ? '教師試答｜可切換年級檢視' : '學生練習｜進度已從雲端讀取';
+    el('cloud-identity').textContent = localContext ? `本機合成學生 ${localContext.student}｜進度存於本機測試資料庫，尚未同步雲端` : data.role === 'teacher' ? '教師試答｜可切換年級檢視' : '學生練習｜進度已從雲端讀取';
     render();
+    await composer?.ready();
     wrongQuestions.ready();
   } catch (e) { if (token === generation) el('cloud-status').textContent = e.message; }
   finally { if (token === generation) { busy = false; el('refresh-library').disabled = false; } }
@@ -54,7 +58,16 @@ async function load() {
 el('grade-filter').addEventListener('change', () => location.assign(quizLibraryPath(el('grade-filter').value)));
 el('subject-filter').addEventListener('change', render);
 el('refresh-library').addEventListener('click', load);
-initNavbarAuth({ onSessionResolved(session) {
+if (localContext) {
+  const localInfo = await fetch('/__quiz-local').then(r=>r.json());
+  if (!localInfo.pool) throw new Error('本機題庫服務尚未啟動。');
+  currentSession = localContext.session;
+  document.querySelector('.library-description').textContent='三上數學全冊：自己選單元組卷，從錯題找同一個重點再練。此處為本機試作。';
+  document.querySelector('.library-parent').href='quiz-library.html?local=1&student='+localContext.student;
+  el('refresh-library').textContent='更新本機進度';
+  el('cloud-lock').hidden=true;el('cloud-library').hidden=false;
+  await load();
+} else initNavbarAuth({ onSessionResolved(session) {
   const same = (session?.user?.id || null) === (currentSession?.user?.id || null);
   currentSession = session;
   el('cloud-identity').textContent = session?.user ? '已登入｜送出答案後會保存練習進度' : '尚未登入・登入後才能讀取及保存作答';
@@ -62,6 +75,7 @@ initNavbarAuth({ onSessionResolved(session) {
   if (same) return;
   generation++; busy = false; papers = []; el('cloud-papers').replaceChildren(); el('cloud-status').textContent = '';
   wrongQuestions.reset();
+  composer?.reset();
   el('grade-filter-label').hidden = true;
   if (session?.user) setTimeout(load, 0);
 } });

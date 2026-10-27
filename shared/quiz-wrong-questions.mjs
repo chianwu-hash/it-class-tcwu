@@ -3,7 +3,7 @@ import {resolveQuizMedia} from './quiz-media.mjs';
 import {initImageLightbox} from './image-lightbox.js';
 
 const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
-export function initWrongQuestions({request,pageGrade,getUserId}) {
+export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canExtend=()=>Boolean(onExtension)}) {
   const library=document.getElementById('cloud-library');
   const views=make('div',undefined,'wrong-view-switch');views.setAttribute('aria-label','練習與複習');
   const papersButton=make('button','單元練習'),wrongButton=make('button','我的錯題');views.append(papersButton,wrongButton);library.prepend(views);
@@ -62,12 +62,17 @@ export function initWrongQuestions({request,pageGrade,getUserId}) {
       if(q.type!=='single'){explanation.append(make('p',`你的答案：${data.response}`),make('p',`可接受的答案：${data.review.answer.accepted.join('、')}`));}
       else explanation.append(make('p',`正確選項：${String.fromCharCode(65+q.options.findIndex(o=>o.id===data.review.answer.option_id))}`));
       content(explanation,data.review.explanation);article.append(explanation);detail.append(article);
+      if(onExtension&&canExtend()&&data.catalog?.subject==='數學'){
+        const section=make('section',undefined,'wrong-extension'),button=make('button','再練3題同一個重點'),status=make('p');status.setAttribute('role','status');section.append(button,status);detail.append(section);
+        const requestId=crypto.randomUUID();
+        button.addEventListener('click',async()=>{if(busy)return;locked(true);status.textContent='正在找同一個重點的題目…';try{const result=await onExtension({...item,request_id:requestId});if(!current(g,uid)||!active)return;const d=result.distribution;status.textContent=`已找到${d.actual}題（易${d.easy}、中${d.medium}、難${d.hard}），不會重複剛才那題。${d.actual<3?'這個重點目前可用題較少，先練這幾題。':''}`;section.querySelector('a')?.remove();const a=make('a','開始同重點練習 →','paper-start');a.href=result.url;section.append(a);}catch(e){if(current(g,uid))status.textContent=e.message;}finally{if(current(g,uid))locked(false);}});
+      }
       el('wrong-list').hidden=true;el('wrong-pages').hidden=true;el('wrong-detail').hidden=false;message('可以慢慢核對題目、當時答案與解析。');el('wrong-title').focus();
     }catch(e){if(current(g,uid))message(e.message);}finally{if(current(g,uid))locked(false);}
   }
-  function activate(value){if(busy)return;active=value;panel.hidden=!value;for(const id of ['cloud-papers','cloud-status'])el(id).hidden=value;library.querySelector('.filters').hidden=value;papersButton.setAttribute('aria-pressed',String(!value));wrongButton.setAttribute('aria-pressed',String(value));if(value)load();}
-  papersButton.addEventListener('click',()=>{history.replaceState(null,'',location.pathname);activate(false);});
-  wrongButton.addEventListener('click',()=>{history.replaceState(null,'','#wrong');activate(true);});
+  function activate(value){if(busy)return;active=value;panel.hidden=!value;for(const id of ['cloud-papers','cloud-status'])el(id).hidden=value;library.querySelector('.filters').hidden=value;const composer=document.getElementById('quiz-composer');if(composer)composer.hidden=value||composer.dataset.available!=='true';papersButton.setAttribute('aria-pressed',String(!value));wrongButton.setAttribute('aria-pressed',String(value));if(value)load();}
+  papersButton.addEventListener('click',()=>{history.replaceState(null,'',location.pathname+location.search);activate(false);});
+  wrongButton.addEventListener('click',()=>{history.replaceState(null,'',location.pathname+location.search+'#wrong');activate(true);});
   el('wrong-subject').addEventListener('change',()=>{el('wrong-unit').value='';units();page=0;load();});el('wrong-unit').addEventListener('change',()=>{page=0;load();});
   el('wrong-refresh').addEventListener('click',()=>{page=0;load();});el('wrong-back').addEventListener('click',()=>{listView();message('選一題，回看當時的答案與解析。');});
   return {ready(){activate(location.hash==='#wrong');},reset(){generation++;locked(false);page=0;facets=[];listView();el('wrong-list').replaceChildren();el('wrong-pages').replaceChildren();fill(el('wrong-subject'),[],'全部科目');units();message('');}};

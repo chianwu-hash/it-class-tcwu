@@ -9,8 +9,10 @@ const {connectCdp}=require('D:/projects/cdp-tools/packages/cdp-safe-client');
  const inventory=JSON.parse(await fs.readFile(dir+'/inventory.json','utf8'));
  if(!process.argv.includes('--partial')&&Object.keys(assets).length!==inventory.images)throw Error('library_upload_incomplete');
  const assetModule='export const assets = '+JSON.stringify(assets)+';\n';await fs.writeFile(dir+'/worker-assets.mjs',assetModule,'utf8');
- const {browser,page}=await connectCdp({cdpUrl:process.env.CDP_URL,targetUrl:'https://dash.cloudflare.com/6ecb5e147cf628802fbe42154ad531af/',puppeteer:runtime('puppeteer-core')});
+ const {browser}=await connectCdp({cdpUrl:process.env.CDP_URL,targetUrl:'https://dash.cloudflare.com/6ecb5e147cf628802fbe42154ad531af/',puppeteer:runtime('puppeteer-core')});
  try{
+  const target=browser.targets().find(t=>t._targetId===process.argv[2]);if(!target)throw Error('exact_cloudflare_target_required');const page=await target.page();
+  await page.waitForFunction(()=>document.body.innerText.includes("Chianwu@gmail.com's Account"),{polling:5000,timeout:30000});
   if(!(await page.evaluate(()=>document.body.innerText)).includes("Chianwu@gmail.com's Account"))throw Error('cloudflare_account_not_visible');
   const result=await page.evaluate(async({source,assetModule,cfg})=>{
    const base='/api/v4/accounts/6ecb5e147cf628802fbe42154ad531af/workers/scripts/dingxi-quiz-drive-library';

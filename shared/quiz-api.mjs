@@ -1,6 +1,7 @@
 import { createAuthenticatedTransport } from './quiz-transport.mjs';
 import { configureQuizMedia } from './quiz-media.mjs';
 const errors = {
+  pool_empty: '這個範圍目前沒有可用的延伸題，可以先回看這題的解析或選其他單元。', extension_unavailable: '這題目前還沒有可用的同重點延伸題。',
   media_freeze_required: '媒體需先完成版本保存。', media_source_denied: '媒體來源未列入允許清單，請確認來源設定。',
   media_invalid: '媒體格式或大小不符，未固定版本。', media_unavailable: '媒體尚未開放或無法載入。',
   revision_changed: '草稿已更新，請重新開啟後再固定版本。', bank_unavailable: '無法開啟這份題庫。',
@@ -43,8 +44,9 @@ export async function createQuizRequest({ getSession, localStudent = null, local
       return result;
     }
     try {
-      const result = await transport(action === 'publish' ? '/functions/v1/quiz-media' : action === 'wrong_questions' ? '/rest/v1/rpc/quiz_wrong_questions' : '/rest/v1/rpc/quiz_action',
-        action === 'publish' ? { action: 'freeze', data } : action === 'wrong_questions' ? { p_data: data } : { p_action: action, p_data: data });
+      const specialized = {wrong_questions:'quiz_wrong_questions',compose:'quiz_compose',pool_catalog:'quiz_pool_catalog'}[action];
+      const result = await transport(action === 'publish' ? '/functions/v1/quiz-media' : specialized ? '/rest/v1/rpc/'+specialized : '/rest/v1/rpc/quiz_action',
+        action === 'publish' ? { action: 'freeze', data } : action === 'pool_catalog' ? {} : specialized ? { p_data: data } : { p_action: action, p_data: data });
       if (result.attempt_id) attemptId = result.attempt_id;
       return result;
     } catch (e) { if (e.code) e.message = quizError(e.code); throw e; }

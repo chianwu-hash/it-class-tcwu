@@ -31,8 +31,14 @@ async function start() {
   const quiz = initQuizModule({ mode: 'server', server: { request, sessionId },
     selectors: { lock: 'quiz-lock', content: 'quiz-content', container: 'server-quiz' } });
   if (local) {
-    if (!(await fetch('/__quiz-local').then(r => r.json())).local) throw new Error('本機服務尚未啟動。');
-    document.getElementById('quiz-identity').textContent = `本機合成學生 ${student}｜不是正式學生帳號`;
+    const descriptor=await fetch('/__quiz-local').then(r => r.json());
+    if (!descriptor.local) throw new Error('本機服務尚未啟動。');
+    if(descriptor.pool){
+      document.body.classList.add('quiz-skin');document.getElementById('server-quiz').dataset.subject='數學';
+      document.title='三年級數學｜本機試作';document.querySelector('.hero h1').textContent='三年級考前練功房';
+      const back=document.createElement('a');back.className='quiz-back-link';back.href=`quiz-library.html?local=1&student=${student}`;back.textContent='← 返回選卷與錯題';document.querySelector('.hero .wrap').append(back);
+    }
+    document.getElementById('quiz-identity').textContent = `本機合成學生 ${student}｜${descriptor.pool?'進度存於本機測試資料庫，尚未同步雲端':'不是正式學生帳號'}`;
     await quiz.handleAuthChange({ user: { id: `demo-student-${student}` } }); return;
   }
   // 課程導覽與 OAuth 仍由既有 navbar／navbar-auth 管理。
