@@ -19,13 +19,16 @@ declare
  selected text[]:='{}'; chosen public.quiz_question_pool; source public.quiz_question_pool;
  reviewed jsonb; blocks jsonb:='[]'; distribution jsonb; doc jsonb; b_id uuid; v_id uuid; s_id uuid;
  request uuid; d integer; quota integer; count_now integer; result jsonb; paper_name text;
+ mode text:=coalesce(p_data->>'difficulty','medium'); passes integer[]; pass integer;
+ target_easy integer; target_medium integer; target_hard integer; shortages jsonb;
 begin
  if uid is null then raise exception 'login_required'; end if;
  if coalesce(public.is_teacher(),false) then raise exception 'student_required'; end if;
  select lower(u.email) into v_email from auth.users u where u.id=uid and u.email_confirmed_at is not null;
  select e.class_code into cls from public.student_enrollments e where e.email=v_email and e.school_year=115 and e.class_code ~ '^3[0-9]{2}$';
  if cls is null then raise exception 'roster_required'; end if;
- if jsonb_typeof(p_data) is distinct from 'object' or exists(select 1 from jsonb_object_keys(p_data) k where k not in ('kind','count','units','request_id','attempt_id','question_id','name')) then raise exception 'invalid_request'; end if;
+ if jsonb_typeof(p_data) is distinct from 'object' or exists(select 1 from jsonb_object_keys(p_data) k where k not in ('kind','count','units','request_id','attempt_id','question_id','name','difficulty')) then raise exception 'invalid_request'; end if;
+ if p_data ? 'difficulty' and (kind<>'self' or jsonb_typeof(p_data->'difficulty') is distinct from 'string' or mode not in ('easy','medium','hard')) then raise exception 'invalid_request';end if;
  if p_data ? 'name' and (jsonb_typeof(p_data->'name') is distinct from 'string' or length(trim(p_data->>'name'))>60 or (p_data->>'name') ~ '[[:cntrl:]]') then raise exception 'invalid_request';end if;
  paper_name:=nullif(trim(p_data->>'name'),'');
  if kind not in ('self','extension') or coalesce(p_data->>'count','') !~ '^[0-9]{1,2}$' then raise exception 'invalid_request'; end if;
@@ -38,6 +41,8 @@ begin
  if kind='self' and (jsonb_array_length(units)=0 or p_data ? 'question_id' or p_data ? 'attempt_id') then raise exception 'invalid_request'; end if;
  conf:=jsonb_build_object('kind',kind,'count',amount,'units',units,'attempt_id',p_data->>'attempt_id','question_id',p_data->>'question_id');
  if paper_name is not null then conf:=conf||jsonb_build_object('name',paper_name);end if;
+ -- Keep omitted difficulty compatible with already-saved legacy request IDs.
+ if p_data ? 'difficulty' then conf:=conf||jsonb_build_object('difficulty',mode);end if;
  perform pg_advisory_xact_lock(hashtextextended(uid::text||request::text,0));
  select * into old from public.quiz_generated_papers g where g.user_id=uid and g.request_id=request;
  if old.session_id is not null then
@@ -51,13 +56,18 @@ begin
   if source.question_id is null then raise exception 'extension_unavailable'; end if;
  end if;
  seed:=request::text;
- -- Three passes use the target mix; an honest fill pass handles scarce difficulty buckets.
- for d in select unnest(array[-3,0,3,99]) loop
-  quota:=case when kind='extension' then amount when d=-3 then amount/5 when d=0 then amount*3/5 when d=3 then amount/5 else amount-cardinality(selected) end;
+ -- Reserve all target buckets before filling shortages in the agreed order.
+ target_easy:=case mode when 'easy' then amount*3/5 when 'medium' then amount/5 else 0 end;
+ target_medium:=case mode when 'medium' then amount*3/5 else amount*2/5 end;
+ target_hard:=case mode when 'hard' then amount*3/5 when 'medium' then amount/5 else 0 end;
+ passes:=case when kind='extension' then array[99] when mode='easy' then array[-3,0,3,0,-3] when mode='hard' then array[-3,0,3,0,3] else array[-3,0,3,0,-3,3] end;
+ for pass in 1..cardinality(passes) loop
+  d:=passes[pass];
+  quota:=case when kind='extension' then amount when pass>3 then amount-cardinality(selected) when d=-3 then target_easy when d=0 then target_medium else target_hard end;
   for count_now in 1..greatest(quota,0) loop
    exit when cardinality(selected)>=amount;
    select p.* into chosen from public.quiz_question_pool p where p.usable and not(p.question_id=any(selected))
-    and (d=99 or kind='extension' or p.difficulty=d)
+    and (kind='extension' or p.difficulty=d)
     and not exists(select 1 from public.quiz_question_pool x where x.question_id=any(selected) and x.group_key=p.group_key)
     and ((kind='self' and exists(select 1 from jsonb_array_elements(units) u where p.unit_ids @> jsonb_build_array(u)))
      or (kind='extension' and p.publisher_explanation and p.knowledge_code=source.knowledge_code and p.group_key<>source.group_key and p.difficulty<=source.difficulty))
@@ -70,13 +80,19 @@ begin
    if chosen.question_id is null then exit; end if;
    selected:=array_append(selected,chosen.question_id);
   end loop;
-  exit when kind='extension';
+  if kind='self' and pass=3 then
+   select jsonb_build_object('easy',greatest(0,target_easy-count(*) filter(where p.difficulty=-3)),
+    'medium',greatest(0,target_medium-count(*) filter(where p.difficulty=0)),
+    'hard',greatest(0,target_hard-count(*) filter(where p.difficulty=3))) into shortages
+   from public.quiz_question_pool p where p.question_id=any(selected);
+  end if;
  end loop;
- if cardinality(selected)=0 then raise exception 'pool_empty'; end if;
+ if cardinality(selected)=0 then raise exception '%',case when kind='self' then 'self_pool_empty' else 'pool_empty' end; end if;
  for chosen in select p.* from unnest(selected) with ordinality r(id,n) join public.quiz_question_pool p on p.question_id=r.id order by n loop
   blocks:=blocks||jsonb_build_array(jsonb_build_object('id','b_'||chosen.source_item_id,'material',jsonb_build_object('text','','media','[]'::jsonb),'questions',jsonb_build_array(chosen.question)));
  end loop;
  select jsonb_build_object('requested',amount,'actual',cardinality(selected),'easy',count(*) filter(where p.difficulty=-3),'medium',count(*) filter(where p.difficulty=0),'hard',count(*) filter(where p.difficulty=3)) into distribution from public.quiz_question_pool p where p.question_id=any(selected);
+ if kind='self' then distribution:=distribution||jsonb_build_object('difficulty',mode,'target',jsonb_build_object('easy',target_easy,'medium',target_medium,'hard',target_hard),'shortages',shortages);end if;
  if kind='extension' and paper_name is null then paper_name:='同重點再練：'||left(source.knowledge_name,50);end if;
  doc:=jsonb_build_object('schema',1,'title',case when kind='extension' then '數學同重點延伸練習' else '我的數學自組卷' end,
   'catalog',jsonb_build_object('school_year','115','volume','3年級上學期','subject','數學','publisher','翰林','unit',case when kind='extension' then '同重點再練習：'||source.knowledge_name else '自選單元：'||units::text end),'blocks',blocks);

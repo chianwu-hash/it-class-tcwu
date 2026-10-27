@@ -1,4 +1,5 @@
 // Display metadata only. Never rewrite a frozen paper or infer a student's ability.
+import {difficultyModes} from './quiz-difficulty.mjs';
 export const grade3MathUnits=['10000以內的數','10000以內的加減','毫米與數線','乘法','角與形狀','除法','公斤與公克','分數','列表與規律'];
 const collator=new Intl.Collator('zh-Hant',{numeric:true});
 const subjects=['國語','英語','數學','社會','自然'];
@@ -39,6 +40,7 @@ export function paperRange(p){
  return units.map(n=>`第${n}單元${math?'：'+grade3MathUnits[n-1]:''}`).join('、');
 }
 export const paperTitle=p=>p.display_name||(isExtension(p)?'同重點再練：'+learningPoint(p):p.title);
+export const paperDifficulty=p=>p.generated&&!isExtension(p)?difficultyModes[p.distribution?.difficulty||'medium']?.label||'':'';
 export function paperMix(p){
  const d=p.distribution;
  if(d&&['easy','medium','hard'].every(k=>Number.isInteger(d[k])&&d[k]>=0))return `題目組合：易 ${d.easy} 題・中 ${d.medium} 題・難 ${d.hard} 題`;

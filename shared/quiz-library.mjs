@@ -1,9 +1,10 @@
 import { initNavbarAuth } from './navbar-auth.js';
-import { createQuizRequest } from './quiz-api.mjs?v=20261027-delete';
+import { createQuizRequest } from './quiz-api.mjs?v=20261027-difficulty';
 import { quizPageGrade, quizLibraryPath, quizStudentRedirect } from './quiz-grade-route.mjs';
 import { initWrongQuestions } from './quiz-wrong-questions.mjs';
 import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs';
-import {comparePapers,paperRange,paperTitle,paperMix,isExtension} from './quiz-paper-display.mjs';
+import {comparePapers,paperRange,paperTitle,paperMix,isExtension,paperDifficulty} from './quiz-paper-display.mjs';
+import {difficultyAdjustment} from './quiz-difficulty.mjs';
 
 let currentSession = null, generation = 0, papers = [], busy = false, studentView=false;
 const el = id => document.getElementById(id);
@@ -51,7 +52,9 @@ function render() {
     const progress = node('progress'); progress.max = p.total; progress.value = p.answered;
     progress.setAttribute('aria-label', `已答 ${p.answered} 題，共 ${p.total} 題`);
     body.append(node('p', `已作答 ${p.answered}／${p.total} 題${p.answered ? `・答對 ${p.correct} 題` : ''}`, 'paper-progress-label'), progress);
+    const level=paperDifficulty(p);if(level)body.append(node('p','所選難度：'+level,'meta paper-difficulty'));
     const mix=paperMix(p);if(mix)body.append(node('p',mix,'meta paper-mix'));
+    const adjustment=difficultyAdjustment(p.distribution);if(adjustment)body.append(node('p',adjustment,'meta paper-adjustment'));
     const link = node('a', p.answered === p.total ? '查看作答與解析' : p.answered ? '接續練功 →' : '開始練功 →', 'paper-start');
     link.href = paperUrl(p.id,localContext); body.append(link);
     if(p.generated){

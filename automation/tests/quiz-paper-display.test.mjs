@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {comparePapers,presetOrdinal,paperRange,paperTitle,paperMix,isExtension} from '../../shared/quiz-paper-display.mjs';
+import {comparePapers,presetOrdinal,paperRange,paperTitle,paperMix,isExtension,paperDifficulty} from '../../shared/quiz-paper-display.mjs';
+import {difficultyAdjustment} from '../../shared/quiz-difficulty.mjs';
 const preset=(unit,subject='國語',volume='3年級上學期',publisher='翰林')=>({id:unit,catalog:{unit,subject,volume,publisher,school_year:'115'}});
 test('預設卷按中文課次、阿拉伯數字及英文課次排序，不按文字字典序',()=>{
  const units=['第十一課','第三課','第十課','第二課','第一課'];
@@ -30,4 +31,9 @@ test('錯題延伸標示學習重點，新舊卷一致且保留學生自訂名�
  assert.ok(isExtension(p));assert.equal(paperTitle(p),'同重點再練：同分母分數比較');assert.equal(paperRange(p),'學習重點：同分母分數比較');
  assert.equal(paperTitle({...p,display_name:'週五再練'}),'週五再練');assert.equal(paperRange({...p,generated_kind:'extension',learning_point:'長度換算'}),'學習重點：長度換算');
  assert.equal(isExtension({...p,generated:false}),false);
+});
+test('所選難度與實際配比分開顯示，舊卷預設中等、延伸卷不套用三種模式',()=>{
+ const p={generated:true,catalog:{unit:'自選單元：[8]'},distribution:{difficulty:'hard',target:{easy:0,medium:8,hard:12},shortages:{easy:0,medium:0,hard:7},easy:0,medium:15,hard:5}};
+ assert.equal(paperDifficulty(p),'難・進階挑戰');assert.equal(paperDifficulty({...p,distribution:{}}),'中・綜合練習');assert.equal(paperDifficulty({...p,generated_kind:'extension'}),'');
+ assert.equal(difficultyAdjustment(p.distribution),'這個範圍的難題較少，已自動補入中等題。');assert.equal(difficultyAdjustment({easy:2,medium:6,hard:2}),'');
 });

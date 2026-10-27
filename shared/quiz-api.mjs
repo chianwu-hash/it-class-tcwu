@@ -1,6 +1,7 @@
 import { createAuthenticatedTransport } from './quiz-transport.mjs';
 import { configureQuizMedia } from './quiz-media.mjs';
 const errors = {
+  self_pool_empty: '這個範圍目前沒有符合所選難度的題目，請選其他單元或難度。',
   paper_removed: '這份卷已從清單移除，請重新組一份新卷。',
   pool_empty: '這個範圍目前沒有可用的延伸題，可以先回看這題的解析或選其他單元。', extension_unavailable: '這題目前還沒有可用的同重點延伸題。',
   media_freeze_required: '媒體需先完成版本保存。', media_source_denied: '媒體來源未列入允許清單，請確認來源設定。',
