@@ -552,7 +552,15 @@ export function initServerQuiz({ selectors, server }) {
   if (!server?.request || !server?.sessionId) throw new Error('缺少測驗場次或後端連線。');
   const el = key => typeof selectors?.[key] === 'string' ? document.getElementById(selectors[key]) : selectors?.[key];
   const root = el('container'), lock = el('lock'), content = el('content');
-  const renderContent = (target, c) => renderQuizContent(target, c, { imageLoading: 'eager' });
+  const renderContent = (target, c) => renderQuizContent(target, {
+    ...c,
+    text: c?.text?.trim() === '書商未提供這一題的詳細解析。'
+      ? '這一題目前沒有詳細解析，可以先核對正確答案。' : c?.text,
+    media: (c?.media || []).map(media => ({ ...media,
+      alt: media.alt === '書商原圖' ? '圖片'
+        : media.alt === '書商原版聽力音檔' ? '聽力音檔' : media.alt,
+    })),
+  }, { imageLoading: 'eager' });
   let userId = null, generation = 0, state = null, cursor = 0, pending = null, selected = '', busy = false, loadError = '', showFullReview = false;
   let feedbackAnimation = null;
   // 依鼓勵原則撰寫的原創短句，不是阿德勒名言，也不推測孩子是否努力或用了哪個方法。

@@ -1,5 +1,7 @@
 // 與頁面登入生命週期共用；不讀另一份 localStorage 權杖，也不自動重送寫入。
-export function createAuthenticatedTransport({ auth, getSession, fetcher = fetch }) {
+export function createAuthenticatedTransport({ auth, getSession, fetcher = fetch, baseUrl = auth.SUPABASE_URL }) {
+  if (baseUrl !== auth.SUPABASE_URL && (!['localhost', '127.0.0.1'].includes(location.hostname) || baseUrl !== location.origin))
+    throw new Error('本機媒體服務設定不符。');
   return async (path, body) => {
     const identity = getSession()?.user?.id;
     if (!identity) throw new Error('請先登入學校帳號。');
@@ -9,7 +11,7 @@ export function createAuthenticatedTransport({ auth, getSession, fetcher = fetch
       throw new Error('登入已失效或身分已變更，請重新登入。');
     let response;
     try {
-      response = await fetcher(`${auth.SUPABASE_URL}${path}`, {
+      response = await fetcher(`${baseUrl}${path}`, {
         method: 'POST', signal: AbortSignal.timeout(path === '/functions/v1/quiz-media' && body.action === 'freeze' ? 45000 : 20000),
         headers: { 'Content-Type': 'application/json', apikey: auth.SUPABASE_ANON_KEY, Authorization: `Bearer ${session.access_token}` },
         body: JSON.stringify(body),

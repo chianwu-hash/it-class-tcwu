@@ -12,7 +12,10 @@ const origin = `http://127.0.0.1:${port}`;
 const dataDir = resolve(process.env.QUIZ_LOCAL_DATA || resolve(root, 'tmp/quiz-local-db'));
 await mkdir(dataDir, { recursive: true });
 const db = await createQuizDb(dataDir);
-const media = createLocalMedia({ db, directory: resolve(dataDir, '../quiz-local-media'), origin });
+const baseMedia = createLocalMedia({ db, directory: resolve(dataDir, '../quiz-local-media'), origin });
+const media = process.env.QUIZ_DRIVE_WORKER_MANIFEST
+  ? await (await import('./lib/quiz-drive-worker-media.mjs')).createDriveWorkerMedia({base:baseMedia,manifestPath:process.env.QUIZ_DRIVE_WORKER_MANIFEST})
+  : baseMedia;
 const cookie = randomBytes(32).toString('hex');
 const types = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.mjs': 'text/javascript', '.woff2': 'font/woff2', '.woff': 'font/woff', '.ttf': 'font/ttf' };
 const server = http.createServer(async (req, res) => {
@@ -47,7 +50,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (req.method !== 'GET') return send(405, { error: 'method_not_allowed' });
     const pathname = url.pathname === '/' ? '/admin-quiz.html' : url.pathname;
-    const allowed = ['/admin-quiz.html', '/grade6/115-1/quiz.html'].includes(pathname) || /^\/shared\/(quiz-(author\.css|author\.mjs|document\.mjs|render\.mjs|student\.css|student\.mjs|server\.mjs|sessions\.mjs|api\.mjs|media\.mjs|transport\.mjs|module\.js|practice\.js)|vendor\/katex\/(katex\.min\.(css|js)|fonts\/[A-Za-z0-9_-]+\.(woff2?|ttf)))$/.test(pathname);
+    const allowed = ['/admin-quiz.html', '/grade6/115-1/quiz.html'].includes(pathname) || /^\/shared\/(quiz-[a-z-]+\.(css|mjs|js)|vendor\/katex\/(katex\.min\.(css|js)|fonts\/[A-Za-z0-9_-]+\.(woff2?|ttf)))$/.test(pathname);
     const authFiles = ['/shared/auth.js', '/shared/navbar-auth.js', '/shared/course-navbar.js', '/shared/grade6-nav-identity.js', '/shared/nav-identity.js', '/grade6/115-1/navbar.js'];
     if (!allowed && !authFiles.includes(pathname) && !['/shared/image-lightbox.js', '/shared/image-lightbox.css'].includes(pathname)) return send(404, { error: 'not_found' });
     const bytes = await readFile(resolve(root, `.${pathname}`));

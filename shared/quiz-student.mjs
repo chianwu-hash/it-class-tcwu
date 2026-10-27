@@ -1,8 +1,10 @@
 import { initQuizModule } from './quiz-module.js';
 import { createQuizRequest } from './quiz-api.mjs';
 import { initImageLightbox } from './image-lightbox.js';
+import {resolveQuizMedia} from './quiz-media.mjs';
 
-initImageLightbox({ root: document.getElementById('server-quiz'), selector: 'img', initialScale: 0.8, minScale: 0.2, zoomStep: 0.1 });
+initImageLightbox({ root: document.getElementById('server-quiz'), selector: 'img', initialScale: 0.8, minScale: 0.2, zoomStep: 0.1,
+  resolveImageSource: image => resolveQuizMedia(image.dataset.quizMediaUrl || image.currentSrc || image.src) });
 
 const params = new URLSearchParams(location.search), sessionId = params.get('session');
 const local = params.get('local') === '1' && ['127.0.0.1', 'localhost'].includes(location.hostname);
@@ -43,7 +45,10 @@ async function start() {
     const previousId = currentSession?.user?.id || null;
     currentSession = session;
     const id = session?.user?.id || null;
-    if (previousId !== id) practiceRole = null;
+    if (previousId !== id) {
+      practiceRole = null;
+      delete document.getElementById('server-quiz').dataset.subject;
+    }
     document.getElementById('quiz-identity').textContent = session?.user?.email
       ? cloud ? (practiceRole === 'teacher' ? '教師試答｜送出後保存進度' : practiceRole === 'student' ? '學生練習｜送出後保存進度' : '正在確認年級與保存紀錄…') : session.user.email
       : '請先登入 Google 帳號';
@@ -60,6 +65,8 @@ async function start() {
         const redirect = gradeRoute.quizStudentRedirect(identity, location.pathname, location.search);
         if (redirect) { location.replace(redirect); return; }
         practiceRole = identity.role;
+        document.getElementById('server-quiz').dataset.subject = identity.sessions
+          ?.find(paper => paper.id === sessionId)?.catalog?.subject || '';
         document.getElementById('quiz-identity').textContent = `${practiceRole === 'teacher' ? '教師試答' : '學生練習'}｜送出後保存進度`;
         validatedUser = id; validatingUser = null;
         document.getElementById('entry-status').textContent = '';

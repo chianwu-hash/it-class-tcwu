@@ -15,10 +15,16 @@ export const quizError = code => errors[code] || '測驗服務暫時無法完成
 export async function createQuizRequest({ getSession, localStudent = null, local = false } = {}) {
   const auth = local ? null : await import('./auth.js');
   const transport = local ? null : createAuthenticatedTransport({ auth, getSession });
+  const driveMedia = !local && ['localhost', '127.0.0.1'].includes(location.hostname)
+    && document.querySelector('meta[name="quiz-media-backend"]')?.content === 'drive';
+  const mediaTransport = driveMedia ? createAuthenticatedTransport({auth, getSession, baseUrl:location.origin}) : null;
   let attemptId = null;
   configureQuizMedia(async url => {
-    const result = local ? await localCall('/__quiz-media', { action: 'read', url, attempt_id: attemptId })
-      : await transport('/functions/v1/quiz-media', { action: 'read', url, attempt_id: attemptId });
+    const body = { action: 'read', url, attempt_id: attemptId };
+    let result = local ? await localCall('/__quiz-media', body)
+      : mediaTransport ? await mediaTransport('/__quiz-drive-media', body)
+      : await transport('/functions/v1/quiz-media', body);
+    if (result.fallback === 'supabase') result = await transport('/functions/v1/quiz-media', body);
     return result.url;
   });
   if (local && !['127.0.0.1', 'localhost'].includes(location.hostname)) throw new Error('本機模式只可在本機使用。');

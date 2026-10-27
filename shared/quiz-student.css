@@ -685,5 +685,32 @@
 @keyframes qfm2-bi-head{0%{transform:translate(0px,0px) rotate(0deg)}22%,55%{transform:translate(0px,0px) rotate(8deg)}72%{transform:translate(0px,-4px) rotate(0deg)}82%{transform:translate(0px,-1px) rotate(0deg)}90%{transform:translate(0px,-4px) rotate(0deg)}100%{transform:translate(0px,-3px) rotate(0deg)}}
 @keyframes qfm2-bi-eyes{0%{transform:translate(0px,0px)}22%,60%{transform:translate(4px,2px)}76%,100%{transform:translate(4px,-4px)}}
 /* 題庫原圖可直接放大，公式與表格維持網頁內容。 */
+@font-face {
+  font-family: "Andika";
+  src: url("fonts/andika/Andika-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Andika";
+  src: url("fonts/andika/Andika-Bold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+/* 英語使用接近課本字形的初學閱讀字型；中文說明保留原中文備援字型。 */
+#server-quiz[data-subject="英語"] .question .preview-content,
+#server-quiz[data-subject="英語"] .question textarea {
+  font-family: "Andika", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  line-height: 1.8;
+}
+/* 國語題文沿用學生熟悉的楷體；科目來自已授權選卷資料，不改全站介面。 */
+#server-quiz[data-subject="國語"] .question .preview-content,
+#server-quiz[data-subject="國語"] .question textarea {
+  font-family: "DFKai-SB", "BiauKai", "標楷體", serif;
+  font-weight: 400;
+  line-height: 1.8;
+}
 #server-quiz img[role="button"]{cursor:zoom-in}
 #server-quiz img[role="button"]:focus-visible{outline:3px solid #7853c5;outline-offset:4px;border-radius:4px}

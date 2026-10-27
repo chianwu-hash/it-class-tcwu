@@ -1,5 +1,5 @@
 // Based on grade6/115-1/week01.html; no auth or progress dependencies.
-export function initImageLightbox({ root = document, selector = '[data-image-lightbox]', initialScale = 1, minScale = 1, zoomStep = 0.35 } = {}) {
+export function initImageLightbox({ root = document, selector = '[data-image-lightbox]', initialScale = 1, minScale = 1, zoomStep = 0.35, resolveImageSource = null } = {}) {
     if (document.getElementById('lightbox')) return;
     document.body.insertAdjacentHTML('beforeend', `<div id="lightbox" class="image-lightbox hidden" role="dialog" aria-modal="true" aria-label="圖片放大檢視">
         <div class="image-lightbox-panel">
@@ -201,7 +201,8 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
             trigger.title = '點擊放大圖片';
         });
     }
-    function activateImage(event) {
+    let activationGeneration = 0;
+    async function activateImage(event) {
         const trigger = event.target.closest?.(selector);
         if (!trigger || !root.contains(trigger)) return;
         if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
@@ -211,7 +212,18 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
         // 選項中的圖片只開燈箱，不觸發 label 的選答行為。
         event.stopPropagation();
         trigger.focus();
-        openLightbox(trigger.matches('a') ? trigger.href : image.currentSrc || image.src, image.alt || '圖片放大檢視');
+        let source = trigger.matches('a') ? trigger.href : image.currentSrc || image.src;
+        if (resolveImageSource) {
+            const generation = ++activationGeneration;
+            trigger.setAttribute('aria-busy', 'true');
+            try {
+                source = await resolveImageSource(image);
+                if (generation !== activationGeneration || !root.contains(image)) return;
+            } catch {
+                trigger.title = '圖片目前無法開啟，請更新狀態後重試。'; return;
+            } finally { trigger.removeAttribute('aria-busy'); }
+        }
+        openLightbox(source, image.alt || '圖片放大檢視');
     }
     prepareImages();
     root.addEventListener('click', activateImage, true);

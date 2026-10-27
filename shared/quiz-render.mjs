@@ -60,6 +60,7 @@ export function renderContent(container, content, { strict = false, loadMedia = 
     if (!['image', 'audio'].includes(media.kind)) throw new Error('不支援此媒體格式。');
     if (!loadMedia) continue;
     const element = document.createElement(media.kind === 'image' ? 'img' : 'audio');
+    element.dataset.quizMediaUrl = url.href;
     if (media.kind === 'image') { element.alt = media.alt; element.loading = imageLoading; }
     else { element.controls = true; element.preload = 'none'; }
     const failed = () => {
