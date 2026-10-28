@@ -1,0 +1,60 @@
+# 三年級 115-1 第 09 週功能契約
+
+2026-10-28。依修訂後 `grade3/LessonPlan/115-1/Week 09.md` 製作。狀態：本機實作、SQL 與合成瀏覽器驗收已完成；未 commit／push、未正式發布。正式 SQL、OAuth 與正式後台驗收另列，不以合成測試替代。
+
+## 基本資訊與視覺
+
+- 頁面：`grade3/115-1/week09.html`，C 類中英打，六關。
+- 課程：`grade3-115-1`；`weekCode: '09'`；`activityKey: 'typing_task_6'`；總數 6。
+- 視覺固定基準：`grade3/week20.html`。功能參考：目前學期第 08 週與 `shared/grade3-google-course.js`。
+- 沿用 Noto Sans TC、sky／teal／emerald 漸層、圓形圖示、白底圓角彩框卡、舒適間距、實心按鈕與可見焦點。
+- 必要差異：加琥珀色票選卡與紫色練功卡區分活動。用原生圖示／文字步驟呈現；無新增 AI 圖卡，圖片壓縮與燈箱不適用。
+- 四個任務區塊預設展開，用錨點導覽降低切換成本。教師分鐘表、備課與後台資訊不放學生頁。
+
+## Navbar 與身分
+
+- 使用學期 `navbar.js?v=20261028-week09`；不手刻導航、不直接綁登入／登出／重設按鈕。
+- `initNavbarAuth()` 與現行 `initGoogleCourseAuth()`；以可信本人名冊身分為準。
+- 依 2026-10-06 新契約，舊身分卡／guest_progress 分支不適用；不套用六年級作業與閱讀。
+- 說明、票選及補救入口公開；未登入、身分接回失敗或進度讀取失敗時，打字輸入、檢查、再練習均鎖定。
+- OAuth 沿用集中入口與原頁 returnTo。跨分頁回來不新增輪詢、focus 重載或自動儲存。
+
+## 本週任務與保存
+
+- 票選：`https://forms.gle/6EYf7aSkYvq7PBwz7`，另開分頁，`noopener noreferrer`。提醒一人一票，已投不重投；不要求先完成網站登入，不代投，不在本站寫投票成果。
+- 打字：一律 `initTypingChallenge()`＋`createGoogleCourseProgress()`；`levelsData` 用 `{ id, ans }`，與教案逐字一致。
+- 六關：窗戶／eight／霧裡看花／How old are you?／上課要專心一點，才能有收穫。／兩行 How old are you? 與 I'm eight years old.。
+- 最低先做前兩關；較長句延伸，練功不綁六關全過。舊週題目、活動與進度不改。
+- 正式保存經 `save_grade3_progress()` 寫 `student_progress`；載入經 `get_grade3_progress()`；不使用 localStorage 或直接 upsert。
+- 保存失敗保持當關可重試、不解鎖；重整接續本人已存成果。每關精準位置／少字／多字／換行提示，設定描述策略與努力的鼓勵語。
+- 先用共用 adapter 載入確認，再開放輸入；再練習只在已保存關卡開放。透過 adapter 避免已存關數重寫，不倒退或重複發獎勵。
+- 依 SOP 每關再練習須換同技能題；替換題也從同課原頁取材，見教案附註。使用原共用驗答，不另做一套判定或儲存。
+- 範例不能反白，輸入禁止 paste/drop；可正常逐字與中文 IME 輸入。使用 `initTypingTools()` 共用鍵盤與標點工具，不複製其 HTML。
+- 無 typing 草稿、自動保存或匿名新測驗。
+- 全過慶祝提供共同努力樹入口；普通六關對應五葉一花。不得為登入、票選、補救暖身另加獎勵。
+- 練功：連到 `quiz-library.html` 與 `#wrong`，不內嵌題目、不建立試卷；沿用原服務身分與 `quiz_attempts/quiz_answers`。
+- 無上傳／繳交／閱讀小卡，相關契約不適用。無教師指定即時開放需求，課堂即時開關不新增。
+
+## 同步與驗收
+
+- 首頁最新週卡、navbar `activeWeeks`、後台對應 `visibilityDefaults.weeks` 加 09；只影響 `grade3-115-1`。
+- 努力樹活動清單與後台六關總數同步；新增獨立可重跑 SQL，只登記本週活動，不改權限、RPC 或既有學生進度。
+- 合成瀏覽器驗：匿名鎖定、本人身分、逐關實際控制項、錯誤提示、RPC 參數、保存失敗重試、讀取失敗鎖定、接續、再練習換題不寫回、帳號變動鎖定、六關完成與慶祝、跨頁連結、首頁／navbar 隱藏恢復。
+- 實際 SQL 在本機 PostgreSQL 相容測試環境驗證活動登記、本人保存／讀取與隔離；不使用真實學生資料。
+- 以 1280 與 390px 對照固定視覺基準，驗字型／圖示與水平溢出；截圖輸出 ignored `tmp/grade3-week09-qa/`。
+- 正式發布前仍須套用登記 SQL、正式 OAuth 回跳、教師後台活動／週卡及正式努力樹驗收；本機完成不冒稱已上線。
+
+## 禁止事項
+
+不可用 localStorage 存進度；不可重寫 typing 邏輯；答案欄位是 `ans` 而不是 `answer`。不改 shared auth／typing／navbar 核心模組，不操作其他學生資料，不 stage 無關檔案。
+
+## 本次驗收結果
+
+- 票選：未帶登入憑證讀取原表單，確認標題「頂溪國小72週年校慶會旗票選活動」、12 件候選作品與提交入口；未顯示停止收件，未提交選票。原工作瀏覽器的既有 Google session 曾導往重新登入，未代為登入；不將該舊 session 的狀態誤判成表單強制登入。
+- `node --test automation/tests/grade3-week09.test.mjs` 通過：真實 PostgreSQL 相容 SQL 執行、六關登記重跑、總數衝突拒絕、匿名拒絕、本人逐關保存／接續、重送不倒退、另一學生隔離，以及其他週進度原樣保留。
+- `automation/tests/grade3-week09-browser.cjs` 經有效 AI 工作瀏覽器租約執行通過：匿名與錯誤鎖定、票選／平台／練功連結、登入 returnTo、保存失敗重試、09/typing_task_6 正確 RPC、重整接續、中英提示／缺換行／第二行字元位置、六個替換題不寫回、共用鍵盤、同帳號 refresh、換帳號立即鎖定、完成回饋與努力樹連結、首頁／navbar 隱藏恢復。
+- 修正驗收發現的「前往下一關」初始化仍 disabled 問題，再以實際點擊確認焦點到達下一關，完整瀏覽器測試重跑通過。
+- 教案與 JS 六個正式答案逐字一致、HTML id 唯一、UTF-8 及模組語法檢查通過。桌面 1280px／手機 390px 截圖均無水平溢出，沿用固定基準漸層、彩框、圖示、字型與間距。
+- `week09.css` 重用目前學期 `week08.css` 基礎元件，再添加本週任務色系及小螢幕調整；未修改共用 auth／typing 核心。依 SOP 同步第 01～08 週與第 02 週郵件頁的 navbar 快取版本，不改其教材或活動。
+- 瀏覽器測試以合成 session／RPC 回應隔離，真實學生寫入 0。未驗證真實 Google OAuth、新版 Microsoft 注音候選窗、正式教師後台切換或正式努力樹入帳；這些是上線前後續驗收，不當作已通過。
+- 需正式套用 `supabase/grade3_week09_typing.sql` 後，本週雲端保存才能使用。未改正式資料、權限、試卷或發布設定。

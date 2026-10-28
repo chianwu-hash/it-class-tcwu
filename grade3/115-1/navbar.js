@@ -19,7 +19,7 @@
         `<span title="${full}" class="inline-flex items-center gap-1"><i class="${iconClass}" aria-hidden="true"></i><span aria-hidden="true">${short}</span><span class="sr-only">${full}</span></span>`;
 
     const navConfig = {
-        activeWeeks: quizMode ? [] : [1, 2, 3, 4, 5, 6, 7, 8],
+        activeWeeks: quizMode ? [] : [1, 2, 3, 4, 5, 6, 7, 8, 9],
         gradeLabel: quizMode ? "考前練功房｜三年級" : "三年級資訊課｜115-1",
         titleIconClass: "fa-solid fa-rocket text-cyan-600",
         titleClassName: "font-black text-gray-800 flex items-center text-lg tracking-wide whitespace-nowrap",

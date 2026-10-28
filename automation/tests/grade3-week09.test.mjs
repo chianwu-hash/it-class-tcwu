@@ -1,0 +1,47 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
+const require = createRequire(new URL('../../tmp/week06-dbtest/package.json', import.meta.url));
+const { PGlite } = require('@electric-sql/pglite');
+const read = file => readFile(new URL('../../supabase/' + file, import.meta.url), 'utf8');
+const a='00000000-0000-0000-0000-000000000001',b='00000000-0000-0000-0000-000000000002';
+test('Week09 SQL registers six levels idempotently, preserves other progress, and enforces authenticated own RPC writes', async () => {
+ const db = new PGlite();
+ try {
+  await db.exec(`create role anon; create role authenticated; create schema auth;
+   create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz);
+   create function auth.uid() returns uuid language sql as $$select nullif(current_setting('test.uid',true),'')::uuid$$;
+   create function public.is_teacher() returns boolean language sql as $$select false$$;
+   grant usage on schema public,auth to anon,authenticated;
+   create table student_enrollments(school_year smallint,email text,class_code text,seat_no smallint,display_name text,primary key(school_year,email),unique(school_year,class_code,seat_no));
+   create table class_card_students(course_id text,class_code text,seat_no smallint,student_code text,display_name text,active boolean,practice_account text,birthday_code text);
+   create table guest_progress(course_id text,week_code text,activity_key text,student_code text,class_code text,seat_no smallint,display_name text,current_level integer,score smallint,completed boolean,updated_at timestamptz);
+   create table student_progress(user_id uuid,course_id text,week_code text,activity_key text,current_level integer constraint student_progress_current_level_check check(current_level between 1 and 5),score smallint,completed boolean,updated_at timestamptz default now(),primary key(user_id,course_id,week_code,activity_key));
+   alter table student_progress enable row level security;
+   create policy own on student_progress for all to authenticated using(user_id=auth.uid()) with check(user_id=auth.uid());
+   grant select,insert,update,delete on student_progress to authenticated;
+   insert into auth.users values('${a}','synthetic1@apps.ntpc.edu.tw',now()),('${b}','synthetic2@apps.ntpc.edu.tw',now());
+   insert into student_enrollments values(115,'synthetic1@apps.ntpc.edu.tw','301',1,'合成甲'),(115,'synthetic2@apps.ntpc.edu.tw','302',1,'合成乙');
+   insert into class_card_students values('grade3-115-1','301',1,'30101','合成甲',true,'synthetic1','0101'),('grade3-115-1','302',1,'30201','合成乙',true,'synthetic2','0101');
+   create function get_class_card_practice_account(text,text,smallint,text) returns text language sql as $$select 'synthetic'::text$$;`);
+  await db.exec(await read('grade3_google_transition.sql'));
+  await db.exec("insert into grade3_google_approvals(email,student_code,display_name,history_student_code,history_display_name) values('synthetic1@apps.ntpc.edu.tw','30101','合成甲','30101','合成甲'),('synthetic2@apps.ntpc.edu.tw','30201','合成乙','30201','合成乙')");
+  const as=async uid=>{await db.exec('reset role');await db.query("select set_config('test.uid',$1,false)",[uid]);await db.exec('set role authenticated');};
+  await as(a);await db.query('select * from reconnect_grade3_progress()');
+  await db.query("select save_grade3_progress('06','typing_task_5',3)");
+  await db.exec('reset role');const before=(await db.query("select * from student_progress where week_code<>'09'")).rows;
+  const sql=await read('grade3_week09_typing.sql');await db.exec(sql);await db.exec(sql);
+  assert.deepEqual((await db.query("select * from grade3_google_activities where week_code='09'")).rows,[{week_code:'09',activity_key:'typing_task_6',total:6}]);
+  await db.exec('set role anon');await assert.rejects(db.query("select save_grade3_progress('09','typing_task_6',1)"),/permission denied/);
+  await as(a);for(let n=1;n<=6;n++)await db.query("select save_grade3_progress('09','typing_task_6',$1)",[n]);
+  await db.query("select save_grade3_progress('09','typing_task_6',2)");
+  const result=(await db.query("select * from get_grade3_progress('09','typing_task_6')")).rows[0];
+  assert.equal(result.completed,true);assert.equal(result.score,6);assert.equal(result.current_level,6);
+  await assert.rejects(db.query("select save_grade3_progress('09','typing_task_6',7)"),/無效/);
+  await as(b);await db.query('select * from reconnect_grade3_progress()');assert.equal((await db.query("select * from get_grade3_progress('09','typing_task_6')")).rows.length,0);
+  assert.equal((await db.query("select * from student_progress where user_id=$1",[a])).rows.length,0);
+  await db.exec('reset role');assert.deepEqual((await db.query("select * from student_progress where week_code<>'09'")).rows,before);
+  await db.exec("update grade3_google_activities set total=5 where week_code='09'");await assert.rejects(db.exec(sql),/Week09 total conflicts/);await db.exec('rollback');assert.equal((await db.query("select total from grade3_google_activities where week_code='09'")).rows[0].total,5);
+ } finally { await db.close(); }
+});
