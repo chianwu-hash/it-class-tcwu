@@ -65,7 +65,14 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
       if(onExtension&&canExtend(data.catalog)){
         const section=make('section',undefined,'wrong-extension'),button=make('button','再練3題同一個重點'),status=make('p');status.setAttribute('role','status');section.append(button,status);detail.append(section);
         const requestId=crypto.randomUUID();
-        button.addEventListener('click',async()=>{if(busy)return;locked(true);status.textContent='正在找同一個重點的題目…';try{const result=await onExtension({...item,request_id:requestId});if(!current(g,uid)||!active)return;const d=result.distribution;status.textContent=`已找到${d.actual}題（易${d.easy}、中${d.medium}、難${d.hard}），不會重複剛才那題。${d.actual<3?'這個重點目前可用題較少，先練這幾題。':''}`;section.querySelector('a')?.remove();const a=make('a','開始同重點練習 →','paper-start');a.href=result.url;section.append(a);}catch(e){if(current(g,uid))status.textContent=e.message;}finally{if(current(g,uid))locked(false);}});
+        button.addEventListener('click',async()=>{if(busy||button.disabled)return;locked(true);status.textContent='正在找同一個重點的題目…';try{
+          const result=await onExtension({...item,request_id:requestId});if(!current(g,uid)||!active)return;
+          const d=result.distribution;button.hidden=true;button.dataset.pageDisabled='true';section.dataset.state='saved';section.prepend(make('h3','✓ 延伸練習已儲存'));
+          status.textContent=`已儲存到「我的自組卷」${result.display_name?'：'+result.display_name:'。'} 共${d.actual}題（易${d.easy}、中${d.medium}、難${d.hard}），不會重複剛才那題。${d.actual<3?'這個重點目前可用題較少，先練這幾題。':''}`;
+          const actions=make('div',undefined,'wrong-extension-actions'),a=make('a',`開始這${d.actual}題 →`,'paper-start');a.href=result.url;
+          const view=make('button','到我的自組卷查看');view.type='button';view.addEventListener('click',()=>document.dispatchEvent(new CustomEvent('quiz-show-own',{detail:{sessionId:result.session_id}})));
+          actions.append(a,view);section.append(actions);message('延伸練習已儲存，可以直接開始，或稍後到「我的自組卷」繼續。');a.focus();
+        }catch(e){if(current(g,uid))status.textContent=e.message;}finally{if(current(g,uid))locked(false);}});
       }
       el('wrong-list').hidden=true;el('wrong-pages').hidden=true;el('wrong-detail').hidden=false;message('可以慢慢核對題目、當時答案與解析。');el('wrong-title').focus();
     }catch(e){if(current(g,uid))message(e.message);}finally{if(current(g,uid))locked(false);}

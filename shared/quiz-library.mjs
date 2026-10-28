@@ -1,12 +1,12 @@
 import { initNavbarAuth } from './navbar-auth.js';
 import { createQuizRequest } from './quiz-api.mjs?v=20261028-student-only';
 import { quizPageGrade, quizLibraryPath, quizStudentRedirect } from './quiz-grade-route.mjs';
-import { initWrongQuestions } from './quiz-wrong-questions.mjs?v=20261028-student-only';
+import { initWrongQuestions } from './quiz-wrong-questions.mjs?v=20261028-extension-feedback';
 import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs?v=20261028-student-only';
 import {comparePapers,paperRange,paperTitle,paperMix,isExtension,paperDifficulty} from './quiz-paper-display.mjs';
 import {difficultyAdjustment} from './quiz-difficulty.mjs';
 
-let currentSession = null, generation = 0, papers = [], busy = false, studentView=false, reloadAfter=false;
+let currentSession = null, generation = 0, papers = [], busy = false, studentView=false, reloadAfter=false, focusPaperId=null;
 const el = id => document.getElementById(id);
 const pageGrade = quizPageGrade(location.pathname);
 el('grade-filter').value = String(pageGrade);
@@ -18,7 +18,7 @@ ownSection.innerHTML='<header class="collection-heading"><span class="collection
 const presetSection=document.createElement('section');presetSection.id='system-papers-section';presetSection.className='paper-collection collection-preset';presetSection.setAttribute('aria-labelledby','system-papers-title');
 presetSection.innerHTML='<header class="collection-heading"><span class="collection-label">已準備好的練習</span><h2 id="system-papers-title">老師準備的卷 <span id="system-papers-count" class="collection-count"></span></h2><p>各科單元卷已經準備好，選一份就能開始練習。</p></header><p id="system-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的老師準備的卷。</p>';
 el('cloud-papers').before(presetSection);presetSection.append(el('cloud-papers'));presetSection.before(ownSection);
-document.addEventListener('quiz-paper-saved',()=>{if(busy)reloadAfter=true;else load({refreshComposer:false});});
+document.addEventListener('quiz-paper-saved',()=>{if(busy)reloadAfter=true;else load({refreshComposer:false,refreshWrong:false});});
 const wrongQuestions = initWrongQuestions({request,pageGrade,getUserId:()=>currentSession?.user?.id,onExtension:composer?.extend,canExtend:catalog=>composer?.canExtend(catalog),externalNavigation:true});
 let activeView=location.hash==='#wrong'?'wrong':location.hash==='#mine'?'mine':'preset';
 const tabs=document.createElement('div');tabs.className='library-tabs';tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','選擇練習方式');
@@ -30,7 +30,8 @@ el('cloud-library').querySelector('.filters').before(tabs);
 const continueBox=document.createElement('section');continueBox.id='continue-practice';continueBox.className='continue-practice';continueBox.hidden=true;el('compose-entry').before(continueBox);
 function applyView(){ownSection.hidden=activeView!=='mine'||!studentView;presetSection.hidden=activeView!=='preset';el('wrong-panel').hidden=activeView!=='wrong';el('cloud-library').querySelector('.filters').hidden=activeView==='wrong';el('cloud-status').hidden=activeView==='wrong';for(const b of tabs.children){const selected=b.dataset.view===activeView;b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1;}}
 function showView(view){activeView=view;history.replaceState(null,'',location.pathname+location.search+(view==='wrong'?'#wrong':view==='mine'?'#mine':''));applyView();wrongQuestions.activate(view==='wrong');}
-document.addEventListener('quiz-show-own',e=>{el('subject-filter').value='';render();showView('mine');const card=[...el('my-papers').children].find(n=>n.dataset.sessionId===e.detail.sessionId);(card?.querySelector('.paper-start')||el('my-papers-title')).focus();});
+function focusOwnPaper(){if(activeView!=='mine'||!focusPaperId)return;const card=[...el('my-papers').children].find(n=>n.dataset.sessionId===focusPaperId);if(card){card.querySelector('.paper-start').focus();focusPaperId=null;}}
+document.addEventListener('quiz-show-own',e=>{el('subject-filter').value='';render();showView('mine');focusPaperId=e.detail.sessionId;el('my-papers-title').focus();focusOwnPaper();});
 addEventListener('hashchange',()=>showView(location.hash==='#wrong'?'wrong':location.hash==='#mine'?'mine':'preset'));
 const node = (tag, text, className) => {
   const n = document.createElement(tag); if (text !== undefined) n.textContent = text;
@@ -88,6 +89,7 @@ function render() {
   }
   el('cloud-status').textContent = `進度已從${localContext?'本機測試資料庫':'雲端'}讀取`;
   renderContinue();
+  focusOwnPaper();
 }
 function renderContinue(){
  continueBox.replaceChildren();
@@ -101,7 +103,7 @@ function showLock(message){
  el('cloud-lock').querySelector('h2').textContent='僅限本校學生使用';
  const notes=el('cloud-lock').querySelectorAll('p');notes[0].textContent=message;notes[1].textContent='請使用115學年度三、六年級名冊中的學生 Google 帳號登入。';
 }
-async function load({refreshComposer=true}={}) {
+async function load({refreshComposer=true,refreshWrong=true}={}) {
   if (!currentSession?.user || busy) return;
   const token = generation; busy = true; el('refresh-library').disabled = true; el('cloud-status').textContent = '正在讀取雲端進度…';
   try {
@@ -117,10 +119,10 @@ async function load({refreshComposer=true}={}) {
     el('cloud-identity').textContent = localContext ? `本機合成學生 ${localContext.student}｜進度存於本機測試資料庫，尚未同步雲端` : data.role === 'teacher' ? '教師試答｜可切換年級檢視' : '學生練習｜進度已從雲端讀取';
     render();
     if(refreshComposer)await composer?.ready({student:data.role==='student'});
-    wrongQuestions.ready();
-    if(activeView==='wrong')wrongQuestions.activate(true);
+    // Saving a paper updates the cards, while the current wrong-answer explanation stays open.
+    if(refreshWrong){wrongQuestions.ready();if(activeView==='wrong')wrongQuestions.activate(true);}
   } catch (e) { if (token === generation) {studentView=false;papers=[];composer.reset();wrongQuestions.reset();el('cloud-papers').replaceChildren();el('my-papers').replaceChildren();continueBox.replaceChildren();continueBox.hidden=true;el('cloud-identity').textContent='尚未取得學生使用資格';showLock(['student_required','roster_required','login_required'].includes(e.code)?e.message:'暫時無法確認學生資格，請稍後重新整理。');} }
-  finally { if (token === generation) { busy = false; el('refresh-library').disabled = false;if(reloadAfter){reloadAfter=false;setTimeout(()=>load({refreshComposer:false}),0);} } }
+  finally { if (token === generation) { busy = false; el('refresh-library').disabled = false;if(reloadAfter){reloadAfter=false;setTimeout(()=>load({refreshComposer:false,refreshWrong:false}),0);} } }
 }
 el('grade-filter').addEventListener('change', () => location.assign(quizLibraryPath(el('grade-filter').value)));
 el('subject-filter').addEventListener('change', render);
@@ -140,7 +142,7 @@ if (localContext) {
   if (same) {if(!session?.user){el('cloud-identity').textContent='尚未登入・僅限名冊中的學生使用';showLock('請使用名冊中的學生帳號登入後開始練習。');}return;}
   el('cloud-identity').textContent=session?.user?'正在確認學生資格…':'尚未登入・僅限名冊中的學生使用';
   showLock(session?.user?'正在確認學生資格，請稍候…':'請使用名冊中的學生帳號登入後開始練習。');
-  reloadAfter=false;
+  reloadAfter=false;focusPaperId=null;
   generation++; busy = false; papers = []; el('cloud-papers').replaceChildren(); el('cloud-status').textContent = '';
   studentView=false;el('my-papers').replaceChildren();ownSection.hidden=true;ownSection.dataset.enabled='false';continueBox.hidden=true;continueBox.replaceChildren();activeView=same?activeView:location.hash==='#wrong'?'wrong':location.hash==='#mine'?'mine':'preset';el('subject-filter').value='';applyView();
   wrongQuestions.reset();
