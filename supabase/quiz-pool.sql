@@ -93,7 +93,7 @@ declare
  request uuid; d integer; quota integer; count_now integer; result jsonb; paper_name text;
  mode text:=coalesce(p_data->>'difficulty','medium'); passes integer[]; pass integer;
  target_easy integer; target_medium integer; target_hard integer; shortages jsonb;
- selected_course text:=coalesce(p_data->>'course_id','115-1-hanlin-g3-math'); course public.quiz_courses; source_version_id uuid;
+ selected_course text:=coalesce(p_data->>'course_id','115-1-hanlin-g3-math'); course public.quiz_courses; source_version_id uuid; seen_counts jsonb;
 begin
  if uid is null then raise exception 'login_required'; end if;
  if coalesce(public.is_teacher(),false) then raise exception 'student_required'; end if;
@@ -146,6 +146,10 @@ begin
   select * into course from public.quiz_courses c where c.id=selected_course and c.enabled and c.grade=left(cls,1)::integer;
   if course.id is null then raise exception 'extension_unavailable';end if;
  end if;
+ -- Freeze this caller's exposure counts once; do not rescan answers for every candidate.
+ select coalesce(jsonb_object_agg(history.question_id,history.n),'{}'::jsonb) into seen_counts from (
+  select a.question_id,count(*) n from public.quiz_answers a join public.quiz_attempts at on at.id=a.attempt_id
+  where at.user_id=uid and a.question_id is not null group by a.question_id) history;
  seed:=request::text;
  -- Reserve all target buckets before filling shortages in the agreed order.
  target_easy:=case mode when 'easy' then amount*3/5 when 'medium' then amount/5 else 0 end;
@@ -165,7 +169,7 @@ begin
      or (kind='extension' and p.publisher_explanation and coalesce((select m.knowledge_reliable from public.quiz_pool_membership m where m.question_id=p.question_id),true) and p.knowledge_code=source.knowledge_code and p.group_key<>source.group_key and p.difficulty<=source.difficulty))
     order by
      case when kind='extension' and p.publisher_explanation then 0 when kind='extension' then 1 else 0 end,
-     (select count(*) from public.quiz_answers a join public.quiz_attempts at on at.id=a.attempt_id where at.user_id=uid and a.question_id=p.question_id),
+     coalesce((seen_counts->>p.question_id)::bigint,0),
      (select count(*) from public.quiz_question_pool x where x.question_id=any(selected) and x.knowledge_code=p.knowledge_code),
      (select count(*) from public.quiz_question_pool x where x.question_id=any(selected) and x.unit_ids=p.unit_ids),
      case when kind='extension' then abs(p.difficulty-source.difficulty) else 0 end,md5(p.question_id||seed) limit 1;
@@ -215,7 +219,7 @@ language plpgsql security definer set search_path='' as $$
 declare uid uuid:=auth.uid(); identity jsonb; paper uuid;
 begin
  if uid is null then raise exception 'login_required';end if;
- identity:=public.quiz_action('library_sessions');
+ identity:=public.quiz_student_identity();
  if identity->>'role'<>'student' then raise exception 'student_required';end if;
  if jsonb_typeof(p_data) is distinct from 'object' or exists(select 1 from jsonb_object_keys(p_data) k where k<>'session_id') then raise exception 'invalid_request';end if;
  paper:=(p_data->>'session_id')::uuid;
@@ -230,7 +234,7 @@ create or replace function public.quiz_pool_catalog() returns jsonb
 language plpgsql security definer set search_path='' as $$
 declare identity jsonb; result jsonb; courses jsonb; c public.quiz_courses; units jsonb; total integer;
 begin
- identity:=public.quiz_action('library_sessions');
+ identity:=public.quiz_student_identity();
  if identity->>'role'<>'student' then return jsonb_build_object('available',false,'units','[]'::jsonb,'courses','[]'::jsonb);end if;
  courses:='[]';
  for c in select * from public.quiz_courses where enabled and grade=(identity->>'grade')::integer order by id loop

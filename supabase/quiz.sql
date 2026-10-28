@@ -202,6 +202,19 @@ begin
  return jsonb_build_object('title',d->>'title','questions',items);
 end $$;
 
+-- Private, caller-bound qualification lookup; never materializes the practice library.
+create or replace function public.quiz_student_identity() returns jsonb language plpgsql security definer set search_path='' as $$
+declare uid uuid:=auth.uid();mail text;cls text;
+begin
+ if uid is null then raise exception 'login_required';end if;
+ if coalesce(public.is_teacher(),false) then raise exception 'student_required';end if;
+ select lower(u.email) into mail from auth.users u where u.id=uid and u.email_confirmed_at is not null;
+ select e.class_code into cls from public.student_enrollments e where e.email=mail and e.school_year=115 and e.class_code ~ '^[36][0-9]{2}$';
+ if cls is null then raise exception 'roster_required';end if;
+ return jsonb_build_object('role','student','grade',left(cls,1)::integer,'email',mail,'class_code',cls);
+end $$;
+revoke all on function public.quiz_student_identity() from public,anon,authenticated;
+
 create or replace function public.quiz_action(p_action text,p_data jsonb default '{}') returns jsonb
 language plpgsql security definer set search_path='' as $$
 #variable_conflict use_column
@@ -210,7 +223,7 @@ declare
  bank public.quiz_banks; ver public.quiz_versions; sess public.quiz_sessions; att public.quiz_attempts; ans public.quiz_answers;
  d jsonb; b jsonb; q jsonb; o jsonb; qo jsonb; oo jsonb:='{}'; result jsonb; reviews jsonb:='[]'; responses jsonb;
  target uuid; qid text; response jsonb; correct boolean; done boolean; groupdone boolean; n integer; cls text; mode text; student_grade integer;
- new_answer boolean:=false; leaf jsonb:='{}';
+ new_answer boolean:=false; leaf jsonb:='{}'; identity jsonb; correct_map jsonb; prior_lock_timeout text; compact boolean:=p_action='submit' and coalesce(p_data->'compact'='true'::jsonb,false);
 begin
  if uid is null then raise exception 'login_required'; end if;
  -- Practice pages and answer APIs are student-only; teacher authoring/monitoring remains separate.
@@ -218,10 +231,7 @@ begin
  if p_action in ('list','get','save','publish','versions','open','monitor','close','sessions','personal_sessions') and not teacher then raise exception 'teacher_required'; end if;
  if p_action in ('personal_sessions','library_sessions') then
   if not teacher then
-   select lower(u.email) into v_email from auth.users u where u.id=uid and u.email_confirmed_at is not null;
-   select left(e.class_code,1)::integer into student_grade from public.student_enrollments e
-    where e.email=v_email and e.school_year=115 and e.class_code ~ '^[36][0-9]{2}$';
-   if student_grade is null then raise exception 'roster_required'; end if;
+   identity:=public.quiz_student_identity();v_email:=identity->>'email';student_grade:=(identity->>'grade')::integer;
   end if;
   select coalesce(jsonb_agg(jsonb_build_object('id',s.id,'version_id',s.version_id,'title',v.document->>'title',
    'catalog',v.document->'catalog','status',s.status,
@@ -229,11 +239,12 @@ begin
    'generated_kind',g.config->>'kind','unit_ids',g.config->'units','distribution',g.actual_distribution,
    'learning_point',case when g.config->>'kind'='extension' then regexp_replace(v.document->'catalog'->>'unit','^同重點再練習[：:]\s*','') else null end,
    'total',(select count(*) from jsonb_array_elements(v.document->'blocks') b,lateral jsonb_array_elements(b->'questions') q),
-   'answered',(select count(*) from public.quiz_answers x join public.quiz_attempts a on a.id=x.attempt_id where a.session_id=s.id and a.user_id=uid),
-   'correct',(select count(*) from public.quiz_answers x join public.quiz_attempts a on a.id=x.attempt_id where a.session_id=s.id and a.user_id=uid and x.correct)
+   'answered',coalesce(progress.answered,0),'correct',coalesce(progress.correct,0)
    ) order by v.document->'catalog'->>'volume',v.document->'catalog'->>'subject',v.document->'catalog'->>'unit'),'[]') into result
    from public.quiz_sessions s join public.quiz_versions v on v.id=s.version_id
    left join public.quiz_generated_papers g on g.session_id=s.id and g.user_id=uid
+   left join (select a.session_id,count(x.question_id) answered,count(*) filter(where x.correct) correct
+    from public.quiz_attempts a left join public.quiz_answers x on x.attempt_id=a.id where a.user_id=uid group by a.session_id) progress on progress.session_id=s.id
    where (teacher and s.owner_id=uid and s.access_mode='personal')
     or (not teacher and s.access_mode in ('practice','self') and (s.access_mode<>'self' or exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id and g.user_id=uid and g.deleted_at is null)) and exists(select 1 from public.student_enrollments e
      where e.email=v_email and e.school_year=s.school_year and s.class_codes ? e.class_code));
@@ -301,12 +312,19 @@ begin
    or sess.shuffle_options<>coalesce((p_data->>'shuffle_options')::boolean,false) or sess.access_mode<>mode then raise exception 'session_conflict'; end if;
   return to_jsonb(sess);
  end if;
- select * into sess from public.quiz_sessions where id=(p_data->>'session_id')::uuid for update;
+ select * into sess from public.quiz_sessions where id=(p_data->>'session_id')::uuid;
  if sess.id is null then raise exception 'session_unavailable'; end if;
  if sess.access_mode='self' and not exists(select 1 from public.quiz_generated_papers g where g.session_id=sess.id and g.user_id=uid) then raise exception 'session_unavailable'; end if;
  if p_action in ('monitor','close') then
   if sess.owner_id<>uid then raise exception 'session_unavailable'; end if;
-  if p_action='close' then update public.quiz_sessions set status='closed' where id=sess.id;return jsonb_build_object('ok',true); end if;
+  if p_action='close' then
+   begin
+    prior_lock_timeout:=current_setting('lock_timeout');perform set_config('lock_timeout','1000ms',true);
+    perform pg_advisory_xact_lock(1364542026,hashtext(sess.id::text));
+    perform set_config('lock_timeout',prior_lock_timeout,true);
+   exception when lock_not_available then raise exception 'session_busy';end;
+   update public.quiz_sessions set status='closed' where id=sess.id;return jsonb_build_object('ok',true);
+  end if;
   select coalesce(jsonb_agg(jsonb_build_object('user_id',a.user_id,'answered',(select count(*) from public.quiz_answers x where x.attempt_id=a.id),
    'total',jsonb_array_length(a.question_order),'class_code',e.class_code,'seat_no',e.seat_no,'display_name',e.display_name,
    'last_submitted_at',(select max(x.created_at) from public.quiz_answers x where x.attempt_id=a.id)) order by a.created_at),'[]') into result
@@ -324,10 +342,21 @@ begin
   select e.class_code into cls from public.student_enrollments e where e.email=v_email and e.school_year=sess.school_year and sess.class_codes ? e.class_code;
   if cls is null then raise exception 'roster_required'; end if;
  end if;
- select * into ver from public.quiz_versions where id=sess.version_id;d:=ver.document;
- select * into att from public.quiz_attempts where session_id=sess.id and user_id=uid;
+ -- Shared admission protects close; per-attempt locks isolate different students.
+ if p_action='join' and sess.access_mode='classroom' then
+  perform pg_advisory_xact_lock(1364542026,hashtext(sess.id::text));
+ elsif p_action in ('join','submit') then
+  perform pg_advisory_xact_lock_shared(1364542026,hashtext(sess.id::text));
+ end if;
+ if p_action in ('join','submit') then select * into sess from public.quiz_sessions where id=sess.id;end if;
+ if p_action='resume' then
+  select * into att from public.quiz_attempts where session_id=sess.id and user_id=uid for share;
+ else
+  select * into att from public.quiz_attempts where session_id=sess.id and user_id=uid for update;
+ end if;
  if att.id is null then
   if p_action<>'join' or sess.status<>'open' then raise exception 'attempt_unavailable'; end if;
+  select * into ver from public.quiz_versions where id=sess.version_id;d:=ver.document;
   select count(*) into n from public.quiz_attempts where session_id=sess.id;
   if sess.access_mode='classroom' and n>=29 then raise exception 'session_full'; end if;
   -- 暫定：題組位置固定，只在單題區塊的既有位置間亂序。
@@ -343,7 +372,8 @@ begin
     oo:=oo||jsonb_build_object(q->>'id',result);
    end loop;
   end loop;
-  insert into public.quiz_attempts(session_id,user_id,question_order,option_orders) values(sess.id,uid,qo,oo) returning * into att;
+  insert into public.quiz_attempts(session_id,user_id,question_order,option_orders) values(sess.id,uid,qo,oo) on conflict(session_id,user_id) do nothing;
+  select * into att from public.quiz_attempts where session_id=sess.id and user_id=uid for update;
  end if;
  if p_action='view_question' then
   qid:=p_data->>'question_id';
@@ -352,6 +382,7 @@ begin
   if to_regprocedure('public.quiz_answer_guard(uuid,text,boolean)') is not null then perform public.quiz_answer_guard(att.id,qid,false);end if;
   return jsonb_build_object('viewed',true);
  end if;
+ if ver.id is null then select * into ver from public.quiz_versions where id=sess.version_id;d:=ver.document;end if;
  if p_action='submit' then
   qid:=p_data->>'question_id';response:=p_data->'response';
   select bx,qx into b,q from jsonb_array_elements(d->'blocks') bx,lateral jsonb_array_elements(bx->'questions') qx where qx->>'id'=qid;
@@ -378,13 +409,12 @@ begin
    new_answer:=true;
   end if;
  end if;
- select count(*)=jsonb_array_length(att.question_order),coalesce(jsonb_object_agg(a.question_id,a.response),'{}') into done,responses from public.quiz_answers a where a.attempt_id=att.id;
+ select count(*)=jsonb_array_length(att.question_order),coalesce(jsonb_object_agg(a.question_id,a.response),'{}'),coalesce(jsonb_object_agg(a.question_id,a.correct),'{}') into done,responses,correct_map from public.quiz_answers a where a.attempt_id=att.id;
  for b in select value from jsonb_array_elements(d->'blocks') loop
-  select not exists(select 1 from jsonb_array_elements(b->'questions') x where not exists(select 1 from public.quiz_answers a where a.attempt_id=att.id and a.question_id=x->>'id')) into groupdone;
+  select not exists(select 1 from jsonb_array_elements(b->'questions') x where not(responses ? (x->>'id'))) into groupdone;
   if (sess.reveal='complete' and done) or (sess.reveal='immediate' and groupdone) then
    for q in select value from jsonb_array_elements(b->'questions') loop
-    select * into ans from public.quiz_answers where attempt_id=att.id and question_id=q->>'id';
-    reviews:=reviews||jsonb_build_array(jsonb_build_object('question_id',q->>'id','answer',q->'answer','explanation',q->'explanation','correct',ans.correct));
+    reviews:=reviews||jsonb_build_array(jsonb_build_object('question_id',q->>'id','answer',q->'answer','explanation',q->'explanation','correct',correct_map->(q->>'id')));
    end loop;
   end if;
  end loop;
@@ -393,8 +423,9 @@ begin
   if cls is not null then d:=jsonb_set(d,'{title}',to_jsonb(cls));end if;
  end if;
  if to_regprocedure('public.quiz_leaf_result(uuid,boolean)') is not null then leaf:=public.quiz_leaf_result(att.id,new_answer);end if;
- return jsonb_build_object('attempt_id',att.id,'session_id',sess.id,'version_id',sess.version_id,'status',sess.status,'complete',done,'leaf',leaf,
-  'document',public.quiz_student_document(d,att.question_order,att.option_orders),'responses',responses,'reviews',reviews);
+ result:=jsonb_build_object('attempt_id',att.id,'session_id',sess.id,'version_id',sess.version_id,'status',sess.status,'complete',done,'leaf',leaf,'responses',responses,'reviews',reviews);
+ if compact then return result||jsonb_build_object('compact',true);end if;
+ return result||jsonb_build_object('document',public.quiz_student_document(d,att.question_order,att.option_orders));
 end $$;
 revoke all on function public.quiz_valid_runs(jsonb,jsonb),public.quiz_valid_content(jsonb),public.quiz_validate(jsonb),public.quiz_student_document(jsonb,jsonb,jsonb) from public,anon,authenticated;
 revoke all on function public.quiz_action(text,jsonb) from public,anon;

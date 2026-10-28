@@ -1,5 +1,5 @@
-import { initQuizModule } from './quiz-module.js';
-import { createQuizRequest } from './quiz-api.mjs?v=20261028-student-only';
+import { initQuizModule } from './quiz-module.js?v=20261028-performance';
+import { createQuizRequest } from './quiz-api.mjs?v=20261028-performance';
 import { initImageLightbox } from './image-lightbox.js';
 import {resolveQuizMedia} from './quiz-media.mjs';
 

@@ -15,6 +15,7 @@ const errors = {
   roster_required: '這個帳號不在本場次的班級名冊中，請老師確認。', session_unavailable: '找不到這個場次，請確認加入連結。',
   wrong_question_unavailable: '目前無法查看這題錯題，請更新紀錄後重試。', invalid_request: '資料格式不符，請更新後重試。',
   attempt_unavailable: '場次已結束或尚未加入，請老師確認。', session_closed: '老師已結束場次，這次答案尚未送出。',
+  session_busy: '目前仍有答案正在儲存，請稍候再結束場次。',
   session_full: '本場次的學生名額已滿，請老師確認。', submission_conflict: '這題已有保存紀錄，請更新狀態確認。',
   question_order: '作答順序已更新，請更新狀態後接續。', invalid_response: '請先選擇選項或填入答案（最多 2000 字）。',
   version_unavailable: '找不到這個固定版本。', session_conflict: '同一場次的設定不同，請重新確認。',

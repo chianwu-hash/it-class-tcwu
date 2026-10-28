@@ -5,7 +5,7 @@ import {randomBytes,timingSafeEqual,createHash} from 'node:crypto';
 import {createQuizDb,quizCall,studentId,TEACHER} from './lib/quiz-local-db.mjs';
 import {createLocalMedia} from './lib/quiz-local-media.mjs';
 const root=process.cwd(),port=Number(process.env.QUIZ_POOL_PORT||4380),origin=`http://127.0.0.1:${port}`;
-const base=resolve(root,'automation/output/quiz/hanlin-g3-math-pool'),runtime=resolve(base,'runtime');await mkdir(runtime,{recursive:true});
+const base=resolve(root,'automation/output/quiz/hanlin-g3-math-pool'),runtime=resolve(process.env.QUIZ_POOL_RUNTIME||resolve(base,'runtime'));await mkdir(runtime,{recursive:true});
 const db=await createQuizDb(resolve(runtime,'db'));
 await db.exec(await readFile('supabase/quiz-wrong-questions.sql','utf8'));await db.exec(await readFile('supabase/quiz-pool.sql','utf8'));
 await db.exec(await readFile('supabase/quiz-rewards.sql','utf8'));

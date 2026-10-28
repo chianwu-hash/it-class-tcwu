@@ -8,7 +8,7 @@ declare
  page integer:=0; subject text:=coalesce(p_data->>'subject',''); unit text:=coalesce(p_data->>'unit','');
 begin
  if uid is null then raise exception 'login_required'; end if;
- identity:=public.quiz_action('library_sessions');
+ identity:=public.quiz_student_identity();
  teacher:=identity->>'role'='teacher'; student_grade:=(identity->>'grade')::integer;
  if coalesce(p_data->>'grade','') not in ('','3','6') then raise exception 'invalid_request'; end if;
  requested_grade:=case when teacher then nullif(p_data->>'grade','')::integer else student_grade end;

@@ -1,5 +1,5 @@
 import { initQuizPractice } from './quiz-practice.js';
-import { initServerQuiz } from './quiz-server.mjs';
+import { initServerQuiz } from './quiz-server.mjs?v=20261028-performance';
 
 const DEFAULT_MESSAGES = {
     questionLabel: (index) => `Q${index}`,

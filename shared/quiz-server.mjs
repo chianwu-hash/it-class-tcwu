@@ -1,4 +1,5 @@
 import { renderContent as renderQuizContent } from './quiz-render.mjs';
+import { mergeQuizSnapshot } from './quiz-state.mjs';
 
 // Claude Opus 5.5 原創四套圖形與動作；Codex整合，原型中的題目線索改為中性文字。
 const quizFeedbackMotion = (function () {
@@ -741,14 +742,17 @@ export function initServerQuiz({ selectors, server }) {
     }
     const token = generation; busy = true; render(); say('正在儲存答案…');
     try {
-      const next = await server.request('submit', { session_id: server.sessionId, ...pending });
+      const result = await server.request('submit', { session_id: server.sessionId, ...pending, compact: true });
       if (generation !== token) return;
+      const next = mergeQuizSnapshot(state, result);
       // 只在送答成功、後端允許揭答後播放；回看、重整與整卷檢視不反覆播放。
       feedbackAnimation = next.reviews.some(r => r.question_id === q.id) ? q.id : null;
       state = next; pending = null; busy = false; render(); say('答案已儲存。');
       if(next.leaf?.earned_now)celebrateQuizLeaf();
       root.querySelector('.answer-preview')?.focus();
-    } catch (e) { if (generation === token) { busy = false;if(e.code==='answer_too_fast'){pending=null;quizReadingWarning();} render(); say(e.message, true); } }
+    } catch (e) { if (generation === token) { busy = false;
+      if(e.code==='quiz_snapshot_mismatch'){await load('resume',true);return;}
+      if(e.code==='answer_too_fast'){pending=null;quizReadingWarning();} render(); say(e.message, true); } }
     finally { if (generation === token) { busy = false; const b = root.querySelector('#server-submit'); if (b) b.disabled = false; } }
   }
   async function handleAuthChange(session) {
