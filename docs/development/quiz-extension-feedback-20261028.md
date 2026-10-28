@@ -7,3 +7,7 @@
 沒有更動SQL、題目抽選、答案、權限、難度或努力樹。
 
 驗證：`automation/tests/quiz-extension-feedback-browser.cjs` 使用真實選卷／錯題／組卷前端與合成本機RPC，刻意延遲背景清單1.2秒。舊版選卷模組確實因「背景更新隱藏解析」失敗；新版三、六年級成功，包含直接開始、清單到達前就切頁、聚焦新卷、回應遺失後相同ID重試只建一卷及手機版面。私有測試輸出在ignored `automation/output/quiz/extension-feedback-20261028/`。
+
+舊版重現可設 `QUIZ_EXTENSION_BEFORE=1`，預設讀取修正前的 `03b7b31`；可用 `QUIZ_EXTENSION_BASELINE_REF` 明確指定基準，避免提交後HEAD已變而失去重現性。
+
+功能提交 `1d01314` 已push，Vercel `dpl_12xKLDRJxgAzqrUrXBfvETau7ETW` READY。正式站先核對QA學生身分，從既有錯題實際組成一份延伸卷；故意延遲背景清單1.2秒，確認原題詳情、成功提示、開始入口與新卷定位均正常。只移除本次新測試卷，前後既有試卷清單相同，未提交答案、未改原有錯題或發葉。沒有資料庫修改或正式壓測。

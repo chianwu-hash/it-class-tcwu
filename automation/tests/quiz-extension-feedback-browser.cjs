@@ -38,7 +38,7 @@ const runtime=createRequire('D:/projects/cdp-tools/package.json'),{connectCdp}=r
     throw Error('unexpected_action:'+action);
    }
    if(!/^\/(shared\/[A-Za-z0-9_./-]+|grade[36]\/115-1\/quiz-library\.html)$/.test(u.pathname)||u.pathname.includes('..'))return r.respond({status:404,body:''});
-   let text=before&&u.pathname==='/shared/quiz-library.mjs'?cp.execFileSync('git',['show','HEAD:shared/quiz-library.mjs'],{encoding:'utf8'}):await fs.readFile('.'+u.pathname,'utf8');
+   let text=before&&u.pathname==='/shared/quiz-library.mjs'?cp.execFileSync('git',['show',(process.env.QUIZ_EXTENSION_BASELINE_REF||'03b7b3120c668f367d3e7e0a5f545a4e9a208e54')+':shared/quiz-library.mjs'],{encoding:'utf8'}):await fs.readFile('.'+u.pathname,'utf8');
    if(u.pathname.endsWith('.html'))text=text.replace('<head>','<head><meta name="quiz-pool-local" content="1">');
    return r.respond({contentType:u.pathname.endsWith('.html')?'text/html;charset=utf-8':u.pathname.endsWith('.css')?'text/css':'text/javascript',body:text});
   });
