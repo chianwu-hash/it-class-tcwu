@@ -3,11 +3,11 @@ import {resolveQuizMedia} from './quiz-media.mjs';
 import {initImageLightbox} from './image-lightbox.js';
 
 const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
-export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canExtend=()=>Boolean(onExtension)}) {
+export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canExtend=()=>Boolean(onExtension),externalNavigation=false}) {
   const library=document.getElementById('cloud-library');
   const views=make('div',undefined,'wrong-view-switch');views.setAttribute('aria-label','練習與複習');
-  const papersButton=make('button','單元練習'),wrongButton=make('button','我的錯題');views.append(papersButton,wrongButton);library.prepend(views);
-  const panel=make('section',undefined,'wrong-panel');panel.hidden=true;
+  const papersButton=make('button','單元練習'),wrongButton=make('button','我的錯題');views.append(papersButton,wrongButton);if(!externalNavigation)library.prepend(views);
+  const panel=make('section',undefined,'wrong-panel');panel.id='wrong-panel';panel.hidden=true;
   panel.innerHTML='<h2>我的錯題</h2><p>把答錯的題目再看一次，從解析裡找一個新線索。這裡只會收錄已開放解析的錯題。</p><div class="filters"><label>科目 <select id="wrong-subject"><option value="">全部科目</option></select></label><label>單元 <select id="wrong-unit"><option value="">全部單元</option></select></label><button id="wrong-refresh">更新錯題</button></div><p id="wrong-status" role="status" aria-live="polite"></p><div id="wrong-list"></div><div id="wrong-pages" class="wrong-pages"></div><section id="wrong-detail" hidden><button id="wrong-back">返回錯題清單</button><h3 id="wrong-title" tabindex="-1"></h3><p id="wrong-meta"></p><div id="server-quiz"></div></section>';
   library.append(panel);
   const el=id=>document.getElementById(id),detail=el('server-quiz');
@@ -70,10 +70,10 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
       el('wrong-list').hidden=true;el('wrong-pages').hidden=true;el('wrong-detail').hidden=false;message('可以慢慢核對題目、當時答案與解析。');el('wrong-title').focus();
     }catch(e){if(current(g,uid))message(e.message);}finally{if(current(g,uid))locked(false);}
   }
-  function activate(value){if(busy)return;active=value;panel.hidden=!value;for(const id of ['cloud-papers','cloud-status','my-papers-section','system-papers-section','paper-jumps'])if(el(id))el(id).hidden=value||(['my-papers-section','paper-jumps'].includes(id)&&el(id).dataset.enabled!=='true');library.querySelector('.filters').hidden=value;const composer=document.getElementById('quiz-composer');if(composer)composer.hidden=value||composer.dataset.available!=='true';papersButton.setAttribute('aria-pressed',String(!value));wrongButton.setAttribute('aria-pressed',String(value));if(value)load();}
+  function activate(value){if(busy&&value&&!externalNavigation)return;active=value;panel.hidden=!value;if(externalNavigation){if(value)load();return;}for(const id of ['cloud-papers','cloud-status','my-papers-section','system-papers-section','paper-jumps'])if(el(id))el(id).hidden=value||(['my-papers-section','paper-jumps'].includes(id)&&el(id).dataset.enabled!=='true');library.querySelector('.filters').hidden=value;const composer=document.getElementById('quiz-composer');if(composer)composer.hidden=value||composer.dataset.available!=='true';papersButton.setAttribute('aria-pressed',String(!value));wrongButton.setAttribute('aria-pressed',String(value));if(value)load();}
   papersButton.addEventListener('click',()=>{history.replaceState(null,'',location.pathname+location.search);activate(false);});
   wrongButton.addEventListener('click',()=>{history.replaceState(null,'',location.pathname+location.search+'#wrong');activate(true);});
   el('wrong-subject').addEventListener('change',()=>{el('wrong-unit').value='';units();page=0;load();});el('wrong-unit').addEventListener('change',()=>{page=0;load();});
   el('wrong-refresh').addEventListener('click',()=>{page=0;load();});el('wrong-back').addEventListener('click',()=>{listView();message('選一題，回看當時的答案與解析。');});
-  return {ready(){activate(location.hash==='#wrong');},reset(){generation++;locked(false);page=0;facets=[];listView();el('wrong-list').replaceChildren();el('wrong-pages').replaceChildren();fill(el('wrong-subject'),[],'全部科目');units();message('');}};
+  return {activate,ready(){if(externalNavigation)return;activate(location.hash==='#wrong');},reset(){generation++;active=false;panel.hidden=true;locked(false);page=0;facets=[];listView();el('wrong-list').replaceChildren();el('wrong-pages').replaceChildren();fill(el('wrong-subject'),[],'全部科目');units();message('');}};
 }

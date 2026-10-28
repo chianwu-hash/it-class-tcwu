@@ -1,12 +1,12 @@
 import { initNavbarAuth } from './navbar-auth.js';
-import { createQuizRequest } from './quiz-api.mjs?v=20261028-safe-names';
+import { createQuizRequest } from './quiz-api.mjs?v=20261028-library-ux';
 import { quizPageGrade, quizLibraryPath, quizStudentRedirect } from './quiz-grade-route.mjs';
-import { initWrongQuestions } from './quiz-wrong-questions.mjs';
-import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs';
+import { initWrongQuestions } from './quiz-wrong-questions.mjs?v=20261028-library-ux';
+import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs?v=20261028-library-ux';
 import {comparePapers,paperRange,paperTitle,paperMix,isExtension,paperDifficulty} from './quiz-paper-display.mjs';
 import {difficultyAdjustment} from './quiz-difficulty.mjs';
 
-let currentSession = null, generation = 0, papers = [], busy = false, studentView=false;
+let currentSession = null, generation = 0, papers = [], busy = false, studentView=false, reloadAfter=false;
 const el = id => document.getElementById(id);
 const pageGrade = quizPageGrade(location.pathname);
 el('grade-filter').value = String(pageGrade);
@@ -14,14 +14,24 @@ const localContext = localPoolContext();
 const request = await createQuizRequest({ getSession: () => currentSession, local: Boolean(localContext), localStudent: localContext?.student });
 const composer = initComposer({request,context:localContext});
 const ownSection=document.createElement('section');ownSection.id='my-papers-section';ownSection.className='paper-collection collection-own';ownSection.hidden=true;ownSection.setAttribute('aria-labelledby','my-papers-title');
-ownSection.innerHTML='<header class="collection-heading"><span class="collection-label">自己選範圍</span><h2 id="my-papers-title">我的自組卷 <span id="my-papers-count" class="collection-count"></span></h2><p>依科目、複習範圍與角色卷名找到練習，整理試卷，並接著作答。</p></header><p id="my-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的自組卷，可以從上方選擇範圍組一份。</p><div id="my-papers" class="papers"></div>';
+ownSection.innerHTML='<header class="collection-heading"><span class="collection-label">自己選範圍</span><h2 id="my-papers-title" tabindex="-1">我的自組卷 <span id="my-papers-count" class="collection-count"></span></h2><p>依科目、複習範圍與角色卷名找到練習，整理試卷，並接著作答。</p></header><p id="my-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的自組卷，按「我要自組卷」試試看。</p><div id="my-papers" class="papers"></div>';
 const presetSection=document.createElement('section');presetSection.id='system-papers-section';presetSection.className='paper-collection collection-preset';presetSection.setAttribute('aria-labelledby','system-papers-title');
-presetSection.innerHTML='<header class="collection-heading"><span class="collection-label">已準備好的練習</span><h2 id="system-papers-title">系統預設卷 <span id="system-papers-count" class="collection-count"></span></h2><p>各科單元卷已經準備好，選一份就能開始練習。</p></header><p id="system-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的系統預設卷。</p>';
+presetSection.innerHTML='<header class="collection-heading"><span class="collection-label">已準備好的練習</span><h2 id="system-papers-title">老師準備的卷 <span id="system-papers-count" class="collection-count"></span></h2><p>各科單元卷已經準備好，選一份就能開始練習。</p></header><p id="system-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的老師準備的卷。</p>';
 el('cloud-papers').before(presetSection);presetSection.append(el('cloud-papers'));presetSection.before(ownSection);
-const jumps=document.createElement('div');jumps.id='paper-jumps';jumps.className='paper-jumps';jumps.setAttribute('role','navigation');jumps.setAttribute('aria-label','前往試卷區塊');jumps.hidden=true;
-for(const [id,label] of [['my-papers-section','我的自組卷'],['system-papers-section','系統預設卷']]){const link=document.createElement('a');link.href='#'+id;link.textContent=label;jumps.append(link);document.getElementById(id).tabIndex=-1;}el('cloud-library').prepend(jumps);
-document.addEventListener('quiz-paper-saved',()=>load({refreshComposer:false}));
-const wrongQuestions = initWrongQuestions({request,pageGrade,getUserId:()=>currentSession?.user?.id,onExtension:composer?.extend,canExtend:catalog=>composer?.canExtend(catalog)});
+document.addEventListener('quiz-paper-saved',()=>{if(busy)reloadAfter=true;else load({refreshComposer:false});});
+const wrongQuestions = initWrongQuestions({request,pageGrade,getUserId:()=>currentSession?.user?.id,onExtension:composer?.extend,canExtend:catalog=>composer?.canExtend(catalog),externalNavigation:true});
+let activeView=location.hash==='#wrong'?'wrong':location.hash==='#mine'?'mine':'preset';
+const tabs=document.createElement('div');tabs.className='library-tabs';tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','選擇練習方式');
+for(const [view,label,panel] of [['preset','老師準備的卷','system-papers-section'],['mine','我的自組卷','my-papers-section'],['wrong','我的錯題','wrong-panel']]){
+ const b=document.createElement('button');b.type='button';b.id='tab-'+view;b.textContent=label;b.dataset.view=view;b.setAttribute('role','tab');b.setAttribute('aria-controls',panel);tabs.append(b);const p=el(panel);p.setAttribute('role','tabpanel');p.setAttribute('aria-labelledby',b.id);p.tabIndex=-1;b.addEventListener('click',()=>showView(view));
+ b.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const buttons=[...tabs.children],i=buttons.indexOf(b),next=e.key==='Home'?0:e.key==='End'?2:(i+(e.key==='ArrowRight'?1:2))%3;buttons[next].focus();buttons[next].click();});
+}
+el('cloud-library').querySelector('.filters').before(tabs);
+const continueBox=document.createElement('section');continueBox.id='continue-practice';continueBox.className='continue-practice';continueBox.hidden=true;el('compose-entry').before(continueBox);
+function applyView(){ownSection.hidden=activeView!=='mine'||!studentView;presetSection.hidden=activeView!=='preset';el('wrong-panel').hidden=activeView!=='wrong';el('cloud-library').querySelector('.filters').hidden=activeView==='wrong';el('cloud-status').hidden=activeView==='wrong';for(const b of tabs.children){const selected=b.dataset.view===activeView;b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1;}}
+function showView(view){activeView=view;history.replaceState(null,'',location.pathname+location.search+(view==='wrong'?'#wrong':view==='mine'?'#mine':''));applyView();wrongQuestions.activate(view==='wrong');}
+document.addEventListener('quiz-show-own',e=>{el('subject-filter').value='';render();showView('mine');const card=[...el('my-papers').children].find(n=>n.dataset.sessionId===e.detail.sessionId);(card?.querySelector('.paper-start')||el('my-papers-title')).focus();});
+addEventListener('hashchange',()=>showView(location.hash==='#wrong'?'wrong':location.hash==='#mine'?'mine':'preset'));
 const node = (tag, text, className) => {
   const n = document.createElement(tag); if (text !== undefined) n.textContent = text;
   if (className) n.className = className; return n;
@@ -30,7 +40,6 @@ const subjectIcons = { '國語':'fa-book-open', '英語':'fa-language', '數學'
 function render() {
   el('cloud-papers').replaceChildren();
   el('my-papers').replaceChildren();ownSection.dataset.enabled=String(Boolean(composer&&studentView));ownSection.hidden=ownSection.dataset.enabled!=='true';
-  jumps.dataset.enabled=ownSection.dataset.enabled;jumps.hidden=ownSection.hidden;
   const subject = el('subject-filter').value;
   const shown = papers.filter(p => p.catalog?.volume?.startsWith(String(pageGrade)) && (!subject || p.catalog?.subject === subject));
   shown.sort(comparePapers);
@@ -44,21 +53,22 @@ function render() {
     a.dataset.sessionId=p.id;
     const header = node('div', undefined, 'paper-card-header'), icon = node('span', undefined, 'subject-icon');
     const symbol = node('i', undefined, `fa-solid ${subjectIcons[p.catalog?.subject] || 'fa-book'}`); symbol.setAttribute('aria-hidden','true'); icon.append(symbol);
-    const title = node('div'); title.append(node('span',isExtension(p)?'錯題延伸':p.generated?'自組卷':'系統預設卷','paper-source-label'),node('p', p.catalog?.subject || '單元練習', 'paper-subject'), node('h2', p.generated ? paperTitle(p) : p.catalog?.unit || p.title));
+    const title = node('div'); title.append(node('span',isExtension(p)?'錯題延伸':p.generated?'自組卷':'老師準備的卷','paper-source-label'),node('p', p.catalog?.subject || '單元練習', 'paper-subject'), node('h3',p.generated?paperRange(p):p.catalog?.unit||p.title));
     header.append(icon,title); a.append(header);
     const body = node('div', undefined, 'paper-card-body');
-    body.append(node('p', `${p.catalog?.volume || ''}・${p.total} 題`, 'meta'));
-    if(p.generated)body.append(node('p',paperRange(p),'paper-range'));
+    const level=paperDifficulty(p);body.append(node('p',`${p.total} 題${level?'・'+level:''}`,'meta paper-difficulty'));
+    if(p.generated)body.append(node('p',paperTitle(p),'paper-name'));
     const progress = node('progress'); progress.max = p.total; progress.value = p.answered;
     progress.setAttribute('aria-label', `已答 ${p.answered} 題，共 ${p.total} 題`);
     body.append(node('p', `已作答 ${p.answered}／${p.total} 題${p.answered ? `・答對 ${p.correct} 題` : ''}`, 'paper-progress-label'), progress);
-    const level=paperDifficulty(p);if(level)body.append(node('p','所選難度：'+level,'meta paper-difficulty'));
-    const mix=paperMix(p);if(mix)body.append(node('p',mix,'meta paper-mix'));
+    const mix=paperMix(p);
     const adjustment=difficultyAdjustment(p.distribution);if(adjustment)body.append(node('p',adjustment,'meta paper-adjustment'));
     const link = node('a', p.answered === p.total ? '查看作答與解析' : p.answered ? '接續練功 →' : '開始練功 →', 'paper-start');
     link.href = paperUrl(p.id,localContext); body.append(link);
-    if(p.generated){
-      const manage=node('details',undefined,'paper-manage'),summary=node('summary','整理試卷');manage.append(summary);body.append(manage);
+    if(p.generated||mix){
+      const manage=node('details',undefined,'paper-manage'),summary=node('summary','試卷詳情');manage.append(summary);body.append(manage);
+      if(mix)manage.append(node('p',mix,'meta paper-mix'));
+      if(p.generated){
       manage.append(node('p',`試卷已儲存｜${new Date(p.saved_at).toLocaleString('zh-TW')}`,'meta'));
       const status=node('p');status.setAttribute('role','status');manage.append(status);
       const remove=node('button','刪除試卷','paper-delete');remove.type='button';manage.append(remove);
@@ -72,10 +82,19 @@ function render() {
         }catch(e){if(token===generation)status.textContent=e.message;}
         finally{if(token===generation)remove.disabled=false;}
       });
+      }
     }
     a.append(body); (p.generated?el('my-papers'):el('cloud-papers')).append(a);
   }
-  el('cloud-status').textContent = `顯示 ${shown.length} 卷・進度已從${localContext?'本機測試資料庫':'雲端'}讀取`;
+  el('cloud-status').textContent = `進度已從${localContext?'本機測試資料庫':'雲端'}讀取`;
+  renderContinue();
+}
+function renderContinue(){
+ continueBox.replaceChildren();
+ const unfinished=papers.filter(p=>p.catalog?.volume?.startsWith(String(pageGrade))&&p.answered>0&&p.answered<p.total);
+ // No last-answer timestamp in the existing payload; never label this as the last practiced paper.
+ if(unfinished.length){const p=unfinished[0],a=node('a','繼續練習 →','paper-start');a.href=paperUrl(p.id,localContext);continueBox.append(node('h2','接著完成這份練習'),node('p',(p.catalog?.subject||'')+'・'+(paperRange(p)||p.title)+'｜已作答 '+p.answered+'／'+p.total+' 題'),a);}
+ continueBox.hidden=!unfinished.length;applyView();
 }
 async function load({refreshComposer=true}={}) {
   if (!currentSession?.user || busy) return;
@@ -92,8 +111,9 @@ async function load({refreshComposer=true}={}) {
     render();
     if(refreshComposer)await composer?.ready();
     wrongQuestions.ready();
+    if(activeView==='wrong')wrongQuestions.activate(true);
   } catch (e) { if (token === generation) el('cloud-status').textContent = e.message; }
-  finally { if (token === generation) { busy = false; el('refresh-library').disabled = false; } }
+  finally { if (token === generation) { busy = false; el('refresh-library').disabled = false;if(reloadAfter){reloadAfter=false;setTimeout(()=>load({refreshComposer:false}),0);} } }
 }
 el('grade-filter').addEventListener('change', () => location.assign(quizLibraryPath(el('grade-filter').value)));
 el('subject-filter').addEventListener('change', render);
@@ -113,8 +133,9 @@ if (localContext) {
   el('cloud-identity').textContent = session?.user ? '已登入｜送出答案後會儲存練習進度' : '尚未登入・登入後才能讀取及儲存作答';
   el('cloud-lock').hidden = Boolean(session?.user); el('cloud-library').hidden = !session?.user;
   if (same) return;
+  reloadAfter=false;
   generation++; busy = false; papers = []; el('cloud-papers').replaceChildren(); el('cloud-status').textContent = '';
-  studentView=false;el('my-papers').replaceChildren();ownSection.hidden=true;ownSection.dataset.enabled='false';jumps.hidden=true;jumps.dataset.enabled='false';
+  studentView=false;el('my-papers').replaceChildren();ownSection.hidden=true;ownSection.dataset.enabled='false';continueBox.hidden=true;continueBox.replaceChildren();activeView=same?activeView:location.hash==='#wrong'?'wrong':location.hash==='#mine'?'mine':'preset';el('subject-filter').value='';applyView();
   wrongQuestions.reset();
   composer?.reset();
   el('grade-filter-label').hidden = true;

@@ -1,6 +1,7 @@
 import { createAuthenticatedTransport } from './quiz-transport.mjs';
 import { configureQuizMedia } from './quiz-media.mjs';
 const errors = {
+  paper_name_choice_invalid: '這個主題或角色目前無法使用，請更新後重新選擇。',
   paper_name_locked: '試卷由系統自動命名，不能自行修改名稱。',
   self_pool_empty: '這個範圍目前沒有符合所選難度的題目，請選其他單元或難度。',
   course_unavailable: '這個科目目前尚未開放，請選擇自己年級可用的科目。',

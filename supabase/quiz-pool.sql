@@ -30,7 +30,7 @@ grant all on public.quiz_courses,public.quiz_pool_membership,public.quiz_pool_al
 insert into public.quiz_courses values('115-1-hanlin-g3-math',3,'{"school_year":"115","volume":"3年級上學期","subject":"數學","publisher":"翰林","units":{"1":"10000以內的數","2":"10000以內的加減","3":"毫米與數線","4":"乘法","5":"角與形狀","6":"除法","7":"公斤與公克","8":"分數","9":"列表與規律"}}',true) on conflict(id) do nothing;
 create index if not exists quiz_pool_course_idx on public.quiz_pool_membership(course_id,question_id);
 
--- Student titles are assigned once from reviewed work/character pairs. Never accept client text.
+-- Student titles are assigned once from reviewed work/character pairs. Never accept free-form names.
 create table if not exists public.quiz_name_characters(id text primary key,work text not null,character text not null,enabled boolean not null default true);
 create table if not exists public.quiz_name_counters(user_id uuid not null references auth.users(id),school_year smallint not null,last_number bigint not null check(last_number>0),primary key(user_id,school_year));
 alter table public.quiz_name_characters enable row level security;
@@ -62,8 +62,11 @@ begin
  select v.document->'catalog',s.school_year into cat,yr from public.quiz_sessions s join public.quiz_versions v on v.id=s.version_id where s.id=new.session_id and s.owner_id=new.user_id and s.access_mode='self';
  g:=substring(cat->>'volume' from '^([36])')::smallint;sub:=cat->>'subject';
  if yr is null or g is null or sub is null or sub not in ('國語','英語','數學','社會','自然') then raise exception 'paper_name_metadata_invalid';end if;
- select * into person from public.quiz_name_characters where enabled order by random() limit 1;
- if person.id is null then raise exception 'paper_name_pool_empty';end if;
+ select * into person from public.quiz_name_characters where enabled
+  and (coalesce(new.config->>'name_work','')='' or work=new.config->>'name_work')
+  and (coalesce(new.config->>'name_character','')='' or id=new.config->>'name_character')
+  order by random() limit 1;
+ if person.id is null then raise exception 'paper_name_choice_invalid';end if;
  insert into public.quiz_name_counters as counter(user_id,school_year,last_number) values(new.user_id,yr,1)
   on conflict(user_id,school_year) do update set last_number=counter.last_number+1 returning last_number into n;
  new.name_year:=yr;new.name_grade:=g;new.name_subject:=sub;new.name_character_id:=person.id;new.name_number:=n;
@@ -101,7 +104,9 @@ begin
   select * into course from public.quiz_courses c where c.id=selected_course and c.enabled and c.grade=left(cls,1)::integer;
   if course.id is null then raise exception '%',case when not(p_data ? 'course_id') then 'roster_required' else 'course_unavailable' end;end if;
  end if;
- if jsonb_typeof(p_data) is distinct from 'object' or exists(select 1 from jsonb_object_keys(p_data) k where k not in ('kind','count','units','request_id','attempt_id','question_id','name','difficulty','course_id')) then raise exception 'invalid_request'; end if;
+ if jsonb_typeof(p_data) is distinct from 'object' or exists(select 1 from jsonb_object_keys(p_data) k where k not in ('kind','count','units','request_id','attempt_id','question_id','name','difficulty','course_id','name_work','name_character')) then raise exception 'invalid_request'; end if;
+ if exists(select 1 from jsonb_each(p_data) e where e.key in ('name_work','name_character') and (kind<>'self' or jsonb_typeof(e.value)<>'string' or length(e.value#>>'{}')>80)) then raise exception 'invalid_request';end if;
+ if coalesce(p_data->>'name_character','')<>'' and coalesce(p_data->>'name_work','')='' then raise exception 'paper_name_choice_invalid';end if;
  if p_data ? 'course_id' and (kind<>'self' or jsonb_typeof(p_data->'course_id') is distinct from 'string') then raise exception 'invalid_request';end if;
  if p_data ? 'difficulty' and (kind<>'self' or jsonb_typeof(p_data->'difficulty') is distinct from 'string' or mode not in ('easy','medium','hard')) then raise exception 'invalid_request';end if;
  -- Ignore legacy client names; the insert trigger is the sole naming authority.
@@ -117,6 +122,8 @@ begin
  -- Keep omitted difficulty compatible with already-saved legacy request IDs.
  if p_data ? 'difficulty' then conf:=conf||jsonb_build_object('difficulty',mode);end if;
  if p_data ? 'course_id' then conf:=conf||jsonb_build_object('course_id',selected_course);end if;
+ if coalesce(p_data->>'name_work','')<>'' then conf:=conf||jsonb_build_object('name_work',p_data->>'name_work');end if;
+ if coalesce(p_data->>'name_character','')<>'' then conf:=conf||jsonb_build_object('name_character',p_data->>'name_character');end if;
  perform pg_advisory_xact_lock(hashtextextended(uid::text||request::text,0));
  select * into old from public.quiz_generated_papers g where g.user_id=uid and g.request_id=request;
  if old.session_id is not null then
@@ -124,6 +131,7 @@ begin
   if (old.config-'name')<>(conf-'name') then raise exception 'submission_conflict'; end if;
   return jsonb_build_object('session_id',old.session_id,'display_name',old.display_name,'distribution',old.actual_distribution,'reused',true);
  end if;
+ if kind='self' and (conf ? 'name_work' or conf ? 'name_character') and not exists(select 1 from public.quiz_name_characters where enabled and work=conf->>'name_work' and (not(conf ? 'name_character') or id=conf->>'name_character')) then raise exception 'paper_name_choice_invalid';end if;
  if kind='extension' then
   reviewed:=public.quiz_wrong_questions(jsonb_build_object('action','detail','attempt_id',p_data->>'attempt_id','question_id',p_data->>'question_id'));
   select s.version_id into source_version_id from public.quiz_sessions s where s.id=(reviewed->>'session_id')::uuid;
@@ -233,7 +241,7 @@ begin
   if total>0 then courses:=courses||jsonb_build_array(jsonb_build_object('id',c.id,'subject',c.definition->>'subject','grade',c.grade,'volume',c.definition->>'volume','units',units,'total',total,'extension_available',exists(select 1 from public.quiz_question_pool p left join public.quiz_pool_membership m on m.question_id=p.question_id where p.usable and coalesce(m.course_id,'115-1-hanlin-g3-math')=c.id and coalesce(m.knowledge_reliable,true))));end if;
  end loop;
  result:=coalesce((select value from jsonb_array_elements(courses) where value->>'id'='115-1-hanlin-g3-math'),courses->0,'{}');
- return result||jsonb_build_object('available',jsonb_array_length(courses)>0,'courses',courses,'units',coalesce(result->'units','[]'));
+ return result||jsonb_build_object('available',jsonb_array_length(courses)>0,'courses',courses,'units',coalesce(result->'units','[]'),'name_characters',coalesce((select jsonb_agg(jsonb_build_object('id',id,'work',work,'character',character) order by work,id) from public.quiz_name_characters where enabled),'[]'));
 end $$;
 revoke all on function public.quiz_pool_catalog() from public,anon;
 grant execute on function public.quiz_pool_catalog() to authenticated;

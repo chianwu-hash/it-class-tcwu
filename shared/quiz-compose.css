@@ -13,3 +13,14 @@
 .paper-rename{margin-top:1rem}.paper-rename label{font-weight:700}.paper-rename button{padding:.6rem 1rem;font:inherit;border-radius:.5rem;border:1px solid #0f766e;background:#f0faf7;color:#115e59;cursor:pointer}
 #my-papers-section{margin:1.5rem 0}#my-papers-section>h2{color:#115e59}#compose-result button{margin-left:.7rem}#my-papers-section[hidden]{display:none!important}
 .quiz-library-page .paper-delete{align-self:flex-start;margin-top:1rem;padding:.6rem 1rem;border:1px solid #b45344;border-radius:.5rem;color:#963c30;background:#fff6f3;font:inherit;cursor:pointer}.quiz-library-page .paper-delete:disabled{opacity:.6;cursor:wait}
+#quiz-composer .compose-options{display:flex;gap:16px;flex-wrap:wrap;margin:16px 0}
+#quiz-composer .compose-options label{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#quiz-composer .compose-naming{border:1px solid #d2bfe9;border-radius:14px;padding:12px 16px;margin:20px 0;background:#fff9}
+#quiz-composer .compose-naming legend{font-weight:700;padding:0 6px}
+#quiz-composer .compose-naming p{font-size:14px;margin:4px 0}
+#quiz-composer .compose-rules{margin:16px 0;font-size:14px;line-height:1.8}
+#quiz-composer .compose-rules summary{cursor:pointer;padding:8px 0;font-weight:700}
+#quiz-composer #compose-result{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+#quiz-composer #compose-result button,#quiz-composer #compose-result a{margin:0}
+#quiz-composer #compose-status:not(:empty){padding:14px;border:1px solid #baa3d8;border-radius:12px;background:white;overflow-wrap:anywhere}
+@media(max-width:550px){#quiz-composer .compose-options{display:grid;grid-template-columns:1fr}#quiz-composer .compose-naming{padding:12px}#quiz-composer #compose-result>*{width:100%;box-sizing:border-box;text-align:center}}

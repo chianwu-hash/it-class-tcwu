@@ -14,6 +14,21 @@ async function legacyPaper(db,user,grade,generated=true,deleted=false){
 }
 const snapshot=async db=>JSON.stringify(await Promise.all(['quiz_versions','quiz_answers','quiz_leaf_awards'].map(async t=>(await db.query(`select to_jsonb(x) value from public.${t} x order by to_jsonb(x)::text`)).rows)));
 
+test('主題角色白名單、主題內隨機、完全隨機、冪等重送與偽造輸入隔離',async()=>{
+ const db=await createQuizDb();try{
+  await db.query("update public.student_enrollments set class_code='301'");await db.exec(await readFile('supabase/quiz-wrong-questions.sql','utf8'));await db.exec(poolSql);
+  for(let i=0;i<18;i++){const q=newQuestion();q.id='choice_'+i;await db.query('insert into public.quiz_question_pool values($1,$1,$1,$2,$3,$3,$4,$5,true,$6,$7,true)',[q.id,'[1]','knowledge',[-3,0,3][i%3],'v1',JSON.stringify(q),'{}']);}
+  const base={kind:'self',count:5,units:[1]},compose=c=>rpc(db,studentId(1),'quiz_compose',{...base,request_id:crypto.randomUUID(),...c});
+  const config={name_work:'寶可夢',name_character:'pokemon-eevee',request_id:crypto.randomUUID()};const chosen=await compose(config);assert.match(chosen.display_name,/寶可夢・伊布/);assert.equal((await compose(config)).session_id,chosen.session_id);
+  await assert.rejects(compose({...config,name_character:'pokemon-pikachu'}),/submission_conflict/);
+  const themed=await compose({name_work:'三麗鷗'});assert.match(themed.display_name,/三麗鷗・/);const random=await compose({});assert.match(random.display_name,/^三年級數學｜.+・.+｜003$/);
+  for(const c of [{name_work:'任意名稱'},{name_work:'寶可夢',name_character:'conan-conan'},{name_character:'pokemon-eevee'},{name_work:'寶可夢',name_character:'<script>'}])await assert.rejects(compose(c),/paper_name_choice_invalid/);
+  for(const c of [{name_work:4},{name_work:null},{name_character:[]},{kind:'extension',name_work:'寶可夢',count:3}])await assert.rejects(compose(c),/invalid_request/);
+  assert.equal((await db.query('select count(*)::int n from public.quiz_generated_papers')).rows[0].n,3);
+  const catalog=await db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[studentId(1)]);await tx.exec('set local role authenticated');return (await tx.query('select public.quiz_pool_catalog() r')).rows[0].r;});assert.equal(catalog.name_characters.length,22);assert.ok(catalog.name_characters.every(p=>p.id&&p.work&&p.character));assert.doesNotMatch(JSON.stringify(catalog),/option_id|explanation/);
+ }finally{await db.close();}
+});
+
 test('舊自組與已刪卷安全換名，老師卷、版本、答案及葉片不變，重跑不重編號',async()=>{
  const db=await createQuizDb();try{
   await db.query("update public.student_enrollments set class_code=case when email='student1@example.invalid' then '301' else '601' end");await db.exec(await readFile('supabase/quiz-rewards.sql','utf8'));

@@ -93,3 +93,50 @@
 .quiz-library-page .paper-jumps a:last-child{background:#eef7ff;border-color:#a6cbe8;color:#155681}
 .quiz-library-page .paper-jumps a:focus-visible,.quiz-library-page .paper-manage summary:focus-visible{outline:3px solid #0f766e;outline-offset:3px}
 .quiz-library-page .paper-collection{scroll-margin-top:90px}
+
+/* 選卷入口：建立動作與三種清單分開，保留年級與來源色。 */
+.quiz-library-page [hidden]{display:none!important}
+.quiz-library-page .library-hero{border-radius:0 0 24px 24px}
+.quiz-library-page .library-hero-inner{padding:16px 24px}
+.quiz-library-page .library-hero h1{font-size:clamp(26px,3vw,32px);margin:5px 0}
+.quiz-library-page .library-description{font-size:14px;font-weight:400}
+.quiz-library-page .hero-ornament{font-size:110px;bottom:-20px}
+.quiz-library-page main{padding-top:20px}
+.quiz-library-page .compose-entry{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:0 0 20px}
+.quiz-library-page #compose-toggle{background:#7350a2;color:white;border-color:#7350a2;padding:12px 20px;min-height:48px;font-size:17px}
+.quiz-library-page #compose-availability{font-size:14px;color:#52656a;line-height:1.7}
+.quiz-library-page .library-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 14px}
+.quiz-library-page .library-tabs button{flex:1;border:2px solid #c4dbe4;min-width:0;background:white;color:#245768;padding:12px 8px;line-height:1.5}
+.quiz-library-page #tab-preset[aria-selected="true"]{background:#155681;color:white;border-color:#155681}
+.quiz-library-page #tab-mine[aria-selected="true"]{background:#7350a2;color:white;border-color:#7350a2}
+.quiz-library-page #tab-wrong[aria-selected="true"]{background:#0f766e;color:white;border-color:#0f766e}
+.quiz-library-page :is(button,a,select,summary):focus-visible{outline:3px solid #0f766e;outline-offset:4px}
+.quiz-library-page .continue-practice{border:2px solid var(--quiz-border);border-radius:20px;padding:18px 22px;background:white;margin-bottom:18px;display:grid;grid-template-columns:1fr auto;gap:6px 20px;align-items:center}
+.quiz-library-page .continue-practice h2{margin:0;font-size:20px}
+.quiz-library-page .continue-practice p{margin:0;line-height:1.7;color:#40545f;grid-column:1}
+.quiz-library-page .continue-practice a{grid-column:2;grid-row:1/3;padding:12px 18px}
+.quiz-library-page .paper-card-header h3{font-size:19px;line-height:1.6;margin:0;overflow-wrap:anywhere}
+.quiz-library-page .paper-card-header>div{min-width:0}
+.quiz-library-page .paper-name{font-size:13px;line-height:1.8;color:#655178;overflow-wrap:anywhere;margin:0 0 8px}
+.quiz-library-page .paper-collection{margin-top:14px;padding:20px}
+.quiz-library-page .collection-label{display:none}
+.quiz-library-page .collection-heading h2{font-size:23px}
+.quiz-library-page .paper-collection .papers{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.quiz-library-page .paper-card-body{gap:8px}
+.quiz-library-page .paper-card-header{padding:14px;align-items:flex-start}
+.quiz-library-page .paper-card-body{padding:14px}
+.quiz-library-page .paper-source-label{margin-bottom:4px}
+.quiz-library-page .paper-adjustment{color:#8b4911}
+@media(max-width:850px){.quiz-library-page .paper-collection .papers{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:550px){
+ .quiz-library-page .library-hero-inner{padding:14px 16px}
+ .quiz-library-page main{padding:16px 12px 32px}
+ .quiz-library-page .library-tabs{gap:5px}
+ .quiz-library-page .library-tabs button{font-size:14px;padding:11px 4px}
+ .quiz-library-page .paper-collection{padding:12px}
+ .quiz-library-page .paper-collection .papers{grid-template-columns:1fr}
+ .quiz-library-page .continue-practice{display:block;padding:16px}
+ .quiz-library-page .continue-practice a{display:inline-block;margin-top:10px}
+ .quiz-library-page #refresh-library{margin-left:0}
+ .quiz-library-page .filters{padding:12px;gap:10px}
+}
