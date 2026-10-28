@@ -21,4 +21,8 @@
 
 ## 正式資料更新
 
-2026-10-28 01:21 UTC完成後端更新：24份generated paper全部命名，其中16份已移除卷也更新，missing_name為0；交易內protectedDataUnchanged為true。私人備份與驗收在ignored `automation/output/quiz/safe-names-20261028/`。前端發布與正式學生試走完成後補記。
+2026-10-28 01:21 UTC完成後端更新：24份generated paper全部命名，其中16份已移除卷也更新，missing_name為0；交易內protectedDataUnchanged為true。私人備份與驗收在ignored `automation/output/quiz/safe-names-20261028/`。
+
+功能commit `4255439`已push、Vercel正式READY。正式三年級學生瀏覽器驗證通過：舊自組卷皆符合新格式，前端無自由命名／改名欄，實際組5題、重送／併發復用原卷、直接API傳任意名稱不生效、改名回明確錯誤、作答頁接回名稱與0／5進度、手機390px不溢出。只軟刪本次兩份QA卷後，其他卷ID／標題／已答與正確題數，以及全部已得葉紀錄和更新前一致。
+
+正式努力樹3片考前練功葉均呈現新自動卷名；沒有新增或重發葉片。六年級以本機實際瀏覽器及SQL年級測試驗證，未使用正式六年級學生帳號。證據：`browser-local.json`、`browser-production.json`、`deployment.json`。
