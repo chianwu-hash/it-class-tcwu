@@ -1,5 +1,5 @@
 import { initQuizModule } from './quiz-module.js';
-import { createQuizRequest } from './quiz-api.mjs';
+import { createQuizRequest } from './quiz-api.mjs?v=20261028-student-only';
 import { initImageLightbox } from './image-lightbox.js';
 import {resolveQuizMedia} from './quiz-media.mjs';
 
@@ -68,6 +68,7 @@ async function start() {
       try {
         const identity = await request('library_sessions');
         if (token !== authGeneration || currentSession?.user?.id !== id) return;
+        if(identity.role!=='student')throw new Error('考前練功房僅限名冊中的學生帳號使用。');
         const redirect = gradeRoute.quizStudentRedirect(identity, location.pathname, location.search);
         if (redirect) { location.replace(redirect); return; }
         practiceRole = identity.role;

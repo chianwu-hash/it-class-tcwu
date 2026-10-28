@@ -66,6 +66,7 @@ end $$;
 create or replace function public.quiz_rewards(p_data jsonb default '{}') returns jsonb language plpgsql security definer set search_path='' as $$
 declare identity jsonb;g integer;items jsonb;
 begin
+ if coalesce(public.is_teacher(),false) then return jsonb_build_object('awards','[]'::jsonb);end if;
  identity:=public.quiz_action('library_sessions');if identity->>'role'<>'student' then return jsonb_build_object('awards','[]'::jsonb);end if;
  g:=(identity->>'grade')::integer;
  if p_data ? 'course_id' and p_data->>'course_id'<>'grade'||g||'-115-1' then raise exception 'course_unavailable';end if;

@@ -32,8 +32,8 @@ test('錯題整理：本人隔離、題組／整卷揭答、固定亂序、關�
   const complete=await paper(db,{reveal:'complete',unit:'第二單元'});await quizCall(db,studentId(1),'join',complete.args);await answer(db,studentId(1),complete,0);
   assert.equal((await wrong(db,studentId(1),{unit:'第二單元'})).total,0);await answer(db,studentId(1),complete,1,true);assert.equal((await wrong(db,studentId(1),{unit:'第二單元'})).total,1);
   assert.deepEqual((await db.query('select * from public.quiz_answers where attempt_id=$1 order by question_id',[row.attempt_id])).rows,before);
-  const personal=await paper(db,{mode:'personal',count:1});await quizCall(db,TEACHER,'join',personal.args);await answer(db,TEACHER,personal,0);
-  assert.equal((await wrong(db,TEACHER,{grade:6})).total,1);assert.equal((await wrong(db,OTHER_TEACHER,{grade:6})).total,0);
+  const personal=await paper(db,{mode:'personal',count:1});await assert.rejects(quizCall(db,TEACHER,'join',personal.args),/student_required/);
+  await assert.rejects(wrong(db,TEACHER,{grade:6}),/student_required/);await assert.rejects(wrong(db,OTHER_TEACHER,{grade:6}),/student_required/);
   await db.query('delete from public.student_enrollments where email=$1',['student1@example.invalid']);await assert.rejects(wrong(db,studentId(1)),/roster_required/);
  }finally{await db.close();}
 });

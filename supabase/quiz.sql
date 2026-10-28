@@ -213,6 +213,8 @@ declare
  new_answer boolean:=false; leaf jsonb:='{}';
 begin
  if uid is null then raise exception 'login_required'; end if;
+ -- Practice pages and answer APIs are student-only; teacher authoring/monitoring remains separate.
+ if teacher and p_action in ('library_sessions','join','resume','submit','view_question') then raise exception 'student_required';end if;
  if p_action in ('list','get','save','publish','versions','open','monitor','close','sessions','personal_sessions') and not teacher then raise exception 'teacher_required'; end if;
  if p_action in ('personal_sessions','library_sessions') then
   if not teacher then

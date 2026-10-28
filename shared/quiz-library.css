@@ -104,6 +104,8 @@
 .quiz-library-page main{padding-top:20px}
 .quiz-library-page .compose-entry{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:0 0 20px}
 .quiz-library-page #compose-toggle{background:#7350a2;color:white;border-color:#7350a2;padding:12px 20px;min-height:48px;font-size:17px}
+.quiz-library-page #compose-toggle:disabled{cursor:not-allowed}
+.quiz-library-page #compose-toggle[aria-busy="true"]{cursor:wait}
 .quiz-library-page #compose-availability{font-size:14px;color:#52656a;line-height:1.7}
 .quiz-library-page .library-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 14px}
 .quiz-library-page .library-tabs button{flex:1;border:2px solid #c4dbe4;min-width:0;background:white;color:#245768;padding:12px 8px;line-height:1.5}

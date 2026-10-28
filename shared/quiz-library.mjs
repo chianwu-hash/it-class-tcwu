@@ -1,8 +1,8 @@
 import { initNavbarAuth } from './navbar-auth.js';
-import { createQuizRequest } from './quiz-api.mjs?v=20261028-library-ux';
+import { createQuizRequest } from './quiz-api.mjs?v=20261028-student-only';
 import { quizPageGrade, quizLibraryPath, quizStudentRedirect } from './quiz-grade-route.mjs';
-import { initWrongQuestions } from './quiz-wrong-questions.mjs?v=20261028-library-ux';
-import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs?v=20261028-library-ux';
+import { initWrongQuestions } from './quiz-wrong-questions.mjs?v=20261028-student-only';
+import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs?v=20261028-student-only';
 import {comparePapers,paperRange,paperTitle,paperMix,isExtension,paperDifficulty} from './quiz-paper-display.mjs';
 import {difficultyAdjustment} from './quiz-difficulty.mjs';
 
@@ -96,23 +96,30 @@ function renderContinue(){
  if(unfinished.length){const p=unfinished[0],a=node('a','繼續練習 →','paper-start');a.href=paperUrl(p.id,localContext);continueBox.append(node('h2','接著完成這份練習'),node('p',(p.catalog?.subject||'')+'・'+(paperRange(p)||p.title)+'｜已作答 '+p.answered+'／'+p.total+' 題'),a);}
  continueBox.hidden=!unfinished.length;applyView();
 }
+function showLock(message){
+ el('cloud-library').hidden=true;el('cloud-lock').hidden=false;
+ el('cloud-lock').querySelector('h2').textContent='僅限本校學生使用';
+ const notes=el('cloud-lock').querySelectorAll('p');notes[0].textContent=message;notes[1].textContent='請使用115學年度三、六年級名冊中的學生 Google 帳號登入。';
+}
 async function load({refreshComposer=true}={}) {
   if (!currentSession?.user || busy) return;
   const token = generation; busy = true; el('refresh-library').disabled = true; el('cloud-status').textContent = '正在讀取雲端進度…';
   try {
     const data = await request('library_sessions');
     if (token !== generation) return;
+    if(data.role!=='student')throw Object.assign(new Error('考前練功房僅限名冊中的學生帳號使用。'),{code:'student_required'});
     const redirect = quizStudentRedirect(data, location.pathname);
     if (redirect) { location.replace(redirect); return; }
-    el('grade-filter-label').hidden = data.role !== 'teacher';
+    el('grade-filter-label').hidden=true;
+    el('cloud-lock').hidden=true;el('cloud-library').hidden=false;
     papers = data.sessions;
     studentView=data.role==='student';
     el('cloud-identity').textContent = localContext ? `本機合成學生 ${localContext.student}｜進度存於本機測試資料庫，尚未同步雲端` : data.role === 'teacher' ? '教師試答｜可切換年級檢視' : '學生練習｜進度已從雲端讀取';
     render();
-    if(refreshComposer)await composer?.ready();
+    if(refreshComposer)await composer?.ready({student:data.role==='student'});
     wrongQuestions.ready();
     if(activeView==='wrong')wrongQuestions.activate(true);
-  } catch (e) { if (token === generation) el('cloud-status').textContent = e.message; }
+  } catch (e) { if (token === generation) {studentView=false;papers=[];composer.reset();wrongQuestions.reset();el('cloud-papers').replaceChildren();el('my-papers').replaceChildren();continueBox.replaceChildren();continueBox.hidden=true;el('cloud-identity').textContent='尚未取得學生使用資格';showLock(['student_required','roster_required','login_required'].includes(e.code)?e.message:'暫時無法確認學生資格，請稍後重新整理。');} }
   finally { if (token === generation) { busy = false; el('refresh-library').disabled = false;if(reloadAfter){reloadAfter=false;setTimeout(()=>load({refreshComposer:false}),0);} } }
 }
 el('grade-filter').addEventListener('change', () => location.assign(quizLibraryPath(el('grade-filter').value)));
@@ -130,9 +137,9 @@ if (localContext) {
 } else initNavbarAuth({ onSessionResolved(session) {
   const same = (session?.user?.id || null) === (currentSession?.user?.id || null);
   currentSession = session;
-  el('cloud-identity').textContent = session?.user ? '已登入｜送出答案後會儲存練習進度' : '尚未登入・登入後才能讀取及儲存作答';
-  el('cloud-lock').hidden = Boolean(session?.user); el('cloud-library').hidden = !session?.user;
-  if (same) return;
+  if (same) {if(!session?.user){el('cloud-identity').textContent='尚未登入・僅限名冊中的學生使用';showLock('請使用名冊中的學生帳號登入後開始練習。');}return;}
+  el('cloud-identity').textContent=session?.user?'正在確認學生資格…':'尚未登入・僅限名冊中的學生使用';
+  showLock(session?.user?'正在確認學生資格，請稍候…':'請使用名冊中的學生帳號登入後開始練習。');
   reloadAfter=false;
   generation++; busy = false; papers = []; el('cloud-papers').replaceChildren(); el('cloud-status').textContent = '';
   studentView=false;el('my-papers').replaceChildren();ownSection.hidden=true;ownSection.dataset.enabled='false';continueBox.hidden=true;continueBox.replaceChildren();activeView=same?activeView:location.hash==='#wrong'?'wrong':location.hash==='#mine'?'mine':'preset';el('subject-filter').value='';applyView();

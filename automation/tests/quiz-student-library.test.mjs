@@ -26,7 +26,7 @@ test('學生選卷：名冊年級、個人紀錄隔離、揭答與跨班不限29
     await assert.rejects(call(outsider,'library_sessions'),/roster_required/);
     await assert.rejects(call(studentId(31),'join',sessions[1].session),/roster_required/);
     await assert.rejects(call(TEACHER,'join',sessions[1].session),/student_required/);
-    assert.equal((await call(OTHER_TEACHER,'library_sessions')).sessions.length,0);
+    await assert.rejects(call(OTHER_TEACHER,'library_sessions'),/student_required/);
     const args=sessions[1].session,joined=await call(studentId(1),'join',args);
     assert.doesNotMatch(JSON.stringify(joined),/原解析|option_id|explanation/);
     const q=sessions[1].document.blocks[0].questions[0];
