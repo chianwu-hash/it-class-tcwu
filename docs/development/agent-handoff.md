@@ -1,5 +1,15 @@
 # Agent Handoff
 
+## 已完成：304課堂效能優化、本機並行驗證與正式發布 — 2026-10-28
+
+- 使用者核准先與Claude討論，再優化重複讀取、答題回應與鎖；保留學生限定登入、儲存／重送、揭答、防弊、努力樹。先在本機比較整班登入完成後驗證、組卷、答題的前後結果，通過才上線；不付費，不在正式環境壓測。
+- Codex唯一寫入者；Claude透過chat-mode唯讀檢視策展程式與討論，不接觸學生資料、憑證、雲端或部署。Claude不能再派代理。
+- 既有PGlite無法證明資料庫並行鎖行為，準備獨立本機Postgres；合成身分模擬Google登入完成後的應用層資格驗證，不宣稱已壓測外部Google OAuth服務或重現免費雲端記憶體限制。
+- 原因尚未定案，事故資料見quiz-304-service-incident-20261028.md；優化前基準必須在相同資料／負載／設定下量測，確認答案、葉片與權限不退化。
+- 本輪優先檢視supabase/quiz.sql、quiz-pool.sql、quiz-rewards.sql與shared/quiz-library.mjs、quiz-server.mjs、quiz-student.mjs、quiz-compose.mjs；實作與測試檔由Codex掌管。
+- 12:35更新：三次Claude唯讀審查均completed、viewer及Git基準核對通過。已實作私有資格helper、一次彙整選卷進度／揭答、compact只省document、本人鎖與有限關場，以及組卷已作答次數快照。詳見quiz-performance-20261028.md。前幾批正確性全過但個別max退步，仍未發布；不可把整體改善說成發布通過。最後以actual-3同規格跑三輪22人及30人，SQL 12項排序／權限等價測試已過，之後仍須完整本機瀏覽器／回歸與正式小量驗收。無付費、無正式壓測。
+- 12:44完成：actual-3三輪22人與30人原門檻全過、50項回歸0跳過，本機3／6組卷／接續／錯題／手機、lost-response重送、錯快照resume與燈箱均過。961答案與63葉完全一致；送答payload減75.9%，30人p95 106→78ms；DB中位下降28.9%未達30目標，不隱瞞。SQL七函式更新既有資料摘要未變；功能commit cc9a2b5 已push，正式Vercel dpl_E2Z8Zz7df7scLVAzVFYxPNenZsFQ READY及別名確認。正式已登入QA學生新5題只答1題正確、保存與接續正常、不發葉、只移除新卷；非學生8入口全拒絕。未真壓Google OAuth／Supabase Auth、未實測正式6年級學生，不能保證根治Nano尖峰；無付費與正式壓測。詳細證據與限制以quiz-performance-20261028.md為準。獨立4381測試server已停止、原4380保留，所有瀏覽器租約已釋放。
+
 ## 錯題回顧已上線，相似卷維持規劃 — 2026-10-27
 
 - 使用者後續授權錯題記錄／整理，已完成三、六年級選卷頁「我的錯題」與 `#wrong` 入口。依科目／單元篩選、每頁20筆；保留原選項順序、當時答案及圖文解析，沿用字型、燈箱與Drive＋Cloudflare。
