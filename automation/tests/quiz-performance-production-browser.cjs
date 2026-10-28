@@ -9,7 +9,7 @@ const runtime=createRequire('D:/projects/cdp-tools/package.json'),{connectCdp}=r
  const out='automation/output/quiz/bench-performance-20261028';let page,sid,report={passed:false},original;
  async function identity(){return page.evaluate(async uid=>{
   const auth=await import('/shared/auth.js'),session=(await auth.supabase.auth.getSession()).data.session;
-  if(session?.user.id!==uid||session.user.email!=='chianwu@apps.ntpc.edu.tw'||document.querySelector('#auth-status')?.textContent!==session.user.email)throw Error('qa_identity_mismatch');
+  if(session?.user.id!==uid||session.user.email!=='chianwu@apps.ntpc.edu.tw'||!document.querySelector('#auth-status')?.title.includes(session.user.email))throw Error('qa_identity_mismatch');
   const {createQuizRequest}=await import('/shared/quiz-api.mjs?v=20261028-performance');window.__perfRequest=await createQuizRequest({getSession:()=>session});return true;
  },qa.testUserId);}
  try{

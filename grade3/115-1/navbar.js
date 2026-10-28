@@ -55,6 +55,9 @@
     const navHTML = window.__buildCourseNavbarHtml(navConfig);
     currentScript.insertAdjacentHTML("beforebegin", navHTML);
     currentScript.remove();
+    if (quizMode) import('../../shared/grade6-nav-identity.js?v=20261028-roster')
+        .then(({ initGrade6NavIdentity }) => initGrade6NavIdentity({ expanded: true }))
+        .catch(error => console.warn('練功房導覽身分暫時無法讀取', error));
     if (quizMode) return;
 
     // Match the semester home cards; never apply the previous semester's visibility.
