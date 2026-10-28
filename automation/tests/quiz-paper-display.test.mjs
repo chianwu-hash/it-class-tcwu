@@ -26,7 +26,7 @@ test('新舊自組卷顯示中文範圍，去除重複與非法單元，保持�
  assert.equal(paperRange({...p,catalog:{...p.catalog,unit:'無法辨識'}}),'自選範圍');
  assert.equal(paperMix({...p,distribution:{easy:1,medium:3,hard:1}}),'題目組合：易 1 題・中 3 題・難 1 題');
 });
-test('錯題延伸標示學習重點，新舊卷一致且保留學生自訂名稱',()=>{
+test('錯題延伸標示學習重點，新舊卷一致且保留後端指定卷名',()=>{
  const p={...preset('同重點再練習：同分母分數比較','數學'),generated:true,title:'數學同重點延伸練習'};
  assert.ok(isExtension(p));assert.equal(paperTitle(p),'同重點再練：同分母分數比較');assert.equal(paperRange(p),'學習重點：同分母分數比較');
  assert.equal(paperTitle({...p,display_name:'週五再練'}),'週五再練');assert.equal(paperRange({...p,generated_kind:'extension',learning_point:'長度換算'}),'學習重點：長度換算');

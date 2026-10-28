@@ -8,7 +8,7 @@ export function localPoolContext(){
 export function paperUrl(id,context){return `quiz.html?${context?`local=1&student=${context.student}`:'cloud=1'}&session=${encodeURIComponent(id)}`;}
 export function initComposer({request,context}){
  const library=document.getElementById('cloud-library'),panel=make('section');panel.id='quiz-composer';panel.className='panel';panel.hidden=true;
- panel.innerHTML='<h2>自己選範圍練習</h2><p>組卷成功就會自動儲存到「我的自組卷」，不必先作答。</p><form id="compose-form"><label>試卷名稱（選填）<input id="compose-name" type="text" maxlength="60" placeholder="例如：我的分數複習卷"></label><fieldset id="compose-units"><legend>選擇單元（可複選）</legend></fieldset><label>題數（最多20題） <select id="compose-count"><option value="5">5題</option><option value="10" selected>10題</option><option value="15">15題</option><option value="20">20題</option></select></label><p id="compose-mix"></p><button type="submit">組卷並儲存</button></form><p id="compose-status" role="status" aria-live="polite"></p><div id="compose-result"></div>';
+ panel.innerHTML='<h2>自己選範圍練習</h2><p>組卷成功就會自動儲存到「我的自組卷」。系統會用年級、科目、作品、角色與流水號命名，方便找到自己的練習卷。</p><form id="compose-form"><fieldset id="compose-units"><legend>選擇單元（可複選）</legend></fieldset><label>題數（最多20題） <select id="compose-count"><option value="5">5題</option><option value="10" selected>10題</option><option value="15">15題</option><option value="20">20題</option></select></label><p id="compose-mix"></p><button type="submit">組卷並儲存</button></form><p id="compose-status" role="status" aria-live="polite"></p><div id="compose-result"></div>';
  library.insertBefore(panel,library.querySelector('.filters'));
  const difficultyLabel=make('label','試卷難度 '),difficulty=make('select');difficultyLabel.className='compose-difficulty';difficulty.id='compose-difficulty';
  for(const [value,m] of Object.entries(difficultyModes)){const o=make('option',m.label);o.value=value;o.defaultSelected=value==='medium';difficulty.append(o);}difficultyLabel.append(difficulty);document.getElementById('compose-mix').before(difficultyLabel);
@@ -31,15 +31,15 @@ export function initComposer({request,context}){
  panel.querySelector('form').addEventListener('input',()=>{pending=null;result.replaceChildren();status.textContent='';});
  panel.querySelector('form').addEventListener('submit',async e=>{
   e.preventDefault();if(busy)return;
-  const units=[...panel.querySelectorAll('input:checked')].map(n=>Number(n.value)),count=Number(document.getElementById('compose-count').value),name=document.getElementById('compose-name').value.trim();
+  const units=[...panel.querySelectorAll('input:checked')].map(n=>Number(n.value)),count=Number(document.getElementById('compose-count').value);
   if(!units.length){status.textContent='先勾選至少一個想複習的單元。';return;}
-  pending??={kind:'self',count,units,name,course_id:courseSelect.value,difficulty:difficulty.value,request_id:crypto.randomUUID()};const g=generation;
+  pending??={kind:'self',count,units,course_id:courseSelect.value,difficulty:difficulty.value,request_id:crypto.randomUUID()};const g=generation;
   busy=true;panel.querySelectorAll('button,input,select').forEach(n=>n.disabled=true);status.textContent='正在組卷並儲存…';
   try{
    const r=await request('compose',pending);if(g!==generation)return;const d=r.distribution;
-   status.textContent=`✓ 已儲存到「我的自組卷」。${name?`名稱：${name}。`:''}${difficultyModes[d.difficulty||'medium'].label}。${difficultyAdjustment(d)}共${d.actual}題：易${d.easy}、中${d.medium}、難${d.hard}。${d.actual<count?'所選難度可用的題目較少，先練這幾題。':''}`;
+   status.textContent=`✓ 已儲存到「我的自組卷」。名稱：${r.display_name}。${difficultyModes[d.difficulty||'medium'].label}。${difficultyAdjustment(d)}共${d.actual}題：易${d.easy}、中${d.medium}、難${d.hard}。${d.actual<count?'所選難度可用的題目較少，先練這幾題。':''}`;
    const a=make('a',`開始這${d.actual}題 →`);a.className='paper-start';a.href=paperUrl(r.session_id,context);
-   const more=make('button','再組一份新卷');more.type='button';more.addEventListener('click',()=>{pending=null;result.replaceChildren();status.textContent='原卷已保留在「我的自組卷」。可以調整名稱和範圍，再組一份。';document.getElementById('compose-name').focus();});
+   const more=make('button','再組一份新卷');more.type='button';more.addEventListener('click',()=>{pending=null;result.replaceChildren();status.textContent='原卷已保留在「我的自組卷」。可以調整範圍或難度，再組一份。';courseSelect.focus();});
    result.replaceChildren(a,more);document.dispatchEvent(new CustomEvent('quiz-paper-saved'));
   }catch(e){if(g===generation)status.textContent=e.message;}
   finally{if(g===generation){busy=false;panel.querySelectorAll('button,input,select').forEach(n=>n.disabled=false);}}

@@ -1,5 +1,5 @@
 import { initNavbarAuth } from './navbar-auth.js';
-import { createQuizRequest } from './quiz-api.mjs?v=20261027-all-subjects';
+import { createQuizRequest } from './quiz-api.mjs?v=20261028-safe-names';
 import { quizPageGrade, quizLibraryPath, quizStudentRedirect } from './quiz-grade-route.mjs';
 import { initWrongQuestions } from './quiz-wrong-questions.mjs';
 import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs';
@@ -14,7 +14,7 @@ const localContext = localPoolContext();
 const request = await createQuizRequest({ getSession: () => currentSession, local: Boolean(localContext), localStudent: localContext?.student });
 const composer = initComposer({request,context:localContext});
 const ownSection=document.createElement('section');ownSection.id='my-papers-section';ownSection.className='paper-collection collection-own';ownSection.hidden=true;ownSection.setAttribute('aria-labelledby','my-papers-title');
-ownSection.innerHTML='<header class="collection-heading"><span class="collection-label">自己選範圍</span><h2 id="my-papers-title">我的自組卷 <span id="my-papers-count" class="collection-count"></span></h2><p>自己組的卷與錯題延伸卷，可以改名、整理，並接著作答。</p></header><p id="my-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的自組卷，可以從上方選擇範圍組一份。</p><div id="my-papers" class="papers"></div>';
+ownSection.innerHTML='<header class="collection-heading"><span class="collection-label">自己選範圍</span><h2 id="my-papers-title">我的自組卷 <span id="my-papers-count" class="collection-count"></span></h2><p>依科目、複習範圍與角色卷名找到練習，整理試卷，並接著作答。</p></header><p id="my-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的自組卷，可以從上方選擇範圍組一份。</p><div id="my-papers" class="papers"></div>';
 const presetSection=document.createElement('section');presetSection.id='system-papers-section';presetSection.className='paper-collection collection-preset';presetSection.setAttribute('aria-labelledby','system-papers-title');
 presetSection.innerHTML='<header class="collection-heading"><span class="collection-label">已準備好的練習</span><h2 id="system-papers-title">系統預設卷 <span id="system-papers-count" class="collection-count"></span></h2><p>各科單元卷已經準備好，選一份就能開始練習。</p></header><p id="system-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的系統預設卷。</p>';
 el('cloud-papers').before(presetSection);presetSection.append(el('cloud-papers'));presetSection.before(ownSection);
@@ -60,19 +60,17 @@ function render() {
     if(p.generated){
       const manage=node('details',undefined,'paper-manage'),summary=node('summary','整理試卷');manage.append(summary);body.append(manage);
       manage.append(node('p',`試卷已儲存｜${new Date(p.saved_at).toLocaleString('zh-TW')}`,'meta'));
-      const form=node('form',undefined,'paper-rename'),label=node('label','試卷名稱'),input=node('input');input.type='text';input.maxLength=60;input.required=true;input.value=paperTitle(p);input.setAttribute('aria-label','試卷名稱');label.append(input);
-      const save=node('button','儲存名稱'),status=node('p');save.type='submit';status.setAttribute('role','status');form.append(label,save,status);manage.append(form);
-      form.addEventListener('submit',async e=>{e.preventDefault();const name=input.value.trim();if(!name){status.textContent='請輸入試卷名稱。';return;}const uid=currentSession?.user?.id,token=generation;save.disabled=true;input.disabled=true;status.textContent='正在儲存名稱…';try{const r=await request('rename_paper',{session_id:p.id,name});if(token!==generation||currentSession?.user?.id!==uid)return;p.display_name=r.display_name;title.querySelector('h2').textContent=r.display_name;input.value=r.display_name;status.textContent='名稱已儲存。';}catch(e){if(token===generation)status.textContent=e.message;}finally{if(token===generation){save.disabled=false;input.disabled=false;}}});
+      const status=node('p');status.setAttribute('role','status');manage.append(status);
       const remove=node('button','刪除試卷','paper-delete');remove.type='button';manage.append(remove);
       remove.addEventListener('click',async()=>{
-        if(remove.disabled||save.disabled)return;
+        if(remove.disabled)return;
         if(!confirm(`要刪除「${paperTitle(p)}」嗎？\n試卷會從「我的自組卷」移除，已儲存的作答與錯題紀錄會保留。`))return;
-        const uid=currentSession?.user?.id,token=generation;remove.disabled=true;save.disabled=true;input.disabled=true;status.textContent='正在移除試卷…';
+        const uid=currentSession?.user?.id,token=generation;remove.disabled=true;status.textContent='正在移除試卷…';
         try{await request('delete_paper',{session_id:p.id});if(token!==generation||currentSession?.user?.id!==uid)return;
           papers=papers.filter(x=>x.id!==p.id);render();el('cloud-status').textContent='已從「我的自組卷」移除試卷；作答與錯題紀錄已保留。';
           document.dispatchEvent(new CustomEvent('quiz-paper-removed',{detail:{sessionId:p.id}}));
         }catch(e){if(token===generation)status.textContent=e.message;}
-        finally{if(token===generation){remove.disabled=false;save.disabled=false;input.disabled=false;}}
+        finally{if(token===generation)remove.disabled=false;}
       });
     }
     a.append(body); (p.generated?el('my-papers'):el('cloud-papers')).append(a);
