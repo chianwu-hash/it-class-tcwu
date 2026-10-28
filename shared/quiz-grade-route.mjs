@@ -7,6 +7,10 @@ export function quizLibraryPath(grade) {
   if (![3,6].includes(Number(grade))) throw new Error('無法辨識測驗年級。');
   return `/grade${Number(grade)}/115-1/quiz-library.html`;
 }
+export function quizLibraryForEnrollment(enrollment) {
+  const grade = String(enrollment?.class_code || '').match(/^([36])[0-9]{2}$/)?.[1];
+  return grade ? quizLibraryPath(Number(grade)) : null;
+}
 export function quizStudentRedirect(identity, pathname, search = '') {
   if (identity.role !== 'student') return null;
   const grade = Number(identity.grade);

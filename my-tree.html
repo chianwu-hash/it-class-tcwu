@@ -412,6 +412,7 @@
                 <p id="subtitle" class="subtitle">登入後讀取自己的闖關成果</p>
             </div>
             <div class="actions">
+                <a class="btn hidden" id="quiz-library-link">返回考前練功房</a>
                 <a class="btn hidden" id="back-page-btn" href="/">返回來源頁</a>
                 <a class="btn" id="course-home-link" href="/grade3/index.html">回課程首頁</a>
                 <button class="btn" id="login-btn" type="button">Google 登入</button>
@@ -499,6 +500,7 @@
         import { readingRequest, readingTreeData } from './shared/reading-api.js';
         import { homeworkRequest, homeworkTreeData } from "./shared/homework-api.js";
         import {quizTreeData} from './shared/quiz-rewards.mjs?v=20261027-all-subjects';
+        import {quizLibraryForEnrollment} from './shared/quiz-grade-route.mjs?v=20261028-tree-return';
         import {createFoundationProgress} from './shared/typing-foundation-progress.js?v=20261006-google';
         import {foundationTreeData} from './shared/typing-foundation-rewards.js?v=20261002-zhuyin';
 
@@ -506,6 +508,7 @@
         const subtitleEl = document.getElementById("subtitle");
         const courseHomeLinkEl = document.getElementById("course-home-link");
         const backPageBtn = document.getElementById("back-page-btn");
+        const quizLibraryLinkEl = document.getElementById("quiz-library-link");
         const loginBtn = document.getElementById("login-btn");
         const logoutBtn = document.getElementById("logout-btn");
         const courseSelectEl = document.getElementById("course-select");
@@ -529,6 +532,7 @@
 
         let currentSession = null;
         let currentEnrollment = null;
+        let practiceEnrollment = null;
         let treeLoadVersion = 0;
         let selectedCourseId = resolveInitialCourseId();
         const returnTarget = resolveReturnTarget();
@@ -633,6 +637,7 @@
         }
 
         function updateAuthUi() {
+            updateQuizLibraryLink();
             const email = currentSession?.user?.email || "";
             loginBtn.classList.toggle("hidden", !!email);
             logoutBtn.classList.toggle("hidden", !email);
@@ -653,11 +658,18 @@
             profileMetaEl.textContent = `${getCourseDefinition(selectedCourseId).label}・尚未找到本學年名冊資料`;
         }
 
-        async function loadCurrentEnrollment(courseId) {
+        function updateQuizLibraryLink() {
+            const href = currentSession?.user && !mockMode ? quizLibraryForEnrollment(practiceEnrollment) : null;
+            quizLibraryLinkEl.classList.toggle('hidden', !href);
+            if (href) quizLibraryLinkEl.href = href;
+            else quizLibraryLinkEl.removeAttribute('href');
+        }
+
+        async function loadCurrentEnrollment(courseId, schoolYear = null) {
             if (!currentSession?.user || mockMode) return null;
             const course = getCourseDefinition(courseId);
             const { data, error } = await supabase.rpc("get_my_student_enrollment", {
-                p_school_year: Number(course.schoolYear)
+                p_school_year: Number(schoolYear ?? course.schoolYear)
             });
             if (error) {
                 console.warn("student enrollment unavailable", error);
@@ -792,6 +804,7 @@
             detailTextEl.textContent = '';
             updateCourseChrome();
             currentEnrollment = null;
+            practiceEnrollment = null;
             updateAuthUi();
 
             const course = getRewardTreeCourse(selectedCourseId);
@@ -799,12 +812,16 @@
                 const loadingCourse = selectedCourseId;
                 const loadingUser = currentSession?.user?.id;
                 const activities = [...(course.activities || [])];
-                const [rows, enrollment] = await Promise.all([
+                const currentSchoolYear = Number(getCourseDefinition(loadingCourse).schoolYear);
+                const [rows, enrollment, currentYearEnrollment] = await Promise.all([
                     loadProgressRows(),
-                    loadCurrentEnrollment(loadingCourse)
+                    loadCurrentEnrollment(loadingCourse),
+                    currentSchoolYear === 115 ? null : loadCurrentEnrollment(loadingCourse, 115)
                 ]);
                 if (version !== treeLoadVersion || selectedCourseId !== loadingCourse || currentSession?.user?.id !== loadingUser) return;
                 currentEnrollment = enrollment;
+                // The practice library follows the student's current roster, even when viewing an older tree.
+                practiceEnrollment = currentSchoolYear === 115 ? enrollment : currentYearEnrollment;
                 updateAuthUi();
                 if (!activities.length && loadingCourse !== 'grade6-115-1') { renderEmptyCourse(course); return; }
                 if (['grade3-115-1','grade6-115-1'].includes(loadingCourse) && currentSession?.user && !mockMode) {
@@ -860,6 +877,8 @@
             currentSession = session;
             treeLoadVersion++;
             currentEnrollment = null;
+            practiceEnrollment = null;
+            updateQuizLibraryLink();
             rewardLayerEl.replaceChildren();
             leafCountEl.textContent = '0';
             flowerCountEl.textContent = '0';
