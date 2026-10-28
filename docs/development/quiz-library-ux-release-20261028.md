@@ -23,4 +23,10 @@
 
 ## 正式發布
 
-發布與線上驗收完成後補記。資料庫更新腳本 `automation/quiz-all-subjects/deploy-name-choices.mjs`：驗證預定 Supabase 專案、備份既有命名資料，以同一 repeatable-read 交易保護原卷名、版本、答案、葉片、既有進度及生成卷設定不變。
+功能 commit `8f1436ec264b62fd9e29fb80213b77cfb2ea82d2` 已推送。Vercel 正式部署 `dpl_CLtq6Hestx5crd1ewK4s8fZnF7wP` 已 READY，提交與正式網域均核對一致。
+
+資料庫更新腳本 `automation/quiz-all-subjects/deploy-name-choices.mjs` 驗證預定 Supabase 專案、備份既有命名資料，以同一 repeatable-read 交易保護原卷名、版本、答案、葉片、既有進度及生成卷設定不變。正式 28 份生成卷（含 18 份已移除）名稱完整，保護檢查通過。
+
+正式站以既有三年級測試學生登入驗收，核對可見帳號與預期使用者一致後才建卷。指定寶可夢／伊布、主題內隨機及完全隨機皆成功；重送只建一次，清單即時更新，重整後仍存在；原有未完成卷的作答數可正確接回，既有錯題可回看當時答案與解析。新建三份測試卷已移除，原清單識別集合不變；正式站驗收不代學生送答或新增葉片。
+
+分身 02 為教師身分，因此只做讀取確認；釋放後改以有效租約取得分身 01 的學生登入做驗收。正式六年級學生尚未實測，六年級流程由本機合成學生完整驗證。正式手機 390px 與瀏覽器錯誤檢查通過。私有報告：`browser-production.json`，本機：`browser-local.json`。
