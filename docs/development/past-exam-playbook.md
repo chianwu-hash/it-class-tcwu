@@ -61,6 +61,7 @@
 | `automation/past-exam-local-server.mjs` | 隔離 auth／RPC／圖片的本機驗收環境 | 固定本機 port 與本卷 bundle；重跑給葉驗收前需重置其合成資料 |
 | `automation/tests/quiz-past-exams.test.mjs` | 新舊模式下的後端、權限、交易及媒體測試 | 需既有本機測試依賴與私有 bundle |
 | `automation/tests/quiz-past-exams-browser.cjs` | 真前端＋隔離後端的作答、重送、歷史與登出驗收 | 共用瀏覽器租約、精確 target、隔離本機 server |
+| `automation/lib/past-exam-type-checks.cjs` | 由上述 browser harness 的 `PAST_TYPES_ONLY=1` 執行全40題組、桌機／手機操作及窄螢幕檢查 | 必須使用隔離 fixture；僅本機加速 view 時間，不能把測試時鐘開關加入正式前端 |
 | `automation/tests/quiz-past-review-browser.cjs` | 教師預覽的題組、圖片、來源及疑義驗收 | 同上；合成教師不是正式真人 OAuth 驗證 |
 | `automation/past-exam-cloud.mjs` | 本次 inspect／upload／apply／activate 分段操作 | 包含正式寫入；綁定專案、owner、備份與部署產物，不能當任意卷匯入器 |
 | `automation/past-exam-cloud-smoke.mjs` | 真 PostgreSQL 交易內全卷驗證後 rollback | 明確核對專案，最後確認沒有保留測試答案與葉片 |
@@ -88,6 +89,8 @@ clone repo 不含 ignored 原卷、解答、`source.private.json`、`bundle.priv
 ## 8. 本次踩過的坑
 
 **使用者對首次上線外觀的更正（2026-10-29）**：只套用年級配色，不足以宣稱「已統一練功房風格」。第一版仍保留獨立 prototype 的大標題、大片重複說明、原型選項及卡片版面，被使用者指出差異很大。後續驗收須以既有正式作答元件為視覺基準，核對字體、字重、間距、選項背景／圓角／陰影、進度列及底部操作列；保留題型操作不代表必須保留 prototype 外觀。將規則與歷史收合，讓題目在第一屏可見。修正版另使用 `quiz-past-style.css`；原 `past-exam-ui-build.py` 仍是第一次轉接的歷史生成器，重新執行可能覆蓋後續手動修正，不可不看 diff 就執行。
+
+**全題型補驗收**：不可用第一題是非題的截圖代表全部題型。已補40題組在1280／390px各次實際作答，以及11個非選題組360px窄螢幕版面，共91檢查；分別留存勾選、排序、圖號填答、複選、畫圖的10張桌機／手機截圖。需要檢查 CSS specificity：共用 `.student-wrap fieldset` 會清除新 `.slot` 的 padding，不能只看新CSS有寫內距。Puppeteer的 HTMLElement focus 不適用SVG，畫圖鍵盤驗收應使用SVG的標準focus。結束行動模擬測試時，先關閉精確自有分頁，不在解除攔截後還原viewport而觸發正式身分重新載入；非同步攔截回應要 await，避免測試完成後冒出未處理錯誤。詳[全題型驗收](past-exam-types-review-20261029.md)。
 
 - **O／X 重複與空材料框**：選項代碼加文字造成重複，空共同題幹仍占位。依實際題型渲染並在桌機／手機目視檢查。
 - **網站主題被蓋掉**：作答 CSS 的載入順序覆蓋網站主題。調整主題順序與樣式範圍，不能只看單獨 prototype。

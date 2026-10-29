@@ -9,6 +9,7 @@ const version=(await db.query('insert into public.quiz_past_versions(paper_id,sh
 for(const a of bundle.assets)await db.query('insert into public.quiz_media_assets values($1,$2,$3,$4,$5)',[a.url,TEACHER,a.object_path,a.mime,a.bytes]);
 const server=http.createServer(async(req,res)=>{const send=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(data));};try{
  if(req.headers.host!==`127.0.0.1:${port}`)return send(403,{});const url=new URL(req.url,origin);
+ if(req.method==='GET'&&url.pathname==='/__past/blank'){res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});return res.end('<!doctype html><html lang="zh-Hant"><title>考古題隔離驗收</title><body></body></html>');}
  if(req.method==='GET'&&url.pathname==='/__past/setup')return send(200,{nonce,version});
  if(req.method==='POST'&&url.pathname==='/__past/rpc'){
   if(req.headers['x-fixture-nonce']!==nonce)return send(403,{});let bytes='';for await(const chunk of req)bytes+=chunk;const {action,data,student=1,fast=false}=JSON.parse(bytes),uid=student==='teacher'?TEACHER:studentId(student);

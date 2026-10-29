@@ -28,7 +28,7 @@ function render(){if(!active)return;
  const meter=$('#past-progress');if(meter){meter.max=summary.total;meter.value=summary.answered;}
  renderPractice();
  $('#steps').replaceChildren(...state.groups.map((item,i)=>{const b=button('',()=>{index=i;arrowStart=null;undo=[];say('');render();},'step'+(i===index?' active':''));b.setAttribute('aria-current',i===index?'step':'false');b.append(el('b',String(i+1)));const t=el('span',item.title);t.append(el('small',state.records[item.id]?(item.kind==='annotation'?'已自我核對':'已核對'):'試試看'));b.append(t);return b;}));
- const card=el('div',undefined,'question-card'),head=el('header',undefined,'card-title'),title=el('div');title.append(el('span','原卷 '+g.sourceLabel,'source-label'),el('h2',g.title));head.append(title,el('span',g.kind==='annotation'?'不自動計分':`${g.fields.reduce((n,f)=>n+f.points,0)} 分`,'badge'));card.append(head);
+ const card=el('div',undefined,'question-card'),head=el('header',undefined,'card-title'),title=el('div');card.dataset.kind=g.kind;card.dataset.groupId=g.id;title.append(el('span','原卷 '+g.sourceLabel,'source-label'),el('h2',g.title));head.append(title,el('span',g.kind==='annotation'?'不自動計分':`${g.fields.reduce((n,f)=>n+f.points,0)} 分`,'badge'));card.append(head);
  const grid=el('div',undefined,'body-grid'+(g.assets.length?'':' no-art')),left=el('div'),right=el('div');
  const hasMaterial=g.materialContent?Boolean(g.materialContent.text.trim()||g.materialContent.layout?.length||g.materialContent.media.length):Boolean(g.material?.trim());
  if(hasMaterial){const material=el('div',undefined,'material material-box');if(g.materialContent)renderLocalContent(material,g.materialContent);else material.textContent=g.material;left.append(material);}

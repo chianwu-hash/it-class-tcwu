@@ -1,4 +1,4 @@
-import {initPastExamUI} from './quiz-past-ui.mjs?v=20261029-past-style2';
+import {initPastExamUI} from './quiz-past-ui.mjs?v=20261029-past-types3';
 import {createAuthenticatedTransport} from './quiz-transport.mjs?v=20261029-batch4';
 import {createMediaScope,configureQuizMedia} from './quiz-media.mjs';
 import {initImageLightbox} from './image-lightbox.js';
