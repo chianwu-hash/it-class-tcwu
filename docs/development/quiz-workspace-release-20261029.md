@@ -38,4 +38,10 @@ node --test automation/tests/quiz.test.mjs automation/tests/quiz-auth-media.test
 
 發布前須確認本輪七檔以外的正式來源與基準一致，尤其保留剛上線的找字小幫手與草稿。提交檢查在乾淨快照執行原 pre-commit，不停用 hook、不修改其他暫存腳本。
 
-正式發布經 `origin/main` 的既有 Vercel Git 整合。提交識別、部署 READY、正式網域指向、七檔讀回與未改檔保留驗證，以及正式主網址的合成瀏覽器結果，於發布後補記。私有驗證產物置於忽略的 `tmp/workspace-release-20261029/`，不提交 token、真實學生成果或題庫來源。
+正式發布經 `origin/main` 的既有 Vercel Git 整合。功能提交 `eaf209806ef6820a3fb1fee5e325025c26d2ba22` 已推送；部署 `dpl_4n7Vg69KFEVqi2GhyyoL3bBhPR16` 為 production／READY，正式別名 `it-class-tcwu.vercel.app` 已確認指向此部署。專案 `it-class-tcwu`／`prj_eJ1qle57xyilS5MKy6ZS6OuYtyFb`、團隊 `chianwu-4755s-projects`／`team_SOhQ0oysg6ZGV9vs3RryW2CB` 沿用原設定。
+
+發布後 44 個正式檔案均 HTTP 200，UTF-8 內容在 CRLF／LF 與開頭 BOM 正規化後與功能提交一致：七個本輪檔、24 個找字／草稿檔，以及 13 個原登入／navbar／選卷／計葉／努力樹重要檔。初次首頁比對差異僅為 `Response.text()` 移除 UTF-8 BOM，已檢視 diff 確認並修正比對方式，沒有修改首頁。
+
+正式主網址使用 `QUIZ_WORKSPACE_LIVE=1` 重跑同一完整瀏覽器流程，實際下載正式靜態檔；Auth／名冊／作答 API 與媒體仍為攔截合成回應，所有斷言通過、零頁面錯誤。包含 13 類基本流程與保存中／延後揭答／長內容／原一葉／320px 末題／關場／換人延遲／十角色／減少動態／表格聽力公式補驗。這不是正式學生資料寫入或新一輪真人 OAuth 驗收。
+
+私有驗證產物置於忽略的 `tmp/workspace-release-20261029/`；本機與正式瀏覽器結果分別在其 `automation/output/quiz/workspace-release-20261029/` 與 `workspace-production-20261029/`，檔案讀回紀錄在 `tmp/workspace-production-verification.json`。不提交 token、真實學生成果或題庫來源。
