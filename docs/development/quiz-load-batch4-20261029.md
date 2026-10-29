@@ -38,3 +38,13 @@
 - 沒有真人課堂驗證；下一班是第一次實測。課後請查 Logs（`/v1/projects/{ref}/analytics/endpoints/logs`，ClickHouse SQL，`source` 欄位）與 `infra-monitoring` 的 swap／CPU。
 - git 分支 `claude/quiz-load-batch4`（worktree `D:/projects/it-class-tcwu-batch4`），**尚未 push**；主工作區與 Codex 分支都沒有合入。之後從 Git 重新部署時必須包含本分支，不可用舊主工作區整包覆蓋。
 - 回滾：前端 promote 回 `dpl_9igJHMDmzwAeHQSqJHC3bbzeF1Gd`。SQL 的新欄位是增量，舊前端也相容，一般不必回滾；若要回滾，重套 batch1（catalog／entry）、batch2（library）、batch3（compose）即可，快取表與 trigger 可保留或 drop。
+
+## 升級 Supabase Pro + Small（2026-10-29 17:52，使用者自行付款並確認）
+
+- 方案從 Free 升為 Pro（每月 $25），主機規格從 Nano 改為 Small（主機每月 $14.83，扣掉 $10 運算額度後，每月合計約 $29.83，未含稅）。17:53:52 重啟完成。
+- 新設定：`shared_buffers` 224 MB → 512 MB；`max_connections` 60 → 90；主機 RAM 0.43 GB → 1.92 GB。
+- 資料完整性：升級前後，九表筆數與內容雜湊、其餘 quiz 函式定義，以及三、六年級學生的目錄／清單／開卷／錯題輸出雜湊**全部相同**。
+- 新連線第一次呼叫（5 條新連線）：catalog 15 ms、library 4–5 ms、wrong 5–6 ms、rewards 3 ms，5 次幾乎一樣。Nano 時同樣量測為 catalog 673–4,885 ms、wrong 41–1,501 ms，波動很大。
+- PostgREST HTTP（公開 anon 讀 `week_visibility`，從學校電腦連到首爾）：依序 20 次 p50 116 ms（最大 816 ms，是第一次建立連線）；30 個並行 × 3 輪共 90 次，p50 229 ms、p95 308 ms、最大 314 ms，0 錯誤。Nano 時沒有做同樣的量測，無法直接對照。
+- 主機曲線：升級前 RAM 使用約 150–200 MB、swap 377–457 MB；升級後 RAM 使用約 324–356 MB（約 30%），**swap 0**。重啟後剛開始幾分鐘的 CPU 約 44–57%，是開機暖機，需要稍後再確認是否回落。
+- 限制（Codex 審查指出）：重啟後 swap 為 0 是必然的，要看經過一段時間、以及上課期間是否仍維持低值，才算有效。明天上課前先確認 swap 與 CPU，上課後再取 Logs 和主機曲線比對。尚未進行真人 30 人實測。
