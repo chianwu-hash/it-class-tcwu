@@ -1,7 +1,7 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
-import { initGoogleCourseAuth, createGoogleCourseProgress } from '../../shared/grade3-google-course.js?v=20261007-identity';
-import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261006';
-import { initTypingTools } from '../../shared/typing-tools.js?v=20261019-zhuyin-2';
+import { initGoogleCourseAuth, createGoogleCourseProgress } from '../../shared/grade3-google-course.js?v=20261028-drafts';
+import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261028-drafts';
+import { initTypingTools } from '../../shared/typing-tools.js?v=20261028-keyboard';
 
 // Source: 康軒國語三上第一課〈字的小旅行〉課文與「我會認字」。
 const levelsData = [
@@ -153,7 +153,7 @@ const store = createGoogleCourseProgress({ courseId: 'grade3-115-1', weekCode: '
 const container = document.getElementById('typing-levels-container');
 container.inert = !auth.hasIdentity();
 container.querySelectorAll('input,textarea,button').forEach(el => { el.disabled = !auth.hasIdentity(); });
-initTypingChallenge({ courseId: 'grade3-115-1', weekCode: '08', activityKey: 'typing_task_5', levelsData,
+initTypingChallenge({ draftOptions: { enabled: true, getSession: () => auth.getDraftSession?.() }, courseId: 'grade3-115-1', weekCode: '08', activityKey: 'typing_task_5', levelsData,
     // The UI is gated by the verified roster/import controller; the adapter calls
     // authenticated, student-safe RPCs, never the classroom guest RPCs.
     progressAdapter: store,

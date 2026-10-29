@@ -23,14 +23,19 @@ export async function initGoogleCourseAuth({ courseId }) {
     let invalidated = false;
     const session = await resolveSession();
     const originalUser = session?.user?.id ?? null;
+    let draftSession = session;
     supabase.auth.onAuthStateChange((_event, next) => {
         // Subscribe before import: account changes during a slow import invalidate UI.
         if ((next?.user?.id ?? null) !== originalUser) {
             invalidated = true;
             identity = null;
+            draftSession = null;
             document.querySelectorAll('[data-google-activity], #typing-levels-container').forEach(el => { el.inert = true; });
             window.location.reload();
-        } else setTimeout(paint, 0);
+        } else {
+            draftSession = next;
+            setTimeout(paint, 0);
+        }
     });
     try {
         if (originalUser) {
@@ -63,7 +68,10 @@ export async function initGoogleCourseAuth({ courseId }) {
     }
     window.addEventListener('course-navbar:rendered', () => setTimeout(paint, 0));
     setTimeout(paint, 0);
-    return { getIdentity: () => identity, hasIdentity: () => Boolean(identity),
+    function getDraftSession() {
+        return identity && !invalidated && draftSession?.user?.id === originalUser ? draftSession : null;
+    }
+    return { getIdentity: () => identity, hasIdentity: () => Boolean(identity), getDraftSession,
         getIdentityError: () => identityError,
         open: () => beginCentralizedLogin({ returnTo: window.location.href }), clear: () => { identity = null; } };
 }

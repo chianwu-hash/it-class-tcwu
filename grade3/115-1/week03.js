@@ -1,9 +1,9 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
-import { initGoogleCourseAuth as initClassCardAuth } from '../../shared/grade3-google-course.js?v=20261007-identity';
-import { createGoogleCourseProgress as createClassCardProgress } from '../../shared/grade3-google-course.js?v=20261007-identity';
+import { initGoogleCourseAuth as initClassCardAuth } from '../../shared/grade3-google-course.js?v=20261028-drafts';
+import { createGoogleCourseProgress as createClassCardProgress } from '../../shared/grade3-google-course.js?v=20261028-drafts';
 import { initQuizModule } from '../../shared/quiz-module.js?v=20260916-1';
-import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261006';
-import { initTypingTools, renderEnglishKeyboardGuide } from '../../shared/typing-tools.js?v=20260916-1';
+import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261028-drafts';
+import { initTypingTools, renderEnglishKeyboardGuide } from '../../shared/typing-tools.js?v=20261028-keyboard';
 import { initQuizReadingAid } from './week03-reading.js?v=20260916-3';
 
 const COURSE_ID = 'grade3-115-1';
@@ -211,7 +211,7 @@ function typingHint(value, target) {
 
 const typingPracticeMode = pageParams.get('typingPractice') === '1';
 
-initTypingChallenge({
+initTypingChallenge({ draftOptions: { enabled: true, getSession: () => classCardAuth.getDraftSession?.() },
     courseId: COURSE_ID,
     weekCode: WEEK_CODE,
     activityKey: 'typing_task_6',

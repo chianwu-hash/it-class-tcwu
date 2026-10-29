@@ -1,7 +1,7 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
-import { initGoogleCourseAuth, createGoogleCourseProgress } from '../../shared/grade3-google-course.js?v=20261007-identity';
-import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261006';
-import { initTypingTools } from '../../shared/typing-tools.js?v=20260924-1';
+import { initGoogleCourseAuth, createGoogleCourseProgress } from '../../shared/grade3-google-course.js?v=20261028-drafts';
+import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261028-drafts';
+import { initTypingTools } from '../../shared/typing-tools.js?v=20261028-keyboard';
 
 const levelsData = [
     { id: 1, ans: 'tree' }, { id: 2, ans: 'tree246' }, { id: 3, ans: 'Tree246!' },
@@ -36,7 +36,7 @@ const tools = initTypingTools({ keyboardGuide: true, getKeyboardTarget: () => ke
 document.querySelectorAll('[id^="input-level"]').forEach((input, index) => {
     input.addEventListener('focus', () => { keyboardTarget = levelsData[index].ans; tools?.refreshKeyboardGuide?.(); });
 });
-initTypingChallenge({ courseId: 'grade3-115-1', weekCode: '07', activityKey: 'typing_task_5', levelsData,
+initTypingChallenge({ draftOptions: { enabled: true, getSession: () => auth.getDraftSession?.() }, courseId: 'grade3-115-1', weekCode: '07', activityKey: 'typing_task_5', levelsData,
     // The UI is gated by the verified roster/import controller; the adapter calls
     // authenticated, student-safe RPCs, never the classroom guest RPCs.
     progressAdapter: store,

@@ -95,6 +95,35 @@ export function initTypingChallenge({
     const useGuestProgress = Boolean(guestProgress && !requireAuth);
     const draftStateByLevel = new Map();
     let draftLoadKey = "";
+    // Keep draft auth separate: adapter progress must stay on its own RPC path.
+    let adapterDraftSession = null;
+    let draftEpoch = 0;
+    const activeDraftSession = () => progressAdapter ? adapterDraftSession : currentSession;
+
+    function invalidateAdapterDrafts() {
+        draftEpoch += 1;
+        adapterDraftSession = null;
+        draftStateByLevel.clear();
+        draftLoadKey = "";
+        for (let level = 1; level <= maxLevel; level += 1) updateDraftControlFromState(level);
+    }
+
+    async function refreshDraftSession() {
+        if (!draftsEnabled) return null;
+        if (!progressAdapter) return currentSession;
+        try {
+            const session = await draftOptions.getSession?.();
+            if (!session?.user || (adapterDraftSession && adapterDraftSession.user.id !== session.user.id)) {
+                invalidateAdapterDrafts();
+                return null;
+            }
+            adapterDraftSession = session;
+            return session;
+        } catch (_error) {
+            invalidateAdapterDrafts();
+            return null;
+        }
+    }
 
     const authStatusEl = document.getElementById("auth-status");
     const progressStatusEl = document.getElementById("progress-status");
@@ -235,7 +264,7 @@ export function initTypingChallenge({
         }
 
         const isCompleted = inputEl.readOnly;
-        const isLocked = !currentSession?.user || inputEl.disabled || isCompleted;
+        const isLocked = !activeDraftSession()?.user || inputEl.disabled || isCompleted;
         control.classList.toggle("hidden", isCompleted);
         [getDraftSaveButton(level), getDraftRestoreButton(level)].forEach((button) => {
             if (!button) {
@@ -275,8 +304,14 @@ export function initTypingChallenge({
                     <button type="button" id="typing-draft-save-${level}" class="rounded-lg bg-slate-700 px-3 py-2 text-sm font-black text-white transition hover:bg-slate-800">儲存草稿</button>
                     <button type="button" id="typing-draft-restore-${level}" class="hidden rounded-lg bg-indigo-600 px-3 py-2 text-sm font-black text-white transition hover:bg-indigo-700">回復上次草稿</button>
                 </div>
-                <span id="typing-draft-status-${level}" class="text-xs font-bold text-slate-500">尚未儲存草稿</span>
+                <span id="typing-draft-status-${level}" role="status" class="text-xs font-bold text-slate-500">尚未儲存草稿</span>
             `;
+            const help = document.createElement('p');
+            help.className = 'mb-4 text-sm font-bold text-slate-600';
+            help.textContent = '離開前請按「儲存草稿」，看到成功訊息再離開。下次按「回復上次草稿」繼續；草稿不算過關。';
+            control.appendChild(help);
+            control.classList.add('flex-wrap');
+            help.style.flexBasis = '100%';
             inputEl.insertAdjacentElement("afterend", control);
 
             getDraftSaveButton(level)?.addEventListener("click", () => saveDraft(level));
@@ -286,7 +321,7 @@ export function initTypingChallenge({
     }
 
     function getDraftAccessToken() {
-        return currentSession?.access_token ?? getStoredAccessToken();
+        return activeDraftSession()?.access_token ?? (progressAdapter ? null : getStoredAccessToken());
     }
 
     function isMissingCourseIdError(error) {
@@ -372,11 +407,13 @@ export function initTypingChallenge({
     }
 
     async function loadDraftsOnce() {
-        if (!draftsEnabled || !currentSession?.user) {
+        const session = await refreshDraftSession();
+        const epoch = draftEpoch;
+        if (!session?.user) {
             return;
         }
 
-        const key = `${currentSession.user.id}:${resolvedCourseId}:${weekCode}:${activityKey}`;
+        const key = `${session.user.id}:${resolvedCourseId}:${weekCode}:${activityKey}`;
         if (draftLoadKey === key) {
             return;
         }
@@ -386,20 +423,21 @@ export function initTypingChallenge({
             method: "GET",
             query: {
                 select: "level_id,draft_text,saved_at",
-                ...getDraftBaseFilters(currentSession.user.id)
+                ...getDraftBaseFilters(session.user.id)
             }
         });
 
-        if (error && isMissingCourseIdError(error)) {
+        if (error && !progressAdapter && isMissingCourseIdError(error)) {
             ({ data, error } = await requestDrafts({
                 method: "GET",
                 query: {
                     select: "level_id,draft_text,saved_at",
-                    ...getDraftBaseFilters(currentSession.user.id, false)
+                    ...getDraftBaseFilters(session.user.id, false)
                 }
             }));
         }
 
+        if (epoch !== draftEpoch) return;
         if (error) {
             draftLoadKey = "";
             console.warn("load typing drafts failed", error);
@@ -420,7 +458,9 @@ export function initTypingChallenge({
 
     async function saveDraft(level) {
         const inputEl = document.getElementById(`input-level${level}`);
-        const user = await getActiveUser();
+        const session = await refreshDraftSession();
+        const user = session?.user;
+        const epoch = draftEpoch;
         if (!draftsEnabled || !inputEl || !user) {
             return;
         }
@@ -455,7 +495,7 @@ export function initTypingChallenge({
             prefer: "resolution=merge-duplicates,return=representation"
         });
 
-        if (error && isMissingCourseIdError(error)) {
+        if (error && !progressAdapter && isMissingCourseIdError(error)) {
             ({ data, error } = await requestDrafts({
                 method: "POST",
                 query: {
@@ -466,8 +506,9 @@ export function initTypingChallenge({
             }));
         }
 
+        if (epoch !== draftEpoch) return;
         if (error) {
-            console.warn("save typing draft failed", error, payload);
+            console.warn("save typing draft failed", error);
             setDraftStatus(level, "草稿暫時沒有儲存成功", "error");
             return;
         }
@@ -480,7 +521,8 @@ export function initTypingChallenge({
         syncDraftControlState(level);
     }
 
-    function restoreDraft(level) {
+    async function restoreDraft(level) {
+        if (!await refreshDraftSession()) return;
         const inputEl = document.getElementById(`input-level${level}`);
         const state = draftStateByLevel.get(level);
         if (!inputEl || !state?.draft_text || inputEl.disabled || inputEl.readOnly) {
@@ -495,23 +537,28 @@ export function initTypingChallenge({
         }
 
         inputEl.value = state.draft_text;
+        inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+        draftOptions.onRestore?.(level, inputEl.value);
         inputEl.focus();
         setDraftStatus(level, "已回復上次草稿", "success");
     }
 
     async function deleteDraft(level) {
-        if (!draftsEnabled || !currentSession?.user) {
+        const session = await refreshDraftSession();
+        const epoch = draftEpoch;
+        if (!session?.user) {
             return;
         }
 
         const { error } = await requestDrafts({
             method: "DELETE",
             query: {
-                ...getDraftBaseFilters(currentSession.user.id),
+                ...getDraftBaseFilters(session.user.id),
                 level_id: `eq.${level}`
             }
         });
 
+        if (epoch !== draftEpoch) return;
         if (error) {
             console.warn("delete typing draft failed", error, { level });
             return;
@@ -522,15 +569,18 @@ export function initTypingChallenge({
     }
 
     async function deleteAllDraftsForActivity() {
-        if (!draftsEnabled || !currentSession?.user) {
+        const session = await refreshDraftSession();
+        const epoch = draftEpoch;
+        if (!session?.user) {
             return;
         }
 
         const { error } = await requestDrafts({
             method: "DELETE",
-            query: getDraftBaseFilters(currentSession.user.id)
+            query: getDraftBaseFilters(session.user.id)
         });
 
+        if (epoch !== draftEpoch) return;
         if (error) {
             console.warn("delete typing drafts failed", error);
             return;
@@ -1225,6 +1275,13 @@ export function initTypingChallenge({
             currentSession = null;
             await updateAuthUI(null);
             await loadProgress();
+            if (progressAdapter && draftsEnabled) {
+                supabase.auth.onAuthStateChange((_event, session) => {
+                    if (session?.user?.id !== adapterDraftSession?.user?.id) invalidateAdapterDrafts();
+                });
+                await loadDraftsOnce();
+                syncAllDraftControls();
+            }
             return;
         }
 

@@ -1,5 +1,19 @@
 # Agent Handoff
 
+## Grade 3 long-text keyboard helper discussion — 2026-10-28
+
+- Goal: discuss with Claude how to keep the lower-right keyboard visible for long Chinese/English typing passages. Discussion only; no product implementation, database, deployment, student data, credentials, or external network.
+- Verified sources: shared/typing-tools.js and Grade 3 115-1 Week 08/09 controllers. Fixed bottom panel has no maximum height; all zhuyin syllables are rendered as separate rows; keyboard appears before the unbounded rows. English renders the full letter sequence.
+- Codex is sole writer. Claude has Read/Glob/Grep only and reviews frozen copies in the ignored evidence repository at .chat-mode/exchange/20261028-keyboard-longtext-1793176799135/evidence; source hashes and main baseline are recorded next to it. This avoids unrelated ongoing repository changes and thousands of untracked textbook assets.
+- Handback verified: two completed CLI discussion turns, viewers/markers and frozen Git baselines passed; all eight live source hashes unchanged. Recommendation: bounded stable keyboard plus compact segmented hints, optional click-to-look-up character, full-list disclosure; defer automatic tracking and mandatory per-character steps.
+- User authorized a local implementation preview. Implemented shared pure guide model, bounded keyboard renderer/CSS, optional character lookup, segmented/full hints, keyboard/punctuation exclusivity and Week09 single rendering path; compatibility getters/exports retained. Grade03–09 cache versions updated. No auth/progress/database/deployment changes.
+- Verified: six model tests; leased real browser preview/1280x720/640x360/390x844, actual mouse focus and keyboard Enter, synthetic composition guard; Grade3 Week08/09 draft reload/restore and original progress RPC, legacy Week16 static keyboard tabs. Native Windows IME candidate behavior remains manual acceptance.
+- User approved the reviewed preview and requested application. Production released as dpl_FsaD45HERoxHHFkFuF2X1CgZHpCh, promoted from a tested production skip-domain deployment. Baseline dpl_8wfgFTaHc8VpdJyxXCPUKwLrmuJP / 5e5b15b plus 24 runtime overlays; 389 other source files preserved. Draft schema/RLS inspected read-only; no database changes.
+- Release verification: all nine semester draft flows on the frozen bundle passed; staged and live 24-file byte SHA256 checks, 11 critical preserved-file normalized-content checks, live-origin synthetic Week08/09 keyboard/draft/progress and legacy Week16 tabs passed. No real student writes. Browser leases released; no commit/push.
+- 2026-10-29: user requested committing/pushing only the already deployed helper and drafts. The 24 runtime files match the release manifest; package only these files, three related tests and the helper/draft documentation. Exclude all unreleased quiz/garden/reward work. Git history records the resulting commit and push; native Windows IME acceptance remains manual.
+
+
+
 ## 已完成：304課堂效能優化、本機並行驗證與正式發布 — 2026-10-28
 
 - 使用者核准先與Claude討論，再優化重複讀取、答題回應與鎖；保留學生限定登入、儲存／重送、揭答、防弊、努力樹。先在本機比較整班登入完成後驗證、組卷、答題的前後結果，通過才上線；不付費，不在正式環境壓測。

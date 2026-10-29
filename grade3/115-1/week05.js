@@ -1,8 +1,8 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
-import { initGoogleCourseAuth as initClassCardAuth } from '../../shared/grade3-google-course.js?v=20261007-identity';
-import { createGoogleCourseProgress as createClassCardProgress } from '../../shared/grade3-google-course.js?v=20261007-identity';
-import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261006';
-import { initTypingTools } from '../../shared/typing-tools.js?v=20260924-1';
+import { initGoogleCourseAuth as initClassCardAuth } from '../../shared/grade3-google-course.js?v=20261028-drafts';
+import { createGoogleCourseProgress as createClassCardProgress } from '../../shared/grade3-google-course.js?v=20261028-drafts';
+import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261028-drafts';
+import { initTypingTools } from '../../shared/typing-tools.js?v=20261028-keyboard';
 import { supabase } from '../../shared/auth.js';
 
 const COURSE_ID = 'grade3-115-1';
@@ -246,7 +246,7 @@ function refreshIdentityLock() {
   accountBlock.inert = !ready || !practiceAccount;
 }
 
-initTypingChallenge({
+initTypingChallenge({ draftOptions: { enabled: true, getSession: () => classCardAuth.getDraftSession?.() },
   courseId: COURSE_ID,
   weekCode: WEEK_CODE,
   activityKey: ACTIVITY_KEY,

@@ -1,7 +1,7 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
-import { initGoogleCourseAuth, createGoogleCourseProgress } from '../../shared/grade3-google-course.js?v=20261007-identity';
-import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261006';
-import { initTypingTools, renderEnglishKeyboardGuide, renderZhuyinKeyboardGuide } from '../../shared/typing-tools.js?v=20261019-zhuyin-2';
+import { initGoogleCourseAuth, createGoogleCourseProgress } from '../../shared/grade3-google-course.js?v=20261028-drafts';
+import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261028-drafts';
+import { initTypingTools } from '../../shared/typing-tools.js?v=20261028-keyboard';
 
 // Verified: 康軒國語三上 L2 p.18–19; 翰林 Here We Go 1 U2 p.26,34.
 const levelsData = [
@@ -23,14 +23,11 @@ const zhuyin = {
     '雖然他張大了眼睛看著黑板，可是怎麼也找不到答案。': 'ㄙㄨㄟ ㄖㄢˊ ㄊㄚ ㄓㄤ ㄉㄚˋ ㄌㄜ˙ ㄧㄢˇ ㄐㄧㄥ ㄎㄢˋ ㄓㄜ˙ ㄏㄟ ㄅㄢˇ ㄎㄜˇ ㄕˋ ㄗㄣˇ ㄇㄜ˙ ㄧㄝˇ ㄓㄠˇ ㄅㄨˊ ㄉㄠˋ ㄉㄚˊ ㄢˋ'
 };
 let focusedLevel = 1;
-function refreshGuide() {
-    const root = document.getElementById('floating-letter-key-guide');
+const tools = initTypingTools({ keyboardGuide: true, getKeyboardTarget: () => {
     const text = levelsData[focusedLevel - 1].ans;
-    if (focusedLevel % 2) renderZhuyinKeyboardGuide(root, { text, zhuyin: zhuyin[text] });
-    else renderEnglishKeyboardGuide(root, { target: text });
-}
-initTypingTools({ keyboardGuide: true, getKeyboardTarget: () => levelsData[focusedLevel - 1].ans });
-document.querySelector('[data-typing-tool-toggle="keyboard"]').addEventListener('click', refreshGuide);
+    return focusedLevel % 2 ? { lang: 'zh', text, zhuyin: zhuyin[text] } : text;
+} });
+function refreshGuide() { tools?.refreshKeyboardGuide?.(); }
 document.querySelectorAll('[id^="input-level"]').forEach(input => input.addEventListener('focus', () => {
     focusedLevel = Number(input.id.replace('input-level', ''));
     refreshGuide();
@@ -89,7 +86,7 @@ const progressAdapter = {
     }
 };
 container.querySelectorAll('input,textarea,button').forEach(el => { el.disabled = true; });
-initTypingChallenge({ courseId: 'grade3-115-1', weekCode: '09', activityKey: 'typing_task_6', levelsData, progressAdapter, autoScrollNext: false,
+initTypingChallenge({ draftOptions: { enabled: true, getSession: () => auth.getDraftSession?.() }, courseId: 'grade3-115-1', weekCode: '09', activityKey: 'typing_task_6', levelsData, progressAdapter, autoScrollNext: false,
     levelEncouragements: {
         1: '你看清楚「窗戶」，把注音和字都檢查過了。',
         2: '你切回英文，一個字母一個字母完成數字單字。',

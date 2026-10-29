@@ -1,8 +1,8 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
-import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261006';
+import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261028-drafts';
 import { initQuizModule } from '../../shared/quiz-module.js';
-import { initGoogleCourseAuth as initClassCardAuth } from '../../shared/grade3-google-course.js?v=20261007-identity';
-import { createGoogleCourseProgress as createClassCardProgress } from '../../shared/grade3-google-course.js?v=20261007-identity';
+import { initGoogleCourseAuth as initClassCardAuth } from '../../shared/grade3-google-course.js?v=20261028-drafts';
+import { createGoogleCourseProgress as createClassCardProgress } from '../../shared/grade3-google-course.js?v=20261028-drafts';
 import { connectTypingUI, digitHint, typingMessages, randomDigits } from './week02-typing-ui.js?v=20261008-google-unlock';
 import { initReadingAid } from './week02-reading.js?v=20260909';
 import { initWindowPractice } from './week02-window.js?v=20260909';
@@ -261,7 +261,7 @@ async function saveTypingClassCardProgress(progress) {
     return rememberTypingProgress(progress);
 }
 
-initTypingChallenge({ courseId: COURSE_ID, weekCode: WEEK_CODE, activityKey: 'typing_task_4', levelsData,
+initTypingChallenge({ draftOptions: { enabled: true, getSession: () => classCardAuth.getDraftSession?.() }, courseId: COURSE_ID, weekCode: WEEK_CODE, activityKey: 'typing_task_4', levelsData,
     levelEncouragements: { 1: '你先找到框，再把數字放進去了。', 2: '位置換了，你仍記得先點框。', 3: '少了提示，你也能自己找位置。', 4: '你用先點再打的方法，完成了四關。努力正在累積！' },
     buildHint: digitHint, getWrongAnswerHtml: ({ hint }) => hint,
     progressMessages: {

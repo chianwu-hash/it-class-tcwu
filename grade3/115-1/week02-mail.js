@@ -1,7 +1,7 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
-import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261006';
-import { initGoogleCourseAuth as initClassCardAuth } from '../../shared/grade3-google-course.js?v=20261007-identity';
-import { createGoogleCourseProgress as createClassCardProgress } from '../../shared/grade3-google-course.js?v=20261007-identity';
+import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261028-drafts';
+import { initGoogleCourseAuth as initClassCardAuth } from '../../shared/grade3-google-course.js?v=20261028-drafts';
+import { createGoogleCourseProgress as createClassCardProgress } from '../../shared/grade3-google-course.js?v=20261028-drafts';
 import { connectTypingUI, digitHint, typingMessages, randomDigits } from './week02-typing-ui.js?v=20261008-google-unlock';
 
 const COURSE_ID = 'grade3-115-1';
@@ -183,7 +183,19 @@ function start() {
         $('delivery-instruction').textContent = delivered.size === 3 ? '三個信箱已依序投遞，請按檢查信箱。' : `接著投遞給${animals[delivered.size].slice(3)}。`;
     }));
 
-    initTypingChallenge({
+    initTypingChallenge({ draftOptions: {
+        enabled: true, getSession: () => classCardAuth.getDraftSession?.(),
+        onRestore(level, text) {
+            const values = text.split('\n');
+            codes[level - 1].forEach((_, index) => { $(`mail-${level}-${index}`).value = values[index] || ''; });
+            if (level === 4) {
+                delivered.clear();
+                document.querySelectorAll('.delivered').forEach(el => el.classList.remove('delivered'));
+                $('delivery-instruction').textContent = '草稿已回復，請核對數字，再依順序重新投遞。';
+            }
+            updateAnswer(level);
+        }
+    },
         courseId: COURSE_ID,
         weekCode: WEEK_CODE,
         activityKey: 'typing_task_5',
