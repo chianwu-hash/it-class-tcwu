@@ -1,4 +1,6 @@
 import {renderLocalContent} from './quiz-past-content.mjs';
+import {renderManualResponse} from './quiz-past-manual.mjs';
+import {attachPastInputKeyboard} from './quiz-past-input.mjs';
 export function initPastExamUI({root,request,resolveAsset,onView}){
 let active=true;
 const $=s=>root.querySelector(s),el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
@@ -7,11 +9,12 @@ let state,index=0,busy=false;const drafts=new Map(),pending=new Map();let tool='
 const say=t=>{if(active&&$('#status'))$('#status').textContent=t;};
 const api=request;
 
-function draft(g){if(!drafts.has(g.id))drafts.set(g.id,g.kind==='mark'?g.fields.map(()=>false):g.kind==='sequence'?g.choices.map(()=>''):g.kind==='annotation'?{point:null,arrow:null,mediaSha256:g.assets[0].sha256}:g.fields.map(()=>g.kind==='set'?[]:''));return drafts.get(g.id);}
-function currentValue(g){const r=state.records[g.id];return r?(g.kind==='annotation'?r.responses[0].value:r.responses.map(x=>x.value)):draft(g);}
+const isManual=g=>['annotation','manual'].includes(g.kind);
+function draft(g){if(!drafts.has(g.id))drafts.set(g.id,g.kind==='mark'?g.fields.map(()=>false):g.kind==='sequence'?g.choices.map(()=>''):g.kind==='manual'?{text:'',strokes:[],confirmed:false}:g.kind==='annotation'?{point:null,arrow:null,mediaSha256:g.assets[0].sha256}:g.fields.map(()=>g.kind==='set'?[]:''));return drafts.get(g.id);}
+function currentValue(g){const r=state.records[g.id];return r?(isManual(g)?r.responses[0].value:r.responses.map(x=>x.value)):draft(g);}
 function art(a){const f=el('figure',undefined,'figure');const link=el('a');link.href='#';link.dataset.imageLightbox='';const img=el('img');img.dataset.quizMediaUrl=a.url;resolveAsset(a.url).then(src=>{if(img.isConnected)img.src=src;}).catch(e=>say(e.message));img.alt=a.alt;link.append(img);f.append(link,el('figcaption',a.alt));return f;}
 function officialText(g,value){if(g.kind==='mark')return value?'應打勾':'不打勾';if(Array.isArray(value))return value.join(g.kind==='sequence'?' → ':'、');return value;}
-function feedback(g,i,host){const r=state.records[g.id];if(!r||g.kind==='annotation')return;const result=r.results[i],box=el('div',undefined,'feedback'+(result.correct?'':' wrong'));box.append(el('strong',result.correct?'✓ 這一格核對正確':'這一格和官方記號不同'),el('span','官方記號：'+officialText(g,result.official)));host.append(box);}
+function feedback(g,i,host){const r=state.records[g.id];if(!r||isManual(g))return;const result=r.results[i],box=el('div',undefined,'feedback'+(result.correct?'':' wrong'));box.append(el('strong',result.correct?'✓ 這一格核對正確':'這一格和官方記號不同'),el('span','官方記號：'+officialText(g,result.official)));host.append(box);}
 function renderPractice(){
  const host=$('#practice-progress'),p=state.practice;if(!host||!p)return;
  const box=el('div',undefined,'demo-note');
@@ -24,22 +27,22 @@ function renderPractice(){
 }
 function render(){if(!active)return;
  const g=state.groups[index],saved=state.records[g.id],locked=Boolean(saved)||busy||pending.has(g.id);if(!saved)onView(g.id);const values=currentValue(g);const summary=state.summary;
- $('#score').textContent=summary.answered?`目前核對 ${summary.score}／${summary.max} 分`:'準備好，就從一組開始。';$('#progress').textContent=`已核對 ${summary.answered}／${summary.total} 個欄位${summary.drawingStatus==='self_checked'?'・畫圖已自我核對':''}`;
+ $('#score').textContent=summary.answered?`目前核對 ${summary.score}／${summary.max} 分`:'準備好，就從一組開始。';$('#progress').textContent=`已核對 ${summary.answered}／${summary.total} 個欄位${summary.drawingStatus==='self_checked'?'・開放題已有自我核對紀錄':''}`;
  const meter=$('#past-progress');if(meter){meter.max=summary.total;meter.value=summary.answered;}
  renderPractice();
- $('#steps').replaceChildren(...state.groups.map((item,i)=>{const b=button('',()=>{index=i;arrowStart=null;undo=[];say('');render();},'step'+(i===index?' active':''));b.setAttribute('aria-current',i===index?'step':'false');b.append(el('b',String(i+1)));const t=el('span',item.title);t.append(el('small',state.records[item.id]?(item.kind==='annotation'?'已自我核對':'已核對'):'試試看'));b.append(t);return b;}));
- const card=el('div',undefined,'question-card'),head=el('header',undefined,'card-title'),title=el('div');card.dataset.kind=g.kind;card.dataset.groupId=g.id;title.append(el('span','原卷 '+g.sourceLabel,'source-label'),el('h2',g.title));head.append(title,el('span',g.kind==='annotation'?'不自動計分':`${g.fields.reduce((n,f)=>n+f.points,0)} 分`,'badge'));card.append(head);
+ $('#steps').replaceChildren(...state.groups.map((item,i)=>{const b=button('',()=>{index=i;arrowStart=null;undo=[];say('');render();},'step'+(i===index?' active':''));b.setAttribute('aria-current',i===index?'step':'false');b.append(el('b',String(i+1)));const t=el('span',item.title);t.append(el('small',state.records[item.id]?(isManual(item)?'已自我核對':'已核對'):'試試看'));b.append(t);return b;}));
+ const card=el('div',undefined,'question-card'),head=el('header',undefined,'card-title'),title=el('div');card.dataset.kind=g.kind;card.dataset.groupId=g.id;title.append(el('span','原卷 '+g.sourceLabel,'source-label'),el('h2',g.title));head.append(title,el('span',isManual(g)?'不自動計分':`${g.fields.reduce((n,f)=>n+f.points,0)} 分`,'badge'));card.append(head);
  const grid=el('div',undefined,'body-grid'+(g.assets.length?'':' no-art')),left=el('div'),right=el('div');
  const hasMaterial=g.materialContent?Boolean(g.materialContent.text.trim()||g.materialContent.layout?.length||g.materialContent.media.length):Boolean(g.material?.trim());
  if(hasMaterial){const material=el('div',undefined,'material material-box');if(g.materialContent)renderLocalContent(material,g.materialContent);else material.textContent=g.material;left.append(material);}
  if(g.notice)left.append(el('p',g.notice,'demo-note'));
- if(g.choices.length&&g.kind!=='single'){const bank=el('div',undefined,'choice-bank');g.choices.forEach(c=>bank.append(el('p',c.id+'　'+c.text)));left.append(bank);}
+ if(g.choices.length&&g.kind!=='single'){const bank=el('div',undefined,'choice-bank');g.choices.forEach(c=>{const row=el('div',undefined,'past-bank-choice');row.append(el('b',c.id+'　'));renderLocalContent(row,c.content||{text:c.text,media:[]});bank.append(row);});left.append(bank);}
  if(g.assets.length&&g.kind!=='annotation'){const imgs=el('div',undefined,'art-grid'+(g.kind==='set'?' magnets':''));g.assets.forEach(a=>imgs.append(art(a)));left.append(imgs,el('p','點圖片可放大查看。','helper'));}
  if(g.kind==='single'||g.kind==='short'){
   const stem=el('div',undefined,'material');renderLocalContent(stem,g.promptContent);right.append(stem);
   if(g.kind==='single'){const choices=el('div',undefined,'past-choices');for(const c of g.choices){const row=el('label',undefined,'choice-row student-option'),input=el('input');input.type='radio';input.name='single';input.value=c.id;input.checked=values[0]===c.id;input.disabled=locked;input.addEventListener('change',()=>draft(g)[0]=c.id);const text=el('span',undefined,'option-body');if(c.content.text.trim()===c.id&&!c.content.media.length&&!c.content.layout)text.textContent=c.id==='O'?'正確':c.id==='X'?'不正確':'';else renderLocalContent(text,c.content);row.append(input,el('span',c.id,'option-badge'),text);choices.append(row);}right.append(choices);}
-  else{const label=el('label','你的答案','field-label');label.htmlFor='short-answer';const input=el('input');input.id='short-answer';input.type='text';input.maxLength=2000;input.value=values[0];input.disabled=locked;input.autocomplete='off';input.addEventListener('input',()=>draft(g)[0]=input.value);right.append(label,input);}
-  feedback(g,0,right);
+  else{g.fields.forEach((f,i)=>{const slot=el('div',undefined,'slot'),label=el('label',g.fields.length===1?'你的答案':`（${f.label}）${f.text}`,'field-label');label.htmlFor='short-answer-'+i;const input=el('input');input.id='short-answer-'+i;input.type='text';input.maxLength=2000;input.value=values[i];input.disabled=locked;input.autocomplete='off';input.addEventListener('input',()=>draft(g)[i]=input.value);slot.append(label,input);const hint=g.material+' '+f.text;attachPastInputKeyboard(slot,input,{bopomofo:/注音/.test(hint),punctuation:/標點/.test(hint)});feedback(g,i,slot);right.append(slot);});}
+  if(g.kind==='single')feedback(g,0,right);
  }else if(g.kind==='mark'){
   right.append(el('p','勾選你認為正確的敘述。','helper'));const list=el('div',undefined,'answer-list');
   g.fields.forEach((f,i)=>{const wrap=el('div'),label=el('label',undefined,'choice-row student-option'),input=el('input');input.type='checkbox';input.checked=values[i];input.disabled=locked;input.dataset.field=f.id;input.addEventListener('change',()=>{draft(g)[i]=input.checked;label.querySelector('.option-badge').textContent=input.checked?'✓':f.label;const confirm=$('#mark-confirm');if(confirm)confirm.checked=false;});label.append(input,el('span',values[i]?'✓':f.label,'option-badge'),el('span',f.text,'option-body'));wrap.append(label);feedback(g,i,wrap);list.append(wrap);});right.append(list);
@@ -50,18 +53,22 @@ function render(){if(!active)return;
    for(const [delta,text] of [[-1,'↑'],[1,'↓']]){const b=button(text,()=>{const v=draft(g),j=i+delta;[v[i],v[j]]=[v[j],v[i]];render();$('#order-'+j)?.focus();});b.disabled=locked||i+delta<0||i+delta>=g.choices.length;b.setAttribute('aria-label',`將第${i+1}位${delta<0?'上移':'下移'}`);row.append(b);}slot.append(row);right.append(slot);}
   feedback(g,0,right);
  }else if(g.kind==='code'){
-  g.fields.forEach((f,i)=>{const slot=el('div',undefined,'slot'),label=el('label',`圖中（${f.label}）的代號`);label.htmlFor='code-'+i;const select=el('select');select.id='code-'+i;select.disabled=locked;select.append(new Option('請選擇代號',''));g.choices.forEach(c=>select.append(new Option(c.id+'　'+c.text,c.id)));select.value=values[i];select.addEventListener('change',()=>draft(g)[i]=select.value);slot.append(label,select);feedback(g,i,slot);right.append(slot);});
+  g.fields.forEach((f,i)=>{const slot=el('div',undefined,'slot'),label=el('label',`（${f.label}）${f.text}`);label.htmlFor='code-'+i;const select=el('select');select.id='code-'+i;select.disabled=locked;select.append(new Option('請選擇代號',''));g.choices.forEach(c=>select.append(new Option(c.id+'　'+c.text,c.id)));select.value=values[i];select.addEventListener('change',()=>draft(g)[i]=select.value);slot.append(label,select);feedback(g,i,slot);right.append(slot);});
  }else if(g.kind==='set'){
   right.append(el('p','點選代號，可選一個或多個；再點一次即可取消。','helper'));
   g.fields.forEach((f,i)=>{const slot=el('fieldset',undefined,'slot');slot.append(el('legend',`（${f.label}）${f.text}`,'field-label'));const codes=el('div',undefined,'codes');for(const c of g.codes){const b=button(c,()=>{const list=draft(g)[i],at=list.indexOf(c);if(at<0)list.push(c);else list.splice(at,1);b.setAttribute('aria-pressed',String(list.includes(c)));});b.setAttribute('aria-pressed',String(values[i].includes(c)));b.setAttribute('aria-label',`第${f.label}欄代號${c}`);b.disabled=locked;codes.append(b);}slot.append(codes);feedback(g,i,slot);right.append(slot);});
+ }else if(g.kind==='manual'){
+  right.append(el('p',g.fields[0].text,'material'));
+  renderManualResponse({host:right,value:values,locked,asset:g.assets[0],resolveAsset});
+  if(saved){const ref=el('div',undefined,'reference');ref.append(el('h3',saved.referenceStatus==='not_provided'?'作答已保留・不自動判分':saved.referenceStatus==='partial'?'對照已確認的官方參考':'對照官方參考，自己檢查'),el('p',saved.reference||'這題採自我核對。'));if(saved.referenceUrl)ref.append(art({url:saved.referenceUrl,alt:'官方解答局部參考圖'}));right.append(ref);}
  }else if(g.kind==='annotation'){
   left.append(el('p',g.fields[0].text,'material'));renderDrawing(g,right,locked,values);
   if(saved){const ref=el('div',undefined,'reference');ref.append(el('h3','對照官方標記，自己檢查'),el('p','看看施力點的位置與箭頭方向。這是自我核對，不是老師評分，也不計入分數。'));ref.append(art({url:saved.referenceUrl,alt:'官方解答局部參考圖'}));right.append(ref);}
  }
  if(left.childNodes.length)grid.append(left,right);else{grid.classList.add('question-only');grid.append(right);}card.append(grid);const actions=el('div',undefined,'actions'),al=el('div',undefined,'actions-left');
  if(index>0)al.append(button('← 上一組',()=>{index--;say('');render();},'quiet'));if(index<state.groups.length-1)al.append(button('下一組 →',()=>{index++;say('');render();},'quiet'));actions.append(al);
- if(saved)actions.append(el('span',g.kind==='annotation'?'已保留這次標示・未自動判分':`這組已儲存並核對：${saved.score} 分`,'local-saved'));
- else {const submit=button(busy?'正在儲存…':pending.has(g.id)?'以同一份答案重試':g.kind==='annotation'?'完成標示，查看參考':'送出這一組',submitGroup,'primary');submit.id='submit';submit.disabled=busy;actions.append(submit);}
+ if(saved)actions.append(el('span',isManual(g)?'已保留這次作答・未自動判分':`這組已儲存並核對：${saved.score} 分`,'local-saved'));
+ else {const submit=button(busy?'正在儲存…':pending.has(g.id)?'以同一份答案重試':isManual(g)?'完成並儲存作答':'送出這一組',submitGroup,'primary');submit.id='submit';submit.disabled=busy;actions.append(submit);}
  card.append(actions);$('#workspace').replaceChildren(card);
 }
 function renderDrawing(g,host,locked,value){
@@ -83,14 +90,15 @@ function renderDrawing(g,host,locked,value){
 }
 async function submitGroup(){const g=state.groups[index];let packet=pending.get(g.id);
  if(!packet){const value=draft(g);if(g.kind==='mark'&&!$('#mark-confirm')?.checked){say('請先確認未勾選的格子就是不勾。');return;}
-  if(['single','short'].includes(g.kind)&&!value[0]){say('請先完成這一題再送出。');return;}
+  if(['single','short'].includes(g.kind)&&value.some(v=>!v.trim())){say('請先完成每個答案欄再送出。');return;}
+  if(g.kind==='manual'&&(!value.confirmed||(!value.text.trim()&&!value.strokes.length))){say('請先輸入文字或畫圖，並勾選完成確認。');return;}
   if(g.kind==='sequence'&&(value.some(v=>!v)||new Set(value).size!==g.choices.length)){say('請將所有位置填完整，每個代號使用一次。');return;}
   if(g.kind==='code'&&value.some(v=>!v)){say('請為每個位置選好代號。');return;}
   if(g.kind==='set'&&value.some(v=>!v.length)){say('請為每個答案欄選擇代號，再送出。');return;}
   if(g.kind==='annotation'&&(!value.point||!value.arrow)){say('請先放置施力點並畫出箭頭。');return;}
-  packet={version:state.version,groupId:g.id,requestId:crypto.randomUUID(),confirmed:g.kind==='mark'?true:undefined,responses:g.fields.map((f,i)=>({questionId:f.id,value:g.kind==='annotation'?structuredClone(value):g.kind==='sequence'?[...value]:structuredClone(value[i])}))};pending.set(g.id,packet);
+  packet={version:state.version,groupId:g.id,requestId:crypto.randomUUID(),confirmed:g.kind==='mark'?true:undefined,responses:g.fields.map((f,i)=>({questionId:f.id,value:isManual(g)?structuredClone(value):g.kind==='sequence'?[...value]:structuredClone(value[i])}))};pending.set(g.id,packet);
  }
- busy=true;say('正在儲存這一組…');render();try{state=await api('/api/submit',packet);pending.delete(g.id);say(g.kind==='annotation'?'已保留標示，請和官方參考圖自我核對。':'已儲存這一組，可以看核對結果或繼續下一組。');}catch(e){say('儲存結果尚未確認：'+e.message+' 請用同一份答案重試。');}finally{busy=false;render();}
+ busy=true;say('正在儲存這一組…');render();try{state=await api('/api/submit',packet);pending.delete(g.id);say(isManual(g)?'已保留作答，請依題目要求檢查；有官方參考時可供對照。':'已儲存這一組，可以看核對結果或繼續下一組。');}catch(e){say('儲存結果尚未確認：'+e.message+' 請用同一份答案重試。');}finally{busy=false;render();}
 }
 let restartRequest=null;
 $('#restart').addEventListener('click',async()=>{if(busy)return;busy=true;restartRequest??=crypto.randomUUID();try{state=await api('/api/reset',{requestId:restartRequest});restartRequest=null;drafts.clear();pending.clear();index=0;undo=[];arrowStart=null;say('');}catch(e){say(e.message);}finally{busy=false;render();}});

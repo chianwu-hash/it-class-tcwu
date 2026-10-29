@@ -6,6 +6,7 @@ import { initWrongQuestions } from './quiz-wrong-questions.mjs?v=20261029-load-b
 import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs?v=20261029-batch4';
 import {comparePapers,paperRange,paperTitle,paperMix,isExtension,paperDifficulty} from './quiz-paper-display.mjs';
 import {difficultyAdjustment} from './quiz-difficulty.mjs';
+import {createPastCatalogReader,pastPaperDisplay} from './quiz-past-catalog.mjs';
 
 let currentSession = null, generation = 0, papers = [], busy = false, studentView=false, reloadAfter=false, focusPaperId=null;
 const el = id => document.getElementById(id);
@@ -19,7 +20,9 @@ ownSection.innerHTML='<header class="collection-heading"><span class="collection
 const presetSection=document.createElement('section');presetSection.id='system-papers-section';presetSection.className='paper-collection collection-preset';presetSection.setAttribute('aria-labelledby','system-papers-title');
 presetSection.innerHTML='<header class="collection-heading"><span class="collection-label">已準備好的練習</span><h2 id="system-papers-title">老師準備的卷 <span id="system-papers-count" class="collection-count"></span></h2><p>各科單元卷已經準備好，選一份就能開始練習。</p></header><p id="system-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的老師準備的卷。</p>';
 el('cloud-papers').before(presetSection);presetSection.append(el('cloud-papers'));presetSection.before(ownSection);
-const hasPastExams=pageGrade===3&&!localContext;
+const hasPastExams=[3,6].includes(pageGrade)&&!localContext;
+let pastPapers=[],pastCatalogError=false;
+const readPastCatalog=hasPastExams?await createPastCatalogReader(()=>currentSession):null;
 const pastSection=document.createElement('section');pastSection.id='past-papers-section';pastSection.className='paper-collection collection-past';pastSection.hidden=true;pastSection.setAttribute('aria-labelledby','past-papers-title');
 pastSection.innerHTML='<header class="collection-heading"><h2 id="past-papers-title">考古題專區 <span id="past-papers-count" class="collection-count">0卷</span></h2><p>依照歷年原卷練習，保留各次成績；同一份試卷首次完整達標可取得葉片。</p></header><p id="past-papers-empty" class="collection-empty">目前沒有符合篩選條件的考古題。</p><div id="past-papers" class="papers"></div>';
 presetSection.after(pastSection);
@@ -98,14 +101,15 @@ function render() {
     a.append(body); (p.generated?el('my-papers'):el('cloud-papers')).append(a);
   }
   el('cloud-status').textContent = `進度已從${localContext?'本機測試資料庫':'雲端'}讀取`;
-  if (hasPastExams && studentView && (!subject || subject === '自然')) {
-    const card=node('article',undefined,'paper-card');card.dataset.subject='自然';card.dataset.kind='past-exam';
+  const visiblePast=hasPastExams&&studentView?pastPapers.map(pastPaperDisplay).filter(p=>p.grade===pageGrade&&(!subject||subject===p.subject)):[];
+  for(const p of visiblePast){
+    const card=node('article',undefined,'paper-card');card.dataset.subject=p.subject;card.dataset.kind='past-exam';
     const header=node('div',undefined,'paper-card-header'),icon=node('span',undefined,'subject-icon'),symbol=node('i',undefined,'fa-solid fa-leaf');symbol.setAttribute('aria-hidden','true');icon.append(symbol);
-    const title=node('div');title.append(node('span','考古題專區','paper-source-label'),node('p','自然','paper-subject'),node('h3','114上三年級期中自然'));header.append(icon,title);card.append(header);
-    const body=node('div',undefined,'paper-card-body');body.append(node('p','康軒第1–2單元｜原卷圖文、整組作答與歷次成績'),node('p','自動核對92分；畫圖自核對。完整達60%，同學期首次達標得1片葉。'));
-    const link=node('a','開始／繼續考古題 →','paper-start');link.href='past-exam.html?paper=dingxi-114-1-g3-exam1-science';body.append(link);card.append(body);el('past-papers').append(card);
-    el('past-papers-empty').hidden=true;el('past-papers-count').textContent='1卷';
+    const title=node('div');title.append(node('span','考古題專區','paper-source-label'),node('p',p.subject,'paper-subject'),node('h3',p.shortTitle));header.append(icon,title);card.append(header);
+    const body=node('div',undefined,'paper-card-body');body.append(node('p',`${p.edition||''} ${p.range||''}｜原卷圖文與歷次成績`),node('p','單次完整作答達60%，同卷同學期首次達標得1片葉。開放題採自我核對，暫停題不列入完成。'));
+    const link=node('a','開始／繼續考古題 →','paper-start');link.href='past-exam.html?paper='+encodeURIComponent(p.id);body.append(link);card.append(body);el('past-papers').append(card);
   }
+  el('past-papers-empty').hidden=visiblePast.length>0;el('past-papers-empty').textContent=pastCatalogError?'暫時無法讀取考古題，請按「更新雲端進度」重試。':'目前沒有符合篩選條件的考古題。';el('past-papers-count').textContent=visiblePast.length+'卷';
   renderContinue();
   focusOwnPaper();
 }
@@ -131,6 +135,8 @@ async function load({refreshComposer=true,refreshWrong=true}={}) {
     if(data.role!=='student')throw Object.assign(new Error('考前練功房僅限名冊中的學生帳號使用。'),{code:'student_required'});
     const redirect = quizStudentRedirect(data, location.pathname);
     if (redirect) { location.replace(redirect); return; }
+    pastPapers=[];pastCatalogError=false;
+    if(readPastCatalog){try{pastPapers=await readPastCatalog();}catch{pastCatalogError=true;}if(token!==generation)return;}
     el('grade-filter-label').hidden=true;
     el('cloud-lock').hidden=true;el('cloud-library').hidden=false;
     papers = data.sessions;
@@ -163,7 +169,7 @@ if (localContext) {
   el('cloud-identity').textContent=session?.user?'正在確認學生資格…':'尚未登入・僅限名冊中的學生使用';
   showLock(session?.user?'正在確認學生資格，請稍候…':'請使用名冊中的學生帳號登入後開始練習。');
   reloadAfter=false;focusPaperId=null;
-  generation++; busy = false; papers = []; el('cloud-papers').replaceChildren(); el('cloud-status').textContent = '';
+  generation++; busy = false; papers = []; pastPapers=[];pastCatalogError=false;el('cloud-papers').replaceChildren(); el('cloud-status').textContent = '';
   studentView=false;el('my-papers').replaceChildren();clearPastPapers();ownSection.hidden=true;ownSection.dataset.enabled='false';continueBox.hidden=true;continueBox.replaceChildren();activeView=same?activeView:viewFromHash();el('subject-filter').value='';applyView();
   wrongQuestions.reset();
   composer?.reset();

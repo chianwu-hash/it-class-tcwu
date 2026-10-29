@@ -1,4 +1,4 @@
-import {initPastExamUI} from './quiz-past-ui.mjs?v=20261029-past-types3';
+import {initPastExamUI} from './quiz-past-ui.mjs?v=20261030-past114';
 import {createAuthenticatedTransport} from './quiz-transport.mjs?v=20261029-batch4';
 import {createMediaScope,configureQuizMedia} from './quiz-media.mjs';
 import {initImageLightbox} from './image-lightbox.js';
@@ -28,6 +28,8 @@ export function initPastExam({selectors,server}){
    state=next;const url=new URL(location.href);url.searchParams.set('attempt',state.attemptId);history.replaceState(null,'',url);viewed.clear();root.innerHTML=template;content.hidden=false;lock.hidden=true;updateScope();
    provideNavIdentity({userId:user.user.id,email:user.user.email,row:next.identity?.enrollment||next.identity});
    root.querySelector('#paper-title').textContent=next.title;
+   if(root.querySelector('#paper-policy')&&next.policy){const p=next.policy;root.querySelector('#paper-policy').textContent=`本卷自動核對共${p.automaticPoints}分；單次完整作答達60%，同卷同學期首次達標取得1片葉。`;root.querySelector('#paper-exclusions').textContent=`開放作答與畫圖題共${p.manualPoints}分採自我核對，不列入自動分數；${p.blockedFields}個暫停欄位共${p.blockedPoints}分不影響完成。`;}
+   document.title=next.title+'・考前練功坊';
    ui=initPastExamUI({root,request,resolveAsset:url=>scope.resolve(url),onView});ui.load(next);
   }catch(e){if(token!==generation)return;lock.querySelector('[role="status"]').textContent=e.message;}
  },destroy(){clear();user=null;transport=null;}};

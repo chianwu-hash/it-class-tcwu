@@ -1,4 +1,27 @@
-# 2026-10-29 考古題專區分頁已上線（最新）
+# 2026-10-30 114學年度考古題19份已正式開放
+
+- 使用者授權的114上三、六年級各10卷已完成；新增19卷，原三年級期中自然pilot保留。113未轉換、未發布。本次學習紀錄115上；完整單次自動分達60%首次一葉，重作與歷次保留，不合併多次答案，同卷同學期／跨內容版本不重領。
+- 正式deployment `dpl_7MN16pxfnz6SwNHFBQ6GUquYAwtf`，https://it-class-tcwu.vercel.app；三、六年級`grade{3,6}/115-1/quiz-library.html#past-exams`各10卷。教師原預覽頁現可選自己擁有的20卷。前版`dpl_4z2gMQ47cuazJ5bgVJeSpU9bR4B7`。
+- 新增19卷最終648題組952欄、94個暫停項（82個缺原音聽力，另有原卷／解答矛盾或歧義）；106個去重私有PNG逐張上傳／下載驗SHA。各卷均verified，原文／來源頁／原檔與轉檔SHA／官方原記號／校對記錄完整。六年級期末自然單選2因可能不唯一先暫停2分，不改原題或猜答案。
+- 新增manual文字／筆跡、多欄short、注音／標點輔助、rich選項、三六年級catalog、教師多卷預覽及媒體驗權。官方略／留白採manual並標not_provided，不猜參考；部分參考只保留可辨內容。六年級期末自然基本100另加4分選做，以optional manual保存、不影響分母／完整；只有manual可optional。沒有50分／10欄門檻。
+- 原pilot不可變version `2b25e1de-55fb-4768-8e93-b866856c16ca`、SHA `1536ce5703e91719a6f7503e2585c628b44eba2e91ffdc100fb601eea681fca8`仍保留。舊catalog欄位由前端限定ID merge補足學年／期中／出版社範圍，不修改文件版本。
+- 72完整回歸全過（59.3秒）；19卷整卷RPC、獎勵介面一片葉與重作歷史全過；19卷所有組1280／390／360px及教師預覽、相同封包重送、葉片0→1→1全過。catalog雙年級6尺寸組合全過。最新候選舊pilot91檢查／新自然／catalog全過；正式254靜態SHA及正式來源隔離Chrome全過。手機是Chrome模擬，非實體手機／真人OAuth測試。
+- 正式DB先disabled註冊、增量只換6相關函數；交易內9個既有表摘要不變、無關函數保留。19卷各三次作答真PostgreSQL驗證後rollback，未保留測試作答／葉片。02:40開放19，02:42再確認各年級10、教師20、函數符合來源、表格私有、無合成auth／attempt、pilot不變。既有努力樹wrapper不需重包裝。
+- 來源與所有私有產物在ignored `automation/output/past-exams-batch`，clone不含。`index.private.html`／`catalog.private.json`為本機校對總覽；逐卷含reviewed JSON、bundle、MD、preview、image manifest、issues、QC。`cloud/`保留before、frozen、media驗證、register、rollback、candidate/live gate、activate、正式data/files/alias證據。詳`docs/development/past-exams-114-production-20261030.md`及playbook。
+- 正式由最新完整440來源檔凍結包加22個runtime overlay發布；主專案有其他dirty，未整包部署主專案。分支`codex/past-exam-production`、本工作區為唯一寫入。不要從舊主專案整包部署覆蓋。回復先`node automation/past-exams-cloud-114.mjs deactivate`只停本批19卷，再promote前版；保留學生歷次及葉片。
+- 新批次工具`past-exams-{inventory,build,migration,cloud-114,cloud-smoke-114,release-114,release-gate-114,live-114,index-114}`只針對明列114範圍。完整Wayground安裝器未執行。一旦已apply，不要重跑inspect覆蓋before或apply重複insert；再次執行須先讀狀態及文件。
+- Claude唯讀CLI2.1.289提供8份草稿與架構討論，Codex獨立校對整合；額度失敗session不可Resume或冒稱同意，無API計費切換。原頁／字型與分數順序是高風險；一次性qc／transcribe腳本會覆寫人工修正，勿盲跑。Puppeteer背景初始化用受租約保護`past-browser-wake.cjs`喚醒精確target；子程序須preload、本機快速測試旗標及足夠長測試時限。failed logs保留，結果以最終SHA匹配證據為準。
+- 本次自有4421／4422舊fixture及4423／4424新fixture已停，驗收分頁已關閉、租約釋放；未接管其他使用中的server。結果沿用MEMKEY:考前練功坊-考古題前處理-cian請益，id `d1491e03-ff0c-4c9a-b096-255e22b831b2`。
+
+
+# 2026-10-29 批次範圍調整：僅114學年度（進行中）
+
+- 使用者最新指示「40份太多，只做114學年度就好」。本次只含114-1，三、六年級各10份，共20份（含已上線三年級期中自然），其餘19份待完成轉錄、校對、轉接及驗證後發布。113-1不在本次授權範圍；先前已產生的113中間檔不得加入本次發布。
+- 已驗證原檔SHA-256、版本、來源紀錄ID與同版本解答配對；114的20對159頁已轉圖。盤點工具預設及選項均鎖114-1。這是準備完成，不代表19份已完成題庫或上線。
+- Claude透過chat-mode唯讀審查六年級期中自然，已回完整草稿；Codex仍須逐頁獨立校對及實測裁圖。草稿有官方答案疑義與掃描截斷，不能直接匯入。既有試辦的不可變版本、歷次作答與首次達標一葉規則維持。
+- 實際檔案與Claude審查包在ignored automation/output/past-exams-batch及.chat-mode/batch-review；clone不含。正式最新仍是下方dpl_4z2gMQ47cuazJ5bgVJeSpU9bR4B7，尚未新增發布。
+
+# 2026-10-29 考古題專區分頁已上線
 
 - 三年級選卷新增獨立「考古題專區」，自然114期中原卷移入且不再計入老師卷數。手機四分頁兩欄，科目篩選／更新／鍵盤／重整保留，返回選卷帶#past-exams。六年級保留原3分頁；無新增RPC或資料庫變更。
 - 正式dpl_4z2gMQ47cuazJ5bgVJeSpU9bR4B7已promote；5變更檔候選SHA、248正式靜態SHA、66回歸，以及本機與正式來源1280／390／360px隔離fixture驗收均過。教師拒絕與登出清空確認。詳[專區分頁](past-exam-area-20261029.md)，QA在ignored area-*。工作仍在codex/past-exam-production，dirty主工作區未合併不可整包發布。

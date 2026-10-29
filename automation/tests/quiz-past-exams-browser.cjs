@@ -1,6 +1,6 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{randomUUID}=require('node:crypto');
 const {connectCdp}=require('D:/projects/cdp-tools/packages/cdp-safe-client');const keep=setInterval(()=>{},1000);
-const origin=process.env.PAST_TEST_ORIGIN||'http://127.0.0.1:4420',backend='http://127.0.0.1:4420',out=process.env.PAST_TEST_OUTPUT||'automation/output/past-exam-production/browser'+(origin==='https://it-class-tcwu.vercel.app'?'-live':process.env.PAST_TEST_ORIGIN?'-staged':'');
+const origin=process.env.PAST_TEST_ORIGIN||'http://127.0.0.1:4420',backend=process.env.PAST_TEST_BACKEND||'http://127.0.0.1:4420',out=process.env.PAST_TEST_OUTPUT||'automation/output/past-exam-production/browser'+(origin==='https://it-class-tcwu.vercel.app'?'-live':process.env.PAST_TEST_ORIGIN?'-staged':'');
 const auth=`export const SUPABASE_URL='https://past-fixture.invalid',SUPABASE_ANON_KEY='synthetic-only';
 let s=JSON.parse(sessionStorage.getItem('past-fixture-session')||'null');if(!sessionStorage.getItem('past-fixture-session'))s={user:{id:'00000000-0000-4000-8001-000000000001',email:'student1@example.invalid'},access_token:'fixture-1'};const callbacks=[];
 window.__pastSession=next=>{s=next;sessionStorage.setItem('past-fixture-session',JSON.stringify(s));callbacks.forEach(f=>f(s?'SIGNED_IN':'SIGNED_OUT',s));};
@@ -10,6 +10,7 @@ export const supabase={auth:{getSession:async()=>({data:{session:s}}),onAuthStat
 const rpc=async(action,data,student=1,fast=false)=>{const r=await fetch(backend+'/__past/rpc',{method:'POST',headers:{'Content-Type':'application/json','X-Fixture-Nonce':descriptor.nonce},body:JSON.stringify({action,data,student,fast})});return {status:r.status,data:await r.json()};};
 const targets=await(await fetch(process.env.CDP_URL+'/json/list')).json(),target=targets.find(t=>t.id===process.argv[2]);if(!target)throw Error('Exact target missing');
 const puppeteer=require('D:/projects/cdp-tools/node_modules/puppeteer-core');
+await require('../lib/past-browser-wake.cjs')(puppeteer,process.env.CDP_URL,target.id);
 const connection=networkEnabled=>({cdpUrl:process.env.CDP_URL,targetUrl:target.url,puppeteer:{connect:options=>puppeteer.connect({...options,protocolTimeout:30000,networkEnabled,targetFilter:t=>['browser','tab'].includes(t.type())||t._targetId===target.id})}});
 // 先不監看網路，只啟用精確的自有分頁，避免背景分頁初始化卡在 Network.enable。
 const bootstrap=await connectCdp(connection(false));try{assert.equal(bootstrap.page.target()._targetId,target.id);bootstrap.session.grantForegroundOnce('Page.bringToFront','恢復考古題驗收分頁後再初始化網路攔截');await bootstrap.session.send('Page.bringToFront');}finally{await bootstrap.disconnect();}
