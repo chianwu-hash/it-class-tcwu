@@ -4,7 +4,9 @@
 
 - 使用者授權接續第一批，本機及真實Postgres30人並行全過才上線；保存／重送／揭答／原一葉維持。Codex唯一寫入，現有獨立工作區，分支codex/quiz-load-batch2；主工作區其他dirty不動。
 - 範圍：單筆私有版本摘要、薄library、錯題refs／頁面JSON／單題明細、可靠來源共用、教師metadata清單及按需預覽。原quiz_action、保存／揭答／防弊／leaf與第一批媒體驗權不改；compose只改共用來源查找段。
-- 55項候選模式回歸、核心及新流程Chrome通過。三表摘要及精簡初輪失敗報告保留，未發布；每版本一筆的bench-verify兩輪22＋30人全過，補上異常多餘答案的揭答等價後，鎖定最後SQL SHA的bench-final30人再全過。2,101答案／30葉一致、p95約143→117ms；錯題持鎖1216→5ms、教師清單payload減98.5%。現在準備正式SQL／資料摘要及候選部署驗收。詳quiz-load-batch2-20261029.md及ignored automation/output/quiz/batch2。
+- 已上線。55項候選模式回歸、核心及新流程本機／正式來源Chrome通過。三表摘要及精簡初輪失敗報告保留；每版本一筆的bench-verify兩輪22＋30人全過，補上異常多餘答案的揭答等價後，鎖定最後SQL SHA的bench-final30人再全過。2,101答案／30葉一致、p95約143→117ms；錯題持鎖1216→5ms、教師清單payload減98.5%。
+- 功能9147b56，Vercel dpl_GFRzHXKymQ3F1iVHg8L8U2xiARhq已promote／READY，239正式檔SHA一致，三版collector均204。正式99版本／887題衍生99筆私有摘要264KiB；原九表資料摘要與其餘17個quiz函式不變，三／六及教師唯讀比對一致。沒有真人送答／正式壓測／付費變更。主工作區舊碼未合併，後續沿本獨立分支接續，舊pool／wrong SQL重裝後須重套batch2。
+- 詳quiz-load-batch2-20261029.md及ignored automation/output/quiz/batch2。自有測試server／分頁驗收後清理，租約釋放；舊CLI sampler保持停止。
 
 ## 考前練功坊資料讀取第一批 — 2026-10-29
 

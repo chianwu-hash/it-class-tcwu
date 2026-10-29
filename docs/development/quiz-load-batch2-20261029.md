@@ -26,7 +26,11 @@
 - `bench-verify` 原門檻兩輪22人＋30人全過。另補強異常多一筆答案時，保留舊detail經resume要求的整卷答案數完全相符限制；定向等價通過後，用最後SQL SHA256鎖定再跑 `bench-final`，30人及所有鎖／教師讀取檢查全過。
 - 最後30人兩組各2,101答案／30葉、0非法計時一致；HTTP p95 142.740→117.028ms、max598.145→533.171ms。library／錯題清單／錯題明細DB p95分別37.094→22.589、43.960→33.655、57.695→39.116ms。送答compact bytes完全相同；學生總bytes因新增必要version_id／can_extend略增約0.09%，不是本批整體payload縮減的主張。
 - 同attempt持寫鎖時錯題明細1215.80→4.91ms；同題庫保存鎖下版本清單1291.29→2.58ms。31版的30次教師清單請求19,597,950→292,950bytes（減98.5%），DB p95 428.163→26.571ms。最後30人WAL576808→603824bytes（約增4.7%）；摘要維護有寫入成本，不宣稱零成本。
-- 正式發布與資料核對待補；尚未據此宣稱Nano尖峰已根治。
+- 正式Supabase更新通過：只替換原compose／wrong_questions，新增6個helper／讀取函式、1個私有摘要表及trigger。其餘17個原quiz函式逐字不變。99份固定版本／887題回填99筆摘要，含索引共270336bytes（264KiB）；anon／authenticated均不能直接讀表或執行私有helper。
+- 原90份bank、99份version、122場session、94份attempt、485筆answer、30筆leaf、468筆timing、57份generated及12筆name_counter的筆數與內容雜湊前後相同。正式三／六年級既有資料的library／錯題清單／明細，以及教師版本metadata／單版document的正規化雜湊均與更新前一致；沒有正式學生送答。
+- 功能commit `9147b56`，分支 `codex/quiz-load-batch2`。Vercel候選 `dpl_GFRzHXKymQ3F1iVHg8L8U2xiARhq` production／READY，先以CLI讀回20個修改／保留檔案SHA256與collector204，才promote至 `https://it-class-tcwu.vercel.app`。
+- 正式239個HTML／JS／MJS／CSS／WOFF2檔案逐byte一致，三個診斷版本均204；正式來源的新錯題／教師流程及第一批核心瀏覽器回歸再次全過。這些瀏覽器使用實際已發布HTML／模組／樣式，但Auth／RPC為合成替身；正式DB則另以真實函式及既有資料唯讀比對，不混稱真人全流程壓測。
+- 本批已上線，仍未據此宣稱Nano尖峰已根治。自有4391測試server於驗收後停止，瀏覽器測試分頁清理及租約釋放；舊CLI sampler仍停止。
 
 ## 證據與限制
 
@@ -35,3 +39,5 @@
 並行兩邊都用第一批實際正式函式、同2,906題／220卷／180份歷史attempt／1,800筆合成歷史答案、8條連線pool；兩輪22人交錯A/B及30人，真等2.1秒閱讀，加入兩頁錯題與單題回顧、媒體／送答交錯、同attempt持寫鎖的錯題讀取，以及同題庫持保存鎖的版本清單。另量測31個版次的30個教師並行讀請求；這是合成教師讀取壓力，不代表學生有教師權限。
 
 這些測試不是真實Google OAuth／Supabase Auth／Nano／WAN壓測，不能宣稱301底層唯一根因已根治。正式驗證有界且不代真人學生作答、不做正式30人壓測、不調付費方案或pool／timeout。
+
+後續請在 `C:/Users/user/.codex/worktrees/quiz-load-batch1/it-class-tcwu`／`codex/quiz-load-batch2` 接續；主工作區其他dirty程式未合併，不能直接整包覆蓋本次正式版。SQL安裝順序維持原quiz／media／wrong／pool／rewards，再batch1、batch2；若重裝舊pool或wrong檔，須重套batch2，避免退回全量讀取。
