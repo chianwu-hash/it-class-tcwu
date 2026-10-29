@@ -86,3 +86,21 @@ Logs API 舊端點 `logs.all` 已經停用（回 410），現在要用 `/v1/proj
 - 私有原始輸出（含 IP／查詢文字）只留在 Claude 暫存目錄，沒有進 repo。
 - `pg_stat_statements` 自 10/06 起累積，混有優化前的版本，只能當背景參考。
 - 正式程式以 Codex worktree `codex/quiz-load-batch3` 加上 `253d2bf`（偵錯預設關閉）為準；主工作區有其他未發布修改，沒有混入。
+
+## 六、補充：真實 PostgreSQL 17 逐句剖析（15:50，第四批程式）
+
+工具：`automation/quiz-profile.mjs`。使用 embedded PostgreSQL 17、`pg_stat_statements.track=all`、pool 8、同一份授權題庫副本；30 位合成學生同時執行：清單 → 目錄 → 組 10 題卷 → 開卷 → 每題「看題 → 圖片驗權 → 至少等 2.1 秒 → 送答」→ 回清單 → 老師卷 5 題。
+
+| 動作 | 次數 | p50 | p95 | 總時間 |
+|---|---:|---:|---:|---:|
+| submit | 450 | 4.0 ms | 6.5 ms | 1,876 ms |
+| compose | 30 | 17.6 ms | 88 ms | 810 ms |
+| view_question | 450 | 1.5 ms | 3.0 ms | 767 ms |
+| join | 60 | 7.3 ms | 16 ms | 489 ms |
+| media_access | 240 | 1.2 ms | 2.5 ms | 342 ms |
+| library_sessions | 60 | 3.1 ms | 24 ms | 295 ms |
+
+- 一整輪的資料庫工作時間合計約 4.8 秒，分布在 38 秒內，約等於一顆 CPU 的 12%。**在健康的主機上，30 人的工作量很輕。**
+- 單一 backend 跑完整個學生流程後，私有記憶體從 1.3 MB 增加到 7.4 MB（compose 佔 +3.6 MB）。以 10～15 條連線計算約 70～110 MB，有影響但不是主因。
+- 對照主機曲線：13:35 尚未上課、CPU 1.5% 時，swap 已經使用 384 MB。也就是平台自己的服務在 Nano 上就已經超過 RAM，平常一直在換頁。每個請求都可能觸發換頁讀回，所以程式端剩下有效的方向是**減少請求次數**，而不是讓 SQL 更快。
+- 每位學生作答一題要 3 個請求（view_question、圖片驗權、submit），佔總請求數約 85%。
