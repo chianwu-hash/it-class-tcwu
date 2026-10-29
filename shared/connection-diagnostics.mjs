@@ -1,11 +1,14 @@
 // Metadata only: never retain credentials, identities, URLs with queries, or answers.
 export const DIAGNOSTICS_RELEASE = '20261029-load-batch3';
-const enabled = typeof window !== 'undefined' && typeof document !== 'undefined';
+// 全站開關：改為 true 並重新部署才會啟用；目前先關閉供實班觀察。
+export const DIAGNOSTICS_ENABLED = false;
+const enabled = DIAGNOSTICS_ENABLED && typeof window !== 'undefined' && typeof document !== 'undefined';
+const noop = () => {};
 const events = [], queue = [];
 let sequence = 0, sending = false, timer, persistTimer;
-function persist(){clearTimeout(persistTimer);persistTimer=null;try{sessionStorage.setItem(KEY,JSON.stringify({release:DIAGNOSTICS_RELEASE,tab,events}));}catch{}}
+function persist(){if(!enabled)return;clearTimeout(persistTimer);persistTimer=null;try{sessionStorage.setItem(KEY,JSON.stringify({release:DIAGNOSTICS_RELEASE,tab,events}));}catch{}}
 const KEY = 'connection-diagnostics-v1';
-let tab = enabled ? crypto.randomUUID() : 'test';
+let tab = enabled ? crypto.randomUUID() : null;
 if (enabled) {
   try {
     const saved = JSON.parse(sessionStorage.getItem(KEY) || 'null');
@@ -27,11 +30,13 @@ function record(event) {
   } catch { /* Diagnostics must never affect an application operation. */ }
 }
 export function diagnoseStep(operation) {
+  if (!enabled) return noop;
   const started = performance.now(), id = ++sequence;
   record({ id, phase: 'start', operation: atom(operation) });
   return (code = 'ok') => record({ id, phase: 'end', operation: atom(operation), code: atom(code), ms: Math.round(performance.now() - started) });
 }
 export function diagnosticFetch(fetcher = globalThis.fetch) {
+  if (!enabled) return fetcher;
   return async (input, init) => {
     if (!enabled) return fetcher(input, init);
     let url;
@@ -58,9 +63,9 @@ export function diagnosticFetch(fetcher = globalThis.fetch) {
     }
   };
 }
-export function diagnoseResult(code) { record({ phase: 'result', code: atom(code) || 'service_error' }); }
+export function diagnoseResult(code) { if(enabled)record({ phase: 'result', code: atom(code) || 'service_error' }); }
 export function exportDiagnostics() {
-  return { release: DIAGNOSTICS_RELEASE, tab, page: location.pathname, events: [...events] };
+  return { release: DIAGNOSTICS_RELEASE, enabled, tab, page: globalThis.location?.pathname || '', events: [...events] };
 }
 export async function flushDiagnostics() {
   if (!enabled || sending || !queue.length || location.hostname !== 'it-class-tcwu.vercel.app') return;

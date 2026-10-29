@@ -1,10 +1,13 @@
 // Independent collector: bounded metadata to private Vercel runtime logs, no DB.
+// 共用前端的全站開關；關閉時仍回 204，讓尚未重整的舊頁面正常清空佇列。
+const diagnosticsEnabled = import('../shared/connection-diagnostics.mjs').then(module => module.DIAGNOSTICS_ENABLED);
 const atom = value => typeof value === 'string' && /^[a-zA-Z0-9_.:/-]{1,100}$/.test(value) ? value : '';
-module.exports = function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).end();
   if (req.headers.origin !== 'https://it-class-tcwu.vercel.app') return res.status(403).end();
   if (Number(req.headers['content-length'] || 0) > 24000) return res.status(413).end();
+  if (!await diagnosticsEnabled) return res.status(204).end();
   let body = req.body;
   try { if (typeof body === 'string') body = JSON.parse(body); } catch { return res.status(400).end(); }
   if (!body || JSON.stringify(body).length > 24000 || !['20261029-301-v1','20261029-load-batch1','20261029-load-batch2','20261029-load-batch3'].includes(body.release) ||

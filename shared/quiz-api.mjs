@@ -1,4 +1,4 @@
-import { createAuthenticatedTransport } from './quiz-transport.mjs?v=20261029-load-batch3';
+import { createAuthenticatedTransport } from './quiz-transport.mjs?v=20261029-diagnostics-switch';
 import { configureQuizMedia, createMediaScope } from './quiz-media.mjs?v=20261029-load-batch1';
 const errors = {
   paper_name_choice_invalid: '這個主題或角色目前無法使用，請更新後重新選擇。',

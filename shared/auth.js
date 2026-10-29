@@ -1,6 +1,6 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-import { diagnosticFetch } from './connection-diagnostics.mjs?v=20261029-load-batch3';
+import { diagnosticFetch } from './connection-diagnostics.mjs?v=20261029-diagnostics-switch';
 
 export const SUPABASE_URL = "https://upxgyusodibaqcrocdzj.supabase.co";
 export const SUPABASE_ANON_KEY = "sb_publishable_VhqRaRCR5m4VRuCqTMXToA_XgeCgl5j";

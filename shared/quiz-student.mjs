@@ -1,5 +1,5 @@
 import { initQuizModule } from './quiz-module.js?v=20261029-load-batch1';
-import { createQuizRequest } from './quiz-api.mjs?v=20261029-load-batch3';
+import { createQuizRequest } from './quiz-api.mjs?v=20261029-diagnostics-switch';
 import { initImageLightbox } from './image-lightbox.js';
 import {resolveQuizImage} from './quiz-media.mjs?v=20261029-load-batch1';
 

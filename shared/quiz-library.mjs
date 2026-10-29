@@ -1,5 +1,5 @@
 import { initNavbarAuth } from './navbar-auth.js';
-import { createQuizRequest } from './quiz-api.mjs?v=20261029-load-batch3';
+import { createQuizRequest } from './quiz-api.mjs?v=20261029-diagnostics-switch';
 import { quizPageGrade, quizLibraryPath, quizStudentRedirect } from './quiz-grade-route.mjs';
 import { initWrongQuestions } from './quiz-wrong-questions.mjs?v=20261029-load-batch2';
 import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs?v=20261029-load-batch1';
