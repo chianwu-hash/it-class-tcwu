@@ -34,6 +34,7 @@ export const supabase={auth:{getSession:async()=>({data:{session:window.fixtureS
     throw Error('unexpected endpoint '+name);
    }
    if(!/^\/(shared\/[A-Za-z0-9_./-]+|grade[36]\/115-1\/(quiz-library\.html|quiz\.html|navbar\.js))$/.test(url.pathname)||url.pathname.includes('..'))return request.respond({status:404,body:''});
+   if(process.env.QUIZ_BATCH4_LIVE==='1')return request.continue();
    const type=url.pathname.endsWith('.html')?'text/html;charset=utf-8':url.pathname.endsWith('.css')?'text/css':url.pathname.endsWith('.woff2')?'font/woff2':'text/javascript';
    return request.respond({contentType:type,body:await fs.readFile('.'+url.pathname)});
   }catch(e){errors.push(e.message);if(!request.isInterceptResolutionHandled?.())try{await request.respond({status:500,body:'fixture failed'});}catch{}}});
