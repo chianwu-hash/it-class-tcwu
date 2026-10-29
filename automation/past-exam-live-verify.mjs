@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import {createHash} from 'node:crypto';
+const out='automation/output/past-exam-production';
+const base=JSON.parse(fs.readFileSync('D:/projects/it-class-tcwu-batch4/automation/output/quiz/batch4/release-manifest.json','utf8'));
+const current=JSON.parse(fs.readFileSync(out+'/release-manifest.json','utf8'));
+const expected=Object.entries({...base.files,...current.files}).filter(([p])=>!p.startsWith('api/')&&/\.(?:html|js|mjs|css|woff2)$/.test(p));
+const queue=[...expected],results=[];
+await Promise.all(Array.from({length:8},async()=>{for(let item;item=queue.shift();){const [file,sha]=item;try{const r=await fetch('https://it-class-tcwu.vercel.app/'+file+'?past_release=20261029');const actual=createHash('sha256').update(Buffer.from(await r.arrayBuffer())).digest('hex');results.push({file,status:r.status,passed:r.ok&&actual===sha});}catch(e){results.push({file,passed:false,error:String(e.message)});}}}));
+const report={at:new Date().toISOString(),origin:'https://it-class-tcwu.vercel.app',files:results.length,passed:results.every(r=>r.passed),results};
+fs.writeFileSync(out+'/cloud/live-files.json',JSON.stringify(report,null,2));
+console.log(JSON.stringify({files:report.files,passed:report.passed,failed:results.filter(r=>!r.passed)}));
+if(!report.passed)process.exitCode=1;

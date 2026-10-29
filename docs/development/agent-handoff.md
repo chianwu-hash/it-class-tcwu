@@ -1,3 +1,11 @@
+# 2026-10-29 自然考古題已正式上線（優先於下方僅本機紀錄）
+
+- 使用者已明確授權正式接入及驗證後上線。114上三年級自然第一次評量，穩定paper ID dingxi-114-1-g3-exam1-science，學習115-1；40題組、92分自動／4分畫圖自核對／4分疑義暫停。保留作答方式，統一網站樣式。單次完整>=60%首次給1葉，同卷同學期只領一次，可重作並保留歷次；55→56→92葉0→1→1已驗證。
+- 正式 dpl_6q3C3ZH7U23iuKQSoBHHeukFUCdm 已promote，SQL本卷enabled=true、私有媒體9張及Edge已接入；正式247靜態SHA一致，66回歸零失敗零略過，Chrome正式來源學生／教師隔離fixture通過，真Supabase交易回滾驗證，沒有留下假學生作答與葉。
+- 分支codex/past-exam-production，工作區C:/Users/user/.codex/worktrees/past-exam-production/it-class-tcwu，基於claude/quiz-load-batch4，以第四批433檔凍結包加13檔發布。主工作區尚未合併，含花園等其他dirty，禁止整包部署覆蓋。
+- 新私有quiz_past_*與opt-in past-exam模式；只包裝quiz_rewards／quiz_media_access，原quiz_action及其他原函式不變。SQL核心／pool／wrong→batch1→2→3→4後才處理past-exams，舊rewards/media重裝須重檢包裝／備份。
+- 詳[正式接入紀錄](past-exam-production-20261029.md)。ignored automation/output/past-exam-production含私有來源／bundle／QA／雲端before備份，clone不含。回復先disabled本卷並保留歷次與領葉帳本，再promote原dpl_G6mqwLwCj3JqJ66HzQzuW1UqeyCu。
+
 # Agent Handoff
 
 ## 連線偵錯開關已關閉 — 2026-10-29

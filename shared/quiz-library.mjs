@@ -90,6 +90,14 @@ function render() {
     a.append(body); (p.generated?el('my-papers'):el('cloud-papers')).append(a);
   }
   el('cloud-status').textContent = `進度已從${localContext?'本機測試資料庫':'雲端'}讀取`;
+  if (!localContext && studentView && pageGrade === 3 && (!subject || subject === '自然')) {
+    const card=node('article',undefined,'paper-card');card.dataset.subject='自然';card.dataset.kind='past-exam';
+    const header=node('div',undefined,'paper-card-header'),icon=node('span',undefined,'subject-icon'),symbol=node('i',undefined,'fa-solid fa-leaf');symbol.setAttribute('aria-hidden','true');icon.append(symbol);
+    const title=node('div');title.append(node('span','考古題專區','paper-source-label'),node('p','自然','paper-subject'),node('h3','114上三年級期中自然'));header.append(icon,title);card.append(header);
+    const body=node('div',undefined,'paper-card-body');body.append(node('p','康軒第1–2單元｜原卷圖文、整組作答與歷次成績'),node('p','自動核對92分；畫圖自核對。完整達60%，同學期首次達標得1片葉。'));
+    const link=node('a','開始／繼續考古題 →','paper-start');link.href='past-exam.html?paper=dingxi-114-1-g3-exam1-science';body.append(link);card.append(body);el('cloud-papers').prepend(card);
+    el('system-papers-empty').hidden=true;el('system-papers-count').textContent=`${shown.length-ownCount+1}卷`;
+  }
   renderContinue();
   focusOwnPaper();
 }

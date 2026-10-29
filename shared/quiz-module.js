@@ -69,6 +69,10 @@ export function initQuizModule({
     mode = "scored",
     server = null
 }) {
+    if (mode === 'past-exam') {
+        const ready = import('./quiz-past-exams.mjs?v=20261029-past1').then(m => m.initPastExam({ selectors, server }));
+        return { handleAuthChange: session => ready.then(q => q.handleAuthChange(session)), destroy: () => ready.then(q => q.destroy()) };
+    }
     if (mode === 'server') return initServerQuiz({ selectors, server });
     if (mode === 'practice') return initQuizPractice({ questions, selectors, messages, loadProgress, saveProgress, loadGuestProgress, saveGuestProgress, getCurrentUser, onAfterSubmit, requireAuth, optionLabelMode });
     const mergedMessages = {
