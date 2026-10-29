@@ -1,0 +1,68 @@
+/* 直接沿用練功房的主題、字體、四色選項與底部操作列，不影響其他頁。 */
+.past-exam-page{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;min-height:100dvh}
+.past-exam-page .student-wrap .body-grid .material{background:transparent;padding:0;margin:0 0 16px;border-radius:0}
+.past-exam-page .student-wrap .body-grid .material-box{background:var(--quiz-tint);padding:16px;border-radius:16px}
+.past-exam-page .student-wrap{padding-bottom:150px}
+.past-exam-workspace{min-width:0;max-width:1440px;margin:auto}
+@scope (.past-exam-workspace){
+ h1,h2,h3,p{overflow-wrap:anywhere}
+ button,input,select{font:inherit}
+ button{min-height:44px;border:2px solid var(--quiz-border);border-radius:12px;padding:10px 16px;background:white;color:var(--quiz-primary-dark);font-weight:700;cursor:pointer}
+ button:disabled{opacity:.55;cursor:default}
+ button:focus-visible,select:focus-visible,input:focus-visible,svg:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--quiz-primary);outline-offset:4px}
+ .past-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 10px}
+ .past-heading h1{font-size:1rem;font-weight:900;line-height:1.6;margin:0;color:var(--quiz-primary-dark)}
+ .eyebrow{font-size:.75rem;margin:0 0 2px;color:#536c67;font-weight:700}
+ .quiz-back-link{font-size:.85rem;color:var(--quiz-primary);font-weight:700;white-space:nowrap;text-underline-offset:4px}
+ .overview{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+ .overview strong{font-size:.95rem;color:var(--quiz-primary-dark)}
+ .overview span{font-size:.85rem;color:#536c67;margin-left:12px}
+ .past-progress{width:100%;height:7px;display:block;border:0;border-radius:10px;margin:8px 0 12px;accent-color:var(--quiz-primary);overflow:hidden}
+ .past-progress::-webkit-progress-bar{background:var(--quiz-border)}
+ .past-progress::-webkit-progress-value{background:var(--quiz-primary);border-radius:10px}
+ .past-tools{display:flex;align-items:start;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+ details{border:0;padding:0;margin:0}
+ summary{cursor:pointer;min-height:44px;display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--quiz-border);border-radius:12px;color:var(--quiz-primary-dark);font-size:.85rem;font-weight:700;background:white;list-style:none}
+ summary::-webkit-details-marker{display:none}
+ summary::before{content:'＋';font-size:1rem}details[open]>summary::before{content:'−'}
+ .past-tools>details{min-width:0;flex:1 1 260px}
+ .past-tools>details>div{padding:14px;background:white;border:1px solid var(--quiz-border);border-radius:12px;margin-top:6px}
+ .past-rules p{margin:4px 0;font-size:.85rem;color:#536c67}
+ .past-options #restart{font-size:.85rem;background:var(--quiz-tint);margin-top:12px}
+ #practice-progress .demo-note{padding:0;background:transparent;margin:0;font-size:.85rem}
+ #practice-progress details{margin-top:10px}
+ .table-scroll{max-width:100%;overflow:auto}table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.85rem}
+ th,td{padding:10px;text-align:left;border-bottom:1px solid var(--quiz-border)}th{background:var(--quiz-tint);color:var(--quiz-primary-dark)}
+ .steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;max-height:240px;overflow:auto}
+ .step{display:flex;align-items:center;gap:8px;text-align:left;padding:8px;font-size:.8rem}
+ .step b{display:grid;place-items:center;flex:none;min-width:28px;height:28px;border-radius:8px;background:var(--quiz-tint)}
+ .step small{display:block;font-size:.7rem;color:inherit}.step.active{background:var(--quiz-primary);border-color:var(--quiz-primary);color:white}.step.active b{background:#ffffff24}
+ .question-card{background:white;border:0;border-radius:24px;overflow:hidden;min-width:0;box-shadow:0 5px 20px #44335f08}
+ .card-title{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--quiz-border)}
+ .card-title>div{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.card-title h2{font-size:1rem;margin:0;color:var(--quiz-primary-dark);font-weight:900}
+ .source-label{font-size:.8rem;color:#536c67}.badge{font-size:.75rem;font-weight:700;color:var(--quiz-primary-dark);background:var(--quiz-tint);border-radius:99px;padding:4px 12px;white-space:nowrap}
+ .body-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:24px;padding:18px 22px 24px;min-width:0}.body-grid>div{min-width:0}.body-grid.question-only{grid-template-columns:minmax(0,1fr)}
+ .material{font-size:clamp(1.35rem,2.1vw,1.9rem);line-height:1.65;font-weight:700;white-space:pre-line;margin:0 0 16px}.material .quiz-rich-paragraph{margin:6px 0;line-height:1.65}
+ .material-box{background:var(--quiz-tint);border-radius:16px;padding:16px;margin:0 0 16px}.material-box:empty{display:none}
+ .past-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px 0 8px;min-width:0}
+ .choice-row{position:relative;display:grid;grid-template-columns:42px minmax(0,1fr);align-items:center;gap:12px;padding:16px;min-height:76px;margin:0;border:2px solid #b8d1ef;border-radius:18px;background:#edf5ff;box-shadow:0 4px 0 #d4e3f5;cursor:pointer;font-size:clamp(1.15rem,1.8vw,1.55rem);font-weight:700;color:#302d45;line-height:1.65}
+ .choice-row:nth-child(4n+2){background:#fff6df;border-color:#edce8b;box-shadow:0 4px 0 #f0e0b9}.choice-row:nth-child(4n+3){background:#f2edff;border-color:#d0bdf0;box-shadow:0 4px 0 #e3d9f6}.choice-row:nth-child(4n+4){background:#fff0f5;border-color:#e9bfd1;box-shadow:0 4px 0 #f1dce5}
+ .choice-row input{position:absolute;width:1px;height:1px;opacity:0;padding:0;margin:0}
+ .choice-row:has(input:checked){border-color:var(--quiz-primary);outline:2px solid var(--quiz-primary);outline-offset:1px;background:var(--quiz-tint)}.choice-row:has(input:focus-visible){outline:3px solid var(--quiz-primary-dark);outline-offset:4px}.choice-row:has(input:disabled){cursor:default}
+ .option-badge{display:grid;place-items:center;width:42px;height:44px;background:white;border:1px solid white;border-radius:12px;font-size:1.2rem;font-weight:900}.option-body{min-width:0;overflow-wrap:anywhere}.option-body .quiz-rich-paragraph{margin:0}
+ .helper{font-size:.85rem;color:#536c67;margin:8px 0}.answer-list{display:grid;gap:12px}
+ .confirm{display:flex;align-items:start;gap:10px;padding:14px;background:#fff6df;border-radius:12px;margin:18px 0 0;font-size:.9rem}.confirm input{width:22px;height:22px;flex:none;margin:2px 0 0;accent-color:var(--quiz-primary)}
+ .slot{border:1px solid var(--quiz-border);border-radius:16px;padding:14px;margin:0 0 12px;min-width:0}.slot label,.field-label{display:block;font-size:1rem;font-weight:700;margin:0 0 8px}
+ select{width:100%;max-width:100%;min-width:0;min-height:48px;padding:10px;border:1px solid var(--quiz-border);border-radius:12px;background:white;color:var(--quiz-primary-dark);font-size:1.1rem}
+ .order-line{display:flex;align-items:center;gap:8px}.order-line select{flex:1}.order-line button{flex:none;padding:8px 12px}.codes,.drawing-tools{display:flex;gap:8px;flex-wrap:wrap}.codes button{min-width:52px;font-size:1.25rem}[aria-pressed=true]{background:var(--quiz-primary);color:white;border-color:var(--quiz-primary)}
+ .choice-bank{padding:14px 16px;background:var(--quiz-tint);border-radius:16px;margin-bottom:16px}.choice-bank p{margin:6px 0;font-size:1.05rem}
+ .art-grid{display:grid;gap:12px}.art-grid.magnets{grid-template-columns:repeat(2,minmax(0,1fr))}.figure{margin:0;padding:10px;border:1px solid var(--quiz-border);border-radius:16px;min-width:0;background:white;text-align:center}.figure a{display:block}.figure img{display:block;max-width:100%;max-height:390px;object-fit:contain;margin:auto}figcaption{font-size:.8rem;color:#536c67;margin-top:6px}
+ .feedback{border-left:4px solid #61a181;background:#f0f8f3;border-radius:12px;padding:14px;margin-top:16px;font-size:1rem;line-height:1.65}.feedback.wrong{background:#fff3df;border-color:#d49a48;color:#754c1f}.feedback strong{display:block}
+ .actions{position:fixed;z-index:35;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 24px max(14px,env(safe-area-inset-bottom));background:white;border-top:2px solid var(--quiz-border);box-shadow:0 -4px 18px #153c3212}
+ .actions-left{display:flex;gap:8px;flex-wrap:wrap}.primary{background:var(--quiz-primary);border-color:var(--quiz-primary);box-shadow:0 4px 0 var(--quiz-primary-dark);color:white;min-width:160px}.quiet{background:var(--quiz-tint);color:var(--quiz-primary)}.local-saved{font-size:.85rem;color:var(--quiz-primary-dark);font-weight:700}
+ #status:empty{display:none}#status:not(:empty){padding:12px 16px;background:#fff6df;border:1px solid #edce8b;border-radius:12px;margin-bottom:12px;overflow-wrap:anywhere}
+ .drawing-tools{margin:0 0 12px}.drawing-board{width:100%;aspect-ratio:694/611;height:auto;display:block;border:2px solid var(--quiz-border);border-radius:16px;background:white;touch-action:none}.drawing-board .cursor{stroke:#a87727;stroke-width:.004;fill:none}.drawing-board .dot{fill:#c34f3f}.drawing-board .arrow{stroke:#c34f3f;stroke-width:.011;fill:none;stroke-linecap:round}
+ .direction-grid{display:grid;grid-template-columns:repeat(3,48px);gap:6px;margin:12px 0}.direction-grid button{padding:6px;font-size:1.25rem}.reference{padding:14px;margin-top:18px;background:var(--quiz-tint);border-radius:16px}.reference img{max-width:100%;max-height:320px;display:block;margin:12px auto}.reference h3{font-size:1rem;margin:0}.demo-note{background:var(--quiz-tint);padding:12px;border-radius:12px;font-size:.85rem;margin:12px 0}
+ @media(max-width:700px){.past-heading{align-items:start}.past-heading h1{font-size:.9rem}.overview span{display:block;margin:2px 0 0;font-size:.75rem}.past-tools{gap:6px}.past-tools>details{flex-basis:100%}.body-grid{grid-template-columns:1fr;padding:16px 14px 22px;gap:16px}.card-title{padding:12px 14px}.card-title>div{gap:6px}.past-choices{grid-template-columns:minmax(0,1fr);gap:12px}.choice-row{padding:12px;min-height:70px;font-size:1.2rem}.actions{padding:10px 12px max(12px,env(safe-area-inset-bottom));gap:8px;flex-wrap:wrap}.actions-left{flex:1}.actions button{padding:10px 12px;font-size:.85rem}.primary{min-width:0}.local-saved{flex:1 1 100%}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+ @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto;transition:none}}
+}

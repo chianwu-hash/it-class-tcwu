@@ -16,7 +16,7 @@ function renderPractice(){
  const host=$('#practice-progress'),p=state.practice;if(!host||!p)return;
  const box=el('div',undefined,'demo-note');
  const message=p.earnedByThisAttempt?'這次完整作答達標，取得1片葉片。':p.leafCount?'這份試卷已取得1片葉片，可繼續練習，不重複領取。':p.complete?'這次作答已完成，尚未取得葉片；可以重新作答再挑戰。':'完整作答達60%後取得1片葉片；不同次答案不合併計算。';
- box.append(el('strong',message),el('p',p.eligible?'畫圖需完成標示，但不判對錯或列入自動分數；疑義欄位不影響完成。':'這次屬先前試作或合成相容題，不發模擬葉片。原卷可按「重新作答」另開可計獎勵的練習。'),el('p','可到努力樹查看這次達標成果。'));
+ box.append(el('strong',message));
  const details=el('details');details.append(el('summary',`歷次作答（${p.history.length}次）`));
  const wrap=el('div',undefined,'table-scroll'),table=el('table'),head=el('tr');for(const title of ['次數','成績','狀態','葉片'])head.append(el('th',title));table.append(head);
  p.history.forEach((h,i)=>{const row=el('tr');row.append(el('td',String(i+1)+(h.id===state.attemptId?'（目前）':'')),el('td',h.complete?`${h.score}／${h.max_score}`:`目前 ${h.score} 分`),el('td',h.complete?(h.passed?'達標':'未達60%'):'未完成'),el('td',h.earned_leaf?'取得1片':'—'));table.append(row);});wrap.append(table);details.append(wrap);box.append(details);host.replaceChildren(box);
@@ -25,6 +25,7 @@ function renderPractice(){
 function render(){if(!active)return;
  const g=state.groups[index],saved=state.records[g.id],locked=Boolean(saved)||busy||pending.has(g.id);if(!saved)onView(g.id);const values=currentValue(g);const summary=state.summary;
  $('#score').textContent=summary.answered?`目前核對 ${summary.score}／${summary.max} 分`:'準備好，就從一組開始。';$('#progress').textContent=`已核對 ${summary.answered}／${summary.total} 個欄位${summary.drawingStatus==='self_checked'?'・畫圖已自我核對':''}`;
+ const meter=$('#past-progress');if(meter){meter.max=summary.total;meter.value=summary.answered;}
  renderPractice();
  $('#steps').replaceChildren(...state.groups.map((item,i)=>{const b=button('',()=>{index=i;arrowStart=null;undo=[];say('');render();},'step'+(i===index?' active':''));b.setAttribute('aria-current',i===index?'step':'false');b.append(el('b',String(i+1)));const t=el('span',item.title);t.append(el('small',state.records[item.id]?(item.kind==='annotation'?'已自我核對':'已核對'):'試試看'));b.append(t);return b;}));
  const card=el('div',undefined,'question-card'),head=el('header',undefined,'card-title'),title=el('div');title.append(el('span','原卷 '+g.sourceLabel,'source-label'),el('h2',g.title));head.append(title,el('span',g.kind==='annotation'?'不自動計分':`${g.fields.reduce((n,f)=>n+f.points,0)} 分`,'badge'));card.append(head);
@@ -36,12 +37,12 @@ function render(){if(!active)return;
  if(g.assets.length&&g.kind!=='annotation'){const imgs=el('div',undefined,'art-grid'+(g.kind==='set'?' magnets':''));g.assets.forEach(a=>imgs.append(art(a)));left.append(imgs,el('p','點圖片可放大查看。','helper'));}
  if(g.kind==='single'||g.kind==='short'){
   const stem=el('div',undefined,'material');renderLocalContent(stem,g.promptContent);right.append(stem);
-  if(g.kind==='single')for(const c of g.choices){const row=el('label',undefined,'choice-row'),input=el('input');input.type='radio';input.name='single';input.value=c.id;input.checked=values[0]===c.id;input.disabled=locked;input.addEventListener('change',()=>draft(g)[0]=c.id);const text=el('span');if(c.content.text.trim()!==c.id||c.content.media.length||c.content.layout)text.append(el('b',c.id+'　'));renderLocalContent(text,c.content);row.append(input,text);right.append(row);}
+  if(g.kind==='single'){const choices=el('div',undefined,'past-choices');for(const c of g.choices){const row=el('label',undefined,'choice-row student-option'),input=el('input');input.type='radio';input.name='single';input.value=c.id;input.checked=values[0]===c.id;input.disabled=locked;input.addEventListener('change',()=>draft(g)[0]=c.id);const text=el('span',undefined,'option-body');if(c.content.text.trim()===c.id&&!c.content.media.length&&!c.content.layout)text.textContent=c.id==='O'?'正確':c.id==='X'?'不正確':'';else renderLocalContent(text,c.content);row.append(input,el('span',c.id,'option-badge'),text);choices.append(row);}right.append(choices);}
   else{const label=el('label','你的答案','field-label');label.htmlFor='short-answer';const input=el('input');input.id='short-answer';input.type='text';input.maxLength=2000;input.value=values[0];input.disabled=locked;input.autocomplete='off';input.addEventListener('input',()=>draft(g)[0]=input.value);right.append(label,input);}
   feedback(g,0,right);
  }else if(g.kind==='mark'){
   right.append(el('p','勾選你認為正確的敘述。','helper'));const list=el('div',undefined,'answer-list');
-  g.fields.forEach((f,i)=>{const wrap=el('div'),label=el('label',undefined,'choice-row'),input=el('input');input.type='checkbox';input.checked=values[i];input.disabled=locked;input.dataset.field=f.id;input.addEventListener('change',()=>{draft(g)[i]=input.checked;const confirm=$('#mark-confirm');if(confirm)confirm.checked=false;});label.append(input,el('span',`（${f.label}）${f.text}`));wrap.append(label);feedback(g,i,wrap);list.append(wrap);});right.append(list);
+  g.fields.forEach((f,i)=>{const wrap=el('div'),label=el('label',undefined,'choice-row student-option'),input=el('input');input.type='checkbox';input.checked=values[i];input.disabled=locked;input.dataset.field=f.id;input.addEventListener('change',()=>{draft(g)[i]=input.checked;label.querySelector('.option-badge').textContent=input.checked?'✓':f.label;const confirm=$('#mark-confirm');if(confirm)confirm.checked=false;});label.append(input,el('span',values[i]?'✓':f.label,'option-badge'),el('span',f.text,'option-body'));wrap.append(label);feedback(g,i,wrap);list.append(wrap);});right.append(list);
   if(!saved){const label=el('label',undefined,'confirm'),input=el('input');input.type='checkbox';input.id='mark-confirm';input.disabled=locked;label.append(input,el('span','我已檢查這一組，其他沒有勾選的格子就是「不勾」。'));right.append(label);}
  }else if(g.kind==='sequence'){
   right.append(el('p','每個位置選一個代號；也可用上移、下移調整。','helper'));
