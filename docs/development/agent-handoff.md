@@ -4,7 +4,8 @@
 
 - 使用者已核准依Claude三輪討論方案分批實作，本機與真正PostgreSQL的30人並行全部通過才上線；保存、相同答案重送、題組／整卷揭答及原一葉不變。
 - Codex唯一寫入者，獨立工作區quiz-load-batch1，947fced加正式診斷4檔；主工作區dirty未動，不帶半葉／花園／schema2／身分快取。負責學生入口、目錄、媒體、診斷、教師監看與新增函式檔；不修改原quiz_action。
-- 實作與驗證見quiz-load-batch1-20261029.md。53項本機回歸與租用Chrome功能驗證通過。首輪30人通過、22人一次max退步，未部署；保留失敗報告並隔離重測。待最終並行與持鎖檢查通過後，才做正式函式替換／資料摘要比對及Vercel候選部署驗收。
+- 已上線，詳quiz-load-batch1-20261029.md。53項本機回歸與本機／正式來源合成Chrome功能驗證通過；最終兩輪22人與30人原門檻全過，741答案／52葉等價，30人p95 265→149ms、max552→216ms；同attempt持寫鎖的媒體1213→1.49ms。首輪22人max失敗報告保留。
+- 功能37017eb，分支codex/quiz-load-batch1，工作區C:/Users/user/.codex/worktrees/quiz-load-batch1/it-class-tcwu。正式SQL四函式更新，既有學生資料摘要與其他15個quiz函式不變；Vercel dpl_HGZTE2a2yduoYvKdi9tu6YiwTsqb已promote，正式239個網頁／模組／樣式／字型SHA256一致，collector舊新均204。主工作區dirty程式仍未合併，後續不能用舊主工作區覆蓋新正式版。
 - 原每分鐘CLI診斷快照仍保持停止，不能啟動舊sampler。沒有正式壓測或付費變更。
 
 ## 答題雙欄與固定操作列獨立發布 — 2026-10-29
