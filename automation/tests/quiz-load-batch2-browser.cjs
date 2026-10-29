@@ -40,6 +40,7 @@ export const supabase={auth:{getSession:async()=>({data:{session:window.fixtureS
      if(data.action==='get'){if(delayVersion){delayVersion=false;await new Promise(r=>releaseVersion=r);}return send({id:ids.version,bank_id:ids.bank,revision:3,created_at:'2026-10-29T00:00:00Z',document});}
      return send({versions:[{id:ids.version,bank_id:ids.bank,revision:3,created_at:'2026-10-29T00:00:00Z',title:document.title,catalog,total:1}]});
     }
+    if(name==='quiz_monitor'){assert.equal(uid,'teacher');assert.equal(data.session_id,ids.session);return send({status:'open',students:[{user_id:'a',answered:2,total:10,class_code:'304',seat_no:1,display_name:'合成學生',last_submitted_at:'2026-10-29T00:00:00Z'}]});}
     if(name==='quiz_action'){
      if(uid!=='teacher')return deny('teacher_required');
      if(body.p_action==='list')return send({banks:[{id:ids.bank,revision:3,title:document.title,catalog,updated_at:'2026-10-29T00:00:00Z'}]});
@@ -72,6 +73,7 @@ export const supabase={auth:{getSession:async()=>({data:{session:window.fixtureS
   const clickVersion=text=>page.$$eval('.version-row button',(nodes,text)=>nodes.find(n=>n.textContent===text).click(),text);
   await clickVersion('用此版本開場');assert.equal(count('quiz_version_browser'),1,'selecting a version needs no document');assert.match(await page.$eval('#quiz-sessions',n=>n.textContent),/固定版本測試/);
   await clickVersion('預覽此版本');await page.waitForSelector('#preview-dialog[open]');assert.equal(calls.filter(c=>c.name==='quiz_version_browser'&&c.body.p_data.action==='get').length,1);assert.match(await page.$eval('#preview-body',n=>n.textContent),/完整解析/);await page.click('#close-preview');
+  const monitor=await page.evaluate(async session_id=>{const {createQuizRequest}=await import('/shared/quiz-api.mjs');const request=await createQuizRequest({getSession:()=>fixtureSession});return request('monitor',{session_id});},ids.session);assert.equal(monitor.students[0].answered,2);assert.equal(count('quiz_monitor'),1);assert.equal(calls.filter(c=>c.name==='quiz_action'&&c.body.p_action==='monitor').length,0);
   delayVersion=true;await clickVersion('預覽此版本');await page.waitForFunction(()=>document.querySelector('#workspace').inert);await page.evaluate(()=>fixtureSwitch('a'));await page.waitForFunction(()=>document.querySelector('#workspace').hidden);releaseVersion();await new Promise(r=>setTimeout(r,150));assert.equal(await page.$('#preview-dialog[open]'),null);assert.equal(await page.$eval('#preview-body',n=>n.textContent),'');
   assert.deepEqual(errors,[]);const report={passed:true,libraryThin:true,initialCatalog:0,detailCatalog:0,optionsPreserved:true,scopedLightbox:true,sameRequestRetry:true,oneExtensionSaved:true,noExtensionWhenUnavailable:true,oldDetailFallback:true,lateDetailIsolated:true,teacherMetadataOnly:true,selectionWithoutDocument:true,previewSingleDocument:true,latePreviewIsolated:true,errors};await fs.writeFile(out+'/browser.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));
  }finally{await browser.disconnect();}

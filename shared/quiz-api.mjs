@@ -1,4 +1,4 @@
-import { createAuthenticatedTransport } from './quiz-transport.mjs?v=20261029-load-batch2';
+import { createAuthenticatedTransport } from './quiz-transport.mjs?v=20261029-load-batch3';
 import { configureQuizMedia, createMediaScope } from './quiz-media.mjs?v=20261029-load-batch1';
 const errors = {
   paper_name_choice_invalid: '這個主題或角色目前無法使用，請更新後重新選擇。',
@@ -53,7 +53,7 @@ export async function createQuizRequest({ getSession, localStudent = null, local
       return result;
     }
     try {
-      const specialized = {library_sessions:'quiz_library_sessions',version_list:'quiz_version_browser',version_get:'quiz_version_browser',entry_context:'quiz_entry_context',rewards:'quiz_rewards',wrong_questions:'quiz_wrong_questions',compose:'quiz_compose',rename_paper:'quiz_rename_paper',delete_paper:'quiz_delete_paper',pool_catalog:'quiz_pool_catalog'}[action];
+      const specialized = {monitor:'quiz_monitor',library_sessions:'quiz_library_sessions',version_list:'quiz_version_browser',version_get:'quiz_version_browser',entry_context:'quiz_entry_context',rewards:'quiz_rewards',wrong_questions:'quiz_wrong_questions',compose:'quiz_compose',rename_paper:'quiz_rename_paper',delete_paper:'quiz_delete_paper',pool_catalog:'quiz_pool_catalog'}[action];
       const result = await transport(action === 'publish' ? '/functions/v1/quiz-media' : specialized ? '/rest/v1/rpc/'+specialized : '/rest/v1/rpc/quiz_action',
         action === 'publish' ? { action: 'freeze', data } : action === 'pool_catalog' ? {} : specialized ? { p_data: action==='version_list'||action==='version_get'?{...data,action:action==='version_get'?'get':'list'}:data } : { p_action: action, p_data: data });
       if (result.attempt_id) attemptId = result.attempt_id;

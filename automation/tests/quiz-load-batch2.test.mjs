@@ -9,7 +9,7 @@ const rpc=(db,uid,name,data={},role='authenticated')=>db.transaction(async tx=>{
  return (await tx.query(`select public.${name}($1) result`,[JSON.stringify(data)])).rows[0].result;
 });
 const outcome=async fn=>{try{return {value:await fn()};}catch(e){return {error:e.message};}};
-async function setup(){const db=await createQuizDb(undefined,{batch2:false});for(const f of ['quiz-wrong-questions.sql','quiz-pool.sql','quiz-rewards.sql','quiz-load-batch1.sql'])await db.exec(await sql(f));return db;}
+async function setup(){const db=await createQuizDb(undefined,{batch2:false,batch3:false});for(const f of ['quiz-wrong-questions.sql','quiz-pool.sql','quiz-rewards.sql','quiz-load-batch1.sql'])await db.exec(await sql(f));return db;}
 async function paper(db,{reveal='immediate',count=4,group=true}={}){
  const doc=newDocument();doc.catalog={...doc.catalog,volume:'6年級上學期',subject:'數學',unit:'第一單元'};
  const qs=Array.from({length:count},(_,i)=>{const q=newQuestion(i===count-1?'short':'single');q.prompt=content('第'+i+'題');q.explanation=content('解析'+i);return q;});

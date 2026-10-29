@@ -1,5 +1,5 @@
 // 與頁面登入生命週期共用；不讀另一份 localStorage 權杖，也不自動重送寫入。
-import { diagnosticFetch, diagnoseStep, diagnoseResult } from './connection-diagnostics.mjs?v=20261029-load-batch2';
+import { diagnosticFetch, diagnoseStep, diagnoseResult } from './connection-diagnostics.mjs?v=20261029-load-batch3';
 export function createAuthenticatedTransport({ auth, getSession, fetcher = fetch, baseUrl = auth.SUPABASE_URL }) {
   const measuredFetch = diagnosticFetch(fetcher);
   if (baseUrl !== auth.SUPABASE_URL && (!['localhost', '127.0.0.1'].includes(location.hostname) || baseUrl !== location.origin))

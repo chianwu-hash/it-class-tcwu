@@ -11,6 +11,7 @@ await db.exec(await readFile('supabase/quiz-wrong-questions.sql','utf8'));await 
 await db.exec(await readFile('supabase/quiz-rewards.sql','utf8'));
 await db.exec(await readFile('supabase/quiz-load-batch1.sql','utf8'));
 await db.exec(await readFile('supabase/quiz-load-batch2.sql','utf8'));
+await db.exec(await readFile('supabase/quiz-load-batch3.sql','utf8'));
 await db.query('update public.quiz_integrity_settings set enabled=true');
 await db.query("update public.student_enrollments set class_code='301' where email like 'student%@example.invalid'");
 await db.query("update public.student_enrollments set class_code='603' where email ~ '^student(2[2-9]|3[01])@example.invalid$'");

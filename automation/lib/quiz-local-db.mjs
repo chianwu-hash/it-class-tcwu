@@ -8,7 +8,7 @@ export const OTHER_TEACHER = '00000000-0000-4000-8000-000000000002';
 export const studentId = n => `00000000-0000-4000-8001-${String(n).padStart(12, '0')}`;
 
 // 純合成身分。本機 scaffold 不屬於 migration，不接正式 Supabase。
-export async function createQuizDb(location,{batch2=process.env.QUIZ_TEST_READ_BATCH2==='1'}={}) {
+export async function createQuizDb(location,{batch2=process.env.QUIZ_TEST_READ_BATCH2==='1',batch3=process.env.QUIZ_TEST_READ_BATCH3==='1'}={}) {
   const db = new PGlite(location);
   await db.exec(`
     do $$begin
@@ -33,12 +33,14 @@ export async function createQuizDb(location,{batch2=process.env.QUIZ_TEST_READ_B
     and not exists(select 1 from public.student_enrollments e where e.email=u.email);`);
   await db.exec(await readFile(new URL('../../supabase/quiz.sql', import.meta.url), 'utf8'));
   await db.exec(await readFile(new URL('../../supabase/quiz-media.sql', import.meta.url), 'utf8'));
-  if(batch2){
+  if(batch2||batch3){
     for(const file of ['quiz-wrong-questions.sql','quiz-pool.sql','quiz-rewards.sql','quiz-load-batch1.sql','quiz-load-batch2.sql'])await db.exec(await readFile(new URL('../../supabase/'+file,import.meta.url),'utf8'));
-    const exec=db.exec.bind(db),upgrade=await readFile(new URL('../../supabase/quiz-load-batch2.sql',import.meta.url),'utf8');
+    let upgrade=await readFile(new URL('../../supabase/quiz-load-batch2.sql',import.meta.url),'utf8');
+    if(batch3){const third=await readFile(new URL('../../supabase/quiz-load-batch3.sql',import.meta.url),'utf8');await db.exec(third);upgrade+='\n'+third;}
+    const exec=db.exec.bind(db);
     // Older suites install their own legacy fixtures. Keep the candidate read paths active
     // after those installs so this opt-in release run actually exercises the new functions.
-    db.exec=async source=>{const result=await exec(source);if(typeof source==='string'&&/create or replace function public\.quiz_(?:compose|wrong_questions)\(/i.test(source))await exec(upgrade);return result;};
+    db.exec=async source=>{const result=await exec(source);if(typeof source==='string'&&/create or replace function public\.quiz_(?:compose|wrong_questions|student_document)\(/i.test(source))await exec(upgrade);return result;};
   }
   return db;
 }
