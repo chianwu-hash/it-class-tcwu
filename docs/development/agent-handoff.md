@@ -1,5 +1,15 @@
 # Agent Handoff
 
+## 考前練功坊資料讀取第三批 — 2026-10-29
+
+- 已依使用者授權完成抽題候選一次篩選、學生白名單試卷一次組裝、教師監看單次彙整。保存／相同答案重送／題組與整卷揭答／防弊／原一葉保留；quiz_action、answer_guard、leaf 及其他 23 個既有函式定義不變。
+- 分支 codex/quiz-load-batch3，功能 29539cd，工作區 C:/Users/user/.codex/worktrees/quiz-load-batch1/it-class-tcwu。主工作區未合併且有其他工作，不可整包部署舊主工作區覆蓋新版。
+- 58 項候選模式回歸零失敗／零略過。本機及正式來源核心／新流程 Chrome 合成驗證全過。第一輪 30 人延遲未過與量測腳本 JSON 參數失敗都保留；修正腳本後 bench-verify 兩輪 22＋30 人所有 15 門檻全過，2,697 答案／52 葉一致、無不合法接受計時。
+- 本機 30 人 p95／max 約 291／848→199／248ms；組卷 PostgreSQL 平均約314→68ms；教師監看 DB p95 約41→10ms。單獨學生投影約6.6→6.7ms大致持平，不宣稱每個請求都變快。
+- 正式 SQL checksum 與通過量測候選一致。原九表內容摘要、三／六年級／教師唯讀結果、全部本人場次監看及既有學生試卷投影前後一致；monitor authenticated only，候選型別及投影仍私有。沒有正式壓測或真人送答、付費、pool、timeout 調整。
+- Vercel dpl_erUknwk6WfmcHuzphwQLi1oW8KRB 已 promote 至 it-class-tcwu.vercel.app，production READY。以第二批凍結包加14檔發布，239正式檔SHA一致，四版collector204。舊每分鐘CLI sampler仍停止；自有4391 server停、四個fixture分頁清理、租約釋放。
+- 詳 quiz-load-batch3-20261029.md；ignored automation/output/quiz/batch3 有 failed bench、通過 bench-verify、SQL／資料與正式來源驗證紀錄。重裝舊 quiz.sql／pool／wrong 後須依序重套 batch1、batch2、batch3，不能只裝舊檔。
+
 ## 考前練功坊資料讀取第二批 — 2026-10-29
 
 - 使用者授權接續第一批，本機及真實Postgres30人並行全過才上線；保存／重送／揭答／原一葉維持。Codex唯一寫入，現有獨立工作區，分支codex/quiz-load-batch2；主工作區其他dirty不動。
