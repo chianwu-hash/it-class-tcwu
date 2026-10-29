@@ -7,7 +7,7 @@ module.exports = function handler(req, res) {
   if (Number(req.headers['content-length'] || 0) > 24000) return res.status(413).end();
   let body = req.body;
   try { if (typeof body === 'string') body = JSON.parse(body); } catch { return res.status(400).end(); }
-  if (!body || JSON.stringify(body).length > 24000 || !['20261029-301-v1','20261029-load-batch1'].includes(body.release) ||
+  if (!body || JSON.stringify(body).length > 24000 || !['20261029-301-v1','20261029-load-batch1','20261029-load-batch2'].includes(body.release) ||
       !/^[a-f0-9-]{36}$/.test(body.tab || '') || !Array.isArray(body.events) || body.events.length > 40 ||
       !/^\/(?:|index\.html|grade[36]\/115-1\/(?:index|quiz|quiz-library)\.html)$/.test(body.page || '')) return res.status(400).end();
   const events = body.events.map(row => {

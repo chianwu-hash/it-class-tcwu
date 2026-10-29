@@ -1,7 +1,7 @@
 import { content, newDocument, newQuestion, importQuestionBank, validateDocument } from './quiz-document.mjs';
 import { renderTeacherPreview } from './quiz-render.mjs?v=20261029-load-batch1';
-import { initQuizSessions } from './quiz-sessions.mjs?v=20261029-load-batch1';
-import { createQuizRequest } from './quiz-api.mjs?v=20261029-load-batch1';
+import { initQuizSessions } from './quiz-sessions.mjs?v=20261029-load-batch2';
+import { createQuizRequest } from './quiz-api.mjs?v=20261029-load-batch2';
 
 const $ = id => document.getElementById(id);
 let doc = newDocument(), bankId = crypto.randomUUID(), revision = 0, dirty = false, busy = false, request, identityKey, currentSession = null;
@@ -135,11 +135,17 @@ async function refreshBanks() {
 async function refreshVersions() {
   $('versions').replaceChildren();
   if (!revision) { $('versions').append(node('p', '儲存草稿後，即可固定版本。', 'hint')); return; }
-  const { versions } = await request('versions', { bank_id: bankId });
+  const owner=identityKey,bank=bankId;
+  const { versions } = await request('version_list', { bank_id: bank });
+  if(owner!==identityKey||bank!==bankId)return;
   if (!versions.length) $('versions').append(node('p', '還沒有固定版本。', 'hint'));
   for (const v of versions) {
     const row = node('div', undefined, 'version-row'); row.append(node('span', `第 ${v.revision} 版 · ${new Date(v.created_at).toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })}`));
-    button(row, '預覽此版本', () => preview(v.document, `${v.document.title} · 固定第 ${v.revision} 版`)); $('versions').append(row);
+    button(row, '預覽此版本', () => run(async()=>{
+      const version=await request('version_get',{bank_id:bank,version_id:v.id});
+      if(owner!==identityKey||bank!==bankId)return;
+      preview(version.document,`${version.document.title} · 固定第 ${version.revision} 版`);
+    })); $('versions').append(row);
     button(row, '用此版本開場', () => sessions.selectVersion(v));
   }
 }
@@ -200,7 +206,7 @@ async function start() {
     $('identity').replaceChildren(node('span', session?.user?.email || '未登入'));
     if (session) button($('identity'), '登出', () => auth.signOutAndReload());
     $('workspace').hidden = !auth.isTeacher(session); $('locked').hidden = auth.isTeacher(session);
-    $('preview-dialog').close(); doc = newDocument(); bankId = crypto.randomUUID(); revision = 0; dirty = false;
+    $('preview-dialog').close();$('preview-body').replaceChildren();$('preview-title').textContent='';doc = newDocument(); bankId = crypto.randomUUID(); revision = 0; dirty = false;
     $('versions').replaceChildren(); $('bank-list').replaceChildren(); renderEditor();
     if (!auth.isTeacher(session)) { await sessions.setEnabled(false); message(session ? '此帳號沒有教師權限。' : '請登入後開始備課。'); return; }
     request = await createQuizRequest({ getSession: () => currentSession });

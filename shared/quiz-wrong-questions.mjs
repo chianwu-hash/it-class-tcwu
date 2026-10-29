@@ -46,8 +46,8 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
     if(busy)return;const g=generation,uid=getUserId();locked(true);message('正在讀取這題的作答與解析…');
     try{
       const data=await request('wrong_questions',{action:'detail',grade:pageGrade,attempt_id:item.attempt_id,question_id:item.question_id});if(!current(g,uid)||!active)return;
-      const extensionAvailable=onExtension&&await canExtend(data.catalog);if(!current(g,uid)||!active)return;
-      mediaScope?.dispose();mediaScope=request.createMediaScope?.({user_id:uid,session_id:data.session_id,attempt_id:item.attempt_id,view:crypto.randomUUID(),generation:g},{ttl:0});
+      const extensionAvailable=onExtension&&(typeof data.can_extend==='boolean'?data.can_extend:await canExtend(data.catalog));if(!current(g,uid)||!active)return;
+      mediaScope?.dispose();mediaScope=request.createMediaScope?.({user_id:uid,session_id:data.session_id,attempt_id:item.attempt_id,version_id:data.version_id,view:crypto.randomUUID(),generation:g},data.version_id?{}:{ttl:0});
       detail.dataset.subject=data.catalog?.subject||'';detail.replaceChildren();const article=make('article',undefined,'question');
       el('wrong-title').textContent=`${data.catalog?.subject||'未分類'}・${data.catalog?.unit||data.title}・第 ${data.number} 題`;
       el('wrong-meta').textContent=`作答時間：${new Date(data.answered_at).toLocaleString('zh-TW')}｜以下保留你當時的選項順序。`;

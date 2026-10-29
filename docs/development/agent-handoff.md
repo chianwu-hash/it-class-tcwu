@@ -1,5 +1,11 @@
 # Agent Handoff
 
+## 考前練功坊資料讀取第二批 — 2026-10-29
+
+- 使用者授權接續第一批，本機及真實Postgres30人並行全過才上線；保存／重送／揭答／原一葉維持。Codex唯一寫入，現有獨立工作區，分支codex/quiz-load-batch2；主工作區其他dirty不動。
+- 範圍：單筆私有版本摘要、薄library、錯題refs／頁面JSON／單題明細、可靠來源共用、教師metadata清單及按需預覽。原quiz_action、保存／揭答／防弊／leaf與第一批媒體驗權不改；compose只改共用來源查找段。
+- 55項候選模式回歸、核心及新流程Chrome通過。三表摘要及精簡初輪失敗報告保留，未發布；每版本一筆的bench-verify兩輪22＋30人全過，補上異常多餘答案的揭答等價後，鎖定最後SQL SHA的bench-final30人再全過。2,101答案／30葉一致、p95約143→117ms；錯題持鎖1216→5ms、教師清單payload減98.5%。現在準備正式SQL／資料摘要及候選部署驗收。詳quiz-load-batch2-20261029.md及ignored automation/output/quiz/batch2。
+
 ## 考前練功坊資料讀取第一批 — 2026-10-29
 
 - 使用者已核准依Claude三輪討論方案分批實作，本機與真正PostgreSQL的30人並行全部通過才上線；保存、相同答案重送、題組／整卷揭答及原一葉不變。

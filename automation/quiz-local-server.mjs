@@ -12,6 +12,7 @@ const origin = `http://127.0.0.1:${port}`;
 const dataDir = resolve(process.env.QUIZ_LOCAL_DATA || resolve(root, 'tmp/quiz-local-db'));
 await mkdir(dataDir, { recursive: true });
 const db = await createQuizDb(dataDir);
+for(const file of ['quiz-wrong-questions.sql','quiz-pool.sql','quiz-rewards.sql','quiz-load-batch1.sql','quiz-load-batch2.sql'])await db.exec(await readFile(resolve(root,'supabase',file),'utf8'));
 const baseMedia = createLocalMedia({ db, directory: resolve(dataDir, '../quiz-local-media'), origin });
 const media = process.env.QUIZ_DRIVE_WORKER_MANIFEST
   ? await (await import('./lib/quiz-drive-worker-media.mjs')).createDriveWorkerMedia({base:baseMedia,manifestPath:process.env.QUIZ_DRIVE_WORKER_MANIFEST})
@@ -45,6 +46,7 @@ const server = http.createServer(async (req, res) => {
         if (!Number.isInteger(n) || n < 1 || n > 31 || !['join', 'resume', 'submit'].includes(action)) return send(403, { error: 'student_required' });
         return send(200, await quizCall(db, studentId(n), action, data));
       }
+      if(['version_list','version_get'].includes(action))return send(200,await db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[TEACHER]);await tx.exec('set local role authenticated');return (await tx.query('select public.quiz_version_browser($1) result',[JSON.stringify({...data,action:action==='version_get'?'get':'list'})])).rows[0].result;}));
       if (!['list', 'get', 'save', 'publish', 'versions', 'sessions', 'open', 'monitor', 'close'].includes(action)) return send(403, { error: 'teacher_required' });
       return send(200, await quizCall(db, TEACHER, action, data));
     }

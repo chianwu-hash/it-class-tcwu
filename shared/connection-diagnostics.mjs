@@ -1,5 +1,5 @@
 // Metadata only: never retain credentials, identities, URLs with queries, or answers.
-export const DIAGNOSTICS_RELEASE = '20261029-load-batch1';
+export const DIAGNOSTICS_RELEASE = '20261029-load-batch2';
 const enabled = typeof window !== 'undefined' && typeof document !== 'undefined';
 const events = [], queue = [];
 let sequence = 0, sending = false, timer, persistTimer;

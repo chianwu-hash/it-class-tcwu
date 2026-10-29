@@ -74,7 +74,7 @@ export function initQuizSessions({ root, request, local = false }) {
     } finally { if (generation === token) open.disabled = false; }
   });
   return {
-    selectVersion(v) { if (pendingOpen) return say('上次開場尚未確認，請先重試或更新場次清單。'); version = v; note.textContent = `已選擇：${v.document.title} · 固定第 ${v.revision} 版`; form.hidden = false; root.scrollIntoView({ block: 'start', behavior: 'smooth' }); },
+    selectVersion(v) { if (pendingOpen) return say('上次開場尚未確認，請先重試或更新場次清單。'); version = v; note.textContent = `已選擇：${v.title??v.document?.title} · 固定第 ${v.revision} 版`; form.hidden = false; root.scrollIntoView({ block: 'start', behavior: 'smooth' }); },
     async setEnabled(value) { enabled = value; generation++; monitorGeneration++; clearTimeout(timer); activeId = null; pendingOpen = null; version = null; lockConfiguration(false); open.disabled = false; open.textContent = '開啟新場次'; form.hidden = true; list.replaceChildren(); note.textContent = '先從「已固定的版本」選擇一個版本，再建立場次。'; if (value) await refresh(); },
   };
 }
