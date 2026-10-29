@@ -1,10 +1,10 @@
-import { initQuizModule } from './quiz-module.js?v=20261029-workspace';
-import { createQuizRequest } from './quiz-api.mjs?v=20261028-performance';
+import { initQuizModule } from './quiz-module.js?v=20261029-load-batch1';
+import { createQuizRequest } from './quiz-api.mjs?v=20261029-load-batch1';
 import { initImageLightbox } from './image-lightbox.js';
-import {resolveQuizMedia} from './quiz-media.mjs';
+import {resolveQuizImage} from './quiz-media.mjs?v=20261029-load-batch1';
 
 initImageLightbox({ root: document.getElementById('server-quiz'), selector: 'img', initialScale: 0.8, minScale: 0.2, zoomStep: 0.1,
-  resolveImageSource: image => resolveQuizMedia(image.dataset.quizMediaUrl || image.currentSrc || image.src) });
+  resolveImageSource: resolveQuizImage });
 
 const params = new URLSearchParams(location.search), sessionId = params.get('session');
 const local = params.get('local') === '1' && ['127.0.0.1', 'localhost'].includes(location.hostname);
@@ -66,14 +66,13 @@ async function start() {
     // Auth callback 中只排程，不在鎖內等待 SDK；年級確認前不加入場次。
     setTimeout(async () => {
       try {
-        const identity = await request('library_sessions');
+        const identity = await request('entry_context',{session_id:sessionId});
         if (token !== authGeneration || currentSession?.user?.id !== id) return;
         if(identity.role!=='student')throw new Error('考前練功房僅限名冊中的學生帳號使用。');
         const redirect = gradeRoute.quizStudentRedirect(identity, location.pathname, location.search);
         if (redirect) { location.replace(redirect); return; }
         practiceRole = identity.role;
-        document.getElementById('server-quiz').dataset.subject = identity.sessions
-          ?.find(paper => paper.id === sessionId)?.catalog?.subject || '';
+        document.getElementById('server-quiz').dataset.subject = identity.subject || '';
         document.getElementById('quiz-identity').textContent = `${practiceRole === 'teacher' ? '教師試答' : '學生練習'}｜送出後儲存進度`;
         validatedUser = id; validatingUser = null;
         document.getElementById('entry-status').textContent = '';

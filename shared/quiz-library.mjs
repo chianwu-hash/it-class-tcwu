@@ -1,8 +1,8 @@
 import { initNavbarAuth } from './navbar-auth.js';
-import { createQuizRequest } from './quiz-api.mjs?v=20261028-student-only';
+import { createQuizRequest } from './quiz-api.mjs?v=20261029-load-batch1';
 import { quizPageGrade, quizLibraryPath, quizStudentRedirect } from './quiz-grade-route.mjs';
-import { initWrongQuestions } from './quiz-wrong-questions.mjs?v=20261028-extension-feedback';
-import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs?v=20261028-student-only';
+import { initWrongQuestions } from './quiz-wrong-questions.mjs?v=20261029-load-batch1';
+import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs?v=20261029-load-batch1';
 import {comparePapers,paperRange,paperTitle,paperMix,isExtension,paperDifficulty} from './quiz-paper-display.mjs';
 import {difficultyAdjustment} from './quiz-difficulty.mjs';
 
@@ -126,7 +126,7 @@ async function load({refreshComposer=true,refreshWrong=true}={}) {
 }
 el('grade-filter').addEventListener('change', () => location.assign(quizLibraryPath(el('grade-filter').value)));
 el('subject-filter').addEventListener('change', render);
-el('refresh-library').addEventListener('click', load);
+el('refresh-library').addEventListener('click', () => load({refreshComposer:false}));
 if (localContext) {
   const localInfo = await fetch('/__quiz-local').then(r=>r.json());
   if (!localInfo.pool) throw new Error('本機題庫服務尚未啟動。');

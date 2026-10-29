@@ -9,6 +9,7 @@ const base=resolve(root,'automation/output/quiz/hanlin-g3-math-pool'),runtime=re
 const db=await createQuizDb(resolve(runtime,'db'));
 await db.exec(await readFile('supabase/quiz-wrong-questions.sql','utf8'));await db.exec(await readFile('supabase/quiz-pool.sql','utf8'));
 await db.exec(await readFile('supabase/quiz-rewards.sql','utf8'));
+await db.exec(await readFile('supabase/quiz-load-batch1.sql','utf8'));
 await db.query('update public.quiz_integrity_settings set enabled=true');
 await db.query("update public.student_enrollments set class_code='301' where email like 'student%@example.invalid'");
 await db.query("update public.student_enrollments set class_code='603' where email ~ '^student(2[2-9]|3[01])@example.invalid$'");
@@ -46,7 +47,7 @@ const server=http.createServer(async(req,res)=>{
    let body='';for await(const c of req){body+=c;if(Buffer.byteLength(body)>16000)return send(413,{error:'invalid_request'});}const {action,data={}}=JSON.parse(body);
    if(u.pathname==='/__quiz-media'){if(action!=='read')return send(403,{error:'teacher_required'});const r=await media.call(JSON.parse(body),`student-${student}`);return send(r.status,r.result);}
    if(['library_sessions','join','resume','submit','view_question'].includes(action))return send(200,await quizCall(db,studentId(student),action,data));
-   const functions={rewards:'quiz_rewards',compose:'quiz_compose',rename_paper:'quiz_rename_paper',delete_paper:'quiz_delete_paper',pool_catalog:'quiz_pool_catalog',wrong_questions:'quiz_wrong_questions'};if(!functions[action])return send(403,{error:'invalid_action'});
+   const functions={entry_context:'quiz_entry_context',rewards:'quiz_rewards',compose:'quiz_compose',rename_paper:'quiz_rename_paper',delete_paper:'quiz_delete_paper',pool_catalog:'quiz_pool_catalog',wrong_questions:'quiz_wrong_questions'};if(!functions[action])return send(403,{error:'invalid_action'});
    const result=await db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[studentId(student)]);await tx.exec('set local role authenticated');return (await tx.query(action==='pool_catalog'?`select public.${functions[action]}() result`:`select public.${functions[action]}($1) result`,action==='pool_catalog'?[]:[JSON.stringify(data)])).rows[0].result;});return send(200,result);
   }
   if(req.method!=='GET')return send(405,{error:'method_not_allowed'});

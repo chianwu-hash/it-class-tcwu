@@ -1,4 +1,4 @@
-import { renderContent as renderQuizContent } from './quiz-render.mjs';
+import { renderContent as renderQuizContent } from './quiz-render.mjs?v=20261029-load-batch1';
 import { mergeQuizSnapshot } from './quiz-state.mjs';
 
 // Claude Opus 5.5 原創四套圖形與動作；Codex整合，原型中的題目線索改為中性文字。
@@ -556,7 +556,12 @@ export function initServerQuiz({ selectors, server }) {
   const el = key => typeof selectors?.[key] === 'string' ? document.getElementById(selectors[key]) : selectors?.[key];
   const root = el('container'), lock = el('lock'), content = el('content');
   const workspace = createQuizWorkspace(root);
-  const renderContent = (target, c) => renderQuizContent(target, {
+  let mediaScope=null,mediaView=null,contentCache=new Map(),contentUses=new Map();
+  const renderContent = (target, c) => {
+    const serialized=JSON.stringify(c),index=contentUses.get(serialized)||0;contentUses.set(serialized,index+1);
+    const key=serialized+'#'+index,previous=contentCache.get(key);
+    if(previous){target.append(previous);return previous;}
+    const box=renderQuizContent(target, {
     ...c,
     text: c?.text?.trim() === '書商未提供這一題的詳細解析。'
       ? '這一題目前沒有詳細解析，可以先核對正確答案。' : c?.text,
@@ -564,7 +569,9 @@ export function initServerQuiz({ selectors, server }) {
       alt: media.alt === '書商原圖' ? '圖片'
         : media.alt === '書商原版聽力音檔' ? '聽力音檔' : media.alt,
     })),
-  }, { imageLoading: 'eager' });
+  }, { imageLoading: 'eager',mediaScope,deferMedia:showFullReview });
+    contentCache.set(key,box);return box;
+  };
   let userId = null, generation = 0, state = null, cursor = 0, pending = null, selected = '', busy = false, loadError = '', showFullReview = false;
   let feedbackAnimation = null;
   let seenQuestion=null;
@@ -628,8 +635,13 @@ export function initServerQuiz({ selectors, server }) {
     if (animate && actor) quizFeedbackMotion.play(actor);
   }
   function render() {
+    const view=state&&`${generation}:${state.attempt_id}:${state.version_id}:${showFullReview?'all':state.document.questions[Math.min(cursor,state.document.questions.length-1)]?.id}`;
+    const changed=view!==mediaView;
+    if(changed){stopAudio();mediaScope?.dispose();contentCache.clear();mediaView=view;
+      mediaScope=state?server.request.createMediaScope?.({user_id:userId,session_id:server.sessionId,attempt_id:state.attempt_id,version_id:state.version_id,generation,view}):null;}
+    contentUses.clear();
     workspace.reset();
-    stopAudio(); root.querySelectorAll('.qfm-actor').forEach(quizFeedbackMotion.stop); root.replaceChildren();
+    root.querySelectorAll('.qfm-actor').forEach(quizFeedbackMotion.stop); root.replaceChildren();
     const status = make('p', ''); status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite'); root.append(status);
     if (!userId) return;
     if (!state) {
@@ -744,7 +756,10 @@ export function initServerQuiz({ selectors, server }) {
       if (!selected.trim()) return say('請先選擇選項或填入答案。', true);
       pending = { question_id: q.id, response: selected, request_id: crypto.randomUUID() };
     }
-    const token = generation; busy = true; render(); say('正在儲存答案…');
+    const token = generation; busy = true;
+    root.querySelectorAll('.quiz-choices input,.quiz-choices textarea,.quiz-actions button').forEach(n=>n.disabled=true);
+    const saving=root.querySelector('#server-submit');if(saving)saving.textContent='正在儲存…';
+    say('正在儲存答案…');
     try {
       const result = await server.request('submit', { session_id: server.sessionId, ...pending, compact: true });
       if (generation !== token) return;

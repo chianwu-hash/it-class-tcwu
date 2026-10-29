@@ -1,7 +1,7 @@
 import { content, newDocument, newQuestion, importQuestionBank, validateDocument } from './quiz-document.mjs';
-import { renderTeacherPreview } from './quiz-render.mjs';
-import { initQuizSessions } from './quiz-sessions.mjs';
-import { createQuizRequest } from './quiz-api.mjs';
+import { renderTeacherPreview } from './quiz-render.mjs?v=20261029-load-batch1';
+import { initQuizSessions } from './quiz-sessions.mjs?v=20261029-load-batch1';
+import { createQuizRequest } from './quiz-api.mjs?v=20261029-load-batch1';
 
 const $ = id => document.getElementById(id);
 let doc = newDocument(), bankId = crypto.randomUUID(), revision = 0, dirty = false, busy = false, request, identityKey, currentSession = null;

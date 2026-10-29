@@ -1,5 +1,5 @@
-import { createAuthenticatedTransport } from './quiz-transport.mjs';
-import { configureQuizMedia } from './quiz-media.mjs';
+import { createAuthenticatedTransport } from './quiz-transport.mjs?v=20261029-load-batch1';
+import { configureQuizMedia, createMediaScope } from './quiz-media.mjs?v=20261029-load-batch1';
 const errors = {
   paper_name_choice_invalid: '這個主題或角色目前無法使用，請更新後重新選擇。',
   paper_name_locked: '試卷由系統自動命名，不能自行修改名稱。',
@@ -28,14 +28,15 @@ export async function createQuizRequest({ getSession, localStudent = null, local
     && document.querySelector('meta[name="quiz-media-backend"]')?.content === 'drive';
   const mediaTransport = driveMedia ? createAuthenticatedTransport({auth, getSession, baseUrl:location.origin}) : null;
   let attemptId = null;
-  configureQuizMedia(async url => {
-    const body = { action: 'read', url, attempt_id: attemptId };
+  const readMedia = async (url, context) => {
+    const body = { action: 'read', url, attempt_id: context.attempt_id };
     let result = local ? await localCall('/__quiz-media', body)
       : mediaTransport ? await mediaTransport('/__quiz-drive-media', body)
       : await transport('/functions/v1/quiz-media', body);
     if (result.fallback === 'supabase') result = await transport('/functions/v1/quiz-media', body);
-    return result.url;
-  });
+    return result;
+  };
+  configureQuizMedia(async url => (await readMedia(url,{attempt_id:attemptId})).url);
   if (local && !['127.0.0.1', 'localhost'].includes(location.hostname)) throw new Error('本機模式只可在本機使用。');
   async function localCall(path, body) {
     const response = await fetch(path, { method: 'POST', signal: AbortSignal.timeout(body.action === 'freeze' ? 45000 : 20000),
@@ -44,7 +45,7 @@ export async function createQuizRequest({ getSession, localStudent = null, local
     if (!response.ok) { const e = new Error(quizError(result.error)); e.code = result.error; throw e; }
     return result;
   }
-  return async (action, data = {}) => {
+  const request = async (action, data = {}) => {
     if (local) {
       const result = await localCall(action === 'publish' ? '/__quiz-media' : '/__quiz-rpc', { action: action === 'publish' ? 'freeze' : action, data });
       if(result.warning){const e=new Error(quizError(result.warning));e.code=result.warning;e.retryAfter=result.retry_after;throw e;}
@@ -52,7 +53,7 @@ export async function createQuizRequest({ getSession, localStudent = null, local
       return result;
     }
     try {
-      const specialized = {rewards:'quiz_rewards',wrong_questions:'quiz_wrong_questions',compose:'quiz_compose',rename_paper:'quiz_rename_paper',delete_paper:'quiz_delete_paper',pool_catalog:'quiz_pool_catalog'}[action];
+      const specialized = {entry_context:'quiz_entry_context',rewards:'quiz_rewards',wrong_questions:'quiz_wrong_questions',compose:'quiz_compose',rename_paper:'quiz_rename_paper',delete_paper:'quiz_delete_paper',pool_catalog:'quiz_pool_catalog'}[action];
       const result = await transport(action === 'publish' ? '/functions/v1/quiz-media' : specialized ? '/rest/v1/rpc/'+specialized : '/rest/v1/rpc/quiz_action',
         action === 'publish' ? { action: 'freeze', data } : action === 'pool_catalog' ? {} : specialized ? { p_data: data } : { p_action: action, p_data: data });
       if (result.attempt_id) attemptId = result.attempt_id;
@@ -60,4 +61,7 @@ export async function createQuizRequest({ getSession, localStudent = null, local
       return result;
     } catch (e) { if (e.code) e.message = quizError(e.code); throw e; }
   };
+  request.createMediaScope = (context, options={}) => createMediaScope({context,read:readMedia,
+    valid:()=>local || getSession?.()?.user?.id===context.user_id,...options});
+  return request;
 }

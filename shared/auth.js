@@ -1,5 +1,7 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
+import { diagnosticFetch } from './connection-diagnostics.mjs?v=20261029-load-batch1';
+
 export const SUPABASE_URL = "https://upxgyusodibaqcrocdzj.supabase.co";
 export const SUPABASE_ANON_KEY = "sb_publishable_VhqRaRCR5m4VRuCqTMXToA_XgeCgl5j";
 export const TEACHER_EMAILS = ["chianwu@gmail.com"];
@@ -7,6 +9,7 @@ export const AUTH_STORAGE_KEY = "sb-upxgyusodibaqcrocdzj-auth-token";
 export const LOGIN_RETURN_KEY = "post_login_redirect";
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { fetch: diagnosticFetch() },
     auth: {
         persistSession: true,
         autoRefreshToken: true,

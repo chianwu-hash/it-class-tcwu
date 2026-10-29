@@ -1,5 +1,5 @@
 import { initQuizPractice } from './quiz-practice.js';
-import { initServerQuiz } from './quiz-server.mjs?v=20261029-workspace';
+import { initServerQuiz } from './quiz-server.mjs?v=20261029-load-batch1';
 
 const DEFAULT_MESSAGES = {
     questionLabel: (index) => `Q${index}`,
