@@ -1,8 +1,9 @@
 import { initNavbarAuth } from './navbar-auth.js';
-import { createQuizRequest } from './quiz-api.mjs?v=20261029-diagnostics-switch';
+import { createQuizRequest } from './quiz-api.mjs?v=20261029-batch4';
+import { provideNavIdentity } from './grade6-nav-identity.js?v=20261029-batch4';
 import { quizPageGrade, quizLibraryPath, quizStudentRedirect } from './quiz-grade-route.mjs';
 import { initWrongQuestions } from './quiz-wrong-questions.mjs?v=20261029-load-batch2';
-import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs?v=20261029-load-batch1';
+import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs?v=20261029-batch4';
 import {comparePapers,paperRange,paperTitle,paperMix,isExtension,paperDifficulty} from './quiz-paper-display.mjs';
 import {difficultyAdjustment} from './quiz-difficulty.mjs';
 
@@ -18,7 +19,8 @@ ownSection.innerHTML='<header class="collection-heading"><span class="collection
 const presetSection=document.createElement('section');presetSection.id='system-papers-section';presetSection.className='paper-collection collection-preset';presetSection.setAttribute('aria-labelledby','system-papers-title');
 presetSection.innerHTML='<header class="collection-heading"><span class="collection-label">已準備好的練習</span><h2 id="system-papers-title">老師準備的卷 <span id="system-papers-count" class="collection-count"></span></h2><p>各科單元卷已經準備好，選一份就能開始練習。</p></header><p id="system-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的老師準備的卷。</p>';
 el('cloud-papers').before(presetSection);presetSection.append(el('cloud-papers'));presetSection.before(ownSection);
-document.addEventListener('quiz-paper-saved',()=>{if(busy)reloadAfter=true;else load({refreshComposer:false,refreshWrong:false});});
+// Compose returns the saved card in the library shape; insert it instead of reloading the whole list.
+document.addEventListener('quiz-paper-saved',e=>{const paper=e.detail?.paper;if(paper?.id&&!busy&&studentView){papers=[...papers.filter(p=>p.id!==paper.id),paper];render();return;}if(busy)reloadAfter=true;else load({refreshComposer:false,refreshWrong:false});});
 const wrongQuestions = initWrongQuestions({request,pageGrade,getUserId:()=>currentSession?.user?.id,onExtension:composer?.extend,canExtend:catalog=>composer?.canExtend(catalog),externalNavigation:true});
 let activeView=location.hash==='#wrong'?'wrong':location.hash==='#mine'?'mine':'preset';
 const tabs=document.createElement('div');tabs.className='library-tabs';tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','選擇練習方式');
@@ -115,13 +117,14 @@ async function load({refreshComposer=true,refreshWrong=true}={}) {
     el('grade-filter-label').hidden=true;
     el('cloud-lock').hidden=true;el('cloud-library').hidden=false;
     papers = data.sessions;
+    if(!localContext)provideNavIdentity({userId:currentSession.user.id,email:currentSession.user.email,row:data.identity});
     studentView=data.role==='student';
     el('cloud-identity').textContent = localContext ? `本機合成學生 ${localContext.student}｜進度存於本機測試資料庫，尚未同步雲端` : data.role === 'teacher' ? '教師試答｜可切換年級檢視' : '學生練習｜進度已從雲端讀取';
     render();
     if(refreshComposer)await composer?.ready({student:data.role==='student'});
     // Saving a paper updates the cards, while the current wrong-answer explanation stays open.
     if(refreshWrong){wrongQuestions.ready();if(activeView==='wrong')wrongQuestions.activate(true);}
-  } catch (e) { if (token === generation) {studentView=false;papers=[];composer.reset();wrongQuestions.reset();el('cloud-papers').replaceChildren();el('my-papers').replaceChildren();continueBox.replaceChildren();continueBox.hidden=true;el('cloud-identity').textContent='尚未取得學生使用資格';showLock(['student_required','roster_required','login_required'].includes(e.code)?e.message:'暫時無法確認學生資格，請稍後重新整理。');} }
+  } catch (e) { if (token === generation) {studentView=false;papers=[];composer.reset();wrongQuestions.reset();el('cloud-papers').replaceChildren();el('my-papers').replaceChildren();continueBox.replaceChildren();continueBox.hidden=true;el('cloud-identity').textContent='尚未取得學生使用資格';showLock(['student_required','roster_required','login_required','server_busy'].includes(e.code)?e.message:'暫時無法確認學生資格，請稍後重新整理。');} }
   finally { if (token === generation) { busy = false; el('refresh-library').disabled = false;if(reloadAfter){reloadAfter=false;setTimeout(()=>load({refreshComposer:false,refreshWrong:false}),0);} } }
 }
 el('grade-filter').addEventListener('change', () => location.assign(quizLibraryPath(el('grade-filter').value)));

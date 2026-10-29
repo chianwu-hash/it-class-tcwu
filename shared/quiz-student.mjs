@@ -1,5 +1,6 @@
 import { initQuizModule } from './quiz-module.js?v=20261029-load-batch1';
-import { createQuizRequest } from './quiz-api.mjs?v=20261029-diagnostics-switch';
+import { createQuizRequest } from './quiz-api.mjs?v=20261029-batch4';
+import { provideNavIdentity } from './grade6-nav-identity.js?v=20261029-batch4';
 import { initImageLightbox } from './image-lightbox.js';
 import {resolveQuizImage} from './quiz-media.mjs?v=20261029-load-batch1';
 
@@ -42,7 +43,7 @@ async function start() {
     await quiz.handleAuthChange({ user: { id: `demo-student-${student}` } }); return;
   }
   // 課程導覽與 OAuth 仍由既有 navbar／navbar-auth 管理。
-  const script = document.createElement('script'); script.src = 'navbar.js?v=20261028-roster'; script.dataset.homework = 'true';
+  const script = document.createElement('script'); script.src = 'navbar.js?v=20261029-batch4'; script.dataset.homework = 'true';
   if (cloud) script.dataset.quiz = 'true';
   await new Promise((resolve, reject) => { script.onload = resolve; script.onerror = () => reject(new Error('導覽未能載入，請重新整理。')); document.getElementById('quiz-navbar').append(script); });
   const { initNavbarAuth } = await import('./navbar-auth.js');
@@ -68,6 +69,7 @@ async function start() {
       try {
         const identity = await request('entry_context',{session_id:sessionId});
         if (token !== authGeneration || currentSession?.user?.id !== id) return;
+        provideNavIdentity({ userId: id, email: currentSession.user.email, row: identity.identity });
         if(identity.role!=='student')throw new Error('考前練功房僅限名冊中的學生帳號使用。');
         const redirect = gradeRoute.quizStudentRedirect(identity, location.pathname, location.search);
         if (redirect) { location.replace(redirect); return; }

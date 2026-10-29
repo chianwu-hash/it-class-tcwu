@@ -1,4 +1,4 @@
-import { createAuthenticatedTransport } from './quiz-transport.mjs?v=20261029-diagnostics-switch';
+import { createAuthenticatedTransport } from './quiz-transport.mjs?v=20261029-batch4';
 import { configureQuizMedia, createMediaScope } from './quiz-media.mjs?v=20261029-load-batch1';
 const errors = {
   paper_name_choice_invalid: '這個主題或角色目前無法使用，請更新後重新選擇。',
@@ -21,6 +21,13 @@ const errors = {
   version_unavailable: '找不到這個固定版本。', session_conflict: '同一場次的設定不同，請重新確認。',
 };
 export const quizError = code => errors[code] || '測驗服務暫時無法完成，請更新狀態或重試。';
+// After an overload signal, hold back reads on this page for 30 seconds so a whole class
+// refreshing at once does not keep the database saturated. Writes keep their manual retry.
+const BUSY_MS = 30000, READS = new Set(['library_sessions','pool_catalog','wrong_questions','rewards','entry_context','version_list','version_get','monitor']);
+let busyUntil = 0;
+const busyError = write => { const s = Math.max(1, Math.ceil((busyUntil - Date.now()) / 1000));
+  const e = new Error(write ? `伺服器忙碌中，這次尚未確認保存。請等 ${s} 秒後再按一次，不要重新整理頁面。` : `伺服器忙碌中，請等 ${s} 秒後再試，不要重新整理頁面。`);
+  e.code = 'server_busy'; e.retryAfter = s; return e; };
 export async function createQuizRequest({ getSession, localStudent = null, local = false } = {}) {
   const auth = local ? null : await import('./auth.js');
   const transport = local ? null : createAuthenticatedTransport({ auth, getSession });
@@ -52,6 +59,7 @@ export async function createQuizRequest({ getSession, localStudent = null, local
       if (result.attempt_id) attemptId = result.attempt_id;
       return result;
     }
+    if (READS.has(action) && Date.now() < busyUntil) throw busyError(false);
     try {
       const specialized = {monitor:'quiz_monitor',library_sessions:'quiz_library_sessions',version_list:'quiz_version_browser',version_get:'quiz_version_browser',entry_context:'quiz_entry_context',rewards:'quiz_rewards',wrong_questions:'quiz_wrong_questions',compose:'quiz_compose',rename_paper:'quiz_rename_paper',delete_paper:'quiz_delete_paper',pool_catalog:'quiz_pool_catalog'}[action];
       const result = await transport(action === 'publish' ? '/functions/v1/quiz-media' : specialized ? '/rest/v1/rpc/'+specialized : '/rest/v1/rpc/quiz_action',
@@ -59,7 +67,10 @@ export async function createQuizRequest({ getSession, localStudent = null, local
       if (result.attempt_id) attemptId = result.attempt_id;
       if(result.warning){const e=new Error(quizError(result.warning));e.code=result.warning;e.retryAfter=result.retry_after;throw e;}
       return result;
-    } catch (e) { if (e.code) e.message = quizError(e.code); throw e; }
+    } catch (e) {
+      if (e.busy) { busyUntil = Date.now() + BUSY_MS; const b = busyError(!READS.has(action)); if (!READS.has(action) && !e.code) b.message = e.message + `（伺服器忙碌，請等 ${b.retryAfter} 秒）`; throw b; }
+      if (e.code) e.message = quizError(e.code); throw e;
+    }
   };
   request.createMediaScope = (context, options={}) => createMediaScope({context,read:readMedia,
     valid:()=>local || getSession?.()?.user?.id===context.user_id,...options});

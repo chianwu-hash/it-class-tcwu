@@ -23,7 +23,9 @@ export function createAuthenticatedTransport({ auth, getSession, fetcher = fetch
         body: JSON.stringify(body),
       });
     } catch (cause) {
-      throw new Error(cause.name === 'TimeoutError' ? '連線逾時，保存狀態尚未確認。請重試或更新狀態。' : '網路中斷，保存狀態尚未確認。請重試或更新狀態。');
+      const e = new Error(cause.name === 'TimeoutError' ? '連線逾時，保存狀態尚未確認。請重試或更新狀態。' : '網路中斷，保存狀態尚未確認。請重試或更新狀態。');
+      if (cause.name === 'TimeoutError') e.busy = true;
+      throw e;
     }
     const finishBody = diagnoseStep('quiz.response_body');
     const result = await response.json().catch(() => null);
@@ -31,7 +33,9 @@ export function createAuthenticatedTransport({ auth, getSession, fetcher = fetch
     if (!response.ok) diagnoseResult(result?.code || result?.error || `http_${response.status}`);
     if (getSession()?.user?.id !== identity) throw new Error('登入身分已變更，請重新加入。');
     if (!response.ok || !result || typeof result !== 'object') {
-      const e = new Error(result?.error || result?.message || 'service_unavailable'); e.code = e.message; throw e;
+      // Gateway timeouts, pool exhaustion and statement timeouts mean the database is overloaded.
+      const busy = [502, 503, 504].includes(response.status) || ['PGRST003', '57014'].includes(result?.code);
+      const e = new Error(result?.error || result?.message || 'service_unavailable'); e.code = e.message; e.busy = busy; throw e;
     }
     return result;
   };

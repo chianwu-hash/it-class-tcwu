@@ -55,8 +55,9 @@
     const navHTML = window.__buildCourseNavbarHtml(navConfig);
     currentScript.insertAdjacentHTML("beforebegin", navHTML);
     currentScript.remove();
-    if (quizMode) import('../../shared/grade6-nav-identity.js?v=20261028-roster')
-        .then(({ initGrade6NavIdentity }) => initGrade6NavIdentity({ expanded: true }))
+    // Quiz pages pass the roster label from their own RPC; no extra enrollment request here.
+    if (quizMode) import('../../shared/grade6-nav-identity.js?v=20261029-batch4')
+        .then(({ initGrade6NavIdentity }) => initGrade6NavIdentity({ expanded: true, provided: true }))
         .catch(error => console.warn('練功房導覽身分暫時無法讀取', error));
     if (quizMode) return;
 

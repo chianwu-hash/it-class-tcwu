@@ -56,7 +56,8 @@ test('SQL等價：目錄、單卷入口、題組／整卷媒體、關場、移�
    const sid=crypto.randomUUID(),data={session_id:sid,version_id:vid,school_year:115,class_codes:['603'],reveal,shuffle_questions:false,shuffle_options:false};
    await quizCall(db,TEACHER,'open',data);
    const before=(await db.query('select count(*) n from public.quiz_attempts')).rows[0].n;
-   assert.deepEqual(await call(studentId(1),'quiz_entry_context',[{session_id:sid}]),{role:'student',grade:6,subject:'數學',version_id:vid});
+   // Batch4 adds the caller's own roster label (identity) for the navbar; other fields unchanged.
+   const {identity:_label,...entry}=await call(studentId(1),'quiz_entry_context',[{session_id:sid}]);assert.deepEqual(entry,{role:'student',grade:6,subject:'數學',version_id:vid});
    assert.equal((await db.query('select count(*) n from public.quiz_attempts')).rows[0].n,before);
    const joined=await quizCall(db,studentId(1),'join',data);await equivalent(studentId(1),joined.attempt_id);await equivalent(studentId(2),joined.attempt_id);await equivalent(OTHER_TEACHER,joined.attempt_id);await equivalent(TEACHER,null);
    let last;

@@ -44,7 +44,7 @@ export const supabase={auth:{getSession:async()=>({data:{session:window.fixtureS
     if(u.pathname==='/mock-supabase/rest/v1/rpc/quiz_entry_context'){
      const uid=r.headers().authorization?.replace('Bearer fixture-','');rpcCalls.push({action:'entry_context'});
      if(uid==='teacher')return r.respond({status:403,contentType:'application/json',body:JSON.stringify({message:'student_required'})});
-     return send({role:'student',grade,subject:'國語',version_id:'version-one'});
+     const who=uid==='b'?'b':'a';return send({role:'student',grade,subject:'國語',version_id:'version-one',identity:{email:who+'@example.invalid',class_code:grade===3?'304':'603',seat_no:7,display_name:who==='b'?'小樹':'小禾',student_code:grade===3?'30407':'60307'}});
     }
     if(u.pathname==='/mock-supabase/rest/v1/rpc/quiz_action'){
      const {p_action:action,p_data:data}=JSON.parse(r.postData()),uid=r.headers().authorization?.replace('Bearer fixture-','');rpcCalls.push({action,data});
@@ -83,7 +83,8 @@ export const supabase={auth:{getSession:async()=>({data:{session:window.fixtureS
   const primary=()=>page.$eval('.quiz-workspace-dock .quiz-primary',e=>{const r=e.getBoundingClientRect();return {text:e.textContent,top:r.top,bottom:r.bottom,height:innerHeight};});
   const visible=async()=>{const b=await primary();assert.ok(b.top>=0&&b.bottom<=b.height+1,JSON.stringify(b));return b;};
   await page.setViewport({width:1366,height:620});await page.goto(url(),{waitUntil:'networkidle0'});await ready();
-  assert.ok(rosterCalls>=1);assert.ok(rpcCalls.some(r=>r.action==='entry_context'));assert.equal(rpcCalls.filter(r=>r.action==='library_sessions').length,0);await visible();
+  // Batch4: the quiz page hands the entry_context roster label to the navbar; no separate roster RPC.
+  assert.equal(rosterCalls,0);await page.waitForFunction(()=>/班 7 號/.test(document.querySelector('#auth-status')?.textContent||''));assert.ok(rpcCalls.some(r=>r.action==='entry_context'));assert.equal(rpcCalls.filter(r=>r.action==='library_sessions').length,0);await visible();
   await page.waitForFunction(()=>document.querySelector('#server-quiz').classList.contains('workspace-desktop'));
   assert.ok(await page.evaluate(()=>document.scrollingElement.scrollHeight<=innerHeight+2));
   const start=await page.$eval('.student-option',e=>({x:e.getBoundingClientRect().x,width:e.getBoundingClientRect().width}));
@@ -94,7 +95,7 @@ export const supabase={auth:{getSession:async()=>({data:{session:window.fixtureS
   const after=await page.$eval('.student-option',e=>({x:e.getBoundingClientRect().x,width:e.getBoundingClientRect().width}));assert.deepEqual(after,start);
   assert.ok(await page.evaluate(()=>{const l=document.querySelector('.quiz-reading-panel').getBoundingClientRect(),r=document.querySelector('.answer-preview').getBoundingClientRect();return l.top>=0&&r.top>=0&&r.bottom<=innerHeight-document.querySelector('.quiz-workspace-dock').getBoundingClientRect().height;}));
   await page.screenshot({path:out+'/desktop-1366-feedback.png'});
-  await page.reload({waitUntil:'networkidle0'});await ready();assert.ok(rosterCalls>=2,'original roster flow retained');
+  await page.reload({waitUntil:'networkidle0'});await ready();assert.equal(rosterCalls,0,'roster label comes from entry_context');
   fast=true;await choose();await page.click('#server-submit');await page.waitForSelector('.quiz-speed-warning');assert.ok(await page.$('#server-submit'));await visible();
   await page.click('#server-submit');await page.waitForSelector('.answer-preview');assert.match((await visible()).text,/查看整份/);
   assert.match(await page.$eval('.quiz-context-status',e=>e.textContent),/本次不計葉片/);
@@ -174,7 +175,7 @@ export const supabase={auth:{getSession:async()=>({data:{session:window.fixtureS
    return {catalogInitial:0,catalogPerUser:1,inflightMerged:true,extensionAvailable:true,reviewInitialMedia:initialReads,reviewTotalMedia:20,hiddenMonitorStopped:true,explicitPauseRetained:true};
   });extra.loadingChecks=loadingChecks;
   assert.deepEqual(errors,[]);
-  const report={passed:true,shortDesktopFits:true,stableColumns:true,failedSaveNoNext:true,sameRequestRetry:true,finalFeedback:true,fullReviewNatural:true,originalRosterFlow:true,fastWarning:true,lightbox:true,mobile:true,zoomEquivalent:true,longReadingFallback:true,nonStudentDenied:true,logoutClearsWorkspace:true,rosterCalls,rpcActions:rpcCalls.map(r=>r.action),errors};
+  const report={passed:true,shortDesktopFits:true,stableColumns:true,failedSaveNoNext:true,sameRequestRetry:true,finalFeedback:true,fullReviewNatural:true,rosterFromEntryContext:true,fastWarning:true,lightbox:true,mobile:true,zoomEquivalent:true,longReadingFallback:true,nonStudentDenied:true,logoutClearsWorkspace:true,rosterCalls,rpcActions:rpcCalls.map(r=>r.action),errors};
   Object.assign(report,extra);await fs.writeFile(out+'/browser.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));
  }finally{await browser.disconnect();}
 })().catch(e=>{console.error(e.stack);process.exitCode=1;});

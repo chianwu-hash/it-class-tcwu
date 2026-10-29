@@ -67,6 +67,6 @@
     currentScript.remove();
 
     // Show roster class/seat/name instead of the email once signed in.
-    import('../../shared/grade6-nav-identity.js?v=20261028-roster').then(({ initGrade6NavIdentity }) => initGrade6NavIdentity({ expanded: quizMode }))
+    import('../../shared/grade6-nav-identity.js?v=20261029-batch4').then(({ initGrade6NavIdentity }) => initGrade6NavIdentity({ expanded: quizMode, provided: quizMode }))
         .catch(error => console.warn('grade6 navbar identity unavailable', error));
 })();
