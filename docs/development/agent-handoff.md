@@ -1,5 +1,12 @@
 # Agent Handoff
 
+## 連線偵錯開關已關閉 — 2026-10-29
+
+- 使用者要求先關閉供實班觀察。單一全站部署旗標 shared/connection-diagnostics.mjs 的 DIAGNOSTICS_ENABLED=false；前端與collector共用，未經使用者要求不要重新開啟。不是學生自行切換的按鈕。後續改 true 必須更新匯入鏈快取標記並重新部署。
+- 關閉不記錄事件／UUID／計時／儲存／監聽／interval／回傳，也沒有下載按鈕，fetcher原函式直通。collector關閉不寫日誌，仍204讓舊頁清空佇列。舊分頁需重新整理才停本機蒐集及傳送。
+- 功能253d2bf，分支codex/quiz-diagnostics-switch；正式dpl_9igJHMDmzwAeHQSqJHC3bbzeF1Gd已promote／READY。第三批凍結包加14檔；18候選與239正式檔SHA一致，四版collector204。59項完整回歸及後加collector檢查的3項專項都過；正式來源Chrome32秒事件／寫入／interval／上傳全0。驗證分頁關閉、租約釋放。
+- 沒有改SQL／學生資料／保存／重送／揭答／防弊／一葉；原每分鐘CLI sampler仍停。詳quiz-diagnostics-switch-20261029.md，ignored automation/output/quiz/diagnostics-switch。最新正式程式尚未合入dirty主工作區，不能用舊主工作區整包部署覆蓋。
+
 ## 考前練功坊資料讀取第三批 — 2026-10-29
 
 - 已依使用者授權完成抽題候選一次篩選、學生白名單試卷一次組裝、教師監看單次彙整。保存／相同答案重送／題組與整卷揭答／防弊／原一葉保留；quiz_action、answer_guard、leaf 及其他 23 個既有函式定義不變。
