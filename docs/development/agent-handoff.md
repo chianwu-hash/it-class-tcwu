@@ -1,5 +1,7 @@
 # 2026-10-29 自然考古題已正式上線（優先於下方僅本機紀錄）
 
+- 實作經驗已整理為[考古題轉線上題庫作業指南](past-exam-playbook.md)：原卷／解答配對與校對、題型轉接、92分分母、重作與一次給葉、工具／本機資料界線、驗證及部署踩坑。日後處理新卷先讀此指南；不代表已授權批次匯入或發布。
+
 - 使用者已明確授權正式接入及驗證後上線。114上三年級自然第一次評量，穩定paper ID dingxi-114-1-g3-exam1-science，學習115-1；40題組、92分自動／4分畫圖自核對／4分疑義暫停。保留作答方式，統一網站樣式。單次完整>=60%首次給1葉，同卷同學期只領一次，可重作並保留歷次；55→56→92葉0→1→1已驗證。
 - 正式 dpl_6q3C3ZH7U23iuKQSoBHHeukFUCdm 已promote，SQL本卷enabled=true、私有媒體9張及Edge已接入；正式247靜態SHA一致，66回歸零失敗零略過，Chrome正式來源學生／教師隔離fixture通過，真Supabase交易回滾驗證，沒有留下假學生作答與葉。
 - 分支codex/past-exam-production，工作區C:/Users/user/.codex/worktrees/past-exam-production/it-class-tcwu，基於claude/quiz-load-batch4，以第四批433檔凍結包加13檔發布。主工作區尚未合併，含花園等其他dirty，禁止整包部署覆蓋。
