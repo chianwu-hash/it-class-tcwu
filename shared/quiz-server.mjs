@@ -549,11 +549,13 @@ quizFeedbackMotion.register({
 })();
 
 import {celebrateQuizLeaf,quizReadingWarning,stopQuizLeafCelebration} from './quiz-leaf-celebration.mjs';
+import {createQuizWorkspace} from './quiz-workspace.mjs?v=20261029-workspace';
 // 選用後端模式不接收答案資料，不執行前端評分，不呼叫舊進度儲存。
 export function initServerQuiz({ selectors, server }) {
   if (!server?.request || !server?.sessionId) throw new Error('缺少測驗場次或後端連線。');
   const el = key => typeof selectors?.[key] === 'string' ? document.getElementById(selectors[key]) : selectors?.[key];
   const root = el('container'), lock = el('lock'), content = el('content');
+  const workspace = createQuizWorkspace(root);
   const renderContent = (target, c) => renderQuizContent(target, {
     ...c,
     text: c?.text?.trim() === '書商未提供這一題的詳細解析。'
@@ -626,6 +628,7 @@ export function initServerQuiz({ selectors, server }) {
     if (animate && actor) quizFeedbackMotion.play(actor);
   }
   function render() {
+    workspace.reset();
     stopAudio(); root.querySelectorAll('.qfm-actor').forEach(quizFeedbackMotion.stop); root.replaceChildren();
     const status = make('p', ''); status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite'); root.append(status);
     if (!userId) return;
@@ -713,9 +716,10 @@ export function initServerQuiz({ selectors, server }) {
       const submitButton = button(busy ? '正在儲存…' : pending ? '以相同答案重試儲存' : '送出答案', submit, 'quiz-primary'); submitButton.disabled = busy; submitButton.id = 'server-submit'; actions.append(submitButton);
     }
     if (cursor > 0 && !pending) actions.append(button('回看前一題', () => { cursor--; selected = ''; render(); }, 'secondary'));
-    if (saved && cursor < questions.length - 1) actions.append(button('下一題', () => { cursor++; selected = ''; render(); root.querySelector('.question')?.scrollIntoView({ block: 'start' }); }, 'quiz-primary'));
-    if (state.complete) actions.append(button('查看整份作答與解析', () => { showFullReview = true; render(); }, 'quiz-primary'));
+    if (saved && cursor < questions.length - 1) actions.append(button('下一題', () => { cursor++; selected = ''; render(); if(root.classList.contains('quiz-workspace-active'))root.querySelector('.quiz-reading-panel')?.focus({preventScroll:true});else root.querySelector('.question')?.scrollIntoView({ block: 'start' }); }, 'quiz-primary'));
+    if (state.complete && cursor === questions.length - 1) actions.append(button('查看整份作答與解析', () => { showFullReview = true; render(); }, 'quiz-primary'));
     actions.append(button('更新儲存狀態', () => load('resume', true), 'secondary quiz-refresh')); article.append(actions); root.append(article);
+    workspace.apply({article, saved, complete:state.complete, closed:state.status==='closed'});
     if (pending) say('這次答案的儲存狀態尚未確認，請以相同答案重試或更新狀態。', true);
   }
   async function load(action, preserveCursor = false) {
@@ -749,7 +753,8 @@ export function initServerQuiz({ selectors, server }) {
       feedbackAnimation = next.reviews.some(r => r.question_id === q.id) ? q.id : null;
       state = next; pending = null; busy = false; render(); say('答案已儲存。');
       if(next.leaf?.earned_now)celebrateQuizLeaf();
-      root.querySelector('.answer-preview')?.focus();
+      root.querySelector('.answer-preview')?.focus({preventScroll:true});
+      if(root.classList.contains('quiz-workspace-active')&&!root.classList.contains('workspace-desktop'))root.querySelector('.answer-preview')?.scrollIntoView({block:'start',behavior:'instant'});
     } catch (e) { if (generation === token) { busy = false;
       if(e.code==='quiz_snapshot_mismatch'){await load('resume',true);return;}
       if(e.code==='answer_too_fast'){pending=null;quizReadingWarning();} render(); say(e.message, true); } }
@@ -759,10 +764,11 @@ export function initServerQuiz({ selectors, server }) {
     const id = session?.user?.id || null;
     if (id === userId) return;
     stopQuizLeafCelebration();
+    workspace.reset({forget:true});
     generation++; userId = id; busy = false; state = null; selected = ''; pending = null; loadError = ''; cursor = 0; showFullReview = false; feedbackAnimation = null;seenQuestion=null;
     if (lock) { lock.hidden = Boolean(id); lock.classList.toggle('hidden', Boolean(id)); }
     if (content) { content.hidden = !id; content.classList.toggle('hidden', !id); }
     render(); if (id) await load('join');
   }
-  return { handleAuthChange, render, submit, refresh: () => load('resume', true), destroy: () => handleAuthChange(null) };
+  return { handleAuthChange, render, submit, refresh: () => load('resume', true), destroy: () => { handleAuthChange(null); workspace.destroy(); } };
 }

@@ -1,5 +1,12 @@
 # Agent Handoff
 
+## 答題雙欄與固定操作列獨立發布 — 2026-10-29
+
+- 使用者已授權驗證通過即上線，明確排除半葉制度及努力花園；Codex 單獨整理，不改正式學生資料或 SQL。
+- 從 `b5ff031` 乾淨快照只加入七個產品檔、獨立瀏覽器測試及文件。保留原登入／名冊流程及一葉規則，排除身分快取、entry_identity、半葉／花園依賴。其他未提交修改保持在工作區。
+- 既有 13 項 SQL／登入／保存／媒體回歸通過；共用答題頁的本機合成瀏覽器涵蓋桌機雙欄、固定主操作、失敗重送、揭答、長內容、窄畫面、關場及換人隔離。詳見 `quiz-workspace-release-20261029.md`；正式發布結果另補記。
+
+
 ## Grade 3 long-text keyboard helper discussion — 2026-10-28
 
 - Goal: discuss with Claude how to keep the lower-right keyboard visible for long Chinese/English typing passages. Discussion only; no product implementation, database, deployment, student data, credentials, or external network.

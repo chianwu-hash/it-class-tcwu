@@ -1,4 +1,4 @@
-import { initQuizModule } from './quiz-module.js?v=20261028-performance';
+import { initQuizModule } from './quiz-module.js?v=20261029-workspace';
 import { createQuizRequest } from './quiz-api.mjs?v=20261028-performance';
 import { initImageLightbox } from './image-lightbox.js';
 import {resolveQuizMedia} from './quiz-media.mjs';
