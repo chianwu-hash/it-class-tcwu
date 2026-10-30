@@ -49,7 +49,7 @@
   .frames .arrow { align-self: center; color: var(--muted); padding-bottom: 18px; }
 
 header,main>.bar,main>.status,main>details:not(#manual-settings),footer,.frames,#capacity{display:none!important}
-#manual-settings{margin-top:0}#manual-settings>.bar:not([aria-label="天氣"]):not([aria-label="雷聲"]),#manual-settings>#settings{display:none!important}
+[hidden]{display:none!important}#manual-settings{margin-top:0}#manual-settings>.bar:not([aria-label="天氣"]):not([aria-label="雷聲"]),#manual-settings>#settings{display:none!important}
 #manual-settings>[aria-label="雷聲"] #testThunder{display:none!important}
 main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與天氣"]{margin:4px!important;padding:9px!important}#wrap{margin:0}canvas{width:100%}
 #motion-controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:8px}#motion-controls button{font:inherit;padding:8px;border-radius:12px;border:1px solid #c5ded0;background:white;color:#255e4e}
@@ -59,9 +59,8 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
 <body>
 <section style="margin:12px auto;padding:14px;max-width:1280px;border:1px solid #b7d8c9;border-radius:18px;background:var(--panel)" aria-label="所在地與天氣">
  <div class="bar"><strong id="location-label">頂溪國小・新北市永和區</strong><span id="local-clock"></span><span id="live-weather">正在準備當地天氣…</span></div>
- <div class="bar"><button class="btn primary" id="use-location">使用目前位置</button><button class="btn" id="school-location">回到學校地點</button><label><input type="checkbox" id="follow-weather" checked> 配合當地日夜與天氣</label></div>
- <p id="location-message" role="status" style="margin:4px 0"></p><p id="weather-message" role="status" style="margin:4px 0"></p><p id="manual-note" style="margin:4px 0"></p>
- <small>定位只在按鈕觸發時取得，使用概略位置查天氣；不持續追蹤。天氣資料：<a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>。</small>
+ <p id="location-message" role="status" style="margin:4px 0"></p><p id="weather-message" role="status" style="margin:4px 0"></p>
+ <small>已允許瀏覽器定位時，自動使用概略位置查天氣；未允許或無法定位時使用學校位置，不持續追蹤。天氣資料：<a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>。</small>
 </section>
 <main>
   <header>
@@ -73,7 +72,7 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
     <span class="label">樹</span>
     <button type="button" class="btn" data-tree="a" aria-pressed="true">A 扇形</button>
     <button type="button" class="btn" data-tree="b" aria-pressed="false">B 分層</button><span id="capacity">64片一般葉＋32片測驗葉＝96片葉；24朵花</span></div>
-  <details id="manual-settings"><summary>手動預覽與動畫設定</summary><div class="bar" role="group" aria-label="天氣"><span class="label">天氣</span><button class="btn" type="button" data-theme="day">☀ 晴日</button><button class="btn" type="button" data-theme="cloudy">☁ 陰天</button><button class="btn" type="button" data-theme="afterrain">雨後放晴</button><button class="btn" type="button" data-theme="night">☾ 夜晚</button><button class="btn" type="button" data-theme="drizzle">毛毛雨</button><button class="btn" type="button" data-theme="downpour">大雨</button><button class="btn" type="button" data-theme="thunder">⚡ 雷雨</button><label class="toggle"><input type="checkbox" id="autoLightning" checked> 雷雨自動閃電</label></div>
+  <details id="manual-settings" hidden inert aria-hidden="true"><summary>手動預覽與動畫設定</summary><div class="bar" role="group" aria-label="天氣"><span class="label">天氣</span><button class="btn" type="button" data-theme="day">☀ 晴日</button><button class="btn" type="button" data-theme="cloudy">☁ 陰天</button><button class="btn" type="button" data-theme="afterrain">雨後放晴</button><button class="btn" type="button" data-theme="night">☾ 夜晚</button><button class="btn" type="button" data-theme="drizzle">毛毛雨</button><button class="btn" type="button" data-theme="downpour">大雨</button><button class="btn" type="button" data-theme="thunder">⚡ 雷雨</button><label class="toggle"><input type="checkbox" id="autoLightning" checked> 雷雨自動閃電</label></div>
   <div class="bar" role="group" aria-label="避雨示範"><span class="label">避雨</span><button class="btn" type="button" data-demo="enter" disabled>看看進屋</button><button class="btn" type="button" data-demo="lazy" disabled>慵懶</button><button class="btn" type="button" data-demo="sleep" disabled>趴睡</button><button class="btn" type="button" data-demo="exit" disabled>雨停出屋</button><span class="status" id="shelterNote" aria-live="polite"></span></div>
   <div class="bar" role="group" aria-label="逐格查看"><span class="label">查看</span><label class="toggle"><input type="checkbox" id="slow"> 慢速 ¼</label><button class="btn" type="button" id="stepBtn" disabled>下一格（暫停時）</button><span class="status" id="poseNote" aria-live="polite"></span></div>
   <div class="bar" role="group" aria-label="雷聲"><span class="label">雷聲</span><button class="btn" type="button" id="audioBtn" aria-pressed="false">🔇 開啟雷聲</button><label class="toggle">音量 <input type="range" id="volume" min="0" max="100" value="70" aria-label="雷聲音量"></label><button class="btn" type="button" id="testThunder" disabled>⚡ 試一次閃電與雷聲</button><span class="status" id="audioNote" aria-live="polite">雷聲預設關閉。雷聲是瀏覽器即時合成，不是錄音。</span></div>
@@ -218,7 +217,7 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
   var THEMES = ['day', 'cloudy', 'afterrain', 'night', 'drizzle', 'downpour', 'thunder'];
   var params = new URLSearchParams(location.search);
   var seed = params.get('seed') || '303', tree = params.get('tree') === 'b' ? 'b' : 'a', ratio = 0.24;
-  var localNight = false; var theme = THEMES.indexOf(params.get('weather')) >= 0 ? params.get('weather') : 'day';
+  var localNight = false; var theme = 'day';
   var weatherClock = 0, plan = null, clock = { t: 0, playing: false }, lastNow = null, rafId = 0, lastStatus = 0, last = null;
   var reduceBox = $('reduce'), autoBox = $('autoLightning'), slowBox = $('slow');
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };

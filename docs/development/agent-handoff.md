@@ -1,3 +1,8 @@
+# 2026-10-30 學生努力樹自動日夜、天氣與位置已上線（Codex）
+
+- 最新正式 `dpl_3nBhT5jpMZmC7UQjXw2sKJLqtwhm`，基於前正式 `dpl_877EgV3NBbzUr8MLXRSwgBCasA8R` 完整來源，534 個無關檔案保持。後續仍要以當下正式版重建發布包。
+- 使用者新政策取代按鈕定位：已授權則自動使用所在地，未授權／失敗用頂溪國小；不自動彈提示。移除學生手動參數，保留暫停／減少動態。8 Node 測試與6種定位／故障瀏覽器情境通過；正式 prompt 權限自動用 school，真天氣載入、45葉10花正常、無手動控制。無 DB、登入、quiz_action 變更。詳 [自動環境紀錄](effort-tree-auto-weather-20261030.md)。
+
 # 2026-10-30 第二級努力樹空白已修復（Codex）
 
 - 最新正式版 `dpl_877EgV3NBbzUr8MLXRSwgBCasA8R`，以 Claude 最新 `dpl_J9HvTo62HwJHyQCPxo83KYJK5oey` 完整 536 檔為底，僅 `garden/stage.html` 修改、535 檔保持。後續發布請重新取得當下正式版，不用舊快照。
