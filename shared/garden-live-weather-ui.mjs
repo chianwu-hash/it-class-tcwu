@@ -6,7 +6,7 @@ const endpoint='/api/garden-weather';
 let last=null;
 const controller=createLocationWeather({endpoint,onChange:s=>{
  last=s;$('location-label').textContent=s.point.label;
- $('location-message').textContent=s.locating?'正在取得已授權的位置…':s.point.id==='school'?'目前使用學校所在地天氣。':'依已授權的位置附近呈現天氣。';
+ $('location-message').textContent=s.locating?'正在取得位置；若出現定位提示，請選擇是否允許。':s.point.id==='school'?'目前使用學校所在地天氣。':'依已授權的位置附近呈現天氣。';
  const clock=new Intl.DateTimeFormat('zh-TW',{timeZone:s.timeZone,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format();
  $('local-clock').textContent=`當地 ${clock}・${s.isDay?'白天':'夜晚'}`;
  $('live-weather').textContent=s.weather?`${names[s.weather.scene]}${s.weather.stale?'（先前資料）':''}・資料 ${new Intl.DateTimeFormat('zh-TW',{timeZone:s.timeZone,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(s.weather.observedAt))}`:'依時間呈現日夜';

@@ -1,3 +1,8 @@
+# 2026-10-30 首次定位授權政策修正已上線（Codex，取代下方不詢問政策）
+
+- 使用者澄清：首次 prompt 必須呼叫原生定位觸發授權；granted 直接定位；denied 不再詢問、使用學校；定位失敗用學校。選擇完全交給瀏覽器，不另存旗標。Permissions API 不支援時亦交由 geolocation 原生處理。
+- 正式 `dpl_4oeG1iffwaRjs2MfN5opZpSgnFLr`，基於前正式 `dpl_3nBhT5jpMZmC7UQjXw2sKJLqtwhm` 完整537檔，僅2個定位模組變更，其餘535檔UID相同。8單測、7種瀏覽器定位／天氣情境與390px皆通過，正式HTTP與內容核對通過。無資料庫、花葉、升級、quiz_action變更；詳 [環境政策](effort-tree-auto-weather-20261030.md)。
+
 # 2026-10-30 學生努力樹自動日夜、天氣與位置已上線（Codex）
 
 - 最新正式 `dpl_3nBhT5jpMZmC7UQjXw2sKJLqtwhm`，基於前正式 `dpl_877EgV3NBbzUr8MLXRSwgBCasA8R` 完整來源，534 個無關檔案保持。後續仍要以當下正式版重建發布包。
