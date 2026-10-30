@@ -1,12 +1,13 @@
 import { initNavbarAuth } from './navbar-auth.js';
-import { createQuizRequest } from './quiz-api.mjs?v=20261029-batch4';
-import { provideNavIdentity } from './grade6-nav-identity.js?v=20261029-batch4';
+import { createQuizRequest } from './quiz-api.mjs?v=20261030-identity-sync';
+import { provideNavIdentity } from './grade6-nav-identity.js?v=20261030-identity-sync';
 import { quizPageGrade, quizLibraryPath, quizStudentRedirect } from './quiz-grade-route.mjs';
 import { initWrongQuestions } from './quiz-wrong-questions.mjs?v=20261029-load-batch2';
 import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs?v=20261029-batch4';
 import {comparePapers,paperRange,paperTitle,paperMix,isExtension,paperDifficulty} from './quiz-paper-display.mjs';
 import {difficultyAdjustment} from './quiz-difficulty.mjs';
 import {createPastCatalogReader,pastPaperDisplay} from './quiz-past-catalog.mjs';
+import { onTestIdentityChange } from './test-identity-state.mjs?v=20261030-identity-sync';
 
 let currentSession = null, generation = 0, papers = [], busy = false, studentView=false, reloadAfter=false, focusPaperId=null;
 const el = id => document.getElementById(id);
@@ -165,10 +166,11 @@ if (localContext) {
   el('refresh-library').textContent='更新本機進度';
   el('cloud-lock').hidden=true;el('cloud-library').hidden=false;
   await load();
-} else initNavbarAuth({ onSessionResolved(session) {
+} else {
+function handleSession(session, {force=false}={}) {
   const same = (session?.user?.id || null) === (currentSession?.user?.id || null);
   currentSession = session;
-  if (same) {if(!session?.user){el('cloud-identity').textContent='尚未登入・僅限名冊中的學生使用';showLock('請使用名冊中的學生帳號登入後開始練習。');}return;}
+  if (same&&!force) {if(!session?.user){el('cloud-identity').textContent='尚未登入・僅限名冊中的學生使用';showLock('請使用名冊中的學生帳號登入後開始練習。');}return;}
   el('cloud-identity').textContent=session?.user?'正在確認學生資格…':'尚未登入・僅限名冊中的學生使用';
   showLock(session?.user?'正在確認學生資格，請稍候…':'請使用名冊中的學生帳號登入後開始練習。');
   reloadAfter=false;focusPaperId=null;
@@ -178,4 +180,9 @@ if (localContext) {
   composer?.reset();
   el('grade-filter-label').hidden = true;
   if (session?.user) setTimeout(load, 0);
-} });
+}
+onTestIdentityChange(({userId}) => {
+  if (currentSession?.user?.id===userId) handleSession(currentSession,{force:true});
+});
+initNavbarAuth({onSessionResolved:handleSession});
+}
