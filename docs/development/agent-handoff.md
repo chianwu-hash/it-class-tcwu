@@ -1,3 +1,8 @@
+# 2026-10-30 努力樹身分與樹型控制簡化已上線（Codex）
+
+- 身分卡僅顯示「30730 吳小謙」格式，座號補兩碼、不顯示Email，課程選單保留。更換樹型移入同張卡底部、葉片統計上方，僅兩文字按鈕、移除大圖與常態說明；第二級才出現、第一級與重設時隱藏，儲存與換裝過場不變。
+- 正式 `dpl_DXZmzi4gwtBWet3LgCX4Y4Gv59VA`，基於2AHx完整538來源，僅my-tree、effort-garden-v2.css、garden-tree-skin.mjs變更，535檔UID保持。30730/30703格式、原換裝回歸、正式身分無Email／控制位置／390px無溢出皆過。初次promote後立即讀到舊邊緣內容，重讀後已與來源逐位元組相同。無DB或練功房修改；未發布較早只改身分的BGFa候選，最後合併兩項需求發布。證據automation/output/quiz/garden-profile-label/。
+
 # 2026-10-30 第二級樹型換裝已上線（Codex）
 
 - 樹下方新增第二級禮物「樹型外觀」，原A／B素材＋各自96葉24花掛點；約1.15秒暖光舒展換裝，減少動態直接切換。本人a/b選擇存Supabase新增garden_tree_skins／garden_tree_skin，需已確認名冊學生且有成長紀錄；RLS／匿名禁止直接讀寫。無獎勵、quiz_action、quiz_rewards、garden_growth修改，三者正式雜湊保持。

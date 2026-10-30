@@ -642,6 +642,7 @@
 
         function updateAuthUi() {
             updateQuizLibraryLink();
+            profileMetaEl.hidden = false;
             const email = currentSession?.user?.email || "";
             loginBtn.classList.toggle("hidden", !!email);
             logoutBtn.classList.toggle("hidden", !email);
@@ -653,12 +654,13 @@
 
             if (currentEnrollment) {
                 const seat = String(currentEnrollment.seat_no).padStart(2, "0");
-                profileTitleEl.textContent = currentEnrollment.display_name || email;
-                profileMetaEl.textContent = `${currentEnrollment.class_code} 班 ${seat} 號・${email}`;
+                profileTitleEl.textContent = `${currentEnrollment.class_code}${seat} ${currentEnrollment.display_name || "同學"}`;
+                profileMetaEl.textContent = "";
+                profileMetaEl.hidden = true;
                 return;
             }
 
-            profileTitleEl.textContent = email;
+            profileTitleEl.textContent = "學生資料確認中";
             profileMetaEl.textContent = `${getCourseDefinition(selectedCourseId).label}・尚未找到本學年名冊資料`;
         }
 
