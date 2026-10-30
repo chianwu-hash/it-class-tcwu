@@ -277,7 +277,7 @@ Logs 與主機資料仍保留，所以用同一支監看程式補抓 13:45–14:
 - 實測重現：未選答案、答太快、伺服器拒絕，畫面都只顯示「選好答案後，按送出答案」。
 - 這可能是第七節學生猛按的原因之一（推測，無法由日誌證實）。
 
-### 修正（`65e0ea9`，尚未上線）
+### 修正（`65e0ea9`，20:07 已上線）
 
 - `supabase/quiz-order-fix.sql`：兩處查詢改為 `with ordinality ... order by ord limit 1`，其餘沿用正式定義。
 - `shared/quiz-server.mjs`：`say()` 優先寫入工作區狀態列。
@@ -287,3 +287,10 @@ Logs 與主機資料仍保留，所以用同一支監看程式補抓 13:45–14:
 
 - 「前端不同步」、「可能是多分頁或多裝置」皆不成立；`23abc38` 的自動同步無法解決此問題，但也沒有害處，可保留作為防護。
 - 第七節沒有主機容量瓶頸的判斷仍成立。
+
+### 上線紀錄（10/30 20:04–20:07）
+
+- **SQL**：`supabase/quiz-order-fix.sql`（SHA256 `1DE307F2…`）。public 83 個函式只有 `quiz_action` 改變（md5 `cf2000f0…` → `7551903b…`）；answers／attempts／sessions 筆數與內容雜湊不變；權限維持 authenticated 可執行、anon 不可、SECURITY DEFINER。回滾交易內以 307-30 測試帳號模擬：真正的第 1 題 `viewed: true`。
+- **前端**：`dpl_J9HvTo62HwJHyQCPxo83KYJK5oey`，基準 `dpl_79j9…`。比對完整檔案樹 536／536，無新增、無刪除，只改 `quiz-server.mjs`、`quiz-module.js`、`quiz-student.mjs`、三／六年級 `quiz.html`。promote 前確認正式版未變、最近 10 分鐘作答 0 筆。
+- **promote 後**：考古題、題目回報、六年級第 9 週、努力樹與測試準備模組都回 200；正式檔案（Auth／RPC 合成）跑訊息可見與題序同步測試，通過。
+- **未驗證**：本次沒有真人實際送答；待使用者用測試帳號實測。Logs API 當時回 500，所以沒有用日誌核對。回滾：前端 promote 回 `dpl_79j9…`；SQL 不建議回到舊定義（舊定義就是 bug）。
