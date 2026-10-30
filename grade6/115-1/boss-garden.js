@@ -1,11 +1,13 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
 import { SUPABASE_URL, SUPABASE_ANON_KEY, getStoredAccessToken } from '../../shared/auth.js';
-import { getRewardTreeCourse, getActivityId } from '../../shared/reward-tree-config.js?v=20261019-g6w08';
+import { getRewardTreeCourse, getActivityId } from '../../shared/reward-tree-config.js?v=20261030-g6w09-boss';
 import { deriveRewardTreeModel } from '../../shared/reward-tree-model.js';
 
 const courseId = 'grade6-115-1';
 const activities = getRewardTreeCourse(courseId).activities.filter(a => a.rewardMode === 'boss');
 const descriptions = {
+    '09:typing_boss_zh_1': { title: '朱子治家格言選', icon: '📜', schoolYear: '115', publisher: '康軒', subject: '國語', lesson: '第2課', text: 'p.21～24四則格言原文整合，共8行。完整過關，開出1朵花。' },
+    '09:typing_boss_en_1': { title: 'Whale Watching', icon: '🐋', schoolYear: '115', publisher: '康軒', subject: '英語', lesson: 'Unit 1', text: 'p.15～17 Story共18格完整對話，分24行。耐心完成，開出1朵花。' },
     '05:typing_boss_zh_1': { title: '臺灣美食詩選', icon: '🍜', schoolYear: '115', publisher: '康軒', subject: '國語', lesson: '第4課', text: '〈鼎邊趖〉＋〈肉圓〉，共25行。兩首全部完成，開出1朵花。' },
     '05:typing_boss_en_1': { title: 'Seeing a Doctor', icon: '🩺', schoolYear: '115', publisher: '康軒', subject: '英語', lesson: 'Unit 2', text: '完整Reading分成9行，練習Joe的完整分享，完成開出1朵花。' },
     '07:typing_boss_zh_1': { title: '李子果醬', icon: '🫙', schoolYear: '115', publisher: '康軒', subject: '國語', lesson: '第5課', text: '〈最好的味覺禮物〉第三、四段，共10行。全文完成，開出1朵花。' },
