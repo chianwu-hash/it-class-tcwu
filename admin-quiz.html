@@ -22,6 +22,7 @@
     <p id="status" role="status" aria-live="polite">正在準備工作臺…</p>
     <div id="locked" class="card" hidden><h2>請先使用教師帳號登入</h2><p>題庫草稿、正解與版本只供建立這份題庫的老師存取。</p><button id="quiz-login">使用 Google 登入</button></div>
     <div id="workspace" hidden>
+      <section id="question-reports" class="card"></section>
       <div class="layout">
         <aside class="card library"><h2>▦ 我的題庫</h2>
           <form id="search-form"><label for="search">搜尋題名、編目或題目文字</label><div class="inline"><input id="search" type="search"><button class="secondary">搜尋</button></div></form>
@@ -44,6 +45,6 @@
   </main>
   <dialog id="preview-dialog"><div class="section-head"><h2 id="preview-title">教師預覽</h2><button id="close-preview" class="secondary">關閉預覽</button></div>
     <p class="notice">教師專用預覽，包含正解與解析。這裡不記錄學生作答。</p><div id="preview-body"></div></dialog>
-  <script type="module" src="shared/quiz-author.mjs?v=20261029-diagnostics-switch"></script>
+  <script type="module" src="shared/quiz-author.mjs?v=20261030-question-reports"></script>
 </body>
 </html>

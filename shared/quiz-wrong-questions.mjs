@@ -1,6 +1,7 @@
 import {renderContent} from './quiz-render.mjs?v=20261029-load-batch1';
 import {resolveQuizImage} from './quiz-media.mjs?v=20261029-load-batch1';
 import {initImageLightbox} from './image-lightbox.js';
+import {createQuestionReport} from './quiz-question-reports.mjs';
 
 const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canExtend=()=>Boolean(onExtension),externalNavigation=false}) {
@@ -64,6 +65,7 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
       if(q.type!=='single'){explanation.append(make('p',`你的答案：${data.response}`),make('p',`可接受的答案：${data.review.answer.accepted.join('、')}`));}
       else explanation.append(make('p',`正確選項：${String.fromCharCode(65+q.options.findIndex(o=>o.id===data.review.answer.option_id))}`));
       content(explanation,data.review.explanation);article.append(explanation);detail.append(article);
+      article.append(createQuestionReport({request,context:{source:'quiz',attempt_id:item.attempt_id,question_id:item.question_id},options:q.options,valid:()=>current(g,uid)&&active&&article.isConnected}));
       if(extensionAvailable){
         const section=make('section',undefined,'wrong-extension'),button=make('button','再練3題同一個重點'),status=make('p');status.setAttribute('role','status');section.append(button,status);detail.append(section);
         const requestId=crypto.randomUUID();

@@ -1,0 +1,51 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs/promises';import {randomUUID as uuid} from 'node:crypto';
+import {createQuizDb,TEACHER,OTHER_TEACHER,studentId} from '../lib/quiz-local-db.mjs';
+import {importQuestionBank} from '../../shared/quiz-document.mjs';
+test('題目回報：本人、固定版本順序、權限、重試、限流、教師處理及媒體隔離',async()=>{
+ const db=await createQuizDb(undefined,{batch4:true}),raw=s=>Object.getPrototypeOf(db).exec.call(db,s),uid=studentId(1);
+ const call=(user,data,role='authenticated')=>db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[user||'']);await tx.exec('set local role '+role);return (await tx.query('select public.quiz_question_report($1) r',[JSON.stringify(data)])).rows[0].r;});
+ const media=(user,url,id)=>db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[user]);await tx.exec('set local role authenticated');return (await tx.query('select public.quiz_media_access($1,$2) r',[url,id])).rows[0].r;});
+ try{
+  await raw(await fs.readFile('supabase/quiz-past-exams.sql','utf8'));
+  const before=(await db.query("select pg_get_functiondef('public.quiz_library_sessions(jsonb)'::regprocedure) f")).rows[0].f;
+  await raw(await fs.readFile('supabase/quiz-question-reports.sql','utf8'));
+  await raw(await fs.readFile('supabase/quiz-question-reports.sql','utf8'));
+  assert.equal((await db.query("select pg_get_functiondef('public.quiz_library_sessions(jsonb)'::regprocedure) f")).rows[0].f,before);
+  const doc=importQuestionBank('# 合成回報試卷\n\n1. 合成題目\nA. 一\nB. 二\nC. 三\nD. 四\n答案：B\n解析：合成解析\n'),q=doc.blocks[0].questions[0];
+  const url='https://quiz-media.invalid/'+uid+'/'+'a'.repeat(64),other='https://quiz-media.invalid/'+uid+'/'+'b'.repeat(64);q.prompt.media=[{kind:'image',url,alt:'合成圖'}];
+  const bank=uuid(),ver=uuid(),session=uuid(),attempt=uuid();
+  await db.query('insert into public.quiz_banks(id,owner_id,draft) values($1,$2,$3)',[bank,uid,doc]);
+  await db.query('insert into public.quiz_versions(id,bank_id,revision,document) values($1,$2,1,$3)',[ver,bank,doc]);
+  await db.query("insert into public.quiz_sessions(id,owner_id,version_id,school_year,class_codes,reveal,shuffle_questions,shuffle_options,access_mode,status) values($1,$2,$3,115,'[\"603\"]','immediate',true,true,'practice','closed')",[session,uid,ver]);
+  await db.query('insert into public.quiz_attempts(id,session_id,user_id,question_order,option_orders) values($1,$2,$3,$4,$5)',[attempt,session,uid,[q.id],{[q.id]:q.options.map(o=>o.id).reverse()}]);
+  for(const [u,h] of [[url,'a'],[other,'b']])await db.query("insert into public.quiz_media_assets values($1,$2,$3,'image/png',100)",[u,uid,uid+'/'+h.repeat(64)]);
+  const packet={attempt_id:attempt,source:'quiz',question_id:q.id,request_id:uuid(),category:'options',option_id:q.options[3].id,description:'選項 A 有疑問',identity:{class_code:'999'},snapshot:{answer:'fake'}};
+  await assert.rejects(call(null,packet,'anon'));
+  await assert.rejects(call(studentId(2),packet),/report_unavailable/);
+  await assert.rejects(call(TEACHER,packet),/student_required/);
+  await assert.rejects(call(uid,{...packet,option_id:'fake'}),/invalid_request/);
+  await assert.rejects(call(uid,{...packet,description:' '.repeat(5)}),/invalid_request/);
+  await assert.rejects(call(uid,{...packet,description:'長'.repeat(1001)}),/invalid_request/);
+  const report=await call(uid,packet);assert.deepEqual(Object.keys(report).sort(),['id','reused','status']);
+  assert.equal((await call(uid,packet)).id,report.id);
+  await assert.rejects(call(uid,{...packet,description:'變更內容'}),/report_conflict/);
+  for(const action of ['list','detail','update'])await assert.rejects(call(studentId(2),{action,id:report.id}),/teacher_required/);
+  const detail=await call(OTHER_TEACHER,{action:'detail',id:report.id});assert.equal(detail.identity.class_code,'603');assert.equal(detail.version_id,ver);
+  assert.equal(detail.snapshot.question.options[0].id,q.options[3].id);assert.equal(detail.snapshot.question.answer.option_id,q.answer.option_id);assert.equal(detail.snapshot.question.explanation.text,q.explanation.text);
+  const updated=await call(TEACHER,{action:'update',id:report.id,updated_at:detail.updated_at,status:'processing',note:'已核對，準備修正'});assert.equal(updated.status,'processing');
+  await assert.rejects(call(OTHER_TEACHER,{action:'update',id:report.id,updated_at:detail.updated_at,status:'resolved'}),/report_changed/);
+  assert.equal((await call(TEACHER,{action:'list',status:'pending'})).total,0);assert.equal((await call(TEACHER,{action:'list',status:'processing'})).total,1);
+  assert.equal((await media(OTHER_TEACHER,url,report.id)).url,url);await assert.rejects(media(OTHER_TEACHER,other,report.id),/media_unavailable/);await assert.rejects(media(studentId(2),url,report.id),/media_unavailable/);
+  // Past-exam group is pinned to the original attempt's version, even after withdrawal.
+  const pid='synthetic-report',pv=uuid(),pa=uuid(),group={id:'g1',title:'合成原卷',sourceLabel:'一',kind:'single',fields:[{id:'f1',label:'1',answer:'B'}],choices:[{id:'A',text:'一'},{id:'B',text:'二'}],assets:[{url,alt:'圖'}]};
+  await db.query("insert into public.quiz_past_papers(id,owner_id,grade,school_year,semester,title) values($1,$2,6,115,1,'合成考古題')",[pid,TEACHER]);
+  await db.query('insert into public.quiz_past_versions(id,paper_id,sha256,document,provenance) values($1,$2,$3,$4,$5)',[pv,pid,'a'.repeat(64),{groups:[group]},{}]);
+  await db.query('insert into public.quiz_past_attempts(id,paper_id,version_id,user_id,school_year,semester,start_request) values($1,$2,$3,$4,115,1,$5)',[pa,pid,pv,uid,uuid()]);
+  const past=await call(uid,{...packet,source:'past',attempt_id:pa,question_id:'g1',option_id:'A',request_id:uuid()});assert.equal((await call(TEACHER,{action:'detail',id:past.id})).snapshot.group.fields[0].answer,'B');assert.equal((await media(OTHER_TEACHER,url,past.id)).backend,'supabase');
+  await db.query("update public.student_enrollments set class_code='307' where email='student1@example.invalid'");await assert.rejects(call(uid,{...packet,request_id:uuid()}),/report_unavailable/);await assert.rejects(call(uid,{...packet,source:'past',attempt_id:pa,question_id:'g1',option_id:'A',request_id:uuid()}),/report_unavailable/);
+  await db.query("update public.student_enrollments set class_code='603' where email='student1@example.invalid'");
+  for(let i=0;i<18;i++)await call(uid,{...packet,request_id:uuid()});await assert.rejects(call(uid,{...packet,request_id:uuid()}),/report_rate_limit/);assert.equal((await call(uid,packet)).id,report.id);
+  await assert.rejects(db.transaction(async tx=>{await tx.exec('set local role authenticated');await tx.query('select * from public.quiz_question_reports');}));
+  assert.equal((await db.query('select count(*) n from public.quiz_answers')).rows[0].n,0);
+ }finally{await db.close();}
+});

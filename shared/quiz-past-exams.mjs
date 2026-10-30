@@ -1,8 +1,9 @@
-import {initPastExamUI} from './quiz-past-ui.mjs?v=20261030-past114';
+import {initPastExamUI} from './quiz-past-ui.mjs?v=20261030-question-reports';
 import {createAuthenticatedTransport} from './quiz-transport.mjs?v=20261029-batch4';
 import {createMediaScope,configureQuizMedia} from './quiz-media.mjs';
 import {initImageLightbox} from './image-lightbox.js';
 import {provideNavIdentity} from './grade6-nav-identity.js?v=20261029-batch4';
+import {quizError} from './quiz-api.mjs?v=20261030-question-reports';
 const messages={answer_too_fast:'請先看清這一組題目，再送出答案。',paper_unavailable:'這份考古題尚未開放，或不適用目前年級。',roster_required:'請使用名冊中的學生帳號。',student_required:'此入口僅供學生作答，教師請使用預覽入口。',attempt_unavailable:'無法讀取這次作答，請重新選擇試卷。',submission_conflict:'這組已有儲存紀錄，請更新後查看。'};
 export function initPastExam({selectors,server}){
  const root=document.getElementById(selectors.container),lock=document.getElementById(selectors.lock),content=document.getElementById(selectors.content);
@@ -30,7 +31,8 @@ export function initPastExam({selectors,server}){
    root.querySelector('#paper-title').textContent=next.title;
    if(root.querySelector('#paper-policy')&&next.policy){const p=next.policy;root.querySelector('#paper-policy').textContent=`本卷自動核對共${p.automaticPoints}分；單次完整作答達60%，同卷同學期首次達標取得1片葉。`;root.querySelector('#paper-exclusions').textContent=`開放作答與畫圖題共${p.manualPoints}分採自我核對，不列入自動分數；${p.blockedFields}個暫停欄位共${p.blockedPoints}分不影響完成。`;}
    document.title=next.title+'・考前練功坊';
-   ui=initPastExamUI({root,request,resolveAsset:url=>scope.resolve(url),onView});ui.load(next);
+   const reportRequest=async(_action,data)=>{try{const result=await transport('/rest/v1/rpc/quiz_question_report',{p_data:data});if(token!==generation)throw Error('登入身分已變更。');return result;}catch(e){if(e.code)e.message=quizError(e.code);throw e;}};
+   ui=initPastExamUI({root,request,resolveAsset:url=>scope.resolve(url),onView,reportRequest});ui.load(next);
   }catch(e){if(token!==generation)return;lock.querySelector('[role="status"]').textContent=e.message;}
  },destroy(){clear();user=null;transport=null;}};
 }

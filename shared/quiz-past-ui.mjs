@@ -1,11 +1,12 @@
 import {renderLocalContent} from './quiz-past-content.mjs';
 import {renderManualResponse} from './quiz-past-manual.mjs';
 import {attachPastInputKeyboard} from './quiz-past-input.mjs';
-export function initPastExamUI({root,request,resolveAsset,onView}){
+import {createQuestionReport} from './quiz-question-reports.mjs';
+export function initPastExamUI({root,request,resolveAsset,onView,reportRequest}){
 let active=true;
 const $=s=>root.querySelector(s),el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 const button=(text,fn,cls)=>{const b=el('button',text,cls);b.type='button';b.addEventListener('click',fn);return b;};
-let state,index=0,busy=false;const drafts=new Map(),pending=new Map();let tool='point',cursor={x:.5,y:.5},arrowStart=null,undo=[];
+let state,index=0,busy=false;const drafts=new Map(),pending=new Map(),reports=new Map();let tool='point',cursor={x:.5,y:.5},arrowStart=null,undo=[];
 const say=t=>{if(active&&$('#status'))$('#status').textContent=t;};
 const api=request;
 
@@ -69,7 +70,9 @@ function render(){if(!active)return;
  if(index>0)al.append(button('← 上一組',()=>{index--;say('');render();},'quiet'));if(index<state.groups.length-1)al.append(button('下一組 →',()=>{index++;say('');render();},'quiet'));actions.append(al);
  if(saved)actions.append(el('span',isManual(g)?'已保留這次作答・未自動判分':`這組已儲存並核對：${saved.score} 分`,'local-saved'));
  else {const submit=button(busy?'正在儲存…':pending.has(g.id)?'以同一份答案重試':isManual(g)?'完成並儲存作答':'送出這一組',submitGroup,'primary');submit.id='submit';submit.disabled=busy;actions.append(submit);}
- card.append(actions);$('#workspace').replaceChildren(card);
+ card.append(actions);
+ if(reportRequest){const aid=state.attemptId,key=aid+':'+g.id;if(!reports.has(key))reports.set(key,createQuestionReport({request:reportRequest,context:{source:'past',attempt_id:aid,question_id:g.id},options:g.choices.map(c=>({...c,label:c.id})),valid:()=>active&&state?.attemptId===aid}));card.append(reports.get(key));}
+ $('#workspace').replaceChildren(card);
 }
 function renderDrawing(g,host,locked,value){
  const panel=el('div',undefined,'drawing-panel'),tools=el('div',undefined,'drawing-tools');

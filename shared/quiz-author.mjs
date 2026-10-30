@@ -1,10 +1,12 @@
 import { content, newDocument, newQuestion, importQuestionBank, validateDocument } from './quiz-document.mjs';
 import { renderTeacherPreview } from './quiz-render.mjs?v=20261029-load-batch1';
 import { initQuizSessions } from './quiz-sessions.mjs?v=20261029-load-batch2';
-import { createQuizRequest } from './quiz-api.mjs?v=20261029-diagnostics-switch';
+import { createQuizRequest } from './quiz-api.mjs?v=20261030-question-reports';
+import {initReportAdmin} from './quiz-report-admin.mjs';
 
 const $ = id => document.getElementById(id);
 let doc = newDocument(), bankId = crypto.randomUUID(), revision = 0, dirty = false, busy = false, request, identityKey, currentSession = null;
+const reports=initReportAdmin({root:$('question-reports'),request:(...args)=>request(...args),getUserId:()=>identityKey});
 const sessions = initQuizSessions({ root: $('quiz-sessions'), request: (...args) => request(...args),
   local: new URLSearchParams(location.search).get('local') === '1' && ['localhost', '127.0.0.1'].includes(location.hostname) });
 const labels = {
@@ -208,8 +210,10 @@ async function start() {
     $('workspace').hidden = !auth.isTeacher(session); $('locked').hidden = auth.isTeacher(session);
     $('preview-dialog').close();$('preview-body').replaceChildren();$('preview-title').textContent='';doc = newDocument(); bankId = crypto.randomUUID(); revision = 0; dirty = false;
     $('versions').replaceChildren(); $('bank-list').replaceChildren(); renderEditor();
+    await reports.setEnabled(false);
     if (!auth.isTeacher(session)) { await sessions.setEnabled(false); message(session ? '此帳號沒有教師權限。' : '請登入後開始備課。'); return; }
     request = await createQuizRequest({ getSession: () => currentSession });
+    await reports.setEnabled(true);
     await run(async () => { await refreshBanks(); await sessions.setEnabled(true); message('教師題庫已就緒。'); });
   };
   $('quiz-login').addEventListener('click', () => auth.beginCentralizedLogin());

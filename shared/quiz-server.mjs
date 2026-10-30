@@ -1,5 +1,6 @@
 import { renderContent as renderQuizContent } from './quiz-render.mjs?v=20261029-load-batch1';
 import { mergeQuizSnapshot } from './quiz-state.mjs';
+import {createQuestionReport} from './quiz-question-reports.mjs';
 
 // Claude Opus 5.5 原創四套圖形與動作；Codex整合，原型中的題目線索改為中性文字。
 const quizFeedbackMotion = (function () {
@@ -573,6 +574,14 @@ export function initServerQuiz({ selectors, server }) {
     contentCache.set(key,box);return box;
   };
   let userId = null, generation = 0, state = null, cursor = 0, pending = null, selected = '', busy = false, loadError = '', showFullReview = false;
+  const reportForms=new Map();
+  function report(q){
+    const key=state.attempt_id+':'+q.id,g=generation;
+    if(!reportForms.has(key))reportForms.set(key,createQuestionReport({request:server.request,
+      context:{source:'quiz',attempt_id:state.attempt_id,question_id:q.id},options:q.options,
+      valid:()=>g===generation&&Boolean(userId)}));
+    return reportForms.get(key);
+  }
   let feedbackAnimation = null;
   let seenQuestion=null;
   // 依鼓勵原則撰寫的原創短句，不是阿德勒名言，也不推測孩子是否努力或用了哪個方法。
@@ -676,7 +685,7 @@ export function initServerQuiz({ selectors, server }) {
         renderContent(article, q.material); renderContent(article, q.prompt);
         article.append(make('p', `你的答案：${q.type === 'single' ? String.fromCharCode(65 + q.options.findIndex(o => o.id === state.responses[q.id])) : state.responses[q.id]}`));
         if (q.type === 'single') q.options.forEach((o, i) => { const row = make('div', undefined, 'preview-option'); row.append(make('strong', `${String.fromCharCode(65 + i)}. `)); renderContent(row, o.content); article.append(row); });
-        renderReview(article, q); root.append(article);
+        renderReview(article, q); article.append(report(q));root.append(article);
       }
       return;
     }
@@ -732,6 +741,7 @@ export function initServerQuiz({ selectors, server }) {
     if (state.complete && cursor === questions.length - 1) actions.append(button('查看整份作答與解析', () => { showFullReview = true; render(); }, 'quiz-primary'));
     actions.append(button('更新儲存狀態', () => load('resume', true), 'secondary quiz-refresh')); article.append(actions); root.append(article);
     workspace.apply({article, saved, complete:state.complete, closed:state.status==='closed'});
+    (article.querySelector('.quiz-reading-panel')||article).append(report(q));
     if (pending) say('這次答案的儲存狀態尚未確認，請以相同答案重試或更新狀態。', true);
   }
   async function load(action, preserveCursor = false) {
@@ -780,7 +790,7 @@ export function initServerQuiz({ selectors, server }) {
     if (id === userId) return;
     stopQuizLeafCelebration();
     workspace.reset({forget:true});
-    generation++; userId = id; busy = false; state = null; selected = ''; pending = null; loadError = ''; cursor = 0; showFullReview = false; feedbackAnimation = null;seenQuestion=null;
+    generation++; reportForms.clear();userId = id; busy = false; state = null; selected = ''; pending = null; loadError = ''; cursor = 0; showFullReview = false; feedbackAnimation = null;seenQuestion=null;
     if (lock) { lock.hidden = Boolean(id); lock.classList.toggle('hidden', Boolean(id)); }
     if (content) { content.hidden = !id; content.classList.toggle('hidden', !id); }
     render(); if (id) await load('join');

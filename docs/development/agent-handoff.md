@@ -1,3 +1,13 @@
+# 2026-10-30 已完成：答題介面題目出錯回報
+
+- 學生在三／六年級一般卷、老師卷、自組卷、整卷回顧、我的錯題及考古題可按「題目出錯回報」，必填文字說明，伺服器自動附本人名冊、固定版本、題目與當時選項順序。前端不提交題幹／正解／身分快照，學生不能讀取回報或教師快照。
+- 後台 `admin-progress.html` 新入口 → `admin-quiz.html#question-reports`；教師可篩選、分頁、查看原題及媒體、標記待處理／處理中／已處理／確認無需修改與備註。使用既有 is_teacher 權限，不另外寄信，不修改正式題庫或既有作答。
+- 新 SQL `supabase/quiz-question-reports.sql`：獨立 RLS 表、本人 submit、request_id 重試、每人每小時20筆、教師樂觀鎖更新。媒體包裝保留原函式為 `quiz_media_access_before_reports`，教師以回報 id 僅可看該題媒體；Edge／Drive Worker 不需改。不可重灌舊 media／batch4 而移除最新授權鏈及 library_visible。
+- 合成 PGlite 權限／重試／限流／固定順序／後台競爭／媒體／考古題測試；凍結包租約瀏覽器實測三個入口、回報文字保留、重試、後台處理、390px、換人清空、純文字及pageerror0。正式PG回滾與套用均通過一般卷／考古題／媒體測試，所有測試紀錄回滾，12類既有表雜湊不變，正式題目與進度未改。
+- 正式以當時最新 `dpl_3Ab6ZKnw7M8oLkC8R6ikUAuG4GJL` 450個來源檔SHA1驗證後疊加21檔，保留其他正式第09週與考古題音檔更新。最終按鈕版 `dpl_6JH1WxD6iF9fdCMH9Vhmduq49wWC` 已promote，正式353公開檔SHA256通過（21改、332保留）。本次來源commit不混入前述其他改動。
+- 正式租約02 Chrome 學校測試帳號驗證答題按鈕、文字輸入、390px及學生後台鎖定，pageerror0；只接回原attempt，view_question攔截防止更動計時，回報／答案0寫入。驗收頁已關閉並釋放租約。
+- 詳見 `docs/development/quiz-question-reports-20261030.md`；工具 `automation/quiz-reports/`，證據與凍結包在 ignored `automation/output/quiz/question-reports/`。回退前端可保留資料表及授權包裝，不刪學生已送出的回報。
+
 # 2026-10-30 已完成：六年級英語改 Unit 1、Unit 3
 
 - 使用者指定本次六年級英語考 Unit 1 和 Unit 3，老師卷、自組卷均已正式更新。分支 `codex/g6-english-u1-u3`，同一工作區基於 `dace148`；不重灌先前題庫／知識分類，不從 dirty 主專案部署。
