@@ -646,8 +646,28 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
 
   // ---------- 本機測試 API ----------
   function r1(v) { return Math.round(v * 10) / 10; }
+  // Palette loading must never replace the preload image's onload/src:
+  // its promise is still part of waits during the initial parent handshake.
+  var paletteVersion = 0, paletteRequested = '';
+  function setFlowerPalette(style) {
+    if (['sunrise','ocean','candy','forest'].indexOf(style) < 0 || paletteRequested === style) return;
+    paletteRequested = style;
+    var version = ++paletteVersion, candidate = new Image();
+    candidate.dataset.style = style;
+    candidate.onload = function () {
+      if (version !== paletteVersion) return;
+      imgs.flower = candidate;
+      draw();
+    };
+    candidate.onerror = function () {
+      if (version !== paletteVersion) return;
+      paletteRequested = '';
+      addError('這個花色暫時無法讀取，先保留目前花色。');
+    };
+    candidate.src = '/assets/reward-tree/flowers/flower-' + style + '.png';
+  }
   var api = {
-    configure:function(data){earnedLeaves=Array.isArray(data.leaves)?data.leaves.slice(0,96):[];earnedFlowers=Array.isArray(data.flowers)?data.flowers.slice(0,24):[];petUnlocked=data.petUnlocked===true;if(['sunrise','ocean','candy','forest'].includes(data.flowerStyle)){var src='/assets/reward-tree/flowers/flower-'+data.flowerStyle+'.png';if(imgs.flower.dataset.style!==data.flowerStyle){imgs.flower.dataset.style=data.flowerStyle;imgs.flower.onload=draw;imgs.flower.src=src;}}draw();return api.snapshot();},
+    configure:function(data){earnedLeaves=Array.isArray(data.leaves)?data.leaves.slice(0,96):[];earnedFlowers=Array.isArray(data.flowers)?data.flowers.slice(0,24):[];petUnlocked=data.petUnlocked===true;setFlowerPalette(data.flowerStyle);draw();return api.snapshot();},
     snapshot: function () {
       var st = G.stateAt(plan, clock.t), pose = shelter.ready && shelter.ctrl ? shelter.ctrl.pose() : null, r = pose ? poseRect(pose) : catRect(st), TR = TREES[tree];
       var sp = shelter.ready && shelter.ctrl ? shelter.ctrl.snapshot() : null, vis = r.vis || null;
