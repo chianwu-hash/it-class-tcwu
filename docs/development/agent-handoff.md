@@ -1,3 +1,12 @@
+# 2026-10-30 已完成：六年級四科學習重點接入正式題庫
+
+- 使用者要求補齊並核對六年級國語、英語、自然、社會學習重點，啟用錯題延伸。獨立分支 `codex/g6-extension-knowledge`，工作區仍 `C:/Users/user/.codex/worktrees/quiz-identity-sync/it-class-tcwu`，基於上次已推送 `6521b92`；只增本次分類清冊、工具、驗證與文件。
+- 正式已套用 930 題分類、928 題 reliable；自然 `675931` 兩項敘述疑義、社會 `1504811` 題幹與選項不符，保留待查且排除延伸。未改原題、答案、解析、source version、usable、舊試卷、作答、葉片、SQL 函數或 RLS。前端不需另部署，延續身分同步版本。
+- 康軒原 metadata 有 KNOW_SPOT，先前 builder 未接上；本次原題 ID／課次／知識代碼逐筆核對，保留國語課文錨點。南一以原章節／課綱交叉核對自然 140／社會 289 題題幹與選項，逐題列出 32／45 細分類。清冊 `automation/quiz-knowledge/g6-reviewed.json` 不含題幹答案副本；review SHA `e90a44644e198404438193d17a5622da4a1f001c8bcea6bb566c4cae291847a6`。
+- **實際可延伸的來源題數：國語 4、英語 152、自然 41、社會 60。不是四科所有題目都可延伸。** 仍須同科同重點、不同題族、難度不提高且候選具書商詳細解析。國語 347 題僅 7 題有詳細解析；不偽造 publisher_explanation。原截圖颱風路徑題雖已分類，該組沒有解析候選，按鈕仍不顯示。後續提高覆蓋需要另補並核對解析／題目。
+- 三項 Node 檢查、本機真 SQL 八個原 ID／alias 錯題→延伸情境、他人拒絕、同 request 重試、疑義題排除、重套用拒絕、12 份一般易中難組卷通過。正式 DB 同樣八個真 join／submit／detail／compose 情境全部 rollback，受保護資料摘要不變；其後正式單交易 apply，前後檢核所有其他 quiz 表、其他 pool／membership 與題目非分類欄位不變。正式重新匯出 930 題指紋、四課程、三 RPC 未變，四科目錄 extension_available 均 true。
+- 私有 before／after、SQL 與結果在 ignored `automation/output/quiz/identity-sync/`。正式已 apply，不要重跑原 apply 或舊全科 deploy；guard 會拒絕已套用資料。後續須新快照、新核對、新增量，不能整表還原。詳 `docs/development/quiz-g6-knowledge-20261030.md`。本機既存 `tmp/quiz-runtime` junction 未提交，不處理其他修改。
+
 # 2026-10-30 已完成：測試身分切換與自組卷同步
 
 - 使用者要求先修「切換身分後，自組卷頁面仍顯示另一個身分」。原因為同一 Google user ID 切換 30730／60930 時，舊分頁的 auth 快路徑、導覽名冊與組卷目錄沒有失效。舊版 Chrome 合成流程已重現；正式 DB 同帳號 3→6→3 交易驗證正常並 rollback。
