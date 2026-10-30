@@ -1,4 +1,4 @@
-import {initPastExamUI} from './quiz-past-ui.mjs?v=20261030-past114';
+import {initPastExamUI} from './quiz-past-ui.mjs?v=20261030-audio';
 import {createAuthenticatedTransport} from './quiz-transport.mjs?v=20261029-batch4';
 import {createMediaScope,configureQuizMedia} from './quiz-media.mjs';
 import {initImageLightbox} from './image-lightbox.js';

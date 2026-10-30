@@ -1,3 +1,11 @@
+# 2026-10-30 已完成：四份英語期中聽力製播與改版
+
+- 使用者新決定取代舊限制：有官方完整聽力稿可自行製播；答案矛盾另確認，先上無疑義部分。113／114上期中三、六英語四卷恢復57欄114分，54題組共51 MP3、72圖，標合成語音練習版；三年級A／C／E各13欄缺完整發話、113六英B4一欄dolphin／鯨魚矛盾仍暫停。加非英語14欄，共41欄待確認。
+- 正式部署`dpl_BygWat1GWL5VHPQ3UGnL3QG8MDoH`，從下方最新身分同步BbR完整凍結包疊12檔，保留身分切換修正。255公開檔SHA通過，四卷新immutable versions已啟用，20期中開、10期末未開放不變；原30版本與函式hash保留，九個學生資料表在register／activate交易內摘要一致。未改SQL／Edge／RLS。
+- 播放器rich content改傳本次作答mediaScope，修正query不同造成全域媒體resolver未共用；換題／送出／重作／登出停止清除舊音檔，教師換卷亦同。四卷全題組1280／390／360與54播放器實播通過；候選驗證bytes及正式網址另以真私有Storage短效音檔20播放器通過，auth／作答為合成替身，不冒稱學生OAuth。真PG四卷各新錯→對→對、舊版resume完成，葉只一次與四筆歷次通過後rollback；24＋15回歸通過。
+- ignored證據`automation/output/past-exams-audio/`，含完整plan、來源／音圖SHA、ASR、bundle、校對、雲端與發布包。Whisper small回辨51段，Anna／Abu用large-v3複核；Abu專名辨識限制留案，未冒稱真人聽審。task-local edge-tts7.3.1與FFmpeg，不用完整Wayground安裝器。**不要重跑build覆蓋QC、inspect覆蓋baseline或register重複註冊。** clone不含ignored來源與產物。
+- 新疑義頁`automation/output/past-exams-review-20261030/考古題疑義審閱-聽力更新版.html`，27聽力＋14其他，保留P／C編號與原題／官方解答。舊審閱頁和教師匯出不覆寫。詳[past-exams-audio-20261030.md](past-exams-audio-20261030.md)。同MEMKEY與記憶id沿用；舊版作答不增加新聽力欄，重作才使用新版，跨版本不重領葉。
+
 # 2026-10-30 已完成：測試身分切換與自組卷同步
 
 - 使用者要求先修「切換身分後，自組卷頁面仍顯示另一個身分」。原因為同一 Google user ID 切換 30730／60930 時，舊分頁的 auth 快路徑、導覽名冊與組卷目錄沒有失效。舊版 Chrome 合成流程已重現；正式 DB 同帳號 3→6→3 交易驗證正常並 rollback。

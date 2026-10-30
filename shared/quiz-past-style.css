@@ -95,6 +95,7 @@
 .past-exam-page .teacher-past-card{padding:20px;margin:24px 0;border:2px solid var(--quiz-border);border-radius:22px;background:white;overflow-wrap:anywhere}
 .past-exam-page .teacher-past-card .preview-content{white-space:pre-wrap;max-width:100%}
 .past-exam-page .teacher-past-card img{max-width:100%;height:auto}
+.past-exam-page audio{display:block;width:100%;max-width:100%;min-width:0;margin:12px 0}
 .past-exam-page .teacher-choice{display:flex;gap:8px;align-items:baseline}
 .past-exam-page .past-bank-choice{display:flex;gap:8px;align-items:baseline;margin:8px 0;font-size:1rem}
 .past-exam-page .past-bank-choice .preview-content{min-width:0;max-width:100%}
