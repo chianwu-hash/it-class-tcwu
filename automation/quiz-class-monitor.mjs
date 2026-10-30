@@ -20,14 +20,26 @@ async function pageTarget() {
   if (!t) throw Error('no Supabase dashboard tab for project ' + ref + ' in this browser');
   return t;
 }
-async function evaluate(expression) {
+async function cdpCall(method, params = {}) {
   const t = await pageTarget(), ws = new WebSocket(t.webSocketDebuggerUrl.replace('localhost', '127.0.0.1'));
   await new Promise((r, j) => { ws.onopen = r; ws.onerror = j; });
-  const res = await new Promise(r => { ws.onmessage = e => { const m = JSON.parse(e.data); if (m.id === 1) r(m); }; ws.send(JSON.stringify({ id: 1, method: 'Runtime.evaluate', params: { expression, awaitPromise: true, returnByValue: true, timeout: 90000 } })); });
+  const res = await new Promise(r => { ws.onmessage = e => { const m = JSON.parse(e.data); if (m.id === 1) r(m); }; ws.send(JSON.stringify({ id: 1, method, params })); });
   ws.close();
+  return res;
+}
+async function evaluate(expression) {
+  const res = await cdpCall('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true, timeout: 90000 });
   if (res.result?.exceptionDetails) throw Error(res.result.exceptionDetails.exception?.description || 'page exception');
   return JSON.parse(res.result.result.value);
 }
+// A background Dashboard tab does not refresh its access token on its own (10/30 p5: 401 after ~13:51).
+// Reloading the tab makes the Dashboard refresh the session from its stored refresh token.
+async function refreshDashboard(reason) {
+  await log('reloading dashboard tab:', reason);
+  await cdpCall('Page.reload', { ignoreCache: false });
+  await new Promise(r => setTimeout(r, 12000));
+}
+const unauthorized = s => s?.error === 'dashboard_not_logged_in' || Object.values(s || {}).some(v => v?.status === 401 || (v && typeof v === 'object' && Object.values(v).some(x => x?.status === 401)));
 // In-page collector: per-minute API traffic, errors by source, host metrics for [from, to].
 const collector = (from, to) => `(async () => {
   const ref = ${JSON.stringify(ref)}, from = ${JSON.stringify(from)}, to = ${JSON.stringify(to)};
@@ -42,7 +54,7 @@ const collector = (from, to) => `(async () => {
   out.slow_paths = await logs("SELECT replaceRegexpOne(log_attributes['request.path'], '^(/[a-z]+/v1/[^/?]+(/[^/?]+)?).*', '\\\\\\\\1') p, count() n, countIf(" + st + ">='500') e5, round(quantile(0.95)(" + ot + ")) p95, round(max(" + ot + ")) mx FROM logs WHERE source='edge_logs' GROUP BY p ORDER BY mx DESC LIMIT 8");
   out.pg_errors = await logs("SELECT " + m + " m, log_attributes['parsed.error_severity'] sev, log_attributes['parsed.sql_state_code'] code, log_attributes['parsed.user_name'] u, substring(event_message,1,120) msg FROM logs WHERE source='postgres_logs' AND log_attributes['parsed.error_severity'] IN ('ERROR','FATAL','PANIC') AND log_attributes['parsed.application_name']<>'mgmt-api' ORDER BY timestamp LIMIT 40");
   out.pgrst = await logs("SELECT countIf(event_message LIKE '%PGRST003%' OR event_message LIKE '%connection pool%') pool_timeouts, countIf(event_message LIKE '%statement timeout%') stmt_timeouts, countIf(event_message LIKE '%Thread killed%') thread_kills FROM logs WHERE source='postgrest_logs'");
-  out.auth = await logs("SELECT countIf(log_attributes['level']='error') errors, countIf(toInt32OrZero(log_attributes['status'])>=500) e5, countIf(event_message LIKE '%5432%' OR event_message LIKE '%failed to connect%') db_connect_fail, countIf(log_attributes['path'] LIKE '%callback%') callbacks FROM logs WHERE source='auth_logs'");
+  out.auth = await logs("SELECT countIf(log_attributes['level']='error') errors, countIf(toInt32OrZero(log_attributes['status'])>=500) e5, countIf(event_message LIKE '%failed to connect%' OR event_message LIKE '%:5432: %' OR event_message LIKE '%dial error%') db_connect_fail, countIf(log_attributes['path'] LIKE '%callback%') callbacks FROM logs WHERE source='auth_logs'");
   out.host = {};
   for (const a of ['avg_cpu_usage','max_cpu_usage','cpu_usage_busy_iowait','ram_usage_used','ram_usage_total','swap_usage','ram_usage_swap']) {
     const r = await fetch('https://api.supabase.com/platform/projects/' + ref + '/infra-monitoring?attribute=' + a + '&startDate=' + from + '&endDate=' + to + '&interval=1m', H);
@@ -52,8 +64,12 @@ const collector = (from, to) => `(async () => {
 })()`;
 const iso = d => d.toISOString().replace(/\.\d+Z$/, 'Z');
 async function collect(from, to) {
-  try { return await evaluate(collector(iso(from), iso(to))); }
-  catch (e) { await log('collect failed:', e.message); return { error: e.message }; }
+  try {
+    let s = await evaluate(collector(iso(from), iso(to)));
+    if (unauthorized(s)) { await refreshDashboard('401 from Management API'); s = await evaluate(collector(iso(from), iso(to))); }
+    if (unauthorized(s)) { await log('collect failed: still 401 after reload — dashboard login may be required'); return { error: 'unauthorized_after_reload' }; }
+    return s;
+  } catch (e) { await log('collect failed:', e.message); return { error: e.message }; }
 }
 function alerts(s) {
   const a = [];
@@ -67,6 +83,7 @@ function alerts(s) {
 }
 await log(`monitor ${iso(start)} → ${iso(end)} every ${interval / 1000}s`);
 while (Date.now() < start.getTime()) await new Promise(r => setTimeout(r, Math.min(30000, start.getTime() - Date.now())));
+if (Date.now() < end.getTime()) await refreshDashboard('fresh token before class');
 let tick = 0;
 while (Date.now() < end.getTime() + 60000) {
   const to = new Date(), from = new Date(Math.max(start.getTime(), to.getTime() - 6 * 60000));
