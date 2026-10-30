@@ -1,3 +1,11 @@
+# 2026-10-30 已完成：Claude四輪疑義複核，建議頁待教師確認
+
+- 教師要求先與Claude確認較簡單疑義，再交本人確認。本輪不發布、不改正式題庫／媒體／學生資料。P04已結案不重審；40暫停欄＝13非聽力＋27聽力。新頁37卡：11明確答案、6處理方式、15維持現況、5缺稿卡（含重疊子項）。A02合併C07，A01／A03合26欄缺完整發話稿，C16–C18為A03子集；R12已開放人工參考不重問。
+- 四輪CLI session `20261030-pending-answers-01` 已完成，38筆建議／151來源SHA／四個marker／可見viewer／Git未改均驗。唯讀來源包 `.chat-mode/pending-review-20261030` HEAD `2084533f9dafde3480d36e6027999f95bc1425eb`；Claude Code2.1.289 OAuth訂閱，只Read／Glob／Grep。撤回無原卷依據的C04畫線誤差、C08拆分、C11過程拆分提案；P11要限水的浮力、P13收乙要補共同圖，仍待教師同意。
+- 新本機頁 `automation/output/past-exams-review-20261030/考古題疑義審閱-Claude複核建議版.html` 已以預設程式開啟；原HTML與教師Downloads匯出未覆寫。每項有整合建議、原題／官方原記號／影像PDF／SHA與實際查閱範圍；明確按同意才填確認，草稿嘗試瀏覽器暫存，填完仍需匯出交回。**教師填寫後不要重跑builder改快照ID，先匯出備份。**
+- 1280／390／360、37卡四類、顯式同意、匯出內容、草稿reload、原頁旋轉、117引用檔通過，pageerror 0。手機模擬／隔離HTTP測試，不能冒稱實體手機或file暫存必可用。QA頁／租約／4889 server均清理；本機HTML不依賴server。C06對比P04外題組不變後轉接目前SHA，仍不可整份舊卷蓋回P04。
+- 詳[past-exams-claude-review-20261030.md](past-exams-claude-review-20261030.md)。生成工具與提案追蹤於repo，ignored來源／CLI回覆／教師確認／QA證據不在clone內。下一步只等教師逐題明確確認；AI提案不是核准，不能直接開放剩餘40欄。
+
 # 2026-10-30 P04教師確認已套用：113六國語第14題②
 
 - 教師匯出「手寫為2」並明確授權驗證後上線，僅P04／`dingxi-113-1-g6-exam1-chinese`／`s4-q14`。原暫停欄恢復單選②、2分，其他題目不修改。新version`f92762ec-2a83-4378-b3e8-b647fab3b3b1`、SHA`b905765fa5b7fad2fa17563bf4b9f8bdb9a5cdec97a5911e7691f023a0f948b2`，舊版與教師確認／原頁／匯出SHA均保留。資料版本切換，不另部署前端，不改SQL／RLS／Edge。
