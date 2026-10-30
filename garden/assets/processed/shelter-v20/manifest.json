@@ -1,0 +1,539 @@
+{
+  "canvas": {
+    "size": [
+      560,
+      500
+    ],
+    "anchor": [
+      280,
+      460
+    ],
+    "referenceHeight": 360
+  },
+  "groups": {
+    "rest": {
+      "frames": [
+        "rest-0.webp",
+        "rest-1.webp",
+        "rest-2.webp"
+      ],
+      "visibleBoxes": [
+        [
+          86,
+          251,
+          474,
+          460
+        ],
+        [
+          84,
+          249,
+          471,
+          460
+        ],
+        [
+          86,
+          251,
+          479,
+          460
+        ]
+      ],
+      "medianVisibleH": 360
+    },
+    "entry": {
+      "frames": [
+        "entry-0.webp",
+        "entry-1.webp",
+        "entry-2.webp",
+        "entry-3.webp"
+      ],
+      "visibleBoxes": [
+        [
+          82,
+          144,
+          474,
+          460
+        ],
+        [
+          88,
+          179,
+          469,
+          460
+        ],
+        [
+          77,
+          224,
+          481,
+          460
+        ],
+        [
+          69,
+          248,
+          476,
+          460
+        ]
+      ],
+      "medianVisibleH": 360
+    },
+    "crawl": {
+      "frames": [
+        "crawl-0.webp",
+        "crawl-1.webp",
+        "crawl-2.webp",
+        "crawl-3.webp"
+      ],
+      "visibleBoxes": [
+        [
+          31,
+          239,
+          535,
+          460
+        ],
+        [
+          34,
+          240,
+          521,
+          460
+        ],
+        [
+          29,
+          241,
+          532,
+          460
+        ],
+        [
+          34,
+          238,
+          534,
+          460
+        ]
+      ],
+      "medianVisibleH": 360
+    },
+    "turn": {
+      "frames": [
+        "turn-0.webp",
+        "turn-1.webp",
+        "turn-2.webp",
+        "turn-3.webp"
+      ],
+      "visibleBoxes": [
+        [
+          92,
+          245,
+          473,
+          460
+        ],
+        [
+          143,
+          284,
+          405,
+          460
+        ],
+        [
+          93,
+          260,
+          448,
+          460
+        ],
+        [
+          52,
+          252,
+          485,
+          460
+        ]
+      ],
+      "medianVisibleH": 360
+    }
+  },
+  "cabin": {
+    "size": [
+      1097,
+      660
+    ],
+    "back": "cabin-back.webp",
+    "front": "cabin-front.webp",
+    "opening": [
+      [
+        142,
+        238
+      ],
+      [
+        947,
+        267
+      ],
+      [
+        947,
+        593
+      ],
+      [
+        142,
+        541
+      ]
+    ],
+    "roof": [
+      [
+        0,
+        0
+      ],
+      [
+        1097,
+        0
+      ],
+      [
+        1097,
+        224
+      ],
+      [
+        0,
+        224
+      ]
+    ]
+  },
+  "provenance": [
+    {
+      "group": "rest",
+      "frame": 0,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v20\\restcycle-generated\\pose-restcycle-01.png",
+      "sha256": "062cb828a1f06a9d9b2c182a90a78620b3e5d2b346d918d62a978ff0b0b27e6f",
+      "scale": 0.54,
+      "headHeight": null,
+      "headWidth": 400,
+      "targetHeadWidth": 216,
+      "rootX": 390,
+      "cleanup": {
+        "removed_px": 2788,
+        "removed_alpha_max": 3,
+        "main_bbox": [
+          30,
+          85,
+          752,
+          474
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "rest",
+      "frame": 1,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v20\\restcycle-generated\\pose-restcycle-01.png",
+      "sha256": "062cb828a1f06a9d9b2c182a90a78620b3e5d2b346d918d62a978ff0b0b27e6f",
+      "scale": 0.54,
+      "headHeight": null,
+      "headWidth": 400,
+      "targetHeadWidth": 216,
+      "rootX": 390,
+      "cleanup": {
+        "removed_px": 4919,
+        "removed_alpha_max": 2,
+        "main_bbox": [
+          26,
+          82,
+          745,
+          474
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "rest",
+      "frame": 2,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v20\\restcycle-generated\\pose-restcycle-01.png",
+      "sha256": "062cb828a1f06a9d9b2c182a90a78620b3e5d2b346d918d62a978ff0b0b27e6f",
+      "scale": 0.54,
+      "headHeight": null,
+      "headWidth": 400,
+      "targetHeadWidth": 216,
+      "rootX": 390,
+      "cleanup": {
+        "removed_px": 6148,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          30,
+          59,
+          767,
+          448
+        ],
+        "touches_edge": true
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "entry",
+      "frame": 0,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v20\\entry-generated\\pose-entry-01.png",
+      "sha256": "ffcb048e0b0b7228d20e8fe614015ee7af12eab5c02e78552ab31ae7b10a168d",
+      "scale": 0.6607142857142857,
+      "headHeight": 280,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 330,
+      "cleanup": {
+        "removed_px": 6822,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          27,
+          130,
+          625,
+          612
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "entry",
+      "frame": 1,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v20\\entry-generated\\pose-entry-01.png",
+      "sha256": "ffcb048e0b0b7228d20e8fe614015ee7af12eab5c02e78552ab31ae7b10a168d",
+      "scale": 0.6607142857142857,
+      "headHeight": 280,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 330,
+      "cleanup": {
+        "removed_px": 4775,
+        "removed_alpha_max": 9,
+        "main_bbox": [
+          37,
+          186,
+          617,
+          614
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "entry",
+      "frame": 2,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v20\\entry-generated\\pose-entry-01.png",
+      "sha256": "ffcb048e0b0b7228d20e8fe614015ee7af12eab5c02e78552ab31ae7b10a168d",
+      "scale": 0.675,
+      "headHeight": null,
+      "headWidth": 320,
+      "targetHeadWidth": 216,
+      "rootX": 330,
+      "cleanup": {
+        "removed_px": 8523,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          26,
+          144,
+          627,
+          496
+        ],
+        "touches_edge": true
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "entry",
+      "frame": 3,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v20\\entry-generated\\pose-entry-01.png",
+      "sha256": "ffcb048e0b0b7228d20e8fe614015ee7af12eab5c02e78552ab31ae7b10a168d",
+      "scale": 0.675,
+      "headHeight": null,
+      "headWidth": 320,
+      "targetHeadWidth": 216,
+      "rootX": 330,
+      "cleanup": {
+        "removed_px": 7475,
+        "removed_alpha_max": 255,
+        "main_bbox": [
+          27,
+          179,
+          627,
+          497
+        ],
+        "touches_edge": true
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "crawl",
+      "frame": 0,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v20\\crawlfix-generated\\pose-crawlfix-01.png",
+      "sha256": "745a57a30d198c56ee929777f1765c1dfc921802d5828f3b7e8b9364bb93c3f0",
+      "scale": 0.8295964125560538,
+      "headHeight": 223,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 320,
+      "cleanup": {
+        "removed_px": 777,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          19,
+          340,
+          627,
+          607
+        ],
+        "touches_edge": true
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "crawl",
+      "frame": 1,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v20\\crawlfix-generated\\pose-crawlfix-01.png",
+      "sha256": "745a57a30d198c56ee929777f1765c1dfc921802d5828f3b7e8b9364bb93c3f0",
+      "scale": 0.8295964125560538,
+      "headHeight": 223,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 320,
+      "cleanup": {
+        "removed_px": 2014,
+        "removed_alpha_max": 255,
+        "main_bbox": [
+          23,
+          340,
+          613,
+          606
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "crawl",
+      "frame": 2,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v20\\crawlfix-generated\\pose-crawlfix-01.png",
+      "sha256": "745a57a30d198c56ee929777f1765c1dfc921802d5828f3b7e8b9364bb93c3f0",
+      "scale": 0.8295964125560538,
+      "headHeight": 223,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 320,
+      "cleanup": {
+        "removed_px": 322,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          16,
+          96,
+          627,
+          361
+        ],
+        "touches_edge": true
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "crawl",
+      "frame": 3,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v20\\crawlfix-generated\\pose-crawlfix-01.png",
+      "sha256": "745a57a30d198c56ee929777f1765c1dfc921802d5828f3b7e8b9364bb93c3f0",
+      "scale": 0.8295964125560538,
+      "headHeight": 223,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 320,
+      "cleanup": {
+        "removed_px": 994,
+        "removed_alpha_max": 15,
+        "main_bbox": [
+          22,
+          97,
+          627,
+          366
+        ],
+        "touches_edge": true
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "turn",
+      "frame": 0,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v20\\turn-generated\\pose-turn-01.png",
+      "sha256": "fe4d7eaa2812e5b2b54e017830e81f13035fd3a6864fb4f2f05d9a5358692c41",
+      "scale": 0.631578947368421,
+      "headHeight": null,
+      "headWidth": 342,
+      "targetHeadWidth": 216,
+      "rootX": 320,
+      "cleanup": {
+        "removed_px": 850,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          22,
+          240,
+          627,
+          583
+        ],
+        "touches_edge": true
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "turn",
+      "frame": 1,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v20\\turn-generated\\pose-turn-01.png",
+      "sha256": "fe4d7eaa2812e5b2b54e017830e81f13035fd3a6864fb4f2f05d9a5358692c41",
+      "scale": 0.54,
+      "headHeight": null,
+      "headWidth": 400,
+      "targetHeadWidth": 216,
+      "rootX": 320,
+      "cleanup": {
+        "removed_px": 6276,
+        "removed_alpha_max": 255,
+        "main_bbox": [
+          66,
+          258,
+          554,
+          585
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "turn",
+      "frame": 2,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v20\\turn-generated\\pose-turn-01.png",
+      "sha256": "fe4d7eaa2812e5b2b54e017830e81f13035fd3a6864fb4f2f05d9a5358692c41",
+      "scale": 0.6545454545454545,
+      "headHeight": null,
+      "headWidth": 330,
+      "targetHeadWidth": 216,
+      "rootX": 320,
+      "cleanup": {
+        "removed_px": 8785,
+        "removed_alpha_max": 255,
+        "main_bbox": [
+          27,
+          155,
+          577,
+          462
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "turn",
+      "frame": 3,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v20\\turn-generated\\pose-turn-01.png",
+      "sha256": "fe4d7eaa2812e5b2b54e017830e81f13035fd3a6864fb4f2f05d9a5358692c41",
+      "scale": 0.7115384615384616,
+      "headHeight": 260,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 320,
+      "cleanup": {
+        "removed_px": 6263,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          0,
+          160,
+          610,
+          454
+        ],
+        "touches_edge": true
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    }
+  ]
+}

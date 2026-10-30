@@ -1,0 +1,587 @@
+{
+  "canvas": {
+    "size": [
+      560,
+      500
+    ],
+    "anchor": [
+      280,
+      460
+    ],
+    "referenceHeight": 360
+  },
+  "groups": {
+    "rest": {
+      "frames": [
+        "../shelter-v20/rest-0.webp",
+        "../shelter-v20/rest-1.webp",
+        "../shelter-v20/rest-2.webp"
+      ],
+      "visibleBoxes": [
+        [
+          86,
+          251,
+          474,
+          460
+        ],
+        [
+          84,
+          249,
+          471,
+          460
+        ],
+        [
+          86,
+          251,
+          479,
+          460
+        ]
+      ],
+      "medianVisibleH": 360
+    },
+    "entry": {
+      "frames": [
+        "../shelter-v20/entry-0.webp",
+        "../shelter-v20/entry-1.webp",
+        "../shelter-v20/entry-2.webp",
+        "../shelter-v20/entry-3.webp"
+      ],
+      "visibleBoxes": [
+        [
+          82,
+          144,
+          474,
+          460
+        ],
+        [
+          88,
+          179,
+          469,
+          460
+        ],
+        [
+          77,
+          224,
+          481,
+          460
+        ],
+        [
+          69,
+          248,
+          476,
+          460
+        ]
+      ],
+      "medianVisibleH": 360
+    },
+    "crawl": {
+      "frames": [
+        "../shelter-v20/crawl-0.webp",
+        "../shelter-v20/crawl-1.webp",
+        "../shelter-v20/crawl-2.webp",
+        "../shelter-v20/crawl-3.webp"
+      ],
+      "visibleBoxes": [
+        [
+          31,
+          239,
+          535,
+          460
+        ],
+        [
+          34,
+          240,
+          521,
+          460
+        ],
+        [
+          29,
+          241,
+          532,
+          460
+        ],
+        [
+          34,
+          238,
+          534,
+          460
+        ]
+      ],
+      "medianVisibleH": 360
+    },
+    "turn": {
+      "frames": [
+        "../shelter-v20/turn-0.webp",
+        "../shelter-v20/turn-1.webp",
+        "../shelter-v20/turn-2.webp",
+        "../shelter-v20/turn-3.webp"
+      ],
+      "visibleBoxes": [
+        [
+          92,
+          245,
+          473,
+          460
+        ],
+        [
+          143,
+          284,
+          405,
+          460
+        ],
+        [
+          93,
+          260,
+          448,
+          460
+        ],
+        [
+          52,
+          252,
+          485,
+          460
+        ]
+      ],
+      "medianVisibleH": 360
+    },
+    "awayturn": {
+      "frames": [
+        "awayturn-0.webp",
+        "awayturn-1.webp",
+        "awayturn-2.webp",
+        "awayturn-3.webp"
+      ],
+      "visibleBoxes": [
+        [
+          56,
+          244,
+          468,
+          460
+        ],
+        [
+          69,
+          236,
+          452,
+          460
+        ],
+        [
+          75,
+          231,
+          439,
+          460
+        ],
+        [
+          155,
+          225,
+          404,
+          484
+        ]
+      ],
+      "medianVisibleH": 360
+    },
+    "rearwalk": {
+      "frames": [
+        "rearwalk-0.webp",
+        "rearwalk-1.webp",
+        "rearwalk-2.webp",
+        "rearwalk-3.webp"
+      ],
+      "visibleBoxes": [
+        [
+          163,
+          226,
+          395,
+          474
+        ],
+        [
+          166,
+          226,
+          389,
+          476
+        ],
+        [
+          164,
+          224,
+          392,
+          474
+        ],
+        [
+          164,
+          223,
+          392,
+          473
+        ]
+      ],
+      "medianVisibleH": 360
+    },
+    "frontwalk": {
+      "frames": [
+        "frontwalk-0.webp",
+        "frontwalk-1.webp",
+        "frontwalk-2.webp",
+        "frontwalk-3.webp"
+      ],
+      "visibleBoxes": [
+        [
+          139,
+          249,
+          378,
+          461
+        ],
+        [
+          140,
+          250,
+          382,
+          460
+        ],
+        [
+          140,
+          250,
+          380,
+          460
+        ],
+        [
+          153,
+          261,
+          388,
+          461
+        ]
+      ],
+      "medianVisibleH": 360
+    }
+  },
+  "cabin": {
+    "size": [
+      1097,
+      660
+    ],
+    "back": "../shelter-v20/cabin-back.webp",
+    "front": "../shelter-v20/cabin-front.webp",
+    "opening": [
+      [
+        142,
+        238
+      ],
+      [
+        947,
+        267
+      ],
+      [
+        947,
+        593
+      ],
+      [
+        142,
+        541
+      ]
+    ],
+    "roof": [
+      [
+        0,
+        0
+      ],
+      [
+        1097,
+        0
+      ],
+      [
+        1097,
+        224
+      ],
+      [
+        0,
+        224
+      ]
+    ]
+  },
+  "provenance": [
+    {
+      "group": "awayturn",
+      "frame": 0,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v21\\awayturn-generated\\pose-awayturn-01.png",
+      "sha256": "000a4d06a282032193d8b0e4329f2c33cff414c3a8cf53b69286f5c3e36533af",
+      "scale": 0.66,
+      "headHeight": null,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 350,
+      "rootY": 518,
+      "cleanup": {
+        "removed_px": 7217,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          10,
+          189,
+          639,
+          519
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "awayturn",
+      "frame": 1,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v21\\awayturn-generated\\pose-awayturn-01.png",
+      "sha256": "000a4d06a282032193d8b0e4329f2c33cff414c3a8cf53b69286f5c3e36533af",
+      "scale": 0.66,
+      "headHeight": null,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 335,
+      "rootY": 530,
+      "cleanup": {
+        "removed_px": 18180,
+        "removed_alpha_max": 4,
+        "main_bbox": [
+          14,
+          188,
+          596,
+          531
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "awayturn",
+      "frame": 2,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v21\\awayturn-generated\\pose-awayturn-01.png",
+      "sha256": "000a4d06a282032193d8b0e4329f2c33cff414c3a8cf53b69286f5c3e36533af",
+      "scale": 0.66,
+      "headHeight": null,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 375,
+      "rootY": 471,
+      "cleanup": {
+        "removed_px": 11135,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          64,
+          123,
+          618,
+          471
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "awayturn",
+      "frame": 3,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v21\\awayturn-generated\\pose-awayturn-01.png",
+      "sha256": "000a4d06a282032193d8b0e4329f2c33cff414c3a8cf53b69286f5c3e36533af",
+      "scale": 0.66,
+      "headHeight": null,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 324,
+      "rootY": 470,
+      "cleanup": {
+        "removed_px": 17335,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          134,
+          113,
+          514,
+          507
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "rearwalk",
+      "frame": 0,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v21\\rearwalklow-generated\\pose-rearwalklow-01.png",
+      "sha256": "ddfc144ca66e34fc200f4c293e05a4d72841a095a1366b140a364ce591487531",
+      "scale": 0.5,
+      "headHeight": null,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 360,
+      "rootY": 582,
+      "cleanup": {
+        "removed_px": 297,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          125,
+          114,
+          590,
+          613
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "rearwalk",
+      "frame": 1,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v21\\rearwalklow-generated\\pose-rearwalklow-01.png",
+      "sha256": "ddfc144ca66e34fc200f4c293e05a4d72841a095a1366b140a364ce591487531",
+      "scale": 0.5,
+      "headHeight": null,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 339,
+      "rootY": 577,
+      "cleanup": {
+        "removed_px": 649,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          110,
+          106,
+          557,
+          609
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "rearwalk",
+      "frame": 2,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v21\\rearwalklow-generated\\pose-rearwalklow-01.png",
+      "sha256": "ddfc144ca66e34fc200f4c293e05a4d72841a095a1366b140a364ce591487531",
+      "scale": 0.5,
+      "headHeight": null,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 361,
+      "rootY": 536,
+      "cleanup": {
+        "removed_px": 304,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          129,
+          62,
+          587,
+          566
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "rearwalk",
+      "frame": 3,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v21\\rearwalklow-generated\\pose-rearwalklow-01.png",
+      "sha256": "ddfc144ca66e34fc200f4c293e05a4d72841a095a1366b140a364ce591487531",
+      "scale": 0.5,
+      "headHeight": null,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 342,
+      "rootY": 536,
+      "cleanup": {
+        "removed_px": 547,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          110,
+          60,
+          568,
+          564
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "frontwalk",
+      "frame": 0,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v21\\frontwalklow-generated\\pose-frontwalklow-01.png",
+      "sha256": "7b2031e6174b447454c89d6c7d28223f9e540d0be0716ccb80c633e81307d923",
+      "scale": 0.47,
+      "headHeight": null,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 365,
+      "rootY": 581,
+      "cleanup": {
+        "removed_px": 1491,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          63,
+          131,
+          574,
+          586
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "frontwalk",
+      "frame": 1,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v21\\frontwalklow-generated\\pose-frontwalklow-01.png",
+      "sha256": "7b2031e6174b447454c89d6c7d28223f9e540d0be0716ccb80c633e81307d923",
+      "scale": 0.47,
+      "headHeight": null,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 344,
+      "rootY": 574,
+      "cleanup": {
+        "removed_px": 2448,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          46,
+          125,
+          563,
+          574
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "frontwalk",
+      "frame": 2,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v21\\frontwalklow-generated\\pose-frontwalklow-01.png",
+      "sha256": "7b2031e6174b447454c89d6c7d28223f9e540d0be0716ccb80c633e81307d923",
+      "scale": 0.47,
+      "headHeight": null,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 365,
+      "rootY": 548,
+      "cleanup": {
+        "removed_px": 2313,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          67,
+          98,
+          580,
+          549
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    },
+    {
+      "group": "frontwalk",
+      "frame": 3,
+      "file": "automation\\output\\quiz\\garden-v2\\shelter-v21\\frontwalklow-generated\\pose-frontwalklow-01.png",
+      "sha256": "7b2031e6174b447454c89d6c7d28223f9e540d0be0716ccb80c633e81307d923",
+      "scale": 0.47,
+      "headHeight": null,
+      "headWidth": null,
+      "targetHeadWidth": null,
+      "rootX": 338,
+      "rootY": 524,
+      "cleanup": {
+        "removed_px": 3303,
+        "removed_alpha_max": 1,
+        "main_bbox": [
+          66,
+          98,
+          570,
+          526
+        ],
+        "touches_edge": false
+      },
+      "operation": "whole frame cleanup, uniform scale, translation only; no limb edits or synthesized breathing"
+    }
+  ]
+}

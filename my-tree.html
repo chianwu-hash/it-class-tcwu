@@ -474,7 +474,9 @@
         </section>
     </main>
 
+    <link rel="stylesheet" href="./shared/effort-garden-v2.css?v=20261030-release">
     <script type="module">
+        import {createGardenUpgrade} from './shared/effort-garden-v2.mjs?v=20261030-release';
         import {
             resolveSession,
             signInWithGoogle,
@@ -494,7 +496,7 @@
             LEAF_SLOTS,
             getRewardTreeCourse,
             getRewardTreeCourses
-        } from "./shared/reward-tree-config.js?v=20261014-week07";
+        } from "./shared/reward-tree-config.js?v=20261030-g6w09-boss";
         import { createFullCompletionRows, deriveRewardTreeModel } from "./shared/reward-tree-model.js?v=20261001-foundation";
         import { renderRewardTree, selectReward } from "./shared/reward-tree-renderer.js";
         import { readingRequest, readingTreeData } from './shared/reading-api.js';
@@ -537,6 +539,7 @@
         let selectedCourseId = resolveInitialCourseId();
         const returnTarget = resolveReturnTarget();
 
+        const upgrade=createGardenUpgrade({supabase,getSession:()=>currentSession,stage:document.querySelector('.tree-stage'),onSelect:r=>selectReward(r,detailTitleEl,detailTextEl)});
         function safeReturnTarget(value) {
             if (!value) return null;
             try {
@@ -753,6 +756,7 @@
         }
 
         function renderModel(model, activities) {
+            void upgrade.render(model,selectedCourseId);
             renderRewardTree({
                 layer: rewardLayerEl,
                 leaves: model.leaves,
@@ -796,6 +800,7 @@
 
         async function loadAndRender() {
             const version = ++treeLoadVersion;
+            upgrade.reset();
             hideNotice();
             rewardLayerEl.replaceChildren();
             leafCountEl.textContent = '0';
@@ -876,6 +881,7 @@
             if ((session?.user?.id ?? null) === (currentSession?.user?.id ?? null)) return;
             currentSession = session;
             treeLoadVersion++;
+            upgrade.reset();
             currentEnrollment = null;
             practiceEnrollment = null;
             updateQuizLibraryLink();

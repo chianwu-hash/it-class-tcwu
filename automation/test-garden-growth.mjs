@@ -1,0 +1,44 @@
+import {createRequire} from 'node:module';import fs from 'node:fs/promises';import assert from 'node:assert/strict';
+const require=createRequire('D:/projects/it-class-tcwu/tmp/quiz-runtime/package.json');const {PGlite}=require('@electric-sql/pglite');const db=new PGlite();
+await db.exec(`create role anon;create role authenticated;create role service_role;create schema auth;
+create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz);
+create function auth.uid() returns uuid language sql as $$select nullif(current_setting('test.uid',true),'')::uuid$$;
+create function public.is_teacher() returns boolean language sql as $$select coalesce(current_setting('test.teacher',true),'')='yes'$$;
+create table public.student_enrollments(school_year int,email text,class_code text);
+create table public.student_progress(user_id uuid,course_id text,week_code text,activity_key text,current_level int,completed boolean);
+create function public.typing_foundation_action(text,text,jsonb) returns jsonb language sql as $$select coalesce(nullif(current_setting('test.foundation',true),'')::jsonb,'[]')$$;
+create function public.quiz_rewards(jsonb) returns jsonb language sql as $$select jsonb_build_object('awards',coalesce(nullif(current_setting('test.quiz',true),'')::jsonb,'[]'))$$;
+create function public.homework_action(text,jsonb) returns jsonb language sql as $$select '{"assignments":[]}'::jsonb$$;
+create function public.reading_action(text,jsonb) returns jsonb language sql as $$select '{"periods":[]}'::jsonb$$;
+grant usage on schema public,auth to authenticated,anon;
+insert into auth.users values('00000000-0000-4000-8000-000000000001','student@example.invalid',now()),('00000000-0000-4000-8000-000000000002','other@example.invalid',now());
+insert into student_enrollments values(115,'student@example.invalid','304'),(115,'other@example.invalid','304');
+select set_config('test.uid','00000000-0000-4000-8000-000000000001',false);`);
+await db.exec(await fs.readFile('supabase/garden-growth.sql','utf8'));
+// 10 normal ten-leaf activities exercise typing/boss/quiz source IDs, with current levels.
+await db.exec(`insert into garden_reward_catalog values('grade3-115-1','01','base','typing',45,null);
+insert into student_progress values(auth.uid(),'grade3-115-1','01','base',45,false);
+insert into garden_reward_catalog select 'grade3-115-1','02','boss'||i,'typing',1,'boss' from generate_series(1,13)i;
+insert into student_progress select auth.uid(),'grade3-115-1','02','boss'||i,1,true from generate_series(1,9)i;`);
+const call=async(action='get',course='grade3-115-1')=>(await db.query('select public.garden_growth($1,$2) s',[course,action])).rows[0].s;
+assert.equal((await call()).level,1);
+await db.exec(`insert into student_progress values(auth.uid(),'grade3-115-1','02','boss10',1,true)`);
+let s=await call();assert.equal(s.level,2);assert.equal(s.petUnlocked,false);assert.equal(s.baseline.length,54);assert.equal(s.newLeaves,0);assert.equal(s.newFlowers,0);
+await call('seen');assert.equal((await call()).seen,true);assert.equal((await db.query('select count(*) n from garden_growth')).rows[0].n,1);
+await db.exec("insert into garden_reward_catalog select 'grade3-115-1','foundation','lesson'||i,'foundation',1,null from generate_series(0,10)i");
+await db.query("select set_config('test.foundation',$1,false)",[JSON.stringify(Array.from({length:11},(_,i)=>({lesson_key:'lesson'+i,completed:true})))]);
+assert.equal((await call()).petUnlocked,false);
+await db.query("select set_config('test.quiz',$1,false)",[JSON.stringify([{id:'award-a',half_units:1},{id:'award-b',half_units:1}])]);
+s=await call();assert.equal(s.petUnlocked,true);assert.equal(s.newLeaves,12);assert(s.order.some(r=>r.id==='grade3-115-1:00:practice_pair:award-a:0:award-b:0:quiz-leaf:1'));
+const ids=s.order.map(r=>r.id);assert.equal(new Set(ids).size,ids.length);
+// Withdrawn progress must not remain on the visible tree; returning IDs cannot count again.
+await db.exec(`select set_config('test.foundation','[]',false);select set_config('test.quiz','[]',false)`);s=await call();assert.equal(s.newLeaves,0);assert.equal(s.petUnlocked,true);assert.deepEqual(s.order.map(r=>r.id),ids);
+// Teacher reset returns to stage 1 while retaining the growth keepsake, not fake leaves.
+await db.exec(`delete from student_progress where activity_key='boss10'`);assert.equal((await call()).level,1);
+await db.exec(`select set_config('test.uid','00000000-0000-4000-8000-000000000002',false);insert into student_progress select auth.uid(),course_id,week_code,activity_key,current_level,completed from student_progress where user_id<>'00000000-0000-4000-8000-000000000002';insert into student_progress values(auth.uid(),'grade3-115-1','02','boss10',1,true)`);
+s=await call();assert.equal(s.petUnlocked,false);assert.equal(s.seen,false);
+await db.exec(`insert into student_progress select auth.uid(),'grade3-115-1','02','boss'||i,1,true from generate_series(11,13)i`);assert.equal((await call()).petUnlocked,true);
+await assert.rejects(call('get','grade6-115-1'),/student_required/);
+await db.exec(`select set_config('test.teacher','yes',false)`);await assert.rejects(call(),/student_required/);
+await db.exec(`select set_config('test.teacher','',false);set role anon`);await assert.rejects(call(),/permission denied/);await db.exec('reset role;set role authenticated');await assert.rejects(db.query('select * from public.garden_growth'),/permission denied/);
+console.log(JSON.stringify({passed:true,checks:['both thresholds','44+10 snapshot','seen persistence','12 new leaves','3 new flowers','half-leaf pairing','stable IDs','reset','separate students','grade guard','teacher guard','anon guard','RLS']}));await db.close();
