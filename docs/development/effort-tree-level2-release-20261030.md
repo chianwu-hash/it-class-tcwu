@@ -37,6 +37,12 @@
 
 發布以當時正式部署 `dpl_3K11Jh65ymHQqT1jpBmKdjYWtgE6` 的 453 個來源檔案為基準，完整保留其他對話已發布但 Git 尚有差異的內容。獨立工作樹：`D:/projects/.chat-mode-worktrees/effort-tree-release-20261030`，分支 `codex/effort-tree-release`。預覽：`dpl_3izK6nVfNjZApTXUm6tggQJfpFTZ`。
 
+已發布正式部署 **`dpl_63D8jsJDgLs57LmuMS3tTYTJhXuY`**（READY），正式 alias `https://it-class-tcwu.vercel.app`；功能 commit `b668cab` 已推送 `codex/effort-tree-release`。發布後 81 檔再次逐一 SHA-256 比對通過，正式天氣端點成功。
+
+正式瀏覽器巡檢先核對學校測試帳號。該帳號目前設定六年級，未更改身分；六上努力樹成功讀取 **10 葉、1 花**，無錯誤提示，保持第一級。三上頁對這個六年級身分顯示名冊不符，屬原有保護，未繞過。第二級成長／解鎖測試採本機合成資料及正式部署檔案一致性驗證，未替真正學生補發成果以測試升級。
+
+主工作樹已同步本功能檔案與 my-tree 的精簡掛點，保留其他對話修改。`main` 尚未合併功能分支；後續提交須納入這些同步檔，避免下一次發布退回第一版。不得整包覆蓋髒工作樹，或把發布前既有的其他功能差異歸為本次修改。
+
 驗證報告、正式函式備份、部署前來源清單在 ignored `automation/output/garden-release/` 與主工作樹 `automation/output/quiz/garden-production-*.json`。不提交憑證、個人紀錄、測試假成果。
 
 ## 回復
