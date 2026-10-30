@@ -221,7 +221,7 @@ Logs 與主機資料仍保留，所以用同一支監看程式補抓 13:45–14:
 
 - 只有 1 筆：15:40:30 `GET /storage/v1/object/authenticated/quiz-media/...` 回 **503**（618 ms），是 Supabase Storage 讀一張題目圖片時的暫時錯誤，不是資料庫或 API。前端讀圖片失敗會自動重試一次。與主機規格無關。
 
-### 修正（已在本機完成並測試，尚未上線）
+### 修正（16:25 已上線，`dpl_Bkk8PX4XMU4yzquUqFLL5Tw1EGzK`）
 
 - 送答或看題收到 `question_order` 時，自動清掉卡住的待送出答案，重新讀取雲端進度並跳到真正的下一題，提示「作答進度已和雲端同步」。
 - 「更新儲存狀態」不會再停在未作答、但不是下一題的題目上。
@@ -232,3 +232,10 @@ Logs 與主機資料仍保留，所以用同一支監看程式補抓 13:45–14:
 
 - 第七節唯一未通過的「5xx」項目是 Storage 單筆暫時錯誤，與主機無關。若扣除這筆，兩節都通過主機面的門檻。RAM 最大約 556 MB（第七節），swap 0。
 - 是否降回 Micro：第七節的實際請求量（含錯誤風暴）是第五節的 2 倍，RAM 也多了約 100 MB；建議等題序修正上線後，再看一節正常課堂的數據決定。
+
+### 上線紀錄（10/30 16:25）
+
+- 功能 commit `23abc38`。以第四批凍結包（`dpl_G6mqwLwCj3JqJ66HzQzuW1UqeyCu`）為底，只覆蓋 6 個檔案（`shared/quiz-server.mjs`、`quiz-api.mjs`、`quiz-module.js`、`quiz-student.mjs`、`grade3|grade6/115-1/quiz.html`）；覆蓋前確認這 6 檔在凍結包中與 `2a18f78` 相同。沒有改 SQL。
+- 候選版讀回 6 檔 SHA256 符合後 promote；正式網址讀回也符合。promote 前的作答查詢因輸出被 CLI 提示蓋掉而未讀到結果，事後補查最近 20 分鐘作答 0 筆，未影響學生。
+- 正式網址的實際檔案（Auth／RPC 合成）重跑 `quiz-order-resync-browser.cjs`（猛按 89 下共 6 個請求）與 `quiz-load-batch4-browser.cjs`，全部通過。
+- 限制：尚未經過真人課堂驗證；不同步的實際成因（多分頁、多裝置或回應遺失）仍未確認。已開著舊頁面的學生要重新整理才會載入新版。回滾：promote 回 `dpl_G6mqwLwCj3JqJ66HzQzuW1UqeyCu`。
