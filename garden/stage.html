@@ -57,12 +57,9 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
 <style>:root{--bg:#f2faf5;--panel:#fff;--ink:#254d43;--muted:#4f6e63;--line:#c6ded0;--accent:#167461;--accent-ink:#fff;--warn-bg:#fff3dc;--warn-ink:#774a00}#errors.error{display:block!important}a{color:#116a61}input{accent-color:#167461}</style>
 </head>
 <body>
-<section style="margin:12px auto;padding:14px;max-width:1280px;border:1px solid #b7d8c9;border-radius:18px;background:var(--panel)" aria-label="所在地與天氣">
- <div class="bar"><strong id="location-label">頂溪國小・新北市永和區</strong><span id="local-clock"></span><span id="live-weather">正在準備當地天氣…</span></div>
- <p id="location-message" role="status" style="margin:4px 0"></p><p id="weather-message" role="status" style="margin:4px 0"></p>
- <small>已允許瀏覽器定位時，自動使用概略位置查天氣；未允許或無法定位時使用學校位置，不持續追蹤。天氣資料：<a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>。</small>
-</section>
+
 <main>
+  <div class="wrap" id="wrap"><canvas id="scene" role="img" aria-label="第二級努力樹，點選花葉可查看來源"></canvas></div>
   <header>
     <h1>努力樹・當地日夜與天氣</h1>
     <span class="badge">第二級努力樹</span>
@@ -92,7 +89,7 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
   </details><p class="status" id="status" aria-live="polite">素材載入中…</p>
   <p class="status" id="errors" aria-live="polite"></p>
 
-  <div id="motion-controls"><button id="motion-toggle" type="button">暫停動畫</button><label><input type="checkbox" id="motion-reduce">減少動態</label></div><div class="wrap" id="wrap"><canvas id="scene" role="img" aria-label="第二級努力樹，點選花葉可查看來源"></canvas></div>
+  <div id="motion-controls"><button id="motion-toggle" type="button">暫停動畫</button><label><input type="checkbox" id="motion-reduce">減少動態</label></div>
 
   <details id="framesBox">
     <summary>轉身與步態格（靜態序列，依實際播放順序）</summary>
@@ -112,6 +109,11 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
     </ul>
   </details>
 </main>
+<section style="margin:12px auto;padding:14px;max-width:1280px;border:1px solid #b7d8c9;border-radius:18px;background:var(--panel)" aria-label="所在地與天氣">
+ <div class="bar"><strong id="location-label">頂溪國小・新北市永和區</strong><span id="local-clock"></span><span id="live-weather">正在準備當地天氣…</span></div>
+ <p id="location-message" role="status" style="margin:4px 0"></p><p id="weather-message" role="status" style="margin:4px 0"></p>
+ <small>已允許瀏覽器定位時，自動使用概略位置查天氣；未允許或無法定位時使用學校位置，不持續追蹤。天氣資料：<a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>。</small>
+</section>
 
 <script src="./src/calm-roaming-core.js"></script>
 <script src="./src/garden-roaming-v9.js"></script>

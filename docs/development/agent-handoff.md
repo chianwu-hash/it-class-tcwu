@@ -1,3 +1,8 @@
+# 2026-10-30 努力樹優先版面已上線（Codex）
+
+- 使用者指定樹在所有說明／參數之前。外層scene置首、iframe內canvas置首，重播／成長說明、動畫控制與天氣都在樹下方。1440／390、45葉10花、重播開關、無JS錯誤通過；正式30730同樣確認，canvas top=0。
+- 最新正式 `dpl_4BMs8XwYYy7Tx5Zr3BLBH8Ecrrt7`，基於前正式4oeG完整537檔，只改stage和effort-garden-v2.mjs，535檔UID保留。無DB／定位規則／練功房改動。詳 [版面紀錄](effort-tree-tree-first-20261030.md)。後續發布仍應重新取得當下正式完整來源。
+
 # 2026-10-30 首次定位授權政策修正已上線（Codex，取代下方不詢問政策）
 
 - 使用者澄清：首次 prompt 必須呼叫原生定位觸發授權；granted 直接定位；denied 不再詢問、使用學校；定位失敗用學校。選擇完全交給瀏覽器，不另存旗標。Permissions API 不支援時亦交由 geolocation 原生處理。

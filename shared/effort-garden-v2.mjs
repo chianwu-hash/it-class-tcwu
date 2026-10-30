@@ -1,7 +1,7 @@
 // This module never awards progress. Server-owned milestones are cosmetic only.
 export function createGardenUpgrade({supabase,getSession,stage,onSelect}){
  const root=document.createElement('section');root.className='garden-upgrade';root.hidden=true;
- root.innerHTML=`<p class="garden-state" role="status"></p><div class="garden-actions"><button type="button" data-replay>重播我的成長</button><button type="button" data-prev>上一區</button><span data-page></span><button type="button" data-next>下一區</button></div><div data-scene></div><details><summary>查看全部花葉與來源</summary><p>成果全部保留。樹冠每區最多呈現 96 葉、24 花。</p><ol data-list></ol><div class="garden-actions"><button type="button" data-list-prev>上一頁</button><span data-list-page></span><button type="button" data-list-next>下一頁</button></div></details>`;
+ root.innerHTML=`<div data-scene></div><p class="garden-state" role="status"></p><div class="garden-actions"><button type="button" data-replay>重播我的成長</button><button type="button" data-prev>上一區</button><span data-page></span><button type="button" data-next>下一區</button></div><details><summary>查看全部花葉與來源</summary><p>成果全部保留。樹冠每區最多呈現 96 葉、24 花。</p><ol data-list></ol><div class="garden-actions"><button type="button" data-list-prev>上一頁</button><span data-list-page></span><button type="button" data-list-next>下一頁</button></div></details>`;
  stage.after(root);
  const $=s=>root.querySelector(s),status=$('.garden-state');let version=0,frame=null,state=null,model=null,course=null,page=0,listPage=0,dialog=null;
  const rpc=async(c,action='get')=>{const {data,error}=await supabase.rpc('garden_growth',{p_course_id:c,p_action:action});if(error)throw error;return data;};
