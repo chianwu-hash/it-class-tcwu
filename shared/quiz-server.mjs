@@ -683,7 +683,7 @@ export function initServerQuiz({ selectors, server }) {
     if (state.complete) root.append(make('p', '所有答案已儲存。先確認這一題的結果，再查看整份作答與解析。', 'notice'));
     cursor = Math.min(cursor, questions.length - 1);
     const q = questions[cursor], saved = answered(q);
-    if(!saved&&state.status==='open'&&seenQuestion!==q.id){seenQuestion=q.id;const g=generation;server.request('view_question',{session_id:server.sessionId,question_id:q.id}).catch(()=>{if(g===generation)seenQuestion=null;});}
+    if(!saved&&state.status==='open'&&seenQuestion!==q.id){seenQuestion=q.id;const g=generation;server.request('view_question',{session_id:server.sessionId,question_id:q.id}).catch(e=>{if(g!==generation)return;if(e.code==='question_order')void resyncOrder();else seenQuestion=null;});}
     const review = state.reviews.find(r => r.question_id === q.id);
     const article = make('article', undefined, 'question'); article.dataset.questionId = q.id;
     article.append(make('h3', `第 ${cursor + 1} 題 / ${questions.length} 題`));
@@ -742,14 +742,27 @@ export function initServerQuiz({ selectors, server }) {
       if (generation !== token) return;
       state = next; loadError = ''; busy = false;
       if (pending && Object.hasOwn(state.responses, pending.question_id)) pending = null;
-      if (!preserveCursor) { const index = firstUnanswered(); cursor = index < 0 ? state.document.questions.length - 1 : index; selected = ''; }
+      const index = firstUnanswered();
+      if (!preserveCursor) { cursor = index < 0 ? state.document.questions.length - 1 : index; selected = ''; }
+      // Answers are saved strictly in order: never stay on an unanswered question that is not the next one.
+      else if (index >= 0 && cursor !== index && !answered(state.document.questions[Math.min(cursor, state.document.questions.length - 1)])) { cursor = index; selected = ''; pending = null; }
       render();
     } catch (e) {
       if (generation === token) { loadError = e.message; if (!state) render(); else say(e.message, true); }
     } finally { if (generation === token) { busy = false; const b = root.querySelector('#server-submit'); if (b) b.disabled = false; } }
   }
+  // At most one automatic re-sync per 5 seconds, so a page that still disagrees cannot flood the server.
+  let lastResync = 0, holdSubmitUntil = 0;
+  async function resyncOrder() {
+    if (Date.now() - lastResync < 5000) { holdSubmitUntil = Date.now() + 5000; say('作答進度和雲端不一致，請稍候幾秒再試；仍無法繼續請告訴老師。', true); return false; }
+    lastResync = Date.now(); const token = generation;
+    await load('resume');
+    if (generation === token && state) say('作答進度已和雲端同步，請從這一題繼續。');
+    return true;
+  }
   async function submit() {
     if (busy || !state || !userId) return;
+    if (Date.now() < holdSubmitUntil) return say(`作答進度和雲端不一致，請等 ${Math.ceil((holdSubmitUntil - Date.now()) / 1000)} 秒再試；仍無法繼續請告訴老師。`, true);
     const q = state.document.questions[cursor];
     if (answered(q)) return;
     if (!pending) {
@@ -772,6 +785,9 @@ export function initServerQuiz({ selectors, server }) {
       if(root.classList.contains('quiz-workspace-active')&&!root.classList.contains('workspace-desktop'))root.querySelector('.answer-preview')?.scrollIntoView({block:'start',behavior:'instant'});
     } catch (e) { if (generation === token) { busy = false;
       if(e.code==='quiz_snapshot_mismatch'){await load('resume',true);return;}
+      // The server's next question differs from this page (another tab/device or a lost response):
+      // drop the unsaved attempt for this question and jump to the cloud's next question.
+      if(e.code==='question_order'){pending=null;if(await resyncOrder())return;}
       if(e.code==='answer_too_fast'){pending=null;quizReadingWarning();} render(); say(e.message, true); } }
     finally { if (generation === token) { busy = false; const b = root.querySelector('#server-submit'); if (b) b.disabled = false; } }
   }

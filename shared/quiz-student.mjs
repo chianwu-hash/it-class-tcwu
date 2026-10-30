@@ -1,4 +1,4 @@
-import { initQuizModule } from './quiz-module.js?v=20261029-load-batch1';
+import { initQuizModule } from './quiz-module.js?v=20261030-order-resync';
 import { createQuizRequest } from './quiz-api.mjs?v=20261029-batch4';
 import { provideNavIdentity } from './grade6-nav-identity.js?v=20261029-batch4';
 import { initImageLightbox } from './image-lightbox.js';
