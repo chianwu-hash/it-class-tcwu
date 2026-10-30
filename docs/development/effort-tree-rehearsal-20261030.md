@@ -33,3 +33,17 @@
 `automation/garden-rehearsal-setup.mjs --prepare` 一次性執行，若已有準備或成長事件會拒絕重設，避免誤消耗體驗。`--verify` 只查此帳號的準備與事件數。成長主 SQL 保留條件式讀取準備資料的掛點；舊環境沒裝準備函式時照原流程。
 
 測試完若使用者要求移除準備資料，應只移除此帳號三上的獨立準備紀錄，保留新親自取得的真正成果；若需要再次體驗「初次成長」，另備份並明確處理此帳號的測試成長紀念。不可清整班進度，不可重設真實測驗或替所有學生加入準備花葉。
+
+## 正式發布與 Claude 同期開發交接
+
+正式更新：**`dpl_ELYV9HokMivNbQobBhTJPuuZMw9E`**（READY），基準為恢復後的完整 `dpl_63D8jsJDgLs57LmuMS3tTYTJhXuY`，候選預覽 `dpl_Aka7Ds2hb2RGhoELpZ41gD4yPJWo`。逐檔核對：保留完整基準的 **532 個其他來源檔**，只修改 `my-tree.html`、`shared/effort-garden-v2.mjs`、`shared/effort-garden-v2.css`，另加一個唯讀測試準備模組。
+
+使用者明確提醒 Claude 同時修改練功房，並提供截圖：Claude 的 `order-resync` 發布曾以較舊少檔快照覆蓋完整站，後來已回復 `dpl_63D8…` 並承諾等 Codex 完成。兩次基準不符時 Codex 的發布保護均中止 promote；曾參考該暫時版本的另一預覽 `dpl_3yvueo8ew7mnodF3HWMoZKug5FWi` **沒有上線，不再使用**。此輪最後採用完整基準的最初合格預覽，而非少檔快照。
+
+正式檢查成功：三上／六上 `past-exam.html`、`shared/quiz-question-reports.mjs`、`grade6/115-1/week09.html`、努力樹三個修改檔／新模組及天氣端點都 HTTP 200 且來源內容一致。已保留全部既有內容；**Claude 尚在處理的 order-resync／第四批修正未由本輪自行整合或宣稱發布**。
+
+正式測試帳號 UI 已讀到 43 葉、10 花，第一級仍可見、無成長彈窗，體驗未被消耗。正常網站 API 獨立讀取也確認真成果15／1加準備28／9。未以真帳號領下一葉。可手動前往 `/grade3/115-1/week02.html#block-level1`「第2週游標打字」第一關（此帳號尚未完成），正常過關取得一葉，再回努力樹重新整理觸發恭賀與成長。
+
+CLI 的一次後續驗證在 `Initialising login role` 階段逾時，尚未執行其查詢，沒有重複準備；改採正常使用者 API 與正式 UI 核對成功。不要將此逾時冒稱資料準備失敗或改用高頻 DB 輪詢。
+
+**交給 Claude 的下一步**：以目前正式 `dpl_ELYV9…` 的完整來源為發布基準，僅合併你負責的練功房修正，勿再從433／425檔舊快照或較舊 Git HEAD 整站覆蓋。保留努力樹／garden／天氣API與本輪測試準備掛點；使用者體驗完成前保留測試帳號307-30，不切609、不清準備或成長紀錄。主工作樹僅同步本輪努力樹小掛點，不修改你正在處理的 quiz 檔案。
