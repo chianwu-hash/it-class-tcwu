@@ -1,3 +1,13 @@
+# 2026-10-30 已完成：六年級英語改 Unit 1、Unit 3
+
+- 使用者指定本次六年級英語考 Unit 1 和 Unit 3，老師卷、自組卷均已正式更新。分支 `codex/g6-english-u1-u3`，同一工作區基於 `dace148`；不重灌先前題庫／知識分類，不從 dirty 主專案部署。
+- 康軒 WW7 原始章節 **03=Review 1，04 才是 Unit 3 From Farm to Table**。從既有已驗 SHA 的完整原光碟另抽 04 共 170 原題，91 獨立單選逐題 metadata／Word 答案交叉核對；14 題解析引用位置排除，77 題正式加入，原 Unit 1 的 77 題不變。新題全部帶原知識點與 reliable 分類；原圖 39／原 MP3 37，沒有代寫題目或生成音檔。
+- 新老師 Unit 3 卷 10 題（2易6中2難、3聽力），session `6e6c4872-0388-4b35-80f7-fedfec2248db`，version `754a0d16-31e2-4a39-9d0a-ab93ae65ea92`，沿用603／604／609。Unit 1 原卷不動；Unit 2 77 題設 usable=false 且原老師卷 library_visible=false，course 選單單元僅1／3。原 Unit2 文件、答案與進度保留，原連結仍可 join／resume／回顧。
+- 新增 `quiz_sessions.library_visible` 預設true；`supabase/quiz-practice-visibility.sql` 只在現有 `quiz_library_sessions` 的 practice 清單加入可見性判定，未把 join/resume 權限綁在清單標記。不要以改 version_id 或清空 class_codes 取代已作答試卷。後續重跑舊 batch4 會覆蓋此條件，必須保留本次規則。
+- 圖片沿用私有 Drive＋Cloudflare，帳號核對、39新圖下載SHA通過；Worker保留即時原程式與7個bindings，以inherit增補allowlist5777→5816。39新圖＋1舊圖透過Worker下載SHA與未簽／過期／私有cache拒絕通過。37 MP3仍在Supabase私有bucket並下載SHA驗證。原1019個媒體登錄保持不變。
+- 本機／正式PG rollback皆通過36自組範圍難度題數組合、重試、Unit2拒絕、老師10題、11媒體引用驗權與既有Unit2 attempt resume；測試fixtures全部rollback。正式單交易apply後，再匯出驗原154列除Unit2 usable外不變、新77吻合、active154及老師1／3、兩份舊文件保留。無Auth／RLS／評分／葉片變更，無Vercel前端部署。
+- 已完成本人學校測試帳號Google OAuth，正式Chrome60930驗老師卷與composer各Unit1／3（各77題），390px無溢出、pageerror0；只讀清單／選單，未建作答。AI分身02已斷線、驗收頁自關、租約釋放，未接管01其他工作。詳細來源、流程與測試見 `docs/development/quiz-g6-english-u1-u3-20261030.md`，工具在 `automation/quiz-english-scope/`；所有題幹／答案／媒體／SQL／報告在ignored `automation/output/quiz/g6-english-u1-u3/`。
+
 # 2026-10-30 已完成：六年級四科學習重點接入正式題庫
 
 - 使用者要求補齊並核對六年級國語、英語、自然、社會學習重點，啟用錯題延伸。獨立分支 `codex/g6-extension-knowledge`，工作區仍 `C:/Users/user/.codex/worktrees/quiz-identity-sync/it-class-tcwu`，基於上次已推送 `6521b92`；只增本次分類清冊、工具、驗證與文件。

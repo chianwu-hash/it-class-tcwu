@@ -1,0 +1,32 @@
+import fs from 'node:fs/promises';import path from 'node:path';import assert from 'node:assert/strict';
+import {createQuizDb,quizCall,studentId} from '../lib/quiz-local-db.mjs';import {migration} from './migration.mjs';
+process.on('uncaughtException',e=>{console.error(e.message);process.exitCode=1;});
+const [out]=process.argv.slice(2),before=JSON.parse(await fs.readFile(path.join(out,'before.private.json'),'utf8')),bundle=JSON.parse(await fs.readFile(path.join(out,'bundle.private.json'),'utf8')),db=await createQuizDb(undefined,{batch4:true}),uid=studentId(1);
+const call=(name,args)=>db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');return (await tx.query(`select public.${name}($1) result`,[JSON.stringify(args)])).rows[0].result;});
+try{
+ for(const owner of new Set([before.owner,...before.media.map(a=>a.owner_id)]))await db.query('insert into auth.users(id,email,email_confirmed_at) values($1,$2,now()) on conflict do nothing',[owner,'fixture-'+owner+'@example.invalid']);
+ await db.query('insert into public.quiz_courses values($1,$2,$3,$4)',[before.course.id,6,JSON.stringify(before.course.definition),true]);
+ await db.query('insert into public.quiz_question_pool select question_id,source_item_id,group_key,unit_ids,knowledge_code,knowledge_name,difficulty,source_version,publisher_explanation,question,checks,usable from jsonb_to_recordset($1) as p(question_id text,source_item_id text,group_key text,unit_ids jsonb,knowledge_code text,knowledge_name text,difficulty int,source_version text,publisher_explanation boolean,question jsonb,checks jsonb,usable boolean)',[JSON.stringify(before.pool)]);
+ await db.query('insert into public.quiz_pool_membership select question_id,course_id,knowledge_reliable from jsonb_to_recordset($1) as p(question_id text,course_id text,knowledge_reliable boolean)',[JSON.stringify(before.pool)]);
+ await db.query('insert into public.quiz_media_assets select url,owner_id::uuid,object_path,mime,bytes from jsonb_to_recordset($1) as a(url text,owner_id text,object_path text,mime text,bytes int)',[JSON.stringify(before.media)]);
+ for(const p of before.presets){await db.query('insert into public.quiz_banks(id,owner_id,draft) values($1,$2,$3)',[p.bank_id,p.session.owner_id,JSON.stringify(p.document)]);await db.query('insert into public.quiz_versions(id,bank_id,revision,document) values($1,$2,1,$3)',[p.version_id,p.bank_id,JSON.stringify(p.document)]);await db.query('insert into public.quiz_sessions select id,owner_id,version_id,school_year,class_codes,reveal,shuffle_questions,shuffle_options,access_mode,status,created_at from jsonb_to_record($1) as s(id uuid,owner_id uuid,version_id uuid,school_year int,class_codes jsonb,reveal text,shuffle_questions boolean,shuffle_options boolean,access_mode text,status text,created_at timestamptz)',[JSON.stringify(p.session)]);}
+ const old2=before.presets.find(p=>p.session.id===bundle.preset.retire_session_id),joined=await quizCall(db,uid,'join',{session_id:old2.session.id});
+ for(const q of old2.document.blocks.flatMap(b=>b.questions).slice(0,2))await quizCall(db,uid,'submit',{session_id:old2.session.id,question_id:q.id,response:q.options[0].id,request_id:crypto.randomUUID()});
+ const oldProgress=await quizCall(db,uid,'resume',{session_id:old2.session.id});
+ // The batch4 test helper reinstalls old functions when their names appear even in a guard literal.
+ // Execute this later migration through PGlite's original method so the new visibility rule stays active.
+ await Object.getPrototypeOf(db).exec.call(db,await migration(before,bundle,{commit:true}));
+ const afterProgress=await quizCall(db,uid,'resume',{session_id:old2.session.id});assert.deepEqual(afterProgress,oldProgress);assert.equal((await quizCall(db,uid,'join',{session_id:old2.session.id})).attempt_id,joined.attempt_id);
+ const library=await call('quiz_library_sessions',{});assert(!library.sessions.some(p=>p.id===old2.session.id));assert(library.sessions.some(p=>p.id===bundle.preset.session_id));assert(library.sessions.some(p=>p.catalog.unit===bundle.scope.units[1]));
+ const catalog=await db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);return (await tx.query('select public.quiz_pool_catalog() result')).rows[0].result;});const course=catalog.courses.find(c=>c.id===bundle.scope.course_id);assert.deepEqual(course.units.map(u=>u.id),[1,3]);
+ await assert.rejects(call('quiz_compose',{kind:'self',course_id:course.id,units:[2],count:10,difficulty:'medium',request_id:crypto.randomUUID()}),/invalid_request/);
+ const pool=[...before.pool,...bundle.pool],teacher=await quizCall(db,uid,'join',{session_id:bundle.preset.session_id});assert.equal(teacher.document.questions.length,10);
+ let normal=0;for(const units of [[1],[3],[1,3]])for(const difficulty of ['easy','medium','hard'])for(const count of [5,10,15,20]){
+  const args={kind:'self',course_id:course.id,units,count,difficulty,request_id:crypto.randomUUID()},p=await call('quiz_compose',args),retry=await call('quiz_compose',args);assert.equal(p.session_id,retry.session_id);
+  const q=(await quizCall(db,uid,'join',{session_id:p.session_id})).document.questions.map(q=>pool.find(p=>p.question_id===q.id));assert.equal(q.length,p.distribution.actual);assert(q.every(p=>p.unit_ids.some(u=>units.includes(u))&&!p.unit_ids.includes(2)));if(difficulty==='easy')assert(q.every(p=>p.difficulty!==3));if(difficulty==='hard')assert(q.every(p=>p.difficulty!==-3));normal++;
+ }
+ const source=bundle.preset.document.blocks[0].questions[0];await quizCall(db,uid,'submit',{session_id:bundle.preset.session_id,question_id:source.id,response:source.options.find(o=>o.id!==source.answer.option_id).id,request_id:crypto.randomUUID()});
+ const detail=await call('quiz_wrong_questions',{action:'detail',attempt_id:teacher.attempt_id,question_id:source.id});assert.equal(detail.can_extend,true);
+ const ext=await call('quiz_compose',{kind:'extension',count:3,attempt_id:teacher.attempt_id,question_id:source.id,request_id:crypto.randomUUID()});assert(ext.session_id);
+ const result={passed:true,teacherUnit1Preserved:true,teacherUnit3TenQuestions:true,oldUnit2Hidden:true,oldUnit2AttemptAndAnswersPreserved:true,composerUnits:[1,3],unit2ComposeRejected:true,selfComposeScenarios:normal,unit3WrongExtension:true};await fs.writeFile(path.join(out,'local-verified.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result));
+}finally{await db.close();}

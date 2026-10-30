@@ -1,0 +1,16 @@
+{
+  "course_id": "115-1-kang-g6-en",
+  "school_year": 115,
+  "grade": 6,
+  "units": {"1": "Unit 1 Whale Watching", "3": "Unit 3 From Farm to Table"},
+  "publisher_chapters": {"1": "01", "3": "04"},
+  "excluded_publisher_chapter": {"03": "Review 1"},
+  "knowledge_labels": {
+    "EWW011800000000": "餐點與食物詞彙的聽讀辨識",
+    "EWW022001000000": "想吃的食物與 would like 句意理解",
+    "EWW022002000000": "What would you like to eat 問答",
+    "EWW042600000000": "oi／oy 的母音發音辨識",
+    "EWW042400000000": "er／ir／ur 的母音發音辨識",
+    "EWW041500000000": "長母音 /eɪ/ 的發音辨識"
+  }
+}
