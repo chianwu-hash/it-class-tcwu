@@ -1,5 +1,6 @@
 import { createAuthenticatedTransport } from './quiz-transport.mjs?v=20261029-batch4';
 import { configureQuizMedia, createMediaScope } from './quiz-media.mjs?v=20261029-load-batch1';
+import { testIdentityRevision } from './test-identity-state.mjs?v=20261030-identity-sync';
 const errors = {
   paper_name_choice_invalid: '這個主題或角色目前無法使用，請更新後重新選擇。',
   paper_name_locked: '試卷由系統自動命名，不能自行修改名稱。',
@@ -13,6 +14,7 @@ const errors = {
   revision_changed: '草稿已更新，請重新開啟後再固定版本。', bank_unavailable: '無法開啟這份題庫。',
   login_required: '請先登入學校帳號。', teacher_required: '只有教師可以操作。', student_required: '請使用學生帳號加入。',
   roster_required: '這個帳號不在本場次的班級名冊中，請老師確認。', session_unavailable: '找不到這個場次，請確認加入連結。',
+  identity_changed: '測試身分已切換，請等候重新確認年級與進度。',
   wrong_question_unavailable: '目前無法查看這題錯題，請更新紀錄後重試。', invalid_request: '資料格式不符，請更新後重試。',
   attempt_unavailable: '場次已結束或尚未加入，請老師確認。', session_closed: '老師已結束場次，這次答案尚未送出。',
   session_busy: '目前仍有答案正在儲存，請稍候再結束場次。',
@@ -60,10 +62,14 @@ export async function createQuizRequest({ getSession, localStudent = null, local
       return result;
     }
     if (READS.has(action) && Date.now() < busyUntil) throw busyError(false);
+    const userId = getSession?.()?.user?.id;
+    const identityRevision = testIdentityRevision(userId);
     try {
       const specialized = {monitor:'quiz_monitor',library_sessions:'quiz_library_sessions',version_list:'quiz_version_browser',version_get:'quiz_version_browser',entry_context:'quiz_entry_context',rewards:'quiz_rewards',wrong_questions:'quiz_wrong_questions',compose:'quiz_compose',rename_paper:'quiz_rename_paper',delete_paper:'quiz_delete_paper',pool_catalog:'quiz_pool_catalog'}[action];
       const result = await transport(action === 'publish' ? '/functions/v1/quiz-media' : specialized ? '/rest/v1/rpc/'+specialized : '/rest/v1/rpc/quiz_action',
         action === 'publish' ? { action: 'freeze', data } : action === 'pool_catalog' ? {} : specialized ? { p_data: action==='version_list'||action==='version_get'?{...data,action:action==='version_get'?'get':'list'}:data } : { p_action: action, p_data: data });
+      if (testIdentityRevision(userId) !== identityRevision)
+        throw Object.assign(new Error(quizError('identity_changed')), {code:'identity_changed'});
       if (result.attempt_id) attemptId = result.attempt_id;
       if(result.warning){const e=new Error(quizError(result.warning));e.code=result.warning;e.retryAfter=result.retry_after;throw e;}
       return result;
@@ -72,7 +78,11 @@ export async function createQuizRequest({ getSession, localStudent = null, local
       if (e.code) e.message = quizError(e.code); throw e;
     }
   };
-  request.createMediaScope = (context, options={}) => createMediaScope({context,read:readMedia,
-    valid:()=>local || getSession?.()?.user?.id===context.user_id,...options});
+  request.createMediaScope = (context, options={}) => {
+    const revision = testIdentityRevision(context.user_id);
+    const {valid=()=>true,...rest}=options;
+    return createMediaScope({context,read:readMedia,...rest,
+      valid:()=>valid() && (local || (getSession?.()?.user?.id===context.user_id && testIdentityRevision(context.user_id)===revision))});
+  };
   return request;
 }

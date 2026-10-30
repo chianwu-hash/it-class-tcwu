@@ -1,3 +1,11 @@
+# 2026-10-30 已完成：測試身分切換與自組卷同步
+
+- 使用者要求先修「切換身分後，自組卷頁面仍顯示另一個身分」。原因為同一 Google user ID 切換 30730／60930 時，舊分頁的 auth 快路徑、導覽名冊與組卷目錄沒有失效。舊版 Chrome 合成流程已重現；正式 DB 同帳號 3→6→3 交易驗證正常並 rollback。
+- 獨立工作區 `C:/Users/user/.codex/worktrees/quiz-identity-sync/it-class-tcwu`，分支 `codex/quiz-identity-sync`，基於最新 `2dedd5d`；不混入前次注音提交或主工作區其他修改。變更包含身分修訂碼通知、頁面重新驗證／清除舊目錄、隔離延遲回應與媒體、切換結果核對及必要版本字串。未改 auth.js／SQL／RLS／學生作答。
+- 正式已 promote `dpl_BbRiddNNbQD1YrrPaPewqWSdxSnh`，前版 `dpl_TXYUw4KvyECaqRzrgSZCkrJAErLv`。先核對前版 254 公開檔，再從其完整凍結包僅覆蓋 15 個執行檔；候選 15 檔 SHA 通過。正式來源隔離 Chrome 的雙向切換、延遲回應、組卷與卡片、BFCache、切換失敗、focus／TOKEN_REFRESHED、390px 全通過，pageerror 0。Auth／RPC 為合成替身，正式 SQL 另以 rollback 探測，不冒稱本人 OAuth 實答。
+- 10 項 Node 回歸通過。可重跑 `automation/tests/quiz-identity-switch-browser.cjs`；須經 shared browser lease 與 `run-background.cjs`，傳入兩個預建精確 target，允許 parent tab 初始化，避免背景 rAF 節流及轉頁過早讀 DOM。
+- 更新前已載入舊程式的分頁需重新整理一次。詳 `docs/development/quiz-identity-sync-20261030.md`；發布、SHA、Chrome 報告保存在 ignored `automation/output/quiz/identity-sync/`。後續部署仍不得從舊 dirty 主專案整包覆蓋。
+
 # 2026-10-30 已完成：113／114上學期期中考20卷開放
 
 - 使用者最新指示取代下方舊範圍：三、六年級，只開113-1／114-1 exam1共20卷；已完成114-1 exam2共10卷列「未開放區」，保留所有版本／歷次／葉片。先前沒有處理下學期。
