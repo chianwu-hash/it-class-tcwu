@@ -1,3 +1,4 @@
+import {afterGardenReward} from './garden-unlock-notice.mjs';
 import {
     getSession,
     getStoredAccessToken,
@@ -1000,6 +1001,7 @@ export function initTypingChallenge({
         }
 
         if (!error) {
+            afterGardenReward(resolvedCourseId);
             clearProgressDebug();
             highestUnlockedLevel = Math.max(highestUnlockedLevel, nextLevel);
             if (progressStatusEl) {

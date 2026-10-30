@@ -1,3 +1,4 @@
+import {afterGardenReward} from './garden-unlock-notice.mjs';
 import { renderContent as renderQuizContent } from './quiz-render.mjs?v=20261029-load-batch1';
 import { mergeQuizSnapshot } from './quiz-state.mjs';
 import {createQuestionReport} from './quiz-question-reports.mjs';
@@ -777,7 +778,7 @@ export function initServerQuiz({ selectors, server }) {
       // 只在送答成功、後端允許揭答後播放；回看、重整與整卷檢視不反覆播放。
       feedbackAnimation = next.reviews.some(r => r.question_id === q.id) ? q.id : null;
       state = next; pending = null; busy = false; render(); say('答案已儲存。');
-      if(next.leaf?.earned_now)celebrateQuizLeaf();
+      if(next.leaf?.earned_now){celebrateQuizLeaf();afterGardenReward();}
       root.querySelector('.answer-preview')?.focus({preventScroll:true});
       if(root.classList.contains('quiz-workspace-active')&&!root.classList.contains('workspace-desktop'))root.querySelector('.answer-preview')?.scrollIntoView({block:'start',behavior:'instant'});
     } catch (e) { if (generation === token) { busy = false;

@@ -1,3 +1,4 @@
+import {checkGardenUnlock} from './garden-unlock-notice.mjs';
 import {createTreeSkinChooser} from './garden-tree-skin.mjs';
 // This module never awards progress. Server-owned milestones are cosmetic only.
 export function createGardenUpgrade({supabase,getSession,stage,onSelect}){
@@ -33,7 +34,7 @@ export function createGardenUpgrade({supabase,getSession,stage,onSelect}){
   try{const data=await rpc(c);if(captured!==version||uid!==getSession()?.user?.id||data?.level!==2)return;
    // Refuse an inconsistent source snapshot rather than drawing unearned rewards.
    if(!Array.isArray(data.order)||!Array.isArray(data.baseline))throw Error('invalid_state');
-   state=data;model=m;course=c;root.hidden=false;stage.hidden=true;
+   state=data;model=m;course=c;checkGardenUnlock(getSession(),c);root.hidden=false;stage.hidden=true;
    status.textContent='第二級努力樹・記錄你一路學習與練習的足跡。';
    frame=document.createElement('iframe');frame.title='我的第二級努力樹';frame.src='/garden/stage.html?v=20261030-release';$('[data-scene]').replaceChildren(frame);void skin.load();send();list();
    if(!data.seen)replay();

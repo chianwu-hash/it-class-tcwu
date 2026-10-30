@@ -1,3 +1,4 @@
+import {afterGardenReward} from './garden-unlock-notice.mjs';
 import { SUPABASE_URL, SUPABASE_ANON_KEY, getStoredAccessToken } from './auth.js';
 
 export function createFoundationProgress({courseId, lessonKey='english-home-row-v1', getSession = () => null, fetchImpl = fetch}) {
@@ -26,7 +27,7 @@ export function createFoundationProgress({courseId, lessonKey='english-home-row-
         if (body.message?.includes('course_identity_required')) throw new Error('目前帳號尚未通過三年級本人身分確認；請確認使用自己的三年級學校 Google 帳號，回課程首頁接回舊成果。');
         throw new Error(`基礎練習連線失敗（${response.status}），請確認身分與資料庫設定後重試。`);
       }
-      return await response.json();
+      const result=await response.json();if(action==='save'&&result.completed)afterGardenReward(courseId);return result;
     } finally { clearTimeout(timeout); }
   }
   return {
