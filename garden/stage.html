@@ -144,7 +144,7 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
   var POSES = {"sit":{"base":"./assets/processed/social-v10/","frames":["sit-0.webp"],"visibleBoxes":[[92,107,386,460]],"size":[560,500],"anchor":[280,460],"medianVisibleH":360},"front":{"base":"./assets/processed/social-v10/","frames":["front-0.webp","front-1.webp","front-2.webp","front-3.webp"],"visibleBoxes":[[2,105,450,460],[98,109,381,460],[56,103,392,460],[89,112,386,460]],"size":[560,500],"anchor":[280,460],"medianVisibleH":360},"wave":{"base":"./assets/processed/social-v10/","frames":["wave-0.webp","wave-1.webp","wave-2.webp","wave-3.webp"],"visibleBoxes":[[84,105,391,460],[86,105,392,460],[84,104,403,460],[88,102,428,460]],"size":[560,500],"anchor":[280,460],"medianVisibleH":360},"rear":{"base":"./assets/processed/social-v10/","frames":["rear-0.webp","rear-1.webp","rear-2.webp","rear-3.webp"],"visibleBoxes":[[67,107,470,460],[79,94,467,460],[76,84,466,460],[68,72,464,460]],"size":[560,500],"anchor":[280,460],"medianVisibleH":360}}; POSES.walk = CAT; POSES.peek={"base":"./assets/processed/peek-v11/","frames":["peek-0.webp"],"size":[560,500],"anchor":[280,460],"medianVisibleH":360,"visibleBoxes":[[111,92,415,460]]};
   var PEEK_PLACEMENTS={"a":{"0.2":{"x":582,"y":713.3},"0.24":{"x":565,"y":713.3},"0.28":{"x":551,"y":713.3}},"b":{"0.2":{"x":586,"y":713.3},"0.24":{"x":568,"y":713.3},"0.28":{"x":558,"y":713.3}}};
   function catSpec(st) { return POSES[st.spriteGroup || 'walk']; }
-  var FULL_LAYOUT = null, fullEnabled = true, earnedLeaves=[], earnedFlowers=[], petUnlocked=false;
+  var FULL_LAYOUT = null, fullEnabled = true, earnedLeaves=[], earnedFlowers=[], pendingLeaves=[], pendingFlowers=[], petUnlocked=false;
   var TREE_VIS_H = 600, ROOT_Y = 690, CENTER_X = 380;
   function treeLayout(file, size, box) {
     var s = TREE_VIS_H / (box[3] - box[1]);
@@ -370,6 +370,15 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
     contactShadow(root.x, root.y, root.rx * .88, 6, sh[1]);
     function drawRewards() {
       if (!fullEnabled || !FULL_LAYOUT) return;
+      function ghost(p,flower){
+        ctx.save();ctx.translate(p.x,p.y);if(!flower){ctx.rotate(p.angle);ctx.scale(.85,.85)}
+        ctx.strokeStyle=flower?(localNight?'#f4cfe6':'#a35b87'):(localNight?'#c2e4d8':'#42715e');ctx.globalAlpha=.82;ctx.lineWidth=1.5;ctx.setLineDash([3,3]);ctx.beginPath();
+        if(flower){for(var j=0;j<=60;j++){var a=j*Math.PI/30,r=14+3*Math.cos(5*a);var x=Math.cos(a)*r,y=Math.sin(a)*r;if(j)ctx.lineTo(x,y);else ctx.moveTo(x,y)}ctx.closePath()}
+        else{ctx.moveTo(-14,0);ctx.bezierCurveTo(-5,-12,10,-10,14,0);ctx.bezierCurveTo(6,11,-5,10,-14,0);ctx.closePath()}
+        ctx.stroke();ctx.restore();
+      }
+      pendingLeaves.forEach(function(r,i){var p=FULL_LAYOUT[tree].leaves[earnedLeaves.length+i];if(p)ghost(p,false)});
+      pendingFlowers.forEach(function(r,i){var p=FULL_LAYOUT[tree].flowers[earnedFlowers.length+i];if(p)ghost(p,true)});
       FULL_LAYOUT[tree].leaves.forEach(function (p,i) {
         if(!earnedLeaves[i])return;var reward=earnedLeaves[i];p=Object.assign({},p,{kind:reward.kind==='quiz-leaf'?'quiz':'leaf'});
         ctx.save(); ctx.strokeStyle = p.kind === 'quiz' ? '#358a88' : '#4b7941'; ctx.lineWidth = 1.1;
@@ -687,13 +696,13 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
   }
   document.addEventListener('visibilitychange',function(){if(document.hidden&&finishSkinTransition)finishSkinTransition()});
   var api = {
-    configure:function(data){earnedLeaves=Array.isArray(data.leaves)?data.leaves.slice(0,96):[];earnedFlowers=Array.isArray(data.flowers)?data.flowers.slice(0,24):[];petUnlocked=data.petUnlocked===true;setFlowerPalette(data.flowerStyle);if(TREES[data.treeSkin]&&data.treeSkin!==tree)setTree(data.treeSkin);draw();return api.snapshot();},
+    configure:function(data){earnedLeaves=Array.isArray(data.leaves)?data.leaves.slice(0,96):[];earnedFlowers=Array.isArray(data.flowers)?data.flowers.slice(0,24):[];pendingLeaves=Array.isArray(data.pendingLeaves)?data.pendingLeaves.slice(0,8):[];pendingFlowers=Array.isArray(data.pendingFlowers)?data.pendingFlowers.slice(0,2):[];petUnlocked=data.petUnlocked===true;setFlowerPalette(data.flowerStyle);if(TREES[data.treeSkin]&&data.treeSkin!==tree)setTree(data.treeSkin);draw();return api.snapshot();},
     snapshot: function () {
       var st = G.stateAt(plan, clock.t), pose = shelter.ready && shelter.ctrl ? shelter.ctrl.pose() : null, r = pose ? poseRect(pose) : catRect(st), TR = TREES[tree];
       var sp = shelter.ready && shelter.ctrl ? shelter.ctrl.snapshot() : null, vis = r.vis || null;
       if (!vis && !pose) { var C = catSpec(st), vb = C.visibleBoxes ? C.visibleBoxes[st.spriteIndex] : null; if (vb) vis = [r.x + vb[0] * r.k, r.y + vb[1] * r.k, (vb[2] - vb[0]) * r.k, (vb[3] - vb[1]) * r.k]; }
       return {
-        background: 'shelter-v21', ready: load.ready, error: load.error, errors: errors.slice(), time: Math.round(clock.t), playing: clock.playing, hidden: document.hidden,
+        pending:{leaves:Math.min(pendingLeaves.length,96-earnedLeaves.length),flowers:Math.min(pendingFlowers.length,24-earnedFlowers.length)},background: 'shelter-v21', ready: load.ready, error: load.error, errors: errors.slice(), time: Math.round(clock.t), playing: clock.playing, hidden: document.hidden,
         cabinVisible: !!(petUnlocked && shelter.ready && shelter.geo && (isWet(theme) || (shelter.ctrl.snapshot().phase !== 'normal' && shelter.ctrl.snapshot().phase !== 'waitSafe'))),
         reduced: reduceBox.checked, slow: slowBox.checked, seed: seed, tree: tree, theme: theme, isDay: !localNight, ratio: ratio, full: fullEnabled,
         counts: fullEnabled && FULL_LAYOUT ? { leaves: earnedLeaves.filter(Boolean).length, flowers: earnedFlowers.filter(Boolean).length } : { leaves: 0, flowers: 0 },
@@ -719,7 +728,8 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
   window.addEventListener('message',function(e){if(e.origin!==location.origin||e.source!==parent||e.data?.type!=='garden-state')return;api.configure(e.data);});
   canvas.addEventListener('click',function(e){if(!FULL_LAYOUT||finishSkinTransition)return;var b=canvas.getBoundingClientRect(),x=((e.clientX-b.left)/cssScale+view.cam-480)/1.16+380,y=((e.clientY-b.top)/cssScale-725)/1.16+690,best=null,distance=28;
     [['leaves',earnedLeaves],['flowers',earnedFlowers]].forEach(function(pair){FULL_LAYOUT[tree][pair[0]].forEach(function(p,i){if(!pair[1][i])return;var d=Math.hypot(p.x-x,p.y-y);if(d<distance){distance=d;best=pair[1][i];}});});
-    if(best){pause();parent.postMessage({type:'garden-select',id:best.id},location.origin);}
+    var pendingHit=false;distance=Math.min(distance,20);[['leaves',pendingLeaves,earnedLeaves.length],['flowers',pendingFlowers,earnedFlowers.length]].forEach(function(pair){pair[1].forEach(function(r,i){var p=FULL_LAYOUT[tree][pair[0]][pair[2]+i];if(!p)return;var d=Math.hypot(p.x-x,p.y-y);if(d<distance){distance=d;best=r;pendingHit=true}})});
+    if(best){pause();parent.postMessage({type:pendingHit?'garden-pending':'garden-select',id:best.id},location.origin);}
   });
   parent.postMessage({type:'garden-ready'},location.origin);
   new ResizeObserver(function(){parent.postMessage({type:'garden-height',height:Math.ceil(document.body.getBoundingClientRect().height+12)},location.origin);}).observe(document.body);

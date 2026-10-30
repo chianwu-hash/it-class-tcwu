@@ -1,3 +1,8 @@
+# 2026-10-30 第二級虛線花葉恢復（Codex已上線）
+
+- 接回真pendingLeaves／pendingFlowers，最多8虛線葉2虛線花、兩樹型日夜描邊，點選回真實站內練習，另有鍵盤可用的收合連結清單。只在最後分區空槽呈現，滿槽不疊、不算新成果。55葉10花不變、未代闖關，30730解鎖前一步仍保留。
+- 最新正式 `dpl_J9cLJUUCH6GeoGqC7dj47jNFajzC`，以CgFN完整539來源為底，僅stage及effort-garden-v2.mjs修改，537其他檔UID保持；A/B日夜、點選ID、390px、滿槽通過，無DB變更。詳 [虛線花葉紀錄](effort-tree-ghost-rewards-20261030.md)。後續仍以當下正式完整來源發布。
+
 # 2026-10-30 跨闖關解鎖慶祝上線、測試帳號留最後一步（Codex）
 
 - 30730已準備升級後11葉0花、總55葉10花，下一片新完整葉解鎖貓＋屋。只將獨立test setup葉28→38，真進度／quiz awards／成長baseline不變、pet尚未解鎖、pending為null。不要替使用者完成下一關或重設成長。
