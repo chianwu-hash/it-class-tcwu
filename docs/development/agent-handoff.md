@@ -1,5 +1,7 @@
 # 2026-10-30 已完成：113／114上學期期中考20卷開放
 
+- 教師要求逐題審閱有疑義／暫停題；已產生ignored `automation/output/past-exams-review-20261030/考古題疑義審閱.html`，來源鎖本次20卷已發布SHA。98暫停欄＝84缺原音（A01–A04四卷）＋14其他（P01–P14）；另22其他內容／配分覆核卡、12組官方留白／部分參考卡、20卷完整歷程。151原頁、原檔／轉檔PDF與SHA附齊；原題與官方raw分列，可篩選、原頁旋轉／放大、填確認並匯出Markdown／JSON。教師回覆之前不修改正式題目。舊歷程「曾blocked」不等於現行停用，以document.blocked為準；manual缺參考不等於暫停。輸入只存當頁記憶體，匯出檔或教師對話回覆才是確認依據，勿當已核准。
+
 - 使用者最新指示取代下方舊範圍：三、六年級，只開113-1／114-1 exam1共20卷；已完成114-1 exam2共10卷列「未開放區」，保留所有版本／歷次／葉片。先前沒有處理下學期。
 - 新證據目錄 `automation/output/past-exams-midterms`，原114批次驗收證據不覆寫。`automation/past-exams-midterm-scope.py`已驗40來源檔、20期中配對，渲染113期中10卷。
 - 目錄未開放區已部署`dpl_TXYUw4KvyECaqRzrgSZCkrJAErLv`；正式114期中10開、期末10停。後端list可回同年級enabled旗標的安全metadata；start／resume／submit／media停用檢查保留。254正式靜態SHA及本機／候選驗證bytes／正式目錄6組皆通過。
