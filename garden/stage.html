@@ -550,7 +550,7 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
     sync(); draw(); updateStatus(true); return theme;
   }
   function setRatio(r) { r = +r; if ([0.2, 0.24, 0.28].indexOf(r) >= 0) { ratio = r; if (shelter.ready) setupShelter(); rebuildShelter(); sync(); draw(); } return ratio; }
-  function setReduce(v) { reduceBox.checked = !!v; if (reduceBox.checked) { cancelThunder(); pause(); } rebuildShelter(); sync(); draw(); updateStatus(true); return reduceBox.checked; }
+  function setReduce(v) { if(v&&finishSkinTransition)finishSkinTransition(); reduceBox.checked = !!v; if (reduceBox.checked) { cancelThunder(); pause(); } rebuildShelter(); sync(); draw(); updateStatus(true); return reduceBox.checked; }
   function setSlow(v) { slowBox.checked = !!v; updateStatus(true); return slowBox.checked; }
   function nextSeed() { return String(G.v9.core._internal.hashSeed(seed + '/next') % 100000); }
   function setFull(value) { fullEnabled = !!value; $('full').setAttribute('aria-pressed', String(fullEnabled)); $('empty').setAttribute('aria-pressed', String(!fullEnabled)); $('capacity').textContent = fullEnabled ? '64片一般葉＋32片測驗葉＝96片葉；24朵花' : '空枝對照：0片葉・0朵花'; draw(); }
@@ -636,7 +636,7 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
   try { setSeed(seed); } catch (e) { addError('路線：' + e.message); setSeed('101'); }
   fit();
   Promise.all(waits).then(function () { return shelterWait; }).then(function () {
-    load.ready = true; setFull(params.get('full') !== '0');
+    load.ready = true; parent.postMessage({type:'garden-scene-ready'},location.origin); setFull(params.get('full') !== '0');
     rebuildShelter('sleep');  // 初載大雨／雷雨：直接屋內睡覺
     sync(); fit(); updateStatus(true); if (!reduceBox.checked) play();
   }).catch(function (e) {
@@ -667,8 +667,27 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
     };
     candidate.src = '/assets/reward-tree/flowers/flower-' + style + '.png';
   }
+  var finishSkinTransition = null;
+  function changeTreeSkin(k) {
+    if (!TREES[k] || k === tree) return Promise.resolve(tree);
+    if (finishSkinTransition) finishSkinTransition();
+    if (!load.ready || reduceBox.checked || document.hidden || !canvas.animate) return Promise.resolve(setTree(k));
+    var old = document.createElement('canvas'); old.width=canvas.width; old.height=canvas.height;
+    old.getContext('2d').drawImage(canvas,0,0);old.setAttribute('aria-hidden','true');
+    old.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1';
+    var glow=document.createElement('div');glow.setAttribute('aria-hidden','true');
+    glow.style.cssText='position:absolute;inset:0;border-radius:12px;pointer-events:none;z-index:2;background:radial-gradient(ellipse at 50% 60%,#fff7bdcc,transparent 70%)';
+    wrap.style.position='relative';wrap.append(old,glow);setTree(k);
+    var options={duration:1150,easing:'cubic-bezier(.22,.68,.2,1)',fill:'both'};
+    var animations=[old.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(1.035)'}],options),canvas.animate([{opacity:0,transform:'translateY(10px) scale(.96)'},{opacity:1,transform:'translateY(0) scale(1)'}],options),glow.animate([{opacity:0},{opacity:1,offset:.45},{opacity:0}],options)];
+    return new Promise(function(resolve){
+      var done=false;function finish(){if(done)return;done=true;animations.forEach(function(a){a.cancel()});old.remove();glow.remove();finishSkinTransition=null;resolve(tree)}
+      finishSkinTransition=finish;Promise.all(animations.map(function(a){return a.finished.catch(function(){})})).then(finish);
+    });
+  }
+  document.addEventListener('visibilitychange',function(){if(document.hidden&&finishSkinTransition)finishSkinTransition()});
   var api = {
-    configure:function(data){earnedLeaves=Array.isArray(data.leaves)?data.leaves.slice(0,96):[];earnedFlowers=Array.isArray(data.flowers)?data.flowers.slice(0,24):[];petUnlocked=data.petUnlocked===true;setFlowerPalette(data.flowerStyle);draw();return api.snapshot();},
+    configure:function(data){earnedLeaves=Array.isArray(data.leaves)?data.leaves.slice(0,96):[];earnedFlowers=Array.isArray(data.flowers)?data.flowers.slice(0,24):[];petUnlocked=data.petUnlocked===true;setFlowerPalette(data.flowerStyle);if(TREES[data.treeSkin]&&data.treeSkin!==tree)setTree(data.treeSkin);draw();return api.snapshot();},
     snapshot: function () {
       var st = G.stateAt(plan, clock.t), pose = shelter.ready && shelter.ctrl ? shelter.ctrl.pose() : null, r = pose ? poseRect(pose) : catRect(st), TR = TREES[tree];
       var sp = shelter.ready && shelter.ctrl ? shelter.ctrl.snapshot() : null, vis = r.vis || null;
@@ -691,14 +710,14 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
         total: plan.totalMs };
     },
     seek: seek, play: play, pause: pause, setSeed: function (s) { setSeed(s); return seed; },
-    setAtmosphere: function(scene,isDay) { localNight = !isDay; return setTheme(scene === 'day' ? (isDay ? 'day' : 'night') : scene); }, setTree: setTree, setTheme: setTheme, setWeather: setTheme, setRatio: setRatio, setFull: setFull, setReduce: setReduce, showAction: showAction,
+    setAtmosphere: function(scene,isDay) { localNight = !isDay; return setTheme(scene === 'day' ? (isDay ? 'day' : 'night') : scene); }, changeTreeSkin: changeTreeSkin, setTree: setTree, setTheme: setTheme, setWeather: setTheme, setRatio: setRatio, setFull: setFull, setReduce: setReduce, showAction: showAction,
     demo: demo, stepFrame: stepFrame, setSlow: setSlow, frameSequences: function () { return JSON.parse(JSON.stringify(FRAME_SEQS)); },
     triggerLightning: testLightning, setAutoLightning: function (v) { autoBox.checked = !!v; if (!v) cancelThunder(); return autoBox.checked; },
     audioState: function () { return audio.state(); }, segments: function () { return plan.segments; }, planSummary: function () { return G.summarize(plan); }
   };
   window.__gardenShelterV21 = api;
   window.addEventListener('message',function(e){if(e.origin!==location.origin||e.source!==parent||e.data?.type!=='garden-state')return;api.configure(e.data);});
-  canvas.addEventListener('click',function(e){if(!FULL_LAYOUT)return;var b=canvas.getBoundingClientRect(),x=((e.clientX-b.left)/cssScale+view.cam-480)/1.16+380,y=((e.clientY-b.top)/cssScale-725)/1.16+690,best=null,distance=28;
+  canvas.addEventListener('click',function(e){if(!FULL_LAYOUT||finishSkinTransition)return;var b=canvas.getBoundingClientRect(),x=((e.clientX-b.left)/cssScale+view.cam-480)/1.16+380,y=((e.clientY-b.top)/cssScale-725)/1.16+690,best=null,distance=28;
     [['leaves',earnedLeaves],['flowers',earnedFlowers]].forEach(function(pair){FULL_LAYOUT[tree][pair[0]].forEach(function(p,i){if(!pair[1][i])return;var d=Math.hypot(p.x-x,p.y-y);if(d<distance){distance=d;best=pair[1][i];}});});
     if(best){pause();parent.postMessage({type:'garden-select',id:best.id},location.origin);}
   });

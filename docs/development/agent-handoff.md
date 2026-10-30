@@ -1,3 +1,8 @@
+# 2026-10-30 第二級樹型換裝已上線（Codex）
+
+- 樹下方新增第二級禮物「樹型外觀」，原A／B素材＋各自96葉24花掛點；約1.15秒暖光舒展換裝，減少動態直接切換。本人a/b選擇存Supabase新增garden_tree_skins／garden_tree_skin，需已確認名冊學生且有成長紀錄；RLS／匿名禁止直接讀寫。無獎勵、quiz_action、quiz_rewards、garden_growth修改，三者正式雜湊保持。
+- 本機權限SQL及1440／390／B葉來源／儲存失敗／減少動態／重新場景恢復B通過。正式30730重整B及45葉10花正常。正式 `dpl_2AHxbiKn7VCjJfHpBEquNH3hWQA9`，基於4BMs完整537來源，534個無關檔UID保留；下次仍需以當下正式快照發布。詳 [換裝紀錄](effort-tree-skins-20261030.md)。
+
 # 2026-10-30 努力樹優先版面已上線（Codex）
 
 - 使用者指定樹在所有說明／參數之前。外層scene置首、iframe內canvas置首，重播／成長說明、動畫控制與天氣都在樹下方。1440／390、45葉10花、重播開關、無JS錯誤通過；正式30730同樣確認，canvas top=0。
