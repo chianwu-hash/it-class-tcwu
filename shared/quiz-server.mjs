@@ -597,7 +597,8 @@ export function initServerQuiz({ selectors, server }) {
   const answered = q => Object.hasOwn(state?.responses || {}, q.id);
   const firstUnanswered = () => state.document.questions.findIndex(q => !answered(q));
   function stopAudio() { root.querySelectorAll('audio').forEach(a => a.pause()); }
-  function say(text, error = false) { const n = root.querySelector('[role="status"]'); if (n) { n.textContent = text; n.dataset.error = String(error); } }
+  // The workspace moves this status into its dock, after the question; a report form may hold another one.
+  function say(text, error = false) { const n = root.querySelector('.quiz-workspace-status [role="status"]') || root.querySelector('[role="status"]'); if (n) { n.textContent = text; n.dataset.error = String(error); } }
   function renderReview(article, q) {
     const review = state.reviews.find(r => r.question_id === q.id);
     if (!review) { article.append(make('p', '已儲存；正解與解析會在符合本場次揭答條件後顯示。', 'notice')); return; }
