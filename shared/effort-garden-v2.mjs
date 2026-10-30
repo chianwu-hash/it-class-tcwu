@@ -34,7 +34,7 @@ export function createGardenUpgrade({supabase,getSession,stage,onSelect}){
    // Refuse an inconsistent source snapshot rather than drawing unearned rewards.
    if(!Array.isArray(data.order)||!Array.isArray(data.baseline))throw Error('invalid_state');
    state=data;model=m;course=c;root.hidden=false;stage.hidden=true;
-   status.textContent=data.petUnlocked?'第二級努力樹・小貓與避雨小屋已解鎖。':'第二級努力樹・背景與天氣已開啟。升級後再累積 12 葉或 3 花，小貓與小屋就會一起來陪你。'+`（目前 ${data.newLeaves} 葉、${data.newFlowers} 花）`;
+   status.textContent='第二級努力樹・記錄你一路學習與練習的足跡。';
    frame=document.createElement('iframe');frame.title='我的第二級努力樹';frame.src='/garden/stage.html?v=20261030-release';$('[data-scene]').replaceChildren(frame);void skin.load();send();list();
    if(!data.seen)replay();
   }catch{if(captured!==version)return;root.hidden=false;status.textContent='成長狀態暫時無法同步，花葉仍保留。';const b=document.createElement('button');b.textContent='重新確認成長';b.type='button';b.onclick=()=>render(m,c);status.append(' ',b);root.querySelector('.garden-actions').hidden=true;}
