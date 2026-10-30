@@ -1,3 +1,9 @@
+# 2026-10-30 已完成：選項帶分數同行排版
+
+- 原題 `hanlin_g6_math_004cf065` 同段整數、分數為不同文字片段；`#server-quiz .student-option .preview-content{display:block}` 誤將內層片段排成區塊。限縮為 `.option-body > .preview-content`，內層恢復既有行內排版，無題庫／作答／分數變更。
+- 本機租約02 Chrome以真實原題重現舊缺陷，新樣式在320／390／640／1103／1280px驗證同行相鄰、無溢出，普通分數／整數／段落／表格保留。正式學校測試帳號同一題1280／390px通過，題目出錯回報按鈕保留、pageerror0；答案／回報0寫入，本次計時寫入已攔截。
+- 正式以最新回報功能部署 `dpl_6JH1WxD6iF9fdCMH9Vhmduq49wWC` 453來源SHA1核對後只疊加CSS及三／六年級答題頁快取版本共3檔。最終 `dpl_3K11Jh65ymHQqT1jpBmKdjYWtgE6` 已promote；353公開檔SHA256通過（3改、350保留），無SQL／Edge／Worker部署。詳見 `quiz-mixed-fraction-20261030.md`，證據在ignored `automation/output/quiz/mixed-fraction/`。
+
 # 2026-10-30 已完成：答題介面題目出錯回報
 
 - 學生在三／六年級一般卷、老師卷、自組卷、整卷回顧、我的錯題及考古題可按「題目出錯回報」，必填文字說明，伺服器自動附本人名冊、固定版本、題目與當時選項順序。前端不提交題幹／正解／身分快照，學生不能讀取回報或教師快照。

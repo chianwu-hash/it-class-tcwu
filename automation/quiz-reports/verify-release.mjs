@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';import path from 'node:path';import {createHash} from 'node:crypto';import {execFile} from 'node:child_process';import {promisify} from 'node:util';
-const run=promisify(execFile),out='automation/output/quiz/question-reports',origin=process.argv[2],live=process.argv[3]==='live';
+const run=promisify(execFile),out=process.argv[4]||'automation/output/quiz/question-reports',origin=process.argv[2],live=process.argv[3]==='live';
 if(!/^https:\/\/it-class-tcwu(?:-[a-z0-9]+-chianwu-4755s-projects)?\.vercel\.app$/.test(origin))throw Error('origin_not_allowed');
 const manifest=JSON.parse(await fs.readFile(out+'/manifest.json','utf8')),queue=[...manifest.changes],results=[];
 const hash=b=>createHash('sha256').update(b).digest('hex');
