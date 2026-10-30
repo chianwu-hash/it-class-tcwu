@@ -1,3 +1,10 @@
+# 2026-10-30 P04教師確認已套用：113六國語第14題②
+
+- 教師匯出「手寫為2」並明確授權驗證後上線，僅P04／`dingxi-113-1-g6-exam1-chinese`／`s4-q14`。原暫停欄恢復單選②、2分，其他題目不修改。新version`f92762ec-2a83-4378-b3e8-b647fab3b3b1`、SHA`b905765fa5b7fad2fa17563bf4b9f8bdb9a5cdec97a5911e7691f023a0f948b2`，舊版與教師確認／原頁／匯出SHA均保留。資料版本切換，不另部署前端，不改SQL／RLS／Edge。
+- 13相關回歸、正式介面＋合成auth／本機SQL的桌機與390／360、P04實選②得2分、重作葉0→1→1通過。真PG四選項0/2/0/0、舊版resume與跨版本八筆歷次一葉通過後rollback，九表摘要不變；register／activate交易亦驗九表，原34版本、quiz函式及其他29卷保留。
+- 此卷現無暫停欄，全體剩40＝27聽力＋13其他。教師繼續原審閱頁，原HTML／匯出檔不覆寫；P04已套用收據存`automation/output/past-exams-review-20261030/applied-decisions/`。後續舊快照同卷確認先比對逐題內容與來源SHA，轉接到最新版本，不能從舊bundle把P04蓋回去。證據`automation/output/past-exams-teacher-p04-20261030/`，詳[past-exam-teacher-p04-20261030.md](past-exam-teacher-p04-20261030.md)。不要重跑build／inspect／register。
+- 已坦白回覆教師：Claude參與前處理／轉錄，但未對剩餘疑義逐題做第二輪複核；P04採教師確認，未另問Claude。其他待確認題尚未取得新判定。
+
 # 2026-10-30 已完成：四份英語期中聽力製播與改版
 
 - 收尾正式alias已由其他第9週發布更新為`dpl_3Ab6ZKnw7M8oLkC8R6ikUAuG4GJL`／commit404ed65，本次12聽力runtime SHA逐檔仍一致。原255檔只7個其他課程／導覽／努力樹設定更新，保留，不回推Byg舊包；下次發布重新取得最新完整基底。
