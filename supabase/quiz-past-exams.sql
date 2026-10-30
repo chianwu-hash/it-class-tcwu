@@ -154,7 +154,7 @@ begin
  end if;
  if coalesce(public.is_teacher(),false) then raise exception 'student_required';end if;
  identity:=public.quiz_student_identity();if identity->>'role' is distinct from 'student' then raise exception 'roster_required';end if;
- if p_action='list' then return jsonb_build_object('identity',identity,'papers',coalesce((select jsonb_agg(jsonb_build_object('id',p.id,'title',p.title,'version',p.active_version,'grade',p.grade,'catalog',v.document->'catalog') order by p.id) from public.quiz_past_papers p join public.quiz_past_versions v on v.id=p.active_version and v.paper_id=p.id where p.enabled and p.grade=(identity->>'grade')::integer and p.school_year=115 and p.semester=1),'[]'));end if;
+ if p_action='list' then return jsonb_build_object('identity',identity,'papers',coalesce((select jsonb_agg(jsonb_build_object('id',p.id,'title',p.title,'version',p.active_version,'grade',p.grade,'enabled',p.enabled,'catalog',v.document->'catalog') order by p.id) from public.quiz_past_papers p join public.quiz_past_versions v on v.id=p.active_version and v.paper_id=p.id where p.grade=(identity->>'grade')::integer and p.school_year=115 and p.semester=1),'[]'));end if;
  select * into paper from public.quiz_past_papers where id=p_data->>'paper_id' for share;
  if paper.id is null or not paper.enabled or paper.grade<>(identity->>'grade')::integer or paper.school_year<>115 or paper.semester<>1 then raise exception 'paper_unavailable';end if;
  if p_action in('start','restart') then

@@ -1,4 +1,15 @@
-# 2026-10-30 114學年度考古題19份已正式開放
+# 2026-10-30 已完成：113／114上學期期中考20卷開放
+
+- 使用者最新指示取代下方舊範圍：三、六年級，只開113-1／114-1 exam1共20卷；已完成114-1 exam2共10卷列「未開放區」，保留所有版本／歷次／葉片。先前沒有處理下學期。
+- 新證據目錄 `automation/output/past-exams-midterms`，原114批次驗收證據不覆寫。`automation/past-exams-midterm-scope.py`已驗40來源檔、20期中配對，渲染113期中10卷。
+- 目錄未開放區已部署`dpl_TXYUw4KvyECaqRzrgSZCkrJAErLv`；正式114期中10開、期末10停。後端list可回同年級enabled旗標的安全metadata；start／resume／submit／media停用檢查保留。254正式靜態SHA及本機／候選驗證bytes／正式目錄6組皆通過。
+- 113十卷已逐頁獨立QC，329組488欄50暫停，84去重私有PNG逐張下載驗SHA；10卷先disabled註冊。桌機／390／360全部題組、重作與歷次葉0→1→1通過；真PG十卷各三次交易後rollback，9資料表摘要不變；73回歸及最後22專項皆過。11:18 gate後activate、11:20正式data驗證通過，各年級10開5未開放，共20開10未開放；原20個版本／provenance、私有表權限均保留，無合成auth資料。
+- 使用者已查看113六年級英語原卷，明確判定頁首「下學期」誤植，依官方目錄歸113上期中；原PDF／SHA保留，decision與issues記錄，不再是未決問題。六年級數學原印100、逐題101，明載差異、不改原配分；3個官方矛盾欄7分暫停。六年級自然第6題不同版暫停。
+- Claude唯讀packet `.chat-mode/midterm-review` HEAD `64bba1357ba04e7bee8783412ce516851b2fb60c`，00及02–09轉錄完成，三年級英語由Codex直接轉錄。Codex已獨立查看原頁／裁圖、修復共同材料與鄰格答案洩漏。各`reviewed.private.json`為最終來源，勿重跑一次性轉錄／QC腳本覆蓋修正。
+- 詳[本輪來源、驗證及發布紀錄](past-exams-midterms-20261030.md)；本機校對總覽`automation/output/past-exams-midterms/index.private.html`含私有答案。新cloud工具有inspect／visibility／upload／register／activate；不要重跑inspect覆蓋before或register重複insert。Supabase CLI臨時角色建立必須序列執行，並行曾造成password authentication failed，失敗證據保留。
+- 正式alias再次核對仍為TXY版本，沒有再從dirty主專案部署；本輪約69分鐘（10:11 scope至11:20正式驗證，不含前輪下載／轉檔）。自有4423／4424 server已停、測試頁自關、worker租約已釋放；其他對話租約不碰。`deactivate`僅停本次113十卷且保留所有紀錄。記憶沿用同一MEMKEY與id `d1491e03-ff0c-4c9a-b096-255e22b831b2`。
+
+# 2026-10-30 前次完成：114學年度考古題19份已正式開放
 
 - 使用者授權的114上三、六年級各10卷已完成；新增19卷，原三年級期中自然pilot保留。113未轉換、未發布。本次學習紀錄115上；完整單次自動分達60%首次一葉，重作與歷次保留，不合併多次答案，同卷同學期／跨內容版本不重領。
 - 正式deployment `dpl_7MN16pxfnz6SwNHFBQ6GUquYAwtf`，https://it-class-tcwu.vercel.app；三、六年級`grade{3,6}/115-1/quiz-library.html#past-exams`各10卷。教師原預覽頁現可選自己擁有的20卷。前版`dpl_4z2gMQ47cuazJ5bgVJeSpU9bR4B7`。

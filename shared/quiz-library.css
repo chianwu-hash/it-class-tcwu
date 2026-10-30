@@ -133,6 +133,10 @@
 .quiz-library-page .paper-card-body{padding:14px}
 .quiz-library-page .paper-source-label{margin-bottom:4px}
 .quiz-library-page .paper-adjustment{color:#8b4911}
+.quiz-library-page #past-unopened-section{margin-top:24px;border-top:2px solid var(--quiz-border);padding-top:16px}
+.quiz-library-page #past-unopened-section summary{cursor:pointer;min-height:44px;font-weight:700;font-size:20px;color:var(--quiz-primary-dark);padding:8px 0}
+.quiz-library-page #past-unopened-section>p{line-height:1.8}
+.quiz-library-page [data-availability="unopened"]{background:#f5f7f9;border-color:#c4d0d9}
 @media(max-width:850px){.quiz-library-page .paper-collection .papers{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:550px){
  .quiz-library-page .library-hero-inner{padding:14px 16px}

@@ -13,7 +13,10 @@ def build(pid,root,require_qc=False):
     if not draftpath.exists():draftpath=folder/'draft.private.json'
     draft=read(draftpath);sources=read(folder/'source-pages.private.json')['sources']
     pair=next(p for p in read(root/'inventory.private.json')['pairs'] if p['paperId']==pid)
-    assert draft['paperId']==pid and draft['sourceTotal']==100
+    assert draft['paperId']==pid and 0<draft['sourceTotal']<=200
+    printed_total=draft.get('sourcePrintedTotal',draft['sourceTotal'])
+    if printed_total!=draft['sourceTotal']:
+        assert draft.get('scoringIssue') and any(draft['scoringIssue'] in g.get('notice','') for g in draft['groups']),'原卷總分與逐題配分不同時須明載差異'
     for source in sources.values():
         assert digest(Path(source['original']))==source['originalSha256'],'原檔已變更'
         assert digest(Path(source['pdf']))==source['pdfSha256'],'轉檔已變更'
@@ -22,7 +25,7 @@ def build(pid,root,require_qc=False):
     assert len(ids)==len(set(ids)) and 0<len(fields)<=200 and 0<len(groups)<=100,'題號重複或數量超限'
     assert len({g['id'] for g in groups})==len(groups)
     bonus=draft.get('sourceBonusTotal',0)
-    assert abs(sum(f['points'] for f in fields)+sum(b['points'] for b in blocked)-100-bonus)<.001,'基本配分與加分合計不符'
+    assert abs(sum(f['points'] for f in fields)+sum(b['points'] for b in blocked)-draft['sourceTotal']-bonus)<.001,'基本配分與加分合計不符'
     assert sum(f['points'] for g in groups if g.get('optional') for f in g['fields'])==bonus,'選做加分配分不符'
     assert all(re.fullmatch(r'[A-Za-z0-9_-]{1,80}',v) for v in ids)
     for f in fields+blocked:
@@ -32,7 +35,7 @@ def build(pid,root,require_qc=False):
         if g['kind']=='code' and not g['choices'] and g['codes']:
             g['choices']=[{'id':code,'text':code,'assets':[]} for code in g['codes']]
         assert g['kind'] in ['single','short','mark','code','set','sequence','manual','annotation']
-        assert not re.search(r'同\s+s\d+-q|同上共同|同前共同',g['material']),'共同題幹仍為內部簡寫'
+        assert not re.search(r'同\s+s\d+-q|同上共同|同前共同|見\s+s\d+[a-z]?-q|同[一二三四五六七八九十、]*閱讀材料',g['material']),'共同題幹仍為內部簡寫'
         assert 1<=len(g['fields'])<=30
         if g['kind'] in ['single','manual','annotation','sequence']:assert len(g['fields'])==1
         if g['kind']=='manual':assert g['fields'][0].get('reference','').strip() and 'answer' not in g['fields'][0]
@@ -47,7 +50,12 @@ def build(pid,root,require_qc=False):
         source=sources[c['source']];assert 1<=c['page']<=len(source['pages'])
         doc=pymupdf.open(source['pdf']);page=doc[c['page']-1];box=pymupdf.Rect(c['bbox'])
         assert not box.is_empty and page.rect.contains(box),'裁圖超出原頁或為空'
-        pix=page.get_pixmap(clip=box,dpi=300,alpha=False)
+        if c.get('imageXref'):
+            assert not c.get('excludeBboxes'),'原始嵌入圖不混用遮除裁框'
+            xref=c['imageXref'];assert xref in [i[0] for i in page.get_images()],'嵌入圖不屬於來源頁'
+            assert any(all(abs(a-b)<1 for a,b in zip(r,box)) for r in page.get_image_rects(xref)),'嵌入圖位置不符'
+            pix=pymupdf.Pixmap(doc,xref)
+        else:pix=page.get_pixmap(clip=box,dpi=300,alpha=False)
         for masked in c.get('excludeBboxes',[]):
             mask=pymupdf.Rect(masked);assert box.contains(mask),'清除區域超出裁圖'
             assert pix.set_rect(pymupdf.IRect(mask*pymupdf.Matrix(300/72,300/72)),(255,255,255)),'清除區域未與圖片相交'
@@ -55,7 +63,7 @@ def build(pid,root,require_qc=False):
         assert len(raw)<=5*1024*1024,'裁圖超過媒體大小限制'
         url=f'https://quiz-media.invalid/{owner}/{sha}'
         assets[c['id']]={'url':url,'sha256':sha,'alt':c['alt']}
-        manifest.append({**c,'sha256':sha,'sourceSha256':source['originalSha256'],'pdfSha256':source['pdfSha256'],'dpi':300,'width':page.get_pixmap(clip=box,dpi=300,alpha=False).width,'height':page.get_pixmap(clip=box,dpi=300,alpha=False).height,'bytes':len(raw),'file':str(path.resolve()),'url':url})
+        manifest.append({**c,'sha256':sha,'sourceSha256':source['originalSha256'],'pdfSha256':source['pdfSha256'],'dpi':round(pix.width*72/box.width,2) if c.get('imageXref') else 300,'renderMode':'embedded-original' if c.get('imageXref') else 'page-clip','width':pix.width,'height':pix.height,'bytes':len(raw),'file':str(path.resolve()),'url':url})
         doc.close()
     roles={c['id']:c['role'] for c in crops}
     runtime=[];entries=[]
@@ -85,6 +93,7 @@ def build(pid,root,require_qc=False):
     qcpath=folder/'qc.private.json';qc=read(qcpath) if qcpath.exists() else {}
     verified=qc.get('draftSha256')==digest(draftpath) and qc.get('fieldIds')==ids and qc.get('cropSha256')=={c['id']:c['sha256'] for c in manifest} and qc.get('status')=='verified'
     provenance_data={'sourceBankSha256':digest(draftpath),'sourceVersion':pair['sourceRecord'],'sourceFiles':[{'fileId':role,'name':pair[role]['name'],'sha256':sources[role]['originalSha256'],'pdfSha256':sources[role]['pdfSha256']} for role in ('paper','key')],'entries':entries,'issues':draft['issues'],'qc':qc if verified else {'status':'awaiting-independent-qc'}}
+    if printed_total!=draft['sourceTotal']:provenance_data['scoring']={'printedTotal':printed_total,'itemTotal':draft['sourceTotal'],'issue':draft['scoringIssue']}
     bundle={'paperId':pid,'owner':owner,'document':doc,'provenance':provenance_data,'sha256':hashlib.sha256(json.dumps(doc,ensure_ascii=False,separators=(',',':')).encode('utf-8')).hexdigest(),'assets':[{'hash':c['sha256'],'url':c['url'],'owner_id':owner,'object_path':f"{owner}/{c['sha256']}",'mime':'image/png','bytes':c['bytes'],'file':c['file']} for c in manifest]}
     bundle['assets']=list({a['hash']:a for a in bundle['assets']}.values())
     write(folder/'images-manifest.private.json',manifest);write(folder/'bundle.private.json',bundle)

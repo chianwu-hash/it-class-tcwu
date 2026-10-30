@@ -24,7 +24,7 @@ const hasPastExams=[3,6].includes(pageGrade)&&!localContext;
 let pastPapers=[],pastCatalogError=false;
 const readPastCatalog=hasPastExams?await createPastCatalogReader(()=>currentSession):null;
 const pastSection=document.createElement('section');pastSection.id='past-papers-section';pastSection.className='paper-collection collection-past';pastSection.hidden=true;pastSection.setAttribute('aria-labelledby','past-papers-title');
-pastSection.innerHTML='<header class="collection-heading"><h2 id="past-papers-title">考古題專區 <span id="past-papers-count" class="collection-count">0卷</span></h2><p>依照歷年原卷練習，保留各次成績；同一份試卷首次完整達標可取得葉片。</p></header><p id="past-papers-empty" class="collection-empty">目前沒有符合篩選條件的考古題。</p><div id="past-papers" class="papers"></div>';
+pastSection.innerHTML='<header class="collection-heading"><h2 id="past-papers-title">考古題專區 <span id="past-papers-count" class="collection-count">0卷</span></h2><p>開放 113、114 學年度上學期期中考。依照歷年原卷練習，保留各次成績；同一份試卷首次完整達標可取得葉片。</p></header><p id="past-papers-empty" class="collection-empty">目前沒有符合篩選條件的考古題。</p><div id="past-papers" class="papers"></div><details id="past-unopened-section"><summary>未開放區 <span id="past-unopened-count" class="collection-count">0卷</span></summary><p>已整理的其他考古題暫不開放作答，既有成績與葉片紀錄仍保留。</p><div id="past-unopened" class="papers"></div></details>';
 presetSection.after(pastSection);
 // Compose returns the saved card in the library shape; insert it instead of reloading the whole list.
 document.addEventListener('quiz-paper-saved',e=>{const paper=e.detail?.paper;if(paper?.id&&!busy&&studentView){papers=[...papers.filter(p=>p.id!==paper.id),paper];render();return;}if(busy)reloadAfter=true;else load({refreshComposer:false,refreshWrong:false});});
@@ -107,13 +107,16 @@ function render() {
     const header=node('div',undefined,'paper-card-header'),icon=node('span',undefined,'subject-icon'),symbol=node('i',undefined,'fa-solid fa-leaf');symbol.setAttribute('aria-hidden','true');icon.append(symbol);
     const title=node('div');title.append(node('span','考古題專區','paper-source-label'),node('p',p.subject,'paper-subject'),node('h3',p.shortTitle));header.append(icon,title);card.append(header);
     const body=node('div',undefined,'paper-card-body');body.append(node('p',`${p.edition||''} ${p.range||''}｜原卷圖文與歷次成績`),node('p','單次完整作答達60%，同卷同學期首次達標得1片葉。開放題採自我核對，暫停題不列入完成。'));
-    const link=node('a','開始／繼續考古題 →','paper-start');link.href='past-exam.html?paper='+encodeURIComponent(p.id);body.append(link);card.append(body);el('past-papers').append(card);
+    if(p.enabled){const link=node('a','開始／繼續考古題 →','paper-start');link.href='past-exam.html?paper='+encodeURIComponent(p.id);body.append(link);}
+    else{body.replaceChildren(node('p',`${p.edition||''} ${p.range||''}`),node('p','尚未開放作答；既有紀錄已保留。','paper-status'));card.dataset.availability='unopened';}
+    card.append(body);el(p.enabled?'past-papers':'past-unopened').append(card);
   }
-  el('past-papers-empty').hidden=visiblePast.length>0;el('past-papers-empty').textContent=pastCatalogError?'暫時無法讀取考古題，請按「更新雲端進度」重試。':'目前沒有符合篩選條件的考古題。';el('past-papers-count').textContent=visiblePast.length+'卷';
+  const openCount=visiblePast.filter(p=>p.enabled).length,unopenedCount=visiblePast.length-openCount;
+  el('past-papers-empty').hidden=openCount>0;el('past-papers-empty').textContent=pastCatalogError?'暫時無法讀取考古題，請按「更新雲端進度」重試。':'目前沒有符合篩選條件的考古題。';el('past-papers-count').textContent=openCount+'卷';el('past-unopened-count').textContent=unopenedCount+'卷';el('past-unopened-section').hidden=unopenedCount===0;
   renderContinue();
   focusOwnPaper();
 }
-function clearPastPapers(){el('past-papers').replaceChildren();el('past-papers-count').textContent='0卷';el('past-papers-empty').hidden=false;}
+function clearPastPapers(){el('past-papers').replaceChildren();el('past-unopened').replaceChildren();el('past-unopened-section').hidden=true;el('past-unopened-count').textContent='0卷';el('past-papers-count').textContent='0卷';el('past-papers-empty').hidden=false;}
 function renderContinue(){
  continueBox.replaceChildren();
  const unfinished=papers.filter(p=>p.catalog?.volume?.startsWith(String(pageGrade))&&p.answered>0&&p.answered<p.total);
