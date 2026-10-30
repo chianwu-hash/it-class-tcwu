@@ -42,3 +42,5 @@ ignored `automation/output/past-exams-audio/`保留來源計畫、音檔／圖�
 本輪有時間戳的製播工作從12:45:51建立輸出目錄，到13:21正式啟用約35分鐘；含正式播放、更新審閱包桌機／手機驗收及13:26記憶核對，約41分鐘。不包含之前原頁查讀與聽力稿盤點。可自動化：短句快取製播、混音、解碼／波形、回辨、SHA、圖文轉接、瀏覽器及雲端回滾。需人工判讀：官方原稿與圖解矛盾、專名發音、裁區完整性及欠缺文字；不能以工具成功取代內容校對。
 
 回復只需在保留學生資料的交易中將四卷active_version指回`cloud/before-papers.private.json`，並重新核對播放相容性；已建立的新舊版本與學生歷次均保留，不能刪版本或重算葉片。前端需回復時先確認是否已有更新部署，不直接覆蓋後續其他功能。
+
+收尾時另一本週課程發布已將正式alias更新為`dpl_3Ab6ZKnw7M8oLkC8R6ikUAuG4GJL`（第9週，commit404ed65）。重新核對，本次12個聽力執行檔SHA仍全部相同；原255檔中只有7個其他課程／導覽／樹設定檔更新，與該提交的範圍一致。保留後續發布，未重新promote舊包。後續部署必須從這個或當時更新的完整正式基底開始。證據`alias-final.private.json`、`latest-deployment.private.json`、`audio-live-files.private.json`。
