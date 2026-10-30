@@ -85,6 +85,9 @@ begin
    end if;
   end loop;
  end if;
+ if to_regprocedure('public.garden_test_rewards(text)') is not null then
+  result := result || public.garden_test_rewards(p_course_id);
+ end if;
  select count(*) filter(where value->>'kind'<>'flower'),count(*) filter(where value->>'kind'='flower') into leaves,flowers from jsonb_array_elements(result);
  select * into g from public.garden_growth where user_id=uid and course_id=p_course_id;
  if leaves>=44 and flowers>=10 then

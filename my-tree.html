@@ -474,9 +474,10 @@
         </section>
     </main>
 
-    <link rel="stylesheet" href="./shared/effort-garden-v2.css?v=20261030-release">
+    <link rel="stylesheet" href="./shared/effort-garden-v2.css?v=20261030-rehearsal">
     <script type="module">
-        import {createGardenUpgrade} from './shared/effort-garden-v2.mjs?v=20261030-release';
+        import {createGardenUpgrade} from './shared/effort-garden-v2.mjs?v=20261030-rehearsal';
+        import {withGardenTestRewards} from './shared/garden-test-rehearsal.mjs?v=20261030-rehearsal';
         import {
             resolveSession,
             signInWithGoogle,
@@ -850,7 +851,8 @@
                 }
                 if (version !== treeLoadVersion || selectedCourseId !== loadingCourse || currentSession?.user?.id !== loadingUser) return;
                 if (!activities.length) { renderEmptyCourse(course); return; }
-                const model = deriveRewardTreeModel(rows, activities);
+                const model = await withGardenTestRewards(deriveRewardTreeModel(rows, activities),{supabase,session:currentSession,courseId:loadingCourse});
+                if(version!==treeLoadVersion||selectedCourseId!==loadingCourse||currentSession?.user?.id!==loadingUser)return;
                 renderModel(model, activities);
             } catch (error) {
                 if (version !== treeLoadVersion) return;

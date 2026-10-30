@@ -4,7 +4,7 @@ if(!process.env.VERCEL_OIDC_TOKEN)throw Error('development_oidc_required');
 const headers={'x-vercel-trusted-oidc-idp-token':process.env.VERCEL_OIDC_TOKEN};
 const get=(p,opts={})=>fetch(origin+p,{...opts,redirect:'manual',headers:{...headers,...opts.headers}});
 async function files(dir){let out=[];for(const f of await fs.readdir(dir,{withFileTypes:true})){const p=dir+'/'+f.name;out.push(...(f.isDirectory()?await files(p):[p]));}return out;}
-const paths=['my-tree.html','shared/effort-garden-v2.mjs','shared/effort-garden-v2.css','shared/garden-location-weather.mjs','shared/garden-live-weather-ui.mjs','shared/garden-weather-handler.mjs',...await files('garden')];
+const paths=['my-tree.html','shared/effort-garden-v2.mjs','shared/effort-garden-v2.css','shared/garden-test-rehearsal.mjs','shared/garden-location-weather.mjs','shared/garden-live-weather-ui.mjs','shared/garden-weather-handler.mjs',...await files('garden')];
 const digest=b=>createHash('sha256').update(b).digest('hex');let next=0;
 async function worker(){for(;;){const p=paths[next++];if(!p)return;const r=await get('/'+p);assert.equal(r.status,200,p);assert.equal(digest(Buffer.from(await r.arrayBuffer())),digest(await fs.readFile(p)),p);}}
 await Promise.all(Array.from({length:6},worker));
