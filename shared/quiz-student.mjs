@@ -1,5 +1,5 @@
-import { initQuizModule } from './quiz-module.js?v=20261030-question-reports';
-import { createQuizRequest } from './quiz-api.mjs?v=20261030-question-reports';
+import { initQuizModule } from './quiz-module.js?v=20261030-order-fix';
+import { createQuizRequest } from './quiz-api.mjs?v=20261030-order-resync';
 import { provideNavIdentity } from './grade6-nav-identity.js?v=20261030-identity-sync';
 import { initImageLightbox } from './image-lightbox.js';
 import {resolveQuizImage} from './quiz-media.mjs?v=20261029-load-batch1';

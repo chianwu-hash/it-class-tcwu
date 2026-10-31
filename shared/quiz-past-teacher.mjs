@@ -6,10 +6,11 @@ import {createMediaScope} from './quiz-media.mjs';
 let session=null,generation=0,scope=null;
 const host=document.getElementById('teacher-preview'),status=document.getElementById('teacher-status'),picker=document.getElementById('teacher-paper');
 const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
+const stopAudio=()=>host.querySelectorAll('audio').forEach(audio=>{audio.pause();audio.removeAttribute('src');audio.load();});
 initImageLightbox({root:host,selector:'img'});
 let transport=null;
 async function preview(id){
- const token=++generation;host.replaceChildren();scope?.dispose();scope=null;status.textContent='正在讀取固定版本與來源紀錄…';
+ const token=++generation;stopAudio();host.replaceChildren();scope?.dispose();scope=null;status.textContent='正在讀取固定版本與來源紀錄…';
  try{
   const data=await transport('/rest/v1/rpc/quiz_past_action',{p_action:'preview',p_data:{paper_id:id}});if(token!==generation)return;
   const url=new URL(location.href);url.searchParams.set('paper',id);history.replaceState(null,'',url);
@@ -33,7 +34,7 @@ async function preview(id){
 }
 picker?.addEventListener('change',()=>{if(picker.value&&session?.user)preview(picker.value);});
 initNavbarAuth({onSessionResolved:async next=>{
- session=next;const token=++generation;scope?.dispose();scope=null;host.replaceChildren();if(picker){picker.replaceChildren();picker.disabled=true;}
+ session=next;const token=++generation;stopAudio();scope?.dispose();scope=null;host.replaceChildren();if(picker){picker.replaceChildren();picker.disabled=true;}
  if(!next?.user){status.textContent='請先登入教師帳號。';return;}
  try{const auth=await import('./auth.js');transport=createAuthenticatedTransport({auth,getSession:()=>session});const list=await transport('/rest/v1/rpc/quiz_past_action',{p_action:'preview_list',p_data:{}});if(token!==generation)return;
   if(!list.papers.length){status.textContent='目前沒有可預覽的考古題。';return;}
