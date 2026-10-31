@@ -8,7 +8,7 @@ lock table public.garden_growth,public.quiz_past_leaves in share row exclusive m
 create temporary table garden_level2_before(value jsonb) on commit drop;
 create function pg_temp.garden_protected_snapshot() returns jsonb language plpgsql as $$
 declare t text;v text;result jsonb:='{}';begin
- foreach t in array array['student_progress','quiz_leaf_awards','quiz_past_leaves','garden_growth','garden_test_setup','garden_tree_skins','garden_unlock_notices'] loop
+ foreach t in array array['student_progress','quiz_leaf_awards','quiz_past_leaves','quiz_integrity_settings','garden_growth','garden_test_setup','garden_tree_skins','garden_unlock_notices'] loop
   if to_regclass('public.'||t) is not null then
    execute format('select md5(coalesce(string_agg((to_jsonb(x)-''reward_kind''-''reward_version''-''leaf_floor''-''flower_floor'')::text,'''' order by (to_jsonb(x)-''reward_kind''-''reward_version''-''leaf_floor''-''flower_floor'')::text),'''')) from public.%I x',t) into v;
    result:=result||jsonb_build_object(t,v);

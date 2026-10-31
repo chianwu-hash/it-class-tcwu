@@ -25,4 +25,3 @@ export const growth=async db=>(await db.query('select garden_growth($1) r',[cid]
 const notice=async(db,action='pending',claim=null)=>(await db.query('select garden_unlock_notice($1,$2,$3) r',[cid,action,claim])).rows[0].r;
 const choice=async(db,action='get',data={})=>(await db.query('select garden_companions($1,$2,$3) r',[cid,action,data])).rows[0].r;
 export const leaves=async(db,n)=>db.query("select set_config('test.quiz',$1,false)",[JSON.stringify(Array.from({length:n},(_,i)=>({id:'award-'+i,half_units:2})))]);
-
