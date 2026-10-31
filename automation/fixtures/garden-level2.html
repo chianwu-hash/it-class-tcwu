@@ -1,0 +1,17 @@
+<!doctype html><html lang="zh-Hant-TW"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第二級努力樹・本機驗收</title>
+<link rel="stylesheet" href="/shared/effort-garden-v2.css"><style>*{box-sizing:border-box}body{margin:0;background:linear-gradient(120deg,#fff6da,#e9fbfa);color:#243c49;font:16px/1.6 system-ui}header,main{max-width:1200px;margin:auto;padding:18px}main{display:grid;grid-template-columns:minmax(0,1fr) 285px;gap:20px}.profile-card,.content{border-radius:24px;padding:18px;background:#ffffffdd}button{font:inherit;cursor:pointer;padding:9px;border-radius:12px;border:1px solid #abd3c1;background:white;color:#165b50;min-height:44px}header p{margin:0}#detail{padding:8px;background:#e8f4ed}@media(max-width:760px){main{display:flex;flex-direction:column}.profile-card{order:2}}</style>
+<header><h1>我的努力樹</h1><p>第二級本機驗收・隔離測試資料，不影響正式帳號</p><button id="flower">試看考古花慶祝</button> <button id="surprise">試看多項解鎖慶祝</button><details><summary>本機情境測試（不會出現在學生頁）</summary><button data-demo="enter">示範進屋避雨</button> <button data-demo="sleep">看看屋內趴睡</button> <button data-demo="exit">示範雨停出屋</button> <button data-demo="peek">看看樹後探頭</button></details><p id="detail" role="status">點選花葉可查看來源。</p></header>
+<main><div class="content"><div id="stage"></div></div><aside class="profile-card"><h2>30730 測試同學</h2><p>可切換三隻夥伴與各三款窩。使用「顯示小窩」，或讓夥伴散步、回窩休息。</p></aside></main>
+<script type="module">
+import {createGardenUpgrade} from '/shared/effort-garden-v2.mjs';import {supabase,fixtureSession} from '/shared/auth.js';import {celebratePastFlower} from '/shared/past-flower-celebration.mjs';import {afterGardenReward} from '/shared/garden-unlock-notice.mjs';
+const app=createGardenUpgrade({supabase,getSession:()=>fixtureSession,stage:document.getElementById('stage'),onSelect:r=>document.getElementById('detail').textContent=r.title+'・來源：'+r.href});
+window.__gardenFixture={app,supabase,async refresh(){const {data,error}=await supabase.rpc('model');if(error)throw error;await app.render(data,'grade3-115-1')},async grow(n){await supabase.rpc('fixture',{leaves:n});return this.refresh()}};
+document.getElementById('flower').onclick=()=>celebratePastFlower('grade3-115-1');
+document.getElementById('surprise').onclick=async()=>{await supabase.rpc('fixture-notice');afterGardenReward('grade3-115-1')};
+document.querySelectorAll('[data-demo]').forEach(b=>b.onclick=()=>document.querySelector('[data-scene] iframe')?.contentWindow.__gardenScene?.demo(b.dataset.demo));
+if(new URLSearchParams(location.search).get('sky')==='day'){
+ document.title='晴日天空試看';document.querySelector('header h1').textContent='晴日天空試看';document.querySelector('header p').textContent='本機白天情境預覽・正式網站仍依實際時間與天氣呈現';
+ window.addEventListener('message',e=>{const f=document.querySelector('[data-scene]>iframe');if(e.origin!==location.origin||e.source!==f?.contentWindow||e.data?.type!=='garden-scene-ready')return;const a=f.contentWindow.__gardenScene;if(!a.__sunnyPreviewOriginal){a.__sunnyPreviewOriginal=a.setAtmosphere.bind(a);a.setAtmosphere=()=>a.__sunnyPreviewOriginal('day',true)}a.setAtmosphere();a.play()});
+}
+await window.__gardenFixture.refresh();
+</script></html>

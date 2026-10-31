@@ -801,7 +801,7 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
   }
   document.addEventListener('visibilitychange',function(){if(document.hidden&&finishSkinTransition)finishSkinTransition()});
   var api = {
-    setCompanionControl:function(c){var changed=requestedRest!==!!c.rest;homeVisible=c.homeVisible===true;requestedRest=c.rest===true;if(changed&&reduceBox.checked)rebuildShelter();draw();return api.snapshot()},
+    setCompanionControl:function(c){var changed=requestedRest!==!!c.rest;homeVisible=c.homeVisible===true;requestedRest=c.rest===true;if((changed&&reduceBox.checked)||(c.initial&&requestedRest))rebuildShelter();draw();return api.snapshot()},
     configure:function(data){earnedLeaves=Array.isArray(data.leaves)?data.leaves.slice(0,96):[];earnedFlowers=Array.isArray(data.flowers)?data.flowers.slice(0,24):[];pendingLeaves=Array.isArray(data.pendingLeaves)?data.pendingLeaves.slice(0,8):[];pendingFlowers=Array.isArray(data.pendingFlowers)?data.pendingFlowers.slice(0,2):[];petUnlocked=data.petUnlocked===true;if(!petUnlocked)tap.reset();petButton.hidden=!petUnlocked;setFlowerPalette(data.flowerStyle);if(TREES[data.treeSkin]&&data.treeSkin!==tree)setTree(data.treeSkin);draw();return api.snapshot();},
     snapshot: function () {
       var st = normalState(clock.t), pose = tap.pose() || (shelter.ready && shelter.ctrl ? shelter.ctrl.pose() : null), r = pose ? poseRect(pose) : catRect(st), TR = TREES[tree];

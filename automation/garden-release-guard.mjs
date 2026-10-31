@@ -1,8 +1,8 @@
 import fs from 'node:fs/promises';import path from 'node:path';import {createHash} from 'node:crypto';import {execFile} from 'node:child_process';import {promisify} from 'node:util';
-const id=process.argv[2],liveMode=process.argv.includes('--live'),root=process.argv[3],audit='D:/projects/it-class-tcwu/automation/output/effort-prerelease-audit-20261031',out='D:/projects/it-class-tcwu/automation/output/effort-level2-release-20261031';
+const id=process.argv[2],liveMode=process.argv.includes('--live'),root=process.argv[3],audit='D:/projects/it-class-tcwu/automation/output/effort-prerelease-audit-20261031',out=process.env.GARDEN_RELEASE_OUTPUT||'D:/projects/it-class-tcwu/automation/output/effort-level2-release-20261031';
 if(!/^dpl_[A-Za-z0-9]+$/.test(id)||!root)throw Error('deployment_and_source_required');
 async function api(endpoint){const command="& vercel api '"+endpoint+"' --scope chianwu-4755s-projects";const {stdout}=await promisify(execFile)('pwsh',['-NoProfile','-Command',command],{windowsHide:true,timeout:45000,maxBuffer:8e6});const at=Math.min(...[stdout.indexOf('{'),stdout.indexOf('[')].filter(x=>x>=0));return JSON.parse(stdout.slice(at))}
-const base=JSON.parse(await fs.readFile(audit+'/production-manifest.json','utf8')),dep=await api('/v13/deployments/'+id),live=await api('/v13/deployments/it-class-tcwu.vercel.app');
+const base=JSON.parse(await fs.readFile(process.env.GARDEN_RELEASE_BASELINE||audit+'/production-manifest.json','utf8')),dep=await api('/v13/deployments/'+id),live=await api('/v13/deployments/it-class-tcwu.vercel.app');
 if(dep.projectId!=='prj_eJ1qle57xyilS5MKy6ZS6OuYtyFb'||dep.readyState!=='READY'||(liveMode?live.id!==id:live.id!==base.deployment.id))throw Error('wrong_or_changed_production');
 const tree=await api('/v6/deployments/'+id+'/files'),src=tree.find(x=>x.name==='src'),files=[];
 function walk(n,p=''){if(n.type==='directory')for(const c of n.children||[])walk(c,p+(n===src?'':n.name+'/'));else files.push({path:p+n.name,uid:n.uid})}if(!src)throw Error('source_tree_missing');walk(src);

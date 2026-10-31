@@ -495,7 +495,7 @@
   },true);
   // ---------- 本機測試 API（只在這個預覽頁） ----------
   window.__gardenShelterV21=window.__homesV5 = window.__homesV4 = {
-    setCompanionControl:function(c){var changed=requestedRest!==!!c.rest;homeVisible=c.homeVisible===true;requestedRest=c.rest===true;if(ctrl){ctrl.setWeather(shelterWeather());if(changed&&reduceBox.checked){ctrl.setReduced(false);ctrl.setReduced(true)}}draw();return this.snapshot()},
+    setCompanionControl:function(c){var changed=requestedRest!==!!c.rest;homeVisible=c.homeVisible===true;requestedRest=c.rest===true;if(ctrl){ctrl.setWeather(shelterWeather());if(c.initial&&requestedRest){ctrl.setReduced(true);ctrl.setReduced(reduceBox.checked)}else if(changed&&reduceBox.checked){ctrl.setReduced(false);ctrl.setReduced(true)}}draw();return this.snapshot()},
     configure:function(data){earnedLeaves=(data.leaves||[]).slice(0,96);earnedFlowers=(data.flowers||[]).slice(0,24);pendingLeaves=(data.pendingLeaves||[]).slice(0,8);pendingFlowers=(data.pendingFlowers||[]).slice(0,2);petUnlocked=data.petUnlocked===true;setFlowerPalette(data.flowerStyle);setTree(data.treeSkin);draw();return this.snapshot()},
     setAtmosphere:function(scene,isDay){localNight=!isDay;return setWeather(scene==='day'?(isDay?'day':'night'):scene)},
     changeTreeSkin:function(k){setTree(k);return Promise.resolve(k)},

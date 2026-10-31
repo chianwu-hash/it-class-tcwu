@@ -45,15 +45,15 @@ export function createCompanionChooser({root,supabase,getSession,onChange,onComm
  }
  async function save(data){
   if(busy)return false;
-  if((!data.pet||data.pet===value.selectedPet)&&(!data.home||data.home===value.selectedHome)&&(!Object.hasOwn(data,'homeVisible')||data.homeVisible===value.homeVisible))return true;
+  if((!data.pet||data.pet===value.selectedPet)&&(!data.home||data.home===value.selectedHome)&&(!Object.hasOwn(data,'homeVisible')||data.homeVisible===value.homeVisible)&&(!Object.hasOwn(data,'petMode')||data.petMode===(value.petMode||'walk')))return true;
   const v=version,uid=getSession()?.user?.id;busy=true;status.textContent='正在儲存選擇…';render();
   try{const next=await request('save',data);if(!valid(v,uid))return;value=next;onChange(value);status.textContent='選擇已儲存';return true}
   catch{if(valid(v,uid))status.textContent='這次選擇尚未儲存，請再試一次。';return false}
   finally{if(valid(v,uid)){busy=false;render()}}
  }
- toggle.onchange=async()=>{const visible=toggle.checked,v=version,uid=getSession()?.user?.id;if(scene?.wet){renderControls();return}if(await save({homeVisible:visible})&&valid(v,uid))onCommand(visible?'show':'hide');else renderControls()};
- walk.onclick=()=>{if(!walk.disabled)onCommand('walk')};
- rest.onclick=async()=>{if(rest.disabled)return;const v=version,uid=getSession()?.user?.id;if(await save({homeVisible:true})&&valid(v,uid))onCommand('rest')};
+ toggle.onchange=async()=>{const visible=toggle.checked,v=version,uid=getSession()?.user?.id;if(scene?.wet){renderControls();return}if(await save(visible?{homeVisible:true}:{homeVisible:false,petMode:'walk'})&&valid(v,uid))onCommand(visible?'show':'hide');else renderControls()};
+ walk.onclick=async()=>{if(walk.disabled)return;const v=version,uid=getSession()?.user?.id;if(await save({petMode:'walk'})&&valid(v,uid))onCommand('walk')};
+ rest.onclick=async()=>{if(rest.disabled)return;const v=version,uid=getSession()?.user?.id;if(await save({homeVisible:true,petMode:'rest'})&&valid(v,uid))onCommand('rest')};
  retry.onclick=()=>load(course);
  return {load,sceneState(next){scene=next;renderControls()},get value(){return value},reset(){scene=null;version++;course=null;busy=false;value={pets:[],homes:[],selectedPet:null,selectedHome:null};host.hidden=true;pets.replaceChildren();homes.replaceChildren();status.textContent='';retry.hidden=true}};
 }

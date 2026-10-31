@@ -13,15 +13,15 @@ const post=(message)=>parent.postMessage(message,location.origin);
 function syncSoundControl(){const b=document.getElementById('thunder-sound');b.hidden=atmosphere.scene!=='thunder';b.disabled=!childReady||reduced||soundBusy;b.title=reduced?'省略動畫過程時不播放雷聲':''}
 function stopSound(){soundVersion++;soundBusy=false;const b=document.getElementById('thunder-sound');b.setAttribute('aria-pressed','false');b.textContent='開啟雷聲';void Promise.resolve(child()?.enableAudio?.(false)).catch(()=>{});syncSoundControl()}
 function publishCompanion(){const state={...policy.snapshot(),owned:data.petUnlocked===true&&childReady},key=JSON.stringify(state);if(key!==lastCompanionState){lastCompanionState=key;post({type:'garden-companion-state',state})}}
-function applyCompanion(){const state=policy.snapshot();child()?.setCompanionControl?.({homeVisible:state.preferredVisible,rest:state.forceRest});publishCompanion()}
+function applyCompanion(initial=false){const state=policy.snapshot();child()?.setCompanionControl?.({homeVisible:state.preferredVisible,rest:state.forceRest,initial});publishCompanion()}
 function showAssetStatus(text,canRetry){const box=document.getElementById('scene-load-status'),button=document.getElementById('scene-retry');document.getElementById('scene-load-message').textContent=text;box.hidden=!text;button.hidden=!canRetry;button.disabled=false}
 function showAssetIssues(){const visible=assetIssues.filter(x=>typeof x?.text==='string');showAssetStatus(visible.map(x=>x.text).join(' '),!!visible.length)}
 function beginLoad(){clearTimeout(loadTimer);childReady=false;assetIssues=[];loadVersion++;showAssetStatus('正在準備花園…',false);loadTimer=setTimeout(()=>showAssetStatus('花園讀取較久，可以重新讀取。學習成果都保留著。',true),45000);syncSoundControl();}
 function retryScene(){transition?.();stopSound();beginLoad();const u=new URL(frame.src);u.searchParams.set('load',String(loadVersion));frame.src=u.href;publishCompanion();}
 function command(action){if(!childReady)return {ok:false,reason:'loading'};const result=policy.command(action);if(result.ok){applyCompanion();if(!paused)child()?.play()}return result}
-function sync(){
+function sync(initial=false){
  const c=child();if(!c||!childReady)return;
- c.configure?.(data);applyCompanion();c.setAtmosphere?.(atmosphere.scene,atmosphere.isDay);c.setReduce(reduced);
+ c.configure?.(data);applyCompanion(initial);c.setAtmosphere?.(atmosphere.scene,atmosphere.isDay);c.setReduce(reduced);
  if(paused||reduced)c.pause();else c.play();
  petButton.hidden=!data.petUnlocked;
  petButton.textContent='和'+petName(data.pet)+'打招呼';
@@ -30,7 +30,7 @@ function sync(){
 function ready(){
  const c=child();let current;try{current=new URL(frame.contentWindow.location.href);if(current.searchParams.get('species')+'-'+current.searchParams.get('home')!==key||current.searchParams.get('load')!==String(loadVersion))return}catch{return}
  if(!c||!c.snapshot().ready)return;
- clearTimeout(loadTimer);childReady=true;assetIssues=c.snapshot().assetIssues||assetIssues;showAssetIssues();sync();post({type:'garden-scene-ready'});
+ clearTimeout(loadTimer);childReady=true;assetIssues=c.snapshot().assetIssues||assetIssues;showAssetIssues();sync(true);post({type:'garden-scene-ready'});
 }
 function configure(next){
  data={...data,...next};policy.configure(data);
