@@ -66,7 +66,8 @@ function createReward({ kind, source = {}, activity, index, total, earned = true
                     : `前往第 ${index} 關繼續挑戰。`,
         updatedAt: source.updated_at || "",
         updatedAtText: formatDateTime(source.updated_at),
-        score: source.score ?? null
+        score: source.score ?? null,
+        ...(activity.sourceLinks ? {sourceLinks:activity.sourceLinks} : {})
     };
 }
 
@@ -102,6 +103,14 @@ export function deriveRewardTreeModel(progressRows, activities) {
             updated_at: ""
         };
 
+        if (activity.type === 'past-exam-flower') {
+            const earned=row.completed===true;
+            const reward=createReward({kind:'flower',source:row,activity,index:1,total:1,earned});
+            reward.title=activity.label+' 考古花';reward.reason='完整完成這份考古題，單次得分率達60%以上。';
+            reward.detail='同份原卷每學期只開一次花；重作保留成績，不重複領獎。';
+            reward.flowerStyle='forest';reward.sourceType='past_exam';
+            (earned?rewards:pendingRewards).push(reward);return;
+        }
         if (activity.type === 'practical') {
             const earned=row.completed === true;
             const reward=createReward({kind:'practical-leaf',source:row,activity,index:1,total:1,earned,href:earned ? '' : activity.pageHref});
@@ -240,6 +249,7 @@ export function deriveRewardTreeModel(progressRows, activities) {
         stats: {
             leafCount: leaves.length,
             flowerCount: flowers.length,
+            pastExamFlowerCount: flowers.filter(r=>r.sourceType==='past_exam').length,
             pendingLeafCount: pendingLeaves.length,
             pendingFlowerCount: pendingFlowers.length,
             colorUnlocked: flowers.length >= 3,

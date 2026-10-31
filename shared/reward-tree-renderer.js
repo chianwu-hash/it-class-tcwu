@@ -44,6 +44,7 @@ function createFlowerElement(reward, slot, index, onSelect, ghost = false) {
     }
     flower.className = ["reward", "flower", ghost ? "ghost" : ""].filter(Boolean).join(" ");
     flower.dataset.rewardKind = reward?.kind || "ghost-flower";
+    if(reward?.sourceType==='past_exam'){flower.classList.add('past-exam');flower.style.backgroundImage='url("/assets/reward-tree/flowers/flower-forest.png")';}
     flower.setAttribute("aria-label", ghost ? reward?.title || "尚未取得的花朵位置" : reward.title);
     flower.title = ghost && reward?.href ? "前往魔王關" : reward?.title || "";
     applySlot(flower, slot, index);
@@ -121,4 +122,14 @@ export function selectReward(reward, titleEl, textEl) {
     titleEl.textContent = reward.title;
     const when = reward.updatedAtText ? `最後更新：${reward.updatedAtText}` : "尚無更新時間";
     textEl.textContent = `${reward.reason} ${reward.detail} ${when}`;
+    for (const source of reward.sourceLinks || []) {
+        if (!safeRewardSourceHref(source.href)) continue;
+        const link=document.createElement('a');link.href=source.href;link.textContent=source.title;
+        const line=document.createElement('span');line.style.display='block';line.style.marginTop='8px';line.append(link);textEl.append(line);
+    }
+}
+
+export function safeRewardSourceHref(href){
+ if(typeof href!=='string')return false;
+ return /^\/grade[36]\/115-1\/quiz\.html\?cloud=1&session=[0-9a-f-]{36}$/i.test(href)||/^\/grade[36]\/115-1\/past-exam\.html\?paper=[a-z0-9_-]+&attempt=[0-9a-f-]{36}$/i.test(href);
 }

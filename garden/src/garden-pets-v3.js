@@ -1,0 +1,613 @@
+/*
+ * 小狗／小兔動畫 v3 控制器：繞樹、探頭、避雨進出屋、點擊互動。側走與短跳沿用 v2，不重寫。
+ * 純邏輯：不讀 DOM、不畫圖、不用 Math.random、不用系統時間、不連網路或 storage；只靠 update(dt) 前進。
+ * CommonJS：require('./garden-pets-v3.js')；瀏覽器：先載入 garden-pets-v2.js → window.GardenPetsV3；可用 opts.v2 注入。
+ *
+ * 平常播放 v2 計畫（t 可凍結）；要做別的事時，先走到安全接點（站姿或完整步態循環的結尾），
+ * 記下離開點，再跑一串「腳本」；腳本結束會走回離開點，從同一個 t 接回原路。
+ *
+ * 規則：
+ *  - 原地序列 x/y 不動；只有 side（側走／短跳）與 gait（真背面／正面步態）會移動。
+ *  - 深度改變只用 rearwalk／frontwalk；側走只在同一走道上橫移。
+ *  - 換層只發生在根外的 T 點、原地、窄身的那一格；不會邊走邊換層。
+ *  - turn 格不鏡像；側面換方向一律經過 turn 0..2，不直接翻面。
+ *  - 缺素材的功能回報 assets-pending，不用別的圖代替。
+ */
+(function (root, factory) {
+  'use strict';
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('./garden-pets-v2.js'));
+  else root.GardenPetsV3 = factory(root.GardenPetsV2);
+})(typeof self !== 'undefined' ? self : this, function (defaultV2) {
+  'use strict';
+
+  var VERSION = 'garden-pets-v3-1';
+  /** v3 新增的姿勢組與格數；walk、stand、sniff、turn、hop、ears 仍從 v2 讀。兔子下一輪用同樣的組名。 */
+  var GROUPS = Object.freeze({
+    crouch: 2, away: 3, rearwalk: 4, frontwalk: 4, lowturn: 3, peek: 3,
+    lie: 3, rest: 3, wake: 3, sit: 2, wave: 2, shake: 2, yawn: 2
+  });
+  var FEATURE_GROUPS = Object.freeze({
+    behind: ['crouch', 'away', 'rearwalk', 'frontwalk', 'lowturn'],
+    peek: ['crouch', 'away', 'rearwalk', 'frontwalk', 'lowturn', 'peek'],
+    enter: ['crouch', 'away', 'rearwalk', 'frontwalk', 'lowturn', 'lie', 'rest'],
+    insideTap: ['lie', 'rest', 'wake'],
+    tap: ['sit']
+  });
+  var TAP_KINDS = Object.freeze(['wave', 'shake', 'yawn']);
+  // 候選值，要看真圖與實際播放才定；都可用 opts.timing 覆寫。
+  var TIMING = Object.freeze({
+    gaitFrameMs: 200, gaitSpeed: 20, crouchMs: 260, awayMs: 260, lowturnMs: 260, turnMs: 240, standMs: 180,
+    lieMs: 360, lazyMs: 5000, breathMs: 1700, lazyAgainEvery: 8, lazyAgainMs: 3000, dryStableMs: 8000,
+    excursionMinMs: 25000, excursionMaxMs: 50000, tapWaitMs: 2500, behindHoldMs: 1200
+  });
+  // 舞台座標。S：前景走道上的根外點；T：根外的換層點（沿用小貓已驗的 755,694 附近）；P：樹幹右緣後方的探頭點。
+  // 都是候選值，樹根範圍要用新圖的 visibleBoxes 與樹 alpha 核對。
+  // T.x 由 755 右移到 762：away 2 在樹 B 還有 4 個重疊像素；仍是原地換層，要用兩棵樹的 alpha 再量。
+  var POINTS = Object.freeze({ S: { x: 768, y: 745 }, T: { x: 762, y: 694 }, P: { x: 572, y: 702 }, laneY: 750 });
+  // w380／right862 只是 v3 狗兔本機預設（同一張小屋圖等比放大）；小貓與正式站用自己的檔案，不受影響。
+  var CABIN = Object.freeze({ w: 380, right: 862, base: 745, size: [1097, 660], opening: [[142, 238], [947, 267], [947, 593], [142, 541]] });
+  /**
+   * 兔子的 rearwalk／frontwalk 是低姿短跳，一循環就是一跳：伏低與著地時不動，蹬地與騰空才前進。
+   * from／to 是這一跳的位移比例，相鄰格的 to 與 from 必須相同；狗仍是等速步態，不用這張表。
+   */
+  var RABBIT_GAIT_TABLE = Object.freeze([
+    Object.freeze({ index: 0, ms: 200, from: 0, to: 0, label: '伏低蓄力' }),
+    Object.freeze({ index: 1, ms: 110, from: 0, to: 0.2, label: '後腳蹬地' }),
+    Object.freeze({ index: 2, ms: 170, from: 0.2, to: 1, air: true, label: '低騰空' }),
+    Object.freeze({ index: 3, ms: 200, from: 1, to: 1, label: '前腳著地、後腳前收' })
+  ]);
+  var RABBIT_GAIT_MS = RABBIT_GAIT_TABLE.reduce(function (a, h) { return a + h.ms; }, 0);
+  var RABBIT_GAIT_HOP = 16;   // 候選值：每跳的縱深位移（舞台單位），要依真圖調，可用 motion.gaitHopAdvance 覆寫
+
+  function hashSeed(str) {
+    var h = 2166136261;
+    for (var i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619);
+    return h >>> 0;
+  }
+  function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+  function round1(v) { return Math.round(v * 10) / 10; }
+  /** 樹後會比較遠：y 740 以前 1、680 時 0.86（同小貓樹後比例）。木屋路線 depth 固定 1，不為進屋縮小。 */
+  function depthAt(y) { return 0.86 + 0.14 * clamp((y - 680) / 60, 0, 1); }
+
+  /** 由 cabin manifest 算門洞；不傳就用已核准的小屋數值。 */
+  function cabinGeometry(cabin, frame) {
+    var c = cabin || CABIN, f = frame || CABIN, s = f.w / c.size[0], h = c.size[1] * s, x0 = f.right - f.w, y0 = f.base - h;
+    var o = c.opening.map(function (p) { return { x: x0 + p[0] * s, y: y0 + p[1] * s }; });
+    function lerpY(a, b, x) { var t = clamp((x - a.x) / ((b.x - a.x) || 1), 0, 1); return a.y + (b.y - a.y) * t; }
+    var left = Math.min(o[0].x, o[3].x), right = Math.max(o[1].x, o[2].x), insideX = (left + right) / 2;
+    var bottom = lerpY(o[3], o[2], insideX), midY = bottom - 1;
+    return { scale: s, rect: { x: x0, y: y0, w: f.w, h: h }, opening: o, left: left, right: right, insideX: insideX, midY: midY, insideY: midY,
+      topAt: function (x) { return lerpY(o[0], o[1], x); }, bottomAt: function (x) { return lerpY(o[3], o[2], x); } };
+  }
+
+  function headingOf(group, index, mirror) {
+    var side = mirror ? 'left' : 'right';
+    if (group === 'rearwalk') return 'away';
+    if (group === 'frontwalk' || group === 'peek' || group === 'sit' || group === 'wave' || group === 'shake' || group === 'yawn') return 'toward';
+    if (group === 'away') return index === 2 ? 'away' : side + (index === 0 ? '-rear-3/4' : '-rear-near');
+    if (group === 'lowturn') return ['right-front-3/4', 'toward', 'left-front-3/4'][index];
+    if (group === 'turn') return ['right-front-3/4', 'toward', 'left-front-3/4'][index];
+    return side;
+  }
+
+  /**
+   * opts：{ v2, available: 可用組名陣列, motion, points, cabin, timing, bounds, weather }
+   */
+  function create(species, seed, opts) {
+    var o = opts || {}, V2 = o.v2 || defaultV2;
+    if (!V2) throw new Error('需要 GardenPetsV2');
+    if (!V2.GROUPS[species]) throw new TypeError('species 必須是 dog 或 rabbit');
+    if (seed === undefined || seed === null || seed === '') throw new TypeError('seed 必須是數字或非空字串');
+    var seedStr = String(seed), T_ = Object.assign({}, TIMING, o.timing || {}), PT = Object.assign({}, POINTS, o.points || {});
+    var M = Object.assign({}, V2.MOTION[species], species === 'rabbit' ? { gaitHopAdvance: RABBIT_GAIT_HOP } : {}, o.motion || {}), geo = cabinGeometry(o.cabin, o.cabinFrame);
+    var avail = o.available || Object.keys(V2.GROUPS[species]);
+    var s = null;
+
+    function has(g) { return avail.indexOf(g) >= 0; }
+    function cap(feature) { return FEATURE_GROUPS[feature].every(has); }
+    function tapKinds() { return TAP_KINDS.filter(has); }
+    function capabilities() {
+      return { roam: true, behind: cap('behind'), peek: cap('peek'), enter: cap('enter'), insideTap: cap('insideTap'), tap: cap('tap') && tapKinds().length > 0 };
+    }
+    function isWet() { return s.weather === 'downpour' || s.weather === 'thunder'; }
+    function rngInt(tag, n) { return hashSeed(species + '#' + seedStr + '#' + tag) % n; }
+    function note(text) { s.log.push(text); if (s.log.length > 20) s.log.shift(); }
+
+    function newPlan(start) {
+      s.planN += 1;
+      var pl = { seconds: 180, motion: M };
+      if (start) pl.start = start;
+      if (o.bounds) pl.bounds = o.bounds;
+      s.plan = V2.makePlan(species, seedStr + (s.planN > 1 ? '#' + s.planN : ''), pl);
+      s.planT = 0;
+    }
+    function blank(weather) {
+      return { mode: 'roam', weather: weather || 'day', plan: null, planT: 0, planN: 0, roamClock: 0, nextExcursion: 0, excursionN: 0, force: null,
+               tapPending: false, tapMs: 0, tapN: 0, lastTap: '', forcedTap: null, ignoredReason: '', dryFor: 0, resume: null,
+               script: null, ops: null, opIdx: 0, opT: 0, cur: null, insidePhase: 'lazy', insideT: 0, reduced: false, log: [] };
+    }
+    function scheduleExcursion() {
+      s.excursionN += 1;
+      s.nextExcursion = s.roamClock + T_.excursionMinMs + rngInt('trip' + s.excursionN, Math.max(1, T_.excursionMaxMs - T_.excursionMinMs));
+    }
+    function roamState() { return V2.stateAt(s.plan, s.planT); }
+    function leavePoint() {
+      var st = roamState();
+      return { x: st.x, y: st.y, facing: st.facing < 0 ? -1 : 1, planT: s.planT };
+    }
+
+    // ---------- 腳本：先把每一步排好，每步都知道自己的起點 ----------
+    function builder(start, facing) {
+      var ops = [], pos = { x: start.x, y: start.y }, face = facing;
+      var b = {
+        pos: function () { return { x: pos.x, y: pos.y }; }, facing: function () { return face; }, ops: ops,
+        step: function (group, index, mirror, ms, label) { return { group: group, index: index, mirror: !!mirror, ms: ms, label: label || '' }; },
+        seq: function (stage, steps, layer, inside, fixedDepth) {
+          ops.push({ kind: 'seq', stage: stage, steps: steps, x: pos.x, y: pos.y, layer: layer || 'front', inside: !!inside, depth: fixedDepth ? 1 : depthAt(pos.y),
+                     ms: steps.reduce(function (a, st) { return a + st.ms; }, 0) });
+          return b;
+        },
+        /** 站姿原地換方向：stand → turn 0..2 → 鏡像 stand（反向倒著播）。 */
+        turnTo: function (dir, layer) {
+          if (dir === face) return b;
+          var order = face > 0 ? [0, 1, 2] : [2, 1, 0], t = T_.turnMs;
+          b.seq('standTurn', [b.step('stand', 0, face < 0, T_.standMs, '站穩'), b.step('turn', order[0], false, t, '轉向鏡頭'), b.step('turn', order[1], false, t, '正面'),
+                              b.step('turn', order[2], false, t, '轉向另一側'), b.step('stand', 0, dir < 0, T_.standMs, '站好')], layer);
+          face = dir;
+          return b;
+        },
+        /** 同一走道上的側走（狗）或短跳（兔）：起訖都是 stand，整數循環。 */
+        side: function (to, layer) {
+          var L = Math.hypot(to.x - pos.x, to.y - pos.y);
+          if (L < 1) { pos = { x: to.x, y: to.y }; return b; }
+          if (Math.abs(to.x - pos.x) > 0.5) b.turnTo(to.x > pos.x ? 1 : -1, layer);
+          var from = { x: pos.x, y: pos.y };
+          if (species === 'dog') {
+            var d = depthAt((from.y + to.y) / 2), n = Math.max(1, Math.round(L / (M.strideUnits * d)));
+            ops.push({ kind: 'side', stage: 'side', from: from, to: { x: to.x, y: to.y }, ms: n * 8 * M.walkFrameMs, frameMs: M.walkFrameMs, mirror: face < 0, layer: layer || 'front', cycles: n });
+          } else {
+            var hops = Math.max(1, Math.round(L / (M.hopAdvance * depthAt(from.y))));
+            for (var i = 0; i < hops; i++) {
+              var a = { x: from.x + (to.x - from.x) * i / hops, y: from.y + (to.y - from.y) * i / hops };
+              var z = { x: from.x + (to.x - from.x) * (i + 1) / hops, y: from.y + (to.y - from.y) * (i + 1) / hops };
+              ops.push({ kind: 'hop', stage: 'side', from: a, to: z, ms: V2.HOP_MS, mirror: face < 0, layer: layer || 'front' });
+              ops.push({ kind: 'seq', stage: 'side', steps: [b.step('stand', 0, face < 0, 200, '落地停穩')], x: z.x, y: z.y, layer: layer || 'front', inside: false, depth: depthAt(z.y), ms: 200 });
+            }
+          }
+          pos = { x: to.x, y: to.y };
+          return b;
+        },
+        /** 真背面／正面步態：沿縱深移動。door=true 走門中央：depth 固定 1，越過門檻線才畫到門框後。 */
+        gait: function (group, to, opt) {
+          var L = Math.hypot(to.x - pos.x, to.y - pos.y), g = opt || {}, hops = 0;
+          if (species === 'rabbit') hops = Math.max(1, Math.round(L / M.gaitHopAdvance));  // 整數跳，距離平均分給每一跳
+          ops.push({ kind: 'gait', stage: g.stage || group, group: group, from: { x: pos.x, y: pos.y }, to: { x: to.x, y: to.y }, ms: hops ? hops * RABBIT_GAIT_MS : Math.max(1, L / T_.gaitSpeed * 1000), frameMs: T_.gaitFrameMs,
+                     layer: g.layer || 'front', door: !!g.door, hops: hops });
+          pos = { x: to.x, y: to.y };
+          return b;
+        },
+        call: function (fn) { ops.push({ kind: 'call', fn: fn, stage: 'decide', ms: 0 }); return b; }
+      };
+      return b;
+    }
+    function run(scriptName, b) {
+      s.mode = 'script'; s.script = scriptName; s.ops = b.ops; s.opIdx = 0; s.opT = 0; s.cur = null;
+      runCalls();
+    }
+    /** 腳本中段接續：把後面的步驟換成新的。 */
+    function replaceRest(b) { s.ops = b.ops; s.opIdx = 0; s.opT = 0; runCalls(); }
+    function runCalls() {
+      while (s.mode === 'script' && s.ops && s.opIdx < s.ops.length && s.ops[s.opIdx].kind === 'call') {
+        var op = s.ops[s.opIdx]; s.opIdx += 1; s.opT = 0;
+        op.fn();
+      }
+    }
+    function backToRoam(reason) {
+      var r = s.resume;
+      s.mode = 'roam'; s.script = null; s.ops = null; s.cur = null; s.opT = 0;
+      if (r) s.planT = r.planT;
+      s.resume = null;
+      if (reason) note(reason);
+    }
+    /** 走回離開點、轉回原方向，再接回原路。 */
+    function tailToResume(b, layer) {
+      var r = s.resume;
+      if (r) { b.side({ x: r.x, y: r.y }, layer); b.turnTo(r.facing, layer); }
+      b.call(function () { backToRoam('接回原路'); });
+      return b;
+    }
+
+    // ---------- 繞樹 ----------
+    function treeScript(withPeek) {
+      var r = s.resume, b = builder(r, r.facing), S = PT.S, Tp = PT.T, P = PT.P, c = T_.crouchMs, a = T_.awayMs, l = T_.lowturnMs;
+      b.side(S, 'front');
+      b.turnTo(1, 'front');
+      // 根外原地：伏低 → 轉背；真背面步態斜向走到 T（還在前層）
+      b.seq('treeTurnBack', [b.step('stand', 0, false, T_.standMs, '站穩'), b.step('crouch', 0, false, c, '半低'), b.step('crouch', 1, false, c, '伏低'),
+                             b.step('away', 0, false, a, '轉向右後'), b.step('away', 1, false, a, '幾乎背對'), b.step('away', 2, false, a, '背對')], 'front');
+      b.gait('rearwalk', Tp, { stage: 'treeRear', layer: 'front' });
+      // T 在根外：背對這一格才換到樹後，接著原地轉成朝左、起身
+      b.seq('treeSwapBehind', [b.step('away', 2, false, a, '在根外換到樹後')], 'behind');
+      b.seq('treeFaceLeft', [b.step('away', 1, true, a, '轉向左後'), b.step('away', 0, true, a, '轉向左'), b.step('crouch', 1, true, c, '低姿朝左'),
+                             b.step('crouch', 0, true, c, '起身'), b.step('stand', 0, true, T_.standMs, '站好')], 'behind');
+      b.call(function () {
+        var b2 = builder(Tp, -1);
+        b2.side(P, 'behind');
+        // 探頭：雨來了就不探，直接往回走
+        if (withPeek && has('peek') && !isWet()) {
+          b2.seq('peek', [b2.step('stand', 0, true, T_.standMs, '站穩'), b2.step('turn', 2, false, T_.turnMs, '轉向鏡頭'), b2.step('turn', 1, false, T_.turnMs, '正面'),
+                          b2.step('peek', 0, false, 320, '探出身體'), b2.step('peek', 1, false, 900, '探頭看鏡頭'), b2.step('peek', 2, false, 500, '眨眼'), b2.step('peek', 1, false, 400, '探頭看鏡頭'),
+                          b2.step('peek', 0, false, 260, '縮回'), b2.step('turn', 1, false, T_.turnMs, '正面'), b2.step('turn', 0, false, T_.turnMs, '轉向右'), b2.step('stand', 0, false, T_.standMs, '站好')], 'behind');
+        } else {
+          b2.seq('behindHold', [b2.step('stand', 0, true, isWet() ? 200 : T_.behindHoldMs, '在樹後停一下')], 'behind');
+          b2.turnTo(1, 'behind');
+        }
+        // 走回 T（還在樹後）；T 原地轉成面向鏡頭，正面這格換回前層；走回走道
+        var back = builder(P, 1);
+        back.side(Tp, 'behind');
+        back.seq('treeTurnFront', [back.step('stand', 0, false, T_.standMs, '站穩'), back.step('crouch', 0, false, c, '半低'), back.step('crouch', 1, false, c, '伏低'), back.step('lowturn', 0, false, l, '轉向鏡頭')], 'behind');
+        back.seq('treeSwapFront', [back.step('lowturn', 1, false, l, '在根外回到前景')], 'front');
+        back.gait('frontwalk', S, { stage: 'treeFront', layer: 'front' });
+        // 狗的 lowturn 2 比 crouch 1 高，略過 crouch 1 才不會先高後低；兔等真素材再看
+        back.seq('treeRise', [back.step('lowturn', 1, false, l, '停步'), back.step('lowturn', 2, false, l, '轉向左')].concat(species === 'dog' ? [] : [back.step('crouch', 1, true, c, '低姿朝左')],
+                              [back.step('crouch', 0, true, c, '起身'), back.step('stand', 0, true, T_.standMs, '站好')]), 'front');
+        var tail = builder(S, -1);
+        tailToResume(tail, 'front');
+        replaceRest({ ops: b2.ops.concat(back.ops, tail.ops) });
+      });
+      note(withPeek ? '繞到樹後探頭' : '繞到樹後');
+      run(withPeek ? 'peek' : 'behind', b);
+    }
+
+    // ---------- 避雨 ----------
+    function downToBack(b, m, layer) {
+      var c = T_.crouchMs, a = T_.awayMs;
+      b.seq('doorCrouch', [b.step('stand', 0, m, T_.standMs, '站穩'), b.step('crouch', 0, m, c, '半低'), b.step('crouch', 1, m, c, '伏低'),
+                           b.step('away', 0, m, a, '轉向後'), b.step('away', 1, m, a, '幾乎背對'), b.step('away', 2, m, a, '背對門口')], layer, false, true);
+    }
+    function inside() { return { x: geo.insideX, y: geo.insideY }; }
+    function lane() { return { x: geo.insideX, y: PT.laneY }; }
+    function doorInFrom(b) {
+      b.gait('rearwalk', inside(), { stage: 'rearIn', door: true });
+      var a = T_.awayMs, ls = T_.lieMs;
+      b.seq('insideTurnBack', [b.step('away', 2, false, a, '屋內停步'), b.step('away', 1, false, a, '轉回'), b.step('away', 0, false, a, '轉回'), b.step('crouch', 1, false, T_.crouchMs, '低姿朝右'),
+                               b.step('lie', 0, false, ls, '放低身體'), b.step('lie', 1, false, ls, '趴下'), b.step('lie', 2, false, ls, '頭放低')], 'mid', true, true);
+      b.call(function () { s.mode = 'inside'; s.script = null; s.ops = null; s.cur = null; s.insidePhase = 'lazy'; s.insideT = 0; s.opT = 0; note('進到屋內'); });
+    }
+    function enterScript() {
+      var r = s.resume, b = builder(r, r.facing);
+      b.side(lane(), 'front');
+      b.call(function () {
+        var here = lane(), f = b.facing();
+        if (!isWet()) { var back = builder(here, f); tailToResume(back, 'front'); note('到門口時雨停：走回'); replaceRest(back); return; }
+        var d = builder(here, 1);
+        downToBack(d, f < 0, 'front');
+        doorInFrom(d);
+        note('門外伏低轉背');
+        replaceRest(d);
+      });
+      note('下大雨：走向小屋門前');
+      run('enter', b);
+    }
+    function exitScript() {
+      var b = builder(inside(), 1), ls = T_.lieMs, c = T_.crouchMs, l = T_.lowturnMs;
+      b.seq('wakeRise', [b.step('rest', 0, false, 500, '醒來'), b.step('lie', 2, false, ls, '抬頭'), b.step('lie', 1, false, ls, '撐起'), b.step('lie', 0, false, ls, '起身'),
+                         b.step('crouch', 1, false, c, '低姿朝右'), b.step('lowturn', 0, false, l, '轉向鏡頭'), b.step('lowturn', 1, false, l, '面向鏡頭')], 'mid', true, true);
+      b.gait('frontwalk', lane(), { stage: 'frontOut', door: true });
+      b.call(function () {
+        var here = lane();
+        if (isWet()) {  // 剛出到門前又下大雨：原地轉回背對再進屋
+          var again = builder(here, 1), a = T_.awayMs;
+          again.seq('reenterTurn', [again.step('lowturn', 1, false, l, '停步'), again.step('lowturn', 0, false, l, '轉向右'), again.step('crouch', 1, false, c, '低姿朝右'),
+                                    again.step('away', 0, false, a, '轉向後'), again.step('away', 1, false, a, '幾乎背對'), again.step('away', 2, false, a, '背對門口')], 'front', false, true);
+          doorInFrom(again);
+          note('又下大雨：轉回背對再進屋');
+          replaceRest(again);
+          return;
+        }
+        var d = builder(here, -1);
+        d.seq('doorRise', [d.step('lowturn', 1, false, l, '停步'), d.step('lowturn', 2, false, l, '轉向左')].concat(species === 'dog' ? [] : [d.step('crouch', 1, true, c, '低姿朝左')],
+                           [d.step('crouch', 0, true, c, '起身'), d.step('stand', 0, true, T_.standMs, '站好')]), 'front', false, true);
+        tailToResume(d, 'front');
+        replaceRest(d);
+      });
+      note('雨停 8 秒：出屋');
+      run('exit', b);
+    }
+
+    // ---------- 點擊 ----------
+    function pickTap() {
+      var kinds = tapKinds().filter(function (k) { return k !== s.lastTap; });
+      if (!kinds.length) kinds = tapKinds();
+      if (s.forcedTap && tapKinds().indexOf(s.forcedTap) >= 0) { var f = s.forcedTap; s.forcedTap = null; return f; }
+      return kinds[hashSeed(species + '#' + seedStr + '#tap#' + (s.tapN + 1)) % kinds.length];
+    }
+    function actSteps(b, kind) {
+      if (kind === 'wave') return [b.step('wave', 0, false, 220, '抬手'), b.step('wave', 1, false, 300, '招手'), b.step('wave', 0, false, 240, '招手'), b.step('wave', 1, false, 300, '招手'), b.step('wave', 0, false, 240, '放下')];
+      if (kind === 'shake') return [b.step('shake', 0, false, 190, '搖頭'), b.step('sit', 1, false, 110, '頭回正'), b.step('shake', 1, false, 190, '搖頭'), b.step('sit', 1, false, 110, '頭回正'),
+                                    b.step('shake', 0, false, 190, '搖頭'), b.step('sit', 1, false, 110, '頭回正'), b.step('shake', 1, false, 190, '搖頭')];
+      return [b.step('yawn', 0, false, 320, '嘴微開'), b.step('yawn', 1, false, 1000, '打哈欠'), b.step('yawn', 0, false, 320, '嘴快合上')];
+    }
+    function tapScript() {
+      var r = s.resume, b = builder(r, r.facing), kind = pickTap(), m = r.facing < 0, side = m ? 2 : 0, t = T_.turnMs;
+      s.tapN += 1; s.lastTap = kind;
+      b.seq('tapIn', [b.step('stand', 0, m, T_.standMs, '停穩'), b.step('turn', side, false, t, '轉向鏡頭'), b.step('turn', 1, false, t, '正面'), b.step('sit', 0, false, 260, '半坐'), b.step('sit', 1, false, 300, '坐好')], 'front');
+      b.seq('tap-' + kind, actSteps(b, kind), 'front');
+      b.seq('tapOut', [b.step('sit', 1, false, 300, '坐好'), b.step('sit', 0, false, 240, '起身'), b.step('turn', 1, false, t, '正面'), b.step('turn', side, false, t, '轉回'), b.step('stand', 0, m, T_.standMs, '站好')], 'front');
+      b.call(function () { backToRoam('點擊動作結束'); });
+      note('點擊：' + kind);
+      run('tap', b);
+    }
+    function insideTapScript() {
+      var b = builder(inside(), 1), ls = T_.lieMs;
+      s.tapN += 1;
+      b.seq('insideTapUp', [b.step('rest', 0, false, 300, '醒來'), b.step('lie', 2, false, ls, '抬頭'), b.step('lie', 1, false, ls, '撐起')], 'mid', true, true);
+      b.seq('insideShake', [b.step('wake', 0, false, 220, '搖頭'), b.step('lie', 1, false, 120, '頭回正'), b.step('wake', 1, false, 220, '搖頭'), b.step('lie', 1, false, 120, '頭回正'),
+                            b.step('wake', 0, false, 220, '搖頭'), b.step('lie', 1, false, 120, '頭回正'), b.step('wake', 1, false, 220, '搖頭'), b.step('lie', 1, false, 200, '頭回正')], 'mid', true, true);
+      b.seq('insideYawn', [b.step('wake', 2, false, 1100, '打哈欠'), b.step('lie', 1, false, 300, '嘴合上')], 'mid', true, true);
+      b.seq('insideTapDown', [b.step('lie', 2, false, ls, '頭放低'), b.step('rest', 0, false, 400, '想睡')], 'mid', true, true);
+      b.call(function () { s.mode = 'inside'; s.script = null; s.ops = null; s.cur = null; s.insidePhase = 'sleep'; s.insideT = 0; s.opT = 0; note('屋內點擊結束：趴睡'); });
+      note('屋內點擊');
+      run('insideTap', b);
+    }
+
+    // ---------- 平常：走到安全接點才接別的事 ----------
+    function stopAtSafe(dt) {
+      var st = roamState();
+      if (st.group === 'stand') return true;
+      if (st.group === 'walk') {
+        var seg = s.plan.segments[st.segmentIndex], cyc = 8 * seg.frameMs, local = s.planT - seg.t0, k = Math.ceil(local / cyc - 1e-9), edge = seg.t0 + k * cyc;
+        if (s.planT + dt >= edge) { s.planT = Math.min(edge, s.plan.totalMs); return true; }
+      }
+      s.planT = Math.min(s.planT + dt, s.plan.totalMs);
+      return false;
+    }
+    function updateRoam(dt) {
+      s.roamClock += dt;
+      var caps = capabilities(), wet = isWet() && caps.enter;
+      if (s.tapPending) {
+        s.tapMs += dt;
+        if (wet || s.tapMs > T_.tapWaitMs) { s.tapPending = false; s.ignoredReason = wet ? 'rain-first' : 'no-safe-pose'; }
+      }
+      var treeDue = !isWet() && (s.force === 'behind' || s.force === 'peek' || (caps.behind && s.roamClock >= s.nextExcursion));
+      if (!wet && !s.tapPending && !treeDue) {
+        s.planT += dt;
+        if (s.planT >= s.plan.totalMs) newPlan(s.plan.end);
+        return;
+      }
+      if (!stopAtSafe(dt)) return;
+      s.resume = leavePoint();
+      if (wet) { s.force = null; enterScript(); return; }
+      if (s.tapPending) { s.tapPending = false; s.tapMs = 0; tapScript(); return; }
+      var withPeek = s.force === 'peek' || (s.force === null && caps.peek);
+      s.force = null;
+      treeScript(withPeek);
+      scheduleExcursion();
+    }
+    function updateScript(dt) {
+      var op = s.ops[s.opIdx];
+      if (!op) { backToRoam('腳本結束'); return; }
+      s.opT += dt;
+      if (s.opT >= op.ms) {
+        var extra = s.opT - op.ms;
+        s.cur = op;
+        s.opIdx += 1; s.opT = 0;
+        runCalls();
+        if (s.mode === 'script' && s.opIdx < s.ops.length) s.opT = Math.min(extra, 50);
+      }
+    }
+    function updateInside(dt) {
+      s.insideT += dt;
+      if (s.dryFor >= T_.dryStableMs && cap('behind')) { exitScript(); return; }
+      if (s.insidePhase === 'lazy' && s.insideT >= T_.lazyMs) { s.insidePhase = 'sleep'; s.insideT = 0; }
+      else if (s.insidePhase === 'lazyAgain' && s.insideT >= T_.lazyAgainMs) { s.insidePhase = 'sleep'; s.insideT = 0; }
+      else if (s.insidePhase === 'sleep' && Math.floor(s.insideT / (2 * T_.breathMs)) >= T_.lazyAgainEvery) { s.insidePhase = 'lazyAgain'; s.insideT = 0; }
+    }
+
+    // ---------- 目前要畫的圖 ----------
+    function poseOfOp(op, t) {
+      var p = null;
+      if (op.kind === 'seq') {
+        var acc = 0, st = op.steps[op.steps.length - 1];
+        for (var i = 0; i < op.steps.length; i++) { if (t < acc + op.steps[i].ms) { st = op.steps[i]; break; } acc += op.steps[i].ms; }
+        p = { group: st.group, index: st.index, mirror: st.mirror, x: op.x, y: op.y, depth: op.depth, layer: op.layer, inside: op.inside, label: st.label, moving: false };
+      } else if (op.kind === 'side') {
+        var u = clamp(t / op.ms, 0, 1), y = op.from.y + (op.to.y - op.from.y) * u;
+        p = { group: 'walk', index: Math.min(op.cycles * 8 - 1, Math.floor(t / op.frameMs)) % 8, mirror: op.mirror, x: op.from.x + (op.to.x - op.from.x) * u, y: y, depth: depthAt(y), layer: op.layer, inside: false, label: '走路', moving: true };
+      } else if (op.kind === 'hop') {
+        var a2 = 0, h = V2.HOP_TABLE[V2.HOP_TABLE.length - 1];
+        for (var j = 0; j < V2.HOP_TABLE.length; j++) { if (t < a2 + V2.HOP_TABLE[j].ms) { h = V2.HOP_TABLE[j]; break; } a2 += V2.HOP_TABLE[j].ms; }
+        var f = h.from + (h.to - h.from) * clamp((t - a2) / h.ms, 0, 1), hy = op.from.y + (op.to.y - op.from.y) * f;
+        p = { group: 'hop', index: h.index, mirror: op.mirror, x: op.from.x + (op.to.x - op.from.x) * f, y: hy, depth: depthAt(hy), layer: op.layer, inside: false, label: h.label, moving: h.from !== h.to, airborne: !!h.air };
+      } else if (op.kind === 'gait') {
+        var g = clamp(t / op.ms, 0, 1), gIndex = Math.floor(t / op.frameMs) % 4, gMoving = true, gAir = false, gLabel = op.group === 'rearwalk' ? '背對走' : '面向鏡頭走';
+        if (op.hops) {
+          var hopI = Math.min(op.hops - 1, Math.floor(t / RABBIT_GAIT_MS)), hopT = t - hopI * RABBIT_GAIT_MS, a3 = 0, gh = RABBIT_GAIT_TABLE[RABBIT_GAIT_TABLE.length - 1];
+          for (var q = 0; q < RABBIT_GAIT_TABLE.length; q++) { if (hopT < a3 + RABBIT_GAIT_TABLE[q].ms) { gh = RABBIT_GAIT_TABLE[q]; break; } a3 += RABBIT_GAIT_TABLE[q].ms; }
+          if (gh === RABBIT_GAIT_TABLE[RABBIT_GAIT_TABLE.length - 1] && hopT >= a3 + gh.ms) a3 = RABBIT_GAIT_MS - gh.ms;
+          g = (hopI + gh.from + (gh.to - gh.from) * clamp((hopT - a3) / gh.ms, 0, 1)) / op.hops;
+          gIndex = gh.index; gMoving = gh.from !== gh.to; gAir = !!gh.air; gLabel = gh.label;
+        }
+        var gy = op.from.y + (op.to.y - op.from.y) * g, inDoor = op.door && gy <= geo.midY + 1e-6;
+        p = { group: op.group, index: gIndex, mirror: false, x: op.from.x + (op.to.x - op.from.x) * g, y: gy, depth: op.door ? 1 : depthAt(gy), layer: op.door ? (inDoor ? 'mid' : 'front') : op.layer, inside: !!inDoor, label: gLabel, moving: gMoving, airborne: gAir };
+      }
+      return p;
+    }
+    function pose() {
+      var p;
+      if (s.reduced) {
+        if (s.mode === 'inside' || (isWet() && capabilities().enter)) p = { group: 'rest', index: 1, mirror: false, x: geo.insideX, y: geo.insideY, depth: 1, layer: 'mid', inside: true, label: '屋內趴睡（減少動態）', moving: false };
+        else { var rp = s.resume || leavePoint(); p = { group: 'stand', index: 0, mirror: rp.facing < 0, x: rp.x, y: rp.y, depth: 1, layer: 'front', inside: false, label: '靜止（減少動態）', moving: false }; }
+      } else if (s.mode === 'roam') {
+        var st = roamState();
+        p = { group: st.group, index: st.index, mirror: st.mirror, x: st.x, y: st.y, depth: st.depth, layer: 'front', inside: false, label: st.label, moving: st.moving, airborne: st.airborne };
+      } else if (s.mode === 'inside') {
+        var idx = s.insidePhase === 'sleep' ? 1 + Math.floor(s.insideT / T_.breathMs) % 2 : 0;
+        p = { group: 'rest', index: idx, mirror: false, x: geo.insideX, y: geo.insideY, depth: 1, layer: 'mid', inside: true, label: s.insidePhase === 'sleep' ? '趴睡' : '慵懶', moving: false };
+      } else {
+        var op = s.ops[s.opIdx] || s.cur;
+        p = op && op.kind !== 'call' ? poseOfOp(op, s.opT) : null;
+        if (!p) { var c = s.resume || leavePoint(); p = { group: 'stand', index: 0, mirror: c.facing < 0, x: c.x, y: c.y, depth: 1, layer: 'front', inside: false, label: '', moving: false }; }
+      }
+      p.footY = p.y;
+      p.heading = headingOf(p.group, p.index, p.mirror);
+      return p;
+    }
+    function phase() {
+      if (s.reduced) return 'reduced';
+      if (s.mode === 'roam') return roamState().phase;
+      if (s.mode === 'inside') return s.insidePhase;
+      var op = s.ops && s.ops[s.opIdx];
+      return op ? op.stage : (s.script || 'script');
+    }
+
+    // ---------- 對外 ----------
+    var api = {
+      species: species, seed: seedStr, geometry: geo, points: PT,
+      update: function (dt) {
+        if (!(dt > 0)) return;
+        s.dryFor = isWet() ? 0 : s.dryFor + dt;
+        if (s.reduced) return;
+        if (s.mode === 'roam') updateRoam(dt);
+        else if (s.mode === 'script') updateScript(dt);
+        else updateInside(dt);
+      },
+      pose: pose,
+      /** 回傳 { ok, reason }。不排隊：表演或轉層中的點擊直接丟棄。 */
+      tap: function (kind) {
+        var fail = function (why) { s.ignoredReason = why; return { ok: false, reason: why }; };
+        if (s.reduced) return fail('reduced-motion');
+        if (s.mode === 'inside') {
+          if (!cap('insideTap')) return fail('assets-pending');
+          insideTapScript();
+          s.ignoredReason = '';
+          return { ok: true, state: 'inside' };
+        }
+        if (s.mode === 'script') return fail(s.script === 'tap' || s.script === 'insideTap' ? 'busy' : 'in-transition');
+        var caps = capabilities();
+        if (!caps.tap) return fail('assets-pending');
+        if (isWet() && caps.enter) return fail('rain-first');
+        if (s.tapPending) return fail('busy');
+        s.tapPending = true; s.tapMs = 0; s.ignoredReason = '';
+        if (kind) s.forcedTap = kind;
+        return { ok: true, state: 'pending' };
+      },
+      setWeather: function (kind) {
+        s.weather = String(kind);
+        // 減少動態沒有轉場：雨停就直接回到離開點
+        if (s.reduced && !isWet() && s.mode === 'inside') backToRoam('減少動態：雨停');
+        return s.weather;
+      },
+      /** 減少動態：只給靜止圖，不轉場；關掉後從靜止點接回原路。 */
+      setReduced: function (v) {
+        var on = !!v;
+        if (on === s.reduced) return on;
+        s.reduced = on;
+        s.tapPending = false; s.force = null;
+        if (on) {
+          if (s.mode === 'script') {
+            var keepInside = s.script === 'insideTap' || (s.script === 'exit' && isWet());
+            if (keepInside) { s.mode = 'inside'; s.script = null; s.ops = null; s.cur = null; s.insidePhase = 'sleep'; s.insideT = 0; }
+            else if (s.resume) backToRoam('減少動態');
+            else { s.mode = 'roam'; s.script = null; s.ops = null; s.cur = null; }
+          }
+          if (s.mode === 'roam' && isWet() && capabilities().enter) { s.resume = leavePoint(); s.mode = 'inside'; s.insidePhase = 'sleep'; s.insideT = 0; }
+        }
+        return on;
+      },
+      reset: function () { var w = s.weather, r = s.reduced; s = blank(w); s.reduced = r; newPlan(); scheduleExcursion(); },
+      /** 示範（只供預覽）。缺素材時回報，不假裝。 */
+      demo: function (kind) {
+        var caps = capabilities();
+        function resetRoam(w) { var keep = s.reduced; s = blank(w); s.reduced = keep; newPlan(); scheduleExcursion(); }
+        function inHouse(which) { resetRoam('downpour'); s.resume = leavePoint(); s.mode = 'inside'; s.insidePhase = which; s.insideT = 0; }
+        if (kind === 'roam') { resetRoam('day'); return { ok: true, kind: kind }; }
+        if (kind === 'behind' || kind === 'peek') {
+          if (!caps[kind]) return { ok: false, reason: 'assets-pending', kind: kind };
+          resetRoam('day'); s.force = kind; return { ok: true, kind: kind };
+        }
+        if (kind === 'enter') {
+          if (!caps.enter) return { ok: false, reason: 'assets-pending', kind: kind };
+          resetRoam('downpour'); return { ok: true, kind: kind };
+        }
+        if (kind === 'sleep' || kind === 'exit') {
+          if (!caps.enter) return { ok: false, reason: 'assets-pending', kind: kind };
+          inHouse('sleep');
+          if (kind === 'exit') { s.weather = 'day'; s.dryFor = T_.dryStableMs; }
+          return { ok: true, kind: kind };
+        }
+        if (kind === 'tap') {
+          if (!caps.tap) return { ok: false, reason: 'assets-pending', kind: kind };
+          resetRoam('day'); return Object.assign({ kind: kind }, api.tap());
+        }
+        return { ok: false, reason: 'unknown-demo', kind: kind };
+      },
+      capabilities: capabilities,
+      /** 小屋只在需要時出現：下大雨且不在繞樹途中，或還在避雨流程裡。 */
+      cabinVisible: function () {
+        if (s.mode === 'inside' || s.script === 'enter' || s.script === 'exit' || s.script === 'insideTap') return true;
+        if (s.script === 'behind' || s.script === 'peek') return false;
+        return isWet() && capabilities().enter;
+      },
+      snapshot: function () {
+        var p = pose(), op = s.mode === 'script' && s.ops ? s.ops[s.opIdx] : null;
+        return { version: VERSION, species: species, seed: seedStr, mode: s.mode, script: s.script, phase: phase(), weather: s.weather, wet: isWet(), reduced: s.reduced,
+                 capabilities: capabilities(), pose: p, heading: p.heading, feet: { x: round1(p.x), y: round1(p.y) }, layer: p.layer, inside: p.inside, planT: Math.round(s.planT), dryForMs: Math.round(s.dryFor),
+                 tap: { pending: s.tapPending, n: s.tapN, last: s.lastTap, ignoredReason: s.ignoredReason }, resume: s.resume, nextExcursionInMs: Math.round(s.nextExcursion - s.roamClock),
+                 route: { points: PT, inside: inside(), lane: lane(), midY: geo.midY }, op: op ? { kind: op.kind, stage: op.stage, index: s.opIdx, total: s.ops.length, t: Math.round(s.opT), ms: Math.round(op.ms) } : null,
+                 cabinVisible: api.cabinVisible(), log: s.log.slice() };
+      }
+    };
+
+    s = blank(o.weather);
+    newPlan();
+    scheduleExcursion();
+    return api;
+  }
+
+  /**
+   * 跑一段時間並檢查規則（給 Node 測試）。這只驗邏輯，不驗美術或自然與否。
+   * events：[{ at: ms, weather }, { at: ms, tap: true }, { at: ms, demo: 'peek' }]
+   */
+  function audit(ctrl, ms, opts) {
+    var o = opts || {}, dt = o.dt || 16, ev = (o.events || []).slice().sort(function (a, b) { return a.at - b.at; }), out = [], prev = null, seen = {}, swaps = [];
+    var SIDE = { walk: 1, stand: 1, sniff: 1, crouch: 1, hop: 1, ears: 1 }, PT2 = ctrl.points;
+    for (var t = 0; t <= ms; t += dt) {
+      while (ev.length && ev[0].at <= t) {
+        var e = ev.shift();
+        if (e.weather) ctrl.setWeather(e.weather);
+        if (e.tap) ctrl.tap(e.kind);
+        if (e.demo) { ctrl.demo(e.demo); prev = null; }
+      }
+      ctrl.update(dt);
+      var p = ctrl.pose(), snap = ctrl.snapshot();
+      seen[snap.phase] = (seen[snap.phase] || 0) + 1;
+      if (p.group === 'turn' && p.mirror) out.push({ t: t, rule: 'turn 格不可鏡像' });
+      if (prev) {
+        var d = Math.hypot(p.x - prev.x, p.y - prev.y);
+        if (d > 0.5 * dt && !o.allowJump) out.push({ t: t, rule: '位置跳動', dist: round1(d), from: prev.group, to: p.group, phase: snap.phase });
+        if (d > 0.01 && !p.moving && !prev.moving) out.push({ t: t, rule: '原地動作卻有位移', phase: snap.phase, dist: round1(d) });
+        if (p.group === 'walk' && Math.abs(p.y - prev.y) > Math.abs(p.x - prev.x) / 1.5 + 0.01) out.push({ t: t, rule: '側面圖沿縱深移動', phase: snap.phase });
+        if (ctrl.species === 'rabbit' && (p.group === 'rearwalk' || p.group === 'frontwalk')) {
+          var gRow = RABBIT_GAIT_TABLE[p.index];
+          if (p.moving !== (gRow.from !== gRow.to)) out.push({ t: t, rule: '兔子步態 moving 與表不同步', index: p.index });
+          if (prev.group === p.group && prev.index === p.index && !p.moving && d > 0.01) out.push({ t: t, rule: '兔子伏低或著地時滑動', index: p.index, dist: round1(d) });
+        }
+        if (p.group === 'rearwalk' && p.y > prev.y + 1e-6) out.push({ t: t, rule: 'rearwalk 往鏡頭移動' });
+        if (p.group === 'frontwalk' && p.y < prev.y - 1e-6) out.push({ t: t, rule: 'frontwalk 往遠處移動' });
+        if (SIDE[p.group] && SIDE[prev.group] && p.mirror !== prev.mirror) out.push({ t: t, rule: '沒有經過轉向格就翻面', from: prev.group, to: p.group });
+        if (p.layer !== prev.layer) {
+          swaps.push({ t: t, from: prev.layer, to: p.layer, x: round1(p.x), y: round1(p.y), group: p.group, index: p.index });
+          var behindSwap = p.layer === 'behind' || prev.layer === 'behind';
+          if (behindSwap && Math.hypot(p.x - PT2.T.x, p.y - PT2.T.y) > 0.5) out.push({ t: t, rule: '樹後換層不在 T 點', x: round1(p.x), y: round1(p.y) });
+          if (behindSwap && p.moving) out.push({ t: t, rule: '移動中換層' });
+        }
+      }
+      prev = p;
+    }
+    return { ok: out.length === 0, violations: out.slice(0, 50), count: out.length, phases: seen, layerSwaps: swaps };
+  }
+
+  return Object.freeze({ VERSION: VERSION, GROUPS: GROUPS, FEATURE_GROUPS: FEATURE_GROUPS, TAP_KINDS: TAP_KINDS, TIMING: TIMING, POINTS: POINTS, CABIN: CABIN, RABBIT_GAIT_TABLE: RABBIT_GAIT_TABLE, RABBIT_GAIT_MS: RABBIT_GAIT_MS, RABBIT_GAIT_HOP: RABBIT_GAIT_HOP,
+    create: create, cabinGeometry: cabinGeometry, depthAt: depthAt, headingOf: headingOf, audit: audit });
+});

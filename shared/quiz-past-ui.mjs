@@ -22,11 +22,11 @@ function feedback(g,i,host){const r=state.records[g.id];if(!r||isManual(g))retur
 function renderPractice(){
  const host=$('#practice-progress'),p=state.practice;if(!host||!p)return;
  const box=el('div',undefined,'demo-note');
- const message=p.earnedByThisAttempt?'這次完整作答達標，取得1片葉片。':p.leafCount?'這份試卷已取得1片葉片，可繼續練習，不重複領取。':p.complete?'這次作答已完成，尚未取得葉片；可以重新作答再挑戰。':'完整作答達60%後取得1片葉片；不同次答案不合併計算。';
+ const message=p.earnedByThisAttempt?'這次完整作答達標，開出1朵考古花。':p.flowerCount?'這份試卷已開出1朵考古花，可繼續練習，不重複領取。':p.complete?'這次作答已完成，尚未開花；可以重新作答再挑戰。':'完整作答達60%後開出1朵考古花；不同次答案不合併計算。';
  box.append(el('strong',message));
  const details=el('details');details.append(el('summary',`歷次作答（${p.history.length}次）`));
- const wrap=el('div',undefined,'table-scroll'),table=el('table'),head=el('tr');for(const title of ['次數','成績','狀態','葉片'])head.append(el('th',title));table.append(head);
- p.history.forEach((h,i)=>{const row=el('tr');row.append(el('td',String(i+1)+(h.id===state.attemptId?'（目前）':'')),el('td',h.complete?`${h.score}／${h.max_score}`:`目前 ${h.score} 分`),el('td',h.complete?(h.passed?'達標':'未達60%'):'未完成'),el('td',h.earned_leaf?'取得1片':'—'));table.append(row);});wrap.append(table);details.append(wrap);box.append(details);host.replaceChildren(box);
+ const wrap=el('div',undefined,'table-scroll'),table=el('table'),head=el('tr');for(const title of ['次數','成績','狀態','考古花'])head.append(el('th',title));table.append(head);
+ p.history.forEach((h,i)=>{const row=el('tr');row.append(el('td',String(i+1)+(h.id===state.attemptId?'（目前）':'')),el('td',h.complete?`${h.score}／${h.max_score}`:`目前 ${h.score} 分`),el('td',h.complete?(h.passed?'達標':'未達60%'):'未完成'),el('td',h.earned_flower?'開出1朵':'—'));table.append(row);});wrap.append(table);details.append(wrap);box.append(details);host.replaceChildren(box);
  $('#restart').textContent=p.complete?'重新作答':'另開一次作答';
 }
 function render(){if(!active)return;

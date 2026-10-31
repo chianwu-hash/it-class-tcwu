@@ -792,7 +792,7 @@ export function initServerQuiz({ selectors, server }) {
       // 只在送答成功、後端允許揭答後播放；回看、重整與整卷檢視不反覆播放。
       feedbackAnimation = next.reviews.some(r => r.question_id === q.id) ? q.id : null;
       state = next; pending = null; busy = false; render(); say('答案已儲存。');
-      if(next.leaf?.earned_now)celebrateQuizLeaf();
+      if(next.leaf?.credit_added_now || next.leaf?.earned_now){celebrateQuizLeaf({leaves:next.leaf.awarded_leaf_count??1});afterGardenReward();}
       root.querySelector('.answer-preview')?.focus({preventScroll:true});
       if(root.classList.contains('quiz-workspace-active')&&!root.classList.contains('workspace-desktop'))root.querySelector('.answer-preview')?.scrollIntoView({block:'start',behavior:'instant'});
     } catch (e) { if (generation === token) { busy = false;

@@ -9,7 +9,16 @@
 <div class="counts"><div class="count"><strong>44</strong>片葉</div><div class="count"><strong>10</strong>朵花</div></div>
 <p id="message" aria-live="polite">正在準備成長紀念……</p><div class="progress" aria-hidden="true"><span id="bar"></span></div>
 <div class="actions"><button class="primary" id="play" disabled>看看努力樹的變化</button><button id="pause" disabled>暫停</button><button id="skip" disabled>直接看大樹</button></div>
-<label><input type="checkbox" id="reduce">減少動態</label><button id="sources">查看保留下來的花葉</button><p id="error" role="alert"></p><div class="note">這是你的成長紀念。重播不會改變成果或重複領取獎勵。</div>
+<label><input type="checkbox" id="reduce" aria-describedby="reduce-help">省略動畫過程</label><p id="reduce-help" class="muted">直接顯示結果，省略走路、成長和閃電等動畫。</p><button id="sources">查看保留下來的花葉</button><p id="error" role="alert"></p><div class="note">這是你的成長紀念。重播不會改變成果或重複領取獎勵。</div>
 </section></main><footer>成長後的空枝位置，留給接下來的練習。這段只展示努力樹的成長。</footer>
 <dialog id="details"><h2>每一份成果都保留著</h2><p>原有的每一份成果都保留在努力樹上。</p><ul id="list"></ul><button id="close">回到努力樹</button></dialog>
-<script type="module" src="growth.mjs"></script></body></html>
+<script>if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('growth-embedded');</script>
+<style>
+.growth-embedded,.growth-embedded body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent}
+.growth-embedded header,.growth-embedded footer,.growth-embedded .side{display:none}
+.growth-embedded .shell{display:block;width:100%;height:100%;max-width:none;margin:0;padding:0}
+.growth-embedded .garden{width:100%;height:100%;border:0;border-radius:0;box-shadow:none}
+.growth-embedded canvas{display:block;width:100%;height:100%;max-height:none;object-fit:contain}
+.growth-embedded .caption{top:auto;bottom:16px;left:18px;right:18px;font-size:clamp(14px,2.3vw,21px);text-wrap:balance}
+</style>
+<script type="module" src="growth.mjs?v=20261031-main-scene"></script></body></html>

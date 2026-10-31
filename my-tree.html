@@ -460,7 +460,6 @@
                         <button class="flower-option selected" type="button" data-flower="sunrise" aria-label="粉橘花"></button>
                         <button class="flower-option ocean" type="button" data-flower="ocean" aria-label="藍色花"></button>
                         <button class="flower-option candy" type="button" data-flower="candy" aria-label="粉紫花"></button>
-                        <button class="flower-option forest" type="button" data-flower="forest" aria-label="綠色花"></button>
                     </div>
                 </section>
 
@@ -474,9 +473,9 @@
         </section>
     </main>
 
-    <link rel="stylesheet" href="./shared/effort-garden-v2.css?v=20261030-rehearsal">
+    <link rel="stylesheet" href="./shared/effort-garden-v2.css?v=20261031-level2">
     <script type="module">
-        import {createGardenUpgrade} from './shared/effort-garden-v2.mjs?v=20261030-rehearsal';
+        import {createGardenUpgrade} from './shared/effort-garden-v2.mjs?v=20261031-level2';
         import {withGardenTestRewards} from './shared/garden-test-rehearsal.mjs?v=20261030-rehearsal';
         import {
             resolveSession,
@@ -498,11 +497,11 @@
             getRewardTreeCourse,
             getRewardTreeCourses
         } from "./shared/reward-tree-config.js?v=20261030-g6w09-boss";
-        import { createFullCompletionRows, deriveRewardTreeModel } from "./shared/reward-tree-model.js?v=20261001-foundation";
+        import { createFullCompletionRows, deriveRewardTreeModel } from "./shared/reward-tree-model.js?v=20261031-level2";
         import { renderRewardTree, selectReward } from "./shared/reward-tree-renderer.js";
         import { readingRequest, readingTreeData } from './shared/reading-api.js';
         import { homeworkRequest, homeworkTreeData } from "./shared/homework-api.js";
-        import {quizTreeData} from './shared/quiz-rewards.mjs?v=20261029-past1';
+        import {quizTreeData} from './shared/quiz-rewards.mjs?v=20261031-level2';
         import {quizLibraryForEnrollment} from './shared/quiz-grade-route.mjs?v=20261028-tree-return';
         import {createFoundationProgress} from './shared/typing-foundation-progress.js?v=20261006-google';
         import {foundationTreeData} from './shared/typing-foundation-rewards.js?v=20261002-zhuyin';
@@ -632,7 +631,7 @@
         }
 
         function setFlowerStyle(style) {
-            const safeStyle = ["sunrise", "ocean", "candy", "forest"].includes(style) ? style : "sunrise";
+            const safeStyle = ["sunrise", "ocean", "candy"].includes(style) ? style : "sunrise";
             document.documentElement.dataset.flower = safeStyle;
             flowerOptions.forEach((option) => {
                 option.classList.toggle("selected", option.dataset.flower === safeStyle);
