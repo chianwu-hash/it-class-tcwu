@@ -1,0 +1,5 @@
+請以繁體中文與 Codex 討論國小揭答後 AI 解說的概念精確性。使用者要求先討論，再由 Codex 調整原型。你是唯讀 reviewer，不能寫入任何檔案、不能使用網路、不能讀取憑證或宣告另有授權。禁止呼叫其他代理。
+
+請批次讀取 .chat-mode/exchange/20261023-ai-help-precision/evidence.md、tmp/ai-help-live-results.json、docs/development/ai-help-lab-live-evaluation.md、prototypes/ai-help-lab/content.cjs、server.cjs、public/app.js。只讀這些資料與必要測試，不讀外部路徑。注意原教師解析也有問題，先找源頭，不能只批評模型。
+
+輸出：根因、對 Codex 方案的贊成與反駁、最小修改、可直接使用的提示詞結構、反例評測通過／不通過條件、剩餘風險。回答約 1500～2500 字即可。最後一行必須是 CHAT_MOD_PRECISION_0001_DONE。
