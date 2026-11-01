@@ -65,6 +65,18 @@ def build(pid,root,require_qc=False):
         assets[c['id']]={'url':url,'sha256':sha,'alt':c['alt']}
         manifest.append({**c,'sha256':sha,'sourceSha256':source['originalSha256'],'pdfSha256':source['pdfSha256'],'dpi':round(pix.width*72/box.width,2) if c.get('imageXref') else 300,'renderMode':'embedded-original' if c.get('imageXref') else 'page-clip','width':pix.width,'height':pix.height,'bytes':len(raw),'file':str(path.resolve()),'url':url})
         doc.close()
+    audio_manifest=[]
+    for a in draft.get('audioSources',[]):
+        assert a['id'] not in assets and re.fullmatch(r'[A-Za-z0-9_-]{1,80}',a['id'])
+        audio_path=Path(a['file']);raw=audio_path.read_bytes();sha=digest(audio_path)
+        assert sha==a['sha256'] and 0<len(raw)<=5*1024*1024,'音檔雜湊或大小不符'
+        assert a['sourceStart']>=0 and a['sourceEnd']>a['sourceStart'] and a['sourceSha256'],'缺原音追溯'
+        assert digest(Path(a['sourceFile']))==a['sourceSha256'],'原音已變更'
+        dest=folder/'assets'/f'{sha}.mp3';dest.write_bytes(raw)
+        url=f'https://quiz-media.invalid/{owner}/{sha}'
+        assets[a['id']]={'url':url,'sha256':sha,'alt':a['alt']}
+        audio_manifest.append({**a,'url':url,'bytes':len(raw),'file':str(dest.resolve()),'mime':'audio/mpeg'})
+    write(folder/'audio-manifest.private.json',audio_manifest)
     roles={c['id']:c['role'] for c in crops}
     runtime=[];entries=[]
     def provenance(f,kind):
@@ -77,6 +89,9 @@ def build(pid,root,require_qc=False):
         prompt=g.get('prompt','')
         if g['kind'] in ('single','short') and len(g['fields'])==1 and not prompt.strip():prompt=g['fields'][0]['text']
         out.update(materialContent={'text':g['material'],'media':[]},promptContent={'text':prompt,'media':[]},assets=[assets[a] for a in g['assets']],fields=[])
+        for aid in g.get('audioAssets',[]):
+            assert any(a['id']==aid for a in audio_manifest),'音檔未登錄'
+            out['materialContent']['media'].append({'kind':'audio','url':assets[aid]['url'],'alt':assets[aid]['alt']})
         out['choices']=[]
         for c in g['choices']:
             for cid in c['assets']:assert roles[cid]=='choice'
@@ -91,10 +106,12 @@ def build(pid,root,require_qc=False):
     for b in blocked:entries.append(provenance(b,'blocked'))
     doc={'schema':2,'title':draft['title'],'catalog':{'subject':'自然' if pair['subject']=='自然科學' else pair['subject'],'sourceYear':pair['year'],'exam':pair['exam'],'grade':pair['grade'],'edition':pair['edition'],'range':pair['range']},'groups':runtime,'blocked':[{k:b[k] for k in ['id','text','points','reason']} for b in blocked]}
     qcpath=folder/'qc.private.json';qc=read(qcpath) if qcpath.exists() else {}
-    verified=qc.get('draftSha256')==digest(draftpath) and qc.get('fieldIds')==ids and qc.get('cropSha256')=={c['id']:c['sha256'] for c in manifest} and qc.get('status')=='verified'
+    verified=qc.get('draftSha256')==digest(draftpath) and qc.get('fieldIds')==ids and qc.get('cropSha256')=={c['id']:c['sha256'] for c in manifest} and qc.get('audioSha256',{})=={a['id']:a['sha256'] for a in audio_manifest} and qc.get('status')=='verified'
     provenance_data={'sourceBankSha256':digest(draftpath),'sourceVersion':pair['sourceRecord'],'sourceFiles':[{'fileId':role,'name':pair[role]['name'],'sha256':sources[role]['originalSha256'],'pdfSha256':sources[role]['pdfSha256']} for role in ('paper','key')],'entries':entries,'issues':draft['issues'],'qc':qc if verified else {'status':'awaiting-independent-qc'}}
+    if audio_manifest:provenance_data['audioSources']=[{k:a[k] for k in ['id','sha256','sourceSha256','sourceStart','sourceEnd','alt']} for a in audio_manifest]
     if printed_total!=draft['sourceTotal']:provenance_data['scoring']={'printedTotal':printed_total,'itemTotal':draft['sourceTotal'],'issue':draft['scoringIssue']}
     bundle={'paperId':pid,'owner':owner,'document':doc,'provenance':provenance_data,'sha256':hashlib.sha256(json.dumps(doc,ensure_ascii=False,separators=(',',':')).encode('utf-8')).hexdigest(),'assets':[{'hash':c['sha256'],'url':c['url'],'owner_id':owner,'object_path':f"{owner}/{c['sha256']}",'mime':'image/png','bytes':c['bytes'],'file':c['file']} for c in manifest]}
+    bundle['assets'] += [{'hash':a['sha256'],'url':a['url'],'owner_id':owner,'object_path':f"{owner}/{a['sha256']}",'mime':'audio/mpeg','bytes':a['bytes'],'file':a['file']} for a in audio_manifest]
     bundle['assets']=list({a['hash']:a for a in bundle['assets']}.values())
     write(folder/'images-manifest.private.json',manifest);write(folder/'bundle.private.json',bundle)
     preview=['<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>考古題本機校對</title><style>body{font:18px/1.7 system-ui;margin:24px auto;max-width:1000px;padding:0 18px;color:#173b45}article{border:2px solid #b8dfe8;padding:20px;margin:22px 0;border-radius:20px}img{max-width:100%;max-height:650px}pre{white-space:pre-wrap;font:inherit}details{background:#eff9fc;padding:12px}</style>',f'<h1>{html.escape(doc["title"])}</h1><p>{"逐頁校對已完成" if verified else "轉錄草稿：未完成獨立校對，不可發布"}</p>']
@@ -104,6 +121,8 @@ def build(pid,root,require_qc=False):
     for g in groups:
         preview.extend(['<article>',f'<h2>{html.escape(g["title"])}</h2><pre>{html.escape(g["material"])}</pre>'])
         readable.extend([f'\n## {g["title"]}\n',g['material']])
+        for aid in g.get('audioAssets',[]):
+            a=assets[aid];preview.append(f'<figure><audio controls preload="none" src="assets/{a["sha256"]}.mp3"></audio><figcaption>{html.escape(a["alt"])}</figcaption></figure>')
         preview.extend(figure(cid) for cid in g['assets'])
         for c in g['choices']:
             preview.append(f'<p>{html.escape(c["id"])}　{html.escape(c["text"])}</p>');preview.extend(figure(cid) for cid in c['assets'])

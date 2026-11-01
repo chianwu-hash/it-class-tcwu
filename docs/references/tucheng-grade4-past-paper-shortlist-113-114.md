@@ -1,8 +1,19 @@
-# 土城四年級考古題：每科兩份候選名單
+# 土城四年級考古題：五科各兩份已上線
 
-查核日期：2026-11-01。使用者指定先找雙北都會區學校；若同版113–114學年度不足兩份，已明確選擇「放寬地區，仍限113–114且版本相符」。後續要求「再找有解答的考古題」；原候選中的文德國語、桃子腳英語、永安英語因此撤回，不以自行推算的解答補足。**目前8份已完成逐題AI目視複核並正式上線，國語、英語各缺1份。** 詳[發布紀錄](../development/tucheng-grade4-past-release-20261101.md)。
+查核日期：2026-11-01。使用者指定先找雙北都會區學校；若同版113–114學年度不足兩份，已明確選擇「放寬地區，仍限113–114且版本相符」。後續要求「再找有解答的考古題」；原候選中的文德國語、桃子腳英語、永安英語因此撤回，不以自行推算的解答補足。**目前已補齊10份並正式上線，五科各2份。** 原8份見[首批發布紀錄](../development/tucheng-grade4-past-release-20261101.md)，本輪補2份見[補齊發布紀錄](../development/tucheng-grade4-past-gap-release-20261101.md)。
 
-## 目前製作範圍：8份有配對解答
+## 最新補齊：文澳114上國語與英語
+
+[文澳國小官方試卷目錄](https://drive.google.com/drive/folders/12IBIpgJSE5ersf_WFAZgvGifRdtb92Ty)的114上期中，取得同版原卷、配對解答及英語原聽力。[官方114版本表](https://wopsweb.my.canva.site/dagwyx32sjm/114)已目視確認四年級國語康軒、英語翰林 Here We Go，沒有用115版本反推。
+
+| 補入科目 | 原卷 | 官方解答 | 處理結果 |
+| --- | --- | --- | --- |
+| 國語／康軒 | [文澳114](https://drive.google.com/file/d/1Z6rHYtYhre0bwEmMDa2cDHe4HrhwLjRf/view) | [配對解答](https://drive.google.com/file/d/1jOrCsc1k45zCxrBK3IOXnWNacqJY146f/view) | 38題組43欄，自動48分、自核對52分；包含原卷課外閱讀。官方未填開放題不造標準答案。 |
+| 英語／翰林Here We Go 3 | [文澳114](https://drive.google.com/file/d/17XV-RJt09c7Vr1hA4Bplt2ungQ1x23UE/view) | [配對解答](https://drive.google.com/file/d/16zhhBLq0rPW_Lq9zH51D5m6XRWJZ4Sp8/view) | 41題組50欄，完整100分；[原聽力](https://drive.google.com/file/d/12Nx1Z6k_qivTKSMe-kKwOm17ikPsHSpw/view)依大題分4段，另含原校口袋書／在地化詞彙。 |
+
+兩卷完成第二遍逐題AI目視校對、55張局部圖與4段原音驗收，正式已開放。英語解答文字層與可見版面不符，按可見同版題文與紅筆記號核對。全部10份合計294題組、487個可作答欄位；原8卷的11個暫停項目仍維持，不因補卷而猜答解除。
+
+## 首批製作範圍：8份有配對解答（歷史紀錄）
 
 保留下表原名單中的成功113國語、兩份數學、兩份自然、兩份安和社會，共7份。新增[名間113上題卷合本](https://drive.google.com/file/d/1H7wX_ie9qH-WQG0ZcTI64rGqaAI-8ps7/view)的第36–37頁四年級英語，配對[官方解答合本](https://drive.google.com/file/d/1H7qBGK8HU67tGqi65ZzubGkZFmRlgD82/view)第58–59頁；第38頁已是五年級國語，不屬於英語卷。
 
@@ -24,7 +35,7 @@
 | 社會／翰林 | [新北土城安和114](https://drive.google.com/file/d/1DgdBW2rJ5FxRq9UrliPO0m-93TXf2xKK/view)・[解答](https://drive.google.com/file/d/1CJt0QA6Km1uDhG7D9iO2k3LuCRxQGwtn/view) | [新北土城安和113](https://drive.google.com/file/d/1Rb42swCSL4Hp6l9eybCYoqgPs51j0yUx/view)・[解答](https://drive.google.com/file/d/1qJubI29p4VCcUhMkQvn527v6nBdNpnBE/view) | 官方校網連到的原始目錄，兩年度均有答案，情境包含三峽、地圖、地形及氣候。114另含人口，113另含傳統住屋／器物；轉入目前1–2單元時須逐題分類，不能整卷當成相同範圍。 |
 | 英語／翰林Here We Go 3 | [新北樹林桃子腳114](https://drive.google.com/file/d/1ao_8_rzB9XdK0MVxtpCgb_-I_lPLuJUf/view) | [高雄永安113](https://www.yap.kh.edu.tw/upload/33/104_44061/113%E4%B8%8A%E5%9B%9B%E5%B9%B4%E7%B4%9A%E8%8B%B1%E8%AA%9E%E6%9C%9F%E4%B8%AD%E8%A9%95%E9%87%8F%E8%A9%A6%E5%8D%B7.pdf) | 桃子腳為官方原卷，天氣、飢餓／口渴、情緒及課堂語句與HWG3對照；已進一步取得該校114課程計畫，明列Here We Go 3及前兩單元。永安113官方選書表亦明列四年級HWG3。兩卷有清楚圖題與句型，但本輪未取得配對答案。桃子腳前49分為聽力，原音檔未取得；永安原卷為60分筆試。先核對筆試題，不能把桃子腳聽力當成可作答完整卷。 |
 
-文德國語、桃子腳英語、永安英語均已撤回，缺額以有配對解答且版本／內容相符的原卷替換。目前僅補入名間113英語1份，另外2份尚未找到合格替代。
+文德國語、桃子腳英語、永安英語均已撤回，缺額以有配對解答且版本／內容相符的原卷替換。首批僅補入名間113英語1份；其後已補入上述文澳114國語與英語，缺額現已補齊。
 
 ## 版本與範圍判斷
 
@@ -46,6 +57,6 @@
 
 - [安和教務連結](https://www.anhoes.ntpc.edu.tw/p/426-1000-5.php) → 歷年段考題庫 → [官方根目錄](https://drive.google.com/drive/folders/11orkSjAS9RdXMOVQkrvf39qbaDUXYWKU)。本輪新取回114原始ID，與先前鏡像PDF內容相同。
 - [桃子腳官方國小試題庫](https://www.tykjh.ntpc.edu.tw/p/426-1000-57.php) → 114國小 → [官方114目錄](https://drive.google.com/drive/folders/1pq81U3wuXsy6T9ASjBeguX_lN1bDnzSq)。動態頁需正常POST載入分頁，先前GET空白不是題庫不存在。
-- 首輪搜尋時檢視全部原頁並抽查答案；本次發布的8卷已另外完成逐題AI複核，紀錄見發布文件。沒有找齊或逐題製作10卷；造句、作圖、問答題保留自核對規則。
+- 首輪搜尋時檢視全部原頁並抽查答案；本次發布的8卷已另外完成逐題AI複核，紀錄見發布文件。這是首批8份的歷史紀錄；其後補齊2份，現在共10卷。造句、作圖、問答題保留自核對規則。
 - 本次續查永安114上國語內容相符但未取得官方key，英語含時間句型，不符目前HWG3內容。桃園大華舊硬碟連結回404／無法取回；高雄博愛114[官方選書表](https://www.paps.kh.edu.tw/upload/322/101_50166/114%E5%90%84%E5%B9%B4%E7%B4%9A%E6%95%99%E7%A7%91%E6%9B%B8%E9%81%B8%E7%94%A8%E7%89%88%E6%9C%AC%E4%B8%80%E8%A6%BD%E8%A1%A8.pdf)四年級為國語翰林、英語康軒，均不符，未採。
 - 私有原檔、metadata、SHA256、抽文字與頁圖：主工作區ignored的 `automation/output/tucheng-grade4-past-research-20261101/`。不提交原卷全文、整頁圖或出版社字型。公開紀錄只保存來源連結與篩選判斷。

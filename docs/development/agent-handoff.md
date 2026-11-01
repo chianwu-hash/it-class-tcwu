@@ -1,3 +1,11 @@
+# 2026-11-01 土城四年級考古題已補齊10份
+
+- 文澳114上期中國語康軒、英語翰林HWG3已取得官方同版原卷／解答，當年版本表已核對；英語含原音，五科各2份共10份正式enabled。入口 https://it-class-tcwu.vercel.app/grade4/115-1/quiz-library.html#past-exams 。
+- 本輪79題組93欄、55局部圖及4原音分段完成逐題AI目視複核（非真人教師簽核）；國語自動48／自核對52，英語自動100。國語官方未填的開放題不造標準答案；英語key隱藏文字層舊版，依可見同版紅筆記號。原8卷限制保留。
+- 私有59素材回讀SHA通過，兩卷本機及正式回滾各6輪0→滿分→滿分／考古花0→1→1、歷次、冪等與權限通過，無正式測試殘留。79題組1280／390px作答保存／登出清除與4段原音play/pause/seek通過；為合成身分隔離驗收，非真人OAuth。
+- fresh正式仍dpl_4LsmuQBTztjPS3vvG6a8nXLQd93w共781來源檔、16關鍵runtime回讀相符。本輪只資料及離線builder，不改前端／quiz函式，不建新部署；驗收後enabled2卷，正式唯讀RPC核10卷五科各2。
+- 詳[補齊發布紀錄](tucheng-grade4-past-gap-release-20261101.md)與[來源名單](../references/tucheng-grade4-past-paper-shortlist-113-114.md)。新來源／證據主repo ignored automation/output/tucheng-grade4-past-gap-20261101/與tucheng-grade4-past-gap-release-20261101/。兩穩定ID為wenao-114-1-g4-exam1-chinese／english，不重跑初始化或create腳本覆蓋已發布reviewed/qc/bundle。舊「缺2份」僅屬歷史。
+
 # 2026-11-01 三個測試身分各顯示兩顆直接切換按鈕，已上線
 
 - 使用者要求每個身分可直接選另兩個：307→407／609、407→307／609、609→307／407。共用test-identity-switch改為排除目前身分，送出時兩顆同時停用；保留既有RPC、session核對與跨分頁revision通知。根首頁及三／四／六年級首頁模組版本同步更新。
