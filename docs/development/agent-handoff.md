@@ -1,3 +1,12 @@
+# 2026-11-01 土城四年級剩餘238題已補齊上線
+
+- 使用者明確授權剩下注音、特殊格式、圖題核對後上線。149圖題＋75國語注音＋14國語畫線，共238題已補齊；五科共1562題（數366／自222／社200／英67／國707）。保留原17卷，新增六份10題補充卷，合計23卷，開放407／409。沒有擴張為未核對的全冊其他題型。
+- 字形以原光碟字型局部PNG或已核對Unicode顯示，不猜多音字；14題逐一確認原Word畫線，原生圖文保留詞語位置。177張新字形／標示圖與原171圖共348圖已私有Drive保存、雜湊／解碼／對照縮圖驗證。字型檔及完整原題仍私有，不提交Git。
+- Cloudflare已恢復可見帳號及API管理；從最新5816資產完整合併為6164，服務程式與七個binding及七項設定逐項保留，只改assetmap。348圖由正式Worker全部回讀SHA相符，匿名／未知圖／外部來源拒絕。正式Supabase仍原Auth／RLS／判分服務，原資料交易摘要保護；原固定版本及答案均保留。私有canonical manifest也只合併本輪348張，後續發布仍必須fresh-read合併最新Worker，不能用舊manifest整包覆蓋。
+- 全238題PostgreSQL判分／保存／媒體授權／resume／得葉回滾證明通過；正式40730實際六卷60題全對保存、重整接續及六片葉通過，正式學生作答仍0。手機390px、注音放大、畫線位置與圖片燈箱驗收正常；原三／六年級測試身分保留。
+- 最新正式部署dpl_8RRMxcuQ9ozADDWWC77BgYF5isFa，773檔逐檔核對，僅grade4首頁文案與quiz.html局部注音圖片樣式改變，其餘與前版Cw完全一致。入口 https://it-class-tcwu.vercel.app/grade4/115-1/index.html 。詳[發布紀錄](tucheng-grade4-release-20261101.md)。私有證據主repo automation/output/tucheng-grade4-20261101/remaining-release，流程tmp/tucheng-115/REMAINING-STATE.md；不再使用舊STATE的初版未上線狀態。
+- 獨立工作樹D:/projects/.chat-mode-worktrees/tucheng-grade4-20261101，分支codex/tucheng-grade4-20261101；主repo大量其他dirty，不能整包發布或stage。Nowledge Mem此次搜尋／更新遇530，最新狀態以此本機交接及發布紀錄為準。
+
 # 2026-11-01 土城四年級國語首批補上線
 
 - 使用者回覆已重新登入康軒後，VerifyKeygrip_V3恢復HTTP200；已正式取得四年級光碟，只讀抽取，不執行安裝程式。國語618題及六課各10題練習卷已啟用，四年級合計五科1324題、17份預備卷。
