@@ -77,6 +77,10 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
           const view=make('button','到我的自組卷查看');view.type='button';view.addEventListener('click',()=>document.dispatchEvent(new CustomEvent('quiz-show-own',{detail:{sessionId:result.session_id}})));
           actions.append(a,view);section.append(actions);message('延伸練習已儲存，可以直接開始，或稍後到「我的自組卷」繼續。');a.focus();
         }catch(e){if(current(g,uid))status.textContent=e.message;}finally{if(current(g,uid))locked(false);}});
+      }else if(onExtension){
+        const section=make('section',undefined,'wrong-extension'),button=make('button','錯題延伸練習（尚無可用題目）');
+        button.type='button';button.disabled=true;button.dataset.pageDisabled='true';
+        section.dataset.state='unavailable';section.append(button,make('p','目前還沒有符合這題學習重點的延伸題，可以先回看解析，或回選卷頁複習同一單元。'));detail.append(section);
       }
       el('wrong-list').hidden=true;el('wrong-pages').hidden=true;el('wrong-detail').hidden=false;message('可以慢慢核對題目、當時答案與解析。');el('wrong-title').focus();
     }catch(e){if(current(g,uid))message(e.message);}finally{if(current(g,uid))locked(false);}

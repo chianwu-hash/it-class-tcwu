@@ -1,3 +1,9 @@
+# 2026-11-01 四年級錯題延伸資格與無候選說明已上線
+
+- 國語707題按書商原題ID、課次、完整KNOW_SPOT核對，586可靠／121未知代碼暫緩；203詳細解析候選，367題可延伸。原截圖療字選項題仍無合格候選，測試帳號14筆既有錯題均無候選，未修改作答；前端新增停用按鈕及說明，不能宣稱每題可延伸。數學／自然分類與英語／社會缺解析仍保留限制。
+- 正式分類增量套用，舊題文答案解析、版本作答獎勵及quiz函式不變；原題與alias兩例錯答→detail→2題延伸→重送同卷rollback通過。7項SQL回歸與3/4/6前端合成身分／手機／無候選狀態通過，無測試殘留。
+- 只改2前端檔，fresh4Lsmu781來源，候選6Ds，正式dpl_4ye54c9t4KsX1NeY66jUEjLXtJED，781全比對／8runtime相符。詳[修正紀錄](quiz-grade4-extension-20261101.md)，清冊automation/quiz-knowledge/g4-chinese-reviewed.json；主repo私有證據automation/output/tucheng-grade4-extension-20261101。不可重跑舊分類或全科部署覆蓋。
+
 # 2026-11-01 土城四年級考古題已補齊10份
 
 - 文澳114上期中國語康軒、英語翰林HWG3已取得官方同版原卷／解答，當年版本表已核對；英語含原音，五科各2份共10份正式enabled。入口 https://it-class-tcwu.vercel.app/grade4/115-1/quiz-library.html#past-exams 。
