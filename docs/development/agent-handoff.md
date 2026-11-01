@@ -1,3 +1,10 @@
+# 2026-11-01 土城四年級題庫與努力樹（首批已正式上線）
+
+- 使用者已確認擴充四年級；正式學生名冊已登錄。學生識別只保留私有作業檔，不寫入公共文件。原測試帳號可循環 30730→40730→60930，驗收後停於 40730。
+- 正式入口 https://it-class-tcwu.vercel.app/grade4/115-1/index.html 。首批數學南一272、自然南一217、社會翰林183、英語翰林 HWG3 34，共706題；11份單元卷已開放407／409。國語及149道圖題待出版社／圖片服務登入恢復，不能宣稱全科全題完成。
+- 正式部署 dpl_CoPVsp6Y8eWrY7oAVNeihwU8RAJU；基於當時最新 dpl_9K3cwM4PTNhTvAZrXYHQDTLLHQoF 的769檔完整來源，只疊16個runtime檔，最後773檔逐檔核對，保留同期考古題更新。勿從主repo整包部署。
+- 功能commit 3f637d6，已push codex/tucheng-grade4-20261101。獨立工作樹 D:/projects/.chat-mode-worktrees/tucheng-grade4-20261101。詳 [發布紀錄](tucheng-grade4-release-20261101.md) 與 [版本來源](../references/tucheng-textbook-version-map-115.md)。私有驗證報告位於主repo ignored automation/output/tucheng-grade4-20261101；出版社原始來源、題庫答案、憑證不得提交。
+
 # 2026-10-30 第二級虛線花葉恢復（Codex已上線）
 
 - 接回真pendingLeaves／pendingFlowers，最多8虛線葉2虛線花、兩樹型日夜描邊，點選回真實站內練習，另有鍵盤可用的收合連結清單。只在最後分區空槽呈現，滿槽不疊、不算新成果。55葉10花不變、未代闖關，30730解鎖前一步仍保留。
