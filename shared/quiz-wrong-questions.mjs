@@ -31,7 +31,7 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
       message(data.total?`共有 ${data.total} 題可複習的錯題，依作答時間由新到舊排列。`:'目前沒有符合條件的錯題。完成練習、開放解析後，答錯的題目會自動收進來。');
       for(const item of data.items){
         const card=make('article',undefined,'wrong-card'),h=make('h3',`${item.catalog?.subject||'未分類'}・${item.catalog?.unit||item.title}`);
-        card.append(h,make('p',`${item.source_type==='past_exam'?'考古題｜':''}第 ${item.number} 題｜${item.source_type==='past_exam'?'本次開始於 ':''}${new Date(item.answered_at).toLocaleString('zh-TW')}`,'meta'),make('p',item.preview));
+        card.append(h,make('p',`${item.source_type==='past_exam'?'考古題｜原卷 '+item.source_label+'（'+item.field_label+'）':'第 '+item.number+' 題'}｜${item.source_type==='past_exam'?'本次開始於 ':''}${new Date(item.answered_at).toLocaleString('zh-TW')}`,'meta'),make('p',item.preview));
         const button=make('button','回看題目與解析');button.dataset.questionId=item.question_id;button.addEventListener('click',()=>open(item));card.append(button);el('wrong-list').append(card);
       }
       const previous=make('button','上一頁'),next=make('button','下一頁');previous.dataset.pageDisabled=String(page===0);next.dataset.pageDisabled=String((page+1)*20>=data.total);
@@ -54,7 +54,7 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
       const extensionAvailable=ref.source_type!=='past_exam'&&onExtension&&(typeof data.can_extend==='boolean'?data.can_extend:await canExtend(data.catalog));if(!current(g,uid)||!active||epoch!==detailEpoch)return;
       mediaScope?.dispose();mediaScope=request.createMediaScope?.({user_id:uid,session_id:data.session_id,attempt_id:item.attempt_id,version_id:data.version_id,view:crypto.randomUUID(),generation:g},data.version_id?{}:{ttl:0});
       detail.dataset.subject=data.catalog?.subject||'';detail.replaceChildren();const article=make('article',undefined,'question');
-      el('wrong-title').textContent=`${data.catalog?.subject||'未分類'}・${data.catalog?.unit||data.title}・第 ${data.number} 題`;
+      el('wrong-title').textContent=`${data.catalog?.subject||'未分類'}・${data.catalog?.unit||data.title}・${ref.source_type==='past_exam'?'原卷 '+data.source_label+'（'+data.field_label+'）':'第 '+data.number+' 題'}`;
       el('wrong-meta').textContent=`${ref.source_type==='past_exam'?'考古題｜本次開始時間':'作答時間'}：${new Date(data.answered_at).toLocaleString('zh-TW')}｜以下保留你當時的選項順序。`;
       const q=data.question;if(q.material?.text||q.material?.media?.length){const material=make('section',undefined,'wrong-material');material.append(make('h4','共用材料'));content(material,q.material);article.append(material);}
       content(article,q.prompt);
@@ -64,11 +64,14 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
         if(ref.source_type!=='past_exam')option.append(make('strong',String.fromCharCode(65+index)));else option.classList.add('past-wrong-option');
         content(body,o.content);
         if(o.id===data.response){body.append(make('p','你的答案','wrong-selected'));option.classList.add('was-selected');}
-        if(o.id===data.review.answer.option_id){body.append(make('p','✓ 正確答案','wrong-correct'));option.classList.add('is-correct');}
+        if(o.id===data.review.answer.option_id){body.append(make('p',ref.source_type==='past_exam'?'✓ 核對答案':'✓ 正確答案','wrong-correct'));option.classList.add('is-correct');}
         option.append(body);choices.append(option);
       }
       article.append(choices);const explanation=make('section',undefined,'answer-preview');explanation.append(make('h4','解題想法'));
-      if(q.type!=='single'){explanation.append(make('p',`你的答案：${data.response}`),make('p',`可接受的答案：${data.review.answer.accepted.join('、')}`));}
+      if(data.past_review&&q.type!=='single'){
+        const result=make('section',undefined,'answer-preview');result.append(make('h4','當時作答與核對'),make('p',`你的答案：${data.response_text}`),make('p',`本卷核對答案：${data.answer_text}`));article.append(result);
+      }
+      else if(q.type!=='single'){explanation.append(make('p',`你的答案：${data.response}`),make('p',`可接受的答案：${data.review.answer.accepted.join('、')}`));}
       else explanation.append(make('p',`正確選項：${String.fromCharCode(65+q.options.findIndex(o=>o.id===data.review.answer.option_id))}`));
       content(explanation,data.review.explanation);if(!data.past_review)article.append(explanation);detail.append(article);
       if(ref.source_type==='past_exam'&&data.past_review){

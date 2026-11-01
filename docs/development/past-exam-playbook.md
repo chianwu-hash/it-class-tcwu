@@ -117,7 +117,7 @@
 - 延伸練習與原卷成績、歷次與葉片分開；沿用已驗證的無額外給葉方式，不因延伸正答改寫原卷。延伸錯答不自動遞迴產生新推薦；新增獎勵或其他歸檔規則須另有明確決策。
 - token主要花在製作及異動複核。共用原頁／題幹、本卷重點清單、少量候選與已固定成果，避免全卷反覆重讀。記錄製作／AI／複核成本，有工具用量才報實際token，不承諾未量測的每卷成本；本機功能開發費用與日後內容製作分開。
 
-目前實證僅[單題解析與重點](past-exam-learning-mvp-20261101.md)、[康軒四題配題](past-publisher-practice-mvp-20261101.md)、[我的錯題往返](past-wrong-entry-mvp-20261101.md)本機MVP。後續依此流程製作內容，但正式通用資料儲存、轉接、發布與全卷驗證尚未完成，不能把本機fixture當正式功能或宣稱全卷已配題。
+目前已完成[單題解析與重點](past-exam-learning-mvp-20261101.md)、[康軒四題配題](past-publisher-practice-mvp-20261101.md)、[我的錯題往返](past-wrong-entry-mvp-20261101.md)，以及[114三上自然全卷本機驗證](past-full-learning-local-20261101.md)：67欄解析、22重點、44書商題。這僅證明該卷本機流程完成；正式通用資料儲存、轉接與發布尚未完成，不能把fixture當正式功能，或推論其他試卷也已配題。
 
 ## 7. 聽力稿、改編與音訊 QC
 
@@ -198,7 +198,7 @@
 | `automation/past-exams-adapted-*` | 已完成 26 欄改編聽力的專用作業，不為新批次直接重跑其 plan／build／register／activate。 |
 | `automation/past-exams-audio-synthesize.py`、`past-exams-audio-transcribe.py`、`past-exams-audio-sign.mjs` | 合成、回辨與簽署；受原批次及 allowlist 限制，`PAST_AUDIO_ROOT` 不代表任意路徑都支援。 |
 | `automation/past-exam-local-server.mjs` | `PAST_BUNDLE_PATH`／`PAST_LOCAL_PORT` 可選 bundle／port；仍依賴本專案 SQL、三／六年級路由，不是正式伺服器。 |
-| `automation/lib/past-learning-fixture.mjs`、`past-publisher-practice.mjs`、`past-wrong-review.mjs` | 固定單題的本機解析／配題／錯題轉接MVP，需opt-in與私有來源packet；不是全卷配題產線或正式RPC，不直接部署fixture。 |
+| `automation/lib/past-learning-map.mjs`、`past-learning-fixture.mjs`、`past-publisher-practice.mjs`、`past-wrong-review.mjs` | 單題schema1及114三上自然全卷schema2解析sidecar的本機轉接，需opt-in與私有來源packet；不是自動產生全卷配題的產線或正式RPC，不直接部署fixture。 |
 | `automation/tests/quiz-past-adapted-listening.test.mjs`、`quiz-past-batch-browser.cjs`、`automation/lib/past-approved11-smoke.mjs` | 判分、瀏覽器及 rollback 測試可參考；新卷需新案例，不能拿舊測試通過當新卷通過。 |
 
 **尚未證明已有：**任意學校／年級一鍵匯入、通用中立 schema 自動轉接、可靠畫圖自動批改、任意原卷自動無誤轉錄。需要時另實作驗證，不能寫成已安裝功能。
@@ -224,5 +224,6 @@ clone 不含 ignored 原 PDF、音圖、私有 bundle、原頁圖、凍結正式
 - [教師核准 11 項修訂](past-exams-approved11-20261031.md)
 - [AI 自主審定及反證修正](past-exams-autoreview-20261101.md)
 - [改編聽力及部分抽聽回饋](past-exams-adapted-listening-20261101.md)
+- [全卷固定解析、重點與書商配題本機驗證](past-full-learning-local-20261101.md)
 
 截至 2026-11-01 本次紀錄為 30 卷、49 不可變版本，20 份指定期中開放、10 份已製作期末未開放，原 26 缺稿暫停欄已明示改編處理。未來以當時正式查詢及任務範圍為準，不硬編碼這些數字。

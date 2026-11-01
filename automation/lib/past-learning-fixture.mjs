@@ -1,19 +1,17 @@
-import {createHash} from 'node:crypto';
+import {validateLearningMap,learningConcepts} from './past-learning-map.mjs';
 // Local-only, version-pinned projection. Not a production migration or API.
 export function createPastLearningProjection({bundle,map,version}){
- if(map.schema!==1||map.paperId!==bundle.paperId||map.documentSha256!==bundle.sha256||
-  createHash('sha256').update(JSON.stringify(bundle.document)).digest('hex')!==bundle.sha256)throw Error('learning_source_version_mismatch');
- const group=bundle.document.groups.find(g=>g.id===map.groupId),field=group?.fields.find(f=>f.id===map.questionId);
- if(!field||field.answer!==map.expectedAnswer||group.kind!=='single')throw Error('learning_source_question_mismatch');
- const entry=bundle.provenance.entries.find(e=>e.id===map.questionId);
- if(entry?.source?.sha256!==map.source.paperSha256||entry?.answerSource?.sha256!==map.source.keySha256||entry.answerSource.raw!==map.source.officialRaw)throw Error('learning_provenance_mismatch');
+ const entries=validateLearningMap({bundle,map});
  return snapshot=>{
   if(!snapshot?.records||snapshot.version!==version)return snapshot;
-  const record=snapshot.records[group.id];
-  if(!record?.results?.some(r=>r.questionId===field.id&&typeof r.correct==='boolean'))return snapshot;
-  return {...snapshot,records:{...snapshot.records,[group.id]:{...record,learningReview:{schema:1,
-   source:{versionId:version,groupId:group.id,questionId:field.id},
-   explanation:map.explanation,concepts:structuredClone(map.concepts)}}}};
+  const records={...snapshot.records};
+  for(const entry of entries){
+   const record=records[entry.groupId];if(!record)continue;
+   const disclosed=record.results?.some(r=>r.questionId===entry.questionId&&typeof r.correct==='boolean');
+   if(!disclosed&&!(map.schema===2&&entry.selfCheck&&record.status==='self_checked'))continue;
+   const review={schema:1,source:{versionId:version,groupId:entry.groupId,questionId:entry.questionId},explanation:entry.explanation,concepts:structuredClone(learningConcepts(map,entry))};
+   records[entry.groupId]=map.schema===1?{...record,learningReview:review}:{...record,learningReviews:{...record.learningReviews,[entry.questionId]:review}};
+  }return {...snapshot,records};
  };
 }
 

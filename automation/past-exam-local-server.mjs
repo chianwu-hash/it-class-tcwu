@@ -3,6 +3,8 @@ import {createQuizDb,TEACHER,studentId} from './lib/quiz-local-db.mjs';
 import {createPastLearningProjection,learningPreviewAssets} from './lib/past-learning-fixture.mjs';
 import {createPastPublisherPractice} from './lib/past-publisher-practice.mjs';
 import {createPastWrongReview} from './lib/past-wrong-review.mjs';
+import {demoWrongResponses} from './lib/past-demo-responses.mjs';
+import {learningEntries} from './lib/past-learning-map.mjs';
 const root=process.cwd(),port=Number(process.env.PAST_LOCAL_PORT||4420),origin=`http://127.0.0.1:${port}`,nonce=randomBytes(24).toString('hex');
 const bundle=JSON.parse(fs.readFileSync(process.env.PAST_BUNDLE_PATH||'automation/output/past-exam-production/bundle.private.json','utf8')),grade=bundle.document.catalog?.grade||3;
 const db=await createQuizDb(undefined,{batch2:true,batch3:true,batch4:true});await db.exec(fs.readFileSync('supabase/quiz-past-exams.sql','utf8'));
@@ -17,23 +19,36 @@ const wrongEntryOnly=process.env.PAST_WRONG_REVIEW==='1';
 const publisherPractice=process.env.PAST_PUBLISHER_PRACTICE_PATH?await createPastPublisherPractice({db,teacher:TEACHER,bundle,map:learningMap,version,wrongEntryOnly,packet:JSON.parse(fs.readFileSync(process.env.PAST_PUBLISHER_PRACTICE_PATH,'utf8'))}):null;
 const project=value=>publisherPractice?publisherPractice.project(learningProject(value)):learningProject(value);
 if(wrongEntryOnly&&!publisherPractice)throw Error('publisher_practice_required');
-const wrongReview=wrongEntryOnly?createPastWrongReview({db,bundle,map:learningMap,version,project,isPracticeSession:publisherPractice.isPracticeSession}):null;
+const wrongReview=wrongEntryOnly?createPastWrongReview({db,bundle,map:learningMap,version,grade,project,isPracticeSession:publisherPractice.isPracticeSession}):null;
 async function localRead(uid,name,data){
  if(name==='wrong_questions'&&wrongReview)return wrongReview.read({uid,data});
  if(!['library_sessions','pool_catalog','wrong_questions'].includes(name))throw Error('invalid_action');
  return db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');return (await tx.query(`select public.quiz_${name}(${name==='pool_catalog'?'':'$1'}) r`,name==='pool_catalog'?[]:[data])).rows[0].r;});
 }
+if(wrongReview&&process.env.PAST_SEED_WRONG_DEMO==='all'){
+ const uid=studentId(1),call=(action,data)=>db.transaction(async tx=>{
+  await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');
+  return (await tx.query('select public.quiz_past_action($1,$2) r',[action,{paper_id:bundle.paperId,...data}])).rows[0].r;
+ });
+ const source=await call('start',{request_id:randomUUID()});
+ for(const group of bundle.document.groups){
+  await call('view',{attempt_id:source.attemptId,group_id:group.id});
+  await db.query("update public.quiz_past_views set started_at=clock_timestamp()-interval '2 minutes' where attempt_id=$1 and group_id=$2",[source.attemptId,group.id]);
+  await call('submit',{attempt_id:source.attemptId,version,group_id:group.id,request_id:randomUUID(),confirmed:true,responses:demoWrongResponses(group)});
+ }
+}
 if(wrongReview&&process.env.PAST_SEED_WRONG_DEMO==='1'){
+ const seed=learningEntries(learningMap)[0];
  const uid=studentId(1),attempt=await db.transaction(async tx=>{
   await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');
   const started=(await tx.query("select public.quiz_past_action('start',$1) r",[{paper_id:bundle.paperId,request_id:randomUUID()}])).rows[0].r;
-  await tx.query("select public.quiz_past_action('view',$1)",[{paper_id:bundle.paperId,attempt_id:started.attemptId,group_id:learningMap.groupId}]);return started.attemptId;
+  await tx.query("select public.quiz_past_action('view',$1)",[{paper_id:bundle.paperId,attempt_id:started.attemptId,group_id:seed.groupId}]);return started.attemptId;
  });
  await db.query("update public.quiz_past_views set started_at=clock_timestamp()-interval '2 minutes' where attempt_id=$1",[attempt]);
- await db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');await tx.query("select public.quiz_past_action('submit',$1)",[{paper_id:bundle.paperId,attempt_id:attempt,version,group_id:learningMap.groupId,request_id:randomUUID(),responses:[{questionId:learningMap.questionId,value:'O'}]}]);});
+ await db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');await tx.query("select public.quiz_past_action('submit',$1)",[{paper_id:bundle.paperId,attempt_id:attempt,version,group_id:seed.groupId,confirmed:true,request_id:randomUUID(),responses:demoWrongResponses(bundle.document.groups.find(g=>g.id===seed.groupId))}]);});
 }
 const previewAssets=learningMap?learningPreviewAssets({origin,nonce}):new Map();
-const previewNote=wrongReview?'本機 MVP・合成測試帳號｜從「我的錯題」查看第 1 題解析、選重點、練康軒題，再回同一道錯題。示範錯答已預先建立；不連正式學生資料、不給葉。':publisherPractice?'本機 MVP・合成測試帳號｜第 1 題解析可選學習重點，練習康軒原始題庫；練習結果與原卷分開，不給葉。':'本機 MVP・合成測試帳號｜只示範第 1 題的解析與學習重點；不連正式學生資料，尚未接書商練習題。';
+const previewNote=learningMap?.schema===2?'本機全卷試用・合成測試帳號｜已預備全卷解析、學習重點與康軒練習。從「我的錯題」選題，練完回同一道；示範錯答與畫圖自核預先建立。學生操作不呼叫AI、不連正式資料，延伸不給葉。':wrongReview?'本機 MVP・合成測試帳號｜從「我的錯題」查看第 1 題解析、選重點、練康軒題，再回同一道錯題。示範錯答已預先建立；不連正式學生資料、不給葉。':publisherPractice?'本機 MVP・合成測試帳號｜第 1 題解析可選學習重點，練習康軒原始題庫；練習結果與原卷分開，不給葉。':'本機 MVP・合成測試帳號｜只示範第 1 題的解析與學習重點；不連正式學生資料，尚未接書商練習題。';
 const signedMedia=process.env.PAST_SIGNED_MEDIA_PATH?JSON.parse(fs.readFileSync(process.env.PAST_SIGNED_MEDIA_PATH,'utf8')):{};
 for(const a of bundle.assets)await db.query('insert into public.quiz_media_assets values($1,$2,$3,$4,$5)',[a.url,TEACHER,a.object_path,a.mime,a.bytes]);
 const server=http.createServer(async(req,res)=>{const send=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(data));};try{

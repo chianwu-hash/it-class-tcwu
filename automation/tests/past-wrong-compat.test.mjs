@@ -6,11 +6,12 @@ import {createQuizDb,quizCall,TEACHER,studentId} from '../lib/quiz-local-db.mjs'
 import {newDocument,content} from '../../shared/quiz-document.mjs';
 import {createPastWrongReview} from '../lib/past-wrong-review.mjs';
 import {createPastLearningProjection} from '../lib/past-learning-fixture.mjs';
+import {createPastPublisherPractice} from '../lib/past-publisher-practice.mjs';
 test('local adapter preserves ordinary wrong detail, filters and merged pagination',async()=>{
  const db=await createQuizDb(undefined,{batch2:true,batch3:true,batch4:true});
  try{
   await db.exec(fs.readFileSync('supabase/quiz-past-exams.sql','utf8'));
-  await db.query("update public.student_enrollments set class_code='301' where email='student1@example.invalid'");
+  await db.query("update public.student_enrollments set class_code='301' where email in ('student1@example.invalid','student2@example.invalid')");
   const bundle=JSON.parse(fs.readFileSync('automation/output/past-exams-autoreview-20261101/dingxi-114-1-g3-exam1-science/bundle.private.json','utf8'));
   const map=JSON.parse(fs.readFileSync('automation/fixtures/past-learning-g3-science-q01.json','utf8'));
   await db.query('insert into public.quiz_past_papers values($1,$2,3,115,1,$3,null,true)',[bundle.paperId,TEACHER,bundle.document.title]);
@@ -35,5 +36,17 @@ test('local adapter preserves ordinary wrong detail, filters and merged paginati
   await adapter.read({uid,data:{action:'detail',grade:3,...second.items.find(i=>i.source_type==='past_exam')}});
   assert.deepEqual((await db.query('select * from public.quiz_answers order by question_id')).rows,answerRows);
   await assert.rejects(adapter.read({uid,data:{page:-1}}),/invalid_request/);
+  // The original schema1 single-question map and publisher packet remain usable.
+  const project=createPastLearningProjection({bundle,map,version});
+  const packet=JSON.parse(fs.readFileSync('automation/output/past-learning-publisher-mvp-20261101/publisher-practice.private.json','utf8'));
+  const publisher=await createPastPublisherPractice({db,teacher:TEACHER,bundle,map,version,packet,wrongEntryOnly:true});
+  const projected=publisher.project(project(await rpc('resume',{attempt_id:source.attemptId})));
+  assert.equal(projected.records[map.groupId].learningReview.concepts.length,2);
+  assert(projected.records[map.groupId].learningReview.concepts.every(c=>c.practice.count===2));
+  const plain=adapter.sourceProjection(projected,1).records[map.groupId];assert.equal(plain.learningExplanation,map.explanation);assert(!plain.learningReview);assert.match(plain.wrongReviewHref,/wrong_question=s1-q01/);assert.match(plain.wrongReviewHref,/fixture_student=1/);
+  const args={uid,student:1,action:'start',data:{attempt_id:source.attemptId,version,group_id:map.groupId,question_id:map.questionId,concept_id:map.concepts[0].id,request_id:randomUUID()}};
+  const practice=await publisher.call(args);assert.equal(practice.awardEligible,false);assert.match(practice.url,/wrong_question=s1-q01/);
+  await assert.rejects(publisher.call({...args,uid:studentId(2),student:2}),/attempt_unavailable/);
+  assert.deepEqual((await db.query('select * from public.quiz_answers order by question_id')).rows,answerRows);
  }finally{await db.close();}
 });

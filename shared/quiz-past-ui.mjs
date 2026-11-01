@@ -71,10 +71,11 @@ function render(){if(!active)return;
   if(saved){const ref=el('div',undefined,'reference');ref.append(el('h3','對照官方標記，自己檢查'),el('p','看看施力點的位置與箭頭方向。這是自我核對，不是老師評分，也不計入分數。'));ref.append(art({url:saved.referenceUrl,alt:'官方解答局部參考圖'}));right.append(ref);}
  }
  if(saved)renderPastLearningReview({host:right,group:g,record:saved,version:state.version,onPractice});
- if(typeof saved?.learningExplanation==='string'){
-  const review=el('section',undefined,'past-learning-review');review.append(el('h3','這題怎麼想？'),el('p',saved.learningExplanation),el('p','補充解析由 AI 依題意整理，非官方解析。','helper'));
-  if(typeof saved.wrongReviewHref==='string'){
-   const url=new URL(saved.wrongReviewHref,location.origin);
+ const explanations=saved?.learningExplanations||(typeof saved?.learningExplanation==='string'?[{text:saved.learningExplanation,wrongReviewHref:saved.wrongReviewHref}]:[]);
+ for(const explanation of explanations){
+  const review=el('section',undefined,'past-learning-review');review.append(el('h3',explanation.selfCheck?'這題怎麼自我核對？':explanation.label?'第 '+explanation.label+' 欄怎麼想？':'這題怎麼想？'),el('p',explanation.text),el('p','補充解析由 AI 依題意整理，非官方解析。','helper'));
+  if(typeof explanation.wrongReviewHref==='string'){
+   const url=new URL(explanation.wrongReviewHref,location.origin);
    if(url.origin===location.origin&&/\/grade[36]\/115-1\/quiz-library\.html$/.test(url.pathname)){
     const link=el('a','到我的錯題選重點、練習 →');link.href=url.href;review.append(link);
    }
