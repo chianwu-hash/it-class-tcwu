@@ -36,11 +36,12 @@ export async function initTestIdentitySwitch({ container = document.querySelecto
     const status = document.createElement('p');
     status.setAttribute('role', 'status');
     status.textContent = '教師測試身分：讀取中…';
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.hidden = true;
-    button.className = 'rounded-full bg-amber-500 px-5 py-2 font-black text-white shadow hover:bg-amber-600 focus-visible:outline focus-visible:outline-4 focus-visible:outline-amber-300 disabled:cursor-wait disabled:opacity-60';
-    bar.append(status, button);
+    const actions = document.createElement('div');
+    actions.className = 'flex flex-wrap items-center gap-3';
+    actions.style.cssText = 'display:flex;flex-wrap:wrap;gap:.75rem';
+    actions.setAttribute('role', 'group');
+    actions.setAttribute('aria-label', '切換到其他測試身分');
+    bar.append(status, actions);
     if (after) after.after(bar); else container.prepend(bar);
 
     const call = async (grade) => {
@@ -50,20 +51,32 @@ export async function initTestIdentitySwitch({ container = document.querySelecto
         return row;
     };
 
-    let target = null;
+    let switching = false;
+    const setDisabled = (disabled) => {
+        actions.querySelectorAll('button').forEach(button => { button.disabled = disabled; });
+    };
     const show = (row) => {
         const current = gradeOfClass(row.class_code);
-        const keys = Object.keys(GRADES);
-        target = keys[(keys.indexOf(current) + 1) % keys.length];
         status.textContent = `教師測試身分：目前是${GRADES[current].label} ${row.class_code} 班 ${row.seat_no} 號 ${row.display_name}`;
-        button.textContent = `切到${GRADES[target].label}`;
-        button.hidden = false;
+        actions.replaceChildren();
+        for (const [grade, identity] of Object.entries(GRADES)) {
+            if (grade === current) continue;
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.dataset.grade = grade;
+            button.className = 'rounded-full bg-amber-500 px-5 py-2 font-black text-white shadow hover:bg-amber-600 focus-visible:outline focus-visible:outline-4 focus-visible:outline-amber-300 disabled:cursor-wait disabled:opacity-60';
+            button.textContent = `切到${identity.label}`;
+            actions.append(button);
+        }
     };
 
-    button.addEventListener('click', async () => {
-        if (!target) return;
-        const next = target;
-        button.disabled = true;
+    actions.addEventListener('click', async (event) => {
+        const button = event.target.closest('button[data-grade]');
+        if (!button || !actions.contains(button) || switching) return;
+        const next = button.dataset.grade;
+        if (!GRADES[next]) return;
+        switching = true;
+        setDisabled(true);
         try {
             const row = await call(next);
             const active = (await getSession()).session;
@@ -73,7 +86,8 @@ export async function initTestIdentitySwitch({ container = document.querySelecto
             window.location.assign(GRADES[next].home);
         } catch {
             status.textContent = '教師測試身分：切換失敗或結果尚未確認，請重新整理確認目前身分後再試。';
-            button.disabled = false;
+            switching = false;
+            setDisabled(false);
         }
     });
 

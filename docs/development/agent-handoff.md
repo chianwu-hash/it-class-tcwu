@@ -1,3 +1,9 @@
+# 2026-11-01 三個測試身分各顯示兩顆直接切換按鈕，已上線
+
+- 使用者要求每個身分可直接選另兩個：307→407／609、407→307／609、609→307／407。共用test-identity-switch改為排除目前身分，送出時兩顆同時停用；保留既有RPC、session核對與跨分頁revision通知。根首頁及三／四／六年級首頁模組版本同步更新。
+- 六方向桌機／手機共12次合成瀏覽器操作、失敗／session換人保護／一般帳號不顯示通過；正式六方向測試交易rollback後名冊摘要相同。沒有改SQL／RLS或作答進度。
+- fresh基準Dn，候選6iQ，正式dpl_4LsmuQBTztjPS3vvG6a8nXLQd93w；781來源全比對及12關鍵runtime回讀通過。只改5個產品檔，保留既有四年級8份考古題。詳[test-identity-three-buttons-20261101.md](test-identity-three-buttons-20261101.md)。主repo私有證據automation/output/test-identity-three-buttons-20261101/，獨立worktree與分支沿用tucheng-grade4-20261101。
+
 # 2026-11-01 土城四年級8份考古題已逐題核對上線
 
 - 使用者明確要求先完成8份並上線，國語／英語各1份缺額繼續尋找113–114相符版本且有配對解答。8份現已正式enabled：成功113國語、和順114／廣興113數學、和順114／文德113自然、安和113／114社會、名間113英語。入口 https://it-class-tcwu.vercel.app/grade4/115-1/quiz-library.html#past-exams 。
