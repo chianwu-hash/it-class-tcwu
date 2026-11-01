@@ -1,8 +1,8 @@
 """不提供目標提示的本機語音回辨；結果須另判讀，不能當教師聽審。"""
-import json,re,difflib
+import json,re,difflib,os
 from pathlib import Path
 from faster_whisper import WhisperModel
-ROOT=Path('automation/output/past-exams-audio');manifest=json.loads((ROOT/'audio-manifest.private.json').read_text(encoding='utf-8'));plan=json.loads((ROOT/'plan.private.json').read_text(encoding='utf-8'));tracks={t['id']:t for t in plan['tracks']}
+ROOT=Path(os.environ.get('PAST_AUDIO_ROOT','automation/output/past-exams-audio'));assert ROOT.as_posix() in ['automation/output/past-exams-audio','automation/output/past-exams-adapted-listening-20261101'];manifest=json.loads((ROOT/'audio-manifest.private.json').read_text(encoding='utf-8'));plan=json.loads((ROOT/'plan.private.json').read_text(encoding='utf-8'));tracks={t['id']:t for t in plan['tracks']}
 model=WhisperModel('small',device='cpu',compute_type='int8',cpu_threads=4,local_files_only=True)
 norm=lambda t:re.sub(r'[^a-z0-9]+',' ',t.lower().replace('’',"'")).split()
 results=[]

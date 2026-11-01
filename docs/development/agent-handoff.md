@@ -1,3 +1,14 @@
+# 2026-11-01 已上線：26題改編聽力，暫停欄歸零
+
+- 教師明確授權：剩26欄可依原題及解答自行編聽力稿、製播、標明改編版，AI討論並驗證後上線。這取代下文「缺完整稿一律暫停」對本26欄的限制；仍不能冒稱官方聽力稿或復原原音。
+- 兩卷三英A/C/E新版本已於14:56啟用、14:57正式核對過；47舊版/其他28卷/函式hash保留，總49版本、20期中開10期末未開不變，26欄恢復、全體blocked=0。官方稿仍未提供，音軌origin=adapted、officialScriptAvailable=false；新作答/重作採新版，舊歷次/成績/跨版一葉不動。
+- 證據automation/output/past-exams-adapted-listening-20261101，獨立原件/26稿包.chat-mode/adapted-listening-20261101，HEAD1d5e5831e0166bbd4119e4e9324e400f7079ead4。Claude3輪106/18/19秒成功，首輪實看4原頁，後2輪討論數字句及fixture；AGY1輪37秒供給文字成功、未看圖未上網，viewer/canary/Git不變均驗。114A1/A2的J/D、K/L矛盾保留，改編以試卷J/K配官方選號。E原4分明示改編為圖2+字2，原id留字、加-picture；原26條ledger/4分另存，轉32線上欄恢復總64分，每卷自動90/manual自核10不變。
+- 26段Jenny -12%每段兩次、約289秒。初稿裸Six被small無提示辨成sex，沒有亂正規化；與Claude確認E6段改The number is...重製，26內容過、數字字形正常化，兩遍波形相關最低.999778、解碼/音量/SHA過。12圖native+smask+仿射白底，clip鄰題線稿未發；35新私有物件上傳下載SHA過，不冒稱真人逐段聽審。
+- 本機真SQL圖/字4/2/2/0、52/90不過54/90恰60%、舊版鎖定/歷次跨版一葉過；正式來源合成auth+本機SQL全題組1280/390/360、教師/重試/原manual畫圖及多欄過；真私有Storage兩卷22+19共41播放器播放/暫停/重播/切題清音過。正式PG兩卷各新錯→對→對+舊版8筆暫時作答全rollback、新音圖media_access owner/path/mime逐件過，九表一致；register/activate亦守九表。不是真人OAuth/實體手機。
+- 114 manual QA三次定位到畫點y1008在900 viewport外；fixture先summary置中/命中、真click、等details.open，再canvas命中/真鼠標畫及復原後過，成功canvas y272/點331、底部列y831、scrollY1154/scrollHeight2063。未改產品，不能把footer必然攔截當已證實根因。失敗JSON/截圖與成功資料、Claude提醒保留。
+- 不需前端部署，37個當時正式執行檔SHA不變，無SQL/RLS/Edge修改。原教師審閱HTML/Downloads/草稿未動，applied-decisions/adapted-listening-20261101.private.json對應新版本；舊整卷不可蓋回。不要重跑plan/build/inspect/register/activate/finish，clone不含ignored原件。詳[past-exams-adapted-listening-20261101.md](past-exams-adapted-listening-20261101.md)。同MEMKEY id d1491e03-ff0c-4c9a-b096-255e22b831b2沿用。
+- **記憶同步待補**：發布已完成，收尾nmem遠端Cloudflare主機DNS失效；show與status均os11001，未更換endpoint/帳號/Space、未假稱同步成功。完整待同步前綴存同output的memory-pending.private.json，本專案文件/交接已保存。恢復後讀現有同MEMKEY先合併；可用finish.py --retry-memory僅重試記憶（驗原收據相同，若現有記憶已有新前綴則轉needs-merge不盲寫）。不要重跑發布步驟。
+
 # 2026-11-01 已上線：AI自主疑義審定，四卷六項處理完成
 
 - 教師不再希望考古題上線前每項等本人簽核：Codex與Claude先獨立判讀、核對來源與解題；仍有分歧交第三個AGY CLI討論，能定案就驗證後更新並報告。這取代下方10/30與10/31的「其餘待教師逐題確認」。不把三方票數當官方依據；官方raw／原題／來源SHA及各方意見保留。缺稿／缺圖且無來源者保留阻擋並報告原因，不猜造官方發話。

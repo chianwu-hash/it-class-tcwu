@@ -1,8 +1,8 @@
-"""以官方計畫稿生成合成練習音檔；僅本機，快取與內容雜湊可重驗。"""
-import asyncio,json,hashlib,subprocess,array,math,wave
+"""依已核對的官方稿或明示改編計畫製播；來源類別由plan保留，快取與雜湊可重驗。"""
+import asyncio,json,hashlib,subprocess,array,math,wave,os
 from pathlib import Path
 import edge_tts,imageio_ffmpeg
-ROOT=Path('automation/output/past-exams-audio');CACHE=ROOT/'speech-cache';CACHE.mkdir(exist_ok=True)
+ROOT=Path(os.environ.get('PAST_AUDIO_ROOT','automation/output/past-exams-audio'));assert ROOT.as_posix() in ['automation/output/past-exams-audio','automation/output/past-exams-adapted-listening-20261101'];CACHE=ROOT/'speech-cache';CACHE.mkdir(exist_ok=True)
 PLAN=json.loads((ROOT/'plan.private.json').read_text(encoding='utf-8'));FFMPEG=imageio_ffmpeg.get_ffmpeg_exe();SAMPLE=24000;sem=asyncio.Semaphore(2)
 def sha(v):return hashlib.sha256(v).hexdigest()
 def key(s,rate):return sha(json.dumps([s['text'],s['voice'],rate],ensure_ascii=False).encode())

@@ -2,7 +2,7 @@
 import json,os,subprocess,time,urllib.request,socket
 from pathlib import Path
 ROOT=Path(os.environ.get('PAST_REVISION_ROOT','automation/output/past-exams-approved11-20261031'))
-assert ROOT.as_posix() in ['automation/output/past-exams-approved11-20261031','automation/output/past-exams-autoreview-20261101']
+assert ROOT.as_posix() in ['automation/output/past-exams-approved11-20261031','automation/output/past-exams-autoreview-20261101','automation/output/past-exams-adapted-listening-20261101']
 rows=json.loads((ROOT/'candidates.private.json').read_text(encoding='utf-8'))
 only=os.environ.get('APPROVED11_ONLY')
 if only:rows=[r for r in rows if r['paperId']==only]
@@ -18,6 +18,10 @@ for index,row in enumerate(rows):
         env['PAST_ANSWER_LABEL']='核對答案：'
         if pid.endswith('g3-exam1-science'):env['PAST_TARGET_QUESTION']='s2-q13'
         if pid.endswith('g6-exam1-science'):env['PAST_TARGET_QUESTION']='s1-q11'
+    if ROOT.name=='past-exams-adapted-listening-20261101':
+        env.update(PAST_ANSWER_LABEL='核對答案：',PAST_AUDIO_CHECK='1',PAST_AUDIO_SCREENSHOTS='1',PAST_ADAPTED_CHECK='1')
+        if os.environ.get('APPROVED11_SIGNED'):
+            env['PAST_TEST_OUTPUT']=str(folder/'browser-signed')
     lease=None;server=None
     with log.open('w',encoding='utf-8') as stream:
         try:
