@@ -1,6 +1,6 @@
 import {celebratePastFlower,stopPastFlowerCelebration} from './past-flower-celebration.mjs';
 import {afterGardenReward} from './garden-unlock-notice.mjs';
-import {initPastExamUI} from './quiz-past-ui.mjs?v=20261030-question-reports';
+import {initPastExamUI} from './quiz-past-ui.mjs?v=20261101-ai-review';
 import {createAuthenticatedTransport} from './quiz-transport.mjs?v=20261029-batch4';
 import {createMediaScope,configureQuizMedia} from './quiz-media.mjs';
 import {initImageLightbox} from './image-lightbox.js';
@@ -18,7 +18,7 @@ export function initPastExam({selectors,server}){
   const token=generation;let next;
   if(route==='/api/reset')next=await rpc('restart',{request_id:packet.requestId});
   else{await viewed.get(packet.groupId);next=await rpc('submit',{attempt_id:state.attemptId,version:packet.version,group_id:packet.groupId,request_id:packet.requestId,responses:packet.responses,confirmed:packet.confirmed});}
-  if(token!==generation)throw Error('登入身分已變更。');const earned=!state.practice?.flowerCount&&next.practice?.flowerCount===1&&next.practice?.earnedByThisAttempt===true;const changed=state.attemptId!==next.attemptId;state=next;if(changed){viewed.clear();updateScope();}const url=new URL(location.href);url.searchParams.set('attempt',state.attemptId);history.replaceState(null,'',url);if(earned){const courseId=`grade${next.identity?.grade||new URL(location.href).pathname.match(/grade([36])/)[1]}-115-1`;celebratePastFlower(courseId);afterGardenReward(courseId);}return next;
+  if(token!==generation)throw Error('登入身分已變更。');const earned=!state.practice?.flowerCount&&next.practice?.flowerCount===1&&next.practice?.earnedByThisAttempt===true;const changed=state.attemptId!==next.attemptId;state=next;if(changed){viewed.clear();updateScope();}const url=new URL(location.href);url.searchParams.set('attempt',state.attemptId);history.replaceState(null,'',url);if(earned){const courseId=`grade${next.identity?.grade||new URL(location.href).pathname.match(/grade([346])/)[1]}-115-1`;celebratePastFlower(courseId);afterGardenReward(courseId);}return next;
  };
  initImageLightbox({root,selector:'[data-image-lightbox]',resolveImageSource:image=>scope.resolve(image.dataset.quizMediaUrl)});
  return {async handleAuthChange(session){

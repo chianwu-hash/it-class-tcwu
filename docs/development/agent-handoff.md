@@ -1,3 +1,11 @@
+# 2026-11-01 土城四年級8份考古題已逐題核對上線
+
+- 使用者明確要求先完成8份並上線，國語／英語各1份缺額繼續尋找113–114相符版本且有配對解答。8份現已正式enabled：成功113國語、和順114／廣興113數學、和順114／文德113自然、安和113／114社會、名間113英語。入口 https://it-class-tcwu.vercel.app/grade4/115-1/quiz-library.html#past-exams 。
+- 全215題組、394作答欄位與11暫停項目已第二遍AI目視對照原卷與官方key，逐欄qc verified（非真人教師簽核）。60張私有局部圖全部回讀SHA通過。修正和順除法商502、自然轉錄與國語key重排裁框；名間小怪獸自由選字改自核對，筆試自動31分／自核對7分，聽42／口20暫停。其他官方疑義依指南暫停，不以null當錯誤。
+- 本機8卷三輪及正式Supabase24輪0→滿分→滿分、考古花0→1→1及歷史獨立通過；正式測試transaction rollback，沒有保留測試作答。舊答案／版本／獎勵與既有quiz函式未改。215題組1280／390px操作、圖片／保存／登出清除，以及8卷目錄與五科篩選通過；為合成身分隔離驗收，未冒稱真人OAuth。
+- fresh基準FNy共780檔，候選7Yc；promote正式dpl_Dn1Kxt44tEYaxPbU866hc7EG7vNB共781來源檔全比對、15關鍵runtime相符，之後才enable8卷。新增supabase/quiz-past-grade4.sql僅擴充grade check，絕不重裝legacy SQL。詳[發布紀錄](tucheng-grade4-past-release-20261101.md)與[來源名單](../references/tucheng-grade4-past-paper-shortlist-113-114.md)。
+- 私有來源及證據主repo ignored automation/output/tucheng-grade4-past-research-20261101/、automation/output/tucheng-grade4-past-release-20261101/；主repo tmp/tucheng-115/PAST-RELEASE-STATE.md已更新。reviewed.private.json為已校對權威，勿重跑create腳本覆蓋。缺國語／英語仍未補齊，最新再查永安114／大華／博愛亦未取得合格替代，不可說已找齊10份。
+
 # 2026-11-01 四年級「我的錯題」已修正正式資料庫
 
 - 四年級傳入grade:4時，正式quiz_wrong_questions白名單仍只有3／6，導致invalid_request及「資料格式不符」。已透過新增supabase/quiz-grade4-wrong-questions.sql只修改現行函式該白名單；保留最佳化讀取、ACL、owner、search_path及其他函式，未重裝舊SQL，也無前端發布。
