@@ -71,6 +71,15 @@ function render(){if(!active)return;
   if(saved){const ref=el('div',undefined,'reference');ref.append(el('h3','對照官方標記，自己檢查'),el('p','看看施力點的位置與箭頭方向。這是自我核對，不是老師評分，也不計入分數。'));ref.append(art({url:saved.referenceUrl,alt:'官方解答局部參考圖'}));right.append(ref);}
  }
  if(saved)renderPastLearningReview({host:right,group:g,record:saved,version:state.version,onPractice});
+ if(typeof saved?.learningExplanation==='string'){
+  const review=el('section',undefined,'past-learning-review');review.append(el('h3','這題怎麼想？'),el('p',saved.learningExplanation),el('p','補充解析由 AI 依題意整理，非官方解析。','helper'));
+  if(typeof saved.wrongReviewHref==='string'){
+   const url=new URL(saved.wrongReviewHref,location.origin);
+   if(url.origin===location.origin&&/\/grade[36]\/115-1\/quiz-library\.html$/.test(url.pathname)){
+    const link=el('a','到我的錯題選重點、練習 →');link.href=url.href;review.append(link);
+   }
+  }right.append(review);
+ }
  if(left.childNodes.length)grid.append(left,right);else{grid.classList.add('question-only');grid.append(right);}card.append(grid);const actions=el('div',undefined,'actions'),al=el('div',undefined,'actions-left');
  if(index>0)al.append(button('← 上一組',()=>{index--;say('');render();},'quiet'));if(index<state.groups.length-1)al.append(button('下一組 →',()=>{index++;say('');render();},'quiet'));actions.append(al);
  if(saved)actions.append(el('span',isManual(g)?'已保留這次作答・未自動判分':`這組已儲存並核對：${saved.score} 分`,'local-saved'));

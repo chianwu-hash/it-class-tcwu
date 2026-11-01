@@ -1,7 +1,8 @@
-import http from 'node:http';import fs from 'node:fs';import path from 'node:path';import {randomBytes} from 'node:crypto';
+import http from 'node:http';import fs from 'node:fs';import path from 'node:path';import {randomBytes,randomUUID} from 'node:crypto';
 import {createQuizDb,TEACHER,studentId} from './lib/quiz-local-db.mjs';
 import {createPastLearningProjection,learningPreviewAssets} from './lib/past-learning-fixture.mjs';
 import {createPastPublisherPractice} from './lib/past-publisher-practice.mjs';
+import {createPastWrongReview} from './lib/past-wrong-review.mjs';
 const root=process.cwd(),port=Number(process.env.PAST_LOCAL_PORT||4420),origin=`http://127.0.0.1:${port}`,nonce=randomBytes(24).toString('hex');
 const bundle=JSON.parse(fs.readFileSync(process.env.PAST_BUNDLE_PATH||'automation/output/past-exam-production/bundle.private.json','utf8')),grade=bundle.document.catalog?.grade||3;
 const db=await createQuizDb(undefined,{batch2:true,batch3:true,batch4:true});await db.exec(fs.readFileSync('supabase/quiz-past-exams.sql','utf8'));
@@ -12,10 +13,27 @@ const version=(await db.query('insert into public.quiz_past_versions(paper_id,sh
 const learningMap=process.env.PAST_LEARNING_REVIEW_PATH?JSON.parse(fs.readFileSync(process.env.PAST_LEARNING_REVIEW_PATH,'utf8')):null;
 const learningProject=learningMap?createPastLearningProjection({bundle,map:learningMap,version}):value=>value;
 if(process.env.PAST_PUBLISHER_PRACTICE_PATH&&!learningMap)throw Error('learning_map_required');
-const publisherPractice=process.env.PAST_PUBLISHER_PRACTICE_PATH?await createPastPublisherPractice({db,teacher:TEACHER,bundle,map:learningMap,version,packet:JSON.parse(fs.readFileSync(process.env.PAST_PUBLISHER_PRACTICE_PATH,'utf8'))}):null;
+const wrongEntryOnly=process.env.PAST_WRONG_REVIEW==='1';
+const publisherPractice=process.env.PAST_PUBLISHER_PRACTICE_PATH?await createPastPublisherPractice({db,teacher:TEACHER,bundle,map:learningMap,version,wrongEntryOnly,packet:JSON.parse(fs.readFileSync(process.env.PAST_PUBLISHER_PRACTICE_PATH,'utf8'))}):null;
 const project=value=>publisherPractice?publisherPractice.project(learningProject(value)):learningProject(value);
+if(wrongEntryOnly&&!publisherPractice)throw Error('publisher_practice_required');
+const wrongReview=wrongEntryOnly?createPastWrongReview({db,bundle,map:learningMap,version,project,isPracticeSession:publisherPractice.isPracticeSession}):null;
+async function localRead(uid,name,data){
+ if(name==='wrong_questions'&&wrongReview)return wrongReview.read({uid,data});
+ if(!['library_sessions','pool_catalog','wrong_questions'].includes(name))throw Error('invalid_action');
+ return db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');return (await tx.query(`select public.quiz_${name}(${name==='pool_catalog'?'':'$1'}) r`,name==='pool_catalog'?[]:[data])).rows[0].r;});
+}
+if(wrongReview&&process.env.PAST_SEED_WRONG_DEMO==='1'){
+ const uid=studentId(1),attempt=await db.transaction(async tx=>{
+  await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');
+  const started=(await tx.query("select public.quiz_past_action('start',$1) r",[{paper_id:bundle.paperId,request_id:randomUUID()}])).rows[0].r;
+  await tx.query("select public.quiz_past_action('view',$1)",[{paper_id:bundle.paperId,attempt_id:started.attemptId,group_id:learningMap.groupId}]);return started.attemptId;
+ });
+ await db.query("update public.quiz_past_views set started_at=clock_timestamp()-interval '2 minutes' where attempt_id=$1",[attempt]);
+ await db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');await tx.query("select public.quiz_past_action('submit',$1)",[{paper_id:bundle.paperId,attempt_id:attempt,version,group_id:learningMap.groupId,request_id:randomUUID(),responses:[{questionId:learningMap.questionId,value:'O'}]}]);});
+}
 const previewAssets=learningMap?learningPreviewAssets({origin,nonce}):new Map();
-const previewNote=publisherPractice?'本機 MVP・合成測試帳號｜第 1 題解析可選學習重點，練習康軒原始題庫；練習結果與原卷分開，不給葉。':'本機 MVP・合成測試帳號｜只示範第 1 題的解析與學習重點；不連正式學生資料，尚未接書商練習題。';
+const previewNote=wrongReview?'本機 MVP・合成測試帳號｜從「我的錯題」查看第 1 題解析、選重點、練康軒題，再回同一道錯題。示範錯答已預先建立；不連正式學生資料、不給葉。':publisherPractice?'本機 MVP・合成測試帳號｜第 1 題解析可選學習重點，練習康軒原始題庫；練習結果與原卷分開，不給葉。':'本機 MVP・合成測試帳號｜只示範第 1 題的解析與學習重點；不連正式學生資料，尚未接書商練習題。';
 const signedMedia=process.env.PAST_SIGNED_MEDIA_PATH?JSON.parse(fs.readFileSync(process.env.PAST_SIGNED_MEDIA_PATH,'utf8')):{};
 for(const a of bundle.assets)await db.query('insert into public.quiz_media_assets values($1,$2,$3,$4,$5)',[a.url,TEACHER,a.object_path,a.mime,a.bytes]);
 const server=http.createServer(async(req,res)=>{const send=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(data));};try{
@@ -23,6 +41,12 @@ const server=http.createServer(async(req,res)=>{const send=(status,data)=>{res.w
  if(req.method==='GET'&&previewAssets.has(url.pathname)){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});return res.end(previewAssets.get(url.pathname));}
  if(req.method==='GET'&&url.pathname==='/__past/blank'){res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});return res.end('<!doctype html><html lang="zh-Hant"><title>考古題隔離驗收</title><body></body></html>');}
  if(req.method==='GET'&&url.pathname==='/__past/setup')return send(200,{nonce,version,paperId:bundle.paperId,grade});
+ if(req.method==='POST'&&url.pathname==='/__past/library'){
+  if(!wrongReview||req.headers['x-fixture-nonce']!==nonce)return send(403,{});
+  let bytes='';for await(const chunk of req){bytes+=chunk;if(Buffer.byteLength(bytes)>16000)return send(413,{});}
+  const {action,data={},student}=JSON.parse(bytes);if(![1,2].includes(student))return send(403,{});
+  return send(200,await localRead(studentId(student),action,data));
+ }
  if(req.method==='POST'&&url.pathname==='/__past/practice'){
   if(!publisherPractice||req.headers['x-fixture-nonce']!==nonce)return send(403,{});
   let bytes='';for await(const chunk of req){bytes+=chunk;if(Buffer.byteLength(bytes)>16000)return send(413,{});}
@@ -32,10 +56,10 @@ const server=http.createServer(async(req,res)=>{const send=(status,data)=>{res.w
  if(req.method==='POST'&&url.pathname==='/__past/rpc'){
   if(req.headers['x-fixture-nonce']!==nonce)return send(403,{});let bytes='';for await(const chunk of req)bytes+=chunk;const {action,data,student=1,fast=false}=JSON.parse(bytes),uid=student==='teacher'?TEACHER:studentId(student);
   if(fast&&action==='submit')await db.query("update public.quiz_past_views set started_at=clock_timestamp()-interval '2 minutes' where attempt_id=$1 and group_id=$2",[data.attempt_id,data.group_id]);
-  const result=await db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');if(action==='media'){const a=(await tx.query('select public.quiz_media_access($1,$2) r',[data.url,data.attempt_id||null])).rows[0].r;return {url:signedMedia[data.url]||origin+'/__past/image/'+data.url.split('/').at(-1)};}return (await tx.query('select public.quiz_past_action($1,$2) r',[action,{paper_id:bundle.paperId,...data}])).rows[0].r;});return send(200,project(result));
+  const result=await db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');if(action==='media'){const a=(await tx.query('select public.quiz_media_access($1,$2) r',[data.url,data.attempt_id||null])).rows[0].r;return {url:signedMedia[data.url]||origin+'/__past/image/'+data.url.split('/').at(-1)};}return (await tx.query('select public.quiz_past_action($1,$2) r',[action,{paper_id:bundle.paperId,...data}])).rows[0].r;});return send(200,wrongReview?wrongReview.sourceProjection(project(result),student):project(result));
  }
  if(req.method==='GET'&&/^\/__past\/image\/[a-f0-9]{64}$/.test(url.pathname)){const a=bundle.assets.find(a=>a.hash===url.pathname.split('/').at(-1));if(!a)return send(404,{});const bytes=fs.readFileSync(a.file),range=req.headers.range?.match(/^bytes=(\d+)-(\d*)$/);if(range){const start=Number(range[1]),end=range[2]?Math.min(Number(range[2]),bytes.length-1):bytes.length-1;if(start>end||start>=bytes.length){res.writeHead(416,{'Content-Range':`bytes */${bytes.length}`});return res.end();}res.writeHead(206,{'Content-Type':a.mime,'Content-Length':end-start+1,'Content-Range':`bytes ${start}-${end}/${bytes.length}`,'Accept-Ranges':'bytes'});return res.end(bytes.subarray(start,end+1));}res.writeHead(200,{'Content-Type':a.mime,'Content-Length':bytes.length,'Accept-Ranges':'bytes'});return res.end(bytes);}
  if(req.method!=='GET'||!/^\/(shared\/[a-zA-Z0-9_./-]+|grade[36]\/115-1\/(past-exam\.html|past-exam-review\.html|quiz\.html|navbar\.js|quiz-library\.html))$/.test(url.pathname)||url.pathname.includes('..'))return send(404,{});
- const file=path.resolve(root,'.'+url.pathname);if(!file.startsWith(root+path.sep))return send(404,{});res.writeHead(200,{'Content-Type':file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.css')?'text/css':file.endsWith('.woff2')?'font/woff2':'text/javascript; charset=utf-8','Cache-Control':'no-store'});let bytes=fs.readFileSync(file);if(learningMap&&(/\/(past-exam|quiz)\.html$/).test(url.pathname))bytes=bytes.toString('utf8').replace('<main class="wrap student-wrap">',`<main class="wrap student-wrap"><p class="card" role="note">${previewNote}</p>`);res.end(bytes);
+ const file=path.resolve(root,'.'+url.pathname);if(!file.startsWith(root+path.sep))return send(404,{});res.writeHead(200,{'Content-Type':file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.css')?'text/css':file.endsWith('.woff2')?'font/woff2':'text/javascript; charset=utf-8','Cache-Control':'no-store'});let bytes=fs.readFileSync(file);if(learningMap&&(/\/(past-exam|quiz|quiz-library)\.html$/).test(url.pathname))bytes=bytes.toString('utf8').replace('<main class="wrap student-wrap">',`<main class="wrap student-wrap"><p class="card" role="note">${previewNote}</p>`);res.end(bytes);
 }catch(e){send(400,{message:e.message});}});
 server.listen(port,'127.0.0.1',()=>console.log(origin));process.on('SIGTERM',()=>server.close(async()=>{await db.close();process.exit(0);}));

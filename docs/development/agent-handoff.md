@@ -1,3 +1,14 @@
+# 2026-11-01 已完成：單題延伸入口移至「我的錯題」（僅本機）
+
+- 使用者指定：把既有114上三自然 s1-q01 接進既有「我的錯題」，從詳情看解析、選重點、練書商題後回同一道；不發布、不動正式學生資料。Codex 唯一寫入者，Claude 只讀複核。
+- 新增 opt-in `PAST_WRONG_REVIEW=1` 本機 adapter；依本人原作答、版本及 correct=false 合併一般錯題與這一題，不收答對、未答或人工自核。source_type＋attempt/paper/version/group/question 完整識別，沿用既有 SQL 解析與書商作答引擎。
+- 已驗證 API：本人隔離、錯版拒絕、未答／正答不收、冪等、不給葉、原卷成績與答案不變；瀏覽器兩概念四題、回同一詳情／刷新、鍵盤、390/360、登出清除皆過。一般21錯題＋1考古題合併分頁20/2、篩選、舊詳情及答案不變也過。
+- 先前4491/4493兩舊預覽已關閉；本機可用記憶體不足時，同時開額外 PGlite 驗證曾 V8 Zone OOM，關閉4495、序列驗證後通過。已重開4495，只保留整合版供試用。
+- 改動：automation/lib/past-wrong-review.mjs、past-publisher-practice.mjs、past-learning-fixture.mjs、past-exam-local-server.mjs；shared/quiz-wrong-route.mjs、quiz-wrong-questions.mjs/css、quiz-past-learning-review.css、quiz-past-style.css、quiz-past-ui.mjs、quiz-student.mjs；新增三項驗證檔。原卷僅留解析與到我的錯題連結，無選重點／練習入口。
+- Claude唯讀複核188秒／13Read成功、Git前後一致，無阻擋；Codex補換帳號清URL但保留首次深連結，重跑完整流程及原卷無CTA／同題連結均過。證據在 ignored `automation/output/past-wrong-entry-mvp-20261101/`，clone不含來源與書商私有packet。不得部署、安裝migration或操作正式學生資料。
+- 試用入口 `http://127.0.0.1:4495/grade3/115-1/quiz-library.html#wrong`，合成學生1僅一筆預先建立錯答；按回看解析→選重點→2題→底列「回這道錯題」。關server資料即失，重開用不帶wrong_*的入口；詳[實作紀錄](past-wrong-entry-mvp-20261101.md)。
+- 已沿原MEMKEY／同id補存入口決策與完成狀態，完整讀回一致、舊歷史保留；私有收據 `memory-verified.private.json`。瀏覽器自動化已斷線並釋放lease，保留預覽分頁與4495服務。
+
 # 2026-11-01 已完成：單題學習重點接書商原題，本機試用
 
 - 使用者授權接續單題 MVP，選重點後練習書商題庫；限本機，不發布、不改正式學生資料／給葉規則。

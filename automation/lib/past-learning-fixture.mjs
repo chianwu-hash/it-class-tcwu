@@ -29,11 +29,12 @@ export function learningPreviewAssets({origin,nonce}){
  const s=await getSession();if(!s?.user)throw Error('請先登入本機測試帳號。');
  const n=s.user.id==='00000000-0000-4000-8001-000000000001'?1:s.user.id==='00000000-0000-4000-8001-000000000002'?2:null;
  if(!n)throw Error('僅供合成測試帳號。');
- const practice=path==='/__past/practice'||path==='/rest/v1/rpc/quiz_action'||path==='/rest/v1/rpc/quiz_entry_context';
- const action=path==='/__past/practice'?body.action:path==='/rest/v1/rpc/quiz_action'?'quiz':path==='/rest/v1/rpc/quiz_entry_context'?'entry_context':path==='/rest/v1/rpc/quiz_past_action'?body.p_action:path==='/functions/v1/quiz-media'?'media':null;
+ const library=['library_sessions','pool_catalog','wrong_questions'].find(n=>path==='/rest/v1/rpc/quiz_'+n);
+ const practice=path==='/__past/practice'||path==='/rest/v1/rpc/quiz_action'||path==='/rest/v1/rpc/quiz_entry_context'||path==='/rest/v1/rpc/quiz_past_practice';
+ const action=library||(path==='/rest/v1/rpc/quiz_past_practice'||(path==='/rest/v1/rpc/quiz_action'&&body.p_action==='past_practice')?'start':path==='/__past/practice'?body.action:path==='/rest/v1/rpc/quiz_action'?'quiz':path==='/rest/v1/rpc/quiz_entry_context'?'entry_context':path==='/rest/v1/rpc/quiz_past_action'?body.p_action:path==='/functions/v1/quiz-media'?'media':null);
  if(!action)throw Error('本機預覽不支援此操作。');
  const data=path==='/__past/practice'?body.data:action==='quiz'?{...body.p_data,quiz_action:body.p_action}:action==='media'?body:body.p_data;
- const r=await fetch(practice?'/__past/practice':'/__past/rpc',{method:'POST',headers:{'Content-Type':'application/json','X-Fixture-Nonce':${JSON.stringify(nonce)}},body:JSON.stringify({action,data,student:n})});
+ const r=await fetch(library?'/__past/library':practice?'/__past/practice':'/__past/rpc',{method:'POST',headers:{'Content-Type':'application/json','X-Fixture-Nonce':${JSON.stringify(nonce)}},body:JSON.stringify({action,data,student:n})});
  const result=await r.json();if(!r.ok)throw Error(result.message||'本機測試失敗');return result;};}`;
  return new Map([['/shared/auth.js',auth],['/shared/quiz-transport.mjs',transport]]);
 }

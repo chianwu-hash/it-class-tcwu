@@ -2,11 +2,12 @@ import fs from 'node:fs';
 import {createHash,randomUUID} from 'node:crypto';
 import {quizCall} from './quiz-local-db.mjs';
 import {validateDocument} from '../../shared/quiz-document.mjs';
+import {wrongQuestionSearch} from '../../shared/quiz-wrong-route.mjs';
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const uuid=value=>typeof value==='string'&&/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(value);
 
 // Explicitly opt-in, loopback fixture. Reuses the existing schema1 SQL engine.
-export async function createPastPublisherPractice({db,teacher,bundle,map,version,packet}){
+export async function createPastPublisherPractice({db,teacher,bundle,map,version,packet,wrongEntryOnly=false}){
  if(packet.schema!==1||packet.sourcePaperId!==bundle.paperId||packet.sourceDocumentSha256!==bundle.sha256||
   packet.sourceGroupId!==map.groupId||packet.sourceQuestionId!==map.questionId)throw Error('practice_source_mismatch');
  const published=new Map(),sessions=new Map(),starts=new Map(),receipts=new Map();
@@ -28,6 +29,7 @@ export async function createPastPublisherPractice({db,teacher,bundle,map,version
    await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');
    const snapshot=(await tx.query("select public.quiz_past_action('resume',$1) r",[{paper_id:bundle.paperId,attempt_id:data.attempt_id}])).rows[0].r;
    if(snapshot.version!==version||!snapshot.records[map.groupId]?.results.some(r=>r.questionId===map.questionId&&typeof r.correct==='boolean'))throw Error('practice_source_not_answered');
+   if(wrongEntryOnly&&!snapshot.records[map.groupId].results.some(r=>r.questionId===map.questionId&&r.correct===false))throw Error('practice_source_not_wrong');
   });
  }
  async function start(uid,data,student){
@@ -44,7 +46,8 @@ export async function createPastPublisherPractice({db,teacher,bundle,map,version
     // Classroom mode is ineligible for quiz leaves regardless of question count.
     await quizCall(db,teacher,'open',{session_id:sessionId,version_id:prepared.versionId,school_year:115,class_codes:['301'],reveal:'immediate',shuffle_questions:false,shuffle_options:false,access_mode:'classroom'});
     sessions.set(sessionId,{userId:uid,sourceAttempt:data.attempt_id,conceptId:data.concept_id});
-    const params=new URLSearchParams({cloud:'1',session:sessionId,fixture_student:String(student),past_paper:bundle.paperId,past_attempt:data.attempt_id});
+    const params=new URLSearchParams(wrongEntryOnly?wrongQuestionSearch({source_type:'past_exam',attempt_id:data.attempt_id,paper_id:bundle.paperId,version_id:version,group_id:map.groupId,question_id:map.questionId}):{past_paper:bundle.paperId,past_attempt:data.attempt_id});
+    params.set('cloud','1');params.set('session',sessionId);params.set('fixture_student',String(student));
     return {sessionId,url:'/grade3/115-1/quiz.html?'+params,count:prepared.count,publisher:packet.publisher.name,awardEligible:false};
    })();
    starts.set(key,pending);pending.catch(()=>starts.delete(key));
@@ -52,6 +55,7 @@ export async function createPastPublisherPractice({db,teacher,bundle,map,version
   return starts.get(key);
  }
  return {
+  isPracticeSession:sessionId=>sessions.has(sessionId),
   project(snapshot){
    const review=snapshot?.records?.[map.groupId]?.learningReview;if(!review)return snapshot;
    return {...snapshot,records:{...snapshot.records,[map.groupId]:{...snapshot.records[map.groupId],learningReview:{...review,concepts:review.concepts.map(c=>published.has(c.id)?{...c,practice:{available:true,count:published.get(c.id).count,publisher:packet.publisher.name,schoolYear:packet.publisher.schoolYear,chapter:packet.publisher.chapterName}}:c)}}}};

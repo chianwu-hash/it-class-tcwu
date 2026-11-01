@@ -4,6 +4,7 @@ import { provideNavIdentity } from './grade6-nav-identity.js?v=20261030-identity
 import { initImageLightbox } from './image-lightbox.js';
 import {resolveQuizImage} from './quiz-media.mjs?v=20261029-load-batch1';
 import { onTestIdentityChange } from './test-identity-state.mjs?v=20261030-identity-sync';
+import {readWrongQuestionRef,wrongQuestionSearch} from './quiz-wrong-route.mjs';
 
 initImageLightbox({ root: document.getElementById('server-quiz'), selector: 'img', initialScale: 0.8, minScale: 0.2, zoomStep: 0.1,
   resolveImageSource: resolveQuizImage });
@@ -23,6 +24,11 @@ if (cloud) {
   if(/^[a-zA-Z0-9_-]{1,100}$/.test(pastPaper||'')&&/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(pastAttempt||'')){
     const query=new URLSearchParams({paper:pastPaper,attempt:pastAttempt});if(['1','2'].includes(params.get('fixture_student')))query.set('fixture_student',params.get('fixture_student'));
     back.href='past-exam.html?'+query;back.textContent='← 返回考古題解析';back.dataset.shortLabel='回原題解析';
+  }
+  const wrongRef=readWrongQuestionRef(location.search);
+  if(wrongRef?.source_type==='past_exam'){
+    const query=wrongQuestionSearch(wrongRef,['1','2'].includes(params.get('fixture_student'))?'fixture_student='+params.get('fixture_student'):'');
+    back.href='quiz-library.html?'+query+'#wrong';back.textContent='← 回這道錯題';back.dataset.shortLabel='回這道錯題';
   }
   document.querySelector('.hero .wrap').append(back);
 }
