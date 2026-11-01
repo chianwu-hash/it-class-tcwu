@@ -879,6 +879,10 @@ To: Claude Code
 
 ## 2026-11-01 寵物散步／休息偏好已上線
 
+### 後續本機工作：偷偷散步小插曲
+
+使用者核准三寵物在保存休息偏好後，下次進頁20%機率於窩前散步、驚訝、兩倍速度回窩，大雨雷雨也能觸發。Codex在 `codex/pet-surprise-20261101`（基準e03433c）整合，不修改學習資料／偏好。Claude Desktop原Code對話／Opus5.5獨占studio的 `src/garden-pet-surprise-v1.js`、`docs/pet-surprise-v1.md` 與三份 `docs/pet-surprise-*-prompt.txt`；Codex不寫這5檔。新角色圖沿原ChatGPT對話，不使用Claude CLI。整合完成前不發布藝術studio整包。
+
 使用者要求回窩休息跨次瀏覽保留。分支 `codex/pet-rest-persistence-20261101`、功能提交 `a25ddb2`，正式部署已更新為 `dpl_wnTX1ou6bMPsYDaV3BAKFV1eQ9vc`。以 CR8 的完整755檔為基準，748檔保持不變，僅7個前端檔更新；後續發布必須以新正式版為基準。
 
 Supabase 新增每隻寵物獨立的 walk/rest 偏好，先儲存成功再切場景，重載直接入窩。天氣強制躲雨不改學生偏好，雨停等待指揮規則保留；舊版未記錄的指令無法回推，更新後選一次即可。10項測試、本機三寵物、雲端預覽與正式頁讀回及重載檢查皆通過，測試偏好已還原，學習成果未改。詳 `docs/development/effort-pet-mode-20261101.md`。

@@ -1,0 +1,282 @@
+{
+  "species": {
+    "cat": {
+      "canvas": {
+        "size": [
+          560,
+          500
+        ],
+        "anchor": [
+          280,
+          460
+        ],
+        "referenceHeight": 360
+      },
+      "groups": {
+        "surprise": {
+          "frames": [
+            "cat/surprise-0.webp",
+            "cat/surprise-1.webp",
+            "cat/surprise-2.webp"
+          ],
+          "visibleBoxes": [
+            [
+              41,
+              98,
+              459,
+              460
+            ],
+            [
+              51,
+              101,
+              449,
+              460
+            ],
+            [
+              53,
+              95,
+              448,
+              460
+            ]
+          ],
+          "footAnchors": [
+            460,
+            460,
+            460
+          ]
+        }
+      }
+    },
+    "dog": {
+      "canvas": {
+        "size": [
+          840,
+          500
+        ],
+        "anchor": [
+          420,
+          460
+        ],
+        "referenceHeight": 360
+      },
+      "groups": {
+        "surprise": {
+          "frames": [
+            "dog/surprise-0.webp",
+            "dog/surprise-1.webp",
+            "dog/surprise-2.webp"
+          ],
+          "visibleBoxes": [
+            [
+              213,
+              100,
+              627,
+              459
+            ],
+            [
+              222,
+              99,
+              616,
+              459
+            ],
+            [
+              216,
+              98,
+              625,
+              459
+            ]
+          ],
+          "footAnchors": [
+            460,
+            460,
+            460
+          ]
+        }
+      }
+    },
+    "rabbit": {
+      "canvas": {
+        "size": [
+          840,
+          600
+        ],
+        "anchor": [
+          420,
+          560
+        ],
+        "referenceHeight": 360
+      },
+      "groups": {
+        "surprise": {
+          "frames": [
+            "rabbit/surprise-0.webp",
+            "rabbit/surprise-1.webp",
+            "rabbit/surprise-2.webp"
+          ],
+          "visibleBoxes": [
+            [
+              167,
+              160,
+              593,
+              559
+            ],
+            [
+              177,
+              145,
+              582,
+              560
+            ],
+            [
+              180,
+              97,
+              580,
+              560
+            ]
+          ],
+          "footAnchors": [
+            560,
+            560,
+            560
+          ]
+        }
+      }
+    }
+  },
+  "provenance": {
+    "cat": {
+      "sourceSha256": "7bf9550b16d972a0f960c72bc182f93f1054e5fa7484bfa6a659eec0101ab1f4",
+      "registration": [
+        {
+          "sourceBox": [
+            34,
+            58,
+            738,
+            667
+          ],
+          "scale": 0.5944170771756979,
+          "offset": [
+            21,
+            64
+          ]
+        },
+        {
+          "sourceBox": [
+            19,
+            60,
+            689,
+            665
+          ],
+          "scale": 0.5944170771756979,
+          "offset": [
+            40,
+            65
+          ]
+        },
+        {
+          "sourceBox": [
+            21,
+            51,
+            686,
+            665
+          ],
+          "scale": 0.5944170771756979,
+          "offset": [
+            40,
+            65
+          ]
+        }
+      ],
+      "generator": "ChatGPT original character conversation; prompt by Claude Desktop Opus 5.5"
+    },
+    "dog": {
+      "sourceSha256": "04c8a80ec293405ef4d7eb5f4ef7a6e7c94cad6e1dbcb0f84101ddff2123c327",
+      "registration": [
+        {
+          "sourceBox": [
+            67,
+            89,
+            707,
+            646
+          ],
+          "scale": 0.6469534050179212,
+          "offset": [
+            170,
+            42
+          ]
+        },
+        {
+          "sourceBox": [
+            41,
+            88,
+            650,
+            646
+          ],
+          "scale": 0.6469534050179212,
+          "offset": [
+            196,
+            42
+          ]
+        },
+        {
+          "sourceBox": [
+            54,
+            87,
+            686,
+            646
+          ],
+          "scale": 0.6469534050179212,
+          "offset": [
+            181,
+            42
+          ]
+        }
+      ],
+      "generator": "ChatGPT original character conversation; prompt by Claude Desktop Opus 5.5"
+    },
+    "rabbit": {
+      "sourceSha256": "9bf77c03008ab7bf52ec27370f078819b3480c755189b9cefcb89ee147da0bc8",
+      "registration": [
+        {
+          "sourceBox": [
+            42,
+            151,
+            666,
+            735
+          ],
+          "scale": 0.6836902800658978,
+          "offset": [
+            138,
+            57
+          ]
+        },
+        {
+          "sourceBox": [
+            20,
+            129,
+            616,
+            736
+          ],
+          "scale": 0.6836902800658978,
+          "offset": [
+            163,
+            57
+          ]
+        },
+        {
+          "sourceBox": [
+            21,
+            61,
+            608,
+            738
+          ],
+          "scale": 0.6836902800658978,
+          "offset": [
+            165,
+            55
+          ]
+        }
+      ],
+      "generator": "ChatGPT original character conversation; prompt by Claude Desktop Opus 5.5"
+    }
+  }
+}

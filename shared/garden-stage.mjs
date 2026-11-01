@@ -1,5 +1,7 @@
 import {createCompanionPolicy} from './garden-companion-policy.mjs';
 import {petName} from './garden-pet-names.mjs';
+import {createSurpriseVisit} from './garden-surprise-visit.mjs';
+const surpriseVisit=createSurpriseVisit();
 const policy=createCompanionPolicy();let lastCompanionState='';
 const frame=document.getElementById('garden-scene');
 const petButton=document.getElementById('pet-tap');
@@ -29,8 +31,10 @@ function sync(initial=false){
 }
 function ready(){
  const c=child();let current;try{current=new URL(frame.contentWindow.location.href);if(current.searchParams.get('species')+'-'+current.searchParams.get('home')!==key||current.searchParams.get('load')!==String(loadVersion))return}catch{return}
- if(!c||!c.snapshot().ready)return;
- clearTimeout(loadTimer);childReady=true;assetIssues=c.snapshot().assetIssues||assetIssues;showAssetIssues();sync(true);post({type:'garden-scene-ready'});
+ if(!c||!c.snapshot().ready||childReady)return;
+ clearTimeout(loadTimer);childReady=true;assetIssues=c.snapshot().assetIssues||assetIssues;showAssetIssues();sync(true);
+ if(surpriseVisit.decide({...data,petUnlocked:data.petUnlocked===true&&data.surpriseAllowed!==false,reduced,ready:true}))c.startSurprise?.();
+ post({type:'garden-scene-ready'});
 }
 function configure(next){
  data={...data,...next};policy.configure(data);
@@ -68,7 +72,7 @@ const api={
  snapshot(){const s=childReady?child()?.snapshot():null;return {...s,ready:childReady&&!!s?.ready,loading:!childReady,manuallyPaused:paused,assetIssues:assetIssues.slice(),pet:data.petUnlocked?data.pet:null,home:data.home,counts:s?.counts||{leaves:0,flowers:0},playing:!paused&&!reduced&&s?.playing===true,reduced,companion:policy.snapshot()}},
  tap(){if(data.petUnlocked&&childReady)return child()?.tap?.()||child()?.tapCat?.()},
  advanceForTest(ms){return child()?.advanceForTest?.(ms)},
- demo(kind){if(['enter','sleep'].includes(kind)){api.setAtmosphere('downpour',atmosphere.isDay)}else if(['exit','roam','peek','behind'].includes(kind)){api.setAtmosphere('day',atmosphere.isDay);command('walk')}return child()?.demo?.(kind)}
+ demo(kind){if(kind==='surprise'){command('rest');return child()?.startSurprise?.()}if(['enter','sleep'].includes(kind)){api.setAtmosphere('downpour',atmosphere.isDay)}else if(['exit','roam','peek','behind'].includes(kind)){api.setAtmosphere('day',atmosphere.isDay);command('walk')}return child()?.demo?.(kind)}
 };
 window.__gardenShelterV21=window.__gardenScene=api;
 frame.addEventListener('load',ready);

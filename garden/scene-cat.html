@@ -131,6 +131,8 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
 <script src="./src/garden-rain-v18.js"></script>
 <script src="./src/garden-day-sky-v1.js?v=20261031-sunny"></script>
 <script src="./src/garden-cat-homes-v6.js?v=home-route-v6-1"></script>
+<script src="./src/garden-pet-surprise-v1.js"></script>
+<script src="./src/garden-surprise-assets.js"></script>
 <script>
 (function () {
   'use strict';
@@ -190,7 +192,13 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
     return { im: im, p: p };
   }
   var assetStatus=window.GardenAssetStatus.create(function(issues){parent.postMessage({type:'garden-scene-status',token:new URLSearchParams(location.search).get('load')||'',issues:issues},location.origin)});
+  var surprise=null,surpriseAssets=null;
   var waits = [];
+  waits.push(window.GardenSurpriseAssets.load('cat').then(function(a){
+    surpriseAssets=a;if(!a)return;
+    POSES.surprise={size:a.canvas.size,anchor:a.canvas.anchor,medianVisibleH:a.canvas.referenceHeight,visibleBoxes:a.group.visibleBoxes};
+    imgs.social.surprise=a.images;
+  }));
   var flowerAsset = loadImg('./assets/processed/motion-web/flower.webp'); imgs.flower = flowerAsset.im; waits.push(flowerAsset.p.catch(function(){imgs.flower=null;assetStatus.report("flower","部分花朵圖片暫時無法顯示，成果仍完整保留。",false)}));var pastFlower=loadImg('/assets/reward-tree/flowers/flower-forest.png');imgs.pastFlower=pastFlower.im;waits.push(pastFlower.p.catch(function(){imgs.pastFlower=null;assetStatus.report("past-flower","考古花圖片暫時無法顯示，成果仍完整保留。",false)}));
   CAT.frames.forEach(function (f) { var r = loadImg(CAT.base + f); imgs.cat.push(r.im); waits.push(r.p); });
   Object.keys(POSES).filter(function (k) { return k !== 'walk'; }).forEach(function (g) { imgs.social[g] = []; POSES[g].frames.forEach(function (f) { var r = loadImg(POSES[g].base + f); imgs.social[g].push(r.im); waits.push(r.p); }); });
@@ -414,7 +422,7 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
     try { ctx.drawImage(W18.layer(localNight ? 'night' : theme), 0, 0, 960, 760); } catch (e) { addError('背景 ' + theme + '：' + e.message); }
     window.GardenDaySkyV1.draw(ctx,weatherClock,{scene:theme,isDay:!localNight,reduced:reduceBox.checked});
     if (!load.ready) return;
-    var TR = TREES[tree], pose = tap.pose() || (shelter.ready && shelter.ctrl ? shelter.ctrl.pose() : null);
+    var TR = TREES[tree], pose = (surprise&&surprise.pose()) || tap.pose() || (shelter.ready && shelter.ctrl ? shelter.ctrl.pose() : null);
     var r = pose ? poseRect(pose) : catRect(st);
     var rainOpt = { animated: animated(), auto: autoOn(), viewLeft: view.cam, viewWidth: view.w, cat: r };
     R.back(ctx, weatherClock, theme, rainOpt);
@@ -539,7 +547,7 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
   // ---------- 原散步狀態 → 避雨控制器輸入 ----------
   function wantsRest(){return requestedRest||isWet(theme)}
   function houseVisible(){return !!(petUnlocked&&shelter.ready&&shelter.geo&&(homeVisible||wantsRest()||shelter.ctrl.homeVisible(false)))}
-  function publishPetState(){if(!shelter.ready)return;var sp=shelter.ctrl.snapshot(),state={inside:sp.inside,travelling:['enter','exit','waitSafe','landed'].includes(sp.phase),busy:tap.snapshot().state!=='idle',visible:houseVisible()},text=JSON.stringify(state);if(text!==lastPetState){lastPetState=text;parent.postMessage({type:'garden-pet-state',state:state},location.origin)}}
+  function publishPetState(){if(!shelter.ready)return;var sp=shelter.ctrl.snapshot(),state={inside:sp.inside,travelling:['enter','exit','waitSafe','landed'].includes(sp.phase),busy:!!(surprise&&['stroll','surprise','handoff','returning'].includes(surprise.phase()))||tap.snapshot().state!=='idle',visible:houseVisible()},text=JSON.stringify(state);if(text!==lastPetState){lastPetState=text;parent.postMessage({type:'garden-pet-state',state:state},location.origin)}}
   var roamResume = null,loopAt=0,cycleCount=0;
   function normalState(t) { return roamResume ? roamResume.stateAt(t) : G.stateAt(plan,t); }
   function normalPose(t) {
@@ -568,7 +576,7 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
       available:['shake','yawn','blink','stretch','wave'],
       pose:p||{group:group,frame:st.spriteIndex,mirror:st.spriteMirror,x:r.fx,footY:r.fy,depth:depthOfY(r.fy),layer:'front',inside:false}};
   }
-  function requestTap(kind){var result=tap.request(tapContext(),kind);draw();return result;}
+  function requestTap(kind){if(surprise&&['stroll','surprise','handoff','returning'].includes(surprise.phase()))return {ok:false,reason:'busy'};var result=tap.request(tapContext(),kind);draw();return result;}
   function tapHit(e){
     if(!petUnlocked||finishSkinTransition)return false;
     var st=normalState(clock.t),pose=tap.pose()||(shelter.ready?shelter.ctrl.pose():null);
@@ -590,6 +598,15 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
     var prev = weatherClock;
     weatherClock += dt;
     var ctrl = shelter.ready ? shelter.ctrl : null;
+    if(surprise&&surprise.active()){
+      surprise.update(dt);
+      if(surprise.phase()==='handoff'){
+        ctrl.update(dt*2,{wet:true,normal:surprise.handoffNormal(clock.t)});
+        if(ctrl.pose())surprise.finish();
+      }
+      if(animated())R.update(prev,weatherClock,theme,quiet?false:autoOn()).forEach(function(cue){if(!quiet)audio.play(cue.strength)});
+      return;
+    }
     var wasActing=tap.frozen();
     if(!wasActing)tap.update(0,tapContext());
     if (!tap.frozen() && (!ctrl || !ctrl.frozen())) clock.t += dt;   // 休息期間凍結，出窩從實際落點銜接散步
@@ -599,7 +616,7 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
       plan=next.plan;loopAt=next.at;roamResume=next.resume;clock.t=roamResume.time+over;
     }
     if (!tap.frozen() && ctrl) {
-      ctrl.update(dt, { wet: wantsRest(), normal: normalPose(clock.t) });
+      ctrl.update(dt*(surprise?surprise.controllerDtScale(ctrl.snapshot()):1), { wet: wantsRest(), normal: normalPose(clock.t) });
       var anchor = ctrl.resumeAnchor();
       if (anchor) {
         roamResume = window.GardenCatRoamResume.create(G,plan,anchor);
@@ -657,7 +674,7 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
     sync(); draw(); updateStatus(true); return theme;
   }
   function setRatio(r) { r = +r; if ([0.2, 0.24, 0.28].indexOf(r) >= 0) { ratio = r; if (shelter.ready) setupShelter(); rebuildShelter(); sync(); draw(); } return ratio; }
-  function setReduce(v) { if(reduceBox.checked===!!v)return reduceBox.checked;tap.reset();if(v&&finishSkinTransition)finishSkinTransition(); reduceBox.checked = !!v; if (reduceBox.checked) { cancelThunder(); pause(); } rebuildShelter(); sync(); draw(); updateStatus(true); return reduceBox.checked; }
+  function setReduce(v) { if(v&&surprise)surprise.cancel(); if(reduceBox.checked===!!v)return reduceBox.checked;tap.reset();if(v&&finishSkinTransition)finishSkinTransition(); reduceBox.checked = !!v; if (reduceBox.checked) { cancelThunder(); pause(); } rebuildShelter(); sync(); draw(); updateStatus(true); return reduceBox.checked; }
   function setSlow(v) { slowBox.checked = !!v; updateStatus(true); return slowBox.checked; }
   function nextSeed() { return String(G.v9.core._internal.hashSeed(seed + '/next') % 100000); }
   /** 示意花葉：demo:true 的假資料，不是學生紀錄，點到也不查來源。 */
@@ -801,14 +818,20 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
   }
   document.addEventListener('visibilitychange',function(){if(document.hidden&&finishSkinTransition)finishSkinTransition()});
   var api = {
+    startSurprise:function(){
+      if(!petUnlocked||!requestedRest||reduceBox.checked||!shelter.ready||!surpriseAssets||surprise)return {ok:false};
+      surprise=window.GardenPetSurpriseV1.create({species:'cat',surpriseFrames:surpriseAssets.images.length});
+      var result=surprise.start({reduced:reduceBox.checked,canEnter:true});
+      if(result.ok){tap.reset();shelter.ctrl.resetNormal();draw()}return result;
+    },
     setCompanionControl:function(c){var changed=requestedRest!==!!c.rest;homeVisible=c.homeVisible===true;requestedRest=c.rest===true;if((changed&&reduceBox.checked)||(c.initial&&requestedRest))rebuildShelter();draw();return api.snapshot()},
     configure:function(data){earnedLeaves=Array.isArray(data.leaves)?data.leaves.slice(0,96):[];earnedFlowers=Array.isArray(data.flowers)?data.flowers.slice(0,24):[];pendingLeaves=Array.isArray(data.pendingLeaves)?data.pendingLeaves.slice(0,8):[];pendingFlowers=Array.isArray(data.pendingFlowers)?data.pendingFlowers.slice(0,2):[];petUnlocked=data.petUnlocked===true;if(!petUnlocked)tap.reset();petButton.hidden=!petUnlocked;setFlowerPalette(data.flowerStyle);if(TREES[data.treeSkin]&&data.treeSkin!==tree)setTree(data.treeSkin);draw();return api.snapshot();},
     snapshot: function () {
-      var st = normalState(clock.t), pose = tap.pose() || (shelter.ready && shelter.ctrl ? shelter.ctrl.pose() : null), r = pose ? poseRect(pose) : catRect(st), TR = TREES[tree];
+      var st = normalState(clock.t), pose = (surprise&&surprise.pose()) || tap.pose() || (shelter.ready && shelter.ctrl ? shelter.ctrl.pose() : null), r = pose ? poseRect(pose) : catRect(st), TR = TREES[tree];
       var sp = shelter.ready && shelter.ctrl ? shelter.ctrl.snapshot() : null, vis = r.vis || null;
       if (!vis && !pose) { var C = catSpec(st), vb = C.visibleBoxes ? C.visibleBoxes[st.spriteIndex] : null; if (vb) vis = [r.x + vb[0] * r.k, r.y + vb[1] * r.k, (vb[2] - vb[0]) * r.k, (vb[3] - vb[1]) * r.k]; }
       return { sky:window.GardenDaySkyV1.snapshot(weatherClock,{scene:theme,isDay:!localNight,reduced:reduceBox.checked}),
-        tap: Object.assign(tap.snapshot(),{ready:tapReady,error:tapError}),route:{diagonalGait:!!st.diagonalGait,gaitKind:st.gaitKind||null,heading:st.gaitHeading||null,tangentR:st.tangentR==null?null:st.tangentR,bridge:st.gaitBridge||null,x:st.sceneX,y:st.sceneY,behind:st.behind,group:st.spriteGroup,index:st.spriteIndex},pending:{leaves:Math.min(pendingLeaves.length,96-earnedLeaves.length),flowers:Math.min(pendingFlowers.length,24-earnedFlowers.length)},background: 'shelter-v21', assetProgress:{done:load.done,total:load.total}, assetIssues:assetStatus.snapshot(),cycleCount:cycleCount,loopAt:loopAt,weatherTime:weatherClock,ready: load.ready, error: load.error, errors: errors.slice(), time: Math.round(clock.t), playing: clock.playing, hidden: document.hidden,
+        surprise:surprise?surprise.state():null,tap: Object.assign(tap.snapshot(),{ready:tapReady,error:tapError}),route:{diagonalGait:!!st.diagonalGait,gaitKind:st.gaitKind||null,heading:st.gaitHeading||null,tangentR:st.tangentR==null?null:st.tangentR,bridge:st.gaitBridge||null,x:st.sceneX,y:st.sceneY,behind:st.behind,group:st.spriteGroup,index:st.spriteIndex},pending:{leaves:Math.min(pendingLeaves.length,96-earnedLeaves.length),flowers:Math.min(pendingFlowers.length,24-earnedFlowers.length)},background: 'shelter-v21', assetProgress:{done:load.done,total:load.total}, assetIssues:assetStatus.snapshot(),cycleCount:cycleCount,loopAt:loopAt,weatherTime:weatherClock,ready: load.ready, error: load.error, errors: errors.slice(), time: Math.round(clock.t), playing: clock.playing, hidden: document.hidden,
         cabinVisible: houseVisible(),
         reduced: reduceBox.checked, slow: slowBox.checked, seed: seed, tree: tree, theme: theme, isDay: !localNight, ratio: ratio, full: fullEnabled,
         counts: fullEnabled && FULL_LAYOUT ? { leaves: earnedLeaves.filter(Boolean).length, flowers: earnedFlowers.filter(Boolean).length } : { leaves: 0, flowers: 0 },
