@@ -7,7 +7,7 @@
 - 本機真SQL圖/字4/2/2/0、52/90不過54/90恰60%、舊版鎖定/歷次跨版一葉過；正式來源合成auth+本機SQL全題組1280/390/360、教師/重試/原manual畫圖及多欄過；真私有Storage兩卷22+19共41播放器播放/暫停/重播/切題清音過。正式PG兩卷各新錯→對→對+舊版8筆暫時作答全rollback、新音圖media_access owner/path/mime逐件過，九表一致；register/activate亦守九表。不是真人OAuth/實體手機。
 - 114 manual QA三次定位到畫點y1008在900 viewport外；fixture先summary置中/命中、真click、等details.open，再canvas命中/真鼠標畫及復原後過，成功canvas y272/點331、底部列y831、scrollY1154/scrollHeight2063。未改產品，不能把footer必然攔截當已證實根因。失敗JSON/截圖與成功資料、Claude提醒保留。
 - 不需前端部署，37個當時正式執行檔SHA不變，無SQL/RLS/Edge修改。原教師審閱HTML/Downloads/草稿未動，applied-decisions/adapted-listening-20261101.private.json對應新版本；舊整卷不可蓋回。不要重跑plan/build/inspect/register/activate/finish，clone不含ignored原件。詳[past-exams-adapted-listening-20261101.md](past-exams-adapted-listening-20261101.md)。同MEMKEY id d1491e03-ff0c-4c9a-b096-255e22b831b2沿用。
-- **記憶同步待補**：發布已完成，收尾nmem遠端Cloudflare主機DNS失效；show與status均os11001，未更換endpoint/帳號/Space、未假稱同步成功。完整待同步前綴存同output的memory-pending.private.json，本專案文件/交接已保存。恢復後讀現有同MEMKEY先合併；可用finish.py --retry-memory僅重試記憶（驗原收據相同，若現有記憶已有新前綴則轉needs-merge不盲寫）。不要重跑發布步驟。
+- **記憶已補同步並讀回驗證**：教師要求重試後，nmem遠端恢復，沿同MEMKEY／同id合併改編聽力經驗。更新回應曾中斷，先讀回而未重送；完整內容等於新前綴＋原25,693字元歷史，共27,586字元，新前綴僅一次、SHA核對過。memory-release.private.json已verified，memory-pending.private.json狀態改synced。先前DNS故障屬歷史，現在不用再補同步或重跑發布。
 
 # 2026-11-01 已上線：AI自主疑義審定，四卷六項處理完成
 
