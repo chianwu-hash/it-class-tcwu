@@ -108,7 +108,7 @@ declare identity jsonb; grade integer; page integer; subject text:=coalesce(p_da
  r record; att public.quiz_attempts;sess public.quiz_sessions;b jsonb;q jsonb;options jsonb;response jsonb;source public.quiz_question_pool;v_course text;can_extend boolean:=false;result jsonb;
 begin
  identity:=public.quiz_student_identity();grade:=(identity->>'grade')::integer;
- if coalesce(p_data->>'grade','') not in ('','3','6') or coalesce(p_data->>'page','0') !~ '^[0-9]{1,5}$' or length(subject)>30 or length(unit)>200 then raise exception 'invalid_request';end if;
+ if coalesce(p_data->>'grade','') not in ('','3','4','6') or coalesce(p_data->>'page','0') !~ '^[0-9]{1,5}$' or length(subject)>30 or length(unit)>200 then raise exception 'invalid_request';end if;
  page:=coalesce((p_data->>'page')::integer,0);
  if coalesce(p_data->>'action','list')='detail' then
   if p_data->>'attempt_id' is null or p_data->>'question_id' is null then raise exception 'wrong_question_unavailable';end if;

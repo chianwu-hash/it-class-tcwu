@@ -53,3 +53,13 @@
 - 最後正式部署為 `dpl_8RRMxcuQ9ozADDWWC77BgYF5isFa`。完整773檔逐檔核對，僅四年級首頁說明與四年級測驗頁的注音顯示樣式改變，其餘檔案與上一正式版 `dpl_CwJnWa3R7rmvhBkJqikXxy9Ji1q7` 相同。
 
 私有來源、備份、題池、驗證 SQL 與 QA 位於主工作區忽略目錄 `automation/output/tucheng-grade4-20261101/` 與 `tmp/tucheng-115/`。獨立修改工作區為 `D:/projects/.chat-mode-worktrees/tucheng-grade4-20261101`。不要整包發布主工作區，也不要提交學生識別、原題、答案或憑證。
+
+## 四年級「我的錯題」修正（2026-11-01）
+
+- 觸發：四年級選卷頁切到「我的錯題」，前端傳入 `grade:4`，正式 `quiz_wrong_questions(jsonb)` 的舊白名單僅接受空值、3、6，拋出 `invalid_request`，畫面顯示「資料格式不符，請更新後重試」。不是學生答題紀錄遺失。
+- 正式修正只將已安裝最佳化函式的年級白名單補為3、4、6；透過 `supabase/quiz-grade4-wrong-questions.sql` 讀取目前 `pg_get_functiondef` 後局部替換，未重裝舊版錯題SQL。原函式其餘文字、owner／ACL／security definer／search_path均保留。遷移可重複執行，來源不符即拒絕。
+- 同步補上基礎與batch2錯題SQL來源，以及四年級遷移產生器，避免後續建立環境又漏掉此函式。
+- 7項測試通過，包含先重現原始 `invalid_request` 再修正；四年級清單／科目單元篩選／解析／亂序／未揭答題組隱藏、三六年級回歸、本人與跨年級隔離、拒絕五年級、權限與重複遷移。測試命令：`node --test automation/tests/quiz-grade4.test.mjs automation/tests/quiz-wrong-questions.test.mjs`。
+- 正式PostgreSQL先以可回滾交易驗證三／四／六年級與年級偽造，再正式套用。套用交易內確認答案、attempts、葉片、課堂進度、名冊、固定版本、其他public函式與目標函式權限摘要均相同。套用後再以40730測試身分可回滾驗證：清單共5題，5題詳情均可讀取且維持錯答解析。
+- 本輪無前端檔案變更，無需發布Vercel；正式站可直接按「更新錯題」重新取得。工作瀏覽器當時已登出，未宣稱完成登入後瀏覽器驗收；驗證為正式資料庫使用相同學生身分的RPC投影與本機回歸測試。
+- 私有稽核檔：主工作區 `tmp/tucheng-115/wrong-live-before.private.json`、`wrong-proof.json`、`wrong-published.json`、`wrong-postcheck.json`。試切年級只在回滾交易內，正式名冊與學習成果不變。
