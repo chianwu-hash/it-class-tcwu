@@ -22,6 +22,8 @@ For new week pages, also read:
 - `docs/development/past-exam-playbook.md`：現行製作流程；政策變更時優先於舊案例報告。
 - `docs/development/past-exam-job-template.md`：由執行者填寫的任務及證據範本，不是逐題教師簽核關卡。
 
+考古題製作須同步完成解析、學習重點與書商配題的處理／複核紀錄並固定版本；學生線上只讀固定資料，不即時呼叫 AI。缺可靠配題如實標記，不硬配、不冒稱已可練習。正式能力以現有 schema／adapter 為準，不把本機單題 MVP 當通用已上線功能。
+
 ## Core Rules
 
 - Do not hand-code navigation HTML. Use the grade `navbar.js` files and shared navbar modules.
