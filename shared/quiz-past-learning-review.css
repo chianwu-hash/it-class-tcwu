@@ -10,4 +10,3 @@
 .past-learning-topic ul{padding-left:1.4em;margin:8px 0}
 .past-learning-start{background:var(--quiz-primary);border-color:var(--quiz-primary);color:white;margin-top:8px;max-width:100%;white-space:normal}
 @media(max-width:700px){.past-learning-review{padding:14px}.past-learning-links{display:grid;grid-template-columns:minmax(0,1fr)}}
-
