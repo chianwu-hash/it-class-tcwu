@@ -1,0 +1,226 @@
+{
+  "version": 1,
+  "projectId": "prj_eJ1qle57xyilS5MKy6ZS6OuYtyFb",
+  "team": "chianwu-4755s-projects",
+  "excludedFiles": [
+    {
+      "path": "assets/reward-tree/empty-tree-base-v1.png",
+      "sha1": "6b2b5170c5439a6de1b3b97bce2c4b02e9ae5491",
+      "size": 1729631,
+      "reason": "no-reference-in-production-sources"
+    },
+    {
+      "path": "grade3/115-1/images/week01/week01-computer-lab-rules-01.png",
+      "sha1": "5e7ccc7e6d731adaee3cca4943391cbcb6c37127",
+      "size": 2206683,
+      "reason": "no-reference-in-production-sources"
+    },
+    {
+      "path": "grade3/images/week14/week14-safety-card-01.png",
+      "sha1": "c2d6124d57c5e9524e112eb50c421b58e7087fe2",
+      "size": 2022386,
+      "reason": "no-reference-in-production-sources"
+    },
+    {
+      "path": "grade3/images/week14/week14-safety-card-02.png",
+      "sha1": "cd06bc93fa48d0def68332957b210b4e00eacac9",
+      "size": 2063572,
+      "reason": "no-reference-in-production-sources"
+    },
+    {
+      "path": "grade3/images/week14/week14-safety-card-03.png",
+      "sha1": "d4a06556073dad592d44445f30f929e559595371",
+      "size": 2150752,
+      "reason": "no-reference-in-production-sources"
+    },
+    {
+      "path": "grade3/images/week14/week14-safety-card-04.png",
+      "sha1": "f2ce28625816e0ddd39f8866d91ba9fac409ebd4",
+      "size": 2226315,
+      "reason": "no-reference-in-production-sources"
+    },
+    {
+      "path": "grade3/images/week14/week14-safety-card-05.png",
+      "sha1": "c631ded15e3b47d9381fcb46daa5e31cdba4593d",
+      "size": 2018473,
+      "reason": "no-reference-in-production-sources"
+    },
+    {
+      "path": "grade3/images/week14/week14-safety-card-06.png",
+      "sha1": "e25910d58e2dedd053fcdd5367962fb3a082c24d",
+      "size": 2068421,
+      "reason": "no-reference-in-production-sources"
+    },
+    {
+      "path": "grade3/images/week14/week14-safety-card-07.png",
+      "sha1": "a9913d9953ff8a7aef849ee34ae0496d7d0b80f8",
+      "size": 1963435,
+      "reason": "no-reference-in-production-sources"
+    },
+    {
+      "path": "grade3/images/week14/week14-safety-card-08.png",
+      "sha1": "c933b16920d70f23274d0254a140b022e24f4e87",
+      "size": 2026604,
+      "reason": "no-reference-in-production-sources"
+    },
+    {
+      "path": "grade3/images/week14/week14-safety-card-09.png",
+      "sha1": "c9b3fed0c20699c0a167167a13338398b5d20d7b",
+      "size": 1761216,
+      "reason": "no-reference-in-production-sources"
+    },
+    {
+      "path": "grade3/images/week14/week14-safety-card-10.png",
+      "sha1": "fbf17b35920c040b6123023bc3e1bc8b63c40421",
+      "size": 1878669,
+      "reason": "no-reference-in-production-sources"
+    },
+    {
+      "path": "grade3/images/week14/week14-safety-card-11.png",
+      "sha1": "ad39ecea0eb36530e45139870ee3d9998f0f9845",
+      "size": 2066345,
+      "reason": "no-reference-in-production-sources"
+    },
+    {
+      "path": "grade3/images/week14/week14-safety-card-12.png",
+      "sha1": "463e0c1f0482a5978cbdce63b791eff5ea4a86a0",
+      "size": 2118774,
+      "reason": "no-reference-in-production-sources"
+    },
+    {
+      "path": "grade3/images/week14/week14-safety-card-13.png",
+      "sha1": "53a80ecd36fd0b9515a05b0c76deecf337b3c15f",
+      "size": 1934249,
+      "reason": "no-reference-in-production-sources"
+    },
+    {
+      "path": "grade3/images/week14/week14-safety-card-cover.png",
+      "sha1": "44e3acd040d7520bba4ce51408c851551721e87b",
+      "size": 2154077,
+      "reason": "no-reference-in-production-sources"
+    },
+    {
+      "path": "grade3/S091-Google網路AI好幫手-PDF/S091_目錄-OK.pdf",
+      "sha1": "2b366f3a21a88e5c7bc412306bad28a9088a8797",
+      "size": 7898843,
+      "reason": "textbook-source-not-served"
+    },
+    {
+      "path": "grade3/S091-Google網路AI好幫手-PDF/S091_第1課-OK.pdf",
+      "sha1": "71af10bda2bf769dacdc14935aa2d94aa64d6daa",
+      "size": 18876582,
+      "reason": "textbook-source-not-served"
+    },
+    {
+      "path": "grade3/S091-Google網路AI好幫手-PDF/S091_第2課-OK.pdf",
+      "sha1": "74b0973eb03bf88f1c78bb121bc37ea1e856bf3e",
+      "size": 18514831,
+      "reason": "textbook-source-not-served"
+    },
+    {
+      "path": "grade3/S091-Google網路AI好幫手-PDF/S091_第3課-OK.pdf",
+      "sha1": "50fa80a1e5b613eec8126315650c4c17e68572a7",
+      "size": 13409909,
+      "reason": "textbook-source-not-served"
+    },
+    {
+      "path": "grade3/S091-Google網路AI好幫手-PDF/S091_第4課-OK.pdf",
+      "sha1": "091863a9f3ffce3a3bd7f425d3e2fdee4160aedd",
+      "size": 14858164,
+      "reason": "textbook-source-not-served"
+    },
+    {
+      "path": "grade3/S091-Google網路AI好幫手-PDF/S091_第5課-OK.pdf",
+      "sha1": "f4557fb5d094b763f1f3a2ec6ad1f936f0eae5a6",
+      "size": 14952708,
+      "reason": "textbook-source-not-served"
+    },
+    {
+      "path": "grade3/S091-Google網路AI好幫手-PDF/S091_第6課-OK.pdf",
+      "sha1": "b2b1920a06ca25ff593d2bbe0ae0e2d2ebe607e3",
+      "size": 13998929,
+      "reason": "textbook-source-not-served"
+    },
+    {
+      "path": "grade3/S091-Google網路AI好幫手-PDF/S091_第7課-OK.pdf",
+      "sha1": "cf5a0c06600ead2b715e985d123fe3eccf2ba3cf",
+      "size": 15047380,
+      "reason": "textbook-source-not-served"
+    },
+    {
+      "path": "grade6/S092-Canva魔法工作室PDF/S092_目錄.pdf",
+      "sha1": "1d0bc0cff19821fff070f06c385b85f3a0eeb3fe",
+      "size": 6766552,
+      "reason": "textbook-source-not-served"
+    },
+    {
+      "path": "grade6/S092-Canva魔法工作室PDF/S092_第1課.pdf",
+      "sha1": "4d644c2d5662ec4f939d4cc92e4942c3f575dae8",
+      "size": 17183626,
+      "reason": "textbook-source-not-served"
+    },
+    {
+      "path": "grade6/S092-Canva魔法工作室PDF/S092_第2課.pdf",
+      "sha1": "919aa00ce59086280e4fa3f12b82562eba4313ca",
+      "size": 14329219,
+      "reason": "textbook-source-not-served"
+    },
+    {
+      "path": "grade6/S092-Canva魔法工作室PDF/S092_第3課.pdf",
+      "sha1": "2f59c051deb1baebfc2f7f2bd53ec095f96fe957",
+      "size": 16649783,
+      "reason": "textbook-source-not-served"
+    },
+    {
+      "path": "grade6/S092-Canva魔法工作室PDF/S092_第4課.pdf",
+      "sha1": "b54429e31ed6a0921ac92dcb5ff483a488f5fac7",
+      "size": 17967284,
+      "reason": "textbook-source-not-served"
+    },
+    {
+      "path": "grade6/S092-Canva魔法工作室PDF/S092_第5課.pdf",
+      "sha1": "c144af1eb5a9f8a8f39e9085fb1718aeb96596b4",
+      "size": 11377917,
+      "reason": "textbook-source-not-served"
+    },
+    {
+      "path": "grade6/S092-Canva魔法工作室PDF/S092_第6課.pdf",
+      "sha1": "7273666ecb38b3a718f822e299a1a51794569611",
+      "size": 15638013,
+      "reason": "textbook-source-not-served"
+    },
+    {
+      "path": "grade6/S092-Canva魔法工作室PDF/S092_第7課.pdf",
+      "sha1": "b6739dbfd352537b01d1e8daf3f139d7e866fbae",
+      "size": 14350479,
+      "reason": "textbook-source-not-served"
+    }
+  ],
+  "requiredFiles": [
+    "index.html",
+    "my-tree.html",
+    "grade3/115-1/index.html",
+    "grade4/115-1/index.html",
+    "grade6/115-1/index.html",
+    "shared/auth.js",
+    "shared/quiz-server.mjs",
+    "api/garden-weather.js",
+    "api/quiz-diagnostics.js",
+    "prototypes/typing-foundation/level1/index.html",
+    "prototypes/typing-foundation/level1/app.js",
+    "grade3/115-1/images/week01/week01-computer-lab-rules-v2-01.png",
+    "admin-learning.html",
+    "admin-progress.html",
+    "shared/admin-learning-api.mjs",
+    "shared/admin-learning-garden.mjs",
+    "shared/admin-learning-model.mjs",
+    "shared/admin-learning-rewards.mjs",
+    "shared/admin-learning.css",
+    "shared/admin-learning.mjs",
+    "grade4/115-1/past-exam.html",
+    "shared/quiz-library.mjs",
+    "shared/quiz-past-catalog.mjs",
+    "shared/quiz-past-exams.mjs",
+    "shared/test-identity-switch.js"
+  ]
+}
