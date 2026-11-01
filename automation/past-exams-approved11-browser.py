@@ -1,7 +1,8 @@
 """序列啟動七份隔離SQL fixture並透過註冊worker驗正式網站介面。"""
 import json,os,subprocess,time,urllib.request,socket
 from pathlib import Path
-ROOT=Path('automation/output/past-exams-approved11-20261031')
+ROOT=Path(os.environ.get('PAST_REVISION_ROOT','automation/output/past-exams-approved11-20261031'))
+assert ROOT.as_posix() in ['automation/output/past-exams-approved11-20261031','automation/output/past-exams-autoreview-20261101']
 rows=json.loads((ROOT/'candidates.private.json').read_text(encoding='utf-8'))
 only=os.environ.get('APPROVED11_ONLY')
 if only:rows=[r for r in rows if r['paperId']==only]
@@ -9,10 +10,14 @@ def run(args,**kw):return subprocess.run(args,encoding='utf-8',errors='replace',
 for index,row in enumerate(rows):
     pid=row['paperId'];port=4901+index;folder=ROOT/pid;log=folder/'fixture.log';env=os.environ.copy()
     with socket.socket() as check:check.bind(('127.0.0.1',port))
-    env.update(PAST_BUNDLE_PATH=str((folder/'bundle.private.json').resolve()),PAST_LOCAL_PORT=str(port),PAST_TEST_ORIGIN='https://it-class-tcwu.vercel.app',PAST_TEST_BACKEND=f'http://127.0.0.1:{port}',PAST_TEST_OUTPUT=str(folder/'browser'),PAST_TYPES_ONLY='1',PAST_SKIP_SCREENSHOTS='1',PAST_FROZEN_LIVE_ROOT=str((ROOT/'live-runtime').resolve()))
+    env.update(PAST_BUNDLE_PATH=str((folder/'bundle.private.json').resolve()),PAST_LOCAL_PORT=str(port),PAST_TEST_ORIGIN='https://it-class-tcwu.vercel.app',PAST_TEST_BACKEND=f'http://127.0.0.1:{port}',PAST_TEST_OUTPUT=str(folder/'browser'),PAST_TYPES_ONLY='1',PAST_SKIP_SCREENSHOTS='1',PAST_FROZEN_LIVE_ROOT=os.environ.get('PAST_FROZEN_LIVE_ROOT',str((ROOT/'live-runtime').resolve())))
     if os.environ.get('APPROVED11_SIGNED'):
         env.update(PAST_SIGNED_MEDIA_PATH=str((ROOT/'signed-media.private.json').resolve()),PAST_REAL_STORAGE='1')
     if pid.endswith('g6-exam1-english'):env.update(PAST_AUDIO_CHECK='1',PAST_AUDIO_SCREENSHOTS='1',PAST_TARGET_QUESTION='s2-q04')
+    if ROOT.name=='past-exams-autoreview-20261101':
+        env['PAST_ANSWER_LABEL']='核對答案：'
+        if pid.endswith('g3-exam1-science'):env['PAST_TARGET_QUESTION']='s2-q13'
+        if pid.endswith('g6-exam1-science'):env['PAST_TARGET_QUESTION']='s1-q11'
     lease=None;server=None
     with log.open('w',encoding='utf-8') as stream:
         try:

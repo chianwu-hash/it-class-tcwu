@@ -17,7 +17,7 @@ function draft(g){if(!drafts.has(g.id))drafts.set(g.id,g.kind==='mark'?g.fields.
 function currentValue(g){const r=state.records[g.id];return r?(isManual(g)?r.responses[0].value:r.responses.map(x=>x.value)):draft(g);}
 function art(a){const f=el('figure',undefined,'figure');const link=el('a');link.href='#';link.dataset.imageLightbox='';const img=el('img');img.dataset.quizMediaUrl=a.url;resolveAsset(a.url).then(src=>{if(img.isConnected)img.src=src;}).catch(e=>say(e.message));img.alt=a.alt;link.append(img);f.append(link,el('figcaption',a.alt));return f;}
 function officialText(g,value){if(g.kind==='mark')return value?'應打勾':'不打勾';if(Array.isArray(value))return value.join(g.kind==='sequence'?' → ':'、');return value;}
-function feedback(g,i,host){const r=state.records[g.id];if(!r||isManual(g))return;const result=r.results[i],box=el('div',undefined,'feedback'+(result.correct?'':' wrong'));box.append(el('strong',result.correct?'✓ 這一格核對正確':'這一格和官方記號不同'),el('span','官方記號：'+officialText(g,result.official)));host.append(box);}
+function feedback(g,i,host){const r=state.records[g.id];if(!r||isManual(g))return;const result=r.results[i],box=el('div',undefined,'feedback'+(result.correct?'':' wrong'));box.append(el('strong',result.correct?'✓ 這一格核對正確':'這一格和核對答案不同'),el('span','核對答案：'+officialText(g,result.official)));host.append(box);}
 function renderPractice(){
  const host=$('#practice-progress'),p=state.practice;if(!host||!p)return;
  const box=el('div',undefined,'demo-note');

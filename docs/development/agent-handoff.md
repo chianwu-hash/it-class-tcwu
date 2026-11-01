@@ -1,3 +1,13 @@
+# 2026-11-01 已上線：AI自主疑義審定，四卷六項處理完成
+
+- 教師不再希望考古題上線前每項等本人簽核：Codex與Claude先獨立判讀、核對來源與解題；仍有分歧交第三個AGY CLI討論，能定案就驗證後更新並報告。這取代下方10/30與10/31的「其餘待教師逐題確認」。不把三方票數當官方依據；官方raw／原題／來源SHA及各方意見保留。缺稿／缺圖且無來源者保留阻擋並報告原因，不猜造官方發話。
+- 本輪P11限定水的浮力④、P13接共同圖收輪生/乙、P14原句季風=冷鋒改×；C01順序填字說明不洩錯字、C09英語等價含chips、C22明示改問上文三態條件收溫度等。四卷12:33啟用、12:34正式核對過；原42版本全保留，共47（4初候選+1英語補充，1未啟用候選保留），20期中開10期末未開不變。新增自動5分，剩26暫停欄僅缺完整聽力稿，不再要求教師逐題簽核；原15項維持、P04與已核准11不改。manual/畫圖評量契約不變。
+- 原始來源獨立包 `.chat-mode/auto-review-20261101` HEAD894821b916d01bd3d19d606735522813bb2d0c7c，11卡39來源。Claude首輪300秒逾時草稿未當完成、未續用失敗session；新auto-review-20261101-compact恢復112秒6Read成功，未覆蓋頁由Codex補核。AGY auto-agy-20261101-01兩輪65+26秒成功、1.4.12/Gemini3.8FlashMedium、viewer/canary工具拒絕/Git未改均驗。AGY只討論供給文字，未看圖/讀repo/上網。
+- chips初稿三方都排除，Codex以Oxford/Cambridge反證題目沒限美式、圖片可消歧，AGY第二輪明確撤回，加入後重驗英語、另註冊不可變版本。不能把AI共識當官方證據；原題、官方raw、原頁SHA、各方差異與修訂存檔。
+- 本機真SQL四卷變體/錯答/未揭答/完整0→1→1/舊版鎖定與歷次跨版一葉、P04兩項回歸過。當時正式來源隔離auth+本機SQL全題組1280/390/360、教師預覽/重試/重作、英語20播放器過，chips後重驗；正式PG四卷各新錯→對→對+舊版完成16暫時作答全rollback、九表摘要一致。register/supplement/activate亦守九表，不改SQL/RLS/Edge或新媒體。不是真人OAuth/實體手機。
+- 介面只把回饋官方記號改為核對答案，從最新正式dpl_7DQqnJPJDzyLCaF49T8qQR3sWsiH完整769來源SHA1封存、只疊標籤/快取鏈6檔，保留question-reports及後續登入功能；候選6檔和正式319公開執行檔SHA過，正式dpl_9K3cwM4PTNhTvAZrXYHQDTLLHQoF。舊工作區不可整包部署，已開舊分頁需刷新。
+- 證據ignored automation/output/past-exams-autoreview-20261101；舊教師審閱HTML、Downloads匯出與草稿未改，6卡最新版本收據另存review目錄applied-decisions/autoreview-20261101.private.json。不得以舊整卷蓋回。不要重跑build/inspect/register/supplement/activate/finish；clone不含ignored原件與產物。詳[past-exams-autoreview-20261101.md](past-exams-autoreview-20261101.md)。同MEMKEY id d1491e03-ff0c-4c9a-b096-255e22b831b2沿用。
+
 # 2026-10-31 已上線：教師核准11項明確答案，七卷改版
 
 - 教師明確核准前輪審閱頁11項明確建議，驗證後上線。本輪七卷新不可變版本已activate並於09:24:21正式核對通過；20期中開／10期末未開放不變，35舊版本／其他23卷／quiz函數hash與學生資料保留，現42版本。40暫停欄減為29＝P11/P13/P14三欄＋三英缺完整稿26欄，其他待決定提案未套用。
