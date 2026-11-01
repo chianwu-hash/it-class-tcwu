@@ -68,7 +68,7 @@ export function createGardenUpgrade({supabase,getSession,stage,onSelect}){
    if(companion.value.selectedPet&&companion.value.petMode==='rest'&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
     const decision=await petVisits.get(uid,c);if(captured!==version||uid!==getSession()?.user?.id)return;visitDecision=decision;
    }
-   frame=document.createElement('iframe');frame.title='我的第二級努力樹';frame.src='/garden/stage.html?v=20261031-prerelease-fixes';$('[data-scene]').replaceChildren(frame);void skin.load();send();list();
+   frame=document.createElement('iframe');frame.title='我的第二級努力樹';frame.src='/garden/stage.html?v=20261101-pet-surprise';$('[data-scene]').replaceChildren(frame);void skin.load();send();list();
    if(!data.seen)replay();
   }catch{if(captured!==version)return;root.hidden=false;status.textContent='成長狀態暫時無法同步，花葉仍保留。';const b=document.createElement('button');b.textContent='重新確認成長';b.type='button';b.onclick=()=>render(m,c);status.append(' ',b);root.querySelector('.garden-actions').hidden=true;}
  }
