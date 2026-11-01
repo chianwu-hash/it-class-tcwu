@@ -830,14 +830,14 @@
                 // The practice library follows the student's current roster, even when viewing an older tree.
                 practiceEnrollment = currentSchoolYear === 115 ? enrollment : currentYearEnrollment;
                 updateAuthUi();
-                if (!activities.length && loadingCourse !== 'grade6-115-1') { renderEmptyCourse(course); return; }
+                if (!activities.length && !['grade4-115-1','grade6-115-1'].includes(loadingCourse)) { renderEmptyCourse(course); return; }
                 if (['grade3-115-1','grade6-115-1'].includes(loadingCourse) && currentSession?.user && !mockMode) {
                     try {
                         const foundation=foundationTreeData(await createFoundationProgress({courseId:loadingCourse,getSession:()=>currentSession}).request('list',{include_zhuyin:true}),loadingCourse);
                         activities.push(...foundation.activities); rows.push(...foundation.rows);
                     } catch(error) { showNotice(`基礎練習成果暫時無法讀取：${error.message}`, 'info'); }
                 }
-                if (['grade3-115-1','grade6-115-1'].includes(loadingCourse) && currentSession?.user && !mockMode) {
+                if (['grade3-115-1','grade4-115-1','grade6-115-1'].includes(loadingCourse) && currentSession?.user && !mockMode) {
                     try {const quiz=await quizTreeData(currentSession,loadingCourse);activities.push(...quiz.activities);rows.push(...quiz.rows);}catch(error){showNotice(`考前練功成果暫時無法讀取：${error.message}`,'info');}
                 }
                 if (loadingCourse === 'grade6-115-1' && currentSession?.user && !mockMode) {
@@ -851,7 +851,7 @@
                     try { const reading=readingTreeData((await readingRequest(currentSession,'list')).periods); activities.push(...reading.activities); rows.push(...reading.rows); } catch(error) { showNotice(`閱讀紀錄暫時無法讀取：${error.message}`, 'info'); }
                 }
                 if (version !== treeLoadVersion || selectedCourseId !== loadingCourse || currentSession?.user?.id !== loadingUser) return;
-                if (!activities.length) { renderEmptyCourse(course); return; }
+                if (!activities.length && loadingCourse !== 'grade4-115-1') { renderEmptyCourse(course); return; }
                 const model = await withGardenTestRewards(deriveRewardTreeModel(rows, activities),{supabase,session:currentSession,courseId:loadingCourse});
                 if(version!==treeLoadVersion||selectedCourseId!==loadingCourse||currentSession?.user?.id!==loadingUser)return;
                 renderModel(model, activities);

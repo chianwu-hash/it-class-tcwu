@@ -127,8 +127,8 @@ function renderContinue(){
 }
 function showLock(message){
  el('cloud-library').hidden=true;el('cloud-lock').hidden=false;
- el('cloud-lock').querySelector('h2').textContent='僅限本校學生使用';
- const notes=el('cloud-lock').querySelectorAll('p');notes[0].textContent=message;notes[1].textContent='請使用115學年度三、六年級名冊中的學生 Google 帳號登入。';
+ el('cloud-lock').querySelector('h2').textContent='僅限名冊中的學生使用';
+ const notes=el('cloud-lock').querySelectorAll('p');notes[0].textContent=message;notes[1].textContent='請使用115學年度三、四、六年級名冊中的學生 Google 帳號登入。';
 }
 async function load({refreshComposer=true,refreshWrong=true}={}) {
   if (!currentSession?.user || busy) return;

@@ -6,8 +6,9 @@ import { publishTestIdentityChange } from './test-identity-state.mjs?v=20261030-
 // so students never trigger a request from this module.
 const TEST_ACCOUNT_SHA256 = 'b75a0f5c4c4131ed25d0305bbeec23ad0186392544c1c4b428aa33ce1cfdeaf2';
 const GRADES = {
-    grade3: { label: '三年級', home: '/grade3/115-1/index.html' },
-    grade6: { label: '六年級', home: '/grade6/115-1/index.html' }
+    grade3: { label: '三年級', home: '/grade3/115-1/index.html', classCode: '307' },
+    grade4: { label: '土城四年級', home: '/grade4/115-1/index.html', classCode: '407' },
+    grade6: { label: '六年級', home: '/grade6/115-1/index.html', classCode: '609' }
 };
 
 async function sha256Hex(text) {
@@ -16,7 +17,9 @@ async function sha256Hex(text) {
 }
 
 function gradeOfClass(classCode) {
-    return String(classCode || '').startsWith('3') ? 'grade3' : 'grade6';
+    const key = `grade${String(classCode || '')[0]}`;
+    if (!GRADES[key]) throw new Error('無法辨識測試年級。');
+    return key;
 }
 
 // Mounted at the top of `container`, or right after `after` when one is given.
@@ -50,7 +53,8 @@ export async function initTestIdentitySwitch({ container = document.querySelecto
     let target = null;
     const show = (row) => {
         const current = gradeOfClass(row.class_code);
-        target = current === 'grade3' ? 'grade6' : 'grade3';
+        const keys = Object.keys(GRADES);
+        target = keys[(keys.indexOf(current) + 1) % keys.length];
         status.textContent = `教師測試身分：目前是${GRADES[current].label} ${row.class_code} 班 ${row.seat_no} 號 ${row.display_name}`;
         button.textContent = `切到${GRADES[target].label}`;
         button.hidden = false;
@@ -63,7 +67,7 @@ export async function initTestIdentitySwitch({ container = document.querySelecto
         try {
             const row = await call(next);
             const active = (await getSession()).session;
-            if (active?.user?.id !== session.user.id || row.class_code !== (next === 'grade3' ? '307' : '609') || Number(row.seat_no) !== 30)
+            if (active?.user?.id !== session.user.id || row.class_code !== GRADES[next].classCode || Number(row.seat_no) !== 30)
                 throw new Error('切換結果尚未確認。');
             publishTestIdentityChange(session.user.id);
             window.location.assign(GRADES[next].home);

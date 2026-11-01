@@ -15,7 +15,7 @@ if (cloud) document.body.classList.add('quiz-skin');
 const gradeRoute = cloud ? await import('./quiz-grade-route.mjs') : null;
 if (cloud) {
   const grade = gradeRoute.quizPageGrade(location.pathname);
-  document.title = `${grade === 3 ? '三' : '六'}年級考前練功房`;
+  document.title = `${({3:'三',4:'四',6:'六'})[grade]}年級考前練功房`;
   document.querySelector('.hero h1').textContent = document.title;
   document.querySelector('#quiz-lock p').textContent = '請使用名冊中的學生 Google 帳號登入，讀取並儲存自己的雲端作答。';
   const back = document.createElement('a'); back.className = 'quiz-back-link'; back.href = 'quiz-library.html'; back.textContent = '← 返回單元選卷';
