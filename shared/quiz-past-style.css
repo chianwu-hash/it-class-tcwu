@@ -85,6 +85,18 @@
  @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto;transition:none}}
 }
 
+.past-exam-workspace .past-learning-review{margin-top:22px;padding:18px;border:2px solid var(--quiz-border);border-radius:18px;background:var(--quiz-tint);line-height:1.8;overflow-wrap:anywhere}
+.past-exam-workspace .past-learning-review h3,.past-exam-workspace .past-learning-review h4{font-size:1rem;color:var(--quiz-primary-dark);margin:0 0 8px}
+.past-exam-workspace .past-learning-review p{margin:8px 0}
+.past-exam-workspace .past-learning-links{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.past-exam-workspace .past-learning-links button{white-space:normal;text-align:left;max-width:100%}
+.past-exam-workspace .past-learning-links button[aria-expanded=true]{background:var(--quiz-primary);border-color:var(--quiz-primary);color:white}
+.past-exam-workspace .past-learning-topic{padding:16px;background:white;border:1px solid var(--quiz-border);border-radius:14px;scroll-margin-block:120px}
+.past-exam-workspace .past-learning-topic[hidden]{display:none}
+.past-exam-workspace .past-learning-topic:focus-visible{outline:3px solid var(--quiz-primary);outline-offset:3px}
+.past-exam-workspace .past-learning-topic ul{padding-left:1.4em;margin:8px 0}
+@media(max-width:700px){.past-exam-workspace .past-learning-review{padding:14px}.past-exam-workspace .past-learning-links{display:grid;grid-template-columns:minmax(0,1fr)}}
+
 /* 自由作答沿用練功坊欄位與畫圖工具。 */
 .past-exam-page .manual-response textarea{display:block;width:100%;max-width:100%;padding:14px;border:2px solid var(--quiz-border);border-radius:16px;background:white;color:inherit;resize:vertical;font:inherit;line-height:1.65}
 .past-exam-page .manual-response details{margin:16px 0;max-width:100%}

@@ -1,3 +1,13 @@
+# 2026-11-01 已完成：單題解析連學習重點，本機 MVP
+
+- 使用者已要求先做 MVP：三上自然其中一題考古題的解析連到相關學習重點。本輪只做本機、不發布，不接書商抽題、不加獎勵、不改正式學生資料。
+- 選定 `dingxi-114-1-g3-exam1-science`／`s1-q01`「校園生態農場裡的解說牌、落葉堆肥區的設施屬於生物」，官方 X；兩原件 SHA 核對並看過 p1 局部，證據在 `automation/output/past-exam-learning-mvp-20261101/`。採最新本機已發布卷快照 f915d39c…，不重建舊卷。
+- 本機 server 4491 啟用 `PAST_LEARNING_REVIEW_PATH`，只在本人已提交的 record 加上補充解析與兩個依題意整理的概念；`shared/quiz-past-learning-review.mjs` 經 UI opt-in 資料渲染，同頁點開重點。未宣稱已對上書商知識代碼；正常 server 不開 fixture auth。
+- 最新 API／真本機 SQL 及瀏覽器已通過：送出前無解析、正確題組／版本綁定、錯答回饋、重試／接回、跨人拒絕、換題／換人／登出／重作清除、1280／390／360 無橫向溢出、兩概念切換、鍵盤 Enter 與面板焦點。fixture 已修正舊 attempt／start 續接假設，未改產品；一次瀏覽器 Runtime 通訊逾時後加步驟記錄，新一輪全過。
+- Claude 初次程序啟動失敗 0 Read，不當完成；新 session `past-learning-mvp-20261101-retry` 完成約 89 秒／10 Read，實看原頁與截圖，無阻擋交付；已補 X 字樣、非官方解析及概念 ID 型別檢查。正式 Supabase／部署均未動，沒有新題或額外葉片。
+- 預覽 `http://127.0.0.1:4491/grade3/115-1/past-exam.html?paper=dingxi-114-1-g3-exam1-science`，保留 server 與分身02自有頁供操作，測試worker已斷線／lease釋放。合成帳號、記憶體DB，server關閉後測試作答消失；重新啟動須用不帶舊attempt的網址。詳[實作及驗證紀錄](past-exam-learning-mvp-20261101.md)。
+- 已沿原記憶鍵／同 id 更新本機 MVP 完成狀態，讀回全文一致並保留歷史；`memory-verified.private.json` 為收據。後續可從此題互動繼續，不把本機資料投影當已部署的正式 RPC。
+
 # 2026-11-01 已討論：考古題錯題延伸（尚未實作／定案）
 
 - 使用者要求先提出看法，再與 Claude、AGY 討論可行性。本輪只讀相關程式與規範，產出討論建議，不改功能、SQL、正式內容、學生資料或發布。

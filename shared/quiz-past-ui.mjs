@@ -1,6 +1,7 @@
 import {renderLocalContent as renderScopedContent} from './quiz-past-content.mjs?v=20261030-audio';
 import {renderManualResponse} from './quiz-past-manual.mjs';
 import {attachPastInputKeyboard} from './quiz-past-input.mjs';
+import {renderPastLearningReview} from './quiz-past-learning-review.mjs';
 export function initPastExamUI({root,request,resolveAsset,onView}){
 let active=true;
 const mediaScope={resolve:resolveAsset,active:()=>active};
@@ -69,6 +70,7 @@ function render(){if(!active)return;
   left.append(el('p',g.fields[0].text,'material'));renderDrawing(g,right,locked,values);
   if(saved){const ref=el('div',undefined,'reference');ref.append(el('h3','對照官方標記，自己檢查'),el('p','看看施力點的位置與箭頭方向。這是自我核對，不是老師評分，也不計入分數。'));ref.append(art({url:saved.referenceUrl,alt:'官方解答局部參考圖'}));right.append(ref);}
  }
+ if(saved)renderPastLearningReview({host:right,group:g,record:saved,version:state.version});
  if(left.childNodes.length)grid.append(left,right);else{grid.classList.add('question-only');grid.append(right);}card.append(grid);const actions=el('div',undefined,'actions'),al=el('div',undefined,'actions-left');
  if(index>0)al.append(button('← 上一組',()=>{index--;say('');render();},'quiet'));if(index<state.groups.length-1)al.append(button('下一組 →',()=>{index++;say('');render();},'quiet'));actions.append(al);
  if(saved)actions.append(el('span',isManual(g)?'已保留這次作答・未自動判分':`這組已儲存並核對：${saved.score} 分`,'local-saved'));
