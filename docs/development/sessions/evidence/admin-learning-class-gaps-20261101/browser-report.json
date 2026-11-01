@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "origin": "https://it-class-tcwu.vercel.app",
+  "localOnly": false,
+  "results": [
+    {
+      "grade": "3",
+      "students": 21,
+      "summaryMatches": true,
+      "allConditionsMatch": true,
+      "allGroups": 173,
+      "summaryGroups": 20,
+      "toggleDoesNotRefetch": true,
+      "refreshKeepsView": true,
+      "mobile": true,
+      "conditionLayoutWidths": [
+        1360,
+        1264,
+        1024,
+        768,
+        390
+      ],
+      "noHorizontalScroll": true
+    },
+    {
+      "grade": "6",
+      "students": 22,
+      "summaryMatches": true,
+      "allConditionsMatch": true,
+      "allGroups": 194,
+      "summaryGroups": 22,
+      "toggleDoesNotRefetch": true,
+      "refreshKeepsView": true,
+      "mobile": true,
+      "conditionLayoutWidths": [
+        1360,
+        1264,
+        1024,
+        768,
+        390
+      ],
+      "noHorizontalScroll": true
+    }
+  ],
+  "errors": []
+}
