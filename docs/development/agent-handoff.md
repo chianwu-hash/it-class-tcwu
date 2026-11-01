@@ -1,3 +1,13 @@
+# 2026-11-01 已完成：單題學習重點接書商原題，本機試用
+
+- 使用者授權接續單題 MVP，選重點後練習書商題庫；限本機，不發布、不改正式學生資料／給葉規則。
+- 已查正式準備池三上翰林自然177題無本題直接對應，不硬配。查本機康軒115三上ISO、既有metadata及第一單元活動1（NA/1501/0101）128份來源DOCX，挑原題 ENA1501000378／0390（生物分類）、0619／0465（環境與生物），各重點2題。ISO實際SHA符合e5b57fa9…；每份DOCX三欄答案與metadata相符，無圖。0465原無解析，另標AI補充，其餘保留書商解析。未冒稱局部概念是書商知識代碼。
+- 私有包 `automation/output/past-learning-publisher-mvp-20261101/publisher-practice.private.json`，不是repo內建資料。`past-publisher-practice.mjs` 重用schema1／quiz_action作答、版本與SQL，僅本人已揭答來源才能建立練習，原卷／練習分開，classroom模式不計葉，開始請求冪等。新的loopback server4493啟用 `PAST_PUBLISHER_PRACTICE_PATH`，舊4491保留。
+- API兩概念四題實際本機SQL已過：正錯、未揭答不送答案、重試／續作、重複開始相同session、跨人拒絕、原卷分數／歷次／葉片不變。兩組瀏覽器全四題、1280／390／360、重整接回及回原題均過，無pageerror／橫向溢出，已看桌面／手機截圖。原hidden hero返回及底列覆蓋文字問題已改成測實際底列、可選shortLabel保留「回原題解析」，其他頁預設仍「回選卷」。
+- Claude session `past-publisher-mvp-20261101` 完成約132秒／13Read，逐題比對原表JSON與線上題，判定兩概念／四原題答案相符、無阻擋本機交付。未看Word渲染、未自己跑測試／重算SHA，相關限制如實記錄；Codex已補核實際測試、第二概念截圖及既有classroom不給葉SQL。錯誤訊息另補繁體中文，原書商詳解不改寫。
+- 新預覽 `http://127.0.0.1:4493/grade3/115-1/past-exam.html?paper=dingxi-114-1-g3-exam1-science`，留在新的一次原題解析且第一重點已展開，兩組練習尚未作答供使用者試。最後自有頁在分身01，已斷自動化／釋放lease，保留4493及舊4491。詳[書商重點練習MVP紀錄](past-publisher-practice-mvp-20261101.md)。同原作答同重點重開接回，未做另起一輪／換題；關server後測試資料消失。正式未變更／未發布。
+- 已沿原記憶鍵／同 id 補存書商原題接線完成經驗，讀回全文一致並保留歷史；輸出目錄 `memory-verified.private.json` 為收據。不可把本機題包當已匯入全站書商pool或正式發布。
+
 # 2026-11-01 已完成：單題解析連學習重點，本機 MVP
 
 - 使用者已要求先做 MVP：三上自然其中一題考古題的解析連到相關學習重點。本輪只做本機、不發布，不接書商抽題、不加獎勵、不改正式學生資料。

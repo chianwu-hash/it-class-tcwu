@@ -17,6 +17,16 @@ export function initPastExam({selectors,server}){
   else{await viewed.get(packet.groupId);next=await rpc('submit',{attempt_id:state.attemptId,version:packet.version,group_id:packet.groupId,request_id:packet.requestId,responses:packet.responses,confirmed:packet.confirmed});}
   if(token!==generation)throw Error('登入身分已變更。');const changed=state.attemptId!==next.attemptId;state=next;if(changed){viewed.clear();updateScope();}const url=new URL(location.href);url.searchParams.set('attempt',state.attemptId);history.replaceState(null,'',url);return next;
  };
+ const onPractice=async({source,conceptId,requestId})=>{
+  const token=generation,aid=state?.attemptId;
+  if(!transport||source.versionId!==state?.version)throw Error('作答狀態已變更，請重新查看解析。');
+  let result;try{result=await transport('/__past/practice',{action:'start',data:{attempt_id:aid,version:source.versionId,group_id:source.groupId,question_id:source.questionId,concept_id:conceptId,request_id:requestId}});}
+  catch(e){const errors={practice_source_not_answered:'請先送出原題，再選擇重點練習。',practice_source_unavailable:'原題版本或學習重點已更新，請重新查看解析。',practice_session_unavailable:'這份練習不適用目前帳號，請返回原題重新選擇。',attempt_unavailable:'這次原題作答已無法讀取，請重新選卷。',submission_conflict:'這次練習請求已變更，請重新查看解析。'};throw Error(errors[e.message]||'目前無法準備練習，請稍後重試。');}
+  if(token!==generation||state?.attemptId!==aid)throw Error('登入或作答狀態已變更。');
+  const target=new URL(result.url,location.href);
+  if(target.origin!==location.origin||!/^\/grade[36]\/115-1\/quiz\.html$/.test(target.pathname)||!/^[a-f0-9-]{36}$/i.test(target.searchParams.get('session')||''))throw Error('練習連結不符。');
+  return {...result,url:target.href};
+ };
  initImageLightbox({root,selector:'[data-image-lightbox]',resolveImageSource:image=>scope.resolve(image.dataset.quizMediaUrl)});
  return {async handleAuthChange(session){
   if(user?.user?.id===session?.user?.id&&ui)return;clear();user=session;if(!session?.user)return;
@@ -30,7 +40,7 @@ export function initPastExam({selectors,server}){
    root.querySelector('#paper-title').textContent=next.title;
    if(root.querySelector('#paper-policy')&&next.policy){const p=next.policy;root.querySelector('#paper-policy').textContent=`本卷自動核對共${p.automaticPoints}分；單次完整作答達60%，同卷同學期首次達標取得1片葉。`;root.querySelector('#paper-exclusions').textContent=`開放作答與畫圖題共${p.manualPoints}分採自我核對，不列入自動分數；${p.blockedFields}個暫停欄位共${p.blockedPoints}分不影響完成。`;}
    document.title=next.title+'・考前練功坊';
-   ui=initPastExamUI({root,request,resolveAsset:url=>scope.resolve(url),onView});ui.load(next);
+   ui=initPastExamUI({root,request,resolveAsset:url=>scope.resolve(url),onView,onPractice});ui.load(next);
   }catch(e){if(token!==generation)return;lock.querySelector('[role="status"]').textContent=e.message;}
  },destroy(){clear();user=null;transport=null;}};
 }

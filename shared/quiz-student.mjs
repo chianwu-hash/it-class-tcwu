@@ -19,6 +19,11 @@ if (cloud) {
   document.querySelector('.hero h1').textContent = document.title;
   document.querySelector('#quiz-lock p').textContent = '請使用名冊中的學生 Google 帳號登入，讀取並儲存自己的雲端作答。';
   const back = document.createElement('a'); back.className = 'quiz-back-link'; back.href = 'quiz-library.html'; back.textContent = '← 返回單元選卷';
+  const pastPaper=params.get('past_paper'),pastAttempt=params.get('past_attempt');
+  if(/^[a-zA-Z0-9_-]{1,100}$/.test(pastPaper||'')&&/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(pastAttempt||'')){
+    const query=new URLSearchParams({paper:pastPaper,attempt:pastAttempt});if(['1','2'].includes(params.get('fixture_student')))query.set('fixture_student',params.get('fixture_student'));
+    back.href='past-exam.html?'+query;back.textContent='← 返回考古題解析';back.dataset.shortLabel='回原題解析';
+  }
   document.querySelector('.hero .wrap').append(back);
 }
 let currentSession = null;

@@ -95,6 +95,7 @@
 .past-exam-workspace .past-learning-topic[hidden]{display:none}
 .past-exam-workspace .past-learning-topic:focus-visible{outline:3px solid var(--quiz-primary);outline-offset:3px}
 .past-exam-workspace .past-learning-topic ul{padding-left:1.4em;margin:8px 0}
+.past-exam-workspace .past-learning-start{background:var(--quiz-primary);border-color:var(--quiz-primary);color:white;margin-top:8px;max-width:100%;white-space:normal}
 @media(max-width:700px){.past-exam-workspace .past-learning-review{padding:14px}.past-exam-workspace .past-learning-links{display:grid;grid-template-columns:minmax(0,1fr)}}
 
 /* 自由作答沿用練功坊欄位與畫圖工具。 */

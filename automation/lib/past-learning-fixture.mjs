@@ -20,7 +20,8 @@ export function createPastLearningProjection({bundle,map,version}){
 // Used only when the loopback fixture is explicitly started with a learning map.
 export function learningPreviewAssets({origin,nonce}){
  const auth=`export const SUPABASE_URL=${JSON.stringify(origin)},SUPABASE_ANON_KEY='local-learning-fixture';
- let s={user:{id:'00000000-0000-4000-8001-000000000001',email:'student1@example.invalid'},access_token:'local-fixture'};
+ const n=new URLSearchParams(location.search).get('fixture_student')==='2'?2:1;
+ let s={user:{id:'00000000-0000-4000-8001-'+String(n).padStart(12,'0'),email:'student'+n+'@example.invalid'},access_token:'local-fixture'};
  const callbacks=[];window.__pastSession=next=>{s=next;callbacks.forEach(f=>f(s?'SIGNED_IN':'SIGNED_OUT',s));};
  export const getSession=async()=>s,resolveSession=async()=>s,isTeacher=()=>false,beginCentralizedLogin=async()=>window.__pastSession({user:{id:'00000000-0000-4000-8001-000000000001',email:'student1@example.invalid'}}),signOutAndReload=async()=>window.__pastSession(null);
  export const supabase={auth:{getSession:async()=>({data:{session:s}}),onAuthStateChange:f=>{callbacks.push(f);return {data:{subscription:{unsubscribe(){}}}}}},rpc:async()=>({data:[],error:null})};`;
@@ -28,9 +29,11 @@ export function learningPreviewAssets({origin,nonce}){
  const s=await getSession();if(!s?.user)throw Error('請先登入本機測試帳號。');
  const n=s.user.id==='00000000-0000-4000-8001-000000000001'?1:s.user.id==='00000000-0000-4000-8001-000000000002'?2:null;
  if(!n)throw Error('僅供合成測試帳號。');
- const action=path==='/rest/v1/rpc/quiz_past_action'?body.p_action:path==='/functions/v1/quiz-media'?'media':null;
+ const practice=path==='/__past/practice'||path==='/rest/v1/rpc/quiz_action'||path==='/rest/v1/rpc/quiz_entry_context';
+ const action=path==='/__past/practice'?body.action:path==='/rest/v1/rpc/quiz_action'?'quiz':path==='/rest/v1/rpc/quiz_entry_context'?'entry_context':path==='/rest/v1/rpc/quiz_past_action'?body.p_action:path==='/functions/v1/quiz-media'?'media':null;
  if(!action)throw Error('本機預覽不支援此操作。');
- const r=await fetch('/__past/rpc',{method:'POST',headers:{'Content-Type':'application/json','X-Fixture-Nonce':${JSON.stringify(nonce)}},body:JSON.stringify({action,data:action==='media'?body:body.p_data,student:n})});
- const data=await r.json();if(!r.ok)throw Error(data.message||'本機測試失敗');return data;};}`;
+ const data=path==='/__past/practice'?body.data:action==='quiz'?{...body.p_data,quiz_action:body.p_action}:action==='media'?body:body.p_data;
+ const r=await fetch(practice?'/__past/practice':'/__past/rpc',{method:'POST',headers:{'Content-Type':'application/json','X-Fixture-Nonce':${JSON.stringify(nonce)}},body:JSON.stringify({action,data,student:n})});
+ const result=await r.json();if(!r.ok)throw Error(result.message||'本機測試失敗');return result;};}`;
  return new Map([['/shared/auth.js',auth],['/shared/quiz-transport.mjs',transport]]);
 }
