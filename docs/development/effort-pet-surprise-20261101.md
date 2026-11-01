@@ -31,3 +31,18 @@ Computer Use 操作原 Claude Desktop Code「Garden art review and pose preparat
 ## 生圖介面適配紀錄
 
 目前composer可由 `.ProseMirror[role=textbox]` 辨識，外層form未帶舊data屬性。圖片輸入必須選有 `multiple` 的相片input，不能選單張拍照input。帳號選單需先等Escape關閉完成，再用實際指標click開啟，並等待可見帳號文字後核對；DOM `.click()` 曾未能打開選單，焦點＋Space在跨對話載入後也不可靠。採用 [Puppeteer ElementHandle.click 文件](https://pptr.dev/api/puppeteer.elementhandle.click) 說明的實際指標操作後，狗兔請求成功。沒有略過帳號核對，也未重新送出已接受的請求。
+
+## 後續核定：5分鐘冷卻與可愛提醒
+
+使用者要求防止重整刷機率。**本節取代前面的每次進頁都可抽籤規則**：
+
+- 抽籤移至 Supabase `garden_pet_visit`。每位學生共用一個5分鐘冷卻期，寵物、分頁、電腦都不另開冷卻桶。
+- 有效抽籤後，不論抽中與否，5分鐘內一律不重抽，也不重播上次抽中的結果。重整只更新頻率計數，不延長冷卻。
+- 1分鐘內進入3次以上，且仍在冷卻中，顯示8秒對話框：「💤 我有好好休息，沒亂跑！」。這是輕鬆提醒，不影響學習獎勵與操作。
+- 資料庫以學生UUID為主鍵及交易鎖處理同時請求。學生、匿名不能直接改冷卻資料；RPC沿用名冊／年級／教師排除檢查，且僅保存休息偏好、已擁有寵物的第二級學生適用。
+- 每次頁面每位學生最多一次RPC，資料更新不重複送出；不輪詢。RPC遺失、錯誤或8秒逾時時，跳過小插曲並維持休息，不退回前端抽籤。
+- 天氣不影響機率；大雨、雷雨仍可觸發。未改角色圖或既有進出窩動畫。
+
+本機隔離資料庫已套用 `supabase/garden-pet-visit.sql`。19項測試通過，包括5分鐘固定期限、到期恢復、頻率窗口重置、跨寵物共用、權限、資料不變、請求合併與失敗略過。實際瀏覽器連續三次重載驗證：第一次正常抽籤、第二次不抽、第三次不抽並顯示對話；保存休息偏好不變，無JS錯誤。證據 `automation/output/pet-surprise-20261101/cooldown-browser-report.json` 與 `cooldown-bubble.png`。
+
+新版本機入口改為 `http://127.0.0.1:4464/`；原4462啟動時的隔離資料庫沒有新RPC，不可拿來驗收冷卻。正式Supabase尚未套用，本輪仍未上線。部署時先套用新增SQL，再發布前端；不變動既有學習資料或偏好表。

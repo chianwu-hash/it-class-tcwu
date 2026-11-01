@@ -15,7 +15,7 @@ insert into auth.users values('00000000-0000-4000-8000-000000000001','student@ex
 insert into student_enrollments values(115,'student@example.invalid','304'),(115,'other@example.invalid','304');
 select set_config('test.uid','00000000-0000-4000-8000-000000000001',false);`);
 
-for(const f of ['garden-growth.sql','garden-reward-conversion.sql','garden-companions.sql','garden-level2.sql','garden-item-notice.sql','garden-tree-skin.sql'])await db.exec(await fs.readFile('supabase/'+f,'utf8'));
+for(const f of ['garden-growth.sql','garden-reward-conversion.sql','garden-companions.sql','garden-level2.sql','garden-item-notice.sql','garden-tree-skin.sql','garden-pet-visit.sql'])await db.exec(await fs.readFile('supabase/'+f,'utf8'));
 await db.exec(`insert into garden_reward_catalog values('grade3-115-1','01','base','typing',45,null);
 insert into student_progress values(auth.uid(),'grade3-115-1','01','base',45,false);
 insert into garden_reward_catalog select 'grade3-115-1','02','boss'||i,'typing',1,'boss' from generate_series(1,22)i;

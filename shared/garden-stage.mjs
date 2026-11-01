@@ -9,6 +9,14 @@ let data={leaves:[],flowers:[],pendingLeaves:[],pendingFlowers:[],petUnlocked:fa
 let paused=false,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches,atmosphere={scene:'day',isDay:true},transition=null;
 let soundVersion=0,soundBusy=false;
 let loadVersion=0,loadTimer=null,assetIssues=[];
+let restBubbleTimer=null;
+function hideRestBubble(){clearTimeout(restBubbleTimer);document.getElementById('pet-rest-bubble')?.remove()}
+function showRestBubble(){
+ hideRestBubble();const bubble=document.createElement('div');bubble.id='pet-rest-bubble';bubble.setAttribute('role','status');bubble.textContent='💤 我有好好休息，沒亂跑！';
+ bubble.style.cssText='position:absolute;right:3%;bottom:22%;max-width:55%;padding:12px 16px;border:2px solid #79b5a0;border-radius:22px 22px 6px 22px;background:#fffef4;color:#295a4a;box-shadow:0 5px 18px #244b3926;font-weight:700;font-size:clamp(12px,2.6vw,18px);z-index:3;pointer-events:none';
+ const tail=document.createElement('span');tail.setAttribute('aria-hidden','true');tail.style.cssText='position:absolute;bottom:-9px;right:24px;width:14px;height:14px;transform:rotate(45deg);background:#fffef4;border-right:2px solid #79b5a0;border-bottom:2px solid #79b5a0';bubble.append(tail);
+ document.getElementById('scene-wrap').append(bubble);restBubbleTimer=setTimeout(hideRestBubble,8000);
+}
 const defaults={cat:'b',dog:'a',rabbit:'b'};
 const child=()=>{try{return frame.contentWindow.__gardenShelterV21||frame.contentWindow.__homesV5}catch{return null}};
 const post=(message)=>parent.postMessage(message,location.origin);
@@ -33,7 +41,9 @@ function ready(){
  const c=child();let current;try{current=new URL(frame.contentWindow.location.href);if(current.searchParams.get('species')+'-'+current.searchParams.get('home')!==key||current.searchParams.get('load')!==String(loadVersion))return}catch{return}
  if(!c||!c.snapshot().ready||childReady)return;
  clearTimeout(loadTimer);childReady=true;assetIssues=c.snapshot().assetIssues||assetIssues;showAssetIssues();sync(true);
- if(surpriseVisit.decide({...data,petUnlocked:data.petUnlocked===true&&data.surpriseAllowed!==false,reduced,ready:true}))c.startSurprise?.();
+ const firstVisit=!surpriseVisit.checked;
+ if(surpriseVisit.decide({...data,decision:data.surpriseDecision===true,petUnlocked:data.petUnlocked===true&&data.surpriseAllowed!==false,reduced,ready:true}))c.startSurprise?.();
+ else if(firstVisit&&data.petUnlocked&&data.petMode==='rest'&&data.surpriseMessage===true)showRestBubble();
  post({type:'garden-scene-ready'});
 }
 function configure(next){
@@ -42,6 +52,7 @@ function configure(next){
  const home=['a','b','c'].includes(data.home)?data.home:defaults[pet];
  const nextKey=pet+'-'+home;
  if(nextKey!==key){
+  hideRestBubble();
   policy.reset();policy.weather(atmosphere.scene);policy.configure(data);
   transition?.();stopSound();beginLoad();key=nextKey;
   frame.src='/garden/'+(pet==='cat'?'scene-cat.html':'scene-pets.html')+'?species='+pet+'&home='+home+'&load='+loadVersion;

@@ -17,6 +17,7 @@ const server=http.createServer(async(req,res)=>{const send=(s,x)=>{res.writeHead
    r={rewards,stats:{leafCount:rewards.filter(x=>x.kind!=='flower').length,flowerCount:rewards.filter(x=>x.kind==='flower').length},pendingLeaves:[{id:'pending-leaf',title:'下一份練習',href:'/grade3/115-1/week01.html'}],pendingFlowers:[{id:'pending-flower',title:'魔王關',href:'/grade3/115-1/week01.html'}]};
   }else if(name==='garden_growth')r=(await db.query('select garden_growth($1,$2) r',[args.p_course_id,args.p_action||'get'])).rows[0].r;
   else if(name==='garden_companions')r=(await db.query('select garden_companions($1,$2,$3) r',[args.p_course_id,args.p_action,args.p_data])).rows[0].r;
+  else if(name==='garden_pet_visit')r=(await db.query('select garden_pet_visit($1) r',[args.p_course_id])).rows[0].r;
   else if(name==='garden_tree_skin')r=(await db.query('select garden_tree_skin($1) r',[args.p_skin])).rows[0].r;
   else if(name==='garden_unlock_notice')r=(await db.query('select garden_unlock_notice($1,$2,$3) r',[args.p_course_id,args.p_action,args.p_claim])).rows[0].r;
   else return send(400,{});return send(200,r);

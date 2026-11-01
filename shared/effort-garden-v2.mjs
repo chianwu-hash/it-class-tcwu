@@ -1,9 +1,11 @@
 import {createCompanionChooser} from './garden-companions.mjs';
 import {checkGardenUnlock} from './garden-unlock-notice.mjs';
 import {createTreeSkinChooser} from './garden-tree-skin.mjs';
+import {createPetVisitClient} from './garden-pet-visit.mjs';
 // This module never awards progress. Server-owned milestones are cosmetic only.
 export function createGardenUpgrade({supabase,getSession,stage,onSelect}){
  let surpriseOwner=null,surpriseVisitUsed=false;
+ const petVisits=createPetVisitClient(supabase);let visitDecision={surprise:false,refreshMessage:false};
  const root=document.createElement('section');root.className='garden-upgrade';root.hidden=true;
  root.innerHTML=`<div data-scene></div><p class="garden-state" role="status"></p><div class="garden-actions"><button type="button" data-replay>重播我的成長</button><button type="button" data-prev>上一區</button><span data-page></span><button type="button" data-next>下一區</button></div><details data-pending-box hidden><summary>繼續練習</summary><ul data-pending-list></ul></details><details><summary>查看全部花葉與來源</summary><p>成果全部保留。樹冠每區最多呈現 96 葉、24 花。</p><ol data-list></ol><div class="garden-actions"><button type="button" data-list-prev>上一頁</button><span data-list-page></span><button type="button" data-list-next>下一頁</button></div></details>`;
  stage.after(root);
@@ -17,7 +19,7 @@ export function createGardenUpgrade({supabase,getSession,stage,onSelect}){
  function safePracticeHref(href){try{const u=new URL(href,location.href);return u.origin===location.origin&&/^\/grade[36]\//.test(u.pathname)?u.pathname+u.search+u.hash:null}catch{return null}}
  function pendingList(){const ul=$('[data-pending-list]');ul.replaceChildren();for(const r of [...pending(false),...pending(true)]){const li=document.createElement('li'),a=document.createElement('a');a.textContent=r.title||'繼續練習';a.href=safePracticeHref(r.href);li.append(a);ul.append(li)}$('[data-pending-box]').hidden=!ul.children.length}
  function pageCount(){return Math.max(1,Math.ceil(ordered(false).length/96),Math.ceil(ordered(true).length/24));}
- function send(){if(!frame||!model)return;const uid=getSession()?.user?.id;if(uid!==surpriseOwner){surpriseOwner=uid;surpriseVisitUsed=false}frame.contentWindow?.postMessage({type:'garden-state',surpriseAllowed:!surpriseVisitUsed,petUnlocked:!!companion.value.selectedPet,pet:companion.value.selectedPet,home:companion.value.selectedHome,homeVisible:companion.value.homeVisible===true,petMode:companion.value.petMode||'walk',
+ function send(){if(!frame||!model)return;const uid=getSession()?.user?.id;if(uid!==surpriseOwner){surpriseOwner=uid;surpriseVisitUsed=false}frame.contentWindow?.postMessage({type:'garden-state',surpriseAllowed:!surpriseVisitUsed,surpriseDecision:!surpriseVisitUsed&&visitDecision.surprise===true,surpriseMessage:!surpriseVisitUsed&&visitDecision.refreshMessage===true,petUnlocked:!!companion.value.selectedPet,pet:companion.value.selectedPet,home:companion.value.selectedHome,homeVisible:companion.value.homeVisible===true,petMode:companion.value.petMode||'walk',
   leaves:ordered(false).slice(page*96,(page+1)*96),flowers:ordered(true).slice(page*24,(page+1)*24),flowerStyle:document.documentElement.dataset.flower,treeSkin:skin.value,pendingLeaves:page===pageCount()-1?pending(false):[],pendingFlowers:page===pageCount()-1?pending(true):[]},location.origin);
   $('[data-page]').textContent=`樹冠第 ${page+1}／${pageCount()} 區`;$('[data-prev]').disabled=page===0;$('[data-next]').disabled=page+1>=pageCount();}
  function list(){pendingList();const items=model.rewards.slice(listPage*30,(listPage+1)*30),ol=$('[data-list]');ol.replaceChildren();for(const r of items){const li=document.createElement('li'),b=document.createElement('button');b.type='button';b.textContent=r.title;b.onclick=()=>{frame?.contentWindow?.__gardenShelterV21?.pause();onSelect(r);document.getElementById('detail-title')?.scrollIntoView({behavior:'smooth',block:'nearest'});};li.append(b);ol.append(li);}const pages=Math.max(1,Math.ceil(model.rewards.length/30));$('[data-list-page]').textContent=`${listPage+1}／${pages}`;$('[data-list-prev]').disabled=listPage===0;$('[data-list-next]').disabled=listPage+1>=pages;}
@@ -62,6 +64,10 @@ export function createGardenUpgrade({supabase,getSession,stage,onSelect}){
    state=data;model=m;course=c;checkGardenUnlock(getSession(),c);root.hidden=false;stage.hidden=true;
    status.textContent='第二級努力樹・記錄你一路學習與練習的足跡。';
    await companion.load(c);if(captured!==version||uid!==getSession()?.user?.id)return;
+   visitDecision={surprise:false,refreshMessage:false};
+   if(companion.value.selectedPet&&companion.value.petMode==='rest'&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const decision=await petVisits.get(uid,c);if(captured!==version||uid!==getSession()?.user?.id)return;visitDecision=decision;
+   }
    frame=document.createElement('iframe');frame.title='我的第二級努力樹';frame.src='/garden/stage.html?v=20261031-prerelease-fixes';$('[data-scene]').replaceChildren(frame);void skin.load();send();list();
    if(!data.seen)replay();
   }catch{if(captured!==version)return;root.hidden=false;status.textContent='成長狀態暫時無法同步，花葉仍保留。';const b=document.createElement('button');b.textContent='重新確認成長';b.type='button';b.onclick=()=>render(m,c);status.append(' ',b);root.querySelector('.garden-actions').hidden=true;}

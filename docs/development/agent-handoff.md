@@ -881,6 +881,8 @@ To: Claude Code
 
 ### 後續本機工作：偷偷散步小插曲
 
+最新核定已本機實作：每人Supabase伺服器抽籤共用5分鐘冷卻（不滑動延長），1分鐘內3次進頁且在冷卻中顯示「我有好好休息，沒亂跑！」8秒氣泡。新增 `garden-pet-visit.sql`，跨寵物／分頁／裝置共用，單頁只呼叫一次且失敗維持休息。19項測試與三次重整瀏覽器驗證通過；新版隔離伺服器4464，舊4462無新RPC。正式DB與網站尚未更新，詳 `effort-pet-surprise-20261101.md` 最新段落。上線需先套新增SQL再發前端，禁止直接發布studio或髒main。
+
 使用者核准三寵物在保存休息偏好後，下次進頁20%機率於窩前散步、驚訝、兩倍速度回窩，大雨雷雨也能觸發。Codex在 `codex/pet-surprise-20261101`（基準e03433c）整合，不修改學習資料／偏好。Claude Desktop原Code對話／Opus5.5獨占studio的 `src/garden-pet-surprise-v1.js`、`docs/pet-surprise-v1.md` 與三份 `docs/pet-surprise-*-prompt.txt`；Codex不寫這5檔。新角色圖沿原ChatGPT對話，不使用Claude CLI。整合完成前不發布藝術studio整包。
 
 使用者要求回窩休息跨次瀏覽保留。分支 `codex/pet-rest-persistence-20261101`、功能提交 `a25ddb2`，正式部署已更新為 `dpl_wnTX1ou6bMPsYDaV3BAKFV1eQ9vc`。以 CR8 的完整755檔為基準，748檔保持不變，僅7個前端檔更新；後續發布必須以新正式版為基準。

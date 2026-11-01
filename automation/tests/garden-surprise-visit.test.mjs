@@ -16,3 +16,7 @@ test('wait for readiness, do not reroll after walking or reduced motion',()=>{
   let draws=0;const x=createSurpriseVisit(()=>{draws++;return 0});assert.equal(x.decide({...rest,...patch}),false);assert.equal(x.decide(rest),false);assert.equal(draws,0);
  }
 });
+test('server decision overrides browser randomness',()=>{
+ assert.equal(createSurpriseVisit(()=>0).decide({...rest,decision:false}),false);
+ assert.equal(createSurpriseVisit(()=>.99).decide({...rest,decision:true}),true);
+});
