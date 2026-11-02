@@ -59,3 +59,24 @@ AGY使用 Gemini 4 Argon Medium，僅處理提供的題文資料，不授權專�
 十卷均以真authenticated角色驗證舊版接續、舊request重試、目前版開始／接續／重試、揭答隱私及拒絕他人作答，12張資料表摘要完整交易回滾；發布後再測一次。手機瀏覽器使用實際UI和真PG回滾產生的舊／新安全投影，核對5組舊版提示及按鈕開出62項新版；沒有代學生作答。使用者原連結亦已唯讀核對正式舊版提示。
 
 私有收據為 `entry-regression-tested`、`entry-ui-tested`、`entry-release`、`reported-attempt-verified`。UI測試須顯式啟用自己的測試分頁；hidden背景分頁曾不執行完成，不能把等待逾時當成正式頁錯誤。測試分頁與4537本機服務已關閉。
+
+## 2026-11-03 其餘九卷複驗及正式英語圖片修復
+
+使用者再要求驗其他九卷及既有紀錄，並提供113英語新版作答的圖片錯誤。該卷確為54項新版，不能再以舊版連結解釋這個錯誤。發現兩個獨立問題：
+
+1. 原圖已在Drive上傳並驗證，但考古題媒體授權指定`backend=supabase`，指定的私有儲存路徑缺51張PNG。先前只驗了SQL授權、本機圖及Drive來源，未完成這條正式讀取路徑的原圖讀回，是Codex的驗收缺漏。保留既有路由，依原始SHA-256及配對metadata補齊51檔，不覆寫既有物件、不刪Drive檔、不改題卷與作答。51圖及25音訊共76檔均經短效私有簽名HTTP讀回，MIME、位元組與雜湊相符，bucket仍為private。
+2. `applySourceCrop`將圖絕對定位並裁切，但原生`loading=lazy`在尚未解碼時量到高度0，裁切後看不到有效交集，造成一直不發出圖片載入。正式頁診斷可重現三個選項皆`naturalWidth=0`；只切`loading=eager`後三者均解碼為1620px，裁切容器大小不變。[MDN的延遲載入尺寸說明](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#loading)亦說明零尺寸可能阻止載入。現在只對有效裁切圖立即載入，維持scope權限／併發限制及overflow:clip，其他圖的載入設定不變。
+
+最終正式前端為 `dpl_7HzTSFsKXLHqJi1FzAgF29qTfMWH`，以當時最新Fsbf的810份完整來源，只疊加`shared/quiz-source-crop.mjs`一檔，其他809份SHA保留；候選810份與HTTP、正式HTTP指紋均核對。沒有修改身分、題目版本、評分或答案資料。
+
+本輪驗證：
+
+- 十卷的active文件雜湊及448項數量均與逐題驗收稿一致。真authenticated測試先以舊卷實際送答產生保存紀錄，再模擬舊卷未完成／已完成、新卷接續，逐卷確認選卷清單與普通入口都用active；舊答案及收據雜湊不變，14張表（含版本／active）完整ROLLBACK，沒有正式測試答案。
+- 依指定學生實際九年級名冊與既有作答，以真正角色呼叫十卷start，每卷均回active版本；測試完整回滾，7張學生資料表摘要一致，沒有代學生作答或留下新場次。不在公開文件列出姓名、帳號或作答ID。
+- 先以正式HTML／JS的相同SHA程式，搭配真PG回滾安全投影，逐卷點選選卷連結、接回新版、重新載入、讀取已存舊版提示及另開新版。授權及transport僅在loopback替換，不能冒稱這部分是少軒實際瀏覽器登入。
+- 裁切修正候選以同一正式程式、真私有Supabase簽名原圖，再走十卷448項；177處圖片均自然載入解碼，未在測試時替圖片強制改eager，裁切容器內捲動量0，無pageerror。只替換候選crop檔，其餘載入來源皆核對正式SHA。
+- 發布後在使用者回報的正式113英語URL，先核對可見登入帳號，再走54項；聽力1–4各3圖、選擇11附圖1張、選擇39四張統計圖，共17處均成功載入。該作答的12個獨立媒體也經正式edge服務取得並讀回原始SHA。沒有按送出答案；一般閱題會依原有流程記錄view時間。
+
+私有收據：`existing-records-tested`、`nine-active-metadata`、`nine-entry-ui`、`shaoxuan-entry-checked`、`past-storage-before`、`past-storage-repaired`、`live-image-diagnosis`、`crop-all-tested`、`image-fix-candidate-verified`、`image-fix-released`、`reported-english-ui`。4538本機服務及本輪分頁已關閉。
+
+往後圖片驗收至少包含「DB引用／授權→實際backend私有簽名→HTTP內容雜湊→未解碼、未快取圖片在正式手機版自然顯示」，不能只驗來源檔存在、SQL允許、ticket產生或本機圖可看。既有作答驗收須含已保存答案的舊未完成卷，並以目標學生實際名冊做交易回滾查核；不將舊成績搬到新版或靜默重評。
