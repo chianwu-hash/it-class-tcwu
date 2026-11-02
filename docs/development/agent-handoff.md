@@ -1,3 +1,23 @@
+# 2026-11-02 已正式發布：三年級10卷解析與延伸
+
+- 使用者已授權驗證後上線，已完成正式登錄、啟用與切換；2026-11-02 15:37:01 臺北時間讀回。部署`dpl_BUr4rAR7wjyiSWPgDh2VeRoQVBbC`，來源仍以舊正式deployment為底加26runtime覆蓋，不部署整個工作樹。
+- 10卷原版本不變，568解析／131重點、98組196次配題（119份來源去重），33缺素材重點不開練習；原錯題仍有固定解析及未開放原因，自核不入錯題，完卷後可主動練已配重點。
+- 延伸及5題自組卷同學期每10不同題1延伸葉，答錯認列、跨卷／原pool同題去重、啟用前歷史不回填。原成績、既有葉片／考古花及student_progress不改。
+- 真本機SQL568欄／196答、119積分；真PG10卷逐卷rollback／9受保護表摘要一致；瀏覽器10錯題返程＋4自核主動練習、33未配點排除、9→10動畫不重播、舊頁相容／教師監看／跨年級隔離、1280／390／360通過。Claude兩輪唯讀，第二輪無阻擋。787候選來源及26HTTP runtime hash、RLS／backup撤權、登錄後map／98 document與啟用前function hashes均核過；正式26HTTP及DB讀回通過。
+- 詳[正式接線紀錄](past-grade3-learning-release-20261102.md)。程式在`codex/past-grade3-learning-release-20261102`／`past-grade3-release` worktree；私有收據在`past-exam-production` worktree的`automation/output/past-grade3-release-20261102/`，不隨clone。後續以正式狀態重查，不執行歷史apply／activate或把本機教師含答案頁部署。
+- Vercel團隊連結即時失效已改隔離CLI device login，由使用者完成並驗正確帳號；原全機CLI仍是另一帳號，不要直接用預設CLI。登入檔只在ignored任務路徑，不讀取／提交／顯示。正式promote回空body曾誤判，先讀回alias確認成功再做剩餘驗證，未重複建立部署。
+
+# 2026-11-02 進行中：三年級10卷正式接線與發布
+
+- 使用者已明確授權10卷已完成568欄解析、131重點／98組196次配題正式接上，沿用延伸及5題卷每10道不同題1葉、答錯計、同題同學期去重；33缺素材重點只供解析、不開練習。
+- 本worktree由Codex唯一寫入，從前輪正式候選eeb5e68繼續；正式基準仍dpl_6mgAi77pCSyWNmPZJvsd4R2Jf7j5，26個runtime overlay以該實際部署為底，不部署整個repo。Vercel MCP團隊連結即時顯示過期，已由使用者完成隔離CLI device login，確認chianwu-4755可讀正確team/project；不要讀取登入檔／憑證。
+- 私有來源及收據在另一worktree past-exam-production/it-class-tcwu/automation/output/past-grade3-release-20261102；Claude不得讀外部路徑或登入資料。供本輪唯讀程式審查的收據另複製到本tree .chat-mode/evidence/。
+- 10卷原版本不動；sidecar接正式SQL、RLS／本人隔離、揭答才送解析。配題catalog用實際書商，避免同題從原pool及延伸包被重算；移除自然／康軒硬編碼。manual自核不進錯題，但完卷後可主動練已配重點；部分比較題明示有限覆蓋。
+- 新API送learning_client=1才把考古題併入錯題；舊頁仍保有一般錯題契約，兩版均排除新私有練習場次的再延伸。原成績、原普通葉／考古花及student_progress不能改寫。
+- 本機真SQL已驗10卷568欄／196答、119不同題積分、5+5、跨原pool去重、原10題葉／10考古花、舊客戶端及教師投影。瀏覽器原輪10往返／4自核重點／9→10動畫及不重播過；加舊頁相容後正在重驗。真PG逐卷交易回滾重跑中；已修fixture時間與多表EXCEPT括號，沒有放寬資料保護斷言。
+- 發布依序：複核、回滾驗證→安裝disabled migration／10 maps／98 private versions→production target不切別名的candidate→驗證candidate及來源hash→啟用精確版本→promote同一candidate→正式讀回。不可把教師含答案頁、本機fixture或私有題包部署；不改正式既有學生列。
+- Claude本輪僅讀指定public code及evidence，不命令、不寫檔、不網路、不憑證、不部署；Codex凍結tracked檔案直至本輪回覆後再修正。具體本次授權及讀取清單以mailbox為準。
+
 # Agent Handoff
 
 ## 答題雙欄與固定操作列獨立發布 — 2026-10-29

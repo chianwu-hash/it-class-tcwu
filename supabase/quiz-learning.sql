@@ -56,6 +56,7 @@ do $$begin
  if to_regprocedure('public.quiz_past_snapshot_before_learning(uuid)') is null then alter function public.quiz_past_snapshot(uuid) rename to quiz_past_snapshot_before_learning;end if;
  if to_regprocedure('public.quiz_action_before_learning(text,jsonb)') is null then alter function public.quiz_action(text,jsonb) rename to quiz_action_before_learning;end if;
  if to_regprocedure('public.quiz_entry_context_before_learning(jsonb)') is null then alter function public.quiz_entry_context(jsonb) rename to quiz_entry_context_before_learning;end if;
+ if to_regprocedure('public.quiz_monitor_before_learning(jsonb)') is null then alter function public.quiz_monitor(jsonb) rename to quiz_monitor_before_learning;end if;
 end$$;
 create or replace function public.quiz_action(p_action text,p_data jsonb default '{}') returns jsonb language plpgsql security definer set search_path='' as $$
 declare data jsonb;begin
@@ -72,6 +73,11 @@ create or replace function public.quiz_entry_context(p_data jsonb default '{}') 
 begin
  if p_data ? 'session_id' and exists(select 1 from public.quiz_learning_sessions where session_id=(p_data->>'session_id')::uuid and user_id is distinct from auth.uid()) then raise exception 'attempt_unavailable';end if;
  return public.quiz_entry_context_before_learning(p_data);
+end$$;
+create or replace function public.quiz_monitor(p_data jsonb default '{}') returns jsonb language plpgsql security definer set search_path='' as $$
+begin
+ if exists(select 1 from public.quiz_learning_sessions where session_id=(p_data->>'session_id')::uuid) then raise exception 'session_unavailable';end if;
+ return public.quiz_monitor_before_learning(p_data);
 end$$;
 create or replace function public.quiz_leaf_result(aid uuid,new_answer boolean) returns jsonb language plpgsql security definer set search_path='' as $$
 declare data jsonb;learning jsonb;begin
@@ -122,8 +128,12 @@ declare a public.quiz_past_attempts;m public.quiz_learning_maps;data jsonb;r jso
  data:=public.quiz_past_action('resume',jsonb_build_object('paper_id',a.paper_id,'attempt_id',aid));r:=data->'records'->gid;
  select value into e from jsonb_array_elements(m.content->'questions') where value->>'groupId'=gid and value->>'questionId'=qid and not coalesce((value->>'selfCheck')::boolean,false);
  if e is null or not exists(select 1 from jsonb_array_elements(coalesce(r->'results','[]')) x where x->>'questionId'=qid and jsonb_typeof(x->'correct')='boolean') then raise exception 'learning_unavailable';end if;
- select coalesce(jsonb_agg(c||jsonb_build_object('practice',jsonb_build_object('available',true,'count',2,'publisher','康軒','schoolYear',115,'chapter','第一、二單元'))),'[]') into cs
- from jsonb_array_elements(m.content->'concepts') c join public.quiz_learning_topics t on t.source_version=a.version_id and t.concept_id=c->>'id' where e->'conceptIds' ? (c->>'id');
+ select coalesce(jsonb_agg(c||jsonb_build_object('practice',jsonb_build_object('available',t.version_id is not null,'count',case when t.version_id is null then 0 else 2 end,
+ 'publisher',v.document->'catalog'->>'publisher','schoolYear',v.document->'catalog'->>'school_year','subject',v.document->'catalog'->>'subject','chapter',v.document->'catalog'->>'unit',
+ 'coverage',c->'practiceCoverage','unavailableReason',c->>'practiceUnavailableReason')) order by ord),'[]') into cs
+ from jsonb_array_elements(m.content->'concepts') with ordinality concepts(c,ord)
+ left join public.quiz_learning_topics t on t.source_version=a.version_id and t.concept_id=c->>'id'
+ left join public.quiz_versions v on v.id=t.version_id where e->'conceptIds' ? (c->>'id');
  return jsonb_build_object('schema',1,'source',jsonb_build_object('versionId',a.version_id,'groupId',gid,'questionId',qid),'explanation',e->>'explanation','concepts',cs);
 end$$;
 
@@ -134,7 +144,7 @@ create or replace function public.quiz_learning_wrong_items(p_grade integer) ret
  cross join lateral jsonb_array_elements(v.document->'groups') with ordinality groups(g,ord) cross join lateral jsonb_array_elements(g->'fields') with ordinality fields(f,ford)
  where a.user_id=auth.uid() and p.enabled and p.grade=p_grade and a.school_year=(select school_year from public.quiz_learning_settings where id) and a.semester=(select semester from public.quiz_learning_settings where id)
  and g->>'id'=an.group_id and f->>'id'=an.question_id and g->>'kind' not in('annotation','manual')
- and exists(select 1 from jsonb_array_elements(m.content->'questions') e where e->>'groupId'=an.group_id and e->>'questionId'=an.question_id)
+ and exists(select 1 from jsonb_array_elements(m.content->'questions') e where e->>'groupId'=an.group_id and e->>'questionId'=an.question_id and not coalesce((e->>'selfCheck')::boolean,false))
  and exists(select 1 from jsonb_array_elements(r.results) x where x->>'questionId'=an.question_id and x->>'correct'='false')
 $$;
 
@@ -163,18 +173,20 @@ declare item jsonb;g jsonb;f jsonb;r public.quiz_past_receipts;review jsonb;resp
 end$$;
 
 create or replace function public.quiz_wrong_questions(p_data jsonb default '{}') returns jsonb language plpgsql security definer set search_path='' as $$
-declare identity jsonb;old jsonb;items jsonb;facets jsonb;n integer;page integer:=coalesce((p_data->>'page')::integer,0);begin
+declare identity jsonb;old jsonb;items jsonb;facets jsonb;n integer;page integer:=coalesce((p_data->>'page')::integer,0);include_past boolean:=p_data->>'learning_client'='1';begin
+ p_data:=p_data-'learning_client';
  identity:=public.quiz_student_identity();if identity->>'role' is distinct from 'student' then raise exception 'student_required';end if;
  if coalesce((p_data->>'grade')::integer,(identity->>'grade')::integer) is distinct from (identity->>'grade')::integer then raise exception 'course_unavailable';end if;
  if coalesce(p_data->>'action','list')='detail' then
-  if p_data->>'source_type'='past_exam' then return public.quiz_learning_wrong_detail(p_data);end if;
+  if p_data->>'source_type'='past_exam' then if include_past then return public.quiz_learning_wrong_detail(p_data);else raise exception 'wrong_question_unavailable';end if;end if;
+  if exists(select 1 from public.quiz_attempts a join public.quiz_learning_sessions ls on ls.session_id=a.session_id where a.id=(p_data->>'attempt_id')::uuid) then raise exception 'wrong_question_unavailable';end if;
   return public.quiz_wrong_questions_before_learning(p_data);
  end if;
- old:=public.quiz_wrong_questions_before_learning(p_data);if not exists(select 1 from public.quiz_learning_maps where enabled) then return old;end if;
+ old:=public.quiz_wrong_questions_before_learning(p_data);if not exists(select 1 from public.quiz_learning_maps where enabled) and not exists(select 1 from public.quiz_learning_sessions) then return old;end if;
  with all_items as materialized(
   select jsonb_build_object('source_type','quiz','attempt_id',r.attempt_id,'session_id',r.session_id,'version_id',r.version_id,'question_id',r.question_id,'answered_at',r.answered_at,'title',r.title,'catalog',r.catalog,'number',array_position(r.ordered_ids,r.question_id),'preview',m.question_index->r.question_id->>'preview') item
   from public.quiz_wrong_refs((identity->>'grade')::integer) r join public.quiz_version_meta m on m.version_id=r.version_id where not exists(select 1 from public.quiz_learning_sessions ls where ls.session_id=r.session_id)
-  union all select x from public.quiz_learning_wrong_items((identity->>'grade')::integer) x
+  union all select x from public.quiz_learning_wrong_items((identity->>'grade')::integer) x where include_past
  ),filtered as materialized(select item from all_items where (coalesce(p_data->>'subject','')='' or item->'catalog'->>'subject'=p_data->>'subject') and (coalesce(p_data->>'unit','')='' or coalesce(item->'catalog'->>'unit',item->>'title')=p_data->>'unit'))
  select (select count(*) from filtered),(select coalesce(jsonb_agg(item order by item->>'answered_at' desc,item->>'attempt_id',item->>'question_id'),'[]') from(select item from filtered order by item->>'answered_at' desc,item->>'attempt_id',item->>'question_id' limit 20 offset page*20) z),
  (select coalesce(jsonb_agg(f),'[]') from(select distinct jsonb_build_object('subject',coalesce(item->'catalog'->>'subject','未分類'),'unit',coalesce(item->'catalog'->>'unit',item->>'title')) f from all_items) x) into n,items,facets;
@@ -199,6 +211,7 @@ begin
   return jsonb_build_object('attempts',result);
  end if;
  select * into a from public.quiz_past_attempts where id=(p_data->>'attempt_id')::uuid and user_id=auth.uid();if a.id is null then raise exception 'attempt_unavailable';end if;
+ if a.school_year is distinct from cfg.school_year or a.semester is distinct from cfg.semester or not exists(select 1 from public.quiz_past_papers p where p.id=a.paper_id and p.enabled and p.grade=(identity->>'grade')::integer) then raise exception 'course_unavailable';end if;
  select * into m from public.quiz_learning_maps where source_version=a.version_id and paper_id=a.paper_id and enabled;if m.source_version is null then raise exception 'learning_unavailable';end if;
  snap:=public.quiz_past_action('resume',jsonb_build_object('paper_id',a.paper_id,'attempt_id',a.id));
  if action='topics' then
@@ -211,10 +224,12 @@ begin
  if coalesce(p_data->>'mode','wrong') not in ('review','wrong') then raise exception 'invalid_request';end if;
  if p_data->>'mode'='review' then
   if a.completed_at is null then raise exception 'learning_incomplete';end if;
-  select value into e from jsonb_array_elements(m.content->'questions') where value->'conceptIds' ? (p_data->>'concept_id') and not coalesce((value->>'selfCheck')::boolean,false) limit 1;
+  -- A completed original permits proactive practice, including concepts occurring
+  -- only on self-check fields. Self-check fields still never become wrong items.
+  select value into e from jsonb_array_elements(m.content->'questions') where value->'conceptIds' ? (p_data->>'concept_id') order by coalesce((value->>'selfCheck')::boolean,false) limit 1;
  else select value into e from jsonb_array_elements(m.content->'questions') where value->>'questionId'=p_data->>'question_id' and value->>'groupId'=p_data->>'group_id' and value->'conceptIds' ? (p_data->>'concept_id') and not coalesce((value->>'selfCheck')::boolean,false);end if;
  if e is null then raise exception 'learning_unavailable';end if;
- review:=public.quiz_learning_review(a.id,e->>'groupId',e->>'questionId');
+ if coalesce(p_data->>'mode','wrong')='wrong' then review:=public.quiz_learning_review(a.id,e->>'groupId',e->>'questionId');end if;
  if coalesce(p_data->>'mode','wrong')='wrong' and not exists(select 1 from jsonb_array_elements(snap->'records'->(e->>'groupId')->'results') x where x->>'questionId'=e->>'questionId' and x->>'correct'='false') then raise exception 'wrong_question_unavailable';end if;
  select * into t from public.quiz_learning_topics where source_version=a.version_id and concept_id=p_data->>'concept_id';if t.version_id is null then raise exception 'learning_unavailable';end if;
  rid:=(p_data->>'request_id')::uuid;if rid is null then raise exception 'invalid_request';end if;
@@ -251,10 +266,10 @@ do $isolation$ declare r record;definition text;needle text;replacement text;hit
 end$isolation$;
 
 do $$declare r record;begin
- for r in select p.oid::regprocedure sig from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and (p.proname like 'quiz_learning%' or p.proname in('quiz_leaf_result_before_learning','quiz_rewards_before_learning','quiz_wrong_questions_before_learning','quiz_past_snapshot_before_learning','quiz_action_before_learning','quiz_entry_context_before_learning')) loop execute format('revoke all on function %s from public,anon,authenticated',r.sig);end loop;
+ for r in select p.oid::regprocedure sig from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and (p.proname like 'quiz_learning%' or p.proname in('quiz_leaf_result_before_learning','quiz_rewards_before_learning','quiz_wrong_questions_before_learning','quiz_past_snapshot_before_learning','quiz_action_before_learning','quiz_entry_context_before_learning','quiz_monitor_before_learning')) loop execute format('revoke all on function %s from public,anon,authenticated',r.sig);end loop;
 end$$;
 revoke all on function public.quiz_leaf_result(uuid,boolean),public.quiz_past_snapshot(uuid) from public,anon,authenticated;
-revoke all on function public.quiz_learning(jsonb),public.quiz_rewards(jsonb),public.quiz_wrong_questions(jsonb),public.quiz_action(text,jsonb),public.quiz_entry_context(jsonb) from public,anon;
-grant execute on function public.quiz_learning(jsonb),public.quiz_rewards(jsonb),public.quiz_wrong_questions(jsonb),public.quiz_action(text,jsonb),public.quiz_entry_context(jsonb) to authenticated;
+revoke all on function public.quiz_learning(jsonb),public.quiz_rewards(jsonb),public.quiz_wrong_questions(jsonb),public.quiz_action(text,jsonb),public.quiz_entry_context(jsonb),public.quiz_monitor(jsonb) from public,anon;
+grant execute on function public.quiz_learning(jsonb),public.quiz_rewards(jsonb),public.quiz_wrong_questions(jsonb),public.quiz_action(text,jsonb),public.quiz_entry_context(jsonb),public.quiz_monitor(jsonb) to authenticated;
 notify pgrst,'reload schema';
 commit;

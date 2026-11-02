@@ -64,6 +64,7 @@ export async function createQuizRequest({ getSession, localStudent = null, local
       return result;
     }
     if (READS.has(action) && Date.now() < busyUntil) throw busyError(false);
+    if(action==='wrong_questions')data={...data,learning_client:1};
     const userId = getSession?.()?.user?.id;
     const identityRevision = testIdentityRevision(userId);
     try {

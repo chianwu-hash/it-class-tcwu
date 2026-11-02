@@ -666,7 +666,7 @@ export function initServerQuiz({ selectors, server }) {
     heading.append(make('h2', state.document.title), make('p', `已作答 ${count} / ${questions.length} 題`, 'progress-label'));
     const progress = make('progress'); progress.max = questions.length; progress.value = count; progress.setAttribute('aria-label', '測驗作答進度');
     heading.append(progress); root.append(heading);
-    if(state.leaf?.learning){const effort=state.leaf.learning,notice=make('p',`本學期完成${effort.count}道不同題・${effort.leaves}片延伸葉・下一片${effort.remainder}/10`,'learning-credit-state');notice.setAttribute('role','status');root.append(notice);}
+    if(state.leaf?.learning){const effort=state.leaf.learning,notice=make('p',`本學期完成${effort.count}道不同題・${effort.leaves}片延伸葉・下一片${effort.remainder}/10`,'learning-credit-state quiz-leaf-state');notice.setAttribute('role','status');root.append(notice);}
     if(state.complete&&state.leaf?.reason!=='not_eligible'){
      const messages={short_paper:'這份少於10題，不計葉片。',accuracy:'完成至少10題、正確率達60%，可長出1片葉子。先核對這次的解析，再繼續練習。',timing_unverified:'作答紀錄已保留；本次閱讀時間紀錄不完整，不追溯計葉。',same_content_already_earned:'這組題目已領過葉片，複習不重複計葉。'};
      if(state.leaf?.earned){

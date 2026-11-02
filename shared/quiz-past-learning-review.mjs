@@ -18,7 +18,8 @@ export function renderPastLearningReview({host,group,record,version,onPractice})
   const heading=make('h4',concept.title);heading.id=id+'-heading';panel.setAttribute('aria-labelledby',heading.id);
   panel.append(heading,make('p',concept.connection));const list=make('ul');for(const point of concept.points)list.append(make('li',point));panel.append(list);
   if(concept.practice?.available===true&&Number.isInteger(concept.practice.count)&&concept.practice.count>0&&typeof onPractice==='function'){
-   panel.append(make('p',`書商題庫：${concept.practice.publisher} ${concept.practice.schoolYear} 上學期自然｜${concept.practice.chapter}`,'helper'));
+   panel.append(make('p',`書商題庫：${concept.practice.publisher} ${concept.practice.schoolYear} 上學期${concept.practice.subject||''}｜${concept.practice.chapter}`,'helper'));
+   if(concept.practice.coverage?.studentLabel)panel.append(make('p',concept.practice.coverage.studentLabel,'helper'));
    const practice=make('button',`練習這個重點（${concept.practice.count}題）`,'past-learning-start'),status=make('p');practice.type='button';status.setAttribute('role','status');let requestId=null;
    practice.addEventListener('click',async()=>{
     if(practice.disabled)return;practice.disabled=true;requestId??=crypto.randomUUID();status.textContent='正在準備對應練習…';
@@ -29,7 +30,7 @@ export function renderPastLearningReview({host,group,record,version,onPractice})
     }catch(e){if(status.isConnected)status.textContent='尚未開啟練習：'+e.message+' 可以重試。';}
     finally{if(practice.isConnected)practice.disabled=false;}
    });panel.append(practice,status);
-  }
+  }else if(concept.practice?.available===false){panel.append(make('p','這個重點的延伸練習尚未開放：'+(concept.practice.unavailableReason||'尚缺可靠題目或素材。'),'helper'));}
   const link=make('button',concept.title);link.type='button';link.setAttribute('aria-controls',id);link.setAttribute('aria-expanded','false');
   link.addEventListener('click',()=>{const open=panel.hidden;for(const [b,p] of buttons){p.hidden=true;b.setAttribute('aria-expanded','false');}panel.hidden=!open;link.setAttribute('aria-expanded',String(open));if(open)panel.focus({preventScroll:true});});
   buttons.push([link,panel]);links.append(link);panels.append(panel);

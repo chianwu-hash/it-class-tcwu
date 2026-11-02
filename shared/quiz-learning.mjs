@@ -24,7 +24,7 @@ async function topics(){
  if(!page||!session?.user)return;const g=generation,uid=session.user.id,params=new URLSearchParams(location.search),attempt=params.get('attempt');page.replaceChildren(make('h2','選學習重點，再練一次'));
  const identity=document.getElementById('cloud-identity');if(identity)identity.textContent=session.user.email||'已登入學生帳號';
  try{const d=await request('learning',{action:attempt?'topics':'reviews',...(attempt?{attempt_id:attempt}:{})});if(g!==generation||uid!==session?.user?.id)return;
-  if(!d.concepts){page.append(make('p','完整完成這份三上自然原卷後，不論分數，都能主動選重點練習。'));
+  if(!d.concepts){page.append(make('p','完整完成已開放解析的考古題原卷後，不論分數，都能主動選重點練習。'));
    if(!d.attempts.length)page.append(make('p','目前沒有可複習的已完成原卷。先回考古題專區，完成一份再來。'));
    for(const a of d.attempts){const el=make('a',a.title+`｜本次${a.score}/${a.max_score}分`,'learning-attempt');el.href=link('learning.html',{attempt:a.id});page.append(el);}return;
   }
@@ -32,6 +32,7 @@ async function topics(){
   for(const c of d.concepts){
    const card=make('details',undefined,'learning-topic');card.id='concept-'+c.id;card.open=params.get('concept')===c.id;
    card.append(make('summary',c.title));const ul=make('ul');for(const p of c.points)ul.append(make('li',p));card.append(ul);
+   if(c.practiceCoverage?.studentLabel)card.append(make('p',c.practiceCoverage.studentLabel,'helper'));
    const button=make('button',`練習這個重點（${c.count}題）`),note=make('p');button.type='button';note.setAttribute('role','status');let rid=null;
    button.onclick=async()=>{if(button.disabled)return;button.disabled=true;rid??=crypto.randomUUID();note.textContent='正在準備練習…';try{
     const r=await request('learning',{action:'start',mode:'review',attempt_id:d.attempt_id,version:d.version,concept_id:c.id,request_id:rid});if(g!==generation||uid!==session?.user?.id||!button.isConnected)return;
