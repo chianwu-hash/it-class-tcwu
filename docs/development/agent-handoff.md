@@ -1,3 +1,12 @@
+# 2026-11-02 已正式發布：三年級10卷解析與延伸
+
+- 使用者已授權驗證後上線，已完成正式登錄、啟用與切換；2026-11-02 15:37:01 臺北時間讀回。部署`dpl_BUr4rAR7wjyiSWPgDh2VeRoQVBbC`，來源仍以舊正式deployment為底加26runtime覆蓋，不部署整個工作樹。
+- 10卷原版本不變，568解析／131重點、98組196次配題（119份來源去重），33缺素材重點不開練習；原錯題仍有固定解析及未開放原因，自核不入錯題，完卷後可主動練已配重點。
+- 延伸及5題自組卷同學期每10不同題1延伸葉，答錯認列、跨卷／原pool同題去重、啟用前歷史不回填。原成績、既有葉片／考古花及student_progress不改。
+- 真本機SQL568欄／196答、119積分；真PG10卷逐卷rollback／9受保護表摘要一致；瀏覽器10錯題返程＋4自核主動練習、33未配點排除、9→10動畫不重播、舊頁相容／教師監看／跨年級隔離、1280／390／360通過。Claude兩輪唯讀，第二輪無阻擋。787候選來源及26HTTP runtime hash、RLS／backup撤權、登錄後map／98 document與啟用前function hashes均核過；正式26HTTP及DB讀回通過。
+- 詳[正式接線紀錄](past-grade3-learning-release-20261102.md)。程式在`codex/past-grade3-learning-release-20261102`／`past-grade3-release` worktree；私有收據在`past-exam-production` worktree的`automation/output/past-grade3-release-20261102/`，不隨clone。後續以正式狀態重查，不執行歷史apply／activate或把本機教師含答案頁部署。
+- Vercel團隊連結即時失效已改隔離CLI device login，由使用者完成並驗正確帳號；原全機CLI仍是另一帳號，不要直接用預設CLI。登入檔只在ignored任務路徑，不讀取／提交／顯示。正式promote回空body曾誤判，先讀回alias確認成功再做剩餘驗證，未重複建立部署。
+
 # 2026-11-02 本機完成：三年級10卷固定解析，延伸配題仍有缺項
 
 - 最新要求：利用本輪額度先做三年級。實際範圍為已啟用的113／114上學期期中五科10卷；新增9卷501欄，沿用114自然67欄，總568欄。沒有宣稱社群預測的16時重置已獲確認。
