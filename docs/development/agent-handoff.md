@@ -689,3 +689,19 @@ To: Claude Code
 4. NotebookLM 解析目前是針對真實匯出格式做寬鬆解析；你覺得這種策略可接受，還是應該再收嚴一點？
 
 如果你覺得哪一段做法不夠穩，請直接點出「目前先不要寫進 SOP 的部分」，我會再收斂。
+# 2026-11-02 正式接入中：三上自然解析／延伸／主動複習及5題累積
+
+- 使用者已驗收本機流程，明確授權慶祝動畫、正式接入並驗證後上線；另授權5題自組卷比照延伸題累積。共用10道不同題1延伸葉，答錯計、同題同學期去重。原卷現在正式是考古花，不回退舊葉片版本，保留普通10題以上達標葉。
+- Codex唯一寫入者。Claude僅唯讀複核本輪SQL／UI，不執行命令、網路、憑證、正式操作或寫檔。複核期間凍結此工作樹所有tracked檔案；測試／上傳收據寫原工作區ignored output。
+- 本樹基底f967d755，實際正式來源dpl_6mgAi77pCSyWNmPZJvsd4R2Jf7j5，project prj_eJ1qle57xyilS5MKy6ZS6OuYtyFb。781個完整source entry逐一取得SHA1及大小，針對26個runtime overlay候選；不從dirty主專案整包部署。最新prod來源已覆蓋到受影響檔，保留回報、身份同步、考古花、半葉與花園。
+- 正式SQL是supabase/quiz-learning.sql：新私有表、本人／揭答轉接、累積帳本與獎勵；以備份委派包裝現有6個RPC／helper，非重裝舊SQL。不變學生答案／student_progress／原卷達標帳本。5題卷只認啟用後新答案，不回填舊答；使用可信學習學期。
+- learning完整2單位獎勵置於quiz_rewards.awards之前，避免吸收舊pending半葉；現有garden_growth讀相同awards，可沿用原第二階段和穩定practice_ ID。前端用learning-leaf型別，不作成績或花，未改garden_growth函式或舊成長紀錄。
+- PostgreSQL真實ROLLBACK（合成auth/enrollment在交易內）與既有9張學生資料表前後摘要一致已過；PGlite套用正式43函式快照，兩份全錯5題、5+延伸部分重複、66考古錯題、滿分、普通10題葉／原考古花不變均過。最新完整瀏覽器正在重跑；先前完整已過、最後調整獎勵投影以兼容花園。尚未apply或activate。
+- 證據與固定題包在原樹C:/Users/user/.codex/worktrees/past-exam-production/it-class-tcwu/automation/output/past-extension-production-20261102/；67解析／22重點／44書商來源在同原樹past-full-learning-20261101。private不在clone。db project upxgyusodibaqcrocdzj，正確teacher及原卷hash已核，不交由Claude操作。
+- 下一步：Claude唯讀核權限與去重、瀏覽器動畫／返回／手機→disabled註冊→候選前端逐檔hash與隔離測試→核正式alias未變→啟用精確map＋設定、發布並重查，不留合成資料。不得把fixture auth/transport發布。官方Vercel connector登入正確，機器CLI是另一帳號，發布用connector。
+
+## 2026-11-02 延伸葉與5題卷正式化候選
+
+- 已完成共用10道不同題累積、錯題／主動練習、長葉動畫及教師資料隔離；本機與正式PostgreSQL回滾測試通過。
+- Vercel建立候選及CLI均403，尚未發布或安裝／啟用正式SQL。需恢復本專案發布權限後續做，不能當作已上線。
+- 接續與證據見 [候選紀錄](past-learning-release-20261102.md)；原MEMKEY持續沿用。

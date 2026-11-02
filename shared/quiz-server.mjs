@@ -1,5 +1,7 @@
-import { renderContent as renderQuizContent } from './quiz-render.mjs';
+import {afterGardenReward} from './garden-unlock-notice.mjs';
+import { renderContent as renderQuizContent } from './quiz-render.mjs?v=20261029-load-batch1';
 import { mergeQuizSnapshot } from './quiz-state.mjs';
+import {createQuestionReport} from './quiz-question-reports.mjs';
 
 // Claude Opus 5.5 原創四套圖形與動作；Codex整合，原型中的題目線索改為中性文字。
 const quizFeedbackMotion = (function () {
@@ -556,7 +558,12 @@ export function initServerQuiz({ selectors, server }) {
   const el = key => typeof selectors?.[key] === 'string' ? document.getElementById(selectors[key]) : selectors?.[key];
   const root = el('container'), lock = el('lock'), content = el('content');
   const workspace = createQuizWorkspace(root);
-  const renderContent = (target, c) => renderQuizContent(target, {
+  let mediaScope=null,mediaView=null,contentCache=new Map(),contentUses=new Map();
+  const renderContent = (target, c) => {
+    const serialized=JSON.stringify(c),index=contentUses.get(serialized)||0;contentUses.set(serialized,index+1);
+    const key=serialized+'#'+index,previous=contentCache.get(key);
+    if(previous){target.append(previous);return previous;}
+    const box=renderQuizContent(target, {
     ...c,
     text: c?.text?.trim() === '書商未提供這一題的詳細解析。'
       ? '這一題目前沒有詳細解析，可以先核對正確答案。' : c?.text,
@@ -564,8 +571,18 @@ export function initServerQuiz({ selectors, server }) {
       alt: media.alt === '書商原圖' ? '圖片'
         : media.alt === '書商原版聽力音檔' ? '聽力音檔' : media.alt,
     })),
-  }, { imageLoading: 'eager' });
+  }, { imageLoading: 'eager',mediaScope,deferMedia:showFullReview });
+    contentCache.set(key,box);return box;
+  };
   let userId = null, generation = 0, state = null, cursor = 0, pending = null, selected = '', busy = false, loadError = '', showFullReview = false;
+  const reportForms=new Map();
+  function report(q){
+    const key=state.attempt_id+':'+q.id,g=generation;
+    if(!reportForms.has(key))reportForms.set(key,createQuestionReport({request:server.request,
+      context:{source:'quiz',attempt_id:state.attempt_id,question_id:q.id},options:q.options,
+      valid:()=>g===generation&&Boolean(userId)}));
+    return reportForms.get(key);
+  }
   let feedbackAnimation = null;
   let seenQuestion=null;
   // 依鼓勵原則撰寫的原創短句，不是阿德勒名言，也不推測孩子是否努力或用了哪個方法。
@@ -590,7 +607,8 @@ export function initServerQuiz({ selectors, server }) {
   const answered = q => Object.hasOwn(state?.responses || {}, q.id);
   const firstUnanswered = () => state.document.questions.findIndex(q => !answered(q));
   function stopAudio() { root.querySelectorAll('audio').forEach(a => a.pause()); }
-  function say(text, error = false) { const n = root.querySelector('[role="status"]'); if (n) { n.textContent = text; n.dataset.error = String(error); } }
+  // The workspace moves this status into its dock, after the question; a report form may hold another one.
+  function say(text, error = false) { const n = root.querySelector('.quiz-workspace-status [role="status"]') || root.querySelector('[role="status"]'); if (n) { n.textContent = text; n.dataset.error = String(error); } }
   function renderReview(article, q) {
     const review = state.reviews.find(r => r.question_id === q.id);
     if (!review) { article.append(make('p', '已儲存；正解與解析會在符合本場次揭答條件後顯示。', 'notice')); return; }
@@ -628,8 +646,13 @@ export function initServerQuiz({ selectors, server }) {
     if (animate && actor) quizFeedbackMotion.play(actor);
   }
   function render() {
+    const view=state&&`${generation}:${state.attempt_id}:${state.version_id}:${showFullReview?'all':state.document.questions[Math.min(cursor,state.document.questions.length-1)]?.id}`;
+    const changed=view!==mediaView;
+    if(changed){stopAudio();mediaScope?.dispose();contentCache.clear();mediaView=view;
+      mediaScope=state?server.request.createMediaScope?.({user_id:userId,session_id:server.sessionId,attempt_id:state.attempt_id,version_id:state.version_id,generation,view}):null;}
+    contentUses.clear();
     workspace.reset();
-    stopAudio(); root.querySelectorAll('.qfm-actor').forEach(quizFeedbackMotion.stop); root.replaceChildren();
+    root.querySelectorAll('.qfm-actor').forEach(quizFeedbackMotion.stop); root.replaceChildren();
     const status = make('p', ''); status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite'); root.append(status);
     if (!userId) return;
     if (!state) {
@@ -643,11 +666,12 @@ export function initServerQuiz({ selectors, server }) {
     heading.append(make('h2', state.document.title), make('p', `已作答 ${count} / ${questions.length} 題`, 'progress-label'));
     const progress = make('progress'); progress.max = questions.length; progress.value = count; progress.setAttribute('aria-label', '測驗作答進度');
     heading.append(progress); root.append(heading);
+    if(state.leaf?.learning){const effort=state.leaf.learning,notice=make('p',`本學期完成${effort.count}道不同題・${effort.leaves}片延伸葉・下一片${effort.remainder}/10`,'learning-credit-state');notice.setAttribute('role','status');root.append(notice);}
     if(state.complete&&state.leaf?.reason!=='not_eligible'){
      const messages={short_paper:'這份少於10題，不計葉片。',accuracy:'完成至少10題、正確率達60%，可長出1片葉子。先核對這次的解析，再繼續練習。',timing_unverified:'作答紀錄已保留；本次閱讀時間紀錄不完整，不追溯計葉。',same_content_already_earned:'這組題目已領過葉片，複習不重複計葉。'};
      if(state.leaf?.earned){
       const notice=make('p',undefined,'quiz-leaf-state');notice.append(make('span','🌿 努力樹已長出1片葉子！'));
-      const grade=location.pathname.match(/^\/grade([36])\/115-1\//)?.[1];
+      const grade=location.pathname.match(/^\/grade([346])\/115-1\//)?.[1];
       if(grade){const link=make('a','查看努力樹 →','quiz-tree-link');link.href=`/my-tree.html?course=grade${grade}-115-1`;notice.append(link);}
       root.append(notice);
      }
@@ -664,14 +688,14 @@ export function initServerQuiz({ selectors, server }) {
         renderContent(article, q.material); renderContent(article, q.prompt);
         article.append(make('p', `你的答案：${q.type === 'single' ? String.fromCharCode(65 + q.options.findIndex(o => o.id === state.responses[q.id])) : state.responses[q.id]}`));
         if (q.type === 'single') q.options.forEach((o, i) => { const row = make('div', undefined, 'preview-option'); row.append(make('strong', `${String.fromCharCode(65 + i)}. `)); renderContent(row, o.content); article.append(row); });
-        renderReview(article, q); root.append(article);
+        renderReview(article, q); article.append(report(q));root.append(article);
       }
       return;
     }
     if (state.complete) root.append(make('p', '所有答案已儲存。先確認這一題的結果，再查看整份作答與解析。', 'notice'));
     cursor = Math.min(cursor, questions.length - 1);
     const q = questions[cursor], saved = answered(q);
-    if(!saved&&state.status==='open'&&seenQuestion!==q.id){seenQuestion=q.id;const g=generation;server.request('view_question',{session_id:server.sessionId,question_id:q.id}).catch(()=>{if(g===generation)seenQuestion=null;});}
+    if(!saved&&state.status==='open'&&seenQuestion!==q.id){seenQuestion=q.id;const g=generation;server.request('view_question',{session_id:server.sessionId,question_id:q.id}).catch(e=>{if(g!==generation)return;if(e.code==='question_order')void resyncOrder();else seenQuestion=null;});}
     const review = state.reviews.find(r => r.question_id === q.id);
     const article = make('article', undefined, 'question'); article.dataset.questionId = q.id;
     article.append(make('h3', `第 ${cursor + 1} 題 / ${questions.length} 題`));
@@ -720,6 +744,7 @@ export function initServerQuiz({ selectors, server }) {
     if (state.complete && cursor === questions.length - 1) actions.append(button('查看整份作答與解析', () => { showFullReview = true; render(); }, 'quiz-primary'));
     actions.append(button('更新儲存狀態', () => load('resume', true), 'secondary quiz-refresh')); article.append(actions); root.append(article);
     workspace.apply({article, saved, complete:state.complete, closed:state.status==='closed'});
+    (article.querySelector('.quiz-reading-panel')||article).append(report(q));
     if (pending) say('這次答案的儲存狀態尚未確認，請以相同答案重試或更新狀態。', true);
   }
   async function load(action, preserveCursor = false) {
@@ -730,21 +755,37 @@ export function initServerQuiz({ selectors, server }) {
       if (generation !== token) return;
       state = next; loadError = ''; busy = false;
       if (pending && Object.hasOwn(state.responses, pending.question_id)) pending = null;
-      if (!preserveCursor) { const index = firstUnanswered(); cursor = index < 0 ? state.document.questions.length - 1 : index; selected = ''; }
+      const index = firstUnanswered();
+      if (!preserveCursor) { cursor = index < 0 ? state.document.questions.length - 1 : index; selected = ''; }
+      // Answers are saved strictly in order: never stay on an unanswered question that is not the next one.
+      else if (index >= 0 && cursor !== index && !answered(state.document.questions[Math.min(cursor, state.document.questions.length - 1)])) { cursor = index; selected = ''; pending = null; }
       render();
     } catch (e) {
       if (generation === token) { loadError = e.message; if (!state) render(); else say(e.message, true); }
     } finally { if (generation === token) { busy = false; const b = root.querySelector('#server-submit'); if (b) b.disabled = false; } }
   }
+  // At most one automatic re-sync per 5 seconds, so a page that still disagrees cannot flood the server.
+  let lastResync = 0, holdSubmitUntil = 0;
+  async function resyncOrder() {
+    if (Date.now() - lastResync < 5000) { holdSubmitUntil = Date.now() + 5000; say('作答進度和雲端不一致，請稍候幾秒再試；仍無法繼續請告訴老師。', true); return false; }
+    lastResync = Date.now(); const token = generation;
+    await load('resume');
+    if (generation === token && state) say('作答進度已和雲端同步，請從這一題繼續。');
+    return true;
+  }
   async function submit() {
     if (busy || !state || !userId) return;
+    if (Date.now() < holdSubmitUntil) return say(`作答進度和雲端不一致，請等 ${Math.ceil((holdSubmitUntil - Date.now()) / 1000)} 秒再試；仍無法繼續請告訴老師。`, true);
     const q = state.document.questions[cursor];
     if (answered(q)) return;
     if (!pending) {
       if (!selected.trim()) return say('請先選擇選項或填入答案。', true);
       pending = { question_id: q.id, response: selected, request_id: crypto.randomUUID() };
     }
-    const token = generation; busy = true; render(); say('正在儲存答案…');
+    const token = generation; busy = true;
+    root.querySelectorAll('.quiz-choices input,.quiz-choices textarea,.quiz-actions button').forEach(n=>n.disabled=true);
+    const saving=root.querySelector('#server-submit');if(saving)saving.textContent='正在儲存…';
+    say('正在儲存答案…');
     try {
       const result = await server.request('submit', { session_id: server.sessionId, ...pending, compact: true });
       if (generation !== token) return;
@@ -752,11 +793,15 @@ export function initServerQuiz({ selectors, server }) {
       // 只在送答成功、後端允許揭答後播放；回看、重整與整卷檢視不反覆播放。
       feedbackAnimation = next.reviews.some(r => r.question_id === q.id) ? q.id : null;
       state = next; pending = null; busy = false; render(); say('答案已儲存。');
-      if(next.leaf?.earned_now)celebrateQuizLeaf();
+      if(next.leaf?.learning?.earned_now){celebrateQuizLeaf({leaves:next.leaf.learning.earned_now,kind:'learning'});afterGardenReward();}
+      if(next.leaf?.credit_added_now || next.leaf?.earned_now){celebrateQuizLeaf({leaves:next.leaf.awarded_leaf_count??1});afterGardenReward();}
       root.querySelector('.answer-preview')?.focus({preventScroll:true});
       if(root.classList.contains('quiz-workspace-active')&&!root.classList.contains('workspace-desktop'))root.querySelector('.answer-preview')?.scrollIntoView({block:'start',behavior:'instant'});
     } catch (e) { if (generation === token) { busy = false;
       if(e.code==='quiz_snapshot_mismatch'){await load('resume',true);return;}
+      // The server's next question differs from this page (another tab/device or a lost response):
+      // drop the unsaved attempt for this question and jump to the cloud's next question.
+      if(e.code==='question_order'){pending=null;if(await resyncOrder())return;}
       if(e.code==='answer_too_fast'){pending=null;quizReadingWarning();} render(); say(e.message, true); } }
     finally { if (generation === token) { busy = false; const b = root.querySelector('#server-submit'); if (b) b.disabled = false; } }
   }
@@ -765,7 +810,7 @@ export function initServerQuiz({ selectors, server }) {
     if (id === userId) return;
     stopQuizLeafCelebration();
     workspace.reset({forget:true});
-    generation++; userId = id; busy = false; state = null; selected = ''; pending = null; loadError = ''; cursor = 0; showFullReview = false; feedbackAnimation = null;seenQuestion=null;
+    generation++; reportForms.clear();userId = id; busy = false; state = null; selected = ''; pending = null; loadError = ''; cursor = 0; showFullReview = false; feedbackAnimation = null;seenQuestion=null;
     if (lock) { lock.hidden = Boolean(id); lock.classList.toggle('hidden', Boolean(id)); }
     if (content) { content.hidden = !id; content.classList.toggle('hidden', !id); }
     render(); if (id) await load('join');

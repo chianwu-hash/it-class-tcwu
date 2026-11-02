@@ -460,7 +460,6 @@
                         <button class="flower-option selected" type="button" data-flower="sunrise" aria-label="粉橘花"></button>
                         <button class="flower-option ocean" type="button" data-flower="ocean" aria-label="藍色花"></button>
                         <button class="flower-option candy" type="button" data-flower="candy" aria-label="粉紫花"></button>
-                        <button class="flower-option forest" type="button" data-flower="forest" aria-label="綠色花"></button>
                     </div>
                 </section>
 
@@ -474,7 +473,10 @@
         </section>
     </main>
 
+    <link rel="stylesheet" href="./shared/effort-garden-v2.css?v=20261031-level2">
     <script type="module">
+        import {createGardenUpgrade} from './shared/effort-garden-v2.mjs?v=20261101-pet-surprise';
+        import {withGardenTestRewards} from './shared/garden-test-rehearsal.mjs?v=20261030-rehearsal';
         import {
             resolveSession,
             signInWithGoogle,
@@ -494,12 +496,12 @@
             LEAF_SLOTS,
             getRewardTreeCourse,
             getRewardTreeCourses
-        } from "./shared/reward-tree-config.js?v=20261014-week07";
-        import { createFullCompletionRows, deriveRewardTreeModel } from "./shared/reward-tree-model.js?v=20261001-foundation";
+        } from "./shared/reward-tree-config.js?v=20261030-g6w09-boss";
+        import { createFullCompletionRows, deriveRewardTreeModel } from "./shared/reward-tree-model.js?v=20261102-learning";
         import { renderRewardTree, selectReward } from "./shared/reward-tree-renderer.js";
         import { readingRequest, readingTreeData } from './shared/reading-api.js';
         import { homeworkRequest, homeworkTreeData } from "./shared/homework-api.js";
-        import {quizTreeData} from './shared/quiz-rewards.mjs?v=20261027-all-subjects';
+        import {quizTreeData} from './shared/quiz-rewards.mjs?v=20261102-learning';
         import {quizLibraryForEnrollment} from './shared/quiz-grade-route.mjs?v=20261028-tree-return';
         import {createFoundationProgress} from './shared/typing-foundation-progress.js?v=20261006-google';
         import {foundationTreeData} from './shared/typing-foundation-rewards.js?v=20261002-zhuyin';
@@ -537,6 +539,7 @@
         let selectedCourseId = resolveInitialCourseId();
         const returnTarget = resolveReturnTarget();
 
+        const upgrade=createGardenUpgrade({supabase,getSession:()=>currentSession,stage:document.querySelector('.tree-stage'),onSelect:r=>selectReward(r,detailTitleEl,detailTextEl)});
         function safeReturnTarget(value) {
             if (!value) return null;
             try {
@@ -628,7 +631,7 @@
         }
 
         function setFlowerStyle(style) {
-            const safeStyle = ["sunrise", "ocean", "candy", "forest"].includes(style) ? style : "sunrise";
+            const safeStyle = ["sunrise", "ocean", "candy"].includes(style) ? style : "sunrise";
             document.documentElement.dataset.flower = safeStyle;
             flowerOptions.forEach((option) => {
                 option.classList.toggle("selected", option.dataset.flower === safeStyle);
@@ -638,6 +641,7 @@
 
         function updateAuthUi() {
             updateQuizLibraryLink();
+            profileMetaEl.hidden = false;
             const email = currentSession?.user?.email || "";
             loginBtn.classList.toggle("hidden", !!email);
             logoutBtn.classList.toggle("hidden", !email);
@@ -649,12 +653,13 @@
 
             if (currentEnrollment) {
                 const seat = String(currentEnrollment.seat_no).padStart(2, "0");
-                profileTitleEl.textContent = currentEnrollment.display_name || email;
-                profileMetaEl.textContent = `${currentEnrollment.class_code} 班 ${seat} 號・${email}`;
+                profileTitleEl.textContent = `${currentEnrollment.class_code}${seat} ${currentEnrollment.display_name || "同學"}`;
+                profileMetaEl.textContent = "";
+                profileMetaEl.hidden = true;
                 return;
             }
 
-            profileTitleEl.textContent = email;
+            profileTitleEl.textContent = "學生資料確認中";
             profileMetaEl.textContent = `${getCourseDefinition(selectedCourseId).label}・尚未找到本學年名冊資料`;
         }
 
@@ -752,10 +757,15 @@
             });
         }
 
+        let leafPage=0;
         function renderModel(model, activities) {
-            renderRewardTree({
+            void upgrade.render(model,selectedCourseId);
+            const pages=Math.max(1,Math.ceil(model.leaves.length/LEAF_SLOTS.length));leafPage=Math.min(leafPage,pages-1);
+            document.getElementById('tree-leaf-pages')?.remove();
+            const drawLeaves=()=>{
+                renderRewardTree({
                 layer: rewardLayerEl,
-                leaves: model.leaves,
+                leaves: model.leaves.slice(leafPage*LEAF_SLOTS.length,(leafPage+1)*LEAF_SLOTS.length),
                 flowers: model.flowers,
                 pendingLeaves: model.pendingLeaves,
                 pendingFlowers: model.pendingFlowers,
@@ -765,6 +775,13 @@
                 ghostLeafCount: activities.length ? 8 : 0,
                 ghostFlowerCount: activities.length ? 2 : 0
             });
+
+            };drawLeaves();
+            if(pages>1){
+                const pager=document.createElement('div');pager.id='tree-leaf-pages';pager.style.cssText='display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px';
+                const prev=document.createElement('button'),next=document.createElement('button'),text=document.createElement('span');prev.textContent='上一頁葉片';next.textContent='下一頁葉片';
+                const update=()=>{prev.disabled=leafPage===0;next.disabled=leafPage===pages-1;text.textContent=`葉片第${leafPage+1}/${pages}頁，共${model.leaves.length}片`;drawLeaves();};prev.onclick=()=>{leafPage--;update();};next.onclick=()=>{leafPage++;update();};pager.append(prev,text,next);rewardLayerEl.closest('.tree-stage').after(pager);update();
+            }
 
             leafCountEl.textContent = String(model.stats.leafCount);
             flowerCountEl.textContent = String(model.stats.flowerCount);
@@ -796,8 +813,9 @@
 
         async function loadAndRender() {
             const version = ++treeLoadVersion;
+            upgrade.reset();
             hideNotice();
-            rewardLayerEl.replaceChildren();
+            rewardLayerEl.replaceChildren();document.getElementById('tree-leaf-pages')?.remove();
             leafCountEl.textContent = '0';
             flowerCountEl.textContent = '0';
             detailTitleEl.textContent = '正在確認本人的成果';
@@ -823,14 +841,14 @@
                 // The practice library follows the student's current roster, even when viewing an older tree.
                 practiceEnrollment = currentSchoolYear === 115 ? enrollment : currentYearEnrollment;
                 updateAuthUi();
-                if (!activities.length && loadingCourse !== 'grade6-115-1') { renderEmptyCourse(course); return; }
+                if (!activities.length && !['grade4-115-1','grade6-115-1'].includes(loadingCourse)) { renderEmptyCourse(course); return; }
                 if (['grade3-115-1','grade6-115-1'].includes(loadingCourse) && currentSession?.user && !mockMode) {
                     try {
                         const foundation=foundationTreeData(await createFoundationProgress({courseId:loadingCourse,getSession:()=>currentSession}).request('list',{include_zhuyin:true}),loadingCourse);
                         activities.push(...foundation.activities); rows.push(...foundation.rows);
                     } catch(error) { showNotice(`基礎練習成果暫時無法讀取：${error.message}`, 'info'); }
                 }
-                if (['grade3-115-1','grade6-115-1'].includes(loadingCourse) && currentSession?.user && !mockMode) {
+                if (['grade3-115-1','grade4-115-1','grade6-115-1'].includes(loadingCourse) && currentSession?.user && !mockMode) {
                     try {const quiz=await quizTreeData(currentSession,loadingCourse);activities.push(...quiz.activities);rows.push(...quiz.rows);}catch(error){showNotice(`考前練功成果暫時無法讀取：${error.message}`,'info');}
                 }
                 if (loadingCourse === 'grade6-115-1' && currentSession?.user && !mockMode) {
@@ -844,8 +862,9 @@
                     try { const reading=readingTreeData((await readingRequest(currentSession,'list')).periods); activities.push(...reading.activities); rows.push(...reading.rows); } catch(error) { showNotice(`閱讀紀錄暫時無法讀取：${error.message}`, 'info'); }
                 }
                 if (version !== treeLoadVersion || selectedCourseId !== loadingCourse || currentSession?.user?.id !== loadingUser) return;
-                if (!activities.length) { renderEmptyCourse(course); return; }
-                const model = deriveRewardTreeModel(rows, activities);
+                if (!activities.length && loadingCourse !== 'grade4-115-1') { renderEmptyCourse(course); return; }
+                const model = await withGardenTestRewards(deriveRewardTreeModel(rows, activities),{supabase,session:currentSession,courseId:loadingCourse});
+                if(version!==treeLoadVersion||selectedCourseId!==loadingCourse||currentSession?.user?.id!==loadingUser)return;
                 renderModel(model, activities);
             } catch (error) {
                 if (version !== treeLoadVersion) return;
@@ -876,10 +895,11 @@
             if ((session?.user?.id ?? null) === (currentSession?.user?.id ?? null)) return;
             currentSession = session;
             treeLoadVersion++;
+            upgrade.reset();
             currentEnrollment = null;
             practiceEnrollment = null;
             updateQuizLibraryLink();
-            rewardLayerEl.replaceChildren();
+            rewardLayerEl.replaceChildren();document.getElementById('tree-leaf-pages')?.remove();
             leafCountEl.textContent = '0';
             flowerCountEl.textContent = '0';
             setTimeout(loadAndRender, 0);
