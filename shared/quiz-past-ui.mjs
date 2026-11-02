@@ -1,6 +1,6 @@
-import {applySourceCrop} from './quiz-source-crop.mjs?v=20261102-math-audio';
+import {applySourceCrop} from './quiz-source-crop.mjs?v=20261102-transcribed';
 import {renderMathResponse,mathResponseComplete,mathResponseError} from './quiz-math-response.mjs?v=20261102-math-audio';
-import {renderLocalContent as renderScopedContent} from './quiz-past-content.mjs?v=20261030-audio';
+import {renderLocalContent as renderScopedContent} from './quiz-past-content.mjs?v=20261102-transcribed';
 import {renderManualResponse} from './quiz-past-manual.mjs';
 import {attachPastInputKeyboard} from './quiz-past-input.mjs?v=20261102-math-audio';
 import {createQuestionReport} from './quiz-question-reports.mjs';
@@ -66,9 +66,9 @@ function render(){if(!active)return;
   right.append(el('p','點選代號，可選一個或多個；再點一次即可取消。','helper'));
   g.fields.forEach((f,i)=>{const slot=el('fieldset',undefined,'slot');slot.append(el('legend',`（${f.label}）${f.text}`,'field-label'));const codes=el('div',undefined,'codes');for(const c of g.codes){const b=button(c,()=>{const list=draft(g)[i],at=list.indexOf(c);if(at<0)list.push(c);else list.splice(at,1);b.setAttribute('aria-pressed',String(list.includes(c)));});b.setAttribute('aria-pressed',String(values[i].includes(c)));b.setAttribute('aria-label',`第${f.label}欄代號${c}`);b.disabled=locked;codes.append(b);}slot.append(codes);feedback(g,i,slot);right.append(slot);});
  }else if(g.kind==='manual'){
-  right.append(el('p',g.fields[0].text,'material'));
+  const manualPrompt=el('div',undefined,'material');renderLocalContent(manualPrompt,{text:g.fields[0].text,media:[]});right.append(manualPrompt);
   renderManualResponse({host:right,value:values,locked,asset:g.assets[0],resolveAsset});
-  if(saved){const ref=el('div',undefined,'reference');ref.append(el('h3',saved.referenceStatus==='not_provided'?'作答已保留・不自動判分':saved.referenceStatus==='partial'?'對照已確認的官方參考':'對照官方參考，自己檢查'),el('p',saved.reference||'這題採自我核對。'));if(saved.referenceUrl)ref.append(art({url:saved.referenceUrl,alt:'官方解答局部參考圖'}));right.append(ref);}
+  if(saved){const ref=el('div',undefined,'reference');ref.append(el('h3',saved.referenceStatus==='not_provided'?'作答已保留・不自動判分':saved.referenceStatus==='partial'?'對照已確認的官方參考':'對照官方參考，自己檢查'));renderLocalContent(ref,{text:saved.reference||'這題採自我核對。',media:[]});if(saved.referenceUrl)ref.append(art({url:saved.referenceUrl,alt:'官方解答局部參考圖'}));right.append(ref);}
  }else if(g.kind==='annotation'){
   left.append(el('p',g.fields[0].text,'material'));renderDrawing(g,right,locked,values);
   if(saved){const ref=el('div',undefined,'reference');ref.append(el('h3','對照官方標記，自己檢查'),el('p','看看施力點的位置與箭頭方向。這是自我核對，不是老師評分，也不計入分數。'));ref.append(art({url:saved.referenceUrl,alt:'官方解答局部參考圖'}));right.append(ref);}
@@ -76,7 +76,7 @@ function render(){if(!active)return;
  if(saved)renderPastLearningReview({host:right,group:g,record:saved,version:state.version,onPractice});
  const explanations=saved?.learningExplanations||(typeof saved?.learningExplanation==='string'?[{text:saved.learningExplanation,wrongReviewHref:saved.wrongReviewHref}]:[]);
  for(const explanation of explanations){
-  const review=el('section',undefined,'past-learning-review');review.append(el('h3',explanation.selfCheck?'這題怎麼自我核對？':explanation.label?'第 '+explanation.label+' 欄怎麼想？':'這題怎麼想？'),el('p',explanation.text),el('p','補充解析由 AI 依題意整理，非官方解析。','helper'));
+  const review=el('section',undefined,'past-learning-review');review.append(el('h3',explanation.selfCheck?'這題怎麼自我核對？':explanation.label?'第 '+explanation.label+' 欄怎麼想？':'這題怎麼想？'));renderLocalContent(review,{text:explanation.text,media:[]});review.append(el('p','補充解析由 AI 依題意整理，非官方解析。','helper'));
   if(typeof explanation.wrongReviewHref==='string'){
    const url=new URL(explanation.wrongReviewHref,location.origin);
    if(url.origin===location.origin&&/\/grade[3469]\/115-1\/quiz-library\.html$/.test(url.pathname)){
