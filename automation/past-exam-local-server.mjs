@@ -16,7 +16,10 @@ const learningMap=process.env.PAST_LEARNING_REVIEW_PATH?JSON.parse(fs.readFileSy
 const learningProject=learningMap?createPastLearningProjection({bundle,map:learningMap,version}):value=>value;
 if(process.env.PAST_PUBLISHER_PRACTICE_PATH&&!learningMap)throw Error('learning_map_required');
 const wrongEntryOnly=process.env.PAST_WRONG_REVIEW==='1';
-const publisherPractice=process.env.PAST_PUBLISHER_PRACTICE_PATH?await createPastPublisherPractice({db,teacher:TEACHER,bundle,map:learningMap,version,wrongEntryOnly,packet:JSON.parse(fs.readFileSync(process.env.PAST_PUBLISHER_PRACTICE_PATH,'utf8'))}):null;
+const extensionRewards=process.env.PAST_EXTENSION_REWARDS==='1';
+const learningTerm={schoolYear:115,semester:1}; // Trusted fixture course, never supplied by browser/source exam year.
+if(extensionRewards&&!wrongEntryOnly)throw Error('extension_requires_wrong_review');
+const publisherPractice=process.env.PAST_PUBLISHER_PRACTICE_PATH?await createPastPublisherPractice({db,teacher:TEACHER,bundle,map:learningMap,version,wrongEntryOnly,extensionRewards,learningTerm,packet:JSON.parse(fs.readFileSync(process.env.PAST_PUBLISHER_PRACTICE_PATH,'utf8'))}):null;
 const project=value=>publisherPractice?publisherPractice.project(learningProject(value)):learningProject(value);
 if(wrongEntryOnly&&!publisherPractice)throw Error('publisher_practice_required');
 const wrongReview=wrongEntryOnly?createPastWrongReview({db,bundle,map:learningMap,version,grade,project,isPracticeSession:publisherPractice.isPracticeSession}):null;
@@ -24,6 +27,19 @@ async function localRead(uid,name,data){
  if(name==='wrong_questions'&&wrongReview)return wrongReview.read({uid,data});
  if(!['library_sessions','pool_catalog','wrong_questions'].includes(name))throw Error('invalid_action');
  return db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');return (await tx.query(`select public.quiz_${name}(${name==='pool_catalog'?'':'$1'}) r`,name==='pool_catalog'?[]:[data])).rows[0].r;});
+}
+if(extensionRewards&&process.env.PAST_SEED_CORRECT_DEMO==='1'){
+ const uid=studentId(2),call=(action,data)=>db.transaction(async tx=>{
+  await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');
+  return (await tx.query('select public.quiz_past_action($1,$2) r',[action,{paper_id:bundle.paperId,...data}])).rows[0].r;
+ });
+ const source=await call('start',{request_id:randomUUID()});
+ for(const group of bundle.document.groups){
+  await call('view',{attempt_id:source.attemptId,group_id:group.id});
+  await db.query("update public.quiz_past_views set started_at=clock_timestamp()-interval '2 minutes' where attempt_id=$1 and group_id=$2",[source.attemptId,group.id]);
+  const responses=group.kind==='annotation'||group.kind==='manual'?demoWrongResponses(group):group.fields.map(f=>({questionId:f.id,value:group.kind==='short'?f.answer[0]:structuredClone(f.answer)}));
+  await call('submit',{attempt_id:source.attemptId,version,group_id:group.id,request_id:randomUUID(),confirmed:true,responses});
+ }
 }
 if(wrongReview&&process.env.PAST_SEED_WRONG_DEMO==='all'){
  const uid=studentId(1),call=(action,data)=>db.transaction(async tx=>{
@@ -47,8 +63,9 @@ if(wrongReview&&process.env.PAST_SEED_WRONG_DEMO==='1'){
  await db.query("update public.quiz_past_views set started_at=clock_timestamp()-interval '2 minutes' where attempt_id=$1",[attempt]);
  await db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');await tx.query("select public.quiz_past_action('submit',$1)",[{paper_id:bundle.paperId,attempt_id:attempt,version,group_id:seed.groupId,confirmed:true,request_id:randomUUID(),responses:demoWrongResponses(bundle.document.groups.find(g=>g.id===seed.groupId))}]);});
 }
-const previewAssets=learningMap?learningPreviewAssets({origin,nonce}):new Map();
+const previewAssets=learningMap?learningPreviewAssets({origin,nonce,extensionRewards}):new Map();
 const previewNote=learningMap?.schema===2?'本機全卷試用・合成測試帳號｜已預備全卷解析、學習重點與康軒練習。從「我的錯題」選題，練完回同一道；示範錯答與畫圖自核預先建立。學生操作不呼叫AI、不連正式資料，延伸不給葉。':wrongReview?'本機 MVP・合成測試帳號｜從「我的錯題」查看第 1 題解析、選重點、練康軒題，再回同一道錯題。示範錯答已預先建立；不連正式學生資料、不給葉。':publisherPractice?'本機 MVP・合成測試帳號｜第 1 題解析可選學習重點，練習康軒原始題庫；練習結果與原卷分開，不給葉。':'本機 MVP・合成測試帳號｜只示範第 1 題的解析與學習重點；不連正式學生資料，尚未接書商練習題。';
+const extensionNote='本機試用・合成帳號｜每10道不同的延伸題長1片葉，答錯也算；同題同學期不重複計。原卷成績與達標葉獨立，不連正式資料。服務重啟會重建本機示範紀錄。';
 const signedMedia=process.env.PAST_SIGNED_MEDIA_PATH?JSON.parse(fs.readFileSync(process.env.PAST_SIGNED_MEDIA_PATH,'utf8')):{};
 for(const a of bundle.assets)await db.query('insert into public.quiz_media_assets values($1,$2,$3,$4,$5)',[a.url,TEACHER,a.object_path,a.mime,a.bytes]);
 const server=http.createServer(async(req,res)=>{const send=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(data));};try{
@@ -56,6 +73,18 @@ const server=http.createServer(async(req,res)=>{const send=(status,data)=>{res.w
  if(req.method==='GET'&&previewAssets.has(url.pathname)){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});return res.end(previewAssets.get(url.pathname));}
  if(req.method==='GET'&&url.pathname==='/__past/blank'){res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});return res.end('<!doctype html><html lang="zh-Hant"><title>考古題隔離驗收</title><body></body></html>');}
  if(req.method==='GET'&&url.pathname==='/__past/setup')return send(200,{nonce,version,paperId:bundle.paperId,grade});
+ if(req.method==='POST'&&url.pathname==='/__past/extension'){
+  if(!extensionRewards||!publisherPractice?.rewards||req.headers['x-fixture-nonce']!==nonce)return send(403,{});
+  let bytes='';for await(const chunk of req){bytes+=chunk;if(Buffer.byteLength(bytes)>16000)return send(413,{});}
+  const {action,data={},student}=JSON.parse(bytes);if(![1,2].includes(student))return send(403,{});const uid=studentId(student);
+  if(action==='summary'){
+   const extension=await publisherPractice.rewards.summary(uid,learningTerm.schoolYear,learningTerm.semester);
+   const original=await db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');return (await tx.query("select public.quiz_rewards('{}'::jsonb) r")).rows[0].r;});
+   return send(200,{...extension,originalAwards:original.awards});
+  }
+  if(action==='review')return send(200,await publisherPractice.review({uid,attemptId:data.attempt_id}));
+  throw Error('invalid_action');
+ }
  if(req.method==='POST'&&url.pathname==='/__past/library'){
   if(!wrongReview||req.headers['x-fixture-nonce']!==nonce)return send(403,{});
   let bytes='';for await(const chunk of req){bytes+=chunk;if(Buffer.byteLength(bytes)>16000)return send(413,{});}
@@ -74,7 +103,19 @@ const server=http.createServer(async(req,res)=>{const send=(status,data)=>{res.w
   const result=await db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');if(action==='media'){const a=(await tx.query('select public.quiz_media_access($1,$2) r',[data.url,data.attempt_id||null])).rows[0].r;return {url:signedMedia[data.url]||origin+'/__past/image/'+data.url.split('/').at(-1)};}return (await tx.query('select public.quiz_past_action($1,$2) r',[action,{paper_id:bundle.paperId,...data}])).rows[0].r;});return send(200,wrongReview?wrongReview.sourceProjection(project(result),student):project(result));
  }
  if(req.method==='GET'&&/^\/__past\/image\/[a-f0-9]{64}$/.test(url.pathname)){const a=bundle.assets.find(a=>a.hash===url.pathname.split('/').at(-1));if(!a)return send(404,{});const bytes=fs.readFileSync(a.file),range=req.headers.range?.match(/^bytes=(\d+)-(\d*)$/);if(range){const start=Number(range[1]),end=range[2]?Math.min(Number(range[2]),bytes.length-1):bytes.length-1;if(start>end||start>=bytes.length){res.writeHead(416,{'Content-Range':`bytes */${bytes.length}`});return res.end();}res.writeHead(206,{'Content-Type':a.mime,'Content-Length':end-start+1,'Content-Range':`bytes ${start}-${end}/${bytes.length}`,'Accept-Ranges':'bytes'});return res.end(bytes.subarray(start,end+1));}res.writeHead(200,{'Content-Type':a.mime,'Content-Length':bytes.length,'Accept-Ranges':'bytes'});return res.end(bytes);}
+ if(extensionRewards&&req.method==='GET'&&(url.pathname==='/my-tree.html'||/^\/grade[36]\/115-1\/(extension-topics|extension-tree)\.html$/.test(url.pathname))){
+  let html=fs.readFileSync(`grade${grade}/115-1/quiz-library.html`,'utf8');
+  html=html.replace('<main>','<main><p class="panel" role="note">'+extensionNote+'</p>').replace(/<section id="cloud-lock"[\s\S]*?<\/main>/,'<section id="extension-page" class="panel"></section></main>').replace(/<script type="module" src="[^\"]*quiz-library[^\"]*"><\/script>/,'');
+  if(url.pathname==='/my-tree.html')html=html.replaceAll('src="navbar.js','src="/grade'+grade+'/115-1/navbar.js');
+  html=html.replace('</head>','<meta name="past-extension-preview" content="1"><link rel="stylesheet" href="/shared/past-extension-preview.css"></head>').replace('</body>','<script type="module" src="/shared/past-extension-preview.mjs"></script></body>');
+  if(url.pathname.includes('tree'))html=html.replace('</head>','<style>'+fs.readFileSync('my-tree.html','utf8').match(/<style>([\s\S]*?)<\/style>/)[1]+'</style></head>');
+  res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});return res.end(html);
+ }
+ if(req.method==='GET'&&extensionRewards&&url.pathname==='/assets/reward-tree/empty-tree-base-v1-q80.webp'){res.writeHead(200,{'Content-Type':'image/webp'});return res.end(fs.readFileSync('.'+url.pathname));}
  if(req.method!=='GET'||!/^\/(shared\/[a-zA-Z0-9_./-]+|grade[36]\/115-1\/(past-exam\.html|past-exam-review\.html|quiz\.html|navbar\.js|quiz-library\.html))$/.test(url.pathname)||url.pathname.includes('..'))return send(404,{});
- const file=path.resolve(root,'.'+url.pathname);if(!file.startsWith(root+path.sep))return send(404,{});res.writeHead(200,{'Content-Type':file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.css')?'text/css':file.endsWith('.woff2')?'font/woff2':'text/javascript; charset=utf-8','Cache-Control':'no-store'});let bytes=fs.readFileSync(file);if(learningMap&&(/\/(past-exam|quiz|quiz-library)\.html$/).test(url.pathname))bytes=bytes.toString('utf8').replace('<main class="wrap student-wrap">',`<main class="wrap student-wrap"><p class="card" role="note">${previewNote}</p>`);res.end(bytes);
+ const file=path.resolve(root,'.'+url.pathname);if(!file.startsWith(root+path.sep))return send(404,{});res.writeHead(200,{'Content-Type':file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.css')?'text/css':file.endsWith('.woff2')?'font/woff2':'text/javascript; charset=utf-8','Cache-Control':'no-store'});let bytes=fs.readFileSync(file);if(learningMap&&(/\/(past-exam|quiz|quiz-library)\.html$/).test(url.pathname)){
+  bytes=bytes.toString('utf8').replace('<main class="wrap student-wrap">',`<main class="wrap student-wrap"><p class="card" role="note">${extensionRewards?extensionNote:previewNote}</p>`);
+  if(extensionRewards)bytes=bytes.replace('</head>','<meta name="past-extension-preview" content="1"><link rel="stylesheet" href="/shared/past-extension-preview.css"></head>').replace('</body>','<script type="module" src="/shared/past-extension-preview.mjs"></script></body>');
+ }res.end(bytes);
 }catch(e){send(400,{message:e.message});}});
 server.listen(port,'127.0.0.1',()=>console.log(origin));process.on('SIGTERM',()=>server.close(async()=>{await db.close();process.exit(0);}));

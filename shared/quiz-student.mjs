@@ -26,6 +26,11 @@ if (cloud) {
     back.href='past-exam.html?'+query;back.textContent='← 返回考古題解析';back.dataset.shortLabel='回原題解析';
   }
   const wrongRef=readWrongQuestionRef(location.search);
+  if(document.querySelector('meta[name="past-extension-preview"]')&&['127.0.0.1','localhost'].includes(location.hostname)&&/^[a-f0-9-]{36}$/i.test(params.get('learning_attempt')||'')){
+    const query=new URLSearchParams({attempt:params.get('learning_attempt'),concept:params.get('learning_concept')||''});
+    if(params.get('fixture_student')==='2')query.set('fixture_student','2');
+    back.href='extension-topics.html?'+query;back.textContent='← 回到學習重點';back.dataset.shortLabel='回到學習重點';
+  }
   if(wrongRef?.source_type==='past_exam'){
     const query=wrongQuestionSearch(wrongRef,['1','2'].includes(params.get('fixture_student'))?'fixture_student='+params.get('fixture_student'):'');
     back.href='quiz-library.html?'+query+'#wrong';back.textContent='← 回這道錯題';back.dataset.shortLabel='回這道錯題';

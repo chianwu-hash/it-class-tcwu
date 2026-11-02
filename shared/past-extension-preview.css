@@ -1,0 +1,12 @@
+.past-extension-summary { margin: 18px auto; width: min(100%, 1160px); box-sizing: border-box; }
+.past-extension-summary h2 { margin-top: 0; }
+.past-extension-summary progress { width: min(100%, 420px); height: 20px; accent-color: #0f766e; }
+.extension-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin: 12px 0; }
+.extension-actions a, .extension-attempt { display: inline-block; padding: 10px 14px; border: 1px solid #a5dce5; border-radius: 12px; background: #ecfeff; color: #155e75; font-weight: 700; text-decoration: none; }
+#extension-page { width: min(100%, 1160px); box-sizing: border-box; margin: 16px auto; }
+.extension-topic { border: 1px solid #b6dce5; border-radius: 16px; padding: 16px; margin: 12px 0; background: white; }
+.extension-topic summary { font-weight: 900; cursor: pointer; min-height: 28px; }
+.extension-topic button { min-height: 44px; }
+.extension-attempt { display: block; margin: 12px 0; }
+.past-extension-summary *, #extension-page * { overflow-wrap: anywhere; }
+@media(max-width:600px) { .extension-actions a { flex: 1 1 140px; text-align: center; } #extension-page .tree-stage { min-height: 360px; } }
