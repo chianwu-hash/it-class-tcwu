@@ -1,6 +1,8 @@
+import {applySourceCrop} from './quiz-source-crop.mjs?v=20261102-math-audio';
+import {renderMathResponse,mathResponseComplete,mathResponseError} from './quiz-math-response.mjs?v=20261102-math-audio';
 import {renderLocalContent as renderScopedContent} from './quiz-past-content.mjs?v=20261030-audio';
 import {renderManualResponse} from './quiz-past-manual.mjs';
-import {attachPastInputKeyboard} from './quiz-past-input.mjs';
+import {attachPastInputKeyboard} from './quiz-past-input.mjs?v=20261102-math-audio';
 import {createQuestionReport} from './quiz-question-reports.mjs';
 import {renderPastLearningReview} from './quiz-past-learning-review.mjs';
 export function initPastExamUI({root,request,resolveAsset,onView,reportRequest,onPractice}){
@@ -17,7 +19,7 @@ const isManual=g=>['annotation','manual'].includes(g.kind);
 const stopAudio=()=>root.querySelectorAll('audio').forEach(audio=>{audio.pause();audio.removeAttribute('src');audio.load();});
 function draft(g){if(!drafts.has(g.id))drafts.set(g.id,g.kind==='mark'?g.fields.map(()=>false):g.kind==='sequence'?g.choices.map(()=>''):g.kind==='manual'?{text:'',strokes:[],confirmed:false}:g.kind==='annotation'?{point:null,arrow:null,mediaSha256:g.assets[0].sha256}:g.fields.map(()=>g.kind==='set'?[]:''));return drafts.get(g.id);}
 function currentValue(g){const r=state.records[g.id];return r?(isManual(g)?r.responses[0].value:r.responses.map(x=>x.value)):draft(g);}
-function art(a){const f=el('figure',undefined,'figure');const link=el('a');link.href='#';link.dataset.imageLightbox='';const img=el('img');img.dataset.quizMediaUrl=a.url;resolveAsset(a.url).then(src=>{if(img.isConnected)img.src=src;}).catch(e=>say(e.message));img.alt=a.alt;link.append(img);f.append(link,el('figcaption',a.alt));return f;}
+function art(a){const f=el('figure',undefined,'figure');const link=el('a');link.href='#';link.dataset.imageLightbox='';const img=el('img');img.dataset.quizMediaUrl=a.url;resolveAsset(a.url).then(src=>{if(img.isConnected)img.src=src;}).catch(e=>say(e.message));img.alt=a.alt;applySourceCrop(link,img,a.viewBox);link.append(img);f.append(link,el('figcaption',a.alt));return f;}
 function officialText(g,value){if(g.kind==='mark')return value?'應打勾':'不打勾';if(Array.isArray(value))return value.join(g.kind==='sequence'?' → ':'、');return value;}
 function feedback(g,i,host){const r=state.records[g.id];if(!r||isManual(g))return;const result=r.results[i],box=el('div',undefined,'feedback'+(result.correct?'':' wrong'));box.append(el('strong',result.correct?'✓ 這一格核對正確':'這一格和核對答案不同'),el('span','核對答案：'+officialText(g,result.official)));host.append(box);}
 function renderPractice(){
@@ -47,7 +49,7 @@ function render(){if(!active)return;
  if(g.kind==='single'||g.kind==='short'){
   const stem=el('div',undefined,'material');renderLocalContent(stem,g.promptContent);right.append(stem);
   if(g.kind==='single'){const choices=el('div',undefined,'past-choices');for(const c of g.choices){const row=el('label',undefined,'choice-row student-option'),input=el('input');input.type='radio';input.name='single';input.value=c.id;input.checked=values[0]===c.id;input.disabled=locked;input.addEventListener('change',()=>draft(g)[0]=c.id);const text=el('span',undefined,'option-body');if(c.content.text.trim()===c.id&&!c.content.media.length&&!c.content.layout)text.textContent=c.id==='O'?'正確':c.id==='X'?'不正確':'';else renderLocalContent(text,c.content);row.append(input,el('span',c.id,'option-badge'),text);choices.append(row);}right.append(choices);}
-  else{g.fields.forEach((f,i)=>{const slot=el('div',undefined,'slot'),label=el('label',g.fields.length===1?'你的答案':`（${f.label}）${f.text}`,'field-label');label.htmlFor='short-answer-'+i;const input=el('input');input.id='short-answer-'+i;input.type='text';input.maxLength=2000;input.value=values[i];input.disabled=locked;input.autocomplete='off';input.addEventListener('input',()=>draft(g)[i]=input.value);slot.append(label,input);const hint=g.material+' '+f.text;attachPastInputKeyboard(slot,input,{bopomofo:/注音/.test(hint),punctuation:/標點/.test(hint)});feedback(g,i,slot);right.append(slot);});}
+  else{g.fields.forEach((f,i)=>{const slot=el('div',undefined,'slot'),label=el('label',g.fields.length===1?'你的答案':`（${f.label}）${f.text}`,'field-label');label.htmlFor='short-answer-'+i;if(g.answerFormat==='math-v1'){slot.append(label);renderMathResponse({host:slot,id:'short-answer-'+i,value:values[i],locked,onChange:v=>{draft(g)[i]=v}});feedback(g,i,slot);right.append(slot);return;}const input=el('input');input.id='short-answer-'+i;input.type='text';input.maxLength=2000;input.value=values[i];input.disabled=locked;input.autocomplete='off';input.addEventListener('input',()=>draft(g)[i]=input.value);slot.append(label,input);const hint=g.material+' '+f.text;attachPastInputKeyboard(slot,input,{bopomofo:/注音/.test(hint),punctuation:/標點/.test(hint)});feedback(g,i,slot);right.append(slot);});}
   if(g.kind==='single')feedback(g,0,right);
  }else if(g.kind==='mark'){
   right.append(el('p','勾選你認為正確的敘述。','helper'));const list=el('div',undefined,'answer-list');
@@ -109,7 +111,8 @@ function renderDrawing(g,host,locked,value){
 }
 async function submitGroup(){const g=state.groups[index];let packet=pending.get(g.id);
  if(!packet){const value=draft(g);if(g.kind==='mark'&&!$('#mark-confirm')?.checked){say('請先確認未勾選的格子就是不勾。');return;}
-  if(['single','short'].includes(g.kind)&&value.some(v=>!v.trim())){say('請先完成每個答案欄再送出。');return;}
+  if(['single','short'].includes(g.kind)&&value.some(v=>g.answerFormat==='math-v1'?!mathResponseComplete(v):!v.trim())){say('請先完成每個答案欄再送出。');return;}
+  if(g.answerFormat==='math-v1'){const error=value.map(mathResponseError).find(Boolean);if(error){say(error);return;}}
   if(g.kind==='manual'&&(!value.confirmed||(!value.text.trim()&&!value.strokes.length))){say('請先輸入文字或畫圖，並勾選完成確認。');return;}
   if(g.kind==='sequence'&&(value.some(v=>!v)||new Set(value).size!==g.choices.length)){say('請將所有位置填完整，每個代號使用一次。');return;}
   if(g.kind==='code'&&value.some(v=>!v)){say('請為每個位置選好代號。');return;}
@@ -117,7 +120,7 @@ async function submitGroup(){const g=state.groups[index];let packet=pending.get(
   if(g.kind==='annotation'&&(!value.point||!value.arrow)){say('請先放置施力點並畫出箭頭。');return;}
   packet={version:state.version,groupId:g.id,requestId:crypto.randomUUID(),confirmed:g.kind==='mark'?true:undefined,responses:g.fields.map((f,i)=>({questionId:f.id,value:isManual(g)?structuredClone(value):g.kind==='sequence'?[...value]:structuredClone(value[i])}))};pending.set(g.id,packet);
  }
- busy=true;say('正在儲存這一組…');render();try{state=await api('/api/submit',packet);pending.delete(g.id);say(isManual(g)?'已保留作答，請依題目要求檢查；有官方參考時可供對照。':'已儲存這一組，可以看核對結果或繼續下一組。');}catch(e){say('儲存結果尚未確認：'+e.message+' 請用同一份答案重試。');}finally{busy=false;render();}
+ busy=true;say('正在儲存這一組…');render();try{state=await api('/api/submit',packet);pending.delete(g.id);say(isManual(g)?'已保留作答，請依題目要求檢查；有官方參考時可供對照。':'已儲存這一組，可以看核對結果或繼續下一組。');}catch(e){if(e.code==='invalid_response'){pending.delete(g.id);say('答案格式不符，尚未儲存。請修改答案後再送出。');}else say('儲存結果尚未確認：'+e.message+' 請用同一份答案重試。');}finally{busy=false;render();}
 }
 let restartRequest=null;
 $('#restart').addEventListener('click',async()=>{if(busy)return;busy=true;restartRequest??=crypto.randomUUID();try{state=await api('/api/reset',{requestId:restartRequest});restartRequest=null;drafts.clear();pending.clear();index=0;undo=[];arrowStart=null;say('');}catch(e){say(e.message);}finally{busy=false;render();}});

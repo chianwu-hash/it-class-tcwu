@@ -1,3 +1,11 @@
+# 2026-11-02 已正式發布：九年級 114 數學自動判分、113／114 合成聽力
+
+- 使用者授權測試後上線，已發布 `dpl_BRodWt7692Jov1i2y7sfZcAv9CJy`。114 數學 25 格、100 分；計算過程選填保存且不判分。英語依官方稿補製 25 段合成音訊，清楚標示非官方原音。
+- 真 PG 回滾、authenticated 真計時及媒體權限、25 格／25 段實際瀏覽器播放與保存、手機及非法格式修改重送均通過。Claude 唯讀兩輪，修正第一輪阻擋後無新阻擋。正式學生未代答。
+- 保留另一工作的新正式基準 `dpl_HNgV9o1A3A6Z3Q99qT2ECJTsTS5d` 的 29 個更新，799 檔底加 8 個功能覆蓋，最終 801 檔。修復共用 quiz-module 的 past-exam 分流；3／4／6 的檢查僅是合成九年級卷的共用載入器相容性。
+- 三份新版 immutable version 已啟用，舊版本保留。私有操作在主工作區 `tmp/zhongzheng-grade9-math-audio-20261102/`，禁止部署或提交其中內容。後續重查正式狀態，不重跑歷史 activate／rollback。
+- 詳 [數學與聽力發布紀錄](zhongzheng-grade9-math-audio-20261102.md)。本次獨立 worktree 分支為 `codex/zhongzheng-grade9-math-audio-20261102`。
+
 # 2026-11-02 已正式發布：三年級10卷解析與延伸
 
 - 使用者已授權驗證後上線，已完成正式登錄、啟用與切換；2026-11-02 15:37:01 臺北時間讀回。部署`dpl_BUr4rAR7wjyiSWPgDh2VeRoQVBbC`，來源仍以舊正式deployment為底加26runtime覆蓋，不部署整個工作樹。
