@@ -226,5 +226,6 @@ clone 不含 ignored 原 PDF、音圖、私有 bundle、原頁圖、凍結正式
 - [AI 自主審定及反證修正](past-exams-autoreview-20261101.md)
 - [改編聽力及部分抽聽回饋](past-exams-adapted-listening-20261101.md)
 - [全卷固定解析、重點與書商配題本機驗證](past-full-learning-local-20261101.md)
+- [三年級10卷固定解析與延伸內容包、缺項及驗證](past-grade3-learning-20261102.md)
 
 截至 2026-11-01 本次紀錄為 30 卷、49 不可變版本，20 份指定期中開放、10 份已製作期末未開放，原 26 缺稿暫停欄已明示改編處理。未來以當時正式查詢及任務範圍為準，不硬編碼這些數字。

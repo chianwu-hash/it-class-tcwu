@@ -10,7 +10,9 @@ export function validateLearningMap({bundle,map}){
  if(map.schema===2&&(!Array.isArray(entries)||entries.length!==bundle.document.groups.flatMap(g=>g.fields).length||new Set(map.concepts.map(c=>c.id)).size!==map.concepts.length))throw Error('learning_incomplete_coverage');
  for(const entry of entries){
   const group=bundle.document.groups.find(g=>g.id===entry.groupId),field=group?.fields.find(f=>f.id===entry.questionId);
-  if(!field||seen.has(field.id)||hash(field.answer)!==hash(entry.expectedAnswer)||typeof entry.explanation!=='string'||!entry.explanation.trim())throw Error('learning_source_question_mismatch');seen.add(field.id);
+  const selfCheck=['annotation','manual'].includes(group?.kind);
+  const answerMatches=field&&('answer' in field?hash(field.answer)===hash(entry.expectedAnswer):selfCheck&&entry.expectedAnswer===null&&entry.reference===field.reference);
+  if(!field||seen.has(field.id)||!answerMatches||typeof entry.explanation!=='string'||!entry.explanation.trim())throw Error('learning_source_question_mismatch');seen.add(field.id);
   if(map.schema===2&&entry.selfCheck!==['annotation','manual'].includes(group.kind))throw Error('learning_self_check_mismatch');
   const source=bundle.provenance.entries.find(p=>p.id===field.id);
   if(map.schema===1){
