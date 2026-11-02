@@ -23,7 +23,7 @@ function feedback(g,i,host){const r=state.records[g.id];if(!r||isManual(g))retur
 function renderPractice(){
  const host=$('#practice-progress'),p=state.practice;if(!host||!p)return;
  const box=el('div',undefined,'demo-note');
- const message=p.earnedByThisAttempt?'這次完整作答達標，開出1朵考古花。':p.flowerCount?'這份試卷已開出1朵考古花，可繼續練習，不重複領取。':p.complete?'這次作答已完成，尚未開花；可以重新作答再挑戰。':'完整作答達60%後開出1朵考古花；不同次答案不合併計算。';
+ const message=state.policy?.automaticPoints===0?'本卷採自我核對，作答會保存，不計自動成績與考古花。':p.earnedByThisAttempt?'這次完整作答達標，開出1朵考古花。':p.flowerCount?'這份試卷已開出1朵考古花，可繼續練習，不重複領取。':p.complete?'這次作答已完成，尚未開花；可以重新作答再挑戰。':'完整作答達60%後開出1朵考古花；不同次答案不合併計算。';
  box.append(el('strong',message));
  const details=el('details');details.append(el('summary',`歷次作答（${p.history.length}次）`));
  const wrap=el('div',undefined,'table-scroll'),table=el('table'),head=el('tr');for(const title of ['次數','成績','狀態','考古花'])head.append(el('th',title));table.append(head);
@@ -77,7 +77,7 @@ function render(){if(!active)return;
   const review=el('section',undefined,'past-learning-review');review.append(el('h3',explanation.selfCheck?'這題怎麼自我核對？':explanation.label?'第 '+explanation.label+' 欄怎麼想？':'這題怎麼想？'),el('p',explanation.text),el('p','補充解析由 AI 依題意整理，非官方解析。','helper'));
   if(typeof explanation.wrongReviewHref==='string'){
    const url=new URL(explanation.wrongReviewHref,location.origin);
-   if(url.origin===location.origin&&/\/grade[36]\/115-1\/quiz-library\.html$/.test(url.pathname)){
+   if(url.origin===location.origin&&/\/grade[3469]\/115-1\/quiz-library\.html$/.test(url.pathname)){
     const link=el('a','到我的錯題選重點、練習 →');link.href=url.href;review.append(link);
    }
   }right.append(review);

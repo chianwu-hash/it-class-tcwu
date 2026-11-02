@@ -1,6 +1,8 @@
 export const DEFAULT_COURSE_ID = "grade3-114-2";
 
 export const COURSE_DEFINITIONS = [
+    { id: "grade9-115-1", grade: "grade9", schoolYear: "115", semester: "1", label: "中正九年級 115 上", homeHref: "/grade9/115-1/index.html" },
+    { id: "grade4-115-1", grade: "grade4", schoolYear: "115", semester: "1", label: "土城四年級 115 上", homeHref: "/grade4/115-1/index.html" },
     {
         id: "grade3-114-2",
         grade: "grade3",
@@ -48,7 +50,7 @@ export function getCourseDefinition(courseId, fallback = DEFAULT_COURSE_ID) {
 
 export function inferCourseIdFromPath(pathname = globalThis.location?.pathname || "") {
     const normalizedPath = String(pathname || "").replaceAll("\\", "/").toLowerCase();
-    const nestedMatch = normalizedPath.match(/\/(grade[36])\/(\d{3}-[12])(?:\/|$)/);
+    const nestedMatch = normalizedPath.match(/\/(grade[3469])\/(\d{3}-[12])(?:\/|$)/);
     if (nestedMatch) {
         return normalizeCourseId(`${nestedMatch[1]}-${nestedMatch[2]}`);
     }

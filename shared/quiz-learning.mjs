@@ -2,7 +2,7 @@ import {createQuizRequest} from './quiz-api.mjs?v=20261102-learning';
 import {resolveSession,supabase} from './auth.js';
 const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 const page=document.querySelector('[data-learning-topics]');
-const grade=Number(document.body.dataset.grade||location.pathname.match(/grade([346])/u)?.[1]||3);
+const grade=Number(document.body.dataset.grade||location.pathname.match(/grade([3469])/u)?.[1]||3);
 const link=(file,extra={})=>'/grade'+grade+'/115-1/'+file+(Object.keys(extra).length?'?'+new URLSearchParams(extra):'');
 let session=await resolveSession(),generation=0,readVersion=0;
 const request=await createQuizRequest({getSession:()=>session});
@@ -36,7 +36,7 @@ async function topics(){
    const button=make('button',`練習這個重點（${c.count}題）`),note=make('p');button.type='button';note.setAttribute('role','status');let rid=null;
    button.onclick=async()=>{if(button.disabled)return;button.disabled=true;rid??=crypto.randomUUID();note.textContent='正在準備練習…';try{
     const r=await request('learning',{action:'start',mode:'review',attempt_id:d.attempt_id,version:d.version,concept_id:c.id,request_id:rid});if(g!==generation||uid!==session?.user?.id||!button.isConnected)return;
-    const url=new URL(r.url,location.origin);if(url.origin!==location.origin||!/^\/grade[346]\/115-1\/quiz\.html$/.test(url.pathname))throw Error('練習連結無效。');location.assign(url.href);
+    const url=new URL(r.url,location.origin);if(url.origin!==location.origin||!/^\/grade[3469]\/115-1\/quiz\.html$/.test(url.pathname))throw Error('練習連結無效。');location.assign(url.href);
    }catch(e){if(g===generation&&note.isConnected)note.textContent=e.message;}finally{if(g===generation&&button.isConnected)button.disabled=false;}};
    card.append(button,note);page.append(card);
   }
