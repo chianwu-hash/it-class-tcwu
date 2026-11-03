@@ -92,6 +92,17 @@ grep -r "activityKey\|activity_key" grade3/ grade6/
 
 若課程支援努力樹，新增打字活動時，同次更新 `shared/reward-tree-config.js` 對應課程的活動清單，核對 `courseId`、`weekCode`、`activityKey`、`totalLevels` 與 `pageHref`。後台有完成紀錄不代表努力樹已收錄；即使週頁沒有努力樹入口，仍須完成這項設定。作業／閱讀沿用動態 adapter，不改為靜態活動設定。三年級 115-1 的 `guest_progress` 尚未支援努力樹，維持既有例外。
 
+### 每週任務與升級目錄必須同次交付（2026-11-03）
+
+新增或修改任何支援努力樹的每週任務，都必須同次同步前端活動設定與正式資料庫的 `garden_reward_catalog`；不能只部署週頁或更新 `reward-tree-config.js`。適用於已接 Google 正式進度的三年級與六年級，不能依下方歷史課堂身分卡敘述跳過。
+
+1. 核對正式頁／adapter 的課程、週碼、活動鍵、類型、總關卡數及 `rewardMode`，更新前端設定。
+2. 執行 `node automation/build-garden-catalog.mjs`，審核產生的 `supabase/garden-catalog.sql` 差異；以受保護遷移套用對應正式專案。
+3. **產生或提交 SQL 不等於已套用正式資料庫。** 保留套用結果與前後比對證據，不修改學生原有進度、花葉或首次成長已讀狀態。
+4. 作業、閱讀、考古花與基礎打字里程碑沿用既有動態蒐集器，不重複登錄為週活動；新增這類來源時也要驗證升級端能收錄。
+
+案例：[第 10 週漏列導致無法升級](effort-garden-catalog-fix-20261103.md)。前端顯示達標而升級端漏算是系統缺陷，不能要求學生重做或反覆登入。
+
 ### 絕對不可以做的事
 
 | 禁止行為 | 正確做法 |
@@ -267,6 +278,17 @@ const classCardAuth = initClassCardAuth({ courseId: "grade3-115-1", mode: "requi
 21. 用教師帳號登入 `admin-progress.html`，確認此週此活動出現在進度清單
 
 ---
+
+## 上線前必要檢查：努力樹升級目錄
+
+有新增／修改努力樹任務的發布，以下任一項未通過就不能宣稱完成上線：
+
+- [ ] 以待發布來源與正式資料庫比對；執行 `node automation/audit-garden-catalog.mjs <snapshot-dir>`，缺項與設定差異為零。不能只查已完成任務或以本機舊設定作準。
+- [ ] 已確認目錄遷移實際套用到正確正式專案；發布後以正式網站來源再核對一次，保留比對與套用結果。
+- [ ] 隔離情境驗證未達標不升級、達標後進入努力樹自動升級並播放主場景成長動畫；既有花葉與來源保留，重整不重複播放首次動畫，仍可手動重播。
+- [ ] 真正學生首次體驗未被測試消耗；不可為驗收永久寫入其成長已讀狀態。
+
+完整流程見 [新頁面檢查表](new-page-checklist.md) 的「努力樹任務目錄同步」。
 
 ## 階段 4：上課前 Smoke Test（上課前 15 分鐘）
 
