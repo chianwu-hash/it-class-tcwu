@@ -1,6 +1,7 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs/promises';import os from 'node:os';import path from 'node:path';
 import {runPreflight,PROJECT,SOURCES} from '../../release/garden-preflight.mjs';
 import {expectedCatalog,compareCatalog} from '../../release/garden-catalog.mjs';
+import {prepareGardenRelease} from '../prepare-garden-release.mjs';
 async function fixture(fn){const root=await fs.mkdtemp(path.join(os.tmpdir(),'garden-gate-'));try{
  await fs.mkdir(root+'/shared');await fs.writeFile(root+'/shared/reward-tree-config.js',`export function getRewardTreeCourses(){return [{id:'grade3-115-1',activities:[{weekCode:'10',activityKey:'typing_task_5',type:'typing',totalLevels:5}]}]}`);
  await fs.writeFile(root+'/shared/typing-foundation-curriculum.mjs',`export const lessons=[{key:'english_01'}]`);await fs.writeFile(root+'/shared/zhuyin-foundation-curriculum.mjs',`export const zhuyinLessons=[{key:'zhuyin_01'}]`);
@@ -25,3 +26,12 @@ test('wrong project, stale response, empty and duplicate data fail closed',()=>f
 }));
 test('retired historical definitions do not remove rewards or block new valid source',()=>fixture(async(root,catalog)=>{const r=compareCatalog(catalog,[...catalog,{...catalog[0],activity_key:'retired'}]);assert(r.passed);assert.equal(r.retainedHistorical.length,1)}));
 test('checked-in cloud configuration runs the gate before serving static files',async()=>{const config=JSON.parse(await fs.readFile(new URL('../../vercel.json',import.meta.url),'utf8'));assert.equal(config.buildCommand,'node release/garden-preflight.mjs');assert.equal(config.outputDirectory,'.');assert.equal(config.builds,undefined)});
+test('frozen release packaging preserves routing and source bytes while installing cloud gate',()=>fixture(async(root,catalog)=>{
+ const config={headers:[{source:'/api/(.*)',headers:[{key:'X-Test',value:'yes'}]}],rewrites:[{source:'/old',destination:'/index.html'}]};await fs.writeFile(root+'/vercel.json',JSON.stringify(config));
+ const source=await fs.readFile(root+'/shared/reward-tree-config.js');await prepareGardenRelease(root,{fetcher:async()=>response(catalog)});
+ const next=JSON.parse(await fs.readFile(root+'/vercel.json'));assert.deepEqual(next.headers,config.headers);assert.deepEqual(next.rewrites,config.rewrites);assert.equal(next.buildCommand,'node release/garden-preflight.mjs');assert.deepEqual(await fs.readFile(root+'/shared/reward-tree-config.js'),source);await fs.access(root+'/release/garden-preflight.mjs');
+}));
+test('invalid catalogue or conflicting build config prevents packaging changes',()=>fixture(async(root,catalog)=>{
+ await assert.rejects(prepareGardenRelease(root,{fetcher:async()=>response(catalog.slice(1))}),/未通過/);await assert.rejects(fs.access(root+'/vercel.json'));
+ await fs.writeFile(root+'/vercel.json',JSON.stringify({buildCommand:'existing-build'}));await assert.rejects(prepareGardenRelease(root,{fetcher:async()=>response(catalog)}),/不能覆蓋/);assert.equal(JSON.parse(await fs.readFile(root+'/vercel.json')).buildCommand,'existing-build');
+}));

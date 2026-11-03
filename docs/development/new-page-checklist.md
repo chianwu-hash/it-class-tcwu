@@ -2,6 +2,8 @@
 
 ## 努力樹任務目錄同步（2026-11-03 補強）
 
+- [ ] 雲端建置自動執行 `release/garden-preflight.mjs` 並通過；若使用凍結發布包，先跑 `automation/prepare-garden-release.mjs <發布包路徑>`。漏項、設定差異或正式目錄讀取失敗必須阻擋發布，不能以人工勾選取代。流程見 [自動發布關卡](garden-release-gate-20261103.md)。
+
 - [ ] 新增／修改計葉或開花活動時，核對正式頁的 `courseId`、`weekCode`、`activityKey`、總關卡數及 `rewardMode`，同步 `reward-tree-config.js`。
 - [ ] 執行 `node automation/build-garden-catalog.mjs` 產生 SQL；**產生檔案不代表已套用正式資料庫**。審核新增／差異列後，用受保護遷移同步 `garden_reward_catalog`。
 - [ ] 以正式來源快照與資料庫匯出執行 `node automation/audit-garden-catalog.mjs <snapshot-dir>`；缺項與設定差異必須為零。目錄稽核不能只比學生已完成的活動。

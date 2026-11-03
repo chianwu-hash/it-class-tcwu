@@ -662,6 +662,8 @@ navbar.js?v=YYYYMMDD
 
 ### 9.5 同步努力樹升級任務目錄（必做）
 
+發布已啟用雲端自動比對：`node release/garden-preflight.mjs` 檢查實際待發布設定與正式資料庫，漏項／不一致／無法查核就使建置失敗。凍結包必須先執行 `node automation/prepare-garden-release.mjs <發布包路徑>`；不得覆寫建置指令或用 `--prebuilt` 跳過。完整契約與真正成功／失敗預覽證據見 [發布自動阻擋](garden-release-gate-20261103.md)。
+
 新增／修改可計葉或開花的每週活動，除了首頁、navbar 與教師後台，也要同次更新前端 `shared/reward-tree-config.js` 和資料庫 `garden_reward_catalog`。核對課程、週碼、活動鍵、類型、總關卡數與魔王模式；不能只更新 HTML 或前端設定。
 
 執行 `node automation/build-garden-catalog.mjs` 後，審核 SQL 差異並以受保護遷移套用正式資料庫。**產生 SQL、commit 或部署週頁都不代表目錄已同步。** 動態獎勵來源沿用原蒐集器，不能重複加成週活動。

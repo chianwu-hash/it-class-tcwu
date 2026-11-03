@@ -281,6 +281,8 @@ const classCardAuth = initClassCardAuth({ courseId: "grade3-115-1", mode: "requi
 
 ## 上線前必要檢查：努力樹升級目錄
 
+**已接自動阻擋**：Vercel 專案與 `vercel.json` 的 Build Command 為 `node release/garden-preflight.mjs`。每次雲端來源建置都直接比對本次發布設定與正式資料庫；漏項、設定差異或讀取失敗會 exit 1，不能發布。凍結來源包在 deploy 前執行 `node automation/prepare-garden-release.mjs <發布包路徑>`，檢查通過才安裝雲端檢查檔案。詳 [自動發布關卡與實測證據](garden-release-gate-20261103.md)；不得用舊通過紀錄、`--prebuilt` 或覆寫建置指令跳過。
+
 有新增／修改努力樹任務的發布，以下任一項未通過就不能宣稱完成上線：
 
 - [ ] 以待發布來源與正式資料庫比對；執行 `node automation/audit-garden-catalog.mjs <snapshot-dir>`，缺項與設定差異為零。不能只查已完成任務或以本機舊設定作準。
