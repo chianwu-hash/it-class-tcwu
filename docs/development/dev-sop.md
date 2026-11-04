@@ -288,7 +288,7 @@ const classCardAuth = initClassCardAuth({ courseId: "grade3-115-1", mode: "requi
 1. **來源只能是 `main`**：部署目錄必須是 `main` 某個 commit 的乾淨 checkout（`git status --porcelain` 為空）。功能分支先經 PR 合併進 `main` 才能發布。不再從凍結發布包、功能分支、主工作區或任何有未 commit 修改的目錄部署。
 2. **先登記、一次一個**：發布前在 [agent-handoff.md](agent-handoff.md) 頂部「發布登記」新增一列，狀態填「發布中」，寫明 agent、開始時間、`main` commit、基準正式部署 ID、預期變更檔。表上已有別人「發布中」就不得部署或 promote，先問使用者；不得自行把別人的登記改成完成或放棄。
 3. **確認基準**：用 Vercel API 查當下正式部署（`/v9/projects/it-class-tcwu` 的 `targets.production.id`），下載檔案樹（`/v6/deployments/<id>/files`），執行 `node automation/release-tree-diff.mjs --tree <正式樹.json> --ref main`。`different`／`missing` 必須只有本次預期變更；若正式版有 `main` 沒有的內容，**停止**，先把正式版檔案補進 `main`（可用 `automation/release-fetch-files.mjs` 依 SHA1 下載），再重來。
-4. **部署候選版**：在乾淨 checkout 執行 `vercel deploy --prod --skip-domain --yes`（Build Command 會自動跑努力樹與課本排除關卡）。GitHub 自動觸發的預覽會因課本資料夾被擋，不能當作發布依據；一律用 CLI 上傳。
+4. **部署候選版**：在乾淨 checkout 執行 `vercel deploy --prod --skip-domain --yes`（Build Command 會自動跑努力樹與課本排除關卡）。GitHub 自動觸發的預覽會因課本資料夾被擋，不能當作發布依據；一律用 CLI 上傳。`vercel.json` 已設 `git.deploymentEnabled.main: false`，push 或合併到 `main` 不會自動部署正式站（2026-11-04 PR #1 合併時曾自動觸發一次正式部署，建置失敗、正式網址未受影響，之後關閉）；不得移除這項設定。
 5. **promote 前比對完整檔案樹**：下載候選版檔案樹，執行
    `node automation/quiz-release-compare.mjs <正式樹.json> <候選樹.json> <預期修改檔...> --added <新檔,…> --removed <刪除檔,…> --eol-dir <部署目錄>`，
    必須 `ok: true`：新增、刪除、修改都剛好是宣告的檔案，沒有多也沒有少。這是唯一的驗收結果，不另做人工放行。接著再查一次 `targets.production.id`，必須仍是第 3 步的基準 ID；不同代表有人在你之後發布，回到第 3 步。
