@@ -55,10 +55,14 @@ export function realEnv({ cwd = process.cwd(), globalConfig = process.env.VERCEL
     aliasTarget: () => api(`/v4/aliases/${ALIAS}`).deploymentId,
     tree: id => api(`/v6/deployments/${id}/files`),
     deployCandidate: () => {
-      const out = vercel('deploy', '--prod', '--skip-domain', '--yes');
+      // CLI normally writes only the URL to stdout. Request structured output so the ID is reliable.
+      const out = vercel('deploy', '--prod', '--skip-domain', '--yes', '--json');
       const id = out.match(/"id":\s*"(dpl_[A-Za-z0-9]+)"/)?.[1] || out.match(/dpl_[A-Za-z0-9]+/)?.[0];
       if (!id) fail('could not read the candidate deployment id from vercel deploy output');
       if (/"readyState":\s*"(ERROR|CANCELED)"/.test(out) || /"status":\s*"error"/.test(out)) fail(`candidate ${id} failed to build`);
+      const info = api(`/v13/deployments/${id}`);
+      if (info.projectId !== 'prj_eJ1qle57xyilS5MKy6ZS6OuYtyFb' || info.target !== 'production' || info.readyState !== 'READY')
+        fail(`candidate ${id} is not a READY production-target deployment of ${PROJECT}`);
       return id;
     },
     promote: id => vercel('promote', id, '--yes'),
