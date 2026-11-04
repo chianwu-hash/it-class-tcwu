@@ -27,7 +27,7 @@ async function update(session){
   ensureEntryStyle();
   const section=document.createElement('section');section.dataset.partnerPilotEntry='main';section.className='panel';
   const title=document.createElement('h2');title.textContent='夥伴練功';
-  const description=document.createElement('p');description.textContent='有人陪，一起想。指定帳號測試中，紀念葉花另存。';
+  const description=document.createElement('p');description.textContent='有人陪，一起想。2～4人一起練，達標的紀念葉花直接長在努力樹。';
   section.append(title,description);
   const actions=document.createElement('div');actions.className='partner-entry-actions';
   for(const [text,params] of [['找夥伴一起練',{}],['接續夥伴練功',{view:'resume'}]]){const a=document.createElement('a');a.textContent=text;a.className='paper-start'+(params.view?' partner-entry-resume':'');a.href=href(params);actions.append(a);}

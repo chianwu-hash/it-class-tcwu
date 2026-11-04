@@ -105,6 +105,13 @@ export function deriveRewardTreeModel(progressRows, activities) {
             updated_at: ""
         };
 
+        if(activity.type==='partner-leaf'||activity.type==='partner-flower'){
+            const flower=activity.type==='partner-flower',earned=row.completed===true;
+            const reward=createReward({kind:flower?'flower':'quiz-leaf',source:row,activity,index:1,total:1,earned,href:activity.pageHref});
+            reward.sourceType='partner';reward.title=activity.label+(flower?' 夥伴紀念花':' 夥伴紀念葉');reward.reason='一起完成題組與共同回顧，全組達60%，訂正也算進步。';
+            reward.detail=(activity.partnerRecord?.team||'我們的小隊')+'｜'+(activity.partnerRecord?.stories||[]).map(s=>s.name).join('、')+'。同題同組不重複，換夥伴可再一起練。';reward.score=null;
+            (earned?rewards:pendingRewards).push(reward);return;
+        }
         if (activity.type === 'past-exam-flower') {
             const earned=row.completed===true;
             const reward=createReward({kind:'flower',source:row,activity,index:1,total:1,earned});
