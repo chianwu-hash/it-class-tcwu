@@ -55,7 +55,7 @@ function configure(next){
   hideRestBubble();
   policy.reset();policy.weather(atmosphere.scene);policy.configure(data);
   transition?.();stopSound();beginLoad();key=nextKey;
-  frame.src='/garden/'+(pet==='cat'?'scene-cat.html':'scene-pets.html')+'?species='+pet+'&home='+home+'&load='+loadVersion;
+  frame.src='/garden/'+(pet==='cat'?'scene-cat.html':'scene-pets.html')+'?v=20261102-milestones&species='+pet+'&home='+home+'&load='+loadVersion;
  }else sync();
  publishCompanion();return api.snapshot();
 }

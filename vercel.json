@@ -1,10 +1,4 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "node release/garden-preflight.mjs",
-  "outputDirectory": ".",
-  "git": {
-    "deploymentEnabled": {
-      "codex/vercel-textbook-publisher-fix-20261104": false
-    }
-  }
+  "outputDirectory": "."
 }

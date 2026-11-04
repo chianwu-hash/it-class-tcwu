@@ -1,4 +1,5 @@
-import { renderEnglishKeyboardGuide } from '../../../shared/typing-tools.js?v=20260922';
+import {initFoundationMapRewards,decorateFoundationLesson} from '../../../shared/typing-foundation-map-rewards.mjs?v=20261102-icons';
+import { createFoundationKeyboard } from './foundation-keyboard.mjs?v=20261102-layout';
 import { generateExercise } from './exercises.mjs?v=20261002-course';
 import { getPolicy, evaluateAttempt, createClock } from './grading.mjs?v=20261002-course';
 import { createTypingFingerGuide, fingerLabel, physicalKey, needsShift } from '../../../shared/typing-finger-guide.mjs?v=20261002-course';
@@ -24,6 +25,7 @@ document.querySelector('.heading .eyebrow').textContent=`小小打字探險家 �
 document.querySelector('.subtitle').textContent=lesson.description;
 document.querySelector('.journey > .eyebrow').textContent=`${lessonName}的 6 個小步驟`;
 document.querySelector('.overline').textContent='照順序輸入，注意大小寫；␣ 代表空白鍵';
+document.querySelector('.keyboard-heading span').textContent='標準鍵盤・手指回到 F、J';
 document.querySelector('.keyboard-heading small').textContent='依題目大小寫輸入；Shift 用另一手';
 document.querySelector('.badge').textContent=window.foundationConfig?'英打十二關':'十二關本機試玩';
 $('tree-note').textContent=`完成${lessonName}，長出一片葉子。`;
@@ -49,7 +51,11 @@ function updateFingerVisibility() {
   $('finger-guide').hidden=!visible;
   $('target-line').hidden=isChallenge() && !visible;
 }
-const speedText = value => (Math.floor(value * 10) / 10).toFixed(1);
+// Convert only the display; grading and cloud records retain their WPM values.
+const speedText = value => String(Math.floor(value * 50) / 10);
+const speedDescription = value => `每分鐘打對 ${speedText(value)} 個字元`;
+$('speed').parentElement.firstChild.textContent='每分鐘打對 ';
+document.querySelector('.stats small').textContent=' 個字元';
 const cloudConfig = window.foundationConfig;
 let cloud = null, cloudStarted = false, transitioning = false, savedCheckpoint = 0, savedCompleted = false;
 let reviewing = false, saving = false, switchDialog = false;
@@ -57,13 +63,16 @@ let courseRecords=[];
 const courseMap=document.createElement('details');courseMap.className='course-map';
 courseMap.innerHTML='<summary>十二關學習地圖（選擇關卡）</summary><div class="course-links"></div><p>依序解鎖；已過關可重練。每關一片葉子，不重複領取。</p>';
 document.querySelector('.layout').before(courseMap);
+initFoundationMapRewards(courseMap,'english');
 function renderCourseMap(){
+  if(cloudConfig&&cloud)cloudConfig.onProgress?.(courseRecords);
   const container=courseMap.querySelector('.course-links');container.replaceChildren();
   lessons.forEach((item,index)=>{
     const done=courseRecords.some(r=>r.lesson_key===item.key&&r.completed);
     const unlocked=!cloudConfig||lessons.slice(0,index).every(l=>courseRecords.some(r=>r.lesson_key===l.key&&r.completed));
     const button=document.createElement('button');button.type='button';button.className='quiet';
     button.textContent=`${done?'✓':unlocked?'':'🔒'} ${item.number}. ${item.title}`;
+    decorateFoundationLesson(button,{track:'english',lesson:item,records:courseRecords});
     button.disabled=!unlocked||saving||transitioning;
     if(item.key===lesson.key)button.setAttribute('aria-current','page');
     button.onclick=async()=>{if(!await canSwitchPractice())return;const url=new URL(location.href);url.searchParams.set('lesson',item.key);location.href=url.href;};
@@ -84,9 +93,9 @@ function earnLeaf() {
 function updatePolicy() {
   policy = getPolicy($('grade').value, $('grade').value === '6' && $('starter').checked,lesson);
   $('starter-label').hidden = $('grade').value !== '6';
-  $('starter-label').lastChild.textContent=` 初學起步：${lesson.starterSpeed} WPM`;
-  $('goal-rule').textContent = `初練 90% · 過關 95%＋${policy.speed} WPM，連續兩次`;
-  $('policy-note').textContent = `初練不限速度；綜合挑戰 95%＋${policy.speed} WPM，連續兩組新題達標。精進目標：95%＋${policy.stretchSpeed} WPM。`;
+  $('starter-label').lastChild.textContent=` 初學起步：${speedDescription(lesson.starterSpeed)}`;
+  $('goal-rule').textContent = `初練正確率 90% · 過關正確率 95%＋${speedDescription(policy.speed)}，連續兩次`;
+  $('policy-note').textContent = `初練不限速度；綜合挑戰正確率 95%＋${speedDescription(policy.speed)}，連續兩組新題達標。字母、空白和標點都算一個字元。精進目標：正確率 95%＋${speedDescription(policy.stretchSpeed)}。`;
 }
 function assessment() {
   return evaluateAttempt({correct, errors, elapsedMs:clock.elapsed(), challenge:isChallenge(), interrupted, policy});
@@ -102,26 +111,7 @@ $('grade').addEventListener('change', updatePolicy);
 $('starter').addEventListener('change', updatePolicy);
 updatePolicy();
 
-renderEnglishKeyboardGuide($('keyboard'), { target: 'fj' });
-const keyboardRows = $('keyboard').querySelectorAll('.typing-letter-row');
-const semicolon = document.createElement('kbd');
-semicolon.className = 'typing-letter-key'; semicolon.dataset.key = ';';
-semicolon.innerHTML = '<span>;</span><small>;</small>';
-keyboardRows[1].append(semicolon);
-const space = document.createElement('kbd');
-space.className = 'typing-letter-key space-key'; space.dataset.key = ' ';
-space.textContent = '空白鍵';
-$('keyboard').querySelector('.typing-letter-keyboard').append(space);
-const keyboardRoot=$('keyboard').querySelector('.typing-letter-keyboard');
-const addKey=(row,key,label=key)=>{const el=document.createElement('kbd');el.className='typing-letter-key';el.dataset.key=key;el.textContent=label;row.append(el);};
-const numberRow=document.createElement('div');numberRow.className='typing-letter-row';
-for(const key of '`1234567890-=')addKey(numberRow,key);
-keyboardRoot.prepend(numberRow);
-for(const key of '[]\\')addKey(keyboardRows[0],key);
-addKey(keyboardRows[1],"'");
-for(const key of ',./')addKey(keyboardRows[2],key);
-const shiftRow=document.createElement('div');shiftRow.className='typing-letter-row';
-addKey(shiftRow,'ShiftLeft','左 Shift');addKey(shiftRow,'ShiftRight','右 Shift');keyboardRoot.append(shiftRow);
+createFoundationKeyboard($('keyboard'));
 const keyElements = [...$('keyboard').querySelectorAll('[data-key]')];
 keyElements.forEach(el => {
   el.classList.toggle('home-key', 'asdfghjkl;'.includes(el.dataset.key));
@@ -226,7 +216,7 @@ async function begin() {
   $('finger-controls-note').textContent = isChallenge() ? '挑戰預設不提示，需要時可開啟。' : '從自己上方看雙手';
   updateFingerVisibility();
   $('attempt-rule').textContent = isChallenge()
-    ? `過關挑戰：95%＋${policy.speed} WPM · 連續達標 ${confirmations}/2。按第一個字開始計時，暫停或切分頁後本次只作練習。`
+    ? `過關挑戰：正確率 95%＋${speedDescription(policy.speed)} · 連續達標 ${confirmations}/2。按第一個字開始計時，暫停或切分頁後本次只作練習。`
     : '初練：正確率達 90% 即可前進，速度只供參考。按第一個字開始計時。';
   mode = 'playing'; show('exercise'); draw();
   startTicker();
@@ -243,7 +233,7 @@ function finish() {
     $('result-icon').textContent=score.passed ? '✓' : '↻';
     $('result-title').textContent=`${stages[stage].title}，重練完成！`;
     $('result-text').textContent='原本的過關成果保留；本次重練不改變進度，也不重複領取努力樹成果。';
-    $('result-stats').textContent=`本次：正確 ${correct} 次 · 按錯 ${errors} 次 · 正確率 ${Math.floor(score.accuracy)}% · ${speedText(score.wpm)} WPM · ${$('time').textContent}`;
+    $('result-stats').textContent=`本次：正確 ${correct} 次 · 按錯 ${errors} 次 · 正確率 ${Math.floor(score.accuracy)}% · ${speedDescription(score.wpm)} · ${$('time').textContent}`;
     $('continue').textContent='再練一次 →'; $('retry').hidden=false; $('retry').textContent='回到目前進度';
     $('continue').disabled=$('retry').disabled=false;
     steps(); show('result'); $('continue').focus(); return;
@@ -260,13 +250,13 @@ function finish() {
   $('result-title').textContent = final ? `${lessonName}過關，打得準也打得順！` : isChallenge() && passed ? '第一次達標！再換一組確認' : passed ? `${stages[stage].title}，完成！` : '練習完成，換一組再試';
   const reasons = [];
   if (!score.accuracyPassed) reasons.push(`正確率還需要達到 ${isChallenge() ? 95 : 90}%。${weakest ? `先練練 ${displayKey(weakest)}。` : ''}`);
-  if (!score.speedPassed) reasons.push(`速度目標為 ${policy.speed} WPM；這次是 ${speedText(score.wpm)} WPM。`);
+  if (!score.speedPassed) reasons.push(`這次${speedDescription(score.wpm)}，目標是${speedDescription(policy.speed)}，再練一次！`);
   if (!score.eligible) reasons.push('這次曾暫停或離開頁面，保留練習結果，下一組重新做速度確認。');
   $('result-text').textContent = final
-    ? `兩組不同題目都達到 95%＋${policy.speed} WPM，這片葉子記下你的努力。${score.wpm >= policy.stretchSpeed ? '也達到精進目標了！' : `接著可以朝 ${policy.stretchSpeed} WPM 精進。`}`
+    ? `兩組不同題目都達到正確率 95%＋${speedDescription(policy.speed)}，這片葉子記下你的努力。${score.wpm >= policy.stretchSpeed ? '也達到精進目標了！' : `接著可以朝${speedDescription(policy.stretchSpeed)}精進。`}`
     : isChallenge() && passed ? '已連續達標 1/2。再完成一組不同題目，就能確認本關過關。'
     : passed ? '你仔細跟著按鍵前進，現在準備讓下一組手指加入。' : `${reasons.join(' ')}${isChallenge() ? '連續達標重新從 0/2 開始，只重練綜合挑戰。' : '只重練這一段就好。'}`;
-  $('result-stats').textContent = `本次：正確 ${correct} 次 · 按錯 ${errors} 次 · 正確率 ${Math.floor(score.accuracy)}% · ${speedText(score.wpm)} WPM · ${$('time').textContent}${isChallenge() ? ` · 連續達標 ${confirmations}/2${bestWpm ? ` · 95%以上最佳速度 ${speedText(bestWpm)} WPM` : ''}` : ''}`;
+  $('result-stats').textContent = `本次：正確 ${correct} 次 · 按錯 ${errors} 次 · 正確率 ${Math.floor(score.accuracy)}% · ${speedDescription(score.wpm)} · ${$('time').textContent}${isChallenge() ? ` · 連續達標 ${confirmations}/2${bestWpm ? ` · 正確率 95%以上的最佳速度：${speedDescription(bestWpm)}` : ''}` : ''}`;
   $('continue').textContent = final ? (lesson.number<12?'前往下一關 →':'十二關完成，繼續精進 →') : isChallenge() ? '換一組綜合題 →' : passed ? `下一段：${stages[stage + 1].title} →` : '換新題，再試一次 →';
   $('retry').hidden = !passed || isChallenge();
   $('retry').textContent='再練這一段';

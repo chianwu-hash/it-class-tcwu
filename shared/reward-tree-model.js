@@ -31,6 +31,8 @@ function createReward({ kind, source = {}, activity, index, total, earned = true
     return {
         id: `${getActivityId(activity.weekCode, activity.activityKey, activity.courseId)}:${kind}:${index}`,
         kind,
+        sourceType: activity.sourceType || '',
+        track: activity.track || '',
         earned,
         href,
         courseId: activity.courseId || source.course_id || "",
@@ -123,6 +125,15 @@ export function deriveRewardTreeModel(progressRows, activities) {
             reward.reason=earned ? '完成整套操作練習，長出一片葉子。' : '完成整套操作練習，就能長出一片葉子。';
             reward.detail='同一活動只計一次；重練不會重複增加。';
             (earned ? rewards : pendingRewards).push(reward);
+            return;
+        }
+        if (activity.type === 'foundation-milestone') {
+            const earned=row.completed===true;
+            const reward=createReward({kind:'flower',source:row,activity,index:1,total:1,earned,href:earned?'':activity.pageHref});
+            reward.title=`${activity.label} ${earned?'里程碑花':'尚未完成的里程碑花'}`;
+            reward.reason=earned?'完成一段完整技能，開出一朵里程碑花。':'完成這個階段所有大關，就能開出里程碑花。';
+            reward.detail=`已完成 ${Math.min(activity.requiredLessons,Number(row.score)||0)}／${activity.requiredLessons} 大關；重練不重複增加，教師重設後依目前成果回算。`;
+            (earned?rewards:pendingRewards).push(reward);
             return;
         }
         if (activity.type === 'foundation') {

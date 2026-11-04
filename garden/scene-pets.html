@@ -118,7 +118,7 @@
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
-  var earnedLeaves=[],earnedFlowers=[],pendingLeaves=[],pendingFlowers=[],petUnlocked=false,localNight=false,homeVisible=false,requestedRest=false,lastPetState='';
+  var rewardColors=null,rewardColorMode="source";var earnedLeaves=[],earnedFlowers=[],pendingLeaves=[],pendingFlowers=[],petUnlocked=false,localNight=false,homeVisible=false,requestedRest=false,lastPetState='';
   var surprise=null,surpriseAssets=null;
   var V2 = window.GardenPetsV2, P = window.GardenPetsHomesV6, W18 = window.GardenWeatherV18, R = window.GardenRainV18;
   var audio=new window.GardenThunderAudioV18();
@@ -273,14 +273,16 @@
       ctx.beginPath(); ctx.moveTo(p.anchor[0], p.anchor[1]); ctx.lineTo(p.x, p.y); ctx.stroke();
       ctx.translate(p.x, p.y); ctx.rotate(p.angle); ctx.scale(.85, .85);
       var g = ctx.createRadialGradient(-4, -3, 1, 0, 0, 17);
-      if (quiz) { g.addColorStop(0, '#92e0d3'); g.addColorStop(.55, '#39a9a3'); g.addColorStop(1, '#247b82'); }
+      var palette=rewardColors&&rewardColors.rewardPalette(earnedLeaves[i],rewardColorMode);
+      if(palette){palette.leaf.forEach(function(color,index){g.addColorStop(index/2,color)})}
+      else if (quiz) { g.addColorStop(0, '#92e0d3'); g.addColorStop(.55, '#39a9a3'); g.addColorStop(1, '#247b82'); }
       else { g.addColorStop(0, '#bbdf80'); g.addColorStop(.55, '#6fb14f'); g.addColorStop(1, '#3a7d47'); }
       ctx.fillStyle = g;
       ctx.beginPath(); ctx.moveTo(-14, 0); ctx.bezierCurveTo(-5, -12, 10, -10, 14, 0); ctx.bezierCurveTo(6, 11, -5, 10, -14, 0); ctx.fill(); ctx.restore();
     });
     layout[tree].flowers.slice(0, earnedFlowers.length).forEach(function (p,i) {
       if(!earnedFlowers[i])return;ctx.save(); ctx.strokeStyle = '#638044'; ctx.lineWidth = 1.1; ctx.beginPath(); ctx.moveTo(p.anchor[0], p.anchor[1]); ctx.lineTo(p.x, p.y); ctx.stroke();
-      var flower=earnedFlowers[i].sourceType==='past_exam'?imgs.pastFlower:imgs.flower;if(flower)ctx.drawImage(flower,p.x-17,p.y-17,34,34);else window.GardenAssetStatus.flowerPlaceholder(ctx,p.x,p.y,34); ctx.restore();
+      var flower=earnedFlowers[i].sourceType==='past_exam'?imgs.pastFlower:imgs.flower;if(rewardColors&&rewardColors.paintSourceFlower(ctx,p.x,p.y,34,earnedFlowers[i],rewardColorMode)){}else if(flower)ctx.drawImage(flower,p.x-17,p.y-17,34,34);else window.GardenAssetStatus.flowerPlaceholder(ctx,p.x,p.y,34); ctx.restore();
     });
   }
   function drawPendingRewards(){
@@ -489,6 +491,7 @@
     loadJson(V3_ROOT + 'manifest.json').then(function (m) { v3m = m; }).catch(function () { v3m = null; }),
     loadJson(DIAG_ROOT + 'manifest.json').then(function (m) { diagM = m; }).catch(function () { diagM = null; }),
     loadJson('./assets/processed/full-tree-v12/layout.json').then(function (j) { layout = j; }).catch(function () {}),
+    import('/shared/reward-source-colors.mjs').then(function(m){rewardColors=m}),
     loadImage('/assets/reward-tree/flowers/flower-forest.png').then(function(im){imgs.pastFlower=im}).catch(function(){assetStatus.report("past-flower","考古花圖片暫時無法顯示，成果仍完整保留。",false)}),
     loadImage('./assets/processed/motion-web/flower.webp').then(function (im) { imgs.flower = im; }).catch(function () {assetStatus.report('flower','部分花朵圖片暫時無法顯示，成果仍完整保留。',false)}),
     loadJson(HOME_ROOT + 'manifest.json').then(function (m) { homesM = m; return loadHomes(); }).catch(function () { homesM = null; homeError = '尚無 manifest'; })
@@ -518,13 +521,13 @@
       if(result.ok){ctrl.reset();draw()}return result;
     },
     setCompanionControl:function(c){var changed=requestedRest!==!!c.rest;homeVisible=c.homeVisible===true;requestedRest=c.rest===true;if(ctrl){ctrl.setWeather(shelterWeather());if(c.initial&&requestedRest){ctrl.setReduced(true);ctrl.setReduced(reduceBox.checked)}else if(changed&&reduceBox.checked){ctrl.setReduced(false);ctrl.setReduced(true)}}draw();return this.snapshot()},
-    configure:function(data){earnedLeaves=(data.leaves||[]).slice(0,96);earnedFlowers=(data.flowers||[]).slice(0,24);pendingLeaves=(data.pendingLeaves||[]).slice(0,8);pendingFlowers=(data.pendingFlowers||[]).slice(0,2);petUnlocked=data.petUnlocked===true;setFlowerPalette(data.flowerStyle);setTree(data.treeSkin);draw();return this.snapshot()},
+    configure:function(data){rewardColorMode=data.rewardColorMode==='custom'?'custom':'source';earnedLeaves=(data.leaves||[]).slice(0,96);earnedFlowers=(data.flowers||[]).slice(0,24);pendingLeaves=(data.pendingLeaves||[]).slice(0,8);pendingFlowers=(data.pendingFlowers||[]).slice(0,2);petUnlocked=data.petUnlocked===true;setFlowerPalette(data.flowerStyle);setTree(data.treeSkin);draw();return this.snapshot()},
     setAtmosphere:function(scene,isDay){localNight=!isDay;return setWeather(scene==='day'?(isDay?'day':'night'):scene)},
     changeTreeSkin:function(k){setTree(k);return Promise.resolve(k)},
     get ready() { return pageReady && !!ctrl; },
     snapshot: function () {
       return { sky:window.GardenDaySkyV1.snapshot(weatherClock,{scene:weather,isDay:!localNight,reduced:reduceBox.checked}), background: 'pets-homes-v5', diagonal: species === 'dog' ? { ready: !!(ctrl && ctrl.diagonal), message: ctrl && ctrl.diagonal ? '' : '斜向步態準備中（' + diagReason + '）：先用 v4 路線' } : { ready: false, message: '兔子不使用斜向步態' }, page: 'pets', home: homeOf(species) ? homeOf(species).name || species : null, homeFrame: ctrl && ctrl.geometry ? ctrl.geometry.rect : null, rewards: rewardsOn, species: species, tree: tree, weather: weather, seed: seed, playing: playing, reduced: reduceBox.checked, slow: slowBox.checked, hidden: document.hidden,
-               counts:{leaves:earnedLeaves.filter(Boolean).length,flowers:earnedFlowers.filter(Boolean).length},cabinVisible:houseVisible(),assetIssues:assetStatus.snapshot(),weatherTime:weatherClock,ready: !!ctrl, available: { dog: available.dog.slice(), rabbit: available.rabbit.slice() }, warnings: warnings[species].slice(), v3ManifestLoaded: !!v3m, homesManifestLoaded: !!homesM, homeError: homeError, error: loadError,
+               rewardColorMode:rewardColorMode,counts:{leaves:earnedLeaves.filter(Boolean).length,flowers:earnedFlowers.filter(Boolean).length},cabinVisible:houseVisible(),assetIssues:assetStatus.snapshot(),weatherTime:weatherClock,ready: !!ctrl, available: { dog: available.dog.slice(), rabbit: available.rabbit.slice() }, warnings: warnings[species].slice(), v3ManifestLoaded: !!v3m, homesManifestLoaded: !!homesM, homeError: homeError, error: loadError,
                surprise:surprise?surprise.state():null,controller: ctrl ? ctrl.snapshot() : null };
     },
     enableAudio:async function(v){if(v)await audio.enable();else audio.disable();return audio.state()},audioState:function(){return audio.state()},

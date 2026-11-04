@@ -422,9 +422,11 @@
 
         <section class="dashboard">
             <article class="tree-shell" aria-label="努力樹">
+                <div id="tree-level-one">
                 <div class="tree-stage">
                     <img class="tree-image" src="assets/reward-tree/empty-tree-base-v1-q80.webp" width="1254" height="1254" alt="努力樹">
                     <div id="reward-layer" class="reward-layer" aria-live="polite"></div>
+                </div>
                 </div>
             </article>
 
@@ -454,7 +456,9 @@
                 </section>
 
                 <section class="palette-card" aria-label="花色選擇">
-                    <h3>花色</h3>
+                    <h3>花葉配色</h3>
+                    <label class="reward-color-control" for="reward-color-mode">顯示方式<select id="reward-color-mode"><option value="source">依學習來源配色</option><option value="custom">使用自選花色</option></select></label>
+                    <p class="reward-color-legend"><span class="english">英打・藍色葉與花</span><span class="zhuyin">中打・紫色葉與花</span></p>
                     <p id="palette-status">完成 3 朵花後，可以選擇花色。</p>
                     <div class="flower-options">
                         <button class="flower-option selected" type="button" data-flower="sunrise" aria-label="粉橘花"></button>
@@ -474,8 +478,9 @@
     </main>
 
     <link rel="stylesheet" href="./shared/effort-garden-v2.css?v=20261031-level2">
+    <link rel="stylesheet" href="./shared/typing-foundation-milestones.css?v=20261102-milestones">
     <script type="module">
-        import {createGardenUpgrade} from './shared/effort-garden-v2.mjs?v=20261101-pet-surprise';
+        import {createGardenUpgrade} from './shared/effort-garden-v2.mjs?v=20261102-milestones';
         import {withGardenTestRewards} from './shared/garden-test-rehearsal.mjs?v=20261030-rehearsal';
         import {
             resolveSession,
@@ -497,14 +502,14 @@
             getRewardTreeCourse,
             getRewardTreeCourses
         } from "./shared/reward-tree-config.js?v=20261102-grade9-release";
-        import { createFullCompletionRows, deriveRewardTreeModel } from "./shared/reward-tree-model.js?v=20261102-learning";
-        import { renderRewardTree, selectReward } from "./shared/reward-tree-renderer.js";
+        import { createFullCompletionRows, deriveRewardTreeModel } from "./shared/reward-tree-model.js?v=20261102-milestones";
+        import { renderRewardTree, selectReward } from "./shared/reward-tree-renderer.js?v=20261102-milestones";
         import { readingRequest, readingTreeData } from './shared/reading-api.js';
         import { homeworkRequest, homeworkTreeData } from "./shared/homework-api.js";
         import {quizTreeData} from './shared/quiz-rewards.mjs?v=20261102-learning';
         import {quizLibraryForEnrollment} from './shared/quiz-grade-route.mjs?v=20261102-grade9-release';
         import {createFoundationProgress} from './shared/typing-foundation-progress.js?v=20261006-google';
-        import {foundationTreeData} from './shared/typing-foundation-rewards.js?v=20261002-zhuyin';
+        import {foundationTreeData} from './shared/typing-foundation-rewards.js?v=20261102-milestones';
 
         import { reconnectGrade3Progress } from './shared/grade3-google-course.js?v=20261007-identity';
         const subtitleEl = document.getElementById("subtitle");
@@ -530,6 +535,11 @@
         const mockMode = query.get("mock") === "full";
         const COURSE_STORAGE_KEY = "reward-tree-course-id";
         const FLOWER_STORAGE_KEY = "reward-tree-flower-style";
+        const REWARD_COLOR_MODE_KEY = 'reward-tree-source-color-mode';
+        const rewardColorMode=document.getElementById('reward-color-mode');
+        function setRewardColorMode(mode){const value=mode==='custom'?'custom':'source';document.documentElement.dataset.rewardColorMode=value;rewardColorMode.value=value;window.localStorage.setItem(REWARD_COLOR_MODE_KEY,value);}
+        rewardColorMode.addEventListener('change',()=>setRewardColorMode(rewardColorMode.value));
+        setRewardColorMode(window.localStorage.getItem(REWARD_COLOR_MODE_KEY)||(window.localStorage.getItem(FLOWER_STORAGE_KEY)?'custom':'source'));
         const RETURN_TO_PARAM = "returnTo";
 
         let currentSession = null;
@@ -539,7 +549,7 @@
         let selectedCourseId = resolveInitialCourseId();
         const returnTarget = resolveReturnTarget();
 
-        const upgrade=createGardenUpgrade({supabase,getSession:()=>currentSession,stage:document.querySelector('.tree-stage'),onSelect:r=>selectReward(r,detailTitleEl,detailTextEl)});
+        const upgrade=createGardenUpgrade({supabase,getSession:()=>currentSession,stage:document.getElementById('tree-level-one'),onSelect:r=>selectReward(r,detailTitleEl,detailTextEl)});
         function safeReturnTarget(value) {
             if (!value) return null;
             try {
@@ -884,7 +894,7 @@
             loadAndRender();
         });
         flowerOptions.forEach((option) => {
-            option.addEventListener("click", () => setFlowerStyle(option.dataset.flower));
+            option.addEventListener("click", () => {setRewardColorMode("custom");setFlowerStyle(option.dataset.flower);});
         });
 
         initCourseSelect();

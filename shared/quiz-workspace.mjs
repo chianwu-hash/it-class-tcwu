@@ -59,7 +59,7 @@ export function createQuizWorkspace(root) {
     messages.append(...notices);
     const refresh = actions.querySelector('.quiz-refresh'); if (refresh) messages.append(refresh);
     const returnLink=document.querySelector('.hero .quiz-back-link');
-    if(returnLink){const link=returnLink.cloneNode(true);link.textContent=returnLink.dataset.shortLabel||'回選卷';actions.prepend(link);}
+    if(returnLink){const link=returnLink.cloneNode(true);link.textContent='回選卷';actions.prepend(link);}
     details.append(summary, messages); statusRow.append(details);
     if (closed || notices.some(n => n.textContent.includes('閱讀時間紀錄不完整'))) {
       const important = document.createElement('p'); important.className = 'quiz-context-status';

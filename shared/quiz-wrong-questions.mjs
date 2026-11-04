@@ -1,6 +1,7 @@
 import {renderContent} from './quiz-render.mjs?v=20261029-load-batch1';
 import {resolveQuizImage} from './quiz-media.mjs?v=20261029-load-batch1';
 import {initImageLightbox} from './image-lightbox.js';
+import {createQuestionReport} from './quiz-question-reports.mjs';
 import {renderPastLearningReview} from './quiz-past-learning-review.mjs';
 import {wrongQuestionRef,readWrongQuestionRef,wrongQuestionSearch} from './quiz-wrong-route.mjs';
 
@@ -82,6 +83,7 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
           return {...result,url:url.href};
         }});
       }
+      article.append(createQuestionReport({request,context:ref.source_type==='past_exam'?{source:'past',attempt_id:ref.attempt_id,question_id:ref.group_id}:{source:'quiz',attempt_id:item.attempt_id,question_id:item.question_id},options:q.options,valid:()=>current(g,uid)&&active&&article.isConnected}));
       if(extensionAvailable){
         const section=make('section',undefined,'wrong-extension'),button=make('button','再練3題同一個重點'),status=make('p');status.setAttribute('role','status');section.append(button,status);detail.append(section);
         const requestId=crypto.randomUUID();
@@ -93,7 +95,7 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
           const view=make('button','到我的自組卷查看');view.type='button';view.addEventListener('click',()=>document.dispatchEvent(new CustomEvent('quiz-show-own',{detail:{sessionId:result.session_id}})));
           actions.append(a,view);section.append(actions);message('延伸練習已儲存，可以直接開始，或稍後到「我的自組卷」繼續。');a.focus();
         }catch(e){if(current(g,uid))status.textContent=e.message;}finally{if(current(g,uid))locked(false);}});
-      }
+      }else if(onExtension&&ref.source_type!=='past_exam'){const section=make('section',undefined,'wrong-extension');section.append(make('p','目前沒有可靠的同重點延伸題，可以先回看解析。'));detail.append(section);}
       route(ref);el('wrong-list').hidden=true;el('wrong-pages').hidden=true;el('wrong-detail').hidden=false;message('可以慢慢核對題目、當時答案與解析。');el('wrong-title').focus();
     }catch(e){if(current(g,uid)){if(restore)route(null);message(restore?'這題已無法開啟，請從錯題清單重新選擇。':e.message);}}finally{if(current(g,uid))locked(false);}
   }

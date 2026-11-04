@@ -1,3 +1,11 @@
+import {rewardTrack,REWARD_SOURCE_PALETTES,sourceFlowerSvg} from './reward-source-colors.mjs';
+function applySource(element,reward){
+    const track=rewardTrack(reward),p=REWARD_SOURCE_PALETTES[track];if(!p)return;
+    element.dataset.rewardTrack=track;
+    p.leaf.forEach((color,i)=>element.style.setProperty(`--source-leaf-${i}`,color));
+    element.style.setProperty('--source-flower-image',`url("data:image/svg+xml,${encodeURIComponent(sourceFlowerSvg(track))}")`);
+    element.title=`${p.label}・${reward.title||''}`;
+}
 function applySlot(element, slot, index) {
     element.style.setProperty("--x", `${slot.x}%`);
     element.style.setProperty("--y", `${slot.y}%`);
@@ -22,6 +30,7 @@ function createLeafElement(reward, slot, index, onSelect, ghost = false) {
         ghost ? "ghost" : ""
     ].filter(Boolean).join(" ");
     leaf.dataset.rewardKind = reward?.kind || "ghost-leaf";
+    applySource(leaf,reward);
     leaf.setAttribute("aria-label", ghost ? reward?.title || "尚未取得的葉子位置" : reward.title);
     leaf.title = ghost && reward?.href ? "前往挑戰" : reward?.title || "";
     applySlot(leaf, slot, index);
@@ -44,9 +53,10 @@ function createFlowerElement(reward, slot, index, onSelect, ghost = false) {
     }
     flower.className = ["reward", "flower", ghost ? "ghost" : ""].filter(Boolean).join(" ");
     flower.dataset.rewardKind = reward?.kind || "ghost-flower";
+    applySource(flower,reward);
     if(reward?.sourceType==='past_exam'){flower.classList.add('past-exam');flower.style.backgroundImage='url("/assets/reward-tree/flowers/flower-forest.png")';}
     flower.setAttribute("aria-label", ghost ? reward?.title || "尚未取得的花朵位置" : reward.title);
-    flower.title = ghost && reward?.href ? "前往魔王關" : reward?.title || "";
+    flower.title = ghost && reward?.href ? (reward?.sourceType==='foundation'?"前往基礎練習":"前往魔王關") : reward?.title || "";
     applySlot(flower, slot, index);
 
     if (!ghost) {
