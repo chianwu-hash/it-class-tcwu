@@ -1,5 +1,7 @@
 # 夥伴練功服務穩定性複查（2026-11-04，Claude Desktop）
 
+發布結果：Codex 依 PR #10／#11 → 乾淨 main `8ff1efc` → 發布腳本完成；2026-11-04 21:32 正式部署 `dpl_EGn9CwbxtAbHLhnGx6uNUoLjBsKd`，回滾基準 `dpl_FBgBVoAs3HsNu46qJNE8P47U14iP`。完整樹精確 7 修改、0 新增、0 刪除、0 換行差異；候選與正式的 13 個關鍵檔位元組一致，發布後正式 live 檢查通過，發布鎖已釋放。真實學生多機與夥伴整班壓測仍待驗證。
+
 範圍：剛上線的夥伴練功（main `95fb685`，正式 `dpl_FBgBVoAs3HsNu46qJNE8P47U14iP`）的同步、重試、媒體與資料庫呼叫鏈。工作區 `D:/projects/it-class-tcwu-worktrees/partner-stability-20261104`，分支 `codex/partner-stability-20261104`，基底 `395d0e2`。
 
 依任務約束：沒有 commit／push／部署，沒有連正式資料庫或讀取憑證，沒有改組隊、計分、半葉配對或獎勵 ID。第一輪 Bash 讀檔逾時被 Codex 停止；turn-0003 使用者撤銷工具限制後，下列測試都由我在本工作區實際執行（結果見「測試」一節）。
@@ -61,7 +63,7 @@
 
 ## 修改的檔案
 
-- `supabase/quiz-partner-stability.sql`（新增，提案遷移；**未套用**）
+- `supabase/quiz-partner-stability.sql`（新增；Claude 交回時為提案，Codex 已從 main 套用）
 - `shared/partner-pilot/rich-content.js`
 - `shared/partner-pilot/learning.js`
 - `shared/partner-pilot/app.mjs`
