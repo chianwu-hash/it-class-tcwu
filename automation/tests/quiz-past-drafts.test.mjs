@@ -1,0 +1,54 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {randomUUID} from 'node:crypto';
+import {createQuizDb,TEACHER,studentId} from '../lib/quiz-local-db.mjs';
+const migration=fs.readFileSync('supabase/quiz-past-drafts.sql','utf8');
+const bundle=JSON.parse(fs.readFileSync('automation/output/past-exam-production/bundle.private.json','utf8'));
+test('雲端草稿：部分答案、本人隔離、版本、重送、競爭與判分分離',async()=>{
+ const db=await createQuizDb(undefined,{batch2:true,batch3:true,batch4:true});
+ try{
+  await db.exec(fs.readFileSync('supabase/quiz-past-exams.sql','utf8'));
+  await db.exec(migration);
+  await db.exec("update public.student_enrollments set class_code='301' where email in('student1@example.invalid','student2@example.invalid')");
+  const doc=structuredClone(bundle.document);
+  doc.groups.push({id:'manual-test',kind:'manual',fields:[{id:'manual-field',points:1}],assets:[]});
+  doc.groups.push({id:'math-test',kind:'short',answerFormat:'math-v1',fields:[{id:'math-field',points:1}],choices:[]});
+  doc.groups.push({id:'twenty-blanks',kind:'short',fields:Array.from({length:20},(_,i)=>({id:'blank-'+i,points:1})),choices:[]});
+  await db.query('insert into public.quiz_past_papers(id,owner_id,grade,school_year,semester,title) values($1,$2,3,115,1,$3)',[bundle.paperId,TEACHER,doc.title]);
+  const version=(await db.query('insert into public.quiz_past_versions(paper_id,sha256,document,provenance) values($1,$2,$3,$4) returning id',[bundle.paperId,bundle.sha256,doc,bundle.provenance])).rows[0].id;
+  await db.query('update public.quiz_past_papers set active_version=$1,enabled=true',[version]);
+  const call=(action,data={},uid=studentId(1),role='authenticated')=>db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid||'']);await tx.exec('set local role '+role);return (await tx.query('select public.quiz_past_action($1,$2) r',[action,{paper_id:bundle.paperId,...data}])).rows[0].r;});
+  const start=await call('start',{request_id:randomUUID()}),aid=start.attemptId;
+  assert.deepEqual(start.draft.groups,{});
+  const groups={};
+  for(const g of doc.groups){groups[g.id]=g.kind==='manual'?{text:'還沒寫完',strokes:[[[.1,.2],[.3,.4]]],confirmed:false}:g.kind==='annotation'?{point:{x:.2,y:.3},arrow:null,mediaSha256:g.assets[0].sha256}:g.id==='math-test'?[{answer:'sqrt(',working:'先算一半'}]:g.kind==='mark'?g.fields.map((_,i)=>i===0):g.kind==='sequence'?g.choices.map((x,i)=>i===0?x.id:''):g.fields.map((_,i)=>g.kind==='set'?(i===0?[g.codes[0]]:[]):i===0?(g.choices?.[0]?.id||'半'):'');}
+  const packet={attempt_id:aid,version,request_id:randomUUID(),revision:0,groups,current_group:'manual-test'};
+  groups['twenty-blanks']=Array.from({length:20},(_,i)=>i<5?'國字'+(i+1):'');
+  const saved=await call('save_draft',packet);assert.equal(saved.revision,1);assert.deepEqual(saved.groups,groups);
+  assert.deepEqual(await call('save_draft',packet),saved,'lost response retries are idempotent');
+  const resumed=await call('resume',{attempt_id:aid});assert.deepEqual(resumed.draft.groups,groups);assert.deepEqual(resumed.records,{});assert.equal(resumed.summary.answered,0);assert.equal(resumed.practice.leafCount,0);
+  assert.equal((await call('start',{request_id:randomUUID()})).attemptId,aid);
+  await assert.rejects(call('save_draft',packet,studentId(2)),/attempt_unavailable/);
+  await assert.rejects(call('save_draft',packet,null,'anon'));
+  await assert.rejects(call('save_draft',packet,TEACHER),/student_required/);
+  await assert.rejects(call('save_draft',{...packet,request_id:randomUUID()}),/draft_conflict/);
+  await assert.rejects(call('save_draft',{...packet,version:randomUUID()}),/version_changed/);
+  await assert.rejects(call('save_draft',{...packet,request_id:randomUUID(),revision:1,groups:{unknown:[]}}),/invalid_draft/);
+  await assert.rejects(call('save_draft',{...packet,request_id:randomUUID(),revision:1,groups:{'manual-test':{...groups['manual-test'],strokes:[[[2,0],[0,0]]]}}}),/invalid_response/);
+  await assert.rejects(db.transaction(async tx=>{await tx.exec('set local role authenticated');await tx.query('select * from public.quiz_past_drafts');}));
+  const first=doc.groups[0];await call('view',{attempt_id:aid,group_id:first.id});await db.query("update public.quiz_past_views set started_at=clock_timestamp()-interval '3 minutes'");
+  const submit={attempt_id:aid,group_id:first.id,version,request_id:randomUUID(),responses:first.fields.map(f=>({questionId:f.id,value:f.answer}))};
+  const result=await call('submit',submit);assert(result.records[first.id]);assert.equal(result.draft.groups[first.id],undefined);assert(result.draft.groups['manual-test']);assert.equal(result.draft.revision,2);
+  assert.deepEqual((await call('submit',submit)).records,result.records);
+  assert.equal((await db.query('select count(*)::int n from public.quiz_past_leaves')).rows[0].n,0);
+  const restarted=await call('restart',{request_id:randomUUID()});assert.notEqual(restarted.attemptId,aid);assert.deepEqual(restarted.draft.groups,{});assert((await call('resume',{attempt_id:aid})).draft.groups['manual-test']);
+  await db.query('update public.quiz_past_attempts set completed_at=now() where id=$1',[aid]);
+  const optional=await call('save_draft',{...packet,request_id:randomUUID(),revision:2,groups:{'manual-test':groups['manual-test']}});assert.equal(optional.revision,3);
+  assert.equal((await call('resume',{attempt_id:aid})).practice.complete,true,'saving optional work preserves completion');
+  await call('view',{attempt_id:restarted.attemptId,group_id:first.id});await db.query("update public.quiz_past_views set started_at=clock_timestamp()-interval '3 minutes'");
+  await call('submit',{...submit,attempt_id:restarted.attemptId,request_id:randomUUID()});
+  const staleTab=await call('save_draft',{...packet,attempt_id:restarted.attemptId,request_id:randomUUID(),groups:{[first.id]:groups[first.id],'twenty-blanks':groups['twenty-blanks']}});
+  assert(!staleTab.groups[first.id]);assert(staleTab.snapshot.records[first.id]);assert.deepEqual(staleTab.groups['twenty-blanks'],groups['twenty-blanks']);
+ }finally{await db.close();}
+});

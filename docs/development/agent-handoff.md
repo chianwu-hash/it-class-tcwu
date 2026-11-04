@@ -1,3 +1,9 @@
+# 2026-11-04 已發布：考古題題組內「暫存作答」
+
+- 使用者確認核心為20格國字注音只填5格→暫存→下次續填；原本已送出題組本來就有雲端紀錄。已發布 dpl_FtbY7SFjHZSy5gdyTbhP6hG18KW6，以正式基準 dpl_BA7yZJj3VFrQnhW8oYA2FHTAjQMb 為底；後續仍須重查正式別名。
+- Codex 唯一寫入者；兩個 renderer 檔以正式 HTTP 版本為底（保留九年級數學、題目回報、考古花等），不部署此舊 worktree 整包。新增 quiz-past-drafts.sql 以 wrapper 保存最新 scoring/snapshot，獨立私有表、CAS revision、同請求重送、提交刪該組草稿。手動儲存所有已編輯未送出組，保留最後題組，離頁提醒，不用 localStorage。
+- 暫存不判分／不揭答／不寫既有答案進度獎勵；有結果不明的正式submit時只查resume，不自動重送。PGlite5項、正式rollback及安裝11表摘要、20格填5格與筆跡／部分排序／複選還原、1280／390／360通過。Claude最終唯讀7Read／152.7秒無剩餘阻擋，Git前後相同。817來源SHA、候選及正式2runtime SHA與RLS權限已核對；別名非同步切換已讀回，不重送promote。詳 past-exam-drafts-20261104.md；私有證據 tmp/past-drafts-20261104/，不重跑歷史apply或publish。
+
 # 2026-11-02 已正式發布：三年級10卷解析與延伸
 
 - 使用者已授權驗證後上線，已完成正式登錄、啟用與切換；2026-11-02 15:37:01 臺北時間讀回。部署`dpl_BUr4rAR7wjyiSWPgDh2VeRoQVBbC`，來源仍以舊正式deployment為底加26runtime覆蓋，不部署整個工作樹。
