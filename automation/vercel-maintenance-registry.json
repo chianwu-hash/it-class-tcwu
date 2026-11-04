@@ -1,0 +1,112 @@
+{
+  "version": 1,
+  "projectId": "prj_eJ1qle57xyilS5MKy6ZS6OuYtyFb",
+  "source": "既有清理保留紀錄；不是新增永久保留或刪除授權",
+  "entries": [
+    {
+      "id": "dpl_EojJsU7YdekYetu5AvW11XStLD9i",
+      "status": "protected",
+      "reason": "沿用已核對的基準／預覽／驗證證據保留：original:failed-build-evidence",
+      "evidence": "2026-11-03 approved121 cleanup preflight and verification",
+      "reviewAfter": null
+    },
+    {
+      "id": "dpl_3o9oGaZGk2WJdPu1FkNgzozNwHcR",
+      "status": "protected",
+      "reason": "沿用已核對的基準／預覽／驗證證據保留：original:failed-build-evidence",
+      "evidence": "2026-11-03 approved121 cleanup preflight and verification",
+      "reviewAfter": null
+    },
+    {
+      "id": "dpl_4ye54c9t4KsX1NeY66jUEjLXtJED",
+      "status": "protected",
+      "reason": "沿用已核對的基準／預覽／驗證證據保留：original:previous-explicit-baseline-or-final-preview",
+      "evidence": "2026-11-03 approved121 cleanup preflight and verification",
+      "reviewAfter": null
+    },
+    {
+      "id": "dpl_HanAtZKNenwRgCaHmGQMpLTeB3EZ",
+      "status": "protected",
+      "reason": "沿用已核對的基準／預覽／驗證證據保留：original:previous-explicit-baseline-or-final-preview; latest-manual-preview-workspace:logs/vercel-slim-final-preview-20261101/publish",
+      "evidence": "2026-11-03 approved121 cleanup preflight and verification",
+      "reviewAfter": null
+    },
+    {
+      "id": "dpl_4LsmuQBTztjPS3vvG6a8nXLQd93w",
+      "status": "protected",
+      "reason": "沿用已核對的基準／預覽／驗證證據保留：original:previous-explicit-baseline-or-final-preview",
+      "evidence": "2026-11-03 approved121 cleanup preflight and verification",
+      "reviewAfter": null
+    },
+    {
+      "id": "dpl_DaA4x3QGP5ch8tDVDK8i8ShhCjAh",
+      "status": "protected",
+      "reason": "沿用已核對的基準／預覽／驗證證據保留：latest-manual-preview-workspace:logs/vercel-slim-latest-preview-20261101/publish",
+      "evidence": "2026-11-03 approved121 cleanup preflight and verification",
+      "reviewAfter": null
+    },
+    {
+      "id": "dpl_4gF28HT2cZZniUywcX189bA32JX3",
+      "status": "protected",
+      "reason": "沿用已核對的基準／預覽／驗證證據保留：latest-manual-preview-workspace:logs/vercel-slim-rebase-preview-20261101/publish",
+      "evidence": "2026-11-03 approved121 cleanup preflight and verification",
+      "reviewAfter": null
+    },
+    {
+      "id": "dpl_Gf6haTfxYJvZzVNexQwAK26VbwAt",
+      "status": "protected",
+      "reason": "沿用已核對的基準／預覽／驗證證據保留：latest-manual-preview-workspace:logs/vercel-slim-preview-20261101/publish",
+      "evidence": "2026-11-03 approved121 cleanup preflight and verification",
+      "reviewAfter": null
+    },
+    {
+      "id": "dpl_8RRMxcuQ9ozADDWWC77BgYF5isFa",
+      "status": "protected",
+      "reason": "沿用已核對的基準／預覽／驗證證據保留：original:previous-explicit-baseline-or-final-preview",
+      "evidence": "2026-11-03 approved121 cleanup preflight and verification",
+      "reviewAfter": null
+    },
+    {
+      "id": "dpl_J9cLJUUCH6GeoGqC7dj47jNFajzC",
+      "status": "protected",
+      "reason": "沿用已核對的基準／預覽／驗證證據保留：original:previous-explicit-baseline-or-final-preview",
+      "evidence": "2026-11-03 approved121 cleanup preflight and verification",
+      "reviewAfter": null
+    },
+    {
+      "id": "dpl_22AkKxwdsa5edMebf5Gd29VReojp",
+      "status": "protected",
+      "reason": "沿用已核對的基準／預覽／驗證證據保留：latest-manual-preview-workspace:C:/Users/user/projects/it-class-tcwu/automation/output/tucheng-grade4-knowledge-complete-20261101/frontend/publish",
+      "evidence": "2026-11-03 approved121 cleanup preflight and verification",
+      "reviewAfter": null
+    },
+    {
+      "id": "dpl_6DsEksfNvWVg2hjFwRUAMkvK2EKr",
+      "status": "protected",
+      "reason": "沿用已核對的基準／預覽／驗證證據保留：latest-manual-preview-workspace:C:/Users/user/projects/it-class-tcwu/automation/output/tucheng-grade4-extension-20261101/frontend/publish",
+      "evidence": "2026-11-03 approved121 cleanup preflight and verification",
+      "reviewAfter": null
+    },
+    {
+      "id": "dpl_6iQ8aWjvgYm8PUFbWnueSppPm5mC",
+      "status": "protected",
+      "reason": "沿用已核對的基準／預覽／驗證證據保留：latest-manual-preview-workspace:C:/Users/user/projects/it-class-tcwu/automation/output/test-identity-three-buttons-20261101/frontend/publish",
+      "evidence": "2026-11-03 approved121 cleanup preflight and verification",
+      "reviewAfter": null
+    },
+    {
+      "id": "dpl_7YcHExFyJAuwL8fCtKQP3Wvf1Aqf",
+      "status": "protected",
+      "reason": "沿用已核對的基準／預覽／驗證證據保留：latest-manual-preview-workspace:C:/Users/user/projects/it-class-tcwu/automation/output/tucheng-grade4-past-release-20261101/frontend/publish",
+      "evidence": "2026-11-03 approved121 cleanup preflight and verification",
+      "reviewAfter": null
+    },
+    {
+      "id": "dpl_FNyxToDFZyB57RQuRzAyQbQnRfJD",
+      "status": "protected",
+      "reason": "11/3清理時額外保留的回復／進行中預覽：baseline-of-protected:dpl_4gF28HT2cZZniUywcX189bA32JX3",
+      "evidence": "2026-11-03 approved121 cleanup retainedCandidates",
+      "reviewAfter": null
+    }
+  ]
+}

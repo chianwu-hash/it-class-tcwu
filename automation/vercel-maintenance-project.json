@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "project": {
+    "name": "it-class-tcwu",
+    "id": "prj_eJ1qle57xyilS5MKy6ZS6OuYtyFb",
+    "teamId": "team_SOhQ0oysg6ZGV9vs3RryW2CB",
+    "teamSlug": "chianwu-4755s-projects",
+    "accountEmail": "chianwu@gmail.com"
+  },
+  "quotaBytes": {
+    "deploymentStorage": 10000000000,
+    "functionsStorage": 10000000000
+  },
+  "snapshotMaxAgeMinutes": 30,
+  "registryFile": "vercel-maintenance-registry.json"
+}
