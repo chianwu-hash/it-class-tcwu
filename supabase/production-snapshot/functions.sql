@@ -153,7 +153,7 @@ begin
  end if;
  return result||jsonb_build_object('identity',identity,'offset',offst,'limit',lim,'as_of',statement_timestamp());
 end $function$;
-revoke all on function public.admin_learning_action(text,text,jsonb) from public;
+revoke all on function public.admin_learning_action(text,text,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.admin_learning_action(text,text,jsonb) to postgres;
 grant execute on function public.admin_learning_action(text,text,jsonb) to authenticated;
 grant execute on function public.admin_learning_action(text,text,jsonb) to service_role;
@@ -176,7 +176,7 @@ begin
  if not found then raise exception 'media_unavailable';end if;
  return to_jsonb(asset);
 end $function$;
-revoke all on function public.admin_learning_media_access(text,jsonb,uuid,text) from public;
+revoke all on function public.admin_learning_media_access(text,jsonb,uuid,text) from public, anon, authenticated, service_role;
 grant execute on function public.admin_learning_media_access(text,jsonb,uuid,text) to postgres;
 grant execute on function public.admin_learning_media_access(text,jsonb,uuid,text) to authenticated;
 grant execute on function public.admin_learning_media_access(text,jsonb,uuid,text) to service_role;
@@ -206,7 +206,7 @@ AS $function$
   from public.quiz_answers z where z.attempt_id=a.id) x
  where s.school_year=p_year and s.class_codes ? p_class and s.access_mode in ('classroom','practice','self') and not exists(select 1 from public.quiz_learning_sessions learning_private where learning_private.session_id=s.id);
 $function$;
-revoke all on function public.admin_learning_paper_rows(uuid,integer,text) from public;
+revoke all on function public.admin_learning_paper_rows(uuid,integer,text) from public, anon, authenticated, service_role;
 grant execute on function public.admin_learning_paper_rows(uuid,integer,text) to postgres;
 grant execute on function public.admin_learning_paper_rows(uuid,integer,text) to service_role;
 
@@ -490,7 +490,7 @@ when 'class_rewards' then execute 'with roster_students as (
  if result ? '__error' then raise exception '%',result->>'__error';end if;
  return result;
 end $function$;
-revoke all on function public.admin_learning_rewards(text,text,jsonb) from public;
+revoke all on function public.admin_learning_rewards(text,text,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.admin_learning_rewards(text,text,jsonb) to postgres;
 grant execute on function public.admin_learning_rewards(text,text,jsonb) to authenticated;
 grant execute on function public.admin_learning_rewards(text,text,jsonb) to service_role;
@@ -586,7 +586,7 @@ AS $function$
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 order by record_type asc, class_code asc nulls last, seat_no asc nulls last, course_id asc nulls last, week_code asc nulls last, activity_key asc nulls last;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 $function$;
-revoke all on function public.admin_list_grade3_grading_data() from public;
+revoke all on function public.admin_list_grade3_grading_data() from public, anon, authenticated, service_role;
 grant execute on function public.admin_list_grade3_grading_data() to public;
 grant execute on function public.admin_list_grade3_grading_data() to postgres;
 grant execute on function public.admin_list_grade3_grading_data() to anon;
@@ -644,7 +644,7 @@ AS $function$
       and (p_completed is null or gp.completed = p_completed)
     order by gp.updated_at desc, gp.class_code asc, gp.seat_no asc, gp.activity_key asc;
 $function$;
-revoke all on function public.admin_list_guest_progress(text,text,text,text,boolean) from public;
+revoke all on function public.admin_list_guest_progress(text,text,text,text,boolean) from public, anon, authenticated, service_role;
 grant execute on function public.admin_list_guest_progress(text,text,text,text,boolean) to public;
 grant execute on function public.admin_list_guest_progress(text,text,text,text,boolean) to postgres;
 grant execute on function public.admin_list_guest_progress(text,text,text,text,boolean) to anon;
@@ -694,7 +694,7 @@ AS $function$
       and (p_completed is null or sp.completed = p_completed)
     order by sp.updated_at desc, au.email asc, sp.week_code asc, sp.activity_key asc;
 $function$;
-revoke all on function public.admin_list_progress(text,text,text,boolean) from public;
+revoke all on function public.admin_list_progress(text,text,text,boolean) from public, anon, authenticated, service_role;
 grant execute on function public.admin_list_progress(text,text,text,boolean) to public;
 grant execute on function public.admin_list_progress(text,text,text,boolean) to postgres;
 grant execute on function public.admin_list_progress(text,text,text,boolean) to anon;
@@ -746,7 +746,7 @@ AS $function$
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          and (p_completed is null or sp.completed = p_completed)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              order by sp.updated_at desc, au.email asc, sp.week_code asc, sp.activity_key asc;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              $function$;
-revoke all on function public.admin_list_progress(text,text,text,text,boolean) from public;
+revoke all on function public.admin_list_progress(text,text,text,text,boolean) from public, anon, authenticated, service_role;
 grant execute on function public.admin_list_progress(text,text,text,text,boolean) to public;
 grant execute on function public.admin_list_progress(text,text,text,text,boolean) to postgres;
 grant execute on function public.admin_list_progress(text,text,text,text,boolean) to anon;
@@ -767,7 +767,7 @@ AS $function$
     where public.is_teacher() and e.school_year = p_school_year
     order by e.class_code, e.seat_no, e.email;
 $function$;
-revoke all on function public.admin_list_student_enrollments(smallint) from public;
+revoke all on function public.admin_list_student_enrollments(smallint) from public, anon, authenticated, service_role;
 grant execute on function public.admin_list_student_enrollments(smallint) to postgres;
 grant execute on function public.admin_list_student_enrollments(smallint) to authenticated;
 grant execute on function public.admin_list_student_enrollments(smallint) to service_role;
@@ -800,7 +800,7 @@ AS $function$
           )
     order by prof.class_code asc nulls last, prof.seat_no asc nulls last, prof.display_name asc nulls last;
 $function$;
-revoke all on function public.admin_list_student_profiles(text,text) from public;
+revoke all on function public.admin_list_student_profiles(text,text) from public, anon, authenticated, service_role;
 grant execute on function public.admin_list_student_profiles(text,text) to public;
 grant execute on function public.admin_list_student_profiles(text,text) to postgres;
 grant execute on function public.admin_list_student_profiles(text,text) to anon;
@@ -824,7 +824,7 @@ AS $function$
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        where public.is_teacher()
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            order by wv.course_id asc, wv.week_code asc;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            $function$;
-revoke all on function public.admin_list_week_visibility() from public;
+revoke all on function public.admin_list_week_visibility() from public, anon, authenticated, service_role;
 grant execute on function public.admin_list_week_visibility() to public;
 grant execute on function public.admin_list_week_visibility() to postgres;
 grant execute on function public.admin_list_week_visibility() to anon;
@@ -850,7 +850,7 @@ begin
       and activity_key = p_activity_key;
 end;
 $function$;
-revoke all on function public.admin_reset_guest_progress(text,text,text,text) from public;
+revoke all on function public.admin_reset_guest_progress(text,text,text,text) from public, anon, authenticated, service_role;
 grant execute on function public.admin_reset_guest_progress(text,text,text,text) to public;
 grant execute on function public.admin_reset_guest_progress(text,text,text,text) to postgres;
 grant execute on function public.admin_reset_guest_progress(text,text,text,text) to anon;
@@ -876,7 +876,7 @@ AS $function$
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        and activity_key = p_activity_key;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        end;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        $function$;
-revoke all on function public.admin_reset_progress(uuid,text,text,text) from public;
+revoke all on function public.admin_reset_progress(uuid,text,text,text) from public, anon, authenticated, service_role;
 grant execute on function public.admin_reset_progress(uuid,text,text,text) to public;
 grant execute on function public.admin_reset_progress(uuid,text,text,text) to postgres;
 grant execute on function public.admin_reset_progress(uuid,text,text,text) to anon;
@@ -901,7 +901,7 @@ begin
       and activity_key = p_activity_key;
 end;
 $function$;
-revoke all on function public.admin_reset_progress(uuid,text,text) from public;
+revoke all on function public.admin_reset_progress(uuid,text,text) from public, anon, authenticated, service_role;
 grant execute on function public.admin_reset_progress(uuid,text,text) to public;
 grant execute on function public.admin_reset_progress(uuid,text,text) to postgres;
 grant execute on function public.admin_reset_progress(uuid,text,text) to anon;
@@ -955,7 +955,7 @@ begin
         and cc.control_key = p_control_key;
 end;
 $function$;
-revoke all on function public.admin_set_classroom_control(text,text,text,boolean) from public;
+revoke all on function public.admin_set_classroom_control(text,text,text,boolean) from public, anon, authenticated, service_role;
 grant execute on function public.admin_set_classroom_control(text,text,text,boolean) to public;
 grant execute on function public.admin_set_classroom_control(text,text,text,boolean) to postgres;
 grant execute on function public.admin_set_classroom_control(text,text,text,boolean) to anon;
@@ -982,7 +982,7 @@ begin
         updated_at = now();
 end;
 $function$;
-revoke all on function public.admin_set_week_visibility(text,text,boolean) from public;
+revoke all on function public.admin_set_week_visibility(text,text,boolean) from public, anon, authenticated, service_role;
 grant execute on function public.admin_set_week_visibility(text,text,boolean) to public;
 grant execute on function public.admin_set_week_visibility(text,text,boolean) to postgres;
 grant execute on function public.admin_set_week_visibility(text,text,boolean) to anon;
@@ -1010,7 +1010,7 @@ AS $function$
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    updated_at = now();
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    end;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    $function$;
-revoke all on function public.admin_set_week_visibility(text,text,text,boolean) from public;
+revoke all on function public.admin_set_week_visibility(text,text,text,boolean) from public, anon, authenticated, service_role;
 grant execute on function public.admin_set_week_visibility(text,text,text,boolean) to public;
 grant execute on function public.admin_set_week_visibility(text,text,text,boolean) to postgres;
 grant execute on function public.admin_set_week_visibility(text,text,text,boolean) to anon;
@@ -1048,7 +1048,7 @@ AS $function$
                                                                                                                             return saved;
                                                                                                                             end;
                                                                                                                             $function$;
-revoke all on function public.admin_upsert_student_enrollment(smallint,text,text,smallint,text) from public;
+revoke all on function public.admin_upsert_student_enrollment(smallint,text,text,smallint,text) from public, anon, authenticated, service_role;
 grant execute on function public.admin_upsert_student_enrollment(smallint,text,text,smallint,text) to postgres;
 grant execute on function public.admin_upsert_student_enrollment(smallint,text,text,smallint,text) to authenticated;
 grant execute on function public.admin_upsert_student_enrollment(smallint,text,text,smallint,text) to service_role;
@@ -1108,7 +1108,7 @@ begin
         updated_at = now();
 end;
 $function$;
-revoke all on function public.admin_upsert_student_profile(uuid,text,smallint,text,text) from public;
+revoke all on function public.admin_upsert_student_profile(uuid,text,smallint,text,text) from public, anon, authenticated, service_role;
 grant execute on function public.admin_upsert_student_profile(uuid,text,smallint,text,text) to public;
 grant execute on function public.admin_upsert_student_profile(uuid,text,smallint,text,text) to postgres;
 grant execute on function public.admin_upsert_student_profile(uuid,text,smallint,text,text) to anon;
@@ -1133,7 +1133,7 @@ AS $function$
                                         state_hash = excluded.state_hash, proof_hash = excluded.proof_hash, expires_at = excluded.expires_at;
                                         end;
                                         $function$;
-revoke all on function public.drive_begin_oauth(uuid,text,text) from public;
+revoke all on function public.drive_begin_oauth(uuid,text,text) from public, anon, authenticated, service_role;
 grant execute on function public.drive_begin_oauth(uuid,text,text) to postgres;
 grant execute on function public.drive_begin_oauth(uuid,text,text) to service_role;
 
@@ -1153,7 +1153,7 @@ AS $function$
                                                     return claimed is not null;
                                                     end;
                                                     $function$;
-revoke all on function public.drive_claim_oauth(uuid,text,text) from public;
+revoke all on function public.drive_claim_oauth(uuid,text,text) from public, anon, authenticated, service_role;
 grant execute on function public.drive_claim_oauth(uuid,text,text) to postgres;
 grant execute on function public.drive_claim_oauth(uuid,text,text) to service_role;
 
@@ -1176,7 +1176,7 @@ AS $function$
   having bool_and(coalesce(r.r->'completed'='true'::jsonb,false)) and bool_and(exists(select 1 from public.garden_reward_catalog c where c.course_id=p_course_id and c.week_code='foundation' and c.kind='foundation' and c.activity_key=k.key))
  ) select coalesce(jsonb_agg(jsonb_build_object('id',p_course_id||':foundation:'||milestone_key||':flower:1','kind','flower','sourceType','foundation','track',track,'earnedAt',earned_at) order by track,ordinal),'[]'::jsonb) from earned;
 $function$;
-revoke all on function public.foundation_milestone_rewards(text,jsonb) from public;
+revoke all on function public.foundation_milestone_rewards(text,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.foundation_milestone_rewards(text,jsonb) to postgres;
 grant execute on function public.foundation_milestone_rewards(text,jsonb) to service_role;
 
@@ -1192,7 +1192,7 @@ begin
  end if;
  if tg_op='DELETE' then return old; else return new; end if;
 end $function$;
-revoke all on function public.freeze_grade3_guest_progress() from public;
+revoke all on function public.freeze_grade3_guest_progress() from public, anon, authenticated, service_role;
 grant execute on function public.freeze_grade3_guest_progress() to public;
 grant execute on function public.freeze_grade3_guest_progress() to postgres;
 grant execute on function public.freeze_grade3_guest_progress() to anon;
@@ -1212,7 +1212,7 @@ AS $function$
    'kind',kind,'total_levels',total_levels,'reward_mode',reward_mode)
    order by course_id,week_code,activity_key) from public.garden_reward_catalog),'[]'::jsonb));
 $function$;
-revoke all on function public.garden_catalog_manifest() from public;
+revoke all on function public.garden_catalog_manifest() from public, anon, authenticated, service_role;
 grant execute on function public.garden_catalog_manifest() to postgres;
 grant execute on function public.garden_catalog_manifest() to anon;
 grant execute on function public.garden_catalog_manifest() to authenticated;
@@ -1262,7 +1262,7 @@ begin
  where c.pet=chosen_pet;
  return jsonb_build_object('pets',pets,'homes',homes,'selectedPet',chosen_pet,'selectedHome',chosen_home,'homeVisible',show_home,'petMode',selected_mode);
 end$function$;
-revoke all on function public.garden_companions(text,text,jsonb) from public;
+revoke all on function public.garden_companions(text,text,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.garden_companions(text,text,jsonb) to postgres;
 grant execute on function public.garden_companions(text,text,jsonb) to authenticated;
 grant execute on function public.garden_companions(text,text,jsonb) to service_role;
@@ -1292,7 +1292,7 @@ begin
  end loop;
  return result;
 end$function$;
-revoke all on function public.garden_convert_quiz_snapshot(jsonb,jsonb,text) from public;
+revoke all on function public.garden_convert_quiz_snapshot(jsonb,jsonb,text) from public, anon, authenticated, service_role;
 grant execute on function public.garden_convert_quiz_snapshot(jsonb,jsonb,text) to postgres;
 grant execute on function public.garden_convert_quiz_snapshot(jsonb,jsonb,text) to service_role;
 
@@ -1432,7 +1432,7 @@ begin
  end if;
  return jsonb_build_object('level',1);
 end$function$;
-revoke all on function public.garden_growth(text,text) from public;
+revoke all on function public.garden_growth(text,text) from public, anon, authenticated, service_role;
 grant execute on function public.garden_growth(text,text) to postgres;
 grant execute on function public.garden_growth(text,text) to authenticated;
 grant execute on function public.garden_growth(text,text) to service_role;
@@ -1453,7 +1453,7 @@ AS $function$values
  ('pet:rabbit','蹦蹦與桃色蘑菇屋','rabbit','b',36,9,'/garden/assets/processed/pets-v3/rabbit/sit-1.webp'),
  ('home:rabbit:a','樺木樹樁屋','rabbit','a',42,11,'/garden/assets/homes/rabbit-a-preview.webp'),
  ('home:rabbit:c','草丘小地窩','rabbit','c',48,12,'/garden/assets/homes/rabbit-c-preview.webp')$function$;
-revoke all on function public.garden_item_catalog() from public;
+revoke all on function public.garden_item_catalog() from public, anon, authenticated, service_role;
 grant execute on function public.garden_item_catalog() to postgres;
 grant execute on function public.garden_item_catalog() to service_role;
 
@@ -1498,7 +1498,7 @@ begin
  end if;
  return jsonb_build_object('surprise',won,'refreshMessage',rapid,'cooldownUntil',v.next_roll_at);
 end$function$;
-revoke all on function public.garden_pet_visit(text) from public;
+revoke all on function public.garden_pet_visit(text) from public, anon, authenticated, service_role;
 grant execute on function public.garden_pet_visit(text) to postgres;
 grant execute on function public.garden_pet_visit(text) to authenticated;
 grant execute on function public.garden_pet_visit(text) to service_role;
@@ -1527,7 +1527,7 @@ begin
  end loop;
  return result;
 end$function$;
-revoke all on function public.garden_quiz_leaf_map(jsonb,text) from public;
+revoke all on function public.garden_quiz_leaf_map(jsonb,text) from public, anon, authenticated, service_role;
 grant execute on function public.garden_quiz_leaf_map(jsonb,text) to postgres;
 grant execute on function public.garden_quiz_leaf_map(jsonb,text) to service_role;
 
@@ -1556,7 +1556,7 @@ AS $function$
  and lower(u.email)='chianwu@apps.ntpc.edu.tw'
  and exists(select 1 from public.student_enrollments e where e.school_year=115 and e.email=lower(u.email) and e.class_code='307' and e.seat_no=30)
 $function$;
-revoke all on function public.garden_test_rewards(text) from public;
+revoke all on function public.garden_test_rewards(text) from public, anon, authenticated, service_role;
 grant execute on function public.garden_test_rewards(text) to postgres;
 grant execute on function public.garden_test_rewards(text) to authenticated;
 grant execute on function public.garden_test_rewards(text) to service_role;
@@ -1585,7 +1585,7 @@ begin
  select skin into chosen from public.garden_tree_skins where user_id=uid;
  return jsonb_build_object('skin',coalesce(chosen,'a'));
 end$function$;
-revoke all on function public.garden_tree_skin(text) from public;
+revoke all on function public.garden_tree_skin(text) from public, anon, authenticated, service_role;
 grant execute on function public.garden_tree_skin(text) to postgres;
 grant execute on function public.garden_tree_skin(text) to authenticated;
 grant execute on function public.garden_tree_skin(text) to service_role;
@@ -1610,7 +1610,7 @@ begin
  select coalesce(jsonb_agg(item_key order by item_key),'[]') into owned from public.garden_item_unlocks where user_id=uid;
  return owned;
 end$function$;
-revoke all on function public.garden_unlock_items(text,integer,integer) from public;
+revoke all on function public.garden_unlock_items(text,integer,integer) from public, anon, authenticated, service_role;
 grant execute on function public.garden_unlock_items(text,integer,integer) to postgres;
 grant execute on function public.garden_unlock_items(text,integer,integer) to service_role;
 
@@ -1650,7 +1650,7 @@ begin
  and (p_action<>'claim' or n.claim_id=claim);
  return jsonb_build_object('courseId',course,'claim',claim,'items',items);
 end$function$;
-revoke all on function public.garden_unlock_notice(text,text,uuid) from public;
+revoke all on function public.garden_unlock_notice(text,text,uuid) from public, anon, authenticated, service_role;
 grant execute on function public.garden_unlock_notice(text,text,uuid) to postgres;
 grant execute on function public.garden_unlock_notice(text,text,uuid) to authenticated;
 grant execute on function public.garden_unlock_notice(text,text,uuid) to service_role;
@@ -1672,7 +1672,7 @@ AS $function$
       and s.active = true
     limit 1;
 $function$;
-revoke all on function public.get_class_card_practice_account(text,text,smallint,text) from public;
+revoke all on function public.get_class_card_practice_account(text,text,smallint,text) from public, anon, authenticated, service_role;
 grant execute on function public.get_class_card_practice_account(text,text,smallint,text) to postgres;
 grant execute on function public.get_class_card_practice_account(text,text,smallint,text) to service_role;
 
@@ -1695,7 +1695,7 @@ AS $function$
         and cc.week_code = p_week_code
         and cc.control_key = p_control_key;
 $function$;
-revoke all on function public.get_classroom_control(text,text,text) from public;
+revoke all on function public.get_classroom_control(text,text,text) from public, anon, authenticated, service_role;
 grant execute on function public.get_classroom_control(text,text,text) to public;
 grant execute on function public.get_classroom_control(text,text,text) to postgres;
 grant execute on function public.get_classroom_control(text,text,text) to anon;
@@ -1714,7 +1714,7 @@ begin
  return query select p.* from public.student_progress p where p.user_id=auth.uid() and p.course_id='grade3-115-1'
    and p.week_code=p_week_code and p.activity_key=p_activity_key;
 end $function$;
-revoke all on function public.get_grade3_progress(text,text) from public;
+revoke all on function public.get_grade3_progress(text,text) from public, anon, authenticated, service_role;
 grant execute on function public.get_grade3_progress(text,text) to postgres;
 grant execute on function public.get_grade3_progress(text,text) to authenticated;
 grant execute on function public.get_grade3_progress(text,text) to service_role;
@@ -1731,7 +1731,7 @@ AS $function$
  where s.course_id=p_course_id and s.course_id<>'grade3-115-1' and s.class_code=p_class_code and s.seat_no=p_seat_no
  and s.birthday_code=p_birthday_code and s.active and gp.week_code=p_week_code and gp.activity_key=p_activity_key limit 1;
 $function$;
-revoke all on function public.get_guest_progress(text,text,text,text,smallint,text) from public;
+revoke all on function public.get_guest_progress(text,text,text,text,smallint,text) from public, anon, authenticated, service_role;
 grant execute on function public.get_guest_progress(text,text,text,text,smallint,text) to postgres;
 grant execute on function public.get_guest_progress(text,text,text,text,smallint,text) to service_role;
 grant execute on function public.get_guest_progress(text,text,text,text,smallint,text) to anon;
@@ -1759,7 +1759,7 @@ AS $function$
       and e.school_year = p_school_year
     limit 1;
 $function$;
-revoke all on function public.get_my_student_enrollment(smallint) from public;
+revoke all on function public.get_my_student_enrollment(smallint) from public, anon, authenticated, service_role;
 grant execute on function public.get_my_student_enrollment(smallint) to postgres;
 grant execute on function public.get_my_student_enrollment(smallint) to authenticated;
 grant execute on function public.get_my_student_enrollment(smallint) to service_role;
@@ -1779,7 +1779,7 @@ AS $function$
      and trim(c.display_name)=trim(e.display_name) and lower(c.practice_account || '@apps.ntpc.edu.tw')=b.email
    where b.user_id=auth.uid() and u.email_confirmed_at is not null and lower(u.email)=b.email);
 $function$;
-revoke all on function public.grade3_google_ready() from public;
+revoke all on function public.grade3_google_ready() from public, anon, authenticated, service_role;
 grant execute on function public.grade3_google_ready() to postgres;
 grant execute on function public.grade3_google_ready() to authenticated;
 grant execute on function public.grade3_google_ready() to service_role;
@@ -1856,7 +1856,7 @@ begin
  end if;
  raise exception 'invalid_action';
 end $function$;
-revoke all on function public.homework_action(text,jsonb) from public;
+revoke all on function public.homework_action(text,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.homework_action(text,jsonb) to postgres;
 grant execute on function public.homework_action(text,jsonb) to authenticated;
 grant execute on function public.homework_action(text,jsonb) to service_role;
@@ -1885,7 +1885,7 @@ begin
  insert into public.homework_events(assignment_id,user_id,upload_id,actor_id,event) values(u.assignment_id,p_user,p_id,p_user,'submitted');
  return jsonb_build_object('ok',true);
 end $function$;
-revoke all on function public.homework_finalize(uuid,uuid) from public;
+revoke all on function public.homework_finalize(uuid,uuid) from public, anon, authenticated, service_role;
 grant execute on function public.homework_finalize(uuid,uuid) to postgres;
 grant execute on function public.homework_finalize(uuid,uuid) to service_role;
 
@@ -1915,7 +1915,7 @@ begin
    values(p_id,p_assignment,p_user,p_drive_id,p_name,p_size,p_sha256) returning * into u;
  return to_jsonb(u);
 end $function$;
-revoke all on function public.homework_reserve(uuid,uuid,uuid,text,text,integer,text) from public;
+revoke all on function public.homework_reserve(uuid,uuid,uuid,text,text,integer,text) from public, anon, authenticated, service_role;
 grant execute on function public.homework_reserve(uuid,uuid,uuid,text,text,integer,text) to postgres;
 grant execute on function public.homework_reserve(uuid,uuid,uuid,text,text,integer,text) to service_role;
 
@@ -1995,7 +1995,7 @@ begin
  end if;
  return jsonb_build_object('ok',true,'annotation_updated_at',(select updated_at from public.homework_annotations where upload_id=u.id));
 end $function$;
-revoke all on function public.homework_review(text,jsonb) from public;
+revoke all on function public.homework_review(text,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.homework_review(text,jsonb) to postgres;
 grant execute on function public.homework_review(text,jsonb) to authenticated;
 grant execute on function public.homework_review(text,jsonb) to service_role;
@@ -2022,7 +2022,7 @@ AS $function$
   )
  );
 $function$;
-revoke all on function public.homework_thumbnail_access(text,boolean) from public;
+revoke all on function public.homework_thumbnail_access(text,boolean) from public, anon, authenticated, service_role;
 grant execute on function public.homework_thumbnail_access(text,boolean) to postgres;
 grant execute on function public.homework_thumbnail_access(text,boolean) to authenticated;
 grant execute on function public.homework_thumbnail_access(text,boolean) to service_role;
@@ -2039,7 +2039,7 @@ AS $function$
                                                                                                                                                                     ]
                                                                                                                                                                         );
                                                                                                                                                                         $function$;
-revoke all on function public.is_teacher() from public;
+revoke all on function public.is_teacher() from public, anon, authenticated, service_role;
 grant execute on function public.is_teacher() to public;
 grant execute on function public.is_teacher() to postgres;
 grant execute on function public.is_teacher() to anon;
@@ -2063,7 +2063,7 @@ declare data jsonb;begin
  end if;
  return data;
 end$function$;
-revoke all on function public.quiz_action(text,jsonb) from public;
+revoke all on function public.quiz_action(text,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_action(text,jsonb) to postgres;
 grant execute on function public.quiz_action(text,jsonb) to authenticated;
 grant execute on function public.quiz_action(text,jsonb) to service_role;
@@ -2285,7 +2285,7 @@ begin
  if compact then return result||jsonb_build_object('compact',true);end if;
  return result||jsonb_build_object('document',public.quiz_student_document(d,att.question_order,att.option_orders));
 end $function$;
-revoke all on function public.quiz_action_before_learning(text,jsonb) from public;
+revoke all on function public.quiz_action_before_learning(text,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_action_before_learning(text,jsonb) to postgres;
 grant execute on function public.quiz_action_before_learning(text,jsonb) to service_role;
 
@@ -2312,7 +2312,7 @@ begin
  if submitting then update public.quiz_question_timing set accepted_seconds=elapsed where attempt_id=aid and question_id=qid;end if;
  return '{}'::jsonb;
 end $function$;
-revoke all on function public.quiz_answer_guard(uuid,text,boolean) from public;
+revoke all on function public.quiz_answer_guard(uuid,text,boolean) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_answer_guard(uuid,text,boolean) to postgres;
 grant execute on function public.quiz_answer_guard(uuid,text,boolean) to service_role;
 
@@ -2344,7 +2344,7 @@ begin
  new.display_name:=(case g when 3 then '三年級' when 4 then '四年級' when 9 then '九年級' else '六年級' end)||sub||'｜'||person.work||'・'||person.character||'｜'||lpad(n::text,greatest(3,length(n::text)),'0');
  return new;
 end $function$;
-revoke all on function public.quiz_assign_paper_name() from public;
+revoke all on function public.quiz_assign_paper_name() from public, anon, authenticated, service_role;
 grant execute on function public.quiz_assign_paper_name() to postgres;
 grant execute on function public.quiz_assign_paper_name() to service_role;
 
@@ -2367,7 +2367,7 @@ begin
  on conflict(version_id) do update set title=excluded.title,catalog=excluded.catalog,total=excluded.total,
   question_index=excluded.question_index,block_questions=excluded.block_questions;
 end $function$;
-revoke all on function public.quiz_cache_version(uuid,jsonb) from public;
+revoke all on function public.quiz_cache_version(uuid,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_cache_version(uuid,jsonb) to postgres;
 grant execute on function public.quiz_cache_version(uuid,jsonb) to service_role;
 
@@ -2400,7 +2400,7 @@ begin
  return result||jsonb_build_object('available',jsonb_array_length(courses)>0,'courses',courses,'units',coalesce(result->'units','[]'),
  'name_characters',coalesce((select jsonb_agg(jsonb_build_object('id',id,'work',work,'character',character) order by work,id) from public.quiz_name_characters where enabled),'[]'));
 end $function$;
-revoke all on function public.quiz_catalog_build(integer) from public;
+revoke all on function public.quiz_catalog_build(integer) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_catalog_build(integer) to postgres;
 grant execute on function public.quiz_catalog_build(integer) to service_role;
 
@@ -2416,7 +2416,7 @@ begin
  delete from public.quiz_catalog_cache;
  return null;
 end $function$;
-revoke all on function public.quiz_catalog_invalidate() from public;
+revoke all on function public.quiz_catalog_invalidate() from public, anon, authenticated, service_role;
 grant execute on function public.quiz_catalog_invalidate() to postgres;
 grant execute on function public.quiz_catalog_invalidate() to service_role;
 
@@ -2548,7 +2548,7 @@ begin
  insert into public.quiz_generated_papers(session_id,user_id,request_id,config,actual_distribution) values(s_id,uid,request,conf,distribution) returning display_name into paper_name;
  return jsonb_build_object('session_id',s_id,'display_name',paper_name,'distribution',distribution,'reused',false,'paper',public.quiz_paper_card(s_id));
 end $function$;
-revoke all on function public.quiz_compose(jsonb) from public;
+revoke all on function public.quiz_compose(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_compose(jsonb) to postgres;
 grant execute on function public.quiz_compose(jsonb) to authenticated;
 grant execute on function public.quiz_compose(jsonb) to service_role;
@@ -2572,7 +2572,7 @@ begin
  if not found then raise exception 'session_unavailable';end if;
  return jsonb_build_object('session_id',paper,'removed',true);
 end $function$;
-revoke all on function public.quiz_delete_paper(jsonb) from public;
+revoke all on function public.quiz_delete_paper(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_delete_paper(jsonb) to postgres;
 grant execute on function public.quiz_delete_paper(jsonb) to authenticated;
 grant execute on function public.quiz_delete_paper(jsonb) to service_role;
@@ -2588,7 +2588,7 @@ begin
  if p_data ? 'session_id' and exists(select 1 from public.quiz_learning_sessions where session_id=(p_data->>'session_id')::uuid and user_id is distinct from auth.uid()) then raise exception 'attempt_unavailable';end if;
  return public.quiz_entry_context_before_learning(p_data);
 end$function$;
-revoke all on function public.quiz_entry_context(jsonb) from public;
+revoke all on function public.quiz_entry_context(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_entry_context(jsonb) to postgres;
 grant execute on function public.quiz_entry_context(jsonb) to authenticated;
 grant execute on function public.quiz_entry_context(jsonb) to service_role;
@@ -2614,7 +2614,7 @@ begin
  end if;
  return jsonb_build_object('role',identity->>'role','grade',identity->'grade','subject',subject,'version_id',vid,'identity',public.quiz_nav_identity(identity->>'email'));
 end $function$;
-revoke all on function public.quiz_entry_context_before_learning(jsonb) from public;
+revoke all on function public.quiz_entry_context_before_learning(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_entry_context_before_learning(jsonb) to postgres;
 grant execute on function public.quiz_entry_context_before_learning(jsonb) to service_role;
 
@@ -2636,7 +2636,7 @@ begin
  if not exists(select 1 from public.quiz_courses c where c.id=v_course and c.enabled and c.grade=p_grade) then return null;end if;
  return source;
 end $function$;
-revoke all on function public.quiz_extension_source(uuid,text,jsonb,integer) from public;
+revoke all on function public.quiz_extension_source(uuid,text,jsonb,integer) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_extension_source(uuid,text,jsonb,integer) to postgres;
 grant execute on function public.quiz_extension_source(uuid,text,jsonb,integer) to service_role;
 
@@ -2667,7 +2667,7 @@ begin
  insert into public.quiz_versions(bank_id,revision,document) values(p_bank,p_revision,p_document) returning * into ver;
  return to_jsonb(ver);
 end $function$;
-revoke all on function public.quiz_freeze_publish(uuid,uuid,integer,jsonb,jsonb,jsonb) from public;
+revoke all on function public.quiz_freeze_publish(uuid,uuid,integer,jsonb,jsonb,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_freeze_publish(uuid,uuid,integer,jsonb,jsonb,jsonb) to postgres;
 grant execute on function public.quiz_freeze_publish(uuid,uuid,integer,jsonb,jsonb,jsonb) to service_role;
 
@@ -2683,7 +2683,7 @@ declare data jsonb;learning jsonb;begin
  if learning is not null then return jsonb_build_object('earned',false,'earned_now',false,'reason','learning_credit','learning',learning);end if;
  return public.quiz_leaf_result_before_learning(aid,new_answer);
 end$function$;
-revoke all on function public.quiz_leaf_result(uuid,boolean) from public;
+revoke all on function public.quiz_leaf_result(uuid,boolean) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_leaf_result(uuid,boolean) to postgres;
 grant execute on function public.quiz_leaf_result(uuid,boolean) to service_role;
 
@@ -2721,7 +2721,7 @@ begin
  end if;
  return jsonb_build_object('earned',award_id is not null,'earned_now',award_id is not null,'id',award_id,'reason',case when award_id is null then 'same_content_already_earned' else 'earned' end);
 end $function$;
-revoke all on function public.quiz_leaf_result_before_learning(uuid,boolean) from public;
+revoke all on function public.quiz_leaf_result_before_learning(uuid,boolean) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_leaf_result_before_learning(uuid,boolean) to postgres;
 grant execute on function public.quiz_leaf_result_before_learning(uuid,boolean) to service_role;
 
@@ -2782,7 +2782,7 @@ begin
  end if;
  return jsonb_build_object('sessionId',sid,'url','/grade'||(identity->>'grade')||'/115-1/quiz.html?cloud=1&learning=1&session='||sid,'count',2,'extensionEligible',true);
 end$function$;
-revoke all on function public.quiz_learning(jsonb) from public;
+revoke all on function public.quiz_learning(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_learning(jsonb) to postgres;
 grant execute on function public.quiz_learning(jsonb) to service_role;
 grant execute on function public.quiz_learning(jsonb) to authenticated;
@@ -2816,7 +2816,7 @@ begin
  insert into public.quiz_learning_leaves(user_id,school_year,semester,ordinal) select auth.uid(),cfg.school_year,cfg.semester,i from generate_series(1,n/10) i on conflict do nothing;get diagnostics awarded=row_count;
  return public.quiz_learning_summary()||jsonb_build_object('added',added,'earned_now',case when new_answer then awarded else 0 end,'origin',origin);
 end$function$;
-revoke all on function public.quiz_learning_credit(uuid,boolean) from public;
+revoke all on function public.quiz_learning_credit(uuid,boolean) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_learning_credit(uuid,boolean) to postgres;
 grant execute on function public.quiz_learning_credit(uuid,boolean) to service_role;
 
@@ -2832,7 +2832,7 @@ AS $function$
  'prompt_runs',case when length(trim(coalesce(q->'prompt'->>'text','')))=0 then q->'prompt'->'runs' else null end,
  'media',coalesce(q->'prompt'->'media','[]'), 'options',(select coalesce(jsonb_agg(x order by x::text),'[]') from(select jsonb_build_object('text',trim(regexp_replace(coalesce(o->'content'->>'text',''),'\s+',' ','g')),'media',coalesce(o->'content'->'media','[]'),'runs',case when length(trim(coalesce(o->'content'->>'text','')))=0 then o->'content'->'runs' else null end) x from jsonb_array_elements(coalesce(q->'options','[]')) o) z))::text)
 $function$;
-revoke all on function public.quiz_learning_key(jsonb,jsonb,jsonb) from public;
+revoke all on function public.quiz_learning_key(jsonb,jsonb,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_learning_key(jsonb,jsonb,jsonb) to postgres;
 grant execute on function public.quiz_learning_key(jsonb,jsonb,jsonb) to service_role;
 
@@ -2857,7 +2857,7 @@ declare a public.quiz_past_attempts;m public.quiz_learning_maps;data jsonb;r jso
  left join public.quiz_versions v on v.id=t.version_id where e->'conceptIds' ? (c->>'id');
  return jsonb_build_object('schema',1,'source',jsonb_build_object('versionId',a.version_id,'groupId',gid,'questionId',qid),'explanation',e->>'explanation','concepts',cs);
 end$function$;
-revoke all on function public.quiz_learning_review(uuid,text,text) from public;
+revoke all on function public.quiz_learning_review(uuid,text,text) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_learning_review(uuid,text,text) to postgres;
 grant execute on function public.quiz_learning_review(uuid,text,text) to service_role;
 
@@ -2875,7 +2875,7 @@ declare s public.quiz_learning_settings;n integer;l integer;identity jsonb;begin
  select count(*) into l from public.quiz_learning_leaves where user_id=auth.uid() and school_year=s.school_year and semester=s.semester;
  return jsonb_build_object('enabled',s.enabled,'count',n,'leaves',l,'remainder',n%10,'schoolYear',s.school_year,'semester',s.semester);
 end$function$;
-revoke all on function public.quiz_learning_summary() from public;
+revoke all on function public.quiz_learning_summary() from public, anon, authenticated, service_role;
 grant execute on function public.quiz_learning_summary() to postgres;
 grant execute on function public.quiz_learning_summary() to service_role;
 
@@ -2908,7 +2908,7 @@ declare item jsonb;g jsonb;f jsonb;r public.quiz_past_receipts;review jsonb;resp
  'review',jsonb_build_object('correct',false,'answer',jsonb_build_object('option_id',official),'explanation',jsonb_build_object('text',review->>'explanation','media','[]'::jsonb)),
  'past_review',jsonb_build_object('version',item->>'version_id','group',jsonb_build_object('id',g->>'id','fields',jsonb_build_array(jsonb_build_object('id',f->>'id'))),'record',jsonb_build_object('results',r.results,'learningReview',review)));
 end$function$;
-revoke all on function public.quiz_learning_wrong_detail(jsonb) from public;
+revoke all on function public.quiz_learning_wrong_detail(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_learning_wrong_detail(jsonb) to postgres;
 grant execute on function public.quiz_learning_wrong_detail(jsonb) to service_role;
 
@@ -2928,7 +2928,7 @@ AS $function$
  and exists(select 1 from jsonb_array_elements(m.content->'questions') e where e->>'groupId'=an.group_id and e->>'questionId'=an.question_id and not coalesce((e->>'selfCheck')::boolean,false))
  and exists(select 1 from jsonb_array_elements(r.results) x where x->>'questionId'=an.question_id and x->>'correct'='false')
 $function$;
-revoke all on function public.quiz_learning_wrong_items(integer) from public;
+revoke all on function public.quiz_learning_wrong_items(integer) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_learning_wrong_items(integer) to postgres;
 grant execute on function public.quiz_learning_wrong_items(integer) to service_role;
 
@@ -2961,7 +2961,7 @@ begin
  from visible s join public.quiz_version_meta v on v.version_id=s.version_id left join progress p on p.session_id=s.id;
  return jsonb_build_object('sessions',papers,'role',identity->>'role','grade',identity->'grade','identity',public.quiz_nav_identity(identity->>'email'));
 end $function$;
-revoke all on function public.quiz_library_sessions(jsonb) from public;
+revoke all on function public.quiz_library_sessions(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_library_sessions(jsonb) to postgres;
 grant execute on function public.quiz_library_sessions(jsonb) to authenticated;
 grant execute on function public.quiz_library_sessions(jsonb) to service_role;
@@ -3000,7 +3000,7 @@ begin
  a:=abs(n);b:=d;while b<>0 loop t:=a%b;a:=b;b:=t;end loop;
  n:=n/a;d:=d/a;return case when d=1 then n::text else n::text||'/'||d::text end;
 end $function$;
-revoke all on function public.quiz_math_answer_normalize(text) from public;
+revoke all on function public.quiz_math_answer_normalize(text) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_math_answer_normalize(text) to postgres;
 grant execute on function public.quiz_math_answer_normalize(text) to service_role;
 
@@ -3026,7 +3026,7 @@ begin
  end if;
  return public.quiz_media_access_before_reports(p_url,p_attempt);
 end$function$;
-revoke all on function public.quiz_media_access(text,uuid) from public;
+revoke all on function public.quiz_media_access(text,uuid) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_media_access(text,uuid) to postgres;
 grant execute on function public.quiz_media_access(text,uuid) to authenticated;
 grant execute on function public.quiz_media_access(text,uuid) to service_role;
@@ -3047,7 +3047,7 @@ begin
  if not public.quiz_media_visible(p_url,p_attempt) then raise exception 'media_unavailable';end if;
  return to_jsonb(asset);
 end $function$;
-revoke all on function public.quiz_media_access_before_past(text,uuid) from public;
+revoke all on function public.quiz_media_access_before_past(text,uuid) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_media_access_before_past(text,uuid) to postgres;
 grant execute on function public.quiz_media_access_before_past(text,uuid) to service_role;
 
@@ -3074,7 +3074,7 @@ begin
  select * into asset from public.quiz_media_assets where url=p_url and owner_id=paper.owner_id;if asset.url is null then raise exception 'media_unavailable';end if;
  return to_jsonb(asset)||jsonb_build_object('backend','supabase');
 end$function$;
-revoke all on function public.quiz_media_access_before_reports(text,uuid) from public;
+revoke all on function public.quiz_media_access_before_reports(text,uuid) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_media_access_before_reports(text,uuid) to postgres;
 grant execute on function public.quiz_media_access_before_reports(text,uuid) to service_role;
 
@@ -3115,7 +3115,7 @@ begin
  end loop;
  return false;
 end $function$;
-revoke all on function public.quiz_media_visible(text,uuid) from public;
+revoke all on function public.quiz_media_visible(text,uuid) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_media_visible(text,uuid) to postgres;
 grant execute on function public.quiz_media_visible(text,uuid) to service_role;
 
@@ -3130,7 +3130,7 @@ begin
  if exists(select 1 from public.quiz_learning_sessions where session_id=(p_data->>'session_id')::uuid) then raise exception 'session_unavailable';end if;
  return public.quiz_monitor_before_learning(p_data);
 end$function$;
-revoke all on function public.quiz_monitor(jsonb) from public;
+revoke all on function public.quiz_monitor(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_monitor(jsonb) to postgres;
 grant execute on function public.quiz_monitor(jsonb) to authenticated;
 grant execute on function public.quiz_monitor(jsonb) to service_role;
@@ -3162,7 +3162,7 @@ begin
  left join progress p on p.attempt_id=a.id;
  return jsonb_build_object('status',sess.status,'students',result);
 end$function$;
-revoke all on function public.quiz_monitor_before_learning(jsonb) from public;
+revoke all on function public.quiz_monitor_before_learning(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_monitor_before_learning(jsonb) to postgres;
 grant execute on function public.quiz_monitor_before_learning(jsonb) to service_role;
 
@@ -3177,7 +3177,7 @@ AS $function$
   'student_code',e.class_code||lpad(e.seat_no::text,2,'0'))
  from public.student_enrollments e where e.school_year=115 and e.email=p_email limit 1
 $function$;
-revoke all on function public.quiz_nav_identity(text) from public;
+revoke all on function public.quiz_nav_identity(text) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_nav_identity(text) to postgres;
 grant execute on function public.quiz_nav_identity(text) to service_role;
 
@@ -3199,7 +3199,7 @@ AS $function$
  join public.quiz_version_meta v on v.version_id=s.version_id
  where s.id=p_session and s.access_mode='self'
 $function$;
-revoke all on function public.quiz_paper_card(uuid) from public;
+revoke all on function public.quiz_paper_card(uuid) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_paper_card(uuid) to postgres;
 grant execute on function public.quiz_paper_card(uuid) to service_role;
 
@@ -3214,7 +3214,7 @@ begin
  if not partner_pilot.can_access() then return jsonb_build_object('allowed',false);end if;
  perform partner_pilot.register_self();return jsonb_build_object('allowed',true,'testRewards',true);
 end $function$;
-revoke all on function public.quiz_partner_pilot_access() from public;
+revoke all on function public.quiz_partner_pilot_access() from public, anon, authenticated, service_role;
 grant execute on function public.quiz_partner_pilot_access() to postgres;
 grant execute on function public.quiz_partner_pilot_access() to authenticated;
 grant execute on function public.quiz_partner_pilot_access() to service_role;
@@ -3307,7 +3307,7 @@ begin
  perform realtime.send(jsonb_build_object('room_id',rid,'revision',r.revision),'revision','partner-pilot:'||rid||':'||r.epoch,true);
  return result;
 end $function$;
-revoke all on function public.quiz_partner_pilot_action(jsonb) from public;
+revoke all on function public.quiz_partner_pilot_action(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_partner_pilot_action(jsonb) to postgres;
 grant execute on function public.quiz_partner_pilot_action(jsonb) to authenticated;
 grant execute on function public.quiz_partner_pilot_action(jsonb) to service_role;
@@ -3321,7 +3321,7 @@ CREATE OR REPLACE FUNCTION public.quiz_partner_pilot_can_subscribe(topic text)
 AS $function$
  select partner_pilot.can_access() and exists(select 1 from partner_pilot.rooms r join partner_pilot.members m on m.room_id=r.id where m.user_id=auth.uid() and topic='partner-pilot:'||r.id||':'||r.epoch and partner_pilot.source_available(r.paper))
 $function$;
-revoke all on function public.quiz_partner_pilot_can_subscribe(text) from public;
+revoke all on function public.quiz_partner_pilot_can_subscribe(text) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_partner_pilot_can_subscribe(text) to postgres;
 grant execute on function public.quiz_partner_pilot_can_subscribe(text) to authenticated;
 grant execute on function public.quiz_partner_pilot_can_subscribe(text) to service_role;
@@ -3344,7 +3344,7 @@ begin
  select jsonb_build_object('path',a.object_path,'mime',a.mime,'bytes',a.bytes) into result from partner_pilot.media_map m join public.quiz_media_assets a on a.url=m.source_url where m.paper_id=pid and m.hash=p_hash;
  if result is null then raise exception 'MEDIA_UNAVAILABLE';end if;return result;
 end $function$;
-revoke all on function public.quiz_partner_pilot_media_descriptor(uuid,text) from public;
+revoke all on function public.quiz_partner_pilot_media_descriptor(uuid,text) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_partner_pilot_media_descriptor(uuid,text) to postgres;
 grant execute on function public.quiz_partner_pilot_media_descriptor(uuid,text) to authenticated;
 grant execute on function public.quiz_partner_pilot_media_descriptor(uuid,text) to service_role;
@@ -3392,7 +3392,7 @@ begin
  on conflict(attempt_id) do update set revision=excluded.revision,groups=excluded.groups,current_group=excluded.current_group,request_id=excluded.request_id,request_body=excluded.request_body,updated_at=excluded.updated_at;
  result:=public.quiz_past_snapshot(att.id);return (result->'draft')||jsonb_build_object('snapshot',result);
 end $function$;
-revoke all on function public.quiz_past_action(text,jsonb) from public;
+revoke all on function public.quiz_past_action(text,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_past_action(text,jsonb) to postgres;
 grant execute on function public.quiz_past_action(text,jsonb) to authenticated;
 grant execute on function public.quiz_past_action(text,jsonb) to service_role;
@@ -3473,7 +3473,7 @@ begin
  end if;
  return public.quiz_past_snapshot(aid);
 end $function$;
-revoke all on function public.quiz_past_action_before_drafts(text,jsonb) from public;
+revoke all on function public.quiz_past_action_before_drafts(text,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_past_action_before_drafts(text,jsonb) to postgres;
 grant execute on function public.quiz_past_action_before_drafts(text,jsonb) to service_role;
 
@@ -3526,7 +3526,7 @@ begin
  if g->>'kind'='sequence' then if n<>jsonb_array_length(codes) then raise exception 'invalid_response';end if;return v;end if;
  select jsonb_agg(c order by ord) into result from jsonb_array_elements(codes) with ordinality x(c,ord) where v @> jsonb_build_array(c);return result;
 end $function$;
-revoke all on function public.quiz_past_canonical(jsonb,jsonb) from public;
+revoke all on function public.quiz_past_canonical(jsonb,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_past_canonical(jsonb,jsonb) to postgres;
 grant execute on function public.quiz_past_canonical(jsonb,jsonb) to service_role;
 
@@ -3570,7 +3570,7 @@ begin
   end if;
  end loop;
 end $function$;
-revoke all on function public.quiz_past_draft_value(jsonb,jsonb) from public;
+revoke all on function public.quiz_past_draft_value(jsonb,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_past_draft_value(jsonb,jsonb) to postgres;
 grant execute on function public.quiz_past_draft_value(jsonb,jsonb) to service_role;
 
@@ -3588,7 +3588,7 @@ AS $function$
   union all select jsonb_path_query(d,'$.groups[*].materialContent.media[*].url')
  ) media where media.value#>>'{}'=u)
 $function$;
-revoke all on function public.quiz_past_has_media(jsonb,text) from public;
+revoke all on function public.quiz_past_has_media(jsonb,text) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_past_has_media(jsonb,text) to postgres;
 grant execute on function public.quiz_past_has_media(jsonb,text) to service_role;
 
@@ -3598,7 +3598,7 @@ CREATE OR REPLACE FUNCTION public.quiz_past_immutable()
  LANGUAGE plpgsql
  SET search_path TO ''
 AS $function$begin raise exception 'immutable_version';end$function$;
-revoke all on function public.quiz_past_immutable() from public;
+revoke all on function public.quiz_past_immutable() from public, anon, authenticated, service_role;
 grant execute on function public.quiz_past_immutable() to postgres;
 grant execute on function public.quiz_past_immutable() to service_role;
 
@@ -3614,7 +3614,7 @@ declare data jsonb;draft public.quiz_past_drafts;begin
  select * into draft from public.quiz_past_drafts where attempt_id=p_attempt;
  return data||jsonb_build_object('draft',jsonb_build_object('revision',coalesce(draft.revision,0),'groups',coalesce(draft.groups,'{}'),'currentGroup',draft.current_group,'updatedAt',draft.updated_at));
 end $function$;
-revoke all on function public.quiz_past_snapshot(uuid) from public;
+revoke all on function public.quiz_past_snapshot(uuid) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_past_snapshot(uuid) to postgres;
 grant execute on function public.quiz_past_snapshot(uuid) to service_role;
 
@@ -3661,7 +3661,7 @@ declare data jsonb;m public.quiz_learning_maps;e jsonb;r jsonb;g jsonb;items jso
  end loop;
  return data;
 end$function$;
-revoke all on function public.quiz_past_snapshot_before_drafts(uuid) from public;
+revoke all on function public.quiz_past_snapshot_before_drafts(uuid) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_past_snapshot_before_drafts(uuid) to postgres;
 grant execute on function public.quiz_past_snapshot_before_drafts(uuid) to service_role;
 
@@ -3692,7 +3692,7 @@ begin
  return jsonb_build_object('version',att.version_id,'title',d->'title','policy',jsonb_build_object('automaticPoints',mx,'manualPoints',(select coalesce(sum((pf->>'points')::numeric),0) from jsonb_array_elements(d->'groups') pg cross join lateral jsonb_array_elements(pg->'fields') pf where pg->>'kind' in('annotation','manual')),'blockedPoints',(select coalesce(sum((b->>'points')::numeric),0) from jsonb_array_elements(coalesce(d->'blocked','[]')) b),'blockedFields',jsonb_array_length(coalesce(d->'blocked','[]'))),'groups',safe,'records',records,'attemptId',aid,'summary',jsonb_build_object('score',score,'max',mx,'answered',answered,'total',total,'drawingStatus',drawing),
   'practice',jsonb_build_object('localOnly',false,'eligible',mx>0,'thresholdPercent',60,'complete',att.completed_at is not null,'leafCount',case when award is null then 0 else 1 end,'earnedByThisAttempt',award=aid,'history',history));
 end $function$;
-revoke all on function public.quiz_past_snapshot_before_flowers(uuid) from public;
+revoke all on function public.quiz_past_snapshot_before_flowers(uuid) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_past_snapshot_before_flowers(uuid) to postgres;
 grant execute on function public.quiz_past_snapshot_before_flowers(uuid) to service_role;
 
@@ -3712,7 +3712,7 @@ begin
  practice:=(practice-'leafCount')||jsonb_build_object('flowerCount',coalesce(practice->'leafCount','0'::jsonb),'rewardKind','past-exam-flower','history',history);
  return jsonb_set(data,'{practice}',practice);
 end$function$;
-revoke all on function public.quiz_past_snapshot_before_learning(uuid) from public;
+revoke all on function public.quiz_past_snapshot_before_learning(uuid) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_past_snapshot_before_learning(uuid) to postgres;
 grant execute on function public.quiz_past_snapshot_before_learning(uuid) to service_role;
 
@@ -3751,7 +3751,7 @@ begin
  end loop;
  if cardinality(fields)>200 then raise exception 'invalid_document';end if;
 end $function$;
-revoke all on function public.quiz_past_validate(jsonb) from public;
+revoke all on function public.quiz_past_validate(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_past_validate(jsonb) to postgres;
 grant execute on function public.quiz_past_validate(jsonb) to service_role;
 
@@ -3778,7 +3778,7 @@ begin
  end if;
  return result;
 end $function$;
-revoke all on function public.quiz_pool_catalog() from public;
+revoke all on function public.quiz_pool_catalog() from public, anon, authenticated, service_role;
 grant execute on function public.quiz_pool_catalog() to postgres;
 grant execute on function public.quiz_pool_catalog() to authenticated;
 grant execute on function public.quiz_pool_catalog() to service_role;
@@ -3862,7 +3862,7 @@ begin
  end if;
  return to_jsonb(r)-'request_id'-'user_id';
 end$function$;
-revoke all on function public.quiz_question_report(jsonb) from public;
+revoke all on function public.quiz_question_report(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_question_report(jsonb) to postgres;
 grant execute on function public.quiz_question_report(jsonb) to authenticated;
 grant execute on function public.quiz_question_report(jsonb) to service_role;
@@ -3880,7 +3880,7 @@ begin
  if coalesce(public.is_teacher(),false) then raise exception 'student_required';end if;
  raise exception 'paper_name_locked';
 end $function$;
-revoke all on function public.quiz_rename_paper(jsonb) from public;
+revoke all on function public.quiz_rename_paper(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_rename_paper(jsonb) to postgres;
 grant execute on function public.quiz_rename_paper(jsonb) to authenticated;
 grant execute on function public.quiz_rename_paper(jsonb) to service_role;
@@ -3903,7 +3903,7 @@ declare data jsonb;cfg public.quiz_learning_settings;awards jsonb;identity jsonb
  -- Existing garden_growth already reads awards and therefore receives the same stable IDs.
  return data||jsonb_build_object('awards',awards||coalesce(data->'awards','[]'),'learning',public.quiz_learning_summary(),'learningAwards',awards);
 end$function$;
-revoke all on function public.quiz_rewards(jsonb) from public;
+revoke all on function public.quiz_rewards(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_rewards(jsonb) to postgres;
 grant execute on function public.quiz_rewards(jsonb) to authenticated;
 grant execute on function public.quiz_rewards(jsonb) to service_role;
@@ -3926,7 +3926,7 @@ begin
  where a->>'source_type'='past_exam' and (cid is null or cid='grade'||(a->>'grade')||'-115-1');
  return old||jsonb_build_object('awards',normal,'flowers',flowers);
 end$function$;
-revoke all on function public.quiz_rewards_before_learning(jsonb) from public;
+revoke all on function public.quiz_rewards_before_learning(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_rewards_before_learning(jsonb) to postgres;
 grant execute on function public.quiz_rewards_before_learning(jsonb) to service_role;
 
@@ -3948,7 +3948,7 @@ begin
  where w.user_id=auth.uid() and w.grade=g;
  return jsonb_build_object('awards',items);
 end $function$;
-revoke all on function public.quiz_rewards_before_past(jsonb) from public;
+revoke all on function public.quiz_rewards_before_past(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_rewards_before_past(jsonb) to postgres;
 grant execute on function public.quiz_rewards_before_past(jsonb) to service_role;
 
@@ -3966,7 +3966,7 @@ declare original jsonb;items jsonb;identity jsonb;begin
  from public.quiz_past_leaves l join public.quiz_past_attempts a on a.id=l.attempt_id join public.quiz_past_papers p on p.id=l.paper_id where l.user_id=auth.uid() and l.school_year=115 and l.semester=1 and p.grade=(identity->>'grade')::integer;
  return jsonb_set(original,'{awards}',coalesce(original->'awards','[]')||items);
 end$function$;
-revoke all on function public.quiz_rewards_before_past_flowers(jsonb) from public;
+revoke all on function public.quiz_rewards_before_past_flowers(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_rewards_before_past_flowers(jsonb) to postgres;
 grant execute on function public.quiz_rewards_before_past_flowers(jsonb) to service_role;
 
@@ -3992,7 +3992,7 @@ AS $function$
   left join source on source.id=r.qid#>>'{}'
  ) select jsonb_build_object('title',d->>'title','questions',coalesce(jsonb_agg(item order by n),'[]'::jsonb)) from items;
 $function$;
-revoke all on function public.quiz_student_document(jsonb,jsonb,jsonb) from public;
+revoke all on function public.quiz_student_document(jsonb,jsonb,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_student_document(jsonb,jsonb,jsonb) to postgres;
 grant execute on function public.quiz_student_document(jsonb,jsonb,jsonb) to service_role;
 
@@ -4012,7 +4012,7 @@ begin
  if cls is null then raise exception 'roster_required';end if;
  return jsonb_build_object('role','student','grade',left(cls,1)::integer,'email',mail,'class_code',cls);
 end $function$;
-revoke all on function public.quiz_student_identity() from public;
+revoke all on function public.quiz_student_identity() from public, anon, authenticated, service_role;
 grant execute on function public.quiz_student_identity() to postgres;
 grant execute on function public.quiz_student_identity() to service_role;
 
@@ -4062,7 +4062,7 @@ begin
  end if;
  return true;
 end $function$;
-revoke all on function public.quiz_valid_content(jsonb) from public;
+revoke all on function public.quiz_valid_content(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_valid_content(jsonb) to postgres;
 grant execute on function public.quiz_valid_content(jsonb) to service_role;
 
@@ -4092,7 +4092,7 @@ begin
  end loop;
  return true;
 end $function$;
-revoke all on function public.quiz_valid_runs(jsonb,jsonb) from public;
+revoke all on function public.quiz_valid_runs(jsonb,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_valid_runs(jsonb,jsonb) to postgres;
 grant execute on function public.quiz_valid_runs(jsonb,jsonb) to service_role;
 
@@ -4147,7 +4147,7 @@ begin
  end loop;
  if n>200 or octet_length(d::text)>1000000 then raise exception 'document_too_large'; end if;
 end $function$;
-revoke all on function public.quiz_validate(jsonb) from public;
+revoke all on function public.quiz_validate(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_validate(jsonb) to postgres;
 grant execute on function public.quiz_validate(jsonb) to service_role;
 
@@ -4171,7 +4171,7 @@ begin
  from public.quiz_versions v join public.quiz_version_meta m on m.version_id=v.id where v.bank_id=bank;
  return jsonb_build_object('versions',result);
 end $function$;
-revoke all on function public.quiz_version_browser(jsonb) from public;
+revoke all on function public.quiz_version_browser(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_version_browser(jsonb) to postgres;
 grant execute on function public.quiz_version_browser(jsonb) to authenticated;
 grant execute on function public.quiz_version_browser(jsonb) to service_role;
@@ -4184,7 +4184,7 @@ CREATE OR REPLACE FUNCTION public.quiz_version_meta_trigger()
  SET search_path TO ''
 AS $function$
 begin perform public.quiz_cache_version(new.id,new.document);return new;end $function$;
-revoke all on function public.quiz_version_meta_trigger() from public;
+revoke all on function public.quiz_version_meta_trigger() from public, anon, authenticated, service_role;
 grant execute on function public.quiz_version_meta_trigger() to postgres;
 grant execute on function public.quiz_version_meta_trigger() to service_role;
 
@@ -4214,7 +4214,7 @@ declare identity jsonb;old jsonb;items jsonb;facets jsonb;n integer;page integer
  (select coalesce(jsonb_agg(f),'[]') from(select distinct jsonb_build_object('subject',coalesce(item->'catalog'->>'subject','未分類'),'unit',coalesce(item->'catalog'->>'unit',item->>'title')) f from all_items) x) into n,items,facets;
  return old||jsonb_build_object('items',items,'total',n,'facets',facets);
 end$function$;
-revoke all on function public.quiz_wrong_questions(jsonb) from public;
+revoke all on function public.quiz_wrong_questions(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_wrong_questions(jsonb) to postgres;
 grant execute on function public.quiz_wrong_questions(jsonb) to authenticated;
 grant execute on function public.quiz_wrong_questions(jsonb) to service_role;
@@ -4272,7 +4272,7 @@ begin
    from paged p join public.quiz_version_meta m on m.version_id=p.version_id)) into result;
  return result;
 end $function$;
-revoke all on function public.quiz_wrong_questions_before_learning(jsonb) from public;
+revoke all on function public.quiz_wrong_questions_before_learning(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_wrong_questions_before_learning(jsonb) to postgres;
 grant execute on function public.quiz_wrong_questions_before_learning(jsonb) to service_role;
 
@@ -4302,7 +4302,7 @@ AS $function$
  and ((a.reveal='complete' and p.answered ?& a.ordered_ids)
   or (a.reveal='immediate' and p.answered @> (a.block_questions->(a.question_index->x.question_id->>'block_id'))))
 $function$;
-revoke all on function public.quiz_wrong_refs(integer,text,text) from public;
+revoke all on function public.quiz_wrong_refs(integer,text,text) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_wrong_refs(integer,text,text) to postgres;
 grant execute on function public.quiz_wrong_refs(integer,text,text) to service_role;
 
@@ -4410,7 +4410,7 @@ begin
  end if;
  raise exception 'invalid_action';
 end $function$;
-revoke all on function public.reading_action(text,jsonb) from public;
+revoke all on function public.reading_action(text,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.reading_action(text,jsonb) to postgres;
 grant execute on function public.reading_action(text,jsonb) to authenticated;
 grant execute on function public.reading_action(text,jsonb) to service_role;
@@ -4496,7 +4496,7 @@ begin
 exception when unique_violation then
  raise exception '資料綁定或匯入紀錄衝突，請找老師查核。';
 end $function$;
-revoke all on function public.reconnect_grade3_progress() from public;
+revoke all on function public.reconnect_grade3_progress() from public, anon, authenticated, service_role;
 grant execute on function public.reconnect_grade3_progress() to postgres;
 grant execute on function public.reconnect_grade3_progress() to authenticated;
 grant execute on function public.reconnect_grade3_progress() to service_role;
@@ -4513,7 +4513,7 @@ AS $function$
             else p_class_code || lpad(p_seat_no::text, 2, '0')
         end;
 $function$;
-revoke all on function public.refresh_student_code(text,smallint) from public;
+revoke all on function public.refresh_student_code(text,smallint) from public, anon, authenticated, service_role;
 grant execute on function public.refresh_student_code(text,smallint) to public;
 grant execute on function public.refresh_student_code(text,smallint) to postgres;
 grant execute on function public.refresh_student_code(text,smallint) to anon;
@@ -4550,7 +4550,7 @@ BEGIN
   END LOOP;
 END;
 $function$;
-revoke all on function public.rls_auto_enable() from public;
+revoke all on function public.rls_auto_enable() from public, anon, authenticated, service_role;
 grant execute on function public.rls_auto_enable() to public;
 grant execute on function public.rls_auto_enable() to postgres;
 grant execute on function public.rls_auto_enable() to anon;
@@ -4575,7 +4575,7 @@ begin
    score=case when p.completed or excluded.completed then t else greatest(coalesce(p.score,p.current_level-1),excluded.score) end,
    completed=p.completed or excluded.completed,current_level=greatest(p.current_level,excluded.current_level),updated_at=now();
 end $function$;
-revoke all on function public.save_grade3_progress(text,text,integer) from public;
+revoke all on function public.save_grade3_progress(text,text,integer) from public, anon, authenticated, service_role;
 grant execute on function public.save_grade3_progress(text,text,integer) to postgres;
 grant execute on function public.save_grade3_progress(text,text,integer) to authenticated;
 grant execute on function public.save_grade3_progress(text,text,integer) to service_role;
@@ -4598,7 +4598,7 @@ begin
     return new;
 end;
 $function$;
-revoke all on function public.student_profiles_set_defaults() from public;
+revoke all on function public.student_profiles_set_defaults() from public, anon, authenticated, service_role;
 grant execute on function public.student_profiles_set_defaults() to public;
 grant execute on function public.student_profiles_set_defaults() to postgres;
 grant execute on function public.student_profiles_set_defaults() to anon;
@@ -4636,7 +4636,7 @@ begin
  return query select e.class_code::text,e.seat_no::smallint,e.display_name::text
   from public.student_enrollments e where e.school_year=115 and e.email=mail;
 end $function$;
-revoke all on function public.switch_test_identity(text) from public;
+revoke all on function public.switch_test_identity(text) from public, anon, authenticated, service_role;
 grant execute on function public.switch_test_identity(text) to postgres;
 grant execute on function public.switch_test_identity(text) to authenticated;
 grant execute on function public.switch_test_identity(text) to service_role;
@@ -4748,7 +4748,7 @@ begin
   select * into r from public.typing_foundation_progress p where p.id=r.id;
   return to_jsonb(r);
 end; $function$;
-revoke all on function public.typing_foundation_action(text,text,jsonb) from public;
+revoke all on function public.typing_foundation_action(text,text,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.typing_foundation_action(text,text,jsonb) to postgres;
 grant execute on function public.typing_foundation_action(text,text,jsonb) to anon;
 grant execute on function public.typing_foundation_action(text,text,jsonb) to authenticated;
@@ -4826,7 +4826,7 @@ begin
         updated_at = now();
 end;
 $function$;
-revoke all on function public.upsert_guest_progress(text,text,text,text,smallint,text,integer,smallint,boolean) from public;
+revoke all on function public.upsert_guest_progress(text,text,text,text,smallint,text,integer,smallint,boolean) from public, anon, authenticated, service_role;
 grant execute on function public.upsert_guest_progress(text,text,text,text,smallint,text,integer,smallint,boolean) to public;
 grant execute on function public.upsert_guest_progress(text,text,text,text,smallint,text,integer,smallint,boolean) to postgres;
 grant execute on function public.upsert_guest_progress(text,text,text,text,smallint,text,integer,smallint,boolean) to anon;
@@ -4845,7 +4845,7 @@ AS $function$
  from public.class_card_students s where s.course_id=p_course_id and s.course_id<>'grade3-115-1'
  and s.class_code=p_class_code and s.seat_no=p_seat_no and s.birthday_code=p_birthday_code and s.active limit 1;
 $function$;
-revoke all on function public.verify_class_card_identity(text,text,smallint,text) from public;
+revoke all on function public.verify_class_card_identity(text,text,smallint,text) from public, anon, authenticated, service_role;
 grant execute on function public.verify_class_card_identity(text,text,smallint,text) to postgres;
 grant execute on function public.verify_class_card_identity(text,text,smallint,text) to service_role;
 grant execute on function public.verify_class_card_identity(text,text,smallint,text) to anon;

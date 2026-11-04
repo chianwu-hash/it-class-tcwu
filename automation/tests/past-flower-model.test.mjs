@@ -1,9 +1,8 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-const asModule=s=>'data:text/javascript;base64,'+Buffer.from(s).toString('base64');
-const config=asModule(await fs.readFile('shared/reward-tree-config.js','utf8'));
-const {deriveRewardTreeModel}=await import(asModule((await fs.readFile('shared/reward-tree-model.js','utf8')).replace('./reward-tree-config.js',config)));
-const {safeRewardSourceHref}=await import(asModule(await fs.readFile('shared/reward-tree-renderer.js','utf8')));
+import {importModule} from '../lib/data-url-import.mjs';
+const {deriveRewardTreeModel}=await importModule('shared/reward-tree-model.js');
+const {safeRewardSourceHref}=await importModule('shared/reward-tree-renderer.js');
 test('考古花的種類、來源、統計及安全回看連結，與一般魔王花各自保留',()=>{
  const cid='grade3-115-1',attempt='00000000-0000-4000-8000-000000000001',href='/grade3/115-1/past-exam.html?paper=paper-v1&attempt='+attempt;
  const acts=[{courseId:cid,weekCode:'00',activityKey:'practice_past:abc',type:'past-exam-flower',label:'期中綜合練習',pageHref:href,sourceLinks:[{title:'回看試卷',href}]},{courseId:cid,weekCode:'01',activityKey:'typing',type:'typing',totalLevels:2,rewardMode:'boss',label:'魔王關'}];

@@ -62,7 +62,8 @@ const extensions = await query('extensions', `select extname as name, extversion
 
 // Functions file: replayable, ends with the exact production ACL per function.
 const aclGrants = (sig, acl) => {
-  const lines = [`revoke all on function public.${sig.replace(/^public\./, '')} from public;`];
+  // Revoke from every managed role first so extra direct grants cannot survive a replay.
+  const lines = [`revoke all on function public.${sig.replace(/^public\./, '')} from public, anon, authenticated, service_role;`];
   for (const item of acl.replace(/^\{|\}$/g, '').split(',').filter(Boolean)) {
     const [grantee, rest] = item.split('='); if (!rest || !rest.split('/')[0].includes('X')) continue;
     lines.push(`grant execute on function public.${sig.replace(/^public\./, '')} to ${grantee === '' ? 'public' : grantee};`);

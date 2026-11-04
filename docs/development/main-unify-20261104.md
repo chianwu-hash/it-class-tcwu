@@ -190,3 +190,18 @@
 - 用 CLI 從乾淨 checkout 上傳時，`textbooks/` 規則仍會留下空資料夾，因此在 `release/project-policy.json` 補上 `cliIgnorePatterns: ["textbooks"]`（比照 S091／S092），並以 `renderProjectIgnore` 重新產生 `.vercelignore`；另排除 `.gitattributes`。`automation/tests/release-report.test.mjs` 11／11 通過。
 - 預覽 `dpl_24v5JeTrxVd48YtUPx3kZWxWTX7W`（commit `0b82917`）建置成功。`quiz-release-compare.mjs` 對正式版：820／820，無新增、無刪除；125 檔 SHA1 不同，其中 2 檔是預期的 `.vercelignore`、`release/project-policy.json`，其餘 123 檔經 `release-tree-diff.mjs` 確認只差換行，內容差異 0。
 - 預覽網址回 302（Vercel 預覽保護需登入），頁面內容未以瀏覽器驗證。
+
+## 10. 依 Codex 審查修正（2026-11-04）
+
+Codex 唯讀審查（session `20261104-main-unify-review`）結論為「修正後可合併」，6 項已全部處理：
+
+| 嚴重度 | 問題 | 處理 |
+| --- | --- | --- |
+| 高 | 快照不足以完整重建（缺 `foundation_milestones.sql`） | 從 `foundation-milestones-20261102` worktree 收錄 migration、建置工具、測試與兩份發布紀錄共 14 檔；README 改為「既有 schema 上的函式還原」，明列 8 張沒有建表 SQL 的表與里程碑規則資料；檢查腳本會自動列出缺少建表 SQL 的表 |
+| 中 | 快照沒完整還原權限 | 重放時先對 `public, anon, authenticated, service_role` 全部撤銷再依正式 ACL 授權（重新唯讀匯出，函式內容不變）；`--live` 另比對 EXECUTE 權限與 SECURITY DEFINER，120／120 相同 |
+| 中 | 比對工具不接受新增／刪除 | `quiz-release-compare.mjs` 新增 `--added`、`--removed`、`--eol-dir`，成為唯一的驗收結果；新增 4 項單元測試；以實際候選 `dpl_24v5…` 驗證 `ok: true`（2 個預期變更、123 個只差換行） |
+| 中 | 覆蓋刪掉 4 個 npm 指令 | `package.json` 還原 `release:report`、`release:prepare-files`、`release:check`、`release:prepare`。`package.json` 會被部署，下次發布要列為預期變更 |
+| 中 | 里程碑測試與紀錄沒收齊；3 個測試失敗 | 收錄如上；另從 `foundation-keyboard-fix-20261102` 收錄 3 份紀錄。`garden-release-gate` 改為「不得關閉 main 部署」；兩個模型測試改用 `automation/lib/data-url-import.mjs` 遞迴處理相對匯入，適用正式模組 |
+| 低 | 考古題範本互斥段落 | 保留「不適用項保留並註明原因」，刪除舊段；其他聯集合併的文件未發現同類矛盾（`agent-handoff.md` 為時間序紀錄，保留重複標題） |
+
+修正後全套單元測試（90 檔）：71 檔通過、19 檔失敗；19 檔與第 5 節相同，都是覆蓋前就失敗的環境因素，沒有新增失敗。`garden-release-gate`、`past-flower-model`、`typing-foundation-model` 由失敗轉為通過；新增的 `foundation-milestones`、`foundation-milestones-db`、`quiz-release-compare` 皆通過。

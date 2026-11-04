@@ -6,7 +6,8 @@
 //        question_order with LIMIT 1 but without ORDER BY (the 2026-10-30 question_order bug).
 //     3. Files that redefine public.quiz_action without the learning wrapper are reported: applying them
 //        after quiz-learning.sql would drop the wrapper, so the snapshot must be applied last.
-//   --live: read-only md5 comparison of every public function in production against the manifest.
+//   --live: read-only comparison of every public function in production against the manifest
+//           (definition md5, EXECUTE acl, SECURITY DEFINER).
 // Exit 1 on any failure.
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -50,16 +51,29 @@ for (const f of sqlFiles) {
   }
 }
 
+// 3b. tables in production that no supabase/*.sql creates (cannot be rebuilt from this repo)
+const schema = JSON.parse(await fs.readFile(path.join(snapDir, 'schema.json'), 'utf8'));
+const allSql = (await Promise.all(sqlFiles.map(f => fs.readFile(path.join(root, 'supabase', f), 'utf8')))).join('\n').toLowerCase().replace(/\s+/g, ' ');
+const noSource = schema.tables.filter(t => ['r', 'p'].includes(t.kind)).map(t => t.name)
+  .filter(n => !new RegExp('create table (if not exists )?(public\\.)?"?' + n + '"?\\s*\\(').test(allSql));
+if (noSource.length) warnings.push(`tables without a CREATE TABLE in supabase/*.sql (definition only in schema.json): ${noSource.join(', ')}`);
+
 // 4. optional live drift check (read-only catalog query)
 if (args.includes('--live')) {
   const cli = opt('--cli', 'D:\\local-bin\\supabase-personal.cmd'), workdir = opt('--workdir', 'D:\\projects\\it-class-tcwu');
   const file = path.join(os.tmpdir(), `snapshot-check-${process.pid}.sql`);
-  await fs.writeFile(file, `select p.oid::regprocedure::text as signature, md5(pg_get_functiondef(p.oid)) as md5 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+  await fs.writeFile(file, `select p.oid::regprocedure::text as signature, md5(pg_get_functiondef(p.oid)) as md5, coalesce(p.proacl::text,'') as acl, p.prosecdef as security_definer from pg_proc p join pg_namespace n on n.oid=p.pronamespace
 where n.nspname='public' and p.prokind in ('f','p') and not exists (select 1 from pg_depend d where d.classid='pg_proc'::regclass and d.objid=p.oid and d.deptype='e') order by 1`);
   const raw = execFileSync('cmd.exe', ['/d', '/c', cli, 'db', 'query', '--linked', '-o', 'json', '-f', file], { cwd: workdir, encoding: 'utf8', maxBuffer: 64 << 20, stdio: ['ignore', 'pipe', 'pipe'] });
   await fs.rm(file, { force: true });
-  const live = new Map(JSON.parse(raw.slice(raw.indexOf('{'), raw.lastIndexOf('}') + 1)).rows.map(r => [r.signature, r.md5]));
-  for (const [sig, md5] of live) if (!manifest.functions[sig]) failures.push(`live has ${sig} not in snapshot`); else if (manifest.functions[sig].md5 !== md5) failures.push(`live ${sig} md5 ${md5} != snapshot ${manifest.functions[sig].md5}`);
+  const live = new Map(JSON.parse(raw.slice(raw.indexOf('{'), raw.lastIndexOf('}') + 1)).rows.map(r => [r.signature, r]));
+  for (const [sig, r] of live) {
+    const snap = manifest.functions[sig];
+    if (!snap) { failures.push(`live has ${sig} not in snapshot`); continue; }
+    if (snap.md5 !== r.md5) failures.push(`live ${sig} md5 ${r.md5} != snapshot ${snap.md5}`);
+    if (snap.acl !== r.acl) failures.push(`live ${sig} EXECUTE acl ${r.acl} != snapshot ${snap.acl}`);
+    if (snap.securityDefiner !== r.security_definer) failures.push(`live ${sig} security definer ${r.security_definer} != snapshot ${snap.securityDefiner}`);
+  }
   for (const sig of Object.keys(manifest.functions)) if (!live.has(sig)) failures.push(`snapshot has ${sig} not in live`);
 }
 

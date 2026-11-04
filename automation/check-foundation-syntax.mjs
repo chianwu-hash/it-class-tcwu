@@ -1,0 +1,3 @@
+import fs from 'node:fs';import{spawnSync}from'node:child_process';
+const manifest=JSON.parse(fs.readFileSync('tmp/foundation-feature-manifest.json'));
+let count=0;for(const {file}of manifest.files){const s=fs.readFileSync(file,'utf8'),scripts=/\.m?js$/.test(file)?[s]:file.endsWith('.html')?[...s.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)].filter(m=>!m[1].includes('src=')).map(m=>m[2]):[];for(const text of scripts){const r=spawnSync(process.execPath,['--input-type=module','--check'],{input:text,encoding:'utf8'});if(r.status)throw Error(file+': '+r.stderr);count++}}console.log(`Syntax verified: ${count} browser scripts.`);
