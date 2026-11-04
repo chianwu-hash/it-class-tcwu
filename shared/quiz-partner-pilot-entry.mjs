@@ -6,6 +6,9 @@ function ensureEntryStyle(){
  if(document.getElementById('partner-pilot-entry-style'))return;
  const style=document.createElement('style');style.id='partner-pilot-entry-style';
  style.textContent=`
+ [data-partner-pilot-entry="main"]{position:relative;padding-right:190px}
+ [data-partner-pilot-entry="main"] .partner-entry-art{position:absolute;right:24px;bottom:14px;width:130px;height:100px;object-fit:contain;object-position:center bottom;pointer-events:none}
+ @media(max-width:850px){[data-partner-pilot-entry="main"]{padding-right:24px}[data-partner-pilot-entry="main"] .partner-entry-art{display:none}}
  [data-partner-pilot-entry="main"] .partner-entry-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:12px;padding-bottom:3px}
  [data-partner-pilot-entry="main"] .partner-entry-actions .paper-start{margin:0;min-width:0}
  [data-partner-pilot-entry="main"] .partner-entry-actions .partner-entry-resume{background:var(--quiz-primary,#0f766e);color:#fff;box-shadow:0 3px 0 var(--quiz-primary-dark,#115e59)}
@@ -32,6 +35,7 @@ async function update(session){
   const actions=document.createElement('div');actions.className='partner-entry-actions';
   for(const [text,params] of [['找夥伴一起練',{}],['接續夥伴練功',{view:'resume'}]]){const a=document.createElement('a');a.textContent=text;a.className='paper-start'+(params.view?' partner-entry-resume':'');a.href=href(params);actions.append(a);}
   section.append(actions);
+  const art=document.createElement('img');art.className='partner-entry-art';art.src=new URL('./partner-pilot/art/welcome-v1.webp',import.meta.url).href;art.alt='';art.setAttribute('aria-hidden','true');art.width=480;art.height=268;art.loading='lazy';art.decoding='async';section.append(art);
   // Also visible to an invited adult without a student roster. Existing student eligibility stays intact.
   document.querySelector('main')?.prepend(section);
   function decorate(){

@@ -4,6 +4,7 @@
 
 | 狀態 | agent | 開始時間 | `main` commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
 | --- | --- | --- | --- | --- | --- | --- |
+| 發布中 | Codex-partner-visual-20261104 | 2026-11-04 晚間 | 待此實作 PR 合併後從 main 發布 | `dpl_EGn9CwbxtAbHLhnGx6uNUoLjBsKd` | 四年級夥伴頁／題庫入口、app、learning、entry；新增 presentation、visual.css、6張WebP | 待完整樹比對與發布腳本 |
 | 已完成 | Codex-partner-stability-20261104 | 2026-11-04T13:29:20.880Z | `8ff1efc` | `dpl_FBgBVoAs3HsNu46qJNE8P47U14iP` | shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/rich-content.js、grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html | `dpl_EGn9CwbxtAbHLhnGx6uNUoLjBsKd`／回滾 `dpl_FBgBVoAs3HsNu46qJNE8P47U14iP`（eolOnly 0） |
 | 已完成 | Codex-partner-20261104 | 2026-11-04T10:06:11.898Z | `95fb685` | `dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p` | .vercelignore、grade3/115-1/partner-practice.html、grade3/115-1/quiz-library.html、grade4/115-1/partner-practice.html、grade4/115-1/quiz-library.html、grade6/115-1/partner-practice.html、grade6/115-1/quiz-library.html、grade9/115-1/partner-practice.html、grade9/115-1/quiz-library.html、my-tree.html、package.json、release/project-policy.json、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/quiz-partner-pilot-entry.mjs、shared/quiz-rewards.mjs、shared/reward-tree-model.js、shared/reward-tree-renderer.js、vercel.json、+shared/quiz-partner-rewards.mjs | `dpl_FBgBVoAs3HsNu46qJNE8P47U14iP`／回滾 `dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p`（eolOnly 120） |
 | 基準 | Claude（整合） | 2026-11-04 10:18 | PR #1 已併入 `main`（`468974a`） | `dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p` | — | 尚未從 `main` 發布 |
@@ -14,6 +15,15 @@
 - 鎖由腳本管理（repo 共用 git 目錄的 `release-lock.json`）；`status` 顯示被別人持有時先問使用者，不得刪除別人的鎖。promote 後把腳本輸出的 `handoffRow` 經 PR 加到下表。
 - 交接時寫明：目前目標與下一步、改了哪些檔與刻意不動的檔、已做與待做的驗證、與 SOP 或共用模組的衝突。
 - 整合紀錄與差異清單：[main-unify-20261104.md](main-unify-20261104.md)。
+
+# 2026-11-04 夥伴練功視覺與營地正式整合（進行中）
+
+- 使用者已接受融合的六情境插圖與營地示意，要求先和 Claude 商量、沒有問題就上線。新工作區 `D:/projects/it-class-tcwu-worktrees/partner-visual-release-20261104`，分支 `codex/partner-visual-release-20261104`，基底 origin/main `f59d3133`。
+- Codex 唯一寫入者；Claude 檢視真實 app／learning／入口與樣式，審查接入方案及完成差異。既有 auth、RPC、同步、題庫、草稿契約及花葉規則保留，不把本機預覽的假資料／記憶體回覆搬入正式站。本次沒有 SQL／資料庫變更。
+- 實作範圍：四年級夥伴頁／題庫入口、shared/partner-pilot 的呈現層、入口模組、6張已核准透明 WebP。手機營地跳轉、真實請教串按題目色塊、空營地插圖；草稿仍用原機制。
+- Claude 首輪指出四項接入風險，均已落實：保留 identity 與麵包屑節點；auth/transport 引用不加版本；presentation 只由 app 載入、learning 的 onStage/scene 可省略；裝飾圖與題目 media/燈箱完全分開。
+- 已實作真實流程與空／忙營地，不含預覽狀態按鈕或假資料。原 partner/stability 7項、套穩定性遷移後 production 2項、原測驗11項均通過；實際 app 合成傳輸瀏覽器含16組年級／寬度與11項流程核對通過。正交給 Claude 複查完成差異。
+- Claude 完成差異複查 `20261104-partner-visual-diff`：沒有必須先修的崩潰、auth、草稿、資料隔離或同步回歸問題，可進PR/main發布。正式139函式live與94項努力樹目錄預檢通過；目前發布鎖空。下一步：PR/main → 乾淨 main 發布腳本。沒有新的真實學生多機或整班壓測。
 
 # 2026-11-04 夥伴練功服務穩定性複查（Claude Desktop 執行）
 
