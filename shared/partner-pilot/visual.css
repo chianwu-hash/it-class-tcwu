@@ -119,4 +119,20 @@
   :scope .camp-welcome h3{font-size:17px}:scope .camp-welcome p{font-size:12px}:scope .camp-welcome p br{display:none}
   :scope .camp-thread{padding:15px}
  }
+ :scope .paper-picker{padding:0;border:0;min-width:0;margin:20px 0}
+ :scope .paper-picker legend{font-weight:800;margin-bottom:12px}
+ :scope .picker-tabs{display:flex;gap:8px;flex-wrap:wrap}
+ :scope .picker-tabs button{padding:9px 12px;font-size:14px;background:#f1f8f7}
+ :scope .picker-tabs [aria-pressed="true"]{background:#0f766e;color:#fff;border-color:#0f766e}
+ :scope .picker-filters{display:grid;grid-template-columns:1fr 1.6fr;gap:12px;margin:10px 0}
+ :scope .picker-filters input,:scope .picker-filters select{margin-bottom:0;min-width:0;font-size:15px;padding:12px}
+ :scope .picker-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ :scope .picker-paper{display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;min-width:0;padding:15px;background:#fff;border:1px solid #c9dedc;font-size:13px;line-height:1.6;box-shadow:none}
+ :scope .picker-paper strong{font-size:16px;overflow-wrap:anywhere}
+ :scope .picker-paper .badge{font-size:12px;padding:3px 8px}
+ :scope .picker-paper[aria-pressed="true"]{border:2px solid #0f766e;padding:14px;background:#eef8f3}
+ :scope .picker-pages{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;font-size:13px}
+ :scope .picker-pages button{padding:8px 12px;font-size:13px}
+ :scope .picker-selected{border-left:4px solid #0f766e;background:#eef8f3;padding:12px;font-size:14px;overflow-wrap:anywhere}
+ @media(max-width:480px){:scope .picker-filters,:scope .picker-list{grid-template-columns:1fr}}
 }

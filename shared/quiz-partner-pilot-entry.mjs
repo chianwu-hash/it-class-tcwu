@@ -1,6 +1,6 @@
 // Optional, fail-closed addition. It never changes the original quiz login or progress lifecycle.
 import {supabase} from './auth.js';
-let generation=0,observer=null;
+let generation=0,observer=null,refreshCatalog=null;
 const href=(params={})=>'partner-practice.html'+(Object.keys(params).length?'?'+new URLSearchParams(params):'');
 function ensureEntryStyle(){
  if(document.getElementById('partner-pilot-entry-style'))return;
@@ -18,7 +18,7 @@ function ensureEntryStyle(){
  `;
  document.head.append(style);
 }
-function clear(){observer?.disconnect();observer=null;document.querySelectorAll('[data-partner-pilot-entry]').forEach(el=>el.remove());}
+function clear(){observer?.disconnect();observer=null;refreshCatalog=null;document.querySelectorAll('[data-partner-pilot-entry]').forEach(el=>el.remove());}
 async function update(session){
  const epoch=++generation;clear();if(!session?.user)return;
  try{
@@ -30,7 +30,7 @@ async function update(session){
   ensureEntryStyle();
   const section=document.createElement('section');section.dataset.partnerPilotEntry='main';section.className='panel';
   const title=document.createElement('h2');title.textContent='夥伴練功';
-  const description=document.createElement('p');description.textContent='有人陪，一起想。2～4人一起練，達標的紀念葉花直接長在努力樹。';
+  const description=document.createElement('p');description.textContent='有人陪，一起想。10題限2人，20題與考古題可2～4人；達標的紀念葉花直接長在努力樹。';
   section.append(title,description);
   const actions=document.createElement('div');actions.className='partner-entry-actions';
   for(const [text,params] of [['找夥伴一起練',{}],['接續夥伴練功',{view:'resume'}]]){const a=document.createElement('a');a.textContent=text;a.className='paper-start'+(params.view?' partner-entry-resume':'');a.href=href(params);actions.append(a);}
@@ -40,7 +40,7 @@ async function update(session){
   document.querySelector('main')?.prepend(section);
   function decorate(){
    if(epoch!==generation)return;
-   for(const card of document.querySelectorAll('#cloud-papers .paper-card,#past-papers .paper-card')){
+   for(const card of document.querySelectorAll('#cloud-papers .paper-card,#past-papers .paper-card,#my-papers .paper-card')){
     if(card.querySelector('[data-partner-pilot-entry]'))continue;
     const start=card.querySelector('a.paper-start');if(!start)continue;
     const url=new URL(start.href,location.href);
@@ -49,9 +49,13 @@ async function update(session){
     const a=document.createElement('a');a.dataset.partnerPilotEntry='paper';a.className='paper-start';a.textContent='邀夥伴練這份';a.href=href(paper.sourcePaper?{paper:paper.sourcePaper}:{session:paper.sourceSession});a.style.marginTop='.75rem';start.after(a);
    }
   }
+  // A newly composed paper is rendered without a page reload. Refresh only this optional catalog.
+  let catalogRequest=0;
+  refreshCatalog=async()=>{const serial=++catalogRequest;try{const fresh=await supabase.rpc('quiz_partner_pilot_action',{p:{action:'catalog'}});if(epoch!==generation||serial!==catalogRequest||fresh.error||!Array.isArray(fresh.data?.papers))return;catalog.splice(0,catalog.length,...fresh.data.papers);decorate();}catch{/* Personal paper creation remains successful if the optional entry is unavailable. */}};
   decorate();observer=new MutationObserver(decorate);
-  for(const id of ['cloud-papers','past-papers']){const node=document.getElementById(id);if(node)observer.observe(node,{childList:true,subtree:true});}
+  for(const id of ['cloud-papers','past-papers','my-papers']){const node=document.getElementById(id);if(node)observer.observe(node,{childList:true,subtree:true});}
  }catch{/* An unavailable pilot does not affect ordinary practice. */}
 }
 supabase.auth.onAuthStateChange((event,session)=>{if(event!=='TOKEN_REFRESHED')queueMicrotask(()=>update(session));});
 supabase.auth.getSession().then(({data})=>update(data.session)).catch(()=>{});
+document.addEventListener('quiz-paper-saved',()=>refreshCatalog?.());
