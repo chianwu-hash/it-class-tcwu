@@ -1,0 +1,6932 @@
+{
+ "tables": [
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "title",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "author",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "reason",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "'new'::text",
+     "generated": "",
+     "identity": "",
+     "name": "status",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "updated_at",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "deleted_at",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "book_wishes_pkey"
+    },
+    {
+     "def": "CHECK (((char_length(reason) >= 4) AND (char_length(reason) <= 1000)))",
+     "name": "book_wishes_reason_check"
+    },
+    {
+     "def": "CHECK ((status = ANY (ARRAY['new'::text, 'reviewing'::text, 'accepted'::text, 'rejected'::text, 'done'::text])))",
+     "name": "book_wishes_status_check"
+    },
+    {
+     "def": "CHECK (((char_length(title) >= 2) AND (char_length(title) <= 160)))",
+     "name": "book_wishes_title_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX book_wishes_created_at_idx ON public.book_wishes USING btree (created_at DESC)",
+    "CREATE INDEX book_wishes_deleted_at_idx ON public.book_wishes USING btree (deleted_at)",
+    "CREATE INDEX book_wishes_status_idx ON public.book_wishes USING btree (status)",
+    "CREATE UNIQUE INDEX book_wishes_pkey ON public.book_wishes USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "book_wishes",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "course_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "class_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "seat_no",
+     "not_null": true,
+     "type": "smallint"
+    },
+    {
+     "default": "(class_code || lpad((seat_no)::text, 2, '0'::text))",
+     "generated": "s",
+     "identity": "",
+     "name": "student_code",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "display_name",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "birthday_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "true",
+     "generated": "",
+     "identity": "",
+     "name": "active",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "updated_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "practice_account",
+     "not_null": false,
+     "type": "text"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((birthday_code ~ '^\\d{4}$'::text))",
+     "name": "class_card_students_birthday_code_check"
+    },
+    {
+     "def": "CHECK ((class_code ~ '^\\d{3}$'::text))",
+     "name": "class_card_students_class_code_check"
+    },
+    {
+     "def": "PRIMARY KEY (course_id, class_code, seat_no)",
+     "name": "class_card_students_pkey"
+    },
+    {
+     "def": "CHECK (((practice_account IS NULL) OR (practice_account ~ '^[a-z][a-z0-9]*$'::text)))",
+     "name": "class_card_students_practice_account_format"
+    },
+    {
+     "def": "CHECK (((seat_no >= 1) AND (seat_no <= 99)))",
+     "name": "class_card_students_seat_no_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX class_card_students_course_student_code_idx ON public.class_card_students USING btree (course_id, student_code)",
+    "CREATE UNIQUE INDEX class_card_students_pkey ON public.class_card_students USING btree (course_id, class_code, seat_no)",
+    "CREATE UNIQUE INDEX class_card_students_practice_account_unique ON public.class_card_students USING btree (course_id, practice_account) WHERE (practice_account IS NOT NULL)"
+   ],
+   "kind": "r",
+   "name": "class_card_students",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "grade",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "week_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "control_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "is_enabled",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "updated_by",
+     "not_null": false,
+     "type": "uuid"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "updated_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((grade = ANY (ARRAY['grade3'::text, 'grade6'::text])))",
+     "name": "classroom_controls_grade_check"
+    },
+    {
+     "def": "PRIMARY KEY (grade, week_code, control_key)",
+     "name": "classroom_controls_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (updated_by) REFERENCES auth.users(id) ON DELETE SET NULL",
+     "name": "classroom_controls_updated_by_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX classroom_controls_pkey ON public.classroom_controls USING btree (grade, week_code, control_key)"
+   ],
+   "kind": "r",
+   "name": "classroom_controls",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "target_type",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "book_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "book_title",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "episode_id",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "episode_title",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "comment_type",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "body",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "'new'::text",
+     "generated": "",
+     "identity": "",
+     "name": "status",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "author_token_hash",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "updated_at",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "deleted_at",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK (((char_length(body) >= 4) AND (char_length(body) <= 1000)))",
+     "name": "content_comments_body_check"
+    },
+    {
+     "def": "CHECK ((comment_type = ANY (ARRAY['reflection'::text, 'error_report'::text, 'other'::text])))",
+     "name": "content_comments_comment_type_check"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "content_comments_pkey"
+    },
+    {
+     "def": "CHECK ((status = ANY (ARRAY['new'::text, 'reviewing'::text, 'resolved'::text, 'ignored'::text])))",
+     "name": "content_comments_status_check"
+    },
+    {
+     "def": "CHECK ((target_type = ANY (ARRAY['book'::text, 'episode'::text])))",
+     "name": "content_comments_target_type_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX content_comments_author_token_hash_idx ON public.content_comments USING btree (author_token_hash)",
+    "CREATE INDEX content_comments_book_id_idx ON public.content_comments USING btree (book_id)",
+    "CREATE INDEX content_comments_created_at_idx ON public.content_comments USING btree (created_at DESC)",
+    "CREATE INDEX content_comments_deleted_at_idx ON public.content_comments USING btree (deleted_at)",
+    "CREATE INDEX content_comments_episode_id_idx ON public.content_comments USING btree (episode_id)",
+    "CREATE INDEX content_comments_status_idx ON public.content_comments USING btree (status)",
+    "CREATE UNIQUE INDEX content_comments_pkey ON public.content_comments USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "content_comments",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "device_hash",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "'unknown'::text",
+     "generated": "",
+     "identity": "",
+     "name": "device_kind",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "'unknown'::text",
+     "generated": "",
+     "identity": "",
+     "name": "browser_family",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "first_seen_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "last_seen_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "UNIQUE (device_hash)",
+     "name": "device_activity_device_hash_key"
+    },
+    {
+     "def": "CHECK ((device_kind = ANY (ARRAY['mobile'::text, 'tablet'::text, 'desktop'::text, 'unknown'::text])))",
+     "name": "device_activity_device_kind_check"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "device_activity_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX device_activity_device_kind_idx ON public.device_activity USING btree (device_kind)",
+    "CREATE INDEX device_activity_last_seen_at_idx ON public.device_activity USING btree (last_seen_at DESC)",
+    "CREATE UNIQUE INDEX device_activity_device_hash_key ON public.device_activity USING btree (device_hash)",
+    "CREATE UNIQUE INDEX device_activity_pkey ON public.device_activity USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "device_activity",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "owner_user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "drive_email",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "google_subject",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "token_envelope",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "scopes",
+     "not_null": true,
+     "type": "text[]"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "connected_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((drive_email = 'th990821@mail.thps.ntpc.edu.tw'::text))",
+     "name": "drive_connections_drive_email_check"
+    },
+    {
+     "def": "FOREIGN KEY (owner_user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+     "name": "drive_connections_owner_user_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (owner_user_id)",
+     "name": "drive_connections_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX drive_connections_pkey ON public.drive_connections USING btree (owner_user_id)"
+   ],
+   "kind": "r",
+   "name": "drive_connections",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "owner_user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "state_hash",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "proof_hash",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "expires_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (owner_user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+     "name": "drive_oauth_states_owner_user_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (owner_user_id)",
+     "name": "drive_oauth_states_pkey"
+    },
+    {
+     "def": "UNIQUE (state_hash)",
+     "name": "drive_oauth_states_state_hash_key"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX drive_oauth_states_pkey ON public.drive_oauth_states USING btree (owner_user_id)",
+    "CREATE UNIQUE INDEX drive_oauth_states_state_hash_key ON public.drive_oauth_states USING btree (state_hash)"
+   ],
+   "kind": "r",
+   "name": "drive_oauth_states",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "milestone_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "track",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "ordinal",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "lesson_keys",
+     "not_null": true,
+     "type": "text[]"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (milestone_key)",
+     "name": "foundation_milestone_definitions_pkey"
+    },
+    {
+     "def": "CHECK ((track = ANY (ARRAY['english'::text, 'zhuyin'::text])))",
+     "name": "foundation_milestone_definitions_track_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX foundation_milestone_definitions_pkey ON public.foundation_milestone_definitions USING btree (milestone_key)"
+   ],
+   "kind": "r",
+   "name": "foundation_milestone_definitions",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "true",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "activated_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK (id)",
+     "name": "foundation_milestone_policy_id_check"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "foundation_milestone_policy_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX foundation_milestone_policy_pkey ON public.foundation_milestone_policy USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "foundation_milestone_policy",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "'cat'::text",
+     "generated": "",
+     "identity": "",
+     "name": "pet",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "'{\"cat\": \"b\", \"dog\": \"a\", \"rabbit\": \"b\"}'::jsonb",
+     "generated": "",
+     "identity": "",
+     "name": "homes",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "home_visible",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "updated_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "'{\"cat\": \"walk\", \"dog\": \"walk\", \"rabbit\": \"walk\"}'::jsonb",
+     "generated": "",
+     "identity": "",
+     "name": "modes",
+     "not_null": true,
+     "type": "jsonb"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (user_id)",
+     "name": "garden_companion_choices_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+     "name": "garden_companion_choices_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX garden_companion_choices_pkey ON public.garden_companion_choices USING btree (user_id)"
+   ],
+   "kind": "r",
+   "name": "garden_companion_choices",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "course_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "grown_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "baseline",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "reward_order",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "seen_at",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "pet_unlocked_at",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "1",
+     "generated": "",
+     "identity": "",
+     "name": "reward_version",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "44",
+     "generated": "",
+     "identity": "",
+     "name": "leaf_floor",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "10",
+     "generated": "",
+     "identity": "",
+     "name": "flower_floor",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "1",
+     "generated": "",
+     "identity": "",
+     "name": "foundation_reward_version",
+     "not_null": true,
+     "type": "smallint"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (user_id, course_id)",
+     "name": "garden_growth_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+     "name": "garden_growth_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX garden_growth_pkey ON public.garden_growth USING btree (user_id, course_id)"
+   ],
+   "kind": "r",
+   "name": "garden_growth",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "item_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "course_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "seen_at",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "claim_id",
+     "not_null": false,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "claim_until",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (user_id, item_key)",
+     "name": "garden_item_notices_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+     "name": "garden_item_notices_user_id_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id, item_key) REFERENCES garden_item_unlocks(user_id, item_key)",
+     "name": "garden_item_notices_user_id_item_key_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX garden_item_notices_pkey ON public.garden_item_notices USING btree (user_id, item_key)"
+   ],
+   "kind": "r",
+   "name": "garden_item_notices",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "item_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "course_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "unlocked_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (user_id, item_key)",
+     "name": "garden_item_unlocks_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+     "name": "garden_item_unlocks_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX garden_item_unlocks_pkey ON public.garden_item_unlocks USING btree (user_id, item_key)"
+   ],
+   "kind": "r",
+   "name": "garden_item_unlocks",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "next_roll_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "refresh_window_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "1",
+     "generated": "",
+     "identity": "",
+     "name": "refresh_count",
+     "not_null": true,
+     "type": "integer"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (user_id)",
+     "name": "garden_pet_visits_pkey"
+    },
+    {
+     "def": "CHECK (((refresh_count >= 1) AND (refresh_count <= 1000)))",
+     "name": "garden_pet_visits_refresh_count_check"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+     "name": "garden_pet_visits_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX garden_pet_visits_pkey ON public.garden_pet_visits USING btree (user_id)"
+   ],
+   "kind": "r",
+   "name": "garden_pet_visits",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "course_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "week_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "activity_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "kind",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "total_levels",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "reward_mode",
+     "not_null": false,
+     "type": "text"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (course_id, week_code, activity_key)",
+     "name": "garden_reward_catalog_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX garden_reward_catalog_pkey ON public.garden_reward_catalog USING btree (course_id, week_code, activity_key)"
+   ],
+   "kind": "r",
+   "name": "garden_reward_catalog",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "course_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "setup_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "leaves",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "flowers",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((course_id = 'grade3-115-1'::text))",
+     "name": "garden_test_setup_course_id_check"
+    },
+    {
+     "def": "CHECK (((flowers >= 0) AND (flowers <= 10)))",
+     "name": "garden_test_setup_flowers_check"
+    },
+    {
+     "def": "CHECK (((leaves >= 0) AND (leaves <= 43)))",
+     "name": "garden_test_setup_leaves_check"
+    },
+    {
+     "def": "PRIMARY KEY (user_id, course_id)",
+     "name": "garden_test_setup_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+     "name": "garden_test_setup_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX garden_test_setup_pkey ON public.garden_test_setup USING btree (user_id, course_id)"
+   ],
+   "kind": "r",
+   "name": "garden_test_setup",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "'a'::text",
+     "generated": "",
+     "identity": "",
+     "name": "skin",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "updated_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (user_id)",
+     "name": "garden_tree_skins_pkey"
+    },
+    {
+     "def": "CHECK ((skin = ANY (ARRAY['a'::text, 'b'::text])))",
+     "name": "garden_tree_skins_skin_check"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+     "name": "garden_tree_skins_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX garden_tree_skins_pkey ON public.garden_tree_skins USING btree (user_id)"
+   ],
+   "kind": "r",
+   "name": "garden_tree_skins",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "event_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "course_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "seen_at",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "claim_id",
+     "not_null": false,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "claim_until",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((event_key = 'pet-home'::text))",
+     "name": "garden_unlock_notices_event_key_check"
+    },
+    {
+     "def": "PRIMARY KEY (user_id, event_key)",
+     "name": "garden_unlock_notices_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+     "name": "garden_unlock_notices_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX garden_unlock_notices_pkey ON public.garden_unlock_notices USING btree (user_id, event_key)"
+   ],
+   "kind": "r",
+   "name": "garden_unlock_notices",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "week_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "activity_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "total",
+     "not_null": true,
+     "type": "smallint"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (week_code, activity_key)",
+     "name": "grade3_google_activities_pkey"
+    },
+    {
+     "def": "CHECK (((total >= 1) AND (total <= 20)))",
+     "name": "grade3_google_activities_total_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX grade3_google_activities_pkey ON public.grade3_google_activities USING btree (week_code, activity_key)"
+   ],
+   "kind": "r",
+   "name": "grade3_google_activities",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "email",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "student_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "display_name",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "history_student_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "history_display_name",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "'[]'::jsonb",
+     "generated": "",
+     "identity": "",
+     "name": "reviewed_existing_progress",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "approved_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((history_student_code ~ '^[0-9]{5}$'::text))",
+     "name": "grade3_google_approvals_history_student_code_check"
+    },
+    {
+     "def": "UNIQUE (history_student_code)",
+     "name": "grade3_google_approvals_history_student_code_key"
+    },
+    {
+     "def": "PRIMARY KEY (email)",
+     "name": "grade3_google_approvals_pkey"
+    },
+    {
+     "def": "CHECK ((jsonb_typeof(reviewed_existing_progress) = 'array'::text))",
+     "name": "grade3_google_approvals_reviewed_existing_progress_check"
+    },
+    {
+     "def": "UNIQUE (student_code)",
+     "name": "grade3_google_approvals_student_code_key"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX grade3_google_approvals_history_student_code_key ON public.grade3_google_approvals USING btree (history_student_code)",
+    "CREATE UNIQUE INDEX grade3_google_approvals_pkey ON public.grade3_google_approvals USING btree (email)",
+    "CREATE UNIQUE INDEX grade3_google_approvals_student_code_key ON public.grade3_google_approvals USING btree (student_code)"
+   ],
+   "kind": "r",
+   "name": "grade3_google_approvals",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "student_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "history_student_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "email",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "migrated_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "UNIQUE (email)",
+     "name": "grade3_google_bindings_email_key"
+    },
+    {
+     "def": "UNIQUE (history_student_code)",
+     "name": "grade3_google_bindings_history_student_code_key"
+    },
+    {
+     "def": "PRIMARY KEY (student_code)",
+     "name": "grade3_google_bindings_pkey"
+    },
+    {
+     "def": "UNIQUE (user_id)",
+     "name": "grade3_google_bindings_user_id_key"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX grade3_google_bindings_email_key ON public.grade3_google_bindings USING btree (email)",
+    "CREATE UNIQUE INDEX grade3_google_bindings_history_student_code_key ON public.grade3_google_bindings USING btree (history_student_code)",
+    "CREATE UNIQUE INDEX grade3_google_bindings_pkey ON public.grade3_google_bindings USING btree (student_code)",
+    "CREATE UNIQUE INDEX grade3_google_bindings_user_id_key ON public.grade3_google_bindings USING btree (user_id)"
+   ],
+   "kind": "r",
+   "name": "grade3_google_bindings",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "student_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "week_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "activity_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "source_snapshot",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "imported_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (student_code, week_code, activity_key)",
+     "name": "grade3_google_imports_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX grade3_google_imports_pkey ON public.grade3_google_imports USING btree (student_code, week_code, activity_key)"
+   ],
+   "kind": "r",
+   "name": "grade3_google_imports",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "course_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "week_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "activity_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "student_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "class_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "seat_no",
+     "not_null": true,
+     "type": "smallint"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "display_name",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": "1",
+     "generated": "",
+     "identity": "",
+     "name": "current_level",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "score",
+     "not_null": false,
+     "type": "smallint"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "completed",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "updated_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK (((current_level >= 1) AND (current_level <= 20)))",
+     "name": "guest_progress_current_level_check"
+    },
+    {
+     "def": "PRIMARY KEY (course_id, week_code, activity_key, student_code)",
+     "name": "guest_progress_pkey"
+    },
+    {
+     "def": "CHECK (((seat_no >= 1) AND (seat_no <= 99)))",
+     "name": "guest_progress_seat_no_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX guest_progress_course_week_idx ON public.guest_progress USING btree (course_id, week_code, activity_key)",
+    "CREATE INDEX guest_progress_updated_at_idx ON public.guest_progress USING btree (updated_at DESC)",
+    "CREATE UNIQUE INDEX guest_progress_pkey ON public.guest_progress USING btree (course_id, week_code, activity_key, student_code)"
+   ],
+   "kind": "r",
+   "name": "guest_progress",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "upload_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "'[]'::jsonb",
+     "generated": "",
+     "identity": "",
+     "name": "strokes",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "''::text",
+     "generated": "",
+     "identity": "",
+     "name": "feedback",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "updated_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((length(feedback) <= 2000))",
+     "name": "homework_annotations_feedback_check"
+    },
+    {
+     "def": "PRIMARY KEY (upload_id)",
+     "name": "homework_annotations_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (upload_id) REFERENCES homework_uploads(id)",
+     "name": "homework_annotations_upload_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX homework_annotations_pkey ON public.homework_annotations USING btree (upload_id)"
+   ],
+   "kind": "r",
+   "name": "homework_annotations",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "owner_user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "'grade6-115-1'::text",
+     "generated": "",
+     "identity": "",
+     "name": "course_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "week_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "title",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "''::text",
+     "generated": "",
+     "identity": "",
+     "name": "instructions",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "class_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "'draft'::text",
+     "generated": "",
+     "identity": "",
+     "name": "state",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "drive_folder_id",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK (((class_code = '*'::text) OR (class_code ~ '^6[0-9]{2}$'::text)))",
+     "name": "homework_assignments_class_code_check"
+    },
+    {
+     "def": "CHECK ((course_id = 'grade6-115-1'::text))",
+     "name": "homework_assignments_course_id_check"
+    },
+    {
+     "def": "UNIQUE (drive_folder_id)",
+     "name": "homework_assignments_drive_folder_id_key"
+    },
+    {
+     "def": "CHECK ((length(instructions) <= 3000))",
+     "name": "homework_assignments_instructions_check"
+    },
+    {
+     "def": "FOREIGN KEY (owner_user_id) REFERENCES auth.users(id)",
+     "name": "homework_assignments_owner_user_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "homework_assignments_pkey"
+    },
+    {
+     "def": "CHECK ((state = ANY (ARRAY['draft'::text, 'open'::text, 'closed'::text])))",
+     "name": "homework_assignments_state_check"
+    },
+    {
+     "def": "CHECK (((length(TRIM(BOTH FROM title)) >= 1) AND (length(TRIM(BOTH FROM title)) <= 100)))",
+     "name": "homework_assignments_title_check"
+    },
+    {
+     "def": "CHECK ((week_code ~ '^(0[1-9]|1[0-9]|2[0-2])$'::text))",
+     "name": "homework_assignments_week_code_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX homework_assignments_drive_folder_id_key ON public.homework_assignments USING btree (drive_folder_id)",
+    "CREATE UNIQUE INDEX homework_assignments_pkey ON public.homework_assignments USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "homework_assignments",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "a",
+     "name": "id",
+     "not_null": true,
+     "type": "bigint"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "assignment_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "upload_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "actor_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "event",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "''::text",
+     "generated": "",
+     "identity": "",
+     "name": "feedback",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (actor_id) REFERENCES auth.users(id)",
+     "name": "homework_events_actor_id_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (assignment_id) REFERENCES homework_assignments(id)",
+     "name": "homework_events_assignment_id_fkey"
+    },
+    {
+     "def": "CHECK ((event = ANY (ARRAY['submitted'::text, 'passed'::text, 'needs_revision'::text])))",
+     "name": "homework_events_event_check"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "homework_events_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (upload_id) REFERENCES homework_uploads(id)",
+     "name": "homework_events_upload_id_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "homework_events_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX homework_events_pkey ON public.homework_events USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "homework_events",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "true",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "104857600",
+     "generated": "",
+     "identity": "",
+     "name": "max_file_bytes",
+     "not_null": true,
+     "type": "integer"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK (id)",
+     "name": "homework_settings_id_check"
+    },
+    {
+     "def": "CHECK (((max_file_bytes >= 1048576) AND (max_file_bytes <= 524288000)))",
+     "name": "homework_settings_max_file_bytes_check"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "homework_settings_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX homework_settings_pkey ON public.homework_settings USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "homework_settings",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "assignment_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "upload_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "status",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "''::text",
+     "generated": "",
+     "identity": "",
+     "name": "feedback",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "submitted_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "reviewed_at",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (assignment_id) REFERENCES homework_assignments(id)",
+     "name": "homework_submissions_assignment_id_fkey"
+    },
+    {
+     "def": "CHECK ((length(feedback) <= 2000))",
+     "name": "homework_submissions_feedback_check"
+    },
+    {
+     "def": "PRIMARY KEY (assignment_id, user_id)",
+     "name": "homework_submissions_pkey"
+    },
+    {
+     "def": "CHECK ((status = ANY (ARRAY['submitted'::text, 'passed'::text, 'needs_revision'::text])))",
+     "name": "homework_submissions_status_check"
+    },
+    {
+     "def": "FOREIGN KEY (upload_id) REFERENCES homework_uploads(id)",
+     "name": "homework_submissions_upload_id_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "homework_submissions_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX homework_submissions_pkey ON public.homework_submissions USING btree (assignment_id, user_id)"
+   ],
+   "kind": "r",
+   "name": "homework_submissions",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "assignment_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "drive_file_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "file_name",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "file_size",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "sha256",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "(now() + '24:00:00'::interval)",
+     "generated": "",
+     "identity": "",
+     "name": "expires_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "resume_uri",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "submitted_at",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (assignment_id) REFERENCES homework_assignments(id)",
+     "name": "homework_uploads_assignment_id_fkey"
+    },
+    {
+     "def": "UNIQUE (drive_file_id)",
+     "name": "homework_uploads_drive_file_id_key"
+    },
+    {
+     "def": "CHECK (((length(file_name) >= 1) AND (length(file_name) <= 160)))",
+     "name": "homework_uploads_file_name_check"
+    },
+    {
+     "def": "CHECK (((file_size >= 1) AND (file_size <= 524288000)))",
+     "name": "homework_uploads_file_size_check"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "homework_uploads_pkey"
+    },
+    {
+     "def": "CHECK ((sha256 ~ '^[a-f0-9]{64}$'::text))",
+     "name": "homework_uploads_sha256_check"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "homework_uploads_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX homework_upload_owner ON public.homework_uploads USING btree (assignment_id, user_id)",
+    "CREATE UNIQUE INDEX homework_uploads_drive_file_id_key ON public.homework_uploads USING btree (drive_file_id)",
+    "CREATE UNIQUE INDEX homework_uploads_pkey ON public.homework_uploads USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "homework_uploads",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "attempt_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "question_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "request_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "response",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "correct",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (attempt_id) REFERENCES quiz_attempts(id)",
+     "name": "quiz_answers_attempt_id_fkey"
+    },
+    {
+     "def": "UNIQUE (attempt_id, request_id)",
+     "name": "quiz_answers_attempt_id_request_id_key"
+    },
+    {
+     "def": "PRIMARY KEY (attempt_id, question_id)",
+     "name": "quiz_answers_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_answers_attempt_id_request_id_key ON public.quiz_answers USING btree (attempt_id, request_id)",
+    "CREATE UNIQUE INDEX quiz_answers_pkey ON public.quiz_answers USING btree (attempt_id, question_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_answers",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "session_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "question_order",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "option_orders",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "quiz_attempts_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (session_id) REFERENCES quiz_sessions(id)",
+     "name": "quiz_attempts_session_id_fkey"
+    },
+    {
+     "def": "UNIQUE (session_id, user_id)",
+     "name": "quiz_attempts_session_id_user_id_key"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "quiz_attempts_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX admin_learning_attempt_user_idx ON public.quiz_attempts USING btree (user_id, session_id)",
+    "CREATE UNIQUE INDEX quiz_attempts_pkey ON public.quiz_attempts USING btree (id)",
+    "CREATE UNIQUE INDEX quiz_attempts_session_id_user_id_key ON public.quiz_attempts USING btree (session_id, user_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_attempts",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "owner_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "1",
+     "generated": "",
+     "identity": "",
+     "name": "revision",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "draft",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "updated_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (owner_id) REFERENCES auth.users(id)",
+     "name": "quiz_banks_owner_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "quiz_banks_pkey"
+    },
+    {
+     "def": "CHECK ((revision > 0))",
+     "name": "quiz_banks_revision_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_banks_pkey ON public.quiz_banks USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "quiz_banks",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "grade",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "payload",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "built_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (grade)",
+     "name": "quiz_catalog_cache_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_catalog_cache_pkey ON public.quiz_catalog_cache USING btree (grade)"
+   ],
+   "kind": "r",
+   "name": "quiz_catalog_cache",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "grade",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "definition",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "enabled",
+     "not_null": true,
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((grade = ANY (ARRAY[3, 4, 6, 9])))",
+     "name": "quiz_courses_grade_check"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "quiz_courses_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_courses_pkey ON public.quiz_courses USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "quiz_courses",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "session_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "request_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "config",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "actual_distribution",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "display_name",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "deleted_at",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "name_year",
+     "not_null": false,
+     "type": "smallint"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "name_grade",
+     "not_null": false,
+     "type": "smallint"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "name_subject",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "name_character_id",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "name_number",
+     "not_null": false,
+     "type": "bigint"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK (((display_name IS NULL) OR ((length(TRIM(BOTH FROM display_name)) >= 1) AND (length(TRIM(BOTH FROM display_name)) <= 60))))",
+     "name": "quiz_generated_papers_display_name_check"
+    },
+    {
+     "def": "FOREIGN KEY (name_character_id) REFERENCES quiz_name_characters(id)",
+     "name": "quiz_generated_papers_name_character_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (session_id)",
+     "name": "quiz_generated_papers_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (session_id) REFERENCES quiz_sessions(id)",
+     "name": "quiz_generated_papers_session_id_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "quiz_generated_papers_user_id_fkey"
+    },
+    {
+     "def": "UNIQUE (user_id, request_id)",
+     "name": "quiz_generated_papers_user_id_request_id_key"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_generated_name_number_idx ON public.quiz_generated_papers USING btree (user_id, name_year, name_number) WHERE (name_number IS NOT NULL)",
+    "CREATE UNIQUE INDEX quiz_generated_papers_pkey ON public.quiz_generated_papers USING btree (session_id)",
+    "CREATE UNIQUE INDEX quiz_generated_papers_user_id_request_id_key ON public.quiz_generated_papers USING btree (user_id, request_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_generated_papers",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "true",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "enabled",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "2",
+     "generated": "",
+     "identity": "",
+     "name": "min_seconds",
+     "not_null": true,
+     "type": "numeric"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK (id)",
+     "name": "quiz_integrity_settings_id_check"
+    },
+    {
+     "def": "CHECK (((min_seconds >= (1)::numeric) AND (min_seconds <= (10)::numeric)))",
+     "name": "quiz_integrity_settings_min_seconds_check"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "quiz_integrity_settings_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_integrity_settings_pkey ON public.quiz_integrity_settings USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "quiz_integrity_settings",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "attempt_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "fingerprint",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "grade",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "total",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "correct",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "awarded_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (attempt_id) REFERENCES quiz_attempts(id)",
+     "name": "quiz_leaf_awards_attempt_id_fkey"
+    },
+    {
+     "def": "UNIQUE (attempt_id)",
+     "name": "quiz_leaf_awards_attempt_id_key"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "quiz_leaf_awards_pkey"
+    },
+    {
+     "def": "UNIQUE (user_id, fingerprint)",
+     "name": "quiz_leaf_awards_user_id_fingerprint_key"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "quiz_leaf_awards_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_leaf_awards_attempt_id_key ON public.quiz_leaf_awards USING btree (attempt_id)",
+    "CREATE UNIQUE INDEX quiz_leaf_awards_pkey ON public.quiz_leaf_awards USING btree (id)",
+    "CREATE UNIQUE INDEX quiz_leaf_awards_user_id_fingerprint_key ON public.quiz_leaf_awards USING btree (user_id, fingerprint)"
+   ],
+   "kind": "r",
+   "name": "quiz_leaf_awards",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "school_year",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "semester",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "question_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "attempt_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "question_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "origin",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (attempt_id) REFERENCES quiz_attempts(id)",
+     "name": "quiz_learning_credits_attempt_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (user_id, school_year, semester, question_key)",
+     "name": "quiz_learning_credits_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "quiz_learning_credits_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_learning_credits_pkey ON public.quiz_learning_credits USING btree (user_id, school_year, semester, question_key)"
+   ],
+   "kind": "r",
+   "name": "quiz_learning_credits",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "school_year",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "semester",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "ordinal",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (user_id, school_year, semester, ordinal)",
+     "name": "quiz_learning_leaves_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "quiz_learning_leaves_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_learning_leaves_pkey ON public.quiz_learning_leaves USING btree (user_id, school_year, semester, ordinal)"
+   ],
+   "kind": "r",
+   "name": "quiz_learning_leaves",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "source_version",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "paper_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "source_sha",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "content",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "enabled",
+     "not_null": true,
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (paper_id) REFERENCES quiz_past_papers(id)",
+     "name": "quiz_learning_maps_paper_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (source_version)",
+     "name": "quiz_learning_maps_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (source_version) REFERENCES quiz_past_versions(id)",
+     "name": "quiz_learning_maps_source_version_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_learning_maps_pkey ON public.quiz_learning_maps USING btree (source_version)"
+   ],
+   "kind": "r",
+   "name": "quiz_learning_maps",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "session_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "source_attempt",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "source_version",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "group_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "question_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "concept_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "mode",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "request_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "school_year",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "semester",
+     "not_null": true,
+     "type": "integer"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((mode = ANY (ARRAY['wrong'::text, 'review'::text])))",
+     "name": "quiz_learning_sessions_mode_check"
+    },
+    {
+     "def": "PRIMARY KEY (session_id)",
+     "name": "quiz_learning_sessions_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (session_id) REFERENCES quiz_sessions(id)",
+     "name": "quiz_learning_sessions_session_id_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (source_attempt) REFERENCES quiz_past_attempts(id)",
+     "name": "quiz_learning_sessions_source_attempt_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "quiz_learning_sessions_user_id_fkey"
+    },
+    {
+     "def": "UNIQUE (user_id, request_id)",
+     "name": "quiz_learning_sessions_user_id_request_id_key"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_learning_sessions_pkey ON public.quiz_learning_sessions USING btree (session_id)",
+    "CREATE UNIQUE INDEX quiz_learning_sessions_user_id_request_id_key ON public.quiz_learning_sessions USING btree (user_id, request_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_learning_sessions",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "true",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "school_year",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "semester",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "enabled",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "enabled_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK (id)",
+     "name": "quiz_learning_settings_id_check"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "quiz_learning_settings_pkey"
+    },
+    {
+     "def": "CHECK ((semester = ANY (ARRAY[1, 2])))",
+     "name": "quiz_learning_settings_semester_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_learning_settings_pkey ON public.quiz_learning_settings USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "quiz_learning_settings",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "source_version",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "concept_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "version_id",
+     "not_null": true,
+     "type": "uuid"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (source_version, concept_id)",
+     "name": "quiz_learning_topics_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (source_version) REFERENCES quiz_learning_maps(source_version)",
+     "name": "quiz_learning_topics_source_version_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (version_id) REFERENCES quiz_versions(id)",
+     "name": "quiz_learning_topics_version_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_learning_topics_pkey ON public.quiz_learning_topics USING btree (source_version, concept_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_learning_topics",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "url",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "owner_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "object_path",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "mime",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "bytes",
+     "not_null": true,
+     "type": "integer"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK (((bytes >= 1) AND (bytes <= 8388608)))",
+     "name": "quiz_media_assets_bytes_check"
+    },
+    {
+     "def": "UNIQUE (object_path)",
+     "name": "quiz_media_assets_object_path_key"
+    },
+    {
+     "def": "FOREIGN KEY (owner_id) REFERENCES auth.users(id)",
+     "name": "quiz_media_assets_owner_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (url)",
+     "name": "quiz_media_assets_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_media_assets_object_path_key ON public.quiz_media_assets USING btree (object_path)",
+    "CREATE UNIQUE INDEX quiz_media_assets_pkey ON public.quiz_media_assets USING btree (url)"
+   ],
+   "kind": "r",
+   "name": "quiz_media_assets",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "work",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "character",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "true",
+     "generated": "",
+     "identity": "",
+     "name": "enabled",
+     "not_null": true,
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "quiz_name_characters_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_name_characters_pkey ON public.quiz_name_characters USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "quiz_name_characters",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "school_year",
+     "not_null": true,
+     "type": "smallint"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "last_number",
+     "not_null": true,
+     "type": "bigint"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((last_number > 0))",
+     "name": "quiz_name_counters_last_number_check"
+    },
+    {
+     "def": "PRIMARY KEY (user_id, school_year)",
+     "name": "quiz_name_counters_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "quiz_name_counters_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_name_counters_pkey ON public.quiz_name_counters USING btree (user_id, school_year)"
+   ],
+   "kind": "r",
+   "name": "quiz_name_counters",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "attempt_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "group_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "question_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "response",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "correct",
+     "not_null": false,
+     "type": "boolean"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "points",
+     "not_null": true,
+     "type": "numeric"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (attempt_id, group_id) REFERENCES quiz_past_receipts(attempt_id, group_id)",
+     "name": "quiz_past_answers_attempt_id_group_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (attempt_id, question_id)",
+     "name": "quiz_past_answers_pkey"
+    },
+    {
+     "def": "CHECK ((points > (0)::numeric))",
+     "name": "quiz_past_answers_points_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_past_answers_pkey ON public.quiz_past_answers USING btree (attempt_id, question_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_past_answers",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "paper_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "version_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "school_year",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "semester",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "start_request",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "completed_at",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "score",
+     "not_null": false,
+     "type": "numeric"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "max_score",
+     "not_null": false,
+     "type": "numeric"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (paper_id) REFERENCES quiz_past_papers(id)",
+     "name": "quiz_past_attempts_paper_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "quiz_past_attempts_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "quiz_past_attempts_user_id_fkey"
+    },
+    {
+     "def": "UNIQUE (user_id, paper_id, start_request)",
+     "name": "quiz_past_attempts_user_id_paper_id_start_request_key"
+    },
+    {
+     "def": "FOREIGN KEY (version_id) REFERENCES quiz_past_versions(id)",
+     "name": "quiz_past_attempts_version_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX quiz_past_own ON public.quiz_past_attempts USING btree (user_id, paper_id, school_year, semester, created_at)",
+    "CREATE UNIQUE INDEX quiz_past_attempts_pkey ON public.quiz_past_attempts USING btree (id)",
+    "CREATE UNIQUE INDEX quiz_past_attempts_user_id_paper_id_start_request_key ON public.quiz_past_attempts USING btree (user_id, paper_id, start_request)"
+   ],
+   "kind": "r",
+   "name": "quiz_past_attempts",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "attempt_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "0",
+     "generated": "",
+     "identity": "",
+     "name": "revision",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "'{}'::jsonb",
+     "generated": "",
+     "identity": "",
+     "name": "groups",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "current_group",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "request_id",
+     "not_null": false,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "request_body",
+     "not_null": false,
+     "type": "jsonb"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "updated_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (attempt_id) REFERENCES quiz_past_attempts(id) ON DELETE CASCADE",
+     "name": "quiz_past_drafts_attempt_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (attempt_id)",
+     "name": "quiz_past_drafts_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_past_drafts_pkey ON public.quiz_past_drafts USING btree (attempt_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_past_drafts",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "paper_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "school_year",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "semester",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "attempt_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "awarded_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "'past-exam-flower'::text",
+     "generated": "",
+     "identity": "",
+     "name": "reward_kind",
+     "not_null": true,
+     "type": "text"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((reward_kind = 'past-exam-flower'::text))",
+     "name": "quiz_past_flower_kind"
+    },
+    {
+     "def": "FOREIGN KEY (attempt_id) REFERENCES quiz_past_attempts(id)",
+     "name": "quiz_past_leaves_attempt_id_fkey"
+    },
+    {
+     "def": "UNIQUE (attempt_id)",
+     "name": "quiz_past_leaves_attempt_id_key"
+    },
+    {
+     "def": "FOREIGN KEY (paper_id) REFERENCES quiz_past_papers(id)",
+     "name": "quiz_past_leaves_paper_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "quiz_past_leaves_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "quiz_past_leaves_user_id_fkey"
+    },
+    {
+     "def": "UNIQUE (user_id, paper_id, school_year, semester)",
+     "name": "quiz_past_leaves_user_id_paper_id_school_year_semester_key"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_past_leaves_attempt_id_key ON public.quiz_past_leaves USING btree (attempt_id)",
+    "CREATE UNIQUE INDEX quiz_past_leaves_pkey ON public.quiz_past_leaves USING btree (id)",
+    "CREATE UNIQUE INDEX quiz_past_leaves_user_id_paper_id_school_year_semester_key ON public.quiz_past_leaves USING btree (user_id, paper_id, school_year, semester)"
+   ],
+   "kind": "r",
+   "name": "quiz_past_leaves",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "owner_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "grade",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "school_year",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "semester",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "title",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "active_version",
+     "not_null": false,
+     "type": "uuid"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "enabled",
+     "not_null": true,
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((grade = ANY (ARRAY[3, 4, 6, 9])))",
+     "name": "quiz_past_papers_grade_check"
+    },
+    {
+     "def": "FOREIGN KEY (owner_id) REFERENCES auth.users(id)",
+     "name": "quiz_past_papers_owner_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "quiz_past_papers_pkey"
+    },
+    {
+     "def": "CHECK ((semester = ANY (ARRAY[1, 2])))",
+     "name": "quiz_past_papers_semester_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_past_papers_pkey ON public.quiz_past_papers USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "quiz_past_papers",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "attempt_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "group_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "request_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "responses",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "results",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "score",
+     "not_null": false,
+     "type": "numeric"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "status",
+     "not_null": true,
+     "type": "text"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (attempt_id) REFERENCES quiz_past_attempts(id)",
+     "name": "quiz_past_receipts_attempt_id_fkey"
+    },
+    {
+     "def": "UNIQUE (attempt_id, request_id)",
+     "name": "quiz_past_receipts_attempt_id_request_id_key"
+    },
+    {
+     "def": "PRIMARY KEY (attempt_id, group_id)",
+     "name": "quiz_past_receipts_pkey"
+    },
+    {
+     "def": "CHECK ((status = ANY (ARRAY['graded'::text, 'self_checked'::text])))",
+     "name": "quiz_past_receipts_status_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_past_receipts_attempt_id_request_id_key ON public.quiz_past_receipts USING btree (attempt_id, request_id)",
+    "CREATE UNIQUE INDEX quiz_past_receipts_pkey ON public.quiz_past_receipts USING btree (attempt_id, group_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_past_receipts",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "paper_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "sha256",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "document",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "provenance",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (paper_id) REFERENCES quiz_past_papers(id)",
+     "name": "quiz_past_versions_paper_id_fkey"
+    },
+    {
+     "def": "UNIQUE (paper_id, sha256)",
+     "name": "quiz_past_versions_paper_id_sha256_key"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "quiz_past_versions_pkey"
+    },
+    {
+     "def": "CHECK ((sha256 ~ '^[a-f0-9]{64}$'::text))",
+     "name": "quiz_past_versions_sha256_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_past_versions_paper_id_sha256_key ON public.quiz_past_versions USING btree (paper_id, sha256)",
+    "CREATE UNIQUE INDEX quiz_past_versions_pkey ON public.quiz_past_versions USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "quiz_past_versions",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "attempt_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "group_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "started_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "accepted_seconds",
+     "not_null": false,
+     "type": "numeric"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (attempt_id) REFERENCES quiz_past_attempts(id)",
+     "name": "quiz_past_views_attempt_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (attempt_id, group_id)",
+     "name": "quiz_past_views_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_past_views_pkey ON public.quiz_past_views USING btree (attempt_id, group_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_past_views",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "version_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "legacy_question_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "question_id",
+     "not_null": true,
+     "type": "text"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (version_id, legacy_question_id)",
+     "name": "quiz_pool_aliases_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (question_id) REFERENCES quiz_question_pool(question_id)",
+     "name": "quiz_pool_aliases_question_id_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (version_id) REFERENCES quiz_versions(id)",
+     "name": "quiz_pool_aliases_version_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_pool_aliases_pkey ON public.quiz_pool_aliases USING btree (version_id, legacy_question_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_pool_aliases",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "question_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "course_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "knowledge_reliable",
+     "not_null": true,
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (course_id) REFERENCES quiz_courses(id)",
+     "name": "quiz_pool_membership_course_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (question_id)",
+     "name": "quiz_pool_membership_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (question_id) REFERENCES quiz_question_pool(question_id) ON DELETE CASCADE",
+     "name": "quiz_pool_membership_question_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX quiz_pool_course_idx ON public.quiz_pool_membership USING btree (course_id, question_id)",
+    "CREATE UNIQUE INDEX quiz_pool_membership_pkey ON public.quiz_pool_membership USING btree (question_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_pool_membership",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "question_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "source_item_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "group_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "unit_ids",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "knowledge_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "knowledge_name",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "difficulty",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "source_version",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "publisher_explanation",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "question",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "checks",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "usable",
+     "not_null": true,
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((difficulty = ANY (ARRAY['-3'::integer, 0, 3])))",
+     "name": "quiz_question_pool_difficulty_check"
+    },
+    {
+     "def": "PRIMARY KEY (question_id)",
+     "name": "quiz_question_pool_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_question_pool_pkey ON public.quiz_question_pool USING btree (question_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_question_pool",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "request_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "source",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "attempt_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "version_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "question_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "category",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "''::text",
+     "generated": "",
+     "identity": "",
+     "name": "option_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "description",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "identity",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "snapshot",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "'pending'::text",
+     "generated": "",
+     "identity": "",
+     "name": "status",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "''::text",
+     "generated": "",
+     "identity": "",
+     "name": "note",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "handled_by",
+     "not_null": false,
+     "type": "uuid"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "updated_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((category = ANY (ARRAY['question'::text, 'options'::text, 'answer'::text, 'explanation'::text, 'media'::text, 'other'::text])))",
+     "name": "quiz_question_reports_category_check"
+    },
+    {
+     "def": "CHECK (((length(description) >= 1) AND (length(description) <= 1000)))",
+     "name": "quiz_question_reports_description_check"
+    },
+    {
+     "def": "FOREIGN KEY (handled_by) REFERENCES auth.users(id)",
+     "name": "quiz_question_reports_handled_by_fkey"
+    },
+    {
+     "def": "CHECK ((length(note) <= 1000))",
+     "name": "quiz_question_reports_note_check"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "quiz_question_reports_pkey"
+    },
+    {
+     "def": "CHECK ((source = ANY (ARRAY['quiz'::text, 'past'::text])))",
+     "name": "quiz_question_reports_source_check"
+    },
+    {
+     "def": "CHECK ((status = ANY (ARRAY['pending'::text, 'processing'::text, 'resolved'::text, 'dismissed'::text])))",
+     "name": "quiz_question_reports_status_check"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "quiz_question_reports_user_id_fkey"
+    },
+    {
+     "def": "UNIQUE (user_id, request_id)",
+     "name": "quiz_question_reports_user_id_request_id_key"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX quiz_reports_inbox ON public.quiz_question_reports USING btree (status, created_at DESC, id)",
+    "CREATE INDEX quiz_reports_user ON public.quiz_question_reports USING btree (user_id, created_at DESC)",
+    "CREATE UNIQUE INDEX quiz_question_reports_pkey ON public.quiz_question_reports USING btree (id)",
+    "CREATE UNIQUE INDEX quiz_question_reports_user_id_request_id_key ON public.quiz_question_reports USING btree (user_id, request_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_question_reports",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "attempt_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "question_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "first_seen",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "accepted_seconds",
+     "not_null": false,
+     "type": "numeric"
+    },
+    {
+     "default": "0",
+     "generated": "",
+     "identity": "",
+     "name": "fast_warnings",
+     "not_null": true,
+     "type": "integer"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (attempt_id) REFERENCES quiz_attempts(id)",
+     "name": "quiz_question_timing_attempt_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (attempt_id, question_id)",
+     "name": "quiz_question_timing_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_question_timing_pkey ON public.quiz_question_timing USING btree (attempt_id, question_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_question_timing",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "owner_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "version_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "school_year",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "class_codes",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "reveal",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "shuffle_questions",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "shuffle_options",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "'classroom'::text",
+     "generated": "",
+     "identity": "",
+     "name": "access_mode",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "'open'::text",
+     "generated": "",
+     "identity": "",
+     "name": "status",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "true",
+     "generated": "",
+     "identity": "",
+     "name": "library_visible",
+     "not_null": true,
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((access_mode = ANY (ARRAY['classroom'::text, 'personal'::text, 'practice'::text, 'self'::text])))",
+     "name": "quiz_sessions_access_mode_check"
+    },
+    {
+     "def": "FOREIGN KEY (owner_id) REFERENCES auth.users(id)",
+     "name": "quiz_sessions_owner_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "quiz_sessions_pkey"
+    },
+    {
+     "def": "CHECK ((reveal = ANY (ARRAY['immediate'::text, 'complete'::text])))",
+     "name": "quiz_sessions_reveal_check"
+    },
+    {
+     "def": "CHECK ((status = ANY (ARRAY['open'::text, 'closed'::text])))",
+     "name": "quiz_sessions_status_check"
+    },
+    {
+     "def": "FOREIGN KEY (version_id) REFERENCES quiz_versions(id)",
+     "name": "quiz_sessions_version_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_sessions_pkey ON public.quiz_sessions USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "quiz_sessions",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "version_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "title",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "catalog",
+     "not_null": false,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "total",
+     "not_null": true,
+     "type": "bigint"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "question_index",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "block_questions",
+     "not_null": true,
+     "type": "jsonb"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (version_id)",
+     "name": "quiz_version_meta_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (version_id) REFERENCES quiz_versions(id) ON DELETE CASCADE",
+     "name": "quiz_version_meta_version_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_version_meta_pkey ON public.quiz_version_meta USING btree (version_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_version_meta",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "bank_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "revision",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "document",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (bank_id) REFERENCES quiz_banks(id)",
+     "name": "quiz_versions_bank_id_fkey"
+    },
+    {
+     "def": "UNIQUE (bank_id, revision)",
+     "name": "quiz_versions_bank_id_revision_key"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "quiz_versions_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_versions_bank_id_revision_key ON public.quiz_versions USING btree (bank_id, revision)",
+    "CREATE UNIQUE INDEX quiz_versions_pkey ON public.quiz_versions USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "quiz_versions",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "a",
+     "name": "id",
+     "not_null": true,
+     "type": "bigint"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "version_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "actor_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "event",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "''::text",
+     "generated": "",
+     "identity": "",
+     "name": "feedback",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (actor_id) REFERENCES auth.users(id)",
+     "name": "reading_events_actor_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "reading_events_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (version_id) REFERENCES reading_versions(id)",
+     "name": "reading_events_version_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX reading_events_pkey ON public.reading_events USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "reading_events",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "owner_user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "'grade6-115-1'::text",
+     "generated": "",
+     "identity": "",
+     "name": "course_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "week_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "starts_on",
+     "not_null": true,
+     "type": "date"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "ends_on",
+     "not_null": true,
+     "type": "date"
+    },
+    {
+     "default": "true",
+     "generated": "",
+     "identity": "",
+     "name": "enabled",
+     "not_null": true,
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK (((ends_on >= starts_on) AND ((ends_on - starts_on) <= 6)))",
+     "name": "reading_periods_check"
+    },
+    {
+     "def": "CHECK ((course_id = 'grade6-115-1'::text))",
+     "name": "reading_periods_course_id_check"
+    },
+    {
+     "def": "UNIQUE (course_id, week_code)",
+     "name": "reading_periods_course_id_week_code_key"
+    },
+    {
+     "def": "FOREIGN KEY (owner_user_id) REFERENCES auth.users(id)",
+     "name": "reading_periods_owner_user_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "reading_periods_pkey"
+    },
+    {
+     "def": "CHECK ((week_code ~ '^(0[1-9]|1[0-9]|2[0-2])$'::text))",
+     "name": "reading_periods_week_code_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX reading_periods_course_id_week_code_key ON public.reading_periods USING btree (course_id, week_code)",
+    "CREATE UNIQUE INDEX reading_periods_pkey ON public.reading_periods USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "reading_periods",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "period_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "version_id",
+     "not_null": true,
+     "type": "uuid"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (period_id) REFERENCES reading_periods(id)",
+     "name": "reading_submissions_period_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (period_id, user_id)",
+     "name": "reading_submissions_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "reading_submissions_user_id_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (version_id, period_id, user_id) REFERENCES reading_versions(id, period_id, user_id)",
+     "name": "reading_submissions_version_id_period_id_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX reading_submissions_pkey ON public.reading_submissions USING btree (period_id, user_id)"
+   ],
+   "kind": "r",
+   "name": "reading_submissions",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "period_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "student_user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "actor_user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "versions_deleted",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "reset_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (actor_user_id) REFERENCES auth.users(id)",
+     "name": "reading_test_resets_actor_user_id_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (period_id) REFERENCES reading_periods(id)",
+     "name": "reading_test_resets_period_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "reading_test_resets_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (student_user_id) REFERENCES auth.users(id)",
+     "name": "reading_test_resets_student_user_id_fkey"
+    },
+    {
+     "def": "CHECK ((versions_deleted > 0))",
+     "name": "reading_test_resets_versions_deleted_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX reading_test_resets_pkey ON public.reading_test_resets USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "reading_test_resets",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "period_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "source",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "book",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "reflection",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "submitted_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "'submitted'::text",
+     "generated": "",
+     "identity": "",
+     "name": "status",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "''::text",
+     "generated": "",
+     "identity": "",
+     "name": "feedback",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "0",
+     "generated": "",
+     "identity": "",
+     "name": "review_seq",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "reviewed_at",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK (((length(TRIM(BOTH FROM book)) >= 1) AND (length(TRIM(BOTH FROM book)) <= 100)))",
+     "name": "reading_versions_book_check"
+    },
+    {
+     "def": "CHECK ((length(feedback) <= 2000))",
+     "name": "reading_versions_feedback_check"
+    },
+    {
+     "def": "UNIQUE (id, period_id, user_id)",
+     "name": "reading_versions_id_period_id_user_id_key"
+    },
+    {
+     "def": "FOREIGN KEY (period_id) REFERENCES reading_periods(id)",
+     "name": "reading_versions_period_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "reading_versions_pkey"
+    },
+    {
+     "def": "CHECK (((length(TRIM(BOTH FROM reflection)) >= 1) AND (length(TRIM(BOTH FROM reflection)) <= 500)))",
+     "name": "reading_versions_reflection_check"
+    },
+    {
+     "def": "CHECK ((source = ANY (ARRAY['school_library'::text, 'parent_platform'::text])))",
+     "name": "reading_versions_source_check"
+    },
+    {
+     "def": "CHECK ((status = ANY (ARRAY['submitted'::text, 'passed'::text, 'needs_revision'::text])))",
+     "name": "reading_versions_status_check"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "reading_versions_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX reading_versions_history ON public.reading_versions USING btree (period_id, user_id, submitted_at)",
+    "CREATE UNIQUE INDEX reading_versions_id_period_id_user_id_key ON public.reading_versions USING btree (id, period_id, user_id)",
+    "CREATE UNIQUE INDEX reading_versions_pkey ON public.reading_versions USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "reading_versions",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "school_year",
+     "not_null": true,
+     "type": "smallint"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "email",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "class_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "seat_no",
+     "not_null": true,
+     "type": "smallint"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "display_name",
+     "not_null": true,
+     "type": "text"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((class_code ~ '^[1-69][0-9]{2}$'::text))",
+     "name": "student_enrollments_class_code_check"
+    },
+    {
+     "def": "CHECK (((email = lower(TRIM(BOTH FROM email))) AND (POSITION(('@'::text) IN (email)) > 1)))",
+     "name": "student_enrollments_email_check"
+    },
+    {
+     "def": "PRIMARY KEY (school_year, email)",
+     "name": "student_enrollments_pkey"
+    },
+    {
+     "def": "CHECK (((school_year >= 100) AND (school_year <= 999)))",
+     "name": "student_enrollments_school_year_check"
+    },
+    {
+     "def": "UNIQUE (school_year, class_code, seat_no)",
+     "name": "student_enrollments_school_year_class_code_seat_no_key"
+    },
+    {
+     "def": "CHECK (((seat_no >= 1) AND (seat_no <= 99)))",
+     "name": "student_enrollments_seat_no_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX student_enrollments_pkey ON public.student_enrollments USING btree (school_year, email)",
+    "CREATE UNIQUE INDEX student_enrollments_school_year_class_code_seat_no_key ON public.student_enrollments USING btree (school_year, class_code, seat_no)"
+   ],
+   "kind": "r",
+   "name": "student_enrollments",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "email",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "class_code",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "seat_no",
+     "not_null": false,
+     "type": "smallint"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "display_name",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "student_code",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": "'student'::text",
+     "generated": "",
+     "identity": "",
+     "name": "role",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "updated_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (user_id)",
+     "name": "student_profiles_pkey"
+    },
+    {
+     "def": "CHECK ((role = ANY (ARRAY['student'::text, 'teacher'::text])))",
+     "name": "student_profiles_role_check"
+    },
+    {
+     "def": "CHECK (((seat_no IS NULL) OR ((seat_no >= 1) AND (seat_no <= 99))))",
+     "name": "student_profiles_seat_no_check"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+     "name": "student_profiles_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX student_profiles_class_code_idx ON public.student_profiles USING btree (class_code)",
+    "CREATE INDEX student_profiles_email_idx ON public.student_profiles USING btree (email)",
+    "CREATE INDEX student_profiles_student_code_idx ON public.student_profiles USING btree (student_code)",
+    "CREATE UNIQUE INDEX student_profiles_pkey ON public.student_profiles USING btree (user_id)"
+   ],
+   "kind": "r",
+   "name": "student_profiles",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "week_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "activity_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "1",
+     "generated": "",
+     "identity": "",
+     "name": "current_level",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "completed",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "updated_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "score",
+     "not_null": false,
+     "type": "smallint"
+    },
+    {
+     "default": "'grade3-114-2'::text",
+     "generated": "",
+     "identity": "",
+     "name": "course_id",
+     "not_null": true,
+     "type": "text"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK (((current_level >= 1) AND (current_level <= 20)))",
+     "name": "student_progress_current_level_check"
+    },
+    {
+     "def": "PRIMARY KEY (user_id, course_id, week_code, activity_key)",
+     "name": "student_progress_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+     "name": "student_progress_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX student_progress_course_week_idx ON public.student_progress USING btree (course_id, week_code, activity_key)",
+    "CREATE INDEX student_progress_updated_at_idx ON public.student_progress USING btree (updated_at DESC)",
+    "CREATE UNIQUE INDEX student_progress_pkey ON public.student_progress USING btree (user_id, course_id, week_code, activity_key)"
+   ],
+   "kind": "r",
+   "name": "student_progress",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "profile_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "token_hash",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "display_name",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "last_seen_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "revoked_at",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "sync_devices_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (profile_id) REFERENCES sync_profiles(id) ON DELETE CASCADE",
+     "name": "sync_devices_profile_id_fkey"
+    },
+    {
+     "def": "UNIQUE (token_hash)",
+     "name": "sync_devices_token_hash_key"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX sync_devices_profile_id_idx ON public.sync_devices USING btree (profile_id)",
+    "CREATE UNIQUE INDEX sync_devices_pkey ON public.sync_devices USING btree (id)",
+    "CREATE UNIQUE INDEX sync_devices_token_hash_key ON public.sync_devices USING btree (token_hash)"
+   ],
+   "kind": "r",
+   "name": "sync_devices",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "profile_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "code_hash",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "expires_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "used_at",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "sync_pairing_codes_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (profile_id) REFERENCES sync_profiles(id) ON DELETE CASCADE",
+     "name": "sync_pairing_codes_profile_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX sync_pairing_codes_code_hash_idx ON public.sync_pairing_codes USING btree (code_hash)",
+    "CREATE INDEX sync_pairing_codes_expires_at_idx ON public.sync_pairing_codes USING btree (expires_at)",
+    "CREATE INDEX sync_pairing_codes_profile_id_idx ON public.sync_pairing_codes USING btree (profile_id)",
+    "CREATE UNIQUE INDEX sync_pairing_codes_pkey ON public.sync_pairing_codes USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "sync_pairing_codes",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "sync_profiles_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX sync_profiles_pkey ON public.sync_profiles USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "sync_profiles",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "profile_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "'{}'::jsonb",
+     "generated": "",
+     "identity": "",
+     "name": "state",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "updated_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (profile_id)",
+     "name": "sync_states_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (profile_id) REFERENCES sync_profiles(id) ON DELETE CASCADE",
+     "name": "sync_states_profile_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX sync_states_pkey ON public.sync_states USING btree (profile_id)"
+   ],
+   "kind": "r",
+   "name": "sync_states",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "week_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "activity_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "level_id",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "''::text",
+     "generated": "",
+     "identity": "",
+     "name": "draft_text",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "saved_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "'grade3-114-2'::text",
+     "generated": "",
+     "identity": "",
+     "name": "course_id",
+     "not_null": true,
+     "type": "text"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((level_id >= 1))",
+     "name": "typing_drafts_level_id_check"
+    },
+    {
+     "def": "PRIMARY KEY (user_id, course_id, week_code, activity_key, level_id)",
+     "name": "typing_drafts_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+     "name": "typing_drafts_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX typing_drafts_course_activity_idx ON public.typing_drafts USING btree (course_id, week_code, activity_key)",
+    "CREATE INDEX typing_drafts_saved_at_idx ON public.typing_drafts USING btree (saved_at DESC)",
+    "CREATE UNIQUE INDEX typing_drafts_pkey ON public.typing_drafts USING btree (user_id, course_id, week_code, activity_key, level_id)"
+   ],
+   "kind": "r",
+   "name": "typing_drafts",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "progress_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "revision",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "stage",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "correct",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "errors",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "elapsed_ms",
+     "not_null": true,
+     "type": "numeric"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "interrupted",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "accuracy",
+     "not_null": true,
+     "type": "numeric"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "wpm",
+     "not_null": true,
+     "type": "numeric"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "passed",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "cpm",
+     "not_null": false,
+     "type": "numeric"
+    },
+    {
+     "default": "'wpm'::text",
+     "generated": "",
+     "identity": "",
+     "name": "rate_unit",
+     "not_null": true,
+     "type": "text"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "typing_foundation_events_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (progress_id) REFERENCES typing_foundation_progress(id)",
+     "name": "typing_foundation_events_progress_id_fkey"
+    },
+    {
+     "def": "CHECK (((stage >= 1) AND (stage <= 6)))",
+     "name": "typing_foundation_events_stage_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX admin_learning_event_progress_idx ON public.typing_foundation_events USING btree (progress_id, revision, created_at DESC, id)",
+    "CREATE UNIQUE INDEX typing_foundation_events_pkey ON public.typing_foundation_events USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "typing_foundation_events",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "lesson_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "ordinal",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "speed",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "starter_speed",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "counts",
+     "not_null": true,
+     "type": "integer[]"
+    },
+    {
+     "default": "'english'::text",
+     "generated": "",
+     "identity": "",
+     "name": "track",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "'wpm'::text",
+     "generated": "",
+     "identity": "",
+     "name": "rate_unit",
+     "not_null": true,
+     "type": "text"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "UNIQUE (ordinal)",
+     "name": "typing_foundation_lessons_ordinal_key"
+    },
+    {
+     "def": "PRIMARY KEY (lesson_key)",
+     "name": "typing_foundation_lessons_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX typing_foundation_lessons_ordinal_key ON public.typing_foundation_lessons USING btree (ordinal)",
+    "CREATE UNIQUE INDEX typing_foundation_lessons_pkey ON public.typing_foundation_lessons USING btree (lesson_key)"
+   ],
+   "kind": "r",
+   "name": "typing_foundation_lessons",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "course_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "learner_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "display_name",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "'english-home-row-v1'::text",
+     "generated": "",
+     "identity": "",
+     "name": "lesson_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "0",
+     "generated": "",
+     "identity": "",
+     "name": "checkpoint",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "completed",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "completed_at",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "starter",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "1",
+     "generated": "",
+     "identity": "",
+     "name": "revision",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "0",
+     "generated": "",
+     "identity": "",
+     "name": "pending_count",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "pending_fingerprint",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "practice_session",
+     "not_null": false,
+     "type": "uuid"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "updated_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (lesson_key) REFERENCES typing_foundation_lessons(lesson_key)",
+     "name": "typing_foundation_lesson_fk"
+    },
+    {
+     "def": "CHECK (((checkpoint >= 0) AND (checkpoint <= 5)))",
+     "name": "typing_foundation_progress_checkpoint_check"
+    },
+    {
+     "def": "CHECK ((course_id = ANY (ARRAY['grade3-115-1'::text, 'grade6-115-1'::text])))",
+     "name": "typing_foundation_progress_course_id_check"
+    },
+    {
+     "def": "UNIQUE (course_id, learner_key, lesson_key)",
+     "name": "typing_foundation_progress_course_id_learner_key_lesson_key_key"
+    },
+    {
+     "def": "CHECK (((pending_count >= 0) AND (pending_count <= 1)))",
+     "name": "typing_foundation_progress_pending_count_check"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "typing_foundation_progress_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX typing_foundation_progress_course_id_learner_key_lesson_key_key ON public.typing_foundation_progress USING btree (course_id, learner_key, lesson_key)",
+    "CREATE UNIQUE INDEX typing_foundation_progress_pkey ON public.typing_foundation_progress USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "typing_foundation_progress",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "progress_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "teacher_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "previous_revision",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "previous_checkpoint",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "previous_completed",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "reset_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "typing_foundation_resets_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (progress_id) REFERENCES typing_foundation_progress(id)",
+     "name": "typing_foundation_resets_progress_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX admin_learning_reset_progress_idx ON public.typing_foundation_resets USING btree (progress_id, reset_at DESC, id)",
+    "CREATE UNIQUE INDEX typing_foundation_resets_pkey ON public.typing_foundation_resets USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "typing_foundation_resets",
+   "rls": true,
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "grade",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "week_code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "true",
+     "generated": "",
+     "identity": "",
+     "name": "is_visible",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "updated_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "'grade3-114-2'::text",
+     "generated": "",
+     "identity": "",
+     "name": "course_id",
+     "not_null": true,
+     "type": "text"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((grade = ANY (ARRAY['grade3'::text, 'grade6'::text])))",
+     "name": "week_visibility_grade_check"
+    },
+    {
+     "def": "PRIMARY KEY (course_id, week_code)",
+     "name": "week_visibility_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX week_visibility_pkey ON public.week_visibility USING btree (course_id, week_code)"
+   ],
+   "kind": "r",
+   "name": "week_visibility",
+   "rls": true,
+   "view_def": null
+  }
+ ],
+ "policies": [
+  {
+   "cmd": "SELECT",
+   "name": "teachers_can_read_class_card_students",
+   "permissive": "PERMISSIVE",
+   "qual": "is_teacher()",
+   "roles": "{authenticated}",
+   "table": "class_card_students",
+   "with_check": null
+  },
+  {
+   "cmd": "SELECT",
+   "name": "public_can_read_classroom_controls",
+   "permissive": "PERMISSIVE",
+   "qual": "true",
+   "roles": "{anon,authenticated}",
+   "table": "classroom_controls",
+   "with_check": null
+  },
+  {
+   "cmd": "ALL",
+   "name": "teachers_manage_classroom_controls",
+   "permissive": "PERMISSIVE",
+   "qual": "is_teacher()",
+   "roles": "{authenticated}",
+   "table": "classroom_controls",
+   "with_check": "is_teacher()"
+  },
+  {
+   "cmd": "SELECT",
+   "name": "grade3_teacher_bindings",
+   "permissive": "PERMISSIVE",
+   "qual": "is_teacher()",
+   "roles": "{authenticated}",
+   "table": "grade3_google_bindings",
+   "with_check": null
+  },
+  {
+   "cmd": "SELECT",
+   "name": "grade3_teacher_import_audit",
+   "permissive": "PERMISSIVE",
+   "qual": "is_teacher()",
+   "roles": "{authenticated}",
+   "table": "grade3_google_imports",
+   "with_check": null
+  },
+  {
+   "cmd": "SELECT",
+   "name": "teachers_can_read_guest_progress",
+   "permissive": "PERMISSIVE",
+   "qual": "is_teacher()",
+   "roles": "{authenticated}",
+   "table": "guest_progress",
+   "with_check": null
+  },
+  {
+   "cmd": "SELECT",
+   "name": "students_can_read_own_profile",
+   "permissive": "PERMISSIVE",
+   "qual": "(auth.uid() = user_id)",
+   "roles": "{authenticated}",
+   "table": "student_profiles",
+   "with_check": null
+  },
+  {
+   "cmd": "DELETE",
+   "name": "grade3_google_delete_gate",
+   "permissive": "RESTRICTIVE",
+   "qual": "((course_id <> 'grade3-115-1'::text) OR is_teacher())",
+   "roles": "{authenticated}",
+   "table": "student_progress",
+   "with_check": null
+  },
+  {
+   "cmd": "INSERT",
+   "name": "grade3_google_insert_gate",
+   "permissive": "RESTRICTIVE",
+   "qual": null,
+   "roles": "{authenticated}",
+   "table": "student_progress",
+   "with_check": "(course_id <> 'grade3-115-1'::text)"
+  },
+  {
+   "cmd": "SELECT",
+   "name": "grade3_google_read_gate",
+   "permissive": "RESTRICTIVE",
+   "qual": "((course_id <> 'grade3-115-1'::text) OR grade3_google_ready() OR is_teacher())",
+   "roles": "{authenticated}",
+   "table": "student_progress",
+   "with_check": null
+  },
+  {
+   "cmd": "UPDATE",
+   "name": "grade3_google_update_gate",
+   "permissive": "RESTRICTIVE",
+   "qual": "(course_id <> 'grade3-115-1'::text)",
+   "roles": "{authenticated}",
+   "table": "student_progress",
+   "with_check": "(course_id <> 'grade3-115-1'::text)"
+  },
+  {
+   "cmd": "DELETE",
+   "name": "students_can_delete_own_progress",
+   "permissive": "PERMISSIVE",
+   "qual": "(auth.uid() = user_id)",
+   "roles": "{authenticated}",
+   "table": "student_progress",
+   "with_check": null
+  },
+  {
+   "cmd": "INSERT",
+   "name": "students_can_insert_own_progress",
+   "permissive": "PERMISSIVE",
+   "qual": null,
+   "roles": "{authenticated}",
+   "table": "student_progress",
+   "with_check": "(auth.uid() = user_id)"
+  },
+  {
+   "cmd": "SELECT",
+   "name": "students_can_read_own_progress",
+   "permissive": "PERMISSIVE",
+   "qual": "(auth.uid() = user_id)",
+   "roles": "{authenticated}",
+   "table": "student_progress",
+   "with_check": null
+  },
+  {
+   "cmd": "UPDATE",
+   "name": "students_can_update_own_progress",
+   "permissive": "PERMISSIVE",
+   "qual": "(auth.uid() = user_id)",
+   "roles": "{authenticated}",
+   "table": "student_progress",
+   "with_check": "(auth.uid() = user_id)"
+  },
+  {
+   "cmd": "DELETE",
+   "name": "students_can_delete_own_typing_drafts",
+   "permissive": "PERMISSIVE",
+   "qual": "(auth.uid() = user_id)",
+   "roles": "{authenticated}",
+   "table": "typing_drafts",
+   "with_check": null
+  },
+  {
+   "cmd": "INSERT",
+   "name": "students_can_insert_own_typing_drafts",
+   "permissive": "PERMISSIVE",
+   "qual": null,
+   "roles": "{authenticated}",
+   "table": "typing_drafts",
+   "with_check": "(auth.uid() = user_id)"
+  },
+  {
+   "cmd": "SELECT",
+   "name": "students_can_read_own_typing_drafts",
+   "permissive": "PERMISSIVE",
+   "qual": "(auth.uid() = user_id)",
+   "roles": "{authenticated}",
+   "table": "typing_drafts",
+   "with_check": null
+  },
+  {
+   "cmd": "UPDATE",
+   "name": "students_can_update_own_typing_drafts",
+   "permissive": "PERMISSIVE",
+   "qual": "(auth.uid() = user_id)",
+   "roles": "{authenticated}",
+   "table": "typing_drafts",
+   "with_check": "(auth.uid() = user_id)"
+  },
+  {
+   "cmd": "SELECT",
+   "name": "public_can_read_week_visibility",
+   "permissive": "PERMISSIVE",
+   "qual": "true",
+   "roles": "{anon,authenticated}",
+   "table": "week_visibility",
+   "with_check": null
+  },
+  {
+   "cmd": "ALL",
+   "name": "teachers_manage_week_visibility",
+   "permissive": "PERMISSIVE",
+   "qual": "is_teacher()",
+   "roles": "{authenticated}",
+   "table": "week_visibility",
+   "with_check": "is_teacher()"
+  }
+ ],
+ "triggers": [
+  {
+   "def": "CREATE TRIGGER grade3_guest_frozen BEFORE INSERT OR DELETE OR UPDATE ON public.guest_progress FOR EACH ROW EXECUTE FUNCTION freeze_grade3_guest_progress()",
+   "enabled": "O",
+   "name": "grade3_guest_frozen",
+   "table": "guest_progress"
+  },
+  {
+   "def": "CREATE TRIGGER quiz_catalog_invalidate AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.quiz_courses FOR EACH STATEMENT EXECUTE FUNCTION quiz_catalog_invalidate()",
+   "enabled": "O",
+   "name": "quiz_catalog_invalidate",
+   "table": "quiz_courses"
+  },
+  {
+   "def": "CREATE TRIGGER quiz_assign_paper_name BEFORE INSERT OR UPDATE ON public.quiz_generated_papers FOR EACH ROW EXECUTE FUNCTION quiz_assign_paper_name()",
+   "enabled": "O",
+   "name": "quiz_assign_paper_name",
+   "table": "quiz_generated_papers"
+  },
+  {
+   "def": "CREATE TRIGGER quiz_catalog_invalidate AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.quiz_name_characters FOR EACH STATEMENT EXECUTE FUNCTION quiz_catalog_invalidate()",
+   "enabled": "O",
+   "name": "quiz_catalog_invalidate",
+   "table": "quiz_name_characters"
+  },
+  {
+   "def": "CREATE TRIGGER quiz_past_immutable BEFORE DELETE OR UPDATE ON public.quiz_past_versions FOR EACH ROW EXECUTE FUNCTION quiz_past_immutable()",
+   "enabled": "O",
+   "name": "quiz_past_immutable",
+   "table": "quiz_past_versions"
+  },
+  {
+   "def": "CREATE TRIGGER quiz_catalog_invalidate AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.quiz_pool_membership FOR EACH STATEMENT EXECUTE FUNCTION quiz_catalog_invalidate()",
+   "enabled": "O",
+   "name": "quiz_catalog_invalidate",
+   "table": "quiz_pool_membership"
+  },
+  {
+   "def": "CREATE TRIGGER quiz_catalog_invalidate AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.quiz_question_pool FOR EACH STATEMENT EXECUTE FUNCTION quiz_catalog_invalidate()",
+   "enabled": "O",
+   "name": "quiz_catalog_invalidate",
+   "table": "quiz_question_pool"
+  },
+  {
+   "def": "CREATE TRIGGER quiz_version_meta AFTER INSERT OR UPDATE OF document ON public.quiz_versions FOR EACH ROW EXECUTE FUNCTION quiz_version_meta_trigger()",
+   "enabled": "O",
+   "name": "quiz_version_meta",
+   "table": "quiz_versions"
+  },
+  {
+   "def": "CREATE TRIGGER trg_student_profiles_set_defaults BEFORE INSERT OR UPDATE ON public.student_profiles FOR EACH ROW EXECUTE FUNCTION student_profiles_set_defaults()",
+   "enabled": "O",
+   "name": "trg_student_profiles_set_defaults",
+   "table": "student_profiles"
+  }
+ ],
+ "sequences": [
+  {
+   "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}",
+   "name": "homework_events_id_seq"
+  },
+  {
+   "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}",
+   "name": "reading_events_id_seq"
+  }
+ ],
+ "types": [
+  {
+   "kind": "c",
+   "labels": [],
+   "name": "quiz_draw_candidate"
+  }
+ ],
+ "extensions": [
+  {
+   "name": "pg_stat_statements",
+   "schema": "extensions",
+   "version": "1.11"
+  },
+  {
+   "name": "pgcrypto",
+   "schema": "extensions",
+   "version": "1.3"
+  },
+  {
+   "name": "plpgsql",
+   "schema": "pg_catalog",
+   "version": "1.0"
+  },
+  {
+   "name": "supabase_vault",
+   "schema": "vault",
+   "version": "0.3.1"
+  },
+  {
+   "name": "uuid-ossp",
+   "schema": "extensions",
+   "version": "1.1"
+  }
+ ]
+}

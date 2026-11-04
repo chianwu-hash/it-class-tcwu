@@ -1,3 +1,4 @@
+import {afterGardenReward} from './garden-unlock-notice.mjs';
 import { thumbnailStorageRequest } from './homework-thumbnails.js?v=20260910-stored';
 import { SUPABASE_URL, SUPABASE_ANON_KEY, getStoredAccessToken } from './auth.js';
 
@@ -37,6 +38,7 @@ export async function homeworkRequest(session, action, data = {}, edge = false, 
   if (edge && action === 'preview' && response.ok) return response.blob();
   const result = await response.json().catch(() => ({}));
   if (!response.ok) { const error = new Error(homeworkError(result.error || result.message)); error.code = result.error || result.message; throw error; }
+  if(action==='list')afterGardenReward();
   return result;
 }
 

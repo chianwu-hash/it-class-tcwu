@@ -1,3 +1,4 @@
+import {afterGardenReward} from './garden-unlock-notice.mjs';
 import { SUPABASE_URL, SUPABASE_ANON_KEY, getStoredAccessToken } from './auth.js';
 
 // Shared adapter for quiz/practical activities. Typing continues to use typing-challenge.
@@ -23,6 +24,7 @@ export function createActivityProgress({ courseId, weekCode, activityKey, total,
         try {
             const response = await fetch(url, options);
             if (!response.ok) throw new Error(`進度連線失敗（${response.status}），請再試一次。`);
+            if(method==='POST'&&score===total)afterGardenReward(courseId);
             return method === 'GET' ? (await response.json())[0] ?? null : true;
         } finally { clearTimeout(timeout); }
     }

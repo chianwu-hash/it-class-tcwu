@@ -1,0 +1,97 @@
+{
+  "baseline": "dpl_HNgV9o1A3A6Z3Q99qT2ECJTsTS5d",
+  "files": [
+    {
+      "file": "garden/growth/growth.mjs",
+      "sha256": "02ac9dcfb2db7ab6c976889ea760a57e641b65392db90286f4c2a44224cee162"
+    },
+    {
+      "file": "garden/growth/index.html",
+      "sha256": "0fa3dfbdbbf4a7536a3c682b7ced575149abbadde7f0051ee2da8e78752ec9ca"
+    },
+    {
+      "file": "garden/scene-cat.html",
+      "sha256": "c21420d447b3c2fdae9bc090119ade78ac20c7c56fd0dd4b6bbe9b8937e904cd"
+    },
+    {
+      "file": "garden/scene-pets.html",
+      "sha256": "d7f9c0068f6378df10ad6821ab28384fe48dd159cba4eb5eeb604caec6fc90fe"
+    },
+    {
+      "file": "garden/stage.html",
+      "sha256": "8def8470d36510fa30ea490903b945527dd5132cd0ec5c9d2b3e27d9e724bd85"
+    },
+    {
+      "file": "grade3/115-1/typing-foundation.html",
+      "sha256": "6247c0ae799d5c62fdbd3e53480f941cac5f47024da9b9f602080680eaa3fe9d"
+    },
+    {
+      "file": "grade3/115-1/zhuyin-foundation.html",
+      "sha256": "7e19cd9ede07f9cabf1a940fd0c5af97d9ef0d29228783de12f8cec78431f606"
+    },
+    {
+      "file": "grade6/115-1/typing-foundation.html",
+      "sha256": "5cf42ed4815a0bcead2497c45f12d27c85cda7c70d8e9abd3512f43d8a6ddea1"
+    },
+    {
+      "file": "grade6/115-1/zhuyin-foundation.html",
+      "sha256": "d3cf774851c054f0d124edb3884b3153df0dcee0115a280fecb6423a7d1176d5"
+    },
+    {
+      "file": "my-tree.html",
+      "sha256": "eed8edcc6e550ae5a6d6f6c3cd279559d46940cf07ba1a5553d235cbbf3772ec"
+    },
+    {
+      "file": "prototypes/typing-foundation/level1/app.js",
+      "sha256": "b6a48ca4fe5d42a1e887d1f3318fb247f19a396f0ef3d57c29ac1d490a4c40d9"
+    },
+    {
+      "file": "shared/effort-garden-v2.mjs",
+      "sha256": "ad3f63f3d3b3987aa6ba387a253d7ff9391bffae2e25e624d46f5d727265e8db"
+    },
+    {
+      "file": "shared/garden-stage.mjs",
+      "sha256": "a252374bd285db0e0c23a374d2c3d265d1701105656fea88f725abacf8e330ed"
+    },
+    {
+      "file": "shared/reward-tree-model.js",
+      "sha256": "0dca1b63b53a524e1006cdcbe17c2fc621ba77591774c1730bb8448950e260da"
+    },
+    {
+      "file": "shared/reward-tree-renderer.js",
+      "sha256": "6d50f3f72c1029601b39e2f22cdc4d8f5b75de345d950b7672ad196d4f8736fb"
+    },
+    {
+      "file": "shared/typing-foundation-page.js",
+      "sha256": "b5b92fbaa9bea1b9756b5f958f2efdfbd854e879ec3460b3cbcdc11152a309bf"
+    },
+    {
+      "file": "shared/typing-foundation-rewards.js",
+      "sha256": "220b2f6cfcd328bb40c560f4579ba9fe1d3a88991433b3b86abde911d25b7187"
+    },
+    {
+      "file": "shared/zhuyin-foundation-app.js",
+      "sha256": "87476fb7c8d47527825b0c38f4fd347f2ed2aee53a5d9e96df241cb3297f55f4"
+    },
+    {
+      "file": "shared/typing-foundation-milestones.mjs",
+      "sha256": "432d9a845c987d4497e709903aa9e1f3e63c285a92f76c7f03a814a5c016ec9c"
+    },
+    {
+      "file": "shared/reward-source-colors.mjs",
+      "sha256": "7065b6ea21cd424a7314432082babc8bb7acd295ac0500f716435243b2e4a114"
+    },
+    {
+      "file": "shared/typing-foundation-milestone-ui.mjs",
+      "sha256": "d99781dcb4ca4394b8d84bc6b1408614678d5e9fc829174533891c94ca0ba6f8"
+    },
+    {
+      "file": "shared/typing-foundation-milestones.css",
+      "sha256": "31bf197279a679af528fc61a2a9d8f58c34226a492a9b094aa416f0f56a010fd"
+    },
+    {
+      "file": "supabase/foundation_milestones.sql",
+      "sha256": "3c24bfb583be9473a6411a6aa69bd1729d91a62d4c60722873f346d3c7981cec"
+    }
+  ]
+}

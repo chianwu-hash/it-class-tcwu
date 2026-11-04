@@ -31,6 +31,8 @@ function createReward({ kind, source = {}, activity, index, total, earned = true
     return {
         id: `${getActivityId(activity.weekCode, activity.activityKey, activity.courseId)}:${kind}:${index}`,
         kind,
+        sourceType: activity.sourceType || '',
+        track: activity.track || '',
         earned,
         href,
         courseId: activity.courseId || source.course_id || "",
@@ -66,7 +68,8 @@ function createReward({ kind, source = {}, activity, index, total, earned = true
                     : `前往第 ${index} 關繼續挑戰。`,
         updatedAt: source.updated_at || "",
         updatedAtText: formatDateTime(source.updated_at),
-        score: source.score ?? null
+        score: source.score ?? null,
+        ...(activity.sourceLinks ? {sourceLinks:activity.sourceLinks} : {})
     };
 }
 
@@ -102,6 +105,19 @@ export function deriveRewardTreeModel(progressRows, activities) {
             updated_at: ""
         };
 
+        if (activity.type === 'past-exam-flower') {
+            const earned=row.completed===true;
+            const reward=createReward({kind:'flower',source:row,activity,index:1,total:1,earned});
+            reward.title=activity.label+' 考古花';reward.reason='完整完成這份考古題，單次得分率達60%以上。';
+            reward.detail='同份原卷每學期只開一次花；重作保留成績，不重複領獎。';
+            reward.flowerStyle='forest';reward.sourceType='past_exam';
+            (earned?rewards:pendingRewards).push(reward);return;
+        }
+        if(activity.type==='learning-leaf'){
+            const reward=createReward({kind:'quiz-leaf',source:row,activity,index:1,total:1,earned:row.completed===true,href:activity.pageHref});
+            reward.title=activity.label;reward.reason='完成10道不同的延伸題或5題自組卷題目，答錯也算努力。';reward.detail='同題同學期只認列首次；原卷達標成果維持原紀錄。';reward.score=null;
+            (row.completed===true?rewards:pendingRewards).push(reward);return;
+        }
         if (activity.type === 'practical') {
             const earned=row.completed === true;
             const reward=createReward({kind:'practical-leaf',source:row,activity,index:1,total:1,earned,href:earned ? '' : activity.pageHref});
@@ -109,6 +125,15 @@ export function deriveRewardTreeModel(progressRows, activities) {
             reward.reason=earned ? '完成整套操作練習，長出一片葉子。' : '完成整套操作練習，就能長出一片葉子。';
             reward.detail='同一活動只計一次；重練不會重複增加。';
             (earned ? rewards : pendingRewards).push(reward);
+            return;
+        }
+        if (activity.type === 'foundation-milestone') {
+            const earned=row.completed===true;
+            const reward=createReward({kind:'flower',source:row,activity,index:1,total:1,earned,href:earned?'':activity.pageHref});
+            reward.title=`${activity.label} ${earned?'里程碑花':'尚未完成的里程碑花'}`;
+            reward.reason=earned?'完成一段完整技能，開出一朵里程碑花。':'完成這個階段所有大關，就能開出里程碑花。';
+            reward.detail=`已完成 ${Math.min(activity.requiredLessons,Number(row.score)||0)}／${activity.requiredLessons} 大關；重練不重複增加，教師重設後依目前成果回算。`;
+            (earned?rewards:pendingRewards).push(reward);
             return;
         }
         if (activity.type === 'foundation') {
@@ -240,6 +265,7 @@ export function deriveRewardTreeModel(progressRows, activities) {
         stats: {
             leafCount: leaves.length,
             flowerCount: flowers.length,
+            pastExamFlowerCount: flowers.filter(r=>r.sourceType==='past_exam').length,
             pendingLeafCount: pendingLeaves.length,
             pendingFlowerCount: pendingFlowers.length,
             colorUnlocked: flowers.length >= 3,

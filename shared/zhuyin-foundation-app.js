@@ -1,3 +1,4 @@
+import {initFoundationMapRewards,decorateFoundationLesson} from './typing-foundation-map-rewards.mjs?v=20261102-icons';
 import {zhuyinLessons as lessons,getZhuyinLesson,zhuyinKeys,generateZhuyin,textDistance,zhuyinCount} from './zhuyin-foundation-curriculum.mjs';
 import {createTypingFingerGuide,fingerLabel} from './typing-finger-guide.mjs';
 import {createClock} from '../prototypes/typing-foundation/level1/grading.mjs';
@@ -63,6 +64,7 @@ $('typing-area').append(editor);editor.hidden=!ime;
 if(ime)$('typing-area').removeAttribute('tabindex');
 const map=document.createElement('details');map.className='course-map';map.innerHTML='<summary>中打學習地圖（選擇關卡）</summary><div class="course-links"></div>';
 document.querySelector('.layout').before(map);
+initFoundationMapRewards(map,'zhuyin');
 function status(text){$('cloud-status').textContent=text;}
 function feedback(text,error=false){$('feedback').textContent=text;$('feedback').classList.toggle('error',error);}
 function show(id){for(const name of ['intro','exercise','result','paused'])$(name).hidden=name!==id;}
@@ -80,10 +82,11 @@ function paint(){
 }
 function timing(){const ms=clock.elapsed(),s=Math.floor(ms/1000);$('time').textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;$('speed').textContent=ms&&correct?(correct*60000/ms).toFixed(1):'—';}
 function controls(){
+ if(cloud)config.onProgress?.(records);
  $('steps').replaceChildren();lesson.stages.forEach((s,i)=>{const done=saved?.completed||i<(saved?.checkpoint||0),li=document.createElement('li'),b=document.createElement('button');li.className=`${done?'done ':''}${i===stage?'current':''}`;b.type='button';b.className='step-link';b.disabled=!done||busy||!cloud;
  const n=document.createElement('span');n.className='step-number';n.textContent=done?'✓':String(i+1).padStart(2,'0');const label=document.createElement('span'),strong=document.createElement('strong'),small=document.createElement('small');strong.textContent=s.title;small.textContent=lesson.mode==='keys'&&i<5?[...s.keys].map(k=>zhuyinKeys[k]).join(' · '):s.keys;label.append(strong,small);b.append(n,label);b.onclick=async()=>{if(await maySwitch()){stage=i;review=true;await begin();}};li.append(b);$('steps').append(li);});
  $('stage-label').textContent=`${stage+1} · ${lesson.stages[stage].title}${review?' · 重練':''}`;$('return-progress').hidden=!review;
- const container=map.querySelector('div');container.replaceChildren();lessons.forEach((l,i)=>{const b=document.createElement('button');b.type='button';b.className='quiet';const unlocked=lessons.slice(0,i).every(prior=>records.some(r=>r.lesson_key===prior.key&&r.completed));b.disabled=!unlocked||busy||!cloud;b.textContent=`${records.some(r=>r.lesson_key===l.key&&r.completed)?'✓ ':unlocked?'':'🔒 '}${i+1}. ${l.title}`;if(l.key===lesson.key)b.setAttribute('aria-current','page');b.onclick=async()=>{if(await maySwitch())location.href=`?lesson=${l.key}`;};container.append(b);});
+ const container=map.querySelector('div');container.replaceChildren();lessons.forEach((l,i)=>{const b=document.createElement('button');b.type='button';b.className='quiet';const unlocked=lessons.slice(0,i).every(prior=>records.some(r=>r.lesson_key===prior.key&&r.completed));b.disabled=!unlocked||busy||!cloud;b.textContent=`${records.some(r=>r.lesson_key===l.key&&r.completed)?'✓ ':unlocked?'':'🔒 '}${i+1}. ${l.title}`;decorateFoundationLesson(b,{track:'zhuyin',lesson:l,records});if(l.key===lesson.key)b.setAttribute('aria-current','page');b.onclick=async()=>{if(await maySwitch())location.href=`?lesson=${l.key}`;};container.append(b);});
 }
 async function maySwitch(){
  if(busy||!cloud)return false;
@@ -106,6 +109,7 @@ async function begin(){
  }catch(error){status(error.message);}finally{busy=false;$('start').disabled=false;controls();}
 }
 function finishUI(passed,completed){
+ config.onProgress?.(records);
  mode='result';$('result-icon').textContent=passed?'✓':'↻';$('result-title').textContent=review?'重練完成':completed?`中打第 ${lesson.number} 關過關！`:passed?'這組完成了！':'完成練習，再試一次';
  $('result-text').textContent=review?'原本成果保留；重練不改變進度，也不重複長葉。':completed?'這一關長出一片中打過關葉。':challenge()?`連續達標 ${confirmations}/2；需要兩組不同題。`:'繼續保持正確的指法與檢查習慣。';
  $('result-stats').textContent=`正確 ${correct} · 錯誤 ${errors} · 正確率 ${Math.floor(correct/(correct+errors)*100)}% · ${(correct*60000/Math.max(1,clock.elapsed())).toFixed(1)} ${ime?'字元／分（含標點）':'鍵／分'}${interrupted?' · 曾暫停':''}`;

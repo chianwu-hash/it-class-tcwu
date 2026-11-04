@@ -58,7 +58,7 @@ export function createHandler({ env, fetcher = fetch }) {
       const storageHeaders = { apikey: service, ...(service.startsWith('sb_secret_') ? {} : { Authorization: `Bearer ${service}` }) };
       if (body.action === 'read') {
         const asset = await rpc('quiz_media_access', { p_url: body.url, p_attempt: body.attempt_id || null });
-        if (env('QUIZ_IMAGE_BACKEND') === 'drive' && asset.mime?.startsWith('image/')) {
+        if (env('QUIZ_IMAGE_BACKEND') === 'drive' && asset.backend !== 'supabase' && asset.mime?.startsWith('image/')) {
           if (asset.url !== body.url) fail('media_unavailable');
           return send(200, { url: await signDriveImage(asset, env) });
         }

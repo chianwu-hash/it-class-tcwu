@@ -19,7 +19,7 @@
         `<span title="${full}" class="inline-flex items-center gap-1"><i class="${iconClass}" aria-hidden="true"></i><span aria-hidden="true">${short}</span><span class="sr-only">${full}</span></span>`;
 
     const navHTML = window.__buildCourseNavbarHtml({
-        activeWeeks: quizMode ? [] : [1, 2, 3, 5, 7, 8],
+        activeWeeks: quizMode ? [] : [1, 2, 3, 5, 7, 9],
         gradeLabel: quizMode ? "考前練功房｜六年級" : "六年級資訊課｜115-1",
         titleIconClass: "fa-solid fa-graduation-cap text-violet-700",
         titleClassName: "font-black text-slate-800 flex items-center text-lg tracking-wide whitespace-nowrap",
@@ -67,6 +67,6 @@
     currentScript.remove();
 
     // Show roster class/seat/name instead of the email once signed in.
-    import('../../shared/grade6-nav-identity.js?v=20261028-roster').then(({ initGrade6NavIdentity }) => initGrade6NavIdentity({ expanded: quizMode }))
+    import('../../shared/grade6-nav-identity.js?v=20261030-identity-sync').then(({ initGrade6NavIdentity }) => initGrade6NavIdentity({ expanded: quizMode, provided: quizMode }))
         .catch(error => console.warn('grade6 navbar identity unavailable', error));
 })();

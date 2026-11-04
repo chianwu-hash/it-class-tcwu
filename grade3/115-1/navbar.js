@@ -19,7 +19,7 @@
         `<span title="${full}" class="inline-flex items-center gap-1"><i class="${iconClass}" aria-hidden="true"></i><span aria-hidden="true">${short}</span><span class="sr-only">${full}</span></span>`;
 
     const navConfig = {
-        activeWeeks: quizMode ? [] : [1, 2, 3, 4, 5, 6, 7, 8, 9],
+        activeWeeks: quizMode ? [] : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         gradeLabel: quizMode ? "考前練功房｜三年級" : "三年級資訊課｜115-1",
         titleIconClass: "fa-solid fa-rocket text-cyan-600",
         titleClassName: "font-black text-gray-800 flex items-center text-lg tracking-wide whitespace-nowrap",
@@ -55,8 +55,9 @@
     const navHTML = window.__buildCourseNavbarHtml(navConfig);
     currentScript.insertAdjacentHTML("beforebegin", navHTML);
     currentScript.remove();
-    if (quizMode) import('../../shared/grade6-nav-identity.js?v=20261028-roster')
-        .then(({ initGrade6NavIdentity }) => initGrade6NavIdentity({ expanded: true }))
+    // Quiz pages pass the roster label from their own RPC; no extra enrollment request here.
+    if (quizMode) import('../../shared/grade6-nav-identity.js?v=20261030-identity-sync')
+        .then(({ initGrade6NavIdentity }) => initGrade6NavIdentity({ expanded: true, provided: true }))
         .catch(error => console.warn('練功房導覽身分暫時無法讀取', error));
     if (quizMode) return;
 

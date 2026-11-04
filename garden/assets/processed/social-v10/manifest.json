@@ -1,0 +1,358 @@
+{
+  "version": 10,
+  "canvas": {
+    "size": [
+      560,
+      500
+    ],
+    "anchor": [
+      280,
+      460
+    ],
+    "referenceHeight": 360,
+    "targetHeadHeight": 185.0
+  },
+  "groups": {
+    "sit": {
+      "frames": [
+        {
+          "web": "sit-0.webp",
+          "sourceCell": 0,
+          "sourceSha256": "a62e397e1e1160dcffba91da47e5092643b3981859596d64cf5f0860b0bb5cb0",
+          "headHeightSource": 592,
+          "rootXSource": 715,
+          "scale": 0.3125,
+          "visibleBox": [
+            92,
+            107,
+            386,
+            460
+          ],
+          "cleanup": {
+            "removed_px": 7240,
+            "removed_alpha_max": 3,
+            "main_bbox": [
+              111,
+              43,
+              1059,
+              1178
+            ],
+            "touches_edge": false
+          }
+        }
+      ]
+    },
+    "front": {
+      "frames": [
+        {
+          "web": "front-0.webp",
+          "sourceCell": 0,
+          "sourceSha256": "3574bbfb4a4102a2f599e5f37072603e1ba078eff5cf46e7e7f1202b41440332",
+          "headHeightSource": 520,
+          "rootXSource": 880,
+          "scale": 0.3557692307692308,
+          "visibleBox": [
+            2,
+            105,
+            450,
+            460
+          ],
+          "cleanup": {
+            "removed_px": 522,
+            "removed_alpha_max": 1,
+            "main_bbox": [
+              96,
+              29,
+              1358,
+              1029
+            ],
+            "touches_edge": false
+          }
+        },
+        {
+          "web": "front-1.webp",
+          "sourceCell": 1,
+          "sourceSha256": "df0b9a74df4598460c02f6ab25c8db2fb7d9b2017d1ccd97fbbda991e22d9d15",
+          "headHeightSource": 288,
+          "rootXSource": 380,
+          "scale": 0.6423611111111112,
+          "visibleBox": [
+            98,
+            109,
+            381,
+            460
+          ],
+          "cleanup": {
+            "removed_px": 9814,
+            "removed_alpha_max": 255,
+            "main_bbox": [
+              94,
+              61,
+              538,
+              609
+            ],
+            "touches_edge": false
+          }
+        },
+        {
+          "web": "front-2.webp",
+          "sourceCell": 2,
+          "sourceSha256": "4ac6ab3952a0d4c9ec164b5249840d058bf71d7bc99a67ec592bb025c895c662",
+          "headHeightSource": 553,
+          "rootXSource": 760,
+          "scale": 0.3345388788426763,
+          "visibleBox": [
+            56,
+            103,
+            392,
+            460
+          ],
+          "cleanup": {
+            "removed_px": 668,
+            "removed_alpha_max": 1,
+            "main_bbox": [
+              87,
+              113,
+              1093,
+              1183
+            ],
+            "touches_edge": false
+          }
+        },
+        {
+          "web": "front-3.webp",
+          "sourceCell": 3,
+          "sourceSha256": "df0b9a74df4598460c02f6ab25c8db2fb7d9b2017d1ccd97fbbda991e22d9d15",
+          "headHeightSource": 290,
+          "rootXSource": 380,
+          "scale": 0.6379310344827587,
+          "visibleBox": [
+            89,
+            112,
+            386,
+            460
+          ],
+          "cleanup": {
+            "removed_px": 2378,
+            "removed_alpha_max": 1,
+            "main_bbox": [
+              80,
+              26,
+              547,
+              574
+            ],
+            "touches_edge": false
+          }
+        }
+      ]
+    },
+    "wave": {
+      "frames": [
+        {
+          "web": "wave-0.webp",
+          "sourceCell": 0,
+          "sourceSha256": "b2213e3b84560d669672fb48b27dd6c1f32250a2e66230cb7d6609ba6721a678",
+          "headHeightSource": 293,
+          "rootXSource": 380,
+          "scale": 0.6313993174061433,
+          "visibleBox": [
+            84,
+            105,
+            391,
+            460
+          ],
+          "cleanup": {
+            "removed_px": 3826,
+            "removed_alpha_max": 1,
+            "main_bbox": [
+              70,
+              13,
+              558,
+              578
+            ],
+            "touches_edge": false
+          }
+        },
+        {
+          "web": "wave-1.webp",
+          "sourceCell": 1,
+          "sourceSha256": "b2213e3b84560d669672fb48b27dd6c1f32250a2e66230cb7d6609ba6721a678",
+          "headHeightSource": 293,
+          "rootXSource": 354,
+          "scale": 0.6313993174061433,
+          "visibleBox": [
+            86,
+            105,
+            392,
+            460
+          ],
+          "cleanup": {
+            "removed_px": 2662,
+            "removed_alpha_max": 1,
+            "main_bbox": [
+              46,
+              12,
+              532,
+              578
+            ],
+            "touches_edge": false
+          }
+        },
+        {
+          "web": "wave-2.webp",
+          "sourceCell": 2,
+          "sourceSha256": "b2213e3b84560d669672fb48b27dd6c1f32250a2e66230cb7d6609ba6721a678",
+          "headHeightSource": 293,
+          "rootXSource": 380,
+          "scale": 0.6313993174061433,
+          "visibleBox": [
+            84,
+            104,
+            403,
+            460
+          ],
+          "cleanup": {
+            "removed_px": 3118,
+            "removed_alpha_max": 1,
+            "main_bbox": [
+              68,
+              12,
+              575,
+              578
+            ],
+            "touches_edge": false
+          }
+        },
+        {
+          "web": "wave-3.webp",
+          "sourceCell": 3,
+          "sourceSha256": "b2213e3b84560d669672fb48b27dd6c1f32250a2e66230cb7d6609ba6721a678",
+          "headHeightSource": 293,
+          "rootXSource": 354,
+          "scale": 0.6313993174061433,
+          "visibleBox": [
+            88,
+            102,
+            428,
+            460
+          ],
+          "cleanup": {
+            "removed_px": 4578,
+            "removed_alpha_max": 1,
+            "main_bbox": [
+              49,
+              10,
+              590,
+              578
+            ],
+            "touches_edge": false
+          }
+        }
+      ]
+    },
+    "rear": {
+      "frames": [
+        {
+          "web": "rear-0.webp",
+          "sourceCell": 0,
+          "sourceSha256": "ce5228bd99f5ae5d55baa97ad1dd25a1b5b59d2caaf92d2559c6e79caa7ff026",
+          "headHeightSource": 260,
+          "rootXSource": 358,
+          "scale": 0.7115384615384616,
+          "visibleBox": [
+            67,
+            107,
+            470,
+            460
+          ],
+          "cleanup": {
+            "removed_px": 5074,
+            "removed_alpha_max": 1,
+            "main_bbox": [
+              57,
+              45,
+              626,
+              543
+            ],
+            "touches_edge": false
+          }
+        },
+        {
+          "web": "rear-1.webp",
+          "sourceCell": 1,
+          "sourceSha256": "ce5228bd99f5ae5d55baa97ad1dd25a1b5b59d2caaf92d2559c6e79caa7ff026",
+          "headHeightSource": 260,
+          "rootXSource": 358,
+          "scale": 0.7115384615384616,
+          "visibleBox": [
+            79,
+            94,
+            467,
+            460
+          ],
+          "cleanup": {
+            "removed_px": 2588,
+            "removed_alpha_max": 1,
+            "main_bbox": [
+              75,
+              32,
+              622,
+              548
+            ],
+            "touches_edge": false
+          }
+        },
+        {
+          "web": "rear-2.webp",
+          "sourceCell": 2,
+          "sourceSha256": "ce5228bd99f5ae5d55baa97ad1dd25a1b5b59d2caaf92d2559c6e79caa7ff026",
+          "headHeightSource": 260,
+          "rootXSource": 358,
+          "scale": 0.7115384615384616,
+          "visibleBox": [
+            76,
+            84,
+            466,
+            460
+          ],
+          "cleanup": {
+            "removed_px": 3621,
+            "removed_alpha_max": 1,
+            "main_bbox": [
+              70,
+              17,
+              621,
+              548
+            ],
+            "touches_edge": false
+          }
+        },
+        {
+          "web": "rear-3.webp",
+          "sourceCell": 3,
+          "sourceSha256": "ce5228bd99f5ae5d55baa97ad1dd25a1b5b59d2caaf92d2559c6e79caa7ff026",
+          "headHeightSource": 260,
+          "rootXSource": 358,
+          "scale": 0.7115384615384616,
+          "visibleBox": [
+            68,
+            72,
+            464,
+            460
+          ],
+          "cleanup": {
+            "removed_px": 1716,
+            "removed_alpha_max": 1,
+            "main_bbox": [
+              58,
+              5,
+              617,
+              552
+            ],
+            "touches_edge": false
+          }
+        }
+      ]
+    }
+  }
+}

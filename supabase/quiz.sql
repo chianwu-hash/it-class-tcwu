@@ -377,7 +377,7 @@ begin
  end if;
  if p_action='view_question' then
   qid:=p_data->>'question_id';
-  select value#>>'{}' into cls from jsonb_array_elements(att.question_order) x(value) where not exists(select 1 from public.quiz_answers a where a.attempt_id=att.id and a.question_id=x.value#>>'{}') limit 1;
+  select value#>>'{}' into cls from jsonb_array_elements(att.question_order) with ordinality x(value,ord) where not exists(select 1 from public.quiz_answers a where a.attempt_id=att.id and a.question_id=x.value#>>'{}') order by ord limit 1;
   if cls is distinct from qid then raise exception 'question_order';end if;
   if to_regprocedure('public.quiz_answer_guard(uuid,text,boolean)') is not null then perform public.quiz_answer_guard(att.id,qid,false);end if;
   return jsonb_build_object('viewed',true);
@@ -392,7 +392,7 @@ begin
    if ans.question_id<>qid or ans.request_id is distinct from (p_data->>'request_id')::uuid or ans.response is distinct from response then raise exception 'submission_conflict'; end if;
   else
    if sess.status<>'open' then raise exception 'session_closed'; end if;
-   select value#>>'{}' into cls from jsonb_array_elements(att.question_order) x(value) where not exists(select 1 from public.quiz_answers a where a.attempt_id=att.id and a.question_id=x.value#>>'{}') limit 1;
+   select value#>>'{}' into cls from jsonb_array_elements(att.question_order) with ordinality x(value,ord) where not exists(select 1 from public.quiz_answers a where a.attempt_id=att.id and a.question_id=x.value#>>'{}') order by ord limit 1;
    if cls is distinct from qid then raise exception 'question_order'; end if;
    if to_regprocedure('public.quiz_answer_guard(uuid,text,boolean)') is not null then
     result:=public.quiz_answer_guard(att.id,qid,true);if result ? 'warning' then return result;end if;

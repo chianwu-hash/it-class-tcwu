@@ -1,4 +1,499 @@
+# 發布登記（置頂，2026-11-04 起；任何 agent 部署或 promote 前必讀）
+
+規則：**只從 `main` 發布**；同一時間只能有一列「發布中」；promote 前用 `automation/quiz-release-compare.mjs` 比對完整檔案樹，並確認正式版仍是登記的基準。完整步驟見 [dev-sop.md「發布規則：只從 main 發布」](dev-sop.md)。
+
+| 狀態 | agent | 開始時間 | `main` commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 基準 | Claude（整合） | 2026-11-04 10:18 | 整合分支 `claude/main-unify-20261104`（尚未併入 `main`） | `dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p` | — | 尚未從 `main` 發布 |
+
+- 新增一列再開始；看到別人「發布中」先問使用者，不得自行清除。完成、失敗或放棄都要更新狀態。
+- 交接時寫明：目前目標與下一步、改了哪些檔與刻意不動的檔、已做與待做的驗證、與 SOP 或共用模組的衝突。
+- 整合紀錄與差異清單：[main-unify-20261104.md](main-unify-20261104.md)。
+
+# 2026-10-29 國語題池注音與既有作答已修復
+
+- 使用者明確授權修改正式題庫及既有作答。正式三上 61／六上 35，共 96 題恢復注音，2 份既有卷沿用場次與題號接到修正版；7 筆答案、題序／選項順序、原判分、計時與獎勵保持。原／中間版本保留，沒有前端部署或重裝既有 SQL。
+- 215 字型字碼核對、905 題來源／樣式語意檢查、7 項 Python 回歸與兩輪真 PostgreSQL 回滾／提交／正式 resume 通過；初輪獨立覆核發現的 11 字碼已完成第二輪修正，最終 96 題逐題與候選一致。5 題卷已答 5、10 題卷已答 2，正解不洩漏。
+- 本機兩份國語來源目錄及私有 pool 產出已同步。擴充 `automation/lib/quiz_chinese_fonts.py`、新增標準注音對照與建池語意檢查，舊漏轉候選會拒絕；保留其他工作區發布基準，不可整包重裝主工作區 SQL。
+- 詳 [正式修復紀錄](quiz-zhuyin-pool-repair-20261029.md)。私有證據、before 備份與 round2 在 ignored `automation/output/quiz/zhuyin-investigation-20261029/`，沒有提交題目或學生資料。
+# 2026-10-30 已完成：選項帶分數同行排版
+
+- 原題 `hanlin_g6_math_004cf065` 同段整數、分數為不同文字片段；`#server-quiz .student-option .preview-content{display:block}` 誤將內層片段排成區塊。限縮為 `.option-body > .preview-content`，內層恢復既有行內排版，無題庫／作答／分數變更。
+- 本機租約02 Chrome以真實原題重現舊缺陷，新樣式在320／390／640／1103／1280px驗證同行相鄰、無溢出，普通分數／整數／段落／表格保留。正式學校測試帳號同一題1280／390px通過，題目出錯回報按鈕保留、pageerror0；答案／回報0寫入，本次計時寫入已攔截。
+- 正式以最新回報功能部署 `dpl_6JH1WxD6iF9fdCMH9Vhmduq49wWC` 453來源SHA1核對後只疊加CSS及三／六年級答題頁快取版本共3檔。最終 `dpl_3K11Jh65ymHQqT1jpBmKdjYWtgE6` 已promote；353公開檔SHA256通過（3改、350保留），無SQL／Edge／Worker部署。詳見 `quiz-mixed-fraction-20261030.md`，證據在ignored `automation/output/quiz/mixed-fraction/`。
+# 2026-11-01 四年級五科學習重點核對與699題延伸已上線
+
+- 五科1,562題均完成分類核對紀錄，1,561可靠／1國語原選項「競競業業」疑義暫緩。可延伸來源：國語212、數學215、自然87、社會185，共699；英語67題分類完成但原來源無詳解，維持0。國語由上一輪367重新核實為212，因排除仍依賴舊選項序號的解析，不能沿用舊數字。
+- 剩餘121國語按實題重分，原KNOW_SPOT有混雜；數學49、自然29、社會25、英語18組。社會原有解析漏帶資格，恢復140題標記；204題只移除單一前導舊選項序號，保留原圖文；254題位置相依解析排除候選。原固定版本、答案、進度、獎勵與全部quiz函式不變。
+- 3純邏輯測試／1,562題validator／真正PostgreSQL10流程rollback／正式增量及逐題回讀、五科真書商題目搭配合成RPC手機／重試／不足題數與停用狀態通過。無正式試答殘留；本機PGlite兩次因Windows記憶體不足失敗，沒有冒稱本機SQL通過。
+- 期間後台main提交3ec8083觸發Git自動部署3UHX，缺四年級頁面造成404。已以完整4ye網站包整合最新後台7檔精確正式bytes（其中4檔有實質更新）恢復，不是盲回舊部署；候選22Ak，正式dpl_6mgAi77pCSyWNmPZJvsd4R2Jf7j5，781來源全比對／14runtime相符，四年級4入口與navbar恢復且最新後台完整保留。後續main自動部署前須整合所有手動發布runtime。
+- 詳[五科發布紀錄](quiz-grade4-knowledge-complete-20261101.md)。新清冊automation/quiz-knowledge/g4-complete-reviewed.json SHA f38e4d2e78eec5e30f551ea977dd9ec61d950491da4e6bef429f489b3de1b31e；主repo私有證據automation/output/tucheng-grade4-knowledge-complete-20261101。已套用，不重跑舊SQL／全科匯入覆蓋；剩餘限制不是漏分類。獨立worktree仍tucheng-grade4-20261101。
+
+# 2026-11-01 四年級錯題延伸資格與無候選說明已上線（前一輪紀錄）
+
+- 國語707題按書商原題ID、課次、完整KNOW_SPOT核對，586可靠／121未知代碼暫緩；203詳細解析候選，367題可延伸。原截圖療字選項題仍無合格候選，測試帳號14筆既有錯題均無候選，未修改作答；前端新增停用按鈕及說明，不能宣稱每題可延伸。數學／自然分類與英語／社會缺解析仍保留限制。
+- 正式分類增量套用，舊題文答案解析、版本作答獎勵及quiz函式不變；原題與alias兩例錯答→detail→2題延伸→重送同卷rollback通過。7項SQL回歸與3/4/6前端合成身分／手機／無候選狀態通過，無測試殘留。
+- 只改2前端檔，fresh4Lsmu781來源，候選6Ds，正式dpl_4ye54c9t4KsX1NeY66jUEjLXtJED，781全比對／8runtime相符。詳[修正紀錄](quiz-grade4-extension-20261101.md)，清冊automation/quiz-knowledge/g4-chinese-reviewed.json；主repo私有證據automation/output/tucheng-grade4-extension-20261101。不可重跑舊分類或全科部署覆蓋。
+
+# 2026-11-01 土城四年級考古題已補齊10份
+
+- 文澳114上期中國語康軒、英語翰林HWG3已取得官方同版原卷／解答，當年版本表已核對；英語含原音，五科各2份共10份正式enabled。入口 https://it-class-tcwu.vercel.app/grade4/115-1/quiz-library.html#past-exams 。
+- 本輪79題組93欄、55局部圖及4原音分段完成逐題AI目視複核（非真人教師簽核）；國語自動48／自核對52，英語自動100。國語官方未填的開放題不造標準答案；英語key隱藏文字層舊版，依可見同版紅筆記號。原8卷限制保留。
+- 私有59素材回讀SHA通過，兩卷本機及正式回滾各6輪0→滿分→滿分／考古花0→1→1、歷次、冪等與權限通過，無正式測試殘留。79題組1280／390px作答保存／登出清除與4段原音play/pause/seek通過；為合成身分隔離驗收，非真人OAuth。
+- fresh正式仍dpl_4LsmuQBTztjPS3vvG6a8nXLQd93w共781來源檔、16關鍵runtime回讀相符。本輪只資料及離線builder，不改前端／quiz函式，不建新部署；驗收後enabled2卷，正式唯讀RPC核10卷五科各2。
+- 詳[補齊發布紀錄](tucheng-grade4-past-gap-release-20261101.md)與[來源名單](../references/tucheng-grade4-past-paper-shortlist-113-114.md)。新來源／證據主repo ignored automation/output/tucheng-grade4-past-gap-20261101/與tucheng-grade4-past-gap-release-20261101/。兩穩定ID為wenao-114-1-g4-exam1-chinese／english，不重跑初始化或create腳本覆蓋已發布reviewed/qc/bundle。舊「缺2份」僅屬歷史。
+
+# 2026-11-01 三個測試身分各顯示兩顆直接切換按鈕，已上線
+
+- 使用者要求每個身分可直接選另兩個：307→407／609、407→307／609、609→307／407。共用test-identity-switch改為排除目前身分，送出時兩顆同時停用；保留既有RPC、session核對與跨分頁revision通知。根首頁及三／四／六年級首頁模組版本同步更新。
+- 六方向桌機／手機共12次合成瀏覽器操作、失敗／session換人保護／一般帳號不顯示通過；正式六方向測試交易rollback後名冊摘要相同。沒有改SQL／RLS或作答進度。
+- fresh基準Dn，候選6iQ，正式dpl_4LsmuQBTztjPS3vvG6a8nXLQd93w；781來源全比對及12關鍵runtime回讀通過。只改5個產品檔，保留既有四年級8份考古題。詳[test-identity-three-buttons-20261101.md](test-identity-three-buttons-20261101.md)。主repo私有證據automation/output/test-identity-three-buttons-20261101/，獨立worktree與分支沿用tucheng-grade4-20261101。
+
+# 2026-11-01 土城四年級8份考古題已逐題核對上線
+
+- 使用者明確要求先完成8份並上線，國語／英語各1份缺額繼續尋找113–114相符版本且有配對解答。8份現已正式enabled：成功113國語、和順114／廣興113數學、和順114／文德113自然、安和113／114社會、名間113英語。入口 https://it-class-tcwu.vercel.app/grade4/115-1/quiz-library.html#past-exams 。
+- 全215題組、394作答欄位與11暫停項目已第二遍AI目視對照原卷與官方key，逐欄qc verified（非真人教師簽核）。60張私有局部圖全部回讀SHA通過。修正和順除法商502、自然轉錄與國語key重排裁框；名間小怪獸自由選字改自核對，筆試自動31分／自核對7分，聽42／口20暫停。其他官方疑義依指南暫停，不以null當錯誤。
+- 本機8卷三輪及正式Supabase24輪0→滿分→滿分、考古花0→1→1及歷史獨立通過；正式測試transaction rollback，沒有保留測試作答。舊答案／版本／獎勵與既有quiz函式未改。215題組1280／390px操作、圖片／保存／登出清除，以及8卷目錄與五科篩選通過；為合成身分隔離驗收，未冒稱真人OAuth。
+- fresh基準FNy共780檔，候選7Yc；promote正式dpl_Dn1Kxt44tEYaxPbU866hc7EG7vNB共781來源檔全比對、15關鍵runtime相符，之後才enable8卷。新增supabase/quiz-past-grade4.sql僅擴充grade check，絕不重裝legacy SQL。詳[發布紀錄](tucheng-grade4-past-release-20261101.md)與[來源名單](../references/tucheng-grade4-past-paper-shortlist-113-114.md)。
+- 私有來源及證據主repo ignored automation/output/tucheng-grade4-past-research-20261101/、automation/output/tucheng-grade4-past-release-20261101/；主repo tmp/tucheng-115/PAST-RELEASE-STATE.md已更新。reviewed.private.json為已校對權威，勿重跑create腳本覆蓋。缺國語／英語仍未補齊，最新再查永安114／大華／博愛亦未取得合格替代，不可說已找齊10份。
+
+# 2026-11-01 四年級「我的錯題」已修正正式資料庫
+
+- 四年級傳入grade:4時，正式quiz_wrong_questions白名單仍只有3／6，導致invalid_request及「資料格式不符」。已透過新增supabase/quiz-grade4-wrong-questions.sql只修改現行函式該白名單；保留最佳化讀取、ACL、owner、search_path及其他函式，未重裝舊SQL，也無前端發布。
+- 本機7項回歸通過；正式PostgreSQL回滾驗證三／四／六年級後正式套用，交易內確認答案、attempts、葉片、進度、名冊、版本及其他函式摘要不變。套用後40730清單5題、5題解析均通過同身分RPC檢查。工作瀏覽器當時已登出，未做登入後瀏覽器驗收，亦未代學生登入／作答。
+- 同步更新基礎與batch2 SQL、四年級遷移產生器及回歸測試。詳[tucheng-grade4-release-20261101.md](tucheng-grade4-release-20261101.md)末段；私有證據主repo tmp/tucheng-115/wrong-*.json。仍勿整包發布髒main。
+
+# 2026-11-01 土城四年級剩餘238題已補齊上線
+
+- 使用者明確授權剩下注音、特殊格式、圖題核對後上線。149圖題＋75國語注音＋14國語畫線，共238題已補齊；五科共1562題（數366／自222／社200／英67／國707）。保留原17卷，新增六份10題補充卷，合計23卷，開放407／409。沒有擴張為未核對的全冊其他題型。
+- 字形以原光碟字型局部PNG或已核對Unicode顯示，不猜多音字；14題逐一確認原Word畫線，原生圖文保留詞語位置。177張新字形／標示圖與原171圖共348圖已私有Drive保存、雜湊／解碼／對照縮圖驗證。字型檔及完整原題仍私有，不提交Git。
+- Cloudflare已恢復可見帳號及API管理；從最新5816資產完整合併為6164，服務程式與七個binding及七項設定逐項保留，只改assetmap。348圖由正式Worker全部回讀SHA相符，匿名／未知圖／外部來源拒絕。正式Supabase仍原Auth／RLS／判分服務，原資料交易摘要保護；原固定版本及答案均保留。私有canonical manifest也只合併本輪348張，後續發布仍必須fresh-read合併最新Worker，不能用舊manifest整包覆蓋。
+- 全238題PostgreSQL判分／保存／媒體授權／resume／得葉回滾證明通過；正式40730實際六卷60題全對保存、重整接續及六片葉通過，正式學生作答仍0。手機390px、注音放大、畫線位置與圖片燈箱驗收正常；原三／六年級測試身分保留。
+- 最新正式部署dpl_8RRMxcuQ9ozADDWWC77BgYF5isFa，773檔逐檔核對，僅grade4首頁文案與quiz.html局部注音圖片樣式改變，其餘與前版Cw完全一致。入口 https://it-class-tcwu.vercel.app/grade4/115-1/index.html 。詳[發布紀錄](tucheng-grade4-release-20261101.md)。私有證據主repo automation/output/tucheng-grade4-20261101/remaining-release，流程tmp/tucheng-115/REMAINING-STATE.md；不再使用舊STATE的初版未上線狀態。
+- 獨立工作樹D:/projects/.chat-mode-worktrees/tucheng-grade4-20261101，分支codex/tucheng-grade4-20261101；主repo大量其他dirty，不能整包發布或stage。Nowledge Mem此次搜尋／更新遇530，最新狀態以此本機交接及發布紀錄為準。
+
+# 2026-11-01 土城四年級國語首批補上線
+
+- 使用者回覆已重新登入康軒後，VerifyKeygrip_V3恢復HTTP200；已正式取得四年級光碟，只讀抽取，不執行安裝程式。國語618題及六課各10題練習卷已啟用，四年級合計五科1324題、17份預備卷。
+- 六課60次保存／得葉／resume／不重複得葉回滾證明通過；正式套用不含模擬答案，既有版本／答案／葉／課堂進度交易摘要不變。新課程115-1-kang-g4-chinese，開放407／409，測試身分仍40730，正式學生作答仍0。
+- 75道國語題含未知純注音字碼、14道特殊格式／上下文暫緩；不依字典猜多音字或用答案倒推。字型包與既有已核來源SHA256相同，原檔與字型仍私有。另149道圖題依舊待Cloudflare圖片服務登入恢復。
+- 首頁僅更新國語已可選文案，正式部署dpl_CwJnWa3R7rmvhBkJqikXxy9Ji1q7；完整773檔逐檔核對，只有grade4/115-1/index.html與前版不同。詳[發布紀錄](tucheng-grade4-release-20261101.md)。新私有來源與證據：主repo automation/output/tucheng-grade4-20261101/kang-g4-ch；腳本tmp/tucheng-115/release-kang.mjs與kang-final-data.mjs。國語正式瀏覽器複驗已通過：六卷與六課自組選項、10題實際保存、全對判分、重整接續、1片葉與390px目視正常，腳本錯誤0；詳production-browser-report.private.json。
+
+# 2026-11-01 土城四年級題庫與努力樹（首批已正式上線）
+
+- 使用者已確認擴充四年級；正式學生名冊已登錄。學生識別只保留私有作業檔，不寫入公共文件。原測試帳號可循環 30730→40730→60930，驗收後停於 40730。
+- 正式入口 https://it-class-tcwu.vercel.app/grade4/115-1/index.html 。首批數學南一272、自然南一217、社會翰林183、英語翰林 HWG3 34，共706題；11份單元卷已開放407／409。國語及149道圖題待出版社／圖片服務登入恢復，不能宣稱全科全題完成。
+- 正式部署 dpl_CoPVsp6Y8eWrY7oAVNeihwU8RAJU；基於當時最新 dpl_9K3cwM4PTNhTvAZrXYHQDTLLHQoF 的769檔完整來源，只疊16個runtime檔，最後773檔逐檔核對，保留同期考古題更新。勿從主repo整包部署。
+- 功能commit 3f637d6，已push codex/tucheng-grade4-20261101。獨立工作樹 D:/projects/.chat-mode-worktrees/tucheng-grade4-20261101。詳 [發布紀錄](tucheng-grade4-release-20261101.md) 與 [版本來源](../references/tucheng-textbook-version-map-115.md)。私有驗證報告位於主repo ignored automation/output/tucheng-grade4-20261101；出版社原始來源、題庫答案、憑證不得提交。
+
+# 2026-10-30 第二級虛線花葉恢復（Codex已上線）
+
+- 接回真pendingLeaves／pendingFlowers，最多8虛線葉2虛線花、兩樹型日夜描邊，點選回真實站內練習，另有鍵盤可用的收合連結清單。只在最後分區空槽呈現，滿槽不疊、不算新成果。55葉10花不變、未代闖關，30730解鎖前一步仍保留。
+- 最新正式 `dpl_J9cLJUUCH6GeoGqC7dj47jNFajzC`，以CgFN完整539來源為底，僅stage及effort-garden-v2.mjs修改，537其他檔UID保持；A/B日夜、點選ID、390px、滿槽通過，無DB變更。詳 [虛線花葉紀錄](effort-tree-ghost-rewards-20261030.md)。後續仍以當下正式完整來源發布。
+
+# 2026-10-30 跨闖關解鎖慶祝上線、測試帳號留最後一步（Codex）
+
+- 30730已準備升級後11葉0花、總55葉10花，下一片新完整葉解鎖貓＋屋。只將獨立test setup葉28→38，真進度／quiz awards／成長baseline不變、pet尚未解鎖、pending為null。不要替使用者完成下一關或重設成長。
+- 新通知outbox／RPC＋共用成功儲存接點，等原慶祝關閉才顯示解鎖內容、去努力樹／繼續練習；唯一事件、2分鐘claim租約、確認ack防重播。navbar僅一次pending、無輪詢；未達不預告。SQL及瀏覽器合成與正式讀回驗證過，完整真人解鎖留給使用者。
+- 最新正式 `dpl_CgFNve8sgdHtaykp7u26Suy4PAB9`，基於92J7完整538來源，9接點＋1新增，529其他檔UID保留；三個核心RPC雜湊不變。後續以當下正式完整來源發布。詳 [解鎖紀錄](effort-tree-unlock-notice-20261030.md)。
+
+# 2026-10-30 學習優先、解鎖不預告（使用者核定，Codex已上線）
+
+- 學生已很努力，不應誘導只為葉片／獎勵練習。訊息區只顯示「第二級努力樹・記錄你一路學習與練習的足跡。」移除升級後12葉／3花門檻、目前累積與小貓／小屋預告。內部條件保留，達標才直接出現作為驚喜；後續功能亦遵循此原則。
+- 最新正式 `dpl_92J7dh3fsfuyMQeAeBCjjCcfj2ye`，以DXZm完整538檔為底，只改effort-garden-v2.mjs的一行訊息，另537檔UID保持；正式內容與關鍵路由核對通過，無SQL／獎勵／進度變更。證據automation/output/quiz/garden-surprise-message/。
+
+# 2026-10-30 努力樹身分與樹型控制簡化已上線（Codex）
+
+- 身分卡僅顯示「30730 吳小謙」格式，座號補兩碼、不顯示Email，課程選單保留。更換樹型移入同張卡底部、葉片統計上方，僅兩文字按鈕、移除大圖與常態說明；第二級才出現、第一級與重設時隱藏，儲存與換裝過場不變。
+- 正式 `dpl_DXZmzi4gwtBWet3LgCX4Y4Gv59VA`，基於2AHx完整538來源，僅my-tree、effort-garden-v2.css、garden-tree-skin.mjs變更，535檔UID保持。30730/30703格式、原換裝回歸、正式身分無Email／控制位置／390px無溢出皆過。初次promote後立即讀到舊邊緣內容，重讀後已與來源逐位元組相同。無DB或練功房修改；未發布較早只改身分的BGFa候選，最後合併兩項需求發布。證據automation/output/quiz/garden-profile-label/。
+
+# 2026-10-30 第二級樹型換裝已上線（Codex）
+
+- 樹下方新增第二級禮物「樹型外觀」，原A／B素材＋各自96葉24花掛點；約1.15秒暖光舒展換裝，減少動態直接切換。本人a/b選擇存Supabase新增garden_tree_skins／garden_tree_skin，需已確認名冊學生且有成長紀錄；RLS／匿名禁止直接讀寫。無獎勵、quiz_action、quiz_rewards、garden_growth修改，三者正式雜湊保持。
+- 本機權限SQL及1440／390／B葉來源／儲存失敗／減少動態／重新場景恢復B通過。正式30730重整B及45葉10花正常。正式 `dpl_2AHxbiKn7VCjJfHpBEquNH3hWQA9`，基於4BMs完整537來源，534個無關檔UID保留；下次仍需以當下正式快照發布。詳 [換裝紀錄](effort-tree-skins-20261030.md)。
+
+# 2026-10-30 努力樹優先版面已上線（Codex）
+
+- 使用者指定樹在所有說明／參數之前。外層scene置首、iframe內canvas置首，重播／成長說明、動畫控制與天氣都在樹下方。1440／390、45葉10花、重播開關、無JS錯誤通過；正式30730同樣確認，canvas top=0。
+- 最新正式 `dpl_4BMs8XwYYy7Tx5Zr3BLBH8Ecrrt7`，基於前正式4oeG完整537檔，只改stage和effort-garden-v2.mjs，535檔UID保留。無DB／定位規則／練功房改動。詳 [版面紀錄](effort-tree-tree-first-20261030.md)。後續發布仍應重新取得當下正式完整來源。
+
+# 2026-10-30 首次定位授權政策修正已上線（Codex，取代下方不詢問政策）
+
+- 使用者澄清：首次 prompt 必須呼叫原生定位觸發授權；granted 直接定位；denied 不再詢問、使用學校；定位失敗用學校。選擇完全交給瀏覽器，不另存旗標。Permissions API 不支援時亦交由 geolocation 原生處理。
+- 正式 `dpl_4oeG1iffwaRjs2MfN5opZpSgnFLr`，基於前正式 `dpl_3nBhT5jpMZmC7UQjXw2sKJLqtwhm` 完整537檔，僅2個定位模組變更，其餘535檔UID相同。8單測、7種瀏覽器定位／天氣情境與390px皆通過，正式HTTP與內容核對通過。無資料庫、花葉、升級、quiz_action變更；詳 [環境政策](effort-tree-auto-weather-20261030.md)。
+
+# 2026-10-30 學生努力樹自動日夜、天氣與位置已上線（Codex）
+
+- 最新正式 `dpl_3nBhT5jpMZmC7UQjXw2sKJLqtwhm`，基於前正式 `dpl_877EgV3NBbzUr8MLXRSwgBCasA8R` 完整來源，534 個無關檔案保持。後續仍要以當下正式版重建發布包。
+- 使用者新政策取代按鈕定位：已授權則自動使用所在地，未授權／失敗用頂溪國小；不自動彈提示。移除學生手動參數，保留暫停／減少動態。8 Node 測試與6種定位／故障瀏覽器情境通過；正式 prompt 權限自動用 school，真天氣載入、45葉10花正常、無手動控制。無 DB、登入、quiz_action 變更。詳 [自動環境紀錄](effort-tree-auto-weather-20261030.md)。
+
+# 2026-10-30 第二級努力樹空白已修復（Codex）
+
+- 最新正式版 `dpl_877EgV3NBbzUr8MLXRSwgBCasA8R`，以 Claude 最新 `dpl_J9HvTo62HwJHyQCPxo83KYJK5oey` 完整 536 檔為底，僅 `garden/stage.html` 修改、535 檔保持。後續發布請重新取得當下正式版，不用舊快照。
+- 根因：預設花色覆寫初始 Image 的 onload/src，預載 Promise 永遠 pending。改獨立載入、版本防亂序與失敗保留。冷啟動故障重現／修後回歸、390px、正式 307-30 的 45 葉 10 花均通過；無資料庫修改或升級紀錄重置，quiz_action 未動。詳 [修復紀錄](effort-tree-render-fix-20261030.md)。
+
+# 2026-10-30 已完成：答題介面題目出錯回報
+
+- 學生在三／六年級一般卷、老師卷、自組卷、整卷回顧、我的錯題及考古題可按「題目出錯回報」，必填文字說明，伺服器自動附本人名冊、固定版本、題目與當時選項順序。前端不提交題幹／正解／身分快照，學生不能讀取回報或教師快照。
+- 後台 `admin-progress.html` 新入口 → `admin-quiz.html#question-reports`；教師可篩選、分頁、查看原題及媒體、標記待處理／處理中／已處理／確認無需修改與備註。使用既有 is_teacher 權限，不另外寄信，不修改正式題庫或既有作答。
+- 新 SQL `supabase/quiz-question-reports.sql`：獨立 RLS 表、本人 submit、request_id 重試、每人每小時20筆、教師樂觀鎖更新。媒體包裝保留原函式為 `quiz_media_access_before_reports`，教師以回報 id 僅可看該題媒體；Edge／Drive Worker 不需改。不可重灌舊 media／batch4 而移除最新授權鏈及 library_visible。
+- 合成 PGlite 權限／重試／限流／固定順序／後台競爭／媒體／考古題測試；凍結包租約瀏覽器實測三個入口、回報文字保留、重試、後台處理、390px、換人清空、純文字及pageerror0。正式PG回滾與套用均通過一般卷／考古題／媒體測試，所有測試紀錄回滾，12類既有表雜湊不變，正式題目與進度未改。
+- 正式以當時最新 `dpl_3Ab6ZKnw7M8oLkC8R6ikUAuG4GJL` 450個來源檔SHA1驗證後疊加21檔，保留其他正式第09週與考古題音檔更新。最終按鈕版 `dpl_6JH1WxD6iF9fdCMH9Vhmduq49wWC` 已promote，正式353公開檔SHA256通過（21改、332保留）。本次來源commit不混入前述其他改動。
+- 正式租約02 Chrome 學校測試帳號驗證答題按鈕、文字輸入、390px及學生後台鎖定，pageerror0；只接回原attempt，view_question攔截防止更動計時，回報／答案0寫入。驗收頁已關閉並釋放租約。
+- 詳見 `docs/development/quiz-question-reports-20261030.md`；工具 `automation/quiz-reports/`，證據與凍結包在 ignored `automation/output/quiz/question-reports/`。回退前端可保留資料表及授權包裝，不刪學生已送出的回報。
+
+# 2026-10-30 已完成：六年級英語改 Unit 1、Unit 3
+
+- 使用者指定本次六年級英語考 Unit 1 和 Unit 3，老師卷、自組卷均已正式更新。分支 `codex/g6-english-u1-u3`，同一工作區基於 `dace148`；不重灌先前題庫／知識分類，不從 dirty 主專案部署。
+- 康軒 WW7 原始章節 **03=Review 1，04 才是 Unit 3 From Farm to Table**。從既有已驗 SHA 的完整原光碟另抽 04 共 170 原題，91 獨立單選逐題 metadata／Word 答案交叉核對；14 題解析引用位置排除，77 題正式加入，原 Unit 1 的 77 題不變。新題全部帶原知識點與 reliable 分類；原圖 39／原 MP3 37，沒有代寫題目或生成音檔。
+- 新老師 Unit 3 卷 10 題（2易6中2難、3聽力），session `6e6c4872-0388-4b35-80f7-fedfec2248db`，version `754a0d16-31e2-4a39-9d0a-ab93ae65ea92`，沿用603／604／609。Unit 1 原卷不動；Unit 2 77 題設 usable=false 且原老師卷 library_visible=false，course 選單單元僅1／3。原 Unit2 文件、答案與進度保留，原連結仍可 join／resume／回顧。
+- 新增 `quiz_sessions.library_visible` 預設true；`supabase/quiz-practice-visibility.sql` 只在現有 `quiz_library_sessions` 的 practice 清單加入可見性判定，未把 join/resume 權限綁在清單標記。不要以改 version_id 或清空 class_codes 取代已作答試卷。後續重跑舊 batch4 會覆蓋此條件，必須保留本次規則。
+- 圖片沿用私有 Drive＋Cloudflare，帳號核對、39新圖下載SHA通過；Worker保留即時原程式與7個bindings，以inherit增補allowlist5777→5816。39新圖＋1舊圖透過Worker下載SHA與未簽／過期／私有cache拒絕通過。37 MP3仍在Supabase私有bucket並下載SHA驗證。原1019個媒體登錄保持不變。
+- 本機／正式PG rollback皆通過36自組範圍難度題數組合、重試、Unit2拒絕、老師10題、11媒體引用驗權與既有Unit2 attempt resume；測試fixtures全部rollback。正式單交易apply後，再匯出驗原154列除Unit2 usable外不變、新77吻合、active154及老師1／3、兩份舊文件保留。無Auth／RLS／評分／葉片變更，無Vercel前端部署。
+- 已完成本人學校測試帳號Google OAuth，正式Chrome60930驗老師卷與composer各Unit1／3（各77題），390px無溢出、pageerror0；只讀清單／選單，未建作答。AI分身02已斷線、驗收頁自關、租約釋放，未接管01其他工作。詳細來源、流程與測試見 `docs/development/quiz-g6-english-u1-u3-20261030.md`，工具在 `automation/quiz-english-scope/`；所有題幹／答案／媒體／SQL／報告在ignored `automation/output/quiz/g6-english-u1-u3/`。
+
+# 2026-10-30 已完成：六年級四科學習重點接入正式題庫
+
+- 使用者要求補齊並核對六年級國語、英語、自然、社會學習重點，啟用錯題延伸。獨立分支 `codex/g6-extension-knowledge`，工作區仍 `C:/Users/user/.codex/worktrees/quiz-identity-sync/it-class-tcwu`，基於上次已推送 `6521b92`；只增本次分類清冊、工具、驗證與文件。
+- 正式已套用 930 題分類、928 題 reliable；自然 `675931` 兩項敘述疑義、社會 `1504811` 題幹與選項不符，保留待查且排除延伸。未改原題、答案、解析、source version、usable、舊試卷、作答、葉片、SQL 函數或 RLS。前端不需另部署，延續身分同步版本。
+- 康軒原 metadata 有 KNOW_SPOT，先前 builder 未接上；本次原題 ID／課次／知識代碼逐筆核對，保留國語課文錨點。南一以原章節／課綱交叉核對自然 140／社會 289 題題幹與選項，逐題列出 32／45 細分類。清冊 `automation/quiz-knowledge/g6-reviewed.json` 不含題幹答案副本；review SHA `e90a44644e198404438193d17a5622da4a1f001c8bcea6bb566c4cae291847a6`。
+- **實際可延伸的來源題數：國語 4、英語 152、自然 41、社會 60。不是四科所有題目都可延伸。** 仍須同科同重點、不同題族、難度不提高且候選具書商詳細解析。國語 347 題僅 7 題有詳細解析；不偽造 publisher_explanation。原截圖颱風路徑題雖已分類，該組沒有解析候選，按鈕仍不顯示。後續提高覆蓋需要另補並核對解析／題目。
+- 三項 Node 檢查、本機真 SQL 八個原 ID／alias 錯題→延伸情境、他人拒絕、同 request 重試、疑義題排除、重套用拒絕、12 份一般易中難組卷通過。正式 DB 同樣八個真 join／submit／detail／compose 情境全部 rollback，受保護資料摘要不變；其後正式單交易 apply，前後檢核所有其他 quiz 表、其他 pool／membership 與題目非分類欄位不變。正式重新匯出 930 題指紋、四課程、三 RPC 未變，四科目錄 extension_available 均 true。
+- 私有 before／after、SQL 與結果在 ignored `automation/output/quiz/identity-sync/`。正式已 apply，不要重跑原 apply 或舊全科 deploy；guard 會拒絕已套用資料。後續須新快照、新核對、新增量，不能整表還原。詳 `docs/development/quiz-g6-knowledge-20261030.md`。本機既存 `tmp/quiz-runtime` junction 未提交，不處理其他修改。
+# 2026-11-04 已發布：混合題逐格顯示注音鍵盤
+
+- 後續依使用者要求，暫存鈕以淡紫底／深紫字標示，與換題、正式送出區分；純CSS、1280／390控制列及hover通過。最新正式 dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p，820來源及CSS實際HTTP SHA核對，SQL與學生資料未變；私有收據 tmp/past-drafts-color-20261104/。
+
+- 使用者要求寫國字欄不顯示注音鍵盤。已新增pure `pastFieldInputAids`，優先依各格原題指示；舊六年級依混合題的引號標示判斷，不讀答案／學生作答。截圖的113三上國語20格僅4格顯示、16格隱藏。
+- 4項欄位／草稿測試、26組75欄正式來源唯讀稽核、20格混合題1280／390／360鍵盤輸入刪除及暫存還原過。沒有SQL或學生資料變更。已發布 dpl_AL9gg69desdHs4AV5aSA3wAPWH18，820來源及3runtime HTTP SHA核對；保留前輪暫存。詳 past-field-keyboard-20261104.md，私有證據 tmp/past-drafts-keyboard-20261104/，不重跑舊發布。
+
+# 2026-11-04 已發布：考古題題組內「暫存作答」
+
+- 使用者確認核心為20格國字注音只填5格→暫存→下次續填；原本已送出題組本來就有雲端紀錄。已發布 dpl_FtbY7SFjHZSy5gdyTbhP6hG18KW6，以正式基準 dpl_BA7yZJj3VFrQnhW8oYA2FHTAjQMb 為底；後續仍須重查正式別名。
+- Codex 唯一寫入者；兩個 renderer 檔以正式 HTTP 版本為底（保留九年級數學、題目回報、考古花等），不部署此舊 worktree 整包。新增 quiz-past-drafts.sql 以 wrapper 保存最新 scoring/snapshot，獨立私有表、CAS revision、同請求重送、提交刪該組草稿。手動儲存所有已編輯未送出組，保留最後題組，離頁提醒，不用 localStorage。
+- 暫存不判分／不揭答／不寫既有答案進度獎勵；有結果不明的正式submit時只查resume，不自動重送。PGlite5項、正式rollback及安裝11表摘要、20格填5格與筆跡／部分排序／複選還原、1280／390／360通過。Claude最終唯讀7Read／152.7秒無剩餘阻擋，Git前後相同。817來源SHA、候選及正式2runtime SHA與RLS權限已核對；別名非同步切換已讀回，不重送promote。詳 past-exam-drafts-20261104.md；私有證據 tmp/past-drafts-20261104/，不重跑歷史apply或publish。
+
+# 2026-11-02 已正式發布：三年級10卷解析與延伸
+
+- 使用者已授權驗證後上線，已完成正式登錄、啟用與切換；2026-11-02 15:37:01 臺北時間讀回。部署`dpl_BUr4rAR7wjyiSWPgDh2VeRoQVBbC`，來源仍以舊正式deployment為底加26runtime覆蓋，不部署整個工作樹。
+- 10卷原版本不變，568解析／131重點、98組196次配題（119份來源去重），33缺素材重點不開練習；原錯題仍有固定解析及未開放原因，自核不入錯題，完卷後可主動練已配重點。
+- 延伸及5題自組卷同學期每10不同題1延伸葉，答錯認列、跨卷／原pool同題去重、啟用前歷史不回填。原成績、既有葉片／考古花及student_progress不改。
+- 真本機SQL568欄／196答、119積分；真PG10卷逐卷rollback／9受保護表摘要一致；瀏覽器10錯題返程＋4自核主動練習、33未配點排除、9→10動畫不重播、舊頁相容／教師監看／跨年級隔離、1280／390／360通過。Claude兩輪唯讀，第二輪無阻擋。787候選來源及26HTTP runtime hash、RLS／backup撤權、登錄後map／98 document與啟用前function hashes均核過；正式26HTTP及DB讀回通過。
+- 詳[正式接線紀錄](past-grade3-learning-release-20261102.md)。程式在`codex/past-grade3-learning-release-20261102`／`past-grade3-release` worktree；私有收據在`past-exam-production` worktree的`automation/output/past-grade3-release-20261102/`，不隨clone。後續以正式狀態重查，不執行歷史apply／activate或把本機教師含答案頁部署。
+- Vercel團隊連結即時失效已改隔離CLI device login，由使用者完成並驗正確帳號；原全機CLI仍是另一帳號，不要直接用預設CLI。登入檔只在ignored任務路徑，不讀取／提交／顯示。正式promote回空body曾誤判，先讀回alias確認成功再做剩餘驗證，未重複建立部署。
+
+# 2026-11-02 本機完成：三年級10卷固定解析，延伸配題仍有缺項
+
+- 最新要求：利用本輪額度先做三年級。實際範圍為已啟用的113／114上學期期中五科10卷；新增9卷501欄，沿用114自然67欄，總568欄。沒有宣稱社群預測的16時重置已獲確認。
+- 全部欄位有固定解析與重點處理；131個卷內重點中98組有196次書商題配置（119份去重原始題檔），33重點缺可靠題目／音圖素材，一組比較方案只涵蓋基礎。不可稱書商延伸全數完成，不可用問年齡替代數字拼字／一般磁鐵題替代磁浮閱讀。
+- 詳見[本機內容紀錄](past-grade3-learning-20261102.md)，ignored輸出`automation/output/past-grade3-learning-20261102/`。各卷source/map/practice/readable/manifest及整批缺項、QA、來源與內容SHA均有收據。JSONB鍵序不可拿來重算原SHA，已恢復原bundle並核實結構相同。
+- Codex唯一寫入；Claude六輪唯讀複核完成，Git前後相同，無未解實質分歧而未再找AGY。來源／原答案／分數不改，補充解析和同文教材材料明示AI。113自然最後五組配題已替換並接受；缺項沒有可開始按鈕。
+- `node automation/validate-grade3-past-learning.mjs`通過：568解析、188個錯題練習答案返程＋8自核專用配題獨立作答。新舊schema驗證單測5項過；全568欄瀏覽器渲染、85含圖欄、50含音欄，以及10卷完整教師練習返程、1280／390／360檢查過。沒有本輪重播聽力／實機／真人OAuth驗收。
+- 教師頁`http://127.0.0.1:4503/`仍可使用；重開`node automation/output/past-grade3-learning-20261102/serve_preview.mjs`。僅本機GET、含答案，不能公開部署；私有檔不在clone。學生通用正式接線尚未做，本輪不碰正式學生資料、不發布。
+- 前輪延伸葉／五題自組卷正式候選在另一worktree`past-extension-release`、commit `eeb5e68`，Vercel帳號權限403仍阻擋；不是等待再次批准。不要把本輪內容包或根工作樹直接當成已部署候選覆蓋。
+
+# 2026-11-02 本機完成：延伸葉與滿分主動複習
+
+- 使用者已批准每10道不同題1延伸葉、答錯認列、同題不重複、滿分主動練習，僅本機；不發布不動正式學生資料。Codex唯一寫入者。
+- 已新增opt-in `PAST_EXTENSION_REWARDS=1`，本機SQL帳本在`past_extension_fixture`，不是正式migration。以書商/年級/科目/題型/材料/題幹/選項內容歸一，不以原錯題、session、卷或技術版本給重複資格。只有後端既有quiz_answers可認列，交易唯一鍵與10題門檻派葉，classroom原獎勵仍關閉。
+- 已加主動學習重點及本機樹入口，沿用既有navbar／作答引擎／樹renderer與圖片；原卷完整完成且本人授權才開主動複習。重練新session保留歷次，原錯題與主動複習各回原來源。合成學生1預備66錯題，學生2預備滿分；只在fixture注入新UI與transport。
+- 測試：SQL去重/部分重疊/跨卷/模擬跨日/並行/可信學期/權限、API及瀏覽器9→10／重練／滿分／雙入口返程／登出換人通過；舊錯題相容及關閉flag後舊全卷API均過。手機僅桌面viewport，非實機或真人OAuth。曾共用合成帳號並跑干擾，重建後單獨重跑API通過，未放寬斷言。
+- Claude若接程式複核：只讀本輪指定模組、測試及此節，不執行命令、不寫檔、不讀憑證／外部路徑、不用網路、不部署。Codex在複核期間凍結tracked檔案；測試僅寫ignored收據。
+- Claude唯讀複核`past-extension-code-20261102`126秒／9Read完成、viewer及Git不變，無本機阻擋；Codex核實並補開關防護、服務可信學期、註冊零筆報錯及換人連結，再跑受影響測試。完整結果、限制及重開方式見[本機實作紀錄](past-extension-leaves-local-20261102.md)。新SQL僅fixture schema，正式未動未發布。
+- 交付合成學生1預先9道已保存延伸題，下一道新題可試長葉；滿分合成學生2可主動選重點。4497為記憶體服務，重啟會重建；ignored `extension-trial.private.json`保存當次有效來源及試用深連結。不可將本機auth/nonce/圖片入口直接部署。
+- 已開分身02兩個有效試用頁：錯題s1-q03「木本莖與草本莖」留前景、9/10；另一頁為滿分學生22重點。開頁背景Runtime逾時後，以單頁有界程序先啟用target恢復成功；已斷線、釋放lease，不代送試用答案。已同步原MEMKEY補充記憶9e677451…並完整讀回保留歷史，驗證收據在原私有輸出。
+
+# 2026-11-02 已討論、未定案：錯題延伸與努力樹
+
+- 使用者已親自試用114三上自然本機「我的錯題→解析→重點→書商→回原錯題」，回覆流程沒問題；先前「尚無教師試作回覆」為歷史狀態。
+- 本輪只提方案並以chat-mode請Claude唯讀討論，未授權實作新獎勵或發布。Codex唯一文件寫入者，Claude不可寫檔、執行命令、讀取憑證／專案外資料、上網或部署。
+- 目標：承認延伸練習是努力，兼顧各卷題量、學生錯題量差異、共用重點重複連線、刷題與原卷葉片規則；比較固定量累積、每卷一次與花朵／葉片不同呈現，不能假定初案已定案。
+- 初案為固定小組完成作答與訂正後認列努力，與原卷60%達標葉分開；正確率不必成為努力門檻。花朵只是提議，現有花是打字魔王關用途，需討論語意及顯示相容性。
+- session `past-extension-tree-20261102`兩輪完成、viewer已啟動、Git前後一致；Claude2.1.289唯讀，未執行產品測試。Codex核實adapter、樹與獎勵來源並檢視書商來源metadata，跨卷穩定ID仍待定義。
+- 討論後建議：[未定案提案](past-extension-tree-proposal-20261102.md)。跨卷／跨日每10道不同書商題1延伸葉、答錯也計、同題同學期只計首次、原卷葉獨立、歷史保存，零頭暫提學期結算；主動重點複習讓滿分學生也可參加。Claude收回以樹槽位封頂4葉及整組集合去重的初案。不可宣稱已通用或已上線，不改SQL、正式資料、題庫、程式或原先不給額外葉的現行規則。
+
+# 2026-11-01 已補記：全卷測試歷程、試用交付與token稽核
+
+- 使用者要求記錄這輪測試作未來參考。已擴充[全卷實作紀錄](past-full-learning-local-20261101.md)：測試順序／執行檔／證據對照，42組67欄、22重點44書商、46答往返及舊格式／權限／手機結果；失敗、具體修正與未確認根因分開，沒有重跑測驗或改程式。
+- 排序s3-q02與看圖s3-q10-1已開到解析、重點按鈕，根圖載入，未替使用者作答；只有自動驗證及開啟收據，沒有教師完成試作／驗收回覆。試用深連結含runtime識別，重開服務須重新取得。
+- 後補本聊天及兩個指定Claude session的usage metadata：整輪25,227,857 tokens，快取24,819,311（98.38%），新輸入／快取建立＋輸出408,546；思考輸出不重算。這是內容＋程式擴充＋測試交接，非純解析邊際成本，也非實付帳單。統計20:02:54～21:32:10（臺北）、含中斷約89.3分鐘，與較早結案檔83.6分鐘分開說明。
+- 原始用量明細／邊界在 ignored `automation/output/past-token-assessment-20261101/`，來源與QA在原全卷輸出。建議以精簡製作包另量代表卷的純內容成本，尚未啟動其他卷、未更改SOP或正式化；這次僅補文件與記憶，不發布、不動正式學生資料。
+- 已同步原MEMKEY「考前練功坊-考古題前處理-cian請益」，完整保留舊內容並逐字讀回核對；收據在原全卷輸出`test-record-memory-verified.private.json`。文件UTF-8、連結、用量加總與diff檢查通過，未重跑產品測試。
+
+# 2026-11-01 已完成：114三上自然全卷固定解析與書商延伸（本機）
+
+- 使用者要求依新SOP補完整份三上自然，僅本機試用、不發布不動正式學生資料。Codex唯一寫入者；Claude本輪只讀內容，文件為範圍契約，不推論隱藏聊天。
+- 基準 `dingxi-114-1-g3-exam1-science` bundle f915d39c…，42題組67欄含畫圖自核；保留先前浮力④、隔物磁力true、輪生/乙等修訂，不改原題判分。已完成全卷解析67、重點22、康軒115三上原題44，來源NA/1501/0101..0203，全部文字單題、DOCX答案與metadata相符。證據 ignored `automation/output/past-full-learning-20261101/`，不是repo預裝題庫。
+- chat-mode session `past-full-content-20261101` 唯讀完整內容與原頁，爭點包含s1-q13器材漏磁鐵卻O、s3-q01-5非生物題幹、聽聲音/體積不過度概括；來源與新解析差異明示，沒有改正式答案。Codex已核實意見，將單題adapter擴到全卷、非單選錯題圖文與自核解析，完成本機驗證。通用正式功能不在本次發布範圍。
+- 所有程式與固定題包由Codex負責；Claude沒有寫檔、命令、網路、憑證或部署權限。review時Git基準凍結；不依回覆摘要宣稱實看未讀原件。
+- 內容Claude `past-full-content-20261101` 159秒12Read成功，讀67欄/22重點/44書商與8原頁，無阻擋；其「30組」摘要誤計，不採為數量依據，實檔42組67欄。花指示線2/3存疑，Codex另看原裁圖後，AGY `past-full-agy-20261101` 約33秒供給文字討論成功，工具拒絕/canary/viewer/Git不變均過，採中性列原答與定義，不依此圖背位置，仍保留可靠文字配題。沒有正式勘誤或教師待辦。
+- 程式已擴schema2全卷固定map（原schema1相容）、多欄/非單選錯題圖文、每欄解析與自核原頁解析。全卷API真SQL67解析/66錯題/22重點/44書商、跨人/錯版/不相關重點/未答/正答/自核拒開練習、7原題圖片SHA、原卷分數歷次葉片不變過；先9組小樣才補全卷。一般21+1分頁/篩選/舊詳情、原schema1配題也過。
+- 瀏覽器第二輪9代表欄全題型1280/390/360、22組44題實際mixed答案/刷新/回同次同版本原錯題、畫圖自核解析、鍵盤/登出清除/494筆學生fetch只到本機過，0retry/0pageerror。首輪彈性題頁停在初始化、無fetch/JSerror，單次reload恢復，原因未證實，不當內容或權限bug，失敗/診斷證據保留。本機4497暫停以釋放記憶體，最後程式review後重開；晚補短答「或」與友善欄號會在重開後再驗。
+- 交付資料已存輸出：可讀題庫MD、map/packet JSON、圖片/書商/內容manifest、含答案靜態preview.private.html、issues-and-decisions.private.json；原圖9檔與44份DOCX原表及SHA重核。新程式均本機opt-in，不是正式RPC；本次未上傳媒體、未改正式SQL/學生資料或發布。
+- 最後程式Claude `past-full-code-20261101` 143秒11Read完成、Git不變，無阻擋；依建議補自核標記型態驗證、schema2單筆demo、友善欄號/短答「或」/單題標題、schema1 sourceProjection。最新API全過；瀏覽器22組加共用重點第二來源，共46答，原卷錯題連結實點、回同次同版/刷新/登出全過，0retry/0pageerror、522學生fetch僅本機。完整讀／未讀及未自行跑測試限制保留於review記錄，不拿摘要當執行證據。
+- 本機入口 `http://127.0.0.1:4497/grade3/115-1/quiz-library.html#wrong`，合成學生1預置66錯答＋畫圖自核，保留隱藏背景node服務與分身01試用頁；自動化已斷線/lease釋放。續作時工具PTY服務失效，確認原port無listener後改背景服務並新開有效頁，沒有動其他服務。重開會重置本機資料/runtime UUID，從無wrong_*參數入口進入。
+- 原PDF兩份及康軒ISO本輪再核SHA；原圖/8頁及書商manifest已補齊。可追溯牆鐘含中斷約84分鐘，純工時未逐階段計，不能外推產線成本；詳[全卷實作紀錄](past-full-learning-local-20261101.md)及timings。SOP已改成「本卷全卷本機完成、正式通用仍未實作」。
+- 已沿原MEMKEY／同id補存全卷完成狀態與4497入口，完整讀回一致、保留舊歷史；私有 `memory-verified.private.json` 為收據。後續只需從預覽試用，不要重跑正式發布／舊批次腳本。
+
+# 2026-11-01 製作SOP定案：解析、重點與書商配題隨卷完成
+
+- 使用者明確要求後續製作同步完成解析、學習重點、書商配題，學生端只讀固定資料、不即時呼叫AI。已更新現行 `past-exam-playbook.md`、`past-exam-job-template.md`（含起始提示詞）及 `AGENTS.md`，本校／外校均依任務範圍套用。
+- 流程：同原頁轉錄核答時寫解析→建立本卷共用穩定重點→程式縮小書商候選、AI確認考點／答案→Claude複核、實質分歧才AGY→固定來源、連線、練習版本及SHA。小樣含我的錯題完整往返；全卷交付覆蓋率／缺項，改版只重核受影響依賴。
+- 缺可靠配題如實標記、保存已確認解析重點、不硬配、不顯示可開始入口；不因此一律暫停有依據的原卷。固定資料仍須本人與揭答授權，不把含答案整包送學生。原卷成績、歷次與葉片不變，人工自核不自動判錯，延伸不額外給葉／不遞迴推薦。
+- 這次僅改文件／後續要求，不批次補既有卷、不發布或修改正式資料。通用正式轉接與全卷工具尚未實作，不能把單題本機MVP或新SOP當正式功能已完成。AI用量只報實測，內容製作與開發成本分開。
+- 四份文件UTF-8、新規則及SOP／範本連結已驗；交接檔僅驗本輪新增節，保留舊歷史的範例連結。已沿原MEMKEY／同id補存SOP定案並完整讀回一致、舊歷史保留，收據在 ignored `automation/output/past-learning-sop-20261101/`。
+
+# 2026-11-01 已完成：單題延伸入口移至「我的錯題」（僅本機）
+
+- 使用者指定：把既有114上三自然 s1-q01 接進既有「我的錯題」，從詳情看解析、選重點、練書商題後回同一道；不發布、不動正式學生資料。Codex 唯一寫入者，Claude 只讀複核。
+- 新增 opt-in `PAST_WRONG_REVIEW=1` 本機 adapter；依本人原作答、版本及 correct=false 合併一般錯題與這一題，不收答對、未答或人工自核。source_type＋attempt/paper/version/group/question 完整識別，沿用既有 SQL 解析與書商作答引擎。
+- 已驗證 API：本人隔離、錯版拒絕、未答／正答不收、冪等、不給葉、原卷成績與答案不變；瀏覽器兩概念四題、回同一詳情／刷新、鍵盤、390/360、登出清除皆過。一般21錯題＋1考古題合併分頁20/2、篩選、舊詳情及答案不變也過。
+- 先前4491/4493兩舊預覽已關閉；本機可用記憶體不足時，同時開額外 PGlite 驗證曾 V8 Zone OOM，關閉4495、序列驗證後通過。已重開4495，只保留整合版供試用。
+- 改動：automation/lib/past-wrong-review.mjs、past-publisher-practice.mjs、past-learning-fixture.mjs、past-exam-local-server.mjs；shared/quiz-wrong-route.mjs、quiz-wrong-questions.mjs/css、quiz-past-learning-review.css、quiz-past-style.css、quiz-past-ui.mjs、quiz-student.mjs；新增三項驗證檔。原卷僅留解析與到我的錯題連結，無選重點／練習入口。
+- Claude唯讀複核188秒／13Read成功、Git前後一致，無阻擋；Codex補換帳號清URL但保留首次深連結，重跑完整流程及原卷無CTA／同題連結均過。證據在 ignored `automation/output/past-wrong-entry-mvp-20261101/`，clone不含來源與書商私有packet。不得部署、安裝migration或操作正式學生資料。
+- 試用入口 `http://127.0.0.1:4495/grade3/115-1/quiz-library.html#wrong`，合成學生1僅一筆預先建立錯答；按回看解析→選重點→2題→底列「回這道錯題」。關server資料即失，重開用不帶wrong_*的入口；詳[實作紀錄](past-wrong-entry-mvp-20261101.md)。
+- 已沿原MEMKEY／同id補存入口決策與完成狀態，完整讀回一致、舊歷史保留；私有收據 `memory-verified.private.json`。瀏覽器自動化已斷線並釋放lease，保留預覽分頁與4495服務。
+
+# 2026-11-01 已完成：單題學習重點接書商原題，本機試用
+
+- 使用者授權接續單題 MVP，選重點後練習書商題庫；限本機，不發布、不改正式學生資料／給葉規則。
+- 已查正式準備池三上翰林自然177題無本題直接對應，不硬配。查本機康軒115三上ISO、既有metadata及第一單元活動1（NA/1501/0101）128份來源DOCX，挑原題 ENA1501000378／0390（生物分類）、0619／0465（環境與生物），各重點2題。ISO實際SHA符合e5b57fa9…；每份DOCX三欄答案與metadata相符，無圖。0465原無解析，另標AI補充，其餘保留書商解析。未冒稱局部概念是書商知識代碼。
+- 私有包 `automation/output/past-learning-publisher-mvp-20261101/publisher-practice.private.json`，不是repo內建資料。`past-publisher-practice.mjs` 重用schema1／quiz_action作答、版本與SQL，僅本人已揭答來源才能建立練習，原卷／練習分開，classroom模式不計葉，開始請求冪等。新的loopback server4493啟用 `PAST_PUBLISHER_PRACTICE_PATH`，舊4491保留。
+- API兩概念四題實際本機SQL已過：正錯、未揭答不送答案、重試／續作、重複開始相同session、跨人拒絕、原卷分數／歷次／葉片不變。兩組瀏覽器全四題、1280／390／360、重整接回及回原題均過，無pageerror／橫向溢出，已看桌面／手機截圖。原hidden hero返回及底列覆蓋文字問題已改成測實際底列、可選shortLabel保留「回原題解析」，其他頁預設仍「回選卷」。
+- Claude session `past-publisher-mvp-20261101` 完成約132秒／13Read，逐題比對原表JSON與線上題，判定兩概念／四原題答案相符、無阻擋本機交付。未看Word渲染、未自己跑測試／重算SHA，相關限制如實記錄；Codex已補核實際測試、第二概念截圖及既有classroom不給葉SQL。錯誤訊息另補繁體中文，原書商詳解不改寫。
+- 新預覽 `http://127.0.0.1:4493/grade3/115-1/past-exam.html?paper=dingxi-114-1-g3-exam1-science`，留在新的一次原題解析且第一重點已展開，兩組練習尚未作答供使用者試。最後自有頁在分身01，已斷自動化／釋放lease，保留4493及舊4491。詳[書商重點練習MVP紀錄](past-publisher-practice-mvp-20261101.md)。同原作答同重點重開接回，未做另起一輪／換題；關server後測試資料消失。正式未變更／未發布。
+- 已沿原記憶鍵／同 id 補存書商原題接線完成經驗，讀回全文一致並保留歷史；輸出目錄 `memory-verified.private.json` 為收據。不可把本機題包當已匯入全站書商pool或正式發布。
+
+# 2026-11-01 已完成：單題解析連學習重點，本機 MVP
+
+- 使用者已要求先做 MVP：三上自然其中一題考古題的解析連到相關學習重點。本輪只做本機、不發布，不接書商抽題、不加獎勵、不改正式學生資料。
+- 選定 `dingxi-114-1-g3-exam1-science`／`s1-q01`「校園生態農場裡的解說牌、落葉堆肥區的設施屬於生物」，官方 X；兩原件 SHA 核對並看過 p1 局部，證據在 `automation/output/past-exam-learning-mvp-20261101/`。採最新本機已發布卷快照 f915d39c…，不重建舊卷。
+- 本機 server 4491 啟用 `PAST_LEARNING_REVIEW_PATH`，只在本人已提交的 record 加上補充解析與兩個依題意整理的概念；`shared/quiz-past-learning-review.mjs` 經 UI opt-in 資料渲染，同頁點開重點。未宣稱已對上書商知識代碼；正常 server 不開 fixture auth。
+- 最新 API／真本機 SQL 及瀏覽器已通過：送出前無解析、正確題組／版本綁定、錯答回饋、重試／接回、跨人拒絕、換題／換人／登出／重作清除、1280／390／360 無橫向溢出、兩概念切換、鍵盤 Enter 與面板焦點。fixture 已修正舊 attempt／start 續接假設，未改產品；一次瀏覽器 Runtime 通訊逾時後加步驟記錄，新一輪全過。
+- Claude 初次程序啟動失敗 0 Read，不當完成；新 session `past-learning-mvp-20261101-retry` 完成約 89 秒／10 Read，實看原頁與截圖，無阻擋交付；已補 X 字樣、非官方解析及概念 ID 型別檢查。正式 Supabase／部署均未動，沒有新題或額外葉片。
+- 預覽 `http://127.0.0.1:4491/grade3/115-1/past-exam.html?paper=dingxi-114-1-g3-exam1-science`，保留 server 與分身02自有頁供操作，測試worker已斷線／lease釋放。合成帳號、記憶體DB，server關閉後測試作答消失；重新啟動須用不帶舊attempt的網址。詳[實作及驗證紀錄](past-exam-learning-mvp-20261101.md)。
+- 已沿原記憶鍵／同 id 更新本機 MVP 完成狀態，讀回全文一致並保留歷史；`memory-verified.private.json` 為收據。後續可從此題互動繼續，不把本機資料投影當已部署的正式 RPC。
+
+# 2026-11-01 已討論：考古題錯題延伸（尚未實作／定案）
+
+- 使用者要求先提出看法，再與 Claude、AGY 討論可行性。本輪只讀相關程式與規範，產出討論建議，不改功能、SQL、正式內容、學生資料或發布。
+- Codex 初步方向：完整作答後以錯題為起點，提供經複核、版本固定的同概念少量延伸；原卷成績／重作／葉片獨立。錯答不等於已診斷迷思，人工自核不能假定錯誤。需查現有「我的錯題／錯題延伸」能重用什麼、考古題 adapter 缺什麼。
+- Claude 僅唯讀檢查相關檔案，AGY 只討論供給文字。兩者不互相呼叫、不改專案，Codex 統整；Git 含既有未追蹤 tmp/ 作為基準保留。完成後於本節補結論及證據路徑。
+- 兩方各兩輪成功，Git 前後一致、viewer 啟動、AGY 工具拒絕及 canary 驗證過。建議一份三年級自然卷、3 概念各 2 題（至少一組圖／共用題幹），完卷後學生自選概念練 2 題。預製複核固定版本，可靠映射才重用 pool；外校可用有依據的局部概念，不冒稱課綱對齊。這些是建議，不是使用者已批准的規格。
+- 現有一般錯題不讀 quiz_past，pool 缺 membership 有三上數學回退、現組卷會清空 material；直接重用 self 卷也可能讓錯題再延伸或達題數後發葉，須另檢查。未決產品選項是延伸錯答歸檔及額外獎勵，並非新增教師逐題簽核。詳[討論紀錄](past-exam-extension-discussion-20261101.md)。本輪無新功能、SQL、媒體或部署。
+- 已沿原記憶鍵／同 id 補存「尚未定案或實作」的討論提案，讀回全文一致並保留歷史；私有收據在 Claude 本輪 exchange 目錄 `memory-verified.private.json`。不可將此討論記憶當作使用者已同意實作。
+
+# 2026-11-01 後續製作規範：本校／外校共用指南
+
+- 使用者要求維持本對話做法，整理供後續考古題（含非本校）參考。現行入口為[製作與上線指南](past-exam-playbook.md)及[任務與交接範本](past-exam-job-template.md)，已列入 AGENTS.md 考古題作業必讀。
+- 延續 Codex 獨立解題、Claude 複核、必要時 AGY 第三方，自主處理有證據的小問題；缺官方稿可明示改編，不例行逐題等教師確認。下方歷史「缺稿一律暫停／待教師逐題確認」不再是後續預設規則。任務仍以當次指定範圍及已有發布授權為準。
+- 指南分開中立紀錄與實際 adapter，明列三／六年級限制、115／1 獎勵查詢、不可變版本、私有媒體、手機及真 SQL 驗證，不宣稱已有任意外校一鍵匯入器。來源學校、平台管理者及學生學年分開；ignored 本機產物不當 clone 內建。
+- 本次僅更新文件與工作規範，未處理新試卷、發布、上傳媒體或更動學生資料。下方數量與案例屬各時間點紀錄，後續先讀現行指南與當時正式狀態。
+- 文件 UTF-8、此次新增相對連結及完整工具路徑已驗；沿原記憶 id `d1491e03-ff0c-4c9a-b096-255e22b831b2` 補入本校／外校後續製作規範，讀回全文一致，原歷史保留。私有驗證收據在 `automation/output/past-exam-workflow-guide-20261101/`；記憶內容沒有取代原件或交付檔案。
+
+# 2026-11-01 已上線：26題改編聽力，暫停欄歸零
+
+- 後續教師已試聽部分，表示挑聽幾個皆正常、應可上線；同意維持已發布版本。未提供抽聽題號/數量，不能記為全26段真人聽審完成。本次只補回饋，不重跑發布或更動音檔/學生資料。
+
+- 教師明確授權：剩26欄可依原題及解答自行編聽力稿、製播、標明改編版，AI討論並驗證後上線。這取代下文「缺完整稿一律暫停」對本26欄的限制；仍不能冒稱官方聽力稿或復原原音。
+- 兩卷三英A/C/E新版本已於14:56啟用、14:57正式核對過；47舊版/其他28卷/函式hash保留，總49版本、20期中開10期末未開不變，26欄恢復、全體blocked=0。官方稿仍未提供，音軌origin=adapted、officialScriptAvailable=false；新作答/重作採新版，舊歷次/成績/跨版一葉不動。
+- 證據automation/output/past-exams-adapted-listening-20261101，獨立原件/26稿包.chat-mode/adapted-listening-20261101，HEAD1d5e5831e0166bbd4119e4e9324e400f7079ead4。Claude3輪106/18/19秒成功，首輪實看4原頁，後2輪討論數字句及fixture；AGY1輪37秒供給文字成功、未看圖未上網，viewer/canary/Git不變均驗。114A1/A2的J/D、K/L矛盾保留，改編以試卷J/K配官方選號。E原4分明示改編為圖2+字2，原id留字、加-picture；原26條ledger/4分另存，轉32線上欄恢復總64分，每卷自動90/manual自核10不變。
+- 26段Jenny -12%每段兩次、約289秒。初稿裸Six被small無提示辨成sex，沒有亂正規化；與Claude確認E6段改The number is...重製，26內容過、數字字形正常化，兩遍波形相關最低.999778、解碼/音量/SHA過。12圖native+smask+仿射白底，clip鄰題線稿未發；35新私有物件上傳下載SHA過，不冒稱真人逐段聽審。
+- 本機真SQL圖/字4/2/2/0、52/90不過54/90恰60%、舊版鎖定/歷次跨版一葉過；正式來源合成auth+本機SQL全題組1280/390/360、教師/重試/原manual畫圖及多欄過；真私有Storage兩卷22+19共41播放器播放/暫停/重播/切題清音過。正式PG兩卷各新錯→對→對+舊版8筆暫時作答全rollback、新音圖media_access owner/path/mime逐件過，九表一致；register/activate亦守九表。不是真人OAuth/實體手機。
+- 114 manual QA三次定位到畫點y1008在900 viewport外；fixture先summary置中/命中、真click、等details.open，再canvas命中/真鼠標畫及復原後過，成功canvas y272/點331、底部列y831、scrollY1154/scrollHeight2063。未改產品，不能把footer必然攔截當已證實根因。失敗JSON/截圖與成功資料、Claude提醒保留。
+- 不需前端部署，37個當時正式執行檔SHA不變，無SQL/RLS/Edge修改。原教師審閱HTML/Downloads/草稿未動，applied-decisions/adapted-listening-20261101.private.json對應新版本；舊整卷不可蓋回。不要重跑plan/build/inspect/register/activate/finish，clone不含ignored原件。詳[past-exams-adapted-listening-20261101.md](past-exams-adapted-listening-20261101.md)。同MEMKEY id d1491e03-ff0c-4c9a-b096-255e22b831b2沿用。
+- **記憶已補同步並讀回驗證**：教師要求重試後，nmem遠端恢復，沿同MEMKEY／同id合併改編聽力經驗。更新回應曾中斷，先讀回而未重送；完整內容等於新前綴＋原25,693字元歷史，共27,586字元，新前綴僅一次、SHA核對過。memory-release.private.json已verified，memory-pending.private.json狀態改synced。先前DNS故障屬歷史，現在不用再補同步或重跑發布。
+
+# 2026-11-01 已上線：AI自主疑義審定，四卷六項處理完成
+
+- 教師不再希望考古題上線前每項等本人簽核：Codex與Claude先獨立判讀、核對來源與解題；仍有分歧交第三個AGY CLI討論，能定案就驗證後更新並報告。這取代下方10/30與10/31的「其餘待教師逐題確認」。不把三方票數當官方依據；官方raw／原題／來源SHA及各方意見保留。缺稿／缺圖且無來源者保留阻擋並報告原因，不猜造官方發話。
+- 本輪P11限定水的浮力④、P13接共同圖收輪生/乙、P14原句季風=冷鋒改×；C01順序填字說明不洩錯字、C09英語等價含chips、C22明示改問上文三態條件收溫度等。四卷12:33啟用、12:34正式核對過；原42版本全保留，共47（4初候選+1英語補充，1未啟用候選保留），20期中開10期末未開不變。新增自動5分，剩26暫停欄僅缺完整聽力稿，不再要求教師逐題簽核；原15項維持、P04與已核准11不改。manual/畫圖評量契約不變。
+- 原始來源獨立包 `.chat-mode/auto-review-20261101` HEAD894821b916d01bd3d19d606735522813bb2d0c7c，11卡39來源。Claude首輪300秒逾時草稿未當完成、未續用失敗session；新auto-review-20261101-compact恢復112秒6Read成功，未覆蓋頁由Codex補核。AGY auto-agy-20261101-01兩輪65+26秒成功、1.4.12/Gemini3.8FlashMedium、viewer/canary工具拒絕/Git未改均驗。AGY只討論供給文字，未看圖/讀repo/上網。
+- chips初稿三方都排除，Codex以Oxford/Cambridge反證題目沒限美式、圖片可消歧，AGY第二輪明確撤回，加入後重驗英語、另註冊不可變版本。不能把AI共識當官方證據；原題、官方raw、原頁SHA、各方差異與修訂存檔。
+- 本機真SQL四卷變體/錯答/未揭答/完整0→1→1/舊版鎖定與歷次跨版一葉、P04兩項回歸過。當時正式來源隔離auth+本機SQL全題組1280/390/360、教師預覽/重試/重作、英語20播放器過，chips後重驗；正式PG四卷各新錯→對→對+舊版完成16暫時作答全rollback、九表摘要一致。register/supplement/activate亦守九表，不改SQL/RLS/Edge或新媒體。不是真人OAuth/實體手機。
+- 介面只把回饋官方記號改為核對答案，從最新正式dpl_7DQqnJPJDzyLCaF49T8qQR3sWsiH完整769來源SHA1封存、只疊標籤/快取鏈6檔，保留question-reports及後續登入功能；候選6檔和正式319公開執行檔SHA過，正式dpl_9K3cwM4PTNhTvAZrXYHQDTLLHQoF。舊工作區不可整包部署，已開舊分頁需刷新。
+- 證據ignored automation/output/past-exams-autoreview-20261101；舊教師審閱HTML、Downloads匯出與草稿未改，6卡最新版本收據另存review目錄applied-decisions/autoreview-20261101.private.json。不得以舊整卷蓋回。不要重跑build/inspect/register/supplement/activate/finish；clone不含ignored原件與產物。詳[past-exams-autoreview-20261101.md](past-exams-autoreview-20261101.md)。同MEMKEY id d1491e03-ff0c-4c9a-b096-255e22b831b2沿用。
+
+# 2026-10-31 已上線：教師核准11項明確答案，七卷改版
+
+- 教師明確核准前輪審閱頁11項明確建議，驗證後上線。本輪七卷新不可變版本已activate並於09:24:21正式核對通過；20期中開／10期末未開放不變，35舊版本／其他23卷／quiz函數hash與學生資料保留，現42版本。40暫停欄減為29＝P11/P13/P14三欄＋三英缺完整稿26欄，其他待決定提案未套用。
+- P01/P02注音、P03②、P05 125、P06人工參考8:17、P07三比值及小蝦最酸整題人工3分、P08④、P09 3400、P10 4069、P12勾、C07②海豚已恢復。新增自動13.5分、人工6分；P06/P07不擅拆配分。P04所在113六國語不在本次七卷中，保持已核定②。
+- 7卷本機真SQL逐欄判分／舊錯答拒絕／原官方記號／新舊版與跨版本一葉、P04兩項及RPC四項回歸過。七卷正式來源隔離auth＋本機SQL全題組1280/390/360、重試、教師預覽、重作歷次過；英語20播放器含C07實播，真私有Storage再驗過。正式PG七卷各新錯→對→對＋舊版完成，共28暫時作答全部rollback，九表一致；register/activate交易亦驗九表。非本人OAuth／實體手機，不冒稱。
+- 四私有音圖上傳下載SHA過，C07官方key p5完整稿合成兩次，逐段Whisper回辨。圖需PDF仿射旋轉矩陣＋smask＋白底；裸Pixmap全黑或頁clip鄰題兩種草稿未發。正式網站新增question-reports使合成auth缺getSession，僅補fixture；本輪當前正式38執行檔freeze及重抓SHA一致，不部署舊前端。
+- 證據在ignored automation/output/past-exams-approved11-20261031，原審閱頁／教師Downloads／草稿保留，套用收據於review目錄applied-decisions/approved11-20261031.private.json。**不要重跑build/inspect/register/activate**。之後讀同卷舊快照確認，需逐題對應最新version，不得舊整卷蓋回。自有4901–4907 server／成功QA頁／lease已清，其他對話分身02不碰。
+- 詳[past-exams-approved11-20261031.md](past-exams-approved11-20261031.md)。新作答／重新作答採新版，舊作答與歷次保留，跨版只一葉。其餘待決定項目仍待教師逐題確認；同MEMKEY記憶id d1491e03-ff0c-4c9a-b096-255e22b831b2沿用。
+
+# 2026-10-30 已完成：Claude四輪疑義複核，建議頁待教師確認
+
+- 教師要求先與Claude確認較簡單疑義，再交本人確認。本輪不發布、不改正式題庫／媒體／學生資料。P04已結案不重審；40暫停欄＝13非聽力＋27聽力。新頁37卡：11明確答案、6處理方式、15維持現況、5缺稿卡（含重疊子項）。A02合併C07，A01／A03合26欄缺完整發話稿，C16–C18為A03子集；R12已開放人工參考不重問。
+- 四輪CLI session `20261030-pending-answers-01` 已完成，38筆建議／151來源SHA／四個marker／可見viewer／Git未改均驗。唯讀來源包 `.chat-mode/pending-review-20261030` HEAD `2084533f9dafde3480d36e6027999f95bc1425eb`；Claude Code2.1.289 OAuth訂閱，只Read／Glob／Grep。撤回無原卷依據的C04畫線誤差、C08拆分、C11過程拆分提案；P11要限水的浮力、P13收乙要補共同圖，仍待教師同意。
+- 新本機頁 `automation/output/past-exams-review-20261030/考古題疑義審閱-Claude複核建議版.html` 已以預設程式開啟；原HTML與教師Downloads匯出未覆寫。每項有整合建議、原題／官方原記號／影像PDF／SHA與實際查閱範圍；明確按同意才填確認，草稿嘗試瀏覽器暫存，填完仍需匯出交回。**教師填寫後不要重跑builder改快照ID，先匯出備份。**
+- 1280／390／360、37卡四類、顯式同意、匯出內容、草稿reload、原頁旋轉、117引用檔通過，pageerror 0。手機模擬／隔離HTTP測試，不能冒稱實體手機或file暫存必可用。QA頁／租約／4889 server均清理；本機HTML不依賴server。C06對比P04外題組不變後轉接目前SHA，仍不可整份舊卷蓋回P04。
+- 詳[past-exams-claude-review-20261030.md](past-exams-claude-review-20261030.md)。生成工具與提案追蹤於repo，ignored來源／CLI回覆／教師確認／QA證據不在clone內。下一步只等教師逐題明確確認；AI提案不是核准，不能直接開放剩餘40欄。
+
+# 2026-10-30 P04教師確認已套用：113六國語第14題②
+
+- 教師匯出「手寫為2」並明確授權驗證後上線，僅P04／`dingxi-113-1-g6-exam1-chinese`／`s4-q14`。原暫停欄恢復單選②、2分，其他題目不修改。新version`f92762ec-2a83-4378-b3e8-b647fab3b3b1`、SHA`b905765fa5b7fad2fa17563bf4b9f8bdb9a5cdec97a5911e7691f023a0f948b2`，舊版與教師確認／原頁／匯出SHA均保留。資料版本切換，不另部署前端，不改SQL／RLS／Edge。
+- 13相關回歸、正式介面＋合成auth／本機SQL的桌機與390／360、P04實選②得2分、重作葉0→1→1通過。真PG四選項0/2/0/0、舊版resume與跨版本八筆歷次一葉通過後rollback，九表摘要不變；register／activate交易亦驗九表，原34版本、quiz函式及其他29卷保留。
+- 此卷現無暫停欄，全體剩40＝27聽力＋13其他。教師繼續原審閱頁，原HTML／匯出檔不覆寫；P04已套用收據存`automation/output/past-exams-review-20261030/applied-decisions/`。後續舊快照同卷確認先比對逐題內容與來源SHA，轉接到最新版本，不能從舊bundle把P04蓋回去。證據`automation/output/past-exams-teacher-p04-20261030/`，詳[past-exam-teacher-p04-20261030.md](past-exam-teacher-p04-20261030.md)。不要重跑build／inspect／register。
+- 已坦白回覆教師：Claude參與前處理／轉錄，但未對剩餘疑義逐題做第二輪複核；P04採教師確認，未另問Claude。其他待確認題尚未取得新判定。
+
+# 2026-10-30 已完成：四份英語期中聽力製播與改版
+
+- 收尾正式alias已由其他第9週發布更新為`dpl_3Ab6ZKnw7M8oLkC8R6ikUAuG4GJL`／commit404ed65，本次12聽力runtime SHA逐檔仍一致。原255檔只7個其他課程／導覽／努力樹設定更新，保留，不回推Byg舊包；下次發布重新取得最新完整基底。
+
+- 使用者新決定取代舊限制：有官方完整聽力稿可自行製播；答案矛盾另確認，先上無疑義部分。113／114上期中三、六英語四卷恢復57欄114分，54題組共51 MP3、72圖，標合成語音練習版；三年級A／C／E各13欄缺完整發話、113六英B4一欄dolphin／鯨魚矛盾仍暫停。加非英語14欄，共41欄待確認。
+- 正式部署`dpl_BygWat1GWL5VHPQ3UGnL3QG8MDoH`，從下方最新身分同步BbR完整凍結包疊12檔，保留身分切換修正。255公開檔SHA通過，四卷新immutable versions已啟用，20期中開、10期末未開放不變；原30版本與函式hash保留，九個學生資料表在register／activate交易內摘要一致。未改SQL／Edge／RLS。
+- 播放器rich content改傳本次作答mediaScope，修正query不同造成全域媒體resolver未共用；換題／送出／重作／登出停止清除舊音檔，教師換卷亦同。四卷全題組1280／390／360與54播放器實播通過；候選驗證bytes及正式網址另以真私有Storage短效音檔20播放器通過，auth／作答為合成替身，不冒稱學生OAuth。真PG四卷各新錯→對→對、舊版resume完成，葉只一次與四筆歷次通過後rollback；24＋15回歸通過。
+- ignored證據`automation/output/past-exams-audio/`，含完整plan、來源／音圖SHA、ASR、bundle、校對、雲端與發布包。Whisper small回辨51段，Anna／Abu用large-v3複核；Abu專名辨識限制留案，未冒稱真人聽審。task-local edge-tts7.3.1與FFmpeg，不用完整Wayground安裝器。**不要重跑build覆蓋QC、inspect覆蓋baseline或register重複註冊。** clone不含ignored來源與產物。
+- 新疑義頁`automation/output/past-exams-review-20261030/考古題疑義審閱-聽力更新版.html`，27聽力＋14其他，保留P／C編號與原題／官方解答。舊審閱頁和教師匯出不覆寫。詳[past-exams-audio-20261030.md](past-exams-audio-20261030.md)。同MEMKEY與記憶id沿用；舊版作答不增加新聽力欄，重作才使用新版，跨版本不重領葉。
+
+# 2026-10-30 已完成：測試身分切換與自組卷同步
+
+- 使用者要求先修「切換身分後，自組卷頁面仍顯示另一個身分」。原因為同一 Google user ID 切換 30730／60930 時，舊分頁的 auth 快路徑、導覽名冊與組卷目錄沒有失效。舊版 Chrome 合成流程已重現；正式 DB 同帳號 3→6→3 交易驗證正常並 rollback。
+- 獨立工作區 `C:/Users/user/.codex/worktrees/quiz-identity-sync/it-class-tcwu`，分支 `codex/quiz-identity-sync`，基於最新 `2dedd5d`；不混入前次注音提交或主工作區其他修改。變更包含身分修訂碼通知、頁面重新驗證／清除舊目錄、隔離延遲回應與媒體、切換結果核對及必要版本字串。未改 auth.js／SQL／RLS／學生作答。
+- 正式已 promote `dpl_BbRiddNNbQD1YrrPaPewqWSdxSnh`，前版 `dpl_TXYUw4KvyECaqRzrgSZCkrJAErLv`。先核對前版 254 公開檔，再從其完整凍結包僅覆蓋 15 個執行檔；候選 15 檔 SHA 通過。正式來源隔離 Chrome 的雙向切換、延遲回應、組卷與卡片、BFCache、切換失敗、focus／TOKEN_REFRESHED、390px 全通過，pageerror 0。Auth／RPC 為合成替身，正式 SQL 另以 rollback 探測，不冒稱本人 OAuth 實答。
+- 10 項 Node 回歸通過。可重跑 `automation/tests/quiz-identity-switch-browser.cjs`；須經 shared browser lease 與 `run-background.cjs`，傳入兩個預建精確 target，允許 parent tab 初始化，避免背景 rAF 節流及轉頁過早讀 DOM。
+- 更新前已載入舊程式的分頁需重新整理一次。詳 `docs/development/quiz-identity-sync-20261030.md`；發布、SHA、Chrome 報告保存在 ignored `automation/output/quiz/identity-sync/`。後續部署仍不得從舊 dirty 主專案整包覆蓋。
+
+# 2026-10-30 已完成：113／114上學期期中考20卷開放
+
+- 教師要求逐題審閱有疑義／暫停題；已產生ignored `automation/output/past-exams-review-20261030/考古題疑義審閱.html`，來源鎖本次20卷已發布SHA。98暫停欄＝84缺原音（A01–A04四卷）＋14其他（P01–P14）；另22其他內容／配分覆核卡、12組官方留白／部分參考卡、20卷完整歷程。151原頁、原檔／轉檔PDF與SHA附齊；原題與官方raw分列，可篩選、原頁旋轉／放大、填確認並匯出Markdown／JSON。教師回覆之前不修改正式題目。舊歷程「曾blocked」不等於現行停用，以document.blocked為準；manual缺參考不等於暫停。輸入只存當頁記憶體，匯出檔或教師對話回覆才是確認依據，勿當已核准。
+
+- 使用者最新指示取代下方舊範圍：三、六年級，只開113-1／114-1 exam1共20卷；已完成114-1 exam2共10卷列「未開放區」，保留所有版本／歷次／葉片。先前沒有處理下學期。
+- 新證據目錄 `automation/output/past-exams-midterms`，原114批次驗收證據不覆寫。`automation/past-exams-midterm-scope.py`已驗40來源檔、20期中配對，渲染113期中10卷。
+- 目錄未開放區已部署`dpl_TXYUw4KvyECaqRzrgSZCkrJAErLv`；正式114期中10開、期末10停。後端list可回同年級enabled旗標的安全metadata；start／resume／submit／media停用檢查保留。254正式靜態SHA及本機／候選驗證bytes／正式目錄6組皆通過。
+- 113十卷已逐頁獨立QC，329組488欄50暫停，84去重私有PNG逐張下載驗SHA；10卷先disabled註冊。桌機／390／360全部題組、重作與歷次葉0→1→1通過；真PG十卷各三次交易後rollback，9資料表摘要不變；73回歸及最後22專項皆過。11:18 gate後activate、11:20正式data驗證通過，各年級10開5未開放，共20開10未開放；原20個版本／provenance、私有表權限均保留，無合成auth資料。
+- 使用者已查看113六年級英語原卷，明確判定頁首「下學期」誤植，依官方目錄歸113上期中；原PDF／SHA保留，decision與issues記錄，不再是未決問題。六年級數學原印100、逐題101，明載差異、不改原配分；3個官方矛盾欄7分暫停。六年級自然第6題不同版暫停。
+- Claude唯讀packet `.chat-mode/midterm-review` HEAD `64bba1357ba04e7bee8783412ce516851b2fb60c`，00及02–09轉錄完成，三年級英語由Codex直接轉錄。Codex已獨立查看原頁／裁圖、修復共同材料與鄰格答案洩漏。各`reviewed.private.json`為最終來源，勿重跑一次性轉錄／QC腳本覆蓋修正。
+- 詳[本輪來源、驗證及發布紀錄](past-exams-midterms-20261030.md)；本機校對總覽`automation/output/past-exams-midterms/index.private.html`含私有答案。新cloud工具有inspect／visibility／upload／register／activate；不要重跑inspect覆蓋before或register重複insert。Supabase CLI臨時角色建立必須序列執行，並行曾造成password authentication failed，失敗證據保留。
+- 正式alias再次核對仍為TXY版本，沒有再從dirty主專案部署；本輪約69分鐘（10:11 scope至11:20正式驗證，不含前輪下載／轉檔）。自有4423／4424 server已停、測試頁自關、worker租約已釋放；其他對話租約不碰。`deactivate`僅停本次113十卷且保留所有紀錄。記憶沿用同一MEMKEY與id `d1491e03-ff0c-4c9a-b096-255e22b831b2`。
+
+# 2026-10-30 前次完成：114學年度考古題19份已正式開放
+
+- 使用者授權的114上三、六年級各10卷已完成；新增19卷，原三年級期中自然pilot保留。113未轉換、未發布。本次學習紀錄115上；完整單次自動分達60%首次一葉，重作與歷次保留，不合併多次答案，同卷同學期／跨內容版本不重領。
+- 正式deployment `dpl_7MN16pxfnz6SwNHFBQ6GUquYAwtf`，https://it-class-tcwu.vercel.app；三、六年級`grade{3,6}/115-1/quiz-library.html#past-exams`各10卷。教師原預覽頁現可選自己擁有的20卷。前版`dpl_4z2gMQ47cuazJ5bgVJeSpU9bR4B7`。
+- 新增19卷最終648題組952欄、94個暫停項（82個缺原音聽力，另有原卷／解答矛盾或歧義）；106個去重私有PNG逐張上傳／下載驗SHA。各卷均verified，原文／來源頁／原檔與轉檔SHA／官方原記號／校對記錄完整。六年級期末自然單選2因可能不唯一先暫停2分，不改原題或猜答案。
+- 新增manual文字／筆跡、多欄short、注音／標點輔助、rich選項、三六年級catalog、教師多卷預覽及媒體驗權。官方略／留白採manual並標not_provided，不猜參考；部分參考只保留可辨內容。六年級期末自然基本100另加4分選做，以optional manual保存、不影響分母／完整；只有manual可optional。沒有50分／10欄門檻。
+- 原pilot不可變version `2b25e1de-55fb-4768-8e93-b866856c16ca`、SHA `1536ce5703e91719a6f7503e2585c628b44eba2e91ffdc100fb601eea681fca8`仍保留。舊catalog欄位由前端限定ID merge補足學年／期中／出版社範圍，不修改文件版本。
+- 72完整回歸全過（59.3秒）；19卷整卷RPC、獎勵介面一片葉與重作歷史全過；19卷所有組1280／390／360px及教師預覽、相同封包重送、葉片0→1→1全過。catalog雙年級6尺寸組合全過。最新候選舊pilot91檢查／新自然／catalog全過；正式254靜態SHA及正式來源隔離Chrome全過。手機是Chrome模擬，非實體手機／真人OAuth測試。
+- 正式DB先disabled註冊、增量只換6相關函數；交易內9個既有表摘要不變、無關函數保留。19卷各三次作答真PostgreSQL驗證後rollback，未保留測試作答／葉片。02:40開放19，02:42再確認各年級10、教師20、函數符合來源、表格私有、無合成auth／attempt、pilot不變。既有努力樹wrapper不需重包裝。
+- 來源與所有私有產物在ignored `automation/output/past-exams-batch`，clone不含。`index.private.html`／`catalog.private.json`為本機校對總覽；逐卷含reviewed JSON、bundle、MD、preview、image manifest、issues、QC。`cloud/`保留before、frozen、media驗證、register、rollback、candidate/live gate、activate、正式data/files/alias證據。詳`docs/development/past-exams-114-production-20261030.md`及playbook。
+- 正式由最新完整440來源檔凍結包加22個runtime overlay發布；主專案有其他dirty，未整包部署主專案。分支`codex/past-exam-production`、本工作區為唯一寫入。不要從舊主專案整包部署覆蓋。回復先`node automation/past-exams-cloud-114.mjs deactivate`只停本批19卷，再promote前版；保留學生歷次及葉片。
+- 新批次工具`past-exams-{inventory,build,migration,cloud-114,cloud-smoke-114,release-114,release-gate-114,live-114,index-114}`只針對明列114範圍。完整Wayground安裝器未執行。一旦已apply，不要重跑inspect覆蓋before或apply重複insert；再次執行須先讀狀態及文件。
+- Claude唯讀CLI2.1.289提供8份草稿與架構討論，Codex獨立校對整合；額度失敗session不可Resume或冒稱同意，無API計費切換。原頁／字型與分數順序是高風險；一次性qc／transcribe腳本會覆寫人工修正，勿盲跑。Puppeteer背景初始化用受租約保護`past-browser-wake.cjs`喚醒精確target；子程序須preload、本機快速測試旗標及足夠長測試時限。failed logs保留，結果以最終SHA匹配證據為準。
+- 本次自有4421／4422舊fixture及4423／4424新fixture已停，驗收分頁已關閉、租約釋放；未接管其他使用中的server。結果沿用MEMKEY:考前練功坊-考古題前處理-cian請益，id `d1491e03-ff0c-4c9a-b096-255e22b831b2`。
+
+
+# 2026-10-29 批次範圍調整：僅114學年度（進行中）
+
+- 使用者最新指示「40份太多，只做114學年度就好」。本次只含114-1，三、六年級各10份，共20份（含已上線三年級期中自然），其餘19份待完成轉錄、校對、轉接及驗證後發布。113-1不在本次授權範圍；先前已產生的113中間檔不得加入本次發布。
+- 已驗證原檔SHA-256、版本、來源紀錄ID與同版本解答配對；114的20對159頁已轉圖。盤點工具預設及選項均鎖114-1。這是準備完成，不代表19份已完成題庫或上線。
+- Claude透過chat-mode唯讀審查六年級期中自然，已回完整草稿；Codex仍須逐頁獨立校對及實測裁圖。草稿有官方答案疑義與掃描截斷，不能直接匯入。既有試辦的不可變版本、歷次作答與首次達標一葉規則維持。
+- 實際檔案與Claude審查包在ignored automation/output/past-exams-batch及.chat-mode/batch-review；clone不含。正式最新仍是下方dpl_4z2gMQ47cuazJ5bgVJeSpU9bR4B7，尚未新增發布。
+
+# 2026-10-29 考古題專區分頁已上線
+
+- 三年級選卷新增獨立「考古題專區」，自然114期中原卷移入且不再計入老師卷數。手機四分頁兩欄，科目篩選／更新／鍵盤／重整保留，返回選卷帶#past-exams。六年級保留原3分頁；無新增RPC或資料庫變更。
+- 正式dpl_4z2gMQ47cuazJ5bgVJeSpU9bR4B7已promote；5變更檔候選SHA、248正式靜態SHA、66回歸，以及本機與正式來源1280／390／360px隔離fixture驗收均過。教師拒絕與登出清空確認。詳[專區分頁](past-exam-area-20261029.md)，QA在ignored area-*。工作仍在codex/past-exam-production，dirty主工作區未合併不可整包發布。
+
+# 2026-10-29 全題型與手機驗收已上線（最新）
+
+- 使用者要求所有題型逐一檢查，已補排序／圖號／複選欄位四色卡、勾選列四色、代號按鈕陰影、畫圖工具與方向鍵，手機畫圖工具兩欄；修正fieldset內距specificity。只改UI、快取及測試，不改題目、SQL／Edge、計分、學生既有成績或首次一葉。
+- 正式dpl_9U4pQ8zsHwKcNbo6QHVb2Quezf18已promote；14候選runtime與248正式靜態SHA一致。66回歸零失敗零略過；正式來源40題組在1280／390px各實際操作送出，360px再11個非選題組，共91檢查、10截圖，最終exit0。圖片燈箱、排序鍵盤、複選取消／確認、畫圖觸控／鍵盤／復原／清除／參考圖隔離、92分完成／葉1不重給與登出均過。手機為Chrome觸控模擬，非實體手機。
+- 詳[全題型驗收](past-exam-types-review-20261029.md)及作業指南。驗收曾卡Network.enable，先networkEnabled:false連精確頁並protected bringToFront喚醒、斷線再正常重連後恢復；仍走共用租約與保護入口，未改瀏覽器設定。01已釋放後改空閒02完成。測試最後關閉自己的頁面，避免還原viewport重載真人身分。
+- 分支codex/past-exam-production；來源與QA仍在ignored automation/output/past-exam-production/types3-*，clone不含。主工作區尚未合併且dirty，不能整包發布。
+
+# 2026-10-29 考古題風格修正已上線（優先於下方初版外觀宣稱）
+
+- 使用者指出初版只改配色、與練功房差很多。已依原作答頁統一字體字重／四色選項徽章／圓角陰影／緊湊進度與固定底部操作列；規則、成績重作與題組選單收合。以實際原生元件計算樣式比對及桌機手機截圖確認，不只宣稱同主色。
+- 正式dpl_5kgNTUX2Hr3NqhbnykhnCenQDjyb已promote；14候選檔／248正式靜態SHA一致，66回歸零失敗零略過，本機及正式來源Chrome隔離fixture的重送、55→56→92分／葉0→1→1、歷史與登出通過。沒有改SQL／Edge／媒體／獎勵／原學生紀錄。
+- 詳[風格修正紀錄](past-exam-style-fix-20261029.md)與作業指南。新學生樣式quiz-past-style.css；歷史UI生成器可能覆蓋後續修正，勿盲跑。工作仍在codex/past-exam-production，dirty主工作區未合併不能整包發布。
+
+# 2026-10-29 自然考古題已正式上線（優先於下方僅本機紀錄）
+
+- 實作經驗已整理為[考古題轉線上題庫作業指南](past-exam-playbook.md)：原卷／解答配對與校對、題型轉接、92分分母、重作與一次給葉、工具／本機資料界線、驗證及部署踩坑。日後處理新卷先讀此指南；不代表已授權批次匯入或發布。
+
+- 使用者已明確授權正式接入及驗證後上線。114上三年級自然第一次評量，穩定paper ID dingxi-114-1-g3-exam1-science，學習115-1；40題組、92分自動／4分畫圖自核對／4分疑義暫停。保留作答方式，統一網站樣式。單次完整>=60%首次給1葉，同卷同學期只領一次，可重作並保留歷次；55→56→92葉0→1→1已驗證。
+- 正式 dpl_6q3C3ZH7U23iuKQSoBHHeukFUCdm 已promote，SQL本卷enabled=true、私有媒體9張及Edge已接入；正式247靜態SHA一致，66回歸零失敗零略過，Chrome正式來源學生／教師隔離fixture通過，真Supabase交易回滾驗證，沒有留下假學生作答與葉。
+- 分支codex/past-exam-production，工作區C:/Users/user/.codex/worktrees/past-exam-production/it-class-tcwu，基於claude/quiz-load-batch4，以第四批433檔凍結包加13檔發布。主工作區尚未合併，含花園等其他dirty，禁止整包部署覆蓋。
+- 新私有quiz_past_*與opt-in past-exam模式；只包裝quiz_rewards／quiz_media_access，原quiz_action及其他原函式不變。SQL核心／pool／wrong→batch1→2→3→4後才處理past-exams，舊rewards/media重裝須重檢包裝／備份。
+- 詳[正式接入紀錄](past-exam-production-20261029.md)。ignored automation/output/past-exam-production含私有來源／bundle／QA／雲端before備份，clone不含。回復先disabled本卷並保留歷次與領葉帳本，再promote原dpl_G6mqwLwCj3JqJ66HzQzuW1UqeyCu。
+# 2026-11-02 優先：九年級考古題交付退回，AGY 初查完成、逐題重做尚未開始
+
+- 使用者明確拒絕整頁圖片加答案欄，九年級十卷均未完成題目轉換。先前已發布與測試紀錄只證明流程，不能稱交付完成。四年級十卷則已有真正逐題結構，本輪未保證四年級全題正確。
+- AGY Argon Medium 五次純提供內容討論（含截斷補驗、原圖確認後續談）已完成，Codex另核正式 document、336 答案代號與關鍵原圖。114 社會48原卷答案D與地理事實矛盾，B/C可能同時成立；建議暫停該題單選判分待勘誤，本輪尚未改正式題卷。
+- 下一步先完整重做113國文：30選擇＋20國字注音＋8解釋＋4默寫格，題文選項與標記全驗再做流程測試，再依標準處理其餘9卷。必要局部圖保留，整頁不能代題文；舊作答／版本保留，不靜默重評。詳 [初查紀錄](zhongzheng-grade9-audit-20261102.md)。
+- 撤回113國文9跨頁說法（原圖同頁完整）；不直接採信AGY原答案等於正確、94分必錯、姓名推性別等判斷。分支 `codex/zhongzheng-grade9-audit-20261102`；私有收據主工作區 `tmp/past-audit-agy-20261102/`，報告同名 automation/output 資料夾。
+
+# 2026-11-02 教師測試身分加入九年級
+
+- 指定 `chianwu@apps.ntpc.edu.tw` 的既有身分切換列加入九年級 922-30，保留三／土城四／六年級；題卷以 922 班開放。只擴充既有帳號限定 RPC 與切換模組，不改一般學生權限、不刪進度或代作答、不主動替使用者切換（仍為 407-30）。
+- PGlite、真 PG authenticated 四年級往返與 7 科／30 單元卷／10 原卷讀取、匿名與冒用拒絕、12 表 rollback 摘要、五入口元件瀏覽器與桌機手機／失敗重試通過。
+- 最新 801 檔正式來源為底，6 檔覆蓋；候選 `dpl_3PpDyW57ravixZsYVjXGYeVktkHY`。分支 `codex/test-identity-grade9-20261102`。詳 [九年級切換紀錄](test-identity-grade9-20261102.md)，操作收據在主工作區 ignored `tmp/test-identity-grade9-20261102/`，續作須重查正式別名與名冊，不重跑快照或回復腳本。
+
+# 2026-11-02 已正式發布：九年級 114 數學自動判分、113／114 合成聽力
+
+- 使用者授權測試後上線，已發布 `dpl_BRodWt7692Jov1i2y7sfZcAv9CJy`。114 數學 25 格、100 分；計算過程選填保存且不判分。英語依官方稿補製 25 段合成音訊，清楚標示非官方原音。
+- 真 PG 回滾、authenticated 真計時及媒體權限、25 格／25 段實際瀏覽器播放與保存、手機及非法格式修改重送均通過。Claude 唯讀兩輪，修正第一輪阻擋後無新阻擋。正式學生未代答。
+- 保留另一工作的新正式基準 `dpl_HNgV9o1A3A6Z3Q99qT2ECJTsTS5d` 的 29 個更新，799 檔底加 8 個功能覆蓋，最終 801 檔。修復共用 quiz-module 的 past-exam 分流；3／4／6 的檢查僅是合成九年級卷的共用載入器相容性。
+- 三份新版 immutable version 已啟用，舊版本保留。私有操作在主工作區 `tmp/zhongzheng-grade9-math-audio-20261102/`，禁止部署或提交其中內容。後續重查正式狀態，不重跑歷史 activate／rollback。
+- 詳 [數學與聽力發布紀錄](zhongzheng-grade9-math-audio-20261102.md)。本次獨立 worktree 分支為 `codex/zhongzheng-grade9-math-audio-20261102`。
+
+# 2026-11-02 已正式發布：三年級10卷解析與延伸
+
+- 使用者已授權驗證後上線，已完成正式登錄、啟用與切換；2026-11-02 15:37:01 臺北時間讀回。部署`dpl_BUr4rAR7wjyiSWPgDh2VeRoQVBbC`，來源仍以舊正式deployment為底加26runtime覆蓋，不部署整個工作樹。
+- 10卷原版本不變，568解析／131重點、98組196次配題（119份來源去重），33缺素材重點不開練習；原錯題仍有固定解析及未開放原因，自核不入錯題，完卷後可主動練已配重點。
+- 延伸及5題自組卷同學期每10不同題1延伸葉，答錯認列、跨卷／原pool同題去重、啟用前歷史不回填。原成績、既有葉片／考古花及student_progress不改。
+- 真本機SQL568欄／196答、119積分；真PG10卷逐卷rollback／9受保護表摘要一致；瀏覽器10錯題返程＋4自核主動練習、33未配點排除、9→10動畫不重播、舊頁相容／教師監看／跨年級隔離、1280／390／360通過。Claude兩輪唯讀，第二輪無阻擋。787候選來源及26HTTP runtime hash、RLS／backup撤權、登錄後map／98 document與啟用前function hashes均核過；正式26HTTP及DB讀回通過。
+- 詳[正式接線紀錄](past-grade3-learning-release-20261102.md)。程式在`codex/past-grade3-learning-release-20261102`／`past-grade3-release` worktree；私有收據在`past-exam-production` worktree的`automation/output/past-grade3-release-20261102/`，不隨clone。後續以正式狀態重查，不執行歷史apply／activate或把本機教師含答案頁部署。
+- Vercel團隊連結即時失效已改隔離CLI device login，由使用者完成並驗正確帳號；原全機CLI仍是另一帳號，不要直接用預設CLI。登入檔只在ignored任務路徑，不讀取／提交／顯示。正式promote回空body曾誤判，先讀回alias確認成功再做剩餘驗證，未重複建立部署。
+
+# 2026-11-02 進行中：三年級10卷正式接線與發布
+
+- 使用者已明確授權10卷已完成568欄解析、131重點／98組196次配題正式接上，沿用延伸及5題卷每10道不同題1葉、答錯計、同題同學期去重；33缺素材重點只供解析、不開練習。
+- 本worktree由Codex唯一寫入，從前輪正式候選eeb5e68繼續；正式基準仍dpl_6mgAi77pCSyWNmPZJvsd4R2Jf7j5，26個runtime overlay以該實際部署為底，不部署整個repo。Vercel MCP團隊連結即時顯示過期，已由使用者完成隔離CLI device login，確認chianwu-4755可讀正確team/project；不要讀取登入檔／憑證。
+- 私有來源及收據在另一worktree past-exam-production/it-class-tcwu/automation/output/past-grade3-release-20261102；Claude不得讀外部路徑或登入資料。供本輪唯讀程式審查的收據另複製到本tree .chat-mode/evidence/。
+- 10卷原版本不動；sidecar接正式SQL、RLS／本人隔離、揭答才送解析。配題catalog用實際書商，避免同題從原pool及延伸包被重算；移除自然／康軒硬編碼。manual自核不進錯題，但完卷後可主動練已配重點；部分比較題明示有限覆蓋。
+- 新API送learning_client=1才把考古題併入錯題；舊頁仍保有一般錯題契約，兩版均排除新私有練習場次的再延伸。原成績、原普通葉／考古花及student_progress不能改寫。
+- 本機真SQL已驗10卷568欄／196答、119不同題積分、5+5、跨原pool去重、原10題葉／10考古花、舊客戶端及教師投影。瀏覽器原輪10往返／4自核重點／9→10動畫及不重播過；加舊頁相容後正在重驗。真PG逐卷交易回滾重跑中；已修fixture時間與多表EXCEPT括號，沒有放寬資料保護斷言。
+- 發布依序：複核、回滾驗證→安裝disabled migration／10 maps／98 private versions→production target不切別名的candidate→驗證candidate及來源hash→啟用精確版本→promote同一candidate→正式讀回。不可把教師含答案頁、本機fixture或私有題包部署；不改正式既有學生列。
+- Claude本輪僅讀指定public code及evidence，不命令、不寫檔、不網路、不憑證、不部署；Codex凍結tracked檔案直至本輪回覆後再修正。具體本次授權及讀取清單以mailbox為準。
+
 # Agent Handoff
+
+## 連線偵錯開關已關閉 — 2026-10-29
+
+- 使用者要求先關閉供實班觀察。單一全站部署旗標 shared/connection-diagnostics.mjs 的 DIAGNOSTICS_ENABLED=false；前端與collector共用，未經使用者要求不要重新開啟。不是學生自行切換的按鈕。後續改 true 必須更新匯入鏈快取標記並重新部署。
+- 關閉不記錄事件／UUID／計時／儲存／監聽／interval／回傳，也沒有下載按鈕，fetcher原函式直通。collector關閉不寫日誌，仍204讓舊頁清空佇列。舊分頁需重新整理才停本機蒐集及傳送。
+- 功能253d2bf，分支codex/quiz-diagnostics-switch；正式dpl_9igJHMDmzwAeHQSqJHC3bbzeF1Gd已promote／READY。第三批凍結包加14檔；18候選與239正式檔SHA一致，四版collector204。59項完整回歸及後加collector檢查的3項專項都過；正式來源Chrome32秒事件／寫入／interval／上傳全0。驗證分頁關閉、租約釋放。
+- 沒有改SQL／學生資料／保存／重送／揭答／防弊／一葉；原每分鐘CLI sampler仍停。詳quiz-diagnostics-switch-20261029.md，ignored automation/output/quiz/diagnostics-switch。最新正式程式尚未合入dirty主工作區，不能用舊主工作區整包部署覆蓋。
+
+## 考前練功坊資料讀取第三批 — 2026-10-29
+
+- 已依使用者授權完成抽題候選一次篩選、學生白名單試卷一次組裝、教師監看單次彙整。保存／相同答案重送／題組與整卷揭答／防弊／原一葉保留；quiz_action、answer_guard、leaf 及其他 23 個既有函式定義不變。
+- 分支 codex/quiz-load-batch3，功能 29539cd，工作區 C:/Users/user/.codex/worktrees/quiz-load-batch1/it-class-tcwu。主工作區未合併且有其他工作，不可整包部署舊主工作區覆蓋新版。
+- 58 項候選模式回歸零失敗／零略過。本機及正式來源核心／新流程 Chrome 合成驗證全過。第一輪 30 人延遲未過與量測腳本 JSON 參數失敗都保留；修正腳本後 bench-verify 兩輪 22＋30 人所有 15 門檻全過，2,697 答案／52 葉一致、無不合法接受計時。
+- 本機 30 人 p95／max 約 291／848→199／248ms；組卷 PostgreSQL 平均約314→68ms；教師監看 DB p95 約41→10ms。單獨學生投影約6.6→6.7ms大致持平，不宣稱每個請求都變快。
+- 正式 SQL checksum 與通過量測候選一致。原九表內容摘要、三／六年級／教師唯讀結果、全部本人場次監看及既有學生試卷投影前後一致；monitor authenticated only，候選型別及投影仍私有。沒有正式壓測或真人送答、付費、pool、timeout 調整。
+- Vercel dpl_erUknwk6WfmcHuzphwQLi1oW8KRB 已 promote 至 it-class-tcwu.vercel.app，production READY。以第二批凍結包加14檔發布，239正式檔SHA一致，四版collector204。舊每分鐘CLI sampler仍停止；自有4391 server停、四個fixture分頁清理、租約釋放。
+- 詳 quiz-load-batch3-20261029.md；ignored automation/output/quiz/batch3 有 failed bench、通過 bench-verify、SQL／資料與正式來源驗證紀錄。重裝舊 quiz.sql／pool／wrong 後須依序重套 batch1、batch2、batch3，不能只裝舊檔。
+
+## 考前練功坊資料讀取第二批 — 2026-10-29
+
+- 使用者授權接續第一批，本機及真實Postgres30人並行全過才上線；保存／重送／揭答／原一葉維持。Codex唯一寫入，現有獨立工作區，分支codex/quiz-load-batch2；主工作區其他dirty不動。
+- 範圍：單筆私有版本摘要、薄library、錯題refs／頁面JSON／單題明細、可靠來源共用、教師metadata清單及按需預覽。原quiz_action、保存／揭答／防弊／leaf與第一批媒體驗權不改；compose只改共用來源查找段。
+- 已上線。55項候選模式回歸、核心及新流程本機／正式來源Chrome通過。三表摘要及精簡初輪失敗報告保留；每版本一筆的bench-verify兩輪22＋30人全過，補上異常多餘答案的揭答等價後，鎖定最後SQL SHA的bench-final30人再全過。2,101答案／30葉一致、p95約143→117ms；錯題持鎖1216→5ms、教師清單payload減98.5%。
+- 功能9147b56，Vercel dpl_GFRzHXKymQ3F1iVHg8L8U2xiARhq已promote／READY，239正式檔SHA一致，三版collector均204。正式99版本／887題衍生99筆私有摘要264KiB；原九表資料摘要與其餘17個quiz函式不變，三／六及教師唯讀比對一致。沒有真人送答／正式壓測／付費變更。主工作區舊碼未合併，後續沿本獨立分支接續，舊pool／wrong SQL重裝後須重套batch2。
+- 詳quiz-load-batch2-20261029.md及ignored automation/output/quiz/batch2。自有測試server／分頁驗收後清理，租約釋放；舊CLI sampler保持停止。
+
+## 考前練功坊資料讀取第一批 — 2026-10-29
+
+- 使用者已核准依Claude三輪討論方案分批實作，本機與真正PostgreSQL的30人並行全部通過才上線；保存、相同答案重送、題組／整卷揭答及原一葉不變。
+- Codex唯一寫入者，獨立工作區quiz-load-batch1，947fced加正式診斷4檔；主工作區dirty未動，不帶半葉／花園／schema2／身分快取。負責學生入口、目錄、媒體、診斷、教師監看與新增函式檔；不修改原quiz_action。
+- 已上線，詳quiz-load-batch1-20261029.md。53項本機回歸與本機／正式來源合成Chrome功能驗證通過；最終兩輪22人與30人原門檻全過，741答案／52葉等價，30人p95 265→149ms、max552→216ms；同attempt持寫鎖的媒體1213→1.49ms。首輪22人max失敗報告保留。
+- 功能37017eb，分支codex/quiz-load-batch1，工作區C:/Users/user/.codex/worktrees/quiz-load-batch1/it-class-tcwu。正式SQL四函式更新，既有學生資料摘要與其他15個quiz函式不變；Vercel dpl_HGZTE2a2yduoYvKdi9tu6YiwTsqb已promote，正式239個網頁／模組／樣式／字型SHA256一致，collector舊新均204。主工作區dirty程式仍未合併，後續不能用舊主工作區覆蓋新正式版。
+- 原每分鐘CLI診斷快照仍保持停止，不能啟動舊sampler。沒有正式壓測或付費變更。
 
 ## 答題雙欄與固定操作列獨立發布 — 2026-10-29
 
@@ -689,3 +1184,110 @@ To: Claude Code
 4. NotebookLM 解析目前是針對真實匯出格式做寬鬆解析；你覺得這種策略可接受，還是應該再收嚴一點？
 
 如果你覺得哪一段做法不夠穩，請直接點出「目前先不要寫進 SOP 的部分」，我會再收斂。
+
+
+## 2026-10-31 第二級努力樹已正式上線（Claude發布必讀）
+
+使用者已授權commit/push/上線。正式版現為 `dpl_CR8iCGz53mwX8tzPT1iGsa6TUEhR`，由完整539檔基準增修至755檔；522舊檔UID不變，保留練功房題目回報與resyncOrder、第九週、auth/transport及天氣API。Git發布分支 `codex/effort-level2-release-20261031`，基準commit332a646、功能commitd868486。
+
+單交易資料遷移、核心函式/學習紀錄雜湊與權限門檻皆通過；正式測試學生登入、場景、Supabase偏好儲存讀回還原、天氣API、手機與17個重要頁面200及來源一致通過。未代答、重設或發放學習成果。詳 `docs/development/effort-level2-release-20261031.md`。
+
+後續必須以這次755檔或更新正式來源為發布基準，不能再用舊539/433/425檔包覆蓋。主工作區仍保留其他未提交內容；本輪只在獨立發布工作樹提交，main僅同步紀錄。回退需同時考慮前端與考古花資料語意，禁止直接還原舊成長快照蓋掉新成果。
+
+## 2026-11-01 寵物散步／休息偏好已上線
+
+最新正式版已更新為 `dpl_7DQqnJPJDzyLCaF49T8qQR3sWsiH`（769檔），寵物偷偷散步、5分鐘冷卻與刷屏對話都已生效。詳 `docs/development/effort-pet-surprise-release-20261101.md`。後續發布必須沿用769檔或更新正式來源；以下較早的「尚未上線／未套正式DB」保留為歷程，不再代表現況。
+
+### 後續本機工作：偷偷散步小插曲
+
+最新核定已本機實作：每人Supabase伺服器抽籤共用5分鐘冷卻（不滑動延長），1分鐘內3次進頁且在冷卻中顯示「我有好好休息，沒亂跑！」8秒氣泡。新增 `garden-pet-visit.sql`，跨寵物／分頁／裝置共用，單頁只呼叫一次且失敗維持休息。19項測試與三次重整瀏覽器驗證通過；新版隔離伺服器4464，舊4462無新RPC。正式DB與網站尚未更新，詳 `effort-pet-surprise-20261101.md` 最新段落。上線需先套新增SQL再發前端，禁止直接發布studio或髒main。
+
+使用者核准三寵物在保存休息偏好後，下次進頁20%機率於窩前散步、驚訝、兩倍速度回窩，大雨雷雨也能觸發。Codex在 `codex/pet-surprise-20261101`（基準e03433c）整合，不修改學習資料／偏好。Claude Desktop原Code對話／Opus5.5獨占studio的 `src/garden-pet-surprise-v1.js`、`docs/pet-surprise-v1.md` 與三份 `docs/pet-surprise-*-prompt.txt`；Codex不寫這5檔。新角色圖沿原ChatGPT對話，不使用Claude CLI。整合完成前不發布藝術studio整包。
+
+使用者要求回窩休息跨次瀏覽保留。分支 `codex/pet-rest-persistence-20261101`、功能提交 `a25ddb2`，正式部署已更新為 `dpl_wnTX1ou6bMPsYDaV3BAKFV1eQ9vc`。以 CR8 的完整755檔為基準，748檔保持不變，僅7個前端檔更新；後續發布必須以新正式版為基準。
+
+Supabase 新增每隻寵物獨立的 walk/rest 偏好，先儲存成功再切場景，重載直接入窩。天氣強制躲雨不改學生偏好，雨停等待指揮規則保留；舊版未記錄的指令無法回推，更新後選一次即可。10項測試、本機三寵物、雲端預覽與正式頁讀回及重載檢查皆通過，測試偏好已還原，學習成果未改。詳 `docs/development/effort-pet-mode-20261101.md`。
+# 2026-11-02 正式接入中：三上自然解析／延伸／主動複習及5題累積
+
+- 使用者已驗收本機流程，明確授權慶祝動畫、正式接入並驗證後上線；另授權5題自組卷比照延伸題累積。共用10道不同題1延伸葉，答錯計、同題同學期去重。原卷現在正式是考古花，不回退舊葉片版本，保留普通10題以上達標葉。
+- Codex唯一寫入者。Claude僅唯讀複核本輪SQL／UI，不執行命令、網路、憑證、正式操作或寫檔。複核期間凍結此工作樹所有tracked檔案；測試／上傳收據寫原工作區ignored output。
+- 本樹基底f967d755，實際正式來源dpl_6mgAi77pCSyWNmPZJvsd4R2Jf7j5，project prj_eJ1qle57xyilS5MKy6ZS6OuYtyFb。781個完整source entry逐一取得SHA1及大小，針對26個runtime overlay候選；不從dirty主專案整包部署。最新prod來源已覆蓋到受影響檔，保留回報、身份同步、考古花、半葉與花園。
+- 正式SQL是supabase/quiz-learning.sql：新私有表、本人／揭答轉接、累積帳本與獎勵；以備份委派包裝現有6個RPC／helper，非重裝舊SQL。不變學生答案／student_progress／原卷達標帳本。5題卷只認啟用後新答案，不回填舊答；使用可信學習學期。
+- learning完整2單位獎勵置於quiz_rewards.awards之前，避免吸收舊pending半葉；現有garden_growth讀相同awards，可沿用原第二階段和穩定practice_ ID。前端用learning-leaf型別，不作成績或花，未改garden_growth函式或舊成長紀錄。
+- PostgreSQL真實ROLLBACK（合成auth/enrollment在交易內）與既有9張學生資料表前後摘要一致已過；PGlite套用正式43函式快照，兩份全錯5題、5+延伸部分重複、66考古錯題、滿分、普通10題葉／原考古花不變均過。最新完整瀏覽器正在重跑；先前完整已過、最後調整獎勵投影以兼容花園。尚未apply或activate。
+- 證據與固定題包在原樹C:/Users/user/.codex/worktrees/past-exam-production/it-class-tcwu/automation/output/past-extension-production-20261102/；67解析／22重點／44書商來源在同原樹past-full-learning-20261101。private不在clone。db project upxgyusodibaqcrocdzj，正確teacher及原卷hash已核，不交由Claude操作。
+- 下一步：Claude唯讀核權限與去重、瀏覽器動畫／返回／手機→disabled註冊→候選前端逐檔hash與隔離測試→核正式alias未變→啟用精確map＋設定、發布並重查，不留合成資料。不得把fixture auth/transport發布。官方Vercel connector登入正確，機器CLI是另一帳號，發布用connector。
+
+## 2026-11-02 延伸葉與5題卷正式化候選
+
+- 已完成共用10道不同題累積、錯題／主動練習、長葉動畫及教師資料隔離；本機與正式PostgreSQL回滾測試通過。
+- Vercel建立候選及CLI均403，尚未發布或安裝／啟用正式SQL。需恢復本專案發布權限後續做，不能當作已上線。
+- 接續與證據見 [候選紀錄](past-learning-release-20261102.md)；原MEMKEY持續沿用。
+
+## 2026-11-02 中正國中九年級：下載交付與未發布候選
+
+- 使用者確認 115 上第二次段考範圍尚未公告，先依 113、114 上歷年原卷整理。原工作區 `automation/output/zhongzheng-grade9-20261102/past-exams/` 已下載學校 23 份 PDF、62 頁，大小與 SHA-256 全數重核；同層有「考古題整理.html」，上一層有含原卷與索引的 ZIP。114 聽力 PDF 是文字稿，未取得音檔。範圍並列在 HTML，未冒稱今年正式範圍。
+- 南一、翰林、康軒 115 上題庫 ISO 均已下載、SHA-256 核對，位於使用者 Downloads，使用既有登入。私人姓名、班級座號與帳號只保存在主工作區 ignored private 檔，禁止寫入版本庫。
+- 本分支九年級候選有 2716 題、1022 張圖、7 選科。來源與限制詳見 `zhongzheng-grade9-20261102.md`。南一答案僅一份權威 Word bookmark，不可稱雙源驗證；皆未建立可靠知識映射。Claude 首輪僅唯讀來源／程式審查，不代表全題逐題解答驗證。
+- 正式 PostgreSQL migration 與七選科作答均只做 ROLLBACK；未套用九年級 schema、未匯入或啟用正式題庫、未建立正式學生作答。私有 Drive 圖片已上傳，但 Cloudflare Worker 資產表尚未發布；Vercel 九年級亦未發布。
+- 瀏覽器已核桌機及 390／360px，數學分數／幾何、自然公式、國文圖表均正常。5+5 自組卷 UI 測試仍失敗：最後紀錄 `browser-qa-error.private.json` phase `five-0-3`，畫面回到題庫首頁，作答保存 3/5、無 pageerror；原因尚未確認。不得將舊瀏覽器成功收據當作 5+5 通過。測試服務已停止，沒有未結束的瀏覽器自動化。
+- 私有工作腳本與證據在主工作區 `tmp/zhongzheng-grade9-20261102/`。若接續線上功能，先釐清 UI 導航原因、完成最終唯讀複核，再依最新正式基線重新核雜湊；不要整包發布本工作樹或覆蓋其他年級變更。
+
+## 2026-11-02 中正九年級正式上線（取代前述未發布狀態）
+
+- 使用者授權完成測試後上線，現已完成。正式 `dpl_2HTiN2uoLtv7WZCcxzFmk9D5yjiS`，入口 https://it-class-tcwu.vercel.app/grade9/115-1/quiz-library.html 。七選科2716題、30單元卷、113/114上十份第二次段考原卷。詳[發布紀錄](zhongzheng-grade9-20261102.md)。
+- 原卷311選擇欄位自動核對＋6組手寫自我核對。114數學整卷自核不開花；缺音檔的25聽力題暫停；今年範圍未公告、國文跨年教材不同與兩年配分94均已標示。
+- 已新增授權私有名冊一筆，未代學生作答、正式學生答案0。全PG回滾、10卷三次作答、真authenticated角色30場次／7選科／10原卷、1073媒體hash回讀及負向授權、45組手機／桌機、指定數學英語5+5保存錯題得葉均通過。
+- Claude最終唯讀複核已完成；來源及證據限制見紀錄。原362普通版本／59原卷版本摘要不變。最新完整正式787來源加20疊加部署793檔，不能以這個較舊Git基底整包覆蓋正式。
+- 收據在主工作區ignored tmp/zhongzheng-grade9-20261102/ 與 automation/output/zhongzheng-grade9-20261102/；個資僅private。回復先停用本輪資料及場次、必要時回復alias，保留學習紀錄。可靠知識映射與原始聽力音檔待補，不能假稱已完成。
+
+## 2026-11-02 九年級十卷逐題重製：AGY 轉錄、Codex 核對
+
+- 先前十卷主題文為整頁圖片，不能稱已完成逐題轉換。使用者授權先讓 AGY 做 113 國文，通過後轉換其餘九卷，由 Codex 檢查、退修、測試；遇未解問題可請 Claude 複核。使用者另要求關閉本次 chat-mode 視窗，明早驗收。
+- 第一卷 62 格已通過真 PostgreSQL ROLLBACK 與本機瀏覽器全格保存／重載／手機檢查。其餘九卷 386 格已有逐題文字、選項、必要局部圖與補充解析；仍在最終驗證，未啟用新正式版本。113／114 國文原配分各94，不能補成100。114社會48保留原題及官方D溯源，因答案疑義改自我核對，不自動給分。
+- Codex 唯一專案寫入者；AGY 使用受監督 supplied-text 模式，禁止工具及專案讀寫。Claude 只讀複核所提供的數學題文／解析，禁止讀其他檔、執行命令、網路、憑證或正式操作。複核期間凍結本工作樹公開檔案。
+- 私有資料及驗證腳本在主工作區 ignored `tmp/past-convert-agy-20261102/`；十卷候選在 `automation/output/past-convert-agy-20261102/`。不交給 Claude 個資、憑證、媒體私有路徑或學生作答。
+- 公開變更只含局部圖片／畫線的 scoped renderer、版本查詢參數、九年級 KaTeX 載入與固定解析揭答 fallback。部署必須用當時最新正式完整來源疊加本輪 runtime，不得整包覆蓋本舊 Git 基底。尚未可靠對應書商考點，不提供假延伸按鈕。
+- 下一步：Claude 核數學推導，Codex 真 PG 回滾驗全448格、瀏覽器驗作答保存及圖文，修正後再候選部署／正式版本啟用；保留舊版本與既有學生紀錄。正式成功後更新本節狀態。
+
+### 2026-11-03 完成：十卷448格真正逐題化已上線
+
+- 取代上一節的待驗／未啟用狀態。正式 `dpl_FsbfV6edoKeeiqdRWf5NwoMemYDF`，十卷新不可變版本已啟用；429格自動、19格自核，原配分合計988（947自動、41自核）。114社會48原2分僅供溯源，因答案疑義不自動計入；114數學25格含真正扇形單選。
+- AGY轉錄及退修、Codex對原件與必要圖、Claude55格數學文字複核已完成。九卷386格中36格退修不等於嚴格錯誤率。詳[逐題化驗收紀錄](zhongzheng-grade9-transcription-20261102.md)，包含Codex中間失誤及修正，不沿用先前「整頁圖也算完成」的說法。
+- 真PG十卷全對／全錯20次與12表摘要回滾、448格完整瀏覽器保存重載及三寬度、25音訊解碼、1030公式、51媒體角色授權均過。最後兩格圖修正後113數學30格及PG兩次另外重驗，其他九卷文件不變。正式文件／來源完整相等、舊版摘要、函式指紋、11HTTP與十卷角色投影讀回通過，未建立正式測試答案。
+- 保留最新809份完整正式來源及期間13個其他更新，8個runtime疊加後810檔；先前候選未公開，最終先前端後active。舊作答仍釘原版本，驗收請從九年級入口重新開卷。書商題庫2716題仍可獨立練習，未假稱逐題延伸對應已完成。
+- 本輪chat-mode視窗、local fixture分頁及服務已清理。後續若退回題卷，保留新renderer與helper以容納新版本舊作答，不刪紀錄；不要從這個舊Git基底整包覆蓋正式來源。
+
+### 2026-11-03 驗收回報補修：九年級入口接回未完成舊版
+
+- 使用者113國文連結是5組舊卷；新版62項已active，但原start會接回任何未完成版本，故先前「由入口重開」指示不正確。已套用 `supabase/quiz-past-grade9-current-version.sql`，九年級start僅接續active版本；精確request重試及顯式舊attempt維持原版，舊版每組加提示指引另開新版。其他年級接續規則不變。
+- 真authenticated十卷舊／新接續、重試、權限與隱私、12表ROLLBACK、發布後重驗及手機實際5→62項UI通過；原回報連結正式提示已唯讀確認。正式作答／答案／版本／開花摘要不變。只有後端函式修正，前端正式部署仍Fsbf；不要重跑以前假定snapshot函式舊hash的發布腳本。
+
+### 2026-11-03 九卷既有作答複驗與英語圖片修復完成
+
+- 使用者回報的113英語確為新版54項，圖片另有問題。Drive原圖與強制Supabase媒體路由未對齊，補齊51張原始PNG到既定private位置（SHA／MIME／bytes一致，不覆寫、不刪Drive），25音訊原已存在；76檔私有簽名HTTP讀回全驗。
+- 裁切lazy圖未解碼高度0，正式手機頁即使裁切框可見仍不載入；切eager實驗即正常。`applySourceCrop`現在僅對有效裁切圖立即載入，clip和幾何不變。候選十卷448項、177處真私有圖自然載入全過。
+- 最新正式 `dpl_7HzTSFsKXLHqJi1FzAgF29qTfMWH`，810來源只疊加crop一檔，保留其餘809。正式回報英語54項、17圖實測成功，12獨立媒體經正式edge及SHA讀回確認，未送答；正常view計時仍按既有流程。
+- 十卷有保存答案的舊未完成／已完成、新版接續、舊資料雜湊與14表ROLLBACK通過；指定學生實際九年級名冊十卷start全回active，7表ROLLBACK不留新作答。可見帳號與正式網址的英語測試另行核對，不把合成fixture當真學生登入。
+- 詳逐題驗收紀錄新增段落。未來必驗正式backend原始bytes及冷圖自然顯示，不只SQL授權／ticket或本機圖；舊有「全部媒體驗完」說法需限縮於當時實際驗證範圍。不得重跑舊整包發布／hash假設腳本。私有收據在原ignored目錄，測試服務與分頁已清理。
+
+### 2026-11-03 使用者決策：委派也須完整交付條件
+
+- 使用者指出即使交AGY製作，交付條件仍必須完整，否則會漏項，要求寫入SOP。已在`past-exam-playbook.md`新增「委派與完整交付條件」，並在`past-exam-job-template.md`新增委派前／回收後核對表及起始提示詞。
+- 協調者須交完整任務、必要輸出、驗收條件與分工，逐項核對實檔與證據；分派子項不能刪除解析、重點清單／逐題連線、書商配題及功能驗收，其他部分須指定承接者。未處理與查核後無可靠候選分開，必要項待補不能宣稱整卷完整完成；不用教師逐題簽核代替協調者驗收。
+- 主工作區另有untracked舊SOP副本；已只補入相同交付規範、保留原歷史全文，並新增同版交接範本，未覆蓋其他修改。同步收據在ignored `tmp/past-convert-agy-20261102/sop-delegation-sync.private.json`。這次是文件規範更新，不代表九年級的完整學習重點連線／書商配題已補齊。
+
+### 2026-11-03 使用者要求分身02＋Claude獨立審查（進行中）
+
+- 範圍為目前九年級113／114上第二次段考十卷；Codex唯一寫入者與瀏覽器操作者，Claude透過chat-mode supervisor唯讀審查題文、原卷與畫面／系統證據，無Bash、瀏覽器、網路、憑證、部署或寫入權限。不得將證據審查冒稱Claude直接操作網站。
+- 指定分身02已開正式專區，固定target；正式資料、原卷與SHA相符runtime副本及去識別畫面在ignored `.chat-mode/evidence/g9-live-review-20261103/`，不交學生答案、token或簽名網址。先查系統／交付完整性，再按五科分段複核十卷；每段交完整條件及覆蓋表，未看部分必須標出。
+- 審查期間凍結此工作樹tracked檔案；Claude回覆後Codex核實發現並回報，既有題卷與學生紀錄不因審查而更動。各段完成後只關本輪已完成chat-mode viewer，分身02入口留給使用者。
+
+### 2026-11-03 Claude 十卷審查完成：有確定缺陷，尚未修正正式內容
+
+- 六階段十次唯讀呼叫完成，448項文字及來源審查；Git前後均7b94c41，無委派寫入。完整結果見 [獨立審查報告](zhongzheng-grade9-claude-review-20261103.md)，不能再以逐題化測試通過概括為零錯誤。
+- P1：114國文choice-01把原卷「抵」轉成「扺」，解析還誤稱原卷筆誤；應恢復抵並移除錯誤註記。114數學fill-11輸入官方形式8/3π、等價(8π)/3會判錯，8π/3才過；真authenticated判分已重現，7表ROLLBACK不留答案。
+- 114數學fill-11有答前關鍵提示；114社會48手機選項在題幹之前。另有答案倒推式解析、簡體字與底線缺漏。grade9 learning maps仍0，完整學習重點連線與書商配題未完成。
+- 114社會38官方C4與地圖五配對有疑義，待教材查證，不逕改D5；48原自核保留且補A選項位置疑義。114國文17作者專長指責已撤回，不能憑傳記未載推論不會。
+- 113數學計算題補拍已等圖片解碼，390px兩圖與作答欄正常；首張空白是截圖時機問題。114官方聽力稿是證據包漏帶，已補25段腳本與SHA，未真人逐段聽音。現行26必要圖均原題頁，解答圖曝光疑慮已排除。
+- 本輪只完成審查與報告，沒有更動正式內容／部署；應依報告優先修P1，建新版並驗入口及既有作答，保留歷史。chat-mode本輪完成視窗已清，分身02保留入口；私人證據仍在ignored目錄。

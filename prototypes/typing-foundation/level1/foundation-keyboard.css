@@ -1,0 +1,8 @@
+#keyboard .foundation-keyboard{width:100%;max-width:760px;margin:auto;padding:8px;border:1px solid #bae6fd;border-radius:16px;background:#ecfeff;box-sizing:border-box}
+#keyboard .foundation-keyboard .typing-letter-row{display:grid;grid-template-columns:repeat(30,minmax(0,1fr));gap:clamp(2px,.5vw,5px);padding:0;margin:0 0 5px;min-width:0;align-items:stretch}
+#keyboard .foundation-keyboard .typing-letter-key{grid-column:span var(--key-units);width:100%;min-width:0;max-width:none;height:48px;box-sizing:border-box;margin:0;padding:3px 1px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1px;white-space:nowrap;line-height:1.15;font-size:clamp(10px,1.5vw,17px);font-family:ui-monospace,Consolas,monospace}
+#keyboard .foundation-keyboard .typing-letter-key span{font:inherit;line-height:1.15;white-space:nowrap}
+#keyboard .foundation-keyboard .typing-letter-key small{font-size:10px;line-height:1;color:#64748b}
+#keyboard .foundation-keyboard .foundation-space{height:38px;font-size:13px}
+#keyboard .foundation-keyboard .typing-letter-row:last-child{margin-bottom:0}
+@media(max-width:600px){#keyboard .foundation-keyboard{padding:5px}#keyboard .foundation-keyboard .typing-letter-key{height:38px;font-size:10px}#keyboard .foundation-keyboard .typing-letter-key small{font-size:8px}#keyboard .foundation-keyboard [data-key^=Shift]{font-size:8px}#keyboard .foundation-keyboard [data-key=Enter],#keyboard .foundation-keyboard [data-key=CapsLock]{font-size:8px}}

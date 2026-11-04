@@ -7,13 +7,13 @@ const migration=await readFile(new URL('../../supabase/quiz-wrong-questions.sql'
 async function wrong(db,uid,data={},role='authenticated'){
  return db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid||'']);await tx.exec(`set local role ${role}`);return (await tx.query('select public.quiz_wrong_questions($1) as result',[JSON.stringify(data)])).rows[0].result;});
 }
-async function paper(db,{reveal='immediate',mode='practice',group=false,count=2,subject='數學',unit='第一單元'}={}){
- const doc=newDocument();doc.title='錯題驗收';doc.catalog={...doc.catalog,volume:'6年級上學期',subject,unit};
+async function paper(db,{reveal='immediate',mode='practice',group=false,count=2,subject='數學',unit='第一單元',grade=6}={}){
+ const doc=newDocument();doc.title='錯題驗收';doc.catalog={...doc.catalog,volume:`${grade}年級上學期`,subject,unit};
  const template=doc.blocks[0].questions[0];template.explanation=content('原解析 $\\frac{1}{2}$');
  const qs=Array.from({length:count},(_,i)=>({...structuredClone(template),id:crypto.randomUUID(),prompt:content(`合成第${i+1}題`)}));
  doc.blocks=group?[{id:crypto.randomUUID(),material:content('共用材料'),questions:qs}]:qs.map(q=>({id:crypto.randomUUID(),material:content(),questions:[q]}));
  const bank_id=crypto.randomUUID();await quizCall(db,TEACHER,'save',{bank_id,expected_revision:0,document:doc});const v=await quizCall(db,TEACHER,'publish',{bank_id,expected_revision:1});
- const args={session_id:crypto.randomUUID(),version_id:v.id,school_year:115,class_codes:mode==='personal'?[]:['603'],access_mode:mode,reveal,shuffle_options:true};
+ const args={session_id:crypto.randomUUID(),version_id:v.id,school_year:115,class_codes:mode==='personal'?[]:[grade===4?'407':'603'],access_mode:mode,reveal,shuffle_options:true};
  await quizCall(db,TEACHER,'open',args);return {args,qs};
 }
 async function answer(db,uid,p,i,correct=false){const q=p.qs[i];return quizCall(db,uid,'submit',{...p.args,question_id:q.id,response:correct?q.answer.option_id:q.options.find(o=>o.id!==q.answer.option_id).id,request_id:crypto.randomUUID()});}
@@ -35,6 +35,39 @@ test('錯題整理：本人隔離、題組／整卷揭答、固定亂序、關�
   const personal=await paper(db,{mode:'personal',count:1});await assert.rejects(quizCall(db,TEACHER,'join',personal.args),/student_required/);
   await assert.rejects(wrong(db,TEACHER,{grade:6}),/student_required/);await assert.rejects(wrong(db,OTHER_TEACHER,{grade:6}),/student_required/);
   await db.query('delete from public.student_enrollments where email=$1',['student1@example.invalid']);await assert.rejects(wrong(db,studentId(1)),/roster_required/);
+ }finally{await db.close();}
+});
+
+test('四年級錯題：正式讀取路徑接受grade 4、依名冊隔離、保留亂序解析且不改作答',async()=>{
+ const db=await createQuizDb(undefined,{batch4:true});try{
+  // Reproduce the already released grade-4 identity/session support in the synthetic DB.
+  // Leave wrong_questions untouched: this test must catch its separate grade guard.
+  for(const signature of ['quiz_student_identity()','quiz_action(text,jsonb)']){
+   const [{definition}]=(await db.query('select pg_get_functiondef($1::regprocedure) definition',[`public.${signature}`])).rows;
+   await db.exec(definition.replaceAll('[36]','[346]'));
+  }
+  await db.query("update public.student_enrollments set class_code='407' where email='student1@example.invalid'");
+  await db.query("update public.student_enrollments set class_code='301' where email='student3@example.invalid'");
+  const p=await paper(db,{grade:4,count:2,group:true});await quizCall(db,studentId(1),'join',p.args);
+  assert.equal((await wrong(db,studentId(1),{grade:4})).total,0);
+  await answer(db,studentId(1),p,0);
+  assert.equal((await wrong(db,studentId(1),{grade:4})).total,0,'未揭答題組不進錯題');
+  const saved=await answer(db,studentId(1),p,1,true);
+  const before=(await db.query('select * from public.quiz_answers order by attempt_id,question_id')).rows;
+  const list=await wrong(db,studentId(1),{grade:4,subject:'數學',unit:'第一單元'});
+  assert.equal(list.grade,4);assert.equal(list.total,1);assert.equal(list.items.length,1);
+  assert.doesNotMatch(JSON.stringify(list),/option_id|原解析/);
+  const row=list.items[0];const detail=await wrong(db,studentId(1),{grade:4,action:'detail',...row});
+  assert.deepEqual(detail.question.options,saved.document.questions[0].options);
+  assert.deepEqual(detail.review,saved.reviews[0]);assert.equal(detail.response,saved.responses[p.qs[0].id]);
+  assert.equal((await wrong(db,studentId(1),{grade:6})).grade,4,'偽造年級不得改變名冊身分');
+  for(const n of [2,3]){
+   assert.equal((await wrong(db,studentId(n),{grade:4})).total,0);
+   await assert.rejects(wrong(db,studentId(n),{grade:4,action:'detail',...row}),/wrong_question_unavailable/);
+  }
+  await assert.rejects(wrong(db,studentId(1),{grade:5}),/invalid_request/);
+  await assert.rejects(wrong(db,studentId(1),{grade:4},'anon'),/permission denied/);
+  assert.deepEqual((await db.query('select * from public.quiz_answers order by attempt_id,question_id')).rows,before);
  }finally{await db.close();}
 });
 test('錯題科目單元篩選與分頁、不收正確及未答題、拒絕異常參數',async()=>{

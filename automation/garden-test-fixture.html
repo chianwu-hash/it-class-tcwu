@@ -1,0 +1,10 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/shared/effort-garden-v2.css"></head><body><div class="tree-stage">第一級正式樹保留</div><h2 id="detail-title"></h2><script type="module">
+import {createGardenUpgrade} from '/shared/effort-garden-v2.mjs';
+let user='fixture',calls=0,level=2,pet=false,seen=true,pending=null;
+const rewards=[...Array.from({length:110},(_,i)=>({id:'leaf-'+i,kind:i%3?'typing-leaf':'quiz-leaf',title:'合成測試葉 '+i})),...Array.from({length:26},(_,i)=>({id:'flower-'+i,kind:'flower',title:'合成測試花 '+i}))];
+const model={rewards,stats:{leafCount:110,flowerCount:26}};
+const rpc=async(_,p)=>{calls++;if(pending)await pending;if(p.p_action==='seen')seen=true;return{data:{level,petUnlocked:pet,seen,baseline:rewards.slice(0,44).concat(rewards.slice(110,120)),order:rewards,newLeaves:0,newFlowers:0}}};
+const api=createGardenUpgrade({supabase:{rpc},getSession:()=>user?{user:{id:user}}:null,stage:document.querySelector('.tree-stage'),onSelect:r=>document.getElementById('detail-title').textContent=r.title});
+window.fixture={api,model,rewards,hold:()=>{pending=new Promise(resolve=>window.fixture.release=()=>{pending=null;resolve()})},stats:()=>({calls,user}),set:o=>{if('user'in o)user=o.user;if('pet'in o)pet=o.pet;if('seen'in o)seen=o.seen;if('level'in o)level=o.level;},render:()=>api.render(model,'grade3-115-1'),small:()=>api.render({...model,stats:{leafCount:43,flowerCount:10}},'grade3-115-1')};
+await fixture.render();
+</script></body></html>

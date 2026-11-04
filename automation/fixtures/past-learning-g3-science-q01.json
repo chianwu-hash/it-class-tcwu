@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "paperId": "dingxi-114-1-g3-exam1-science",
+  "documentSha256": "f915d39c2e5cb1fb8f9adddef8e1d023c1c3c3b7f680173bc9efe69db280d78d",
+  "groupId": "s1-q01",
+  "questionId": "s1-q01",
+  "expectedAnswer": "X",
+  "source": {
+    "school": "頂溪國小",
+    "academicYear": 114,
+    "semester": 1,
+    "assessment": "上學期期中",
+    "paperPage": 1,
+    "paperSha256": "76ad38e928a1ddd884afa42d8389f1f943bf682e6b103f19c0f445103e16ee39",
+    "keyPage": 1,
+    "keySha256": "093bb39ca515544f24bddf514b244d22fa51cc5faeaa8a6f35b444b26b4856d0",
+    "officialRaw": "X",
+    "mappingBasis": "依原題區分設施本身與其中生物；局部概念標籤，尚未對應書商知識代碼。",
+    "contentOrigin": "AI編寫的補充解析，非官方解答原文"
+  },
+  "explanation": "這題應選 X（不正確）。解說牌、落葉堆肥區的設施本身不是生物。堆肥區裡可能有蚯蚓、昆蟲或很小的生物（微生物），但不能把『裡面的生物』和『設施本身』混在一起。",
+  "concepts": [
+    {
+      "id": "living-and-nonliving",
+      "title": "生物與非生物怎麼分？",
+      "connection": "這題先要判斷：題目說的對象是生物，還是非生物？",
+      "points": [
+        "植物、蚯蚓等是生物；解說牌、水管等設施是非生物。",
+        "觀察對象是否具有生長、需要養分等生命現象，不能只憑它會不會移動來判斷。",
+        "植物不會像動物一樣走來走去，但仍然是生物。"
+      ]
+    },
+    {
+      "id": "facility-and-organisms",
+      "title": "分清楚設施和裡面的生物",
+      "connection": "原題說的是『解說牌、堆肥區的設施』，不是問堆肥區裡有沒有生物。",
+      "points": [
+        "先找出題目真正要判斷的對象，再分類。",
+        "例如：花盆是非生物，花盆裡活著的小草是生物。",
+        "同一個環境可以同時有生物與非生物；有生物住在裡面，不代表整個設施就是生物。"
+      ]
+    }
+  ]
+}

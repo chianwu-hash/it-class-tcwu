@@ -1,0 +1,58 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {randomUUID} from 'node:crypto';
+import {createQuizDb,TEACHER,studentId} from '../lib/quiz-local-db.mjs';
+import {createHandler} from '../../supabase/functions/quiz-media/handler.mjs';
+const bundle=JSON.parse(fs.readFileSync('automation/output/past-exam-production/bundle.private.json','utf8'));
+async function setup(){const db=await createQuizDb(undefined,{batch2:true,batch3:true,batch4:true});await db.exec(fs.readFileSync('supabase/quiz-past-exams.sql','utf8'));await db.exec("update public.student_enrollments set class_code='301' where email in('student1@example.invalid','student2@example.invalid')");await db.query('select public.quiz_past_validate($1)',[bundle.document]);await db.query('insert into public.quiz_past_papers(id,owner_id,grade,school_year,semester,title) values($1,$2,3,115,1,$3)',[bundle.paperId,TEACHER,bundle.document.title]);const version=(await db.query('insert into public.quiz_past_versions(paper_id,sha256,document,provenance) values($1,$2,$3,$4) returning id',[bundle.paperId,bundle.sha256,bundle.document,bundle.provenance])).rows[0].id;await db.query('update public.quiz_past_papers set active_version=$1,enabled=true',[version]);for(const a of bundle.assets)await db.query('insert into public.quiz_media_assets values($1,$2,$3,$4,$5)',[a.url,TEACHER,a.object_path,a.mime,a.bytes]);return {db,version};}
+const call=(db,uid,action,data={},role='authenticated')=>db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid||'']);await tx.exec('set local role '+role);return (await tx.query('select public.quiz_past_action($1,$2) r',[action,JSON.stringify({paper_id:bundle.paperId,...data})])).rows[0].r;});
+const packets=(version,target)=>{let left=target;return bundle.document.groups.map(g=>({group_id:g.id,version,request_id:randomUUID(),confirmed:true,responses:g.fields.map(f=>{if(g.kind==='annotation')return {questionId:f.id,value:{mediaSha256:g.assets[0].sha256,point:{x:.4,y:.3},arrow:{from:{x:.4,y:.3},to:{x:.4,y:.6}}}};const ok=left>=f.points;if(ok)left-=f.points;const wrong=g.kind==='single'||g.kind==='code'?g.choices.find(c=>c.id!==f.answer).id:g.kind==='mark'?!f.answer:g.kind==='sequence'?[...f.answer].reverse():[g.codes.find(c=>!f.answer.includes(c))];return {questionId:f.id,value:ok?f.answer:wrong};})}));};
+async function finish(db,version,id,score){let state;for(const p of packets(version,score)){await call(db,studentId(1),'view',{attempt_id:id,group_id:p.group_id});await db.query("update public.quiz_past_views set started_at=clock_timestamp()-interval '2 minutes' where attempt_id=$1 and group_id=$2",[id,p.group_id]);state=await call(db,studentId(1),'submit',{...p,attempt_id:id});}return state;}
+test('正式RPC：權限/安全投影/原子送答/重作歷史/首次達標葉/舊獎勵合併',async()=>{
+ const {db,version}=await setup();try{
+  await assert.rejects(call(db,null,'list',{},'anon'));await assert.rejects(call(db,TEACHER,'start',{request_id:randomUUID()}),/student_required/);await assert.rejects(call(db,studentId(3),'start',{request_id:randomUUID()}),/paper_unavailable/);
+  const request_id=randomUUID(),first=await call(db,studentId(1),'start',{request_id});assert.equal(first.groups.length,40);assert.equal(first.summary.max,92);assert.equal(first.summary.total,63);assert.ok(!JSON.stringify(first).includes('referenceUrl'));assert.ok(!JSON.stringify(first).includes('answerSource'));assert.equal((await call(db,studentId(1),'start',{request_id})).attemptId,first.attemptId);
+  await assert.rejects(call(db,studentId(2),'resume',{attempt_id:first.attemptId}),/attempt_unavailable/);
+  const p=packets(version,55)[0];await assert.rejects(call(db,studentId(1),'submit',{...p,attempt_id:first.attemptId}),/answer_too_fast/);assert.equal((await db.query('select count(*)::int n from public.quiz_past_answers')).rows[0].n,0);
+  const low=await finish(db,version,first.attemptId,55);assert.equal(low.summary.score,55);assert.equal(low.practice.leafCount,0);assert.equal(low.practice.complete,true);
+  const next=await call(db,studentId(1),'restart',{request_id:randomUUID()}),pass=await finish(db,version,next.attemptId,56);assert.equal(pass.practice.leafCount,1);assert.equal(pass.summary.score,56);assert.equal(pass.practice.history.length,2);
+  const third=await call(db,studentId(1),'restart',{request_id:randomUUID()}),better=await finish(db,version,third.attemptId,92);assert.equal(better.practice.leafCount,1);assert.deepEqual(better.practice.history.map(h=>h.score),[55,56,92]);
+  const rewards=await db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[studentId(1)]);await tx.exec('set local role authenticated');return (await tx.query("select public.quiz_rewards('{\"course_id\":\"grade3-115-1\"}') r")).rows[0].r;});assert.equal(rewards.awards.length,1);assert.equal(rewards.awards[0].source_type,'past_exam');assert.equal(rewards.awards[0].correct,56);
+ }finally{await db.close();}
+});
+test('正式RPC：整組缺欄零寫入、集合逆序重送、媒體按本人及揭答授權、版本不可變',async()=>{
+ const {db,version}=await setup();try{
+  const a=await call(db,studentId(1),'start',{request_id:randomUUID()}),id=a.attemptId;
+  const media=async(uid,url,attempt=id)=>db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');return (await tx.query('select public.quiz_media_access($1,$2) r',[url,attempt])).rows[0].r;});
+  const drawing=bundle.document.groups.find(g=>g.kind==='annotation');await assert.rejects(media(studentId(1),drawing.referenceUrl),/media_unavailable/);assert.equal((await media(studentId(1),drawing.assets[0].url)).backend,'supabase');await assert.rejects(media(studentId(2),drawing.assets[0].url),/media_unavailable/);assert.equal((await media(TEACHER,drawing.referenceUrl,null)).backend,'supabase');
+  let p=packets(version,92).find(p=>p.group_id==='s3-q01');await call(db,studentId(1),'view',{attempt_id:id,group_id:p.group_id});await db.query("update public.quiz_past_views set started_at=clock_timestamp()-interval '2 minutes'");const bad=structuredClone(p);bad.responses.pop();await assert.rejects(call(db,studentId(1),'submit',{...bad,attempt_id:id}),/incomplete_group/);assert.equal((await db.query('select count(*)::int n from public.quiz_past_answers')).rows[0].n,0);
+  await call(db,studentId(1),'submit',{...p,attempt_id:id});assert.equal((await call(db,studentId(1),'submit',{...p,attempt_id:id})).summary.score,5);const changed=structuredClone(p);changed.responses[0].value=!changed.responses[0].value;await assert.rejects(call(db,studentId(1),'submit',{...changed,attempt_id:id}),/submission_conflict/);
+  p=packets(version,92).find(p=>p.group_id==='s3-q07');await call(db,studentId(1),'view',{attempt_id:id,group_id:p.group_id});await db.query("update public.quiz_past_views set started_at=clock_timestamp()-interval '2 minutes'");p.responses[1].value.reverse();await call(db,studentId(1),'submit',{...p,attempt_id:id});p.responses[1].value.reverse();assert.equal((await call(db,studentId(1),'submit',{...p,attempt_id:id})).summary.score,7);
+  p=packets(version,92).at(-1);await call(db,studentId(1),'view',{attempt_id:id,group_id:p.group_id});await db.query("update public.quiz_past_views set started_at=clock_timestamp()-interval '2 minutes'");const marked=await call(db,studentId(1),'submit',{...p,attempt_id:id});assert.equal(marked.records[p.group_id].results[0].correct,null);assert.equal((await media(studentId(1),drawing.referenceUrl)).backend,'supabase');
+  await assert.rejects(db.query("update public.quiz_past_versions set sha256=repeat('a',64) where id=$1",[version]),/immutable_version/);
+  await db.exec('update public.quiz_past_papers set enabled=false');await assert.rejects(call(db,studentId(1),'resume',{attempt_id:id}),/paper_unavailable/);await assert.rejects(media(studentId(1),drawing.assets[0].url),/media_unavailable/);
+  await assert.rejects(db.transaction(async tx=>{await tx.exec('set local role authenticated');await tx.query('select * from public.quiz_past_answers');}),/permission denied/);
+ }finally{await db.close();}
+});
+test('正式RPC：最後一組與獎勵同交易，失敗全部回滾；成功但遺失回應重送只一葉',async()=>{
+ const {db,version}=await setup();try{
+  const id=(await call(db,studentId(1),'start',{request_id:randomUUID()})).attemptId,all=packets(version,56);
+  for(const p of all.slice(0,-1)){await call(db,studentId(1),'view',{attempt_id:id,group_id:p.group_id});await db.query("update public.quiz_past_views set started_at=clock_timestamp()-interval '2 minutes'");await call(db,studentId(1),'submit',{...p,attempt_id:id});}
+  const last=all.at(-1);await call(db,studentId(1),'view',{attempt_id:id,group_id:last.group_id});await db.query("update public.quiz_past_views set started_at=clock_timestamp()-interval '2 minutes'");
+  await db.exec("create function public.past_fail_leaf() returns trigger language plpgsql as $$begin raise exception 'injected_failure';end$$;create trigger past_fail_leaf before insert on public.quiz_past_leaves for each row execute function public.past_fail_leaf()");
+  await assert.rejects(call(db,studentId(1),'submit',{...last,attempt_id:id}),/injected_failure/);assert.equal((await call(db,studentId(1),'resume',{attempt_id:id})).practice.complete,false);assert.equal((await db.query("select count(*)::int n from public.quiz_past_receipts where group_id='s4-q01'")).rows[0].n,0);
+  await db.exec('drop trigger past_fail_leaf on public.quiz_past_leaves');await call(db,studentId(1),'submit',{...last,attempt_id:id});await call(db,studentId(1),'submit',{...last,attempt_id:id});assert.equal((await db.query('select count(*)::int n from public.quiz_past_leaves')).rows[0].n,1);
+ }finally{await db.close();}
+});
+test('正式媒體Edge：考古題走驗權後私有Storage，既有Drive開關不會把新素材誤送Drive',async()=>{
+ const {db}=await setup();try{
+  const attempt=(await call(db,studentId(1),'start',{request_id:randomUUID()})).attemptId,asset=bundle.document.groups.find(g=>g.assets.length).assets[0];let signed=0;
+  const env={SUPABASE_URL:'https://fixture.invalid',SUPABASE_ANON_KEY:'synthetic-anon',SUPABASE_SERVICE_ROLE_KEY:'synthetic-service',QUIZ_IMAGE_BACKEND:'drive',QUIZ_ALLOWED_ORIGINS:'https://example.invalid'};
+  const handler=createHandler({env:k=>env[k],fetcher:async(url,opts)=>{
+   if(url.endsWith('/auth/v1/user'))return Response.json({id:studentId(1),email_confirmed_at:new Date().toISOString()});
+   if(url.endsWith('/rest/v1/rpc/quiz_media_access')){const body=JSON.parse(opts.body);try{return Response.json(await db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[studentId(1)]);await tx.exec('set local role authenticated');return (await tx.query('select public.quiz_media_access($1,$2) r',[body.p_url,body.p_attempt])).rows[0].r;}));}catch(e){return Response.json({message:e.message},{status:400});}}
+   if(url.includes('/storage/v1/object/sign/quiz-media/')){signed++;return Response.json({signedURL:'/object/sign/quiz-media/'+bundle.assets[0].object_path+'?token=synthetic'});}throw Error('unexpected_media_endpoint');
+  }});
+  const read=(url,attempt_id)=>handler(new Request('https://edge.invalid',{method:'POST',headers:{Origin:'https://example.invalid',Authorization:'Bearer synthetic-student','Content-Type':'application/json'},body:JSON.stringify({action:'read',url,attempt_id})}));
+  const response=await read(asset.url,attempt);assert.equal(response.status,200);assert.ok((await response.json()).url.includes('/storage/v1/object/sign/quiz-media/'));assert.equal(signed,1);
+  const reference=bundle.document.groups.find(g=>g.kind==='annotation').referenceUrl;assert.notEqual((await read(reference,attempt)).status,200);assert.equal(signed,1);
+ }finally{await db.close();}
+});
