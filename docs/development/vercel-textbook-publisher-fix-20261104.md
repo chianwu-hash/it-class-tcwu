@@ -1,5 +1,7 @@
 # 課本來源發布入口修正（2026-11-04）
 
+後續更新：檔案排除已改由各專案設定，大檔只警示；目前命令與四個關卡／內嵌設定要求以[本機發布前報告與設定分離](release-report-20261104.md)為準。下文保留早先修正的歷史紀錄，不代表跨專案課本禁令。
+
 這次修正先完成本機驗證，再依使用者指示提交、推送。正式站現有部署不會因本次修改而改變，也尚未驗證雲端套用新版關卡。沒有修改學生資料、登入設定、課程程式或付費方案。
 
 本機與遠端 `main` 歷史已分岔，因此以遠端 `origin/main` 為基準，在獨立工作目錄建立 `codex/vercel-textbook-publisher-fix-20261104` 分支，只帶入本次修正與發布關卡的必要依賴，不強制推送或合併 `main`。`vercel.json` 只停用此分支的 Git 自動部署，未停用其他分支；依據 [Vercel git.deploymentEnabled 官方設定](https://vercel.com/docs/project-configuration/git-configuration)。
