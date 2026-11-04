@@ -279,6 +279,22 @@ const classCardAuth = initClassCardAuth({ courseId: "grade3-115-1", mode: "requi
 
 ---
 
+## 發布規則：只從 main 發布（2026-11-04 起）
+
+> 優先於下方及其他文件中「以凍結發布包為底、只覆蓋本批檔案」的流程。
+
+背景：10/30 曾用舊發布包部署，蓋掉另一個 agent 已上線的內容約 9 分鐘。11/04 起 `main` 是正式網站與資料庫函式的唯一來源。
+
+1. **來源只能是 `main`**：部署目錄必須是 `main` 某個 commit 的乾淨 checkout（`git status --porcelain` 為空）。功能分支先經 PR 合併進 `main` 才能發布。不再從凍結發布包、功能分支、主工作區或任何有未 commit 修改的目錄部署。
+2. **先登記、一次一個**：發布前在 [agent-handoff.md](agent-handoff.md) 頂部「發布登記」新增一列，狀態填「發布中」，寫明 agent、開始時間、`main` commit、基準正式部署 ID、預期變更檔。表上已有別人「發布中」就不得部署或 promote，先問使用者；不得自行把別人的登記改成完成或放棄。
+3. **確認基準**：用 Vercel API 查當下正式部署（`/v9/projects/it-class-tcwu` 的 `targets.production.id`），下載檔案樹（`/v6/deployments/<id>/files`），執行 `node automation/release-tree-diff.mjs --tree <正式樹.json> --ref main`。`different`／`missing` 必須只有本次預期變更；若正式版有 `main` 沒有的內容，**停止**，先把正式版檔案補進 `main`（可用 `automation/release-fetch-files.mjs` 依 SHA1 下載），再重來。
+4. **部署候選版**：在乾淨 checkout 執行 `vercel deploy --prod --skip-domain --yes`（Build Command 會自動跑努力樹關卡）。
+5. **promote 前比對完整檔案樹**：下載候選版檔案樹，執行 `node automation/quiz-release-compare.mjs <正式樹.json> <候選樹.json> <預期變更檔...>`，必須 `ok: true`（無新增、無刪除、差異剛好是預期檔）。接著再查一次 `targets.production.id`，必須仍是第 3 步的基準 ID；不同代表有人在你之後發布，回到第 3 步。
+   - 換行注意：本機 `core.autocrlf=true`，checkout 會把 LF 檔變成 CRLF，Vercel 的 SHA1 會跟著變。若比對多出換行造成的差異，用 `release-tree-diff.mjs --tree <正式樹> --dir <部署目錄>` 確認它們只出現在 `eolOnly`，並在登記與交接中列出；不能把內容差異當成換行差異放行。正式版有 11 個混合換行檔已在 `.gitattributes` 標 `-text` 保存原樣。
+6. **promote 與收尾**：`vercel promote <候選 ID> --yes`，讀回關鍵頁面；把登記列改為「已完成」並寫上新部署 ID 與回滾 ID（第 3 步的基準）。發布失敗或放棄也要改狀態。
+7. **資料庫函式**：函式變更寫成 `supabase/` 下的新 SQL 檔，經使用者同意後套用；套用後立刻執行 `node automation/db-schema-snapshot.mjs` 與 `node automation/db-snapshot-check.mjs --live`，兩者通過再把 `supabase/production-snapshot/` commit 進 `main`。重新安裝時最後套用 `supabase/production-snapshot/functions.sql`。**不可單獨重跑 `supabase/quiz-order-fix.sql`**，它會蓋掉 `quiz_action` 的學習包裝層。詳見 [快照說明](../../supabase/production-snapshot/README.md)。
+8. **工具備註**：本機 Vercel CLI 設定在 `%APPDATA%\xdg.data\com.vercel.cli`，呼叫時加 `--global-config` 指向該資料夾；在 Git Bash 呼叫 `vercel api /v9/...` 要先設 `MSYS_NO_PATHCONV=1`，否則路徑會被改寫成 Windows 路徑，CLI 會改走登入流程。
+
 ## 上線前必要檢查：努力樹升級目錄
 
 **已接自動阻擋**：Vercel 專案與 `vercel.json` 的 Build Command 為 `node release/garden-preflight.mjs`。每次雲端來源建置都直接比對本次發布設定與正式資料庫；漏項、設定差異或讀取失敗會 exit 1，不能發布。凍結來源包在 deploy 前執行 `node automation/prepare-garden-release.mjs <發布包路徑>`，檢查通過才安裝雲端檢查檔案。詳 [自動發布關卡與實測證據](garden-release-gate-20261103.md)；不得用舊通過紀錄、`--prebuilt` 或覆寫建置指令跳過。
