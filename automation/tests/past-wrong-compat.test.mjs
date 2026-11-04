@@ -1,0 +1,52 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {randomUUID} from 'node:crypto';
+import {createQuizDb,quizCall,TEACHER,studentId} from '../lib/quiz-local-db.mjs';
+import {newDocument,content} from '../../shared/quiz-document.mjs';
+import {createPastWrongReview} from '../lib/past-wrong-review.mjs';
+import {createPastLearningProjection} from '../lib/past-learning-fixture.mjs';
+import {createPastPublisherPractice} from '../lib/past-publisher-practice.mjs';
+test('local adapter preserves ordinary wrong detail, filters and merged pagination',async()=>{
+ const db=await createQuizDb(undefined,{batch2:true,batch3:true,batch4:true});
+ try{
+  await db.exec(fs.readFileSync('supabase/quiz-past-exams.sql','utf8'));
+  await db.query("update public.student_enrollments set class_code='301' where email in ('student1@example.invalid','student2@example.invalid')");
+  const bundle=JSON.parse(fs.readFileSync('automation/output/past-exams-autoreview-20261101/dingxi-114-1-g3-exam1-science/bundle.private.json','utf8'));
+  const map=JSON.parse(fs.readFileSync('automation/fixtures/past-learning-g3-science-q01.json','utf8'));
+  await db.query('insert into public.quiz_past_papers values($1,$2,3,115,1,$3,null,true)',[bundle.paperId,TEACHER,bundle.document.title]);
+  const version=(await db.query('insert into public.quiz_past_versions(paper_id,sha256,document,provenance) values($1,$2,$3,$4) returning id',[bundle.paperId,bundle.sha256,bundle.document,bundle.provenance])).rows[0].id;
+  await db.query('update public.quiz_past_papers set active_version=$1',[version]);
+  const uid=studentId(1),rpc=async(action,data)=>db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[uid]);await tx.exec('set local role authenticated');return (await tx.query('select public.quiz_past_action($1,$2) r',[action,{paper_id:bundle.paperId,...data}])).rows[0].r;});
+  const source=await rpc('start',{request_id:randomUUID()});await rpc('view',{attempt_id:source.attemptId,group_id:map.groupId});
+  await db.query("update public.quiz_past_views set started_at=clock_timestamp()-interval '2 minutes'");
+  await rpc('submit',{attempt_id:source.attemptId,version,group_id:map.groupId,request_id:randomUUID(),responses:[{questionId:map.questionId,value:'O'}]});
+  const document=newDocument();document.catalog={...document.catalog,volume:'3年級上學期',subject:'數學',unit:'相容性測試'};
+  const template=document.blocks[0].questions[0];document.blocks=Array.from({length:21},(_,i)=>({id:randomUUID(),material:content(),questions:[{...structuredClone(template),id:randomUUID(),prompt:content('合成題目'+i)}]}));
+  const bank_id=randomUUID();await quizCall(db,TEACHER,'save',{bank_id,expected_revision:0,document});const frozen=await quizCall(db,TEACHER,'publish',{bank_id,expected_revision:1});
+  const session_id=randomUUID();await quizCall(db,TEACHER,'open',{session_id,version_id:frozen.id,school_year:115,class_codes:['301'],access_mode:'classroom',reveal:'immediate',shuffle_options:false,shuffle_questions:false});await quizCall(db,uid,'join',{session_id});
+  for(const q of document.blocks.flatMap(b=>b.questions))await quizCall(db,uid,'submit',{session_id,question_id:q.id,response:q.options.find(o=>o.id!==q.answer.option_id).id,request_id:randomUUID()});
+  const adapter=createPastWrongReview({db,bundle,map,version,project:createPastLearningProjection({bundle,map,version}),isPracticeSession:()=>false});
+  const first=await adapter.read({uid,data:{grade:3,page:0}}),second=await adapter.read({uid,data:{grade:3,page:1}});
+  assert.equal(first.total,22);assert.equal(first.items.length,20);assert.equal(second.items.length,2);
+  assert.equal(new Set([...first.items,...second.items].map(i=>JSON.stringify([i.source_type,i.attempt_id,i.question_id]))).size,22);
+  assert.equal((await adapter.read({uid,data:{grade:3,subject:'數學'}})).total,21);assert.equal((await adapter.read({uid,data:{grade:3,subject:'自然'}})).total,1);
+  const row=first.items.find(i=>i.source_type==='quiz');const detail=await adapter.read({uid,data:{action:'detail',grade:3,...row}});assert.equal(detail.question.id,row.question_id);assert.equal(detail.review.correct,false);assert(!detail.past_review);
+  const answerRows=(await db.query('select * from public.quiz_answers order by question_id')).rows;
+  await adapter.read({uid,data:{action:'detail',grade:3,...second.items.find(i=>i.source_type==='past_exam')}});
+  assert.deepEqual((await db.query('select * from public.quiz_answers order by question_id')).rows,answerRows);
+  await assert.rejects(adapter.read({uid,data:{page:-1}}),/invalid_request/);
+  // The original schema1 single-question map and publisher packet remain usable.
+  const project=createPastLearningProjection({bundle,map,version});
+  const packet=JSON.parse(fs.readFileSync('automation/output/past-learning-publisher-mvp-20261101/publisher-practice.private.json','utf8'));
+  const publisher=await createPastPublisherPractice({db,teacher:TEACHER,bundle,map,version,packet,wrongEntryOnly:true});
+  const projected=publisher.project(project(await rpc('resume',{attempt_id:source.attemptId})));
+  assert.equal(projected.records[map.groupId].learningReview.concepts.length,2);
+  assert(projected.records[map.groupId].learningReview.concepts.every(c=>c.practice.count===2));
+  const plain=adapter.sourceProjection(projected,1).records[map.groupId];assert.equal(plain.learningExplanation,map.explanation);assert(!plain.learningReview);assert.match(plain.wrongReviewHref,/wrong_question=s1-q01/);assert.match(plain.wrongReviewHref,/fixture_student=1/);
+  const args={uid,student:1,action:'start',data:{attempt_id:source.attemptId,version,group_id:map.groupId,question_id:map.questionId,concept_id:map.concepts[0].id,request_id:randomUUID()}};
+  const practice=await publisher.call(args);assert.equal(practice.awardEligible,false);assert.match(practice.url,/wrong_question=s1-q01/);
+  await assert.rejects(publisher.call({...args,uid:studentId(2),student:2}),/attempt_unavailable/);
+  assert.deepEqual((await db.query('select * from public.quiz_answers order by question_id')).rows,answerRows);
+ }finally{await db.close();}
+});

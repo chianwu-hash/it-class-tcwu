@@ -1,3 +1,4 @@
+import {pastFieldInputAids} from './quiz-past-field-aids.mjs?v=20261104';
 import {applySourceCrop} from './quiz-source-crop.mjs?v=20261102-transcribed';
 import {renderMathResponse,mathResponseComplete,mathResponseError} from './quiz-math-response.mjs?v=20261102-math-audio';
 import {renderLocalContent as renderScopedContent} from './quiz-past-content.mjs?v=20261102-transcribed';
@@ -11,13 +12,36 @@ const mediaScope={resolve:resolveAsset,active:()=>active};
 const renderLocalContent=(host,content)=>renderScopedContent(host,content,{mediaScope});
 const $=s=>root.querySelector(s),el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 const button=(text,fn,cls)=>{const b=el('button',text,cls);b.type='button';b.addEventListener('click',fn);return b;};
-let state,index=0,busy=false;const drafts=new Map(),pending=new Map(),reports=new Map();let tool='point',cursor={x:.5,y:.5},arrowStart=null,undo=[];
+let state,index=0,busy=false;const drafts=new Map(),clean=new Map(),pending=new Map(),reports=new Map();let tool='point',cursor={x:.5,y:.5},arrowStart=null,undo=[],draftRequest=null;
 const say=t=>{if(active&&$('#status'))$('#status').textContent=t;};
 const api=request;
 
 const isManual=g=>['annotation','manual'].includes(g.kind);
 const stopAudio=()=>root.querySelectorAll('audio').forEach(audio=>{audio.pause();audio.removeAttribute('src');audio.load();});
-function draft(g){if(!drafts.has(g.id))drafts.set(g.id,g.kind==='mark'?g.fields.map(()=>false):g.kind==='sequence'?g.choices.map(()=>''):g.kind==='manual'?{text:'',strokes:[],confirmed:false}:g.kind==='annotation'?{point:null,arrow:null,mediaSha256:g.assets[0].sha256}:g.fields.map(()=>g.kind==='set'?[]:''));return drafts.get(g.id);}
+function draft(g){if(!drafts.has(g.id)){drafts.set(g.id,g.kind==='mark'?g.fields.map(()=>false):g.kind==='sequence'?g.choices.map(()=>''):g.kind==='manual'?{text:'',strokes:[],confirmed:false}:g.kind==='annotation'?{point:null,arrow:null,mediaSha256:g.assets[0].sha256}:g.fields.map(()=>g.kind==='set'?[]:''));clean.set(g.id,JSON.stringify(drafts.get(g.id)));}return drafts.get(g.id);}
+function dirty(){return active&&state?.draft&&[...drafts].some(([id,value])=>!state.records[id]&&JSON.stringify(value)!==clean.get(id));}
+function draftStatus(){const status=$('#past-draft-status');if(status)status.textContent=dirty()?'有尚未儲存的修改，離開前請按「暫存作答」。':state?.draft?.updatedAt?'雲端草稿已儲存（'+new Date(state.draft.updatedAt).toLocaleString('zh-TW')+'）；尚未送出判分。':'可先暫存作答，下次開啟同一份卷繼續作答；草稿不計分。';}
+const observe=()=>queueMicrotask(()=>{if(active)draftStatus();});
+for(const event of ['input','change','click','pointerup','keydown'])root.addEventListener(event,observe);
+const warn=e=>{if(dirty()){e.preventDefault();e.returnValue='';}};
+window.addEventListener('beforeunload',warn);
+const leave=e=>{const a=e.target.closest?.('a[href]');if(a&&a.getAttribute('href')!=='#'&&dirty()&&!window.confirm('還有未儲存的答案。確定離開？請先按「暫存作答」才能下次接續。'))e.preventDefault();};
+document.addEventListener('click',leave);
+async function saveDraft(){
+ if(busy||!active)return;
+ busy=true;say('正在儲存雲端草稿…');render();
+ try{
+  // Resolve uncertain writes first. Never replace an unacknowledged request ID.
+  if(pending.size){const next=await api('/api/resume',{});if(!active)return;state=next;for(const id of pending.keys())if(state.records[id]){pending.delete(id);draftRequest=null;}}
+  if(draftRequest){const result=await api('/api/draft',draftRequest.packet);if(!active)return;if(result.snapshot)state=result.snapshot;else state.draft=result;draftRequest=null;}
+  const groups=Object.fromEntries([...drafts].filter(([id])=>!state.records[id]));
+  const body={version:state.version,revision:state.draft?.revision||0,groups,currentGroup:state.groups[index].id};
+  draftRequest={packet:{...structuredClone(body),requestId:crypto.randomUUID()}};
+  const result=await api('/api/draft',draftRequest.packet);if(!active)return;if(result.snapshot)state=result.snapshot;else state.draft=result;for(const [id,value] of Object.entries(result.groups))clean.set(id,JSON.stringify(value));draftRequest=null;say('作答已暫存。下次開啟這份卷即可接續，尚未送出判分。');
+ }
+ catch(e){if(active)say('草稿尚未確認儲存成功：'+e.message+' 請保留本頁並重試。');}
+ finally{if(active){busy=false;render();}}
+}
 function currentValue(g){const r=state.records[g.id];return r?(isManual(g)?r.responses[0].value:r.responses.map(x=>x.value)):draft(g);}
 function art(a){const f=el('figure',undefined,'figure');const link=el('a');link.href='#';link.dataset.imageLightbox='';const img=el('img');img.dataset.quizMediaUrl=a.url;resolveAsset(a.url).then(src=>{if(img.isConnected)img.src=src;}).catch(e=>say(e.message));img.alt=a.alt;applySourceCrop(link,img,a.viewBox);link.append(img);f.append(link,el('figcaption',a.alt));return f;}
 function officialText(g,value){if(g.kind==='mark')return value?'應打勾':'不打勾';if(Array.isArray(value))return value.join(g.kind==='sequence'?' → ':'、');return value;}
@@ -49,7 +73,7 @@ function render(){if(!active)return;
  if(g.kind==='single'||g.kind==='short'){
   const stem=el('div',undefined,'material');renderLocalContent(stem,g.promptContent);right.append(stem);
   if(g.kind==='single'){const choices=el('div',undefined,'past-choices');for(const c of g.choices){const row=el('label',undefined,'choice-row student-option'),input=el('input');input.type='radio';input.name='single';input.value=c.id;input.checked=values[0]===c.id;input.disabled=locked;input.addEventListener('change',()=>draft(g)[0]=c.id);const text=el('span',undefined,'option-body');if(c.content.text.trim()===c.id&&!c.content.media.length&&!c.content.layout)text.textContent=c.id==='O'?'正確':c.id==='X'?'不正確':'';else renderLocalContent(text,c.content);row.append(input,el('span',c.id,'option-badge'),text);choices.append(row);}right.append(choices);}
-  else{g.fields.forEach((f,i)=>{const slot=el('div',undefined,'slot'),label=el('label',g.fields.length===1?'你的答案':`（${f.label}）${f.text}`,'field-label');label.htmlFor='short-answer-'+i;if(g.answerFormat==='math-v1'){slot.append(label);renderMathResponse({host:slot,id:'short-answer-'+i,value:values[i],locked,onChange:v=>{draft(g)[i]=v}});feedback(g,i,slot);right.append(slot);return;}const input=el('input');input.id='short-answer-'+i;input.type='text';input.maxLength=2000;input.value=values[i];input.disabled=locked;input.autocomplete='off';input.addEventListener('input',()=>draft(g)[i]=input.value);slot.append(label,input);const hint=g.material+' '+f.text;attachPastInputKeyboard(slot,input,{bopomofo:/注音/.test(hint),punctuation:/標點/.test(hint)});feedback(g,i,slot);right.append(slot);});}
+  else{g.fields.forEach((f,i)=>{const slot=el('div',undefined,'slot'),label=el('label',g.fields.length===1?'你的答案':`（${f.label}）${f.text}`,'field-label');label.htmlFor='short-answer-'+i;if(g.answerFormat==='math-v1'){slot.append(label);renderMathResponse({host:slot,id:'short-answer-'+i,value:values[i],locked,onChange:v=>{draft(g)[i]=v}});feedback(g,i,slot);right.append(slot);return;}const input=el('input');input.id='short-answer-'+i;input.type='text';input.maxLength=2000;input.value=values[i];input.disabled=locked;input.autocomplete='off';input.addEventListener('input',()=>draft(g)[i]=input.value);slot.append(label,input);attachPastInputKeyboard(slot,input,pastFieldInputAids(g,f));feedback(g,i,slot);right.append(slot);});}
   if(g.kind==='single')feedback(g,0,right);
  }else if(g.kind==='mark'){
   right.append(el('p','勾選你認為正確的敘述。','helper'));const list=el('div',undefined,'answer-list');
@@ -88,9 +112,10 @@ function render(){if(!active)return;
  if(index>0)al.append(button('← 上一組',()=>{index--;say('');render();},'quiet'));if(index<state.groups.length-1)al.append(button('下一組 →',()=>{index++;say('');render();},'quiet'));actions.append(al);
  if(saved)actions.append(el('span',isManual(g)?'已保留這次作答・未自動判分':`這組已儲存並核對：${saved.score} 分`,'local-saved'));
  else {const submit=button(busy?'正在儲存…':pending.has(g.id)?'以同一份答案重試':isManual(g)?'完成並儲存作答':'送出這一組',submitGroup,'primary');submit.id='submit';submit.disabled=busy;actions.append(submit);}
+ if(state.draft){const save=button('暫存作答',saveDraft,'quiet');save.id='save-past-draft';save.disabled=busy;al.append(save);const note=el('p',undefined,'helper');note.id='past-draft-status';note.setAttribute('role','status');card.append(note);}
  card.append(actions);
  if(reportRequest){const aid=state.attemptId,key=aid+':'+g.id;if(!reports.has(key))reports.set(key,createQuestionReport({request:reportRequest,context:{source:'past',attempt_id:aid,question_id:g.id},options:g.choices.map(c=>({...c,label:c.id})),valid:()=>active&&state?.attemptId===aid}));card.append(reports.get(key));}
- $('#workspace').replaceChildren(card);
+ $('#workspace').replaceChildren(card);draftStatus();
 }
 function renderDrawing(g,host,locked,value){
  const panel=el('div',undefined,'drawing-panel'),tools=el('div',undefined,'drawing-tools');
@@ -120,10 +145,10 @@ async function submitGroup(){const g=state.groups[index];let packet=pending.get(
   if(g.kind==='annotation'&&(!value.point||!value.arrow)){say('請先放置施力點並畫出箭頭。');return;}
   packet={version:state.version,groupId:g.id,requestId:crypto.randomUUID(),confirmed:g.kind==='mark'?true:undefined,responses:g.fields.map((f,i)=>({questionId:f.id,value:isManual(g)?structuredClone(value):g.kind==='sequence'?[...value]:structuredClone(value[i])}))};pending.set(g.id,packet);
  }
- busy=true;say('正在儲存這一組…');render();try{state=await api('/api/submit',packet);pending.delete(g.id);say(isManual(g)?'已保留作答，請依題目要求檢查；有官方參考時可供對照。':'已儲存這一組，可以看核對結果或繼續下一組。');}catch(e){if(e.code==='invalid_response'){pending.delete(g.id);say('答案格式不符，尚未儲存。請修改答案後再送出。');}else say('儲存結果尚未確認：'+e.message+' 請用同一份答案重試。');}finally{busy=false;render();}
+ busy=true;say('正在儲存這一組…');render();try{const next=await api('/api/submit',packet);if(!active)return;state=next;pending.delete(g.id);draftRequest=null;say(isManual(g)?'已保留作答，請依題目要求檢查；有官方參考時可供對照。':'已儲存這一組，可以看核對結果或繼續下一組。');}catch(e){if(!active)return;if(e.code==='invalid_response'){pending.delete(g.id);say('答案格式不符，尚未儲存。請修改答案後再送出。');}else say('儲存結果尚未確認：'+e.message+' 請用同一份答案重試。');}finally{if(active){busy=false;render();}}
 }
 let restartRequest=null;
-$('#restart').addEventListener('click',async()=>{if(busy)return;busy=true;restartRequest??=crypto.randomUUID();try{state=await api('/api/reset',{requestId:restartRequest});restartRequest=null;drafts.clear();pending.clear();index=0;undo=[];arrowStart=null;say('');}catch(e){say(e.message);}finally{busy=false;render();}});
-return {load(next){state=next;index=Math.min(index,state.groups.length-1);render();},clear(){stopAudio();active=false;drafts.clear();pending.clear();state=null;root.replaceChildren();}};
+$('#restart').addEventListener('click',async()=>{if(busy)return;if(dirty()&&!window.confirm('還有未儲存的答案。要先暫存作答，請按取消。確定另開一次作答？'))return;busy=true;restartRequest??=crypto.randomUUID();try{const next=await api('/api/reset',{requestId:restartRequest});if(!active)return;state=next;restartRequest=null;drafts.clear();clean.clear();pending.clear();draftRequest=null;index=0;undo=[];arrowStart=null;say('');}catch(e){if(active)say(e.message);}finally{if(active){busy=false;render();}}});
+return {load(next){state=next;for(const [id,value] of Object.entries(next.draft?.groups||{})){if(!next.records[id]){drafts.set(id,structuredClone(value));clean.set(id,JSON.stringify(value));}}const found=state.groups.findIndex(g=>g.id===next.draft?.currentGroup);index=found>=0?found:Math.max(0,state.groups.findIndex(g=>!state.records[g.id]));render();draftStatus();},clear(){stopAudio();active=false;window.removeEventListener('beforeunload',warn);document.removeEventListener('click',leave);for(const event of ['input','change','click','pointerup','keydown'])root.removeEventListener(event,observe);drafts.clear();clean.clear();pending.clear();state=null;root.replaceChildren();}};
 
 }
