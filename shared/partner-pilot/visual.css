@@ -1,0 +1,122 @@
+/* Visual layer only. Keep course navigation and question media outside this scope. */
+@scope (.partner-content) {
+ :scope{font-family:inherit;color:inherit;background:transparent;font-size:17px}
+ :scope .notice{background:var(--quiz-tint);color:var(--quiz-primary-dark);font-size:12px;padding:7px 16px}
+ :scope .hero{background:var(--quiz-tint);color:var(--quiz-primary-dark);border-radius:0;border-bottom:1px solid color-mix(in srgb,var(--quiz-primary) 18%,white);padding:0}
+ :scope .partner-hero-inner{max-width:1180px;margin:auto;position:relative;padding:32px 20px 26px;min-height:164px}
+ :scope .partner-hero-copy{max-width:calc(100% - 240px)}
+ :scope .hero h1{font-size:32px;line-height:1.35;font-weight:800;margin:12px 0}
+ :scope .hero p{font-size:16px;font-weight:400;color:#52665d;max-width:34em;margin:8px 0}
+ :scope .hero p:first-child{font-size:13px;color:var(--quiz-primary)}
+ :scope [data-hero-art]{position:absolute;right:26px;bottom:0;width:190px;height:140px;pointer-events:none}
+ :scope .partner-hero-pet{display:block;width:100%;height:100%;object-fit:contain;object-position:right bottom}
+ :scope .partner-record-art,:scope .partner-review-art{display:block;width:150px;height:110px;object-fit:contain;object-position:right bottom;margin:24px 0 0 auto;pointer-events:none}
+ :scope .partner-review-art{width:110px;height:95px}
+ :scope .card{border:1px solid color-mix(in srgb,var(--quiz-primary) 14%,white);border-radius:16px;box-shadow:0 1px 2px #173f3005,0 8px 24px #173f3004;padding:28px;margin:20px 0 24px}
+ :scope h2{font-size:22px;font-weight:800;color:var(--quiz-primary-dark)}
+ :scope h3{font-weight:700}
+ :scope label{font-size:15px;font-weight:700}
+ :scope input,:scope select,:scope textarea{border-color:#bdcec6;border-radius:9px}
+ :scope button{border-radius:10px;font-size:16px;min-height:44px;padding:11px 18px;color:var(--quiz-primary-dark);border-color:color-mix(in srgb,var(--quiz-primary) 25%,white)}
+ :scope button.primary{background:var(--quiz-amber);border:1px solid #d99e14;color:var(--quiz-amber-text);box-shadow:none}
+ :scope button.green{background:var(--quiz-primary);color:white}
+ :scope button:focus-visible,:scope input:focus-visible,:scope select:focus-visible,:scope textarea:focus-visible{outline:3px solid var(--quiz-primary);outline-offset:3px}
+ :scope .actions{gap:10px}
+ :scope .actions button{margin:0}
+ :scope .muted{color:#62756e}
+ :scope .code{color:var(--quiz-primary);font-size:44px;letter-spacing:.18em}
+ :scope .member{border-color:color-mix(in srgb,var(--quiz-primary) 16%,white);border-radius:10px;background:color-mix(in srgb,var(--quiz-tint) 45%,white)}
+ :scope .badge{background:var(--quiz-tint);color:var(--quiz-primary-dark);font-size:13px}
+ :scope .source-paper{color:var(--quiz-primary-dark)}
+ :scope .question-card{border-width:1px;border-radius:16px}
+ :scope .question-card[class*=tone-],:scope .thread[class*=tone-]{border-left-width:3px}
+ :scope .option{border-width:1px;border-radius:10px;background:white;font-size:19px}
+ :scope .option:has(input:checked){border-color:var(--quiz-primary);background:var(--quiz-tint)}
+ :scope .option input,:scope progress{accent-color:var(--quiz-primary)}
+ :scope .shared-scene{background:white;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 18px;align-items:center;padding:20px 24px}
+ :scope .shared-scene>.actions{grid-column:2;grid-row:1/4;align-self:start;justify-content:flex-end}
+ :scope .shared-scene>p{grid-column:1;margin:0;font-size:14px}
+ :scope .shared-scene>h2{grid-column:1;grid-row:1;margin:0;font-size:21px}
+ :scope .shared-scene>details,:scope .shared-scene>progress{grid-column:1/-1}
+ :scope .shared-scene>progress{height:10px}
+ :scope .shared-scene>details>summary{padding:5px 0;font-size:13px}
+ :scope .practice-intro{padding:16px 20px;margin-top:0}
+ :scope .practice-intro h2{display:none}
+ :scope .practice-intro p{font-size:14px;margin:5px 0}
+ :scope .practice-intro button{font-size:13px;padding:9px 12px}
+ :scope .practice-guide{font-size:14px}
+ :scope .practice-guide summary{font-size:13px;color:var(--quiz-primary-dark);padding:6px 0}
+ :scope .learning-tabs{gap:6px;background:none;border:0;box-shadow:none}
+ :scope .learning-tabs button{background:white;font-size:14px}
+ :scope .learning-tabs button[aria-pressed=true],:scope [data-filter][aria-pressed=true]{background:var(--quiz-primary);color:white}
+ :scope .story{border-color:color-mix(in srgb,var(--quiz-primary) 12%,white);background:color-mix(in srgb,var(--quiz-tint) 45%,white);border-radius:14px}
+ :scope .memento{border-width:1px;border-radius:16px}
+ :scope [data-camp-jump]{display:none}
+ :scope[data-stage=practice] .hero .partner-hero-inner,:scope[data-stage=review] .hero .partner-hero-inner,:scope[data-stage=book] .hero .partner-hero-inner,:scope[data-stage=record] .hero .partner-hero-inner{min-height:0;padding-block:22px}
+ :scope[data-stage=practice] .partner-hero-copy,:scope[data-stage=review] .partner-hero-copy,:scope[data-stage=book] .partner-hero-copy,:scope[data-stage=record] .partner-hero-copy{max-width:none}
+ :scope[data-stage=practice] .scope{display:none}
+ :scope[data-stage=practice] .hero h1{font-size:26px}
+ :scope[data-stage=practice] #identity{display:none}
+ /* A quiet meeting place. Real asks determine whether the decorative scene exists. */
+ :scope .camp{padding:24px;scroll-margin-top:16px}
+ :scope .camp-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+ :scope .camp-heading h2{margin:0;font-size:23px}
+ :scope #camp-heading:focus-visible{outline:2px solid var(--quiz-primary);outline-offset:4px;border-radius:4px}
+ :scope .camp-eyebrow{margin:0 0 5px;color:var(--quiz-primary);font-size:12px;font-weight:700;letter-spacing:.05em}
+ :scope .camp-status{white-space:nowrap;font-size:12px;color:var(--quiz-primary-dark);background:var(--quiz-tint);border-radius:20px;padding:5px 9px}
+ :scope .camp-intro{font-size:15px;line-height:1.8;color:#60736b;margin:14px 0 20px}
+ :scope .camp-welcome{position:relative;border-bottom:1px solid color-mix(in srgb,var(--quiz-primary) 18%,white);min-height:158px;padding:9px 118px 19px 0}
+ :scope .camp-tiny-label{font-size:12px;color:var(--quiz-primary)}
+ :scope .camp-welcome h3{font-size:18px;line-height:1.5;color:var(--quiz-primary-dark);margin:10px 0}
+ :scope .camp-welcome p{font-size:13px;line-height:1.9;color:#63776d;margin:0}
+ :scope .camp-pets{position:absolute;right:0;bottom:0;width:112px;height:100px;object-fit:contain;object-position:center bottom;pointer-events:none}
+ :scope .camp-empty-note{font-size:14px;line-height:1.9;padding:14px 0 20px}
+ :scope .camp-chat{border-top:1px solid #e4ece8;padding-top:21px}
+ :scope .camp-chat h3{font-size:18px;color:var(--quiz-primary-dark);margin:0 0 14px}
+ :scope .chat-log{background:color-mix(in srgb,var(--quiz-tint) 35%,white);font-size:14px}
+ :scope .camp-thread{padding:18px;border-radius:12px;margin:18px 0}
+ :scope .camp-thread-heading{display:flex;justify-content:space-between;align-items:center;gap:8px}
+ :scope .camp-thread-heading small{font-size:12px;white-space:nowrap;color:#63776d}
+ :scope .camp-thread h3{font-size:18px;margin:13px 0 10px}
+ :scope .camp-thread .badge{background:#ffffffb8;font-size:12px}
+ :scope .camp-question-note{font-size:15px;line-height:1.9;color:#496354}
+ :scope .camp-thread details{font-size:15px}
+ :scope .camp-thread summary{font-size:13px;color:var(--quiz-primary-dark)}
+ :scope .camp-thread label{font-size:13px;margin-top:18px}
+ :scope .camp-thread textarea{font-size:15px;border-color:#c7d7ce}
+ :scope .camp-thread button{font-size:13px;padding:9px 13px;background:white}
+ :scope .camp-tip{display:inline-block;font-size:11px;color:#718078;line-height:1.6}
+ :scope .reply{font-size:14px;line-height:1.9;border-radius:9px;background:#ffffffc9}
+ @media(max-width:1100px) and (min-width:851px){
+  :scope .camp{padding:20px}:scope .camp-heading{align-items:flex-start;flex-direction:column;gap:9px}
+  :scope .camp-welcome{padding-right:0;padding-bottom:100px}:scope .camp-pets{width:105px;height:90px}
+ }
+ @media(max-width:900px){:scope [data-hero-art]{display:none}:scope .partner-hero-copy{max-width:none}:scope .partner-hero-inner{min-height:0}}
+ @media(max-width:850px){
+  :scope .camp{position:static;max-height:none;scroll-margin-top:12px}:scope [data-camp-jump]{display:inline-block}
+  :scope .camp-welcome{min-height:144px;padding-right:138px}:scope .camp-pets{width:126px;height:105px}
+  :scope .learning-tabs button{flex:1 1 auto;margin:0}
+ }
+ @media(max-width:720px){
+  :scope .partner-hero-inner{padding:22px 20px}:scope .hero h1{font-size:25px}
+  :scope .card{padding:20px}:scope main{margin-top:20px}:scope .hero p{font-size:15px}
+  :scope[data-stage=practice] .hero .partner-hero-inner{padding:12px 20px}
+  :scope[data-stage=practice] .hero h1{font-size:20px;margin:0}
+  :scope[data-stage=practice] .hero p:first-child,:scope[data-stage=practice] #identity{display:none}
+  :scope[data-stage=practice] .hero p[data-hero-sub]{font-size:14px;margin:6px 0 0}
+  :scope .shared-scene{padding:16px;display:block}:scope .shared-scene h2{font-size:19px;margin:10px 0 4px}
+  :scope .shared-scene p{font-size:13px}:scope .shared-scene .actions{gap:6px}
+  :scope .shared-scene .actions button{font-size:12px;padding:8px 10px}
+  :scope .learning-tabs{display:grid;grid-template-columns:1.5fr 1fr 1fr;margin:14px 0}
+  :scope .learning-tabs button{font-size:12px;padding:8px 6px;line-height:1.5}
+  :scope .practice-intro{padding:14px 16px}:scope .practice-intro h2{display:none}:scope .practice-intro p{font-size:13px;margin:4px 0}
+  :scope .practice-intro button{font-size:13px;padding:9px 12px}
+  :scope .partner-review-art{display:none}
+ }
+ @media(max-width:420px){
+  :scope .camp-heading{align-items:flex-start;flex-direction:column;gap:8px}
+  :scope .camp-welcome{padding-right:100px;min-height:160px}:scope .camp-pets{width:94px;height:85px}
+  :scope .camp-welcome h3{font-size:17px}:scope .camp-welcome p{font-size:12px}:scope .camp-welcome p br{display:none}
+  :scope .camp-thread{padding:15px}
+ }
+}
