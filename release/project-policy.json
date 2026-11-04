@@ -8,7 +8,7 @@
   },
   "warningThresholdBytes": 20000000,
   "exclusions": [
-    {"path": "textbooks", "kind": "directory", "reason": "本專案既有本機參考庫，沿用已核對的專案排除範圍"},
+    {"path": "textbooks", "kind": "directory", "reason": "本專案既有本機參考庫，沿用已核對的專案排除範圍", "cliIgnorePatterns": ["textbooks"]},
     {"path": "grade3/S091-Google網路AI好幫手-PDF", "kind": "directory", "reason": "本次資訊課瘦身已核准排除的課本來源", "cliIgnorePatterns": ["*S091-Google網路AI好幫手-PDF*"]},
     {"path": "grade6/S092-Canva魔法工作室PDF", "kind": "directory", "reason": "本次資訊課瘦身已核准排除的課本來源", "cliIgnorePatterns": ["*S092-Canva魔法工作室PDF*"]}
   ],
