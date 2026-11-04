@@ -7,6 +7,9 @@
                         "doc":  "docs"
                     },
     "scripts":  {
+                    "maintenance:daily": "node automation/vercel-maintenance.mjs daily",
+                    "maintenance:weekly": "node automation/vercel-maintenance.mjs weekly",
+                    "maintenance:report": "node automation/vercel-maintenance.mjs report",
                     "release:report": "node automation/release-report.mjs",
                     "release:prepare-files": "node automation/prepare-textbook-free-release.mjs",
                     "release:check": "node release/garden-preflight.mjs",
