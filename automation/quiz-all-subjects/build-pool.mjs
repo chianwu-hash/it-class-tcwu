@@ -2,6 +2,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
 import {validateDocument} from '../../shared/quiz-document.mjs';
 const base='automation/output/quiz/all-midterm-local',out='automation/output/quiz/all-subjects-pool';await fs.mkdir(out+'/qa',{recursive:true});
 const read=async p=>JSON.parse(await fs.readFile(p,'utf8')),hash=x=>createHash('sha256').update(x).digest('hex');
@@ -56,5 +57,9 @@ for(const [folder,grade,subject,publisher] of dataSets){
  }catch(e){pending.push({course:courseId,id:r.id,reason:e.message});}}
  console.log(JSON.stringify({course:courseId,source:rows.length,prepared:added}));
 }
+// 回讀原 DOCX 的注音字型語意；答案與一般 schema 通過不能取代此驗證。
+// 發現未轉換字碼、未知讀音或舊目錄時，必須在覆寫現有產出前停止。
+const chineseFontAudit=JSON.parse(execFileSync('py',['-3','automation/quiz-all-subjects/verify-chinese-fonts.py'],{input:JSON.stringify(pool.filter(r=>['kang-g3-ch','kang-g6-ch'].includes(r.checks.source_catalog))),encoding:'utf8',windowsHide:true,maxBuffer:4*1024*1024}));
+await fs.writeFile(out+'/qa/chinese-font-validation.json',JSON.stringify(chineseFontAudit,null,2),'utf8');
 await fs.writeFile(out+'/pool.json',JSON.stringify(pool),'utf8');await fs.writeFile(out+'/courses.json',JSON.stringify(courses),'utf8');await fs.writeFile(out+'/assets.json',JSON.stringify(assets),'utf8');await fs.writeFile(out+'/pending.json',JSON.stringify(pending),'utf8');
 const report={at:new Date().toISOString(),prepared:pool.length,courses:courses.map(c=>({id:c.id,total:pool.filter(r=>r.course_id===c.id).length,units:Object.keys(c.definition.units).map(u=>({id:u,count:pool.filter(r=>r.course_id===c.id&&r.unit_ids.includes(Number(u))).length}))})),pending:pending.length,pool_sha256:hash(await fs.readFile(out+'/pool.json')),assets:Object.keys(assets).length,newAudio:Object.values(assets).filter(a=>a.mime.startsWith('audio')&&!a.registered).length};if(report.courses.some(c=>!c.total||c.units.some(u=>!u.count)))throw Error('存在未覆蓋科目或單元，請檢查pending');await fs.writeFile(out+'/qa/build-report.json',JSON.stringify(report,null,2),'utf8');console.log(JSON.stringify(report));
