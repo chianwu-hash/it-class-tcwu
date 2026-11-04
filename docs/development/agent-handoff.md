@@ -4,6 +4,7 @@
 
 | 狀態 | agent | 開始時間 | `main` commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
 | --- | --- | --- | --- | --- | --- | --- |
+| 發布中 | Codex-partner-20261104 | 2026-11-04（實際時間由發布腳本登記） | PR #8 合入後之 main，start 鎖定完整 SHA | `dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p` | 夥伴頁／入口、花葉與努力樹模組；首次 main 發布設定，詳發布腳本完整宣告 | 尚未 deploy／promote；正式夥伴旗標關閉 |
 | 基準 | Claude（整合） | 2026-11-04 10:18 | PR #1 已併入 `main`（`468974a`） | `dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p` | — | 尚未從 `main` 發布 |
 | 失敗（自動） | Vercel Git 自動部署 | 2026-11-04 12:31 | `468974a` | `dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p` | — | `dpl_DPCuJGfDL2nqyZYvCidSLJZL4Nm3` 建置失敗，未上線；正式網址仍為基準。之後以 `vercel.json` 關閉 `main` 自動部署 |
 
@@ -15,12 +16,14 @@
 
 # 2026-11-04 夥伴練功正式整合（Codex 實作中）
 
+- 實作 PR #7 已合併（`1a4bc2c`）。正式遷移由此 main commit 套用；回滾交易及提交交易均通過，7 張原作答／進度／樹與裝飾資料表雜湊及不相關 public 函式定義保持。夥伴旗標目前關閉，等對應前端發布驗證後啟用。
+- 正式函式快照擴充至 public 與 partner_pilot，共 139 個函式／97 張表；`db-snapshot-check.mjs --live` 為 `ok:true`。既有 legacy SQL 的 quiz_action 包裝層警告、8 張既有非本次表的來源警告仍保留，沒有新增失敗。
 - 工作區：`D:/projects/it-class-tcwu-worktrees/partner-production-20261104`，分支 `codex/partner-production-20261104`，基底 `99dcff8`。Codex 唯一寫入者；Claude 僅唯讀審查。
 - 使用者授權：所有現行名冊學生、2～4 人邀請碼組隊、訂正補達、紀念葉花直接進原努力樹；既有個人練習功能與資料保留。
 - 變更：`supabase/quiz-partner-production*.sql`、四個年級入口／夥伴頁、`shared/partner-pilot/`、樹獎勵模型與圖像、快照工具；未改原個人答題寫入路徑。
 - 已驗證：PGlite 合成情境，原半葉／基準／已讀／原獎勵序保留，四人平均分題、重複防領、換成員、訂正、20 題兩葉、考古卷一花、手動題排除自動分母、來源停用邊界；隔離 Supabase 四個合成帳號並行答題／四私有訂閱，112 次廣播，三房驗證。
 - 瀏覽器四人流程（含請教、標記、紀錄冊、儲存退出重整）及原寵物／裝飾解鎖回歸通過。Claude 聚焦唯讀複核完成，題源連結缺口已補強。詳 [整合與驗證](quiz-partner-production-20261104.md)。
-- 未驗證：真實學生 Google OAuth 多機、整班流量、正式資料庫套用與發布；不能宣稱已上線。隔離帳號 Google provider 為模擬，非四位真實 OAuth。
+- 未驗證：真實學生 Google OAuth 多機、整班流量、正式前端發布；不能宣稱已上線。隔離帳號 Google provider 為模擬，非四位真實 OAuth。
 - 下一步：Claude 複核現有差異、瀏覽器驗證、PR 合入 main；從 main 套用遷移並更新 production-snapshot／live check；快照 PR；乾淨 main 用發布腳本 start/deploy/promote。遷移先關閉新功能，對應前端驗證後才啟用。
 
 # 2026-10-29 國語題池注音與既有作答已修復
