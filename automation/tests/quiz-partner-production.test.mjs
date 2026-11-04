@@ -39,6 +39,8 @@ test('partner 2/3/4 participants, correction, original tree invariants and acces
  const growth=async n=>{await as(n);return(await db.query("select public.garden_growth('grade3-115-1') data")).rows[0].data};
  await as(1);const old=(await db.query("select public.quiz_rewards('{}') data")).rows[0].data;const before=await growth(1);await growth(1);const baseline=(await db.query('select * from public.garden_growth where user_id=$1',[uid(1)])).rows[0];
  await db.exec(await read('supabase/quiz-partner-production.sql'));
+ // Opt-in: run the whole production scenario again on top of the stability migration.
+ if(process.env.QUIZ_PARTNER_STABILITY==='1')await db.exec(await read('supabase/quiz-partner-stability.sql'));
  await db.exec('update partner_pilot.settings set enabled=true where id');
  for(const n of[0,5,7])await assert.rejects(()=>call(n,{action:'catalog'}),/ACCESS_DENIED/);
  await as(1);check(!(await db.query("select has_schema_privilege('authenticated','partner_pilot','usage') ok")).rows[0].ok,'private schema not exposed');
