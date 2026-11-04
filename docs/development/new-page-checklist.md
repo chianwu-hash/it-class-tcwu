@@ -1,5 +1,15 @@
 # 新頁面功能契約 Checklist
 
+## 努力樹任務目錄同步（2026-11-03 補強）
+
+- [ ] 雲端建置自動執行 `release/garden-preflight.mjs` 並通過；若使用凍結發布包，先跑 `automation/prepare-garden-release.mjs <發布包路徑>`。漏項、設定差異或正式目錄讀取失敗必須阻擋發布，不能以人工勾選取代。流程見 [自動發布關卡](garden-release-gate-20261103.md)。
+
+- [ ] 新增／修改計葉或開花活動時，核對正式頁的 `courseId`、`weekCode`、`activityKey`、總關卡數及 `rewardMode`，同步 `reward-tree-config.js`。
+- [ ] 執行 `node automation/build-garden-catalog.mjs` 產生 SQL；**產生檔案不代表已套用正式資料庫**。審核新增／差異列後，用受保護遷移同步 `garden_reward_catalog`。
+- [ ] 以正式來源快照與資料庫匯出執行 `node automation/audit-garden-catalog.mjs <snapshot-dir>`；缺項與設定差異必須為零。目錄稽核不能只比學生已完成的活動。
+- [ ] 隔離資料庫驗證差一花→達標，學生進入「我的努力樹」自動成長、原花葉保留；重整不重播首次動畫，仍可手動重播。不得用真正學生的 `seen` 操作來消耗首次體驗。
+- [ ] 發布後重新核對正式目錄；新週次的 HTML／設定已部署，不代表資料庫的升級目錄已同步。參見 `effort-garden-catalog-fix-20261103.md`。
+
 > **2026-10-24 使用者核准的新場次模式**：對 `initQuizModule({ mode: 'server' })`，下方「測驗寫入 student_progress」項目改驗 `quiz_attempts/quiz_answers` 的本人作答、教師監看與重整接回；暫不映射努力樹。須額外驗證 API／DOM 未提前含答案、題組延後揭答、固定版本、冪等與網路失敗。既有週頁 scored／practice 不套用此例外。
 
 > **2026-10-06 三年級轉換更新**：教師已指定第 06 週接 Google 登入與努力樹。第 02～06 週改用本人名冊核對、一次性舊成果接回與正式 `student_progress`；下文身分卡／不顯示努力樹的敘述僅適用轉換前。第 01 週免身分例外保留。以 [三年級 Google 契約](grade3-google-course.md) 與已填驗收契約為準；正式 SQL 與網站已於2026-10-06獲授權後完成切換；詳見 [正式切換紀錄](grade3-week06-release.md)。
@@ -116,6 +126,8 @@
 - [ ] **可標記 N/A 的理由僅限**：不是六年級 115-1、第 01 週，或本週沒有上課且未建立任務週卡。理由：`___`
 
 ## 3C. 努力樹整合（若適用）
+
+- [ ] 完成本文件開頭「努力樹任務目錄同步」全部檢查，包含正式資料庫實際套用與發布後比對；缺項、設定差異或驗收證據未齊，不得標記完成上線。
 
 - [ ] 新增支援努力樹的打字活動 → 同次更新 `shared/reward-tree-config.js` 對應課程活動，核對 `courseId`、`weekCode`、`activityKey`、`totalLevels` 與 `pageHref`；週頁沒有努力樹入口也需核對
 - [ ] 打字完成後 → 後台有紀錄，努力樹也有本週成果；目前 N 關對應 N−1 葉與 1 朵魔王花，重新整理後仍一致，不能只查後台就判定完成
