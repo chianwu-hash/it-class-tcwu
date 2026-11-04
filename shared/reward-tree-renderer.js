@@ -1,5 +1,7 @@
 import {rewardTrack,REWARD_SOURCE_PALETTES,sourceFlowerSvg} from './reward-source-colors.mjs';
+import {partnerKeepsakeSvg} from './quiz-partner-rewards.mjs';
 function applySource(element,reward){
+    if(reward?.sourceType==='partner'){element.dataset.partnerReward='true';element.style.setProperty('--partner-art',`url("data:image/svg+xml,${encodeURIComponent(partnerKeepsakeSvg(reward.kind==='flower'))}")`);return;}
     const track=rewardTrack(reward),p=REWARD_SOURCE_PALETTES[track];if(!p)return;
     element.dataset.rewardTrack=track;
     p.leaf.forEach((color,i)=>element.style.setProperty(`--source-leaf-${i}`,color));
@@ -141,5 +143,6 @@ export function selectReward(reward, titleEl, textEl) {
 
 export function safeRewardSourceHref(href){
  if(typeof href!=='string')return false;
+ if(/^\/grade[3469]\/115-1\/partner-practice\.html\?award=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(href))return true;
  return /^\/grade[36]\/115-1\/quiz\.html\?cloud=1&session=[0-9a-f-]{36}$/i.test(href)||/^\/grade[36]\/115-1\/past-exam\.html\?paper=[a-z0-9_-]+&attempt=[0-9a-f-]{36}$/i.test(href);
 }

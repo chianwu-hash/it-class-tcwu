@@ -1,4 +1,4 @@
-// Export the production public schema (definitions only, never table rows) into supabase/production-snapshot/.
+// Export the production public and partner_pilot schemas (definitions only, never table rows) into supabase/production-snapshot/.
 // Reads catalogs only: functions, tables/columns/constraints/indexes, RLS policies, triggers, views, grants.
 // usage: node automation/db-schema-snapshot.mjs [--workdir <dir linked to the project>] [--cli <supabase command>]
 //   default --cli is D:\local-bin\supabase-personal.cmd (personal account, linked to upxgyusodibaqcrocdzj).
@@ -29,10 +29,10 @@ const functions = await query('functions', `
 select p.oid::regprocedure::text as signature, p.proname as name, pg_get_functiondef(p.oid) as definition,
        md5(pg_get_functiondef(p.oid)) as md5, p.prosecdef as security_definer, coalesce(p.proacl::text,'') as acl
 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
-where n.nspname='public' and p.prokind in ('f','p') and ${notExtension('pg_proc', 'p.oid')}
+where n.nspname in ('public','partner_pilot') and p.prokind in ('f','p') and ${notExtension('pg_proc', 'p.oid')}
 order by p.proname, p.oid::regprocedure::text`);
 const tables = await query('tables', `
-select c.relname as name, c.relkind::text as kind, c.relrowsecurity as rls, c.relforcerowsecurity as force_rls, coalesce(c.relacl::text,'') as acl,
+select n.nspname as schema,c.relname as name, c.relkind::text as kind, c.relrowsecurity as rls, c.relforcerowsecurity as force_rls, coalesce(c.relacl::text,'') as acl,
   (select coalesce(json_agg(json_build_object('name',a.attname,'type',format_type(a.atttypid,a.atttypmod),'not_null',a.attnotnull,
      'default',pg_get_expr(ad.adbin,ad.adrelid),'identity',a.attidentity::text,'generated',a.attgenerated::text) order by a.attnum),'[]')
    from pg_attribute a left join pg_attrdef ad on ad.adrelid=a.attrelid and ad.adnum=a.attnum
@@ -41,36 +41,36 @@ select c.relname as name, c.relkind::text as kind, c.relrowsecurity as rls, c.re
   (select coalesce(json_agg(pg_get_indexdef(i.indexrelid) order by pg_get_indexdef(i.indexrelid)),'[]') from pg_index i where i.indrelid=c.oid) as indexes,
   case when c.relkind in ('v','m') then pg_get_viewdef(c.oid,true) end as view_def
 from pg_class c join pg_namespace n on n.oid=c.relnamespace
-where n.nspname='public' and c.relkind in ('r','p','v','m') and ${notExtension('pg_class', 'c.oid')}
+where n.nspname in ('public','partner_pilot') and c.relkind in ('r','p','v','m') and ${notExtension('pg_class', 'c.oid')}
 order by c.relname`);
 const policies = await query('policies', `
-select tablename as table, policyname as name, permissive, roles::text as roles, cmd, qual, with_check
-from pg_policies where schemaname='public' order by tablename, policyname`);
+select schemaname as schema,tablename as table, policyname as name, permissive, roles::text as roles, cmd, qual, with_check
+from pg_policies where schemaname in ('public','partner_pilot') order by tablename, policyname`);
 const triggers = await query('triggers', `
-select c.relname as table, t.tgname as name, pg_get_triggerdef(t.oid) as def, t.tgenabled::text as enabled
+select n.nspname as schema,c.relname as table, t.tgname as name, pg_get_triggerdef(t.oid) as def, t.tgenabled::text as enabled
 from pg_trigger t join pg_class c on c.oid=t.tgrelid join pg_namespace n on n.oid=c.relnamespace
-where n.nspname='public' and not t.tgisinternal order by c.relname, t.tgname`);
+where n.nspname in ('public','partner_pilot') and not t.tgisinternal order by c.relname, t.tgname`);
 const sequences = await query('sequences', `
-select c.relname as name, coalesce(c.relacl::text,'') as acl from pg_class c join pg_namespace n on n.oid=c.relnamespace
-where n.nspname='public' and c.relkind='S' order by c.relname`);
+select n.nspname as schema,c.relname as name, coalesce(c.relacl::text,'') as acl from pg_class c join pg_namespace n on n.oid=c.relnamespace
+where n.nspname in ('public','partner_pilot') and c.relkind='S' order by c.relname`);
 const types = await query('types', `
-select t.typname as name, t.typtype::text as kind, (select coalesce(json_agg(e.enumlabel order by e.enumsortorder),'[]') from pg_enum e where e.enumtypid=t.oid) as labels
+select n.nspname as schema,t.typname as name, t.typtype::text as kind, (select coalesce(json_agg(e.enumlabel order by e.enumsortorder),'[]') from pg_enum e where e.enumtypid=t.oid) as labels
 from pg_type t join pg_namespace n on n.oid=t.typnamespace
-where n.nspname='public' and t.typtype in ('e','d','c') and not exists (select 1 from pg_class c where c.oid=t.typrelid and c.relkind<>'c')
+where n.nspname in ('public','partner_pilot') and t.typtype in ('e','d','c') and not exists (select 1 from pg_class c where c.oid=t.typrelid and c.relkind<>'c')
 order by t.typname`);
 const extensions = await query('extensions', `select extname as name, extversion as version, extnamespace::regnamespace::text as schema from pg_extension order by extname`);
 
 // Functions file: replayable, ends with the exact production ACL per function.
 const aclGrants = (sig, acl) => {
   // Revoke from every managed role first so extra direct grants cannot survive a replay.
-  const lines = [`revoke all on function public.${sig.replace(/^public\./, '')} from public, anon, authenticated, service_role;`];
+  const lines = [`revoke all on function ${sig.split('(')[0].includes('.')?sig:'public.'+sig} from public, anon, authenticated, service_role;`];
   for (const item of acl.replace(/^\{|\}$/g, '').split(',').filter(Boolean)) {
     const [grantee, rest] = item.split('='); if (!rest || !rest.split('/')[0].includes('X')) continue;
-    lines.push(`grant execute on function public.${sig.replace(/^public\./, '')} to ${grantee === '' ? 'public' : grantee};`);
+    lines.push(`grant execute on function ${sig.split('(')[0].includes('.')?sig:'public.'+sig} to ${grantee === '' ? 'public' : grantee};`);
   }
   return lines.join('\n');
 };
-const header = `-- Production function snapshot of Supabase project upxgyusodibaqcrocdzj (public schema).
+const header = `-- Production function snapshot of Supabase project upxgyusodibaqcrocdzj (public and partner_pilot schemas).
 -- Generated by automation/db-schema-snapshot.mjs from pg_get_functiondef(); do not hand-edit.
 -- Install order: run the legacy supabase/*.sql files first (tables, policies), then this file LAST,
 -- so every function ends at the production definition (e.g. quiz_action with ordered next-question lookup).

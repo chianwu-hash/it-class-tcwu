@@ -402,7 +402,8 @@
                 animation: none;
             }
         }
-    </style>
+     .reward[data-partner-reward="true"]{background:transparent var(--partner-art) center/contain no-repeat!important;border-radius:0;clip-path:none;box-shadow:none;filter:drop-shadow(0 2px 2px #715b3244)}
+</style>
 </head>
 <body>
     <main class="page">
@@ -502,11 +503,11 @@
             getRewardTreeCourse,
             getRewardTreeCourses
         } from "./shared/reward-tree-config.js?v=20261102-grade9-release";
-        import { createFullCompletionRows, deriveRewardTreeModel } from "./shared/reward-tree-model.js?v=20261102-milestones";
-        import { renderRewardTree, selectReward } from "./shared/reward-tree-renderer.js?v=20261102-milestones";
+        import { createFullCompletionRows, deriveRewardTreeModel } from "./shared/reward-tree-model.js?v=20261104-partner";
+        import { renderRewardTree, selectReward } from "./shared/reward-tree-renderer.js?v=20261104-partner";
         import { readingRequest, readingTreeData } from './shared/reading-api.js';
         import { homeworkRequest, homeworkTreeData } from "./shared/homework-api.js";
-        import {quizTreeData} from './shared/quiz-rewards.mjs?v=20261102-learning';
+        import {quizTreeData} from './shared/quiz-rewards.mjs?v=20261104-partner';
         import {quizLibraryForEnrollment} from './shared/quiz-grade-route.mjs?v=20261102-grade9-release';
         import {createFoundationProgress} from './shared/typing-foundation-progress.js?v=20261006-google';
         import {foundationTreeData} from './shared/typing-foundation-rewards.js?v=20261102-milestones';

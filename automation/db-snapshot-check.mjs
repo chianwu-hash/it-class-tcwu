@@ -54,8 +54,8 @@ for (const f of sqlFiles) {
 // 3b. tables in production that no supabase/*.sql creates (cannot be rebuilt from this repo)
 const schema = JSON.parse(await fs.readFile(path.join(snapDir, 'schema.json'), 'utf8'));
 const allSql = (await Promise.all(sqlFiles.map(f => fs.readFile(path.join(root, 'supabase', f), 'utf8')))).join('\n').toLowerCase().replace(/\s+/g, ' ');
-const noSource = schema.tables.filter(t => ['r', 'p'].includes(t.kind)).map(t => t.name)
-  .filter(n => !new RegExp('create table (if not exists )?(public\\.)?"?' + n + '"?\\s*\\(').test(allSql));
+const noSource = schema.tables.filter(t => ['r', 'p'].includes(t.kind))
+  .filter(t => !new RegExp('create table (if not exists )?'+(t.schema==='partner_pilot'?'partner_pilot\\.':'(public\\.)?')+'"?' + t.name + '"?\\s*\\(').test(allSql)).map(t=>(t.schema==='partner_pilot'?'partner_pilot.':'')+t.name);
 if (noSource.length) warnings.push(`tables without a CREATE TABLE in supabase/*.sql (definition only in schema.json): ${noSource.join(', ')}`);
 
 // 4. optional live drift check (read-only catalog query)
@@ -63,7 +63,7 @@ if (args.includes('--live')) {
   const cli = opt('--cli', 'D:\\local-bin\\supabase-personal.cmd'), workdir = opt('--workdir', 'D:\\projects\\it-class-tcwu');
   const file = path.join(os.tmpdir(), `snapshot-check-${process.pid}.sql`);
   await fs.writeFile(file, `select p.oid::regprocedure::text as signature, md5(pg_get_functiondef(p.oid)) as md5, coalesce(p.proacl::text,'') as acl, p.prosecdef as security_definer from pg_proc p join pg_namespace n on n.oid=p.pronamespace
-where n.nspname='public' and p.prokind in ('f','p') and not exists (select 1 from pg_depend d where d.classid='pg_proc'::regclass and d.objid=p.oid and d.deptype='e') order by 1`);
+where n.nspname in ('public','partner_pilot') and p.prokind in ('f','p') and not exists (select 1 from pg_depend d where d.classid='pg_proc'::regclass and d.objid=p.oid and d.deptype='e') order by 1`);
   const raw = execFileSync('cmd.exe', ['/d', '/c', cli, 'db', 'query', '--linked', '-o', 'json', '-f', file], { cwd: workdir, encoding: 'utf8', maxBuffer: 64 << 20, stdio: ['ignore', 'pipe', 'pipe'] });
   await fs.rm(file, { force: true });
   const live = new Map(JSON.parse(raw.slice(raw.indexOf('{'), raw.lastIndexOf('}') + 1)).rows.map(r => [r.signature, r]));
