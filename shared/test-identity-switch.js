@@ -1,4 +1,5 @@
 import { supabase, getSession } from './auth.js';
+import { publishTestIdentityChange } from './test-identity-state.mjs?v=20261030-identity-sync';
 
 // SHA-256 of the teacher's own school test account (lower-case email). Only
 // that account sees the switch; the trusted RPC rejects every other caller,
@@ -57,12 +58,17 @@ export async function initTestIdentitySwitch({ container = document.querySelecto
 
     button.addEventListener('click', async () => {
         if (!target) return;
+        const next = target;
         button.disabled = true;
         try {
-            await call(target);
-            window.location.assign(GRADES[target].home);
+            const row = await call(next);
+            const active = (await getSession()).session;
+            if (active?.user?.id !== session.user.id || row.class_code !== (next === 'grade3' ? '307' : '609') || Number(row.seat_no) !== 30)
+                throw new Error('切換結果尚未確認。');
+            publishTestIdentityChange(session.user.id);
+            window.location.assign(GRADES[next].home);
         } catch {
-            status.textContent = '教師測試身分：切換失敗，身分沒有改變。請重新整理後再試。';
+            status.textContent = '教師測試身分：切換失敗或結果尚未確認，請重新整理確認目前身分後再試。';
             button.disabled = false;
         }
     });

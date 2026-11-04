@@ -1,6 +1,9 @@
-import { createAuthenticatedTransport } from './quiz-transport.mjs';
-import { configureQuizMedia } from './quiz-media.mjs';
+import { createAuthenticatedTransport } from './quiz-transport.mjs?v=20261029-batch4';
+import { configureQuizMedia, createMediaScope } from './quiz-media.mjs?v=20261029-load-batch1';
+import { testIdentityRevision } from './test-identity-state.mjs?v=20261030-identity-sync';
 const errors = {
+  report_conflict:'這個回報的內容已變更，請重新開啟題目後回報。',report_rate_limit:'這一小時已送出較多回報，請稍後再試。',
+  report_unavailable:'無法核對這次作答與題目，請重新開啟試卷。',report_changed:'其他老師已更新這筆回報，請關閉後重新查看。',
   paper_name_choice_invalid: '這個主題或角色目前無法使用，請更新後重新選擇。',
   paper_name_locked: '試卷由系統自動命名，不能自行修改名稱。',
   self_pool_empty: '這個範圍目前沒有符合所選難度的題目，請選其他單元或難度。',
@@ -13,6 +16,7 @@ const errors = {
   revision_changed: '草稿已更新，請重新開啟後再固定版本。', bank_unavailable: '無法開啟這份題庫。',
   login_required: '請先登入學校帳號。', teacher_required: '只有教師可以操作。', student_required: '請使用學生帳號加入。',
   roster_required: '這個帳號不在本場次的班級名冊中，請老師確認。', session_unavailable: '找不到這個場次，請確認加入連結。',
+  identity_changed: '測試身分已切換，請等候重新確認年級與進度。',
   wrong_question_unavailable: '目前無法查看這題錯題，請更新紀錄後重試。', invalid_request: '資料格式不符，請更新後重試。',
   attempt_unavailable: '場次已結束或尚未加入，請老師確認。', session_closed: '老師已結束場次，這次答案尚未送出。',
   session_busy: '目前仍有答案正在儲存，請稍候再結束場次。',
@@ -21,6 +25,13 @@ const errors = {
   version_unavailable: '找不到這個固定版本。', session_conflict: '同一場次的設定不同，請重新確認。',
 };
 export const quizError = code => errors[code] || '測驗服務暫時無法完成，請更新狀態或重試。';
+// After an overload signal, hold back reads on this page for 30 seconds so a whole class
+// refreshing at once does not keep the database saturated. Writes keep their manual retry.
+const BUSY_MS = 30000, READS = new Set(['library_sessions','pool_catalog','wrong_questions','rewards','entry_context','version_list','version_get','monitor']);
+let busyUntil = 0;
+const busyError = write => { const s = Math.max(1, Math.ceil((busyUntil - Date.now()) / 1000));
+  const e = new Error(write ? `伺服器忙碌中，這次尚未確認保存。請等 ${s} 秒後再按一次，不要重新整理頁面。` : `伺服器忙碌中，請等 ${s} 秒後再試，不要重新整理頁面。`);
+  e.code = 'server_busy'; e.retryAfter = s; return e; };
 export async function createQuizRequest({ getSession, localStudent = null, local = false } = {}) {
   const auth = local ? null : await import('./auth.js');
   const transport = local ? null : createAuthenticatedTransport({ auth, getSession });
@@ -28,14 +39,15 @@ export async function createQuizRequest({ getSession, localStudent = null, local
     && document.querySelector('meta[name="quiz-media-backend"]')?.content === 'drive';
   const mediaTransport = driveMedia ? createAuthenticatedTransport({auth, getSession, baseUrl:location.origin}) : null;
   let attemptId = null;
-  configureQuizMedia(async url => {
-    const body = { action: 'read', url, attempt_id: attemptId };
+  const readMedia = async (url, context) => {
+    const body = { action: 'read', url, attempt_id: context.attempt_id };
     let result = local ? await localCall('/__quiz-media', body)
       : mediaTransport ? await mediaTransport('/__quiz-drive-media', body)
       : await transport('/functions/v1/quiz-media', body);
     if (result.fallback === 'supabase') result = await transport('/functions/v1/quiz-media', body);
-    return result.url;
-  });
+    return result;
+  };
+  configureQuizMedia(async url => (await readMedia(url,{attempt_id:attemptId})).url);
   if (local && !['127.0.0.1', 'localhost'].includes(location.hostname)) throw new Error('本機模式只可在本機使用。');
   async function localCall(path, body) {
     const response = await fetch(path, { method: 'POST', signal: AbortSignal.timeout(body.action === 'freeze' ? 45000 : 20000),
@@ -44,20 +56,35 @@ export async function createQuizRequest({ getSession, localStudent = null, local
     if (!response.ok) { const e = new Error(quizError(result.error)); e.code = result.error; throw e; }
     return result;
   }
-  return async (action, data = {}) => {
+  const request = async (action, data = {}) => {
     if (local) {
       const result = await localCall(action === 'publish' ? '/__quiz-media' : '/__quiz-rpc', { action: action === 'publish' ? 'freeze' : action, data });
       if(result.warning){const e=new Error(quizError(result.warning));e.code=result.warning;e.retryAfter=result.retry_after;throw e;}
       if (result.attempt_id) attemptId = result.attempt_id;
       return result;
     }
+    if (READS.has(action) && Date.now() < busyUntil) throw busyError(false);
+    const userId = getSession?.()?.user?.id;
+    const identityRevision = testIdentityRevision(userId);
     try {
-      const specialized = {rewards:'quiz_rewards',wrong_questions:'quiz_wrong_questions',compose:'quiz_compose',rename_paper:'quiz_rename_paper',delete_paper:'quiz_delete_paper',pool_catalog:'quiz_pool_catalog'}[action];
+      const specialized = {question_report:'quiz_question_report',monitor:'quiz_monitor',library_sessions:'quiz_library_sessions',version_list:'quiz_version_browser',version_get:'quiz_version_browser',entry_context:'quiz_entry_context',rewards:'quiz_rewards',wrong_questions:'quiz_wrong_questions',compose:'quiz_compose',rename_paper:'quiz_rename_paper',delete_paper:'quiz_delete_paper',pool_catalog:'quiz_pool_catalog'}[action];
       const result = await transport(action === 'publish' ? '/functions/v1/quiz-media' : specialized ? '/rest/v1/rpc/'+specialized : '/rest/v1/rpc/quiz_action',
-        action === 'publish' ? { action: 'freeze', data } : action === 'pool_catalog' ? {} : specialized ? { p_data: data } : { p_action: action, p_data: data });
+        action === 'publish' ? { action: 'freeze', data } : action === 'pool_catalog' ? {} : specialized ? { p_data: action==='version_list'||action==='version_get'?{...data,action:action==='version_get'?'get':'list'}:data } : { p_action: action, p_data: data });
+      if (testIdentityRevision(userId) !== identityRevision)
+        throw Object.assign(new Error(quizError('identity_changed')), {code:'identity_changed'});
       if (result.attempt_id) attemptId = result.attempt_id;
       if(result.warning){const e=new Error(quizError(result.warning));e.code=result.warning;e.retryAfter=result.retry_after;throw e;}
       return result;
-    } catch (e) { if (e.code) e.message = quizError(e.code); throw e; }
+    } catch (e) {
+      if (e.busy) { busyUntil = Date.now() + BUSY_MS; const b = busyError(!READS.has(action)); if (!READS.has(action) && !e.code) b.message = e.message + `（伺服器忙碌，請等 ${b.retryAfter} 秒）`; throw b; }
+      if (e.code) e.message = quizError(e.code); throw e;
+    }
   };
+  request.createMediaScope = (context, options={}) => {
+    const revision = testIdentityRevision(context.user_id);
+    const {valid=()=>true,...rest}=options;
+    return createMediaScope({context,read:readMedia,...rest,
+      valid:()=>valid() && (local || (getSession?.()?.user?.id===context.user_id && testIdentityRevision(context.user_id)===revision))});
+  };
+  return request;
 }

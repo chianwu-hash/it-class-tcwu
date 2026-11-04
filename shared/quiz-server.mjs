@@ -1,5 +1,6 @@
-import { renderContent as renderQuizContent } from './quiz-render.mjs';
+import { renderContent as renderQuizContent } from './quiz-render.mjs?v=20261029-load-batch1';
 import { mergeQuizSnapshot } from './quiz-state.mjs';
+import {createQuestionReport} from './quiz-question-reports.mjs';
 
 // Claude Opus 5.5 原創四套圖形與動作；Codex整合，原型中的題目線索改為中性文字。
 const quizFeedbackMotion = (function () {
@@ -556,7 +557,12 @@ export function initServerQuiz({ selectors, server }) {
   const el = key => typeof selectors?.[key] === 'string' ? document.getElementById(selectors[key]) : selectors?.[key];
   const root = el('container'), lock = el('lock'), content = el('content');
   const workspace = createQuizWorkspace(root);
-  const renderContent = (target, c) => renderQuizContent(target, {
+  let mediaScope=null,mediaView=null,contentCache=new Map(),contentUses=new Map();
+  const renderContent = (target, c) => {
+    const serialized=JSON.stringify(c),index=contentUses.get(serialized)||0;contentUses.set(serialized,index+1);
+    const key=serialized+'#'+index,previous=contentCache.get(key);
+    if(previous){target.append(previous);return previous;}
+    const box=renderQuizContent(target, {
     ...c,
     text: c?.text?.trim() === '書商未提供這一題的詳細解析。'
       ? '這一題目前沒有詳細解析，可以先核對正確答案。' : c?.text,
@@ -564,8 +570,18 @@ export function initServerQuiz({ selectors, server }) {
       alt: media.alt === '書商原圖' ? '圖片'
         : media.alt === '書商原版聽力音檔' ? '聽力音檔' : media.alt,
     })),
-  }, { imageLoading: 'eager' });
+  }, { imageLoading: 'eager',mediaScope,deferMedia:showFullReview });
+    contentCache.set(key,box);return box;
+  };
   let userId = null, generation = 0, state = null, cursor = 0, pending = null, selected = '', busy = false, loadError = '', showFullReview = false;
+  const reportForms=new Map();
+  function report(q){
+    const key=state.attempt_id+':'+q.id,g=generation;
+    if(!reportForms.has(key))reportForms.set(key,createQuestionReport({request:server.request,
+      context:{source:'quiz',attempt_id:state.attempt_id,question_id:q.id},options:q.options,
+      valid:()=>g===generation&&Boolean(userId)}));
+    return reportForms.get(key);
+  }
   let feedbackAnimation = null;
   let seenQuestion=null;
   // 依鼓勵原則撰寫的原創短句，不是阿德勒名言，也不推測孩子是否努力或用了哪個方法。
@@ -628,8 +644,13 @@ export function initServerQuiz({ selectors, server }) {
     if (animate && actor) quizFeedbackMotion.play(actor);
   }
   function render() {
+    const view=state&&`${generation}:${state.attempt_id}:${state.version_id}:${showFullReview?'all':state.document.questions[Math.min(cursor,state.document.questions.length-1)]?.id}`;
+    const changed=view!==mediaView;
+    if(changed){stopAudio();mediaScope?.dispose();contentCache.clear();mediaView=view;
+      mediaScope=state?server.request.createMediaScope?.({user_id:userId,session_id:server.sessionId,attempt_id:state.attempt_id,version_id:state.version_id,generation,view}):null;}
+    contentUses.clear();
     workspace.reset();
-    stopAudio(); root.querySelectorAll('.qfm-actor').forEach(quizFeedbackMotion.stop); root.replaceChildren();
+    root.querySelectorAll('.qfm-actor').forEach(quizFeedbackMotion.stop); root.replaceChildren();
     const status = make('p', ''); status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite'); root.append(status);
     if (!userId) return;
     if (!state) {
@@ -664,7 +685,7 @@ export function initServerQuiz({ selectors, server }) {
         renderContent(article, q.material); renderContent(article, q.prompt);
         article.append(make('p', `你的答案：${q.type === 'single' ? String.fromCharCode(65 + q.options.findIndex(o => o.id === state.responses[q.id])) : state.responses[q.id]}`));
         if (q.type === 'single') q.options.forEach((o, i) => { const row = make('div', undefined, 'preview-option'); row.append(make('strong', `${String.fromCharCode(65 + i)}. `)); renderContent(row, o.content); article.append(row); });
-        renderReview(article, q); root.append(article);
+        renderReview(article, q); article.append(report(q));root.append(article);
       }
       return;
     }
@@ -720,6 +741,7 @@ export function initServerQuiz({ selectors, server }) {
     if (state.complete && cursor === questions.length - 1) actions.append(button('查看整份作答與解析', () => { showFullReview = true; render(); }, 'quiz-primary'));
     actions.append(button('更新儲存狀態', () => load('resume', true), 'secondary quiz-refresh')); article.append(actions); root.append(article);
     workspace.apply({article, saved, complete:state.complete, closed:state.status==='closed'});
+    (article.querySelector('.quiz-reading-panel')||article).append(report(q));
     if (pending) say('這次答案的儲存狀態尚未確認，請以相同答案重試或更新狀態。', true);
   }
   async function load(action, preserveCursor = false) {
@@ -744,7 +766,10 @@ export function initServerQuiz({ selectors, server }) {
       if (!selected.trim()) return say('請先選擇選項或填入答案。', true);
       pending = { question_id: q.id, response: selected, request_id: crypto.randomUUID() };
     }
-    const token = generation; busy = true; render(); say('正在儲存答案…');
+    const token = generation; busy = true;
+    root.querySelectorAll('.quiz-choices input,.quiz-choices textarea,.quiz-actions button').forEach(n=>n.disabled=true);
+    const saving=root.querySelector('#server-submit');if(saving)saving.textContent='正在儲存…';
+    say('正在儲存答案…');
     try {
       const result = await server.request('submit', { session_id: server.sessionId, ...pending, compact: true });
       if (generation !== token) return;
@@ -765,7 +790,7 @@ export function initServerQuiz({ selectors, server }) {
     if (id === userId) return;
     stopQuizLeafCelebration();
     workspace.reset({forget:true});
-    generation++; userId = id; busy = false; state = null; selected = ''; pending = null; loadError = ''; cursor = 0; showFullReview = false; feedbackAnimation = null;seenQuestion=null;
+    generation++; reportForms.clear();userId = id; busy = false; state = null; selected = ''; pending = null; loadError = ''; cursor = 0; showFullReview = false; feedbackAnimation = null;seenQuestion=null;
     if (lock) { lock.hidden = Boolean(id); lock.classList.toggle('hidden', Boolean(id)); }
     if (content) { content.hidden = !id; content.classList.toggle('hidden', !id); }
     render(); if (id) await load('join');

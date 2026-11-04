@@ -1,10 +1,12 @@
-import { initQuizModule } from './quiz-module.js?v=20261029-workspace';
-import { createQuizRequest } from './quiz-api.mjs?v=20261028-performance';
+import { initQuizModule } from './quiz-module.js?v=20261030-question-reports';
+import { createQuizRequest } from './quiz-api.mjs?v=20261030-question-reports';
+import { provideNavIdentity } from './grade6-nav-identity.js?v=20261030-identity-sync';
 import { initImageLightbox } from './image-lightbox.js';
-import {resolveQuizMedia} from './quiz-media.mjs';
+import {resolveQuizImage} from './quiz-media.mjs?v=20261029-load-batch1';
+import { onTestIdentityChange } from './test-identity-state.mjs?v=20261030-identity-sync';
 
 initImageLightbox({ root: document.getElementById('server-quiz'), selector: 'img', initialScale: 0.8, minScale: 0.2, zoomStep: 0.1,
-  resolveImageSource: image => resolveQuizMedia(image.dataset.quizMediaUrl || image.currentSrc || image.src) });
+  resolveImageSource: resolveQuizImage });
 
 const params = new URLSearchParams(location.search), sessionId = params.get('session');
 const local = params.get('local') === '1' && ['127.0.0.1', 'localhost'].includes(location.hostname);
@@ -42,12 +44,12 @@ async function start() {
     await quiz.handleAuthChange({ user: { id: `demo-student-${student}` } }); return;
   }
   // 課程導覽與 OAuth 仍由既有 navbar／navbar-auth 管理。
-  const script = document.createElement('script'); script.src = 'navbar.js?v=20261028-roster'; script.dataset.homework = 'true';
+  const script = document.createElement('script'); script.src = 'navbar.js?v=20261030-identity-sync'; script.dataset.homework = 'true';
   if (cloud) script.dataset.quiz = 'true';
   await new Promise((resolve, reject) => { script.onload = resolve; script.onerror = () => reject(new Error('導覽未能載入，請重新整理。')); document.getElementById('quiz-navbar').append(script); });
   const { initNavbarAuth } = await import('./navbar-auth.js');
   let authGeneration = 0, validatedUser = null, validatingUser = null, practiceRole = null;
-  initNavbarAuth({ onSessionResolved(session) {
+  function handleSession(session, {force=false}={}) {
     const previousId = currentSession?.user?.id || null;
     currentSession = session;
     const id = session?.user?.id || null;
@@ -59,27 +61,31 @@ async function start() {
       ? cloud ? (practiceRole === 'teacher' ? '教師試答｜送出後儲存進度' : practiceRole === 'student' ? '學生練習｜送出後儲存進度' : '正在確認年級與儲存紀錄…') : session.user.email
       : '請先登入 Google 帳號';
     if (!cloud) { quiz.handleAuthChange(session).catch(e => { document.getElementById('entry-status').textContent = e.message; }); return; }
-    if (id && previousId === id && (validatedUser === id || validatingUser === id)) return;
+    if (!force && id && previousId === id && (validatedUser === id || validatingUser === id)) return;
     const token = ++authGeneration; validatedUser = null; validatingUser = id;
     quiz.handleAuthChange(null);
     if (!id) return;
     // Auth callback 中只排程，不在鎖內等待 SDK；年級確認前不加入場次。
     setTimeout(async () => {
       try {
-        const identity = await request('library_sessions');
+        const identity = await request('entry_context',{session_id:sessionId});
         if (token !== authGeneration || currentSession?.user?.id !== id) return;
+        provideNavIdentity({ userId: id, email: currentSession.user.email, row: identity.identity });
         if(identity.role!=='student')throw new Error('考前練功房僅限名冊中的學生帳號使用。');
         const redirect = gradeRoute.quizStudentRedirect(identity, location.pathname, location.search);
         if (redirect) { location.replace(redirect); return; }
         practiceRole = identity.role;
-        document.getElementById('server-quiz').dataset.subject = identity.sessions
-          ?.find(paper => paper.id === sessionId)?.catalog?.subject || '';
+        document.getElementById('server-quiz').dataset.subject = identity.subject || '';
         document.getElementById('quiz-identity').textContent = `${practiceRole === 'teacher' ? '教師試答' : '學生練習'}｜送出後儲存進度`;
         validatedUser = id; validatingUser = null;
         document.getElementById('entry-status').textContent = '';
         await quiz.handleAuthChange(currentSession);
       } catch (e) { if (token === authGeneration) { validatingUser = null; document.getElementById('quiz-identity').textContent = '年級或儲存紀錄尚未確認'; document.getElementById('entry-status').textContent = e.message; } }
     }, 0);
-  } });
+  }
+  onTestIdentityChange(({userId}) => {
+    if(cloud&&currentSession?.user?.id===userId) handleSession(currentSession,{force:true});
+  });
+  initNavbarAuth({onSessionResolved:handleSession});
 }
 start().catch(e => { document.getElementById('entry-status').textContent = e.message; });

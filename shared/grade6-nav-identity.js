@@ -3,11 +3,39 @@
 // Read-only: uses the same self-enrollment RPC as my-tree.html. Teachers or accounts
 // outside the roster keep the email that navbar-auth.js already shows.
 import { supabase, resolveSession } from './auth.js';
+import { onTestIdentityChange } from './test-identity-state.mjs?v=20261030-identity-sync';
 
 const SCHOOL_YEAR = 115;
 let cached = { userId: null, email: null, identity: null };
-let pending = null, rerun = false, generation = 0, expanded = false, listening = false;
+let pending = null, rerun = false, generation = 0, expanded = false, listening = false, provided = false;
 const observed = new Map();
+
+function restoreCachedEmail() {
+    const el = document.getElementById('auth-status');
+    if (cached.email && el?.title?.endsWith('\n' + cached.email)) {
+        el.textContent = cached.email;
+        el.removeAttribute('title');
+    }
+}
+onTestIdentityChange(({userId}) => {
+    if (cached.userId && cached.userId !== userId) return;
+    restoreCachedEmail();
+    generation++;
+    cached = {userId:null, email:null, identity:null};
+    // Page-provided labels must wait for a fresh page RPC, not a competing roster read.
+    if (!provided) refresh();
+});
+
+// Quiz pages already receive the caller's roster row from their own RPC; they hand it
+// over here so the navbar does not issue a second enrollment request per page view.
+export function provideNavIdentity({ userId, email, row }) {
+    if (!userId || !email) return;
+    if (row?.email?.toLowerCase() !== email.toLowerCase()) row = null;
+    if (cached.userId === userId) restoreCachedEmail();
+    generation++;
+    cached = { userId, email, identity: row || null };
+    paint();
+}
 
 async function loadIdentity() {
     const token = generation;
@@ -15,6 +43,7 @@ async function loadIdentity() {
     const user = session?.user;
     if (!user) { cached = { userId: null, email: null, identity: null }; return; }
     if (cached.userId === user.id && cached.email === (user.email || '')) return cached;
+    if (provided) return;
     let row = null;
     try {
         const { data, error } = await supabase.rpc('get_my_student_enrollment', { p_school_year: SCHOOL_YEAR });
@@ -49,11 +78,12 @@ function refresh() {
     return pending;
 }
 
-export function initGrade6NavIdentity({ expanded: fullLabel = false } = {}) {
+export function initGrade6NavIdentity({ expanded: fullLabel = false, provided: pageProvided = false } = {}) {
     expanded = fullLabel;
+    provided = pageProvided;
     if (!listening) {
         listening = true;
-        window.addEventListener('course-navbar:rendered', () => initGrade6NavIdentity({ expanded }));
+        window.addEventListener('course-navbar:rendered', () => initGrade6NavIdentity({ expanded, provided }));
     }
     for (const [node, observer] of observed) if (!node.isConnected) { observer.disconnect(); observed.delete(node); }
     const el = document.getElementById('auth-status');

@@ -4,8 +4,145 @@
 - 215 字型字碼核對、905 題來源／樣式語意檢查、7 項 Python 回歸與兩輪真 PostgreSQL 回滾／提交／正式 resume 通過；初輪獨立覆核發現的 11 字碼已完成第二輪修正，最終 96 題逐題與候選一致。5 題卷已答 5、10 題卷已答 2，正解不洩漏。
 - 本機兩份國語來源目錄及私有 pool 產出已同步。擴充 `automation/lib/quiz_chinese_fonts.py`、新增標準注音對照與建池語意檢查，舊漏轉候選會拒絕；保留其他工作區發布基準，不可整包重裝主工作區 SQL。
 - 詳 [正式修復紀錄](quiz-zhuyin-pool-repair-20261029.md)。私有證據、before 備份與 round2 在 ignored `automation/output/quiz/zhuyin-investigation-20261029/`，沒有提交題目或學生資料。
+# 2026-10-30 已完成：選項帶分數同行排版
+
+- 原題 `hanlin_g6_math_004cf065` 同段整數、分數為不同文字片段；`#server-quiz .student-option .preview-content{display:block}` 誤將內層片段排成區塊。限縮為 `.option-body > .preview-content`，內層恢復既有行內排版，無題庫／作答／分數變更。
+- 本機租約02 Chrome以真實原題重現舊缺陷，新樣式在320／390／640／1103／1280px驗證同行相鄰、無溢出，普通分數／整數／段落／表格保留。正式學校測試帳號同一題1280／390px通過，題目出錯回報按鈕保留、pageerror0；答案／回報0寫入，本次計時寫入已攔截。
+- 正式以最新回報功能部署 `dpl_6JH1WxD6iF9fdCMH9Vhmduq49wWC` 453來源SHA1核對後只疊加CSS及三／六年級答題頁快取版本共3檔。最終 `dpl_3K11Jh65ymHQqT1jpBmKdjYWtgE6` 已promote；353公開檔SHA256通過（3改、350保留），無SQL／Edge／Worker部署。詳見 `quiz-mixed-fraction-20261030.md`，證據在ignored `automation/output/quiz/mixed-fraction/`。
+
+# 2026-10-30 已完成：答題介面題目出錯回報
+
+- 學生在三／六年級一般卷、老師卷、自組卷、整卷回顧、我的錯題及考古題可按「題目出錯回報」，必填文字說明，伺服器自動附本人名冊、固定版本、題目與當時選項順序。前端不提交題幹／正解／身分快照，學生不能讀取回報或教師快照。
+- 後台 `admin-progress.html` 新入口 → `admin-quiz.html#question-reports`；教師可篩選、分頁、查看原題及媒體、標記待處理／處理中／已處理／確認無需修改與備註。使用既有 is_teacher 權限，不另外寄信，不修改正式題庫或既有作答。
+- 新 SQL `supabase/quiz-question-reports.sql`：獨立 RLS 表、本人 submit、request_id 重試、每人每小時20筆、教師樂觀鎖更新。媒體包裝保留原函式為 `quiz_media_access_before_reports`，教師以回報 id 僅可看該題媒體；Edge／Drive Worker 不需改。不可重灌舊 media／batch4 而移除最新授權鏈及 library_visible。
+- 合成 PGlite 權限／重試／限流／固定順序／後台競爭／媒體／考古題測試；凍結包租約瀏覽器實測三個入口、回報文字保留、重試、後台處理、390px、換人清空、純文字及pageerror0。正式PG回滾與套用均通過一般卷／考古題／媒體測試，所有測試紀錄回滾，12類既有表雜湊不變，正式題目與進度未改。
+- 正式以當時最新 `dpl_3Ab6ZKnw7M8oLkC8R6ikUAuG4GJL` 450個來源檔SHA1驗證後疊加21檔，保留其他正式第09週與考古題音檔更新。最終按鈕版 `dpl_6JH1WxD6iF9fdCMH9Vhmduq49wWC` 已promote，正式353公開檔SHA256通過（21改、332保留）。本次來源commit不混入前述其他改動。
+- 正式租約02 Chrome 學校測試帳號驗證答題按鈕、文字輸入、390px及學生後台鎖定，pageerror0；只接回原attempt，view_question攔截防止更動計時，回報／答案0寫入。驗收頁已關閉並釋放租約。
+- 詳見 `docs/development/quiz-question-reports-20261030.md`；工具 `automation/quiz-reports/`，證據與凍結包在 ignored `automation/output/quiz/question-reports/`。回退前端可保留資料表及授權包裝，不刪學生已送出的回報。
+
+# 2026-10-30 已完成：六年級英語改 Unit 1、Unit 3
+
+- 使用者指定本次六年級英語考 Unit 1 和 Unit 3，老師卷、自組卷均已正式更新。分支 `codex/g6-english-u1-u3`，同一工作區基於 `dace148`；不重灌先前題庫／知識分類，不從 dirty 主專案部署。
+- 康軒 WW7 原始章節 **03=Review 1，04 才是 Unit 3 From Farm to Table**。從既有已驗 SHA 的完整原光碟另抽 04 共 170 原題，91 獨立單選逐題 metadata／Word 答案交叉核對；14 題解析引用位置排除，77 題正式加入，原 Unit 1 的 77 題不變。新題全部帶原知識點與 reliable 分類；原圖 39／原 MP3 37，沒有代寫題目或生成音檔。
+- 新老師 Unit 3 卷 10 題（2易6中2難、3聽力），session `6e6c4872-0388-4b35-80f7-fedfec2248db`，version `754a0d16-31e2-4a39-9d0a-ab93ae65ea92`，沿用603／604／609。Unit 1 原卷不動；Unit 2 77 題設 usable=false 且原老師卷 library_visible=false，course 選單單元僅1／3。原 Unit2 文件、答案與進度保留，原連結仍可 join／resume／回顧。
+- 新增 `quiz_sessions.library_visible` 預設true；`supabase/quiz-practice-visibility.sql` 只在現有 `quiz_library_sessions` 的 practice 清單加入可見性判定，未把 join/resume 權限綁在清單標記。不要以改 version_id 或清空 class_codes 取代已作答試卷。後續重跑舊 batch4 會覆蓋此條件，必須保留本次規則。
+- 圖片沿用私有 Drive＋Cloudflare，帳號核對、39新圖下載SHA通過；Worker保留即時原程式與7個bindings，以inherit增補allowlist5777→5816。39新圖＋1舊圖透過Worker下載SHA與未簽／過期／私有cache拒絕通過。37 MP3仍在Supabase私有bucket並下載SHA驗證。原1019個媒體登錄保持不變。
+- 本機／正式PG rollback皆通過36自組範圍難度題數組合、重試、Unit2拒絕、老師10題、11媒體引用驗權與既有Unit2 attempt resume；測試fixtures全部rollback。正式單交易apply後，再匯出驗原154列除Unit2 usable外不變、新77吻合、active154及老師1／3、兩份舊文件保留。無Auth／RLS／評分／葉片變更，無Vercel前端部署。
+- 已完成本人學校測試帳號Google OAuth，正式Chrome60930驗老師卷與composer各Unit1／3（各77題），390px無溢出、pageerror0；只讀清單／選單，未建作答。AI分身02已斷線、驗收頁自關、租約釋放，未接管01其他工作。詳細來源、流程與測試見 `docs/development/quiz-g6-english-u1-u3-20261030.md`，工具在 `automation/quiz-english-scope/`；所有題幹／答案／媒體／SQL／報告在ignored `automation/output/quiz/g6-english-u1-u3/`。
+
+# 2026-10-30 已完成：六年級四科學習重點接入正式題庫
+
+- 使用者要求補齊並核對六年級國語、英語、自然、社會學習重點，啟用錯題延伸。獨立分支 `codex/g6-extension-knowledge`，工作區仍 `C:/Users/user/.codex/worktrees/quiz-identity-sync/it-class-tcwu`，基於上次已推送 `6521b92`；只增本次分類清冊、工具、驗證與文件。
+- 正式已套用 930 題分類、928 題 reliable；自然 `675931` 兩項敘述疑義、社會 `1504811` 題幹與選項不符，保留待查且排除延伸。未改原題、答案、解析、source version、usable、舊試卷、作答、葉片、SQL 函數或 RLS。前端不需另部署，延續身分同步版本。
+- 康軒原 metadata 有 KNOW_SPOT，先前 builder 未接上；本次原題 ID／課次／知識代碼逐筆核對，保留國語課文錨點。南一以原章節／課綱交叉核對自然 140／社會 289 題題幹與選項，逐題列出 32／45 細分類。清冊 `automation/quiz-knowledge/g6-reviewed.json` 不含題幹答案副本；review SHA `e90a44644e198404438193d17a5622da4a1f001c8bcea6bb566c4cae291847a6`。
+- **實際可延伸的來源題數：國語 4、英語 152、自然 41、社會 60。不是四科所有題目都可延伸。** 仍須同科同重點、不同題族、難度不提高且候選具書商詳細解析。國語 347 題僅 7 題有詳細解析；不偽造 publisher_explanation。原截圖颱風路徑題雖已分類，該組沒有解析候選，按鈕仍不顯示。後續提高覆蓋需要另補並核對解析／題目。
+- 三項 Node 檢查、本機真 SQL 八個原 ID／alias 錯題→延伸情境、他人拒絕、同 request 重試、疑義題排除、重套用拒絕、12 份一般易中難組卷通過。正式 DB 同樣八個真 join／submit／detail／compose 情境全部 rollback，受保護資料摘要不變；其後正式單交易 apply，前後檢核所有其他 quiz 表、其他 pool／membership 與題目非分類欄位不變。正式重新匯出 930 題指紋、四課程、三 RPC 未變，四科目錄 extension_available 均 true。
+- 私有 before／after、SQL 與結果在 ignored `automation/output/quiz/identity-sync/`。正式已 apply，不要重跑原 apply 或舊全科 deploy；guard 會拒絕已套用資料。後續須新快照、新核對、新增量，不能整表還原。詳 `docs/development/quiz-g6-knowledge-20261030.md`。本機既存 `tmp/quiz-runtime` junction 未提交，不處理其他修改。
+
+# 2026-10-30 已完成：測試身分切換與自組卷同步
+
+- 使用者要求先修「切換身分後，自組卷頁面仍顯示另一個身分」。原因為同一 Google user ID 切換 30730／60930 時，舊分頁的 auth 快路徑、導覽名冊與組卷目錄沒有失效。舊版 Chrome 合成流程已重現；正式 DB 同帳號 3→6→3 交易驗證正常並 rollback。
+- 獨立工作區 `C:/Users/user/.codex/worktrees/quiz-identity-sync/it-class-tcwu`，分支 `codex/quiz-identity-sync`，基於最新 `2dedd5d`；不混入前次注音提交或主工作區其他修改。變更包含身分修訂碼通知、頁面重新驗證／清除舊目錄、隔離延遲回應與媒體、切換結果核對及必要版本字串。未改 auth.js／SQL／RLS／學生作答。
+- 正式已 promote `dpl_BbRiddNNbQD1YrrPaPewqWSdxSnh`，前版 `dpl_TXYUw4KvyECaqRzrgSZCkrJAErLv`。先核對前版 254 公開檔，再從其完整凍結包僅覆蓋 15 個執行檔；候選 15 檔 SHA 通過。正式來源隔離 Chrome 的雙向切換、延遲回應、組卷與卡片、BFCache、切換失敗、focus／TOKEN_REFRESHED、390px 全通過，pageerror 0。Auth／RPC 為合成替身，正式 SQL 另以 rollback 探測，不冒稱本人 OAuth 實答。
+- 10 項 Node 回歸通過。可重跑 `automation/tests/quiz-identity-switch-browser.cjs`；須經 shared browser lease 與 `run-background.cjs`，傳入兩個預建精確 target，允許 parent tab 初始化，避免背景 rAF 節流及轉頁過早讀 DOM。
+- 更新前已載入舊程式的分頁需重新整理一次。詳 `docs/development/quiz-identity-sync-20261030.md`；發布、SHA、Chrome 報告保存在 ignored `automation/output/quiz/identity-sync/`。後續部署仍不得從舊 dirty 主專案整包覆蓋。
+
+# 2026-10-30 已完成：113／114上學期期中考20卷開放
+
+- 使用者最新指示取代下方舊範圍：三、六年級，只開113-1／114-1 exam1共20卷；已完成114-1 exam2共10卷列「未開放區」，保留所有版本／歷次／葉片。先前沒有處理下學期。
+- 新證據目錄 `automation/output/past-exams-midterms`，原114批次驗收證據不覆寫。`automation/past-exams-midterm-scope.py`已驗40來源檔、20期中配對，渲染113期中10卷。
+- 目錄未開放區已部署`dpl_TXYUw4KvyECaqRzrgSZCkrJAErLv`；正式114期中10開、期末10停。後端list可回同年級enabled旗標的安全metadata；start／resume／submit／media停用檢查保留。254正式靜態SHA及本機／候選驗證bytes／正式目錄6組皆通過。
+- 113十卷已逐頁獨立QC，329組488欄50暫停，84去重私有PNG逐張下載驗SHA；10卷先disabled註冊。桌機／390／360全部題組、重作與歷次葉0→1→1通過；真PG十卷各三次交易後rollback，9資料表摘要不變；73回歸及最後22專項皆過。11:18 gate後activate、11:20正式data驗證通過，各年級10開5未開放，共20開10未開放；原20個版本／provenance、私有表權限均保留，無合成auth資料。
+- 使用者已查看113六年級英語原卷，明確判定頁首「下學期」誤植，依官方目錄歸113上期中；原PDF／SHA保留，decision與issues記錄，不再是未決問題。六年級數學原印100、逐題101，明載差異、不改原配分；3個官方矛盾欄7分暫停。六年級自然第6題不同版暫停。
+- Claude唯讀packet `.chat-mode/midterm-review` HEAD `64bba1357ba04e7bee8783412ce516851b2fb60c`，00及02–09轉錄完成，三年級英語由Codex直接轉錄。Codex已獨立查看原頁／裁圖、修復共同材料與鄰格答案洩漏。各`reviewed.private.json`為最終來源，勿重跑一次性轉錄／QC腳本覆蓋修正。
+- 詳[本輪來源、驗證及發布紀錄](past-exams-midterms-20261030.md)；本機校對總覽`automation/output/past-exams-midterms/index.private.html`含私有答案。新cloud工具有inspect／visibility／upload／register／activate；不要重跑inspect覆蓋before或register重複insert。Supabase CLI臨時角色建立必須序列執行，並行曾造成password authentication failed，失敗證據保留。
+- 正式alias再次核對仍為TXY版本，沒有再從dirty主專案部署；本輪約69分鐘（10:11 scope至11:20正式驗證，不含前輪下載／轉檔）。自有4423／4424 server已停、測試頁自關、worker租約已釋放；其他對話租約不碰。`deactivate`僅停本次113十卷且保留所有紀錄。記憶沿用同一MEMKEY與id `d1491e03-ff0c-4c9a-b096-255e22b831b2`。
+
+# 2026-10-30 前次完成：114學年度考古題19份已正式開放
+
+- 使用者授權的114上三、六年級各10卷已完成；新增19卷，原三年級期中自然pilot保留。113未轉換、未發布。本次學習紀錄115上；完整單次自動分達60%首次一葉，重作與歷次保留，不合併多次答案，同卷同學期／跨內容版本不重領。
+- 正式deployment `dpl_7MN16pxfnz6SwNHFBQ6GUquYAwtf`，https://it-class-tcwu.vercel.app；三、六年級`grade{3,6}/115-1/quiz-library.html#past-exams`各10卷。教師原預覽頁現可選自己擁有的20卷。前版`dpl_4z2gMQ47cuazJ5bgVJeSpU9bR4B7`。
+- 新增19卷最終648題組952欄、94個暫停項（82個缺原音聽力，另有原卷／解答矛盾或歧義）；106個去重私有PNG逐張上傳／下載驗SHA。各卷均verified，原文／來源頁／原檔與轉檔SHA／官方原記號／校對記錄完整。六年級期末自然單選2因可能不唯一先暫停2分，不改原題或猜答案。
+- 新增manual文字／筆跡、多欄short、注音／標點輔助、rich選項、三六年級catalog、教師多卷預覽及媒體驗權。官方略／留白採manual並標not_provided，不猜參考；部分參考只保留可辨內容。六年級期末自然基本100另加4分選做，以optional manual保存、不影響分母／完整；只有manual可optional。沒有50分／10欄門檻。
+- 原pilot不可變version `2b25e1de-55fb-4768-8e93-b866856c16ca`、SHA `1536ce5703e91719a6f7503e2585c628b44eba2e91ffdc100fb601eea681fca8`仍保留。舊catalog欄位由前端限定ID merge補足學年／期中／出版社範圍，不修改文件版本。
+- 72完整回歸全過（59.3秒）；19卷整卷RPC、獎勵介面一片葉與重作歷史全過；19卷所有組1280／390／360px及教師預覽、相同封包重送、葉片0→1→1全過。catalog雙年級6尺寸組合全過。最新候選舊pilot91檢查／新自然／catalog全過；正式254靜態SHA及正式來源隔離Chrome全過。手機是Chrome模擬，非實體手機／真人OAuth測試。
+- 正式DB先disabled註冊、增量只換6相關函數；交易內9個既有表摘要不變、無關函數保留。19卷各三次作答真PostgreSQL驗證後rollback，未保留測試作答／葉片。02:40開放19，02:42再確認各年級10、教師20、函數符合來源、表格私有、無合成auth／attempt、pilot不變。既有努力樹wrapper不需重包裝。
+- 來源與所有私有產物在ignored `automation/output/past-exams-batch`，clone不含。`index.private.html`／`catalog.private.json`為本機校對總覽；逐卷含reviewed JSON、bundle、MD、preview、image manifest、issues、QC。`cloud/`保留before、frozen、media驗證、register、rollback、candidate/live gate、activate、正式data/files/alias證據。詳`docs/development/past-exams-114-production-20261030.md`及playbook。
+- 正式由最新完整440來源檔凍結包加22個runtime overlay發布；主專案有其他dirty，未整包部署主專案。分支`codex/past-exam-production`、本工作區為唯一寫入。不要從舊主專案整包部署覆蓋。回復先`node automation/past-exams-cloud-114.mjs deactivate`只停本批19卷，再promote前版；保留學生歷次及葉片。
+- 新批次工具`past-exams-{inventory,build,migration,cloud-114,cloud-smoke-114,release-114,release-gate-114,live-114,index-114}`只針對明列114範圍。完整Wayground安裝器未執行。一旦已apply，不要重跑inspect覆蓋before或apply重複insert；再次執行須先讀狀態及文件。
+- Claude唯讀CLI2.1.289提供8份草稿與架構討論，Codex獨立校對整合；額度失敗session不可Resume或冒稱同意，無API計費切換。原頁／字型與分數順序是高風險；一次性qc／transcribe腳本會覆寫人工修正，勿盲跑。Puppeteer背景初始化用受租約保護`past-browser-wake.cjs`喚醒精確target；子程序須preload、本機快速測試旗標及足夠長測試時限。failed logs保留，結果以最終SHA匹配證據為準。
+- 本次自有4421／4422舊fixture及4423／4424新fixture已停，驗收分頁已關閉、租約釋放；未接管其他使用中的server。結果沿用MEMKEY:考前練功坊-考古題前處理-cian請益，id `d1491e03-ff0c-4c9a-b096-255e22b831b2`。
+
+
+# 2026-10-29 批次範圍調整：僅114學年度（進行中）
+
+- 使用者最新指示「40份太多，只做114學年度就好」。本次只含114-1，三、六年級各10份，共20份（含已上線三年級期中自然），其餘19份待完成轉錄、校對、轉接及驗證後發布。113-1不在本次授權範圍；先前已產生的113中間檔不得加入本次發布。
+- 已驗證原檔SHA-256、版本、來源紀錄ID與同版本解答配對；114的20對159頁已轉圖。盤點工具預設及選項均鎖114-1。這是準備完成，不代表19份已完成題庫或上線。
+- Claude透過chat-mode唯讀審查六年級期中自然，已回完整草稿；Codex仍須逐頁獨立校對及實測裁圖。草稿有官方答案疑義與掃描截斷，不能直接匯入。既有試辦的不可變版本、歷次作答與首次達標一葉規則維持。
+- 實際檔案與Claude審查包在ignored automation/output/past-exams-batch及.chat-mode/batch-review；clone不含。正式最新仍是下方dpl_4z2gMQ47cuazJ5bgVJeSpU9bR4B7，尚未新增發布。
+
+# 2026-10-29 考古題專區分頁已上線
+
+- 三年級選卷新增獨立「考古題專區」，自然114期中原卷移入且不再計入老師卷數。手機四分頁兩欄，科目篩選／更新／鍵盤／重整保留，返回選卷帶#past-exams。六年級保留原3分頁；無新增RPC或資料庫變更。
+- 正式dpl_4z2gMQ47cuazJ5bgVJeSpU9bR4B7已promote；5變更檔候選SHA、248正式靜態SHA、66回歸，以及本機與正式來源1280／390／360px隔離fixture驗收均過。教師拒絕與登出清空確認。詳[專區分頁](past-exam-area-20261029.md)，QA在ignored area-*。工作仍在codex/past-exam-production，dirty主工作區未合併不可整包發布。
+
+# 2026-10-29 全題型與手機驗收已上線（最新）
+
+- 使用者要求所有題型逐一檢查，已補排序／圖號／複選欄位四色卡、勾選列四色、代號按鈕陰影、畫圖工具與方向鍵，手機畫圖工具兩欄；修正fieldset內距specificity。只改UI、快取及測試，不改題目、SQL／Edge、計分、學生既有成績或首次一葉。
+- 正式dpl_9U4pQ8zsHwKcNbo6QHVb2Quezf18已promote；14候選runtime與248正式靜態SHA一致。66回歸零失敗零略過；正式來源40題組在1280／390px各實際操作送出，360px再11個非選題組，共91檢查、10截圖，最終exit0。圖片燈箱、排序鍵盤、複選取消／確認、畫圖觸控／鍵盤／復原／清除／參考圖隔離、92分完成／葉1不重給與登出均過。手機為Chrome觸控模擬，非實體手機。
+- 詳[全題型驗收](past-exam-types-review-20261029.md)及作業指南。驗收曾卡Network.enable，先networkEnabled:false連精確頁並protected bringToFront喚醒、斷線再正常重連後恢復；仍走共用租約與保護入口，未改瀏覽器設定。01已釋放後改空閒02完成。測試最後關閉自己的頁面，避免還原viewport重載真人身分。
+- 分支codex/past-exam-production；來源與QA仍在ignored automation/output/past-exam-production/types3-*，clone不含。主工作區尚未合併且dirty，不能整包發布。
+
+# 2026-10-29 考古題風格修正已上線（優先於下方初版外觀宣稱）
+
+- 使用者指出初版只改配色、與練功房差很多。已依原作答頁統一字體字重／四色選項徽章／圓角陰影／緊湊進度與固定底部操作列；規則、成績重作與題組選單收合。以實際原生元件計算樣式比對及桌機手機截圖確認，不只宣稱同主色。
+- 正式dpl_5kgNTUX2Hr3NqhbnykhnCenQDjyb已promote；14候選檔／248正式靜態SHA一致，66回歸零失敗零略過，本機及正式來源Chrome隔離fixture的重送、55→56→92分／葉0→1→1、歷史與登出通過。沒有改SQL／Edge／媒體／獎勵／原學生紀錄。
+- 詳[風格修正紀錄](past-exam-style-fix-20261029.md)與作業指南。新學生樣式quiz-past-style.css；歷史UI生成器可能覆蓋後續修正，勿盲跑。工作仍在codex/past-exam-production，dirty主工作區未合併不能整包發布。
+
+# 2026-10-29 自然考古題已正式上線（優先於下方僅本機紀錄）
+
+- 實作經驗已整理為[考古題轉線上題庫作業指南](past-exam-playbook.md)：原卷／解答配對與校對、題型轉接、92分分母、重作與一次給葉、工具／本機資料界線、驗證及部署踩坑。日後處理新卷先讀此指南；不代表已授權批次匯入或發布。
+
+- 使用者已明確授權正式接入及驗證後上線。114上三年級自然第一次評量，穩定paper ID dingxi-114-1-g3-exam1-science，學習115-1；40題組、92分自動／4分畫圖自核對／4分疑義暫停。保留作答方式，統一網站樣式。單次完整>=60%首次給1葉，同卷同學期只領一次，可重作並保留歷次；55→56→92葉0→1→1已驗證。
+- 正式 dpl_6q3C3ZH7U23iuKQSoBHHeukFUCdm 已promote，SQL本卷enabled=true、私有媒體9張及Edge已接入；正式247靜態SHA一致，66回歸零失敗零略過，Chrome正式來源學生／教師隔離fixture通過，真Supabase交易回滾驗證，沒有留下假學生作答與葉。
+- 分支codex/past-exam-production，工作區C:/Users/user/.codex/worktrees/past-exam-production/it-class-tcwu，基於claude/quiz-load-batch4，以第四批433檔凍結包加13檔發布。主工作區尚未合併，含花園等其他dirty，禁止整包部署覆蓋。
+- 新私有quiz_past_*與opt-in past-exam模式；只包裝quiz_rewards／quiz_media_access，原quiz_action及其他原函式不變。SQL核心／pool／wrong→batch1→2→3→4後才處理past-exams，舊rewards/media重裝須重檢包裝／備份。
+- 詳[正式接入紀錄](past-exam-production-20261029.md)。ignored automation/output/past-exam-production含私有來源／bundle／QA／雲端before備份，clone不含。回復先disabled本卷並保留歷次與領葉帳本，再promote原dpl_G6mqwLwCj3JqJ66HzQzuW1UqeyCu。
 
 # Agent Handoff
+
+## 連線偵錯開關已關閉 — 2026-10-29
+
+- 使用者要求先關閉供實班觀察。單一全站部署旗標 shared/connection-diagnostics.mjs 的 DIAGNOSTICS_ENABLED=false；前端與collector共用，未經使用者要求不要重新開啟。不是學生自行切換的按鈕。後續改 true 必須更新匯入鏈快取標記並重新部署。
+- 關閉不記錄事件／UUID／計時／儲存／監聽／interval／回傳，也沒有下載按鈕，fetcher原函式直通。collector關閉不寫日誌，仍204讓舊頁清空佇列。舊分頁需重新整理才停本機蒐集及傳送。
+- 功能253d2bf，分支codex/quiz-diagnostics-switch；正式dpl_9igJHMDmzwAeHQSqJHC3bbzeF1Gd已promote／READY。第三批凍結包加14檔；18候選與239正式檔SHA一致，四版collector204。59項完整回歸及後加collector檢查的3項專項都過；正式來源Chrome32秒事件／寫入／interval／上傳全0。驗證分頁關閉、租約釋放。
+- 沒有改SQL／學生資料／保存／重送／揭答／防弊／一葉；原每分鐘CLI sampler仍停。詳quiz-diagnostics-switch-20261029.md，ignored automation/output/quiz/diagnostics-switch。最新正式程式尚未合入dirty主工作區，不能用舊主工作區整包部署覆蓋。
+
+## 考前練功坊資料讀取第三批 — 2026-10-29
+
+- 已依使用者授權完成抽題候選一次篩選、學生白名單試卷一次組裝、教師監看單次彙整。保存／相同答案重送／題組與整卷揭答／防弊／原一葉保留；quiz_action、answer_guard、leaf 及其他 23 個既有函式定義不變。
+- 分支 codex/quiz-load-batch3，功能 29539cd，工作區 C:/Users/user/.codex/worktrees/quiz-load-batch1/it-class-tcwu。主工作區未合併且有其他工作，不可整包部署舊主工作區覆蓋新版。
+- 58 項候選模式回歸零失敗／零略過。本機及正式來源核心／新流程 Chrome 合成驗證全過。第一輪 30 人延遲未過與量測腳本 JSON 參數失敗都保留；修正腳本後 bench-verify 兩輪 22＋30 人所有 15 門檻全過，2,697 答案／52 葉一致、無不合法接受計時。
+- 本機 30 人 p95／max 約 291／848→199／248ms；組卷 PostgreSQL 平均約314→68ms；教師監看 DB p95 約41→10ms。單獨學生投影約6.6→6.7ms大致持平，不宣稱每個請求都變快。
+- 正式 SQL checksum 與通過量測候選一致。原九表內容摘要、三／六年級／教師唯讀結果、全部本人場次監看及既有學生試卷投影前後一致；monitor authenticated only，候選型別及投影仍私有。沒有正式壓測或真人送答、付費、pool、timeout 調整。
+- Vercel dpl_erUknwk6WfmcHuzphwQLi1oW8KRB 已 promote 至 it-class-tcwu.vercel.app，production READY。以第二批凍結包加14檔發布，239正式檔SHA一致，四版collector204。舊每分鐘CLI sampler仍停止；自有4391 server停、四個fixture分頁清理、租約釋放。
+- 詳 quiz-load-batch3-20261029.md；ignored automation/output/quiz/batch3 有 failed bench、通過 bench-verify、SQL／資料與正式來源驗證紀錄。重裝舊 quiz.sql／pool／wrong 後須依序重套 batch1、batch2、batch3，不能只裝舊檔。
+
+## 考前練功坊資料讀取第二批 — 2026-10-29
+
+- 使用者授權接續第一批，本機及真實Postgres30人並行全過才上線；保存／重送／揭答／原一葉維持。Codex唯一寫入，現有獨立工作區，分支codex/quiz-load-batch2；主工作區其他dirty不動。
+- 範圍：單筆私有版本摘要、薄library、錯題refs／頁面JSON／單題明細、可靠來源共用、教師metadata清單及按需預覽。原quiz_action、保存／揭答／防弊／leaf與第一批媒體驗權不改；compose只改共用來源查找段。
+- 已上線。55項候選模式回歸、核心及新流程本機／正式來源Chrome通過。三表摘要及精簡初輪失敗報告保留；每版本一筆的bench-verify兩輪22＋30人全過，補上異常多餘答案的揭答等價後，鎖定最後SQL SHA的bench-final30人再全過。2,101答案／30葉一致、p95約143→117ms；錯題持鎖1216→5ms、教師清單payload減98.5%。
+- 功能9147b56，Vercel dpl_GFRzHXKymQ3F1iVHg8L8U2xiARhq已promote／READY，239正式檔SHA一致，三版collector均204。正式99版本／887題衍生99筆私有摘要264KiB；原九表資料摘要與其餘17個quiz函式不變，三／六及教師唯讀比對一致。沒有真人送答／正式壓測／付費變更。主工作區舊碼未合併，後續沿本獨立分支接續，舊pool／wrong SQL重裝後須重套batch2。
+- 詳quiz-load-batch2-20261029.md及ignored automation/output/quiz/batch2。自有測試server／分頁驗收後清理，租約釋放；舊CLI sampler保持停止。
+
+## 考前練功坊資料讀取第一批 — 2026-10-29
+
+- 使用者已核准依Claude三輪討論方案分批實作，本機與真正PostgreSQL的30人並行全部通過才上線；保存、相同答案重送、題組／整卷揭答及原一葉不變。
+- Codex唯一寫入者，獨立工作區quiz-load-batch1，947fced加正式診斷4檔；主工作區dirty未動，不帶半葉／花園／schema2／身分快取。負責學生入口、目錄、媒體、診斷、教師監看與新增函式檔；不修改原quiz_action。
+- 已上線，詳quiz-load-batch1-20261029.md。53項本機回歸與本機／正式來源合成Chrome功能驗證通過；最終兩輪22人與30人原門檻全過，741答案／52葉等價，30人p95 265→149ms、max552→216ms；同attempt持寫鎖的媒體1213→1.49ms。首輪22人max失敗報告保留。
+- 功能37017eb，分支codex/quiz-load-batch1，工作區C:/Users/user/.codex/worktrees/quiz-load-batch1/it-class-tcwu。正式SQL四函式更新，既有學生資料摘要與其他15個quiz函式不變；Vercel dpl_HGZTE2a2yduoYvKdi9tu6YiwTsqb已promote，正式239個網頁／模組／樣式／字型SHA256一致，collector舊新均204。主工作區dirty程式仍未合併，後續不能用舊主工作區覆蓋新正式版。
+- 原每分鐘CLI診斷快照仍保持停止，不能啟動舊sampler。沒有正式壓測或付費變更。
 
 ## 答題雙欄與固定操作列獨立發布 — 2026-10-29
 

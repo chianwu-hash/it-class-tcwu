@@ -38,7 +38,8 @@
 #server-quiz .option-badge{display:grid;place-items:center;width:42px;height:44px;background:#fff;border-radius:12px;font-size:1.2rem;font-weight:900;border:1px solid #ffffff}
 #server-quiz .option-body{min-width:0;font-size:clamp(1.15rem,1.8vw,1.6rem);font-weight:700}
 #server-quiz .option-body .quiz-rich-paragraph{margin:0;line-height:1.65}
-#server-quiz .student-option .preview-content{display:block}
+/* 只讓選項最外層佔一列；段落內的整數、分數與圖文片段仍沿用行內排版。 */
+#server-quiz .student-option .option-body>.preview-content{display:block}
 #server-quiz .option-result{grid-column:2;font-size:.85rem;font-weight:700}
 #server-quiz .student-option[data-result=correct],#server-quiz .student-option[data-result=correct]:has(input:checked){background:#e7f6ed;border-color:#32815c;outline:none;box-shadow:0 4px 0 #cce7d6}
 #server-quiz .student-option[data-result=incorrect],#server-quiz .student-option[data-result=incorrect]:has(input:checked){background:#fff1e6;border-color:#b55c2c;outline:none;box-shadow:0 4px 0 #f0d9c7}

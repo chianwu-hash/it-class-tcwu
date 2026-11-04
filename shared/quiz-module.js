@@ -1,5 +1,5 @@
 import { initQuizPractice } from './quiz-practice.js';
-import { initServerQuiz } from './quiz-server.mjs?v=20261029-workspace';
+import { initServerQuiz } from './quiz-server.mjs?v=20261030-question-reports';
 
 const DEFAULT_MESSAGES = {
     questionLabel: (index) => `Q${index}`,
@@ -69,6 +69,10 @@ export function initQuizModule({
     mode = "scored",
     server = null
 }) {
+    if (mode === 'past-exam') {
+        const ready = import('./quiz-past-exams.mjs?v=20261030-question-reports').then(m => m.initPastExam({ selectors, server }));
+        return { handleAuthChange: session => ready.then(q => q.handleAuthChange(session)), destroy: () => ready.then(q => q.destroy()) };
+    }
     if (mode === 'server') return initServerQuiz({ selectors, server });
     if (mode === 'practice') return initQuizPractice({ questions, selectors, messages, loadProgress, saveProgress, loadGuestProgress, saveGuestProgress, getCurrentUser, onAfterSubmit, requireAuth, optionLabelMode });
     const mergedMessages = {

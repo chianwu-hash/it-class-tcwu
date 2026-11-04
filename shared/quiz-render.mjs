@@ -1,17 +1,17 @@
-import { resolveQuizMedia } from './quiz-media.mjs';
-export function renderContent(container, content, { strict = false, loadMedia = true, imageLoading = 'lazy' } = {}) {
+import { resolveQuizMedia, bindQuizMedia } from './quiz-media.mjs?v=20261029-load-batch1';
+export function renderContent(container, content, { strict = false, loadMedia = true, imageLoading = 'lazy', mediaScope = null, deferMedia = false } = {}) {
   const box = document.createElement('div'); box.className = 'preview-content';
   if (content?.layout) {
     box.classList.add('quiz-rich-content');
     const runs = (parent, values) => {
       for (const run of values) {
         if (run.type === 'text') {
-          renderContent(parent, { text: run.text, media: [] }, { strict, loadMedia, imageLoading });
+          renderContent(parent, { text: run.text, media: [] }, { strict, loadMedia, imageLoading, mediaScope, deferMedia });
         } else {
           const media = content.media[run.media_index];
           const image = document.createElement('span'); image.className = 'quiz-embedded-image';
           image.style.width = `${run.width}px`;
-          renderContent(image, { text: '', media: [media] }, { strict, loadMedia, imageLoading });
+          renderContent(image, { text: '', media: [media] }, { strict, loadMedia, imageLoading, mediaScope, deferMedia });
           parent.append(image);
         }
       }
@@ -34,7 +34,7 @@ export function renderContent(container, content, { strict = false, loadMedia = 
     }
     // Audio is not an inline image run; retain it when rich text/table layout is present.
     const audios=(content.media||[]).filter(m=>m.kind==='audio');
-    if(audios.length)renderContent(box,{text:'',media:audios},{strict,loadMedia,imageLoading});
+    if(audios.length)renderContent(box,{text:'',media:audios},{strict,loadMedia,imageLoading,mediaScope,deferMedia});
     container.append(box); return box;
   }
   const text = content?.text || ''; let end = 0;
@@ -63,6 +63,8 @@ export function renderContent(container, content, { strict = false, loadMedia = 
     if (!['image', 'audio'].includes(media.kind)) throw new Error('不支援此媒體格式。');
     if (!loadMedia) continue;
     const element = document.createElement(media.kind === 'image' ? 'img' : 'audio');
+    const resolve = mediaScope ? url=>mediaScope.resolve(url) : resolveQuizMedia;
+    if(mediaScope)bindQuizMedia(element,mediaScope);
     element.dataset.quizMediaUrl = url.href;
     if (media.kind === 'image') { element.alt = media.alt; element.loading = imageLoading; }
     else { element.controls = true; element.preload = 'none'; }
@@ -74,8 +76,8 @@ export function renderContent(container, content, { strict = false, loadMedia = 
         retry.addEventListener('click', async () => {
           retry.disabled = true;
           try {
-            const src = await resolveQuizMedia(url.href);
-            if (!figure.isConnected) return;
+            const src = await resolve(url.href);
+            if (!figure.isConnected || (mediaScope&&!mediaScope.active())) return;
             error.remove(); retry.remove(); element.src = src;
             if (media.kind === 'audio') element.load();
           } catch { retry.disabled = false; }
@@ -87,7 +89,8 @@ export function renderContent(container, content, { strict = false, loadMedia = 
     const caption = document.createElement('figcaption'); caption.textContent = media.alt;
     figure.append(element, caption); box.append(figure);
     // 不把短效下載網址寫回草稿／固定版本。移除的題目不再啟動媒體。
-    resolveQuizMedia(url.href).then(src => { if (figure.isConnected) element.src = src; }).catch(failed);
+    const begin=()=>resolve(url.href).then(src => { if (figure.isConnected&&(!mediaScope||mediaScope.active())) element.src = src; }).catch(()=>{if(figure.isConnected&&(!mediaScope||mediaScope.active()))failed();});
+    if(deferMedia&&mediaScope)mediaScope.observe(figure,begin);else begin();
   }
   container.append(box); return box;
 }

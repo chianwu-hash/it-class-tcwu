@@ -1,0 +1,12 @@
+"""Generate a local, private review index; no network or publication."""
+from pathlib import Path
+import html,json
+root=Path('automation/output/past-exams-batch');rows=[];summary=[]
+for p in sorted(root.glob('*/bundle.private.json')):
+ b=json.loads(p.read_text(encoding='utf-8'));d=b['document'];groups=d['groups'];auto=sum(f['points'] for g in groups if g['kind'] not in ('manual','annotation') for f in g['fields']);manual=sum(f['points'] for g in groups if g['kind'] in ('manual','annotation') and not g.get('optional') for f in g['fields']);bonus=sum(f['points'] for g in groups if g.get('optional') for f in g['fields']);blocked=sum(f['points'] for f in d['blocked'])
+ r={'paperId':b['paperId'],'title':d['title'],'sha256':b['sha256'],'groups':len(groups),'fields':sum(len(g['fields']) for g in groups),'automaticPoints':auto,'manualPoints':manual,'optionalBonusPoints':bonus,'blockedPoints':blocked,'blockedFields':len(d['blocked']),'qc':b['provenance']['qc']['status'],'issues':b['provenance']['issues']};summary.append(r)
+ issues=''.join('<li>'+html.escape(i['detail'])+'</li>' for i in r['issues'])
+ rows.append(f'<tr><td><a href="{b["paperId"]}/preview.private.html">{html.escape(d["title"])}</a><br><small>{b["sha256"]}</small></td><td>{len(groups)}組／{r["fields"]}欄</td><td>{auto}／{manual}／{blocked}'+(f'；選做{bonus}' if bonus else '')+f'</td><td><details><summary>{len(r["issues"])}項校對紀錄</summary><ul>{issues}</ul></details></td></tr>')
+ (p.parent/'bundle.private.json').is_file()
+page='<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>114學年度考古題校對總覽</title><style>body{font:17px/1.7 system-ui;margin:30px;color:#173b45}table{border-collapse:collapse;width:100%}td,th{padding:14px;border:1px solid #bddce5;text-align:left;vertical-align:top}small{word-break:break-all;font-size:11px}a{color:#165c84}th{background:#eaf6ff}summary{cursor:pointer}@media(max-width:700px){body{margin:12px}table,tbody,tr,td{display:block}thead{display:none}}</style><h1>114學年度新增19份考古題：本機校對總覽</h1><p>僅供本機校對，含私有答案。來源114上，學習紀錄115上；既有三年級期中自然試辦另行保留。</p><p>計分欄依序為：自動核對／開放自我核對／暫停。選做加分不影響60%達標與完整判定。英語無原始聽力音檔，未以合成語音替代。</p><table><thead><tr><th>試卷與內容SHA-256</th><th>數量</th><th>配分</th><th>校對紀錄</th></tr></thead><tbody>'+''.join(rows)+'</tbody></table>'
+(root/'index.private.html').write_text(page,encoding='utf-8');(root/'catalog.private.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');print('Local private review index:',len(summary))
