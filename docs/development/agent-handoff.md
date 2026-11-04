@@ -14,6 +14,21 @@
 - 交接時寫明：目前目標與下一步、改了哪些檔與刻意不動的檔、已做與待做的驗證、與 SOP 或共用模組的衝突。
 - 整合紀錄與差異清單：[main-unify-20261104.md](main-unify-20261104.md)。
 
+# 2026-11-04 夥伴練功服務穩定性複查（Claude Desktop 執行）
+
+- 使用者明確要求以 Computer Use 請 Claude 查剛上線程式是否有導致服務崩潰的錯誤，有確定缺陷即修復。
+- 新工作區 `D:/projects/it-class-tcwu-worktrees/partner-stability-20261104`，分支 `codex/partner-stability-20261104`，最新 main 基底 `395d0e2`。Claude 唯一產品寫入者，Codex 在交回前不改產品檔。
+- 使用者 turn-0003 明確撤銷額外檔案／工具限制，Claude 可自由修改必要專案檔並執行測試；已完成且交回 Codex。Claude 未操作正式資料庫、commit 或發布；Codex 現為唯一寫入者，負責核對後按 PR／main／發布腳本整合。
+- 必查：自激 refresh／重複訂閱、恢復重送風暴、媒體重載、每次作答重複完整快照、整班多房查詢與鎖、無界回傳。區分明確 bug 與尚未量測容量風險。
+- 交回：更新本交接與 `quiz-partner-stability-20261104.md`，列重現／呼叫鏈、修正、實際測試與未驗證；Codex 另行複核後才走 PR/main/發布腳本。
+- 已核對：修正未完成作答重算、notes／members 索引、獎勵 GIN 查詢、手寫底圖快取、已持有版本廣播。Codex 獨立穩定性 5／5、正式情境 2／2、原功能 11／11；實際瀏覽器合成傳輸驗證重複廣播、底圖／結果快取、輸入保留與儲存退出，pageerror 0。四年級入口（3／4／6／9）已更新快取版本。
+- 下一步：PR 合併程式與 SQL，從 main 進行正式交易回滾驗證、套用兩個函式／四個索引並更新快照，再由乾淨 main 發布。真實學生多機與夥伴整班多房壓測仍未通過實測。
+- **Claude 結果（未 commit，待 Codex 複核）**：沒有找到無界迴圈或重送風暴（Realtime 重試上限 3、refresh 合併、ready 重試上限 6 均確認）。確認並修正 5 個會隨用量放大的缺陷：①未完成小隊每次作答多算一次 `learning_snapshot`（外層 `claim_award` 未完成時不寫資料）→只在 finished 時呼叫；②`partner_pilot.notes`／`members` 只有主鍵，快照與訂閱授權全表掃描→補 4 個索引；③手寫題底圖 `loadAsset` 繞過 `rich-content` 快取，隊友每個動作都重新下載→共用快取 `rich.resolve`；④自己操作的廣播又觸發一次 refresh→`heldRevision` 略過已持有版本；⑤`quiz_partner_rewards` 的 `=any(members)` 用不到 GIN→改等價 `members @> array[auth.uid()]`。4 人小隊一次未完成作答的完整重算預期 6→4 次。
+- 修改：`supabase/quiz-partner-stability.sql`（新增，**未套用正式庫**）、`shared/partner-pilot/{app.mjs,learning.js,rich-content.js}`、`automation/tests/quiz-partner-stability.test.mjs`（新增）、`automation/tests/quiz-partner-production.test.mjs`（`QUIZ_PARTNER_STABILITY=1` 選項）、本檔與報告。刻意未動：`grade*/115-1/partner-practice.html`（`app.mjs?v=` 快取參數由發布時決定）、`quiz-partner-production*.sql`、`production-snapshot/`、組隊／計分／半葉／獎勵 ID。
+- 實測：`node --test automation/tests/quiz-partner-stability.test.mjs` 5／5；`quiz-partner-production.test.mjs` 正式狀態 2／2、加 `QUIZ_PARTNER_STABILITY=1` 2／2；`npm run quiz:test` 11／11；`node --check app.mjs` 與 learning／rich-content ESM 載入正常。
+- 未驗證：瀏覽器實測（底圖、Realtime payload 形狀）、正式庫 EXPLAIN／耗時、30 人多房壓測。仍存容量風險：快照房內 N+1、每次 RPC `register_self`、快照帶本人草稿（≤1.5MB）、`sync_source_links` 掃 `quiz_sessions`。
+- 下一步（Codex）：複核 diff 與測試 → PR 進 main → 經使用者同意套用 SQL，執行 `db-schema-snapshot.mjs`、`db-snapshot-check.mjs --live` 並 commit 快照 → 決定是否更新 `app.mjs?v=` → `release-from-main.mjs` 發布。詳 [報告](quiz-partner-stability-20261104.md)。
+
 # 2026-11-04 夥伴練功正式整合（已發布，學生多機待實測）
 
 - 實作 PR #7 已合併（`1a4bc2c`）。正式遷移由此 main commit 套用；回滾交易及提交交易均通過，7 張原作答／進度／樹與裝飾資料表雜湊及不相關 public 函式定義保持。遷移當時先關閉旗標；對應 main 前端驗證發布後已啟用。
