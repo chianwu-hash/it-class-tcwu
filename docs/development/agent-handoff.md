@@ -4,6 +4,7 @@
 
 | 狀態 | agent | 開始時間 | `main` commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
 | --- | --- | --- | --- | --- | --- | --- |
+| 發布中 | Codex-partner-20261104 | 2026-11-04（實際時間由發布腳本登記） | PR #8 合入後之 main，start 鎖定完整 SHA | `dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p` | 夥伴頁／入口、花葉與努力樹模組；首次 main 發布設定，詳發布腳本完整宣告 | 尚未 deploy／promote；正式夥伴旗標關閉 |
 | 基準 | Claude（整合） | 2026-11-04 10:18 | PR #1 已併入 `main`（`468974a`） | `dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p` | — | 尚未從 `main` 發布 |
 | 失敗（自動） | Vercel Git 自動部署 | 2026-11-04 12:31 | `468974a` | `dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p` | — | `dpl_DPCuJGfDL2nqyZYvCidSLJZL4Nm3` 建置失敗，未上線；正式網址仍為基準。之後以 `vercel.json` 關閉 `main` 自動部署 |
 
