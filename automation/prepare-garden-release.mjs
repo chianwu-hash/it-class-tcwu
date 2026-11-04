@@ -2,6 +2,7 @@
 // Never deploys, changes aliases, or modifies application source files.
 import fs from 'node:fs/promises';import path from 'node:path';import {fileURLToPath} from 'node:url';
 import {BUILD_COMMAND,runPreflight} from '../release/garden-preflight.mjs';
+import {GATE_FILES, POLICY_PATH, loadProjectPolicy, renderProjectIgnore} from '../release/project-policy.mjs';
 export async function prepareGardenRelease(root,options={}){
  root=await fs.realpath(root);
  const configPath=path.join(root,'vercel.json');let config;
@@ -11,7 +12,10 @@ export async function prepareGardenRelease(root,options={}){
  const report=await runPreflight({root,...options});if(!report.passed)throw Error('目錄比對未通過，未準備發布包：'+JSON.stringify({missing:report.missing,mismatched:report.mismatched}));
  const dir=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../release');
  await fs.mkdir(path.join(root,'release'),{recursive:true});
- for(const name of ['garden-catalog.mjs','garden-preflight.mjs'])await fs.copyFile(path.join(dir,name),path.join(root,'release',name));
+ for(const file of GATE_FILES)await fs.copyFile(path.join(dir,path.basename(file)),path.join(root,file));
+ const policy=await loadProjectPolicy(root);await fs.writeFile(path.join(root,POLICY_PATH),JSON.stringify(policy,null,2)+'\n');
+ const ignorePath=path.join(root,'.vercelignore');let ignore='';try{ignore=await fs.readFile(ignorePath,'utf8');}catch(e){if(e.code!=='ENOENT')throw e;}
+ await fs.writeFile(ignorePath,renderProjectIgnore(ignore,policy));
  config.buildCommand=BUILD_COMMAND;config.outputDirectory='.';
  await fs.writeFile(configPath,JSON.stringify(config,null,2)+'\n');return report;
 }

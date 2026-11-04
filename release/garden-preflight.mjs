@@ -1,8 +1,10 @@
 import fs from 'node:fs/promises';import path from 'node:path';import {createHash} from 'node:crypto';import {fileURLToPath} from 'node:url';
 import {expectedCatalog,compareCatalog} from './garden-catalog.mjs';
+import {checkExcludedSources} from './project-policy.mjs';
 export const PROJECT='upxgyusodibaqcrocdzj',BUILD_COMMAND='node release/garden-preflight.mjs';
 export const SOURCES=['shared/reward-tree-config.js','shared/typing-foundation-curriculum.mjs','shared/zhuyin-foundation-curriculum.mjs','shared/auth.js'];
 export async function runPreflight({root=process.cwd(),fetcher=fetch,timeoutMs=12000}={}){
+ const projectPolicyCheck=await checkExcludedSources(root);
  const files=await Promise.all(SOURCES.map(async p=>({path:p,bytes:await fs.readFile(path.join(root,p))})));
  const hashes=Object.fromEntries(files.map(f=>[f.path,createHash('sha256').update(f.bytes).digest('hex')]));
  const load=async i=>import('data:text/javascript;base64,'+files[i].bytes.toString('base64'));
@@ -22,7 +24,7 @@ export async function runPreflight({root=process.cwd(),fetcher=fetch,timeoutMs=1
   const data=await Promise.race([request,new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(Error('正式任務目錄讀取逾時，發布已阻擋'));},timeoutMs)})]);
   if(data?.version!==1||data?.project!==PROJECT||!Number.isFinite(Date.parse(data.asOf))||Math.abs(Date.now()-Date.parse(data.asOf))>120000)throw Error('正式任務目錄來源無效或過期，發布已阻擋');
   const report=compareCatalog(expected,data.catalog);
-  return {...report,project:PROJECT,checkedAt:new Date().toISOString(),databaseAsOf:data.asOf,sourceHashes:hashes};
+  return {...report,projectPolicyCheck,project:PROJECT,checkedAt:new Date().toISOString(),databaseAsOf:data.asOf,sourceHashes:hashes};
  }finally{clearTimeout(timer)}
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
@@ -30,5 +32,5 @@ if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.ur
  if(args.length){if(args.length!==2||args[0]!=='--root')throw Error('僅接受 --root <發布目錄>');root=path.resolve(args[1]);}
  try{const report=await runPreflight({root});console.log(JSON.stringify(report,null,2));if(!report.passed){console.error('努力樹升級任務目錄不一致，發布已阻擋。請先核對並套用正式資料庫目錄。');process.exitCode=1;}
  else console.log('努力樹升級目錄檢查通過。');}
- catch(e){console.error('努力樹發布檢查失敗：'+e.message);process.exitCode=1;}
+ catch(e){console.error('發布檢查失敗：'+e.message);process.exitCode=1;}
 }
