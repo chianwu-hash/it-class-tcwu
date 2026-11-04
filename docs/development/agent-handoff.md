@@ -1,5 +1,7 @@
 # 2026-11-04 已發布：混合題逐格顯示注音鍵盤
 
+- 後續依使用者要求，暫存鈕以淡紫底／深紫字標示，與換題、正式送出區分；純CSS、1280／390控制列及hover通過。最新正式 dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p，820來源及CSS實際HTTP SHA核對，SQL與學生資料未變；私有收據 tmp/past-drafts-color-20261104/。
+
 - 使用者要求寫國字欄不顯示注音鍵盤。已新增pure `pastFieldInputAids`，優先依各格原題指示；舊六年級依混合題的引號標示判斷，不讀答案／學生作答。截圖的113三上國語20格僅4格顯示、16格隱藏。
 - 4項欄位／草稿測試、26組75欄正式來源唯讀稽核、20格混合題1280／390／360鍵盤輸入刪除及暫存還原過。沒有SQL或學生資料變更。已發布 dpl_AL9gg69desdHs4AV5aSA3wAPWH18，820來源及3runtime HTTP SHA核對；保留前輪暫存。詳 past-field-keyboard-20261104.md，私有證據 tmp/past-drafts-keyboard-20261104/，不重跑舊發布。
 

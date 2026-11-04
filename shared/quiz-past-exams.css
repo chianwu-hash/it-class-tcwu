@@ -18,3 +18,7 @@
 .past-exam-page .past-exam-workspace .page-header{padding-bottom:12px}
 .past-exam-page .past-exam-workspace .choice-row input[type=radio]{width:23px;height:23px;accent-color:var(--quiz-primary)}
 .past-exam-page .past-exam-workspace .material-box:empty{display:none}
+
+/* Keep saving a draft visually distinct from navigation and final submission. */
+.past-exam-page #save-past-draft{background:#f0e7ff;color:#5b308c;border-color:#b99bd9;box-shadow:0 3px 0 #cfb9e5}
+.past-exam-page #save-past-draft:hover:not(:disabled){background:#e5d4fa;border-color:#9470bf}
