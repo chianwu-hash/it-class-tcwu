@@ -1,4 +1,6 @@
-import {initPastExamUI} from './quiz-past-ui.mjs?v=20261030-question-reports';
+import {celebratePastFlower,stopPastFlowerCelebration} from './past-flower-celebration.mjs';
+import {afterGardenReward} from './garden-unlock-notice.mjs';
+import {initPastExamUI} from './quiz-past-ui.mjs?v=20261101-ai-review';
 import {createAuthenticatedTransport} from './quiz-transport.mjs?v=20261029-batch4';
 import {createMediaScope,configureQuizMedia} from './quiz-media.mjs';
 import {initImageLightbox} from './image-lightbox.js';
@@ -9,14 +11,14 @@ export function initPastExam({selectors,server}){
  const root=document.getElementById(selectors.container),lock=document.getElementById(selectors.lock),content=document.getElementById(selectors.content);
  const template=root.innerHTML;let user=null,generation=0,ui=null,scope=null,state=null,transport=null,viewed=new Map();
  async function rpc(action,data={}){if(!transport)throw Error('請先登入。');try{return await transport('/rest/v1/rpc/quiz_past_action',{p_action:action,p_data:{paper_id:server.paperId,...data}});}catch(e){e.message=messages[e.code]||messages[e.message]||'資料尚未確認，請更新或用同一份答案重試。';throw e;}}
- const clear=()=>{generation++;scope?.dispose();scope=null;ui?.clear();ui=null;state=null;viewed.clear();document.getElementById('lightbox-close')?.click();root.replaceChildren();content.hidden=true;lock.hidden=false;};
+ const clear=()=>{stopPastFlowerCelebration();generation++;scope?.dispose();scope=null;ui?.clear();ui=null;state=null;viewed.clear();document.getElementById('lightbox-close')?.click();root.replaceChildren();content.hidden=true;lock.hidden=false;};
  const onView=gid=>{if(!state||viewed.has(gid))return;const token=generation;const promise=rpc('view',{attempt_id:state.attemptId,group_id:gid}).catch(e=>{if(token===generation){viewed.delete(gid);root.querySelector('#status').textContent=e.message;}});viewed.set(gid,promise);};
  const updateScope=()=>{scope?.dispose();const token=generation,aid=state.attemptId;scope=createMediaScope({context:{user:user.user.id,attempt:aid},valid:()=>generation===token&&state?.attemptId===aid,read:async url=>transport('/functions/v1/quiz-media',{action:'read',url,attempt_id:aid})});const current=scope;configureQuizMedia(url=>current.resolve(url));};
  const request=async(route,packet)=>{
   const token=generation;let next;
   if(route==='/api/reset')next=await rpc('restart',{request_id:packet.requestId});
   else{await viewed.get(packet.groupId);next=await rpc('submit',{attempt_id:state.attemptId,version:packet.version,group_id:packet.groupId,request_id:packet.requestId,responses:packet.responses,confirmed:packet.confirmed});}
-  if(token!==generation)throw Error('登入身分已變更。');const changed=state.attemptId!==next.attemptId;state=next;if(changed){viewed.clear();updateScope();}const url=new URL(location.href);url.searchParams.set('attempt',state.attemptId);history.replaceState(null,'',url);return next;
+  if(token!==generation)throw Error('登入身分已變更。');const earned=!state.practice?.flowerCount&&next.practice?.flowerCount===1&&next.practice?.earnedByThisAttempt===true;const changed=state.attemptId!==next.attemptId;state=next;if(changed){viewed.clear();updateScope();}const url=new URL(location.href);url.searchParams.set('attempt',state.attemptId);history.replaceState(null,'',url);if(earned){const courseId=`grade${next.identity?.grade||new URL(location.href).pathname.match(/grade([346])/)[1]}-115-1`;celebratePastFlower(courseId);afterGardenReward(courseId);}return next;
  };
  initImageLightbox({root,selector:'[data-image-lightbox]',resolveImageSource:image=>scope.resolve(image.dataset.quizMediaUrl)});
  return {async handleAuthChange(session){
@@ -29,7 +31,7 @@ export function initPastExam({selectors,server}){
    state=next;const url=new URL(location.href);url.searchParams.set('attempt',state.attemptId);history.replaceState(null,'',url);viewed.clear();root.innerHTML=template;content.hidden=false;lock.hidden=true;updateScope();
    provideNavIdentity({userId:user.user.id,email:user.user.email,row:next.identity?.enrollment||next.identity});
    root.querySelector('#paper-title').textContent=next.title;
-   if(root.querySelector('#paper-policy')&&next.policy){const p=next.policy;root.querySelector('#paper-policy').textContent=`本卷自動核對共${p.automaticPoints}分；單次完整作答達60%，同卷同學期首次達標取得1片葉。`;root.querySelector('#paper-exclusions').textContent=`開放作答與畫圖題共${p.manualPoints}分採自我核對，不列入自動分數；${p.blockedFields}個暫停欄位共${p.blockedPoints}分不影響完成。`;}
+   if(root.querySelector('#paper-policy')&&next.policy){const p=next.policy;root.querySelector('#paper-policy').textContent=`本卷自動核對共${p.automaticPoints}分；單次完整作答達60%，同卷同學期首次達標開出1朵考古花。`;root.querySelector('#paper-exclusions').textContent=`開放作答與畫圖題共${p.manualPoints}分採自我核對，不列入自動分數；${p.blockedFields}個暫停欄位共${p.blockedPoints}分不影響完成。`;}
    document.title=next.title+'・考前練功坊';
    const reportRequest=async(_action,data)=>{try{const result=await transport('/rest/v1/rpc/quiz_question_report',{p_data:data});if(token!==generation)throw Error('登入身分已變更。');return result;}catch(e){if(e.code)e.message=quizError(e.code);throw e;}};
    ui=initPastExamUI({root,request,resolveAsset:url=>scope.resolve(url),onView,reportRequest});ui.load(next);

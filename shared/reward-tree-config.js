@@ -289,6 +289,7 @@ function withCourseId(courseId, activities) {
 }
 
 export const REWARD_TREE_COURSES = [
+    { id: "grade4-115-1", label: "土城四年級 115 上", activities: [] },
     {
         id: "grade3-114-2",
         label: "三年級 114 下",

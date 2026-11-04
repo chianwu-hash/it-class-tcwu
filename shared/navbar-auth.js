@@ -1,3 +1,4 @@
+import {checkGardenUnlock} from './garden-unlock-notice.mjs';
 import {
     beginCentralizedLogin,
     isTeacher,
@@ -28,6 +29,7 @@ export function initNavbarAuth({
     }
 
     let currentSession = null;
+    document.addEventListener('course-progress-saved',()=>checkGardenUnlock(currentSession));
     let options = { onResetProgress, onSessionResolved };
 
     function setOptions(nextOptions) {
@@ -39,6 +41,7 @@ export function initNavbarAuth({
 
     function updateAuthUI(session) {
         currentSession = session;
+        checkGardenUnlock(session,null,'pending');
         const {
             authStatusEl,
             adminBtn,

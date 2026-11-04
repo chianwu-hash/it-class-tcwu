@@ -9,6 +9,116 @@
 - 原題 `hanlin_g6_math_004cf065` 同段整數、分數為不同文字片段；`#server-quiz .student-option .preview-content{display:block}` 誤將內層片段排成區塊。限縮為 `.option-body > .preview-content`，內層恢復既有行內排版，無題庫／作答／分數變更。
 - 本機租約02 Chrome以真實原題重現舊缺陷，新樣式在320／390／640／1103／1280px驗證同行相鄰、無溢出，普通分數／整數／段落／表格保留。正式學校測試帳號同一題1280／390px通過，題目出錯回報按鈕保留、pageerror0；答案／回報0寫入，本次計時寫入已攔截。
 - 正式以最新回報功能部署 `dpl_6JH1WxD6iF9fdCMH9Vhmduq49wWC` 453來源SHA1核對後只疊加CSS及三／六年級答題頁快取版本共3檔。最終 `dpl_3K11Jh65ymHQqT1jpBmKdjYWtgE6` 已promote；353公開檔SHA256通過（3改、350保留），無SQL／Edge／Worker部署。詳見 `quiz-mixed-fraction-20261030.md`，證據在ignored `automation/output/quiz/mixed-fraction/`。
+# 2026-11-01 四年級五科學習重點核對與699題延伸已上線
+
+- 五科1,562題均完成分類核對紀錄，1,561可靠／1國語原選項「競競業業」疑義暫緩。可延伸來源：國語212、數學215、自然87、社會185，共699；英語67題分類完成但原來源無詳解，維持0。國語由上一輪367重新核實為212，因排除仍依賴舊選項序號的解析，不能沿用舊數字。
+- 剩餘121國語按實題重分，原KNOW_SPOT有混雜；數學49、自然29、社會25、英語18組。社會原有解析漏帶資格，恢復140題標記；204題只移除單一前導舊選項序號，保留原圖文；254題位置相依解析排除候選。原固定版本、答案、進度、獎勵與全部quiz函式不變。
+- 3純邏輯測試／1,562題validator／真正PostgreSQL10流程rollback／正式增量及逐題回讀、五科真書商題目搭配合成RPC手機／重試／不足題數與停用狀態通過。無正式試答殘留；本機PGlite兩次因Windows記憶體不足失敗，沒有冒稱本機SQL通過。
+- 期間後台main提交3ec8083觸發Git自動部署3UHX，缺四年級頁面造成404。已以完整4ye網站包整合最新後台7檔精確正式bytes（其中4檔有實質更新）恢復，不是盲回舊部署；候選22Ak，正式dpl_6mgAi77pCSyWNmPZJvsd4R2Jf7j5，781來源全比對／14runtime相符，四年級4入口與navbar恢復且最新後台完整保留。後續main自動部署前須整合所有手動發布runtime。
+- 詳[五科發布紀錄](quiz-grade4-knowledge-complete-20261101.md)。新清冊automation/quiz-knowledge/g4-complete-reviewed.json SHA f38e4d2e78eec5e30f551ea977dd9ec61d950491da4e6bef429f489b3de1b31e；主repo私有證據automation/output/tucheng-grade4-knowledge-complete-20261101。已套用，不重跑舊SQL／全科匯入覆蓋；剩餘限制不是漏分類。獨立worktree仍tucheng-grade4-20261101。
+
+# 2026-11-01 四年級錯題延伸資格與無候選說明已上線（前一輪紀錄）
+
+- 國語707題按書商原題ID、課次、完整KNOW_SPOT核對，586可靠／121未知代碼暫緩；203詳細解析候選，367題可延伸。原截圖療字選項題仍無合格候選，測試帳號14筆既有錯題均無候選，未修改作答；前端新增停用按鈕及說明，不能宣稱每題可延伸。數學／自然分類與英語／社會缺解析仍保留限制。
+- 正式分類增量套用，舊題文答案解析、版本作答獎勵及quiz函式不變；原題與alias兩例錯答→detail→2題延伸→重送同卷rollback通過。7項SQL回歸與3/4/6前端合成身分／手機／無候選狀態通過，無測試殘留。
+- 只改2前端檔，fresh4Lsmu781來源，候選6Ds，正式dpl_4ye54c9t4KsX1NeY66jUEjLXtJED，781全比對／8runtime相符。詳[修正紀錄](quiz-grade4-extension-20261101.md)，清冊automation/quiz-knowledge/g4-chinese-reviewed.json；主repo私有證據automation/output/tucheng-grade4-extension-20261101。不可重跑舊分類或全科部署覆蓋。
+
+# 2026-11-01 土城四年級考古題已補齊10份
+
+- 文澳114上期中國語康軒、英語翰林HWG3已取得官方同版原卷／解答，當年版本表已核對；英語含原音，五科各2份共10份正式enabled。入口 https://it-class-tcwu.vercel.app/grade4/115-1/quiz-library.html#past-exams 。
+- 本輪79題組93欄、55局部圖及4原音分段完成逐題AI目視複核（非真人教師簽核）；國語自動48／自核對52，英語自動100。國語官方未填的開放題不造標準答案；英語key隱藏文字層舊版，依可見同版紅筆記號。原8卷限制保留。
+- 私有59素材回讀SHA通過，兩卷本機及正式回滾各6輪0→滿分→滿分／考古花0→1→1、歷次、冪等與權限通過，無正式測試殘留。79題組1280／390px作答保存／登出清除與4段原音play/pause/seek通過；為合成身分隔離驗收，非真人OAuth。
+- fresh正式仍dpl_4LsmuQBTztjPS3vvG6a8nXLQd93w共781來源檔、16關鍵runtime回讀相符。本輪只資料及離線builder，不改前端／quiz函式，不建新部署；驗收後enabled2卷，正式唯讀RPC核10卷五科各2。
+- 詳[補齊發布紀錄](tucheng-grade4-past-gap-release-20261101.md)與[來源名單](../references/tucheng-grade4-past-paper-shortlist-113-114.md)。新來源／證據主repo ignored automation/output/tucheng-grade4-past-gap-20261101/與tucheng-grade4-past-gap-release-20261101/。兩穩定ID為wenao-114-1-g4-exam1-chinese／english，不重跑初始化或create腳本覆蓋已發布reviewed/qc/bundle。舊「缺2份」僅屬歷史。
+
+# 2026-11-01 三個測試身分各顯示兩顆直接切換按鈕，已上線
+
+- 使用者要求每個身分可直接選另兩個：307→407／609、407→307／609、609→307／407。共用test-identity-switch改為排除目前身分，送出時兩顆同時停用；保留既有RPC、session核對與跨分頁revision通知。根首頁及三／四／六年級首頁模組版本同步更新。
+- 六方向桌機／手機共12次合成瀏覽器操作、失敗／session換人保護／一般帳號不顯示通過；正式六方向測試交易rollback後名冊摘要相同。沒有改SQL／RLS或作答進度。
+- fresh基準Dn，候選6iQ，正式dpl_4LsmuQBTztjPS3vvG6a8nXLQd93w；781來源全比對及12關鍵runtime回讀通過。只改5個產品檔，保留既有四年級8份考古題。詳[test-identity-three-buttons-20261101.md](test-identity-three-buttons-20261101.md)。主repo私有證據automation/output/test-identity-three-buttons-20261101/，獨立worktree與分支沿用tucheng-grade4-20261101。
+
+# 2026-11-01 土城四年級8份考古題已逐題核對上線
+
+- 使用者明確要求先完成8份並上線，國語／英語各1份缺額繼續尋找113–114相符版本且有配對解答。8份現已正式enabled：成功113國語、和順114／廣興113數學、和順114／文德113自然、安和113／114社會、名間113英語。入口 https://it-class-tcwu.vercel.app/grade4/115-1/quiz-library.html#past-exams 。
+- 全215題組、394作答欄位與11暫停項目已第二遍AI目視對照原卷與官方key，逐欄qc verified（非真人教師簽核）。60張私有局部圖全部回讀SHA通過。修正和順除法商502、自然轉錄與國語key重排裁框；名間小怪獸自由選字改自核對，筆試自動31分／自核對7分，聽42／口20暫停。其他官方疑義依指南暫停，不以null當錯誤。
+- 本機8卷三輪及正式Supabase24輪0→滿分→滿分、考古花0→1→1及歷史獨立通過；正式測試transaction rollback，沒有保留測試作答。舊答案／版本／獎勵與既有quiz函式未改。215題組1280／390px操作、圖片／保存／登出清除，以及8卷目錄與五科篩選通過；為合成身分隔離驗收，未冒稱真人OAuth。
+- fresh基準FNy共780檔，候選7Yc；promote正式dpl_Dn1Kxt44tEYaxPbU866hc7EG7vNB共781來源檔全比對、15關鍵runtime相符，之後才enable8卷。新增supabase/quiz-past-grade4.sql僅擴充grade check，絕不重裝legacy SQL。詳[發布紀錄](tucheng-grade4-past-release-20261101.md)與[來源名單](../references/tucheng-grade4-past-paper-shortlist-113-114.md)。
+- 私有來源及證據主repo ignored automation/output/tucheng-grade4-past-research-20261101/、automation/output/tucheng-grade4-past-release-20261101/；主repo tmp/tucheng-115/PAST-RELEASE-STATE.md已更新。reviewed.private.json為已校對權威，勿重跑create腳本覆蓋。缺國語／英語仍未補齊，最新再查永安114／大華／博愛亦未取得合格替代，不可說已找齊10份。
+
+# 2026-11-01 四年級「我的錯題」已修正正式資料庫
+
+- 四年級傳入grade:4時，正式quiz_wrong_questions白名單仍只有3／6，導致invalid_request及「資料格式不符」。已透過新增supabase/quiz-grade4-wrong-questions.sql只修改現行函式該白名單；保留最佳化讀取、ACL、owner、search_path及其他函式，未重裝舊SQL，也無前端發布。
+- 本機7項回歸通過；正式PostgreSQL回滾驗證三／四／六年級後正式套用，交易內確認答案、attempts、葉片、進度、名冊、版本及其他函式摘要不變。套用後40730清單5題、5題解析均通過同身分RPC檢查。工作瀏覽器當時已登出，未做登入後瀏覽器驗收，亦未代學生登入／作答。
+- 同步更新基礎與batch2 SQL、四年級遷移產生器及回歸測試。詳[tucheng-grade4-release-20261101.md](tucheng-grade4-release-20261101.md)末段；私有證據主repo tmp/tucheng-115/wrong-*.json。仍勿整包發布髒main。
+
+# 2026-11-01 土城四年級剩餘238題已補齊上線
+
+- 使用者明確授權剩下注音、特殊格式、圖題核對後上線。149圖題＋75國語注音＋14國語畫線，共238題已補齊；五科共1562題（數366／自222／社200／英67／國707）。保留原17卷，新增六份10題補充卷，合計23卷，開放407／409。沒有擴張為未核對的全冊其他題型。
+- 字形以原光碟字型局部PNG或已核對Unicode顯示，不猜多音字；14題逐一確認原Word畫線，原生圖文保留詞語位置。177張新字形／標示圖與原171圖共348圖已私有Drive保存、雜湊／解碼／對照縮圖驗證。字型檔及完整原題仍私有，不提交Git。
+- Cloudflare已恢復可見帳號及API管理；從最新5816資產完整合併為6164，服務程式與七個binding及七項設定逐項保留，只改assetmap。348圖由正式Worker全部回讀SHA相符，匿名／未知圖／外部來源拒絕。正式Supabase仍原Auth／RLS／判分服務，原資料交易摘要保護；原固定版本及答案均保留。私有canonical manifest也只合併本輪348張，後續發布仍必須fresh-read合併最新Worker，不能用舊manifest整包覆蓋。
+- 全238題PostgreSQL判分／保存／媒體授權／resume／得葉回滾證明通過；正式40730實際六卷60題全對保存、重整接續及六片葉通過，正式學生作答仍0。手機390px、注音放大、畫線位置與圖片燈箱驗收正常；原三／六年級測試身分保留。
+- 最新正式部署dpl_8RRMxcuQ9ozADDWWC77BgYF5isFa，773檔逐檔核對，僅grade4首頁文案與quiz.html局部注音圖片樣式改變，其餘與前版Cw完全一致。入口 https://it-class-tcwu.vercel.app/grade4/115-1/index.html 。詳[發布紀錄](tucheng-grade4-release-20261101.md)。私有證據主repo automation/output/tucheng-grade4-20261101/remaining-release，流程tmp/tucheng-115/REMAINING-STATE.md；不再使用舊STATE的初版未上線狀態。
+- 獨立工作樹D:/projects/.chat-mode-worktrees/tucheng-grade4-20261101，分支codex/tucheng-grade4-20261101；主repo大量其他dirty，不能整包發布或stage。Nowledge Mem此次搜尋／更新遇530，最新狀態以此本機交接及發布紀錄為準。
+
+# 2026-11-01 土城四年級國語首批補上線
+
+- 使用者回覆已重新登入康軒後，VerifyKeygrip_V3恢復HTTP200；已正式取得四年級光碟，只讀抽取，不執行安裝程式。國語618題及六課各10題練習卷已啟用，四年級合計五科1324題、17份預備卷。
+- 六課60次保存／得葉／resume／不重複得葉回滾證明通過；正式套用不含模擬答案，既有版本／答案／葉／課堂進度交易摘要不變。新課程115-1-kang-g4-chinese，開放407／409，測試身分仍40730，正式學生作答仍0。
+- 75道國語題含未知純注音字碼、14道特殊格式／上下文暫緩；不依字典猜多音字或用答案倒推。字型包與既有已核來源SHA256相同，原檔與字型仍私有。另149道圖題依舊待Cloudflare圖片服務登入恢復。
+- 首頁僅更新國語已可選文案，正式部署dpl_CwJnWa3R7rmvhBkJqikXxy9Ji1q7；完整773檔逐檔核對，只有grade4/115-1/index.html與前版不同。詳[發布紀錄](tucheng-grade4-release-20261101.md)。新私有來源與證據：主repo automation/output/tucheng-grade4-20261101/kang-g4-ch；腳本tmp/tucheng-115/release-kang.mjs與kang-final-data.mjs。國語正式瀏覽器複驗已通過：六卷與六課自組選項、10題實際保存、全對判分、重整接續、1片葉與390px目視正常，腳本錯誤0；詳production-browser-report.private.json。
+
+# 2026-11-01 土城四年級題庫與努力樹（首批已正式上線）
+
+- 使用者已確認擴充四年級；正式學生名冊已登錄。學生識別只保留私有作業檔，不寫入公共文件。原測試帳號可循環 30730→40730→60930，驗收後停於 40730。
+- 正式入口 https://it-class-tcwu.vercel.app/grade4/115-1/index.html 。首批數學南一272、自然南一217、社會翰林183、英語翰林 HWG3 34，共706題；11份單元卷已開放407／409。國語及149道圖題待出版社／圖片服務登入恢復，不能宣稱全科全題完成。
+- 正式部署 dpl_CoPVsp6Y8eWrY7oAVNeihwU8RAJU；基於當時最新 dpl_9K3cwM4PTNhTvAZrXYHQDTLLHQoF 的769檔完整來源，只疊16個runtime檔，最後773檔逐檔核對，保留同期考古題更新。勿從主repo整包部署。
+- 功能commit 3f637d6，已push codex/tucheng-grade4-20261101。獨立工作樹 D:/projects/.chat-mode-worktrees/tucheng-grade4-20261101。詳 [發布紀錄](tucheng-grade4-release-20261101.md) 與 [版本來源](../references/tucheng-textbook-version-map-115.md)。私有驗證報告位於主repo ignored automation/output/tucheng-grade4-20261101；出版社原始來源、題庫答案、憑證不得提交。
+
+# 2026-10-30 第二級虛線花葉恢復（Codex已上線）
+
+- 接回真pendingLeaves／pendingFlowers，最多8虛線葉2虛線花、兩樹型日夜描邊，點選回真實站內練習，另有鍵盤可用的收合連結清單。只在最後分區空槽呈現，滿槽不疊、不算新成果。55葉10花不變、未代闖關，30730解鎖前一步仍保留。
+- 最新正式 `dpl_J9cLJUUCH6GeoGqC7dj47jNFajzC`，以CgFN完整539來源為底，僅stage及effort-garden-v2.mjs修改，537其他檔UID保持；A/B日夜、點選ID、390px、滿槽通過，無DB變更。詳 [虛線花葉紀錄](effort-tree-ghost-rewards-20261030.md)。後續仍以當下正式完整來源發布。
+
+# 2026-10-30 跨闖關解鎖慶祝上線、測試帳號留最後一步（Codex）
+
+- 30730已準備升級後11葉0花、總55葉10花，下一片新完整葉解鎖貓＋屋。只將獨立test setup葉28→38，真進度／quiz awards／成長baseline不變、pet尚未解鎖、pending為null。不要替使用者完成下一關或重設成長。
+- 新通知outbox／RPC＋共用成功儲存接點，等原慶祝關閉才顯示解鎖內容、去努力樹／繼續練習；唯一事件、2分鐘claim租約、確認ack防重播。navbar僅一次pending、無輪詢；未達不預告。SQL及瀏覽器合成與正式讀回驗證過，完整真人解鎖留給使用者。
+- 最新正式 `dpl_CgFNve8sgdHtaykp7u26Suy4PAB9`，基於92J7完整538來源，9接點＋1新增，529其他檔UID保留；三個核心RPC雜湊不變。後續以當下正式完整來源發布。詳 [解鎖紀錄](effort-tree-unlock-notice-20261030.md)。
+
+# 2026-10-30 學習優先、解鎖不預告（使用者核定，Codex已上線）
+
+- 學生已很努力，不應誘導只為葉片／獎勵練習。訊息區只顯示「第二級努力樹・記錄你一路學習與練習的足跡。」移除升級後12葉／3花門檻、目前累積與小貓／小屋預告。內部條件保留，達標才直接出現作為驚喜；後續功能亦遵循此原則。
+- 最新正式 `dpl_92J7dh3fsfuyMQeAeBCjjCcfj2ye`，以DXZm完整538檔為底，只改effort-garden-v2.mjs的一行訊息，另537檔UID保持；正式內容與關鍵路由核對通過，無SQL／獎勵／進度變更。證據automation/output/quiz/garden-surprise-message/。
+
+# 2026-10-30 努力樹身分與樹型控制簡化已上線（Codex）
+
+- 身分卡僅顯示「30730 吳小謙」格式，座號補兩碼、不顯示Email，課程選單保留。更換樹型移入同張卡底部、葉片統計上方，僅兩文字按鈕、移除大圖與常態說明；第二級才出現、第一級與重設時隱藏，儲存與換裝過場不變。
+- 正式 `dpl_DXZmzi4gwtBWet3LgCX4Y4Gv59VA`，基於2AHx完整538來源，僅my-tree、effort-garden-v2.css、garden-tree-skin.mjs變更，535檔UID保持。30730/30703格式、原換裝回歸、正式身分無Email／控制位置／390px無溢出皆過。初次promote後立即讀到舊邊緣內容，重讀後已與來源逐位元組相同。無DB或練功房修改；未發布較早只改身分的BGFa候選，最後合併兩項需求發布。證據automation/output/quiz/garden-profile-label/。
+
+# 2026-10-30 第二級樹型換裝已上線（Codex）
+
+- 樹下方新增第二級禮物「樹型外觀」，原A／B素材＋各自96葉24花掛點；約1.15秒暖光舒展換裝，減少動態直接切換。本人a/b選擇存Supabase新增garden_tree_skins／garden_tree_skin，需已確認名冊學生且有成長紀錄；RLS／匿名禁止直接讀寫。無獎勵、quiz_action、quiz_rewards、garden_growth修改，三者正式雜湊保持。
+- 本機權限SQL及1440／390／B葉來源／儲存失敗／減少動態／重新場景恢復B通過。正式30730重整B及45葉10花正常。正式 `dpl_2AHxbiKn7VCjJfHpBEquNH3hWQA9`，基於4BMs完整537來源，534個無關檔UID保留；下次仍需以當下正式快照發布。詳 [換裝紀錄](effort-tree-skins-20261030.md)。
+
+# 2026-10-30 努力樹優先版面已上線（Codex）
+
+- 使用者指定樹在所有說明／參數之前。外層scene置首、iframe內canvas置首，重播／成長說明、動畫控制與天氣都在樹下方。1440／390、45葉10花、重播開關、無JS錯誤通過；正式30730同樣確認，canvas top=0。
+- 最新正式 `dpl_4BMs8XwYYy7Tx5Zr3BLBH8Ecrrt7`，基於前正式4oeG完整537檔，只改stage和effort-garden-v2.mjs，535檔UID保留。無DB／定位規則／練功房改動。詳 [版面紀錄](effort-tree-tree-first-20261030.md)。後續發布仍應重新取得當下正式完整來源。
+
+# 2026-10-30 首次定位授權政策修正已上線（Codex，取代下方不詢問政策）
+
+- 使用者澄清：首次 prompt 必須呼叫原生定位觸發授權；granted 直接定位；denied 不再詢問、使用學校；定位失敗用學校。選擇完全交給瀏覽器，不另存旗標。Permissions API 不支援時亦交由 geolocation 原生處理。
+- 正式 `dpl_4oeG1iffwaRjs2MfN5opZpSgnFLr`，基於前正式 `dpl_3nBhT5jpMZmC7UQjXw2sKJLqtwhm` 完整537檔，僅2個定位模組變更，其餘535檔UID相同。8單測、7種瀏覽器定位／天氣情境與390px皆通過，正式HTTP與內容核對通過。無資料庫、花葉、升級、quiz_action變更；詳 [環境政策](effort-tree-auto-weather-20261030.md)。
+
+# 2026-10-30 學生努力樹自動日夜、天氣與位置已上線（Codex）
+
+- 最新正式 `dpl_3nBhT5jpMZmC7UQjXw2sKJLqtwhm`，基於前正式 `dpl_877EgV3NBbzUr8MLXRSwgBCasA8R` 完整來源，534 個無關檔案保持。後續仍要以當下正式版重建發布包。
+- 使用者新政策取代按鈕定位：已授權則自動使用所在地，未授權／失敗用頂溪國小；不自動彈提示。移除學生手動參數，保留暫停／減少動態。8 Node 測試與6種定位／故障瀏覽器情境通過；正式 prompt 權限自動用 school，真天氣載入、45葉10花正常、無手動控制。無 DB、登入、quiz_action 變更。詳 [自動環境紀錄](effort-tree-auto-weather-20261030.md)。
+
+# 2026-10-30 第二級努力樹空白已修復（Codex）
+
+- 最新正式版 `dpl_877EgV3NBbzUr8MLXRSwgBCasA8R`，以 Claude 最新 `dpl_J9HvTo62HwJHyQCPxo83KYJK5oey` 完整 536 檔為底，僅 `garden/stage.html` 修改、535 檔保持。後續發布請重新取得當下正式版，不用舊快照。
+- 根因：預設花色覆寫初始 Image 的 onload/src，預載 Promise 永遠 pending。改獨立載入、版本防亂序與失敗保留。冷啟動故障重現／修後回歸、390px、正式 307-30 的 45 葉 10 花均通過；無資料庫修改或升級紀錄重置，quiz_action 未動。詳 [修復紀錄](effort-tree-render-fix-20261030.md)。
 
 # 2026-10-30 已完成：答題介面題目出錯回報
 
@@ -833,3 +943,24 @@ To: Claude Code
 4. NotebookLM 解析目前是針對真實匯出格式做寬鬆解析；你覺得這種策略可接受，還是應該再收嚴一點？
 
 如果你覺得哪一段做法不夠穩，請直接點出「目前先不要寫進 SOP 的部分」，我會再收斂。
+
+
+## 2026-10-31 第二級努力樹已正式上線（Claude發布必讀）
+
+使用者已授權commit/push/上線。正式版現為 `dpl_CR8iCGz53mwX8tzPT1iGsa6TUEhR`，由完整539檔基準增修至755檔；522舊檔UID不變，保留練功房題目回報與resyncOrder、第九週、auth/transport及天氣API。Git發布分支 `codex/effort-level2-release-20261031`，基準commit332a646、功能commitd868486。
+
+單交易資料遷移、核心函式/學習紀錄雜湊與權限門檻皆通過；正式測試學生登入、場景、Supabase偏好儲存讀回還原、天氣API、手機與17個重要頁面200及來源一致通過。未代答、重設或發放學習成果。詳 `docs/development/effort-level2-release-20261031.md`。
+
+後續必須以這次755檔或更新正式來源為發布基準，不能再用舊539/433/425檔包覆蓋。主工作區仍保留其他未提交內容；本輪只在獨立發布工作樹提交，main僅同步紀錄。回退需同時考慮前端與考古花資料語意，禁止直接還原舊成長快照蓋掉新成果。
+
+## 2026-11-01 寵物散步／休息偏好已上線
+
+### 後續本機工作：偷偷散步小插曲
+
+最新核定已本機實作：每人Supabase伺服器抽籤共用5分鐘冷卻（不滑動延長），1分鐘內3次進頁且在冷卻中顯示「我有好好休息，沒亂跑！」8秒氣泡。新增 `garden-pet-visit.sql`，跨寵物／分頁／裝置共用，單頁只呼叫一次且失敗維持休息。19項測試與三次重整瀏覽器驗證通過；新版隔離伺服器4464，舊4462無新RPC。正式DB與網站尚未更新，詳 `effort-pet-surprise-20261101.md` 最新段落。上線需先套新增SQL再發前端，禁止直接發布studio或髒main。
+
+使用者核准三寵物在保存休息偏好後，下次進頁20%機率於窩前散步、驚訝、兩倍速度回窩，大雨雷雨也能觸發。Codex在 `codex/pet-surprise-20261101`（基準e03433c）整合，不修改學習資料／偏好。Claude Desktop原Code對話／Opus5.5獨占studio的 `src/garden-pet-surprise-v1.js`、`docs/pet-surprise-v1.md` 與三份 `docs/pet-surprise-*-prompt.txt`；Codex不寫這5檔。新角色圖沿原ChatGPT對話，不使用Claude CLI。整合完成前不發布藝術studio整包。
+
+使用者要求回窩休息跨次瀏覽保留。分支 `codex/pet-rest-persistence-20261101`、功能提交 `a25ddb2`，正式部署已更新為 `dpl_wnTX1ou6bMPsYDaV3BAKFV1eQ9vc`。以 CR8 的完整755檔為基準，748檔保持不變，僅7個前端檔更新；後續發布必須以新正式版為基準。
+
+Supabase 新增每隻寵物獨立的 walk/rest 偏好，先儲存成功再切場景，重載直接入窩。天氣強制躲雨不改學生偏好，雨停等待指揮規則保留；舊版未記錄的指令無法回推，更新後選一次即可。10項測試、本機三寵物、雲端預覽與正式頁讀回及重載檢查皆通過，測試偏好已還原，學習成果未改。詳 `docs/development/effort-pet-mode-20261101.md`。

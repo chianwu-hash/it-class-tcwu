@@ -1,0 +1,209 @@
+{
+ "note": "大樹候選審閱用素材，只做格式轉換；非正式整合、非容量驗證。",
+ "trees": [
+  {
+   "key": "a",
+   "label": "扇形",
+   "source": ".chat-mode/inputs/tree-a.png",
+   "source_sha256": "2f71d7fd63b81253291871932b774f74d51dd0be760a1433c13519e9c8883ffa",
+   "source_size": [
+    1122,
+    1402
+   ],
+   "source_bytes": 1367156,
+   "source_bbox": [
+    20,
+    56,
+    1103,
+    1352
+   ],
+   "source_alpha": {
+    "transparent_share": 0.6216,
+    "opaque255_share": 0.0023,
+    "near_opaque_240_254_share": 0.3141,
+    "ghost_1_8_share": 0.0415,
+    "corner_alpha": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "touches_edge": false,
+    "ghost_mean_rgb": [
+     146.3,
+     44.9,
+     17.2
+    ],
+    "ghost_max_shift_on_night": 7.25,
+    "ghost_max_shift_on_white": 8.0,
+    "ghost_max_shift_on_black": 8.0,
+    "body_alpha_mean": 252.12,
+    "body_bleed_on_night_max": 15.0
+   },
+   "original_copy": "assets/processed/tree-candidates/tree-a-original.png",
+   "web": "assets/processed/tree-candidates/tree-a.webp",
+   "web_size": [
+    800,
+    1000
+   ],
+   "web_bytes": 221630,
+   "web_bbox": [
+    14,
+    40,
+    787,
+    965
+   ],
+   "web_alpha": {
+    "transparent_share": 0.6215,
+    "opaque255_share": 0.0069,
+    "near_opaque_240_254_share": 0.308,
+    "ghost_1_8_share": 0.0398,
+    "corner_alpha": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "touches_edge": false,
+    "ghost_mean_rgb": [
+     134.7,
+     50.1,
+     27.1
+    ],
+    "ghost_max_shift_on_night": 6.21,
+    "ghost_max_shift_on_white": 8.0,
+    "ghost_max_shift_on_black": 6.96,
+    "body_alpha_mean": 252.23,
+    "body_bleed_on_night_max": 15.0
+   },
+   "web_root_span_x": [
+    137,
+    687
+   ]
+  },
+  {
+   "key": "b",
+   "label": "分層",
+   "source": ".chat-mode/inputs/tree-b.png",
+   "source_sha256": "75c8ef8851339d85a170302c5ee6a1d8c5ee2ec1adde6ddd5f60049a5978ee49",
+   "source_size": [
+    1122,
+    1402
+   ],
+   "source_bytes": 1474651,
+   "source_bbox": [
+    16,
+    52,
+    1106,
+    1340
+   ],
+   "source_alpha": {
+    "transparent_share": 0.6055,
+    "opaque255_share": 0.0017,
+    "near_opaque_240_254_share": 0.3306,
+    "ghost_1_8_share": 0.0445,
+    "corner_alpha": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "touches_edge": false,
+    "ghost_mean_rgb": [
+     101.9,
+     32.3,
+     15.2
+    ],
+    "ghost_max_shift_on_night": 7.25,
+    "ghost_max_shift_on_white": 8.0,
+    "ghost_max_shift_on_black": 8.0,
+    "body_alpha_mean": 252.14,
+    "body_bleed_on_night_max": 15.0
+   },
+   "original_copy": "assets/processed/tree-candidates/tree-b-original.png",
+   "web": "assets/processed/tree-candidates/tree-b.webp",
+   "web_size": [
+    800,
+    1000
+   ],
+   "web_bytes": 226170,
+   "web_bbox": [
+    11,
+    37,
+    789,
+    956
+   ],
+   "web_alpha": {
+    "transparent_share": 0.6054,
+    "opaque255_share": 0.0057,
+    "near_opaque_240_254_share": 0.3254,
+    "ghost_1_8_share": 0.0434,
+    "corner_alpha": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "touches_edge": false,
+    "ghost_mean_rgb": [
+     95.0,
+     36.3,
+     22.4
+    ],
+    "ghost_max_shift_on_night": 5.84,
+    "ghost_max_shift_on_white": 8.0,
+    "ghost_max_shift_on_black": 6.59,
+    "body_alpha_mean": 252.23,
+    "body_bleed_on_night_max": 15.0
+   },
+   "web_root_span_x": [
+    98,
+    732
+   ]
+  }
+ ],
+ "cats": {
+  "idle": {
+   "file": "assets/processed/motion-web/cat-idle.webp",
+   "size": [
+    560,
+    740
+   ],
+   "bbox": [
+    9,
+    20,
+    547,
+    732
+   ],
+   "sha256": "cd907fe38503c695e4c131b70165d691c62944c9cfe4b716b28c81d2fb5e28dc"
+  },
+  "blink": {
+   "file": "assets/processed/motion-web/cat-blink.webp",
+   "size": [
+    560,
+    740
+   ],
+   "bbox": [
+    9,
+    22,
+    546,
+    733
+   ],
+   "sha256": "d0f4c209ea67ed2b983528b872ce09945df2be837648f0f6e837dc05d686c666"
+  },
+  "celebrate": {
+   "file": "assets/processed/motion-web/cat-celebrate.webp",
+   "size": [
+    560,
+    740
+   ],
+   "bbox": [
+    8,
+    8,
+    552,
+    728
+   ],
+   "sha256": "7b86cd2234114a17ab17c30393c9dbf8483ae779541ade4ca159ab5065d1aec0"
+  }
+ }
+}

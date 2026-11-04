@@ -55,6 +55,7 @@ export function diagnosticFetch(fetcher = globalThis.fetch) {
       record({ id, phase: 'headers', endpoint, action, status: response.status,
         ms: Math.round(performance.now() - started), request: atom(response.headers?.get('sb-request-id') || response.headers?.get('x-request-id')),
         cf: atom(response.headers?.get('cf-ray')) });
+      if(response.ok&&path==='/rest/v1/student_progress'&&['POST','PATCH'].includes((init?.method||input?.method||'GET').toUpperCase()))document.dispatchEvent(new CustomEvent('course-progress-saved'));
       // Do not clone/read response bodies: quiz documents and answers stay out of telemetry.
       return response;
     } catch (error) {

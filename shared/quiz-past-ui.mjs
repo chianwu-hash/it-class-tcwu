@@ -1,9 +1,11 @@
-import {renderLocalContent} from './quiz-past-content.mjs';
+import {renderLocalContent as renderScopedContent} from './quiz-past-content.mjs?v=20261030-audio';
 import {renderManualResponse} from './quiz-past-manual.mjs';
 import {attachPastInputKeyboard} from './quiz-past-input.mjs';
 import {createQuestionReport} from './quiz-question-reports.mjs';
 export function initPastExamUI({root,request,resolveAsset,onView,reportRequest}){
 let active=true;
+const mediaScope={resolve:resolveAsset,active:()=>active};
+const renderLocalContent=(host,content)=>renderScopedContent(host,content,{mediaScope});
 const $=s=>root.querySelector(s),el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 const button=(text,fn,cls)=>{const b=el('button',text,cls);b.type='button';b.addEventListener('click',fn);return b;};
 let state,index=0,busy=false;const drafts=new Map(),pending=new Map(),reports=new Map();let tool='point',cursor={x:.5,y:.5},arrowStart=null,undo=[];
@@ -11,6 +13,7 @@ const say=t=>{if(active&&$('#status'))$('#status').textContent=t;};
 const api=request;
 
 const isManual=g=>['annotation','manual'].includes(g.kind);
+const stopAudio=()=>root.querySelectorAll('audio').forEach(audio=>{audio.pause();audio.removeAttribute('src');audio.load();});
 function draft(g){if(!drafts.has(g.id))drafts.set(g.id,g.kind==='mark'?g.fields.map(()=>false):g.kind==='sequence'?g.choices.map(()=>''):g.kind==='manual'?{text:'',strokes:[],confirmed:false}:g.kind==='annotation'?{point:null,arrow:null,mediaSha256:g.assets[0].sha256}:g.fields.map(()=>g.kind==='set'?[]:''));return drafts.get(g.id);}
 function currentValue(g){const r=state.records[g.id];return r?(isManual(g)?r.responses[0].value:r.responses.map(x=>x.value)):draft(g);}
 function art(a){const f=el('figure',undefined,'figure');const link=el('a');link.href='#';link.dataset.imageLightbox='';const img=el('img');img.dataset.quizMediaUrl=a.url;resolveAsset(a.url).then(src=>{if(img.isConnected)img.src=src;}).catch(e=>say(e.message));img.alt=a.alt;link.append(img);f.append(link,el('figcaption',a.alt));return f;}
@@ -19,14 +22,15 @@ function feedback(g,i,host){const r=state.records[g.id];if(!r||isManual(g))retur
 function renderPractice(){
  const host=$('#practice-progress'),p=state.practice;if(!host||!p)return;
  const box=el('div',undefined,'demo-note');
- const message=p.earnedByThisAttempt?'這次完整作答達標，取得1片葉片。':p.leafCount?'這份試卷已取得1片葉片，可繼續練習，不重複領取。':p.complete?'這次作答已完成，尚未取得葉片；可以重新作答再挑戰。':'完整作答達60%後取得1片葉片；不同次答案不合併計算。';
+ const message=p.earnedByThisAttempt?'這次完整作答達標，開出1朵考古花。':p.flowerCount?'這份試卷已開出1朵考古花，可繼續練習，不重複領取。':p.complete?'這次作答已完成，尚未開花；可以重新作答再挑戰。':'完整作答達60%後開出1朵考古花；不同次答案不合併計算。';
  box.append(el('strong',message));
  const details=el('details');details.append(el('summary',`歷次作答（${p.history.length}次）`));
- const wrap=el('div',undefined,'table-scroll'),table=el('table'),head=el('tr');for(const title of ['次數','成績','狀態','葉片'])head.append(el('th',title));table.append(head);
- p.history.forEach((h,i)=>{const row=el('tr');row.append(el('td',String(i+1)+(h.id===state.attemptId?'（目前）':'')),el('td',h.complete?`${h.score}／${h.max_score}`:`目前 ${h.score} 分`),el('td',h.complete?(h.passed?'達標':'未達60%'):'未完成'),el('td',h.earned_leaf?'取得1片':'—'));table.append(row);});wrap.append(table);details.append(wrap);box.append(details);host.replaceChildren(box);
+ const wrap=el('div',undefined,'table-scroll'),table=el('table'),head=el('tr');for(const title of ['次數','成績','狀態','考古花'])head.append(el('th',title));table.append(head);
+ p.history.forEach((h,i)=>{const row=el('tr');row.append(el('td',String(i+1)+(h.id===state.attemptId?'（目前）':'')),el('td',h.complete?`${h.score}／${h.max_score}`:`目前 ${h.score} 分`),el('td',h.complete?(h.passed?'達標':'未達60%'):'未完成'),el('td',h.earned_flower?'開出1朵':'—'));table.append(row);});wrap.append(table);details.append(wrap);box.append(details);host.replaceChildren(box);
  $('#restart').textContent=p.complete?'重新作答':'另開一次作答';
 }
 function render(){if(!active)return;
+ stopAudio();
  const g=state.groups[index],saved=state.records[g.id],locked=Boolean(saved)||busy||pending.has(g.id);if(!saved)onView(g.id);const values=currentValue(g);const summary=state.summary;
  $('#score').textContent=summary.answered?`目前核對 ${summary.score}／${summary.max} 分`:'準備好，就從一組開始。';$('#progress').textContent=`已核對 ${summary.answered}／${summary.total} 個欄位${summary.drawingStatus==='self_checked'?'・開放題已有自我核對紀錄':''}`;
  const meter=$('#past-progress');if(meter){meter.max=summary.total;meter.value=summary.answered;}
@@ -105,6 +109,6 @@ async function submitGroup(){const g=state.groups[index];let packet=pending.get(
 }
 let restartRequest=null;
 $('#restart').addEventListener('click',async()=>{if(busy)return;busy=true;restartRequest??=crypto.randomUUID();try{state=await api('/api/reset',{requestId:restartRequest});restartRequest=null;drafts.clear();pending.clear();index=0;undo=[];arrowStart=null;say('');}catch(e){say(e.message);}finally{busy=false;render();}});
-return {load(next){state=next;index=Math.min(index,state.groups.length-1);render();},clear(){active=false;drafts.clear();pending.clear();state=null;root.replaceChildren();}};
+return {load(next){state=next;index=Math.min(index,state.groups.length-1);render();},clear(){stopAudio();active=false;drafts.clear();pending.clear();state=null;root.replaceChildren();}};
 
 }
