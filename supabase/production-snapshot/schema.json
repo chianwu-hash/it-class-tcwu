@@ -2928,6 +2928,7 @@
    ],
    "force_rls": false,
    "indexes": [
+    "CREATE INDEX partner_members_user ON partner_pilot.members USING btree (user_id, room_id)",
     "CREATE UNIQUE INDEX members_pkey ON partner_pilot.members USING btree (room_id, user_id)"
    ],
    "kind": "r",
@@ -3036,6 +3037,9 @@
    ],
    "force_rls": false,
    "indexes": [
+    "CREATE INDEX partner_notes_room_qid ON partner_pilot.notes USING btree (room_id, qid, kind)",
+    "CREATE INDEX partner_notes_room_user ON partner_pilot.notes USING btree (room_id, user_id, kind)",
+    "CREATE INDEX partner_notes_thread ON partner_pilot.notes USING btree (thread_id)",
     "CREATE UNIQUE INDEX notes_pkey ON partner_pilot.notes USING btree (id)"
    ],
    "kind": "r",

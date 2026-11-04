@@ -3552,7 +3552,7 @@ grant execute on function public.quiz_partner_pilot_access() to postgres;
 grant execute on function public.quiz_partner_pilot_access() to authenticated;
 grant execute on function public.quiz_partner_pilot_access() to service_role;
 
--- quiz_partner_pilot_action(jsonb)  md5=2773f879cf269306622847b018a0ec59
+-- quiz_partner_pilot_action(jsonb)  md5=975bedbce52e0a3809cc6c42b5cebfde
 CREATE OR REPLACE FUNCTION public.quiz_partner_pilot_action(p jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -3589,7 +3589,8 @@ begin
  if act='settle' then perform partner_pilot.claim_award(rid);return partner_pilot.learning_snapshot(rid);end if;
  result:=partner_pilot.action_core(p);
  if rid is not null and not partner_pilot.source_allowed(r.paper,r.started) and act='save_draft' then return partner_pilot.paused_snapshot(rid);end if;
- if act in ('finish','answer') then perform partner_pilot.claim_award(rid);result:=partner_pilot.learning_snapshot(rid);end if;
+ -- claim_award returns without writing while the room is unfinished; action_core already returned that snapshot.
+ if act in ('finish','answer') and exists(select 1 from partner_pilot.rooms where id=rid and finished) then perform partner_pilot.claim_award(rid);result:=partner_pilot.learning_snapshot(rid);end if;
  return result;
 end $function$;
 revoke all on function public.quiz_partner_pilot_action(jsonb) from public, anon, authenticated, service_role;
@@ -3647,7 +3648,7 @@ revoke all on function public.quiz_partner_reward_ids(text) from public, anon, a
 grant execute on function public.quiz_partner_reward_ids(text) to postgres;
 grant execute on function public.quiz_partner_reward_ids(text) to service_role;
 
--- quiz_partner_rewards(text)  md5=104f9b99760930c13dc1620ace2a34ec
+-- quiz_partner_rewards(text)  md5=63eda942e7a186537a6838ddc41d1ecb
 CREATE OR REPLACE FUNCTION public.quiz_partner_rewards(p_course text)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -3657,7 +3658,7 @@ AS $function$
 begin
  if auth.uid() is null then raise exception 'authentication_required';end if;
  if p_course!~'^grade[3469]-[0-9]{3}-[12]$' then raise exception 'invalid_course';end if;
- return coalesce((select jsonb_agg(jsonb_build_object('id',id,'room',room_id,'course',course_id,'leaves',leaves,'flowers',flowers,'record',record,'at',created_at) order by created_at,id) from partner_pilot.awards where auth.uid()=any(members) and course_id=p_course),'[]');
+ return coalesce((select jsonb_agg(jsonb_build_object('id',id,'room',room_id,'course',course_id,'leaves',leaves,'flowers',flowers,'record',record,'at',created_at) order by created_at,id) from partner_pilot.awards where members @> array[auth.uid()] and course_id=p_course),'[]');
 end $function$;
 revoke all on function public.quiz_partner_rewards(text) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_partner_rewards(text) to postgres;

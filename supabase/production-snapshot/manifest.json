@@ -1,6 +1,6 @@
 {
  "project": "upxgyusodibaqcrocdzj",
- "exportedAt": "2026-11-04T09:55:37.135Z",
+ "exportedAt": "2026-11-04T13:27:57.323Z",
  "counts": {
   "functions": 139,
   "tables": 97,
@@ -454,7 +454,7 @@
    "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
   },
   "quiz_partner_pilot_action(jsonb)": {
-   "md5": "2773f879cf269306622847b018a0ec59",
+   "md5": "975bedbce52e0a3809cc6c42b5cebfde",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
   },
@@ -474,7 +474,7 @@
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
   "quiz_partner_rewards(text)": {
-   "md5": "104f9b99760930c13dc1620ace2a34ec",
+   "md5": "63eda942e7a186537a6838ddc41d1ecb",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}"
   },
@@ -704,5 +704,5 @@
    "acl": "{postgres=X/postgres,service_role=X/postgres,anon=X/postgres,authenticated=X/postgres}"
   }
  },
- "fileSha256": "a6c0fb531ec75450736c242c5cac46bff4827d067faa63280ab2916990ddb304"
+ "fileSha256": "297b338af5ffdfbb285770cd809237e84d3339660ec762e46e3d7252cb04f8b1"
 }
