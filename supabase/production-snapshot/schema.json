@@ -1,6 +1,312 @@
 {
  "tables": [
   {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "display_name",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "true",
+     "generated": "",
+     "identity": "",
+     "name": "active",
+     "not_null": true,
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (user_id)",
+     "name": "allowed_users_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "allowed_users_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX allowed_users_pkey ON partner_pilot.allowed_users USING btree (user_id)"
+   ],
+   "kind": "r",
+   "name": "allowed_users",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "room_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "qid",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "attempt",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "choice",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "correct",
+     "not_null": false,
+     "type": "boolean"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "response",
+     "not_null": false,
+     "type": "jsonb"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (room_id, qid, attempt)",
+     "name": "answers_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (qid) REFERENCES partner_pilot.question_bank(id)",
+     "name": "answers_qid_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (room_id) REFERENCES partner_pilot.rooms(id) ON DELETE CASCADE",
+     "name": "answers_room_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX answers_pkey ON partner_pilot.answers USING btree (room_id, qid, attempt)"
+   ],
+   "kind": "r",
+   "name": "answers",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "hash",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "mime",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "data",
+     "not_null": true,
+     "type": "bytea"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (hash)",
+     "name": "assets_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX assets_pkey ON partner_pilot.assets USING btree (hash)"
+   ],
+   "kind": "r",
+   "name": "assets",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "content_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "member_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "members",
+     "not_null": true,
+     "type": "uuid[]"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "room_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "leaves",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "flowers",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "record",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "course_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "school_year",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "semester",
+     "not_null": true,
+     "type": "integer"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "UNIQUE (content_key, member_key)",
+     "name": "awards_content_key_member_key_key"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "awards_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX partner_awards_members ON partner_pilot.awards USING gin (members)",
+    "CREATE UNIQUE INDEX awards_content_key_member_key_key ON partner_pilot.awards USING btree (content_key, member_key)",
+    "CREATE UNIQUE INDEX awards_pkey ON partner_pilot.awards USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "awards",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
    "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
    "columns": [
     {
@@ -96,6 +402,7 @@
    "kind": "r",
    "name": "book_wishes",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -205,6 +512,7 @@
    "kind": "r",
    "name": "class_card_students",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -280,6 +588,7 @@
    "kind": "r",
    "name": "classroom_controls",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -425,6 +734,7 @@
    "kind": "r",
    "name": "content_comments",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -503,6 +813,71 @@
    "kind": "r",
    "name": "device_activity",
    "rls": true,
+   "schema": "public",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "room_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "state",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "1",
+     "generated": "",
+     "identity": "",
+     "name": "revision",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "saved_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (room_id, user_id)",
+     "name": "drafts_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (room_id) REFERENCES partner_pilot.rooms(id) ON DELETE CASCADE",
+     "name": "drafts_room_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX drafts_pkey ON partner_pilot.drafts USING btree (room_id, user_id)"
+   ],
+   "kind": "r",
+   "name": "drafts",
+   "rls": true,
+   "schema": "partner_pilot",
    "view_def": null
   },
   {
@@ -578,6 +953,7 @@
    "kind": "r",
    "name": "drive_connections",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -638,6 +1014,7 @@
    "kind": "r",
    "name": "drive_oauth_states",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -693,6 +1070,7 @@
    "kind": "r",
    "name": "foundation_milestone_definitions",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -732,6 +1110,7 @@
    "kind": "r",
    "name": "foundation_milestone_policy",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -803,6 +1182,7 @@
    "kind": "r",
    "name": "garden_companion_choices",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -914,6 +1294,7 @@
    "kind": "r",
    "name": "garden_growth",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -997,6 +1378,7 @@
    "kind": "r",
    "name": "garden_item_notices",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -1052,6 +1434,7 @@
    "kind": "r",
    "name": "garden_item_unlocks",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -1111,6 +1494,7 @@
    "kind": "r",
    "name": "garden_pet_visits",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -1178,6 +1562,7 @@
    "kind": "r",
    "name": "garden_reward_catalog",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -1261,6 +1646,7 @@
    "kind": "r",
    "name": "garden_test_setup",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -1312,6 +1698,7 @@
    "kind": "r",
    "name": "garden_tree_skins",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -1395,6 +1782,7 @@
    "kind": "r",
    "name": "garden_unlock_notices",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -1442,6 +1830,7 @@
    "kind": "r",
    "name": "grade3_google_activities",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -1535,6 +1924,7 @@
    "kind": "r",
    "name": "grade3_google_approvals",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -1609,6 +1999,7 @@
    "kind": "r",
    "name": "grade3_google_bindings",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -1676,6 +2067,7 @@
    "kind": "r",
    "name": "grade3_google_imports",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -1793,6 +2185,7 @@
    "kind": "r",
    "name": "guest_progress",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -1852,6 +2245,7 @@
    "kind": "r",
    "name": "homework_annotations",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -1984,6 +2378,7 @@
    "kind": "r",
    "name": "homework_assignments",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -2087,6 +2482,7 @@
    "kind": "r",
    "name": "homework_events",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -2130,6 +2526,7 @@
    "kind": "r",
    "name": "homework_settings",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -2225,6 +2622,7 @@
    "kind": "r",
    "name": "homework_submissions",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -2358,6 +2756,621 @@
    "kind": "r",
    "name": "homework_uploads",
    "rls": true,
+   "schema": "public",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "email",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "display_name",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": false,
+     "type": "uuid"
+    },
+    {
+     "default": "true",
+     "generated": "",
+     "identity": "",
+     "name": "active",
+     "not_null": true,
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((email = lower(email)))",
+     "name": "invitees_email_check"
+    },
+    {
+     "def": "PRIMARY KEY (email)",
+     "name": "invitees_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "invitees_user_id_fkey"
+    },
+    {
+     "def": "UNIQUE (user_id)",
+     "name": "invitees_user_id_key"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX invitees_pkey ON partner_pilot.invitees USING btree (email)",
+    "CREATE UNIQUE INDEX invitees_user_id_key ON partner_pilot.invitees USING btree (user_id)"
+   ],
+   "kind": "r",
+   "name": "invitees",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "paper_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "hash",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "source_url",
+     "not_null": true,
+     "type": "text"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((hash ~ '^[0-9a-f]{64}$'::text))",
+     "name": "media_map_hash_check"
+    },
+    {
+     "def": "FOREIGN KEY (paper_id) REFERENCES partner_pilot.papers(id)",
+     "name": "media_map_paper_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (paper_id, hash)",
+     "name": "media_map_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX media_map_pkey ON partner_pilot.media_map USING btree (paper_id, hash)"
+   ],
+   "kind": "r",
+   "name": "media_map",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "room_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "ready",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "joined_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (room_id, user_id)",
+     "name": "members_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (room_id) REFERENCES partner_pilot.rooms(id) ON DELETE CASCADE",
+     "name": "members_room_id_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES partner_pilot.allowed_users(user_id)",
+     "name": "members_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX members_pkey ON partner_pilot.members USING btree (room_id, user_id)"
+   ],
+   "kind": "r",
+   "name": "members",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "a",
+     "name": "id",
+     "not_null": true,
+     "type": "bigint"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "room_id",
+     "not_null": false,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "kind",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "qid",
+     "not_null": false,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "thread_id",
+     "not_null": false,
+     "type": "bigint"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "tag",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "text",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((kind = ANY (ARRAY['chat'::text, 'ask'::text, 'reply'::text, 'mark'::text, 'discuss'::text])))",
+     "name": "notes_kind_check"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "notes_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (qid) REFERENCES partner_pilot.question_bank(id)",
+     "name": "notes_qid_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (room_id) REFERENCES partner_pilot.rooms(id) ON DELETE CASCADE",
+     "name": "notes_room_id_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (thread_id) REFERENCES partner_pilot.notes(id) ON DELETE CASCADE",
+     "name": "notes_thread_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX notes_pkey ON partner_pilot.notes USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "notes",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "paper_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "number",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "qid",
+     "not_null": false,
+     "type": "integer"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (paper_id) REFERENCES partner_pilot.papers(id)",
+     "name": "paper_items_paper_id_fkey"
+    },
+    {
+     "def": "UNIQUE (paper_id, qid)",
+     "name": "paper_items_paper_id_qid_key"
+    },
+    {
+     "def": "PRIMARY KEY (paper_id, number)",
+     "name": "paper_items_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (qid) REFERENCES partner_pilot.question_bank(id)",
+     "name": "paper_items_qid_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX paper_items_paper_id_qid_key ON partner_pilot.paper_items USING btree (paper_id, qid)",
+    "CREATE UNIQUE INDEX paper_items_pkey ON partner_pilot.paper_items USING btree (paper_id, number)"
+   ],
+   "kind": "r",
+   "name": "paper_items",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "paper_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "session_id",
+     "not_null": true,
+     "type": "uuid"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (paper_id) REFERENCES partner_pilot.papers(id)",
+     "name": "paper_sources_paper_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (paper_id, session_id)",
+     "name": "paper_sources_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (session_id) REFERENCES quiz_sessions(id)",
+     "name": "paper_sources_session_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX paper_sources_pkey ON partner_pilot.paper_sources USING btree (paper_id, session_id)"
+   ],
+   "kind": "r",
+   "name": "paper_sources",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "title",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "grade",
+     "not_null": false,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "subject",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "kind",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "total",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "content_key",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "source_version",
+     "not_null": false,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "source_sha",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "is_real",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "true",
+     "generated": "",
+     "identity": "",
+     "name": "enabled",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "past_meta",
+     "not_null": false,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "source_session",
+     "not_null": false,
+     "type": "uuid"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((kind = ANY (ARRAY['leaf'::text, 'flower'::text])))",
+     "name": "papers_kind_check"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "papers_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX papers_pkey ON partner_pilot.papers USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "papers",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "title",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "prompt",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "options",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "correct",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "explanation",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "'{}'::jsonb",
+     "generated": "",
+     "identity": "",
+     "name": "rich",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "past_meta",
+     "not_null": false,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "past_config",
+     "not_null": false,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "past_answer",
+     "not_null": false,
+     "type": "jsonb"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "question_bank_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX question_bank_pkey ON partner_pilot.question_bank USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "question_bank",
+   "rls": true,
+   "schema": "partner_pilot",
    "view_def": null
   },
   {
@@ -2434,6 +3447,7 @@
    "kind": "r",
    "name": "quiz_answers",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -2515,6 +3529,7 @@
    "kind": "r",
    "name": "quiz_attempts",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -2582,6 +3597,7 @@
    "kind": "r",
    "name": "quiz_banks",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -2625,6 +3641,7 @@
    "kind": "r",
    "name": "quiz_catalog_cache",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -2680,6 +3697,7 @@
    "kind": "r",
    "name": "quiz_courses",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -2825,6 +3843,7 @@
    "kind": "r",
    "name": "quiz_generated_papers",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -2876,6 +3895,7 @@
    "kind": "r",
    "name": "quiz_integrity_settings",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -2977,6 +3997,7 @@
    "kind": "r",
    "name": "quiz_leaf_awards",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -3068,6 +4089,7 @@
    "kind": "r",
    "name": "quiz_learning_credits",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -3131,6 +4153,7 @@
    "kind": "r",
    "name": "quiz_learning_leaves",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -3198,6 +4221,7 @@
    "kind": "r",
    "name": "quiz_learning_maps",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -3326,6 +4350,7 @@
    "kind": "r",
    "name": "quiz_learning_sessions",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -3393,6 +4418,7 @@
    "kind": "r",
    "name": "quiz_learning_settings",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -3444,6 +4470,7 @@
    "kind": "r",
    "name": "quiz_learning_topics",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -3516,6 +4543,7 @@
    "kind": "r",
    "name": "quiz_media_assets",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -3567,6 +4595,7 @@
    "kind": "r",
    "name": "quiz_name_characters",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -3618,6 +4647,7 @@
    "kind": "r",
    "name": "quiz_name_counters",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -3693,6 +4723,7 @@
    "kind": "r",
    "name": "quiz_past_answers",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -3818,6 +4849,7 @@
    "kind": "r",
    "name": "quiz_past_attempts",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -3897,6 +4929,7 @@
    "kind": "r",
    "name": "quiz_past_drafts",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -4006,6 +5039,7 @@
    "kind": "r",
    "name": "quiz_past_leaves",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -4101,6 +5135,7 @@
    "kind": "r",
    "name": "quiz_past_papers",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -4189,6 +5224,7 @@
    "kind": "r",
    "name": "quiz_past_receipts",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -4269,6 +5305,7 @@
    "kind": "r",
    "name": "quiz_past_versions",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -4324,6 +5361,7 @@
    "kind": "r",
    "name": "quiz_past_views",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -4375,6 +5413,7 @@
    "kind": "r",
    "name": "quiz_pool_aliases",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -4427,6 +5466,7 @@
    "kind": "r",
    "name": "quiz_pool_membership",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -4546,6 +5586,7 @@
    "kind": "r",
    "name": "quiz_question_pool",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -4736,6 +5777,7 @@
    "kind": "r",
    "name": "quiz_question_reports",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -4799,6 +5841,7 @@
    "kind": "r",
    "name": "quiz_question_timing",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -4934,6 +5977,7 @@
    "kind": "r",
    "name": "quiz_sessions",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -5005,6 +6049,7 @@
    "kind": "r",
    "name": "quiz_version_meta",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -5073,6 +6118,7 @@
    "kind": "r",
    "name": "quiz_versions",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -5148,6 +6194,7 @@
    "kind": "r",
    "name": "reading_events",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -5244,6 +6291,7 @@
    "kind": "r",
    "name": "reading_periods",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -5299,6 +6347,7 @@
    "kind": "r",
    "name": "reading_submissions",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -5382,6 +6431,7 @@
    "kind": "r",
    "name": "reading_test_resets",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -5523,6 +6573,300 @@
    "kind": "r",
    "name": "reading_versions",
    "rls": true,
+   "schema": "public",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "request_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "body",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "result",
+     "not_null": true,
+     "type": "jsonb"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (user_id, request_id)",
+     "name": "requests_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX requests_pkey ON partner_pilot.requests USING btree (user_id, request_id)"
+   ],
+   "kind": "r",
+   "name": "requests",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "room_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "reflection",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (room_id, user_id)",
+     "name": "review_seen_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (room_id) REFERENCES partner_pilot.rooms(id) ON DELETE CASCADE",
+     "name": "review_seen_room_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX review_seen_pkey ON partner_pilot.review_seen USING btree (room_id, user_id)"
+   ],
+   "kind": "r",
+   "name": "review_seen",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "code",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "team",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "theme",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "paper",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "capacity",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "host",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "1",
+     "generated": "",
+     "identity": "",
+     "name": "revision",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "epoch",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "started",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "(now() + '24:00:00'::interval)",
+     "generated": "",
+     "identity": "",
+     "name": "expires_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "(floor((random() * (4)::double precision)))::integer",
+     "generated": "",
+     "identity": "",
+     "name": "character_offset",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "finished",
+     "not_null": true,
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK (((capacity >= 2) AND (capacity <= 4)))",
+     "name": "rooms_capacity_check"
+    },
+    {
+     "def": "UNIQUE (code)",
+     "name": "rooms_code_key"
+    },
+    {
+     "def": "FOREIGN KEY (paper) REFERENCES partner_pilot.papers(id)",
+     "name": "rooms_paper_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "rooms_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX rooms_code_key ON partner_pilot.rooms USING btree (code)",
+    "CREATE UNIQUE INDEX rooms_pkey ON partner_pilot.rooms USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "rooms",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "true",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "enabled",
+     "not_null": true,
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK (id)",
+     "name": "settings_id_check"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "settings_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX settings_pkey ON partner_pilot.settings USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "settings",
+   "rls": true,
+   "schema": "partner_pilot",
    "view_def": null
   },
   {
@@ -5603,6 +6947,7 @@
    "kind": "r",
    "name": "student_enrollments",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -5701,6 +7046,7 @@
    "kind": "r",
    "name": "student_profiles",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -5794,6 +7140,7 @@
    "kind": "r",
    "name": "student_progress",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -5879,6 +7226,7 @@
    "kind": "r",
    "name": "sync_devices",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -5953,6 +7301,7 @@
    "kind": "r",
    "name": "sync_pairing_codes",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -5988,6 +7337,7 @@
    "kind": "r",
    "name": "sync_profiles",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -6035,6 +7385,7 @@
    "kind": "r",
    "name": "sync_states",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -6120,6 +7471,7 @@
    "kind": "r",
    "name": "typing_drafts",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -6260,6 +7612,7 @@
    "kind": "r",
    "name": "typing_foundation_events",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -6340,6 +7693,7 @@
    "kind": "r",
    "name": "typing_foundation_lessons",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -6492,6 +7846,7 @@
    "kind": "r",
    "name": "typing_foundation_progress",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -6572,6 +7927,7 @@
    "kind": "r",
    "name": "typing_foundation_resets",
    "rls": true,
+   "schema": "public",
    "view_def": null
   },
   {
@@ -6635,6 +7991,7 @@
    "kind": "r",
    "name": "week_visibility",
    "rls": true,
+   "schema": "public",
    "view_def": null
   }
  ],
@@ -6645,6 +8002,7 @@
    "permissive": "PERMISSIVE",
    "qual": "is_teacher()",
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "class_card_students",
    "with_check": null
   },
@@ -6654,6 +8012,7 @@
    "permissive": "PERMISSIVE",
    "qual": "true",
    "roles": "{anon,authenticated}",
+   "schema": "public",
    "table": "classroom_controls",
    "with_check": null
   },
@@ -6663,6 +8022,7 @@
    "permissive": "PERMISSIVE",
    "qual": "is_teacher()",
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "classroom_controls",
    "with_check": "is_teacher()"
   },
@@ -6672,6 +8032,7 @@
    "permissive": "PERMISSIVE",
    "qual": "is_teacher()",
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "grade3_google_bindings",
    "with_check": null
   },
@@ -6681,6 +8042,7 @@
    "permissive": "PERMISSIVE",
    "qual": "is_teacher()",
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "grade3_google_imports",
    "with_check": null
   },
@@ -6690,6 +8052,7 @@
    "permissive": "PERMISSIVE",
    "qual": "is_teacher()",
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "guest_progress",
    "with_check": null
   },
@@ -6699,6 +8062,7 @@
    "permissive": "PERMISSIVE",
    "qual": "(auth.uid() = user_id)",
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "student_profiles",
    "with_check": null
   },
@@ -6708,6 +8072,7 @@
    "permissive": "RESTRICTIVE",
    "qual": "((course_id <> 'grade3-115-1'::text) OR is_teacher())",
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "student_progress",
    "with_check": null
   },
@@ -6717,6 +8082,7 @@
    "permissive": "RESTRICTIVE",
    "qual": null,
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "student_progress",
    "with_check": "(course_id <> 'grade3-115-1'::text)"
   },
@@ -6726,6 +8092,7 @@
    "permissive": "RESTRICTIVE",
    "qual": "((course_id <> 'grade3-115-1'::text) OR grade3_google_ready() OR is_teacher())",
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "student_progress",
    "with_check": null
   },
@@ -6735,6 +8102,7 @@
    "permissive": "RESTRICTIVE",
    "qual": "(course_id <> 'grade3-115-1'::text)",
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "student_progress",
    "with_check": "(course_id <> 'grade3-115-1'::text)"
   },
@@ -6744,6 +8112,7 @@
    "permissive": "PERMISSIVE",
    "qual": "(auth.uid() = user_id)",
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "student_progress",
    "with_check": null
   },
@@ -6753,6 +8122,7 @@
    "permissive": "PERMISSIVE",
    "qual": null,
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "student_progress",
    "with_check": "(auth.uid() = user_id)"
   },
@@ -6762,6 +8132,7 @@
    "permissive": "PERMISSIVE",
    "qual": "(auth.uid() = user_id)",
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "student_progress",
    "with_check": null
   },
@@ -6771,6 +8142,7 @@
    "permissive": "PERMISSIVE",
    "qual": "(auth.uid() = user_id)",
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "student_progress",
    "with_check": "(auth.uid() = user_id)"
   },
@@ -6780,6 +8152,7 @@
    "permissive": "PERMISSIVE",
    "qual": "(auth.uid() = user_id)",
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "typing_drafts",
    "with_check": null
   },
@@ -6789,6 +8162,7 @@
    "permissive": "PERMISSIVE",
    "qual": null,
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "typing_drafts",
    "with_check": "(auth.uid() = user_id)"
   },
@@ -6798,6 +8172,7 @@
    "permissive": "PERMISSIVE",
    "qual": "(auth.uid() = user_id)",
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "typing_drafts",
    "with_check": null
   },
@@ -6807,6 +8182,7 @@
    "permissive": "PERMISSIVE",
    "qual": "(auth.uid() = user_id)",
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "typing_drafts",
    "with_check": "(auth.uid() = user_id)"
   },
@@ -6816,6 +8192,7 @@
    "permissive": "PERMISSIVE",
    "qual": "true",
    "roles": "{anon,authenticated}",
+   "schema": "public",
    "table": "week_visibility",
    "with_check": null
   },
@@ -6825,6 +8202,7 @@
    "permissive": "PERMISSIVE",
    "qual": "is_teacher()",
    "roles": "{authenticated}",
+   "schema": "public",
    "table": "week_visibility",
    "with_check": "is_teacher()"
   }
@@ -6834,72 +8212,89 @@
    "def": "CREATE TRIGGER grade3_guest_frozen BEFORE INSERT OR DELETE OR UPDATE ON public.guest_progress FOR EACH ROW EXECUTE FUNCTION freeze_grade3_guest_progress()",
    "enabled": "O",
    "name": "grade3_guest_frozen",
+   "schema": "public",
    "table": "guest_progress"
   },
   {
    "def": "CREATE TRIGGER quiz_catalog_invalidate AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.quiz_courses FOR EACH STATEMENT EXECUTE FUNCTION quiz_catalog_invalidate()",
    "enabled": "O",
    "name": "quiz_catalog_invalidate",
+   "schema": "public",
    "table": "quiz_courses"
   },
   {
    "def": "CREATE TRIGGER quiz_assign_paper_name BEFORE INSERT OR UPDATE ON public.quiz_generated_papers FOR EACH ROW EXECUTE FUNCTION quiz_assign_paper_name()",
    "enabled": "O",
    "name": "quiz_assign_paper_name",
+   "schema": "public",
    "table": "quiz_generated_papers"
   },
   {
    "def": "CREATE TRIGGER quiz_catalog_invalidate AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.quiz_name_characters FOR EACH STATEMENT EXECUTE FUNCTION quiz_catalog_invalidate()",
    "enabled": "O",
    "name": "quiz_catalog_invalidate",
+   "schema": "public",
    "table": "quiz_name_characters"
   },
   {
    "def": "CREATE TRIGGER quiz_past_immutable BEFORE DELETE OR UPDATE ON public.quiz_past_versions FOR EACH ROW EXECUTE FUNCTION quiz_past_immutable()",
    "enabled": "O",
    "name": "quiz_past_immutable",
+   "schema": "public",
    "table": "quiz_past_versions"
   },
   {
    "def": "CREATE TRIGGER quiz_catalog_invalidate AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.quiz_pool_membership FOR EACH STATEMENT EXECUTE FUNCTION quiz_catalog_invalidate()",
    "enabled": "O",
    "name": "quiz_catalog_invalidate",
+   "schema": "public",
    "table": "quiz_pool_membership"
   },
   {
    "def": "CREATE TRIGGER quiz_catalog_invalidate AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.quiz_question_pool FOR EACH STATEMENT EXECUTE FUNCTION quiz_catalog_invalidate()",
    "enabled": "O",
    "name": "quiz_catalog_invalidate",
+   "schema": "public",
    "table": "quiz_question_pool"
   },
   {
    "def": "CREATE TRIGGER quiz_version_meta AFTER INSERT OR UPDATE OF document ON public.quiz_versions FOR EACH ROW EXECUTE FUNCTION quiz_version_meta_trigger()",
    "enabled": "O",
    "name": "quiz_version_meta",
+   "schema": "public",
    "table": "quiz_versions"
   },
   {
    "def": "CREATE TRIGGER trg_student_profiles_set_defaults BEFORE INSERT OR UPDATE ON public.student_profiles FOR EACH ROW EXECUTE FUNCTION student_profiles_set_defaults()",
    "enabled": "O",
    "name": "trg_student_profiles_set_defaults",
+   "schema": "public",
    "table": "student_profiles"
   }
  ],
  "sequences": [
   {
    "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}",
-   "name": "homework_events_id_seq"
+   "name": "homework_events_id_seq",
+   "schema": "public"
+  },
+  {
+   "acl": "{postgres=rwU/postgres}",
+   "name": "notes_id_seq",
+   "schema": "partner_pilot"
   },
   {
    "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}",
-   "name": "reading_events_id_seq"
+   "name": "reading_events_id_seq",
+   "schema": "public"
   }
  ],
  "types": [
   {
    "kind": "c",
    "labels": [],
-   "name": "quiz_draw_candidate"
+   "name": "quiz_draw_candidate",
+   "schema": "public"
   }
  ],
  "extensions": [
