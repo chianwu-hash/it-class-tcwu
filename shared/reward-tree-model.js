@@ -111,6 +111,11 @@ export function deriveRewardTreeModel(progressRows, activities) {
             reward.flowerStyle='forest';reward.sourceType='past_exam';
             (earned?rewards:pendingRewards).push(reward);return;
         }
+        if(activity.type==='learning-leaf'){
+            const reward=createReward({kind:'quiz-leaf',source:row,activity,index:1,total:1,earned:row.completed===true,href:activity.pageHref});
+            reward.title=activity.label;reward.reason='完成10道不同的延伸題或5題自組卷題目，答錯也算努力。';reward.detail='同題同學期只認列首次；原卷達標成果維持原紀錄。';reward.score=null;
+            (row.completed===true?rewards:pendingRewards).push(reward);return;
+        }
         if (activity.type === 'practical') {
             const earned=row.completed === true;
             const reward=createReward({kind:'practical-leaf',source:row,activity,index:1,total:1,earned,href:earned ? '' : activity.pageHref});

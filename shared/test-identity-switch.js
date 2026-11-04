@@ -8,7 +8,8 @@ const TEST_ACCOUNT_SHA256 = 'b75a0f5c4c4131ed25d0305bbeec23ad0186392544c1c4b428a
 const GRADES = {
     grade3: { label: '三年級', home: '/grade3/115-1/index.html', classCode: '307' },
     grade4: { label: '土城四年級', home: '/grade4/115-1/index.html', classCode: '407' },
-    grade6: { label: '六年級', home: '/grade6/115-1/index.html', classCode: '609' }
+    grade6: { label: '六年級', home: '/grade6/115-1/index.html', classCode: '609' },
+    grade9: { label: '九年級', home: '/grade9/115-1/index.html', classCode: '922' }
 };
 
 async function sha256Hex(text) {

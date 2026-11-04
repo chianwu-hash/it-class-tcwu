@@ -1,8 +1,8 @@
 import {supabase,getSession,isTeacher} from './auth.js';
 import {petUnlockLabel} from './garden-pet-names.mjs';
 let checking=false,again=null,queued=null,showing=false,observer=null,lastPendingUser=null,active=null;
-const COURSES=['grade3-114-2','grade3-115-1','grade4-115-1','grade6-115-1'];
-const courseFromPage=()=>{const m=location.pathname.match(/\/grade([346])\/(115-1)\//);return m?`grade${m[1]}-${m[2]}`:null};
+const COURSES=['grade3-114-2','grade3-115-1','grade4-115-1','grade6-115-1','grade9-115-1'];
+const courseFromPage=()=>{const m=location.pathname.match(/\/grade([3469])\/(115-1)\//);return m?`grade${m[1]}-${m[2]}`:null};
 async function sameUser(uid){return (await getSession()).session?.user?.id===uid}
 async function call(action,courseId=null,claim=null){let request=supabase.rpc('garden_unlock_notice',{p_action:action,p_course_id:courseId,p_claim:claim});if(request.abortSignal)request=request.abortSignal(AbortSignal.timeout(8000));const {data,error}=await request;if(error)throw error;return data}
 function blocked(){return document.hidden||document.querySelector('dialog[open],#celebration-overlay,.quiz-leaf-celebration,.garden-growth-inline')}

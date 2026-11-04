@@ -1,5 +1,5 @@
-import { initQuizModule } from './quiz-module.js?v=20261030-order-fix';
-import { createQuizRequest } from './quiz-api.mjs?v=20261030-order-resync';
+import { initQuizModule } from './quiz-module.js?v=20261102-grade9-release';
+import { createQuizRequest } from './quiz-api.mjs?v=20261102-learning';
 import { provideNavIdentity } from './grade6-nav-identity.js?v=20261030-identity-sync';
 import { initImageLightbox } from './image-lightbox.js';
 import {resolveQuizImage} from './quiz-media.mjs?v=20261029-load-batch1';
@@ -12,10 +12,10 @@ const params = new URLSearchParams(location.search), sessionId = params.get('ses
 const local = params.get('local') === '1' && ['127.0.0.1', 'localhost'].includes(location.hostname);
 const cloud = !local && params.get('cloud') === '1';
 if (cloud) document.body.classList.add('quiz-skin');
-const gradeRoute = cloud ? await import('./quiz-grade-route.mjs') : null;
+const gradeRoute = cloud ? await import('./quiz-grade-route.mjs?v=20261102-grade9-release') : null;
 if (cloud) {
   const grade = gradeRoute.quizPageGrade(location.pathname);
-  document.title = `${({3:'三',4:'四',6:'六'})[grade]}年級考前練功房`;
+  document.title = `${({3:'三',4:'四',6:'六',9:'九'})[grade]}年級考前練功房`;
   document.querySelector('.hero h1').textContent = document.title;
   document.querySelector('#quiz-lock p').textContent = '請使用名冊中的學生 Google 帳號登入，讀取並儲存自己的雲端作答。';
   const back = document.createElement('a'); back.className = 'quiz-back-link'; back.href = 'quiz-library.html'; back.textContent = '← 返回單元選卷';
@@ -74,6 +74,13 @@ async function start() {
         if(identity.role!=='student')throw new Error('考前練功房僅限名冊中的學生帳號使用。');
         const redirect = gradeRoute.quizStudentRedirect(identity, location.pathname, location.search);
         if (redirect) { location.replace(redirect); return; }
+        if(params.get('learning')==='1'){
+          const context=await request('learning',{action:'context',session_id:sessionId});
+          if(token!==authGeneration||currentSession?.user?.id!==id)return;
+          const back=document.querySelector('.hero .quiz-back-link');
+          if(context.mode==='review'){back.href='learning.html?'+new URLSearchParams({attempt:context.attempt_id,concept:context.concept_id});back.textContent='← 回到學習重點';back.dataset.shortLabel='回到學習重點';}
+          else if(context.mode==='wrong'){back.href='quiz-library.html?'+new URLSearchParams({wrong_source:'past_exam',wrong_attempt:context.attempt_id,wrong_paper:context.paper_id,wrong_version:context.version_id,wrong_group:context.group_id,wrong_question:context.question_id})+'#wrong';back.textContent='← 回這道錯題';back.dataset.shortLabel='回這道錯題';}
+        }
         practiceRole = identity.role;
         document.getElementById('server-quiz').dataset.subject = identity.subject || '';
         document.getElementById('quiz-identity').textContent = `${practiceRole === 'teacher' ? '教師試答' : '學生練習'}｜送出後儲存進度`;

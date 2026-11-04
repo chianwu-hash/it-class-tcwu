@@ -1,3 +1,4 @@
+@import url("./quiz-past-learning-review.css");
 /* 直接沿用練功房的主題、字體、四色選項與底部操作列，不影響其他頁。 */
 .past-exam-page{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;min-height:100dvh}
 .past-exam-page .student-wrap .body-grid .material{background:transparent;padding:0;margin:0 0 16px;border-radius:0}

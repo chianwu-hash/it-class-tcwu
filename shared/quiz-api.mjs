@@ -1,7 +1,7 @@
 import { createAuthenticatedTransport } from './quiz-transport.mjs?v=20261029-batch4';
 import { configureQuizMedia, createMediaScope } from './quiz-media.mjs?v=20261029-load-batch1';
 import { testIdentityRevision } from './test-identity-state.mjs?v=20261030-identity-sync';
-const errors = {
+const errors = {learning_unavailable:'這份卷目前尚未開放重點練習。',learning_incomplete:'先完整完成原卷，就能主動選重點練習。',
   report_conflict:'這個回報的內容已變更，請重新開啟題目後回報。',report_rate_limit:'這一小時已送出較多回報，請稍後再試。',
   report_unavailable:'無法核對這次作答與題目，請重新開啟試卷。',report_changed:'其他老師已更新這筆回報，請關閉後重新查看。',
   paper_name_choice_invalid: '這個主題或角色目前無法使用，請更新後重新選擇。',
@@ -64,12 +64,13 @@ export async function createQuizRequest({ getSession, localStudent = null, local
       return result;
     }
     if (READS.has(action) && Date.now() < busyUntil) throw busyError(false);
+    if(action==='wrong_questions')data={...data,learning_client:1};
     const userId = getSession?.()?.user?.id;
     const identityRevision = testIdentityRevision(userId);
     try {
-      const specialized = {question_report:'quiz_question_report',monitor:'quiz_monitor',library_sessions:'quiz_library_sessions',version_list:'quiz_version_browser',version_get:'quiz_version_browser',entry_context:'quiz_entry_context',rewards:'quiz_rewards',wrong_questions:'quiz_wrong_questions',compose:'quiz_compose',rename_paper:'quiz_rename_paper',delete_paper:'quiz_delete_paper',pool_catalog:'quiz_pool_catalog'}[action];
+      const specialized = {learning:'quiz_learning',past_practice:'quiz_learning',question_report:'quiz_question_report',monitor:'quiz_monitor',library_sessions:'quiz_library_sessions',version_list:'quiz_version_browser',version_get:'quiz_version_browser',entry_context:'quiz_entry_context',rewards:'quiz_rewards',wrong_questions:'quiz_wrong_questions',compose:'quiz_compose',rename_paper:'quiz_rename_paper',delete_paper:'quiz_delete_paper',pool_catalog:'quiz_pool_catalog'}[action];
       const result = await transport(action === 'publish' ? '/functions/v1/quiz-media' : specialized ? '/rest/v1/rpc/'+specialized : '/rest/v1/rpc/quiz_action',
-        action === 'publish' ? { action: 'freeze', data } : action === 'pool_catalog' ? {} : specialized ? { p_data: action==='version_list'||action==='version_get'?{...data,action:action==='version_get'?'get':'list'}:data } : { p_action: action, p_data: data });
+        action === 'publish' ? { action: 'freeze', data } : action === 'pool_catalog' ? {} : specialized ? { p_data: action==='past_practice'?{action:'start',...data}: action==='version_list'||action==='version_get'?{...data,action:action==='version_get'?'get':'list'}:data } : { p_action: action, p_data: data });
       if (testIdentityRevision(userId) !== identityRevision)
         throw Object.assign(new Error(quizError('identity_changed')), {code:'identity_changed'});
       if (result.attempt_id) attemptId = result.attempt_id;

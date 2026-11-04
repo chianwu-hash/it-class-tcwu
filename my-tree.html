@@ -489,20 +489,20 @@
             getCourseDefinition,
             inferCourseIdFromPath,
             normalizeCourseId
-        } from "./shared/course-context.js";
+        } from "./shared/course-context.js?v=20261102-grade9-release";
         import {
             DEFAULT_REWARD_TREE_COURSE_ID,
             FLOWER_SLOTS,
             LEAF_SLOTS,
             getRewardTreeCourse,
             getRewardTreeCourses
-        } from "./shared/reward-tree-config.js?v=20261030-g6w09-boss";
-        import { createFullCompletionRows, deriveRewardTreeModel } from "./shared/reward-tree-model.js?v=20261031-level2";
+        } from "./shared/reward-tree-config.js?v=20261102-grade9-release";
+        import { createFullCompletionRows, deriveRewardTreeModel } from "./shared/reward-tree-model.js?v=20261102-learning";
         import { renderRewardTree, selectReward } from "./shared/reward-tree-renderer.js";
         import { readingRequest, readingTreeData } from './shared/reading-api.js';
         import { homeworkRequest, homeworkTreeData } from "./shared/homework-api.js";
-        import {quizTreeData} from './shared/quiz-rewards.mjs?v=20261031-level2';
-        import {quizLibraryForEnrollment} from './shared/quiz-grade-route.mjs?v=20261028-tree-return';
+        import {quizTreeData} from './shared/quiz-rewards.mjs?v=20261102-learning';
+        import {quizLibraryForEnrollment} from './shared/quiz-grade-route.mjs?v=20261102-grade9-release';
         import {createFoundationProgress} from './shared/typing-foundation-progress.js?v=20261006-google';
         import {foundationTreeData} from './shared/typing-foundation-rewards.js?v=20261002-zhuyin';
 
@@ -757,11 +757,15 @@
             });
         }
 
+        let leafPage=0;
         function renderModel(model, activities) {
             void upgrade.render(model,selectedCourseId);
-            renderRewardTree({
+            const pages=Math.max(1,Math.ceil(model.leaves.length/LEAF_SLOTS.length));leafPage=Math.min(leafPage,pages-1);
+            document.getElementById('tree-leaf-pages')?.remove();
+            const drawLeaves=()=>{
+                renderRewardTree({
                 layer: rewardLayerEl,
-                leaves: model.leaves,
+                leaves: model.leaves.slice(leafPage*LEAF_SLOTS.length,(leafPage+1)*LEAF_SLOTS.length),
                 flowers: model.flowers,
                 pendingLeaves: model.pendingLeaves,
                 pendingFlowers: model.pendingFlowers,
@@ -771,6 +775,13 @@
                 ghostLeafCount: activities.length ? 8 : 0,
                 ghostFlowerCount: activities.length ? 2 : 0
             });
+
+            };drawLeaves();
+            if(pages>1){
+                const pager=document.createElement('div');pager.id='tree-leaf-pages';pager.style.cssText='display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px';
+                const prev=document.createElement('button'),next=document.createElement('button'),text=document.createElement('span');prev.textContent='上一頁葉片';next.textContent='下一頁葉片';
+                const update=()=>{prev.disabled=leafPage===0;next.disabled=leafPage===pages-1;text.textContent=`葉片第${leafPage+1}/${pages}頁，共${model.leaves.length}片`;drawLeaves();};prev.onclick=()=>{leafPage--;update();};next.onclick=()=>{leafPage++;update();};pager.append(prev,text,next);rewardLayerEl.closest('.tree-stage').after(pager);update();
+            }
 
             leafCountEl.textContent = String(model.stats.leafCount);
             flowerCountEl.textContent = String(model.stats.flowerCount);
@@ -804,7 +815,7 @@
             const version = ++treeLoadVersion;
             upgrade.reset();
             hideNotice();
-            rewardLayerEl.replaceChildren();
+            rewardLayerEl.replaceChildren();document.getElementById('tree-leaf-pages')?.remove();
             leafCountEl.textContent = '0';
             flowerCountEl.textContent = '0';
             detailTitleEl.textContent = '正在確認本人的成果';
@@ -830,14 +841,14 @@
                 // The practice library follows the student's current roster, even when viewing an older tree.
                 practiceEnrollment = currentSchoolYear === 115 ? enrollment : currentYearEnrollment;
                 updateAuthUi();
-                if (!activities.length && !['grade4-115-1','grade6-115-1'].includes(loadingCourse)) { renderEmptyCourse(course); return; }
+                if (!activities.length && !['grade4-115-1','grade6-115-1','grade9-115-1'].includes(loadingCourse)) { renderEmptyCourse(course); return; }
                 if (['grade3-115-1','grade6-115-1'].includes(loadingCourse) && currentSession?.user && !mockMode) {
                     try {
                         const foundation=foundationTreeData(await createFoundationProgress({courseId:loadingCourse,getSession:()=>currentSession}).request('list',{include_zhuyin:true}),loadingCourse);
                         activities.push(...foundation.activities); rows.push(...foundation.rows);
                     } catch(error) { showNotice(`基礎練習成果暫時無法讀取：${error.message}`, 'info'); }
                 }
-                if (['grade3-115-1','grade4-115-1','grade6-115-1'].includes(loadingCourse) && currentSession?.user && !mockMode) {
+                if (['grade3-115-1','grade4-115-1','grade6-115-1','grade9-115-1'].includes(loadingCourse) && currentSession?.user && !mockMode) {
                     try {const quiz=await quizTreeData(currentSession,loadingCourse);activities.push(...quiz.activities);rows.push(...quiz.rows);}catch(error){showNotice(`考前練功成果暫時無法讀取：${error.message}`,'info');}
                 }
                 if (loadingCourse === 'grade6-115-1' && currentSession?.user && !mockMode) {
@@ -851,7 +862,7 @@
                     try { const reading=readingTreeData((await readingRequest(currentSession,'list')).periods); activities.push(...reading.activities); rows.push(...reading.rows); } catch(error) { showNotice(`閱讀紀錄暫時無法讀取：${error.message}`, 'info'); }
                 }
                 if (version !== treeLoadVersion || selectedCourseId !== loadingCourse || currentSession?.user?.id !== loadingUser) return;
-                if (!activities.length && loadingCourse !== 'grade4-115-1') { renderEmptyCourse(course); return; }
+                if (!activities.length && !['grade4-115-1','grade9-115-1'].includes(loadingCourse)) { renderEmptyCourse(course); return; }
                 const model = await withGardenTestRewards(deriveRewardTreeModel(rows, activities),{supabase,session:currentSession,courseId:loadingCourse});
                 if(version!==treeLoadVersion||selectedCourseId!==loadingCourse||currentSession?.user?.id!==loadingUser)return;
                 renderModel(model, activities);
@@ -888,7 +899,7 @@
             currentEnrollment = null;
             practiceEnrollment = null;
             updateQuizLibraryLink();
-            rewardLayerEl.replaceChildren();
+            rewardLayerEl.replaceChildren();document.getElementById('tree-leaf-pages')?.remove();
             leafCountEl.textContent = '0';
             flowerCountEl.textContent = '0';
             setTimeout(loadAndRender, 0);

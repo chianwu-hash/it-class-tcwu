@@ -73,8 +73,7 @@ const GRADE3_115_1_ACTIVITIES = [
     },
     { "type": "typing", "weekCode": "07", "activityKey": "typing_task_5", "totalLevels": 5, "pageHref": "/grade3/115-1/week07.html", "label": "第 7 週 鍵盤五關" },
     { "type": "typing", "weekCode": "08", "activityKey": "typing_task_5", "totalLevels": 5, "pageHref": "/grade3/115-1/week08.html", "label": "第 8 週 國語第一課" },
-    { "type": "typing", "weekCode": "09", "activityKey": "typing_task_6", "totalLevels": 6, "pageHref": "/grade3/115-1/week09.html", "label": "第 9 週 國語第二課與英語 Unit 2" },
-    { "type": "typing", "weekCode": "10", "activityKey": "typing_task_5", "totalLevels": 5, "pageHref": "/grade3/115-1/week10.html", "label": "第 10 週 期中複習與標點魔王" }
+    { "type": "typing", "weekCode": "09", "activityKey": "typing_task_6", "totalLevels": 6, "pageHref": "/grade3/115-1/week09.html", "label": "第 9 週 國語第二課與英語 Unit 2" }
 ];
 
 const GRADE3_114_2_ACTIVITIES = [
@@ -290,6 +289,7 @@ function withCourseId(courseId, activities) {
 }
 
 export const REWARD_TREE_COURSES = [
+    { id: "grade9-115-1", label: "中正九年級 115 上", activities: [] },
     { id: "grade4-115-1", label: "土城四年級 115 上", activities: [] },
     {
         id: "grade3-114-2",

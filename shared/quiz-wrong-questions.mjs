@@ -2,6 +2,8 @@ import {renderContent} from './quiz-render.mjs?v=20261029-load-batch1';
 import {resolveQuizImage} from './quiz-media.mjs?v=20261029-load-batch1';
 import {initImageLightbox} from './image-lightbox.js';
 import {createQuestionReport} from './quiz-question-reports.mjs';
+import {renderPastLearningReview} from './quiz-past-learning-review.mjs';
+import {wrongQuestionRef,readWrongQuestionRef,wrongQuestionSearch} from './quiz-wrong-route.mjs';
 
 const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canExtend=()=>Boolean(onExtension),externalNavigation=false}) {
@@ -13,15 +15,16 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
   library.append(panel);
   const el=id=>document.getElementById(id),detail=el('server-quiz');
   initImageLightbox({root:detail,selector:'img',initialScale:.8,minScale:.2,zoomStep:.1,resolveImageSource:resolveQuizImage});
-  let active=false,generation=0,busy=false,page=0,facets=[],mediaScope=null;
+  let active=false,generation=0,busy=false,page=0,facets=[],mediaScope=null,detailEpoch=0,identitySeen=false;
+  function route(item){history.replaceState(null,'',location.pathname+'?'+wrongQuestionSearch(item,location.search)+location.hash);}
   const locked=value=>{busy=value;for(const n of [...panel.querySelectorAll('button,select'),papersButton,wrongButton])n.disabled=value||n.dataset.pageDisabled==='true';};
   const message=text=>el('wrong-status').textContent=text;
   const current=(g,uid)=>g===generation&&uid===getUserId();
-  function listView(){mediaScope?.dispose();mediaScope=null;detail.querySelectorAll('audio').forEach(a=>a.pause());el('wrong-detail').hidden=true;el('wrong-list').hidden=false;el('wrong-pages').hidden=false;detail.replaceChildren();document.getElementById('lightbox-close')?.click();}
+  function listView(){detailEpoch++;mediaScope?.dispose();mediaScope=null;detail.querySelectorAll('audio').forEach(a=>a.pause());el('wrong-detail').hidden=true;el('wrong-list').hidden=false;el('wrong-pages').hidden=false;detail.replaceChildren();document.getElementById('lightbox-close')?.click();}
   function fill(select,values,label){const old=select.value;select.replaceChildren(new Option(label,''),...values.map(v=>new Option(v,v)));if(values.includes(old))select.value=old;}
   function units(){const subject=el('wrong-subject').value;fill(el('wrong-unit'),[...new Set(facets.filter(f=>!subject||f.subject===subject).map(f=>f.unit))],'全部單元');}
   async function load(){
-    if(busy||!getUserId())return;const g=generation,uid=getUserId();locked(true);listView();message('正在整理你的錯題…');el('wrong-list').replaceChildren();el('wrong-pages').replaceChildren();
+    if(busy||!getUserId())return;const g=generation,uid=getUserId();identitySeen=true;locked(true);listView();message('正在整理你的錯題…');el('wrong-list').replaceChildren();el('wrong-pages').replaceChildren();
     try {
       const data=await request('wrong_questions',{action:'list',grade:pageGrade,page,subject:el('wrong-subject').value,unit:el('wrong-unit').value});if(!current(g,uid))return;
       facets=data.facets;fill(el('wrong-subject'),[...new Set(facets.map(f=>f.subject))],'全部科目');units();
@@ -29,13 +32,14 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
       message(data.total?`共有 ${data.total} 題可複習的錯題，依作答時間由新到舊排列。`:'目前沒有符合條件的錯題。完成練習、開放解析後，答錯的題目會自動收進來。');
       for(const item of data.items){
         const card=make('article',undefined,'wrong-card'),h=make('h3',`${item.catalog?.subject||'未分類'}・${item.catalog?.unit||item.title}`);
-        card.append(h,make('p',`第 ${item.number} 題｜${new Date(item.answered_at).toLocaleString('zh-TW')}`,'meta'),make('p',item.preview));
+        card.append(h,make('p',`${item.source_type==='past_exam'?'考古題｜原卷 '+item.source_label+'（'+item.field_label+'）':'第 '+item.number+' 題'}｜${item.source_type==='past_exam'?'本次開始於 ':''}${new Date(item.answered_at).toLocaleString('zh-TW')}`,'meta'),make('p',item.preview));
         const button=make('button','回看題目與解析');button.dataset.questionId=item.question_id;button.addEventListener('click',()=>open(item));card.append(button);el('wrong-list').append(card);
       }
       const previous=make('button','上一頁'),next=make('button','下一頁');previous.dataset.pageDisabled=String(page===0);next.dataset.pageDisabled=String((page+1)*20>=data.total);
-      previous.addEventListener('click',()=>{page--;load();});next.addEventListener('click',()=>{page++;load();});
+      previous.addEventListener('click',()=>{route(null);page--;load();});next.addEventListener('click',()=>{route(null);page++;load();});
       if(data.total)el('wrong-pages').append(previous,make('span',`第 ${page+1}／${Math.ceil(data.total/20)} 頁`),next);
     }catch(e){if(current(g,uid))message(e.message);}finally{if(current(g,uid)){locked(false);panel.querySelectorAll('[data-page-disabled="true"]').forEach(n=>n.disabled=true);}}
+    const restore=readWrongQuestionRef(location.search);if(restore&&active&&current(g,uid))await open(restore,{restore:true});
   }
   function content(target,value){
     const c=structuredClone(value||{text:'',media:[]});
@@ -43,29 +47,43 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
     for(const m of c.media||[])if(m.alt==='書商原圖')m.alt='圖片';else if(m.alt==='書商原版聽力音檔')m.alt='聽力音檔';
     renderContent(target,c,{imageLoading:'eager',mediaScope});
   }
-  async function open(item){
-    if(busy)return;const g=generation,uid=getUserId();locked(true);message('正在讀取這題的作答與解析…');
+  async function open(item,{restore=false}={}){
+    if(busy)return;const g=generation,uid=getUserId(),epoch=++detailEpoch;locked(true);message('正在讀取這題的作答與解析…');
     try{
-      const data=await request('wrong_questions',{action:'detail',grade:pageGrade,attempt_id:item.attempt_id,question_id:item.question_id});if(!current(g,uid)||!active)return;
-      const extensionAvailable=onExtension&&(typeof data.can_extend==='boolean'?data.can_extend:await canExtend(data.catalog));if(!current(g,uid)||!active)return;
+      const ref=wrongQuestionRef(item);if(!ref)throw Error('錯題連結不完整，請更新清單。');
+      const data=await request('wrong_questions',{action:'detail',grade:pageGrade,...ref});if(!current(g,uid)||!active||epoch!==detailEpoch)return;
+      const extensionAvailable=ref.source_type!=='past_exam'&&onExtension&&(typeof data.can_extend==='boolean'?data.can_extend:await canExtend(data.catalog));if(!current(g,uid)||!active||epoch!==detailEpoch)return;
       mediaScope?.dispose();mediaScope=request.createMediaScope?.({user_id:uid,session_id:data.session_id,attempt_id:item.attempt_id,version_id:data.version_id,view:crypto.randomUUID(),generation:g},data.version_id?{}:{ttl:0});
       detail.dataset.subject=data.catalog?.subject||'';detail.replaceChildren();const article=make('article',undefined,'question');
-      el('wrong-title').textContent=`${data.catalog?.subject||'未分類'}・${data.catalog?.unit||data.title}・第 ${data.number} 題`;
-      el('wrong-meta').textContent=`作答時間：${new Date(data.answered_at).toLocaleString('zh-TW')}｜以下保留你當時的選項順序。`;
+      el('wrong-title').textContent=`${data.catalog?.subject||'未分類'}・${data.catalog?.unit||data.title}・${ref.source_type==='past_exam'?'原卷 '+data.source_label+'（'+data.field_label+'）':'第 '+data.number+' 題'}`;
+      el('wrong-meta').textContent=`${ref.source_type==='past_exam'?'考古題｜本次開始時間':'作答時間'}：${new Date(data.answered_at).toLocaleString('zh-TW')}｜以下保留你當時的選項順序。`;
       const q=data.question;if(q.material?.text||q.material?.media?.length){const material=make('section',undefined,'wrong-material');material.append(make('h4','共用材料'));content(material,q.material);article.append(material);}
       content(article,q.prompt);
       const choices=make('div',undefined,'wrong-choices');
       for(const [index,o] of (q.options||[]).entries()){
-        const option=make('div',undefined,'wrong-option');option.append(make('strong',String.fromCharCode(65+index)));const body=make('div');content(body,o.content);
+        const option=make('div',undefined,'wrong-option'),body=make('div');
+        if(ref.source_type!=='past_exam')option.append(make('strong',String.fromCharCode(65+index)));else option.classList.add('past-wrong-option');
+        content(body,o.content);
         if(o.id===data.response){body.append(make('p','你的答案','wrong-selected'));option.classList.add('was-selected');}
-        if(o.id===data.review.answer.option_id){body.append(make('p','✓ 正確答案','wrong-correct'));option.classList.add('is-correct');}
+        if(o.id===data.review.answer.option_id){body.append(make('p',ref.source_type==='past_exam'?'✓ 核對答案':'✓ 正確答案','wrong-correct'));option.classList.add('is-correct');}
         option.append(body);choices.append(option);
       }
       article.append(choices);const explanation=make('section',undefined,'answer-preview');explanation.append(make('h4','解題想法'));
-      if(q.type!=='single'){explanation.append(make('p',`你的答案：${data.response}`),make('p',`可接受的答案：${data.review.answer.accepted.join('、')}`));}
+      if(data.past_review&&q.type!=='single'){
+        const result=make('section',undefined,'answer-preview');result.append(make('h4','當時作答與核對'),make('p',`你的答案：${data.response_text}`),make('p',`本卷核對答案：${data.answer_text}`));article.append(result);
+      }
+      else if(q.type!=='single'){explanation.append(make('p',`你的答案：${data.response}`),make('p',`可接受的答案：${data.review.answer.accepted.join('、')}`));}
       else explanation.append(make('p',`正確選項：${String.fromCharCode(65+q.options.findIndex(o=>o.id===data.review.answer.option_id))}`));
-      content(explanation,data.review.explanation);article.append(explanation);detail.append(article);
-      article.append(createQuestionReport({request,context:{source:'quiz',attempt_id:item.attempt_id,question_id:item.question_id},options:q.options,valid:()=>current(g,uid)&&active&&article.isConnected}));
+      content(explanation,data.review.explanation);if(!data.past_review)article.append(explanation);detail.append(article);
+      if(ref.source_type==='past_exam'&&data.past_review){
+        renderPastLearningReview({host:article,...data.past_review,onPractice:async({source,conceptId,requestId})=>{
+          const result=await request('past_practice',{attempt_id:ref.attempt_id,version:source.versionId,group_id:source.groupId,question_id:source.questionId,concept_id:conceptId,request_id:requestId});
+          if(!current(g,uid)||!active||epoch!==detailEpoch||!article.isConnected)throw Error('目前已切換題目或帳號，請重新選擇。');
+          const url=new URL(result.url,location.origin);if(url.origin!==location.origin||!/\/grade[36]\/115-1\/quiz\.html$/.test(url.pathname))throw Error('練習連結無效。');
+          return {...result,url:url.href};
+        }});
+      }
+      article.append(createQuestionReport({request,context:ref.source_type==='past_exam'?{source:'past',attempt_id:ref.attempt_id,question_id:ref.group_id}:{source:'quiz',attempt_id:item.attempt_id,question_id:item.question_id},options:q.options,valid:()=>current(g,uid)&&active&&article.isConnected}));
       if(extensionAvailable){
         const section=make('section',undefined,'wrong-extension'),button=make('button','再練3題同一個重點'),status=make('p');status.setAttribute('role','status');section.append(button,status);detail.append(section);
         const requestId=crypto.randomUUID();
@@ -77,18 +95,14 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
           const view=make('button','到我的自組卷查看');view.type='button';view.addEventListener('click',()=>document.dispatchEvent(new CustomEvent('quiz-show-own',{detail:{sessionId:result.session_id}})));
           actions.append(a,view);section.append(actions);message('延伸練習已儲存，可以直接開始，或稍後到「我的自組卷」繼續。');a.focus();
         }catch(e){if(current(g,uid))status.textContent=e.message;}finally{if(current(g,uid))locked(false);}});
-      }else if(onExtension){
-        const section=make('section',undefined,'wrong-extension'),button=make('button','錯題延伸練習（尚無可用題目）');
-        button.type='button';button.disabled=true;button.dataset.pageDisabled='true';
-        section.dataset.state='unavailable';section.append(button,make('p','目前還沒有符合這題學習重點的延伸題，可以先回看解析，或回選卷頁複習同一單元。'));detail.append(section);
-      }
-      el('wrong-list').hidden=true;el('wrong-pages').hidden=true;el('wrong-detail').hidden=false;message('可以慢慢核對題目、當時答案與解析。');el('wrong-title').focus();
-    }catch(e){if(current(g,uid))message(e.message);}finally{if(current(g,uid))locked(false);}
+      }else if(onExtension&&ref.source_type!=='past_exam'){const section=make('section',undefined,'wrong-extension');section.append(make('p','目前沒有可靠的同重點延伸題，可以先回看解析。'));detail.append(section);}
+      route(ref);el('wrong-list').hidden=true;el('wrong-pages').hidden=true;el('wrong-detail').hidden=false;message('可以慢慢核對題目、當時答案與解析。');el('wrong-title').focus();
+    }catch(e){if(current(g,uid)){if(restore)route(null);message(restore?'這題已無法開啟，請從錯題清單重新選擇。':e.message);}}finally{if(current(g,uid))locked(false);}
   }
   function activate(value){if(busy&&value&&!externalNavigation)return;active=value;panel.hidden=!value;if(!value)listView();if(externalNavigation){if(value)load();return;}for(const id of ['cloud-papers','cloud-status','my-papers-section','system-papers-section','paper-jumps'])if(el(id))el(id).hidden=value||(['my-papers-section','paper-jumps'].includes(id)&&el(id).dataset.enabled!=='true');library.querySelector('.filters').hidden=value;const composer=document.getElementById('quiz-composer');if(composer)composer.hidden=value||composer.dataset.available!=='true';papersButton.setAttribute('aria-pressed',String(!value));wrongButton.setAttribute('aria-pressed',String(value));if(value)load();}
   papersButton.addEventListener('click',()=>{history.replaceState(null,'',location.pathname+location.search);activate(false);});
   wrongButton.addEventListener('click',()=>{history.replaceState(null,'',location.pathname+location.search+'#wrong');activate(true);});
-  el('wrong-subject').addEventListener('change',()=>{el('wrong-unit').value='';units();page=0;load();});el('wrong-unit').addEventListener('change',()=>{page=0;load();});
-  el('wrong-refresh').addEventListener('click',()=>{page=0;load();});el('wrong-back').addEventListener('click',()=>{listView();message('選一題，回看當時的答案與解析。');});
-  return {activate,ready(){if(externalNavigation)return;activate(location.hash==='#wrong');},reset(){generation++;active=false;panel.hidden=true;locked(false);page=0;facets=[];listView();el('wrong-list').replaceChildren();el('wrong-pages').replaceChildren();fill(el('wrong-subject'),[],'全部科目');units();message('');}};
+  el('wrong-subject').addEventListener('change',()=>{route(null);el('wrong-unit').value='';units();page=0;load();});el('wrong-unit').addEventListener('change',()=>{route(null);page=0;load();});
+  el('wrong-refresh').addEventListener('click',()=>{page=0;load();});el('wrong-back').addEventListener('click',()=>{route(null);listView();message('選一題，回看當時的答案與解析。');});
+  return {activate,ready(){if(externalNavigation)return;activate(location.hash==='#wrong');},reset(){if(identitySeen)route(null);generation++;active=false;panel.hidden=true;locked(false);page=0;facets=[];listView();el('wrong-list').replaceChildren();el('wrong-pages').replaceChildren();fill(el('wrong-subject'),[],'全部科目');units();message('');}};
 }
