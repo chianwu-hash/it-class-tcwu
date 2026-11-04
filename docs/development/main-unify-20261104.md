@@ -183,3 +183,10 @@
 3. 第 3 節 6 個移除檔是否保留。
 4. Codex worktree（`foundation-keyboard-fix-20261102`、`foundation-milestones-20261102`）仍有 76 個已上線但未 commit 的檔；整合分支已有正式版內容，請 Codex 確認後清理該 worktree，避免下次從舊內容發布。
 5. 第一次從 `main` 發布時，因 CRLF 會有 297 檔 SHA1 改變但內容相同，依 dev-sop 第 5 步以 `release-tree-diff` 確認只在 `eolOnly` 再放行。
+
+## 9. 從乾淨 checkout 部署預覽（2026-11-04 12:xx，未 promote）
+
+- GitHub 觸發的 Vercel 預覽**一定會失敗**：git clone 會帶入被追蹤的 `textbooks/`、S091、S092 資料夾，`.vercelignore` 只刪掉檔案、留下資料夾，`release/garden-preflight.mjs` 看到資料夾就擋。Codex 的分支也因此在 `vercel.json` 關掉自家分支的 Git 自動部署。正式發布一律用 CLI 從乾淨 checkout 上傳。
+- 用 CLI 從乾淨 checkout 上傳時，`textbooks/` 規則仍會留下空資料夾，因此在 `release/project-policy.json` 補上 `cliIgnorePatterns: ["textbooks"]`（比照 S091／S092），並以 `renderProjectIgnore` 重新產生 `.vercelignore`；另排除 `.gitattributes`。`automation/tests/release-report.test.mjs` 11／11 通過。
+- 預覽 `dpl_24v5JeTrxVd48YtUPx3kZWxWTX7W`（commit `0b82917`）建置成功。`quiz-release-compare.mjs` 對正式版：820／820，無新增、無刪除；125 檔 SHA1 不同，其中 2 檔是預期的 `.vercelignore`、`release/project-policy.json`，其餘 123 檔經 `release-tree-diff.mjs` 確認只差換行，內容差異 0。
+- 預覽網址回 302（Vercel 預覽保護需登入），頁面內容未以瀏覽器驗證。
