@@ -1,0 +1,15 @@
+# Byte-exact production snapshot (md5/sha256 are checked by automation/db-snapshot-check.mjs)
+supabase/production-snapshot/** -text
+
+# Production copies with mixed CRLF/LF line endings; keep bytes exact so release-tree-diff matches dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p.
+garden/growth/growth.mjs -text
+garden/scene-cat.html -text
+garden/scene-pets.html -text
+shared/activity-progress.js -text
+shared/homework-api.js -text
+shared/navbar-auth.js -text
+shared/quiz-past-ui.mjs -text
+shared/reading-api.js -text
+shared/typing-challenge.js -text
+shared/typing-foundation-progress.js -text
+shared/zhuyin-foundation-app.js -text
