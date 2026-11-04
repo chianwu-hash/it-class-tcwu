@@ -3255,6 +3255,30 @@
      "name": "source_session",
      "not_null": false,
      "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "origin",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "owner_id",
+     "not_null": false,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "self_session",
+     "not_null": false,
+     "type": "uuid"
     }
    ],
    "constraints": [
@@ -3263,12 +3287,29 @@
      "name": "papers_kind_check"
     },
     {
+     "def": "CHECK (((origin IS NULL) OR (origin = 'self'::text)))",
+     "name": "papers_origin_check"
+    },
+    {
+     "def": "FOREIGN KEY (owner_id) REFERENCES auth.users(id)",
+     "name": "papers_owner_id_fkey"
+    },
+    {
      "def": "PRIMARY KEY (id)",
      "name": "papers_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (self_session) REFERENCES quiz_sessions(id)",
+     "name": "papers_self_session_fkey"
+    },
+    {
+     "def": "CHECK (((origin IS NULL) OR ((owner_id IS NOT NULL) AND (self_session IS NOT NULL) AND (source_session IS NULL) AND (source_version IS NULL) AND (kind = 'leaf'::text) AND (total = ANY (ARRAY[10, 20])))))",
+     "name": "partner_self_origin"
     }
    ],
    "force_rls": false,
    "indexes": [
+    "CREATE INDEX partner_self_owner ON partner_pilot.papers USING btree (owner_id) WHERE (origin = 'self'::text)",
     "CREATE UNIQUE INDEX papers_pkey ON partner_pilot.papers USING btree (id)"
    ],
    "kind": "r",
@@ -6824,6 +6865,7 @@
    ],
    "force_rls": false,
    "indexes": [
+    "CREATE INDEX partner_rooms_paper ON partner_pilot.rooms USING btree (paper)",
     "CREATE UNIQUE INDEX rooms_code_key ON partner_pilot.rooms USING btree (code)",
     "CREATE UNIQUE INDEX rooms_pkey ON partner_pilot.rooms USING btree (id)"
    ],
@@ -8291,6 +8333,11 @@
    "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}",
    "name": "reading_events_id_seq",
    "schema": "public"
+  },
+  {
+   "acl": "{postgres=rwU/postgres}",
+   "name": "self_question_id",
+   "schema": "partner_pilot"
   }
  ],
  "types": [

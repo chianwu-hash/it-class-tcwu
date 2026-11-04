@@ -1,8 +1,8 @@
 {
  "project": "upxgyusodibaqcrocdzj",
- "exportedAt": "2026-11-04T13:27:57.323Z",
+ "exportedAt": "2026-11-04T23:17:08.738Z",
  "counts": {
-  "functions": 139,
+  "functions": 144,
   "tables": 97,
   "policies": 21,
   "triggers": 9
@@ -120,6 +120,16 @@
   },
   "partner_pilot.claim_award(uuid)": {
    "md5": "14d6ba7051b5ee3103c13e1030384ce8",
+   "securityDefiner": true,
+   "acl": "{postgres=X/postgres}"
+  },
+  "partner_pilot.copy_self(uuid,text)": {
+   "md5": "c3da408c532d9e011b52154d2b2a06ea",
+   "securityDefiner": true,
+   "acl": "{postgres=X/postgres}"
+  },
+  "partner_pilot.custom_invite_ok(uuid,text)": {
+   "md5": "d688350134aed2c1dee7bca7e15fdfec",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres}"
   },
@@ -264,7 +274,12 @@
    "acl": "{postgres=X/postgres}"
   },
   "partner_pilot.lobby_action(jsonb)": {
-   "md5": "41e7429d53213ef843a5c5d4c4d96a35",
+   "md5": "81ccdaf585addd657cd582c8b03575cd",
+   "securityDefiner": true,
+   "acl": "{postgres=X/postgres}"
+  },
+  "partner_pilot.max_capacity(text)": {
+   "md5": "46933bf2fbecb5b556976ff08f1cb79b",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres}"
   },
@@ -454,7 +469,7 @@
    "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
   },
   "quiz_partner_pilot_action(jsonb)": {
-   "md5": "975bedbce52e0a3809cc6c42b5cebfde",
+   "md5": "b9bd449a3b6833f0fe085cbe5e0a7fac",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
   },
@@ -658,13 +673,23 @@
    "securityDefiner": true,
    "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
   },
+  "partner_pilot.self_catalog()": {
+   "md5": "74d6abe07590863cedfabafe8d251956",
+   "securityDefiner": true,
+   "acl": "{postgres=X/postgres}"
+  },
+  "partner_pilot.self_document_ok(jsonb)": {
+   "md5": "915ff31ec471fde42f9781da15f04400",
+   "securityDefiner": false,
+   "acl": "{postgres=X/postgres}"
+  },
   "partner_pilot.snapshot(uuid)": {
    "md5": "0d3f373b6eb87a4a9e63dcd775024c07",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres}"
   },
   "partner_pilot.source_allowed(text,boolean)": {
-   "md5": "4762afcfcd1dd1d0029a3fa7660c8240",
+   "md5": "9a72f26a91fea7ba2ead4e77e2e58ebe",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres}"
   },
@@ -704,5 +729,5 @@
    "acl": "{postgres=X/postgres,service_role=X/postgres,anon=X/postgres,authenticated=X/postgres}"
   }
  },
- "fileSha256": "297b338af5ffdfbb285770cd809237e84d3339660ec762e46e3d7252cb04f8b1"
+ "fileSha256": "78c3991ca31953a411ab8f7e6fab8066c72de0e14f833d9b8ab96191b7c8064c"
 }
