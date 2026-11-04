@@ -41,7 +41,7 @@ export async function createQuizDb(location,options={}) {
     for(const file of ['quiz-wrong-questions.sql','quiz-pool.sql','quiz-rewards.sql','quiz-load-batch1.sql','quiz-load-batch2.sql'])await db.exec(await readFile(new URL('../../supabase/'+file,import.meta.url),'utf8'));
     let upgrade=await readFile(new URL('../../supabase/quiz-load-batch2.sql',import.meta.url),'utf8');
     if(batch3){const third=await readFile(new URL('../../supabase/quiz-load-batch3.sql',import.meta.url),'utf8');await db.exec(third);upgrade+='\n'+third;}
-    if(batch4){const fourth=await readFile(new URL('../../supabase/quiz-load-batch4.sql',import.meta.url),'utf8');await db.exec(fourth);upgrade+='\n'+fourth;}
+    if(batch4){const fourth=await readFile(new URL('../../supabase/quiz-load-batch4.sql',import.meta.url),'utf8')+'\n'+await readFile(new URL('../../supabase/quiz-order-fix.sql',import.meta.url),'utf8');await db.exec(fourth);upgrade+='\n'+fourth;}
     const exec=db.exec.bind(db);
     // Older suites install their own legacy fixtures. Keep the candidate read paths active
     // after those installs so this opt-in release run actually exercises the new functions.

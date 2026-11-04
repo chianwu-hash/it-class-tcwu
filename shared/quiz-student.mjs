@@ -1,10 +1,8 @@
-import { initQuizModule } from './quiz-module.js?v=20261102-grade9-release';
-import { createQuizRequest } from './quiz-api.mjs?v=20261102-learning';
-import { provideNavIdentity } from './grade6-nav-identity.js?v=20261030-identity-sync';
+import { initQuizModule } from './quiz-module.js?v=20261030-order-resync';
+import { createQuizRequest } from './quiz-api.mjs?v=20261029-batch4';
+import { provideNavIdentity } from './grade6-nav-identity.js?v=20261029-batch4';
 import { initImageLightbox } from './image-lightbox.js';
 import {resolveQuizImage} from './quiz-media.mjs?v=20261029-load-batch1';
-import { onTestIdentityChange } from './test-identity-state.mjs?v=20261030-identity-sync';
-import {readWrongQuestionRef,wrongQuestionSearch} from './quiz-wrong-route.mjs';
 
 initImageLightbox({ root: document.getElementById('server-quiz'), selector: 'img', initialScale: 0.8, minScale: 0.2, zoomStep: 0.1,
   resolveImageSource: resolveQuizImage });
@@ -13,28 +11,13 @@ const params = new URLSearchParams(location.search), sessionId = params.get('ses
 const local = params.get('local') === '1' && ['127.0.0.1', 'localhost'].includes(location.hostname);
 const cloud = !local && params.get('cloud') === '1';
 if (cloud) document.body.classList.add('quiz-skin');
-const gradeRoute = cloud ? await import('./quiz-grade-route.mjs?v=20261102-grade9-release') : null;
+const gradeRoute = cloud ? await import('./quiz-grade-route.mjs') : null;
 if (cloud) {
   const grade = gradeRoute.quizPageGrade(location.pathname);
-  document.title = `${({3:'三',4:'四',6:'六',9:'九'})[grade]}年級考前練功房`;
+  document.title = `${grade === 3 ? '三' : '六'}年級考前練功房`;
   document.querySelector('.hero h1').textContent = document.title;
   document.querySelector('#quiz-lock p').textContent = '請使用名冊中的學生 Google 帳號登入，讀取並儲存自己的雲端作答。';
   const back = document.createElement('a'); back.className = 'quiz-back-link'; back.href = 'quiz-library.html'; back.textContent = '← 返回單元選卷';
-  const pastPaper=params.get('past_paper'),pastAttempt=params.get('past_attempt');
-  if(/^[a-zA-Z0-9_-]{1,100}$/.test(pastPaper||'')&&/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(pastAttempt||'')){
-    const query=new URLSearchParams({paper:pastPaper,attempt:pastAttempt});if(['1','2'].includes(params.get('fixture_student')))query.set('fixture_student',params.get('fixture_student'));
-    back.href='past-exam.html?'+query;back.textContent='← 返回考古題解析';back.dataset.shortLabel='回原題解析';
-  }
-  const wrongRef=readWrongQuestionRef(location.search);
-  if(document.querySelector('meta[name="past-extension-preview"]')&&['127.0.0.1','localhost'].includes(location.hostname)&&/^[a-f0-9-]{36}$/i.test(params.get('learning_attempt')||'')){
-    const query=new URLSearchParams({attempt:params.get('learning_attempt'),concept:params.get('learning_concept')||''});
-    if(params.get('fixture_student')==='2')query.set('fixture_student','2');
-    back.href='extension-topics.html?'+query;back.textContent='← 回到學習重點';back.dataset.shortLabel='回到學習重點';
-  }
-  if(wrongRef?.source_type==='past_exam'){
-    const query=wrongQuestionSearch(wrongRef,['1','2'].includes(params.get('fixture_student'))?'fixture_student='+params.get('fixture_student'):'');
-    back.href='quiz-library.html?'+query+'#wrong';back.textContent='← 回這道錯題';back.dataset.shortLabel='回這道錯題';
-  }
   document.querySelector('.hero .wrap').append(back);
 }
 let currentSession = null;
@@ -60,12 +43,12 @@ async function start() {
     await quiz.handleAuthChange({ user: { id: `demo-student-${student}` } }); return;
   }
   // 課程導覽與 OAuth 仍由既有 navbar／navbar-auth 管理。
-  const script = document.createElement('script'); script.src = 'navbar.js?v=20261030-identity-sync'; script.dataset.homework = 'true';
+  const script = document.createElement('script'); script.src = 'navbar.js?v=20261029-batch4'; script.dataset.homework = 'true';
   if (cloud) script.dataset.quiz = 'true';
   await new Promise((resolve, reject) => { script.onload = resolve; script.onerror = () => reject(new Error('導覽未能載入，請重新整理。')); document.getElementById('quiz-navbar').append(script); });
   const { initNavbarAuth } = await import('./navbar-auth.js');
   let authGeneration = 0, validatedUser = null, validatingUser = null, practiceRole = null;
-  function handleSession(session, {force=false}={}) {
+  initNavbarAuth({ onSessionResolved(session) {
     const previousId = currentSession?.user?.id || null;
     currentSession = session;
     const id = session?.user?.id || null;
@@ -77,7 +60,7 @@ async function start() {
       ? cloud ? (practiceRole === 'teacher' ? '教師試答｜送出後儲存進度' : practiceRole === 'student' ? '學生練習｜送出後儲存進度' : '正在確認年級與儲存紀錄…') : session.user.email
       : '請先登入 Google 帳號';
     if (!cloud) { quiz.handleAuthChange(session).catch(e => { document.getElementById('entry-status').textContent = e.message; }); return; }
-    if (!force && id && previousId === id && (validatedUser === id || validatingUser === id)) return;
+    if (id && previousId === id && (validatedUser === id || validatingUser === id)) return;
     const token = ++authGeneration; validatedUser = null; validatingUser = id;
     quiz.handleAuthChange(null);
     if (!id) return;
@@ -90,13 +73,6 @@ async function start() {
         if(identity.role!=='student')throw new Error('考前練功房僅限名冊中的學生帳號使用。');
         const redirect = gradeRoute.quizStudentRedirect(identity, location.pathname, location.search);
         if (redirect) { location.replace(redirect); return; }
-        if(params.get('learning')==='1'){
-          const context=await request('learning',{action:'context',session_id:sessionId});
-          if(token!==authGeneration||currentSession?.user?.id!==id)return;
-          const back=document.querySelector('.hero .quiz-back-link');
-          if(context.mode==='review'){back.href='learning.html?'+new URLSearchParams({attempt:context.attempt_id,concept:context.concept_id});back.textContent='← 回到學習重點';back.dataset.shortLabel='回到學習重點';}
-          else if(context.mode==='wrong'){back.href='quiz-library.html?'+new URLSearchParams({wrong_source:'past_exam',wrong_attempt:context.attempt_id,wrong_paper:context.paper_id,wrong_version:context.version_id,wrong_group:context.group_id,wrong_question:context.question_id})+'#wrong';back.textContent='← 回這道錯題';back.dataset.shortLabel='回這道錯題';}
-        }
         practiceRole = identity.role;
         document.getElementById('server-quiz').dataset.subject = identity.subject || '';
         document.getElementById('quiz-identity').textContent = `${practiceRole === 'teacher' ? '教師試答' : '學生練習'}｜送出後儲存進度`;
@@ -105,10 +81,6 @@ async function start() {
         await quiz.handleAuthChange(currentSession);
       } catch (e) { if (token === authGeneration) { validatingUser = null; document.getElementById('quiz-identity').textContent = '年級或儲存紀錄尚未確認'; document.getElementById('entry-status').textContent = e.message; } }
     }, 0);
-  }
-  onTestIdentityChange(({userId}) => {
-    if(cloud&&currentSession?.user?.id===userId) handleSession(currentSession,{force:true});
-  });
-  initNavbarAuth({onSessionResolved:handleSession});
+  } });
 }
 start().catch(e => { document.getElementById('entry-status').textContent = e.message; });

@@ -28,6 +28,7 @@ export const supabase={auth:{getSession:async()=>({data:{session:window.fixtureS
     if(name==='quiz_pool_catalog')return send({available:true,courses:[{id:'115-1-hanlin-g3-math',grade:3,subject:'數學',units:[{id:1,title:'10000以內的數',count:10}],extension_available:true}],name_characters:[]});
     if(name==='quiz_compose'){own={id:ids.own,version_id:'v2',title:'我的數學自組卷',catalog:{...catalog,unit:'第1單元：10000以內的數'},status:'open',generated:true,display_name:'三年級數學｜測試・角色｜001',saved_at:'2026-10-29T07:00:00Z',generated_kind:'self',unit_ids:[1],distribution:{actual:5,easy:1,medium:3,hard:1,requested:5,difficulty:'medium'},learning_point:null,total:5,answered:0,correct:0};
      return send({session_id:ids.own,display_name:own.display_name,distribution:own.distribution,reused:false,paper:own});}
+    if(name==='quiz_past_action')return send({papers:[],sessions:[],items:[]});
     if(name==='quiz_wrong_questions')return send({role:'student',grade:3,total:0,facets:[],items:[]});
     if(name==='quiz_entry_context')return send({role:'student',grade:3,subject:'數學',version_id:'v1',identity});
     if(name==='quiz_action')return send({message:'attempt_unavailable'},400);
@@ -55,8 +56,9 @@ export const supabase={auth:{getSession:async()=>({data:{session:window.fixtureS
   busyNext=1;await page.click('#refresh-library');await page.waitForFunction(()=>document.querySelector('#cloud-lock p')?.textContent.includes('伺服器忙碌'));
   const before=count('quiz_library_sessions');const msg=await page.$eval('#cloud-lock p',n=>n.textContent);assert.match(msg,/不要重新整理/);
   // Same module instance as the page: the read is refused locally during cooldown, writes still go out.
-  const cooled=await page.evaluate(async()=>{const {createQuizRequest}=await import('/shared/quiz-api.mjs?v=20261029-batch4');const r=await createQuizRequest({getSession:()=>fixtureSession});
-   const read=await r('library_sessions').then(()=>'sent',e=>e.code);const write=await r('compose',{kind:'self',count:5,units:[1],request_id:crypto.randomUUID()}).then(()=>'sent',e=>e.code);return {read,write};});
+  const apiUrl='/shared/'+(await (await page.evaluate(()=>fetch('/shared/quiz-library.mjs').then(r=>r.text()))).match(/quiz-api\.mjs\?v=[A-Za-z0-9-]+/)[0]);
+  const cooled=await page.evaluate(async apiUrl=>{const {createQuizRequest}=await import(apiUrl);const r=await createQuizRequest({getSession:()=>fixtureSession});
+   const read=await r('library_sessions').then(()=>'sent',e=>e.code);const write=await r('compose',{kind:'self',count:5,units:[1],request_id:crypto.randomUUID()}).then(()=>'sent',e=>e.code);return {read,write};},apiUrl);
   assert.deepEqual(cooled,{read:'server_busy',write:'sent'});assert.equal(count('quiz_library_sessions'),before,'no read during cooldown');
   // 4. 作答頁：entry帶回身分，navbar不另查名冊。
   await page.goto(origin+`/grade3/115-1/quiz.html?cloud=1&session=${ids.practice}`,{waitUntil:'networkidle0'});
