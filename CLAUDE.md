@@ -34,9 +34,9 @@ For new week pages, also read:
 
 - **開始工作**：一律先 `git fetch`，從最新 `origin/main` 開新分支／新 worktree。不要在主工作區 `D:\projects\it-class-tcwu` 直接改檔，也不要沿用舊 worktree 或舊分支繼續發布。
 - **進 main**：修改經 PR 合併進 `main`；不可直接 push 到 `main`。
-- **只從 main 發布**：部署來源必須是 `main` 的乾淨 checkout，用 Vercel CLI 上傳。舊的凍結發布包、功能分支、有未 commit 修改的目錄都不能部署。`main` 已關閉 Vercel Git 自動部署（`vercel.json` 的 `git.deploymentEnabled.main: false`），不得移除；GitHub 上 Vercel 預覽顯示失敗是預期的。
-- **一次一個發布**：部署或 promote 前，先在 `docs/development/agent-handoff.md` 頂部「發布登記」新增一列「發布中」；表上已有別人「發布中」就停止並問使用者。完成、失敗或放棄都要更新狀態。
-- **promote 前比對**：以當下正式部署為基準，用 `automation/quiz-release-compare.mjs <正式樹> <候選樹> <預期修改檔...> --added … --removed … --eol-dir <部署目錄>` 比對完整檔案樹，必須 `ok: true`；promote 前再確認正式部署 ID 沒變。
+- **只能用發布腳本**：正式發布一律在「從 `origin/main` 建立的乾淨 worktree」執行 `node automation/release-from-main.mjs start --agent <名稱> --changed … --added … --removed …` → `deploy --agent <名稱>` → `promote --agent <名稱>`。不要自己執行 `vercel deploy --prod` 或 `vercel promote`。舊的凍結發布包、功能分支、有未 commit 修改的目錄都會被腳本擋下。
+- **一次一個發布**：腳本的發布鎖被別人持有時，停止並問使用者；不得刪除別人的鎖。放棄或失敗用 `abort --agent <名稱>` 釋放自己的鎖。
+- **`main` 不自動部署**：`vercel.json` 的 `git.deploymentEnabled.main: false` 不得移除；GitHub 上 Vercel 預覽顯示失敗是預期的。promote 後把腳本輸出的 `handoffRow` 經 PR 記到 `docs/development/agent-handoff.md` 頂部。
 - **資料庫函式**：改函式要寫成 `supabase/` 下的 SQL 檔，經使用者同意後才套用到正式庫；套用後執行 `node automation/db-schema-snapshot.mjs` 與 `node automation/db-snapshot-check.mjs --live`，通過後把 `supabase/production-snapshot/` 一併 commit。不可單獨重跑 `supabase/quiz-order-fix.sql`（會蓋掉 `quiz_action` 的學習包裝層）。
 - **公開 repo**：不 commit 課本 PDF、學生資料、權杖、`*.private.json` 或私有輸出。
 

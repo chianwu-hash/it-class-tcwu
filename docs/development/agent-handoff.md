@@ -1,6 +1,6 @@
-# 發布登記（置頂，2026-11-04 起；任何 agent 部署或 promote 前必讀）
+# 發布紀錄（置頂，2026-11-04 起；任何 agent 部署或 promote 前必讀）
 
-規則：**只從 `main` 發布**；同一時間只能有一列「發布中」；promote 前用 `automation/quiz-release-compare.mjs` 比對完整檔案樹，並確認正式版仍是登記的基準。完整步驟見 [dev-sop.md「發布規則：只從 main 發布」](dev-sop.md)。
+規則：**只從 `main` 發布，而且只能用 `node automation/release-from-main.mjs`**（start → deploy → promote）。腳本會取得發布鎖（同一時間只有一人能發布）、確認目錄乾淨且是最新 `origin/main`、比對完整檔案樹，並在 promote 前確認正式版沒變。完整步驟見 [dev-sop.md「發布規則：只從 main 發布」](dev-sop.md)。
 
 | 狀態 | agent | 開始時間 | `main` commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -9,7 +9,7 @@
 
 - 第一次從 `main` 發布時，預期變更檔為 `.vercelignore`、`package.json`、`release/project-policy.json`、`vercel.json`（相對於基準），其餘只應是 `eolOnly`。
 
-- 新增一列再開始；看到別人「發布中」先問使用者，不得自行清除。完成、失敗或放棄都要更新狀態。
+- 鎖由腳本管理（repo 共用 git 目錄的 `release-lock.json`）；`status` 顯示被別人持有時先問使用者，不得刪除別人的鎖。promote 後把腳本輸出的 `handoffRow` 經 PR 加到下表。
 - 交接時寫明：目前目標與下一步、改了哪些檔與刻意不動的檔、已做與待做的驗證、與 SOP 或共用模組的衝突。
 - 整合紀錄與差異清單：[main-unify-20261104.md](main-unify-20261104.md)。
 

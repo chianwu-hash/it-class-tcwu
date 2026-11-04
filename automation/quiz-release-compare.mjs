@@ -11,10 +11,14 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
-export async function flatten(file) {
-  const tree = JSON.parse((await fs.readFile(file, 'utf8')).replace(/^﻿/, '')), out = new Map();
+export function flattenTree(tree) {
+  const out = new Map();
   (function walk(nodes, prefix) { for (const n of nodes) { const p = prefix + n.name; if (n.type === 'directory') walk(n.children || [], p + '/'); else if (n.type === 'file') out.set(p, n.uid); } })(tree.find(n => n.name === 'src').children, '');
   return out;
+}
+
+export async function flatten(file) {
+  return flattenTree(JSON.parse((await fs.readFile(file, 'utf8')).replace(/^﻿/, '')));
 }
 
 const sha1 = b => createHash('sha1').update(b).digest('hex');
