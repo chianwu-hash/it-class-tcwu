@@ -4,6 +4,7 @@
 
 | 狀態 | agent | 開始時間 | `main` commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
 | --- | --- | --- | --- | --- | --- | --- |
+| 發布中 | Codex-partner-self-20261105 | 2026-11-05 | 待快照PR合併（產品main `d46520c`） | `dpl_G1bXq2cRCnBRJ2oQp8uffL3PaVSA` | 四年級partner-practice／quiz-library、shared/partner-pilot/app.mjs、visual.css、shared/quiz-partner-pilot-entry.mjs、+paper-picker.mjs | 正式DB已驗證套用；待乾淨main發布腳本 |
 | 已完成 | Codex-partner-visual-20261104 | 2026-11-04T15:07:56.607Z | `4fc3a4c` | `dpl_EGn9CwbxtAbHLhnGx6uNUoLjBsKd` | grade3/115-1/partner-practice.html、grade3/115-1/quiz-library.html、grade4/115-1/partner-practice.html、grade4/115-1/quiz-library.html、grade6/115-1/partner-practice.html、grade6/115-1/quiz-library.html、grade9/115-1/partner-practice.html、grade9/115-1/quiz-library.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/quiz-partner-pilot-entry.mjs、+shared/partner-pilot/art/discover-v1.webp、+shared/partner-pilot/art/invite-v1.webp、+shared/partner-pilot/art/keepsake-v1.webp、+shared/partner-pilot/art/support-v1.webp、+shared/partner-pilot/art/wait-v1.webp、+shared/partner-pilot/art/welcome-v1.webp、+shared/partner-pilot/presentation.mjs、+shared/partner-pilot/visual.css | `dpl_G1bXq2cRCnBRJ2oQp8uffL3PaVSA`／回滾 `dpl_EGn9CwbxtAbHLhnGx6uNUoLjBsKd`（eolOnly 0） |
 | 已完成 | Codex-partner-stability-20261104 | 2026-11-04T13:29:20.880Z | `8ff1efc` | `dpl_FBgBVoAs3HsNu46qJNE8P47U14iP` | shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/rich-content.js、grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html | `dpl_EGn9CwbxtAbHLhnGx6uNUoLjBsKd`／回滾 `dpl_FBgBVoAs3HsNu46qJNE8P47U14iP`（eolOnly 0） |
 | 已完成 | Codex-partner-20261104 | 2026-11-04T10:06:11.898Z | `95fb685` | `dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p` | .vercelignore、grade3/115-1/partner-practice.html、grade3/115-1/quiz-library.html、grade4/115-1/partner-practice.html、grade4/115-1/quiz-library.html、grade6/115-1/partner-practice.html、grade6/115-1/quiz-library.html、grade9/115-1/partner-practice.html、grade9/115-1/quiz-library.html、my-tree.html、package.json、release/project-policy.json、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/quiz-partner-pilot-entry.mjs、shared/quiz-rewards.mjs、shared/reward-tree-model.js、shared/reward-tree-renderer.js、vercel.json、+shared/quiz-partner-rewards.mjs | `dpl_FBgBVoAs3HsNu46qJNE8P47U14iP`／回滾 `dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p`（eolOnly 120） |
@@ -25,6 +26,7 @@
 - 下一步：Claude 檢視正式快照權限鏈與建議；完成 SQL、前端、隔離整合測試與瀏覽器後再進 main，正式庫不建立合成學生資料。
 - 已完成第一版與隔離驗證：原個人11、原夥伴7、新整合2均通過；實際瀏覽器／Claude差異複查／發布待辦，詳 `quiz-partner-self-20261105.md`。SQL新檔只改夥伴helper、source_allowed、lobby與RPC wrapper，不改claim_award或個人函式。
 - Claude三輪（設計、主體、最後補強）完成，後兩輪無可重現阻擋；Codex真實前端合成傳輸11／16與選題器6／12通過。先提交實作PR，再從乾淨main做正式遷移回滾證明及套用；只從main發布，正式學生多機與整班容量仍不宣稱通過。
+- PR #15 已併入main `d46520c`。從該乾淨main執行受保護遷移，rollback proof與apply皆通過，54張原資料表雜湊保持、所有原函式ACL保持、不相關函式不變。144函式／97表快照與`db-snapshot-check.mjs --live`通過；僅既有legacy警告。使用既有測試帳號SQL context唯讀讀取自組catalog通過，沒有建立正式測試小隊、作答或領獎。待快照PR及正式網站發布。
 
 # 2026-11-04 夥伴練功視覺與營地正式整合（已發布）
 
