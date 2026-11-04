@@ -17,6 +17,10 @@ const forceHash=db=>db.exec("set enable_nestloop=off;set enable_mergejoin=off;se
 const nextId=(db,attempt)=>db.query("select value#>>'{}' v from jsonb_array_elements((select question_order from public.quiz_attempts where id=$1)) x(value) where not exists(select 1 from public.quiz_answers q where q.attempt_id=$1 and q.question_id=x.value#>>'{}') limit 1",[attempt]);
 test('修正前：hash anti join 下，LIMIT 1 不一定回傳第一題（重現正式環境）',async()=>{
  const {db,args,ids}=await setup();try{
+  // supabase/quiz.sql now ships the ordered lookup; reinstall the pre-fix lookup to reproduce production.
+  const def=(await db.query("select pg_get_functiondef('public.quiz_action(text,jsonb)'::regprocedure) d")).rows[0].d;
+  const buggy=def.replaceAll('with ordinality x(value,ord) where','x(value) where').replaceAll("x.value#>>'{}') order by ord limit 1","x.value#>>'{}') limit 1");
+  assert.notEqual(buggy,def);await db.exec(buggy+';');
   const j=await quizCall(db,studentId(1),'join',args);await forceHash(db);
   const plan=(await db.query(`explain select value#>>'{}' from jsonb_array_elements((select question_order from public.quiz_attempts where id='${j.attempt_id}')) x(value) where not exists(select 1 from public.quiz_answers q where q.attempt_id='${j.attempt_id}' and q.question_id=x.value#>>'{}') limit 1`)).rows.map(r=>r['QUERY PLAN']).join('\n');
   assert.match(plan,/Hash.*Anti/,plan);
