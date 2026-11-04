@@ -40,4 +40,8 @@ Codex 是唯一寫入者，Claude 僅審查。第二輪 session `20261104-partne
 
 ## 發布
 
-僅經 PR/main、從最新乾淨 main 執行 release-from-main start → deploy → promote。資料庫函式不變，仍在發布前後做 live snapshot 檢查。正式部署／完整樹與發布後驗證結果另補。
+PR #13 已合併，以乾淨 main `4fc3a4c` 執行 release-from-main start → deploy → promote，2026-11-04T15:11:09.852Z 正式部署 `dpl_G1bXq2cRCnBRJ2oQp8uffL3PaVSA`，回滾 `dpl_EGn9CwbxtAbHLhnGx6uNUoLjBsKd`。
+
+完整檔案樹精確11修改、8新增、0刪除、0換行差異；19個本次檔案與7個保留的auth／media／努力樹關鍵檔，候選與正式共26檔逐位元組核對一致。資料庫函式未改，發布後139函式live再次通過。正式alias指向新部署，發布鎖已釋放。
+
+正式既有學校Google工作階段的首頁檢查也通過：姓名identity保留、2/3/4人選項、建立表單、新CSS與透明圖、淺色頁首、無溢出、pageerror0。沒有提交任何表單、送答、回覆、領獎或開啟努力樹已讀。本次沒有重新執行真實學生多機或整班壓測，不能將這次單人首頁檢查等同多人驗收。
