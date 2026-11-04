@@ -1,4 +1,9 @@
 {
   "buildCommand": "node release/garden-preflight.mjs",
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "git": {
+    "deploymentEnabled": {
+      "main": false
+    }
+  }
 }

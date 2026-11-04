@@ -4,7 +4,10 @@
 
 | 狀態 | agent | 開始時間 | `main` commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 基準 | Claude（整合） | 2026-11-04 10:18 | 整合分支 `claude/main-unify-20261104`（尚未併入 `main`） | `dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p` | — | 尚未從 `main` 發布 |
+| 基準 | Claude（整合） | 2026-11-04 10:18 | PR #1 已併入 `main`（`468974a`） | `dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p` | — | 尚未從 `main` 發布 |
+| 失敗（自動） | Vercel Git 自動部署 | 2026-11-04 12:31 | `468974a` | `dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p` | — | `dpl_DPCuJGfDL2nqyZYvCidSLJZL4Nm3` 建置失敗，未上線；正式網址仍為基準。之後以 `vercel.json` 關閉 `main` 自動部署 |
+
+- 第一次從 `main` 發布時，預期變更檔為 `.vercelignore`、`package.json`、`release/project-policy.json`、`vercel.json`（相對於基準），其餘只應是 `eolOnly`。
 
 - 新增一列再開始；看到別人「發布中」先問使用者，不得自行清除。完成、失敗或放棄都要更新狀態。
 - 交接時寫明：目前目標與下一步、改了哪些檔與刻意不動的檔、已做與待做的驗證、與 SOP 或共用模組的衝突。
