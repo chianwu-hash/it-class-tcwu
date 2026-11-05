@@ -23,6 +23,15 @@
 - 交接時寫明：目前目標與下一步、改了哪些檔與刻意不動的檔、已做與待做的驗證、與 SOP 或共用模組的衝突。
 - 整合紀錄與差異清單：[main-unify-20261104.md](main-unify-20261104.md)。
 
+# 2026-11-05 答題優先方向與原答題介面（討論中）
+
+- 使用者明確要求記錄上一輪「答題優先、營地按需展開」方向，並指出原本考前練功房與夥伴練功介面不同，要求先提出看法，再與Claude討論沿用原介面以降低學習障礙。本輪不實作產品、不改正式站。
+- 新worktree partner-original-ui-discuss-20261105／codex/partner-original-ui-discuss-20261105，基底main c861cc7。Codex只寫提案與交接；Claude唯讀原UI與partner相關來源，無測試／網路／憑證／DB／部署權限。
+- 將上一輪本機提案帶回 [partner-focused-practice-proposal.md](partner-focused-practice-proposal.md)。小隊訊息收合方向已由使用者要求記錄；原題目分頁及UI共用方式依最新需求重新評估，尚未實作。
+- 已核對：一般老師卷／自組卷走quiz-student→quiz-module→initServerQuiz（quiz-server），以個人session/attempt、選項ID、submit/resume/view_question及leaf回饋為契約；考古題走initPastExamUI及group/fields/records。partner learning.js走room/exercise/mine/shared、整數qid／choice索引、answer/expectedAttempt、notes/review/共同獎勵，並列本人題卡與營地。
+- 共用／隔離事實：原createQuizWorkspace是純呈現模組，quiz-render支援mediaScope；partner已用原手寫／輸入輔助的隔離副本與rich媒體適配器。git只找到正式部署匯入commit d4cce66，未找到足以證實當初為何採不同外觀的設計決策紀錄，不能把目前架構推論冒充原作者動機。
+- Codex初步建議：學生操作與視覺優先沿用原答題介面；抽出／共用純呈現與題型元件，保留partner資料適配、同步、訂正、揭答、冪等與計葉。避免直接把原整頁／單人控制器接進房間，亦避免再長期複製第三套UI。下一步Claude核對可行性及最小驗證範圍，整合提案以文件PR保存，不發佈產品。
+
 # 2026-11-05 練功訊息醒目提示（已發布）
 
 - 使用者要求請教訊息醒目並詢問閃5秒。新worktree partner-message-highlight-20261105，基底dbffb14；Codex唯一寫入者。限定前端呈現，不改RPC、資料庫、個人進度或花葉。
