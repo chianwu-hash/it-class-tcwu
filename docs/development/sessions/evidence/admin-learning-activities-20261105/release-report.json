@@ -1,0 +1,50 @@
+{
+  "agent": "Codex-admin-learning-activities-20261105",
+  "commit": "65d66f0d6c7b08c07ac9f69bfad809deaa84a972",
+  "baseline": "dpl_Dxxyw8mmvX7ChCYmZsGVcr6Ex9Gw",
+  "expected": {
+    "changed": [
+      "admin-learning.html",
+      "shared/admin-learning-api.mjs",
+      "shared/admin-learning.css",
+      "shared/admin-learning.mjs",
+      "vercel.json"
+    ],
+    "added": [
+      "shared/admin-learning-activities.mjs"
+    ],
+    "removed": []
+  },
+  "startedAt": "2026-11-05T03:41:13.345Z",
+  "state": "promoted",
+  "candidate": "dpl_JE7dcnnqwx1qLhzjUaF9oHbAFjgy",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "admin-learning.html",
+      "shared/admin-learning-api.mjs",
+      "shared/admin-learning.css",
+      "shared/admin-learning.mjs",
+      "vercel.json"
+    ],
+    "added": [
+      "shared/admin-learning-activities.mjs"
+    ],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-05T03:41:39.279Z",
+  "promotedAt": "2026-11-05T03:42:22.947Z",
+  "alias": "dpl_JE7dcnnqwx1qLhzjUaF9oHbAFjgy",
+  "rollback": "dpl_Dxxyw8mmvX7ChCYmZsGVcr6Ex9Gw"
+}

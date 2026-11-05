@@ -30,3 +30,15 @@
 PR #19 已合併為 `aa148c5`。從該main commit建立乾淨checkout，正式套用教師migration並重跑交易內查核，17張學生資料表摘要一致。匯出後 `db-snapshot-check.mjs --live` 通過；快照只變動本次四個教師函式與新增的內部detail helper，其他函式定義與權限不變。145個函式、97張表／view、21條policy與9個trigger。
 
 前端候選以01租約瀏覽器在localhost直讀已合併的main程式，使用明示合成資料驗證選擇、勾選、排序、文字填答與人工手寫原答。1280／768／390px均無水平外溢，手寫筆畫可見且輸入／繪圖為唯讀。這個候選版面測試不冒稱真正Google登入。已保存[套用報告](evidence/admin-learning-activities-20261105/apply-report.json)與[合成資料瀏覽器報告](evidence/admin-learning-activities-20261105/synthetic-browser-report.json)。
+
+## 正式發布與真教師複驗
+
+PR #20 合併後從乾淨 `65d66f0` main checkout執行發布腳本。完整來源比較 `ok:true`：四個後台既有檔、新增活動renderer，以及main既有停用Git預覽的 `vercel.json` 同步，無其他差異。正式部署 `dpl_JE7dcnnqwx1qLhzjUaF9oHbAFjgy`，回滾基準 `dpl_Dxxyw8mmvX7ChCYmZsGVcr6Ex9Gw`。5個公開runtime檔HTTP與SHA256一致。
+
+01獨立分頁經正常教師Google登入，確認預期教師後直接讀正式RPC。四課程名冊／篩選／班級花葉表皆通過；三、六、九年級實際考古題固定版本、逐題清單與錯題篩選通過，九年級31張圖片正常。1280／768／390px皆無頁面水平外溢，腳本錯誤0。四年級當時無考古作答，因此僅驗證現有名冊、無紀錄與篩選，未宣稱有實際明細可查。正式樣本未有延伸練習，類型篩選入口通過；逐題延伸卷與資料隔離仍以合成資料為證。
+
+完整無個資證據：[正式瀏覽器報告](evidence/admin-learning-activities-20261105/formal-browser-report.json)、[公開檔案核對](evidence/admin-learning-activities-20261105/public-check.json)、[完整發布比對](evidence/admin-learning-activities-20261105/release-report.json)。自動化已移除攔截、斷線並釋放租約。
+
+發布途中曾由CLI誤建一個以worktree名稱命名的專案，專案ID關卡擋下，未切換正式站；該誤建專案已刪除。明確link既有project後，清掉CLI自動產生的本機環境檔及其.gitignore變動，再經完整發布腳本完成。另一次比對正確攔下main新增的停用Git預覽設定；查明只是 `deploymentEnabled["**"]=false` 後，abort自己的鎖、重新登記已檢查的完整範圍，未繞過比較。
+
+收尾複查發現人工題receipt的official依法保存null，因此renderer改用同一固定版本field內的reference作為參考顯示，保留未提供者的明示狀態；未更動資料庫或原答。新增null receipt／reference合成版面檢查，並在正式瀏覽器測試逐題比對原答與參考文字、自組卷篩選。此小修仍經PR、main乾淨checkout及發布腳本處理。
