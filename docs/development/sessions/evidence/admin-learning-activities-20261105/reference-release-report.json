@@ -1,0 +1,42 @@
+{
+  "agent": "Codex-admin-learning-reference-20261105",
+  "commit": "f7f9ff53302c0d4817cb31408f092da8687328a6",
+  "baseline": "dpl_JE7dcnnqwx1qLhzjUaF9oHbAFjgy",
+  "expected": {
+    "changed": [
+      "admin-learning.html",
+      "shared/admin-learning.mjs",
+      "shared/admin-learning-activities.mjs"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "startedAt": "2026-11-05T03:46:21.134Z",
+  "state": "promoted",
+  "candidate": "dpl_8U7FN7B9qKdzmXZEi7NtmXvtjZGA",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "admin-learning.html",
+      "shared/admin-learning-activities.mjs",
+      "shared/admin-learning.mjs"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-05T03:46:46.108Z",
+  "promotedAt": "2026-11-05T03:47:20.620Z",
+  "alias": "dpl_8U7FN7B9qKdzmXZEi7NtmXvtjZGA",
+  "rollback": "dpl_JE7dcnnqwx1qLhzjUaF9oHbAFjgy"
+}

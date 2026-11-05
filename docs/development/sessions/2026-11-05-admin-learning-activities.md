@@ -1,5 +1,7 @@
 # 學習檔案：考古題、延伸練習與四／九年級
 
+> 已正式上線並完成真正教師Google登入複驗。最終前端部署：`dpl_8U7FN7B9qKdzmXZEi7NtmXvtjZGA`（乾淨main `f7f9ff5`），入口：https://it-class-tcwu.vercel.app/admin-learning.html 。下方「待辦」保留當時階段紀錄，以文末完成紀錄為準。
+
 使用者授權補齊活動與逐題明細，驗證後可以上線。從最新 `origin/main`（`d5d892b`）建立新分支／worktree，不修改主工作區。
 
 ## 功能
@@ -42,3 +44,13 @@ PR #20 合併後從乾淨 `65d66f0` main checkout執行發布腳本。完整來�
 發布途中曾由CLI誤建一個以worktree名稱命名的專案，專案ID關卡擋下，未切換正式站；該誤建專案已刪除。明確link既有project後，清掉CLI自動產生的本機環境檔及其.gitignore變動，再經完整發布腳本完成。另一次比對正確攔下main新增的停用Git預覽設定；查明只是 `deploymentEnabled["**"]=false` 後，abort自己的鎖、重新登記已檢查的完整範圍，未繞過比較。
 
 收尾複查發現人工題receipt的official依法保存null，因此renderer改用同一固定版本field內的reference作為參考顯示，保留未提供者的明示狀態；未更動資料庫或原答。新增null receipt／reference合成版面檢查，並在正式瀏覽器測試逐題比對原答與參考文字、自組卷篩選。此小修仍經PR、main乾淨checkout及發布腳本處理。
+
+## 最終完成紀錄
+
+PR #21 合併後，從乾淨main `f7f9ff5` 執行 `release-from-main` start／deploy／promote，三個前端變更檔完整比較 `ok:true`、eolOnly 0，正式別名確認指向 `dpl_8U7FN7B9qKdzmXZEi7NtmXvtjZGA`。回滾目標是第一輪部署 `dpl_JE7dcnnqwx1qLhzjUaF9oHbAFjgy`。第二輪沒有資料庫異動或Edge部署。
+
+2026-11-05 11:50（臺灣時間）正式站再次以已確認的教師Google身分複驗。三、六、九年級實際考古題逐題的群組／題號、原答顯示與固定版本參考文字皆相符；九年級31張圖正常，錯題篩選不混未答／人工題。四個課程的考古題、延伸練習、自組卷篩選及班級彙總通過；1280／768／390px頁面無水平溢出，腳本錯誤0。四年級沒有可驗證的考古題作答，報告中的detailVerified／answersMatch為false表示未執行該分支，不代表讀取失敗；其他三年級為true。正式樣本沒有延伸卷，真實延伸明細仍未覆蓋，已由合成資料完整檢驗。
+
+最終[正式瀏覽器報告](evidence/admin-learning-activities-20261105/formal-browser-report.json)、[5個公開runtime檔案核對](evidence/admin-learning-activities-20261105/public-check.json)、[參考答案補正發布紀錄](evidence/admin-learning-activities-20261105/reference-release-report.json)均保留。正式資料庫快照145函式再次 `--live` 通過。所有正式查閱皆為教師唯讀動作，未重置／補答／重評／發放學生獎勵。瀏覽器攔截、連線與租約已清理。
+
+合成版面最後一次重跑在所有DOM斷言通過後，背景分頁截圖曾逾時；為測試器加入具體理由的單次前景授權，避免非作用中分頁影響後續截圖。正式瀏覽器測試亦補上等待首批列表回應後才更動篩選，避免測試器在初次載入期間競態操作。兩項皆只調整驗證工具，不改產品查詢或學生資料。

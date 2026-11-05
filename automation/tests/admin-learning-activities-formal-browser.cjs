@@ -33,6 +33,7 @@ const out=path.resolve("automation/output/admin-learning-activities-20261105");
    },course);
    assert.ok(chosen.code,'linked_roster_sample_required');await page.click(`.student-button[data-student-code="${chosen.code}"]`);
    await page.waitForFunction(()=>document.querySelector('#mapping-status').textContent.startsWith('已依'));await page.waitForSelector('#record-section:not([hidden])');await page.click('#tab-papers');
+   await page.waitForFunction(()=>document.querySelector('#paper-filter-status').textContent.includes('符合')&&document.querySelector('#records').getAttribute('aria-busy')!=='true');
    await page.select('#paper-activity','past_exam');assert.ok((await page.$eval('#paper-filter-status',e=>e.textContent)).includes('請按'));
    await page.$eval('#paper-filters',e=>e.requestSubmit());
    await page.waitForFunction(()=>document.querySelector('#paper-filter-status').textContent.startsWith('考古題・'));
