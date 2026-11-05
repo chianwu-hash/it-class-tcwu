@@ -1,0 +1,61 @@
+{
+  "sourceCommit": "b028484c57e4c50d7922bafcfd703ae814235387",
+  "production": "dpl_8NhYoqpAA7mc29n1bm3yjEHR6uQV",
+  "rollback": "dpl_8PdjF5a9zKkhNmXTr1AMrJZSx9pg",
+  "promotedAt": "2026-11-05T23:07:45.464Z",
+  "taiwanTime": "2026-11-06 07:07:45",
+  "tree": {
+    "ok": true,
+    "changed": 8,
+    "added": 2,
+    "removed": 0,
+    "eolOnly": 0
+  },
+  "servedFiles": {
+    "candidate": 10,
+    "production": 10,
+    "sameSha256": true
+  },
+  "db": {
+    "functions": 153,
+    "added": [
+      "partner_pilot.team_rooms()"
+    ],
+    "changed": [
+      "partner_pilot.lobby_action(jsonb)",
+      "quiz_partner_pilot_action(jsonb)",
+      "partner_pilot.freeze_allocation()"
+    ],
+    "liveCheck": true,
+    "existingTablesUnchanged": 21,
+    "syntheticUsers": 0,
+    "audit": {
+      "hostGate": true,
+      "privateHelper": true,
+      "studentAction": true,
+      "syntheticAuth": 0,
+      "noReadyLobbyGate": true,
+      "allocationTrigger": true,
+      "noReadyAllocationGate": true
+    }
+  },
+  "tests": {
+    "nodeSql": 32,
+    "syntheticBrowser": 17,
+    "claudeReviews": 2
+  },
+  "browser": {
+    "correctAccount": true,
+    "nonmemberStatus": 403,
+    "nonmemberCode": "ACCESS_DENIED",
+    "appScript": "../../shared/partner-pilot/app.mjs?v=20261106-team-flow",
+    "status": "請使用正式名冊中的學生Google帳號。",
+    "pageErrors": []
+  },
+  "notVerified": [
+    "real Google student accounts on two devices",
+    "physical QR scan",
+    "real IME and touch"
+  ],
+  "recordPR": "pending"
+}
