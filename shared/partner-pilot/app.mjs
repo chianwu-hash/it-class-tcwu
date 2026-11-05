@@ -1,4 +1,4 @@
-import {inviteMarkup,bindInvite,readInvite} from './invite.mjs?v=20261105-invite';
+import {inviteMarkup,bindInvite,readInvite} from './invite.mjs?v=20261105-copy';
 import {mountPaperPicker,partySizes} from './paper-picker.mjs?v=20261105-self';
 import {createLearningUI} from './learning.js?v=20261104-visual';
 import {setPartnerStage,scene} from './presentation.mjs?v=20261104-visual';

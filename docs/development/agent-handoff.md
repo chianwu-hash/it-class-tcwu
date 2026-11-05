@@ -4,6 +4,7 @@
 
 | 狀態 | agent | 開始時間 | `main` commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
 | --- | --- | --- | --- | --- | --- | --- |
+| 發布中 | Codex-invite-copy-feedback-20261105 | 2026-11-05 | 待PR合併 | 待腳本重驗 | 四年級partner-practice.html、shared/partner-pilot/app.mjs、invite.mjs、visual.css | 未部署；僅複製回饋呈現 |
 | 已完成 | Codex-admin-learning-reference-20261105 | 2026-11-05T03:46:21.134Z | `f7f9ff5` | `dpl_JE7dcnnqwx1qLhzjUaF9oHbAFjgy` | admin-learning.html、shared/admin-learning.mjs、shared/admin-learning-activities.mjs | `dpl_8U7FN7B9qKdzmXZEi7NtmXvtjZGA`／回滾 `dpl_JE7dcnnqwx1qLhzjUaF9oHbAFjgy`（eolOnly 0） |
 | 已完成 | Codex-partner-invite-20261105 | 2026-11-05T03:51:27.622Z | `40412c7` | `dpl_8U7FN7B9qKdzmXZEi7NtmXvtjZGA` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/visual.css、+shared/partner-pilot/invite.mjs、+shared/vendor/qrcode-generator/qrcode.mjs、+shared/vendor/qrcode-generator/LICENSE | `dpl_A1wSMQ7frx6GnYwDsqCTBqMsTRQr`／回滾 `dpl_8U7FN7B9qKdzmXZEi7NtmXvtjZGA`（eolOnly 0） |
 | 已完成 | Codex-admin-learning-activities-20261105 | 2026-11-05T03:41:13.345Z | `65d66f0` | `dpl_Dxxyw8mmvX7ChCYmZsGVcr6Ex9Gw` | admin-learning.html、shared/admin-learning-api.mjs、shared/admin-learning.css、shared/admin-learning.mjs、vercel.json、+shared/admin-learning-activities.mjs | `dpl_JE7dcnnqwx1qLhzjUaF9oHbAFjgy`／回滾 `dpl_Dxxyw8mmvX7ChCYmZsGVcr6Ex9Gw`（eolOnly 0） |
@@ -19,6 +20,12 @@
 - 鎖由腳本管理（repo 共用 git 目錄的 `release-lock.json`）；`status` 顯示被別人持有時先問使用者，不得刪除別人的鎖。promote 後把腳本輸出的 `handoffRow` 經 PR 加到下表。
 - 交接時寫明：目前目標與下一步、改了哪些檔與刻意不動的檔、已做與待做的驗證、與 SOP 或共用模組的衝突。
 - 整合紀錄與差異清單：[main-unify-20261104.md](main-unify-20261104.md)。
+
+# 2026-11-05 複製邀請的就近回饋（待發布）
+
+- 使用者指出按下複製連結看不到訊息。原訊息在頁面上方，改為按鈕文字直接「✓ 連結已複製／邀請碼已複製」，按鈕下另顯示有aria-live的成功提示；剪貼簿拒絕時只顯示手動複製警示並復原按鈕文案，不誤報成功。保留原頁首notice。
+- 新worktree invite-copy-feedback-20261105，基底main f375ba5。只有invite呈現層／四年級快取版本及既有測試更新，不改登入、QR內容、RPC、DB或計葉。舊剪貼簿回應不會把提示寫到新開的房。
+- 既有invite測試4／4，真實前端合成傳輸10流程／3寬度通過（含成功訊息在按鈕旁可見、拒絕剪貼簿不誤報、既有登入／入隊流程）；無pageerror／橫向溢出。待PR/main與官方發布腳本。
 
 # 2026-11-05 集合室邀請連結與QR Code（已發布）
 
