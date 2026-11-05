@@ -1,4 +1,8 @@
-# 2026-11-05 考古題完整題組配題接線（實作中，尚未發布）
+# 2026-11-05 考古題完整題組配題接線（後端已安裝，前端待發布）
+
+- PR #35已合併main d19d277；使用正式發布腳本取得Codex-partner-allocation-20261105鎖後，從乾淨main checkout精確套用單一SQL，SHA256 `6741b0dce56d987cd6cd67582f874e30ac2f5dea44b40b83b489986cf9d500a9`。50份spec／40啟用副本guard通過，沒有開放10份停用卷。
+- 正式安裝後重跑40卷120配置及12個authenticated角色案例（交易回滾）通過；19張既有資料表摘要完全不變，合成Auth為0。正式snapshot148函式/live-check通過：只新增allocation_items／freeze_allocation／guard_allocation_source，修改owner_of／snapshot／source_allowed，沒有其他函式差異或刪除。新增2私有RLS表及4個trigger。
+- 為先將正式snapshot經PR進main，已abort自己的尚無candidate發布鎖（不是回滾DB）；前端正式alias仍`dpl_22JA3jB9gebvZeuVA376NPTcpfHZ`。下一步snapshot PR後從最新乾淨main重開發布腳本，宣告僅6個前端檔，deploy／compare／promote。下方歷程中的未安裝／未發布字樣是當時狀態。
 
 - 使用者已授權接正式網站並驗證；新分支 `codex/past-paper-allocation-live-20261105`，新worktree同名，基底最新main f341c1d。Codex唯一寫入者；Claude使用chat-mode supervisor只讀程式／metadata，不讀憑證、學生資料、私有題文或操作資料庫／部署。
 - 目標：新考古小隊使用固定版本語意單位，按可作答目標數做確定性largest-pack-first；同field與共用配對詞庫保守合併ownership。原題、blocked、optional、判分、60%與花葉不變。舊集合室含未出發一律allocation_version=0維持原公式，新考古房為1，出發時凍結到私有allocations表，新版缺映射不回退。

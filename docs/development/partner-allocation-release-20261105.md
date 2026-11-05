@@ -31,6 +31,10 @@
 
 ## 發布／回復
 
-待最終複核後，先PR進main，再由main精確SQL安裝；取得正式snapshot並跑live-check後另PR記錄。前端從最新乾淨main checkout走release-from-main start→deploy→promote及完整檔案樹比對。
+PR #35已合併main `d19d277`。正式發布腳本取得本輪鎖後，從乾淨main精確套用單一SQL（SHA256 `6741b0dce56d987cd6cd67582f874e30ac2f5dea44b40b83b489986cf9d500a9`）；50份spec及每份enabled副本guard通過。正式安裝後再次跑120配題配置及12 authenticated案例，全部ROLLBACK通過，19表摘要不變、合成Auth0。
+
+已執行 `db-schema-snapshot.mjs` 與 `db-snapshot-check.mjs --live`，148函式一致；只新增3個allocation函式、修改owner_of／snapshot／source_allowed，無其他變動或刪除。2張私有RLS表、rooms版本欄位與4個trigger有完整schema快照。
+
+為先合併snapshot PR，已釋放自己的無candidate鎖；不是回滾DB，後端新配題已生效。前端仍為 `dpl_22JA3jB9gebvZeuVA376NPTcpfHZ`，下一步從最新乾淨main checkout走release-from-main start→deploy→promote，宣告僅6檔並做完整檔案樹比對。
 
 如需回退前端可回到發布腳本記錄的基準deployment；後端不要刪除allocations或改回新房的owner公式，以免學生換手。新版本新房暫停，既有凍結作答與紀念保留，再經修正遷移處理。
