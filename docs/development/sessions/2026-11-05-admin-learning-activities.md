@@ -24,3 +24,9 @@
 唯讀報告在 `automation/output/admin-learning-activities-20261105/`（ignored），無密碼／票證。提交的證據只留數量與通過狀態，不含姓名、題目、原答或學生識別。
 
 發布待辦：PR合併程式 → 從main套用本migration → 匯出正式schema快照及 `db-snapshot-check.mjs --live` → 快照PR → 乾淨main checkout透過 `release-from-main.mjs` start／deploy／promote → 真教師瀏覽器正式複驗及發布紀錄PR。
+
+## 正式套用與前端候選驗證
+
+PR #19 已合併為 `aa148c5`。從該main commit建立乾淨checkout，正式套用教師migration並重跑交易內查核，17張學生資料表摘要一致。匯出後 `db-snapshot-check.mjs --live` 通過；快照只變動本次四個教師函式與新增的內部detail helper，其他函式定義與權限不變。145個函式、97張表／view、21條policy與9個trigger。
+
+前端候選以01租約瀏覽器在localhost直讀已合併的main程式，使用明示合成資料驗證選擇、勾選、排序、文字填答與人工手寫原答。1280／768／390px均無水平外溢，手寫筆畫可見且輸入／繪圖為唯讀。這個候選版面測試不冒稱真正Google登入。已保存[套用報告](evidence/admin-learning-activities-20261105/apply-report.json)與[合成資料瀏覽器報告](evidence/admin-learning-activities-20261105/synthetic-browser-report.json)。

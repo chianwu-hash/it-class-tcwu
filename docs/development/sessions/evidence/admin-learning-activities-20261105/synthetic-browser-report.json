@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "synthetic": true,
+  "courses": [
+    "grade3-115-1",
+    "grade4-115-1",
+    "grade6-115-1",
+    "grade9-115-1"
+  ],
+  "activityTypes": [
+    "all",
+    "classroom",
+    "practice",
+    "self",
+    "past_exam",
+    "extension"
+  ],
+  "widths": [
+    1280,
+    768,
+    390
+  ],
+  "manualReadOnly": true,
+  "rawResponsesPreserved": true
+}

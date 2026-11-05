@@ -1,0 +1,39 @@
+{
+  "courses": [
+    {
+      "detail_checks": 2,
+      "extensions": 0,
+      "garden": true,
+      "grade": "3",
+      "past": 6,
+      "roster": 132
+    },
+    {
+      "detail_checks": 0,
+      "extensions": 0,
+      "garden": true,
+      "grade": "4",
+      "past": 0,
+      "roster": 1
+    },
+    {
+      "detail_checks": 9,
+      "extensions": 0,
+      "garden": true,
+      "grade": "6",
+      "past": 9,
+      "roster": 47
+    },
+    {
+      "detail_checks": 1,
+      "extensions": 0,
+      "garden": true,
+      "grade": "9",
+      "past": 1,
+      "roster": 1
+    }
+  ],
+  "learnerDataUnchanged": true,
+  "mode": "apply",
+  "passed": true
+}
