@@ -1,4 +1,7 @@
-# 2026-11-06 組隊簡化（實作中，尚未發布）
+# 2026-11-06 組隊簡化（DB已接，前端待發布）
+
+- 功能PR42已進main f61769f，從新乾淨main worktree `partner-team-main-20261106`取得自己的發布鎖後跑正式PG交易內合成名冊角色，使用真考古來源／整包配題trigger驗證host-only、未滿拒絕、全ready=false出發、滿房、重送、metadata本人限定與草稿保留，通過並ROLLBACK。21張既有表（含allocations／specs與rooms.allocation_version）摘要完全一致、合成Auth0。
+- 從乾淨main只套單一SQL `quiz-partner-team-flow.sql`，SHA256 `24e4befe62a0e33c4db35ea067b7199830414ade12029f5f387fd6dae6b0e28d`；套用後21表摘要仍全相同。snapshot/live通過153函式，僅新增team_rooms，修改lobby_action／quiz_partner_pilot_action／freeze_allocation，無其他函式差異；schema表／policy／trigger均未變。為snapshot PR回main已abort自己的尚無candidate鎖，不是回滾DB。下一步snapshot PR→新乾淨main發布，正式前端仍dpl_8PdjF5a9zKkhNmXTr1AMrJZSx9pg。
 
 - 使用者已授權依前輪與Claude討論實作，取消準備步驟，只有隊長在人數到齊後出發；接續任務有未完成內容才顯示；完成後Claude複核、驗證、PR/main與發布腳本。新worktree `partner-team-flow-20261106`／branch `codex/partner-team-flow-20261106`，基底最新main e38aa78（前輪發布登記PR41現已合併）。Codex唯一寫入者。
 - 新`team-flow.mjs/css`負責隊長選卷／隊員輸碼／條件式接續卡與紀錄冊；app保留既有auth/transport/requestId/realtime，連結登入後自動lookup→join、消耗invite避免退出後又加入，原卷帶入只開啟一次隊長頁。等候隊員不見邀請分享或出發鈕；明確退出交棒，暫離保留；有完成記錄可直接翻紀錄冊，接續按實際階段進入。
