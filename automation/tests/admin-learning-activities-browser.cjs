@@ -6,7 +6,7 @@ const out=path.resolve('automation/output/admin-learning-activities-20261105');
  const browser=await puppeteer.connect({browserURL:process.env.AI_WORK_BROWSER_CDP_URL,defaultViewport:null,protocolTimeout:25000});
  try{
   const target=browser.targets().find(t=>t._targetId===process.argv[2]);if(!target)throw Error('owned_target_missing');
-  const page=await target.page();await page.setViewport({width:1280,height:1000});
+  const page=await target.page();const cdp=await page.target().createCDPSession();cdp.grantForegroundOnce('Page.bringToFront','驗證合成學習檔案明細版面與唯讀手寫原答');await cdp.send('Page.bringToFront');await page.setViewport({width:1280,height:1000});
   await page.goto('http://localhost:4486/admin-learning.html',{waitUntil:'networkidle0'});
   const controls=await page.evaluate(()=>({courses:[...document.querySelector('#course').options].map(x=>x.value),activities:[...document.querySelector('#paper-activity').options].map(x=>x.value)}));
   assert.deepEqual(controls.courses.sort(),['grade3-115-1','grade4-115-1','grade6-115-1','grade9-115-1']);

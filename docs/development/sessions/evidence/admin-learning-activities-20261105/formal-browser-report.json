@@ -8,9 +8,11 @@
       "roster": 1,
       "pastRecordsForSample": 0,
       "detailVerified": false,
+      "answersMatch": false,
       "images": 0,
       "activityFilter": true,
       "extensionFilter": true,
+      "selfFilter": true,
       "classSummary": true,
       "widths": [
         1280,
@@ -23,9 +25,11 @@
       "roster": 1,
       "pastRecordsForSample": 1,
       "detailVerified": true,
+      "answersMatch": true,
       "images": 31,
       "activityFilter": true,
       "extensionFilter": true,
+      "selfFilter": true,
       "classSummary": true,
       "widths": [
         1280,
@@ -38,9 +42,11 @@
       "roster": 132,
       "pastRecordsForSample": 6,
       "detailVerified": true,
+      "answersMatch": true,
       "images": 0,
       "activityFilter": true,
       "extensionFilter": true,
+      "selfFilter": true,
       "classSummary": true,
       "widths": [
         1280,
@@ -53,9 +59,11 @@
       "roster": 47,
       "pastRecordsForSample": 2,
       "detailVerified": true,
+      "answersMatch": true,
       "images": 0,
       "activityFilter": true,
       "extensionFilter": true,
+      "selfFilter": true,
       "classSummary": true,
       "widths": [
         1280,
@@ -65,5 +73,5 @@
     }
   ],
   "scriptErrors": 0,
-  "at": "2026-11-05T03:42:44.903Z"
+  "at": "2026-11-05T03:50:38.588Z"
 }
