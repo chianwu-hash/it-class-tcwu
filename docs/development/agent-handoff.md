@@ -1,3 +1,11 @@
+# 2026-11-05 營地語音與畫圖（企劃先討論）
+
+- 使用者授權「先做企劃，和 AGY 討論後再開始」。全新 worktree `partner-camp-media-20261105`／branch `codex/partner-camp-media-20261105` 從最新 main05b9179建立，快轉納入尚未合併的PR38（7b83750）作相依。不能部署此分支，正式站／DB／Storage未變。
+- 已完成AGY企劃與後端接線設計討論後才實作，詳 `partner-camp-media-plan-20261105.md`。使用者睡前再授權盡量完成，23:40請Claude複核、修好沒問題就發布；本對話一次性heartbeat `23-40` 已排定。Codex唯一寫入者；AGY supplied-text，無repo／憑證／學生資料存取。
+- 新錄音／畫圖純元件、正式營地接線、增量SQL與Edge handler已寫，本機41項Node/SQL與14＋10個Browser檢查通過；最新答題回歸17項亦通過。AGY實作輪 `camp-media-implementation-20261105` 已完成，未指出可重現的部署阻擋。之後補強舊草稿格式清理、saveEpoch隔離、單一錄音與預覽非同步防護；6項Edge/SQL及全新模組語法檢查再通過。尚未套正式DB／建立bucket／部署Edge或Vercel，保留期限未核定、無自動刪除排程。
+- 精確接續位置：`D:/projects/it-class-tcwu-worktrees/partner-camp-media-20261105`。23:40先執行 ignored `.chat-mode/prepare-claude-preflight.py` 產生包含當前Git基準的請求，再依chat-mode的Claude CLI supervisor只讀複核；不要提前呼叫Claude，不可直接從此功能分支發布。即使主工作區handoff未合併，仍以本worktree本輪紀錄接續。
+- 23:40接續順序：讀本輪企劃「上線前接續」、Claude只讀複核實際程式及證據→修正／驗證→PR38與本輪PR進main→乾淨main套增量SQL／部署Edge→snapshot與live check後PR進main→乾淨main發布腳本→正式驗證／handoffRow。任何未通過與真人兩帳號／真麥克風／平板未測須明講。
+
 # 2026-11-05 答題優先與收合營地（隔離實作，未發布）
 
 - 修改前 Claude 討論完成後才實作。Codex 唯一寫入者；本輪無 DB／題庫／花葉修改。現況與測試界線見 `partner-focused-answer-20261105.md`。新單選純呈現供原個人與 partner 共用；partner 穩定題目區＋收合營地原生 dialog，私有草稿保存目前題號。
