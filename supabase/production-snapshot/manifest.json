@@ -1,8 +1,8 @@
 {
  "project": "upxgyusodibaqcrocdzj",
- "exportedAt": "2026-11-04T23:17:08.738Z",
+ "exportedAt": "2026-11-05T03:34:04.287Z",
  "counts": {
-  "functions": 144,
+  "functions": 145,
   "tables": 97,
   "policies": 21,
   "triggers": 9
@@ -14,22 +14,27 @@
    "acl": "{postgres=X/postgres}"
   },
   "admin_learning_action(text,text,jsonb)": {
-   "md5": "fa7481e709115c757fa99a3f0b0f0a32",
+   "md5": "e1e56f0d8f9246ad373f4fe7b9f7d9f7",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
   },
   "admin_learning_media_access(text,jsonb,uuid,text)": {
-   "md5": "2664a46ce6e5b3611794a0c20a76f4b3",
+   "md5": "85b41000b4728af8dc9b178a0b8de348",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
   },
   "admin_learning_paper_rows(uuid,integer,text)": {
-   "md5": "bc6bf42f7c0fb441c34ada55470182ab",
+   "md5": "4f1875b65bc0567b4dc4cf31b69f819a",
    "securityDefiner": false,
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
+  "admin_learning_past_detail(uuid,integer,integer,text)": {
+   "md5": "8cc5b18619aa2b3d6f5c7912a718099e",
+   "securityDefiner": false,
+   "acl": "{postgres=X/postgres}"
+  },
   "admin_learning_rewards(text,text,jsonb)": {
-   "md5": "025bc31c7226254ce75c3071314dd1da",
+   "md5": "01e3ec4eaedfde3a8efeccb144a7c420",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
   },
@@ -729,5 +734,5 @@
    "acl": "{postgres=X/postgres,service_role=X/postgres,anon=X/postgres,authenticated=X/postgres}"
   }
  },
- "fileSha256": "78c3991ca31953a411ab8f7e6fab8066c72de0e14f833d9b8ab96191b7c8064c"
+ "fileSha256": "06f17eded5b0a214ed0318a1e9c94a0e8b16d45be7cf450077dccf33aa84fc34"
 }

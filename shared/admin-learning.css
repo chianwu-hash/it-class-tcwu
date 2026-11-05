@@ -86,6 +86,7 @@ h3{font-size:1.06rem}
 @media(max-width:900px){.paper-filters{grid-template-columns:1fr 1fr}}
 .saved-drawing .manual-board{display:block;width:100%;min-height:240px;aspect-ratio:1;border:1px solid var(--border);background:#fff;pointer-events:none}
 .saved-drawing textarea{width:100%;box-sizing:border-box}
+.saved-mark{display:block;width:100%;max-width:600px;aspect-ratio:1;border:1px solid var(--border);background:#fff}
 .saved-drawing .drawing-tools,.saved-drawing .confirm{display:none}
 .answer-box span{overflow-wrap:anywhere;white-space:pre-wrap}
 @media(max-width:480px){.paper-filters{grid-template-columns:1fr}}

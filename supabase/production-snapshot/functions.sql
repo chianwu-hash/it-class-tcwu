@@ -87,7 +87,7 @@ end $function$;
 revoke all on function partner_pilot.action_core(jsonb) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.action_core(jsonb) to postgres;
 
--- admin_learning_action(text,text,jsonb)  md5=fa7481e709115c757fa99a3f0b0f0a32
+-- admin_learning_action(text,text,jsonb)  md5=e1e56f0d8f9246ad373f4fe7b9f7d9f7
 CREATE OR REPLACE FUNCTION public.admin_learning_action(p_action text, p_course_id text, p_payload jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -97,25 +97,27 @@ AS $function$
 declare
  yr integer; grade text; cls text; seat integer; uid uuid; mappings integer; label text;
  lim integer:=20; offst integer:=0; search text; result jsonb; identity jsonb;
- selected_subject text; selected_state text;
+ selected_subject text; selected_state text; selected_activity text;
  prog public.typing_foundation_progress%rowtype; sess public.quiz_sessions%rowtype;
  att public.quiz_attempts%rowtype; doc jsonb; version_no integer; paper_count integer;
 begin
  if auth.uid() is null or not coalesce(public.is_teacher(),false) then raise exception 'teacher_required';end if;
  -- v1 contract intentionally limited to the two audited course identities.
- if p_course_id is null or p_course_id not in ('grade3-115-1','grade6-115-1') then raise exception 'invalid_course';end if;
+ if p_course_id is null or p_course_id not in ('grade3-115-1','grade4-115-1','grade6-115-1','grade9-115-1') then raise exception 'invalid_course';end if;
  yr:=115;grade:=substring(p_course_id from 6 for 1);
  if p_payload is null or jsonb_typeof(p_payload)<>'object' then raise exception 'invalid_request';end if;
  if exists(select 1 from jsonb_object_keys(p_payload) k where k not in
-  ('class_code','seat_no','search','limit','offset','progress_id','session_id','revision','filter','subject','state')) then raise exception 'invalid_request';end if;
+  ('class_code','seat_no','search','limit','offset','progress_id','session_id','revision','filter','subject','state','activity_type')) then raise exception 'invalid_request';end if;
  if coalesce(p_payload->>'filter','all') not in ('all','wrong') then raise exception 'invalid_request';end if;
+ selected_activity:=coalesce(p_payload->>'activity_type','all');
+ if selected_activity not in ('all','classroom','practice','self','past_exam','extension') then raise exception 'invalid_request';end if;
  selected_subject:=coalesce(p_payload->>'subject','');selected_state:=coalesce(p_payload->>'state','all');
  if length(selected_subject)>80 or selected_state not in ('all','unstarted','in_progress','completed','hidden') then raise exception 'invalid_request';end if;
  if coalesce(p_payload->>'limit','20') !~ '^[0-9]{1,2}$' or coalesce(p_payload->>'offset','0') !~ '^[0-9]{1,6}$' then raise exception 'invalid_page';end if;
  lim:=(coalesce(p_payload->>'limit','20'))::integer;offst:=(coalesce(p_payload->>'offset','0'))::integer;
  if lim not between 1 and 50 or offst>100000 then raise exception 'invalid_page';end if;
  cls:=nullif(p_payload->>'class_code','');search:=coalesce(p_payload->>'search','');
- if length(search)>80 or (cls is not null and (cls !~ '^[36][0-9]{2}$' or left(cls,1)<>grade)) then raise exception 'invalid_class';end if;
+ if length(search)>80 or (cls is not null and (cls !~ '^[3469][0-9]{2}$' or left(cls,1)<>grade)) then raise exception 'invalid_class';end if;
 
  if p_action='roster' then
   with rows as (
@@ -195,7 +197,7 @@ begin
      where progress_id=prog.id order by reset_at desc,id limit 20)r),'[]'::jsonb)) into result;
  elsif p_action='papers' then
   with rows as materialized(select * from public.admin_learning_paper_rows(uid,yr,cls)),
-  filtered as (select * from rows r where (selected_subject='' or r.subject=selected_subject)
+  filtered as (select * from rows r where (selected_subject='' or r.subject=selected_subject) and (selected_activity='all' or r.access_mode=selected_activity)
    and (selected_state='all' or (selected_state='unstarted' and r.attempt_id is null)
     or (selected_state='in_progress' and r.attempt_id is not null and (r.answered<r.total or r.total=0))
     or (selected_state='completed' and r.answered=r.total and r.total>0)
@@ -205,8 +207,12 @@ begin
    'subjects',(select coalesce(jsonb_agg(subject order by subject),'[]'::jsonb) from (select distinct subject from rows where subject<>'')s),
    'items',coalesce((select jsonb_agg(to_jsonb(p) order by created_at desc,session_id) from page p),'[]'::jsonb)) into result;
  elsif p_action='paper' then
+  if exists(select 1 from public.admin_learning_paper_rows(uid,yr,cls) r where r.session_id=(p_payload->>'session_id')::uuid and r.access_mode='past_exam') then
+   result:=public.admin_learning_past_detail((p_payload->>'session_id')::uuid,lim,offst,coalesce(p_payload->>'filter','all'));
+   return result||jsonb_build_object('identity',identity,'offset',offst,'limit',lim,'as_of',statement_timestamp());
+  end if;
   select * into sess from public.quiz_sessions s where s.id=(p_payload->>'session_id')::uuid and s.school_year=yr
-   and s.class_codes ? cls and s.access_mode in ('classroom','practice','self') and not exists(select 1 from public.quiz_learning_sessions learning_private where learning_private.session_id=s.id)
+   and s.class_codes ? cls and s.access_mode in ('classroom','practice','self')
    and (exists(select 1 from public.quiz_attempts a where a.session_id=s.id and a.user_id=uid)
     or exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id and g.user_id=uid));
   if not found then raise exception 'paper_unavailable';end if;
@@ -241,7 +247,7 @@ grant execute on function public.admin_learning_action(text,text,jsonb) to postg
 grant execute on function public.admin_learning_action(text,text,jsonb) to authenticated;
 grant execute on function public.admin_learning_action(text,text,jsonb) to service_role;
 
--- admin_learning_media_access(text,jsonb,uuid,text)  md5=2664a46ce6e5b3611794a0c20a76f4b3
+-- admin_learning_media_access(text,jsonb,uuid,text)  md5=85b41000b4728af8dc9b178a0b8de348
 CREATE OR REPLACE FUNCTION public.admin_learning_media_access(p_course_id text, p_student jsonb, p_session uuid, p_url text)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -254,7 +260,10 @@ begin
  checked:=public.admin_learning_action('paper',p_course_id,p_student||jsonb_build_object('session_id',p_session,'limit',1,'offset',0));
  if checked->'identity'->>'mapping' is distinct from 'linked' then raise exception 'paper_unavailable';end if;
  select v.document into doc from public.quiz_sessions s join public.quiz_versions v on v.id=s.version_id where s.id=p_session;
- if not exists(select 1 from jsonb_path_query(doc,'$.**.media[*].url') u where u#>>'{}'=p_url) then raise exception 'media_unavailable';end if;
+ if checked->>'activity_type'='past_exam' then
+  select v.document into doc from public.quiz_past_attempts a join public.quiz_past_versions v on v.id=a.version_id where a.id=p_session;
+ end if;
+ if not exists(select 1 from (select * from jsonb_path_query(doc,'$.**.url') union select * from jsonb_path_query(doc,'$.**.referenceUrl')) u(value) where u.value#>>'{}'=p_url) then raise exception 'media_unavailable';end if;
  select * into asset from public.quiz_media_assets where url=p_url;
  if not found then raise exception 'media_unavailable';end if;
  return to_jsonb(asset);
@@ -264,7 +273,7 @@ grant execute on function public.admin_learning_media_access(text,jsonb,uuid,tex
 grant execute on function public.admin_learning_media_access(text,jsonb,uuid,text) to authenticated;
 grant execute on function public.admin_learning_media_access(text,jsonb,uuid,text) to service_role;
 
--- admin_learning_paper_rows(uuid,integer,text)  md5=bc6bf42f7c0fb441c34ada55470182ab
+-- admin_learning_paper_rows(uuid,integer,text)  md5=4f1875b65bc0567b4dc4cf31b69f819a
 CREATE OR REPLACE FUNCTION public.admin_learning_paper_rows(p_user uuid, p_year integer, p_class text)
  RETURNS TABLE(session_id uuid, attempt_id uuid, title text, subject text, unit text, access_mode text, revision integer, created_at timestamp with time zone, started_at timestamp with time zone, last_answer_at timestamp with time zone, answered bigint, correct bigint, total integer, hidden boolean, source_attempt_id text, source_question_id text)
  LANGUAGE sql
@@ -277,23 +286,76 @@ AS $function$
  )
  select s.id,a.id,coalesce(g.display_name,v.document->>'title','未命名試卷'),
   coalesce(v.document->'catalog'->>'subject',''),coalesce(v.document->'catalog'->>'unit',''),
-  s.access_mode,v.revision,s.created_at,a.created_at,x.last_at,x.answered,x.correct,
+  case when ls.session_id is not null then 'extension' else s.access_mode end,v.revision,s.created_at,a.created_at,x.last_at,x.answered,x.correct,
   case when a.id is not null then jsonb_array_length(a.question_order)
    else (select coalesce(sum(jsonb_array_length(b->'questions')),0)::integer from jsonb_array_elements(v.document->'blocks') b) end,
-  g.deleted_at is not null,g.config->>'attempt_id',g.config->>'question_id'
+  g.deleted_at is not null,coalesce(ls.source_attempt::text,g.config->>'attempt_id'),coalesce(ls.question_id,g.config->>'question_id')
  from own o join public.quiz_sessions s on s.id=o.session_id
+ left join public.quiz_learning_sessions ls on ls.session_id=s.id and ls.user_id=p_user
  join public.quiz_versions v on v.id=s.version_id
  left join public.quiz_attempts a on a.session_id=s.id and a.user_id=p_user
  left join public.quiz_generated_papers g on g.session_id=s.id and g.user_id=p_user
  cross join lateral (select count(*) as answered,count(*) filter(where z.correct) as correct,max(z.created_at) as last_at
   from public.quiz_answers z where z.attempt_id=a.id) x
- where s.school_year=p_year and s.class_codes ? p_class and s.access_mode in ('classroom','practice','self') and not exists(select 1 from public.quiz_learning_sessions learning_private where learning_private.session_id=s.id);
+ where s.school_year=p_year and s.class_codes ? p_class and s.access_mode in ('classroom','practice','self')
+ union all
+ select a.id,a.id,v.document->>'title',coalesce(v.document->'catalog'->>'subject',''),v.document->>'title','past_exam',
+  (select count(*)::integer from public.quiz_past_versions prior where prior.paper_id=a.paper_id and (prior.created_at,prior.id)<=(v.created_at,v.id)),
+  a.created_at,a.created_at,x.last_at,x.answered,x.correct,
+  (select count(*)::integer from jsonb_array_elements(v.document->'groups') g cross join lateral jsonb_array_elements(g->'fields') f),
+  false,null::text,null::text
+ from public.quiz_past_attempts a join public.quiz_past_versions v on v.id=a.version_id and v.paper_id=a.paper_id
+ join public.quiz_past_papers p on p.id=a.paper_id
+ cross join lateral(select count(*) filter(where r.attempt_id is not null) as answered,count(*) filter(where z.correct) as correct,null::timestamptz as last_at
+  from jsonb_array_elements(v.document->'groups') fg cross join lateral jsonb_array_elements(fg->'fields') ff
+  left join public.quiz_past_receipts r on r.attempt_id=a.id and r.group_id=fg->>'id'
+  left join public.quiz_past_answers z on z.attempt_id=a.id and z.group_id=fg->>'id' and z.question_id=ff->>'id') x
+ where a.user_id=p_user and a.school_year=p_year and a.semester=1 and p.grade=left(p_class,1)::integer;
 $function$;
 revoke all on function public.admin_learning_paper_rows(uuid,integer,text) from public, anon, authenticated, service_role;
 grant execute on function public.admin_learning_paper_rows(uuid,integer,text) to postgres;
 grant execute on function public.admin_learning_paper_rows(uuid,integer,text) to service_role;
 
--- admin_learning_rewards(text,text,jsonb)  md5=025bc31c7226254ce75c3071314dd1da
+-- admin_learning_past_detail(uuid,integer,integer,text)  md5=8cc5b18619aa2b3d6f5c7912a718099e
+CREATE OR REPLACE FUNCTION public.admin_learning_past_detail(aid uuid, lim integer, offst integer, flt text)
+ RETURNS jsonb
+ LANGUAGE sql
+ STABLE
+ SET search_path TO ''
+AS $function$
+ with source as (
+  select a.*,v.document,v.created_at as version_created from public.quiz_past_attempts a
+  join public.quiz_past_versions v on v.id=a.version_id and v.paper_id=a.paper_id where a.id=aid
+ ), fields as (
+  select g,f,go,fo,row_number() over(order by go,fo) as number,s.document,s.version_id,s.paper_id
+  from source s cross join lateral jsonb_array_elements(s.document->'groups') with ordinality groups(g,go)
+  cross join lateral jsonb_array_elements(g->'fields') with ordinality fields(f,fo)
+ ), rows as (
+  select f.*,r.status as receipt_status,r.attempt_id is not null as answered,
+   a.response,a.correct,saved.value as raw_response,coalesce(official.value,f.f->'answer',f.f->'reference') as official,
+   f.g->>'kind' in ('manual','annotation') or r.status='self_checked' as manual,
+   r.attempt_id is not null as receipt_saved
+  from fields f left join public.quiz_past_receipts r on r.attempt_id=aid and r.group_id=f.g->>'id'
+  left join public.quiz_past_answers a on a.attempt_id=aid and a.group_id=f.g->>'id' and a.question_id=f.f->>'id'
+  left join lateral(select x->'value' as value from jsonb_array_elements(coalesce(r.responses,'[]')) x where x->>'questionId'=f.f->>'id') saved on true
+  left join lateral(select x->'official' as value from jsonb_array_elements(coalesce(r.results,'[]')) x where x->>'questionId'=f.f->>'id') official on true
+ ), filtered as(select * from rows where flt='all' or (answered and correct=false)),
+ page as(select * from filtered order by number limit lim offset offst)
+ select jsonb_build_object('activity_type','past_exam','title',(select document->>'title' from source),
+  'version_id',(select version_id from source),
+  'revision',(select count(*) from public.quiz_past_versions v,source s where v.paper_id=s.paper_id and (v.created_at,v.id)<=(s.version_created,s.version_id)),
+  'session_id',aid,'started',true,'total',(select count(*) from rows),'filtered_total',(select count(*) from filtered),
+  'answered',(select count(*) from rows where answered),'correct',(select count(*) from rows where correct=true),
+  'manual',(select count(*) from rows where manual),'completed_at',(select completed_at from source),'hidden',false,
+  'items',coalesce((select jsonb_agg(jsonb_build_object('number',p.number,'group',p.g,'field',p.f,
+   'question',jsonb_build_object('id',p.f->>'id'),'group_id',p.g->>'id',
+   'response',coalesce(p.raw_response,p.response),'official',p.official,'correct',p.correct,
+   'answered',p.answered,'manual',p.manual,'receipt_status',p.receipt_status) order by p.number) from page p),'[]'::jsonb))
+$function$;
+revoke all on function public.admin_learning_past_detail(uuid,integer,integer,text) from public, anon, authenticated, service_role;
+grant execute on function public.admin_learning_past_detail(uuid,integer,integer,text) to postgres;
+
+-- admin_learning_rewards(text,text,jsonb)  md5=01e3ec4eaedfde3a8efeccb144a7c420
 CREATE OR REPLACE FUNCTION public.admin_learning_rewards(p_action text, p_course_id text, p_payload jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -303,10 +365,10 @@ AS $function$
 declare cls text;seat integer;result jsonb;
 begin
  if auth.uid() is null or not coalesce(public.is_teacher(),false) then raise exception 'teacher_required';end if;
- if p_course_id is null or p_course_id not in ('grade3-115-1','grade6-115-1') then raise exception 'invalid_course';end if;
+ if p_course_id is null or p_course_id not in ('grade3-115-1','grade4-115-1','grade6-115-1','grade9-115-1') then raise exception 'invalid_course';end if;
  if p_payload is null or jsonb_typeof(p_payload)<>'object' or exists(select 1 from jsonb_object_keys(p_payload) k where k not in ('class_code','seat_no')) then raise exception 'invalid_request';end if;
  cls:=p_payload->>'class_code';
- if cls is null or cls !~ '^[36][0-9]{2}$' or left(cls,1)<>substring(p_course_id from 6 for 1) then raise exception 'invalid_class';end if;
+ if cls is null or cls !~ '^[3469][0-9]{2}$' or left(cls,1)<>substring(p_course_id from 6 for 1) then raise exception 'invalid_class';end if;
  if p_action='class_rewards' then
   if p_payload ? 'seat_no' then raise exception 'invalid_request';end if;
  else
@@ -344,8 +406,8 @@ begin
       selected_version as (select v.document,v.revision from public.quiz_versions v where v.id=(select version_id from selected_session)) select (case
       when not exists(select 1 from learner) then jsonb_build_object(''__error'',''student_unavailable'')
       when (select identity->>''mapping'' from learner)<>''linked'' then jsonb_build_object(''identity'',(select identity from learner),''items'',''[]''::jsonb,''total'',0)
-      
-      
+
+
       else (select result from (select jsonb_build_object(
     ''weekly_rows'',coalesce((select jsonb_agg(to_jsonb(r)) from
       (select s.course_id,s.week_code,s.activity_key,s.current_level,s.completed,s.score,s.updated_at
@@ -415,8 +477,8 @@ when 'garden_status' then execute 'with reward_snapshot as (with input as (selec
       selected_version as (select v.document,v.revision from public.quiz_versions v where v.id=(select version_id from selected_session)) select (case
       when not exists(select 1 from learner) then jsonb_build_object(''__error'',''student_unavailable'')
       when (select identity->>''mapping'' from learner)<>''linked'' then jsonb_build_object(''identity'',(select identity from learner),''items'',''[]''::jsonb,''total'',0)
-      
-      
+
+
       else (select result from (select jsonb_build_object(
     ''weekly_rows'',coalesce((select jsonb_agg(to_jsonb(r)) from
       (select s.course_id,s.week_code,s.activity_key,s.current_level,s.completed,s.score,s.updated_at
@@ -512,8 +574,8 @@ when 'class_rewards' then execute 'with roster_students as (
       selected_version as (select v.document,v.revision from public.quiz_versions v where v.id=(select version_id from selected_session)) select (case
       when not exists(select 1 from learner) then jsonb_build_object(''__error'',''student_unavailable'')
       when (select identity->>''mapping'' from learner)<>''linked'' then jsonb_build_object(''identity'',(select identity from learner),''items'',''[]''::jsonb,''total'',0)
-      
-      
+
+
       else (select result from (select jsonb_build_object(
     ''weekly_rows'',coalesce((select jsonb_agg(to_jsonb(r)) from
       (select s.course_id,s.week_code,s.activity_key,s.current_level,s.completed,s.score,s.updated_at

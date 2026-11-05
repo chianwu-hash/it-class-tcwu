@@ -1,11 +1,11 @@
 # 正式版資料庫快照（public schema）
 
-來源：Supabase 專案 `upxgyusodibaqcrocdzj`，2026-11-04 以 `automation/db-schema-snapshot.mjs` 唯讀匯出（只查系統目錄，不含任何資料列）。
+來源：Supabase 專案 `upxgyusodibaqcrocdzj`，2026-11-05 以 `automation/db-schema-snapshot.mjs` 唯讀匯出（只查系統目錄，不含任何資料列）。本次新增教師學習檔案考古題明細helper，並擴充四個教師唯讀函式；其他函式定義與權限不變。
 
 | 檔案 | 內容 |
 | --- | --- |
-| `functions.sql` | 120 個 public 函式的 `pg_get_functiondef()` 原文＋正式版 EXECUTE 權限（先對 `public, anon, authenticated, service_role` 全部撤銷，再依正式 ACL 授權），可直接重放 |
-| `schema.json` | 80 張表／view 的欄位、constraint、index、RLS 開關與 ACL；21 條 policy、9 個 trigger、sequence、type、extension |
+| `functions.sql` | 145 個函式的 `pg_get_functiondef()` 原文＋正式版 EXECUTE 權限（先對 `public, anon, authenticated, service_role` 全部撤銷，再依正式 ACL 授權），可直接重放 |
+| `schema.json` | 97 張表／view 的欄位、constraint、index、RLS 開關與 ACL；21 條 policy、9 個 trigger、sequence、type、extension |
 | `manifest.json` | 每個函式的 md5、SECURITY DEFINER、ACL，以及 `functions.sql` 的 SHA256 |
 
 整個資料夾在 `.gitattributes` 標為 `-text`，checkout 後位元組不變，雜湊才能比對。
