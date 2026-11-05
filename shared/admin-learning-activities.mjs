@@ -16,7 +16,7 @@ export function pastAnswerText(value,kind){
 }
 export function renderPastAnswerItem(host,item,mediaScope){
  const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
- const g=item.group,f=item.field,kind=g.kind;
+ const g=item.group,f=item.field,kind=g.kind,official=item.official??f.displayAnswer??f.answer??f.reference;
  const article=el('article',undefined,'question-card');article.dataset.questionId=f.id;article.dataset.groupId=g.id;
  const state=!item.answered?'尚未作答':item.manual?'已自評／需人工核對':item.correct===true?'答對':item.correct===false?'答錯':'已保存／未判分';
  article.append(el('h3',`第 ${item.number} 題・${g.sourceLabel||g.title||''} ${f.label||''}・${state}`));
@@ -28,7 +28,7 @@ export function renderPastAnswerItem(host,item,mediaScope){
  if(f.text)rich(article,{text:f.text,media:[]});
  for(const choice of g.choices||[]){const opt=el('div',undefined,'option-row');opt.append(el('strong',`${choice.id}．`));rich(opt,choice.content||{text:choice.text||'',media:[]});article.append(opt);}
  const answers=el('div',undefined,'answer-grid');
- for(const [label,value] of [['學生原答',item.answered?pastAnswerText(item.response,kind):'尚未作答'],[item.manual?'參考答案／核對資訊':'正解',pastAnswerText(item.official,kind)]]){const box=el('div',undefined,'answer-box');box.append(el('strong',label),el('span',value));answers.append(box);}
+ for(const [label,value] of [['學生原答',item.answered?pastAnswerText(item.response,kind):'尚未作答'],[item.manual?'參考答案／核對資訊':'正解',pastAnswerText(official,kind)]]){const box=el('div',undefined,'answer-box');box.append(el('strong',label),el('span',value));answers.append(box);}
  article.append(answers);
  if(kind==='manual'&&item.answered&&item.response&&typeof item.response==='object'&&Array.isArray(item.response.strokes)){
   const view=el('div',undefined,'saved-drawing');
