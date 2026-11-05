@@ -17,6 +17,14 @@
 - 交接時寫明：目前目標與下一步、改了哪些檔與刻意不動的檔、已做與待做的驗證、與 SOP 或共用模組的衝突。
 - 整合紀錄與差異清單：[main-unify-20261104.md](main-unify-20261104.md)。
 
+# 2026-11-05 停用Git自動預覽（使用者授權）
+
+- 使用者收到多封Vercel通知後授權停用功能分支自動預覽，保留PR與main發布腳本。已讀Gmail確認最新三封對應PR15／16／17；實際建置日誌顯示Git clone的教材來源資料夾被garden-preflight阻擋，非正式版崩潰。
+- 新工作區disable-git-previews-20261105，codex/disable-git-previews-20261105，從最新main f416fb2開始。vercel.json保留main:false，加上globstar **:false以含斜線分支全面停用Git自動部署；不更動正式頁面、DB、通知偏好、發布安全檢查或CLI腳本。
+- 同步AGENTS／CLAUDE／dev-sop，舊分支必須從最新main另開，避免仍使用舊設定。Git設定由提交內容讀取，不需要另行部署正式網站。
+- 待驗：現有發布腳本與preflight測試、PR推送未建立預覽、正式部署與alias保持。完成後在本節補記。
+- 官方參考：https://vercel.com/docs/project-configuration/git-configuration （minimatch glob及未列分支預設true）。
+
 # 2026-11-05 自組卷與選題器（進行中）
 
 - 使用者授權：普通10題限2人、20題2～4人；自組卷只開10／20題，5／15題維持個人模式；考古題原規格。分類、科目、搜尋卡片取代長下拉。驗證後 PR → main → 正式發布腳本。
