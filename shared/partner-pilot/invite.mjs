@@ -16,12 +16,12 @@ export function inviteQR(link){
  const qr=qrcode(0,'M');qr.addData(link,'Byte');qr.make();
  const count=qr.getModuleCount(),size=count+8;let path='';
  for(let y=0;y<count;y++)for(let x=0;x<count;x++)if(qr.isDark(y,x))path+=`M${x+4},${y+4}h1v1h-1z`;
- const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${size*4}" height="${size*4}" viewBox="0 0 ${size} ${size}" role="img" aria-label="掃描QR Code開啟集合室邀請" shape-rendering="crispEdges"><rect width="${size}" height="${size}" fill="#fff"/><path d="${path}" fill="#063d40"/></svg>`;
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${size*4}" height="${size*4}" viewBox="0 0 ${size} ${size}" role="img" aria-label="掃描QR Code開啟小隊邀請" shape-rendering="crispEdges"><rect width="${size}" height="${size}" fill="#fff"/><path d="${path}" fill="#063d40"/></svg>`;
  if(cache.size>=8)cache.delete(cache.keys().next().value);cache.set(link,svg);return svg;
 }
 export function inviteMarkup({pageUrl,code,esc}){
  const link=inviteURL(pageUrl,code);
- return `<div class="invite-share"><div class="invite-details"><p class="muted">用邀請碼、連結或掃碼邀夥伴（24小時內可加入）</p><div class="code">${esc(code)}</div><div class="actions"><button id="copy" type="button">複製邀請碼</button><button id="copy-link" type="button" class="green">複製邀請連結</button></div><p id="invite-copy-status" class="invite-copy-status" role="status" aria-live="polite" aria-atomic="true"></p><label for="invite-link">邀請連結</label><input id="invite-link" type="url" readonly value="${esc(link)}"><p class="muted invite-hint">夥伴開啟後，登入學校帳號，確認小隊再加入。</p></div><figure class="invite-qr">${inviteQR(link)}<figcaption>掃碼開啟邀請</figcaption></figure></div>`;
+ return `<div class="invite-share"><div class="invite-details"><p class="muted">用邀請碼、連結或掃碼邀夥伴（24小時內可加入）</p><div class="code">${esc(code)}</div><div class="actions"><button id="copy" type="button">複製邀請碼</button><button id="copy-link" type="button" class="green">複製邀請連結</button></div><p id="invite-copy-status" class="invite-copy-status" role="status" aria-live="polite" aria-atomic="true"></p><label for="invite-link">邀請連結</label><input id="invite-link" type="url" readonly value="${esc(link)}"><p class="muted invite-hint">夥伴開啟後，登入學校帳號，就會加入這個小隊，等隊長出發。</p></div><figure class="invite-qr">${inviteQR(link)}<figcaption>掃碼開啟邀請</figcaption></figure></div>`;
 }
 export function bindInvite(root,{code,notice,clipboard=globalThis.navigator?.clipboard}){
  const field=root.querySelector('#invite-link');if(!field)return;

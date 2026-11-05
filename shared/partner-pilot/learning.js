@@ -58,7 +58,7 @@ export function createLearningUI({container,esc,onAction,onHome,onRefresh,onRetr
   const settle=content.querySelector('#settle');if(settle)settle.onclick=()=>submit({action:'settle'});
   const home=content.querySelector('#learning-home');if(home)home.onclick=onHome;
  }
- function render(r,me){const same=current?.id===r.id&&viewer?.id===me.id;if(same)capture();else{clear();current=r;viewer=me;restore(r);shell();}current=r;viewer=me;units=practiceUnits(r.exercise.mine);const index=unitIndex(),unit=units[index];if(unit)activeQuestion=unit.questions[0].id;onStage?.(view);header();panel.update(r,me);panel.setTransport({...transport,busy:transport.busy||savingMedia});
+ function render(r,me,entryView=null){const same=current?.id===r.id&&viewer?.id===me.id;if(same)capture();else{clear();current=r;viewer=me;restore(r);if(entryView==='book'&&r.exercise.finished)view='book';else if(entryView==='review'&&r.exercise.reviewOpen)view='review';shell();}current=r;viewer=me;units=practiceUnits(r.exercise.mine);const index=unitIndex(),unit=units[index];if(unit)activeQuestion=unit.questions[0].id;onStage?.(view);header();panel.update(r,me);panel.setTransport({...transport,busy:transport.busy||savingMedia});
   const model=view==='practice'?[unit,[...editing].sort()]:[r.exercise.shared,r.exercise.reviewers,r.exercise.stories,r.exercise.notes.filter(n=>['mark','discuss'].includes(n.kind)),r.exercise.finished,r.exercise.award,markedOnly,r.exercise.correct];const next=JSON.stringify([view,activeQuestion,model]);
   const typing=content?.contains(document.activeElement)&&document.activeElement.matches('textarea,input[type=text]');
   const mediaBusy=[...content.querySelectorAll('audio')].some(a=>!a.paused&&!a.ended)||!!document.querySelector('#lightbox[open]');
