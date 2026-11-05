@@ -21,7 +21,7 @@ test('QR is a local SVG with a white quiet zone and no remote image dependencies
 });
 test('copying a link uses the displayed invitation; denied clipboard selects it for manual copy',async()=>{
  const messages=[],copied=[],field={value:'https://it-class-tcwu.vercel.app/grade3/115-1/partner-practice.html?invite=000123',focus(){this.focused=true},select(){this.selected=true}},codeButton={},linkButton={};
- const root={querySelector:s=>({'#invite-link':field,'#copy':codeButton,'#copy-link':linkButton}[s])};
- bindInvite(root,{code:'000123',notice:t=>messages.push(t),clipboard:{writeText:async text=>copied.push(text)}});await codeButton.onclick();await linkButton.onclick();assert.deepEqual(copied,['000123',field.value]);
- bindInvite(root,{code:'000123',notice:t=>messages.push(t),clipboard:{writeText:async()=>{throw Error('denied')}}});await linkButton.onclick();assert(field.selected&&field.focused);assert(messages.at(-1).includes('已選取'));
+ const output={textContent:'',dataset:{}},root={querySelector:s=>({'#invite-link':field,'#copy':codeButton,'#copy-link':linkButton,'#invite-copy-status':output}[s])};
+ bindInvite(root,{code:'000123',notice:t=>messages.push(t),clipboard:{writeText:async text=>copied.push(text)}});await codeButton.onclick();assert.match(codeButton.textContent,/已複製/);await linkButton.onclick();assert.deepEqual(copied,['000123',field.value]);assert.match(linkButton.textContent,/已複製/);assert.match(output.textContent,/邀請連結已複製/);assert.equal(output.dataset.tone,'success');
+ bindInvite(root,{code:'000123',notice:t=>messages.push(t),clipboard:{writeText:async()=>{throw Error('denied')}}});await linkButton.onclick();assert(field.selected&&field.focused);assert(messages.at(-1).includes('已選取'));assert.equal(linkButton.textContent,'複製邀請連結');assert.equal(output.dataset.tone,'error');
 });

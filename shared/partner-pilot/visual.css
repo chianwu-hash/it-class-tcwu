@@ -126,6 +126,9 @@
  :scope .invite-details label{font-size:14px;margin-top:16px}
  :scope #invite-link{font-size:14px;background:#f4faf9;margin-bottom:0}
  :scope .invite-hint{font-size:13px;line-height:1.7}
+ :scope .invite-copy-status{margin:10px 0 0;padding:10px 12px;border-left:3px solid #0f766e;border-radius:6px;background:#e6f4ed;color:#115e59;font-size:15px;font-weight:700;line-height:1.7}
+ :scope .invite-copy-status:empty{margin:0;padding:0;border:0}
+ :scope .invite-copy-status[data-tone="error"]{border-color:#b45309;background:#fff4e5;color:#92400e}
  :scope .invite-qr{margin:0;padding:12px;border:1px solid #d5e7e3;border-radius:16px;background:#fff;text-align:center;max-width:240px}
  :scope .invite-qr svg{display:block;max-width:100%;height:auto;margin:auto}
  :scope .invite-qr figcaption{font-size:14px;font-weight:700;margin-top:6px}

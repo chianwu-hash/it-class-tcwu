@@ -21,11 +21,13 @@ export function inviteQR(link){
 }
 export function inviteMarkup({pageUrl,code,esc}){
  const link=inviteURL(pageUrl,code);
- return `<div class="invite-share"><div class="invite-details"><p class="muted">用邀請碼、連結或掃碼邀夥伴（24小時內可加入）</p><div class="code">${esc(code)}</div><div class="actions"><button id="copy" type="button">複製邀請碼</button><button id="copy-link" type="button" class="green">複製邀請連結</button></div><label for="invite-link">邀請連結</label><input id="invite-link" type="url" readonly value="${esc(link)}"><p class="muted invite-hint">夥伴開啟後，登入學校帳號，確認小隊再加入。</p></div><figure class="invite-qr">${inviteQR(link)}<figcaption>掃碼開啟邀請</figcaption></figure></div>`;
+ return `<div class="invite-share"><div class="invite-details"><p class="muted">用邀請碼、連結或掃碼邀夥伴（24小時內可加入）</p><div class="code">${esc(code)}</div><div class="actions"><button id="copy" type="button">複製邀請碼</button><button id="copy-link" type="button" class="green">複製邀請連結</button></div><p id="invite-copy-status" class="invite-copy-status" role="status" aria-live="polite" aria-atomic="true"></p><label for="invite-link">邀請連結</label><input id="invite-link" type="url" readonly value="${esc(link)}"><p class="muted invite-hint">夥伴開啟後，登入學校帳號，確認小隊再加入。</p></div><figure class="invite-qr">${inviteQR(link)}<figcaption>掃碼開啟邀請</figcaption></figure></div>`;
 }
 export function bindInvite(root,{code,notice,clipboard=globalThis.navigator?.clipboard}){
  const field=root.querySelector('#invite-link');if(!field)return;
+ const codeButton=root.querySelector('#copy'),linkButton=root.querySelector('#copy-link');
+ function feedback(text,tone,button,label){if(root.querySelector('#invite-link')!==field)return;button.textContent=label;const output=root.querySelector('#invite-copy-status');if(output){output.textContent=text;output.dataset.tone=tone;}notice(text);}
  field.onclick=()=>field.select();
- root.querySelector('#copy').onclick=async()=>{try{await clipboard.writeText(code);notice('邀請碼已複製。');}catch{notice('請直接選取六位數邀請碼複製。');}};
- root.querySelector('#copy-link').onclick=async()=>{try{await clipboard.writeText(field.value);notice('邀請連結已複製，可以分享給夥伴。');}catch{field.focus();field.select();notice('請複製已選取的邀請連結，再分享給夥伴。');}};
+ codeButton.onclick=async()=>{try{await clipboard.writeText(code);feedback('✓ 邀請碼已複製。','success',codeButton,'✓ 邀請碼已複製');}catch{feedback('無法自動複製，請直接選取六位數邀請碼複製。','error',codeButton,'複製邀請碼');}};
+ linkButton.onclick=async()=>{try{await clipboard.writeText(field.value);feedback('✓ 邀請連結已複製，可以分享給夥伴。','success',linkButton,'✓ 連結已複製');}catch{if(root.querySelector('#invite-link')!==field)return;field.focus();field.select();feedback('無法自動複製，請複製已選取的邀請連結，再分享給夥伴。','error',linkButton,'複製邀請連結');}};
 }
