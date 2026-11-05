@@ -23,7 +23,21 @@
 - 交接時寫明：目前目標與下一步、改了哪些檔與刻意不動的檔、已做與待做的驗證、與 SOP 或共用模組的衝突。
 - 整合紀錄與差異清單：[main-unify-20261104.md](main-unify-20261104.md)。
 
-# 2026-11-05 考古題配題結構盤點（目錄基線完成，語意複核未完成）
+# 2026-11-05 考古題配題結構盤點（50份紙本結構已整理，未接配題）
+
+## 本輪成果：50卷逐份整理與SOP（已複核例外，未接配題）
+
+- 工作區：`past-paper-structure-20261105`，分支`codex/past-paper-structure-20261105`，起點最新origin/main c18286b；帶入上輪基線文件commit後續作。Codex唯一寫入者，Claude只讀指定證據與本輪檔案，不得改原題、學生資料、資料庫或部署。
+- 範圍：40啟用＋10停用，共50個現用版本；唯讀來源2543個作答field及60個blocked紀錄。已取得49份PDF來源及1份DOCX來源，另包含必要空白答案卷／聽力稿；原件及私有轉錄留在ignored `.chat-mode`，不提交原題或答案。
+- 已以受監督chat-mode完成規則討論、六批文字／必要原頁複核（0、10、20、30、40、45）及最後疑義複核，共8次completed、exit0、viewer已啟動、Git前後一致。最後session `structure-final-20261105`：315.709秒、30次Read；實際頁面清單與限制留在私有回覆，不將文字複核冒稱全頁雙人視覺重校。Codex核對原頁並落實修正。
+- 新增結構／決策JSON、驗證收據與離線驗證器，SOP及範本新增必要交付。已確認1635獨立題、225題組、2439個紙本已列作答目標（含4個optional）。JSON為`reviewed-printed-items`、`allocationEnabled:false`、`allocationContractReady:false`，沒有產品接線。
+- 重要例外：名間113四英原卷只提供口試20%評分欄，題目未載，完整評量題數不能宣稱已確認；紙本已列題目另外計數。文澳114四國一個field包數個多音字作答目標，需記storageCouplings，不能分兩人寫同一payload。選做加分保留optional，不灌入必填／60%分母。
+- 最後修正：Claude確認名間英語p2-f1包心情／天氣／臉色三個閱讀目標；加fieldParts後紙本55改57，保持同一field／同一題組，完整評量總數仍因口試未載而未知。已補數列與明列①②子項規則、blocked轉可用須重核coupling、共用詞庫未機器編碼的限制與來源標記。舊批次初判是歷史意見，不能拿來當現況缺陷或回復既有勘誤。
+- 驗證：50份固定決策與來源映射完整一致，17項合成正／負向測試通過；唯讀重查50份現用版本／SHA／啟用狀態全部相同。Claude只讀程式、未執行測試，修正後測試由Codex實跑。未查學生作答、未寫DB、未部署，也未驗新配題ownership／學生UI／全部媒體答案／新結構獎勵流程。
+- 交付：`past-paper-allocation-audit.md`逐卷表、`past-paper-allocation-structure.json`結構、`past-paper-allocation-decisions.json`固定決策、`past-paper-allocation-validation.json`收據；離線檢查器`automation/past-paper-structure-verify.py`及合成測試。互動查看表只在本worktree ignored `.chat-mode/results/past-paper-allocation-audit.html`，沒有加入正式頁面。私有源包不隨clone提供，依來源SHA／頁次及現用版本取得。
+- 下一步：先在隔離環境處理sharedOptionPools（跨人詞庫規則）、storageCouplings、blocked／口試及版本再接配題；原卷題組不可拆，新房分配須凍結、舊房不得轉手。另驗ownership、媒體、送答／部分失敗／同ID重送、2～4人與舊房及評分／花葉契約。使用者本輪明確不動正式網站，本次不執行發布腳本。
+
+### 上輪目錄基線歷史紀錄（已由本輪結構成果取代）
 
 - 使用者定案：先整理現有卷的獨立題、題組及各組子題數，才調整分配。可分配單位包含獨立題；不能只以題組數判斷人數，也不能直接用document.groups計數。
 - 新worktree past-structure-audit-20261105，基底origin/main c18286b；唯讀現有50份卷的現用版本，40啟用、10停用。未讀學生作答，未改資料庫、產品程式或部署。

@@ -1,0 +1,4915 @@
+{
+  "schemaVersion": 1,
+  "papers": [
+    {
+      "paperId": "dingxi-113-1-g3-exam1-chinese",
+      "activeVersion": "c519aafa-d9ea-4037-97a6-3bd90b5b8dfe",
+      "documentSha256": "b1623d16ed6026cc833211b22c8b998ef1c41d5e8adc34e4550a6f718e1c04ed",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s1"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s3-f01",
+            "f:s3-f02",
+            "f:s3-f03",
+            "f:s3-f04",
+            "f:s3-f05",
+            "f:s3-f06",
+            "f:s3-f07",
+            "f:s3-f08",
+            "f:s3-f09",
+            "f:s3-f10"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4",
+            "g:s4-f01",
+            "g:s4-f04"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s5"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s8a-q01",
+            "g:s8a-q02"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s8b-q01",
+            "g:s8b-q02",
+            "g:s8b-q03"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:s3-f01",
+            "f:s3-f02",
+            "f:s3-f03"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s3-f04",
+            "f:s3-f05",
+            "f:s3-f06",
+            "f:s3-f07",
+            "f:s3-f08",
+            "f:s3-f09"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch0-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s5",
+          "fieldIds": [
+            "s5-f01",
+            "s5-f02",
+            "s5-f03",
+            "s5-f04",
+            "s5-f05"
+          ],
+          "choiceCount": 9,
+          "unitIds": [
+            "unit-bc87dc1679162aa0"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "330e76012559aa448fb7318dc26755f24b73540123f1e335d886ea691b84fc82"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-113-1-g3-exam1-english",
+      "activeVersion": "c58ba8ba-b587-4fd8-b492-e96b7d9b48e8",
+      "documentSha256": "1763cce561dd670103b262c4a0d94561ab105f40b2933b94ad4c826f9b3bb9ee",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:j-q01",
+            "g:j-q02",
+            "g:j-q03"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:k-q01",
+            "g:k-q02",
+            "g:k-q03",
+            "g:k-q04"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:e-q01-picture",
+            "f:e-q01"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:e-q02-picture",
+            "f:e-q02"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:e-q03-picture",
+            "f:e-q03"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch0-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "dingxi-113-1-g3-exam1-math",
+      "activeVersion": "6a366ece-815d-496e-aa41-91f69582bd68",
+      "documentSha256": "4e213d9ba5491bb089725254edca8c1e0e039d7e3064c8faa6ae65f4d0099924",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "f:s1-q05-a",
+            "f:s1-q05-b"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s1-q06-a",
+            "f:s1-q06-b"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s2-q02"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:s1-q01-a",
+            "f:s1-q01-b",
+            "f:s1-q01-c"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s1-q02-a",
+            "f:s1-q02-b",
+            "f:s1-q02-c"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s1-q04",
+            "f:s1-q04-th",
+            "f:s1-q04-h",
+            "f:s1-q04-t",
+            "f:s1-q04-o"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s1-q07-1a",
+            "f:s1-q07-1b",
+            "f:s1-q07-1c",
+            "f:s1-q07-1d"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s1-q07-2a",
+            "f:s1-q07-2b",
+            "f:s1-q07-2c",
+            "f:s1-q07-2d"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s1-q09-a",
+            "f:s1-q09-b"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s1-q10-a",
+            "f:s1-q10-b"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s2-q01"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch0-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": true
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s3-a",
+          "fieldIds": [
+            "s3-a-1",
+            "s3-a-2",
+            "s3-a-3"
+          ],
+          "choiceCount": 3,
+          "unitIds": [
+            "unit-70b0932e476e4730",
+            "unit-761b3898a48ce28a",
+            "unit-849d3bb497787b9c"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "f7448d7dd54fd59b9d5bbc13f7b26d9671e8130dba772f8d5dd19a10c8aaa645"
+          }
+        },
+        {
+          "groupId": "s3-b",
+          "fieldIds": [
+            "s3-b-1",
+            "s3-b-2",
+            "s3-b-3"
+          ],
+          "choiceCount": 3,
+          "unitIds": [
+            "unit-9652212a99322b63",
+            "unit-b556ffd0d571b9be",
+            "unit-c80f7f7e1003e80e"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "f7448d7dd54fd59b9d5bbc13f7b26d9671e8130dba772f8d5dd19a10c8aaa645"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-113-1-g3-exam1-science",
+      "activeVersion": "4c0162ee-7652-4619-966b-18134dc4d3aa",
+      "documentSha256": "0976fdcbe1f37a202ef667705f794da323a42082d8d6cd7cc67d681ce24ae3b6",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "f:s4-q01-left",
+            "f:s4-q01-upper-right",
+            "f:s4-q01-right",
+            "f:s4-q01-bottom"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s5-q01",
+            "g:s5-q02",
+            "g:s5-q03",
+            "g:s5-q04"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "g:s4-q02-1",
+            "g:s4-q02-2",
+            "g:s4-q02-3",
+            "g:s4-q02-4"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch0-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s4-q01",
+          "fieldIds": [
+            "s4-q01-bottom",
+            "s4-q01-left",
+            "s4-q01-right",
+            "s4-q01-upper-right"
+          ],
+          "choiceCount": 4,
+          "unitIds": [
+            "unit-59296c5325126a5a"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "67569efd48d1e01da2727ccfeb4538ef6b5c3cda3a1c633e848947772f1f8c4d"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-113-1-g3-exam1-social",
+      "activeVersion": "f338d10c-30d1-4d15-a69d-d54999d65c16",
+      "documentSha256": "b8d07b4effe7fc48f709337e40e7d244f266a99df23faf126a312b0e25184398",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "f:s3-q02-1",
+            "f:s3-q02-2",
+            "f:s3-q02-3",
+            "f:s3-q02-4"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s5-q01-1",
+            "g:s5-q01-2",
+            "g:s5-q01-3",
+            "g:s5-q01-4"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "g:s4-q01"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s4-q02"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s4-q03"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch0-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s3-q01",
+          "fieldIds": [
+            "s3-q01-1",
+            "s3-q01-2",
+            "s3-q01-3",
+            "s3-q01-4"
+          ],
+          "choiceCount": 4,
+          "unitIds": [
+            "unit-68a3302af1e0077a",
+            "unit-7c9c345c9f53743b",
+            "unit-b6e6e38d64e13797",
+            "unit-e76fc35f8a37d7ae"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "512f5417fddd03b282c53735e3e19cbfc0d1d26462998277a984fefa5a443523"
+          }
+        },
+        {
+          "groupId": "s3-q02",
+          "fieldIds": [
+            "s3-q02-1",
+            "s3-q02-2",
+            "s3-q02-3",
+            "s3-q02-4"
+          ],
+          "choiceCount": 4,
+          "unitIds": [
+            "unit-f35b2e27079bd485"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "512f5417fddd03b282c53735e3e19cbfc0d1d26462998277a984fefa5a443523"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-114-1-g3-exam1-chinese",
+      "activeVersion": "7c6fad1f-ce9f-4b2a-b8c0-c91a7be2e728",
+      "documentSha256": "613d2a3813180b3eac8d09db814e3ee6ee032394ed53bb9ba304cf9d47eed547",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "f:s1-q01-1",
+            "f:s1-q01-2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s1-q02-1",
+            "f:s1-q02-2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s1-q03-1",
+            "f:s1-q03-2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s1-q04-1",
+            "f:s1-q04-2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s1-q05-1",
+            "f:s1-q05-2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s1-q06-1",
+            "f:s1-q06-2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q01a",
+            "g:s3-q01b"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q02a",
+            "g:s3-q02b",
+            "g:s3-q02c"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q03a",
+            "g:s3-q03b"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q04a",
+            "g:s3-q04b",
+            "g:s3-q04c"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s5"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s7"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s10-q01",
+            "g:s10-q02",
+            "g:s10-q03"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:s2-q01-1",
+            "f:s2-q01-2"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s2-q02-1",
+            "f:s2-q02-2"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s2-q03-1",
+            "f:s2-q03-2"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s2-q04-1",
+            "f:s2-q04-2"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s2-q05-1",
+            "f:s2-q05-2"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch0-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s5",
+          "fieldIds": [
+            "s5-1",
+            "s5-2",
+            "s5-3",
+            "s5-4",
+            "s5-5"
+          ],
+          "choiceCount": 9,
+          "unitIds": [
+            "unit-d7d72a5aa7d161e2"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "7e95e0a2a40aaccb42262eb73cd7cf9d2045001118c5117b5a3eb6d6f354926f"
+          }
+        },
+        {
+          "groupId": "s6",
+          "fieldIds": [
+            "s6-1",
+            "s6-2",
+            "s6-3",
+            "s6-4"
+          ],
+          "choiceCount": 4,
+          "unitIds": [
+            "unit-3c1c8482d616ccce",
+            "unit-486ffd5b427a4c42",
+            "unit-6270ee5c648d1e38",
+            "unit-b599ef2e256cb7b4"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "7e95e0a2a40aaccb42262eb73cd7cf9d2045001118c5117b5a3eb6d6f354926f"
+          }
+        },
+        {
+          "groupId": "s7",
+          "fieldIds": [
+            "s7-1",
+            "s7-2",
+            "s7-3",
+            "s7-4",
+            "s7-5",
+            "s7-6"
+          ],
+          "choiceCount": 6,
+          "unitIds": [
+            "unit-95851b0dc3821222"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "7e95e0a2a40aaccb42262eb73cd7cf9d2045001118c5117b5a3eb6d6f354926f"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-114-1-g3-exam1-english",
+      "activeVersion": "b39e40a2-c4d6-4228-9420-51bc3383e687",
+      "documentSha256": "76a58884ec6d4d2053ecd9d9d81d23664a84b6036cd621351fe7fb9888992a3d",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s9-q01",
+            "g:s9-q02",
+            "g:s9-q03",
+            "g:s9-q04",
+            "g:s9-q05"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s11-q01",
+            "g:s11-q02",
+            "g:s11-q03",
+            "g:s11-q04"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:s4-q01",
+            "f:s4-q02",
+            "f:s4-q03",
+            "f:s4-q04"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s5-q01-picture",
+            "f:s5-q01"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s5-q02-picture",
+            "f:s5-q02"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s5-q03-picture",
+            "f:s5-q03"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch0-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s4-audio",
+          "fieldIds": [
+            "s4-q01",
+            "s4-q02",
+            "s4-q03",
+            "s4-q04"
+          ],
+          "choiceCount": 4,
+          "unitIds": [
+            "unit-f73a913175942f2f"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 1,
+            "sha256": "da7b8b23e73661535b5e685088a86c457be57e1d3b6b0e75c468fe44def2d464"
+          }
+        },
+        {
+          "groupId": "s7",
+          "fieldIds": [
+            "s7-q01",
+            "s7-q02",
+            "s7-q03",
+            "s7-q04"
+          ],
+          "choiceCount": 5,
+          "unitIds": [
+            "unit-1f52e5edb9ecb1b8",
+            "unit-bb0501899a9822fa",
+            "unit-c647f71815c06f0f",
+            "unit-ee65bf2239580e14"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "da7b8b23e73661535b5e685088a86c457be57e1d3b6b0e75c468fe44def2d464"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-114-1-g3-exam1-math",
+      "activeVersion": "34222e98-38cf-4196-bd20-1ec5ebb667cb",
+      "documentSha256": "3b2b3a689fc66a7b78320c3e1b68e73754ebf361659b88471b819ffda5671dcc",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "f:s6-q03-1",
+            "f:s6-q03-2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s6-q04-1",
+            "f:s6-q04-2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s6-q11-1",
+            "f:s6-q11-2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s9-q01",
+            "g:s9-q02",
+            "g:s9-q03"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:s6-q01-1",
+            "f:s6-q01-2",
+            "f:s6-q01-3"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s6-q06-1",
+            "f:s6-q06-2"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s7-q01"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s7-q02"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch0-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "dingxi-114-1-g3-exam1-science",
+      "activeVersion": "721672d8-dd85-4750-aac5-9135b5104947",
+      "documentSha256": "f915d39c2e5cb1fb8f9adddef8e1d023c1c3c3b7f680173bc9efe69db280d78d",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s3-q06"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q07"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q08-1",
+            "g:s3-q08"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q10"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "g:s3-q01"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s3-q03"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s3-q04"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s3-q05"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s3-q09"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch0-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s3-q06",
+          "fieldIds": [
+            "s3-q06-1",
+            "s3-q06-2",
+            "s3-q06-3",
+            "s3-q06-4"
+          ],
+          "choiceCount": 4,
+          "unitIds": [
+            "unit-5ccb176d4cc22f10"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "76ad38e928a1ddd884afa42d8389f1f943bf682e6b103f19c0f445103e16ee39"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-114-1-g3-exam1-social",
+      "activeVersion": "41a52da6-2c96-4bb0-ab75-14ba01d52d64",
+      "documentSha256": "ba7b090bc04ceac4dcc420f268c9d0d27e5215adb70f55ad51d5ae54449081ce",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "f:s3-q01-b1",
+            "f:s3-q01-b2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s7-q01",
+            "g:s7-q02",
+            "g:s7-q03",
+            "g:s7-q04",
+            "g:s7-q05",
+            "g:s7-q06",
+            "g:s7-q07",
+            "g:s7-q08"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s8-q01",
+            "g:s8-q02",
+            "g:s8-q03"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:s5-q01-1",
+            "f:s5-q01-2",
+            "f:s5-q01-3",
+            "f:s5-q01-4",
+            "f:s5-q01-5",
+            "f:s5-q01-6"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s6-q01"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s6-q02"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s6-q03"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch0-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s3-q01",
+          "fieldIds": [
+            "s3-q01-b1",
+            "s3-q01-b2"
+          ],
+          "choiceCount": 3,
+          "unitIds": [
+            "unit-e8cb8b6377bb6838"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "449dee46c79865d0198df20ae65a951af21a517da7c34e8a628ae818b718dbee"
+          }
+        },
+        {
+          "groupId": "s3-q02",
+          "fieldIds": [
+            "s3-q02-1",
+            "s3-q02-2",
+            "s3-q02-3",
+            "s3-q02-4",
+            "s3-q02-5"
+          ],
+          "choiceCount": 3,
+          "unitIds": [
+            "unit-07bf67ea23ff60bb",
+            "unit-10afc58355e33835",
+            "unit-38db16b3b331660b",
+            "unit-aabb67cbbbf9cab8",
+            "unit-b4a44b9409b59fe3"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "449dee46c79865d0198df20ae65a951af21a517da7c34e8a628ae818b718dbee"
+          }
+        },
+        {
+          "groupId": "s3-q03",
+          "fieldIds": [
+            "s3-q03-1",
+            "s3-q03-2",
+            "s3-q03-3"
+          ],
+          "choiceCount": 3,
+          "unitIds": [
+            "unit-03a657613d443145",
+            "unit-03ec8dc636735a7c",
+            "unit-499deb02e6cf6522"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "449dee46c79865d0198df20ae65a951af21a517da7c34e8a628ae818b718dbee"
+          }
+        },
+        {
+          "groupId": "s4-q01",
+          "fieldIds": [
+            "s4-q01-1",
+            "s4-q01-2",
+            "s4-q01-3",
+            "s4-q01-4",
+            "s4-q01-5",
+            "s4-q01-6"
+          ],
+          "choiceCount": 3,
+          "unitIds": [
+            "unit-19f15e0ca2303d04",
+            "unit-8dc06f2c46306bec",
+            "unit-c3130372dfd2f1d6",
+            "unit-e2faabbd327df5f9",
+            "unit-e7495283443a0a7c",
+            "unit-f4db6cd0dc4066db"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 4,
+            "sha256": "449dee46c79865d0198df20ae65a951af21a517da7c34e8a628ae818b718dbee"
+          }
+        },
+        {
+          "groupId": "s5-q01",
+          "fieldIds": [
+            "s5-q01-1",
+            "s5-q01-2",
+            "s5-q01-3",
+            "s5-q01-4",
+            "s5-q01-5",
+            "s5-q01-6"
+          ],
+          "choiceCount": 6,
+          "unitIds": [
+            "unit-5093a841e09609c9"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 4,
+            "sha256": "449dee46c79865d0198df20ae65a951af21a517da7c34e8a628ae818b718dbee"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-114-1-g3-exam2-chinese",
+      "activeVersion": "06f4142e-4387-44c9-92c4-683df7683642",
+      "documentSha256": "c4603fcf92ea77d85fb15116a17522d03885c1dc3ce59438a8552ff6f44fee5d",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s1-q01"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q02"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q03"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q04"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q05"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q06"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q07"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q08"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q09"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s6-q01"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s10-q01",
+            "g:s10-q02",
+            "g:s10-q03"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "g:s2-q01"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s2-q02"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s2-q03"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s2-q04"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s2-q05"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s2-q06"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s2-q07"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s3-zhuyin-1",
+            "f:s3-word-1"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s3-zhuyin-2",
+            "f:s3-word-2"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s3-zhuyin-3",
+            "f:s3-word-3"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s3-zhuyin-4",
+            "f:s3-word-4"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch10-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "dingxi-114-1-g3-exam2-english",
+      "activeVersion": "4c17bd23-1d56-47b4-8c6e-c87ec7ce3a99",
+      "documentSha256": "3456ca192068b42fc386e866b320e709abff79430c7ea94aa0a285d8df8570e6",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s7-q01",
+            "g:s7-q02",
+            "g:s7-q03",
+            "g:s7-q04",
+            "g:s7-q05"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s9-q01",
+            "g:s9-q02",
+            "g:s9-q03"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch10-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "dingxi-114-1-g3-exam2-math",
+      "activeVersion": "bbb4767b-5b0b-4c57-a7bf-c510d959cab3",
+      "documentSha256": "79d20980fd241ebfc9b58c445f6fe319e4cde07608ffc5c1ec7a3f87e53c462f",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s4-q03a",
+            "g:s4-q03b",
+            "g:s4-q03c",
+            "g:s4-q03c2",
+            "b:s4-q03d",
+            "b:s4-q03e",
+            "g:s4-q03e2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q06"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q07"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s5-q01"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s5-q02a",
+            "g:s5-q02b",
+            "g:s5-q02c"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s5-q03a",
+            "g:s5-q03b"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s8-q01",
+            "g:s8-q02a",
+            "g:s8-q02b",
+            "g:s8-q03a",
+            "g:s8-q03b"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:s4-q01-1a",
+            "f:s4-q01-1b"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s4-q02"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s4-q03c",
+            "g:s4-q03c2"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "b:s4-q03e",
+            "g:s4-q03e2"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s4-q07-3a",
+            "f:s4-q07-3b"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s4-q07-4a",
+            "f:s4-q07-4b"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s5-q02b",
+            "g:s5-q02c"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s5-q04"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s7-q01"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s7-q03"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s8-q02a",
+            "g:s8-q02b"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s8-q03a",
+            "g:s8-q03b"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch10-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s5-q01",
+          "fieldIds": [
+            "s5-q01-1",
+            "s5-q01-2"
+          ],
+          "choiceCount": 3,
+          "unitIds": [
+            "unit-db231bd2ef8063ff"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "2b6024f5fdd84603f9740ad33bb175bba523a97fa005bf043817e85af09904c9"
+          }
+        },
+        {
+          "groupId": "s5-q03a",
+          "fieldIds": [
+            "s5-q03a-1",
+            "s5-q03a-2",
+            "s5-q03a-3"
+          ],
+          "choiceCount": 4,
+          "unitIds": [
+            "unit-7fec0a0d75aa0c0e"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "2b6024f5fdd84603f9740ad33bb175bba523a97fa005bf043817e85af09904c9"
+          }
+        },
+        {
+          "groupId": "s5-q04",
+          "fieldIds": [
+            "s5-q04-1",
+            "s5-q04-2",
+            "s5-q04-3",
+            "s5-q04-4"
+          ],
+          "choiceCount": 4,
+          "unitIds": [
+            "unit-7add247f5fb4919e"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "2b6024f5fdd84603f9740ad33bb175bba523a97fa005bf043817e85af09904c9"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-114-1-g3-exam2-science",
+      "activeVersion": "b7362ce2-5aaa-48bf-a27e-0f034b421303",
+      "documentSha256": "22e41f09b2b3739900b2591ff156a0272e09b3c76d58a5c0d120a40226ff0d57",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s3-q01"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q04a",
+            "g:s3-q04b"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q01",
+            "g:s4-q02a",
+            "g:s4-q02b"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "g:s3-q02"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s3-q03"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch10-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s3-q01",
+          "fieldIds": [
+            "s3-q01-1",
+            "s3-q01-2",
+            "s3-q01-3",
+            "s3-q01-4",
+            "s3-q01-5"
+          ],
+          "choiceCount": 5,
+          "unitIds": [
+            "unit-f2e736beece7a413"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "d5b09b62f141b6d7d9af733bd41916ab4c20e562ae4f3354d19c57bf0ba616d8"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-114-1-g3-exam2-social",
+      "activeVersion": "9f6a4be0-3390-4f04-9d9e-79e3ddf5cfae",
+      "documentSha256": "9c5566c3c95be00143090e35ecf62839bb9e0ffdec57192d51241baf86ae160b",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s3-q01"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q02"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "g:s5"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s7-q01-1",
+            "b:s7-q01-2",
+            "f:s7-q01-3",
+            "f:s7-q01-4"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s7-q02-1",
+            "g:s7-q02-2"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch10-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s3-q01",
+          "fieldIds": [
+            "s3-q01-1",
+            "s3-q01-2",
+            "s3-q01-3"
+          ],
+          "choiceCount": 4,
+          "unitIds": [
+            "unit-849f1b3f962cd6b0"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "c707cc0ae7b5621d876b00c07085abbaf1135706485668e417b3b00793e2e137"
+          }
+        },
+        {
+          "groupId": "s3-q02",
+          "fieldIds": [
+            "s3-q02-1",
+            "s3-q02-2",
+            "s3-q02-3"
+          ],
+          "choiceCount": 5,
+          "unitIds": [
+            "unit-57084fc9c3bc7ade"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "c707cc0ae7b5621d876b00c07085abbaf1135706485668e417b3b00793e2e137"
+          }
+        },
+        {
+          "groupId": "s3-q03",
+          "fieldIds": [
+            "s3-q03-1",
+            "s3-q03-2",
+            "s3-q03-3"
+          ],
+          "choiceCount": 3,
+          "unitIds": [
+            "unit-03a657613d443145",
+            "unit-03ec8dc636735a7c",
+            "unit-499deb02e6cf6522"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "c707cc0ae7b5621d876b00c07085abbaf1135706485668e417b3b00793e2e137"
+          }
+        },
+        {
+          "groupId": "s3-q04",
+          "fieldIds": [
+            "s3-q04-1",
+            "s3-q04-2",
+            "s3-q04-3"
+          ],
+          "choiceCount": 3,
+          "unitIds": [
+            "unit-0a96ad052432f38f",
+            "unit-49ac4c85736ac276",
+            "unit-8e1490040c6f2df3"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "c707cc0ae7b5621d876b00c07085abbaf1135706485668e417b3b00793e2e137"
+          }
+        },
+        {
+          "groupId": "s4-q01",
+          "fieldIds": [
+            "s4-q01-1",
+            "s4-q01-2",
+            "s4-q01-3",
+            "s4-q01-4"
+          ],
+          "choiceCount": 4,
+          "unitIds": [
+            "unit-8dc06f2c46306bec",
+            "unit-c3130372dfd2f1d6",
+            "unit-e7495283443a0a7c",
+            "unit-f4db6cd0dc4066db"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "c707cc0ae7b5621d876b00c07085abbaf1135706485668e417b3b00793e2e137"
+          }
+        },
+        {
+          "groupId": "s4-q02",
+          "fieldIds": [
+            "s4-q02-1",
+            "s4-q02-2",
+            "s4-q02-3",
+            "s4-q02-4"
+          ],
+          "choiceCount": 2,
+          "unitIds": [
+            "unit-583dae502bb96e1c",
+            "unit-8bb8a252910239bd",
+            "unit-f2bb4e1656a8d817",
+            "unit-fb85a95ee33d9a7a"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "c707cc0ae7b5621d876b00c07085abbaf1135706485668e417b3b00793e2e137"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "anhe-113-1-g4-exam1-social",
+      "activeVersion": "0b5bf219-e626-4db2-a498-2aaa31bc778e",
+      "documentSha256": "3c232ddb41db6fa111502d073abce6dd7049390ead8cf6f32f7277af104e8b53",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s1-q1",
+            "g:s1-q2",
+            "g:s1-q3",
+            "g:s1-q4"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-d"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch10-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": true
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s3-a",
+          "fieldIds": [
+            "s3-a-q1",
+            "s3-a-q2",
+            "s3-a-q3",
+            "s3-a-q4"
+          ],
+          "choiceCount": 4,
+          "unitIds": [
+            "unit-0e641bd24afbb753",
+            "unit-464034e63d1162a0",
+            "unit-4f25c9339bcbccd1",
+            "unit-6547db81063c2e0b"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "7f94f16431b5b364044e3818678d2e4e9d359a41eaa581f414dc980e2b6585b3"
+          }
+        },
+        {
+          "groupId": "s3-b",
+          "fieldIds": [
+            "s3-b-q1",
+            "s3-b-q2",
+            "s3-b-q3",
+            "s3-b-q4",
+            "s3-b-q5"
+          ],
+          "choiceCount": 5,
+          "unitIds": [
+            "unit-444d694e0cae7455",
+            "unit-5f4ba82787d18cc1",
+            "unit-67664d30bc974bca",
+            "unit-a8cba0066eea40ea",
+            "unit-d694eeadb62349c8"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "7f94f16431b5b364044e3818678d2e4e9d359a41eaa581f414dc980e2b6585b3"
+          }
+        },
+        {
+          "groupId": "s3-e",
+          "fieldIds": [
+            "s3-e-q1",
+            "s3-e-q2",
+            "s3-e-q3",
+            "s3-e-q4",
+            "s3-e-q5"
+          ],
+          "choiceCount": 5,
+          "unitIds": [
+            "unit-2694de690983a68e",
+            "unit-b9cb48d9cd11c34c",
+            "unit-f5b5dfc0bff8a573",
+            "unit-f78c8cee955c8cda",
+            "unit-f9f7d7783c346952"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "7f94f16431b5b364044e3818678d2e4e9d359a41eaa581f414dc980e2b6585b3"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "anhe-114-1-g4-exam1-social",
+      "activeVersion": "39816592-e6d2-46fd-ac3b-7d719cf68ec1",
+      "documentSha256": "c7177d90a50b5408e09e404c7efda43f1392b733cb17346332fe7960ec52e703",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "f:s3-q3-f1",
+            "b:s3-q3-f2",
+            "f:s3-q3-f3",
+            "b:s3-q3-f4",
+            "g:s3-q3-west"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q1-1",
+            "g:s4-q1-2",
+            "g:s4-q1-3"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q2",
+            "g:s4-q2-old",
+            "g:s4-q2-birth"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "g:s4-q2-old"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s4-q2-birth"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch10-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s3-q1",
+          "fieldIds": [
+            "s3-q1-f1",
+            "s3-q1-f2",
+            "s3-q1-f3",
+            "s3-q1-f4",
+            "s3-q1-f5"
+          ],
+          "choiceCount": 5,
+          "unitIds": [
+            "unit-3544df76287234e4",
+            "unit-62b4b7d8d50dc704",
+            "unit-a060da4da06e3a62",
+            "unit-e5e0864df230e501",
+            "unit-f3049a470df598aa"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "0e5c21aacfa0612dc98112949ddc6a1cbd8ae6945f4e7c05eda9410bdf68acb0"
+          }
+        },
+        {
+          "groupId": "s3-q3",
+          "fieldIds": [
+            "s3-q3-f1",
+            "s3-q3-f3"
+          ],
+          "choiceCount": 4,
+          "unitIds": [
+            "unit-9dcedaff7440e791"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "0e5c21aacfa0612dc98112949ddc6a1cbd8ae6945f4e7c05eda9410bdf68acb0"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "chenggong-113-1-g4-exam1-chinese",
+      "activeVersion": "7d2bceb4-8dcd-4c60-9f40-1f8019da10ec",
+      "documentSha256": "c9898c62b7b932ff446a04901e0a8fc93b4ad63c4304ecae5d628eacf8421698",
+      "fieldParts": {
+        "s1-q1": [
+          "1",
+          "2"
+        ],
+        "s1-q2": [
+          "1",
+          "2"
+        ],
+        "s1-q3": [
+          "1",
+          "2"
+        ],
+        "s1-q4": [
+          "1",
+          "2"
+        ],
+        "s1-q5": [
+          "1",
+          "2"
+        ],
+        "s1-q6": [
+          "1",
+          "2"
+        ],
+        "s1-q7": [
+          "1",
+          "2"
+        ],
+        "s1-q8": [
+          "1",
+          "2"
+        ]
+      },
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s3-q1",
+            "g:s3-q2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q1"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q3"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q4"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q5"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q6"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q7"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q8"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "g:s8"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch10-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": true
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s6-words",
+          "fieldIds": [
+            "s6-words-f1",
+            "s6-words-f2",
+            "s6-words-f3",
+            "s6-words-f4",
+            "s6-words-f5"
+          ],
+          "choiceCount": 5,
+          "unitIds": [
+            "unit-022c74e2510a4465",
+            "unit-2d27092640dfc032",
+            "unit-73a8d08e550870f7",
+            "unit-7f686215f3b27f99",
+            "unit-8acd6027e1d20219"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "4483ef137ccbd2a13b43bc9875616f904d059c07e61fff8dcd81ea3c59fa1ab2"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "guangxing-113-1-g4-exam1-math",
+      "activeVersion": "5d05804f-b275-40fe-95d3-535362e623a2",
+      "documentSha256": "0c1ed83ce780644e190797b15e65610bb3752688a45ee3fcf9bfe345cc1fd839",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s4-q1"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q4"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q6"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q8"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "g:s2"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s4-q5"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s4-q10a"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s4-q10b"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch10-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s2",
+          "fieldIds": [
+            "s2-f1",
+            "s2-f2",
+            "s2-f3",
+            "s2-f4",
+            "s2-f5"
+          ],
+          "choiceCount": 5,
+          "unitIds": [
+            "unit-2b9380385dbf004f"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 1,
+            "sha256": "1bb2472746708529f1a6402196d076bc2346d47d4d5abaaf5d516e436f79c7ec"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "heshun-114-1-g4-exam1-math",
+      "activeVersion": "5cacc935-730e-44f1-a84a-156d836e1994",
+      "documentSha256": "16f08138f53eed8055f4c0a722c04e7525b05c45bd638cf4d835d1bcee66adda",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s2-q1"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s2-q2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s2-q3"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s2-q4"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s2-q5"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s2-q8"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q2a",
+            "g:s4-q2b"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q3a",
+            "g:s4-q3b"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q4a",
+            "g:s4-q4b"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "g:s2-q7"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s3-q1",
+            "g:s3-q1-check"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch10-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "heshun-114-1-g4-exam1-science",
+      "activeVersion": "a849a865-5d61-45cc-affc-c5a64ee89a23",
+      "documentSha256": "f76d3bf3bb535ed3ec24c54382627670cd2d479b9214fb32ea84f3475d995fa3",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s3-q2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q5"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q7"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q9"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q1",
+            "g:s4-q2",
+            "g:s4-q3"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:s3-q1-f1",
+            "f:s3-q1-f2",
+            "f:s3-q1-f3",
+            "f:s3-q1-f4",
+            "f:s3-q1-f5",
+            "f:s3-q1-f6"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch20-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s3-q1",
+          "fieldIds": [
+            "s3-q1-f1",
+            "s3-q1-f2",
+            "s3-q1-f3",
+            "s3-q1-f4",
+            "s3-q1-f5",
+            "s3-q1-f6"
+          ],
+          "choiceCount": 6,
+          "unitIds": [
+            "unit-c4264fa2253b4b46"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 1,
+            "sha256": "b94883f50c68787a7734709bf9b70ca677bee94eb53bb9998329f20f52619647"
+          }
+        },
+        {
+          "groupId": "s3-q4",
+          "fieldIds": [
+            "s3-q4-f1",
+            "s3-q4-f2",
+            "s3-q4-f3",
+            "s3-q4-f4"
+          ],
+          "choiceCount": 4,
+          "unitIds": [
+            "unit-1f07c8dad5648712",
+            "unit-4d0e427db35a2410",
+            "unit-6430c2cd6bbf8145",
+            "unit-fc3bba21dc7b9445"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "b94883f50c68787a7734709bf9b70ca677bee94eb53bb9998329f20f52619647"
+          }
+        },
+        {
+          "groupId": "s3-q8",
+          "fieldIds": [
+            "s3-q8-f1",
+            "s3-q8-f2",
+            "s3-q8-f3"
+          ],
+          "choiceCount": 3,
+          "unitIds": [
+            "unit-18f8e780d0009bce",
+            "unit-40478d1b8517fee3",
+            "unit-661580e776ec60f7"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "b94883f50c68787a7734709bf9b70ca677bee94eb53bb9998329f20f52619647"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "mingjian-113-1-g4-exam1-english",
+      "activeVersion": "8b688e23-c041-4d59-895a-21cc17a4bbc1",
+      "documentSha256": "507c87b581e5943a6c1c5be68ea20d768ecb26cf3e4b3a26ffdf1d9fa80fea6c",
+      "fieldParts": {
+        "p2-f1": [
+          "mood",
+          "weather",
+          "face"
+        ]
+      },
+      "blockedExpansions": {
+        "p1-a": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "p1-b": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "p1-c": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "p1-d": [
+          "circle-1",
+          "circle-2",
+          "circle-3",
+          "check-cockatoo",
+          "check-koala",
+          "check-emu"
+        ],
+        "p1-f": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ]
+      },
+      "excludedBlocked": [
+        "p3-oral"
+      ],
+      "bundles": [
+        {
+          "members": [
+            "b:p1-d#circle-1",
+            "b:p1-d#circle-2",
+            "b:p1-d#circle-3",
+            "b:p1-d#check-cockatoo",
+            "b:p1-d#check-koala",
+            "b:p1-d#check-emu"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:p2-d1",
+            "g:p2-d2",
+            "g:p2-d3",
+            "g:p2-d4",
+            "g:p2-d5"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:p2-e"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:p2-f1",
+            "g:p2-f2",
+            "g:p2-f3"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch20-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": true
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "wenao-114-1-g4-exam1-chinese",
+      "activeVersion": "87ebf739-40b3-46a3-b0a5-012014dce45f",
+      "documentSha256": "b4c9a3a5047fdb568b155a4efd543a65dd992ec49d0d4f97428cc1059162d84d",
+      "fieldParts": {
+        "s1-q1": [
+          "1",
+          "2"
+        ],
+        "s1-q2": [
+          "1",
+          "2"
+        ],
+        "s1-q3": [
+          "1",
+          "2"
+        ],
+        "s1-q4": [
+          "1",
+          "2"
+        ],
+        "s1-q5": [
+          "1",
+          "2"
+        ],
+        "s1-q6": [
+          "1",
+          "2"
+        ],
+        "s1-q7": [
+          "1",
+          "2"
+        ],
+        "s1-q8": [
+          "1",
+          "2"
+        ],
+        "s1-q9": [
+          "1",
+          "2"
+        ],
+        "s1-q10": [
+          "1",
+          "2"
+        ],
+        "s1-q11": [
+          "1",
+          "2"
+        ],
+        "s4": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "s6": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7"
+        ]
+      },
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s7-q6",
+            "g:s7-q7"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s10-q1",
+            "g:s10-q2",
+            "g:s10-q3",
+            "g:s10-q4"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q1"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q3"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q4"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q5"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q6"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q7"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q8"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q9"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q10"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q11"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s4#1",
+            "f:s4#2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s4#3",
+            "f:s4#4"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s6"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch20-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": true
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "wenao-114-1-g4-exam1-english",
+      "activeVersion": "4342e30a-5a1d-4138-8473-8bc0e5255b7f",
+      "documentSha256": "f3164e712264c475248f774b8b06f5af9767e167db8b643712c3013939db4e4a",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:i1",
+            "g:i2"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch20-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "wende-113-1-g4-exam1-science",
+      "activeVersion": "849a0c51-f1d4-4179-b46b-9adffabf54f3",
+      "documentSha256": "764da612e699f11aa2249fdbe30d6f27f28acd8678e5dd567fa2c60f77f19ddf",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s3-q1a",
+            "b:s3-q1b",
+            "g:s3-q1c"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q2a",
+            "g:s3-q2b",
+            "g:s3-q2c"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q6"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q7a",
+            "g:s3-q7b",
+            "g:s3-q7c"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:s3-q2a-f1",
+            "f:s3-q2a-f2",
+            "f:s3-q2a-f3"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s3-q2b-f1",
+            "f:s3-q2b-f2"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s3-q7c-f1",
+            "f:s3-q7c-f2"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s3-q8"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch20-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s3-q5",
+          "fieldIds": [
+            "s3-q5-f1",
+            "s3-q5-f2",
+            "s3-q5-f3",
+            "s3-q5-f4"
+          ],
+          "choiceCount": 4,
+          "unitIds": [
+            "unit-2da8bc2f36d8189e",
+            "unit-527d2ffeb7dc4653",
+            "unit-59a76ceab415b293",
+            "unit-dab0377c1179fac5"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "9cbb294b844bda9fd1fe833fbe10eca9ba78e094cc4427df135272af32203a89"
+          }
+        },
+        {
+          "groupId": "s3-q7c",
+          "fieldIds": [
+            "s3-q7c-f1",
+            "s3-q7c-f2"
+          ],
+          "choiceCount": 2,
+          "unitIds": [
+            "unit-84c172be86ab785f"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "9cbb294b844bda9fd1fe833fbe10eca9ba78e094cc4427df135272af32203a89"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-113-1-g6-exam1-chinese",
+      "activeVersion": "f92762ec-2a83-4378-b3e8-b647fab3b3b1",
+      "documentSha256": "b905765fa5b7fad2fa17563bf4b9f8bdb9a5cdec97a5911e7691f023a0f948b2",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s1-q01"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q02"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q03"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s1-q04"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s6-q01",
+            "g:s6-q02",
+            "g:s6-q03",
+            "g:s6-q04"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s6-q05",
+            "g:s6-q06"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:s2-q01-1",
+            "f:s2-q01-2"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s2-q02-1",
+            "f:s2-q02-2"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s2-q03-1",
+            "f:s2-q03-2"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s2-q04-1",
+            "f:s2-q04-2"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s2-q05-1",
+            "f:s2-q05-2"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch20-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s3-b",
+          "fieldIds": [
+            "s3-b-1",
+            "s3-b-2",
+            "s3-b-3",
+            "s3-b-4",
+            "s3-b-5",
+            "s3-b-6"
+          ],
+          "choiceCount": 6,
+          "unitIds": [
+            "unit-78d65fd2847030ef",
+            "unit-9652212a99322b63",
+            "unit-9a9edbc38d30f324",
+            "unit-b556ffd0d571b9be",
+            "unit-c80f7f7e1003e80e",
+            "unit-ebcb222d192793c1"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 1,
+            "sha256": "d79edd191eb8c714c160f6c4960906415d75c784098057991b91510ad4c0fc3f"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-113-1-g6-exam1-english",
+      "activeVersion": "aa2235c3-3808-4ab5-8f37-0d0dd1ecdab8",
+      "documentSha256": "7583921d3d9264767355face46fe8d2296a3d33c41753a7ce31899b61cf48de0",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s7-q01",
+            "g:s7-q02",
+            "g:s7-q03",
+            "g:s7-q04",
+            "g:s7-q05"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s9-q01"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s10-q01",
+            "g:s10-q02",
+            "g:s10-q03",
+            "g:s10-q04",
+            "g:s10-q05",
+            "g:s10-q06"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s5-q01",
+            "g:s5-q02",
+            "g:s5-q03",
+            "g:s5-q04",
+            "g:s5-q05",
+            "g:s5-q06"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:s8-q01-a",
+            "f:s8-q01-b"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s8-q02-a",
+            "f:s8-q02-b"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s8-q03-a",
+            "f:s8-q03-b",
+            "f:s8-q03-c",
+            "f:s8-q03-d"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch20-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": true
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s9-q01",
+          "fieldIds": [
+            "s9-q01",
+            "s9-q02",
+            "s9-q03",
+            "s9-q04",
+            "s9-q05"
+          ],
+          "choiceCount": 6,
+          "unitIds": [
+            "unit-a157efe4f2c97090"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "488ec7b6982734a2d5a5ede2f4e7e9072633f20fd43a304e5b03f5f8128a9ac5"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-113-1-g6-exam1-math",
+      "activeVersion": "944363fb-f8a2-4608-bae3-9d0ee746adb7",
+      "documentSha256": "ad8876f481953f48c257b5cfd77ece4461e4486449a1f102008db0e866d987b2",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:d1-q02",
+            "g:d1-q03"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:d2-q02a",
+            "g:d2-q02b",
+            "g:d2-q03"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:d3-q01",
+            "g:d3-q02",
+            "g:d3-q03"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:d4-f1",
+            "g:d4-f2",
+            "g:d4-f3"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:d5-q01",
+            "g:d5-q02",
+            "g:d5-q03"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:d6-r1",
+            "g:d6-r2",
+            "g:d6-r3",
+            "g:d6-r4"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:d7-q01",
+            "g:d7-q02",
+            "g:d7-q03"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:d7-q04",
+            "g:d7-q05a",
+            "g:d7-q05b",
+            "g:d7-q05c"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:d7-q06",
+            "g:d7-q07"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:d2-q01-a",
+            "f:d2-q01-b"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:d7-q05a",
+            "f:d7-q05b",
+            "f:d7-q05c"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch20-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "dingxi-113-1-g6-exam1-science",
+      "activeVersion": "e3cd46ac-b6c3-4d97-8d1c-e47e988f0710",
+      "documentSha256": "23f8a612c748c612df6b2ebf39b96adb288358bb09a75b9a820f2c5f3ec09b74",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s2-q01-1",
+            "g:s2-q01-2a",
+            "g:s2-q01-2b",
+            "g:s2-q01-3"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s2-q02-1a",
+            "g:s2-q02-1b",
+            "g:s2-q02-2",
+            "g:s2-q02-3",
+            "g:s2-q02-4"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s2-q03-1",
+            "g:s2-q03-2",
+            "g:s2-q03-3"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s2-q04"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s2-q05-1",
+            "g:s2-q05-2",
+            "g:s2-q05-3",
+            "g:s2-q05-4"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:s2-q02-3a",
+            "f:s2-q02-3b"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s2-q01-2a",
+            "g:s2-q01-2b"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "g:s2-q02-1a",
+            "g:s2-q02-1b"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch20-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": true
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s2-q01-1",
+          "fieldIds": [
+            "s2-q01-1a",
+            "s2-q01-1b"
+          ],
+          "choiceCount": 3,
+          "unitIds": [
+            "unit-685bed3a2751c7e7"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "70ab7ec495c140a364b498ac16199d60a503e954d639d6866a74bb2f5f0bbe40"
+          }
+        },
+        {
+          "groupId": "s2-q01-3",
+          "fieldIds": [
+            "s2-q01-3a",
+            "s2-q01-3b"
+          ],
+          "choiceCount": 3,
+          "unitIds": [
+            "unit-685bed3a2751c7e7"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "70ab7ec495c140a364b498ac16199d60a503e954d639d6866a74bb2f5f0bbe40"
+          }
+        },
+        {
+          "groupId": "s2-q02-3",
+          "fieldIds": [
+            "s2-q02-3a",
+            "s2-q02-3b"
+          ],
+          "choiceCount": 2,
+          "unitIds": [
+            "unit-dca5eebf095cc4fa"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "70ab7ec495c140a364b498ac16199d60a503e954d639d6866a74bb2f5f0bbe40"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-113-1-g6-exam1-social",
+      "activeVersion": "2c65b165-049b-492b-9b22-72487c570db0",
+      "documentSha256": "8184bf6b646ba27d58349d0605ade7636e692d3f5dd7f15b337ab17487f8e1a5",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s3-q01",
+            "g:s3-q02"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s5-q01",
+            "g:s5-q02",
+            "g:s5-q03",
+            "g:s5-q04",
+            "g:s5-q05",
+            "g:s5-q06"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch20-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s4",
+          "fieldIds": [
+            "s4-q01",
+            "s4-q02",
+            "s4-q03",
+            "s4-q04",
+            "s4-q05",
+            "s4-q06",
+            "s4-q07",
+            "s4-q08",
+            "s4-q09",
+            "s4-q10"
+          ],
+          "choiceCount": 7,
+          "unitIds": [
+            "unit-00fae6b6e8be97ca",
+            "unit-2a75d0edc1fde8cc",
+            "unit-3329553216c5f5c2",
+            "unit-41ec61604fbbbfb2",
+            "unit-442520437e0e78af",
+            "unit-666a46bb738136a2",
+            "unit-7861411715d78720",
+            "unit-8e278f542780cd05",
+            "unit-b63703af5e90371d",
+            "unit-f9c474bb3e1227cf"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "467d63d290a40ddda772334e2fd2cae41f74629708bce385d94ef02f27e1fc09"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-114-1-g6-exam1-chinese",
+      "activeVersion": "ed4f6c49-e8ec-4510-8199-aa7befd3c28c",
+      "documentSha256": "59b62344e890eaf6f3ec54ca95e64d9089152db185a177e8d215abdf46433285",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s1"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s7a-q01",
+            "g:s7a-q02"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s7b-q01",
+            "g:s7b-q02",
+            "g:s7b-q03"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch30-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s4",
+          "fieldIds": [
+            "s4-1",
+            "s4-2",
+            "s4-3",
+            "s4-4",
+            "s4-5",
+            "s4-6",
+            "s4-7"
+          ],
+          "choiceCount": 7,
+          "unitIds": [
+            "unit-0f394f15628c6eda",
+            "unit-36657326d482b85a",
+            "unit-595dbb980d699174",
+            "unit-6cf977df2106abd7",
+            "unit-6e0ad189286c0abc",
+            "unit-a77057c6943a9816",
+            "unit-c77a44f334c9dd65"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "28914f6984ab2b500502b4155121aa98f4c243aeedc9e19262445d8ab311c799"
+          }
+        },
+        {
+          "groupId": "s5",
+          "fieldIds": [
+            "s5-1",
+            "s5-2",
+            "s5-3",
+            "s5-4",
+            "s5-5",
+            "s5-6"
+          ],
+          "choiceCount": 6,
+          "unitIds": [
+            "unit-44d15209e4194769",
+            "unit-5bdb99ad5bc2a0da",
+            "unit-5ed016744ac0daf4",
+            "unit-b26c3910c3fa177a",
+            "unit-cc1b0d4ea39117d3",
+            "unit-eb06478e38e26f07"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "28914f6984ab2b500502b4155121aa98f4c243aeedc9e19262445d8ab311c799"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-114-1-g6-exam1-english",
+      "activeVersion": "f427b400-fe0a-4d7b-bc66-eb3b9761ba9d",
+      "documentSha256": "507dfae92e98a0c7c04e80e3a839d6ce87c6ac745b185130f6c029d5b9c7f94a",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s4-q01",
+            "g:s4-q02",
+            "g:s4-q03",
+            "g:s4-q04"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s7-q01",
+            "g:s7-q02",
+            "g:s7-q03",
+            "g:s7-q04",
+            "f:s7-q05-1",
+            "f:s7-q05-2",
+            "f:s7-q05-3",
+            "f:s7-q06-1",
+            "f:s7-q06-2",
+            "f:s7-q06-3",
+            "f:s7-q07-1",
+            "f:s7-q07-2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s8-1",
+            "f:s8-2",
+            "f:s8-3",
+            "f:s8-4",
+            "f:s8-5",
+            "f:s8-6"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s9-q01",
+            "g:s9-q02",
+            "f:s9-q03-1",
+            "f:s9-q03-2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s5-q01",
+            "g:s5-q02",
+            "g:s5-q03",
+            "g:s5-q04",
+            "g:s5-q05",
+            "g:s5-q06"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:s7-q05-1",
+            "f:s7-q05-2",
+            "f:s7-q05-3"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s7-q06-1",
+            "f:s7-q06-2",
+            "f:s7-q06-3"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s7-q07-1",
+            "f:s7-q07-2"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch30-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": true
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s8",
+          "fieldIds": [
+            "s8-1",
+            "s8-2",
+            "s8-3",
+            "s8-4",
+            "s8-5",
+            "s8-6"
+          ],
+          "choiceCount": 7,
+          "unitIds": [
+            "unit-71119f21d83ca8c8"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "0bdac170e95faa436a7bc44beda72d5878abd35f2737feb8544e9503a37c2cf5"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-114-1-g6-exam1-math",
+      "activeVersion": "062e9d67-91ce-4a58-ac39-58b04c606eb1",
+      "documentSha256": "300219ebbeacb49a41f83eea55109c14147b08935af293571618a1fc5f3e5006",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "f:s2-q03-1",
+            "f:s2-q03-2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s2-q06-1",
+            "g:s2-q06-2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s2-q10ab-1",
+            "f:s2-q10ab-2",
+            "f:s2-q10ab-3",
+            "g:s2-q10c"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:s2-q05-1",
+            "f:s2-q05-2"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s2-q10ab-1",
+            "f:s2-q10ab-2"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch30-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "dingxi-114-1-g6-exam1-science",
+      "activeVersion": "b0a4b12d-21e1-443c-8e78-ad4d83d338c8",
+      "documentSha256": "28d667c27685f411acb7209a421dec771f8df66aface9618f0a4e4b89dda622c",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s3-q01"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q02-1",
+            "g:s3-q02-2",
+            "g:s3-q02-3"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q03-1",
+            "g:s3-q03-2",
+            "g:s3-q03-3"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q04",
+            "g:s3-q05"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q01-1",
+            "g:s4-q01-2",
+            "g:s4-q01-3"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q02-1",
+            "g:s4-q02-2",
+            "g:s4-q02-3",
+            "g:s4-q02-4",
+            "g:s4-q02-5"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q03-1",
+            "g:s4-q03-2",
+            "g:s4-q03-3"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch30-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s3-q01",
+          "fieldIds": [
+            "s3-q01-1",
+            "s3-q01-2",
+            "s3-q01-3",
+            "s3-q01-4",
+            "s3-q01-5"
+          ],
+          "choiceCount": 3,
+          "unitIds": [
+            "unit-f2e736beece7a413"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "b4b5185e421bb08e98a8a9981a44e5a8da2826dab2655b54f23dd8962283651d"
+          }
+        },
+        {
+          "groupId": "s3-q04",
+          "fieldIds": [
+            "s3-q04-01",
+            "s3-q04-02",
+            "s3-q04-03",
+            "s3-q04-04",
+            "s3-q04-05",
+            "s3-q04-06",
+            "s3-q04-07",
+            "s3-q04-08",
+            "s3-q04-09",
+            "s3-q04-10"
+          ],
+          "choiceCount": 12,
+          "unitIds": [
+            "unit-1e6aeceac6bba193"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "b4b5185e421bb08e98a8a9981a44e5a8da2826dab2655b54f23dd8962283651d"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-114-1-g6-exam1-social",
+      "activeVersion": "68619a74-2b8b-4b2e-b1ae-ee988325f386",
+      "documentSha256": "da674041638889cf11906abcf659149d19586ee25dfaefae203e078b4afb247a",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "f:s3-q01-1",
+            "f:s3-q01-2",
+            "f:s3-q01-3",
+            "f:s3-q01-4"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s3-q02-1",
+            "f:s3-q02-2",
+            "f:s3-q02-3",
+            "f:s3-q02-4"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s3-q03-1",
+            "f:s3-q03-2",
+            "f:s3-q03-3",
+            "f:s3-q03-4"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s5-q01",
+            "g:s5-q02"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch30-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s4-q01",
+          "fieldIds": [
+            "s4-q01-1",
+            "s4-q01-2",
+            "s4-q01-3",
+            "s4-q01-4"
+          ],
+          "choiceCount": 3,
+          "unitIds": [
+            "unit-8dc06f2c46306bec",
+            "unit-c3130372dfd2f1d6",
+            "unit-e7495283443a0a7c",
+            "unit-f4db6cd0dc4066db"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "5e9c0d13c19494790646bf10eb289c1f5124b074f4cd25c9764d76078d730a01"
+          }
+        },
+        {
+          "groupId": "s4-q02",
+          "fieldIds": [
+            "s4-q02-1",
+            "s4-q02-2",
+            "s4-q02-3",
+            "s4-q02-4",
+            "s4-q02-5"
+          ],
+          "choiceCount": 6,
+          "unitIds": [
+            "unit-049bfda3e748e5bb",
+            "unit-583dae502bb96e1c",
+            "unit-8bb8a252910239bd",
+            "unit-f2bb4e1656a8d817",
+            "unit-fb85a95ee33d9a7a"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "5e9c0d13c19494790646bf10eb289c1f5124b074f4cd25c9764d76078d730a01"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-114-1-g6-exam2-chinese",
+      "activeVersion": "894636eb-a6b2-431b-883b-46e4d2f42590",
+      "documentSha256": "7099431b7bf3e133f43928febb1b0f2a451ff87f53282ee59621ca817ce47481",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s1"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s7-q01",
+            "g:s7-q02",
+            "g:s7-q03",
+            "g:s7-q04",
+            "g:s7-q05"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch30-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": true
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s2",
+          "fieldIds": [
+            "s2-1",
+            "s2-2",
+            "s2-3",
+            "s2-4",
+            "s2-5",
+            "s2-6"
+          ],
+          "choiceCount": 6,
+          "unitIds": [
+            "unit-1613f4b72f33f21a",
+            "unit-4f87451f8463605c",
+            "unit-5890ed3d554ba13e",
+            "unit-6503d76e5b1a488b",
+            "unit-6a012cbe9a8ce32a",
+            "unit-e44d78371db54aad"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 1,
+            "sha256": "802c4b5efc498c03b1da434490c30ab11d41a08b493e948b2737d557a3215b7d"
+          }
+        },
+        {
+          "groupId": "s5",
+          "fieldIds": [
+            "s5-1",
+            "s5-2",
+            "s5-3",
+            "s5-4",
+            "s5-5",
+            "s5-6"
+          ],
+          "choiceCount": 6,
+          "unitIds": [
+            "unit-44d15209e4194769",
+            "unit-5bdb99ad5bc2a0da",
+            "unit-5ed016744ac0daf4",
+            "unit-b26c3910c3fa177a",
+            "unit-cc1b0d4ea39117d3",
+            "unit-eb06478e38e26f07"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "802c4b5efc498c03b1da434490c30ab11d41a08b493e948b2737d557a3215b7d"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-114-1-g6-exam2-english",
+      "activeVersion": "474bb6d0-6268-421b-a562-61ae830b0f1f",
+      "documentSha256": "0f705ef8ffac527d89a09516280f5aa3a9d6f731ea16bac1b2fbec0e35474f64",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "b:s4-q01",
+            "b:s4-q02",
+            "b:s4-q03",
+            "b:s4-q04"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s5-1",
+            "f:s5-2",
+            "f:s5-3",
+            "f:s5-4",
+            "f:s5-5"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s7-q01-fill-1",
+            "f:s7-q01-fill-2",
+            "g:s7-q01-choose"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s7-q02-fill",
+            "g:s7-q02-choose"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s7-q03-fill-1",
+            "f:s7-q03-fill-2",
+            "g:s7-q03-choose"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s7-q04-fill",
+            "g:s7-q04-choose"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s9-schedule-1",
+            "f:s9-schedule-2",
+            "f:s9-schedule-3",
+            "f:s9-schedule-4",
+            "g:s9-q05",
+            "g:s9-q06",
+            "g:s9-q07",
+            "g:s9-q08"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:s7-q01-fill-1",
+            "f:s7-q01-fill-2"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s7-q03-fill-1",
+            "f:s7-q03-fill-2"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch30-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s8",
+          "fieldIds": [
+            "s8-1",
+            "s8-2",
+            "s8-3"
+          ],
+          "choiceCount": 5,
+          "unitIds": [
+            "unit-3bc32f2688517cdd",
+            "unit-e7f465570538376b",
+            "unit-f66ee6c8712c7cd6"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "52ba11acf623ab7c9a3d646265f8eb043a42471ae0ce5822a85a217a265b6dee"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-114-1-g6-exam2-math",
+      "activeVersion": "c049f7b6-08a1-45ef-9c74-90ea5cc1a32a",
+      "documentSha256": "af15e317d33f4b4ba698350edacd152689d30a4e1f02679764556077d1d1c5f3",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s2-q01a",
+            "g:s2-q01b"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s2-q02a",
+            "g:s2-q02b",
+            "f:s2-q02c-1",
+            "f:s2-q02c-2"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s2-q03a",
+            "b:s2-q03b",
+            "b:s2-q03c",
+            "g:s2-q03d",
+            "g:s2-q03e"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s2-q04a",
+            "g:s2-q04b",
+            "g:s2-q04c"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q01-1",
+            "g:s3-q01-2",
+            "g:s3-q01-3",
+            "g:s3-q01-4",
+            "g:s3-q01-5",
+            "g:s3-q01-6"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q01",
+            "g:s4-q02",
+            "g:s4-q03"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s6-a",
+            "g:s6-b"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "g:s2-q04b",
+            "g:s2-q04c"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch30-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "dingxi-114-1-g6-exam2-science",
+      "activeVersion": "3ddb8a76-f47c-4332-a692-d83d73a8d770",
+      "documentSha256": "08064184d0a5235f1ddd16b2e8f178fbd51cc32a4d3c076e9b5371b074de6401",
+      "fieldParts": {
+        "s4-q02-bonus": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ]
+      },
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:s3-q01-1",
+            "g:s3-q01-2",
+            "g:s3-q01-3",
+            "g:s3-q01-4",
+            "g:s3-q01-5",
+            "g:s3-q01-6",
+            "g:s3-q01-7",
+            "g:s3-q01-8",
+            "g:s3-q01-9",
+            "g:s3-q01-10",
+            "g:s3-q01-11"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s3-q02-code-1",
+            "f:s3-q02-code-2",
+            "f:s3-q02-code-3",
+            "f:s3-q02-code-4",
+            "f:s3-q02-code-5",
+            "g:s3-q02-choice-1",
+            "g:s3-q02-choice-4"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q03-q01",
+            "g:s3-q03-q02",
+            "g:s3-q03-q03",
+            "g:s3-q03-q04",
+            "g:s3-q03-q05"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s3-q05-1",
+            "g:s3-q05-2",
+            "g:s3-q05-3",
+            "g:s3-q05-4"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q01-q01",
+            "g:s4-q01-q02",
+            "g:s4-q01-q03",
+            "g:s4-q01-q04",
+            "g:s4-q01-q05"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q02-q01",
+            "g:s4-q02-q02",
+            "g:s4-q02-q03",
+            "g:s4-q02-4-1",
+            "g:s4-q02-4-2",
+            "g:s4-q02-bonus"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "g:s3-q04"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s3-q02-code-1",
+            "g:s3-q02-choice-1"
+          ],
+          "basis": "reviewed-compound-response"
+        },
+        {
+          "members": [
+            "f:s3-q02-code-4",
+            "g:s3-q02-choice-4"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch30-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": true
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s3-q02-code",
+          "fieldIds": [
+            "s3-q02-code-1",
+            "s3-q02-code-2",
+            "s3-q02-code-3",
+            "s3-q02-code-4",
+            "s3-q02-code-5"
+          ],
+          "choiceCount": 5,
+          "unitIds": [
+            "unit-a57d286fefa855dd"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "a2bd16f2a70a12f8290f11de2766ec25b31362ba7372b494266f5b62cc2c2f4a"
+          }
+        },
+        {
+          "groupId": "s3-q06",
+          "fieldIds": [
+            "s3-q06-1",
+            "s3-q06-2",
+            "s3-q06-3",
+            "s3-q06-4",
+            "s3-q06-5",
+            "s3-q06-6"
+          ],
+          "choiceCount": 3,
+          "unitIds": [
+            "unit-09eebdd80d6d715b",
+            "unit-3b545985e7392b73",
+            "unit-450a292c9b719c6e",
+            "unit-5290da45a246917d",
+            "unit-95deb1b1db4bb754",
+            "unit-e83fb2db69ab1bce"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "a2bd16f2a70a12f8290f11de2766ec25b31362ba7372b494266f5b62cc2c2f4a"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "dingxi-114-1-g6-exam2-social",
+      "activeVersion": "f6d60117-1fab-4c02-ac3a-7ab55cdde137",
+      "documentSha256": "1142294b9f3d067340364bbcced8a019b56c8751c33fb3881443186af56b2908",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "f:s3-q04-joined-1",
+            "f:s3-q04-joined-2",
+            "f:s3-q04-joined-3",
+            "f:s3-q04-name-1",
+            "f:s3-q04-name-2",
+            "f:s3-q04-name-3"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "f:s3-q05-1",
+            "f:s3-q05-2",
+            "f:s3-q05-3",
+            "f:s3-q05-4",
+            "f:s3-q05-5",
+            "f:s3-q05-6"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:s4-q01",
+            "g:s4-q02"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [
+        {
+          "members": [
+            "f:s3-q01-1",
+            "f:s3-q01-2",
+            "f:s3-q01-3",
+            "f:s3-q01-4"
+          ],
+          "basis": "reviewed-compound-response"
+        }
+      ],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch30-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": [
+        {
+          "groupId": "s3-q01",
+          "fieldIds": [
+            "s3-q01-1",
+            "s3-q01-2",
+            "s3-q01-3",
+            "s3-q01-4"
+          ],
+          "choiceCount": 4,
+          "unitIds": [
+            "unit-8298a14021ced439"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 2,
+            "sha256": "2fb270b76fbf75b1aa3cd617c26deb9326e9fab357869289cdd7427a5aba7171"
+          }
+        },
+        {
+          "groupId": "s3-q03",
+          "fieldIds": [
+            "s3-q03-1",
+            "s3-q03-2",
+            "s3-q03-3",
+            "s3-q03-4",
+            "s3-q03-5"
+          ],
+          "choiceCount": 5,
+          "unitIds": [
+            "unit-03a657613d443145",
+            "unit-03ec8dc636735a7c",
+            "unit-23b05fb9cdfdf0fb",
+            "unit-499deb02e6cf6522",
+            "unit-cc32cffb2f7a8f02"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": true,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "2fb270b76fbf75b1aa3cd617c26deb9326e9fab357869289cdd7427a5aba7171"
+          }
+        },
+        {
+          "groupId": "s3-q04-name",
+          "fieldIds": [
+            "s3-q04-name-1",
+            "s3-q04-name-2",
+            "s3-q04-name-3"
+          ],
+          "choiceCount": 3,
+          "unitIds": [
+            "unit-98be442b3c88997a"
+          ],
+          "machineEncodedReusePolicy": null,
+          "allocationReviewRequired": false,
+          "source": {
+            "fileId": "paper",
+            "page": 3,
+            "sha256": "2fb270b76fbf75b1aa3cd617c26deb9326e9fab357869289cdd7427a5aba7171"
+          }
+        }
+      ]
+    },
+    {
+      "paperId": "zhongzheng-113-1-g9-exam2-chinese",
+      "activeVersion": "94e1bedd-a50f-bc2e-a4eb-86f4f967b406",
+      "documentSha256": "cea3cab67e2fbffe6c4722530cb768e86bc1a243b1f8559b52bf62bea9d59b17",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:recitation-01",
+            "g:recitation-02",
+            "g:recitation-03",
+            "g:recitation-04"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch40-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": true
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "zhongzheng-113-1-g9-exam2-english",
+      "activeVersion": "c218b70f-a015-3bc7-18e0-5ede70beff16",
+      "documentSha256": "57bc0d4dced984bce945dd5b169b7ba3d7e98cce59de0341910872a0eeca5f6b",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:choice-25",
+            "g:choice-26",
+            "g:choice-27",
+            "g:choice-28"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:choice-29",
+            "g:choice-30",
+            "g:choice-31",
+            "g:choice-32"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:choice-33",
+            "g:choice-34",
+            "g:choice-35",
+            "g:choice-36"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:choice-37",
+            "g:choice-38",
+            "g:choice-39",
+            "g:choice-40"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch40-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "zhongzheng-113-1-g9-exam2-math",
+      "activeVersion": "6aba04ca-80da-9cb0-0605-f9cc184e791a",
+      "documentSha256": "e1374fbd416d4fd368afe1aa9c27355a633adf6c2dbf94e47b85f54aa451653e",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:basic-06",
+            "g:basic-07"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:basic-08",
+            "g:basic-09"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:fill-05",
+            "g:fill-06"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:fill-07",
+            "g:fill-08"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:calculation-01",
+            "g:calculation-02"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch40-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": true
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "zhongzheng-113-1-g9-exam2-science",
+      "activeVersion": "24795fed-256d-21e2-00e4-8ac78f0e238c",
+      "documentSha256": "d0dfddaa32f29d41dab66e98940f10ac46746dc61dd318459c51a098f3bf1ac5",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:choice-32",
+            "g:choice-33"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch40-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "zhongzheng-113-1-g9-exam2-social",
+      "activeVersion": "b036a408-eb7c-988f-d53f-32bee0e68d0e",
+      "documentSha256": "ca7865f1156a848113bee65eff625ddb13fefedfbfa6fb32aa1f376330c17562",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:choice-14",
+            "g:choice-15",
+            "g:choice-16"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch40-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": true
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "zhongzheng-114-1-g9-exam2-chinese",
+      "activeVersion": "b8c9c202-1fd1-7e7a-ef50-12ae29a30e90",
+      "documentSha256": "da8778f423ec29b970d7ad19ea49113ee20b70dbf92916125f2070192178c227",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:choice-33",
+            "g:choice-34"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:choice-35",
+            "g:choice-36"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:choice-42",
+            "g:choice-43"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:choice-45",
+            "g:choice-46"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch45-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "zhongzheng-114-1-g9-exam2-english",
+      "activeVersion": "bb06ffec-8e02-451f-3a11-d960adaa660d",
+      "documentSha256": "8ad3bafbf332ab3419e3930d1d9178d722db8c349ca63e158deab0ccf6ff3be4",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:choice-29",
+            "g:choice-30",
+            "g:choice-31",
+            "g:choice-32"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:choice-33",
+            "g:choice-34",
+            "g:choice-35"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:choice-36",
+            "g:choice-37",
+            "g:choice-38"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:choice-39",
+            "g:choice-40"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch45-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "zhongzheng-114-1-g9-exam2-math",
+      "activeVersion": "20b0d3f5-13bd-15fc-cbed-bd88027f10b4",
+      "documentSha256": "07bbf884c68b31cc4471ee027874efac0f6fcc249d91d9c3b1055bcfc095eb13",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:basic-02",
+            "g:basic-03"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:basic-07",
+            "g:basic-08"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch45-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "zhongzheng-114-1-g9-exam2-science",
+      "activeVersion": "ee5dfc00-283c-8889-3058-c3f27d28ed93",
+      "documentSha256": "e51a1c15327279bd8092819e5623f1ddbccd3f7d62e113692b8e10456f669184",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch45-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": false
+      },
+      "sharedOptionPools": []
+    },
+    {
+      "paperId": "zhongzheng-114-1-g9-exam2-social",
+      "activeVersion": "11890eed-74e4-d0b3-f647-37c4714c6753",
+      "documentSha256": "634de5c11485c41ae56cc18effc44ce19544d1c1e1fe1e445f18d256fd3f96dc",
+      "fieldParts": {},
+      "blockedExpansions": {},
+      "excludedBlocked": [],
+      "bundles": [
+        {
+          "members": [
+            "g:choice-13",
+            "g:choice-14"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:choice-15",
+            "g:choice-16"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:choice-37",
+            "g:choice-38",
+            "g:choice-39"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:choice-40",
+            "g:choice-41"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:choice-44",
+            "g:choice-45",
+            "g:choice-46"
+          ],
+          "basis": "reviewed-shared-source"
+        },
+        {
+          "members": [
+            "g:choice-17",
+            "g:choice-18",
+            "g:choice-19"
+          ],
+          "basis": "reviewed-shared-source"
+        }
+      ],
+      "questions": [],
+      "review": {
+        "method": "source-text-and-selected-original-pages",
+        "batchSession": "structure-batch45-20261105",
+        "codexAdjudicated": true,
+        "finalCaseReview": true
+      },
+      "sharedOptionPools": []
+    }
+  ]
+}
