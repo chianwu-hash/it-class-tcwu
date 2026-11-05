@@ -302,8 +302,8 @@ begin
       selected_version as (select v.document,v.revision from public.quiz_versions v where v.id=(select version_id from selected_session)) select (case
       when not exists(select 1 from learner) then jsonb_build_object(''__error'',''student_unavailable'')
       when (select identity->>''mapping'' from learner)<>''linked'' then jsonb_build_object(''identity'',(select identity from learner),''items'',''[]''::jsonb,''total'',0)
-      
-      
+
+
       else (select result from (select jsonb_build_object(
     ''weekly_rows'',coalesce((select jsonb_agg(to_jsonb(r)) from
       (select s.course_id,s.week_code,s.activity_key,s.current_level,s.completed,s.score,s.updated_at
@@ -373,8 +373,8 @@ when 'garden_status' then execute 'with reward_snapshot as (with input as (selec
       selected_version as (select v.document,v.revision from public.quiz_versions v where v.id=(select version_id from selected_session)) select (case
       when not exists(select 1 from learner) then jsonb_build_object(''__error'',''student_unavailable'')
       when (select identity->>''mapping'' from learner)<>''linked'' then jsonb_build_object(''identity'',(select identity from learner),''items'',''[]''::jsonb,''total'',0)
-      
-      
+
+
       else (select result from (select jsonb_build_object(
     ''weekly_rows'',coalesce((select jsonb_agg(to_jsonb(r)) from
       (select s.course_id,s.week_code,s.activity_key,s.current_level,s.completed,s.score,s.updated_at
@@ -470,8 +470,8 @@ when 'class_rewards' then execute 'with roster_students as (
       selected_version as (select v.document,v.revision from public.quiz_versions v where v.id=(select version_id from selected_session)) select (case
       when not exists(select 1 from learner) then jsonb_build_object(''__error'',''student_unavailable'')
       when (select identity->>''mapping'' from learner)<>''linked'' then jsonb_build_object(''identity'',(select identity from learner),''items'',''[]''::jsonb,''total'',0)
-      
-      
+
+
       else (select result from (select jsonb_build_object(
     ''weekly_rows'',coalesce((select jsonb_agg(to_jsonb(r)) from
       (select s.course_id,s.week_code,s.activity_key,s.current_level,s.completed,s.score,s.updated_at

@@ -49,5 +49,5 @@ let rewards=scope(get('admin_learning_rewards').definition);
 const detail=await fs.readFile('supabase/admin-learning-past-detail.fragment.sql','utf8');
 const functions=[get('admin_learning_paper_rows'),get('admin_learning_action'),get('admin_learning_media_access'),get('admin_learning_rewards')];
 const guard=`do $guard$ begin\n${functions.map(b=>` if md5(pg_get_functiondef('public.${b.signature}'::regprocedure))<>'${b.md5}' then raise exception 'production_function_changed: ${b.signature}';end if;`).join('\n')}\nend $guard$;`;
-await fs.writeFile('supabase/admin-learning-activities.sql',`-- Teacher read-only activity expansion. No learner writes or grading changes.\nbegin;\n${guard}\n${detail}\n${rows};\n${core};\n${media};\n${rewards};\ncommit;\n`);
+await fs.writeFile('supabase/admin-learning-activities.sql',`-- Teacher read-only activity expansion. No learner writes or grading changes.\nbegin;\n${guard}\n${detail}\n${rows};\n${core};\n${media};\n${rewards};\ncommit;\n`.replace(/[ \t]+$/gm,''));
 console.log('Prepared four existing teacher functions and one private detail helper.');
