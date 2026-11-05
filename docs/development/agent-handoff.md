@@ -6,6 +6,7 @@
 - 精確接續位置：`D:/projects/it-class-tcwu-worktrees/partner-camp-media-20261105`。23:40先執行 ignored `.chat-mode/prepare-claude-preflight.py` 產生包含當前Git基準的請求，再依chat-mode的Claude CLI supervisor只讀複核；不要提前呼叫Claude，不可直接從此功能分支發布。即使主工作區handoff未合併，仍以本worktree本輪紀錄接續。
 - 實作commit `242c205`，草稿PR [#39](https://github.com/chianwu-hash/it-class-tcwu/pull/39)，base暫為PR38分支；兩PR都尚未合併／部署。23:40 heartbeat已更新完整worktree、請求helper、PR與發布順序。先合併PR38，再將PR39改base為main並合併，避免把相依分支誤當正式來源。正式現行基準 `dpl_8PFEpMsmXtjVoW3iJvz82NBhMf4W`，如已有他人更新，先重新比對，不能強行promote。
 - 23:40接續順序：讀本輪企劃「上線前接續」、Claude只讀複核實際程式及證據→修正／驗證→PR38與本輪PR進main→乾淨main套增量SQL／部署Edge→snapshot與live check後PR進main→乾淨main發布腳本→正式驗證／handoffRow。任何未通過與真人兩帳號／真麥克風／平板未測須明講。
+- 23:40 Claude複核已完成（`camp-media-claude-preflight-20261105`，433秒／22次Read，viewer確認、Git前後一致），未找到P1；指出staging6筆無期限造成永久額度封鎖，已改最近1小時並新增過期／近期6筆回歸通過。另修Edge上游HTML／網路錯誤誤報格式不符為503可重試，以及busy送出明確保稿提示。保留SQL→Edge→前端順序；正式PG交易內角色測試仍待執行，不以PGlite當正式驗證。
 
 # 2026-11-05 答題優先與收合營地（隔離實作，未發布）
 

@@ -19,6 +19,8 @@
 
 ## 上線前接續（23:40 Claude 複核後）
 
+23:40 Claude實際程式複核完成：未找到P1；staging6筆累積永久封鎖為P2，已加最近1小時時間窗，不刪除任何檔案，20MiB每日位元組上限仍保留。新增過期intent不阻擋與近期上限回歸通過；另補上游非JSON／網路故障為503及busy送出保稿提示。正式PG／雲端部署關卡須在合併main後執行；仍未冒稱真人裝置通過。
+
 1. 先確認 AGY 實作複核與所有必要檢查通過，更新本紀錄與agent-handoff；原答題PR38與本輪相依PR均經PR進main，不直接push main。
 2. 使用全新乾淨main worktree。先確認無別人發布鎖、來源與Supabase project ref `upxgyusodibaqcrocdzj`；本輪增量SQL為 `supabase/quiz-partner-message-media.sql`，一次性交易，不能重跑整份歷史production SQL。僅在Claude核對、使用者最新發布授權範圍內套用。
 3. 由main部署 `quiz-partner-message-media` Edge function，Auth /user＋caller-scoped RPC自行驗證JWT；config verify_jwt=false。私有bucket與SQL服務權限先到位，才切前端。

@@ -25,3 +25,11 @@ test('message media authenticated ownership, private drafts, atomic send, idempo
  assert.equal((await db.query(`select public from storage.buckets where id='partner-message-media'`)).rows[0].public,false);
  }finally{await db.close();}
 });
+test('stale upload intents do not permanently block an owner; recent staging remains bounded',async()=>{
+ const {db,call,room,uid}=await setupMediaDB();try{
+  await db.query(`insert into partner_pilot.message_attachments(room_id,owner_id,client_id,kind,purpose,sha256,bytes,stroke_count,created_at) select $1,$2,gen_random_uuid(),'drawing_v1','chat',repeat('a',64),48,1,clock_timestamp()-interval '2 hours' from generate_series(1,6)`,[room.id,uid(1)]);
+  const intent=()=>call(1,{action:'intent',roomId:room.id,purpose:'chat',kind:'drawing_v1',clientId:crypto.randomUUID(),sha256:'a'.repeat(64),bytes:48,strokeCount:1},true);
+  for(let n=0;n<6;n++)assert.equal((await intent()).state,'staging');
+  await assert.rejects(intent,/MEDIA_QUOTA/);
+ }finally{await db.close();}
+});

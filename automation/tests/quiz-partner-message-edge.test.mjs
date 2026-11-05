@@ -8,3 +8,15 @@ test('duplicate immutable object requires matching stored bytes before finalize'
 test('denied identity/origin and invalid/corrupt media never upload or finalize',async()=>{const denied=setup({denied:true});assert.equal((await denied.call(store)).status,401);assert.equal(denied.calls.length,1);const bad=setup();assert.equal((await bad.call({...store,base64:Buffer.from('not-wave').toString('base64')})).status,400);assert(!bad.calls.some(c=>c.url.includes('/rpc/')||c.url.includes('/storage/')));const cross=setup();assert.equal((await cross.call(store,{Origin:'https://untrusted.invalid'})).status,403);assert.equal(cross.calls.length,0);});
 test('drawing uses bounded validated JSON, no Storage write; authorized read verifies audio hash',async()=>{const f=setup();assert.equal((await f.call({...store,kind:'drawing_v1',base64:undefined,payload:{version:1,strokes:[[[0,0],[1,1]]]}})).status,200);assert(!f.calls.some(c=>c.url.includes('/storage/')));const audio=setup();const r=await audio.call({action:'read',roomId:room,id});assert.equal(r.status,200);assert.equal((await r.json()).base64,base64);const corrupt=setup({corrupt:true});assert.equal((await corrupt.call({action:'read',roomId:room,id})).status,503);});
 test('edge validator copy matches the browser contract byte-for-byte',async()=>{assert.equal(await fs.readFile(new URL('../../shared/partner-pilot/media-contract.mjs',import.meta.url),'utf8'),await fs.readFile(new URL('../../supabase/functions/quiz-partner-message-media/contract.mjs',import.meta.url),'utf8'));});
+test('upstream outages and HTML responses are retryable service errors, never invalid media',async()=>{
+ for(const failure of ['auth','rpc','storage','network']){
+  const handler=createHandler({env:k=>({SUPABASE_URL:'https://synthetic.invalid',SUPABASE_ANON_KEY:'public-test',SUPABASE_SERVICE_ROLE_KEY:'private-test'})[k],fetcher:async(url)=>{
+   if(failure==='network')throw new TypeError('offline');
+   if(url.endsWith('/auth/v1/user'))return failure==='auth'?new Response('<html>bad gateway</html>',{status:502}):Response.json({id});
+   if(url.includes('/rest/'))return failure==='rpc'?new Response('<html>bad gateway</html>',{status:502}):Response.json({id,kind:'audio_wav',state:'staging',objectKey:`rooms/${room}/attachments/${id}.wav`});
+   return new Response('<html>bad gateway</html>',{status:502});
+  }});
+  const response=await handler(new Request('https://edge.invalid',{method:'POST',headers:{Origin:origin,Authorization:'Bearer synthetic-user'},body:JSON.stringify(store)}));
+  assert.equal(response.status,503,failure);assert.equal((await response.json()).error,'MEDIA_UNAVAILABLE');
+ }
+});

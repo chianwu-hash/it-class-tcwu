@@ -92,7 +92,7 @@ begin
    return partner_pilot.message_meta(a)||jsonb_build_object('objectKey',a.object_key);
   end if;
   select coalesce(sum(x.bytes),0) into totalbytes from partner_pilot.message_attachments x where x.owner_id=uid and x.created_at>=date_trunc('day',now());
-  if totalbytes+coalesce((p->>'bytes')::int,960045)>20971520 or(select count(*) from partner_pilot.message_attachments where owner_id=uid and state='staging')>=6 then raise exception 'MEDIA_QUOTA';end if;
+  if totalbytes+coalesce((p->>'bytes')::int,960045)>20971520 or(select count(*) from partner_pilot.message_attachments where owner_id=uid and state='staging' and created_at>clock_timestamp()-interval '1 hour')>=6 then raise exception 'MEDIA_QUOTA';end if;
   a.id:=gen_random_uuid();
   insert into partner_pilot.message_attachments(id,room_id,owner_id,client_id,kind,purpose,qid,thread_id,sha256,bytes,duration_ms,stroke_count,object_key)
   values(a.id,rid,uid,(p->>'clientId')::uuid,p->>'kind',purpose,qid,tid,p->>'sha256',(p->>'bytes')::int,(p->>'durationMs')::int,(p->>'strokeCount')::int,case when p->>'kind'='audio_wav' then 'rooms/'||rid||'/attachments/'||a.id||'.wav' else null end) returning * into a;
