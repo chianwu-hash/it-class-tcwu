@@ -1,4 +1,9 @@
-# 2026-11-05 營地語音與畫圖（正式接線中）
+# 2026-11-06 營地語音與畫圖（已正式發布）
+
+- 正式完成：Claude兩輪複核、修正與真PG回滾驗證後，PR38／39／40均進main。乾淨main `4ba884e` 經發布腳本start→deploy→promote，臺灣時間2026-11-06 00:01:25正式指向 `dpl_8PdjF5a9zKkhNmXTr1AMrJZSx9pg`；回滾 `dpl_8PFEpMsmXtjVoW3iJvz82NBhMf4W`。全檔樹10修改＋10新增、無刪除／非預期／換行差異，候選與正式20檔SHA256全同main，鎖已釋放。
+- 新Edge `quiz-partner-message-media` v1 ACTIVE，私有bucket／RLS／ACL符合預期，正式OPTIONS200、匿名401、失效登入401、外站403；工作瀏覽器核對既有教師帳號後讀媒體403 ACCESS_DENIED、pageerror0。這是拒絕路徑驗證，不是學生成功上傳。正式19表摘要未變、合成Auth0，snapshot152函式／live通過。
+- 明日仍須真人驗收：兩個不同名冊帳號／兩台裝置，答題→問夥伴→真麥克風錄音→另一端播放→畫圖回覆→收起回原題→儲存退出／重新接續。iPad／Android互錄互播、真實注音IME／觸控未測。合成雙頁整合與真PG角色測試不能代替以上實機項目。沒有啟用自動刪除／外部AI轉錄。
+- 發布曾被專案識別guard擋下：新worktree未先連既有Vercel專案，CLI誤建同目錄名專案；未promote到正式。已刪除本次誤建專案，明確link回it-class-tcwu並移除CLI自動產生的.env.local與本次.gitignore修改，再由乾淨main重跑通過。詳 `partner-camp-media-release-20261106.md`。本段以下為歷程，未發布字樣是當時狀態。
 
 - PR38、39已合併main `1f45c69`。從新乾淨main worktree `partner-message-main-20261106` 取得自己的發布鎖後，真正式PG交易內跑合成authenticated／service角色：建房出發、intent、finalize、私有草稿、發送與replay、跨成員草稿拒絕、非成員拒絕、snapshot安全、原OID保留／複製body一致，全通過並ROLLBACK。19表摘要前後完全相同、synthetic Auth0。
 - 正式僅套單一增量SQL `quiz-partner-message-media.sql`，SHA256 `0250e86b277d30ceed25bdda9e674d71ff9a508898a7be7d505e496c8ed59d6e`，交易成功；19表摘要仍全不變。snapshot152函式、live-check通過，僅新增4函式／修改learning_snapshot，其他函式不變。沒有自動刪除。
@@ -51,6 +56,7 @@
 
 | 狀態 | agent | 開始時間 | `main` commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
 | --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-partner-camp-media-20261106 | 2026-11-05T15:58:01.240Z | `4ba884e` | `dpl_8PFEpMsmXtjVoW3iJvz82NBhMf4W` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/image-lightbox.js、shared/partner-pilot/learning.js、shared/partner-pilot/past-answer.js、shared/partner-pilot/rich-content.js、shared/quiz-server.mjs、+shared/partner-pilot/camp-attention.mjs、+shared/partner-pilot/camp-panel.mjs、+shared/partner-pilot/focused.css、+shared/partner-pilot/media-contract.mjs、+shared/partner-pilot/message-composer.mjs、+shared/partner-pilot/message-media.css、+shared/partner-pilot/practice-model.mjs、+shared/partner-pilot/sketch-editor.mjs、+shared/partner-pilot/voice-recorder.mjs、+shared/quiz-choice.mjs | `dpl_8PdjF5a9zKkhNmXTr1AMrJZSx9pg`／回滾 `dpl_8PFEpMsmXtjVoW3iJvz82NBhMf4W`（eolOnly 0） |
 | 已完成 | Codex-partner-allocation-20261105 | 2026-11-05T12:58:19.971Z | `3a9f880` | `dpl_22JA3jB9gebvZeuVA376NPTcpfHZ` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js | `dpl_8PFEpMsmXtjVoW3iJvz82NBhMf4W`／回滾 `dpl_22JA3jB9gebvZeuVA376NPTcpfHZ`（eolOnly 0） |
 | 已完成 | Codex-partner-messages-20261105 | 2026-11-05T08:38:10.909Z | `c85710d` | `dpl_FwzqwTNugeNukYzLKVqmD6KcXrMS` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/visual.css、+shared/partner-pilot/message-attention.mjs | `dpl_22JA3jB9gebvZeuVA376NPTcpfHZ`／回滾 `dpl_FwzqwTNugeNukYzLKVqmD6KcXrMS`（eolOnly 0） |
 | 已完成（僅Supabase） | Codex-partner-media-20261105 | 2026-11-05T07:07:45.810Z | `02e469a`（PR #27） | Vercel維持`dpl_FwzqwTNugeNukYzLKVqmD6KcXrMS` | `quiz_partner_pilot_media_descriptor`、`quiz-partner-pilot-media` Edge | Edge v2 ACTIVE；回滾descriptor舊快照／Edge v1；無Vercel切換 |

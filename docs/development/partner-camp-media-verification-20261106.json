@@ -1,0 +1,60 @@
+{
+  "releasedAt": "2026-11-05T16:01:25.232Z",
+  "sourceCommit": "4ba884e94999be551998a672bc5e546e15b3f27f",
+  "production": "dpl_8PdjF5a9zKkhNmXTr1AMrJZSx9pg",
+  "rollback": "dpl_8PFEpMsmXtjVoW3iJvz82NBhMf4W",
+  "tree": {
+    "ok": true,
+    "changed": 10,
+    "added": 10,
+    "removed": 0,
+    "eolOnly": 0
+  },
+  "servedCandidateFiles": 20,
+  "servedProductionFiles": 20,
+  "sameSha256": true,
+  "functions": 152,
+  "dataTablesUnchanged": 19,
+  "syntheticAuthUsers": 0,
+  "edge": [
+    {
+      "check": "options",
+      "status": 200
+    },
+    {
+      "check": "anonymous",
+      "status": 401
+    },
+    {
+      "check": "invalid-session",
+      "status": 401
+    },
+    {
+      "check": "cross-origin",
+      "status": 403
+    },
+    {
+      "check": "deployed-edge",
+      "version": 1,
+      "status": "ACTIVE",
+      "verifyJwt": false
+    }
+  ],
+  "browser": {
+    "correctAccount": true,
+    "nonmemberStatus": 403,
+    "nonmemberCode": "ACCESS_DENIED",
+    "appScript": "../../shared/partner-pilot/app.mjs?v=20261105-message-media",
+    "status": "請使用正式名冊中的學生Google帳號。",
+    "pageErrors": []
+  },
+  "notVerified": [
+    "real microphone",
+    "two real student accounts on two devices",
+    "iPad/Safari",
+    "Android",
+    "real IME and touch",
+    "positive student media upload on production"
+  ],
+  "automaticDeletionEnabled": false
+}
