@@ -22,7 +22,7 @@
 - 使用者收到多封Vercel通知後授權停用功能分支自動預覽，保留PR與main發布腳本。已讀Gmail確認最新三封對應PR15／16／17；實際建置日誌顯示Git clone的教材來源資料夾被garden-preflight阻擋，非正式版崩潰。
 - 新工作區disable-git-previews-20261105，codex/disable-git-previews-20261105，從最新main f416fb2開始。vercel.json保留main:false，加上globstar **:false以含斜線分支全面停用Git自動部署；不更動正式頁面、DB、通知偏好、發布安全檢查或CLI腳本。
 - 同步AGENTS／CLAUDE／dev-sop，舊分支必須從最新main另開，避免仍使用舊設定。Git設定由提交內容讀取，不需要另行部署正式網站。
-- 待驗：現有發布腳本與preflight測試、PR推送未建立預覽、正式部署與alias保持。完成後在本節補記。
+- 已驗：release-from-main與garden-release-gate現有21項全通過；首次推送／建立PR #18後API查本分支無deployment、PR無Vercel建置檢查。同API查舊partner-self-handoff分支可找到既有失敗預覽，排除查詢路徑錯誤。正式部署與alias仍為`dpl_Dxxyw8mmvX7ChCYmZsGVcr6Ex9Gw`，未另行部署網站。
 - 官方參考：https://vercel.com/docs/project-configuration/git-configuration （minimatch glob及未列分支預設true）。
 
 # 2026-11-05 自組卷與選題器（進行中）
