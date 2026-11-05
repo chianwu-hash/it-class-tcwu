@@ -21,6 +21,14 @@
 - 交接時寫明：目前目標與下一步、改了哪些檔與刻意不動的檔、已做與待做的驗證、與 SOP 或共用模組的衝突。
 - 整合紀錄與差異清單：[main-unify-20261104.md](main-unify-20261104.md)。
 
+# 2026-11-05 自組卷圖片修復（開發與驗證中）
+
+- 目標：修復三年級自然20題自組卷在夥伴練功的圖片失敗，不改個人練習。Codex為本worktree唯一寫入者；Claude僅唯讀複核。
+- 根因：舊partner媒體Edge僅讀Storage，實際10張不同圖片屬私人Drive；且copy_self的URL雜湊被誤當內容SHA256。既有3份自組卷的23筆媒體映射均不在Storage。
+- 修改：descriptor只增加受信任來源URL／SHA256／backend，原member/reveal檢查與ACL不變；將Edge來源納入版本控制，沿用既有Drive簽票，伺服器讀回並校驗bytes/SHA256後保留base64回應。無學生資料、作答、獎勵或題目內容更動。
+- 驗證：14項Node/PGlite通過；實際10張私人Drive圖片全部讀回且bytes/SHA256一致（Auth/RPC為合成注入，權限另以PGlite驗證；尚非正式學生兩機驗收）。
+- 下一步：Claude複核→PR/main→乾淨main受保護SQL proof/apply與snapshot/live check→只部署partner媒體Edge。無網站前端變更，不需Vercel候選切換。正式部署前須登記發布中並確認無他人發布；保留原Edge及descriptor以便回滾。
+
 # 2026-11-05 複製邀請的就近回饋（已發布）
 
 - 使用者指出按下複製連結看不到訊息。原訊息在頁面上方，改為按鈕文字直接「✓ 連結已複製／邀請碼已複製」，按鈕下另顯示有aria-live的成功提示；剪貼簿拒絕時只顯示手動複製警示並復原按鈕文案，不誤報成功。保留原頁首notice。
