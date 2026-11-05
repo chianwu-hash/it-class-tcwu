@@ -4,7 +4,7 @@
 
 | 狀態 | agent | 開始時間 | `main` commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中（僅Supabase） | Codex-partner-media-20261105 | 2026-11-05T07:10Z | 本次PR合併後main | Vercel維持`dpl_FwzqwTNugeNukYzLKVqmD6KcXrMS` | `quiz_partner_pilot_media_descriptor`、`quiz-partner-pilot-media` Edge | 原descriptor快照／Edge v1可回滾；無Vercel切換 |
+| 已完成（僅Supabase） | Codex-partner-media-20261105 | 2026-11-05T07:07:45.810Z | `02e469a`（PR #27） | Vercel維持`dpl_FwzqwTNugeNukYzLKVqmD6KcXrMS` | `quiz_partner_pilot_media_descriptor`、`quiz-partner-pilot-media` Edge | Edge v2 ACTIVE；回滾descriptor舊快照／Edge v1；無Vercel切換 |
 | 已完成 | Codex-invite-copy-feedback-20261105 | 2026-11-05T04:36:32.174Z | `a519ea9` | `dpl_A1wSMQ7frx6GnYwDsqCTBqMsTRQr` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/invite.mjs、shared/partner-pilot/visual.css | `dpl_FwzqwTNugeNukYzLKVqmD6KcXrMS`／回滾 `dpl_A1wSMQ7frx6GnYwDsqCTBqMsTRQr`（eolOnly 0） |
 | 已完成 | Codex-admin-learning-reference-20261105 | 2026-11-05T03:46:21.134Z | `f7f9ff5` | `dpl_JE7dcnnqwx1qLhzjUaF9oHbAFjgy` | admin-learning.html、shared/admin-learning.mjs、shared/admin-learning-activities.mjs | `dpl_8U7FN7B9qKdzmXZEi7NtmXvtjZGA`／回滾 `dpl_JE7dcnnqwx1qLhzjUaF9oHbAFjgy`（eolOnly 0） |
 | 已完成 | Codex-partner-invite-20261105 | 2026-11-05T03:51:27.622Z | `40412c7` | `dpl_8U7FN7B9qKdzmXZEi7NtmXvtjZGA` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/visual.css、+shared/partner-pilot/invite.mjs、+shared/vendor/qrcode-generator/qrcode.mjs、+shared/vendor/qrcode-generator/LICENSE | `dpl_A1wSMQ7frx6GnYwDsqCTBqMsTRQr`／回滾 `dpl_8U7FN7B9qKdzmXZEi7NtmXvtjZGA`（eolOnly 0） |
@@ -22,14 +22,17 @@
 - 交接時寫明：目前目標與下一步、改了哪些檔與刻意不動的檔、已做與待做的驗證、與 SOP 或共用模組的衝突。
 - 整合紀錄與差異清單：[main-unify-20261104.md](main-unify-20261104.md)。
 
-# 2026-11-05 自組卷圖片修復（開發與驗證中）
+# 2026-11-05 自組卷圖片修復（已發布）
 
 - 目標：修復三年級自然20題自組卷在夥伴練功的圖片失敗，不改個人練習。Codex為本worktree唯一寫入者；Claude僅唯讀複核。
 - 根因：舊partner媒體Edge僅讀Storage，實際10張不同圖片屬私人Drive；且copy_self的URL雜湊被誤當內容SHA256。既有3份自組卷的23筆媒體映射均不在Storage。
 - 修改：descriptor只增加受信任來源URL／SHA256／backend，原member/reveal檢查與ACL不變；將Edge來源納入版本控制，沿用既有Drive簽票，伺服器讀回並校驗bytes/SHA256後保留base64回應。無學生資料、作答、獎勵或題目內容更動。
 - 驗證：15項Node/PGlite通過；實際10張私人Drive圖片全部讀回且bytes/SHA256一致並可解碼（Auth/RPC為合成注入，權限另以PGlite驗證；尚非正式學生兩機驗收）。Claude CLI 2.1.289／session 20261105-partner-media唯讀審查完成，git前後相同、viewer已顯示，無權限或校驗阻擋。
 - 採納Claude提醒：不能只依drive-檔名前綴路由，六年級英文有不同命名。改比照現有quiz-media：考古題固定Storage，其他圖片依QUIZ_IMAGE_BACKEND、音訊固定Storage；新測試涵蓋非drive前綴圖片與音訊／停用Drive的相容分流。此補強由Codex實作與驗證，非宣稱Claude執行測試。
-- 下一步：Claude複核→PR/main→乾淨main受保護SQL proof/apply與snapshot/live check→只部署partner媒體Edge。無網站前端變更，不需Vercel候選切換。正式部署前須登記發布中並確認無他人發布；保留原Edge及descriptor以便回滾。
+- PR #27合併main `02e469a`後，從乾淨main取得官方發布鎖；SQL先rollback proof再apply，54張相關表逐表資料hash、所有既有函式ACL及無關函式定義均保留。snapshot匯出145函式／97表，live check `ok:true`，僅descriptor定義雜湊與manifest改變。
+- 從另一乾淨同版main checkout用Supabase個人CLI限定部署`quiz-partner-pilot-media`，v2 ACTIVE；正式ESZIP讀回兩個mjs來源與main一致（只正規化CR/LF）、既有Worker票證key的metadata hash相符。正式匿名／壞token401、惡意origin403、正常preflight200。
+- 無前端變更，不建立Vercel候選或promote；僅使用官方start序列化發布，Supabase完成後以abort釋放本人的空Vercel候選鎖（candidate:null，並非回滾Supabase）。網站alias未變。舊Edge原始bundle保留本機ignored稽核輸出，舊descriptor可從PR #27之前的main快照還原。
+- 尚未以正式學生登入頁正向確認顯圖或兩機實測；已用真實私人圖片＋候選handler驗證bytes、hash與解碼，正式Edge原碼與設定另經讀回確認。原小隊及已存作答可直接接續，不需重建。
 
 # 2026-11-05 複製邀請的就近回饋（已發布）
 

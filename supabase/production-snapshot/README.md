@@ -1,6 +1,6 @@
 # 正式版資料庫快照（public schema）
 
-來源：Supabase 專案 `upxgyusodibaqcrocdzj`，2026-11-05 以 `automation/db-schema-snapshot.mjs` 唯讀匯出（只查系統目錄，不含任何資料列）。本次新增教師學習檔案考古題明細helper，並擴充四個教師唯讀函式；其他函式定義與權限不變。
+來源：Supabase 專案 `upxgyusodibaqcrocdzj`，2026-11-05 以 `automation/db-schema-snapshot.mjs` 唯讀匯出（只查系統目錄，不含任何資料列）。本次只擴充夥伴練功圖片描述函式的來源URL、內容校驗碼與媒體後端資訊；原小隊／揭答授權、所有函式權限與其他函式定義不變。
 
 | 檔案 | 內容 |
 | --- | --- |
