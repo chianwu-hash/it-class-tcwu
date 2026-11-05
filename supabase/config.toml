@@ -15,3 +15,7 @@ verify_jwt = false
 [functions.quiz-partner-pilot-media]
 # Handler verifies Auth /user and caller-scoped room/reveal RPC before reading.
 verify_jwt = false
+
+[functions.quiz-partner-message-media]
+# Auth /user plus caller-scoped message RPC; service key remains server-side.
+verify_jwt = false
