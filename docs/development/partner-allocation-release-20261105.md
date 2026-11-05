@@ -35,6 +35,10 @@ PR #35已合併main `d19d277`。正式發布腳本取得本輪鎖後，從乾淨
 
 已執行 `db-schema-snapshot.mjs` 與 `db-snapshot-check.mjs --live`，148函式一致；只新增3個allocation函式、修改owner_of／snapshot／source_allowed，無其他變動或刪除。2張私有RLS表、rooms版本欄位與4個trigger有完整schema快照。
 
-為先合併snapshot PR，已釋放自己的無candidate鎖；不是回滾DB，後端新配題已生效。前端仍為 `dpl_22JA3jB9gebvZeuVA376NPTcpfHZ`，下一步從最新乾淨main checkout走release-from-main start→deploy→promote，宣告僅6檔並做完整檔案樹比對。
+snapshot PR #36合併後，從乾淨最新main `3a9f880`重新取得發布鎖，經release-from-main start→deploy→promote，2026-11-05T13:03:31.968Z正式為 `dpl_8PFEpMsmXtjVoW3iJvz82NBhMf4W`。完整檔案樹比對 `ok:true`，只改4個年級入口＋app／learning，共6檔；無其他變更、新增、刪除或換行例外。基準回滾是 `dpl_22JA3jB9gebvZeuVA376NPTcpfHZ`，發布鎖已釋放。
+
+候選域受Vercel登入保護，使用既有CLI認證的`vercel curl`核對，不關閉／擴大保護。候選及正式6檔皆200，SHA256逐一與main來源完全相同。正式瀏覽器重載新版參數、pageerror為0；目前teacher正確拒絕學生功能。沒有真人雙帳號互測的宣稱。
+
+正式SQL後讀回50份spec、40份啟用副本2035欄、10停用來源不變；對既有started v0小隊488欄逐一比較原owner公式，差異0。148函式snapshot/live-check再驗通過；19表摘要仍不變，合成Auth0。摘要收據見[驗證JSON](partner-allocation-verification-20261105.json)。
 
 如需回退前端可回到發布腳本記錄的基準deployment；後端不要刪除allocations或改回新房的owner公式，以免學生換手。新版本新房暫停，既有凍結作答與紀念保留，再經修正遷移處理。

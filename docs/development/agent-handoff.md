@@ -1,4 +1,9 @@
-# 2026-11-05 考古題完整題組配題接線（後端已安裝，前端待發布）
+# 2026-11-05 考古題完整題組配題接線（正式完成）
+
+- PR #35功能、#36正式snapshot均已合併。前端從乾淨最新main `3a9f880`經發布腳本start→deploy→promote完成，2026-11-05T13:03:31.968Z正式alias指向`dpl_8PFEpMsmXtjVoW3iJvz82NBhMf4W`；完整樹ok:true，只有6個預期檔改變、無新增／刪除／換行例外。基準回滾`dpl_22JA3jB9gebvZeuVA376NPTcpfHZ`，發布鎖已釋放。
+- 候選域受Vercel保護，改用既有CLI認證的`vercel curl`核對，不調整保護設定；候選及正式4頁＋2模組共6檔SHA256全與main相同。正式工作瀏覽器重載新版cache參數、pageerror為0，教師帳號正確拒絕學生功能。
+- 發布後正式server contract：50 specs、40啟用副本2035欄完整mapping、10停用來源仍停用；既有started v0小隊488欄owner與原公式全部相同（mismatch0）。19表資料摘要全不變、合成Auth0，148函式snapshot/live通過。[公開驗證收據](partner-allocation-verification-20261105.json)。
+- 已完成程式／正式PG角色及部署驗證，**真人學生雙帳號／兩台實機互測仍未完成**；不能拿teacher拒絕畫面或合成authenticated測試代替。新規則只用於本次DB更新後新建考古小隊；舊pending／started保持舊分配，請另建集合室驗收。答題介面共用／收合營地尚屬另一項待作方向。
 
 - PR #35已合併main d19d277；使用正式發布腳本取得Codex-partner-allocation-20261105鎖後，從乾淨main checkout精確套用單一SQL，SHA256 `6741b0dce56d987cd6cd67582f874e30ac2f5dea44b40b83b489986cf9d500a9`。50份spec／40啟用副本guard通過，沒有開放10份停用卷。
 - 正式安裝後重跑40卷120配置及12個authenticated角色案例（交易回滾）通過；19張既有資料表摘要完全不變，合成Auth為0。正式snapshot148函式/live-check通過：只新增allocation_items／freeze_allocation／guard_allocation_source，修改owner_of／snapshot／source_allowed，沒有其他函式差異或刪除。新增2私有RLS表及4個trigger。
@@ -20,6 +25,7 @@
 
 | 狀態 | agent | 開始時間 | `main` commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
 | --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-partner-allocation-20261105 | 2026-11-05T12:58:19.971Z | `3a9f880` | `dpl_22JA3jB9gebvZeuVA376NPTcpfHZ` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js | `dpl_8PFEpMsmXtjVoW3iJvz82NBhMf4W`／回滾 `dpl_22JA3jB9gebvZeuVA376NPTcpfHZ`（eolOnly 0） |
 | 已完成 | Codex-partner-messages-20261105 | 2026-11-05T08:38:10.909Z | `c85710d` | `dpl_FwzqwTNugeNukYzLKVqmD6KcXrMS` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/visual.css、+shared/partner-pilot/message-attention.mjs | `dpl_22JA3jB9gebvZeuVA376NPTcpfHZ`／回滾 `dpl_FwzqwTNugeNukYzLKVqmD6KcXrMS`（eolOnly 0） |
 | 已完成（僅Supabase） | Codex-partner-media-20261105 | 2026-11-05T07:07:45.810Z | `02e469a`（PR #27） | Vercel維持`dpl_FwzqwTNugeNukYzLKVqmD6KcXrMS` | `quiz_partner_pilot_media_descriptor`、`quiz-partner-pilot-media` Edge | Edge v2 ACTIVE；回滾descriptor舊快照／Edge v1；無Vercel切換 |
 | 已完成 | Codex-invite-copy-feedback-20261105 | 2026-11-05T04:36:32.174Z | `a519ea9` | `dpl_A1wSMQ7frx6GnYwDsqCTBqMsTRQr` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/invite.mjs、shared/partner-pilot/visual.css | `dpl_FwzqwTNugeNukYzLKVqmD6KcXrMS`／回滾 `dpl_A1wSMQ7frx6GnYwDsqCTBqMsTRQr`（eolOnly 0） |
