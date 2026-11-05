@@ -80,10 +80,15 @@ h3{font-size:1.06rem}
 .mini-progress .done{background:#5488b9}
 .paging{display:flex;gap:9px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:16px;font-size:.81rem}
 .paging:empty{display:none}
-.paper-filters{display:grid;grid-template-columns:minmax(120px,1fr) minmax(140px,1fr) auto auto;gap:12px;align-items:end;padding:0 0 18px;margin:0 0 8px;border-bottom:1px solid var(--border)}
+.paper-filters{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr)) auto auto;gap:12px;align-items:end;padding:0 0 18px;margin:0 0 8px;border-bottom:1px solid var(--border)}
 .paper-filters label{margin-top:0}
 .paper-filters p{grid-column:1/-1;margin:0}
 @media(max-width:900px){.paper-filters{grid-template-columns:1fr 1fr}}
+.saved-drawing .manual-board{display:block;width:100%;min-height:240px;aspect-ratio:1;border:1px solid var(--border);background:#fff;pointer-events:none}
+.saved-drawing textarea{width:100%;box-sizing:border-box}
+.saved-drawing .drawing-tools,.saved-drawing .confirm{display:none}
+.answer-box span{overflow-wrap:anywhere;white-space:pre-wrap}
+@media(max-width:480px){.paper-filters{grid-template-columns:1fr}}
 .paging button{padding:6px 11px}
 .small-link{font-size:.8rem}
 .existing-admin{display:flex;gap:8px;flex-direction:column;border-top:1px solid var(--border);padding-top:12px}

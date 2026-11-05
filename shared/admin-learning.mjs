@@ -1,4 +1,5 @@
 import {createLearningRequest,learningError,beginLearningTeacherLogin} from './admin-learning-api.mjs';
+import {activityLabel,renderPastAnswerItem} from './admin-learning-activities.mjs?v=20261105';
 import {lessonName,rateLabel,timeLabel,fullTime,paperStatus,paperAccuracy,typingPolicy,orderedOptions,optionLetter,responseLabel} from './admin-learning-model.mjs';
 import {renderContent} from './quiz-render.mjs';
 import {configureQuizMedia} from './quiz-media.mjs';
@@ -7,7 +8,7 @@ const $=id=>document.getElementById(id),node=(tag,text,cls)=>{const n=document.c
 const local=new URLSearchParams(location.search).get('local')==='1';
 const readOnlyBridge=document.querySelector('meta[name="admin-learning-backend"]')?.content==='local-readonly';
 let auth=null,session=null,request=null,selected=null,rosterPage=0,activeTab='typing',rosterEpoch=0,studentEpoch=0,tabEpoch=0,dialogEpoch=0,firstLoad=true;
-let dialogContext=null,lastOpener=null,typingTrack='english',paperFilters={subject:'',state:'all'};const pending=new Set(),cache=new Map();
+let dialogContext=null,lastOpener=null,typingTrack='english',paperFilters={subject:'',state:'all',activity_type:'all'};const pending=new Set(),cache=new Map();
 let classEpoch=0,classSummary=null,classSorter=null,classGapPresenter=null;const classPending=new Set();
 const button=(text,fn,cls='secondary')=>{const b=node('button',text,cls);b.type='button';b.addEventListener('click',fn);return b;};
 const tag=(text,cls='')=>node('span',text,`tag ${cls}`);
@@ -38,7 +39,7 @@ function closeDialog(){dialogEpoch++;dialogContext=null;if($('detail-dialog').op
 function clearStudent(){studentEpoch++;tabEpoch++;selected=null;cache.clear();cancelRequests(false);closeDialog();$('profile-content').hidden=true;$('empty-profile').hidden=false;$('records').replaceChildren();$('summary-cards').replaceChildren();
   $('reward-section').hidden=true;$('reward-content').replaceChildren();
   for(const id of ['student-title','student-meta','mapping-status','data-time'])$(id).textContent='';
-  paperFilters={subject:'',state:'all'};$('paper-subject').replaceChildren(new Option('全部科目',''));$('paper-state').value='all';$('paper-filter-status').textContent='';$('paper-filters').hidden=true;}
+  paperFilters={subject:'',state:'all',activity_type:'all'};$('paper-activity').value='all';$('paper-subject').replaceChildren(new Option('全部科目',''));$('paper-state').value='all';$('paper-filter-status').textContent='';$('paper-filters').hidden=true;}
 async function loadRoster(offset=0){
   const epoch=++rosterEpoch;rosterPage=offset;loading($('roster-list'),'正在讀取名冊…');$('roster-paging').replaceChildren();$('roster-status').textContent='';
   try{
@@ -194,7 +195,7 @@ async function loadTab(tab,offset=0){
   if(tab==='papers')$('paper-filter-status').textContent='正在套用查詢條件…';
   $('record-note').textContent={weekly:'顯示已保存的週次活動，並非應完成任務清單。此處不列自由閱讀缺交。',
     typing:'小關進度與整關成果分開呈現。速度依英打、注音按鍵、中文輸入使用不同單位；自由重練不一定保存。',
-    papers:'顯示本學年度的課堂卷、練習卷與自組卷（含已從學生列表隱藏的卷）。正確率以已答題目計算。'}[tab];
+    papers:'顯示本學年度的課堂卷、題庫練習、自組卷、考古題與延伸練習（含已隱藏及歷次作答）。考古題自評／人工題另標示，不當作答錯。'}[tab];
   loading($('records'));
   try{
     const data=cache.get(key)||await call(tab,{...studentPayload(),offset,limit:tab==='typing'?50:20,...(tab==='papers'?filters:{})});if(epoch!==tabEpoch||student!==studentEpoch)return;
@@ -202,10 +203,10 @@ async function loadTab(tab,offset=0){
     if(tab==='papers'){
       $('paper-subject').replaceChildren(new Option('全部科目',''),...(data.subjects||[]).map(s=>new Option(s,s)));
       if(filters.subject&&!data.subjects?.includes(filters.subject))$('paper-subject').add(new Option(filters.subject,filters.subject));
-      $('paper-subject').value=filters.subject;$('paper-state').value=filters.state;
-      $('paper-filter-status').textContent=`符合 ${data.total} / 全部 ${data.all_total} 張試卷（條件套用至全部頁面）`;
+      $('paper-subject').value=filters.subject;$('paper-state').value=filters.state;$('paper-activity').value=filters.activity_type;
+      $('paper-filter-status').textContent=`${filters.activity_type==='all'?'全部活動':activityLabel(filters.activity_type)}・${filters.subject||'全部科目'}・符合 ${data.total} / 全部 ${data.all_total} 筆活動（條件套用至全部頁面）`;
     }
-    if(!data.items?.length){empty($('records'),tab==='papers'&&(filters.subject||filters.state!=='all')?'沒有符合篩選條件的試卷。可清除篩選查看全部紀錄。':'目前沒有這類已保存紀錄。');return;}
+    if(!data.items?.length){empty($('records'),tab==='papers'&&(filters.subject||filters.state!=='all'||filters.activity_type!=='all')?'沒有符合篩選條件的活動。可清除篩選查看全部紀錄。':'目前沒有這類已保存紀錄。');return;}
     if(tab==='typing'){
       const filters=node('div',undefined,'tabs typing-filters');filters.setAttribute('aria-label','打字類型篩選');
       for(const [key,text] of [['english','英打'],['zhuyin','中打']]){const b=button(`${text}（${data.items.filter(i=>i.track===key).length}）`,()=>{typingTrack=key;loadTab('typing');});b.setAttribute('aria-pressed',String(typingTrack===key));b.dataset.track=key;filters.append(b);}
@@ -229,10 +230,10 @@ async function loadTab(tab,offset=0){
         if(item.progress_id)r.head.append(button(`查看歷程（${item.events}）`,e=>openDetail('typing_events',item,e.currentTarget)));
         $('records').append(r.article);
       }else{
-        const r=row(item.title),state=paperStatus(item);r.left.append(tag(state,state==='已完成'?'pass':'pending'));
+        const r=row(item.title),state=paperStatus(item);r.article.dataset.activityType=item.access_mode;r.left.append(tag(activityLabel(item.access_mode)),document.createTextNode(' '),tag(state,state==='已完成'?'pass':'pending'));
         if(item.hidden)r.left.append(document.createTextNode(' '),tag('學生列表已隱藏'));
         r.article.append(node('p',`${item.subject||'未分類'}・${item.unit||'未分類單元'}・固定第 ${item.revision} 版`,'small muted'),
-          node('p',`已答 ${item.answered} / ${item.total} 題・已答正確：${paperAccuracy(item)}`,'row-meta'),
+          node('p',item.access_mode==='past_exam'?`已保存 ${item.answered} / ${item.total} 題・自動判分答對 ${item.correct} 題（自評／人工題另見明細）`:`已答 ${item.answered} / ${item.total} 題・已答正確：${paperAccuracy(item)}`,'row-meta'),
           node('p',`建立：${timeLabel(item.created_at)}・最後作答：${timeLabel(item.last_answer_at)}`,'small muted'));
         if(item.source_attempt_id)r.article.append(node('p','同重點延伸卷：題目不同，不代表原題重答。','small muted'));
         r.head.append(button('逐題答案明細',e=>openDetail('paper',item,e.currentTarget)));$('records').append(r.article);
@@ -275,13 +276,15 @@ async function loadDetail(offset=0){
 function rich(root,value){try{renderContent(root,value||{text:'',media:[]},{mediaScope:dialogContext?.mediaScope||null});}catch{root.append(node('p','這段內容的格式或媒體無法顯示，原紀錄仍保留。','error'));}}
 function renderPaper(data,ctx){
   const root=$('detail-content'),toolbar=node('div',undefined,'dialog-toolbar');
-  toolbar.append(node('p',`全卷已答 ${data.answered} / ${data.total} 題・已答正確 ${paperAccuracy(data)}`));
+  toolbar.append(node('p',data.activity_type==='past_exam'?`全卷已保存 ${data.answered} / ${data.total} 題・自動判分答對 ${data.correct} 題・自評／人工題 ${data.manual} 題`:`全卷已答 ${data.answered} / ${data.total} 題・已答正確 ${paperAccuracy(data)}`));
   const filter=node('label',undefined,'filter-label'),input=node('input');input.type='checkbox';input.checked=ctx.filter==='wrong';input.id='only-wrong';
   input.addEventListener('change',()=>{ctx.filter=input.checked?'wrong':'all';loadDetail(0);});filter.append(input,document.createTextNode('只看已答錯題'));toolbar.append(filter);root.append(toolbar);
   const meta=node('div',undefined,'detail-meta');meta.append(tag(`固定第 ${data.revision} 版`),tag(!data.started?'尚未開始':Number(data.answered)===Number(data.total)&&Number(data.total)>0?'已完成':'作答中'));
+  if(data.version_id)meta.append(tag(`版本識別：${data.version_id}`));
   if(data.hidden)meta.append(tag('學生列表已隱藏'));root.append(meta,node('p',`${data.started?'保留學生當時的題目順序與選項順序。':'尚未開始作答，以固定版本的原始順序預覽。'}未答不計為錯誤；作答紀錄本身無法判定猜題或未答原因。`,'small muted'));
   if(!data.items.length){root.append(node('p',ctx.filter==='wrong'?'本卷沒有已答錯題；仍可能包含未作答題目。':'這份試卷目前沒有可顯示的題目。','empty'));return;}
   for(const item of data.items){
+    if(data.activity_type==='past_exam'){renderPastAnswerItem(root,item,ctx.mediaScope);continue;}
     const q=item.question,article=node('article',undefined,'question-card');article.dataset.questionId=q.id;
     const heading=node('h3',`第 ${item.number} 題`);heading.append(tag(!item.answered?'尚未作答':item.correct?'答對':'答錯',!item.answered?'pending':item.correct?'pass':'fail'));article.append(heading);
     if(item.material?.text||item.material?.media?.length||item.material?.layout){const material=node('div',undefined,'material');material.append(node('strong','共用材料'));rich(material,item.material);article.append(material);}
@@ -314,8 +317,9 @@ function bind(){
   $('reward-class').addEventListener('change',loadClassRewards);$('refresh-class-rewards').addEventListener('click',loadClassRewards);$('reward-sort').addEventListener('change',renderClassRewards);
   $('show-all-class-gaps').addEventListener('change',renderClassRewards);
   $('refresh-student').addEventListener('click',()=>{if(selected)selectStudent({...selected});});
-  $('paper-filters').addEventListener('submit',e=>{e.preventDefault();paperFilters={subject:$('paper-subject').value,state:$('paper-state').value};loadTab('papers',0);});
-  $('clear-paper-filters').addEventListener('click',()=>{paperFilters={subject:'',state:'all'};$('paper-subject').value='';$('paper-state').value='all';loadTab('papers',0);});
+  $('paper-filters').addEventListener('submit',e=>{e.preventDefault();paperFilters={subject:$('paper-subject').value,state:$('paper-state').value,activity_type:$('paper-activity').value};loadTab('papers',0);});
+  $('clear-paper-filters').addEventListener('click',()=>{paperFilters={subject:'',state:'all',activity_type:'all'};$('paper-subject').value='';$('paper-state').value='all';$('paper-activity').value='all';loadTab('papers',0);});
+  for(const id of ['paper-subject','paper-state','paper-activity'])$(id).addEventListener('change',()=>{$('paper-filter-status').textContent='篩選條件已變更，請按「套用篩選」更新下方活動。';});
   $('record-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b)loadTab(b.dataset.tab);});
   $('record-tabs').addEventListener('keydown',e=>{const buttons=[...$('record-tabs').querySelectorAll('button')],index=buttons.indexOf(document.activeElement);if(index<0)return;
     let next;if(e.key==='ArrowRight')next=(index+1)%buttons.length;else if(e.key==='ArrowLeft')next=(index+buttons.length-1)%buttons.length;else if(e.key==='Home')next=0;else if(e.key==='End')next=buttons.length-1;else return;e.preventDefault();buttons[next].focus();loadTab(buttons[next].dataset.tab);});

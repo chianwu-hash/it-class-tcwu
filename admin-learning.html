@@ -5,7 +5,7 @@
   <meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
   <title>學生學習檔案｜教師後台</title>
   <link rel="stylesheet" href="shared/vendor/katex/katex.min.css">
-  <link rel="stylesheet" href="shared/admin-learning.css?v=20261101">
+  <link rel="stylesheet" href="shared/admin-learning.css?v=20261105-activities">
   <script defer src="shared/vendor/katex/katex.min.js"></script>
 </head>
 <body>
@@ -23,7 +23,7 @@
     <div id="workspace" class="layout" hidden>
       <aside class="card roster" aria-labelledby="roster-title">
         <div class="section-heading"><h2 id="roster-title">班級名冊</h2><span class="pill">115 學年度</span></div>
-        <label for="course">課程</label><select id="course"><option value="grade6-115-1">六年級・115 上學期</option><option value="grade3-115-1">三年級・115 上學期</option></select>
+        <label for="course">課程</label><select id="course"><option value="grade6-115-1">六年級・115 上學期</option><option value="grade3-115-1">三年級・115 上學期</option><option value="grade4-115-1">土城四年級・115 上學期</option><option value="grade9-115-1">中正國中九年級・115 上學期</option></select>
         <form id="roster-search"><label for="class-filter">班級</label><select id="class-filter"><option value="">全部班級</option></select>
           <label for="student-search">姓名或班級座號</label><div class="search-line"><input id="student-search" type="search" maxlength="80" placeholder="搜尋同學"><button type="submit">搜尋</button></div></form>
         <p id="roster-status" role="status" class="muted"></p><div id="roster-list" class="roster-list"></div><div id="roster-paging" class="paging"></div>
@@ -52,6 +52,7 @@
             </div>
             <div id="record-panel" role="tabpanel" aria-labelledby="tab-typing"><p id="record-note" class="muted"></p>
               <form id="paper-filters" class="paper-filters" hidden>
+                <div><label for="paper-activity">活動類型</label><select id="paper-activity"><option value="all">全部活動</option><option value="classroom">課堂卷</option><option value="practice">題庫練習</option><option value="self">自組卷</option><option value="past_exam">考古題</option><option value="extension">延伸練習</option></select></div>
                 <div><label for="paper-subject">科目</label><select id="paper-subject"><option value="">全部科目</option></select></div>
                 <div><label for="paper-state">試卷狀態</label><select id="paper-state"><option value="all">全部狀態</option><option value="unstarted">尚未開始</option><option value="in_progress">作答中</option><option value="completed">已完成</option><option value="hidden">學生列表已隱藏</option></select></div>
                 <button type="submit">套用篩選</button><button id="clear-paper-filters" type="button" class="secondary">清除篩選</button>
@@ -69,5 +70,5 @@
     <div id="detail-content"></div><div id="detail-paging" class="paging"></div>
   </dialog>
   <noscript>請啟用 JavaScript，才能使用教師學習檔案。</noscript>
-  <script type="module" src="shared/admin-learning.mjs?v=20261101"></script>
+  <script type="module" src="shared/admin-learning.mjs?v=20261105-activities"></script>
 </body></html>
