@@ -1,6 +1,6 @@
 import {inviteMarkup,bindInvite,readInvite} from './invite.mjs?v=20261105-copy';
 import {mountPaperPicker,partySizes} from './paper-picker.mjs?v=20261105-self';
-import {createLearningUI} from './learning.js?v=20261105-messages';
+import {createLearningUI} from './learning.js?v=20261105-allocation';
 import {setPartnerStage,scene} from './presentation.mjs?v=20261104-visual';
 import * as auth from '../auth.js';
 import {initNavbarAuth} from '../navbar-auth.js';
@@ -13,7 +13,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const papers={ten:'共同任務・10 題',twenty:'共同任務・20 題',exam:'考古卷流程示範・12 題'};
 let catalog=[],invitePreviewed='';
 async function loadCatalog(){const gen=generation,result=await rpc({action:'catalog'});if(gen!==generation)return false;catalog=Array.isArray(result.papers)?result.papers:[];for(const p of catalog)papers[p.id]=p.title;return true;}
-const errors={ROOM_RATE_LIMIT:'建立小隊太快了，請稍等一分鐘，或接續現有集合室。',PAIR_ONLY:'10題共同任務限2人。尚未出發的舊小隊請先由多出的夥伴離開，再由發起人調整為2人。',SELF_UNAVAILABLE:'這份自組卷目前無法組隊。請選擇本人儲存的10或20題自組卷。',SELF_MEDIA_UNAVAILABLE:'這份自組卷有尚未備妥的圖片或音檔，請先回原卷練習。',SOURCE_CHANGED:'這份題目已更新或暫停開放。請返回考前練功房重新選題；原紀錄仍保留。',INVALID_CAPACITY:'請選擇2～4位夥伴。',INVALID_DRAFT:'草稿暫時無法儲存，請更新狀態後再試；較大的畫圖可先送出作答再退出。',invalid_response:'請確認答案格式，並完成這題的自我檢查。',ACCESS_DENIED:'請使用正式名冊中的學生Google帳號。',NOT_MEMBER:'你已不在這個集合室。',ROOM_NOT_FOUND:'找不到集合室，邀請碼可能已失效。',INVALID_CODE:'請輸入六位數邀請碼。',STALE_REVISION:'夥伴的狀態剛更新，已重新載入，請再操作一次。',NOT_READY:'要等人數到齊，而且每位夥伴都準備好才能出發。',HOST_ONLY:'請由發起人操作。',ROOM_FULL:'集合室已滿。',JOIN_CLOSED:'這個集合室已出發或邀請碼已失效。',ALREADY_STARTED:'小隊已出發。',INVALID_ROOM:'請確認小隊名稱與人數。',TOO_MANY_ROOMS:'未出發的集合室太多，請先使用現有集合室。'};
+const errors={ALLOCATION_UNAVAILABLE:'這份考古卷的配題資料尚未備妥，請重新選卷；既有紀錄仍保留。',ALLOCATION_TOO_FEW_UNITS:'這份卷能完整分配的題目包不足，請減少人數或改選其他試卷。',ALLOCATION_SOURCE_FROZEN:'這份小隊的題目已固定，請使用原集合室繼續練習。',ROOM_RATE_LIMIT:'建立小隊太快了，請稍等一分鐘，或接續現有集合室。',PAIR_ONLY:'10題共同任務限2人。尚未出發的舊小隊請先由多出的夥伴離開，再由發起人調整為2人。',SELF_UNAVAILABLE:'這份自組卷目前無法組隊。請選擇本人儲存的10或20題自組卷。',SELF_MEDIA_UNAVAILABLE:'這份自組卷有尚未備妥的圖片或音檔，請先回原卷練習。',SOURCE_CHANGED:'這份題目已更新或暫停開放。請返回考前練功房重新選題；原紀錄仍保留。',INVALID_CAPACITY:'請選擇2～4位夥伴。',INVALID_DRAFT:'草稿暫時無法儲存，請更新狀態後再試；較大的畫圖可先送出作答再退出。',invalid_response:'請確認答案格式，並完成這題的自我檢查。',ACCESS_DENIED:'請使用正式名冊中的學生Google帳號。',NOT_MEMBER:'你已不在這個集合室。',ROOM_NOT_FOUND:'找不到集合室，邀請碼可能已失效。',INVALID_CODE:'請輸入六位數邀請碼。',STALE_REVISION:'夥伴的狀態剛更新，已重新載入，請再操作一次。',NOT_READY:'要等人數到齊，而且每位夥伴都準備好才能出發。',HOST_ONLY:'請由發起人操作。',ROOM_FULL:'集合室已滿。',JOIN_CLOSED:'這個集合室已出發或邀請碼已失效。',ALREADY_STARTED:'小隊已出發。',INVALID_ROOM:'請確認小隊名稱與人數。',TOO_MANY_ROOMS:'未出發的集合室太多，請先使用現有集合室。'};
 function renderPending(){const el=$('#pending');el.hidden=!pending;el.innerHTML=pending?'<p>上一筆操作的結果待確認。重送會沿用同一個請求編號。</p><button id="retry" class="primary">重送同一次操作</button>':'';if(pending){$('#retry').disabled=busy;$('#retry').onclick=sendPending;}}
 function status(message='',bad=false){$('#status').textContent=message;$('#status').className=message?(bad?'error':'ok'):'';}
 const disabledBefore=new WeakMap();
