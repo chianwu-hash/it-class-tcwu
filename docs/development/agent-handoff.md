@@ -1,3 +1,13 @@
+# 2026-11-06 組隊簡化（實作中，尚未發布）
+
+- 使用者已授權依前輪與Claude討論實作，取消準備步驟，只有隊長在人數到齊後出發；接續任務有未完成內容才顯示；完成後Claude複核、驗證、PR/main與發布腳本。新worktree `partner-team-flow-20261106`／branch `codex/partner-team-flow-20261106`，基底最新main e38aa78（前輪發布登記PR41現已合併）。Codex唯一寫入者。
+- 新`team-flow.mjs/css`負責隊長選卷／隊員輸碼／條件式接續卡與紀錄冊；app保留既有auth/transport/requestId/realtime，連結登入後自動lookup→join、消耗invite避免退出後又加入，原卷帶入只開啟一次隊長頁。等候隊員不見邀請分享或出發鈕；明確退出交棒，暫離保留；有完成記錄可直接翻紀錄冊，接續按實際階段進入。
+- 增量SQL `quiz-partner-team-flow.sql` 用函式MD5守衛並原地replace保留OID，只修改lobby_action的出發權限／人數條件／移除ready reset及me；public wrapper僅改me回安全team_rooms metadata。新增team_rooms私有函式，沒有資料列UPDATE/DELETE或配題／作答／草稿／獎勵變更。舊ready RPC為相容保留，但不再是出發門檻。正式DB仍未套用。
+- 本機相關9項Node/SQL通過，含新隊長權限、未滿拒絕、忽略ready、重送不重複、交棒、10題固定2人、20題三人完整答題回顧開2葉、本人接續metadata與原房／作答草稿獎勵比對。實際app雙頁＋合成登入＋真PGlite瀏覽器驗證進行中，先前修的是測試stub語法／背景click及fixture網址，不是正式功能。真Google雙帳號兩機仍未測。
+- Claude精確下一步：只讀新UI/app/SQL/新測試及learning entryView小改，找權限、加入重送／晚回應、首頁／接續、任務與紀錄保留及SQL安裝問題。不得讀憑證／學生資料，不用shell／網路／寫檔／子agent／部署；Codex在review期間凍結專案寫入。正式PG交易回滾、來源main套用／snapshot/live與完整樹發布仍待執行。
+- 第一輪Claude `partner-team-flow-review-20261106` 完成，224秒／12次Read，viewer/Git不變通過。找出P1：freeze_allocation觸發器另有ready門檻，已將同一交易增量SQL加上MD5守衛原地移除該子條件，保留人數／完整題包凍結／舊配題防改，沒有重配既有房。現在預期3個既有函式修改＋1個新增（153函式）。新fixture安裝正式freeze/owner/snapshot，合成4/3/2/1子題包在三人ready全false出發成功、整包同人／4/3/3分配／舊房無新增allocation，3項新team測試通過。32項Node/SQL累計通過；首輪雙頁16項通過，補考古觸發器後再跑中。真Google雙帳號兩機未驗證。
+- 修後Claude `partner-team-flow-final-20261106` 69秒／5次Read，viewer/Git不變通過，確認P1已修、無新阻擋。追加考古2／3／4人ready全false出發與各包不拆測試皆通過，最新雙頁17項亦全通過（含真freeze觸發器＋三人考古出發），pageerror0。下一步功能PR進main、真PG角色回滾驗證、乾淨main單一SQL套用、snapshot/live PR與乾淨main發布；不可拿合成Auth當真人Google兩機已測。
+
 # 2026-11-06 營地語音與畫圖（已正式發布）
 
 - 正式完成：Claude兩輪複核、修正與真PG回滾驗證後，PR38／39／40均進main。乾淨main `4ba884e` 經發布腳本start→deploy→promote，臺灣時間2026-11-06 00:01:25正式指向 `dpl_8PdjF5a9zKkhNmXTr1AMrJZSx9pg`；回滾 `dpl_8PFEpMsmXtjVoW3iJvz82NBhMf4W`。全檔樹10修改＋10新增、無刪除／非預期／換行差異，候選與正式20檔SHA256全同main，鎖已釋放。
