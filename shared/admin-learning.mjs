@@ -1,5 +1,5 @@
 import {createLearningRequest,learningError,beginLearningTeacherLogin} from './admin-learning-api.mjs';
-import {activityLabel,renderPastAnswerItem} from './admin-learning-activities.mjs?v=20261105';
+import {activityLabel,renderPastAnswerItem} from './admin-learning-activities.mjs?v=20261105-reference';
 import {lessonName,rateLabel,timeLabel,fullTime,paperStatus,paperAccuracy,typingPolicy,orderedOptions,optionLetter,responseLabel} from './admin-learning-model.mjs';
 import {renderContent} from './quiz-render.mjs';
 import {configureQuizMedia} from './quiz-media.mjs';

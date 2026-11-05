@@ -16,14 +16,14 @@ const out=path.resolve('automation/output/admin-learning-activities-20261105');
    const host=document.createElement('main');host.className='wrap';host.id='synthetic-learning-preview';
    const title=document.createElement('h1');title.textContent='學習檔案・合成資料版面驗證';host.append(title);document.body.replaceChildren(host);
    const mediaScope={resolve:async()=>{throw Error('synthetic_no_media');},active:()=>true};
-   const values=[['single','A','B',false],['mark',true,false,false],['sequence',['甲','乙'],['乙','甲'],false],['short',{answer:'原始填答'},['正解一','正解二'],false],['manual',{text:'合成手寫答案',strokes:[[[.1,.1],[.5,.5]]],confirmed:true},'參考資訊',null]];
-   values.forEach(([kind,response,official,correct],i)=>renderPastAnswerItem(host,{number:i+1,group:{id:'g'+i,kind,prompt:'這是用來驗證唯讀明細的合成題目。',choices:kind==='single'?[{id:'A',text:'合成選項甲'},{id:'B',text:'合成選項乙'}]:[]},field:{id:'q'+i,label:String(i+1)},response,official,correct,answered:true,manual:kind==='manual'},mediaScope));
+   const values=[['single','A','B',false],['mark',true,false,false],['sequence',['甲','乙'],['乙','甲'],false],['short',{answer:'原始填答'},['正解一','正解二'],false],['manual',{text:'合成手寫答案',strokes:[[[.1,.1],[.5,.5]]],confirmed:true},null,null]];
+   values.forEach(([kind,response,official,correct],i)=>renderPastAnswerItem(host,{number:i+1,group:{id:'g'+i,kind,prompt:'這是用來驗證唯讀明細的合成題目。',choices:kind==='single'?[{id:'A',text:'合成選項甲'},{id:'B',text:'合成選項乙'}]:[]},field:{id:'q'+i,label:String(i+1),reference:kind==='manual'?'參考資訊':undefined},response,official,correct,answered:true,manual:kind==='manual'},mediaScope));
    if(pastAnswerText(false,'mark')!=='不勾選'||pastAnswerText(['甲','乙'],'sequence')!=='甲 → 乙')throw Error('answer_format_failed');
   });
   const widths=[];
   for(const width of [1280,768,390]){await page.setViewport({width,height:1000});
    const r=await page.evaluate(()=>({overflow:document.documentElement.scrollWidth>innerWidth+1,cards:document.querySelectorAll('.question-card').length,manualLocked:document.querySelector('.saved-drawing textarea')?.disabled===true,strokes:document.querySelectorAll('.saved-drawing polyline').length,body:document.body.innerText}));
-   assert.equal(r.overflow,false);assert.equal(r.cards,5);assert.equal(r.manualLocked,true);assert.equal(r.strokes,1);assert.ok(r.body.includes('已自評／需人工核對'));widths.push(width);
+   assert.equal(r.overflow,false);assert.equal(r.cards,5);assert.equal(r.manualLocked,true);assert.equal(r.strokes,1);assert.ok(r.body.includes('已自評／需人工核對'));assert.ok(r.body.includes('參考資訊'));widths.push(width);
   }
   await page.screenshot({path:path.join(out,'synthetic-mobile.png'),fullPage:true});await page.setViewport({width:1280,height:1000});
   const report={passed:true,synthetic:true,courses:controls.courses,activityTypes:controls.activities,widths,manualReadOnly:true,rawResponsesPreserved:true};

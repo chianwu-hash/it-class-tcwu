@@ -1,0 +1,69 @@
+{
+  "passed": true,
+  "origin": "https://it-class-tcwu.vercel.app",
+  "realGoogleTeacher": true,
+  "results": [
+    {
+      "grade": 4,
+      "roster": 1,
+      "pastRecordsForSample": 0,
+      "detailVerified": false,
+      "images": 0,
+      "activityFilter": true,
+      "extensionFilter": true,
+      "classSummary": true,
+      "widths": [
+        1280,
+        768,
+        390
+      ]
+    },
+    {
+      "grade": 9,
+      "roster": 1,
+      "pastRecordsForSample": 1,
+      "detailVerified": true,
+      "images": 31,
+      "activityFilter": true,
+      "extensionFilter": true,
+      "classSummary": true,
+      "widths": [
+        1280,
+        768,
+        390
+      ]
+    },
+    {
+      "grade": 3,
+      "roster": 132,
+      "pastRecordsForSample": 6,
+      "detailVerified": true,
+      "images": 0,
+      "activityFilter": true,
+      "extensionFilter": true,
+      "classSummary": true,
+      "widths": [
+        1280,
+        768,
+        390
+      ]
+    },
+    {
+      "grade": 6,
+      "roster": 47,
+      "pastRecordsForSample": 2,
+      "detailVerified": true,
+      "images": 0,
+      "activityFilter": true,
+      "extensionFilter": true,
+      "classSummary": true,
+      "widths": [
+        1280,
+        768,
+        390
+      ]
+    }
+  ],
+  "scriptErrors": 0,
+  "at": "2026-11-05T03:42:44.903Z"
+}
