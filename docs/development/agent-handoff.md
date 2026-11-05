@@ -7,6 +7,7 @@
 - 實作commit `242c205`，草稿PR [#39](https://github.com/chianwu-hash/it-class-tcwu/pull/39)，base暫為PR38分支；兩PR都尚未合併／部署。23:40 heartbeat已更新完整worktree、請求helper、PR與發布順序。先合併PR38，再將PR39改base為main並合併，避免把相依分支誤當正式來源。正式現行基準 `dpl_8PFEpMsmXtjVoW3iJvz82NBhMf4W`，如已有他人更新，先重新比對，不能強行promote。
 - 23:40接續順序：讀本輪企劃「上線前接續」、Claude只讀複核實際程式及證據→修正／驗證→PR38與本輪PR進main→乾淨main套增量SQL／部署Edge→snapshot與live check後PR進main→乾淨main發布腳本→正式驗證／handoffRow。任何未通過與真人兩帳號／真麥克風／平板未測須明講。
 - 23:40 Claude複核已完成（`camp-media-claude-preflight-20261105`，433秒／22次Read，viewer確認、Git前後一致），未找到P1；指出staging6筆無期限造成永久額度封鎖，已改最近1小時並新增過期／近期6筆回歸通過。另修Edge上游HTML／網路錯誤誤報格式不符為503可重試，以及busy送出明確保稿提示。保留SQL→Edge→前端順序；正式PG交易內角色測試仍待執行，不以PGlite當正式驗證。
+- Claude修後複核 `camp-media-claude-preflight-20261105-234948` 113秒／11次Read、viewer與Git不變通過，確認P2及上游錯誤／busy小修到位，無新阻擋；補看PR38純選項。指出選中答案色優先序P3，已依建議補`data-result:has(input:checked)`，實際Chrome計算樣式正確／錯誤兩項通過。配額提示改「目前」，最新相關11項Node/SQL通過。未做真實mic／Google雙帳號兩機／iPad／Android，部署後須保留此界線。
 
 # 2026-11-05 答題優先與收合營地（隔離實作，未發布）
 
