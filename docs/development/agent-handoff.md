@@ -5,6 +5,7 @@
 | 狀態 | agent | 開始時間 | `main` commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
 | --- | --- | --- | --- | --- | --- | --- |
 | 已完成 | Codex-admin-learning-reference-20261105 | 2026-11-05T03:46:21.134Z | `f7f9ff5` | `dpl_JE7dcnnqwx1qLhzjUaF9oHbAFjgy` | admin-learning.html、shared/admin-learning.mjs、shared/admin-learning-activities.mjs | `dpl_8U7FN7B9qKdzmXZEi7NtmXvtjZGA`／回滾 `dpl_JE7dcnnqwx1qLhzjUaF9oHbAFjgy`（eolOnly 0） |
+| 發布中 | Codex-partner-invite-20261105 | 2026-11-05 | 待邀請功能PR合併 | 待腳本重驗最新正式部署 | 四年級partner-practice.html、shared/partner-pilot/app.mjs、visual.css、+invite.mjs、+vendor/qrcode-generator | 未部署；先合併最新main，保留學習檔案成果 |
 | 已完成 | Codex-admin-learning-activities-20261105 | 2026-11-05T03:41:13.345Z | `65d66f0` | `dpl_Dxxyw8mmvX7ChCYmZsGVcr6Ex9Gw` | admin-learning.html、shared/admin-learning-api.mjs、shared/admin-learning.css、shared/admin-learning.mjs、vercel.json、+shared/admin-learning-activities.mjs | `dpl_JE7dcnnqwx1qLhzjUaF9oHbAFjgy`／回滾 `dpl_Dxxyw8mmvX7ChCYmZsGVcr6Ex9Gw`（eolOnly 0） |
 | 已完成 | Codex-partner-self-20261105 | 2026-11-04T23:19:16.863Z | `7f0cdde` | `dpl_G1bXq2cRCnBRJ2oQp8uffL3PaVSA` | grade3/115-1/partner-practice.html、grade3/115-1/quiz-library.html、grade4/115-1/partner-practice.html、grade4/115-1/quiz-library.html、grade6/115-1/partner-practice.html、grade6/115-1/quiz-library.html、grade9/115-1/partner-practice.html、grade9/115-1/quiz-library.html、shared/partner-pilot/app.mjs、shared/partner-pilot/visual.css、shared/quiz-partner-pilot-entry.mjs、+shared/partner-pilot/paper-picker.mjs | `dpl_Dxxyw8mmvX7ChCYmZsGVcr6Ex9Gw`／回滾 `dpl_G1bXq2cRCnBRJ2oQp8uffL3PaVSA`（eolOnly 0） |
 | 已完成 | Codex-partner-visual-20261104 | 2026-11-04T15:07:56.607Z | `4fc3a4c` | `dpl_EGn9CwbxtAbHLhnGx6uNUoLjBsKd` | grade3/115-1/partner-practice.html、grade3/115-1/quiz-library.html、grade4/115-1/partner-practice.html、grade4/115-1/quiz-library.html、grade6/115-1/partner-practice.html、grade6/115-1/quiz-library.html、grade9/115-1/partner-practice.html、grade9/115-1/quiz-library.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/quiz-partner-pilot-entry.mjs、+shared/partner-pilot/art/discover-v1.webp、+shared/partner-pilot/art/invite-v1.webp、+shared/partner-pilot/art/keepsake-v1.webp、+shared/partner-pilot/art/support-v1.webp、+shared/partner-pilot/art/wait-v1.webp、+shared/partner-pilot/art/welcome-v1.webp、+shared/partner-pilot/presentation.mjs、+shared/partner-pilot/visual.css | `dpl_G1bXq2cRCnBRJ2oQp8uffL3PaVSA`／回滾 `dpl_EGn9CwbxtAbHLhnGx6uNUoLjBsKd`（eolOnly 0） |
@@ -18,6 +19,14 @@
 - 鎖由腳本管理（repo 共用 git 目錄的 `release-lock.json`）；`status` 顯示被別人持有時先問使用者，不得刪除別人的鎖。promote 後把腳本輸出的 `handoffRow` 經 PR 加到下表。
 - 交接時寫明：目前目標與下一步、改了哪些檔與刻意不動的檔、已做與待做的驗證、與 SOP 或共用模組的衝突。
 - 整合紀錄與差異清單：[main-unify-20261104.md](main-unify-20261104.md)。
+
+# 2026-11-05 集合室邀請連結與QR Code（進行中）
+
+- 使用者要求保留邀請碼並增加QR Code及連結。新worktree partner-invite-link-20261105，codex/partner-invite-link-20261105，從main65d66f0開始。Codex唯一寫入者，無DB／登入模組／計葉變更。
+- 未出發集合室增加複製連結、唯讀可手動複製網址及本機QR；連結只帶六位invite碼，排除個人session／award／片段。不用第三方QR服務。vendored qrcode-generator 2.0.4原始ESM，SHA512封存驗證及MIT授權保留。
+- 邀請連結先用既有登入，登入後只lookup，不自動join；確認小隊才加入。原成員可回原房，滿房／已出發不能新加入，過期及格式錯誤有提示；舊lookup晚到不覆蓋新開啟的小隊。原RPC／24小時／名冊／年級／容量規則完全沿用。
+- 新單元4項、原穩定性5項、原個人11項通過。真實前端合成傳輸9流程與390／760／1180排版通過；四年級QR以OpenCV獨立解碼回精確邀請網址。尚未以實體手機相機掃描。
+- 初次檢查他人發布鎖為rejected，未動他人鎖或部署；對方完成後目前alias為dpl_JE7dcnnqwx1qLhzjUaF9oHbAFjgy，鎖已釋放。發布前仍須重驗最新main及正式版，保留對方學習檔案成果。
 
 # 2026-11-05 停用Git自動預覽（使用者授權）
 
