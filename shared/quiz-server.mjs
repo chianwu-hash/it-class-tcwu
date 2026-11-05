@@ -1,3 +1,4 @@
+import {appendSingleChoiceOptions} from './quiz-choice.mjs';
 import {afterGardenReward} from './garden-unlock-notice.mjs?v=20261102-grade9-release';
 import { renderContent as renderQuizContent } from './quiz-render.mjs?v=20261029-load-batch1';
 import { mergeQuizSnapshot } from './quiz-state.mjs';
@@ -712,20 +713,11 @@ export function initServerQuiz({ selectors, server }) {
     inputs.classList.toggle('long-options', q.type !== 'single' || q.options.some(o => o.content.text.length > 34 || o.content.layout?.some(p => p.type === 'table') || o.content.media.length > 1));
     const legend = make('legend', q.type === 'single' ? '選擇一個答案' : '填入你的答案'); inputs.append(legend);
     if (q.type === 'single') {
-      q.options.forEach((o, i) => {
-        const label = make('label', undefined, 'student-option'); const input = make('input'); input.type = 'radio'; input.name = `q-${q.id}`; input.value = o.id;
-        input.disabled = choicesLocked;
-        input.checked = (saved ? state.responses[q.id] : pending?.response ?? selected) === o.id;
-        input.addEventListener('change', () => { selected = o.id; });
-        const body = make('div', undefined, 'option-body'); renderContent(body, o.content);
-        const badge = make('strong', String.fromCharCode(65 + i), 'option-badge');
-        label.append(input, badge, body);
-        if (saved && review && q.type === 'single') {
-          const correctOption = o.id === review.answer.option_id;
-          label.dataset.result = correctOption ? 'correct' : input.checked ? 'incorrect' : 'other';
-          if (correctOption || input.checked) label.append(make('span', correctOption ? (input.checked ? '✓ 你的答案・答對了' : '✓ 正確答案') : '× 你的答案', 'option-result'));
-        }
-        inputs.append(label);
+      appendSingleChoiceOptions(inputs, {
+        name:`q-${q.id}`, options:q.options.map(o=>({...o,value:o.id})),
+        selected:saved?state.responses[q.id]:pending?.response??selected, locked:choicesLocked,
+        onSelect:value=>{selected=value;}, renderBody:(body,o)=>renderContent(body,o.content),
+        result:saved&&review?{chosen:state.responses[q.id],correct:review.answer.option_id}:null
       });
     } else {
       const input = make('textarea'); input.setAttribute('aria-label', '簡答內容'); input.maxLength = 2000;

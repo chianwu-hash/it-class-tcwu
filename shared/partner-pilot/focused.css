@@ -1,0 +1,85 @@
+@scope (.partner-content) {
+ :scope [hidden]{display:none!important}
+ :scope[data-stage=practice] .hero,:scope[data-stage=practice] main>.scope{display:none}
+ :scope[data-stage=practice] main{max-width:1080px;margin-top:18px;padding-bottom:90px}
+ :scope .focus-team-bar{padding:0;background:transparent;align-items:flex-start;gap:18px}
+ :scope .focus-team-bar h2{font-size:22px;margin:0 0 5px}
+ :scope .focus-team-bar p{margin:0;color:#57767c;font-size:14px}
+ :scope .focus-team-bar button{font-size:14px;padding:10px 14px;margin-top:0}
+ :scope .focus-progress{display:flex;gap:15px;align-items:center;font-size:13px;color:#526f79;margin:16px 0 4px}
+ :scope .focus-progress progress{width:160px;height:8px;accent-color:var(--quiz-primary)}
+ :scope .focus-team-info{font-size:13px;color:#57767c}
+ :scope .focus-team-info summary{padding:7px 0}
+ :scope .focus-team-info p{margin:6px 0}
+ :scope .partner-focus>.learning-tabs{margin:10px 0 20px}
+ :scope .focus-question-position{display:flex;justify-content:space-between;align-items:center;gap:16px}
+ :scope .focus-question-position h2{font-size:20px;margin:0}
+ :scope .focus-question-position label{font-size:12px;max-width:260px;margin:0}
+ :scope .focus-question-position select{padding:9px;font-size:13px}
+ :scope .focus-material{font-size:20px;line-height:1.8}
+ :scope .focus-material:empty{display:none}
+ :scope .partner-focus .question-card{border:1px solid #c8dedb;border-radius:18px;padding:24px;margin:16px 0;box-shadow:0 4px 18px #183b3c05}
+ :scope .partner-focus .question-text{font-size:clamp(21px,2.3vw,28px);line-height:1.75}
+ :scope .partner-focus .question-card h3{font-size:17px;color:#46656c;margin:10px 0}
+ :scope .partner-focus .question-tools{display:flex;align-items:flex-start;flex-wrap:wrap;gap:12px}
+ :scope .partner-focus .question-tools button,:scope .partner-focus .question-tools summary{font-size:14px}
+ :scope .partner-answer-dock{padding:12px 0;background:#f3fcfa;border-top:1px solid #c7ded9;display:flex;justify-content:space-between;gap:12px}
+ :scope .partner-answer-dock button{font-size:14px;padding:10px 14px;margin-top:0}
+ :scope .partner-focus button,:scope .partner-focus input,:scope .partner-focus textarea{scroll-margin-block:100px 180px}
+ :scope .partner-focus .quiz-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0 22px;min-width:0}
+ :scope .partner-focus .quiz-choices.long-options{grid-template-columns:minmax(0,1fr)}
+ :scope .partner-focus .student-option{position:relative;display:grid;grid-template-columns:42px minmax(0,1fr);gap:12px;margin:0;padding:16px;min-height:94px;border:2px solid #b8d1ef;border-radius:18px;background:#edf5ff;box-shadow:0 4px 0 #d4e3f5;color:#302d45;line-height:1.65;align-items:center;cursor:pointer}
+ :scope .partner-focus .student-option:nth-of-type(2){background:#fff6df;border-color:#edce8b;box-shadow:0 4px 0 #f0e0b9}
+ :scope .partner-focus .student-option:nth-of-type(3){background:#f2edff;border-color:#d0bdf0;box-shadow:0 4px 0 #e3d9f6}
+ :scope .partner-focus .student-option:nth-of-type(4){background:#fff0f5;border-color:#e9bfd1;box-shadow:0 4px 0 #f1dce5}
+ :scope .partner-focus .student-option input{position:absolute;width:1px;height:1px;opacity:0}
+ :scope .partner-focus .student-option:has(input:checked){border:2px solid #7250b9;outline:2px solid #7250b9;outline-offset:1px;background:#eae0ff}
+ :scope .partner-focus .student-option:has(input:focus-visible){outline:3px solid #392266;outline-offset:4px}
+ :scope .partner-focus .option-badge{display:grid;place-items:center;width:42px;height:44px;background:#fff;border-radius:12px;font-size:1.2rem;font-weight:900;border:1px solid #fff}
+ :scope .partner-focus .option-body{min-width:0;font-size:clamp(1.15rem,1.8vw,1.6rem);font-weight:700}
+ :scope .partner-focus .option-result{grid-column:2;font-size:.85rem;font-weight:700}
+ :scope .partner-focus .student-option[data-result=correct]{background:#e7f6ed;border-color:#32815c;outline:none;box-shadow:0 4px 0 #cce7d6}
+ :scope .partner-focus .student-option[data-result=incorrect]{background:#fff1e6;border-color:#b55c2c;outline:none;box-shadow:0 4px 0 #f0d9c7}
+ :scope .partner-camp-dialog{position:fixed;inset:0 0 0 auto;margin:0;width:min(580px,100vw);height:100dvh;max-height:100dvh;max-width:100vw;padding:0;border:0;background:#fff;overflow:hidden;color:inherit;box-shadow:-12px 0 50px #123b4c26}
+ :scope .partner-camp-dialog::backdrop{background:#102f4055}
+ :scope .camp-panel{display:flex;flex-direction:column;height:100%;animation:camp-enter .18s ease-out}
+ :scope .is-closing .camp-panel{animation:camp-leave .16s ease-in forwards}
+ :scope .camp-panel-heading{flex:none;padding:16px 20px;gap:12px;background:#eef9f6;border-bottom:1px solid #d6e7e1}
+ :scope .camp-panel-heading p{font-size:12px;margin:0;color:#59756b}
+ :scope .camp-panel-heading h2{font-size:22px;margin:5px 0}
+ :scope .camp-panel-heading button{font-size:13px;white-space:nowrap;padding:9px 12px;margin:0}
+ :scope .camp-scroll{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:18px 20px 40px;scroll-padding-top:16px}
+ :scope .camp-transport{flex:none;padding:0 20px;font-size:14px;background:#fff8df}
+ :scope .camp-transport p:empty{display:none}
+ :scope .camp-transport [data-error=true]{color:#943e29}
+ :scope .camp-transport button{font-size:14px;padding:9px 12px;margin-bottom:10px}
+ :scope .camp-thread{border:1px solid #cee1d8;border-radius:14px;padding:0 14px;margin:12px 0;background:#f8fcfa}
+ :scope .camp-thread>summary{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:15px;line-height:1.7}
+ :scope .camp-thread>summary small{color:#98621c;font-size:12px}
+ :scope .camp-thread form{padding-bottom:14px}
+ :scope .camp-question{font-size:14px;background:white;padding:0 10px;border-radius:8px}
+ :scope .camp-question summary{font-size:13px}
+ :scope .camp-message{font-size:16px;margin:12px 0;padding:12px;border:1px solid #dae7e1;border-radius:10px;background:white}
+ :scope .camp-message.message-unread{border-left:4px solid #248879;background:#eff9f5}
+ :scope .camp-message p{margin:6px 0;white-space:pre-wrap}
+ :scope .camp-message small{font-size:11px;color:#6f8380}
+ :scope .camp-read-end{display:block;height:2px;width:100%}
+ :scope .camp-scroll textarea{min-height:100px;font-size:16px;scroll-margin-bottom:100px}
+ :scope [data-action-status]{display:block;font-size:13px;color:#166a52;margin-top:8px}
+ :scope .partner-camp-toast{position:fixed;right:24px;bottom:26px;z-index:40;display:flex;align-items:center;gap:14px;max-width:min(480px,calc(100vw - 32px));padding:14px 18px;border:1px solid #b8d8ce;border-radius:16px;background:#f1fff8;color:#174d43;box-shadow:0 8px 30px #143e3c28;font-size:15px}
+ :scope .partner-camp-toast button{font-size:14px;white-space:nowrap;margin:0;padding:9px 12px;background:#0f766e;color:white}
+ @keyframes camp-enter{from{transform:translateX(100%)}to{transform:translateX(0)}}
+ @keyframes camp-leave{to{transform:translateX(100%)}}
+ @media(max-width:700px){
+  :scope .focus-team-bar{flex-direction:column;gap:12px}:scope .focus-team-bar .actions{width:100%;justify-content:space-between}
+  :scope .focus-question-position{align-items:flex-start;flex-direction:column;gap:10px}:scope .focus-question-position label{width:100%;max-width:none}
+  :scope .partner-focus .quiz-choices{grid-template-columns:minmax(0,1fr)}:scope .partner-focus .question-card{padding:18px 14px}
+  :scope .partner-answer-dock{flex-direction:column;gap:8px;padding:10px 0 max(10px,env(safe-area-inset-bottom))}
+  :scope .partner-answer-dock .actions{justify-content:space-between;gap:4px}:scope .partner-answer-dock button{font-size:12px;padding:9px 8px;margin-right:0}
+  :scope .camp-panel-heading{padding:12px 14px}:scope .camp-scroll{padding:14px 14px 40px}:scope .camp-panel-heading h2{font-size:19px}
+  :scope .partner-camp-toast{right:16px;bottom:18px}
+ }
+ @media(prefers-reduced-motion:reduce){:scope .camp-panel,:scope .is-closing .camp-panel{animation:none}}
+}
+body.partner-pilot dialog.image-lightbox{margin:0;border:0;padding:0;max-width:none;max-height:none;width:100vw;height:100dvh}
+body.partner-pilot dialog.image-lightbox::backdrop{background:transparent}

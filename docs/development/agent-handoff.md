@@ -1,3 +1,14 @@
+# 2026-11-05 答題優先與收合營地（隔離實作，未發布）
+
+- 修改前 Claude 討論完成後才實作。Codex 唯一寫入者；本輪無 DB／題庫／花葉修改。現況與測試界線見 `partner-focused-answer-20261105.md`。新單選純呈現供原個人與 partner 共用；partner 穩定題目區＋收合營地原生 dialog，私有草稿保存目前題號。
+- 原個人 11 項、focused/self/media/production 13 項、stability/舊 attention 8 項通過；隔離瀏覽器 48 項通過。Claude 修改後複核額度用完，使用者改指定 AGY；修正後最終結案確認提供的程式無阻擋，屬 supplied-text 複核，非 AGY 自行跑瀏覽器。真人兩機與真實 IME 尚未驗證。未 merge／發布，本機預覽 `http://localhost:8816/` 只用合成資料。
+- 使用者接著要求評估三年級語音訊息與畫圖請教，已有 `partner-camp-media-proposal-20261105.md`：現有手寫可抽純元件；語音需新增錄音／私有附件與訊息契約；不強制打字、不即時通話、不做 AI 轉錄、不額外計葉花。本輪未實作此新功能。
+
+- 使用者要求先和Claude討論再改：盡量沿用原考前練功房操作、主畫面以答題為主，訊息先提示，點開共同營地，閱讀／回覆後可收起。新worktree partner-focused-answer-20261105，分支codex/partner-focused-answer-20261105，基底最新main05b9179。Codex唯一寫入者，Claude只讀指定專案程式／設計；禁止憑證、學生資料、DB、網路及部署。
+- 本輪先核對原quiz-server／quiz-past-ui／workspace與partner learning/app/rich-content/past-answer/message-attention。原個人控制器不能直接嵌入小隊；考慮抽出純單選呈現供兩者共用，小隊保留自己的qid／requestId／expectedAttempt／訂正及媒體權限。一般／自組一題一題；考古依原technical group顯示本人所分配欄位，不自行猜新語意題組或改allocation。
+- 重要已確認：learning.render每個新snapshot整個container.innerHTML，雖有capture/focus restoration，仍會換掉組字／手寫／音訊DOM。需拆穩定題目區與訊息區；營地native dialog抽屜平時關閉、不擠題目，穩定keyed討論串／回覆輸入。小提示不自動開啟、不搶焦點；一般聊天只數字。首次快照不輪播歷史訊息，看到討論串底部並停留才標已讀，回覆成功不強制關閉。
+- 精確下一步：Claude修改前討論最小可用實作與主要風險，指定一般原UI可抽的元件、考古group安全邊界、DOM／草稿／注音／音訊穩定、dialog與圖片燈箱衝突、toast／未讀以及測試關卡。此階段不改runtime、不碰DB／花葉；討論完成後Codex才實作與驗證。
+
 # 2026-11-05 考古題完整題組配題接線（正式完成）
 
 - PR #35功能、#36正式snapshot均已合併。前端從乾淨最新main `3a9f880`經發布腳本start→deploy→promote完成，2026-11-05T13:03:31.968Z正式alias指向`dpl_8PFEpMsmXtjVoW3iJvz82NBhMf4W`；完整樹ok:true，只有6個預期檔改變、無新增／刪除／換行例外。基準回滾`dpl_22JA3jB9gebvZeuVA376NPTcpfHZ`，發布鎖已釋放。

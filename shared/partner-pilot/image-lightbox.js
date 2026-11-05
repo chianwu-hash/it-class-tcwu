@@ -1,7 +1,7 @@
 // Based on grade6/115-1/week01.html; no auth or progress dependencies.
 export function initImageLightbox({ root = document, selector = '[data-image-lightbox]', initialScale = 1, minScale = 1, zoomStep = 0.35, resolveImageSource = null } = {}) {
     if (document.getElementById('lightbox')) return;
-    document.body.insertAdjacentHTML('beforeend', `<div id="lightbox" class="image-lightbox hidden" role="dialog" aria-modal="true" aria-label="圖片放大檢視">
+    document.body.insertAdjacentHTML('beforeend', `<dialog id="lightbox" class="image-lightbox hidden" aria-label="圖片放大檢視">
         <div class="image-lightbox-panel">
             <div class="image-lightbox-controls" aria-label="圖片縮放控制">
                 <button id="lightbox-zoom-out" type="button" aria-label="縮小圖片">-</button>
@@ -16,7 +16,7 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
             </div>
             <p class="image-lightbox-hint">滾輪縮放・拖曳平移・雙擊放大・手機雙指縮放</p>
         </div>
-    </div>`);
+    </dialog>`);
         const lightboxEl = document.getElementById("lightbox");
         const lightboxStage = document.getElementById("lightbox-stage");
         const lightboxImage = document.getElementById("lightbox-img");
@@ -81,10 +81,12 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
             document.body.style.overflow = "hidden";
             resetLightboxTransform();
             lightboxEl.classList.remove("hidden");
-            lightboxClose.focus();
+            if(!lightboxEl.open)lightboxEl.showModal();lightboxClose.focus();
         };
 
         const closeLightbox = function() {
+            if(lightboxEl.open)lightboxEl.close();
+            if(lightboxEl.classList.contains('hidden'))return;
             lightboxEl.classList.add("hidden");
             lightboxImage.removeAttribute("src");
             previousFocus?.focus();
@@ -93,6 +95,8 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
             lightboxState.previousOverflow = "";
             resetLightboxTransform();
         };
+        lightboxEl.addEventListener('cancel',event=>{event.preventDefault();closeLightbox();});
+        lightboxEl.addEventListener('close',()=>{if(!lightboxEl.open)closeLightbox();});
 
         lightboxEl.addEventListener("mousedown", (event) => {
             if (event.target === lightboxEl) closeLightbox();
@@ -181,15 +185,6 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
         lightboxStage.addEventListener("pointerup", endLightboxPointer);
         lightboxStage.addEventListener("pointercancel", endLightboxPointer);
 
-        document.addEventListener("keydown", (event) => {
-            if (!lightboxEl.classList.contains("hidden") && event.key === "Tab") {
-                const buttons = [...lightboxEl.querySelectorAll('button')];
-                const index = buttons.indexOf(document.activeElement);
-                event.preventDefault();
-                buttons[(index + (event.shiftKey ? -1 : 1) + buttons.length) % buttons.length].focus();
-            }
-            if (event.key === "Escape" && !lightboxEl.classList.contains("hidden")) closeLightbox();
-        });
 
     // 事件代理支援逐題重繪及稍後才揭露的解析，不複製或另存授權網址。
     function prepareImages() {
