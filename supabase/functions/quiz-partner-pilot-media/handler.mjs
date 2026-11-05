@@ -54,12 +54,14 @@ export function createHandler({ env, fetcher = fetch }) {
         || !Number.isInteger(media.bytes) || media.bytes < 1 || media.bytes > MAX
         || !/^[a-f0-9]{64}$/.test(media.sha256 || '')) return send(403, { error: 'MEDIA_DENIED' });
       let object;
-      if (media.backend === 'drive') {
+      // Match the existing quiz-media contract: past exams stay in Storage;
+      // native images follow the configured image backend, audio stays in Storage.
+      if (media.backend === 'auto' && env('QUIZ_IMAGE_BACKEND') === 'drive' && media.mime.startsWith('image/')) {
         if (env('QUIZ_IMAGE_BACKEND') !== 'drive' || media.url?.split('/').at(-1) !== media.sha256) throw Error('MEDIA_UNAVAILABLE');
         const url = await signDriveImage({ url: media.url, mime: media.mime, bytes: media.bytes }, env);
         // Never send a Supabase service credential to the image Worker.
         object = await call(url);
-      } else if (media.backend === 'supabase') {
+      } else if (media.backend === 'supabase' || media.backend === 'auto') {
         object = await call(base + '/storage/v1/object/authenticated/quiz-media/' + media.path.split('/').map(encodeURIComponent).join('/'), {
           headers: { apikey: service, ...(service.startsWith('sb_secret_') ? {} : { Authorization: 'Bearer ' + service }) } });
       } else return send(403, { error: 'MEDIA_DENIED' });

@@ -18,7 +18,7 @@ begin
  if not exists(select 1 from jsonb_array_elements(coalesce(snap#>'{exercise,mine}','[]')||coalesce(snap#>'{exercise,shared}','[]')) q cross join lateral jsonb_path_query(q->'rich','$.**.url') media where media=to_jsonb('https://partner-media.invalid/'||p_hash)) then raise exception 'MEDIA_DENIED';end if;
  select jsonb_build_object('path',a.object_path,'mime',a.mime,'bytes',a.bytes,
  'url',a.url,'sha256',substring(a.url from '/([a-f0-9]{64})$'),
- 'backend',case when a.object_path like 'drive-%' then 'drive' else 'supabase' end) into result from partner_pilot.media_map m join public.quiz_media_assets a on a.url=m.source_url where m.paper_id=pid and m.hash=p_hash;
+ 'backend',case when exists(select 1 from partner_pilot.papers p where p.id=pid and p.past_meta is not null) then 'supabase' else 'auto' end) into result from partner_pilot.media_map m join public.quiz_media_assets a on a.url=m.source_url where m.paper_id=pid and m.hash=p_hash;
  if result is null then raise exception 'MEDIA_UNAVAILABLE';end if;return result;
 end $function$;
 revoke all on function public.quiz_partner_pilot_media_descriptor(uuid,text) from public, anon, authenticated, service_role;

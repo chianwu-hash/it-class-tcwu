@@ -89,9 +89,9 @@ test('self owner/code/room isolation, idempotency, capacity, correction, content
  const media=async(n,hash)=>{await as(n);return(await db.query('select public.quiz_partner_pilot_media_descriptor($1,$2) data',[mediaRoom.id,hash])).rows[0].data;};
  const promptHash=hashes.find(h=>h.source_url===url).hash,explanationHash=hashes.find(h=>h.source_url===explain).hash;
  const descriptor=await media(1,promptHash);
- assert.equal(descriptor.mime,'image/png');assert.equal(descriptor.sha256,'a'.repeat(64));assert.notEqual(descriptor.sha256,promptHash);assert.equal(descriptor.url,url);assert.equal(descriptor.backend,'supabase');
+ assert.equal(descriptor.mime,'image/png');assert.equal(descriptor.sha256,'a'.repeat(64));assert.notEqual(descriptor.sha256,promptHash);assert.equal(descriptor.url,url);assert.equal(descriptor.backend,'auto');
  await db.query('update public.quiz_media_assets set object_path=$1 where url=$2',['drive-all-subjects-'+'a'.repeat(64),url]);
- assert.equal((await media(1,promptHash)).backend,'drive');
+ assert.equal((await media(1,promptHash)).backend,'auto');
  await assert.rejects(()=>media(1,explanationHash),/MEDIA_DENIED/);await assert.rejects(()=>media(3,promptHash),/SOURCE_CHANGED|NOT_MEMBER/);
  await call(1,{action:'answer',roomId:mediaRoom.id,qid:q.id,choice:0,expectedAttempt:0});assert.equal((await media(1,explanationHash)).mime,'audio/mpeg');
  // Personal deletion prevents NEW copies; previously shared rooms continue without changing private answers.
