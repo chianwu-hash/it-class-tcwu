@@ -1,7 +1,7 @@
 const labels={teacher_required:'請使用具有權限的教師帳號登入。',student_unavailable:'這位學生不在目前課程名冊中。',
   session_expired:'教師登入已失效，請重新登入後再讀取紀錄。',identity_changed:'登入帳號已變更，這次讀取結果已捨棄。',
   paper_unavailable:'這張試卷不屬於所選學生，或已無法讀取。',progress_unavailable:'這筆打字紀錄不屬於所選學生。',
-  unsupported_document:'這份試卷的題型版本尚未支援檢視；紀錄仍保留。',invalid_course:'目前只支援 115 學年度上學期三、六年級課程。',
+  unsupported_document:'這份試卷的題型版本尚未支援檢視；紀錄仍保留。',invalid_course:'目前支援 115 學年度上學期三、四、六、九年級課程。',
   local_session_required:'本機預覽連線已失效，請重新整理此頁。'};
 labels.live_reader_unavailable='Google 登入已確認，實際紀錄的唯讀查詢尚未就緒。請稍後重新讀取。';
 export function learningError(error){
