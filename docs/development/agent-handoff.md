@@ -4,6 +4,7 @@
 - 已完成AGY企劃與後端接線設計討論後才實作，詳 `partner-camp-media-plan-20261105.md`。使用者睡前再授權盡量完成，23:40請Claude複核、修好沒問題就發布；本對話一次性heartbeat `23-40` 已排定。Codex唯一寫入者；AGY supplied-text，無repo／憑證／學生資料存取。
 - 新錄音／畫圖純元件、正式營地接線、增量SQL與Edge handler已寫，本機41項Node/SQL與14＋10個Browser檢查通過；最新答題回歸17項亦通過。AGY實作輪 `camp-media-implementation-20261105` 已完成，未指出可重現的部署阻擋。之後補強舊草稿格式清理、saveEpoch隔離、單一錄音與預覽非同步防護；6項Edge/SQL及全新模組語法檢查再通過。尚未套正式DB／建立bucket／部署Edge或Vercel，保留期限未核定、無自動刪除排程。
 - 精確接續位置：`D:/projects/it-class-tcwu-worktrees/partner-camp-media-20261105`。23:40先執行 ignored `.chat-mode/prepare-claude-preflight.py` 產生包含當前Git基準的請求，再依chat-mode的Claude CLI supervisor只讀複核；不要提前呼叫Claude，不可直接從此功能分支發布。即使主工作區handoff未合併，仍以本worktree本輪紀錄接續。
+- 實作commit `242c205`，草稿PR [#39](https://github.com/chianwu-hash/it-class-tcwu/pull/39)，base暫為PR38分支；兩PR都尚未合併／部署。23:40 heartbeat已更新完整worktree、請求helper、PR與發布順序。先合併PR38，再將PR39改base為main並合併，避免把相依分支誤當正式來源。正式現行基準 `dpl_8PFEpMsmXtjVoW3iJvz82NBhMf4W`，如已有他人更新，先重新比對，不能強行promote。
 - 23:40接續順序：讀本輪企劃「上線前接續」、Claude只讀複核實際程式及證據→修正／驗證→PR38與本輪PR進main→乾淨main套增量SQL／部署Edge→snapshot與live check後PR進main→乾淨main發布腳本→正式驗證／handoffRow。任何未通過與真人兩帳號／真麥克風／平板未測須明講。
 
 # 2026-11-05 答題優先與收合營地（隔離實作，未發布）
