@@ -7,6 +7,130 @@
      "default": null,
      "generated": "",
      "identity": "",
+     "name": "version",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "source_paper",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "document_sha",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "plan",
+     "not_null": true,
+     "type": "jsonb"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (version)",
+     "name": "allocation_specs_pkey"
+    },
+    {
+     "def": "CHECK ((jsonb_typeof(plan) = 'object'::text))",
+     "name": "allocation_specs_plan_check"
+    },
+    {
+     "def": "FOREIGN KEY (version) REFERENCES quiz_past_versions(id)",
+     "name": "allocation_specs_version_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX allocation_specs_pkey ON partner_pilot.allocation_specs USING btree (version)"
+   ],
+   "kind": "r",
+   "name": "allocation_specs",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "room_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "qid",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "unit_id",
+     "not_null": true,
+     "type": "text"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (room_id, qid)",
+     "name": "allocations_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (qid) REFERENCES partner_pilot.question_bank(id)",
+     "name": "allocations_qid_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (room_id) REFERENCES partner_pilot.rooms(id) ON DELETE CASCADE",
+     "name": "allocations_room_id_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES partner_pilot.allowed_users(user_id)",
+     "name": "allocations_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX allocations_pkey ON partner_pilot.allocations USING btree (room_id, qid)"
+   ],
+   "kind": "r",
+   "name": "allocations",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
      "name": "user_id",
      "not_null": true,
      "type": "uuid"
@@ -6843,9 +6967,21 @@
      "name": "finished",
      "not_null": true,
      "type": "boolean"
+    },
+    {
+     "default": "0",
+     "generated": "",
+     "identity": "",
+     "name": "allocation_version",
+     "not_null": true,
+     "type": "integer"
     }
    ],
    "constraints": [
+    {
+     "def": "CHECK ((allocation_version = ANY (ARRAY[0, 1])))",
+     "name": "rooms_allocation_version_check"
+    },
     {
      "def": "CHECK (((capacity >= 2) AND (capacity <= 4)))",
      "name": "rooms_capacity_check"
@@ -8262,6 +8398,27 @@
    "table": "guest_progress"
   },
   {
+   "def": "CREATE TRIGGER partner_allocation_item_guard BEFORE INSERT OR DELETE OR UPDATE ON partner_pilot.paper_items FOR EACH ROW EXECUTE FUNCTION partner_pilot.guard_allocation_source()",
+   "enabled": "O",
+   "name": "partner_allocation_item_guard",
+   "schema": "partner_pilot",
+   "table": "paper_items"
+  },
+  {
+   "def": "CREATE TRIGGER partner_allocation_paper_guard BEFORE DELETE OR UPDATE ON partner_pilot.papers FOR EACH ROW EXECUTE FUNCTION partner_pilot.guard_allocation_source()",
+   "enabled": "O",
+   "name": "partner_allocation_paper_guard",
+   "schema": "partner_pilot",
+   "table": "papers"
+  },
+  {
+   "def": "CREATE TRIGGER partner_allocation_question_guard BEFORE DELETE OR UPDATE ON partner_pilot.question_bank FOR EACH ROW EXECUTE FUNCTION partner_pilot.guard_allocation_source()",
+   "enabled": "O",
+   "name": "partner_allocation_question_guard",
+   "schema": "partner_pilot",
+   "table": "question_bank"
+  },
+  {
    "def": "CREATE TRIGGER quiz_catalog_invalidate AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.quiz_courses FOR EACH STATEMENT EXECUTE FUNCTION quiz_catalog_invalidate()",
    "enabled": "O",
    "name": "quiz_catalog_invalidate",
@@ -8309,6 +8466,13 @@
    "name": "quiz_version_meta",
    "schema": "public",
    "table": "quiz_versions"
+  },
+  {
+   "def": "CREATE TRIGGER partner_freeze_allocation BEFORE INSERT OR UPDATE ON partner_pilot.rooms FOR EACH ROW EXECUTE FUNCTION partner_pilot.freeze_allocation()",
+   "enabled": "O",
+   "name": "partner_freeze_allocation",
+   "schema": "partner_pilot",
+   "table": "rooms"
   },
   {
    "def": "CREATE TRIGGER trg_student_profiles_set_defaults BEFORE INSERT OR UPDATE ON public.student_profiles FOR EACH ROW EXECUTE FUNCTION student_profiles_set_defaults()",

@@ -1260,6 +1260,53 @@ grant execute on function public.admin_upsert_student_profile(uuid,text,smallint
 grant execute on function public.admin_upsert_student_profile(uuid,text,smallint,text,text) to authenticated;
 grant execute on function public.admin_upsert_student_profile(uuid,text,smallint,text,text) to service_role;
 
+-- partner_pilot.allocation_items(text)  md5=4a5ef93d1e57b5df29ce0b2333c936c7
+CREATE OR REPLACE FUNCTION partner_pilot.allocation_items(pid text)
+ RETURNS TABLE(qid integer, unit_id text, weight integer)
+ LANGUAGE plpgsql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare p partner_pilot.papers; spec partner_pilot.allocation_specs; doc jsonb; total integer; result jsonb;
+begin
+ select * into strict p from partner_pilot.papers where id=pid;
+ select * into spec from partner_pilot.allocation_specs where version=p.source_version;
+ select v.document into doc from public.quiz_past_versions v
+ where v.id=spec.version and v.paper_id=spec.source_paper and v.sha256=spec.document_sha;
+ if doc is null or p.past_meta->>'sourcePaper' is distinct from spec.source_paper
+ or spec.plan->>'version' is distinct from spec.version::text
+ or spec.plan->>'paper' is distinct from spec.source_paper
+ or spec.plan->>'sha256' is distinct from spec.document_sha then raise exception 'ALLOCATION_UNAVAILABLE';end if;
+ select count(*) into total from jsonb_array_elements(doc->'groups') g cross join lateral jsonb_array_elements(g->'fields') f;
+ if total<>p.total or total<>(select count(*) from partner_pilot.paper_items where paper_id=pid) then raise exception 'ALLOCATION_UNAVAILABLE';end if;
+ if total<>(select count(distinct f->>'id') from jsonb_array_elements(doc->'groups') g cross join lateral jsonb_array_elements(g->'fields') f)
+ or jsonb_array_length(doc->'groups')<>(select count(distinct g->>'id') from jsonb_array_elements(doc->'groups') g)
+ then raise exception 'ALLOCATION_UNAVAILABLE';end if;
+ if jsonb_array_length(spec.plan->'packs')<>(select count(distinct u->>'id') from jsonb_array_elements(spec.plan->'packs') u)
+ or total<>(select count(*) from jsonb_array_elements(spec.plan->'packs') u cross join lateral jsonb_array_elements(u->'fields') f)
+ or total<>(select count(distinct f->>'id') from jsonb_array_elements(spec.plan->'packs') u cross join lateral jsonb_array_elements(u->'fields') f)
+ then raise exception 'ALLOCATION_UNAVAILABLE';end if;
+ with source as (
+  select g->>'id' gid,f->>'id' fid,coalesce(f->>'label',f->>'id') label,f->>'points' points,
+   row_number() over(order by gn,fn)::int number
+  from jsonb_array_elements(doc->'groups') with ordinality a(g,gn)
+  cross join lateral jsonb_array_elements(g->'fields') with ordinality b(f,fn)
+ ), mapping as (
+  select u->>'id' unit,(u->>'weight')::int w,f->>'id' fid,f->>'group' gid
+  from jsonb_array_elements(spec.plan->'packs') u cross join lateral jsonb_array_elements(u->'fields') f
+ )
+ select jsonb_agg(jsonb_build_object('qid',i.qid,'unit',m.unit,'weight',m.w)) into result from source s join mapping m on m.fid=s.fid and m.gid=s.gid
+ join partner_pilot.paper_items i on i.paper_id=pid and i.number=s.number
+ join partner_pilot.question_bank b on b.id=i.qid
+ where b.past_meta->>'group'=s.gid and b.past_meta->>'points'=s.points
+ and right(b.past_meta->>'label',length(s.label)+1)=chr(12539)||s.label and m.w>0;
+ if coalesce(jsonb_array_length(result),0)<>total
+ or total<>(select count(distinct v->>'qid') from jsonb_array_elements(result) v) then raise exception 'ALLOCATION_UNAVAILABLE';end if;
+ return query select (v->>'qid')::integer,v->>'unit',(v->>'weight')::integer from jsonb_array_elements(result) v;
+end $function$;
+revoke all on function partner_pilot.allocation_items(text) from public, anon, authenticated, service_role;
+grant execute on function partner_pilot.allocation_items(text) to postgres;
+
 -- partner_pilot.assert_source(text)  md5=474652ad9f829fe87fc70e0162e7710a
 CREATE OR REPLACE FUNCTION partner_pilot.assert_source(pid text)
  RETURNS void
@@ -1437,6 +1484,45 @@ $function$;
 revoke all on function public.foundation_milestone_rewards(text,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.foundation_milestone_rewards(text,jsonb) to postgres;
 grant execute on function public.foundation_milestone_rewards(text,jsonb) to service_role;
+
+-- partner_pilot.freeze_allocation()  md5=f56e173b7a87239885735f92ca6e8cff
+CREATE OR REPLACE FUNCTION partner_pilot.freeze_allocation()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare roster uuid[]; loads integer[]; pack record; pos integer; n integer;
+begin
+ if TG_OP='INSERT' then
+  if new.started then raise exception 'ALLOCATION_INVALID_STATE';end if;
+  new.allocation_version:=case when (select past_meta is not null from partner_pilot.papers where id=new.paper) then 1 else 0 end;
+  if new.allocation_version=1 then perform * from partner_pilot.allocation_items(new.paper);end if;
+  return new;
+ end if;
+ if new.allocation_version is distinct from old.allocation_version or
+  (old.started and (not new.started or new.paper<>old.paper or new.capacity<>old.capacity)) then raise exception 'ALLOCATION_FROZEN';end if;
+ if not old.started and new.started and new.allocation_version=1 then
+  select array_agg(user_id order by joined_at,user_id) into roster from partner_pilot.members where room_id=new.id;
+  if cardinality(roster) is distinct from new.capacity or exists(select 1 from partner_pilot.members where room_id=new.id and not ready) then raise exception 'NOT_READY';end if;
+  if exists(select 1 from partner_pilot.allocations where room_id=new.id) then raise exception 'ALLOCATION_FROZEN';end if;
+  select count(distinct unit_id) into n from partner_pilot.allocation_items(new.paper);
+  if n<new.capacity then raise exception 'ALLOCATION_TOO_FEW_UNITS';end if;
+  loads:=array_fill(0,array[new.capacity]);
+  -- Deterministic largest-pack-first scheduling. Bounded O(items * members), no search explosion.
+  for pack in select unit_id,max(weight) weight,array_agg(qid order by qid) qids
+    from partner_pilot.allocation_items(new.paper) group by unit_id order by max(weight) desc,unit_id collate "C" loop
+   select i into pos from generate_subscripts(loads,1) i order by loads[i],i limit 1;
+   insert into partner_pilot.allocations(room_id,qid,user_id,unit_id)
+    select new.id,q,roster[pos],pack.unit_id from unnest(pack.qids) q;
+   loads[pos]:=loads[pos]+pack.weight;
+  end loop;
+  if exists(select 1 from unnest(loads) v where v=0) then raise exception 'ALLOCATION_TOO_FEW_UNITS';end if;
+ end if;
+ return new;
+end $function$;
+revoke all on function partner_pilot.freeze_allocation() from public, anon, authenticated, service_role;
+grant execute on function partner_pilot.freeze_allocation() to postgres;
 
 -- freeze_grade3_guest_progress()  md5=3b288a1b4339c370c540200cc6ddb251
 CREATE OR REPLACE FUNCTION public.freeze_grade3_guest_progress()
@@ -2043,6 +2129,33 @@ grant execute on function public.grade3_google_ready() to postgres;
 grant execute on function public.grade3_google_ready() to authenticated;
 grant execute on function public.grade3_google_ready() to service_role;
 
+-- partner_pilot.guard_allocation_source()  md5=856e7171a70e546c0ec7c67890bc35e5
+CREATE OR REPLACE FUNCTION partner_pilot.guard_allocation_source()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare pid text; frozen boolean;
+begin
+ if TG_TABLE_NAME='papers' then
+  if TG_OP='UPDATE' and (new.source_version,new.source_sha,new.total,new.past_meta,new.content_key)
+   is not distinct from (old.source_version,old.source_sha,old.total,old.past_meta,old.content_key) then return new;end if;
+  pid:=old.id;
+ elsif TG_TABLE_NAME='paper_items' then
+  if TG_OP<>'INSERT' and exists(select 1 from partner_pilot.rooms where paper=old.paper_id and allocation_version=1) then raise exception 'ALLOCATION_SOURCE_FROZEN';end if;
+  if TG_OP<>'DELETE' then pid:=new.paper_id;end if;
+ else
+  select exists(select 1 from partner_pilot.paper_items i join partner_pilot.rooms r on r.paper=i.paper_id
+   where i.qid=old.id and r.allocation_version=1) into frozen;
+  if frozen then raise exception 'ALLOCATION_SOURCE_FROZEN';end if;
+ end if;
+ if pid is not null and exists(select 1 from partner_pilot.rooms where paper=pid and allocation_version=1) then raise exception 'ALLOCATION_SOURCE_FROZEN';end if;
+ if TG_OP='DELETE' then return old;else return new;end if;
+end $function$;
+revoke all on function partner_pilot.guard_allocation_source() from public, anon, authenticated, service_role;
+grant execute on function partner_pilot.guard_allocation_source() to postgres;
+
 -- homework_action(text,jsonb)  md5=abfe6f270daa5356642b35c09788c573
 CREATE OR REPLACE FUNCTION public.homework_action(p_action text, p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
@@ -2452,15 +2565,27 @@ $function$;
 revoke all on function partner_pilot.max_capacity(text) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.max_capacity(text) to postgres;
 
--- partner_pilot.owner_of(uuid,integer)  md5=7be004522124d5796fc1b4dfb57d5e54
+-- partner_pilot.owner_of(uuid,integer)  md5=c82e32f88cea2dbbdb5e838bf6684551
 CREATE OR REPLACE FUNCTION partner_pilot.owner_of(rid uuid, n integer)
  RETURNS uuid
- LANGUAGE sql
+ LANGUAGE plpgsql
  STABLE SECURITY DEFINER
- SET search_path TO 'pg_catalog', 'partner_pilot'
+ SET search_path TO ''
 AS $function$
-select user_id from (select user_id,row_number() over(order by joined_at,user_id)-1 pos from partner_pilot.members where room_id=rid) m where pos=(select (i.number-1)%r.capacity from partner_pilot.rooms r join partner_pilot.paper_items i on i.paper_id=r.paper where r.id=rid and i.qid=n)
-$function$;
+declare r partner_pilot.rooms; owner uuid;
+begin
+ select * into strict r from partner_pilot.rooms where id=rid;
+ if r.allocation_version=1 then
+  if not r.started then return null;end if;
+  select user_id into owner from partner_pilot.allocations where room_id=rid and qid=n;
+  if owner is null then raise exception 'ALLOCATION_UNAVAILABLE';end if;
+  return owner;
+ end if;
+ select m.user_id into owner from
+ (select user_id,row_number() over(order by joined_at,user_id)-1 pos from partner_pilot.members where room_id=rid) m
+ where pos=(select (i.number-1)%r.capacity from partner_pilot.paper_items i where i.paper_id=r.paper and i.qid=n);
+ return owner;
+end $function$;
 revoke all on function partner_pilot.owner_of(uuid,integer) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.owner_of(uuid,integer) to postgres;
 
@@ -5231,7 +5356,7 @@ $function$;
 revoke all on function partner_pilot.self_document_ok(jsonb) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.self_document_ok(jsonb) to postgres;
 
--- partner_pilot.snapshot(uuid)  md5=0d3f373b6eb87a4a9e63dcd775024c07
+-- partner_pilot.snapshot(uuid)  md5=ab32e534bb561362cef923c58a1bd77e
 CREATE OR REPLACE FUNCTION partner_pilot.snapshot(rid uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -5242,21 +5367,21 @@ declare r partner_pilot.rooms; answer jsonb;
 begin
  if not exists(select 1 from partner_pilot.members where room_id=rid and user_id=auth.uid()) then raise exception 'NOT_MEMBER'; end if;
  select * into strict r from partner_pilot.rooms where id=rid;
- select jsonb_build_object('id',r.id,'code',r.code,'team',r.team,'theme',r.theme,'paper',r.paper,'capacity',r.capacity,'host',r.host,'revision',r.revision,'started',r.started,'topic','partner-pilot:'||r.id||':'||r.epoch,'members',coalesce(jsonb_agg(jsonb_build_object('id',m.user_id,'name',u.display_name,'ready',m.ready,'character',(case r.theme when 'space' then array['星星','月亮','彗星','太陽'] when 'dora' then array['大雄','哆啦A夢','靜香','小夫'] else array['小鹿','松鼠','狐狸','貓頭鷹'] end)[((m.position::int+r.character_offset-1)%4)+1])),'[]'::jsonb),'questions',case when r.started then (select coalesce(jsonb_agg(n),'[]'::jsonb) from generate_series(1,partner_pilot.paper_total(r.paper)) n where (n-1)%r.capacity=(select count(*) from partner_pilot.members a where a.room_id=rid and (a.joined_at,a.user_id)<(select b.joined_at,b.user_id from partner_pilot.members b where b.room_id=rid and b.user_id=auth.uid()))) else '[]'::jsonb end) into answer
+ select jsonb_build_object('id',r.id,'code',r.code,'team',r.team,'theme',r.theme,'paper',r.paper,'capacity',r.capacity,'host',r.host,'revision',r.revision,'started',r.started,'allocationVersion',r.allocation_version,'topic','partner-pilot:'||r.id||':'||r.epoch,'members',coalesce(jsonb_agg(jsonb_build_object('id',m.user_id,'name',u.display_name,'ready',m.ready,'character',(case r.theme when 'space' then array['星星','月亮','彗星','太陽'] when 'dora' then array['大雄','哆啦A夢','靜香','小夫'] else array['小鹿','松鼠','狐狸','貓頭鷹'] end)[((m.position::int+r.character_offset-1)%4)+1])),'[]'::jsonb),'questions',case when r.started then (select coalesce(jsonb_agg(i.number order by i.number),'[]'::jsonb) from partner_pilot.paper_items i where i.paper_id=r.paper and partner_pilot.owner_of(rid,i.qid)=auth.uid()) else '[]'::jsonb end) into answer
  from (select *,row_number() over(order by joined_at,user_id) position from partner_pilot.members where room_id=rid) m join partner_pilot.allowed_users u using(user_id);
  return answer;
 end $function$;
 revoke all on function partner_pilot.snapshot(uuid) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.snapshot(uuid) to postgres;
 
--- partner_pilot.source_allowed(text,boolean)  md5=9a72f26a91fea7ba2ead4e77e2e58ebe
+-- partner_pilot.source_allowed(text,boolean)  md5=116cbac1374d17a4e51086844ecff7c5
 CREATE OR REPLACE FUNCTION partner_pilot.source_allowed(pid text, continuing boolean DEFAULT false)
  RETURNS boolean
  LANGUAGE sql
  STABLE SECURITY DEFINER
  SET search_path TO ''
 AS $function$
- select exists(select 1 from partner_pilot.papers p join auth.users u on u.id=auth.uid() join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 where p.id=pid and p.enabled and p.is_real and left(e.class_code,1)=p.grade::text and case when p.origin='self' then p.total in (10,20) and exists(select 1 from partner_pilot.rooms r join partner_pilot.members m on m.room_id=r.id where r.paper=p.id and m.user_id=auth.uid()) when p.past_meta is not null then exists(select 1 from public.quiz_past_papers s where s.id=p.past_meta->>'sourcePaper' and s.enabled and s.grade=p.grade and (continuing or s.active_version=p.source_version)) else p.total in (10,20) and exists(select 1 from partner_pilot.paper_sources ps join public.quiz_sessions s on s.id=ps.session_id where ps.paper_id=p.id and s.status='open' and s.library_visible and s.access_mode='practice' and s.school_year=115 and s.class_codes ? e.class_code and (continuing or s.version_id=p.source_version)) end)
+ select exists(select 1 from partner_pilot.papers p join auth.users u on u.id=auth.uid() join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 where p.id=pid and p.enabled and p.is_real and left(e.class_code,1)=p.grade::text and case when p.origin='self' then p.total in (10,20) and exists(select 1 from partner_pilot.rooms r join partner_pilot.members m on m.room_id=r.id where r.paper=p.id and m.user_id=auth.uid()) when p.past_meta is not null then exists(select 1 from public.quiz_past_papers s where s.id=p.past_meta->>'sourcePaper' and s.enabled and s.grade=p.grade and (continuing or exists(select 1 from partner_pilot.allocation_specs a where a.version=p.source_version)) and (continuing or s.active_version=p.source_version)) else p.total in (10,20) and exists(select 1 from partner_pilot.paper_sources ps join public.quiz_sessions s on s.id=ps.session_id where ps.paper_id=p.id and s.status='open' and s.library_visible and s.access_mode='practice' and s.school_year=115 and s.class_codes ? e.class_code and (continuing or s.version_id=p.source_version)) end)
 $function$;
 revoke all on function partner_pilot.source_allowed(text,boolean) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.source_allowed(text,boolean) to postgres;
