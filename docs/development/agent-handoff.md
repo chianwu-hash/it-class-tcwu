@@ -1,3 +1,15 @@
+# 2026-11-05 考古題完整題組配題接線（實作中，尚未發布）
+
+- 使用者已授權接正式網站並驗證；新分支 `codex/past-paper-allocation-live-20261105`，新worktree同名，基底最新main f341c1d。Codex唯一寫入者；Claude使用chat-mode supervisor只讀程式／metadata，不讀憑證、學生資料、私有題文或操作資料庫／部署。
+- 目標：新考古小隊使用固定版本語意單位，按可作答目標數做確定性largest-pack-first；同field與共用配對詞庫保守合併ownership。原題、blocked、optional、判分、60%與花葉不變。舊集合室含未出發一律allocation_version=0維持原公式，新考古房為1，出發時凍結到私有allocations表，新版缺映射不回退。
+- 新增 `automation/build-partner-allocation.py`、50卷server-only plan JSON／SQL、`supabase/quiz-partner-allocation.sql`及兩份測試。40份既有partner副本2035欄的版本、group、欄位順序／標籤末段及points已核對；source_sha是轉換副本hash，不能當native document hash。接線查native版本／SHA及欄位映射，不改副本hash。
+- 初步隔離測試通過2／3／4人、整包同人、舊房不動、權限、重送、訂正開花；50卷compiler依賴／完整coverage測試通過。還要真PG回滾、正式schema前後守衛、正式安裝後snapshot/live、前端提示及正式讀回。尚未套用正式DB／發布。
+- Claude精確下一步：複核compiler、migration、兩份測試，找出會導致權限錯配／服務錯誤／舊房或花葉回歸的具體問題。新資料SQL只需抽樣，不掃整份原題；不把審查當作執行測試。審查期間凍結tracked/untracked專案檔案；只產生ignored `.chat-mode`證據。
+- 第一輪Claude完成（CLI2.1.289／allocation-live-review-20261105／375.624秒／12次Read，Git前後相同）：指出單一交易安裝／commit前全卷guard、重複映射、catalog新版本、題目副本凍結及測試基底缺口。Codex已採納：template生成單一SQL，50筆＋每個enabled past副本實跑mapping才commit；檢查plan identity／唯一field／唯一qid；source_allowed新房須有spec，舊房continuing保留；副本與question_bank使用v1房後禁止原地改動。
+- 另修snapshot.questions原逐欄取模，現在和learning_snapshot／送答同用owner_of；回傳allocationVersion供小提示。新版錯誤碼有中文指引，4年級入口加cache版本。沒有更換答題介面／營地佈局。
+- 修後23項Node既有／新測試、50卷plan測試通過。真正式PG以單一SQL安裝後ROLLBACK：40卷×2／3／4人120配置6105欄映射與ownership通過；另使用16個交易內合成帳號、真authenticated角色12個年級／人數案例驗create→join→ready→start→snapshot、跨人answer拒絕、ask／mark（回滾不留資料）。沒有真人學生帳號兩機互測；正式瀏覽器目前為teacher，正確拒絕學生功能。尚未正式安裝／部署。
+- 最終Claude（allocation-final-review-20261105／202.044秒／9次Read／Git前後一致）未發現P1/P2阻擋。P3來源重複邊界再補native field／group唯一guard，重跑真PG120配置／12角色案例及新測試通過。19張既有資料表摘要前後完全一致，synthetic Auth數0。詳[接線驗證紀錄](partner-allocation-release-20261105.md)。下一步PR進main→單一SQL正式安裝→snapshot/live-check→snapshot PR→乾淨main發布；未完成人類兩機互測。
+
 # 發布紀錄（置頂，2026-11-04 起；任何 agent 部署或 promote 前必讀）
 
 規則：**只從 `main` 發布，而且只能用 `node automation/release-from-main.mjs`**（start → deploy → promote）。腳本會取得發布鎖（同一時間只有一人能發布）、確認目錄乾淨且是最新 `origin/main`、比對完整檔案樹，並在 promote 前確認正式版沒變。完整步驟見 [dev-sop.md「發布規則：只從 main 發布」](dev-sop.md)。

@@ -1,0 +1,36 @@
+# 考古題整包配題接線與驗證（2026-11-05）
+
+將50份已核固定結構接到夥伴練功後端；保持40份啟用、10份停用，不修改題目、答案、原配分、60%門檻、紀念花／葉或個人練習。
+
+## 行為
+
+- 新考古集合室建立時採配題版本1，固定原卷版本與欄位；出發時按可作答來源目標數做確定性largest-pack-first，完整題組同人、共享field及配對詞庫保守同人，凍結到私有allocations表。
+- 既有集合室包含未出發者仍為版本0，保留原逐欄輪配。普通10／20題及自組卷不變。
+- source_allowed對新考古房要求有spec；缺版本／映射、欄位遺漏／重複、group／label／points不符都拒絕，不回退舊公式。
+- 已被版本1小隊引用的副本／題目不可原地更改。停用仍可操作；換卷須發新版本及新副本，不覆蓋既有作答。
+- 集合室題號、mine投影與送答／ask／mark權限均用同一owner_of。前端增加簡短說明及缺資料的中文指引，沒有更換答題或營地版面。
+- 原來源盤點的allocationEnabled:false保留為歷史盤點狀態；實際server contract獨立生成於supabase/partner-allocation-plan.json，不直接將盤點檔當runtime adapter。
+
+## 實作及交付
+
+`automation/build-partner-allocation.py`從固定structure／decisions及`automation/templates/quiz-partner-allocation.sql`生成server-only計畫與單一交易SQL。正式只安裝`supabase/quiz-partner-allocation.sql`，程式、50筆metadata與commit前完整映射守衛同一交易；不手動分段安裝。SOP已補後續製卷／換版交付與驗收規則。
+
+## 驗證
+
+- 原結構17項合成正負測試通過；50卷compiler測試驗唯一完整field覆蓋、來源／版本、語意整包、storage coupling與共享詞庫同人。
+- Node 23項回歸通過，涵蓋普通／自組、媒體／揭答、訊息／邀請、獎勵去重／訂正及新配題。新案例另驗2／3／4人、舊started／pending、snapshot題號一致、跨人answer／ask／mark拒絕、相同request重送、缺mapping／重複field／錯誤identity及副本凍結。
+- 真正正式PostgreSQL交易內安裝單一候選SQL後ROLLBACK：40卷×2／3／4人＝120配置、6105欄mapping，整包同人、全部唯一覆蓋、每人非空、owner_of一致。
+- 另用交易內16個合成Auth／名冊帳號，真正authenticated角色跨3／4／6／9年級共12案例，create→join→ready→start→snapshot、跨人answer拒絕、ask／mark通過；全部回滾，不留學生作答或獎勵。
+- 最大差異是三年級113國語20子題文章：4人目標數10／11／11／20；不能為平均而拆文章。其餘119配置的差距見私有收據，不承諾全域最優。
+- Claude兩輪supervised CLI唯讀複核（2.1.289／OAuth；375.624秒12次Read、202.044秒9次Read；各輪Git前後不變）。第一輪指出的安裝guard、唯一映射、版本／副本與測試基底缺口已修，最終未發現P1／P2阻擋。P3來源重複情境亦補唯一guard，並重跑真PG及新測試。Codex自行實跑測試，不冒稱Claude操作正式站。
+- PostgreSQL 17.6真庫回滾測試前後19張既有資料表摘要完全相同，合成Auth帳號0筆。
+
+## 限制
+
+目前正式工作瀏覽器是教師帳號，實際確認系統拒絕進學生功能；未完成真人學生雙帳號、兩台實機與斷線重連互測。上述PG authenticated驗證和合成瀏覽器驗證不能替代這項。沒有重核原卷全部答案／媒體，沒有更換為原單人答題介面或收合營地（那是另一項已記錄方向）。名間口試仍未知，blocked及optional不變。
+
+## 發布／回復
+
+待最終複核後，先PR進main，再由main精確SQL安裝；取得正式snapshot並跑live-check後另PR記錄。前端從最新乾淨main checkout走release-from-main start→deploy→promote及完整檔案樹比對。
+
+如需回退前端可回到發布腳本記錄的基準deployment；後端不要刪除allocations或改回新房的owner公式，以免學生換手。新版本新房暫停，既有凍結作答與紀念保留，再經修正遷移處理。
