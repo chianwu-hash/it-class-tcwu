@@ -1,8 +1,8 @@
 {
  "project": "upxgyusodibaqcrocdzj",
- "exportedAt": "2026-11-05T15:55:26.205Z",
+ "exportedAt": "2026-11-05T23:03:02.625Z",
  "counts": {
-  "functions": 152,
+  "functions": 153,
   "tables": 100,
   "policies": 21,
   "triggers": 13
@@ -159,7 +159,7 @@
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
   "partner_pilot.freeze_allocation()": {
-   "md5": "f56e173b7a87239885735f92ca6e8cff",
+   "md5": "709976471cb502ce109f344030fefcad",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres}"
   },
@@ -299,7 +299,7 @@
    "acl": "{postgres=X/postgres}"
   },
   "partner_pilot.lobby_action(jsonb)": {
-   "md5": "81ccdaf585addd657cd582c8b03575cd",
+   "md5": "ce0f12140226d6ea960c4d9ae41d2b58",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres}"
   },
@@ -509,7 +509,7 @@
    "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
   },
   "quiz_partner_pilot_action(jsonb)": {
-   "md5": "b9bd449a3b6833f0fe085cbe5e0a7fac",
+   "md5": "8dcef95dd78cf59d57d088b44950ec46",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
   },
@@ -753,6 +753,11 @@
    "securityDefiner": true,
    "acl": "{postgres=X/postgres}"
   },
+  "partner_pilot.team_rooms()": {
+   "md5": "67de92209ccc003c55bfab4d68980f5c",
+   "securityDefiner": true,
+   "acl": "{postgres=X/postgres}"
+  },
   "typing_foundation_action(text,text,jsonb)": {
    "md5": "6b30bf5be692c56baae9e057fa4ecd63",
    "securityDefiner": true,
@@ -769,5 +774,5 @@
    "acl": "{postgres=X/postgres,service_role=X/postgres,anon=X/postgres,authenticated=X/postgres}"
   }
  },
- "fileSha256": "698052bd893c57aef1393e95f62240a1e8078a4733265022d8a6ae1da062cc23"
+ "fileSha256": "569b1e1ccd878db1ccc89bc5a599d3548a669d009db9c85ab4eba2fb1a298030"
 }

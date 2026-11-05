@@ -1485,7 +1485,7 @@ revoke all on function public.foundation_milestone_rewards(text,jsonb) from publ
 grant execute on function public.foundation_milestone_rewards(text,jsonb) to postgres;
 grant execute on function public.foundation_milestone_rewards(text,jsonb) to service_role;
 
--- partner_pilot.freeze_allocation()  md5=f56e173b7a87239885735f92ca6e8cff
+-- partner_pilot.freeze_allocation()  md5=709976471cb502ce109f344030fefcad
 CREATE OR REPLACE FUNCTION partner_pilot.freeze_allocation()
  RETURNS trigger
  LANGUAGE plpgsql
@@ -1504,7 +1504,7 @@ begin
   (old.started and (not new.started or new.paper<>old.paper or new.capacity<>old.capacity)) then raise exception 'ALLOCATION_FROZEN';end if;
  if not old.started and new.started and new.allocation_version=1 then
   select array_agg(user_id order by joined_at,user_id) into roster from partner_pilot.members where room_id=new.id;
-  if cardinality(roster) is distinct from new.capacity or exists(select 1 from partner_pilot.members where room_id=new.id and not ready) then raise exception 'NOT_READY';end if;
+  if cardinality(roster) is distinct from new.capacity then raise exception 'NOT_READY';end if;
   if exists(select 1 from partner_pilot.allocations where room_id=new.id) then raise exception 'ALLOCATION_FROZEN';end if;
   select count(distinct unit_id) into n from partner_pilot.allocation_items(new.paper);
   if n<new.capacity then raise exception 'ALLOCATION_TOO_FEW_UNITS';end if;
@@ -2483,7 +2483,7 @@ end $function$;
 revoke all on function partner_pilot.learning_snapshot_pre_message_media(uuid) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.learning_snapshot_pre_message_media(uuid) to postgres;
 
--- partner_pilot.lobby_action(jsonb)  md5=81ccdaf585addd657cd582c8b03575cd
+-- partner_pilot.lobby_action(jsonb)  md5=ce0f12140226d6ea960c4d9ae41d2b58
 CREATE OR REPLACE FUNCTION partner_pilot.lobby_action(p jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -2493,7 +2493,7 @@ AS $function$
 declare uid uuid:=auth.uid(); act text:=p->>'action'; rid uuid; r partner_pilot.rooms; old_topic text; result jsonb; previous partner_pilot.requests; req text:=p->>'requestId'; cnt int; cap int; cname text; changed boolean:=true;
 begin
  perform partner_pilot.register_self();
- if act='me' then return jsonb_build_object('id',uid,'name',(select display_name from partner_pilot.allowed_users where user_id=uid),'rooms',coalesce((select jsonb_agg(jsonb_build_object('id',a.id,'team',a.team,'started',a.started) order by a.created_at desc) from partner_pilot.rooms a join partner_pilot.members b on b.room_id=a.id where b.user_id=uid and partner_pilot.source_available(a.paper)),'[]'::jsonb)); end if;
+ if act='me' then return jsonb_build_object('id',auth.uid(),'name',(select display_name from partner_pilot.allowed_users where user_id=auth.uid()),'rooms',partner_pilot.team_rooms());end if;
  if act='lookup' then
   if coalesce(p->>'code','') !~ '^[0-9]{6}$' then raise exception 'INVALID_CODE'; end if;
   select * into r from partner_pilot.rooms where code=p->>'code' and expires_at>now() and (partner_pilot.source_available(paper) or partner_pilot.custom_invite_ok(id,p->>'code'));
@@ -2531,7 +2531,7 @@ begin
     if r.started or r.expires_at<=now() or r.code<>coalesce(p->>'code','') then raise exception 'JOIN_CLOSED'; end if;
     if (select count(*) from partner_pilot.members where room_id=rid)>=least(r.capacity,partner_pilot.max_capacity(r.paper)) then raise exception 'ROOM_FULL'; end if;
     insert into partner_pilot.members(room_id,user_id) values(rid,uid);
-    update partner_pilot.members set ready=false where room_id=rid;
+    -- Membership changes do not reset a preparation gate.
     update partner_pilot.rooms set epoch=gen_random_uuid() where id=rid;
    end if;
   else
@@ -2542,9 +2542,10 @@ begin
     if jsonb_typeof(p->'ready')<>'boolean' or not(p ? 'ready') then raise exception 'INVALID_READY'; end if;
     update partner_pilot.members set ready=(p->>'ready')::boolean where room_id=rid and user_id=uid;
    elsif act='start' then
+    if r.host<>uid then raise exception 'HOST_ONLY';end if;
     if r.capacity>partner_pilot.max_capacity(r.paper) then raise exception 'PAIR_ONLY';end if;
     select count(*) into cnt from partner_pilot.members where room_id=rid;
-    if cnt<>r.capacity or exists(select 1 from partner_pilot.members where room_id=rid and not ready) then raise exception 'NOT_READY'; end if;
+    if cnt<>r.capacity then raise exception 'NOT_READY'; end if;
     update partner_pilot.rooms set started=true where id=rid;
    elsif act='resize' then
     cap:=(p->>'capacity')::int;
@@ -2552,10 +2553,10 @@ begin
     if cap is null or cap not between 2 and 4 or cap<(select count(*) from partner_pilot.members where room_id=rid) then raise exception 'INVALID_CAPACITY'; end if;
     if cap>partner_pilot.max_capacity(r.paper) then raise exception 'PAIR_ONLY';end if;
     update partner_pilot.rooms set capacity=cap where id=rid;
-    update partner_pilot.members set ready=false where room_id=rid;
+    -- Membership changes do not reset a preparation gate.
    elsif act='leave' then
     delete from partner_pilot.members where room_id=rid and user_id=uid;
-    update partner_pilot.members set ready=false where room_id=rid;
+    -- Membership changes do not reset a preparation gate.
     update partner_pilot.rooms set epoch=gen_random_uuid(),host=coalesce((select user_id from partner_pilot.members where room_id=rid order by joined_at,user_id limit 1),uid),expires_at=case when not exists(select 1 from partner_pilot.members where room_id=rid) then now() else expires_at end where id=rid;
    end if;
   end if;
@@ -3972,7 +3973,7 @@ grant execute on function public.quiz_partner_pilot_access() to postgres;
 grant execute on function public.quiz_partner_pilot_access() to authenticated;
 grant execute on function public.quiz_partner_pilot_access() to service_role;
 
--- quiz_partner_pilot_action(jsonb)  md5=b9bd449a3b6833f0fe085cbe5e0a7fac
+-- quiz_partner_pilot_action(jsonb)  md5=8dcef95dd78cf59d57d088b44950ec46
 CREATE OR REPLACE FUNCTION public.quiz_partner_pilot_action(p jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -4010,7 +4011,7 @@ begin
 
  -- Remember newly published class sessions before a room starts; their normal version updates do not orphan it.
 
- if act='me' then return jsonb_build_object('id',auth.uid(),'name',(select display_name from partner_pilot.allowed_users where user_id=auth.uid()),'rooms',coalesce((select jsonb_agg(jsonb_build_object('id',t.id,'team',t.team,'started',t.started,'paused',not partner_pilot.source_allowed(t.paper,t.started)) order by t.created_at desc) from partner_pilot.rooms t join partner_pilot.members m on m.room_id=t.id where m.user_id=auth.uid()),'[]'));end if;
+ if act='me' then return jsonb_build_object('id',auth.uid(),'name',(select display_name from partner_pilot.allowed_users where user_id=auth.uid()),'rooms',partner_pilot.team_rooms());end if;
  if act='record' then
   aid:=(p->>'awardId')::uuid;select room_id into rid from partner_pilot.awards where id=aid and auth.uid()=any(members);if rid is null then raise exception 'NOT_MEMBER';end if;
   select * into r from partner_pilot.rooms where id=rid;
@@ -5617,6 +5618,28 @@ AS $function$
 $function$;
 revoke all on function partner_pilot.sync_source_links() from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.sync_source_links() to postgres;
+
+-- partner_pilot.team_rooms()  md5=67de92209ccc003c55bfab4d68980f5c
+CREATE OR REPLACE FUNCTION partner_pilot.team_rooms()
+ RETURNS jsonb
+ LANGUAGE sql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+ select coalesce(jsonb_agg(jsonb_build_object(
+  'id',r.id,'team',r.team,'started',r.started,'finished',r.finished,'capacity',r.capacity,'host',r.host,
+  'title',p.title,'subject',p.subject,'total',p.total,'kind',p.kind,
+  'paused',not partner_pilot.source_allowed(r.paper,r.started),
+  'inviteExpired',not r.started and r.expires_at<=now(),
+  'count',(select count(*) from partner_pilot.members m where m.room_id=r.id),
+  'members',(select coalesce(jsonb_agg(jsonb_build_object('id',m.user_id,'name',u.display_name) order by m.joined_at,m.user_id),'[]') from partner_pilot.members m join partner_pilot.allowed_users u on u.user_id=m.user_id where m.room_id=r.id),
+  'phase',case when r.finished then 'completed' when not r.started then 'waiting'
+   when not exists(select 1 from partner_pilot.paper_items pi where pi.paper_id=r.paper and not exists(select 1 from partner_pilot.answers a where a.room_id=r.id and a.qid=pi.qid)) then 'review' else 'practice' end
+ ) order by r.created_at desc,r.id),'[]'::jsonb)
+ from partner_pilot.rooms r join partner_pilot.members mine on mine.room_id=r.id and mine.user_id=auth.uid() join partner_pilot.papers p on p.id=r.paper
+$function$;
+revoke all on function partner_pilot.team_rooms() from public, anon, authenticated, service_role;
+grant execute on function partner_pilot.team_rooms() to postgres;
 
 -- typing_foundation_action(text,text,jsonb)  md5=6b30bf5be692c56baae9e057fa4ecd63
 CREATE OR REPLACE FUNCTION public.typing_foundation_action(p_action text, p_course_id text, p_payload jsonb DEFAULT '{}'::jsonb)
