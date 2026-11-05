@@ -11,3 +11,7 @@ verify_jwt = false
 # Every POST is authenticated with Auth /user plus the existing is_teacher RPC.
 # Do not replace this with browser-side role checks.
 verify_jwt = false
+
+[functions.quiz-partner-pilot-media]
+# Handler verifies Auth /user and caller-scoped room/reveal RPC before reading.
+verify_jwt = false

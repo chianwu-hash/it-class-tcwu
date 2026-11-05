@@ -39,7 +39,8 @@ test('self owner/code/room isolation, idempotency, capacity, correction, content
  for(const n of [1,2,3,4]){await db.query("select set_config('request.jwt.claim.sub',$1,false)",[uid(n)]);await db.exec('select partner_pilot.register_self()');}
  for(const [id,started,count]of[[uid(701),false,3],[uid(702),true,4]]){await db.query(`insert into partner_pilot.rooms(id,code,team,theme,paper,capacity,host,started) values($1,$2,'舊小隊','forest','teacher-ten',$3,$4,$5)`,[id,started?'777702':'777701',count,uid(1),started]);for(let n=1;n<=count;n++)await db.query('insert into partner_pilot.members(room_id,user_id,ready) values($1,$2,true)',[id,uid(n)]);}
  const original=(await personal()).rows[0].data;
- await db.exec(await read('supabase/quiz-partner-self.sql'));await db.exec('update partner_pilot.settings set enabled=true');
+ await db.exec(await read('supabase/quiz-partner-self.sql'));
+ await db.exec(await read('supabase/quiz-partner-media-fix.sql'));await db.exec('update partner_pilot.settings set enabled=true');
  const as=async n=>db.query("select set_config('request.jwt.claim.sub',$1,false)",[n?uid(n):'']);
  const call=async(n,p)=>{await as(n);return(await db.query('select public.quiz_partner_pilot_action($1) data',[{requestId:crypto.randomUUID(),...p}])).rows[0].data;};
  const create=(n,sid,capacity=2,extra={})=>call(n,{action:'create',paper:'self:'+sid,team:'合成小隊',theme:'forest',capacity,...extra});
@@ -87,7 +88,11 @@ test('self owner/code/room isolation, idempotency, capacity, correction, content
  const hashes=(await db.query('select hash,source_url from partner_pilot.media_map where paper_id=$1',[mediaRoom.paper])).rows;
  const media=async(n,hash)=>{await as(n);return(await db.query('select public.quiz_partner_pilot_media_descriptor($1,$2) data',[mediaRoom.id,hash])).rows[0].data;};
  const promptHash=hashes.find(h=>h.source_url===url).hash,explanationHash=hashes.find(h=>h.source_url===explain).hash;
- assert.equal((await media(1,promptHash)).mime,'image/png');await assert.rejects(()=>media(1,explanationHash),/MEDIA_DENIED/);await assert.rejects(()=>media(3,promptHash),/SOURCE_CHANGED|NOT_MEMBER/);
+ const descriptor=await media(1,promptHash);
+ assert.equal(descriptor.mime,'image/png');assert.equal(descriptor.sha256,'a'.repeat(64));assert.notEqual(descriptor.sha256,promptHash);assert.equal(descriptor.url,url);assert.equal(descriptor.backend,'auto');
+ await db.query('update public.quiz_media_assets set object_path=$1 where url=$2',['drive-all-subjects-'+'a'.repeat(64),url]);
+ assert.equal((await media(1,promptHash)).backend,'auto');
+ await assert.rejects(()=>media(1,explanationHash),/MEDIA_DENIED/);await assert.rejects(()=>media(3,promptHash),/SOURCE_CHANGED|NOT_MEMBER/);
  await call(1,{action:'answer',roomId:mediaRoom.id,qid:q.id,choice:0,expectedAttempt:0});assert.equal((await media(1,explanationHash)).mime,'audio/mpeg');
  // Personal deletion prevents NEW copies; previously shared rooms continue without changing private answers.
  await db.query('update public.quiz_generated_papers set deleted_at=now() where session_id=$1',[richSid]);await assert.rejects(()=>create(1,richSid),/SELF_UNAVAILABLE/);assert((await call(2,{action:'snapshot',roomId:mediaRoom.id})).started);assert.equal((await media(1,promptHash)).mime,'image/png');
