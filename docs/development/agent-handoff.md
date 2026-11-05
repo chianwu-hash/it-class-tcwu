@@ -4,6 +4,7 @@
 
 | 狀態 | agent | 開始時間 | `main` commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
 | --- | --- | --- | --- | --- | --- | --- |
+| 發布中 | Codex-partner-messages-20261105 | 2026-11-05T08:36Z | 本次PR合併後main | `dpl_FwzqwTNugeNukYzLKVqmD6KcXrMS` | 4年級partner-practice.html、app.mjs、learning.js、visual.css、+message-attention.mjs | 驗證後依官方start/deploy/promote |
 | 已完成（僅Supabase） | Codex-partner-media-20261105 | 2026-11-05T07:07:45.810Z | `02e469a`（PR #27） | Vercel維持`dpl_FwzqwTNugeNukYzLKVqmD6KcXrMS` | `quiz_partner_pilot_media_descriptor`、`quiz-partner-pilot-media` Edge | Edge v2 ACTIVE；回滾descriptor舊快照／Edge v1；無Vercel切換 |
 | 已完成 | Codex-invite-copy-feedback-20261105 | 2026-11-05T04:36:32.174Z | `a519ea9` | `dpl_A1wSMQ7frx6GnYwDsqCTBqMsTRQr` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/invite.mjs、shared/partner-pilot/visual.css | `dpl_FwzqwTNugeNukYzLKVqmD6KcXrMS`／回滾 `dpl_A1wSMQ7frx6GnYwDsqCTBqMsTRQr`（eolOnly 0） |
 | 已完成 | Codex-admin-learning-reference-20261105 | 2026-11-05T03:46:21.134Z | `f7f9ff5` | `dpl_JE7dcnnqwx1qLhzjUaF9oHbAFjgy` | admin-learning.html、shared/admin-learning.mjs、shared/admin-learning-activities.mjs | `dpl_8U7FN7B9qKdzmXZEi7NtmXvtjZGA`／回滾 `dpl_JE7dcnnqwx1qLhzjUaF9oHbAFjgy`（eolOnly 0） |
@@ -21,6 +22,14 @@
 - 鎖由腳本管理（repo 共用 git 目錄的 `release-lock.json`）；`status` 顯示被別人持有時先問使用者，不得刪除別人的鎖。promote 後把腳本輸出的 `handoffRow` 經 PR 加到下表。
 - 交接時寫明：目前目標與下一步、改了哪些檔與刻意不動的檔、已做與待做的驗證、與 SOP 或共用模組的衝突。
 - 整合紀錄與差異清單：[main-unify-20261104.md](main-unify-20261104.md)。
+
+# 2026-11-05 練功訊息醒目提示
+
+- 使用者要求請教訊息醒目並詢問閃5秒。新worktree partner-message-highlight-20261105，基底dbffb14；Codex唯一寫入者。限定前端呈現，不改RPC、資料庫、個人進度或花葉。
+- 請教、回覆及最近30則聊天改獨立訊息框，粗體內容、訊息種類與金色未讀色框；新訊息用低頻陰影柔和亮起5秒，無隱藏文字／透明閃爍，prefers-reduced-motion關閉動畫。相同快照不重算接收時間。
+- 固定未讀入口可從答題／回顧／紀錄冊前往第一則未讀；看過後按「我看到了」清除該則提醒，自己的訊息不列未讀。僅目前頁面記憶體，重整會重新提示營地現有訊息；換帳號／房間／登出清除，不宣稱跨裝置已讀同步。
+- 保留草稿、輸入焦點、選取範圍與展開題目；不自動搶焦點或捲動。固定入口點擊才跳到訊息；保留原營地場景及題目內容。
+- 驗證通過：12項單元／原穩定性與邀請回歸，含5秒截止、快照不重播、本人訊息、改文重提、房間／帳號清除與聊天30則範圍；真實前端＋合成傳輸通過390/760/1180版型、草稿／焦點、閱讀後清除、回顧切回及減少動態效果，無pageerror／橫向溢出，已看手機與桌機截圖。初次QA未點「回到小隊」與背景頁截圖等待屬測試程序修正；另查出原桌機hide camp-jump規則遮住新固定入口，已提高新入口選擇器精確度。未用正式學生操作消耗進度。
 
 # 2026-11-05 自組卷圖片修復（已發布）
 

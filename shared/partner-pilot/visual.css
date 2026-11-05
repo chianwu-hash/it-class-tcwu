@@ -1,5 +1,22 @@
 /* Visual layer only. Keep course navigation and question media outside this scope. */
+@keyframes partner-message-glow {
+  0%,100%{box-shadow:0 0 0 0 #db9f2930}
+  50%{box-shadow:0 0 0 6px #db9f2960}
+}
 @scope (.partner-content) {
+ :scope .camp-message{margin:16px 0;padding:16px 18px;border:2px solid #9bbeb9;border-left-width:5px;border-radius:14px;background:#fff;color:#164e47;overflow-wrap:anywhere;white-space:normal}
+ :scope .camp-message>p{margin:10px 0 0;font-size:19px;font-weight:700;line-height:1.8;white-space:pre-wrap}
+ :scope .camp-message-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:14px;line-height:1.6}
+ :scope .camp-message.message-unread{border-color:#b67612;background:#fff7df;color:#593808}
+ :scope .message-seen{font-size:13px;font-weight:800;padding:6px 10px;min-height:36px;border:1px solid #a1680c;background:#ffe1a0;color:#593808;box-shadow:none;white-space:normal}
+ :scope .message-seen[aria-pressed=true]{background:#eef6f3;border-color:#9bbeb9;color:#355c52}
+ :scope .message-own{font-size:12px;color:#52665d}
+ :scope .message-pulse{animation:partner-message-glow 1.25s ease-in-out 4;animation-delay:var(--message-delay,0ms)}
+ :scope .camp-message-jump[data-camp-jump]{display:block;position:fixed;right:20px;bottom:20px;z-index:20;max-width:calc(100vw - 40px);padding:14px 20px;background:#fff0c3;color:#593808;border:2px solid #a1680c;box-shadow:0 4px 18px #513c2430;font-size:16px;font-weight:800;white-space:normal}
+ :scope .camp-message-jump[hidden]{display:none}
+ :scope .camp-message:focus{outline:3px solid #0f766e;outline-offset:4px}
+ @media(prefers-reduced-motion:reduce){:scope .message-pulse{animation:none}}
+ @media(max-width:480px){:scope .camp-message{padding:14px}:scope .camp-message>p{font-size:18px}:scope .camp-message-jump{right:12px;bottom:12px;max-width:calc(100vw - 24px);font-size:14px;padding:10px 14px}}
  :scope{font-family:inherit;color:inherit;background:transparent;font-size:17px}
  :scope .notice{background:var(--quiz-tint);color:var(--quiz-primary-dark);font-size:12px;padding:7px 16px}
  :scope .hero{background:var(--quiz-tint);color:var(--quiz-primary-dark);border-radius:0;border-bottom:1px solid color-mix(in srgb,var(--quiz-primary) 18%,white);padding:0}
