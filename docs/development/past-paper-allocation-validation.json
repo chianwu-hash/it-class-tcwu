@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-11-05T12:22:10.947541+00:00",
+  "scope": "printed-source-structure-only",
+  "paperCount": 50,
+  "enabledPaperCount": 40,
+  "disabledPaperCount": 10,
+  "sourceAnswerFieldCount": 2543,
+  "sourceBlockedRecordCount": 60,
+  "listedResponseTargetCount": 2439,
+  "independentQuestionCount": 1635,
+  "bundleCount": 225,
+  "fullAssessmentCountConfirmed": 49,
+  "fullAssessmentCountUnknown": 1,
+  "allocationEnabled": false,
+  "productionWrites": false,
+  "productionDeployment": false,
+  "studentDataRead": false,
+  "studentDataWritten": false,
+  "offlineSourceCoverage": {
+    "papersVerified": 50,
+    "result": "passed"
+  },
+  "syntheticRegressionTests": {
+    "count": 17,
+    "result": "passed"
+  },
+  "liveCatalogueRecheck": {
+    "same": true,
+    "papers": 50,
+    "changed": []
+  },
+  "review": {
+    "transport": "supervised-claude-cli",
+    "claudeVersion": "2.1.289",
+    "authentication": "subscription-oauth",
+    "runs": [
+      {
+        "sessionId": "structure-rules-20261105",
+        "status": "completed",
+        "exitCode": 0,
+        "viewerStarted": true,
+        "gitUnchanged": true,
+        "readToolUseCount": 5,
+        "elapsedSeconds": 393.441
+      },
+      {
+        "sessionId": "structure-batch0-20261105",
+        "status": "completed",
+        "exitCode": 0,
+        "viewerStarted": true,
+        "gitUnchanged": true,
+        "readToolUseCount": 17,
+        "elapsedSeconds": 169.401
+      },
+      {
+        "sessionId": "structure-batch10-20261105",
+        "status": "completed",
+        "exitCode": 0,
+        "viewerStarted": true,
+        "gitUnchanged": true,
+        "readToolUseCount": 25,
+        "elapsedSeconds": 261.695
+      },
+      {
+        "sessionId": "structure-batch20-20261105",
+        "status": "completed",
+        "exitCode": 0,
+        "viewerStarted": true,
+        "gitUnchanged": true,
+        "readToolUseCount": 17,
+        "elapsedSeconds": 203.666
+      },
+      {
+        "sessionId": "structure-batch30-20261105",
+        "status": "completed",
+        "exitCode": 0,
+        "viewerStarted": true,
+        "gitUnchanged": true,
+        "readToolUseCount": 12,
+        "elapsedSeconds": 209.346
+      },
+      {
+        "sessionId": "structure-batch40-20261105",
+        "status": "completed",
+        "exitCode": 0,
+        "viewerStarted": true,
+        "gitUnchanged": true,
+        "readToolUseCount": 11,
+        "elapsedSeconds": 92.075
+      },
+      {
+        "sessionId": "structure-batch45-20261105",
+        "status": "completed",
+        "exitCode": 0,
+        "viewerStarted": true,
+        "gitUnchanged": true,
+        "readToolUseCount": 14,
+        "elapsedSeconds": 115.732
+      },
+      {
+        "sessionId": "structure-final-20261105",
+        "status": "completed",
+        "exitCode": 0,
+        "viewerStarted": true,
+        "gitUnchanged": true,
+        "readToolUseCount": 30,
+        "elapsedSeconds": 317.326
+      }
+    ],
+    "method": "source-text-plus-selected-original-pages",
+    "claudeExecutedTests": false,
+    "postReviewChangesValidatedBy": "Codex",
+    "wholePaperVisualDoubleReview": false
+  },
+  "notVerified": [
+    "all-answer-and-media-correctness",
+    "student-ui",
+    "multiplayer-assignment-ownership",
+    "rewards-flow-with-new-structure"
+  ],
+  "sha256": {
+    "automation/past-paper-structure-verify.py": "4d92630aac660727377ef4019ca12e61c76e97dc3be18aa29348ac9793efa1f1",
+    "automation/tests/past-paper-structure-test.py": "beff0d504559957108d9ef6d1fb7a7101259616c93592b98eba56999b6292123",
+    "docs/development/past-paper-allocation-structure.json": "0b039376b9aabd22a1289ae8da5735a4aee4a2a6e4ace28eb2c699fbcc8b36c1",
+    "docs/development/past-paper-allocation-decisions.json": "2899dddf20f89c4ec42b5de8ae2b31729acee412f10d81d68e1dd94519b09f58",
+    "docs/development/past-exam-playbook.md": "921c7901dd49224b0b4b384edb8582481418f6f651386ddf9bad65c974bc511d",
+    "docs/development/past-exam-job-template.md": "95daefe338e44951eeea12705f7be423dce7b3c95960b37c3223be4c646dde9b"
+  }
+}
