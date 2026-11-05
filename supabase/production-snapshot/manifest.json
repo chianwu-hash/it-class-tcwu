@@ -1,9 +1,9 @@
 {
  "project": "upxgyusodibaqcrocdzj",
- "exportedAt": "2026-11-05T12:56:20.848Z",
+ "exportedAt": "2026-11-05T15:55:26.205Z",
  "counts": {
-  "functions": 148,
-  "tables": 99,
+  "functions": 152,
+  "tables": 100,
   "policies": 21,
   "triggers": 13
  },
@@ -289,7 +289,12 @@
    "acl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
   },
   "partner_pilot.learning_snapshot(uuid)": {
-   "md5": "3ed6f2045dae467d5d175d25793178a6",
+   "md5": "a6f57f58bf6c43d5ec0c5cffd02b00eb",
+   "securityDefiner": true,
+   "acl": "{postgres=X/postgres}"
+  },
+  "partner_pilot.learning_snapshot_pre_message_media(uuid)": {
+   "md5": "b532c66a1abc43d2c13e19d5d3f9faca",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres}"
   },
@@ -301,6 +306,11 @@
   "partner_pilot.max_capacity(text)": {
    "md5": "46933bf2fbecb5b556976ff08f1cb79b",
    "securityDefiner": true,
+   "acl": "{postgres=X/postgres}"
+  },
+  "partner_pilot.message_meta(partner_pilot.message_attachments)": {
+   "md5": "4d96fde608117c479476121f29a91bd9",
+   "securityDefiner": false,
    "acl": "{postgres=X/postgres}"
   },
   "partner_pilot.owner_of(uuid,integer)": {
@@ -480,6 +490,16 @@
   },
   "quiz_paper_card(uuid)": {
    "md5": "b6b7c7d445245c36873bf13233d71e68",
+   "securityDefiner": true,
+   "acl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  "quiz_partner_message_action(jsonb)": {
+   "md5": "502b19af05fbdb39f6295034af026a74",
+   "securityDefiner": true,
+   "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}"
+  },
+  "quiz_partner_message_finalize(uuid,text,jsonb)": {
+   "md5": "56ba50d9173d909416a078df9161bb9a",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
@@ -749,5 +769,5 @@
    "acl": "{postgres=X/postgres,service_role=X/postgres,anon=X/postgres,authenticated=X/postgres}"
   }
  },
- "fileSha256": "b7d6bb6aca2feb0aab9cc6789eb37c5656401d68d51d36b8c31f81d32fb09368"
+ "fileSha256": "698052bd893c57aef1393e95f62240a1e8078a4733265022d8a6ae1da062cc23"
 }

@@ -3065,6 +3065,209 @@
    "acl": "{postgres=arwdDxtm/postgres}",
    "columns": [
     {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "room_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "owner_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "client_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "kind",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "purpose",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "qid",
+     "not_null": false,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "thread_id",
+     "not_null": false,
+     "type": "bigint"
+    },
+    {
+     "default": "'staging'::text",
+     "generated": "",
+     "identity": "",
+     "name": "state",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "sha256",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "bytes",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "duration_ms",
+     "not_null": false,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "stroke_count",
+     "not_null": false,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "object_key",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "drawing_payload",
+     "not_null": false,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "note_id",
+     "not_null": false,
+     "type": "bigint"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK (((bytes >= 1) AND (bytes <= 960044)))",
+     "name": "message_attachments_bytes_check"
+    },
+    {
+     "def": "CHECK (((state = 'linked'::text) = (note_id IS NOT NULL)))",
+     "name": "message_attachments_check"
+    },
+    {
+     "def": "CHECK ((((kind = 'audio_wav'::text) AND (duration_ms IS NOT NULL) AND ((duration_ms >= 800) AND (duration_ms <= 30000)) AND (object_key IS NOT NULL) AND (stroke_count IS NULL)) OR ((kind = 'drawing_v1'::text) AND (stroke_count IS NOT NULL) AND ((stroke_count >= 1) AND (stroke_count <= 80)) AND (duration_ms IS NULL) AND (bytes <= 262144))))",
+     "name": "message_attachments_check1"
+    },
+    {
+     "def": "CHECK ((kind = ANY (ARRAY['audio_wav'::text, 'drawing_v1'::text])))",
+     "name": "message_attachments_kind_check"
+    },
+    {
+     "def": "FOREIGN KEY (note_id) REFERENCES partner_pilot.notes(id) ON DELETE CASCADE",
+     "name": "message_attachments_note_id_fkey"
+    },
+    {
+     "def": "UNIQUE (owner_id, client_id)",
+     "name": "message_attachments_owner_id_client_id_key"
+    },
+    {
+     "def": "FOREIGN KEY (owner_id) REFERENCES auth.users(id)",
+     "name": "message_attachments_owner_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "message_attachments_pkey"
+    },
+    {
+     "def": "CHECK ((purpose = ANY (ARRAY['ask'::text, 'reply'::text, 'chat'::text])))",
+     "name": "message_attachments_purpose_check"
+    },
+    {
+     "def": "FOREIGN KEY (room_id) REFERENCES partner_pilot.rooms(id) ON DELETE CASCADE",
+     "name": "message_attachments_room_id_fkey"
+    },
+    {
+     "def": "CHECK ((sha256 ~ '^[a-f0-9]{64}$'::text))",
+     "name": "message_attachments_sha256_check"
+    },
+    {
+     "def": "CHECK ((state = ANY (ARRAY['staging'::text, 'ready'::text, 'draft_saved'::text, 'linked'::text, 'expiring'::text])))",
+     "name": "message_attachments_state_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX message_attachments_owner_date ON partner_pilot.message_attachments USING btree (owner_id, created_at)",
+    "CREATE INDEX message_attachments_room_note ON partner_pilot.message_attachments USING btree (room_id, note_id) WHERE (state = 'linked'::text)",
+    "CREATE UNIQUE INDEX message_attachments_owner_id_client_id_key ON partner_pilot.message_attachments USING btree (owner_id, client_id)",
+    "CREATE UNIQUE INDEX message_attachments_pkey ON partner_pilot.message_attachments USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "message_attachments",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
      "default": null,
      "generated": "",
      "identity": "a",

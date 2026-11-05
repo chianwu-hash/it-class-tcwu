@@ -1,4 +1,8 @@
-# 2026-11-05 營地語音與畫圖（企劃先討論）
+# 2026-11-05 營地語音與畫圖（正式接線中）
+
+- PR38、39已合併main `1f45c69`。從新乾淨main worktree `partner-message-main-20261106` 取得自己的發布鎖後，真正式PG交易內跑合成authenticated／service角色：建房出發、intent、finalize、私有草稿、發送與replay、跨成員草稿拒絕、非成員拒絕、snapshot安全、原OID保留／複製body一致，全通過並ROLLBACK。19表摘要前後完全相同、synthetic Auth0。
+- 正式僅套單一增量SQL `quiz-partner-message-media.sql`，SHA256 `0250e86b277d30ceed25bdda9e674d71ff9a508898a7be7d505e496c8ed59d6e`，交易成功；19表摘要仍全不變。snapshot152函式、live-check通過，僅新增4函式／修改learning_snapshot，其他函式不變。沒有自動刪除。
+- 為snapshot PR回main已abort自己的尚無candidate發布鎖，這不是回滾DB；現行前端仍 `dpl_8PFEpMsmXtjVoW3iJvz82NBhMf4W`。下一步snapshot PR合併→新乾淨main部署新Edge→正式bucket/ACL/OPTIONS/匿名拒絕查核→發布腳本前端→正式讀回。尚未寫已發布或真人兩機通過。
 
 - 使用者授權「先做企劃，和 AGY 討論後再開始」。全新 worktree `partner-camp-media-20261105`／branch `codex/partner-camp-media-20261105` 從最新 main05b9179建立，快轉納入尚未合併的PR38（7b83750）作相依。不能部署此分支，正式站／DB／Storage未變。
 - 已完成AGY企劃與後端接線設計討論後才實作，詳 `partner-camp-media-plan-20261105.md`。使用者睡前再授權盡量完成，23:40請Claude複核、修好沒問題就發布；本對話一次性heartbeat `23-40` 已排定。Codex唯一寫入者；AGY supplied-text，無repo／憑證／學生資料存取。
