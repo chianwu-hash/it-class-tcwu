@@ -1,18 +1,19 @@
-# 2026-11-06 幫我找夥伴／年級共用／期中20題（已檢視，發布中）
+# 2026-11-06 幫我找夥伴／年級共用／期中20題（已正式發布）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-partner-matchmaking-20261106 | 2026-11-06T06:06:34.045733+00:00 | PR60→main（待發布腳本鎖定） | `dpl_HnPy1eaz92ktXsjut7Z9LnXeBcXo` | 四年級partner-practice.html、partner app/matchmaking/team-flow/presentation/css、shared/quiz-transport.mjs | 待新SQL、快照live與官方發布檢查；尚未promote |
+| 已完成 | Codex-partner-matchmaking-20261106 | 2026-11-06T06:20:14.440Z | `fe0fb00` | `dpl_HnPy1eaz92ktXsjut7Z9LnXeBcXo` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/presentation.mjs、shared/partner-pilot/team-flow.css、shared/partner-pilot/team-flow.mjs、shared/quiz-transport.mjs、+shared/partner-pilot/matchmaking.mjs | `dpl_Es2QRFbCVEDHFCRAT3f7L1PZpanW`／回滾 `dpl_HnPy1eaz92ktXsjut7Z9LnXeBcXo`（eolOnly 0） |
 
+- PR60及DB快照PR61均已進main；新乾淨main `fe0fb00` 經官方start/deploy/promote，臺灣2026-11-06 14:25:25正式上線。完整樹ok:true，9修改／1新增／0刪除／0非預期／0換行例外。候選／正式各10檔SHA一致，正式11項頁面及測試帳號入口／5份新20題卷清單檢查通、pageerror0、兩個未登入API皆拒絕。三／四／六／九候配已啟用，30秒集合；沒有代答或消耗首次成長已讀。發布鎖已釋放。[發布收據](partner-matchmaking-release-verification-20261106.json)。
 - 使用者最新授權：改由AGY檢視、不等Claude，修正驗證後上線；含本批必要新SQL。不得再把16:00 Claude額度列為阻擋。
 - 草稿[PR60](https://github.com/chianwu-hash/it-class-tcwu/pull/60)，實作5253cfe、修正runtime ab6862e；唯一寫入者Codex，worktree `D:/projects/it-class-tcwu-worktrees/partner-matchmaking-20261106`。AGY僅討論提供程式碼，三包及第二輪均completed、viewer／工具攔截探針通、Git不變，第二輪無可確認P1/P2；Codex負責原碼與測試核對。[複核紀錄](partner-matchmaking-agy-review-20261106.md)、[收據](partner-matchmaking-verification-20261106.json)。
 - 43項Node／SQL、四合成身分15項流程與故障恢復、6項邀請銜接通；真實200題本機比對及重跑通。正式僅唯讀preflight：14函式hash、200來源指紋、meta trigger均符合；40份啟用考古卷題包映射通。原答案／回顧／計獎沿舊路徑，不碰學生資料或首次成長已讀。
 - 修正認證分類、catalog重試、出發後載入恢復、保留邀請及指定卷、隱藏卷新授權／既有個人紀錄、鎖順序及十間舊集合室卡住候配出發；手動配額與舊rooms不改。固定pre-upgrade QA基準在automation/fixtures/partner-match-before，不能隨正式snapshot覆寫。
-- PR60已merge main `8e904c8`；新main工作目錄`partner-match-main-db-20261106`已套本批5個新SQL，10卷／200題原題／partner對應正式唯讀比對通，162函式／105表／21policy／13trigger，新增9函式、修改14、原ACL/SECDEF保留，snapshot/live與升級後43項Node通。候配仍關閉，未寫答案或紀念已讀。[DB收據](partner-matchmaking-db-verification-20261106.json)。下一步本快照PR進main後再新建乾淨main，官方release start/deploy/promote完整樹ok:true發布，前端驗證後套enable。
+- PR60已merge main `8e904c8`；新main工作目錄`partner-match-main-db-20261106`已套本批5個新SQL，10卷／200題原題／partner對應正式唯讀比對通，162函式／105表／21policy／13trigger，新增9函式、修改14、原ACL/SECDEF保留，snapshot/live與升級後43項Node通。候配仍關閉，未寫答案或紀念已讀。[DB收據](partner-matchmaking-db-verification-20261106.json)。此5個新SQL已套用，不可盲目重播；已完成相容前端發布與enable。
 - 新20題僅3／6各五科，六英U1+3；137題有原詳解，63題保留原無詳解提示。老師／考古同年級跨班，自組維持私人。85老師卷中55相容；九30卷非空共同block仍待辨別是否題組，不硬拆，九個人卷仍全年級開放、候配可用考古卷。詳[實作](partner-matchmaking-implementation-20261106.md)。
-- 閒置交棒／收隊預設NULL，120秒心跳待實機測；真Google兩機、真Postgres多連線、實體平板／正式正向流程仍未驗，不能冒稱已驗。localhost:8840為合成身分原型，不呼叫正式API。原未開始集合室刪除仍獨立草稿；已開始任務提前結束仍暫緩。寵物動畫無改動。
+- 閒置交棒／收隊預設NULL，120秒心跳待實機測；真Google兩機完整組隊／送答／回顧／計獎、真Postgres多連線及實體平板仍未驗；正式單一測試帳號入口與新卷清單已驗，不能冒稱已驗。localhost:8840為合成身分原型，不呼叫正式API。原未開始集合室刪除仍獨立草稿；已開始任務提前結束仍暫緩。寵物動畫無改動。
 
 # 2026-11-06 夥伴紀念顯示修正（已正式發布）
 

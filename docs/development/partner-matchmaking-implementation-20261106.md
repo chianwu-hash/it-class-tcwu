@@ -26,7 +26,7 @@
 - [x] 新UI、原邀請與接續任務、全隊合法選卷及重複紀念提示；選定後收合選卷區，避免出發按鈕被清單埋沒。
 - [x] 本機合成SQL／四身分瀏覽器驗證，原答案／回顧／計獎流程仍接原RPC。
 - [x] 使用者改指定AGY，完成三包及跨包第二輪提供程式檢視；Codex逐項原碼核對與修正，第二輪無可確認P1/P2。詳見partner-matchmaking-agy-review-20261106.md；未使用AGY直接讀repo或執行測試。
-- [ ] PR/main、必要新SQL及快照live驗證，再依官方發布腳本上線。
+- [x] PR60／61進main，5新SQL、snapshot/live及快照PR已完成；新乾淨main經官方發布腳本完整樹ok:true，正式入口及新卷清單檢查通後enable。詳見partner-matchmaking-release-verification-20261106.json。
 
 閒置交棒與心跳秒數仍是待裝置實測參數；企劃的90秒／約3分鐘不是已核定正式值。不得自動選卷或出發。沒有未測即稱可上線；不使用真學生帳號代答或消耗首次成長事件。
 
@@ -40,4 +40,4 @@
 - 回復舊前端前須先用`quiz-partner-matchmaking-disable.sql`關閉候配並清除僅前置的presence，避免舊前端看不到候配而又被舊create/join保護擋住。只關閉尚未出發前置小隊，不刪原rooms、答案、草稿、回顧或葉花。不DROP新表，不重設計獎。
 - `automation/partner-match-preview.mjs`在localhost:8840提供合成身分、記憶體PGlite及正式前端模組；不呼叫正式API，不使用真登入。`/__qa/expire`僅本機合成測試用，正式前端沒有此端點。
 
-詳細驗證範圍見[本批檢查收據](partner-matchmaking-verification-20261106.json)。真Google兩機、平板觸控／麥克風、正式正向新卷／候配、真Postgres併發及正式snapshot/live均未驗；本機四身分頁籤不等於兩台電腦。
+詳細驗證範圍見[本批檢查收據](partner-matchmaking-verification-20261106.json)。真Google兩機、平板觸控／麥克風、正式完整組隊／作答／回顧／獎勵、真Postgres併發及正式snapshot/live均未驗；本機四身分頁籤不等於兩台電腦。
