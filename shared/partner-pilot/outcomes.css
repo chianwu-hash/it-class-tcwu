@@ -32,3 +32,10 @@
  :scope:has(.review-callout:not([hidden])) .partner-camp-toast{bottom:calc(32px + var(--review-callout-height,160px))}
  @media(max-width:900px){:scope:has(.review-callout:not([hidden])) .partner-camp-toast{bottom:calc(106px + env(safe-area-inset-bottom) + var(--review-callout-height,160px))}}
 }
+
+.partner-content .answer-next-step{margin:20px 0 10px;padding:20px 24px;border:2px solid #b49a4b;border-radius:16px;background:#fff9e9;color:#4b431e;overflow-wrap:anywhere}
+.partner-content .answer-next-step[hidden]{display:none}
+.partner-content .answer-next-step h3{margin:0 0 8px;font-size:22px;line-height:1.5}
+.partner-content .answer-next-step p{margin:0 0 14px;line-height:1.8}
+.partner-content .answer-next-step button{min-height:48px;white-space:normal}
+@media(max-width:600px){.partner-content .answer-next-step{padding:16px}.partner-content .answer-next-step h3{font-size:20px}.partner-content .answer-next-step button{width:100%}}
