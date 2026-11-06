@@ -1,10 +1,12 @@
-# 2026-11-06 媒體工具全圖示與畫布間距（發布中）
+# 2026-11-06 媒體工具全圖示與畫布間距（已正式發布）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-all-media-icons-20261106 | 待start | PR後新乾淨main | 由alias鎖定 | 10修改、tool-icons新增 | 待腳本驗證 |
+| 已完成 | Codex-all-media-icons-20261106 | 2026-11-06T12:56:13.697Z | `d6925cf` | `dpl_T6HnHqmrjRLZdJqWsEdXt33j4cM8` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/camp-panel.mjs、shared/partner-pilot/message-composer.mjs、shared/partner-pilot/message-media.css、shared/partner-pilot/sketch-editor.mjs、+shared/partner-pilot/tool-icons.mjs | `dpl_37emDdg4VTzTBQEmQfpm7gLXSHNK`／回滾 `dpl_T6HnHqmrjRLZdJqWsEdXt33j4cM8`（eolOnly 0） |
+
+- PR94進main；乾淨main d6925cf經start/deploy/promote於臺灣2026-11-06 20:57:03上線。完整樹ok:true（10改、1新、0刪／非預期／eolOnly），正式11檔與main一致；鎖已釋放。[發布收據](all-media-icons-release-20261106.json)。12 Node與24合成瀏覽器通過，已看手機截圖。無SQL／Edge變更；實體觸控與正式雙人未重測。
 
 - 使用者澄清全部媒體工具改圖示、mouseover顯示文字，並拉開畫布。模式切換、復原、清除、儲存、接回／移除與錄音控制統一靜態SVG；native title／aria-label與動態錄音名稱保留。工具列下方18px間距、44px點按、hidden規則保持。送出訊息主操作與提示文字維持清楚。
 - Codex唯一寫入者，fresh branch codex/sketch-all-icons-20261106。無SQL／Edge／格式改動。12 Node、24合成瀏覽器通過（含草稿／錯誤重送、無可見工具文字、hover名稱、手機工具列與畫布至少16px間距），已看手機截圖；實體觸控／正式雙帳號未重測。測試選取改用可及名稱，hidden檢查明確includeHidden，沒有改動業務行為。
