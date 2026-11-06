@@ -5,6 +5,9 @@ export async function withGardenTestRewards(model,{supabase,session,courseId}){
  let request=supabase.rpc('garden_test_rewards',{p_course_id:courseId});
  if(request.abortSignal)request=request.abortSignal(AbortSignal.timeout(10000));
  const {data,error}=await request;if(error)throw new Error('升級體驗準備資料暫時無法讀取，請重新整理。');
+ return appendGardenTestRewards(model,data,courseId);
+}
+export function appendGardenTestRewards(model,data,courseId){
  if(!Array.isArray(data)||!data.length)return model;
  if(data.some(r=>r.courseId!==courseId||r.earned!==true||!['flower','typing-leaf'].includes(r.kind)||!r.id?.startsWith(courseId+':test-setup:')))throw new Error('升級體驗資料格式不符。');
  const rewards=[...model.rewards,...data],leaves=rewards.filter(r=>r.kind!=='flower'),flowers=rewards.filter(r=>r.kind==='flower');
