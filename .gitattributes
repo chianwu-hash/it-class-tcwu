@@ -1,6 +1,6 @@
 # Byte-exact production snapshot (md5/sha256 are checked by automation/db-snapshot-check.mjs)
 supabase/production-snapshot/** -text
-automation/fixtures/partner-review-before.sql -text
+automation/fixtures/partner-review-before.sql -text whitespace=cr-at-eol
 
 # Production copies with mixed CRLF/LF line endings; keep bytes exact so release-tree-diff matches dpl_BDJATgLLgbUKvQUNXZYYeu8d5L4p.
 garden/growth/growth.mjs -text

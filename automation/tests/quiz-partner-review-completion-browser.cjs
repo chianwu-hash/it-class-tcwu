@@ -47,4 +47,3 @@ await click(q,`[data-resume="${id}"]`);await q.waitForSelector('.outcome-result'
 fs.mkdirSync('.chat-mode/evidence/review-completion',{recursive:true});await p.screenshot({path:'.chat-mode/evidence/review-completion/mobile-review.png',fullPage:true});check('uncaught errors zero',!errors.length);
 fs.writeFileSync('.chat-mode/evidence/review-completion/browser.json',JSON.stringify({out,errors},null,2));console.log(JSON.stringify({passed:out.length,out,errors}));
 }catch(e){fs.mkdirSync('.chat-mode/evidence/review-completion',{recursive:true});fs.writeFileSync('.chat-mode/evidence/review-completion/failure.json',JSON.stringify({out,error:e.message,errors}));console.error(e);process.exitCode=1;}finally{if(q)await q.close();await p.close();await c.disconnect();}})();
-
