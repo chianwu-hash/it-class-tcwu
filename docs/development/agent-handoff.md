@@ -1,3 +1,16 @@
+# 2026-11-06 六年級第10週課程網頁（發布中）
+
+## 發布登記
+
+| 狀態 | Agent | main來源 | 基準正式 | 預期變更 | 結果 |
+|---|---|---|---|---|---|
+| 發布中 | Codex-grade6-week10-20261106 | 從 `13e977a` 開新分支，待本次PR合併 | `dpl_G8MP9zRkwPYwMKEwWHdNuYuNos9t` | 六年級第10週HTML/CSS/JS/圖卡、首頁週卡、navbar與同學期快取版本、後台defaults | 待發布腳本start/deploy/promote |
+
+- 使用者已授權依規定發布，第08週週卡維持隱藏。新worktree `D:/projects/it-class-tcwu-worktrees/grade6-week10-publish-20261106`／分支 `codex/grade6-week10-publish-20261106`；從最新main帶入核定第10週檔案，保留最新夥伴組隊入口與營地功能。Codex為本批唯一寫入者。
+- 本頁為B類說明頁，連至既有中英打、閱讀、魔王及夥伴服務，沒有新增activityKey、SQL函式、題庫或學生進度修改。班徽p.45～47、自選重交、原有紫色分色風格；任務卡標題已標課本頁碼。
+- 第10週閱讀期間11/02～11/08已建立並教師回讀；學生分享／真正多機夥伴流程由實班確認，不代作答。詳細前輪驗證與圖卡證據見[製作紀錄](grade6-week10-web-20261106.md)。
+- 下一步：本批最終檢查→commit/push→PR/main→新乾淨main由release-from-main start/deploy/promote，完整樹須ok且正式部署ID不變；完成後handoffRow另經PR登記。
+
 # 2026-11-06 組隊入口優先（已正式發布）
 
 ## 發布登記

@@ -1,0 +1,20 @@
+Generate ONE new 16:9 landscape educational infographic for Taiwan elementary grade 6. Use the uploaded Week09 image ONLY as the visual style reference: same lively hand-painted watercolor/gouache textures, large navy chunky rounded Traditional Chinese headings, purple/teal/orange/sky-blue color accents, playful friendly older-elementary children, bright white rounded cards with soft shadows, tiny plants and flowers. Follow its visual family closely. Do NOT copy Week09's content, activity order, timings or voting activity. Do not use muted sage editorial design, thin teal outlines or a corporate poster style.
+
+Use a clear 2-by-2 arrangement of large rounded cards, each with a large colorful numbered circle, a friendly contextual watercolor illustration, and large highly legible exact Traditional Chinese text. Sharp text rendering. Large title at top, short cheerful ribbon beneath it. Bottom a small illustrated wooden sign amid plants. All text safely within the image margins. No school crest, official mascots, fake logos, watermarks, URLs or QR codes. There must be no time durations because the practice activities can also happen at home.
+
+Required exact visible text:
+Main title: 第10週｜班徽與夥伴練功
+Subtitle: 班徽再進一步，夥伴一起練功
+Card 01 title: 校名與班名
+Card 01 caption: 上方「頂溪國小」
+Card 01 caption: 下方自己的班級
+Card 02 title: 記得儲存
+Card 02 caption: 本週是否重交，自己決定
+Card 03 title: 夥伴練功
+Card 03 caption: 各用自己的帳號與電腦
+Card 03 caption: 組隊 → 作答 → 送出
+Card 04 title: 回家也能接續
+Card 04 caption: 中英打・閱讀小卡・魔王花園
+Bottom sign: 不比速度，照自己的進度練習
+
+Illustrations: 01 a monitor showing a simple bear class badge with curved 頂溪國小 school name and 六年三班 ribbon, no decorative stars on the badge; 02 a floppy-disk save symbol, a PNG document and a small optional upload arrow, communicating save first and uploading is optional; 03 a boy and a girl in purple and teal outfits at two separate computers discussing practice, anatomically correct two hands each; 04 a cozy home study scene with keyboard, open book, flowers including one cheerful crowned flower, communicating continued practice at home. The flower is an ordinary whimsical garden illustration, not an official mascot. A small cheering student near the header may echo the reference without obstructing text.

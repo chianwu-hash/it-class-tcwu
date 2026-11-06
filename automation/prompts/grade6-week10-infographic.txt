@@ -1,0 +1,18 @@
+Create one polished 16:9 educational infographic image, 1920x1080 composition, for Taiwan elementary grade 6 computing class. Generate the image directly. Sharp text rendering, all visible Chinese in Traditional Chinese exactly as supplied. Cream white background, dark ink bold headings, teal rounded outlines, soft lavender and apricot accents, generous spacing. Friendly editorial illustration, suitable for older elementary students, not childish. Four clear visual panels, a confident large title, large readable Chinese text. No official crest, logos, mascots, watermark, QR codes, website addresses, extra captions or dates. Keep all content safely inside margins. Do not draw stars on the class badge because star decoration belongs to next week.
+
+Exact visible text:
+Title: 六年級第10週
+Subtitle: 班徽再進一步・夥伴一起練功
+Panel 1 heading: 校名與班名
+Panel 1 text: 上方「頂溪國小」
+Panel 1 text: 下方自己的班級
+Panel 2 heading: 記得儲存
+Panel 2 text: 本週是否重交，自己決定
+Panel 3 heading: 夥伴練功
+Panel 3 text: 各用自己的帳號與電腦
+Panel 3 text: 組隊 → 作答 → 送出
+Panel 4 heading: 回家也能接續
+Panel 4 text: 中英打・閱讀小卡・魔王花園
+Bottom message: 不比速度，照自己的進度練習
+
+Visuals: panel 1 a stylized Canva-like editor containing a simple bear badge and editable curved school name and class ribbon; panel 2 a saved document and optional upload arrow; panel 3 two friendly grade 6 students, each at their own separate computer, discussing a practice question, each person anatomically correct with two hands; panel 4 a small cozy home desk with keyboard, open book and tiny flower pot, representing practice at home. No extra interface text. Prioritize exact text, hierarchy and clear illustration.
