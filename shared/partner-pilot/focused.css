@@ -141,6 +141,26 @@ body.quiz-workspace-desktop .partner-content[data-stage=practice] main{padding-b
 body.partner-pilot .partner-content[data-stage=practice] main{max-width:none;margin:10px 0 0;padding:0 24px calc(var(--quiz-dock-height,130px) + 20px)}
 body.quiz-workspace-desktop.partner-pilot .partner-content[data-stage=practice] main{padding-bottom:0}
 .partner-content .partner-focus .partner-workspace-question{margin:0}
+
+/* Question support: two clear actions, one full-width optional editor. */
+.partner-content .question-extras{min-width:0;margin-top:16px}
+.partner-content .question-support-context{margin:0 0 8px;font-size:14px;font-weight:700}
+.partner-content .question-support-actions{display:flex;gap:8px;flex-wrap:wrap}
+.partner-content .question-support-actions button{flex:1 1 120px;min-width:0;min-height:44px;margin:0;padding:10px 12px;font-size:15px;box-shadow:none}
+.partner-content .question-support-actions [aria-expanded=true]{border-color:#0f766e;background:#e5f5f0}
+.partner-content .question-mark-panel{margin-top:12px;padding:16px;border:1px solid #c6dfda;border-radius:16px;background:#fff}
+.partner-content .question-mark-panel:not([open]){display:none}
+.partner-content .mark-reasons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;min-width:0;margin:0;padding:0}
+.partner-content .mark-reasons legend{margin-bottom:8px;padding:0;font-size:14px;font-weight:700}
+.partner-content .mark-reasons label{display:flex;align-items:center;gap:6px;min-width:0;min-height:44px;margin:0;padding:8px;border:1px solid #d5e5e1;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer}
+.partner-content .mark-reasons label:has(input:checked){border-color:#0f766e;background:#e5f5f0;color:#075e54}
+.partner-content .mark-reasons input{width:18px;height:18px;min-height:0;margin:0;padding:0;flex:0 0 18px;accent-color:#0f766e}
+.partner-content .mark-comment{display:block;margin:14px 0 0;font-size:14px;font-weight:500}
+.partner-content .mark-comment textarea{display:block;width:100%;min-height:72px;margin-top:6px;padding:10px;font-size:15px;resize:vertical}
+.partner-content .mark-panel-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:12px}
+.partner-content .mark-panel-actions button{min-height:44px;margin:0;padding:10px 12px;font-size:14px;box-shadow:none}
+.partner-content .mark-panel-actions [type=submit]{background:#0f766e;color:#fff;border-color:#0f766e}
+.partner-content .mark-panel-actions [data-close-mark]{background:transparent;border-color:transparent;color:#526b67}
 @media(max-width:700px){body.partner-pilot .partner-content[data-stage=practice] main{padding-left:12px;padding-right:12px}}
 
 .partner-content[data-stage=practice] .partner-focus[data-awaiting-review]{padding-bottom:0}
