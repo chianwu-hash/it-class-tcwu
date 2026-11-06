@@ -4,7 +4,7 @@
 -- so every function ends at the production definition (e.g. quiz_action with ordered next-question lookup).
 -- Check: node automation/db-snapshot-check.mjs
 
--- partner_pilot.action_core(jsonb)  md5=6fa6d2f4372e65f3453fe41d6c648bef
+-- partner_pilot.action_core(jsonb)  md5=71a4b9c68066965e08435c333143aee6
 CREATE OR REPLACE FUNCTION partner_pilot.action_core(p jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -68,6 +68,8 @@ begin
   if (select count(distinct a.qid) from partner_pilot.answers a where a.room_id=rid)<>total then raise exception 'REVIEW_NOT_READY'; end if;
   body:=trim(coalesce(p->>'text',''));if length(body)>240 then raise exception 'INVALID_TEXT'; end if;
   insert into partner_pilot.review_seen values(rid,uid,body,clock_timestamp()) on conflict(room_id,user_id) do update set reflection=excluded.reflection;
+  -- The room row is already locked: the last explicit review completes atomically.
+  if (select count(*) from partner_pilot.review_seen where room_id=rid)=r.capacity then update partner_pilot.rooms set finished=true where id=rid;end if;
  elsif act='finish' then
   if (select count(distinct a.qid) from partner_pilot.answers a where a.room_id=rid)<>total or (select count(*) from partner_pilot.review_seen where room_id=rid)<>r.capacity then raise exception 'WAIT_FOR_REVIEW'; end if;
   update partner_pilot.rooms set finished=true where id=rid;
@@ -3973,7 +3975,7 @@ grant execute on function public.quiz_partner_pilot_access() to postgres;
 grant execute on function public.quiz_partner_pilot_access() to authenticated;
 grant execute on function public.quiz_partner_pilot_access() to service_role;
 
--- quiz_partner_pilot_action(jsonb)  md5=8dcef95dd78cf59d57d088b44950ec46
+-- quiz_partner_pilot_action(jsonb)  md5=154f9f65eaff002236cb0dab15001b16
 CREATE OR REPLACE FUNCTION public.quiz_partner_pilot_action(p jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -4037,7 +4039,7 @@ begin
  result:=partner_pilot.action_core(p);
  if rid is not null and not partner_pilot.source_allowed(r.paper,r.started) and act='save_draft' then return partner_pilot.paused_snapshot(rid);end if;
  -- claim_award returns without writing while the room is unfinished; action_core already returned that snapshot.
- if act in ('finish','answer') and exists(select 1 from partner_pilot.rooms where id=rid and finished) then perform partner_pilot.claim_award(rid);result:=partner_pilot.learning_snapshot(rid);end if;
+ if act in ('finish','answer','review') and exists(select 1 from partner_pilot.rooms where id=rid and finished) then perform partner_pilot.claim_award(rid);result:=partner_pilot.learning_snapshot(rid);end if;
  return result;
 end $function$;
 revoke all on function public.quiz_partner_pilot_action(jsonb) from public, anon, authenticated, service_role;
@@ -5619,7 +5621,7 @@ $function$;
 revoke all on function partner_pilot.sync_source_links() from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.sync_source_links() to postgres;
 
--- partner_pilot.team_rooms()  md5=67de92209ccc003c55bfab4d68980f5c
+-- partner_pilot.team_rooms()  md5=4d86f90d9ee87ec31dff42e3b94480e3
 CREATE OR REPLACE FUNCTION partner_pilot.team_rooms()
  RETURNS jsonb
  LANGUAGE sql
@@ -5632,11 +5634,25 @@ AS $function$
   'paused',not partner_pilot.source_allowed(r.paper,r.started),
   'inviteExpired',not r.started and r.expires_at<=now(),
   'count',(select count(*) from partner_pilot.members m where m.room_id=r.id),
-  'members',(select coalesce(jsonb_agg(jsonb_build_object('id',m.user_id,'name',u.display_name) order by m.joined_at,m.user_id),'[]') from partner_pilot.members m join partner_pilot.allowed_users u on u.user_id=m.user_id where m.room_id=r.id),
+  'members',(select coalesce(jsonb_agg(jsonb_build_object('id',m.user_id,'name',u.display_name,
+   'assigned',case when r.started then (select count(*) from partner_pilot.paper_items i where i.paper_id=r.paper and partner_pilot.owner_of(r.id,i.qid)=m.user_id) else 0 end,
+   'submitted',(select count(distinct a.qid) from partner_pilot.answers a where a.room_id=r.id and a.user_id=m.user_id),
+   'reviewed',exists(select 1 from partner_pilot.review_seen v where v.room_id=r.id and v.user_id=m.user_id)) order by m.joined_at,m.user_id),'[]')
+   from partner_pilot.members m join partner_pilot.allowed_users u on u.user_id=m.user_id where m.room_id=r.id),
   'phase',case when r.finished then 'completed' when not r.started then 'waiting'
-   when not exists(select 1 from partner_pilot.paper_items pi where pi.paper_id=r.paper and not exists(select 1 from partner_pilot.answers a where a.room_id=r.id and a.qid=pi.qid)) then 'review' else 'practice' end
+   when s.submitted=s.total then 'review' else 'practice' end,
+  'progress',jsonb_build_object('total',s.total,'submitted',s.submitted,'graded',s.graded,
+   'correct',case when s.submitted=s.total and r.started then s.correct else null end,
+   'reviewed',(select count(*) from partner_pilot.review_seen v where v.room_id=r.id),
+   'meReviewed',exists(select 1 from partner_pilot.review_seen v where v.room_id=r.id and v.user_id=auth.uid()),
+   'award',(select jsonb_build_object('leaves',a.leaves,'flowers',a.flowers,'earnedHere',a.room_id=r.id)
+     from partner_pilot.awards a where a.content_key=p.content_key and a.member_key=(select string_agg(user_id::text,',' order by user_id) from partner_pilot.members where room_id=r.id)))
  ) order by r.created_at desc,r.id),'[]'::jsonb)
  from partner_pilot.rooms r join partner_pilot.members mine on mine.room_id=r.id and mine.user_id=auth.uid() join partner_pilot.papers p on p.id=r.paper
+ cross join lateral (select partner_pilot.paper_total(r.paper) total,
+  (select count(distinct a.qid) from partner_pilot.answers a where a.room_id=r.id) submitted,
+  (select count(*) from partner_pilot.paper_items i join partner_pilot.question_bank q on q.id=i.qid where i.paper_id=r.paper and coalesce(q.past_meta->>'selfCheck','false')<>'true') graded,
+  (select count(*) from (select distinct on(a.qid) a.correct from partner_pilot.answers a where a.room_id=r.id order by a.qid,a.attempt desc)x where correct) correct) s
 $function$;
 revoke all on function partner_pilot.team_rooms() from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.team_rooms() to postgres;

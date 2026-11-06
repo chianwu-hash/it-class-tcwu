@@ -1,4 +1,14 @@
-# 2026-11-06 夥伴回顧引導與自動結算（複核通過，待正式PG及發布）
+# 2026-11-06 夥伴回顧引導與自動結算（正式DB已驗，待前端發布）
+
+## 發布登記
+
+| 狀態 | Agent | main來源 | 基準正式 | 預期變更 | 結果 |
+|---|---|---|---|---|---|
+| 發布中 | Codex-partner-review-completion-20261106 | PR55及PR56合併後的新乾淨main | `dpl_EFDgQZUtQ1gTqaEqewRahFSA2djn` | 四年級入口HTML與app/learning/team-flow/outcomes CSS共8檔 | 待官方發布腳本與完整樹驗證 |
+
+- 功能PR55已合入main `a66d1f0`。從新乾淨main worktree `partner-review-db-main-20261106`執行正式PG回滾演練後增量，只更新3函式，21張既有資料表雜湊全同；合成Auth及作答無殘留。初輪演練選到私人自組來源及班級不符，均由原權限拒絕並rollback；改用真已發布老師卷與其允許班級的空座位合成身分後通過，不放寬權限。
+- 正式PG驗證首人回顧不結算、最後主動確認自動完成及1葉、同請求重送同獎、舊finish相容、本人清單與未作答不揭分數、非成員拒絕、原函式OID/owner/ACL保持及其他函式不變。最大現有清單8房約46.805ms。未做兩個PG連線同時送出，不冒稱併發實測。
+- schema snapshot/live核對153函式通過（100表、21policy、13trigger），只有action_core、team_rooms及public包裝定義改變。快照經本PR入main後，再新乾淨main由官方release-from-main發布8個前端修改檔，基準仍 `dpl_EFDgQZUtQ1gTqaEqewRahFSA2djn`。
 
 - 使用者已授權本輪三項及必要SQL／發布：列表詳細進度、全員送答後持續回顧引導、最後一人主動確認回顧後自動結算。保留全員回顧／60%／訂正補達與同內容同成員防重政策；不加提前結束或未核定解析卡樣式，不回填歷史答案／回顧／獎勵。
 - 新worktree `partner-review-completion-20261106`／分支 `codex/partner-review-completion-20261106`，基底main `e2edb71`，Codex唯一寫入者。SQL精確更新三函式、UI learning/team-flow/app/outcomes CSS與四年級入口cache，測試及說明見[實作紀錄](partner-review-completion-20261106.md)。
