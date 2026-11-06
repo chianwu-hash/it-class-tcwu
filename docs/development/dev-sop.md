@@ -4,7 +4,7 @@
 
 > **2026-10-06 三年級轉換更新**：教師已指定第 06 週接 Google 登入與努力樹。第 02～06 週改用本人名冊核對、一次性舊成果接回與正式 `student_progress`；下文身分卡／不顯示努力樹的敘述僅適用轉換前。第 01 週免身分例外保留。以 [三年級 Google 契約](grade3-google-course.md) 與已填驗收契約為準；正式 SQL 與網站已於2026-10-06獲授權後完成切換；詳見 [正式切換紀錄](grade3-week06-release.md)。
 
-> 最後更新：2026-10-01
+> 最後更新：2026-11-06
 >
 > 目標：避免「上課才發現功能壞掉」。
 
@@ -292,9 +292,41 @@ const classCardAuth = initClassCardAuth({ courseId: "grade3-115-1", mode: "requi
 3. **開始（取得發布鎖）**：`node automation/release-from-main.mjs start --agent <名稱> --changed <預期修改檔,…> --added <新檔,…> --removed <刪除檔,…>`。基準是正式網址 `it-class-tcwu.vercel.app` 實際指向的部署（不是 `targets.production`，後者可能是建置失敗的部署）。鎖存在 repo 共用 git 目錄的 `release-lock.json`，所有 worktree 都看得到；被別人持有時停止並問使用者，不得刪除別人的鎖。
 4. **部署候選版**：`node automation/release-from-main.mjs deploy --agent <名稱>`。只建立候選版（`--prod --skip-domain`，不 promote），並自動比對完整檔案樹；不符就標為 rejected。2026-11-05 起 `vercel.json` 的 `git.deploymentEnabled` 同時設 `"**": false` 和 `"main": false`：所有 Git 分支的自動預覽／正式部署都關閉，包含 `codex/...` 等帶斜線分支，避免 PR 反覆觸發教材來源阻擋及失敗通知。新分支仍必須從最新 main 建立，以承接此設定；不要推送仍保有舊設定的歷史分支。這不影響 PR 或本 CLI 發布腳本，不需要為這項 Git 設定切換正式網站。不得重開 Git 自動部署，也不能停用發布前檢查來消除通知。
 5. **promote**：`node automation/release-from-main.mjs promote --agent <名稱>`。promote 前會再確認正式版與 `origin/main` 沒變、比對仍通過；promote 後確認正式網址已指向候選版，釋放鎖並寫入 `release-history.ndjson`。只差換行的檔（`core.autocrlf=true` 造成）會列為 `eolOnly`，不算失敗；內容不同就會擋下。正式版有 11 個混合換行檔已在 `.gitattributes` 標 `-text`。
-6. **收尾**：把 promote 輸出的 `handoffRow` 經 PR 加到 [agent-handoff.md](agent-handoff.md) 頂部的發布紀錄，並讀回關鍵頁面。放棄或失敗用 `abort --agent <名稱>` 釋放鎖。回滾目標是紀錄中的基準部署。
+6. **收尾**：把 promote 輸出的 `handoffRow` 經 PR 加到 [agent-handoff.md](agent-handoff.md) 頂部的發布紀錄，並讀回關鍵頁面；確認收據已進 main、發布鎖已釋放後，必須完成下節的證據封存與工作目錄清理。放棄或失敗用 `abort --agent <名稱>` 釋放自己的鎖，保留未完成工作及排錯證據。回滾目標是紀錄中的基準部署，不必永久保留整份發布 checkout。
 7. **資料庫函式**：函式變更寫成 `supabase/` 下的新 SQL 檔，經使用者同意後套用；套用後立刻執行 `node automation/db-schema-snapshot.mjs` 與 `node automation/db-snapshot-check.mjs --live`，兩者通過再把 `supabase/production-snapshot/` commit 進 `main`。重新安裝時最後套用 `supabase/production-snapshot/functions.sql`。**不可單獨重跑 `supabase/quiz-order-fix.sql`**，它會蓋掉 `quiz_action` 的學習包裝層。詳見 [快照說明](../../supabase/production-snapshot/README.md)。
 8. **工具備註**：本機 Vercel CLI 設定在 `%APPDATA%\xdg.data\com.vercel.cli`，呼叫時加 `--global-config` 指向該資料夾；在 Git Bash 呼叫 `vercel api /v9/...` 要先設 `MSYS_NO_PATHCONV=1`，否則路徑會被改寫成 Windows 路徑，CLI 會改走登入流程。
+
+## 發布後收尾：證據封存與工作目錄清理（2026-11-06 起）
+
+每次正式發布完成後，由本次執行者完成以下收尾；開發、資料庫快照、乾淨 main 發布與收據 PR 所建立的工作目錄都要列入檢查。純文件任務在 PR 合併後同樣收尾，無須為文件修改另做 Vercel 部署。使用者已授權依本節常態執行，不必每次另問；授權只涵蓋已確認屬於本次工作、已完成且未使用的目錄，不能擴大成清除其他對話的工作。
+
+### 1. 確認完成與清理範圍
+
+- 正式驗證已通過、發布收據 PR 已進 `main`、發布鎖已釋放，才可清理發布工作目錄。驗證未通過或仍需排錯時保留，不能為回收空間把工作標成完成。
+- 先 `git fetch origin`，以 `git worktree list --porcelain` 逐一列出本次工作目錄的**完整絕對路徑**、HEAD、分支、PR 與用途；記錄清理前各磁碟可用位元組。從最新 `origin/main` 建新工作目錄與只從乾淨 main 發布的規則不變。
+- 主工作區、共用 Git 目錄、其他對話的目錄、共用依賴與教材來源不在清理範圍。不按日期、名稱前綴或整個父資料夾批次刪除；巢狀 worktree 也必須逐一確認登記與精確路徑，不得誤刪其主工作區。
+- 每個候選都要確認：HEAD 已包含於最新 `origin/main`、沒有未提交修改或未追蹤檔案、未被鎖定、沒有未合併成果；**忽略檔案另行盤點，`git status` 乾淨不代表沒有私有證據**。
+- 檢查其他對話狀態、程序工作目錄及命令列中的目標路徑、預覽服務、Claude／AGY worker 與檢視器；命令列只用於辨認歸屬，不輸出或保存可能含憑證的原文。對話未載入、回合結束或程序檢查沒命中，不能單獨作為安全刪除的證據。
+- 未完成、有修改、未合併、鎖定、使用中或歸屬不明的目錄一律保留並說明原因；不為了清理強制停止服務或檢視器。正常測試收尾時先自行停止已確認不再需要的本次 worker／服務，再重新核對；仍在使用者與他人服務保持原狀。發布鎖被別人持有時停止並問使用者，不得移除鎖。
+
+### 2. 分批處理與證據封存
+
+1. **沒有忽略檔案的乾淨已合併目錄**：保存上述目錄及 Git 清單後，可直接使用正常 `git worktree remove <已核對的完整絕對路徑>` 移除。
+2. **有忽略檔案的目錄**：先在 repo 外的本機私有位置封存必要證據，例如 `C:/Users/user/Documents/pc-master/worktree-evidence/<日期時間>/`；先確認目的磁碟空間與存取權限。只保留必要的獨有證據，不搬整份 checkout；`.chat-mode` 討論、來源指紋、SQL 套用前後比對、正式驗證與發布收據等不可因已 merge 就遺失。學生資料、私有題目與 `*.private.json` 不進公開 repo；權杖及密碼不是應封存的證據，不輸出或提交。
+3. 每份封存保存原完整路徑、HEAD、分支、PR／發布及回滾識別、時間、追蹤檔案索引、封存檔案相對路徑／大小／SHA-256，以及 junction／符號連結的目標資訊。追蹤內容由可讀的 Git commit 還原；仍需保留且未進 Git 的成果不得只記檔名而不保存內容。
+4. 排除可重建依賴副本與暫存前，先確認它們可重建且不含獨有證據；不能只憑 `tmp` 或 `automation/output` 名稱略過。**不得跟隨 junction／符號連結複製或刪除共用目標**，例如主工作區的 `tmp/quiz-runtime`。
+5. 移除前必須驗證：封存可讀、檔案清單與數量及位元組符合、壓縮檔 CRC（若適用）、逐檔 SHA-256 與來源相同，並保存整份封存的 SHA-256。清理前再核對來源沒有變動；任何缺檔、差異、讀取失敗或權限問題均保留原目錄，不能宣稱封存完成。
+
+### 3. 正常移除與最後複驗
+
+- 在每次移除前重新確認精確絕對路徑仍位於核定工作目錄、沒有經過 reparse point、HEAD／Git 狀態／使用程序／發布鎖未變，且封存仍完整；條件有變就跳過。
+- 只用正常 `git worktree remove <完整絕對路徑>`，不使用 `--force`，也不以 `Remove-Item -Recurse`、`rmdir /s` 或跨 shell 的字串拼接刪除整份目錄。若 Git 拒絕，先查原因；僅可在再次驗證後處理已封存且 SHA-256 相符的忽略檔案，再重試正常移除，不能順手刪掉新出現的內容。
+- junction／符號連結只能在核對完整路徑與封存的目標後移除**連結本身**，不得遞迴進入目標；不能刪除共用依賴來讓工作目錄變乾淨。先保留分支與 Git commit，不附帶刪分支或執行垃圾回收。
+- 確認移除的路徑與 worktree 登記皆已消失，保留目錄與共用依賴仍存在，原服務仍正常，封存再次讀回／雜湊驗證通過。`git worktree prune` 不是目錄清理工具；若需處理失效登記，先 `--dry-run`，不可用來掩蓋移除失敗。
+- 量測清理後可用位元組，以前後差值回報**實際回收空間**；目錄邏輯大小只是估計，並註明其他同時執行的程式可能影響磁碟差值。記錄已清理／保留目錄、原因、封存位置與驗證結果到 repo 外的收尾收據，最終回覆摘要；公開交接只留不含私有資料的必要摘要。
+- 收據 PR 的工作目錄與本次收尾用的工作目錄也要依同一規則處理，不能為了記錄清理不斷另開新副本。純收尾收據可留在 repo 外，不為它再建立網站部署或循環產生 PR。
+
+本流程是發布完成後的必要工作，不啟用定時自動刪除、不清未完成或使用中的目錄，也不自動刪除封存證據。封存保存期限與舊封存清除另依使用者指示。
 
 ## 上線前必要檢查：努力樹升級目錄
 

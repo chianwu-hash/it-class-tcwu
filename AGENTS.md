@@ -50,6 +50,7 @@ For new week pages, also read:
 - **Git 不自動部署**：`vercel.json` 的 `git.deploymentEnabled` 保留 `"main": false`，並以 `"**": false` 關閉所有功能分支（含帶斜線的分支）的自動預覽；不得重新開啟或用失敗預覽當發布依據。PR 與 CLI 發布腳本維持原流程。promote 後把腳本輸出的 `handoffRow` 經 PR 記到 `docs/development/agent-handoff.md` 頂部。
 - **資料庫函式**：改函式要寫成 `supabase/` 下的 SQL 檔，經使用者同意後才套用到正式庫；套用後執行 `node automation/db-schema-snapshot.mjs` 與 `node automation/db-snapshot-check.mjs --live`，通過後把 `supabase/production-snapshot/` 一併 commit。不可單獨重跑 `supabase/quiz-order-fix.sql`（會蓋掉 `quiz_action` 的學習包裝層）。
 - **公開 repo**：不 commit 課本 PDF、學生資料、權杖、`*.private.json` 或私有輸出。
+- **發布後必做收尾**：正式驗證與發布收據 PR 完成、發布鎖釋放後，依 `docs/development/dev-sop.md`「發布後收尾：證據封存與工作目錄清理」封存並驗證必要證據，再正常移除本次已完成且未使用的 worktree；本項為使用者已授權的常態流程，不需每次重新詢問。未完成、有修改、未合併、鎖定或使用中的目錄保留，不停止他人的服務、不使用 `--force`，並回報實際回收空間與保留原因。純文件 PR 合併後也要收尾，不為文件修改另做網站部署。
 
 ## Collaboration With Claude Code
 
