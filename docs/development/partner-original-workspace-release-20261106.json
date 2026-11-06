@@ -1,0 +1,101 @@
+{
+  "production": "dpl_7qKNYvxzyt97bN69uBrt4hAiFx75",
+  "runtime_main": "0db7a8bd34f81a0a734f3f58c1e571c5945cbc93",
+  "baseline_rollback": "dpl_EpnHcYKxAxnqtNdRpipoW8W1KXwn",
+  "promotedAt": "2026-11-06T10:54:46.705Z",
+  "fullTree": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/focused.css",
+      "shared/partner-pilot/learning.js",
+      "shared/quiz-workspace.mjs"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "formal_assets": [
+    {
+      "path": "grade3/115-1/partner-practice.html",
+      "sha256": "880209ca29e1c1a32353dd6e35255917eac07b46fb3cd7d9f38709b2d1a78ff5",
+      "matches_main": true
+    },
+    {
+      "path": "grade4/115-1/partner-practice.html",
+      "sha256": "10acd2c4bcb8e44e66bbb4c583b93abc23b99b3463cada7fd2461b8ffffccbaf",
+      "matches_main": true
+    },
+    {
+      "path": "grade6/115-1/partner-practice.html",
+      "sha256": "952fd7673adf7fd84df7e5c00425d1d2544ebdc676c29896d561cd738d9a256a",
+      "matches_main": true
+    },
+    {
+      "path": "grade9/115-1/partner-practice.html",
+      "sha256": "cd128171494c9191712b2cd4bf89e94d111f52fb25cdfd3106b97c9b87d905cf",
+      "matches_main": true
+    },
+    {
+      "path": "shared/partner-pilot/app.mjs",
+      "sha256": "261eb91519ba6ac6bb815f41e82a65b56efd52e23b8570ab68b6f22120c94d99",
+      "matches_main": true
+    },
+    {
+      "path": "shared/partner-pilot/learning.js",
+      "sha256": "3304166f69338842e7fc9e184b96371124815342dd8d8e466d66acfb76c8a6f0",
+      "matches_main": true
+    },
+    {
+      "path": "shared/partner-pilot/focused.css",
+      "sha256": "25057a614823cdf89a7529ea72d2d089fc77671ed8590921630397366b0ba840",
+      "matches_main": true
+    },
+    {
+      "path": "shared/quiz-workspace.mjs",
+      "sha256": "3a960ee47e0342af8898cb72bf4b23c821a360d4dbcb10d0b9718706a25260ad",
+      "matches_main": true
+    },
+    {
+      "path": "shared/quiz-workspace.css",
+      "sha256": "c452f78e3aae5287e5f807047c8627f311a2e62e2511d966d1d4aba127c59f23",
+      "matches_main": true
+    },
+    {
+      "path": "my-tree.html",
+      "sha256": "2a26e69d6ef2dc76646dc21a0fdaa21b96d6692af694e8a786b8f0448f43a104",
+      "matches_main": true
+    },
+    {
+      "path": "admin-learning.html",
+      "sha256": "074b47ce315cd0ff63f6d3ab87ab354059176f42b9f476d7d257719915385970",
+      "matches_main": true
+    }
+  ],
+  "node_tests": 8,
+  "synthetic_browser_checks": 29,
+  "desktop_mobile_screenshots": "captured and visually checked",
+  "agy_runtime_head": "495538d",
+  "agy_final": "completed; no confirmed P1/P2; tool boundary and viewer verified; Git unchanged",
+  "student_data_written": false,
+  "database_changed": false,
+  "unverified": [
+    "正式雙帳號完整作答／回顧／計獎",
+    "實體平板觸控與真實注音輸入"
+  ],
+  "preserved_teacher_tree_release": true
+}
