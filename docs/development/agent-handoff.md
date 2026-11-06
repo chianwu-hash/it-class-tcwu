@@ -1,3 +1,18 @@
+# 2026-11-06 作答送出提醒與結束引導（隔離實作，待複核）
+
+## 發布登記
+
+- 發布中：`Codex-partner-outcomes-20261106`；功能／複核／19項Node及99項browser通過，待本PR進main後從新乾淨main使用release-from-main start/deploy/promote。正式基準 `dpl_8NhYoqpAA7mc29n1bm3yjEHR6uQV`（status無鎖）；預期6個runtime修改＋2個新增，沒有DB／資料列變更。尚未promote。
+- Claude最後針對快取／焦點複核 `partner-outcomes-cache-20261106`（3turn／2Read／54秒，viewer、Git不變通過），無P1/P2阻擋。原介面48與雙人媒體10已在最後版重跑通過；outcomes41及Node19亦通過。真人雙帳號兩機、真IME／觸控／報讀器仍未測。
+
+- 使用者授權三項：未送出提醒、全員作答／回顧後引導、真實達標慶祝及未達標訂正提示。先Claude討論再改、修後複核、驗證後PR/main/發布腳本。原有任務與紀錄不得變動。
+- 最新main d7f7ff2，新worktree `partner-outcomes-20261106`／branch `codex/partner-outcomes-20261106`，Codex唯一寫入者。Claude只讀專案，無shell／網路／憑證／學生資料／部署權限；review期間凍結寫入。
+- 初步方案：保留明確送出與草稿，離開題目／儲存退出前告知未送出；穩定狀態導引不自動切頁搶焦點；紀錄冊明確達標或訂正，慶祝只看server award且本tab不重播。僅前端，沒有SQL／資料修補／計葉規則變更。
+- Claude精確下一步：檢查learning/past-answer/app與focused測試，討論草稿版本、即時peer更新不拆DOM、慶祝真實入帳及舊獎勵邊界。討論後Codex實作，實機真人兩帳號測試仍不可冒稱通過。
+- 修改前Claude已完成，viewer/Git不變通過。已實作learning＋outcome-model.mjs／outcomes.css、四個年級入口cache、app import及測試；沒有SQL／auth／個人練習修改。詳細契約與證據見 `partner-outcomes-20261106.md`。目前19項Node／SQL及新增35項outcomes瀏覽器通過；既有focused17、actions10、edge8、read／lightbox已通過。測試fixture不再把歷史team migration重播到已更新snapshot，已驗現行DB契約。
+- 修後Claude精確下一步：只讀實際上述檔案、驗證文件及相關測試，找草稿誤提交／跨房延遲回呼／舊紀念誤播／同步DOM替換／假達標／前端cache問題。Codex唯一寫入者，複核期間凍結專案寫入。尚未PR或發布。
+- 第二輪Claude已完成，無P1/P2；已補P3焦點／Esc／逐題live region／busy提示，outcomes擴充38項通過，既有48項browser及19項Node通過。補跑真本機SQL＋Edge＋記憶體Storage合成雙人媒體（不是Google真人／真麥克風）；精確port8825，不使用舊worktree server。媒體10項通過、第三輪Claude無阻擋。最後自查重現innerHTML序列化使慶祝被重建，已改guideKey／celebrationKey閉包快取，41項outcomes通過；返回／關閉焦點一併補齊。最後短複核及回歸均通過，接PR/main與新乾淨main發布。
+
 # 2026-11-06 組隊簡化（已正式發布）
 
 - 已正式完成：PR42功能／PR43 snapshot已進main，從乾淨main `b028484` 用發布腳本start→deploy→promote，臺灣時間 2026-11-06 07:07:45 正式指向 `dpl_8NhYoqpAA7mc29n1bm3yjEHR6uQV`。回滾 `dpl_8PdjF5a9zKkhNmXTr1AMrJZSx9pg`。完整樹8修改／2新增／0刪除／0非預期／0換行例外；候選與正式各10檔SHA256與main一致，鎖已釋放。

@@ -1,7 +1,7 @@
 // Local synthetic Auth + real PGlite RPCs + in-memory Storage. No outbound network/real credentials.
 import http from 'node:http';import {readFile} from 'node:fs/promises';import path from 'node:path';import {fileURLToPath} from 'node:url';
 import {setupMediaDB} from './fixtures/partner-message-db.mjs';import {createHandler} from '../supabase/functions/quiz-partner-message-media/handler.mjs';
-const root=fileURLToPath(new URL('../',import.meta.url)),port=8818,base='http://localhost:'+port,envBase='https://synthetic.invalid',objects=new Map();let db=await setupMediaDB(),queue=Promise.resolve();
+const root=fileURLToPath(new URL('../',import.meta.url)),port=Number(process.env.PORT||8818),base='http://localhost:'+port,envBase='https://synthetic.invalid',objects=new Map();let db=await setupMediaDB(),queue=Promise.resolve();
 const serial=fn=>{const result=queue.then(fn);queue=result.catch(()=>{});return result;};
 const action=(n,p,media=false)=>serial(()=>db.call(n,p,media));
 const handler=createHandler({env:k=>({SUPABASE_URL:envBase,SUPABASE_ANON_KEY:'prototype-public',SUPABASE_SERVICE_ROLE_KEY:'prototype-private'})[k],fetcher:async(url,options={})=>{

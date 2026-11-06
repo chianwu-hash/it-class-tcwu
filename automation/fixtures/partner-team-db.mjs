@@ -9,7 +9,8 @@ export async function setupTeamDB(){
  const install=async name=>{const i=snapshot.indexOf('CREATE OR REPLACE FUNCTION '+name+'(');if(i<0)throw Error(name);await db.exec(snapshot.slice(i,snapshot.indexOf('$function$;',i)+11));};
  for(const name of ['public.quiz_valid_runs','public.quiz_valid_content','public.quiz_validate'])await install(name);
  await db.exec(await read('supabase/quiz-partner-self.sql'));
- // Use exactly the two current production definitions that the guarded migration transforms.
+ // Current snapshots already include team-flow. Install the shipped contract;
+ // replaying its historical guarded migration against post-migration functions is invalid.
  for(const name of ['partner_pilot.lobby_action','public.quiz_partner_pilot_action'])await install(name);
  const sid=(await db.query(`select source_session from partner_pilot.papers where id='ten'`)).rows[0].source_session;
  const version=(await db.query(`select source_version from partner_pilot.papers where id='ten'`)).rows[0].source_version;
@@ -24,7 +25,7 @@ export async function setupTeamDB(){
  await db.query(`insert into partner_pilot.papers(id,title,grade,subject,kind,total,content_key,source_version,is_real,past_meta) values('packed','合成考古題組',3,'數學','flower',10,'packed',$1,true,'{"sourcePaper":"packed-source"}')`,[version]);
  await db.exec(`insert into partner_pilot.paper_items select 'packed',number,qid from partner_pilot.paper_items where paper_id='ten'`);
  for(const name of ['partner_pilot.freeze_allocation','partner_pilot.owner_of','partner_pilot.snapshot'])await install(name);
+ await install('partner_pilot.team_rooms');
  await db.exec(`create trigger partner_freeze_allocation before insert or update on partner_pilot.rooms for each row execute function partner_pilot.freeze_allocation()`);
- await db.exec(await read('supabase/quiz-partner-team-flow.sql'));
  return f;
 }
