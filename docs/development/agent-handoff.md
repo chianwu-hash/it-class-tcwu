@@ -1,9 +1,19 @@
-# 2026-11-06 共同營地懸浮入口（發布中）
+# 2026-11-06 共同營地懸浮入口（已正式發布）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-partner-floating-camp-20261106 | 2026-11-06T01:39:37.949Z | `6b1b5ef` | `dpl_FuTwKPGevKufL2To2NiNVyagJmky` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/focused.css | `dpl_BsS5NFTz2sCs4ShkueTmB3W7bYQ3`／回滾 `dpl_FuTwKPGevKufL2To2NiNVyagJmky`（eolOnly 0） |
+
+- PR47已進main，從新乾淨main `6b1b5ef` 經release-from-main start→deploy→promote，臺灣時間2026-11-06 09:41:17正式切換 `dpl_BsS5NFTz2sCs4ShkueTmB3W7bYQ3`。完整樹ok:true，5修改／0新增／0刪除／0非預期／0換行例外；候選及正式各5檔SHA256均同main。鎖已釋放。
+- Chrome 16項懸浮＋17項原介面回歸通過、pageerror0；正式4項載入讀回通過。CSS呈現調整，沒有JS／SQL或學生任務、作答、草稿、花葉資料變動。實體觸控及虛擬鍵盤開啟狀態未測，不冒稱真人兩機驗證。
+
+以下為實作與隔離驗證紀錄。
 
 - 使用者要求捲動答題時隨時能開營地。沿用原header的同一個data-open-camp按鈕／未讀數／dialog開關與焦點契約，只改focused.css固定右下角、深綠色圓角與鍵盤focus樣式；footer重複入口隱藏，營地展開時懸浮入口隱藏，toast上移避免相疊，內容底部留空間並支援safe-area。
-- 新worktree／branch `partner-floating-camp-20261106`，最新main ea4c532；只有focused.css與四年級入口cache版本（四個年級3/4/6/9），沒有JS、SQL、作答／任務／草稿／獎勵或個人練習變更。Codex唯一寫入者。
+- 新worktree／branch `partner-floating-camp-20261106`，最新main ea4c532；只有focused.css與四個年級入口cache版本（3/4/6/9），沒有JS、SQL、作答／任務／草稿／獎勵或個人練習變更。Codex唯一寫入者。
 - 隔離Chrome 16項懸浮檢查＋17項既有focused回歸通過，pageerror0。1440／768／360寬捲動可達、底部操作可滾到懸浮鈕上方、無水平溢出、未讀／toast分開、營地開關／焦點／原選答保留、回顧／紀錄冊可達均驗證；手機截圖已檢視。這是CSS呈現小改，沒有新增鏡像測試或DB驗證。
-- 發布登記：`Codex-partner-floating-camp-20261106`，基準正式 `dpl_FuTwKPGevKufL2To2NiNVyagJmky`，status無鎖。驗證通過後PR/main，新乾淨main執行release-from-main start/deploy/promote，預期5個runtime修改、0新增／刪除；完成後經PR登記handoffRow。
 
 # 2026-11-06 作答送出提醒與結束引導（已正式發布）
 
