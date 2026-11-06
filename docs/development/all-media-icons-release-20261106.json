@@ -1,0 +1,65 @@
+{
+  "agent": "Codex-all-media-icons-20261106",
+  "commit": "d6925cfa1f85bb72604a196bbaaa218e520eaa65",
+  "baseline": "dpl_T6HnHqmrjRLZdJqWsEdXt33j4cM8",
+  "expected": {
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/learning.js",
+      "shared/partner-pilot/camp-panel.mjs",
+      "shared/partner-pilot/message-composer.mjs",
+      "shared/partner-pilot/message-media.css",
+      "shared/partner-pilot/sketch-editor.mjs"
+    ],
+    "added": [
+      "shared/partner-pilot/tool-icons.mjs"
+    ],
+    "removed": []
+  },
+  "startedAt": "2026-11-06T12:56:13.697Z",
+  "state": "promoted",
+  "candidate": "dpl_37emDdg4VTzTBQEmQfpm7gLXSHNK",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/camp-panel.mjs",
+      "shared/partner-pilot/learning.js",
+      "shared/partner-pilot/message-composer.mjs",
+      "shared/partner-pilot/message-media.css",
+      "shared/partner-pilot/sketch-editor.mjs"
+    ],
+    "added": [
+      "shared/partner-pilot/tool-icons.mjs"
+    ],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-06T12:56:38.300Z",
+  "promotedAt": "2026-11-06T12:57:03.328Z",
+  "alias": "dpl_37emDdg4VTzTBQEmQfpm7gLXSHNK",
+  "rollback": "dpl_T6HnHqmrjRLZdJqWsEdXt33j4cM8",
+  "handoffRow": "| 已完成 | Codex-all-media-icons-20261106 | 2026-11-06T12:56:13.697Z | `d6925cf` | `dpl_T6HnHqmrjRLZdJqWsEdXt33j4cM8` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/camp-panel.mjs、shared/partner-pilot/message-composer.mjs、shared/partner-pilot/message-media.css、shared/partner-pilot/sketch-editor.mjs、+shared/partner-pilot/tool-icons.mjs | `dpl_37emDdg4VTzTBQEmQfpm7gLXSHNK`／回滾 `dpl_T6HnHqmrjRLZdJqWsEdXt33j4cM8`（eolOnly 0） |",
+  "formalAssetsExact": 11,
+  "syntheticBrowserChecks": 24,
+  "nodeTests": 12,
+  "realTouchTested": false
+}
