@@ -1,3 +1,15 @@
+# 2026-11-06 請教與標記操作簡化（發布中）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 發布中 | Codex-simple-question-tools-20261106 | 待腳本start | PR合併後新乾淨main | 由正式alias鎖定 | grade3/4/6/9 的 partner-practice.html、shared/partner-pilot/app.mjs、focused.css、learning.js | 純介面，不改SQL／原任務與計獎 |
+
+- 依使用者截圖簡化：移除「請教或標記」外層摺疊，預設只留「問夥伴／標記這題」。標記全寬展開在兩按鈕下方，四個短理由radio、選填兩行提醒、加入共同回顧／收起；成功後收起並顯示已標記。保留原hard／interesting／careful／method鍵與mark RPC、原生必填、草稿key與open紀錄。回應晚到時不清掉更新過的標記文字。
+- Codex為唯一寫入者，fresh branch codex/partner-help-mark-simple-20261106。8 Node、22合成瀏覽器通過：原答題工作區、標記與答案草稿接續、隊友更新保留DOM、成功／失敗狀態、正確題目請教、原送答、考古多小題獨立理由與標記、1366／390px全寬無溢出、pageerror0。已目視桌機與手機截圖；測試只用合成fixture，不讀寫正式學生紀錄。
+- 本機測試埠8843已被其他程序使用，未停止或接管，改用4491；後續租約worker完成與暫存分頁清理。證據在本批ignored .chat-mode/evidence/simple-tools/。原資料庫、題目、答案、分配、回顧門檻、紀念葉花均未修改。正式資產／發布收據待候選完整樹檢查通過後補記。
+
 # 2026-11-06 第一級紀念葉尺寸與樹枝對齊（已正式發布）
 
 ## 發布登記
