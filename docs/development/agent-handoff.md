@@ -1,10 +1,15 @@
-# 2026-11-06 夥伴紀念顯示修正（首輪複核完成，待發布）
+# 2026-11-06 夥伴紀念顯示修正（已正式發布）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-partner-keepsake-display-20261106 | 待腳本取得鎖 | 待本PR合併main | `dpl_YFLs7rxodob61WM3agfDWjXwahwa` | 4年級夥伴入口、my-tree、shared/partner-pilot/app／learning／outcome-model／outcomes.css、shared/effort-garden-v2／garden-stage／quiz-partner-rewards／reward-source-colors／reward-tree-renderer、garden/stage／scene-cat／scene-pets／growth/index／growth.mjs | 待複核及main乾淨來源發布；目前無發布鎖 |
+| 已完成 | Codex-partner-keepsake-display-20261106 | 2026-11-06T04:06:22.316Z | `a2f7eec` | `dpl_YFLs7rxodob61WM3agfDWjXwahwa` | garden/growth/growth.mjs、garden/growth/index.html、garden/scene-cat.html、garden/scene-pets.html、garden/stage.html、grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、my-tree.html、shared/effort-garden-v2.mjs、shared/garden-stage.mjs、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/outcome-model.mjs、shared/partner-pilot/outcomes.css、shared/quiz-partner-rewards.mjs、shared/reward-source-colors.mjs、shared/reward-tree-renderer.js | `dpl_HnPy1eaz92ktXsjut7Z9LnXeBcXo`／回滾 `dpl_YFLs7rxodob61WM3agfDWjXwahwa`（eolOnly 0） |
+
+- PR58已進main `a2f7eec`，從新乾淨main worktree經官方start→deploy→promote，臺灣2026-11-06 12:07:43上線。完整樹ok:true，19修改／0新增／0刪除／0非預期／0換行例外。候選及正式各19檔SHA256相同，正式4項載入檢查通、pageerror0。無SQL／學生資料／成長已讀變更。發布鎖已釋放；[驗證收據](partner-keepsake-display-verification-20261106.json)。
+- Claude首輪無可確認P1/P2；P3小修後23／19瀏覽器重驗通，第二輪受每週額度限制未執行（臺灣16:00恢復），不可聲稱二次複核通。真Google兩機、觸控／報讀器未驗。未開始集合室刪除仍在獨立草稿，未套SQL、未發布；已開始任務提前結束仍暫緩。
+
+以下為本輪發布前紀錄，其中「待發布」為當時狀態。
 
 - Codex唯一寫入者，工作分支codex/partner-keepsake-audit-20261106，main基底d44674a。範圍與驗證見[顯示修正](partner-keepsake-display-20261106.md)。不改SQL／計獎／任務資料；正式仍dpl_YFLs7rxodob61WM3agfDWjXwahwa。
 - Claude首輪只讀複核無可確認P1/P2、Git未變；小修後23／19瀏覽器重驗通過，第二輪因每週額度零Read拒絕，未執行。11項Node／SQL／保護檢查通過，1部署DB測試skip不列通過。PR進main後再乾淨main依官方腳本發布。另一分支的未開始集合室刪除功能尚未完成，不能宣稱已發布。
