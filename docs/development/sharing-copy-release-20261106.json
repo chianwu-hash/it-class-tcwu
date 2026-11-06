@@ -1,0 +1,47 @@
+{
+  "agent": "Codex-restore-sharing-copy-20261106",
+  "commit": "06ed389c367d82702b8fbbbe3f5273790c77bbf1",
+  "baseline": "dpl_JAheFRzwF3bapEpUNVX6sxKLzdSA",
+  "expected": {
+    "changed": [
+      "shared/partner-pilot/learning.js",
+      "shared/partner-pilot/focused.css"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "startedAt": "2026-11-06T11:34:20.737Z",
+  "state": "promoted",
+  "candidate": "dpl_EJGnWZCFfX2ZUbWA3vVMVqhtKxtk",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "shared/partner-pilot/focused.css",
+      "shared/partner-pilot/learning.js"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-06T11:34:43.509Z",
+  "promotedAt": "2026-11-06T11:35:22.193Z",
+  "alias": "dpl_EJGnWZCFfX2ZUbWA3vVMVqhtKxtk",
+  "rollback": "dpl_JAheFRzwF3bapEpUNVX6sxKLzdSA",
+  "handoffRow": "| 已完成 | Codex-restore-sharing-copy-20261106 | 2026-11-06T11:34:20.737Z | `06ed389` | `dpl_JAheFRzwF3bapEpUNVX6sxKLzdSA` | shared/partner-pilot/learning.js、shared/partner-pilot/focused.css | `dpl_EJGnWZCFfX2ZUbWA3vVMVqhtKxtk`／回滾 `dpl_JAheFRzwF3bapEpUNVX6sxKLzdSA`（eolOnly 0） |",
+  "formalVerification": {
+    "assetsMatch": true,
+    "fileCount": 2,
+    "sharingLabelRestored": true
+  },
+  "browserChecks": 22
+}
