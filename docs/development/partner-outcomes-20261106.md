@@ -1,5 +1,7 @@
 # 夥伴練功：送出提醒、結束引導與夥伴紀念
 
+已正式發布：PR45進main `0543996`，臺灣時間2026-11-06 09:01:23經release-from-main切換 `dpl_FuTwKPGevKufL2To2NiNVyagJmky`。候選及正式各8個runtime檔案與main SHA256相同，完整樹ok:true、發布鎖已釋放，正式載入4檢查及匿名401通過。回滾 `dpl_8NhYoqpAA7mc29n1bm3yjEHR6uQV`。本輪不改資料庫或既有紀錄。
+
 ## 功能契約
 
 沿用已發布的答題優先介面、共享 navbar 與登入、既有 RPC／requestId／expectedAttempt／草稿版本。只新增呈現與明確操作引導，不修改 SQL、題庫、配題、名冊、作答紀錄、個人練習或花葉政策；不代送草稿，不以草稿增加完成題數。
@@ -20,9 +22,9 @@
 
 - Node：outcomes 4、focused 3、self 2、stability 5、production 2、team 3，共19項通過；合成資料庫驗證既有任務、草稿、訂正補發、同題同人去重、新成員組合及原個人練習資料保留。
 - 修正既有team測試fixture：main的production snapshot已含team-flow，不能再重套需要舊MD5的歷史遷移。fixture改直接安裝現行snapshot的team_rooms／lobby／wrapper／freeze；沒有更改正式SQL或解除基準保護。
-- Chrome：新增outcomes 41項、原focused 17／actions 12／edge 10／read 7／lightbox 2項通過，共89項；合成資料隔離preview `http://localhost:8824/`，只使用註冊工作瀏覽器租約與精確target。原生dialog及鍵盤Esc另有實際pointer檢查；注音以CompositionEvent模擬，不冒稱真實IME。媒體整合使用同一新worktree、獨立port8825（preview改支援PORT，測試支援指定兩個精確URL），10項通過（語音、畫圖、草稿與重送、原選答保留、手機版面）；加上媒體共99項。最新DOM快取小修後focused及媒體再次回歸中。
+- Chrome：新增outcomes 41項、原focused 17／actions 12／edge 10／read 7／lightbox 2項通過，共89項；合成資料隔離preview `http://localhost:8824/`，只使用註冊工作瀏覽器租約與精確target。原生dialog及鍵盤Esc另有實際pointer檢查；注音以CompositionEvent模擬，不冒稱真實IME。媒體整合使用同一新worktree、獨立port8825（preview改支援PORT，測試支援指定兩個精確URL，限定localhost），10項通過（語音、畫圖、草稿與重送、原選答保留、手機版面）；加上媒體共99項。最新DOM快取小修後focused及媒體已再次通過。
 - 原focused保存測試依新契約補上「只存草稿」確認，等待保存完成後才接續；actions測試補上明確前景授權以免背景scroll等待。這些是測試流程調整，非弱化驗證。
 - 不以合成登入當真人Google兩帳號／兩台裝置；真注音、平板觸控／螢幕閱讀器仍未測。本輪沒有改媒體錄音／傳輸功能。
-- 最終驗證及Claude複核通過，接續PR進main後從新乾淨main執行release-from-main。發布結果另記handoff。
+- 最終驗證及Claude複核通過，已經PR/main及新乾淨main發布完成，結果見頂部及handoff。
 
 - 最後自查重現：直接比較DOM innerHTML與原始字串會因data屬性序列化而每個快照重建橫幅、重播動畫。已改閉包guideKey／celebrationKey，只在原始呈現字串改變時換DOM；clear時重設。新增相同快照保持慶祝節點／guide按鈕節點及關閉後焦點測試，41項outcomes通過。Claude最後針對性複核 `partner-outcomes-cache-20261106`（3turn／2Read／54秒、viewer／Git不變）無P1/P2；最新48項介面與10項媒體再次通過，總計99項browser。已知不阻擋邊界：呼叫者重複focus無資料影響；伺服器若缺award數量則保守不慶祝；真實報讀器未測。

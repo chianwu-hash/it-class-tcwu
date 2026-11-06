@@ -1,9 +1,16 @@
-# 2026-11-06 作答送出提醒與結束引導（隔離實作，待複核）
+# 2026-11-06 作答送出提醒與結束引導（已正式發布）
 
 ## 發布登記
 
-- 發布中：`Codex-partner-outcomes-20261106`；功能／複核／19項Node及99項browser通過，待本PR進main後從新乾淨main使用release-from-main start/deploy/promote。正式基準 `dpl_8NhYoqpAA7mc29n1bm3yjEHR6uQV`（status無鎖）；預期6個runtime修改＋2個新增，沒有DB／資料列變更。尚未promote。
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-partner-outcomes-20261106 | 2026-11-06T00:57:10.600Z | `0543996` | `dpl_8NhYoqpAA7mc29n1bm3yjEHR6uQV` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、+shared/partner-pilot/outcome-model.mjs、+shared/partner-pilot/outcomes.css | `dpl_FuTwKPGevKufL2To2NiNVyagJmky`／回滾 `dpl_8NhYoqpAA7mc29n1bm3yjEHR6uQV`（eolOnly 0） |
+
+- 已完成：PR45已進main，從乾淨main `0543996` 經發布腳本start→deploy→promote，臺灣時間2026-11-06 09:01:23正式指向 `dpl_FuTwKPGevKufL2To2NiNVyagJmky`；回滾 `dpl_8NhYoqpAA7mc29n1bm3yjEHR6uQV`。完整樹6修改／2新增／0刪除／0非預期／0換行例外；候選與正式各8檔SHA256與main一致。發布鎖已釋放。
+- 正式瀏覽器讀回新版app及CSS／模組內容，4項載入檢查通過、pageerror0；匿名RPC拒絕401。沒有SQL、Auth、Storage政策、資料列或獎勵政策變更。19項Node與99項隔離browser通過，詳 `partner-outcomes-verification-20261106.json`。
 - Claude最後針對快取／焦點複核 `partner-outcomes-cache-20261106`（3turn／2Read／54秒，viewer、Git不變通過），無P1/P2阻擋。原介面48與雙人媒體10已在最後版重跑通過；outcomes41及Node19亦通過。真人雙帳號兩機、真IME／觸控／報讀器仍未測。
+
+下方為實作歷程，待發布等文字描述當時狀態。
 
 - 使用者授權三項：未送出提醒、全員作答／回顧後引導、真實達標慶祝及未達標訂正提示。先Claude討論再改、修後複核、驗證後PR/main/發布腳本。原有任務與紀錄不得變動。
 - 最新main d7f7ff2，新worktree `partner-outcomes-20261106`／branch `codex/partner-outcomes-20261106`，Codex唯一寫入者。Claude只讀專案，無shell／網路／憑證／學生資料／部署權限；review期間凍結寫入。

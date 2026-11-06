@@ -1,0 +1,159 @@
+{
+  "sourceCommit": "0543996a828b58431f06d1d6e1438f8f1bafe9fa",
+  "productionDeployment": "dpl_FuTwKPGevKufL2To2NiNVyagJmky",
+  "rollback": "dpl_8NhYoqpAA7mc29n1bm3yjEHR6uQV",
+  "promotedAt": "2026-11-06T01:01:23.576Z",
+  "fullTree": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/learning.js"
+    ],
+    "added": [
+      "shared/partner-pilot/outcome-model.mjs",
+      "shared/partner-pilot/outcomes.css"
+    ],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "assets": {
+    "candidate": [
+      {
+        "file": "grade3/115-1/partner-practice.html",
+        "ok": true,
+        "sha256": "7352839963aaaccff7af1efedfabd7ef9efcf1cf5e5620208b5944bba647781e"
+      },
+      {
+        "file": "grade4/115-1/partner-practice.html",
+        "ok": true,
+        "sha256": "c840ae874acf78afe3007fb15abcda67a77df9cc20f8b86f96d984fc1744045e"
+      },
+      {
+        "file": "grade6/115-1/partner-practice.html",
+        "ok": true,
+        "sha256": "4eabff7c3cef1c60bc9cca7914452c1ae3a0076b25e131754b3587ceb46377b5"
+      },
+      {
+        "file": "grade9/115-1/partner-practice.html",
+        "ok": true,
+        "sha256": "1e993629470cd1038a3c8f2ee2114696b7a649298c7325167b1444567d340109"
+      },
+      {
+        "file": "shared/partner-pilot/app.mjs",
+        "ok": true,
+        "sha256": "16a3a6f5af742586d32c8e85506b11ee7e2edb87ebab78df86f1d370e571ae57"
+      },
+      {
+        "file": "shared/partner-pilot/learning.js",
+        "ok": true,
+        "sha256": "766a87f9d18f7ca3541e772c76d8864e8532ef4c290289777b1cefc8d1e92f25"
+      },
+      {
+        "file": "shared/partner-pilot/outcome-model.mjs",
+        "ok": true,
+        "sha256": "04b50e5fdf1bd32f1d052f53239dcc71288dbd56cd64266c1a6504f98e285214"
+      },
+      {
+        "file": "shared/partner-pilot/outcomes.css",
+        "ok": true,
+        "sha256": "a95874a632ec9850c1512cb5f647b3f17779623024024ec35da6c77d848e7ba8"
+      }
+    ],
+    "production": [
+      {
+        "file": "grade3/115-1/partner-practice.html",
+        "ok": true,
+        "sha256": "7352839963aaaccff7af1efedfabd7ef9efcf1cf5e5620208b5944bba647781e"
+      },
+      {
+        "file": "grade4/115-1/partner-practice.html",
+        "ok": true,
+        "sha256": "c840ae874acf78afe3007fb15abcda67a77df9cc20f8b86f96d984fc1744045e"
+      },
+      {
+        "file": "grade6/115-1/partner-practice.html",
+        "ok": true,
+        "sha256": "4eabff7c3cef1c60bc9cca7914452c1ae3a0076b25e131754b3587ceb46377b5"
+      },
+      {
+        "file": "grade9/115-1/partner-practice.html",
+        "ok": true,
+        "sha256": "1e993629470cd1038a3c8f2ee2114696b7a649298c7325167b1444567d340109"
+      },
+      {
+        "file": "shared/partner-pilot/app.mjs",
+        "ok": true,
+        "sha256": "16a3a6f5af742586d32c8e85506b11ee7e2edb87ebab78df86f1d370e571ae57"
+      },
+      {
+        "file": "shared/partner-pilot/learning.js",
+        "ok": true,
+        "sha256": "766a87f9d18f7ca3541e772c76d8864e8532ef4c290289777b1cefc8d1e92f25"
+      },
+      {
+        "file": "shared/partner-pilot/outcome-model.mjs",
+        "ok": true,
+        "sha256": "04b50e5fdf1bd32f1d052f53239dcc71288dbd56cd64266c1a6504f98e285214"
+      },
+      {
+        "file": "shared/partner-pilot/outcomes.css",
+        "ok": true,
+        "sha256": "a95874a632ec9850c1512cb5f647b3f17779623024024ec35da6c77d848e7ba8"
+      }
+    ]
+  },
+  "anonymous": {
+    "status": 401,
+    "rejected": true
+  },
+  "browserLoad": {
+    "checks": [
+      {
+        "name": "correct grade and navbar",
+        "ok": true
+      },
+      {
+        "name": "new app import and outcome CSS are loaded",
+        "ok": true
+      },
+      {
+        "name": "public module matches new interaction contract",
+        "ok": true
+      },
+      {
+        "name": "no runtime exceptions",
+        "ok": true
+      }
+    ],
+    "errors": []
+  },
+  "tests": {
+    "nodeSql": 19,
+    "outcomesBrowser": 41,
+    "focusedBrowser": 48,
+    "syntheticTwoMemberMediaBrowser": 10
+  },
+  "databaseChanged": false,
+  "studentRecordsChanged": false,
+  "notVerified": [
+    "real Google two-account two-device flow",
+    "real IME",
+    "tablet touch",
+    "screen reader",
+    "real microphone interoperability"
+  ]
+}
