@@ -2,7 +2,7 @@ import {mountPastResults} from './past-results.js';
 import {mountPastAnswers} from './past-answer.js';
 import {createRichContent} from './rich-content.js';
 import {appendSingleChoiceOptions} from '../quiz-choice.mjs';
-import {createCampPanel} from './camp-panel.mjs';
+import {createCampPanel} from './camp-panel.mjs?v=20261106-button-alert';
 import {practiceUnits} from './practice-model.mjs';
 import {unsentQuestions,taskOutcome,rewardLabel,createAwardTracker} from './outcome-model.mjs?v=20261106-outcomes';
 const tags={hard:'有點難，想一起弄清楚',interesting:'有意思，想讓大家看看',careful:'有個地方容易忽略',method:'想交換不同方法'};

@@ -1,3 +1,10 @@
+# 2026-11-06 營地按鈕五秒新訊息提醒（發布中）
+
+- 使用者要求新訊息到達時懸浮按鈕醒目約5秒，不自動開營地，不打斷作答。沿用既有attention基準／未讀規則，新增opt-in includeChat供按鈕提醒；原toast仍只提示新請教及回覆本人，聊天只做按鈕提醒與未讀數。
+- 按鈕轉暖黃色、柔和外圈1.25秒共4次，JS五秒後移除；新一則重算5秒、相同snapshot不延長，歷史／本人不播，展開營地及clear／換房取消。背景新訊息排隊至前景才提醒；減少動態效果改靜態醒目5秒。沒有open／focus／scroll／讀取狀態或網路寫入操作。
+- 全新worktree `partner-camp-alert-20261106`，基底main1b0f02a，Codex唯一寫入者。4項Node及40項Chrome通過（新提醒16／原focused17／原已讀7），pageerror0；實際等待驗證5秒／續期／重複快照不重播，注音以CompositionEvent、前背景以visibilityState模擬，不冒稱真人輸入法或實體裝置測試。
+- 發布登記：`Codex-partner-camp-alert-20261106`；基準正式 `dpl_BsS5NFTz2sCs4ShkueTmB3W7bYQ3`，status無鎖。預期9個runtime修改（四入口cache、app／learning import cache、panel／attention／focused.css），無新增／刪除；沒有SQL／學生任務、作答、草稿或花葉資料改動。PR/main後新乾淨main執行release-from-main。
+
 # 2026-11-06 共同營地懸浮入口（已正式發布）
 
 ## 發布登記

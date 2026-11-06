@@ -1,10 +1,19 @@
 import {createMessageComposers} from './message-composer.mjs';
-import {createCampAttention} from './camp-attention.mjs';
+import {createCampAttention} from './camp-attention.mjs?v=20261106-button-alert';
 
 // A persistent modal panel. Updating notes never replaces a reply/composer input.
 export function createCampPanel({host,esc,getState,getViewer,drafts,capture,question,fragment,mountRich,submit,onRetry,onCount,storeMedia,readMedia,restoreMedia={}}){
  const attention=createCampAttention();let state=null,user=null,opener=null,scroll=0,previousOverflow='',closing=null,destroyed=false,scope='',askQid=null,transport={busy:false,pending:false,message:'',bad:false};
  let toastTimer=null,toastStarted=0,toastRemaining=5000,toastNotes=[];const readTimers=new Map(),visible=new Set();
+ let alertTimer=null,alertPending=false,alertButton=null;
+ function stopAlert(){clearTimeout(alertTimer);alertTimer=null;alertButton?.classList.remove('camp-has-new');alertButton=null;}
+ function beginAlert(){
+  if(!alertPending||dialog.open||destroyed)return;
+  if(!attention.count()){alertPending=false;stopAlert();return;}
+  stopAlert();alertButton=host.querySelector('.focus-team-bar [data-open-camp]');if(!alertButton)return;
+  alertPending=false;void alertButton.offsetWidth;alertButton.classList.add('camp-has-new');alertTimer=setTimeout(stopAlert,5000);
+ }
+ function alertNew(fresh){if(!fresh.length||dialog.open)return;alertPending=true;if(document.visibilityState==='visible')beginAlert();}
  const dialog=document.createElement('dialog');dialog.id='camp-dialog';dialog.className='partner-camp-dialog';dialog.setAttribute('aria-labelledby','camp-title');
  dialog.innerHTML=`<div class="camp-panel"><header class="camp-panel-heading"><div><p>隨時可以問方法、交換發現</p><h2 id="camp-title">我們的共同營地</h2></div><button type="button" data-ui-only data-camp-close aria-label="關閉營地，回到答題">回到答題 ×</button></header><div class="camp-transport"><p role="status" data-camp-status></p><button type="button" data-ui-only data-camp-retry hidden>重送同一次操作</button></div><div class="camp-scroll"><section data-ask-composer hidden></section><p class="muted" data-camp-empty>還沒有人請教。自己先想，卡住時可以按題目上的「問夥伴」。</p><div class="camp-threads"></div><section class="camp-chat"><h3>大家的聊天小紙條</h3><div class="chat-log" aria-label="小隊聊天"><div class="camp-chat-messages"></div><span class="camp-read-end" data-read-chat></span></div><form data-form="chat"><label for="camp-chat-text">留給夥伴的話</label><textarea id="camp-chat-text" data-draft="chat-" maxlength="600" required></textarea><button>送到共同營地</button><span data-action-status role="status"></span></form></section></div></div>`;
  const toast=document.createElement('div');toast.className='partner-camp-toast';toast.hidden=true;toast.innerHTML='<span role="status" aria-live="polite"></span><button type="button" data-ui-only>去看看</button>';
@@ -35,25 +44,25 @@ export function createCampPanel({host,esc,getState,getViewer,drafts,capture,ques
   el.addEventListener('toggle',()=>{cancelRead();if(dialog.open){for(const s of visible)startRead(s);}});threads.append(el);bindForm(el.querySelector('form'));observer.observe(el.querySelector('[data-read-thread]'));mountRich(el);return el;
  }
  function setTransport(next){transport={...transport,...next};const status=dialog.querySelector('[data-camp-status]');status.textContent=transport.message;status.dataset.error=String(transport.bad);const retry=dialog.querySelector('[data-camp-retry]');retry.hidden=!transport.pending;retry.disabled=transport.busy;for(const el of dialog.querySelectorAll('form button'))el.disabled=transport.busy||transport.pending||el.closest('form')?.dataset.uploading==='true';media?.setTransport(transport);}
- function update(r,me){if(destroyed)return;state=r;user=me;const next=JSON.stringify([r.id,me.id]);if(scope!==next){scope=next;hideToast();}
-  cancelRead();const fresh=attention.update(r.id,me.id,r.exercise.notes),asks=r.exercise.notes.filter(n=>n.kind==='ask');
+ function update(r,me){if(destroyed)return;state=r;user=me;const next=JSON.stringify([r.id,me.id]);if(scope!==next){scope=next;hideToast();alertPending=false;stopAlert();}
+  cancelRead();const fresh=attention.update(r.id,me.id,r.exercise.notes,{includeChat:true}),asks=r.exercise.notes.filter(n=>n.kind==='ask');
   const present=new Set(asks.map(n=>String(n.id)));for(const old of [...threads.children])if(!present.has(old.dataset.thread)){observer.unobserve(old.querySelector('[data-read-thread]'));old.remove();}
   for(const n of asks){const el=[...threads.children].find(x=>x.dataset.thread===String(n.id))||threadNode(n);syncMessages(el.querySelector('.thread-messages'),[n,...r.exercise.notes.filter(reply=>reply.kind==='reply'&&reply.thread===n.id)]);}
   syncMessages(chat,r.exercise.notes.filter(n=>n.kind==='chat').slice(-30));dialog.querySelector('[data-camp-empty]').hidden=asks.length>0;
-  badges();notify(fresh);setTransport({});for(const el of visible)startRead(el);
+  badges();alertNew(fresh);notify(fresh.filter(n=>n.kind!=='chat'));setTransport({});for(const el of visible)startRead(el);
  }
  function compose(qid){if(askQid===qid)return;capture();askQid=qid;const q=question(qid);composer.hidden=false;composer.innerHTML=`<form data-form="ask" data-qid="${qid}"><h3>想請夥伴一起想：${esc(q?.title||'這道題')}</h3><label for="camp-ask">哪裡卡住了？</label><textarea id="camp-ask" data-draft="ask-${qid}" maxlength="600" required placeholder="先說說你已經想到哪一步。">${esc(drafts.get('ask-'+qid)||'')}</textarea><button>請夥伴一起想</button><span data-action-status role="status"></span></form>`;bindForm(composer.querySelector('form'));setTransport({});}
- function open({qid,thread}={}){if(destroyed)return;capture();clearTimeout(closing);dialog.classList.remove('is-closing');if(!dialog.open){opener=document.activeElement;scroll=window.scrollY;previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden';dialog.showModal();}hideToast();if(qid){compose(qid);composer.scrollIntoView({block:'start'});composer.querySelector('textarea')?.focus();}else if(thread){const target=[...threads.children].find(el=>el.dataset.thread===String(thread));if(target){target.open=true;target.scrollIntoView({block:'start'});target.querySelector('summary').focus();}}else dialog.querySelector('[data-camp-close]').focus();for(const el of visible)startRead(el);}
+ function open({qid,thread}={}){if(destroyed)return;alertPending=false;stopAlert();capture();clearTimeout(closing);dialog.classList.remove('is-closing');if(!dialog.open){opener=document.activeElement;scroll=window.scrollY;previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden';dialog.showModal();}hideToast();if(qid){compose(qid);composer.scrollIntoView({block:'start'});composer.querySelector('textarea')?.focus();}else if(thread){const target=[...threads.children].find(el=>el.dataset.thread===String(thread));if(target){target.open=true;target.scrollIntoView({block:'start'});target.querySelector('summary').focus();}}else dialog.querySelector('[data-camp-close]').focus();for(const el of visible)startRead(el);}
  function close(){media?.stop();capture();cancelRead();hideToast();if(!dialog.open)return;dialog.classList.add('is-closing');clearTimeout(closing);closing=setTimeout(()=>dialog.close(),matchMedia('(prefers-reduced-motion: reduce)').matches?0:160);}
  dialog.querySelector('[data-camp-close]').onclick=close;dialog.querySelector('[data-camp-retry]').onclick=onRetry;
  dialog.addEventListener('cancel',event=>{event.preventDefault();close();});
  dialog.addEventListener('close',()=>{if(dialog.open)return;cancelRead();document.body.style.overflow=previousOverflow;dialog.classList.remove('is-closing');if(!destroyed){window.scrollTo({top:scroll,behavior:'instant'});if(opener?.isConnected)opener.focus({preventScroll:true});}});
- const visibility=()=>{cancelRead();if(document.visibilityState!=='visible'){media?.stop();pauseToast();}else{resumeToast();for(const el of visible)startRead(el);}};document.addEventListener('visibilitychange',visibility);const pageHide=()=>media?.stop();window.addEventListener('pagehide',pageHide);
+ const visibility=()=>{cancelRead();if(document.visibilityState!=='visible'){media?.stop();pauseToast();if(alertTimer)alertPending=true;stopAlert();}else{beginAlert();resumeToast();for(const el of visible)startRead(el);}};document.addEventListener('visibilitychange',visibility);const pageHide=()=>media?.stop();window.addEventListener('pagehide',pageHide);
  const modalToggle=event=>{if(!['lightbox','message-sketch-dialog'].includes(event.target.id))return;cancelRead();if(event.newState==='closed')queueMicrotask(()=>{if(!destroyed)for(const el of visible)startRead(el);});};document.addEventListener('beforetoggle',modalToggle,true);
  dialog.addEventListener('input',event=>{const el=event.target;if(el.dataset.draft)drafts.set(el.dataset.draft,el.value);});
  dialog.querySelector('textarea[data-draft="chat-"]').value=drafts.get('chat-')||'';bindForm(dialog.querySelector('form[data-form="chat"]'));
  return {update,open,close,setTransport,count:()=>attention.count(),
   saveMedia:()=>media?.save()||Promise.resolve({}),
   committed(p){media?.committed(p);if(!['ask','reply','chat'].includes(p.action))return;const target=dialog.querySelector(`form[data-form="${p.action}"]${p.action==='reply'?`[data-thread="${p.thread}"]`:p.action==='ask'?`[data-qid="${p.qid}"]`:''}`);if(target){const input=target.querySelector('textarea');if(input.value===p.text)input.value='';target.querySelector('[data-action-status]').textContent=input.value?'上一則已送出；新輸入的草稿仍保留。':'已送出，讓夥伴接著想。';}},
-  clear(){destroyed=true;media?.dispose();clearTimeout(closing);cancelRead();hideToast();observer.disconnect();document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',pageHide);document.removeEventListener('beforetoggle',modalToggle,true);if(dialog.open){dialog.close();document.body.style.overflow=previousOverflow;}dialog.remove();toast.remove();attention.clear();}};
+  clear(){destroyed=true;alertPending=false;stopAlert();media?.dispose();clearTimeout(closing);cancelRead();hideToast();observer.disconnect();document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',pageHide);document.removeEventListener('beforetoggle',modalToggle,true);if(dialog.open){dialog.close();document.body.style.overflow=previousOverflow;}dialog.remove();toast.remove();attention.clear();}};
 }

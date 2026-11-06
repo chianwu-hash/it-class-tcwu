@@ -26,3 +26,13 @@ test('只將本人原卷同段欄位一起顯示，不新增、改序或重配�
  assert.deepEqual(units.map(u=>u.questions.map(q=>q.id)),[[1],[2,3],[4],[5]]);assert.deepEqual(mine,before);assert.equal(units[1].questions[0],mine[1]);
  assert.deepEqual(practiceUnits([]),[]);
 });
+
+test('懸浮提醒可接新聊天，基準／本人／同快照不重播，舊toast預設規則保留',()=>{
+ const a=createCampAttention(),chat={id:1,kind:'chat',user:'peer',text:'一起練',at:'1'};
+ assert.deepEqual(a.update('r','me',[chat],{includeChat:true}),[]);
+ const next={...chat,id:2,at:'2'},own={...chat,id:3,user:'me'};
+ assert.deepEqual(a.update('r','me',[chat,next,own],{includeChat:true}),[next]);
+ assert.deepEqual(a.update('r','me',[chat,next,own],{includeChat:true}),[]);
+ assert.deepEqual(a.update('other','me',[chat,next],{includeChat:true}),[]);
+ assert.deepEqual(a.update('other','me',[chat,next,{...next,id:4}]),[]);
+});

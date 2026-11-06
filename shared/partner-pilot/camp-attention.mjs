@@ -1,7 +1,7 @@
 // Session-only attention. A baseline never emits a toast; no learning/read state is written remotely.
 export function createCampAttention(){
  let scope='',messages=new Map();
- function update(room,user,notes){
+ function update(room,user,notes,{includeChat=false}={}){
   const next=JSON.stringify([room,user]),baseline=next!==scope;
   if(baseline){scope=next;messages.clear();}
   const asks=new Map(notes.filter(n=>n.kind==='ask').map(n=>[String(n.id),n]));
@@ -11,7 +11,7 @@ export function createCampAttention(){
    const id=String(n.id),related=n.user!==user&&(n.kind==='ask'||n.kind==='reply'&&asks.get(String(n.thread))?.user===user);
    const relevant=related||n.user!==user&&n.kind==='chat'&&!baseline;
    const signature=JSON.stringify([n.user,n.kind,n.text,n.at]);present.add(id);
-   if(messages.get(id)?.signature!==signature){messages.set(id,{signature,read:!relevant});if(!baseline&&related)fresh.push(n);}
+   if(messages.get(id)?.signature!==signature){messages.set(id,{signature,read:!relevant});if(!baseline&&(related||includeChat&&relevant&&n.kind==='chat'))fresh.push(n);}
   }
   for(const id of messages.keys())if(!present.has(id))messages.delete(id);
   return fresh;
