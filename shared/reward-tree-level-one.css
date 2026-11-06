@@ -1,0 +1,15 @@
+/* The image and earned/pending rewards share one square coordinate space.
+   Keep this after my-tree's original responsive styles so neither the desktop
+   image cap nor the mobile image enlargement can detach rewards from branches. */
+.tree-shell{min-height:0}
+.tree-stage{width:100%;min-height:0;aspect-ratio:1 / 1}
+.tree-stage .tree-image{inset:0;width:100%;height:100%;object-fit:contain;transform:none}
+.tree-stage .reward-layer{inset:0}
+
+/* A keepsake leaf contains two leaves in a 64:44 SVG. The ordinary leaf box
+   (narrow and tall) used to shrink this artwork to half the visible height. */
+.tree-stage .reward.leaf[data-partner-reward="true"]{
+ width:max(36px,calc(var(--size) * 1.9));
+ height:max(26px,calc(var(--size) * 1.4));
+ padding:0;
+}

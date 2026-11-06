@@ -1,3 +1,16 @@
+# 2026-11-06 第一級紀念葉尺寸與樹枝對齊（發布中）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 發布中 | Codex-level-one-layout-20261106 | 待 start 記錄 | PR 合併後乾淨 main | 由正式 alias 與腳本鎖定 | my-tree.html、shared/reward-tree-config.js、+shared/reward-tree-level-one.css | 純視覺，不改 SQL／獎勵／學生紀錄 |
+
+- 使用者回報第一級紀念雙葉太小且葉片漂離樹枝。雙葉 SVG 為64:44，原本套普通單葉窄高框，contain後可見高度過小；樹圖寬度上限／手機112%放大與圖層座標不同步，造成偏移。現在共用正方形邊界，校正44葉／10花落點至原圖樹枝；紀念葉至少36px寬、26px高。沿用原ID、順序、44葉分頁、來源互動及第二級，不改學生資料。
+- 唯一寫入者 Codex，fresh branch codex/level-one-keepsake-layout-20261106。13 Node、19 合成瀏覽器通過；1360／1024／768／390px 圖層重合、樹枝底圖像素取樣、尺寸、分頁與來源互動通過，已看桌機／手機截圖。幾何檢查採減少動態效果，避免進場動畫中間值；動畫本身不變。
+- 與正式任務目錄比對94項，missing=0、mismatched=0，不需SQL。完整checkout含既有排除教材目錄，直接執行build preflight會依來源排除規則拒絕；沒有刪教材或停用守衛。正式CLI依.vercelignore過濾後仍須由雲端preflight通過，失敗就停止。
+- 本機證據在本批 ignored .chat-mode/evidence/level-one/（純合成）；沿PR、新乾淨main及發布腳本流程。完成後補正式資產與教師檢視驗證、收據及封存清理。
+
 # 2026-11-06 夥伴練功原答題操作（使用者核准，待發布）
 
 - 實班反映先前只共用 ABCD，送出位置與原習慣不同；本次直接接原 createQuizWorkspace 與 CSS，固定右下主要操作、題目／小幫手分欄、精簡小隊／導覽／請教控制。小隊認證、送答、紀錄、回顧與葉花路徑不變。唯一寫入者 Codex，branch codex/partner-original-answer-shell-20261106，base main c2476a0。[介面契約與驗證](partner-original-workspace-20261106.md)。
