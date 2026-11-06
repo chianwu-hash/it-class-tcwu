@@ -1,0 +1,68 @@
+{
+  "agent": "Codex-level-one-layout-20261106",
+  "commit": "46a0d0f743c8a0aba4b50026feb0dc9db8b2c5bd",
+  "baseline": "dpl_7qKNYvxzyt97bN69uBrt4hAiFx75",
+  "expected": {
+    "changed": [
+      "my-tree.html",
+      "shared/reward-tree-config.js"
+    ],
+    "added": [
+      "shared/reward-tree-level-one.css"
+    ],
+    "removed": []
+  },
+  "startedAt": "2026-11-06T11:04:44.185Z",
+  "state": "promoted",
+  "candidate": "dpl_2u1ivxeoxUbx1y4gNvLFeSXZ3sby",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "my-tree.html",
+      "shared/reward-tree-config.js"
+    ],
+    "added": [
+      "shared/reward-tree-level-one.css"
+    ],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-06T11:05:09.335Z",
+  "promotedAt": "2026-11-06T11:05:39.302Z",
+  "alias": "dpl_2u1ivxeoxUbx1y4gNvLFeSXZ3sby",
+  "rollback": "dpl_7qKNYvxzyt97bN69uBrt4hAiFx75",
+  "handoffRow": "| 已完成 | Codex-level-one-layout-20261106 | 2026-11-06T11:04:44.185Z | `46a0d0f` | `dpl_7qKNYvxzyt97bN69uBrt4hAiFx75` | my-tree.html、shared/reward-tree-config.js、+shared/reward-tree-level-one.css | `dpl_2u1ivxeoxUbx1y4gNvLFeSXZ3sby`／回滾 `dpl_7qKNYvxzyt97bN69uBrt4hAiFx75`（eolOnly 0） |",
+  "formalVerification": {
+    "assetsMatch": true,
+    "fileCount": 3
+  },
+  "browserVerification": {
+    "teacherTreeLoaded": true,
+    "newStyleLoaded": true,
+    "levelOneVisible": true,
+    "imageOverlayAligned": true
+  },
+  "localVerification": {
+    "nodeTests": 13,
+    "browserChecks": 19,
+    "widths": [
+      1360,
+      1024,
+      768,
+      390
+    ],
+    "catalogMissing": 0,
+    "catalogMismatched": 0,
+    "catalogCount": 94
+  }
+}
