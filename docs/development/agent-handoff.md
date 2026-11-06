@@ -4,18 +4,18 @@
 - 新增確認與留在原畫面的私有草稿保存；11 Node／14 合成瀏覽器通過，已看截圖；實體觸控／正式雙帳號未測。[行為與驗證](partner-drawing-draft-20261106.md)。
 - 下一步 AGY 僅討論提供的必要程式碼，無工具／正式資料；通過後 PR、乾淨 main 與發布腳本，保留他人最新努力樹發布。尚未部署；不是發布鎖登記。
 
-# 2026-11-06 第一級紀念葉尺寸與樹枝對齊（發布中）
+# 2026-11-06 第一級紀念葉尺寸與樹枝對齊（已正式發布）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-level-one-layout-20261106 | 待 start 記錄 | PR 合併後乾淨 main | 由正式 alias 與腳本鎖定 | my-tree.html、shared/reward-tree-config.js、+shared/reward-tree-level-one.css | 純視覺，不改 SQL／獎勵／學生紀錄 |
+| 已完成 | Codex-level-one-layout-20261106 | 2026-11-06T11:04:44.185Z | `46a0d0f` | `dpl_7qKNYvxzyt97bN69uBrt4hAiFx75` | my-tree.html、shared/reward-tree-config.js、+shared/reward-tree-level-one.css | `dpl_2u1ivxeoxUbx1y4gNvLFeSXZ3sby`／回滾 `dpl_7qKNYvxzyt97bN69uBrt4hAiFx75`（eolOnly 0） |
 
-- 使用者回報第一級紀念雙葉太小且葉片漂離樹枝。雙葉 SVG 為64:44，原本套普通單葉窄高框，contain後可見高度過小；樹圖寬度上限／手機112%放大與圖層座標不同步，造成偏移。現在共用正方形邊界，校正44葉／10花落點至原圖樹枝；紀念葉至少36px寬、26px高。沿用原ID、順序、44葉分頁、來源互動及第二級，不改學生資料。
-- 唯一寫入者 Codex，fresh branch codex/level-one-keepsake-layout-20261106。13 Node、19 合成瀏覽器通過；1360／1024／768／390px 圖層重合、樹枝底圖像素取樣、尺寸、分頁與來源互動通過，已看桌機／手機截圖。幾何檢查採減少動態效果，避免進場動畫中間值；動畫本身不變。
-- 與正式任務目錄比對94項，missing=0、mismatched=0，不需SQL。完整checkout含既有排除教材目錄，直接執行build preflight會依來源排除規則拒絕；沒有刪教材或停用守衛。正式CLI依.vercelignore過濾後仍須由雲端preflight通過，失敗就停止。
-- 本機證據在本批 ignored .chat-mode/evidence/level-one/（純合成）；沿PR、新乾淨main及發布腳本流程。完成後補正式資產與教師檢視驗證、收據及封存清理。
+- PR72 已進 main；新乾淨 main 46a0d0f 經 start/deploy/promote，臺灣 2026-11-06 19:05:39 上線。雲端來源排除／任務目錄守衛通過，完整樹 ok:true（2改、1新、0非預期、eolOnly0）；正式3檔與main完全一致，鎖已釋放。[發布收據](reward-tree-level-one-release-20261106.json)。
+- 修正第一級雙葉SVG被普通單葉窄高框縮小，紀念葉至少36px寬、26px高。樹圖與圖層共用正方形，44葉／10花落點校正在既有底圖樹枝。沿用獎勵ID、順序、數量、分頁、來源互動與第二級；沒有SQL或學生資料寫入。
+- 13 Node／19 合成瀏覽器通過（1360／1024／768／390px，含底圖枝幹像素取樣、縮放對齊、紀念葉尺寸、分頁及來源點選），正式任務94項missing0/mismatched0。Google教師正式視圖確認第一級可見、樣式已載入、樹圖與葉片圖層重合；僅保存布林證據，沒有正式學生明細或截圖。
+- 本次唯一寫入者Codex。合併時只有handoff與並行答題介面發布收據衝突，已保留雙方完整紀錄；未改動對方runtime，發布以最新main及其正式版本為基準。早先建立但尚未使用的main工作區已正常移除；開發與發布工作區在收據進main、證據封存後正常清理，分支保留。
 
 # 2026-11-06 夥伴練功原答題操作（已正式發布）
 
