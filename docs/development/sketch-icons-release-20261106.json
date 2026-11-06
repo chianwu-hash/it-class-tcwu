@@ -1,0 +1,60 @@
+{
+  "agent": "Codex-sketch-icons-20261106",
+  "commit": "ce09ab479478c306c2bce26b150b09b1340b5def",
+  "baseline": "dpl_Dp2ycRM6u644TvTVFAfj4c6Y22mb",
+  "expected": {
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/learning.js",
+      "shared/partner-pilot/camp-panel.mjs",
+      "shared/partner-pilot/message-composer.mjs",
+      "shared/partner-pilot/message-media.css",
+      "shared/partner-pilot/sketch-editor.mjs"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "startedAt": "2026-11-06T12:39:12.980Z",
+  "state": "promoted",
+  "candidate": "dpl_3jYJ84TsUBgaCTYUcC4nPP3XP26C",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/camp-panel.mjs",
+      "shared/partner-pilot/learning.js",
+      "shared/partner-pilot/message-composer.mjs",
+      "shared/partner-pilot/message-media.css",
+      "shared/partner-pilot/sketch-editor.mjs"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-06T12:39:35.335Z",
+  "promotedAt": "2026-11-06T12:39:59.555Z",
+  "alias": "dpl_3jYJ84TsUBgaCTYUcC4nPP3XP26C",
+  "rollback": "dpl_Dp2ycRM6u644TvTVFAfj4c6Y22mb",
+  "handoffRow": "| 已完成 | Codex-sketch-icons-20261106 | 2026-11-06T12:39:12.980Z | `ce09ab4` | `dpl_Dp2ycRM6u644TvTVFAfj4c6Y22mb` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/camp-panel.mjs、shared/partner-pilot/message-composer.mjs、shared/partner-pilot/message-media.css、shared/partner-pilot/sketch-editor.mjs | `dpl_3jYJ84TsUBgaCTYUcC4nPP3XP26C`／回滾 `dpl_Dp2ycRM6u644TvTVFAfj4c6Y22mb`（eolOnly 0） |",
+  "formalAssetsExact": 10,
+  "syntheticBrowserChecks": 24,
+  "realTouchTested": false
+}
