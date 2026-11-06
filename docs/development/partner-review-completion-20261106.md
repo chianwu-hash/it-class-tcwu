@@ -1,6 +1,10 @@
 # 夥伴練功：回顧引導與自動結算
 
-狀態：實作、Claude修後複核與正式DB增量已驗，快照PR後待前端發布。
+狀態：已於臺灣2026-11-06 11:21:42正式發布。
+
+PR55功能、PR56正式快照進main後，從新乾淨main `66b9aef`經官方release-from-main start／deploy／promote，正式部署`dpl_YFLs7rxodob61WM3agfDWjXwahwa`；回滾`dpl_EFDgQZUtQ1gTqaEqewRahFSA2djn`。完整樹ok:true，只有預期8個前端修改，0新增／刪除／非預期／換行例外；候選與正式各8檔SHA256同main。正式頁4項載入檢查及無pageerror、匿名RPC401通過，發布鎖釋放。Supabase管理端一次502已退避60秒後重新live核對153函式通過才promote。
+
+37項Node/SQL、120項合成Chrome與正式PG回滾／增量通過。正式原資料摘要維持，沒有批次替歷史任務確認回顧或領獎。完整公開收據見[驗證JSON](partner-review-completion-verification-20261106.json)。以下保留實作過程與未驗限制，文中的待發布描述屬當時狀態。
 
 使用者定案：共同回顧仍是完成任務必要條件；列表公開詳細進度；全員成功送答後引導大家回顧；最後一人主動確認後自動結算。沒有加入尚未定案的提前結束功能，也沒有帶入未核定的解析卡美化。
 
