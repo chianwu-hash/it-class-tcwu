@@ -15,3 +15,14 @@
  :scope .team-waiting .actions{margin:20px 0;gap:12px}
  @media(max-width:600px){:scope .team-resume{align-items:stretch;flex-direction:column;gap:10px}:scope .team-resume button{align-self:flex-start}}
 }
+.match-entry{display:flex;align-items:center;justify-content:space-between;gap:1.5rem}
+.match-entry p{margin-bottom:0}.match-entry button{flex-shrink:0}
+.match-panel{max-width:58rem;margin-inline:auto}.match-panel ol{padding-left:1.5rem;line-height:2}
+.match-countdown{font-size:clamp(1.3rem,4vw,2rem);font-weight:800;color:#0f766e;min-height:3rem}
+.match-note{padding:1rem 1.25rem;border-left:4px solid #d6a72d;background:#fff9e6;border-radius:.75rem;line-height:1.8}
+.match-roster{padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
+.match-roster li{display:flex;gap:.75rem;align-items:center;justify-content:space-between;background:#f1faf9;border:1px solid #d4e7e5;border-radius:1rem;padding:1rem}
+.match-selected{border-block:1px solid #d4e7e5;margin-block:1.5rem;padding-block:1rem}
+.match-paper-options{margin-block:1rem 1.5rem}.match-paper-options summary{font-weight:700;cursor:pointer;padding-block:.75rem}.match-paper-options [data-match-select]{margin-top:1rem}
+.match-panel [data-match-feedback]:empty{display:none}
+@media(max-width:640px){.match-entry{align-items:stretch;flex-direction:column}.match-roster{grid-template-columns:1fr}.match-panel .actions button{flex:1 1 12rem}}

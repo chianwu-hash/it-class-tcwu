@@ -21,7 +21,7 @@ export function taskCardState(r){
 }
 const roster=r=>(r.members||[]).map(m=>m.name).join('、');
 
-export function mountTeamHome({root,esc,rooms=[],initialMode='home',initialCode='',picked=null,requested=false,loadPapers,onNavigate,onCreate,onJoin,onResume,onRefresh,onStage,notice}){
+export function mountTeamHome({root,esc,rooms=[],initialMode='home',initialCode='',picked=null,requested=false,loadPapers,onNavigate,onCreate,onJoin,onResume,onRefresh,onStage,notice,onFindPartner=null}){
  root.innerHTML='<div data-team-home></div>';
  const frame=root.firstElementChild;let mode='home',token=0;
  const $=s=>frame.querySelector(s),live=t=>frame.isConnected&&t===token;
@@ -43,8 +43,8 @@ export function mountTeamHome({root,esc,rooms=[],initialMode='home',initialCode=
   }else if(next==='records'){
    const done=rooms.filter(r=>r.finished||r.phase==='completed');frame.innerHTML=`<section class="card"><h2>我的共同紀錄冊</h2>${done.length?cards(done):'<p>完成小隊任務後，紀錄會留在這裡。</p>'}${back}</section>`;bind();
   }else{
-   const pending=pendingTeams(rooms),done=rooms.some(r=>r.finished||r.phase==='completed');frame.innerHTML=`<div class="grid team-entry"><section class="card"><span class="badge">選卷・邀人</span><h2>我當隊長</h2><p>選好今天的題目，邀夥伴加入，人到齊後一起出發。</p><button type="button" class="primary" data-captain>選卷，邀夥伴 →</button></section><section class="card"><span class="badge">輸碼・加入</span><h2>我當隊員</h2><p>拿到隊長的邀請碼，加入後等隊長出發。</p><button type="button" class="green" data-member>輸入邀請碼 →</button></section></div>${pending.length?`<section class="card" id="resume-tasks"><h2>接續任務</h2><p>回到原來的小隊，不用重新組隊。</p>${cards(pending)}</section>`:''}<div class="actions"><button type="button" data-refresh>更新我的小隊</button>${done?'<button type="button" data-records>翻看共同紀錄冊</button>':''}</div>`;
-   $('[data-captain]').onclick=()=>show('captain');$('[data-member]').onclick=()=>show('member');$('[data-refresh]').onclick=()=>onRefresh();if($('[data-records]'))$('[data-records]').onclick=()=>show('records');bind();
+   const pending=pendingTeams(rooms),done=rooms.some(r=>r.finished||r.phase==='completed');frame.innerHTML=`<div class="grid team-entry"><section class="card"><span class="badge">選卷・邀人</span><h2>我當隊長</h2><p>選好今天的題目，邀夥伴加入，人到齊後一起出發。</p><button type="button" class="primary" data-captain>選卷，邀夥伴 →</button></section><section class="card"><span class="badge">輸碼・加入</span><h2>我當隊員</h2><p>拿到隊長的邀請碼，加入後等隊長出發。</p><button type="button" class="green" data-member>輸入邀請碼 →</button></section></div>${onFindPartner?'<section class="card match-entry"><div><span class="badge">自願參加・同年級跨班</span><h2>也可以幫我找夥伴</h2><p>先集合，再隨機安排 2～4 人小隊；成隊後由隊長選卷。</p></div><button type="button" class="green" data-find-partner>幫我找夥伴 →</button></section>':''}${pending.length?`<section class="card" id="resume-tasks"><h2>接續任務</h2><p>回到原來的小隊，不用重新組隊。</p>${cards(pending)}</section>`:''}<div class="actions"><button type="button" data-refresh>更新我的小隊</button>${done?'<button type="button" data-records>翻看共同紀錄冊</button>':''}</div>`;
+   if($('[data-find-partner]'))$('[data-find-partner]').onclick=onFindPartner;$('[data-captain]').onclick=()=>show('captain');$('[data-member]').onclick=()=>show('member');$('[data-refresh]').onclick=()=>onRefresh();if($('[data-records]'))$('[data-records]').onclick=()=>show('records');bind();
   }
  }
  show(initialMode);

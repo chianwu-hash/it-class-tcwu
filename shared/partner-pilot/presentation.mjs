@@ -8,6 +8,7 @@ export function scene(name,className='partner-art'){
 const stages={
  login:['一起練，先從這裡開始。','用學校 Google 帳號登入，邀夥伴一起想。','invite'],
  home:['今天想怎麼加入小隊？','當隊長邀夥伴，或輸入邀請碼加入。','invite'],
+ match:['找到夥伴，再一起出發。','自願集合、同年級跨班；每個人都能參與。','wait'],
  captain:['選好題目，邀夥伴一起來。','選卷與人數，建立小隊後就能分享邀請。','invite'],
  member:['輸入邀請碼，加入夥伴。','加入後，等隊長帶大家一起出發。','wait'],
  room:['人到齊，隊長帶大家出發。','加入就是小隊的一員；可以稍後從接續任務回來。','wait'],
