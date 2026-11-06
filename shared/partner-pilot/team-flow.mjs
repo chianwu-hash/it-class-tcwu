@@ -21,7 +21,7 @@ export function taskCardState(r){
 }
 const roster=r=>(r.members||[]).map(m=>m.name).join('、');
 
-export function mountTeamHome({root,esc,rooms=[],initialMode='home',initialCode='',picked=null,requested=false,loadPapers,onNavigate,onCreate,onJoin,onResume,onRefresh,onStage,notice,onFindPartner=null}){
+export function mountTeamHome({root,esc,rooms=[],initialMode='home',initialCode='',picked=null,requested=false,loadPapers,onNavigate,onCreate,onJoin,onResume,onRefresh,onStage,notice,onFindPartner=null,resolvePicked=null}){
  root.innerHTML='<div data-team-home></div>';
  const frame=root.firstElementChild;let mode='home',token=0;
  const $=s=>frame.querySelector(s),live=t=>frame.isConnected&&t===token;
@@ -32,10 +32,10 @@ export function mountTeamHome({root,esc,rooms=[],initialMode='home',initialCode=
   if(next==='captain'){
    frame.innerHTML=`<section class="card"><h2>我當隊長：選一份卷，邀夥伴來</h2><p role="status">正在找可以一起練的題目…</p>${back}</section>`;bind();
    let papers;try{papers=await loadPapers();}catch(e){if(live(t)){notice(e.message,true);frame.querySelector('[role=status]').textContent='題目暫時無法載入，請返回後再試。';}return;}if(!live(t))return;
-   const selected=picked||(!requested?papers[0]:null);
+   const currentPicked=resolvePicked?.(papers)||picked;const selected=currentPicked||(!requested?papers[0]:null);
    frame.innerHTML=`<section class="card"><h2>我當隊長：選卷與人數</h2><form id="create"><div id="paper-picker"></div><label for="capacity">這次幾人一起練？（包含隊長）</label><select id="capacity"></select><details class="team-options"><summary>修改小隊名稱與主題人物</summary><label for="team">小隊名稱</label><input id="team" maxlength="24" value="森林探險隊" required><label for="theme">主題人物（只增加趣味）</label><select id="theme"><option value="forest">森林探險隊</option><option value="space">星際夥伴隊</option><option value="dora">哆啦A夢隊</option></select></details><div class="actions"><button class="primary" id="create-room">建立小隊，邀請夥伴 →</button>${back}</div></form></section>`;
    mountPaperPicker($('#paper-picker'),{papers,selected,esc,onChange:p=>{const sizes=partySizes(p),old=Number($('#capacity').value);$('#capacity').innerHTML=sizes.map(n=>`<option value="${n}" ${n===old?'selected':''}>${n} 人${sizes.length===1?'（10題固定2人）':''}</option>`).join('');$('#create-room').disabled=!p;}});
-   if(requested&&!picked)notice('這份卷目前無法組隊，請返回原卷，或明確改選另一份題組。',true);
+   if(requested&&!currentPicked)notice('這份卷目前無法組隊，請返回原卷，或明確改選另一份題組。',true);
    $('#create').onsubmit=e=>{e.preventDefault();const paper=$('#paper').value;if(!papers.some(p=>p.id===paper))return;onCreate({paper,capacity:Number($('#capacity').value),team:$('#team').value,theme:$('#theme').value});};bind();
   }else if(next==='member'){
    frame.innerHTML=`<section class="card team-join"><h2>我當隊員</h2><p>輸入隊長的邀請碼，加入後等隊長出發。</p><form id="join-code"><label for="code">六位數邀請碼</label><input id="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="off" required value="${esc(initialCode)}"><p id="join-feedback" role="status" aria-live="polite"></p><button class="green" id="join-team">加入小隊 →</button></form>${back}</section>`;

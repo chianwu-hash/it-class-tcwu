@@ -15,7 +15,7 @@ export function selectMidtermQuestions(course){
  const sorted=course.questions.slice().sort((a,b)=>Number(b.has_explanation)-Number(a.has_explanation)||hash(course.id+a.id).localeCompare(hash(course.id+b.id)));
  for(const q of sorted){
   if(!q.units?.length||q.units.some(u=>!units.includes(Number(u)))||q.question?.type!=='single'||![-3,0,3].includes(q.difficulty))continue;
-  const fp=fingerprint(q.question);if(seen.has(fp)||families.has(q.family))continue;seen.add(fp);families.add(q.family);
+  const fp=fingerprint(q.question);if(seen.has(fp)||(q.family&&families.has(q.family)))continue;seen.add(fp);if(q.family)families.add(q.family);
   const u=Number(q.units[0]),k=u+':'+q.difficulty;if(!buckets.has(k))buckets.set(k,[]);buckets.get(k).push({...q,selectedUnit:u});
  }
  const source=0,sink=units.length+4,N=sink+1,edges=Array.from({length:N},()=>[]);

@@ -3,7 +3,8 @@ begin;
 set local lock_timeout='3s';set local statement_timeout='90s';
 do $guard$begin
  if to_regprocedure('public.quiz_session_class_allowed(uuid,text)') is null
- or md5(pg_get_functiondef('public.quiz_partner_pilot_action(jsonb)'::regprocedure))<>'154f9f65eaff002236cb0dab15001b16' then raise exception 'MATCHMAKING_BASE_CHANGED';end if;
+ or md5(pg_get_functiondef('public.quiz_partner_pilot_action(jsonb)'::regprocedure))<>'154f9f65eaff002236cb0dab15001b16' or md5(pg_get_functiondef('partner_pilot.lobby_action(jsonb)'::regprocedure))<>'ce0f12140226d6ea960c4d9ae41d2b58'
+ or md5(pg_get_functiondef('partner_pilot.sync_source_links()'::regprocedure))<>'d22e52601f2ca4e5253a04e43fe3aec7' then raise exception 'MATCHMAKING_BASE_CHANGED';end if;
 end $guard$;
 create table partner_pilot.match_settings(
  grade int primary key check(grade in(3,4,6,9)),enabled boolean not null default false,
@@ -167,10 +168,13 @@ declare act text:=p->>'action';req text:=p->>'requestId';g int;policy partner_pi
 begin
  if not partner_pilot.can_access() then raise exception 'ACCESS_DENIED';end if;
  if jsonb_typeof(p) is distinct from 'object' or act is null or act not in('status','join','cancel','leave','catalog','select','ping','start') then raise exception 'INVALID_ACTION';end if;
- select left(e.class_code,1)::int into strict g from auth.users u join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 where u.id=auth.uid();
+ perform pg_advisory_xact_lock(hashtextextended('partner-match-user:'||auth.uid(),0));
+ select left(e.class_code,1)::int into strict g from auth.users u join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 where u.id=auth.uid() for share of u,e;
  select * into a from partner_pilot.match_presence where user_id=auth.uid();
- perform pg_advisory_xact_lock(hashtextextended('partner-match-grade:'||coalesce(a.grade,g),0));
+ perform pg_advisory_xact_lock(hashtextextended('partner-match-grade:'||least(coalesce(a.grade,g),g),0));
+ if a.grade is not null and a.grade<>g then perform pg_advisory_xact_lock(hashtextextended('partner-match-grade:'||greatest(a.grade,g),0));end if;
  perform partner_pilot.register_self();select * into policy from partner_pilot.match_settings where grade=g;
+ if act in('join','catalog','select','start') or (act='status' and a.user_id is null and policy.enabled) then perform partner_pilot.sync_source_links();end if;
  if act in('join','cancel','leave','select','ping','start') then
   if req is null or length(req) not between 8 and 80 then raise exception 'REQUEST_ID_REQUIRED';end if;
   select * into prior from partner_pilot.match_requests where user_id=auth.uid() and request_id=req;
@@ -235,7 +239,7 @@ begin
      perform 1 from public.quiz_past_papers s join partner_pilot.papers pp on pp.past_meta->>'sourcePaper'=s.id where pp.id=pid for share of s;
     end if;
     if not partner_pilot.match_paper_ok(paper,t.participants,t.host) then raise exception 'MATCH_PAPER_UNAVAILABLE';end if;
-    room:=partner_pilot.lobby_action(jsonb_build_object('action','create','paper',pid,'capacity',cardinality(t.participants),'theme','forest','team','一起練功隊','requestId',req||':create'));
+    room:=partner_pilot.lobby_action(jsonb_build_object('action','create','paper',pid,'capacity',cardinality(t.participants),'theme','forest','team','一起練功隊','matchedTeam',t.id,'requestId',req||':create'));
     foreach member in array t.participants loop insert into partner_pilot.members(room_id,user_id,ready) values((room->>'id')::uuid,member,true) on conflict(room_id,user_id) do update set ready=true;end loop;
     room:=partner_pilot.lobby_action(jsonb_build_object('action','start','roomId',room->>'id','revision',room->'revision','requestId',req||':start'));
     update partner_pilot.match_teams set phase='started',room_id=(room->>'id')::uuid,revision=revision+1 where id=t.id;
@@ -250,11 +254,25 @@ begin
 end $function$;
 
 -- Existing invite creates/joins cannot race the same user's active opt-in queue/pre-team.
-do $wrapper$declare d text;needle text:='perform partner_pilot.register_self();';begin
+do $wrapper$declare d text;needle text:='if act in (''catalog'',''create'',''join'',''lookup'') then perform partner_pilot.sync_source_links();end if;';begin
  select pg_get_functiondef('public.quiz_partner_pilot_action(jsonb)'::regprocedure) into d;
  if position(needle in d)=0 then raise exception 'MATCHMAKING_ENTRY_CHANGED';end if;
- execute replace(d,needle,'if act in (''create'',''join'') then perform pg_advisory_xact_lock(hashtextextended(''partner-match-grade:''||(select left(e.class_code,1) from auth.users u join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 where u.id=auth.uid()),0));if exists(select 1 from partner_pilot.match_presence where user_id=auth.uid()) then raise exception ''MATCH_ACTIVE'';end if;end if;'||E'\n '||needle);
+ execute replace(d,needle,'if act in (''catalog'',''create'',''join'',''lookup'') then perform pg_advisory_xact_lock(hashtextextended(''partner-match-user:''||auth.uid(),0));perform pg_advisory_xact_lock(hashtextextended(''partner-match-grade:''||(select left(e.class_code,1) from auth.users u join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 where u.id=auth.uid()),0));if act in (''create'',''join'') and exists(select 1 from partner_pilot.match_presence where user_id=auth.uid()) then raise exception ''MATCH_ACTIVE'';end if;end if;'||E'\n '||needle);
 end $wrapper$;
+-- Callers acquire grade locks before synchronizing sources. Serialize link insertion across grades too.
+create or replace function partner_pilot.sync_source_links() returns void language sql security definer set search_path='' as $function$
+ select pg_advisory_xact_lock(hashtextextended('partner-match-source-links',0));
+ insert into partner_pilot.paper_sources select p.id,s.id from partner_pilot.papers p join public.quiz_sessions s on s.version_id=p.source_version
+ where p.past_meta is null and s.access_mode='practice' and s.status='open' and s.library_visible and s.school_year=115
+ and not exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id) order by p.id,s.id on conflict do nothing
+$function$;
+-- Only a validated matched pre-team may bypass the waiting-room quota: this room is started in the same transaction.
+do $matched_quota$declare d text;needle text:='if (select count(*) from partner_pilot.rooms a join partner_pilot.members b on b.room_id=a.id where b.user_id=uid and not a.started)>9 then';begin
+ select pg_get_functiondef('partner_pilot.lobby_action(jsonb)'::regprocedure) into d;
+ if position(needle in d)=0 then raise exception 'MATCHMAKING_QUOTA_BASE_CHANGED';end if;
+ execute replace(d,needle,replace(needle,'>9 then',
+ '>9 and not exists(select 1 from partner_pilot.match_teams t join partner_pilot.match_presence mp on mp.team_id=t.id and mp.user_id=uid where t.id::text=p->>''matchedTeam'' and t.host=uid and t.phase=''selecting'' and cardinality(t.participants)=(p->>''capacity'')::int) then'));
+end $matched_quota$;
 revoke all on function partner_pilot.match_partition(int),partner_pilot.match_paper_ok(text,uuid[],uuid),partner_pilot.match_available(int),partner_pilot.match_sweep(int),partner_pilot.match_snapshot(uuid),partner_pilot.match_self_key(jsonb,int) from public,anon,authenticated,service_role;
 grant execute on function partner_pilot.match_partition(int),partner_pilot.match_paper_ok(text,uuid[],uuid),partner_pilot.match_available(int),partner_pilot.match_sweep(int),partner_pilot.match_snapshot(uuid),partner_pilot.match_self_key(jsonb,int) to postgres;
 revoke all on function public.quiz_partner_match_action(jsonb) from public,anon,authenticated,service_role;

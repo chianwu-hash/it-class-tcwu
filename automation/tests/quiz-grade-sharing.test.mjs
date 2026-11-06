@@ -47,6 +47,8 @@ test('年級共用貫通清單、作答、媒體與回報；私人卷／課堂�
   await db.query("insert into public.student_enrollments(school_year,email,class_code,seat_no,display_name) values(115,'student6@example.invalid','308',6,'新增班合成同學')");
   assert((await call(6,'library_sessions')).sessions.some(s=>s.id===sid));
   await db.query('update public.quiz_sessions set library_visible=false where id=$1',[sid]);assert.equal((await call(3,'library_sessions')).sessions.length,0);assert.equal((await rpc(3,'quiz_library_sessions',[{}])).sessions.length,0);assert.equal((await call(3,'resume',{session_id:sid})).reviews.length,20);
+  await assert.rejects(call(6,'join',{session_id:sid}),/roster_required/);assert.equal((await db.query('select count(*)::int n from public.quiz_attempts where session_id=$1 and user_id=$2',[sid,uid(6)])).rows[0].n,0);
+  const adminRows=(await db.query('select * from public.admin_learning_paper_rows($1,115,$2)',[uid(3),'307'])).rows;assert(adminRows.length>0);
  });
  await t.test('自組私人卷與課堂測驗維持原本班級與所有權，內部helper不可直接呼叫',async()=>{
   for(const[mode,n]of[['classroom',104],['self',105]])await db.query("insert into public.quiz_sessions(id,owner_id,version_id,school_year,class_codes,reveal,shuffle_questions,shuffle_options,access_mode) values($1,$2,$3,115,'[\"301\"]','immediate',false,false,$4)",[uid(n),uid(2),version,mode]);

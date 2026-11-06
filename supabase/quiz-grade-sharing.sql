@@ -23,7 +23,9 @@ language sql stable security definer set search_path='' as $function$
   when s.access_mode='practice' and m.catalog->>'volume' ~ '^[3469]年級'
    and not exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id)
    and not exists(select 1 from public.quiz_learning_sessions l where l.session_id=s.id)
-  then p_class ~ '^[3469][0-9]{2}$' and left(p_class,1)=left(m.catalog->>'volume',1)
+  then (p_class ~ '^[3469][0-9]{2}$' and left(p_class,1)=left(m.catalog->>'volume',1)
+   and (s.library_visible or exists(select 1 from public.quiz_attempts a where a.session_id=s.id and a.user_id=auth.uid())))
+   or (not s.library_visible and s.class_codes ? p_class)
   else s.class_codes ? p_class end
  from public.quiz_sessions s left join public.quiz_version_meta m on m.version_id=s.version_id where s.id=p_session),false)
 $function$;
@@ -598,7 +600,7 @@ begin
    return result||jsonb_build_object('identity',identity,'offset',offst,'limit',lim,'as_of',statement_timestamp());
   end if;
   select * into sess from public.quiz_sessions s where s.id=(p_payload->>'session_id')::uuid and s.school_year=yr
-   and public.quiz_session_class_allowed(s.id,cls) and s.access_mode in ('classroom','practice','self')
+   and (public.quiz_session_class_allowed(s.id,cls) or (s.access_mode='practice' and exists(select 1 from public.quiz_attempts old_attempt where old_attempt.session_id=s.id and old_attempt.user_id=uid))) and s.access_mode in ('classroom','practice','self')
    and (exists(select 1 from public.quiz_attempts a where a.session_id=s.id and a.user_id=uid)
     or exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id and g.user_id=uid));
   if not found then raise exception 'paper_unavailable';end if;
@@ -651,7 +653,7 @@ AS $function$
  left join public.quiz_generated_papers g on g.session_id=s.id and g.user_id=p_user
  cross join lateral (select count(*) as answered,count(*) filter(where z.correct) as correct,max(z.created_at) as last_at
   from public.quiz_answers z where z.attempt_id=a.id) x
- where s.school_year=p_year and public.quiz_session_class_allowed(s.id,p_class) and s.access_mode in ('classroom','practice','self')
+ where s.school_year=p_year and (public.quiz_session_class_allowed(s.id,p_class) or (s.access_mode='practice' and a.id is not null)) and s.access_mode in ('classroom','practice','self')
  union all
  select a.id,a.id,v.document->>'title',coalesce(v.document->'catalog'->>'subject',''),v.document->>'title','past_exam',
   (select count(*)::integer from public.quiz_past_versions prior where prior.paper_id=a.paper_id and (prior.created_at,prior.id)<=(v.created_at,v.id)),
@@ -708,7 +710,7 @@ begin
  left join public.quiz_generated_papers g on g.session_id=s.id and g.user_id=(select uid from learner)
  cross join lateral (select count(*) as answered,count(*) filter(where z.correct) as correct,max(z.created_at) as last_at
   from public.quiz_answers z where z.attempt_id=a.id) x
- where s.school_year=115 and public.quiz_session_class_allowed(s.id,(select class_code from input)) and s.access_mode in (''classroom'',''practice'',''self'') and not exists(select 1 from public.quiz_learning_sessions learning_private where learning_private.session_id=s.id)),
+ where s.school_year=115 and (public.quiz_session_class_allowed(s.id,(select class_code from input)) or (s.access_mode=''practice'' and a.id is not null)) and s.access_mode in (''classroom'',''practice'',''self'') and not exists(select 1 from public.quiz_learning_sessions learning_private where learning_private.session_id=s.id)),
       selected_progress as (select p.* from public.typing_foundation_progress p where p.course_id=$1
        and p.learner_key=''google:''||(select uid::text from learner) and p.id=nullif($4::jsonb->>''progress_id'','''')::uuid),
       selected_session as (select s.* from public.quiz_sessions s join paper_rows r on r.session_id=s.id where s.id=nullif($4::jsonb->>''session_id'','''')::uuid),
@@ -779,7 +781,7 @@ when 'garden_status' then execute 'with reward_snapshot as (with input as (selec
  left join public.quiz_generated_papers g on g.session_id=s.id and g.user_id=(select uid from learner)
  cross join lateral (select count(*) as answered,count(*) filter(where z.correct) as correct,max(z.created_at) as last_at
   from public.quiz_answers z where z.attempt_id=a.id) x
- where s.school_year=115 and public.quiz_session_class_allowed(s.id,(select class_code from input)) and s.access_mode in (''classroom'',''practice'',''self'') and not exists(select 1 from public.quiz_learning_sessions learning_private where learning_private.session_id=s.id)),
+ where s.school_year=115 and (public.quiz_session_class_allowed(s.id,(select class_code from input)) or (s.access_mode=''practice'' and a.id is not null)) and s.access_mode in (''classroom'',''practice'',''self'') and not exists(select 1 from public.quiz_learning_sessions learning_private where learning_private.session_id=s.id)),
       selected_progress as (select p.* from public.typing_foundation_progress p where p.course_id=$1
        and p.learner_key=''google:''||(select uid::text from learner) and p.id=nullif($4::jsonb->>''progress_id'','''')::uuid),
       selected_session as (select s.* from public.quiz_sessions s join paper_rows r on r.session_id=s.id where s.id=nullif($4::jsonb->>''session_id'','''')::uuid),
@@ -876,7 +878,7 @@ when 'class_rewards' then execute 'with roster_students as (
  left join public.quiz_generated_papers g on g.session_id=s.id and g.user_id=(select uid from learner)
  cross join lateral (select count(*) as answered,count(*) filter(where z.correct) as correct,max(z.created_at) as last_at
   from public.quiz_answers z where z.attempt_id=a.id) x
- where s.school_year=115 and public.quiz_session_class_allowed(s.id,(select class_code from input)) and s.access_mode in (''classroom'',''practice'',''self'') and not exists(select 1 from public.quiz_learning_sessions learning_private where learning_private.session_id=s.id)),
+ where s.school_year=115 and (public.quiz_session_class_allowed(s.id,(select class_code from input)) or (s.access_mode=''practice'' and a.id is not null)) and s.access_mode in (''classroom'',''practice'',''self'') and not exists(select 1 from public.quiz_learning_sessions learning_private where learning_private.session_id=s.id)),
       selected_progress as (select p.* from public.typing_foundation_progress p where p.course_id=$1
        and p.learner_key=''google:''||(select uid::text from learner) and p.id=nullif($4::jsonb->>''progress_id'','''')::uuid),
       selected_session as (select s.* from public.quiz_sessions s join paper_rows r on r.session_id=s.id where s.id=nullif($4::jsonb->>''session_id'','''')::uuid),

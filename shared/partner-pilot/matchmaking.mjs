@@ -1,13 +1,13 @@
 import {mountPaperPicker} from './paper-picker.mjs?v=20261105-self';
 
 const messages={MATCH_DISABLED:'目前暫停幫忙找夥伴，仍可使用邀請碼組隊。',MATCH_NO_PAPER:'目前沒有適合全隊一起練的共用卷，請稍後再試。',MATCH_CHANGED:'小隊狀態已更新，請確認目前畫面後再操作。',MATCH_ACTIVE:'你正在找夥伴，請先回到候配畫面或取消。',MATCH_HOST_ONLY:'請由畫面上標示的隊長選卷及出發。',MATCH_PAPER_UNAVAILABLE:'這份卷目前無法讓全隊一起練，請隊長重新選卷。',MATCH_POOL_FULL:'目前找夥伴的人較多，請稍後再試。',STALE_REVISION:'小隊剛更新，請確認畫面後再按一次。',ROOM_RATE_LIMIT:'建立小隊太快了，請稍後再試。',TOO_MANY_ROOMS:'未出發的小隊較多，請先接續原有小隊。'};
-Object.assign(messages,{HOST_ONLY:'請由畫面上標示的隊長選卷及出發。',MATCH_RATE_LIMIT:'操作比較頻繁，請稍等一下再試。',ACCESS_DENIED:'請使用正式名冊中的學生 Google 帳號。',MATCH_IDENTITY_CHANGED:'名冊資料已更新，請先離開原候配再重新參加。'});
+Object.assign(messages,{HOST_ONLY:'請由畫面上標示的隊長選卷及出發。',MATCH_RATE_LIMIT:'操作比較頻繁，請稍等一下再試。',ACCESS_DENIED:'請使用正式名冊中的學生 Google 帳號。',AUTH_REQUIRED:'登入狀態已失效，請重新登入後再試。',MATCH_IDENTITY_CHANGED:'名冊資料已更新，請先離開原候配再重新參加。'});
 export const matchMessage=e=>messages[e.code]||e.message||'連線未完成，請稍後再試。';
 export const matchInstalledError=e=>['PGRST202','42883','404'].includes(String(e.code))||/Could not find the function public\.quiz_partner_match_action/.test(e.message||'');
 export function remainingSeconds(deadline,serverNow,elapsed=0){return deadline?Math.max(0,Math.ceil((Date.parse(deadline)-Date.parse(serverNow)-elapsed)/1000)):null;}
 
 // One controller owns its timers and pending request. A retry never gets a new request ID.
-export function createMatchmaking({root,rpc,userId,esc,onExit,onActive,onStage,notice}){
+export function createMatchmaking({root,rpc,userId,esc,onExit,onActive,onStage,notice,returnToInvite=false}){
  let state=null,disposed=false,poll=null,tick=null,busy=false,fetching=false,epoch=0,pending=null,key='',serial=0,clockAt=0,serverNow=null,teamHint=null;
  const $=s=>root.querySelector(s),alive=n=>!disposed&&n===serial;
  function stopTimers(){clearTimeout(poll);clearInterval(tick);poll=tick=null;}
@@ -32,9 +32,9 @@ export function createMatchmaking({root,rpc,userId,esc,onExit,onActive,onStage,n
  async function mutate(action,extra={}){if(disposed||busy||pending)return;epoch++;pending={action,...requestArgs(),...extra,requestId:crypto.randomUUID()};await send();}
  async function send(){
   if(disposed||busy||!pending)return;busy=true;locks();const n=serial;
-  try{const next=await rpc(pending);if(!alive(n))return;pending=null;await accept(next);}
+  try{const next=await rpc(pending);if(!alive(n))return;const withdrew=['cancel','leave'].includes(pending.action)&&next.phase==='idle';pending=null;if(withdrew&&returnToInvite){dispose();onExit();return;}await accept(next);}
   catch(e){if(!alive(n))return;const transient=e instanceof TypeError||e.busy||!e.code;if(transient){feedback('連線結果待確認。請重送同一次操作，避免重複排隊或建立小隊。',true);}else{pending=null;feedback(matchMessage(e),true);key='';}}
-  finally{if(alive(n)){busy=false;locks();if(!pending)schedule();}}
+  finally{if(alive(n)){busy=false;locks();if(!pending){if(!key)queueMicrotask(refresh);else schedule();}}}
  }
  function shell(body){root.innerHTML=`<section class="card match-panel">${body}<p data-match-feedback role="status" aria-live="polite"></p><div data-match-pending hidden><p>上一筆結果還沒確認。</p><button type="button" data-match-retry class="primary">重送同一次操作</button></div></section>`;$('[data-match-retry]').onclick=send;}
  function render(){
@@ -55,7 +55,7 @@ export function createMatchmaking({root,rpc,userId,esc,onExit,onActive,onStage,n
   }
   locks();
  }
- async function loadPicker(team){const n=serial,atKey=key;try{const result=await rpc({action:'catalog',...requestArgs()});if(!alive(n)||key!==atKey||result.revision!==team.revision)return;const target=$('[data-match-picker]');if(!target)return;let draft=null;mountPaperPicker(target,{papers:result.papers,selected:result.papers.find(p=>p.id===team.selected?.id),esc,onChange:p=>{draft=p;const b=$('[data-match-select]');b.disabled=!p||p.id===state.team.selected?.id;}});$('[data-match-select]').onclick=()=>{if(draft)mutate('select',{paper:draft.id});};locks();}catch(e){if(alive(n)&&key===atKey){$('[data-match-picker]').textContent='題目暫時無法載入。';feedback(matchMessage(e),true);}}}
+ async function loadPicker(team){const n=serial,atKey=key;try{const result=await rpc({action:'catalog',...requestArgs()});if(!alive(n)||key!==atKey||result.revision!==team.revision)return;const target=$('[data-match-picker]');if(!target)return;let draft=null;mountPaperPicker(target,{papers:result.papers,selected:result.papers.find(p=>p.id===team.selected?.id),esc,onChange:p=>{draft=p;const b=$('[data-match-select]');b.disabled=!p||p.id===state.team.selected?.id;}});$('[data-match-select]').onclick=()=>{if(draft)mutate('select',{paper:draft.id});};locks();}catch(e){if(alive(n)&&key===atKey){$('[data-match-picker]').innerHTML='<p>題目暫時無法載入，請再試一次。</p><button type="button" data-match-reload>重新載入題組</button>';$('[data-match-reload]').onclick=()=>loadPicker(state.team);feedback(matchMessage(e),true);}}}
  function wake(){if(!disposed&&!busy&&!pending){clearTimeout(poll);refresh();}}
  document.addEventListener('visibilitychange',wake);window.addEventListener('online',wake);
  return {async start(initial){if(initial)await accept(initial);else await refresh();schedule();},dispose};

@@ -27,6 +27,9 @@ export function buildGradeSharingMigration(definitions){
    after=after.replace(needle," if p_action='library_sessions' then return public.quiz_library_sessions(p_data);end if;\n"+needle);
   }
   if(!edits||after.includes('class_codes ?'))throw Error('unhandled_class_guard:'+signature);
+  if(signature.startsWith('public.admin_learning_')){
+   after=after.replaceAll('public.quiz_session_class_allowed(s.id,p_class)',"(public.quiz_session_class_allowed(s.id,p_class) or (s.access_mode='practice' and a.id is not null))").replaceAll('public.quiz_session_class_allowed(s.id,cls)',"(public.quiz_session_class_allowed(s.id,cls) or (s.access_mode='practice' and exists(select 1 from public.quiz_attempts old_attempt where old_attempt.session_id=s.id and old_attempt.user_id=uid)))").replaceAll('public.quiz_session_class_allowed(s.id,(select class_code from input))',"(public.quiz_session_class_allowed(s.id,(select class_code from input)) or (s.access_mode=''practice'' and a.id is not null))");
+  }
   rows.push({signature,hash:createHash('md5').update(definition).digest('hex'),after});
  }
  return `-- Grade-shared teacher practice only. Private self/classroom sessions keep their original class checks.
@@ -44,7 +47,9 @@ language sql stable security definer set search_path='' as $function$
   when s.access_mode='practice' and m.catalog->>'volume' ~ '^[3469]年級'
    and not exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id)
    and not exists(select 1 from public.quiz_learning_sessions l where l.session_id=s.id)
-  then p_class ~ '^[3469][0-9]{2}$' and left(p_class,1)=left(m.catalog->>'volume',1)
+  then (p_class ~ '^[3469][0-9]{2}$' and left(p_class,1)=left(m.catalog->>'volume',1)
+   and (s.library_visible or exists(select 1 from public.quiz_attempts a where a.session_id=s.id and a.user_id=auth.uid())))
+   or (not s.library_visible and s.class_codes ? p_class)
   else s.class_codes ? p_class end
  from public.quiz_sessions s left join public.quiz_version_meta m on m.version_id=s.version_id where s.id=p_session),false)
 $function$;
