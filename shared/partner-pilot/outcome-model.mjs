@@ -38,6 +38,7 @@ export function createAwardTracker() {
    return pending;
   },
   dismiss() { pending = null; },
+  replay(room,viewer) {const a=room.exercise.award;if(!room.exercise.finished||!a||a.leaves+a.flowers<=0)return null;identity=JSON.stringify([room.id,viewer.id]);previous=JSON.stringify([viewer.id,a.id]);seen.add(previous);pending={...a,replay:true};return pending;},
   clear() { identity = null; previous = null; pending = null; }
  };
 }

@@ -1,4 +1,4 @@
-import {rewardPalette,paintSourceFlower} from '/shared/reward-source-colors.mjs';
+import {rewardPalette,paintSourceFlower,paintPartnerKeepsake} from '/shared/reward-source-colors.mjs?v=20261106-keepsake';
 import {LEAF_SLOTS,FLOWER_SLOTS} from '/shared/reward-tree-config.js';
 const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d');
 const base='/garden/assets/processed/';
@@ -19,7 +19,7 @@ function mapped(slots,points,type){
  return old.map((r,i)=>({...r,end:selected[i],group:group(selected[i]),endSize:type==='flower'?31:17+(i%3),endRot:type==='flower'?0:(i%2?.6:-.6)}));
 }
 function position(r,t){const q=ease((t-(4400+r.group*340))/2100),arc=Math.sin(q*Math.PI)*16;return{x:mix(r.start.x,r.end.x,q),y:mix(r.start.y,r.end.y,q)-arc,s:mix(r.s,r.endSize,q),rot:mix(r.rot,r.endRot,q),q}}
-function leaf(r,p){ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);const s=p.s;const g=ctx.createLinearGradient(-s/2,-s/2,s/2,s/2);const palette=rewardPalette(r,rewardColorMode);if(palette){palette.leaf.forEach((c,i)=>g.addColorStop(i/2,c))}else {g.addColorStop(0,r.kind==='quiz-leaf'?'#70dae1':'#a0df69');g.addColorStop(.5,r.kind==='quiz-leaf'?'#2eafb8':'#51ac51');g.addColorStop(1,r.kind==='quiz-leaf'?'#138793':'#28814e');}ctx.fillStyle=g;ctx.shadowColor='#225c3d35';ctx.shadowBlur=5;ctx.beginPath();ctx.moveTo(-s*.52,s*.57);ctx.bezierCurveTo(-s*.9,-s*.3,-s*.1,-s*.85,s*.55,-s*.58);ctx.bezierCurveTo(s*.8,s*.28,s*.06,s*.9,-s*.52,s*.57);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#ffffff45';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(-s*.4,s*.46);ctx.lineTo(s*.38,-s*.4);ctx.stroke();ctx.restore()}
+function leaf(r,p){ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);const s=p.s;if(paintPartnerKeepsake(ctx,0,0,s,r)){ctx.restore();return;}const g=ctx.createLinearGradient(-s/2,-s/2,s/2,s/2);const palette=rewardPalette(r,rewardColorMode);if(palette){palette.leaf.forEach((c,i)=>g.addColorStop(i/2,c))}else {g.addColorStop(0,r.kind==='quiz-leaf'?'#70dae1':'#a0df69');g.addColorStop(.5,r.kind==='quiz-leaf'?'#2eafb8':'#51ac51');g.addColorStop(1,r.kind==='quiz-leaf'?'#138793':'#28814e');}ctx.fillStyle=g;ctx.shadowColor='#225c3d35';ctx.shadowBlur=5;ctx.beginPath();ctx.moveTo(-s*.52,s*.57);ctx.bezierCurveTo(-s*.9,-s*.3,-s*.1,-s*.85,s*.55,-s*.58);ctx.bezierCurveTo(s*.8,s*.28,s*.06,s*.9,-s*.52,s*.57);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#ffffff45';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(-s*.4,s*.46);ctx.lineTo(s*.38,-s*.4);ctx.stroke();ctx.restore()}
 function paintReward(r,t){const p=position(r,t);if(r.kind==='flower'){ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);if(!paintSourceFlower(ctx,0,0,p.s,r,rewardColorMode))ctx.drawImage(r.sourceType==='past_exam'?pastFlower:flower,-p.s/2,-p.s/2,p.s,p.s);ctx.restore()}else leaf(r,p)}
 function tree(t){
  const fade=ease((t-3300)/2300);ctx.save();ctx.globalAlpha=1-fade;ctx.drawImage(oldLayer,128,178,544,544);ctx.restore();

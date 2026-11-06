@@ -1,3 +1,14 @@
+# 2026-11-06 夥伴紀念顯示修正（首輪複核完成，待發布）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 發布中 | Codex-partner-keepsake-display-20261106 | 待腳本取得鎖 | 待本PR合併main | `dpl_YFLs7rxodob61WM3agfDWjXwahwa` | 4年級夥伴入口、my-tree、shared/partner-pilot/app／learning／outcome-model／outcomes.css、shared/effort-garden-v2／garden-stage／quiz-partner-rewards／reward-source-colors／reward-tree-renderer、garden/stage／scene-cat／scene-pets／growth/index／growth.mjs | 待複核及main乾淨來源發布；目前無發布鎖 |
+
+- Codex唯一寫入者，工作分支codex/partner-keepsake-audit-20261106，main基底d44674a。範圍與驗證見[顯示修正](partner-keepsake-display-20261106.md)。不改SQL／計獎／任務資料；正式仍dpl_YFLs7rxodob61WM3agfDWjXwahwa。
+- Claude首輪只讀複核無可確認P1/P2、Git未變；小修後23／19瀏覽器重驗通過，第二輪因每週額度零Read拒絕，未執行。11項Node／SQL／保護檢查通過，1部署DB測試skip不列通過。PR進main後再乾淨main依官方腳本發布。另一分支的未開始集合室刪除功能尚未完成，不能宣稱已發布。
+
 # 2026-11-06 夥伴回顧引導與自動結算（已正式發布）
 
 ## 發布登記

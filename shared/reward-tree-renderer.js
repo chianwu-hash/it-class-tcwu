@@ -1,5 +1,5 @@
-import {rewardTrack,REWARD_SOURCE_PALETTES,sourceFlowerSvg} from './reward-source-colors.mjs';
-import {partnerKeepsakeSvg} from './quiz-partner-rewards.mjs';
+import {rewardTrack,REWARD_SOURCE_PALETTES,sourceFlowerSvg} from './reward-source-colors.mjs?v=20261106-keepsake';
+import {partnerKeepsakeSvg} from './quiz-partner-rewards.mjs?v=20261106-keepsake';
 function applySource(element,reward){
     if(reward?.sourceType==='partner'){element.dataset.partnerReward='true';element.style.setProperty('--partner-art',`url("data:image/svg+xml,${encodeURIComponent(partnerKeepsakeSvg(reward.kind==='flower'))}")`);return;}
     const track=rewardTrack(reward),p=REWARD_SOURCE_PALETTES[track];if(!p)return;
