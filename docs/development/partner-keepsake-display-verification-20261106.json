@@ -1,0 +1,452 @@
+{
+  "production": "dpl_HnPy1eaz92ktXsjut7Z9LnXeBcXo",
+  "source": "a2f7eecc83c08b0bdec5ebb2e3bf7e329c3fee9b",
+  "rollback": "dpl_YFLs7rxodob61WM3agfDWjXwahwa",
+  "promotedAt": "2026-11-06T04:07:43.891Z",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "garden/growth/growth.mjs",
+      "garden/growth/index.html",
+      "garden/scene-cat.html",
+      "garden/scene-pets.html",
+      "garden/stage.html",
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "my-tree.html",
+      "shared/effort-garden-v2.mjs",
+      "shared/garden-stage.mjs",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/learning.js",
+      "shared/partner-pilot/outcome-model.mjs",
+      "shared/partner-pilot/outcomes.css",
+      "shared/quiz-partner-rewards.mjs",
+      "shared/reward-source-colors.mjs",
+      "shared/reward-tree-renderer.js"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "candidateAssets": [
+    {
+      "file": "garden/growth/growth.mjs",
+      "ok": true,
+      "sha256": "6196b354df0c405999777f04aa9f32321c4fa0e37747a30aba6d60195fc34336"
+    },
+    {
+      "file": "garden/growth/index.html",
+      "ok": true,
+      "sha256": "65eaf2a6dee0380391f0ddee5341a1c53c3ca810cc5b78a9d46ccfe36962b366"
+    },
+    {
+      "file": "garden/scene-cat.html",
+      "ok": true,
+      "sha256": "32c80b522f4918ece57902ac474f8c3a2bf2420bd924c4d5c2557dc3477b76d3"
+    },
+    {
+      "file": "garden/scene-pets.html",
+      "ok": true,
+      "sha256": "155170ca7a085b6df067dffa987abcabca696660e339e3ff0c0ac975299e5f2a"
+    },
+    {
+      "file": "garden/stage.html",
+      "ok": true,
+      "sha256": "b9e8279a21109031d172ce45c395e77af8bbf080323d8e713d077a858f2c50aa"
+    },
+    {
+      "file": "grade3/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "6dd124621aa189eaa105ba5a1681075ea9a68a5250e193ed6a78e010ed13e0aa"
+    },
+    {
+      "file": "grade4/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "5508f6124b5a8d6448ce72c4132ec94290fcd541cd5c56234050920c782a37da"
+    },
+    {
+      "file": "grade6/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "ea73cb869fdd041008a34e28c84e8184c36e33d029c0f55728d1eb305a1a333c"
+    },
+    {
+      "file": "grade9/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "b2f1f7a71f0a8fcb764ad865012b0df3f8c765547c385746190725cec015bb9a"
+    },
+    {
+      "file": "my-tree.html",
+      "ok": true,
+      "sha256": "4fec548db08aa36e41ee881398b9560890d9e0f3c4002a00ec60eae8aa343203"
+    },
+    {
+      "file": "shared/effort-garden-v2.mjs",
+      "ok": true,
+      "sha256": "33a6602ed6c13170921a0081e5594f9ffe18c5585070df74b6b0c2bbdb23f33c"
+    },
+    {
+      "file": "shared/garden-stage.mjs",
+      "ok": true,
+      "sha256": "82bbbb8cf3b0e686eb1689a6a9d07a0027e0f36694ba17ca48446cf02c961c38"
+    },
+    {
+      "file": "shared/partner-pilot/app.mjs",
+      "ok": true,
+      "sha256": "945466277fec45134a9faf3e0bee8930799e3c70e285bcdb7d26c6440f8e6dac"
+    },
+    {
+      "file": "shared/partner-pilot/learning.js",
+      "ok": true,
+      "sha256": "5a237cb215e5e6542837e9215304dd31f127acb41dcd302177023c0dc749032c"
+    },
+    {
+      "file": "shared/partner-pilot/outcome-model.mjs",
+      "ok": true,
+      "sha256": "c2cef029a76ea3ef70cb84b3af82dd687370a7ac4b09843204178966fb51d533"
+    },
+    {
+      "file": "shared/partner-pilot/outcomes.css",
+      "ok": true,
+      "sha256": "d93fa68ce367fd3640a082444f4481adfc84dd592f949debdc1512994d8e730b"
+    },
+    {
+      "file": "shared/quiz-partner-rewards.mjs",
+      "ok": true,
+      "sha256": "84f8c7bd0820799e04ec62274543f18dfc30903c014720702aaf85e91f597c78"
+    },
+    {
+      "file": "shared/reward-source-colors.mjs",
+      "ok": true,
+      "sha256": "ca0b79385a40829896efa47ce13dc09054b2dd1e678312b3b443f39079cbfba0"
+    },
+    {
+      "file": "shared/reward-tree-renderer.js",
+      "ok": true,
+      "sha256": "d1361d58082fa95c77ec48c8fd7a51a77fa23c2295371afdd89a4db692d07b33"
+    }
+  ],
+  "productionAssets": [
+    {
+      "file": "garden/growth/growth.mjs",
+      "ok": true,
+      "sha256": "6196b354df0c405999777f04aa9f32321c4fa0e37747a30aba6d60195fc34336"
+    },
+    {
+      "file": "garden/growth/index.html",
+      "ok": true,
+      "sha256": "65eaf2a6dee0380391f0ddee5341a1c53c3ca810cc5b78a9d46ccfe36962b366"
+    },
+    {
+      "file": "garden/scene-cat.html",
+      "ok": true,
+      "sha256": "32c80b522f4918ece57902ac474f8c3a2bf2420bd924c4d5c2557dc3477b76d3"
+    },
+    {
+      "file": "garden/scene-pets.html",
+      "ok": true,
+      "sha256": "155170ca7a085b6df067dffa987abcabca696660e339e3ff0c0ac975299e5f2a"
+    },
+    {
+      "file": "garden/stage.html",
+      "ok": true,
+      "sha256": "b9e8279a21109031d172ce45c395e77af8bbf080323d8e713d077a858f2c50aa"
+    },
+    {
+      "file": "grade3/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "6dd124621aa189eaa105ba5a1681075ea9a68a5250e193ed6a78e010ed13e0aa"
+    },
+    {
+      "file": "grade4/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "5508f6124b5a8d6448ce72c4132ec94290fcd541cd5c56234050920c782a37da"
+    },
+    {
+      "file": "grade6/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "ea73cb869fdd041008a34e28c84e8184c36e33d029c0f55728d1eb305a1a333c"
+    },
+    {
+      "file": "grade9/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "b2f1f7a71f0a8fcb764ad865012b0df3f8c765547c385746190725cec015bb9a"
+    },
+    {
+      "file": "my-tree.html",
+      "ok": true,
+      "sha256": "4fec548db08aa36e41ee881398b9560890d9e0f3c4002a00ec60eae8aa343203"
+    },
+    {
+      "file": "shared/effort-garden-v2.mjs",
+      "ok": true,
+      "sha256": "33a6602ed6c13170921a0081e5594f9ffe18c5585070df74b6b0c2bbdb23f33c"
+    },
+    {
+      "file": "shared/garden-stage.mjs",
+      "ok": true,
+      "sha256": "82bbbb8cf3b0e686eb1689a6a9d07a0027e0f36694ba17ca48446cf02c961c38"
+    },
+    {
+      "file": "shared/partner-pilot/app.mjs",
+      "ok": true,
+      "sha256": "945466277fec45134a9faf3e0bee8930799e3c70e285bcdb7d26c6440f8e6dac"
+    },
+    {
+      "file": "shared/partner-pilot/learning.js",
+      "ok": true,
+      "sha256": "5a237cb215e5e6542837e9215304dd31f127acb41dcd302177023c0dc749032c"
+    },
+    {
+      "file": "shared/partner-pilot/outcome-model.mjs",
+      "ok": true,
+      "sha256": "c2cef029a76ea3ef70cb84b3af82dd687370a7ac4b09843204178966fb51d533"
+    },
+    {
+      "file": "shared/partner-pilot/outcomes.css",
+      "ok": true,
+      "sha256": "d93fa68ce367fd3640a082444f4481adfc84dd592f949debdc1512994d8e730b"
+    },
+    {
+      "file": "shared/quiz-partner-rewards.mjs",
+      "ok": true,
+      "sha256": "84f8c7bd0820799e04ec62274543f18dfc30903c014720702aaf85e91f597c78"
+    },
+    {
+      "file": "shared/reward-source-colors.mjs",
+      "ok": true,
+      "sha256": "ca0b79385a40829896efa47ce13dc09054b2dd1e678312b3b443f39079cbfba0"
+    },
+    {
+      "file": "shared/reward-tree-renderer.js",
+      "ok": true,
+      "sha256": "d1361d58082fa95c77ec48c8fd7a51a77fa23c2295371afdd89a4db692d07b33"
+    }
+  ],
+  "productionBrowser": {
+    "checks": [
+      {
+        "name": "correct grade and navbar",
+        "ok": true
+      },
+      {
+        "name": "review completion app and stylesheet are loaded",
+        "ok": true
+      },
+      {
+        "name": "public modules contain keepsake contract",
+        "ok": true
+      },
+      {
+        "name": "no runtime exceptions",
+        "ok": true
+      }
+    ],
+    "errors": []
+  },
+  "localSqlBrowser": {
+    "out": [
+      {
+        "name": "last answer does not force either client into review",
+        "ok": true
+      },
+      {
+        "name": "peer completion keeps open camp draft and does not mark review",
+        "ok": true
+      },
+      {
+        "name": "no award or completion before explicit review",
+        "ok": true
+      },
+      {
+        "name": "persistent review button reachable at mobile scroll bottom",
+        "ok": true
+      },
+      {
+        "name": "mobile no horizontal overflow",
+        "ok": true
+      },
+      {
+        "name": "review starts with progress and no finish confirmation at beginning",
+        "ok": true
+      },
+      {
+        "name": "first explicit review waits for named peer and never awards",
+        "ok": true
+      },
+      {
+        "name": "list exposes personal acknowledgment and peer wait",
+        "ok": true
+      },
+      {
+        "name": "other list says it is your turn to review",
+        "ok": true
+      },
+      {
+        "name": "resumed task enters review directly",
+        "ok": true
+      },
+      {
+        "name": "last review automatically shows summary and real awarded leaf",
+        "ok": true
+      },
+      {
+        "name": "explicit final acknowledgment focuses summary heading",
+        "ok": true
+      },
+      {
+        "name": "celebration is inside viewport after final acknowledgment",
+        "ok": true
+      },
+      {
+        "name": "waiting peer gets award celebration without forced page switch",
+        "ok": true
+      },
+      {
+        "name": "review update actually committed before checking view",
+        "ok": true
+      },
+      {
+        "name": "updating a completed review stays on review instead of jumping away",
+        "ok": true
+      },
+      {
+        "name": "completed task leaves pending list",
+        "ok": true
+      },
+      {
+        "name": "record card confirms leaf was credited",
+        "ok": true
+      },
+      {
+        "name": "reentry preserves result without replay or repeat award",
+        "ok": true
+      },
+      {
+        "name": "manual replay shows existing award and no duplicate issuance",
+        "ok": true
+      },
+      {
+        "name": "manual replay does not change server award",
+        "ok": true
+      },
+      {
+        "name": "keepsake art uses matching twin-leaf SVG",
+        "ok": true
+      },
+      {
+        "name": "uncaught errors zero",
+        "ok": true
+      }
+    ],
+    "errors": []
+  },
+  "gardenBrowser": {
+    "out": [
+      {
+        "name": "partner totals visible",
+        "ok": true
+      },
+      {
+        "name": "source shortcut opens filtered list",
+        "ok": true
+      },
+      {
+        "name": "partner on later crown page selected and detailed",
+        "ok": true
+      },
+      {
+        "name": "flower source detailed",
+        "ok": true
+      },
+      {
+        "name": "all-source pagination retained",
+        "ok": true
+      },
+      {
+        "name": "cat/a source hover for both earned leaf and flower",
+        "ok": true
+      },
+      {
+        "name": "cat/a renders with preserved earned counts",
+        "ok": true
+      },
+      {
+        "name": "cat/b source hover for both earned leaf and flower",
+        "ok": true
+      },
+      {
+        "name": "cat/b renders with preserved earned counts",
+        "ok": true
+      },
+      {
+        "name": "dog/a source hover for both earned leaf and flower",
+        "ok": true
+      },
+      {
+        "name": "dog/a renders with preserved earned counts",
+        "ok": true
+      },
+      {
+        "name": "dog/b source hover for both earned leaf and flower",
+        "ok": true
+      },
+      {
+        "name": "dog/b renders with preserved earned counts",
+        "ok": true
+      },
+      {
+        "name": "rabbit/a source hover for both earned leaf and flower",
+        "ok": true
+      },
+      {
+        "name": "rabbit/a renders with preserved earned counts",
+        "ok": true
+      },
+      {
+        "name": "rabbit/b source hover for both earned leaf and flower",
+        "ok": true
+      },
+      {
+        "name": "rabbit/b renders with preserved earned counts",
+        "ok": true
+      },
+      {
+        "name": "logout hides partner count and sources",
+        "ok": true
+      },
+      {
+        "name": "no uncaught browser errors",
+        "ok": true
+      }
+    ],
+    "errors": []
+  },
+  "nodeSqlPassed": 11,
+  "skipped": 1,
+  "dbMutation": false,
+  "claude": {
+    "firstReviewCompleted": true,
+    "viewerStarted": true,
+    "gitUnchanged": true,
+    "confirmedP1P2": 0,
+    "followup": "weekly_limit_before_any_read"
+  },
+  "unverified": [
+    "真實Google雙機",
+    "觸控",
+    "報讀器"
+  ],
+  "pendingWaitingRoomDeletion": "獨立草稿，未套SQL或發布"
+}
