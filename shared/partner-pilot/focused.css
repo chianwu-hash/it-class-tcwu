@@ -80,6 +80,18 @@
   :scope .partner-camp-toast{right:16px;bottom:18px}
  }
  @media(prefers-reduced-motion:reduce){:scope .camp-panel,:scope .is-closing .camp-panel{animation:none}}
+
+ /* Keep the existing camp opener (and its unread state/focus contract) reachable while scrolling. */
+ :scope .focus-team-bar [data-open-camp]{position:fixed;right:max(24px,env(safe-area-inset-right));bottom:max(24px,env(safe-area-inset-bottom));z-index:35;max-width:calc(100vw - 32px);min-height:54px;width:auto;margin:0;padding:14px 20px;border:1px solid #b7e0d3;border-radius:999px;background:#0f766e;color:#fff;box-shadow:0 6px 22px #164d4533;font-size:15px;line-height:1.45;white-space:normal}
+ :scope .focus-team-bar [data-open-camp]:focus-visible{outline:3px solid #db9e20;outline-offset:4px}
+ :scope .partner-answer-dock [data-open-camp]{display:none}
+ :scope .partner-focus{padding-bottom:100px}
+ :scope .partner-camp-toast{bottom:104px}
+ :scope:has(#camp-dialog[open]) .focus-team-bar [data-open-camp]{visibility:hidden;pointer-events:none}
+ @media(max-width:700px){
+  :scope .focus-team-bar [data-open-camp]{right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));padding:13px 17px}
+  :scope .partner-camp-toast{bottom:calc(max(16px,env(safe-area-inset-bottom)) + 78px)}
+ }
 }
 body.partner-pilot dialog.image-lightbox{margin:0;border:0;padding:0;max-width:none;max-height:none;width:100vw;height:100dvh}
 body.partner-pilot dialog.image-lightbox::backdrop{background:transparent}

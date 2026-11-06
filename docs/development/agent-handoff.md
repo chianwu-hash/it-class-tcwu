@@ -1,3 +1,10 @@
+# 2026-11-06 共同營地懸浮入口（發布中）
+
+- 使用者要求捲動答題時隨時能開營地。沿用原header的同一個data-open-camp按鈕／未讀數／dialog開關與焦點契約，只改focused.css固定右下角、深綠色圓角與鍵盤focus樣式；footer重複入口隱藏，營地展開時懸浮入口隱藏，toast上移避免相疊，內容底部留空間並支援safe-area。
+- 新worktree／branch `partner-floating-camp-20261106`，最新main ea4c532；只有focused.css與四年級入口cache版本（四個年級3/4/6/9），沒有JS、SQL、作答／任務／草稿／獎勵或個人練習變更。Codex唯一寫入者。
+- 隔離Chrome 16項懸浮檢查＋17項既有focused回歸通過，pageerror0。1440／768／360寬捲動可達、底部操作可滾到懸浮鈕上方、無水平溢出、未讀／toast分開、營地開關／焦點／原選答保留、回顧／紀錄冊可達均驗證；手機截圖已檢視。這是CSS呈現小改，沒有新增鏡像測試或DB驗證。
+- 發布登記：`Codex-partner-floating-camp-20261106`，基準正式 `dpl_FuTwKPGevKufL2To2NiNVyagJmky`，status無鎖。驗證通過後PR/main，新乾淨main執行release-from-main start/deploy/promote，預期5個runtime修改、0新增／刪除；完成後經PR登記handoffRow。
+
 # 2026-11-06 作答送出提醒與結束引導（已正式發布）
 
 ## 發布登記
