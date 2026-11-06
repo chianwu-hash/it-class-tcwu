@@ -1,11 +1,12 @@
-# 2026-11-06 小隊資訊與流程入口分離（發布中）
+# 2026-11-06 小隊資訊與流程入口分離（已正式發布）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-partner-flow-actions-20261106 | 待腳本 | PR後乾淨main | `dpl_3jYJ84TsUBgaCTYUcC4nPP3XP26C` | shared/partner-pilot/learning.js、shared/partner-pilot/app.mjs | 待發布 |
+| 已完成 | Codex-partner-flow-actions-20261106 | 2026-11-06T12:43:49.324Z | `5c64318` | `dpl_3jYJ84TsUBgaCTYUcC4nPP3XP26C` | shared/partner-pilot/learning.js、shared/partner-pilot/app.mjs | `dpl_T6HnHqmrjRLZdJqWsEdXt33j4cM8`／回滾 `dpl_3jYJ84TsUBgaCTYUcC4nPP3XP26C`（eolOnly 0） |
 
+- PR92進main，乾淨main 5c64318經發布腳本上線。完整樹ok:true（2改／0非預期／eolOnly0），正式2檔與main位元組一致，鎖已釋放。[發布收據](partner-flow-actions-release-20261106.json)。
 - 使用者要求重新檢討並移除小隊選單流程按鈕：選單只留資訊；答題沿用全員完成後共同回顧引導；回顧提供回題目入口，完成後才進紀錄冊，紀錄冊可回題目／回顧。舊草稿若停在尚未完成的紀錄冊，依目前階段回到答題／回顧，原答案草稿不更動。
 - 更新按鈕僅同步／snapshot異常才顯示於獨立恢復提示，手動成功更新後重建同步；待確認操作仍走原請求重送，普通操作錯誤不冒稱斷線。沒有SQL、權限、作答／配題／計獎契約變更，未寫學生資料。「這題不能只有我知道」原文不變。
 - 與最新畫圖圖示PR90／91整合後，14 Node、56合成瀏覽器檢查通過，含恢復狀態、送答／回顧／總結／返回、紀錄與草稿保留，1920／1366／1024／390／320px。已目視桌機／手機小隊資訊截圖。其他歷史瀏覽器腳本選擇器同步調整但未全數另跑；真實多人、正式斷網恢復及實體平板未重測。Codex唯一寫入者，收據進main後封存清理本批工作區。

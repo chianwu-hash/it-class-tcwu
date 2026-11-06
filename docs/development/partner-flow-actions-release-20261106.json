@@ -1,0 +1,53 @@
+{
+  "agent": "Codex-partner-flow-actions-20261106",
+  "commit": "5c64318f4dab501bcd9e013c515b943acb59193c",
+  "baseline": "dpl_3jYJ84TsUBgaCTYUcC4nPP3XP26C",
+  "expected": {
+    "changed": [
+      "shared/partner-pilot/learning.js",
+      "shared/partner-pilot/app.mjs"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "startedAt": "2026-11-06T12:43:49.324Z",
+  "state": "promoted",
+  "candidate": "dpl_T6HnHqmrjRLZdJqWsEdXt33j4cM8",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/learning.js"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-06T12:44:11.860Z",
+  "promotedAt": "2026-11-06T12:44:44.383Z",
+  "alias": "dpl_T6HnHqmrjRLZdJqWsEdXt33j4cM8",
+  "rollback": "dpl_3jYJ84TsUBgaCTYUcC4nPP3XP26C",
+  "handoffRow": "| 已完成 | Codex-partner-flow-actions-20261106 | 2026-11-06T12:43:49.324Z | `5c64318` | `dpl_3jYJ84TsUBgaCTYUcC4nPP3XP26C` | shared/partner-pilot/learning.js、shared/partner-pilot/app.mjs | `dpl_T6HnHqmrjRLZdJqWsEdXt33j4cM8`／回滾 `dpl_3jYJ84TsUBgaCTYUcC4nPP3XP26C`（eolOnly 0） |",
+  "productionAssets": [
+    {
+      "path": "shared/partner-pilot/learning.js",
+      "sha256": "69d0e1b867eb289b11ff4af2738c2ed3f469372e49b706e3ab63d3da597cb73c",
+      "matchesMain": true
+    },
+    {
+      "path": "shared/partner-pilot/app.mjs",
+      "sha256": "6ca5e11123d2c4bb789b692cc535019154ed42f371ed60e66cfd4a2d5e9a5dbf",
+      "matchesMain": true
+    }
+  ]
+}
