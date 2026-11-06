@@ -31,3 +31,5 @@ AGY 1.5.2／Gemini 4 Argon Medium 以提供文字複核，未直接讀寫專案�
 - 首段關於標記 textarea 讓全部題目退成單欄的猜測不成立：標記區在 workspace.apply 前已移到右側，29 項檢查實際驗到桌機左右分欄與滿版寬度。
 
 AGY 首次前置探針因新版本工具回報 write_file、舊監督器只認 write_to_file 而失敗，未交付正式問題。使用 repo 外的本次專用副本，只接受兩個等價名稱的同 nonce deny；deny-all hook、canary 不存在、viewer 及所有權限限制均保持。新會話重驗邊界通過後才進行實際複核，沒有改共用 skill 或放寬工具權限。原始請求、回覆、執行與相容處理證據私有保存。
+
+第二輪 AGY（會話 agy-original-workspace-20261106T163712，runtime 基準 495538d）完成，無可確認 P1／P2；工具邊界、viewer 與 Git 前後一致均通過。修正後 29 項合成瀏覽器檢查及桌機／手機實際截圖通過。此時尚未部署，先供使用者核對預覽。
