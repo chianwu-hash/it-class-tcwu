@@ -1,14 +1,15 @@
-# 2026-11-06 夥伴答題上方資訊列壓縮（發布中）
+# 2026-11-06 夥伴答題上方資訊列壓縮（已正式發布）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-partner-compact-header-20261106 | 待start | PR合併後新乾淨main | 由正式alias鎖定 | shared/partner-pilot/learning.js、focused.css | 純排版，原題目與紀錄不變 |
+| 已完成 | Codex-partner-compact-header-20261106 | 2026-11-06T11:46:14.581Z | `f96395b` | `dpl_H8aqWahtSsRcvn5zchMNga2UvRNj` | shared/partner-pilot/learning.js、shared/partner-pilot/focused.css | `dpl_G5VoPkbtoPAgw6wA4oegjjmxLmDW`／回滾 `dpl_H8aqWahtSsRcvn5zchMNga2UvRNj`（eolOnly 0） |
 
-- 使用者指出題組／進度／選單／題次堆在左邊太高、右邊空白。桌機改為單行四區：題組名稱、目前題次、全組進度、題目與小隊；手機兩行。將既有題次DOM移至header，不複製標題，切換題目仍維持正確焦點；選單內文在答題時用浮層，不推低題目，在共同回顧恢復一般文件流。保留「這題不能只有我知道」原句。
-- Codex唯一寫入者，fresh branch codex/partner-compact-header-20261106。8 Node、33合成瀏覽器通過：1920／1366／1024／390px、含正常長題組名稱，桌機header<78px、手機<120px、題目間距<20px、選單靠右且展開不推題目，原請教標記草稿／送答、回顧來回與題次不重複皆通過；已看桌機與手機截圖，pageerror0。
-- 沒有SQL、認證、題庫、答題與計葉花改動。真實多人整流程／實體觸控未驗，不能把合成測試當實班驗證。證據在本批ignored .chat-mode/evidence/compact-header/；候選完整樹通過後發布，完成正式資產比對與收據，再封存清理本批工作區。
+- PR81已進main，新乾淨main f96395b經start/deploy/promote上線。完整樹ok:true（2改／0新增刪除／0非預期／eolOnly0），正式2檔與main一致，鎖已釋放。[發布收據](partner-compact-header-release-20261106.json)。
+- 桌機以單行呈現題組、題次、全組進度、小隊選單；手機兩行。題次沿用同一DOM與焦點，小隊資訊答題時用浮層而不推低題目，共同回顧恢復正常文件流。「這題不能只有我知道」原句保留。
+- 與並行畫圖草稿PR79／80整合後，11 Node（含其草稿回歸）與33合成瀏覽器重跑通過。1920／1366／1024／390px包含正常長題組名，header高度與題目間距、選單位置／展開、原草稿／送答／回顧來回皆通過，已目視截圖。完整保留並行功能與交接紀錄，正式以其最新版本為基準。
+- Codex唯一寫入者，無SQL、認證、答案、配題、門檻或花葉改動。真實多人全流程與實體觸控未驗；不以合成檢查冒稱實班測試。收據進main後封存並正常清理本批工作區，不停止他人服務。
 
 # 2026-11-06 畫圖清除確認與儲存草稿（已正式發布）
 
