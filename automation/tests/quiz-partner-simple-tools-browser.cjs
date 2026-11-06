@@ -1,7 +1,7 @@
 // Synthetic-only UI regression. Exact leased target; no real auth or data writes.
 const fs=require('node:fs/promises'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const puppeteer=require('D:/projects/cdp-tools/node_modules/puppeteer-core');
-const root=path.resolve(__dirname,'../..'),origin='http://127.0.0.1:4491',out=path.join(root,'.chat-mode/evidence/camp-dock');
+const root=path.resolve(__dirname,'../..'),origin='http://127.0.0.1:4491',out=path.join(root,'.chat-mode/evidence/current-tab');
 const server=http.createServer(async(req,res)=>{try{let name=new URL(req.url,origin).pathname;if(name==='/')name='/automation/fixtures/partner-focused.html';if(req.method!=='GET'||!/^\/(shared\/|automation\/fixtures\/partner-focused\.)/.test(name)||name.includes('..'))throw Error();const f=path.resolve(root,'.'+name);if(!f.startsWith(root+path.sep))throw Error();const types={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.webp':'image/webp','.png':'image/png'};res.writeHead(200,{'Content-Type':types[path.extname(f)]||'application/octet-stream','Cache-Control':'no-store'});res.end(await fs.readFile(f));}catch{res.writeHead(404);res.end();}});
 console.log('simple_tools_worker_started');
 (async()=>{await fs.mkdir(out,{recursive:true});console.log('evidence_ready');await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(4491,'127.0.0.1',resolve);});console.log('preview_listening');const b=await puppeteer.connect({browserURL:process.env.AI_WORK_BROWSER_CDP_URL,defaultViewport:null,protocolTimeout:30000}),t=b.targets().find(t=>t._targetId===process.env.AI_WORK_BROWSER_TARGET_ID);assert(t,'exact_target_required');console.log('leased_browser_ready');const p=await t.page(),checks=[],errors=[];
@@ -28,7 +28,11 @@ try{
  check('關閉營地後焦點回到操作列原按鈕',await p.evaluate(()=>document.activeElement===campControlRef));
  await click('.focus-team-info>summary');
  check('小隊選單展開不推低題目',await p.evaluate(()=>{const bar=document.querySelector('.focus-team-bar').getBoundingClientRect(),q=document.querySelector('.partner-workspace-question').getBoundingClientRect(),body=document.querySelector('.focus-team-info-body');return q.top-bar.bottom<=20&&getComputedStyle(body).position==='absolute'&&body.getBoundingClientRect().right<=innerWidth;}));
- await click('.focus-team-info>summary');
+ await p.evaluate(()=>{window.beforeCurrentQuestion=document.querySelector('.partner-workspace-question');window.currentChoice=document.querySelector('form[data-form=answer] input[type=radio]');currentChoice.checked=true;currentChoice.dispatchEvent(new Event('change',{bubbles:true}));});
+ check('我的題目明確標示目前頁面',await p.$eval('.learning-tabs [data-view=practice]',e=>e.getAttribute('aria-current')==='page'&&e.textContent.includes('目前')));
+ await p.click('.learning-tabs [data-view=practice]');
+ check('點目前題目收起選單並回到題目',await p.evaluate(()=>!document.querySelector('.focus-team-info').open&&document.activeElement===document.querySelector('#focus-question-heading')));
+ check('點目前題目不重建或清空未送出的答案',await p.evaluate(()=>document.querySelector('.partner-workspace-question')===beforeCurrentQuestion&&currentChoice.checked));
  check('保留原本左右答題工作區',await p.$eval('[data-focus-content]',e=>e.classList.contains('workspace-desktop')));
  check('預設只顯示兩個支援操作',await p.$eval('.question-support-actions',e=>e.children.length===2&&e.textContent.includes('問夥伴')&&e.textContent.includes('這題不能只有我知道')));
  check('標記表單預設收起且無雙重摺疊標題',await p.evaluate(()=>!document.getElementById('mark-panel-101').open&&!document.querySelector('details.question-extras')&&document.getElementById('mark-panel-101').querySelector('summary').hidden));
