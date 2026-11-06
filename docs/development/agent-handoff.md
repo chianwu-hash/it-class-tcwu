@@ -3,8 +3,9 @@
 - 使用者接受8851精簡原型，授權接回夥伴練功、AGY複核與驗證後走PR/main/發布腳本。唯一寫入者Codex，fresh origin/main 7b0daba，分支 codex/partner-review-layout-20261106。
 - 新 review-layout.mjs/css 接入learning.js，保留原transport、actions、draft keys、題目ID、review/finish/settle與server計獎。摘要列只展開一完整單元，考古材料一次、子題逐題保持身分；不使用past的佔位correct索引揭答。答案與既有解析直接可見、分享選填、努力沿用真實stories。回顧確認與等待名單；僅修改留言才顯示更新。
 - 修正review/discuss在操作結果回來前繼續輸入時的草稿保留。本人最後確認沿用自動進紀錄冊／慶祝；隊友完成時保持回顧頁與輸入DOM，出現紀錄冊入口。沒有SQL／Auth／RLS／權限／原作答記錄更動。
-- 合成UI 29項與正式app+本機SQL雙人11項通過；20項Node/SQL回歸。涵蓋題組、IME草稿、留言清空、20題全標、320/390/1024布局、最後確認自動發葉、去重／訂正／考古花、舊任務不變。已目視桌機與手機截圖。這是本機合成身分，不是真實Google兩機／實體平板驗收。
+- 合成UI 34項與正式app+本機SQL雙人12項通過；20項Node/SQL回歸。涵蓋題組、IME草稿、留言清空、20題全標、320/390/1024布局、最後確認自動發葉、去重／訂正／考古花、舊任務不變。已目視桌機與手機截圖。這是本機合成身分，不是真實Google兩機／實體平板驗收。
 - 變更範圍：4年級partner-practice.html、app.mjs、learning.js、新review-layout.mjs/css及專屬測試、合成fixture CSS與交接。未改共同營地／題庫／配題／後端。AGY僅討論供應的代碼與差異，不宣稱repo工具審查。
+- AGY首輪提出busy/pending鎖定、輸入期間即時標記、回顧選中單元接續三點；已補獨立鎖定與submit guard、沿用標記局部更新、以既有current物件保存/驗證reviewQid。真實本機SQL接受既有草稿格式，接回隊友題目與未送分享通過。待第二輪複核。
 - 下一步：AGY複核具體風險→修正並複驗→PR→main乾淨新worktree→發布腳本。不得從本feature worktree部署。發布後收據PR與本批封存清理，使用中的8850/8851原型與其他工作目錄保留。
 
 # 2026-11-06 媒體工具全圖示與畫布間距（已正式發布）
