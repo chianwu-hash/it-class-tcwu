@@ -2,7 +2,23 @@ import {mountPaperPicker,partySizes} from './paper-picker.mjs?v=20261105-self';
 import {inviteMarkup,bindInvite} from './invite.mjs?v=20261106-team-flow';
 
 export const phaseLabel=phase=>({waiting:'等隊員集合',practice:'練習中',review:'共同回顧',completed:'已完成'})[phase]||'接續練習';
-export const pendingTeams=rooms=>rooms.filter(r=>!r.finished&&r.phase!=='completed');
+export const pendingTeams=rooms=>rooms.filter(r=>(!r.finished&&r.phase!=='completed')||needsSettlement(r));
+const needsSettlement=r=>r.finished&&!r.paused&&r.progress?.graded>0&&!r.progress.award;
+export function taskCardState(r){
+ const p=r.progress;if(r.paused)return {label:'題目暫停開放',action:'查看紀錄',detail:'原有作答與紀念仍保留。'};
+ if(!p)return {label:phaseLabel(r.phase||(r.started?'practice':'waiting')),action:r.finished?'翻開紀錄':'接續任務 →',detail:''};
+ if(!r.started)return {label:'等待集合',action:'回到集合室 →',detail:`已加入 ${r.count??r.members?.length??1}／${r.capacity} 位${r.inviteExpired?'・邀請已到期':''}`};
+ const score=p.correct===null?'':`目前答對 ${p.correct}／${p.graded} 個可判分欄位（${Math.round(p.correct/p.graded*100)||0}%）。`;
+ if(r.finished){
+  if(p.award)return {label:'任務已完成・紀念已收藏',action:'查看任務總結 →',detail:p.award.earnedHere?`每位夥伴已獲得 ${p.award.leaves?`${p.award.leaves} 片紀念葉`:`${p.award.flowers} 朵紀念花`}，已計入努力樹。`:'相同題目、相同夥伴的紀念已收藏，本次練習紀錄仍保留。'};
+  if(!p.graded)return {label:'回顧已完成・自我核對',action:'查看任務總結 →',detail:'這份任務沒有可判分欄位，不發放紀念葉花。'};
+  if(p.correct*100<p.graded*60)return {label:'回顧已完成・可訂正補達',action:'查看訂正進度 →',detail:score+`再訂正 ${Math.ceil(p.graded*.6-p.correct)} 個判分欄位即可達標。`};
+  return {label:'已達標・待確認紀念',action:'查看結算 →',detail:score+'請進入任務確認結算結果。'};
+ }
+ if(p.submitted<p.total)return {label:'答題中',action:'接續答題 →',detail:`全組已送出 ${p.submitted}／${p.total} 題。全員送出後，一起回顧彼此的題目。`};
+ const waiting=(r.members||[]).filter(m=>!m.reviewed).map(m=>m.name).join('、');
+ return {label:p.reviewed===r.capacity?'全員已回顧・待結算':p.meReviewed?'你已回顧・等待夥伴':'待你共同回顧',action:p.reviewed===r.capacity?'完成結算 →':p.meReviewed?'查看回顧進度 →':'前往共同回顧 →',detail:`全組已送出 ${p.total}／${p.total} 題；回顧已確認 ${p.reviewed}／${r.capacity} 人。${waiting?`等待${waiting}確認。`:''}${score}全員確認回顧後才會完成任務，達60%再發放紀念。`};
+}
 const roster=r=>(r.members||[]).map(m=>m.name).join('、');
 
 export function mountTeamHome({root,esc,rooms=[],initialMode='home',initialCode='',picked=null,requested=false,loadPapers,onNavigate,onCreate,onJoin,onResume,onRefresh,onStage,notice}){
@@ -10,7 +26,7 @@ export function mountTeamHome({root,esc,rooms=[],initialMode='home',initialCode=
  const frame=root.firstElementChild;let mode='home',token=0;
  const $=s=>frame.querySelector(s),live=t=>frame.isConnected&&t===token;
  const back='<button type="button" data-home>回到組隊入口</button>';
- function cards(list){return list.map(r=>`<article class="team-resume"><div><span class="badge">${phaseLabel(r.phase|| (r.started?'practice':'waiting'))}</span><h3>${esc(r.title||r.team)}</h3><p>${esc(r.team)}${r.members?.length?'・'+esc(roster(r)):''}</p>${!r.started?`<p class="muted">已加入 ${r.count??r.members?.length??1}／${r.capacity??2} 位${r.inviteExpired?'・邀請已到期':''}</p>`:''}</div><button type="button" data-resume="${esc(r.id)}" class="green">${r.finished?'翻開紀錄':'接續任務 →'}</button></article>`).join('');}
+ function cards(list){return list.map(r=>{const s=taskCardState(r);return `<article class="team-resume"><div><span class="badge">${esc(s.label)}</span><h3>${esc(r.title||r.team)}</h3><p>${esc(r.team)}${r.members?.length?'・'+esc(roster(r)):''}</p><p class="task-state-detail">${esc(s.detail)}</p>${r.progress&&r.started?`<details><summary>各位夥伴的任務進度</summary><ul>${(r.members||[]).map(m=>`<li>${esc(m.name)}：已送出 ${m.submitted}／${m.assigned??"—"} 題・${m.reviewed?'已確認回顧':'尚未確認回顧'}</li>`).join('')}</ul></details>`:''}</div><button type="button" data-resume="${esc(r.id)}" class="green">${esc(s.action)}</button></article>`;}).join('');}
  function bind(){frame.querySelectorAll('[data-home]').forEach(b=>b.onclick=()=>show('home'));frame.querySelectorAll('[data-resume]').forEach(b=>b.onclick=()=>onResume(b.dataset.resume));}
  async function show(next){mode=next;const t=++token;onNavigate();onStage(next==='captain'?'captain':next==='member'?'member':'home');
   if(next==='captain'){

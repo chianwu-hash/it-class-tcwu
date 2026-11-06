@@ -1,3 +1,11 @@
+# 2026-11-06 夥伴回顧引導與自動結算（複核通過，待正式PG及發布）
+
+- 使用者已授權本輪三項及必要SQL／發布：列表詳細進度、全員送答後持續回顧引導、最後一人主動確認回顧後自動結算。保留全員回顧／60%／訂正補達與同內容同成員防重政策；不加提前結束或未核定解析卡樣式，不回填歷史答案／回顧／獎勵。
+- 新worktree `partner-review-completion-20261106`／分支 `codex/partner-review-completion-20261106`，基底main `e2edb71`，Codex唯一寫入者。SQL精確更新三函式、UI learning/team-flow/app/outcomes CSS與四年級入口cache，測試及說明見[實作紀錄](partner-review-completion-20261106.md)。
+- 21項Node／SQL逐項通過、雙頁真本機SQL合成流程通過；原focused/actions/edge通過，outcomes更新舊按鈕假設後待重跑。沒有正式資料變更／部署。初次本機並行SQL OOM已以單並行重跑通，真Google多機、真麥克風／觸控與報讀器仍未測。
+- Claude兩輪已完成，修後無可確認P1/P2：浮層遮擋修正後五寬12項elementFromPoint通過，更新已完成回顧不跳頁與最後確認總結焦點已修。新雙頁SQL流程19／原outcomes41、focused/actions/edge/read/lightbox通過。原始回覆在ignored `.chat-mode/sessions/partner-review-completion-code-20261106`及`partner-review-completion-fix-20261106`。真實Google兩機、觸控／報讀器、實體錄音及雙PG連線同時提交未測；兩個歷史教材學習測試缺本機私有素材未跑，不列為通過。
+- 通過後功能PR→main→新乾淨main正式PG回滾／增量→schema snapshot/live→快照PR/main→再新乾淨main官方release-from-main start/deploy/promote。發布鎖被別人持有即停止；此刻最新正式為六年第10週 `dpl_EFDgQZUtQ1gTqaEqewRahFSA2djn`，不得覆蓋回舊基準。
+
 # 2026-11-06 六年級第10週課程網頁（已正式發布）
 
 ## 發布登記
