@@ -89,7 +89,7 @@ end $function$;
 revoke all on function partner_pilot.action_core(jsonb) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.action_core(jsonb) to postgres;
 
--- admin_learning_action(text,text,jsonb)  md5=e1e56f0d8f9246ad373f4fe7b9f7d9f7
+-- admin_learning_action(text,text,jsonb)  md5=ae0f457c3c775a907d3836a3a6151e86
 CREATE OR REPLACE FUNCTION public.admin_learning_action(p_action text, p_course_id text, p_payload jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -214,7 +214,7 @@ begin
    return result||jsonb_build_object('identity',identity,'offset',offst,'limit',lim,'as_of',statement_timestamp());
   end if;
   select * into sess from public.quiz_sessions s where s.id=(p_payload->>'session_id')::uuid and s.school_year=yr
-   and s.class_codes ? cls and s.access_mode in ('classroom','practice','self')
+   and (public.quiz_session_class_allowed(s.id,cls) or (s.access_mode='practice' and exists(select 1 from public.quiz_attempts old_attempt where old_attempt.session_id=s.id and old_attempt.user_id=uid))) and s.access_mode in ('classroom','practice','self')
    and (exists(select 1 from public.quiz_attempts a where a.session_id=s.id and a.user_id=uid)
     or exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id and g.user_id=uid));
   if not found then raise exception 'paper_unavailable';end if;
@@ -275,7 +275,7 @@ grant execute on function public.admin_learning_media_access(text,jsonb,uuid,tex
 grant execute on function public.admin_learning_media_access(text,jsonb,uuid,text) to authenticated;
 grant execute on function public.admin_learning_media_access(text,jsonb,uuid,text) to service_role;
 
--- admin_learning_paper_rows(uuid,integer,text)  md5=4f1875b65bc0567b4dc4cf31b69f819a
+-- admin_learning_paper_rows(uuid,integer,text)  md5=6aef0354cb0ba37fa9d7103eb02ef8ec
 CREATE OR REPLACE FUNCTION public.admin_learning_paper_rows(p_user uuid, p_year integer, p_class text)
  RETURNS TABLE(session_id uuid, attempt_id uuid, title text, subject text, unit text, access_mode text, revision integer, created_at timestamp with time zone, started_at timestamp with time zone, last_answer_at timestamp with time zone, answered bigint, correct bigint, total integer, hidden boolean, source_attempt_id text, source_question_id text)
  LANGUAGE sql
@@ -299,7 +299,7 @@ AS $function$
  left join public.quiz_generated_papers g on g.session_id=s.id and g.user_id=p_user
  cross join lateral (select count(*) as answered,count(*) filter(where z.correct) as correct,max(z.created_at) as last_at
   from public.quiz_answers z where z.attempt_id=a.id) x
- where s.school_year=p_year and s.class_codes ? p_class and s.access_mode in ('classroom','practice','self')
+ where s.school_year=p_year and (public.quiz_session_class_allowed(s.id,p_class) or (s.access_mode='practice' and a.id is not null)) and s.access_mode in ('classroom','practice','self')
  union all
  select a.id,a.id,v.document->>'title',coalesce(v.document->'catalog'->>'subject',''),v.document->>'title','past_exam',
   (select count(*)::integer from public.quiz_past_versions prior where prior.paper_id=a.paper_id and (prior.created_at,prior.id)<=(v.created_at,v.id)),
@@ -357,7 +357,7 @@ $function$;
 revoke all on function public.admin_learning_past_detail(uuid,integer,integer,text) from public, anon, authenticated, service_role;
 grant execute on function public.admin_learning_past_detail(uuid,integer,integer,text) to postgres;
 
--- admin_learning_rewards(text,text,jsonb)  md5=01e3ec4eaedfde3a8efeccb144a7c420
+-- admin_learning_rewards(text,text,jsonb)  md5=322f5219483ed3f705d5e5953bd9b587
 CREATE OR REPLACE FUNCTION public.admin_learning_rewards(p_action text, p_course_id text, p_payload jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -400,7 +400,7 @@ begin
  left join public.quiz_generated_papers g on g.session_id=s.id and g.user_id=(select uid from learner)
  cross join lateral (select count(*) as answered,count(*) filter(where z.correct) as correct,max(z.created_at) as last_at
   from public.quiz_answers z where z.attempt_id=a.id) x
- where s.school_year=115 and s.class_codes ? (select class_code from input) and s.access_mode in (''classroom'',''practice'',''self'') and not exists(select 1 from public.quiz_learning_sessions learning_private where learning_private.session_id=s.id)),
+ where s.school_year=115 and (public.quiz_session_class_allowed(s.id,(select class_code from input)) or (s.access_mode=''practice'' and a.id is not null)) and s.access_mode in (''classroom'',''practice'',''self'') and not exists(select 1 from public.quiz_learning_sessions learning_private where learning_private.session_id=s.id)),
       selected_progress as (select p.* from public.typing_foundation_progress p where p.course_id=$1
        and p.learner_key=''google:''||(select uid::text from learner) and p.id=nullif($4::jsonb->>''progress_id'','''')::uuid),
       selected_session as (select s.* from public.quiz_sessions s join paper_rows r on r.session_id=s.id where s.id=nullif($4::jsonb->>''session_id'','''')::uuid),
@@ -471,7 +471,7 @@ when 'garden_status' then execute 'with reward_snapshot as (with input as (selec
  left join public.quiz_generated_papers g on g.session_id=s.id and g.user_id=(select uid from learner)
  cross join lateral (select count(*) as answered,count(*) filter(where z.correct) as correct,max(z.created_at) as last_at
   from public.quiz_answers z where z.attempt_id=a.id) x
- where s.school_year=115 and s.class_codes ? (select class_code from input) and s.access_mode in (''classroom'',''practice'',''self'') and not exists(select 1 from public.quiz_learning_sessions learning_private where learning_private.session_id=s.id)),
+ where s.school_year=115 and (public.quiz_session_class_allowed(s.id,(select class_code from input)) or (s.access_mode=''practice'' and a.id is not null)) and s.access_mode in (''classroom'',''practice'',''self'') and not exists(select 1 from public.quiz_learning_sessions learning_private where learning_private.session_id=s.id)),
       selected_progress as (select p.* from public.typing_foundation_progress p where p.course_id=$1
        and p.learner_key=''google:''||(select uid::text from learner) and p.id=nullif($4::jsonb->>''progress_id'','''')::uuid),
       selected_session as (select s.* from public.quiz_sessions s join paper_rows r on r.session_id=s.id where s.id=nullif($4::jsonb->>''session_id'','''')::uuid),
@@ -568,7 +568,7 @@ when 'class_rewards' then execute 'with roster_students as (
  left join public.quiz_generated_papers g on g.session_id=s.id and g.user_id=(select uid from learner)
  cross join lateral (select count(*) as answered,count(*) filter(where z.correct) as correct,max(z.created_at) as last_at
   from public.quiz_answers z where z.attempt_id=a.id) x
- where s.school_year=115 and s.class_codes ? (select class_code from input) and s.access_mode in (''classroom'',''practice'',''self'') and not exists(select 1 from public.quiz_learning_sessions learning_private where learning_private.session_id=s.id)),
+ where s.school_year=115 and (public.quiz_session_class_allowed(s.id,(select class_code from input)) or (s.access_mode=''practice'' and a.id is not null)) and s.access_mode in (''classroom'',''practice'',''self'') and not exists(select 1 from public.quiz_learning_sessions learning_private where learning_private.session_id=s.id)),
       selected_progress as (select p.* from public.typing_foundation_progress p where p.course_id=$1
        and p.learner_key=''google:''||(select uid::text from learner) and p.id=nullif($4::jsonb->>''progress_id'','''')::uuid),
       selected_session as (select s.* from public.quiz_sessions s join paper_rows r on r.session_id=s.id where s.id=nullif($4::jsonb->>''session_id'','''')::uuid),
@@ -2401,6 +2401,55 @@ grant execute on function public.homework_thumbnail_access(text,boolean) to post
 grant execute on function public.homework_thumbnail_access(text,boolean) to authenticated;
 grant execute on function public.homework_thumbnail_access(text,boolean) to service_role;
 
+-- partner_pilot.import_teacher_library_session(uuid)  md5=ff98627fa80e9f62f955961910611466
+CREATE OR REPLACE FUNCTION partner_pilot.import_teacher_library_session(sid uuid)
+ RETURNS text
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare s public.quiz_sessions;d jsonb;pid text;g integer;n integer:=0;question_count integer;
+ b jsonb;q jsonb;opts jsonb;correct_index integer;rich jsonb;source_url text;hash text;qid integer;
+begin
+ select * into s from public.quiz_sessions where id=sid and access_mode='practice' and library_visible and status='open' and school_year=115 for share;
+ if s.id is null or exists(select 1 from public.quiz_generated_papers where session_id=sid)
+ or exists(select 1 from public.quiz_learning_sessions where session_id=sid) then raise exception 'TEACHER_SOURCE_UNAVAILABLE';end if;
+ select document into d from public.quiz_versions where id=s.version_id;
+ if d#>>'{catalog,volume}' !~ '^[3469]年級' then raise exception 'TEACHER_GRADE_UNAVAILABLE';end if;
+ g:=left(d#>>'{catalog,volume}',1)::int;
+ if not partner_pilot.self_document_ok(d) then raise exception 'TEACHER_DOCUMENT_UNSUPPORTED';end if;
+ perform public.quiz_validate(d);
+ select count(*) into question_count from jsonb_array_elements(d->'blocks') x cross join lateral jsonb_array_elements(x->'questions') y;
+ pid:='real-'||s.version_id;
+ if exists(select 1 from partner_pilot.papers where id=pid) then
+  if not exists(select 1 from partner_pilot.papers where id=pid and source_version=s.version_id and origin is null and total=question_count and is_real) then raise exception 'TEACHER_IMPORT_CONFLICT';end if;
+  insert into partner_pilot.paper_sources values(pid,sid) on conflict do nothing;return pid;
+ end if;
+ for source_url in select distinct value#>>'{}' from jsonb_path_query(d,'$.blocks[*].**.media[*].url') a(value) loop
+  if not exists(select 1 from public.quiz_media_assets where url=source_url and owner_id=s.owner_id) then raise exception 'TEACHER_MEDIA_UNAVAILABLE';end if;
+ end loop;
+ insert into partner_pilot.papers(id,title,grade,subject,kind,total,content_key,source_version,source_sha,is_real,source_session)
+ values(pid,d->>'title',g,d#>>'{catalog,subject}','leaf',question_count,'teacher:'||s.version_id,s.version_id,encode(sha256(convert_to(d::text,'UTF8')),'hex'),true,sid);
+ for source_url in select distinct value#>>'{}' from jsonb_path_query(d,'$.blocks[*].**.media[*].url') a(value) loop
+  hash:=encode(sha256(convert_to(source_url,'UTF8')),'hex');insert into partner_pilot.media_map values(pid,hash,source_url);
+  d:=replace(d::text,to_jsonb(source_url)::text,to_jsonb('https://partner-media.invalid/'||hash)::text)::jsonb;
+ end loop;
+ for b in select value from jsonb_array_elements(d->'blocks') loop
+  q:=b->'questions'->0;n:=n+1;
+  select jsonb_agg(o->'content' order by i),min((i-1)::int) filter(where o->>'id'=q#>>'{answer,option_id}') into opts,correct_index
+  from jsonb_array_elements(q->'options') with ordinality a(o,i);
+  rich:=jsonb_build_object('material',b->'material','prompt',q->'prompt','options',opts,'explanation',q->'explanation');
+  qid:=nextval('partner_pilot.self_question_id');
+  insert into partner_pilot.question_bank(id,title,prompt,options,correct,explanation,rich)
+  values(qid,'第'||n||'題',q#>>'{prompt,text}',(select jsonb_agg(o->>'text' order by i) from jsonb_array_elements(opts) with ordinality a(o,i)),correct_index,q#>>'{explanation,text}',rich);
+  insert into partner_pilot.paper_items values(pid,n,qid);
+ end loop;
+ insert into partner_pilot.paper_sources values(pid,sid);
+ return pid;
+end $function$;
+revoke all on function partner_pilot.import_teacher_library_session(uuid) from public, anon, authenticated, service_role;
+grant execute on function partner_pilot.import_teacher_library_session(uuid) to postgres;
+
 -- is_teacher()  md5=139dc315c99fc8c71be27a67523dbc84
 CREATE OR REPLACE FUNCTION public.is_teacher()
  RETURNS boolean
@@ -2485,7 +2534,7 @@ end $function$;
 revoke all on function partner_pilot.learning_snapshot_pre_message_media(uuid) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.learning_snapshot_pre_message_media(uuid) to postgres;
 
--- partner_pilot.lobby_action(jsonb)  md5=ce0f12140226d6ea960c4d9ae41d2b58
+-- partner_pilot.lobby_action(jsonb)  md5=a6451cce9166c5670312d0f1aeb30954
 CREATE OR REPLACE FUNCTION partner_pilot.lobby_action(p jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -2512,7 +2561,7 @@ begin
   cap:=(p->>'capacity')::int;
   if cap is null or cap not between 2 and 4 or length(trim(coalesce(p->>'team',''))) not between 1 and 24 or not exists(select 1 from partner_pilot.papers where id=p->>'paper' and enabled) or coalesce(p->>'theme','') not in ('forest','space','dora') then raise exception 'INVALID_ROOM'; end if;
   if cap>partner_pilot.max_capacity(p->>'paper') then raise exception 'PAIR_ONLY';end if;
-  if (select count(*) from partner_pilot.rooms a join partner_pilot.members b on b.room_id=a.id where b.user_id=uid and not a.started)>9 then raise exception 'TOO_MANY_ROOMS'; end if;
+  if (select count(*) from partner_pilot.rooms a join partner_pilot.members b on b.room_id=a.id where b.user_id=uid and not a.started)>9 and not exists(select 1 from partner_pilot.match_teams t join partner_pilot.match_presence mp on mp.team_id=t.id and mp.user_id=uid where t.id::text=p->>'matchedTeam' and t.host=uid and t.phase='selecting' and cardinality(t.participants)=(p->>'capacity')::int) then raise exception 'TOO_MANY_ROOMS'; end if;
   for i in 1..10 loop
    cname:=lpad((floor(random()*1000000)::int)::text,6,'0');
    begin
@@ -2574,6 +2623,177 @@ begin
 end $function$;
 revoke all on function partner_pilot.lobby_action(jsonb) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.lobby_action(jsonb) to postgres;
+
+-- partner_pilot.match_available(integer)  md5=7408f6b5848f2ff9e690e2cb971cc512
+CREATE OR REPLACE FUNCTION partner_pilot.match_available(g integer)
+ RETURNS boolean
+ LANGUAGE plpgsql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare p record;units int;
+begin
+ for p in select * from partner_pilot.papers where grade=g and enabled and is_real and origin is null order by (kind='leaf' and total=20) desc,id loop
+  if p.past_meta is null then
+   if p.total=20 and exists(select 1 from partner_pilot.paper_sources ps join public.quiz_sessions s on s.id=ps.session_id join public.quiz_version_meta m on m.version_id=s.version_id
+    where ps.paper_id=p.id and s.status='open' and s.library_visible and s.access_mode='practice' and s.school_year=115 and s.version_id=p.source_version and left(m.catalog->>'volume',1)=g::text
+    and not exists(select 1 from public.quiz_generated_papers x where x.session_id=s.id) and not exists(select 1 from public.quiz_learning_sessions x where x.session_id=s.id)) then return true;end if;
+  elsif exists(select 1 from public.quiz_past_papers s where s.id=p.past_meta->>'sourcePaper' and s.enabled and s.grade=g and s.active_version=p.source_version) then
+   begin select count(distinct unit_id) into units from partner_pilot.allocation_items(p.id);exception when raise_exception then units:=0;end;
+   if units>=4 then return true;end if;
+  end if;
+ end loop;return false;
+end $function$;
+revoke all on function partner_pilot.match_available(integer) from public, anon, authenticated, service_role;
+grant execute on function partner_pilot.match_available(integer) to postgres;
+
+-- partner_pilot.match_paper_ok(text,uuid[],uuid)  md5=f30a9fdbcc59764759924cfe2da0d8bf
+CREATE OR REPLACE FUNCTION partner_pilot.match_paper_ok(pid text, roster uuid[], captain uuid)
+ RETURNS boolean
+ LANGUAGE plpgsql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare p partner_pilot.papers;cnt int:=cardinality(roster);g int;doc jsonb;units int;sid uuid;
+begin
+ if cnt not between 2 and 4 then return false;end if;
+ select min(left(e.class_code,1)::int) into g from auth.users u join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115
+ where u.id=any(roster) and u.email_confirmed_at is not null and u.raw_app_meta_data->'providers' ? 'google' and e.class_code~'^[3469][0-9]{2}$';
+ if g is null or (select count(*) from auth.users u join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 where u.id=any(roster) and u.email_confirmed_at is not null and u.raw_app_meta_data->'providers' ? 'google' and e.class_code~'^[3469][0-9]{2}$' and left(e.class_code,1)::int=g)<>cnt then return false;end if;
+ if left(coalesce(pid,''),5)='self:' then
+  if substring(pid from 6)!~'^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$' or not(captain=any(roster)) then return false;end if;
+  sid:=substring(pid from 6)::uuid;
+  select v.document into doc from public.quiz_generated_papers x join public.quiz_sessions s on s.id=x.session_id join public.quiz_versions v on v.id=s.version_id
+  join auth.users u on u.id=captain join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115
+  where s.id=sid and x.user_id=captain and s.owner_id=captain and x.deleted_at is null and x.config->>'kind'='self' and x.config->>'count' in('10','20')
+   and s.access_mode='self' and s.status='open' and s.school_year=115 and s.class_codes ? e.class_code and left(e.class_code,1)::int=g;
+  if doc is null or not partner_pilot.self_document_ok(doc) then return false;end if;
+  select count(*) into units from jsonb_array_elements(doc->'blocks') b cross join lateral jsonb_array_elements(b->'questions') q;
+  return units=20 or units=10 and cnt=2;
+ end if;
+ select * into p from partner_pilot.papers where id=pid and enabled and is_real and origin is null and grade=g;
+ if p.id is null then return false;end if;
+ if p.past_meta is not null then
+  if not exists(select 1 from public.quiz_past_papers s where s.id=p.past_meta->>'sourcePaper' and s.enabled and s.grade=g and s.active_version=p.source_version) then return false;end if;
+  begin select count(distinct unit_id) into units from partner_pilot.allocation_items(pid);exception when raise_exception then return false;end;
+  return units>=cnt;
+ end if;
+ return (p.total=20 or p.total=10 and cnt=2) and not exists(
+  select 1 from auth.users u join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 where u.id=any(roster) and not exists(
+   select 1 from partner_pilot.paper_sources ps join public.quiz_sessions s on s.id=ps.session_id where ps.paper_id=pid and s.status='open' and s.library_visible and s.access_mode='practice' and s.school_year=115 and s.version_id=p.source_version and public.quiz_session_class_allowed(s.id,e.class_code)
+   and not exists(select 1 from public.quiz_generated_papers x where x.session_id=s.id) and not exists(select 1 from public.quiz_learning_sessions x where x.session_id=s.id)));
+end $function$;
+revoke all on function partner_pilot.match_paper_ok(text,uuid[],uuid) from public, anon, authenticated, service_role;
+grant execute on function partner_pilot.match_paper_ok(text,uuid[],uuid) to postgres;
+
+-- partner_pilot.match_partition(integer)  md5=53a5fb5ed4b329f99a88a76664d7b92c
+CREATE OR REPLACE FUNCTION partner_pilot.match_partition(n integer)
+ RETURNS integer[]
+ LANGUAGE plpgsql
+ IMMUTABLE
+ SET search_path TO ''
+AS $function$
+declare groups int;sizes int[]:='{}';i int;
+begin
+ if n<2 then return sizes;end if;if n>2000 then raise exception 'MATCH_POOL_FULL';end if;
+ groups:=ceil(n/4.0)::int;for i in 1..groups loop sizes:=array_append(sizes,n/groups+case when i<=n%groups then 1 else 0 end);end loop;return sizes;
+end $function$;
+revoke all on function partner_pilot.match_partition(integer) from public, anon, authenticated, service_role;
+grant execute on function partner_pilot.match_partition(integer) to postgres;
+
+-- partner_pilot.match_self_key(jsonb,integer)  md5=e20c8ef105981db52c5a957533f5f80d
+CREATE OR REPLACE FUNCTION partner_pilot.match_self_key(doc jsonb, g integer)
+ RETURNS text
+ LANGUAGE plpgsql
+ IMMUTABLE
+ SET search_path TO ''
+AS $function$
+declare canonical jsonb:=doc;url text;hash text;key text;
+begin
+ for url in select distinct value#>>'{}' from jsonb_path_query(doc,'$.blocks[*].**.media[*].url') a(value) loop
+  hash:=substring(url from '([a-f0-9]{64})$');if hash is null then return null;end if;
+  canonical:=replace(canonical::text,to_jsonb(url)::text,to_jsonb('asset:'||hash)::text)::jsonb;
+ end loop;
+ select 'self:v1:'||encode(sha256(convert_to(jsonb_build_object('grade',g::text,'year',115,'semester',1,
+ 'questions',jsonb_agg(jsonb_build_object('material',b->'material','question',q-'id') order by jsonb_build_object('material',b->'material','question',q-'id')::text))::text,'UTF8')),'hex') into key
+ from jsonb_array_elements(canonical->'blocks') b cross join lateral jsonb_array_elements(b->'questions') q;
+ return key;
+end $function$;
+revoke all on function partner_pilot.match_self_key(jsonb,integer) from public, anon, authenticated, service_role;
+grant execute on function partner_pilot.match_self_key(jsonb,integer) to postgres;
+
+-- partner_pilot.match_snapshot(uuid)  md5=fbc4e02f11615b90d0114b77ecdaac4e
+CREATE OR REPLACE FUNCTION partner_pilot.match_snapshot(team_hint uuid DEFAULT NULL::uuid)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare a partner_pilot.match_presence;t partner_pilot.match_teams;policy partner_pilot.match_settings;g int;selected jsonb;ready boolean;result jsonb;selected_key text;
+begin
+ select left(e.class_code,1)::int into strict g from auth.users u join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 where u.id=auth.uid();
+ select * into policy from partner_pilot.match_settings where grade=g;
+ select * into a from partner_pilot.match_presence where user_id=auth.uid();
+ result:=jsonb_build_object('now',clock_timestamp(),'enabled',coalesce(policy.enabled,false),'available',coalesce(policy.enabled,false) and (a.user_id is not null or partner_pilot.match_available(g)),'grade',g);
+ if a.user_id is null then
+  if team_hint is not null then select * into t from partner_pilot.match_teams where id=team_hint and auth.uid()=any(participants);end if;
+  if t.phase='started' and exists(select 1 from partner_pilot.members where room_id=t.room_id and user_id=auth.uid()) then return result||jsonb_build_object('phase','active','roomId',t.room_id);end if;
+  if team_hint is null then select * into t from partner_pilot.match_teams where phase='closed' and auth.uid()=any(participants) and created_at>clock_timestamp()-interval '5 minutes' order by created_at desc limit 1;end if;
+  return result||jsonb_build_object('phase','idle','reason',t.reason);
+ end if;
+ if a.grade<>g then return result||jsonb_build_object('phase','identity_changed','ticket',a.ticket);end if;
+ if a.batch_id is not null then return result||jsonb_build_object('phase','waiting','ticket',a.ticket,'deadline',(select deadline from partner_pilot.match_batches where id=a.batch_id));end if;
+ select * into t from partner_pilot.match_teams where id=a.team_id;
+ ready:=t.selected_paper is not null and partner_pilot.match_paper_ok(t.selected_paper,t.participants,t.host);
+ if ready then
+  if left(t.selected_paper,5)='self:' then select jsonb_build_object('id',t.selected_paper,'title',coalesce(x.display_name,v.document->>'title'),'total',(select count(*) from jsonb_array_elements(v.document->'blocks') b cross join lateral jsonb_array_elements(b->'questions') q),'kind','leaf'),partner_pilot.match_self_key(v.document,g) into selected,selected_key from public.quiz_generated_papers x join public.quiz_sessions s on s.id=x.session_id join public.quiz_versions v on v.id=s.version_id where s.id=substring(t.selected_paper from 6)::uuid;
+  else select jsonb_build_object('id',id,'title',title,'total',total,'kind',kind),content_key into selected,selected_key from partner_pilot.papers where id=t.selected_paper;end if;
+ end if;
+ return result||jsonb_build_object('phase','selecting','ticket',a.ticket,'team',jsonb_build_object('id',t.id,'revision',t.revision,'host',t.host,'members',(select jsonb_agg(jsonb_build_object('id',u.user_id,'name',u.display_name) order by u.user_id) from partner_pilot.allowed_users u where u.user_id=any(t.participants)),
+  'selected',selected,'selectionUnavailable',t.selected_paper is not null and not ready,
+  'idleWarning',t.captain_at<clock_timestamp()-make_interval(secs=>policy.warning_seconds),
+  'handoffAt',case when policy.handoff_seconds is not null then t.captain_at+make_interval(secs=>policy.handoff_seconds) end,
+  'closeAt',case when policy.close_seconds is not null then t.activity_at+make_interval(secs=>policy.close_seconds) end,
+  'alreadyAwarded',ready and exists(select 1 from partner_pilot.awards where content_key=selected_key and member_key=(select string_agg(u::text,',' order by u) from unnest(t.participants) u))));
+end $function$;
+revoke all on function partner_pilot.match_snapshot(uuid) from public, anon, authenticated, service_role;
+grant execute on function partner_pilot.match_snapshot(uuid) to postgres;
+
+-- partner_pilot.match_sweep(integer)  md5=0db34655be8bf5141c98f1be6da396fe
+CREATE OR REPLACE FUNCTION partner_pilot.match_sweep(g integer)
+ RETURNS void
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare policy partner_pilot.match_settings;b partner_pilot.match_batches;t partner_pilot.match_teams;
+ roster uuid[];group_roster uuid[];sizes int[];size int;offset_n int:=1;captain uuid;tid uuid;
+begin
+ select * into policy from partner_pilot.match_settings where grade=g;
+ delete from partner_pilot.match_presence a where grade=g and batch_id is not null and (seen_at<clock_timestamp()-make_interval(secs=>policy.lease_seconds)
+ or not exists(select 1 from auth.users u join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 where u.id=a.user_id and u.email_confirmed_at is not null and u.raw_app_meta_data->'providers' ? 'google' and e.class_code~'^[3469][0-9]{2}$' and left(e.class_code,1)::int=g));
+ for t in select * from partner_pilot.match_teams where grade=g and phase='selecting' for update loop
+  if policy.close_seconds is not null and t.activity_at<clock_timestamp()-make_interval(secs=>policy.close_seconds) then
+   update partner_pilot.match_teams set phase='closed',reason='idle',revision=revision+1 where id=t.id;delete from partner_pilot.match_presence where team_id=t.id;
+  elsif policy.handoff_seconds is not null and t.captain_at<clock_timestamp()-make_interval(secs=>policy.handoff_seconds) then
+   select user_id into captain from partner_pilot.match_presence where team_id=t.id and user_id<>t.host and seen_at>clock_timestamp()-make_interval(secs=>policy.lease_seconds) order by random() limit 1;
+   if captain is not null then update partner_pilot.match_teams set host=captain,captain_at=clock_timestamp(),selected_paper=case when left(selected_paper,5)='self:' then null else selected_paper end,revision=revision+1 where id=t.id;end if;
+  end if;
+ end loop;
+ select * into b from partner_pilot.match_batches where grade=g and not closed for update;
+ if b.id is null or b.deadline is null or b.deadline>clock_timestamp() then return;end if;
+ select array_agg(user_id order by random()) into roster from partner_pilot.match_presence where batch_id=b.id;
+ if coalesce(cardinality(roster),0)<2 then update partner_pilot.match_batches set deadline=null where id=b.id;return;end if;
+ sizes:=partner_pilot.match_partition(cardinality(roster));
+ foreach size in array sizes loop
+  group_roster:=roster[offset_n:offset_n+size-1];captain:=group_roster[1+floor(random()*size)::int];
+  insert into partner_pilot.match_teams(grade,host,participants) values(g,captain,group_roster) returning id into tid;
+  update partner_pilot.match_presence set team_id=tid,batch_id=null where user_id=any(group_roster);offset_n:=offset_n+size;
+ end loop;
+ update partner_pilot.match_batches set closed=true where id=b.id;
+end $function$;
+revoke all on function partner_pilot.match_sweep(integer) from public, anon, authenticated, service_role;
+grant execute on function partner_pilot.match_sweep(integer) to postgres;
 
 -- partner_pilot.max_capacity(text)  md5=46933bf2fbecb5b556976ff08f1cb79b
 CREATE OR REPLACE FUNCTION partner_pilot.max_capacity(pid text)
@@ -2672,7 +2892,7 @@ grant execute on function public.quiz_action(text,jsonb) to postgres;
 grant execute on function public.quiz_action(text,jsonb) to authenticated;
 grant execute on function public.quiz_action(text,jsonb) to service_role;
 
--- quiz_action_before_learning(text,jsonb)  md5=bc629bb9102ea79fed963dde580bba4a
+-- quiz_action_before_learning(text,jsonb)  md5=97e2df6be9620bd3b0e24ccd4ee1e81d
 CREATE OR REPLACE FUNCTION public.quiz_action_before_learning(p_action text, p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -2691,6 +2911,7 @@ begin
  -- Practice pages and answer APIs are student-only; teacher authoring/monitoring remains separate.
  if teacher and p_action in ('library_sessions','join','resume','submit','view_question') then raise exception 'student_required';end if;
  if p_action in ('list','get','save','publish','versions','open','monitor','close','sessions','personal_sessions') and not teacher then raise exception 'teacher_required'; end if;
+ if p_action='library_sessions' then return public.quiz_library_sessions(p_data);end if;
  if p_action in ('personal_sessions','library_sessions') then
   if not teacher then
    identity:=public.quiz_student_identity();v_email:=identity->>'email';student_grade:=(identity->>'grade')::integer;
@@ -2709,7 +2930,7 @@ begin
     from public.quiz_attempts a left join public.quiz_answers x on x.attempt_id=a.id where a.user_id=uid group by a.session_id) progress on progress.session_id=s.id
    where (teacher and s.owner_id=uid and s.access_mode='personal')
     or (not teacher and s.access_mode in ('practice','self') and (s.access_mode<>'self' or exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id and g.user_id=uid and g.deleted_at is null)) and exists(select 1 from public.student_enrollments e
-     where e.email=v_email and e.school_year=s.school_year and s.class_codes ? e.class_code));
+     where e.email=v_email and e.school_year=s.school_year and public.quiz_session_class_allowed(s.id,e.class_code)));
   return jsonb_build_object('sessions',result,'role',case when teacher then 'teacher' else 'student' end,'grade',student_grade);
  end if;
  if p_action='sessions' then
@@ -2801,7 +3022,7 @@ begin
  else
   if teacher then raise exception 'student_required'; end if;
   select lower(u.email) into v_email from auth.users u where u.id=uid and u.email_confirmed_at is not null;
-  select e.class_code into cls from public.student_enrollments e where e.email=v_email and e.school_year=sess.school_year and sess.class_codes ? e.class_code;
+  select e.class_code into cls from public.student_enrollments e where e.email=v_email and e.school_year=sess.school_year and public.quiz_session_class_allowed(sess.id,e.class_code);
   if cls is null then raise exception 'roster_required'; end if;
  end if;
  -- Shared admission protects close; per-attempt locks isolate different students.
@@ -3197,7 +3418,7 @@ grant execute on function public.quiz_entry_context(jsonb) to postgres;
 grant execute on function public.quiz_entry_context(jsonb) to authenticated;
 grant execute on function public.quiz_entry_context(jsonb) to service_role;
 
--- quiz_entry_context_before_learning(jsonb)  md5=4fed50cd9e8edffe9b96a3570f808147
+-- quiz_entry_context_before_learning(jsonb)  md5=f5ce71b71090fb1ed51302f05c8836a7
 CREATE OR REPLACE FUNCTION public.quiz_entry_context_before_learning(p_data jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -3211,7 +3432,7 @@ begin
  if sess.id is not null and sess.access_mode<>'personal'
  and (sess.access_mode<>'self' or exists(select 1 from public.quiz_generated_papers where session_id=sess.id and user_id=auth.uid()))
  and exists(select 1 from public.student_enrollments e join auth.users u on lower(u.email)=e.email
-  where u.id=auth.uid() and u.email_confirmed_at is not null and e.school_year=sess.school_year and sess.class_codes ? e.class_code) then
+  where u.id=auth.uid() and u.email_confirmed_at is not null and e.school_year=sess.school_year and public.quiz_session_class_allowed(sess.id,e.class_code)) then
   -- Small per-version summary instead of detoasting the whole document; same subject.
   select coalesce(m.catalog->>'subject',v.document->'catalog'->>'subject'),v.id into subject,vid
   from public.quiz_versions v left join public.quiz_version_meta m on m.version_id=v.id where v.id=sess.version_id;
@@ -3291,7 +3512,7 @@ revoke all on function public.quiz_leaf_result(uuid,boolean) from public, anon, 
 grant execute on function public.quiz_leaf_result(uuid,boolean) to postgres;
 grant execute on function public.quiz_leaf_result(uuid,boolean) to service_role;
 
--- quiz_leaf_result_before_learning(uuid,boolean)  md5=c3f57d4cf6534196f2880d28513f67ba
+-- quiz_leaf_result_before_learning(uuid,boolean)  md5=703060d59ca758c80cfa1e401fe66f07
 CREATE OR REPLACE FUNCTION public.quiz_leaf_result_before_learning(aid uuid, new_answer boolean)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -3319,7 +3540,7 @@ begin
   select md5((q->'prompt')::text||coalesce((select string_agg((o->'content')::text,'' order by (o->'content')::text) from jsonb_array_elements(q->'options') o),'')) fingerprint
   from jsonb_array_elements(v.document->'blocks') b,lateral jsonb_array_elements(b->'questions') q) x;
  g:=substring(v.document->'catalog'->>'volume' from '^([3469])')::integer;
- if g is null or not exists(select 1 from public.student_enrollments e join auth.users u on lower(u.email)=e.email where u.id=auth.uid() and u.email_confirmed_at is not null and e.school_year=s.school_year and s.class_codes ? e.class_code and left(e.class_code,1)::integer=g) then return jsonb_build_object('earned',false,'reason','not_eligible');end if;
+ if g is null or not exists(select 1 from public.student_enrollments e join auth.users u on lower(u.email)=e.email where u.id=auth.uid() and u.email_confirmed_at is not null and e.school_year=s.school_year and public.quiz_session_class_allowed(s.id,e.class_code) and left(e.class_code,1)::integer=g) then return jsonb_build_object('earned',false,'reason','not_eligible');end if;
  if new_answer then
   insert into public.quiz_leaf_awards(user_id,attempt_id,fingerprint,grade,total,correct) values(a.user_id,aid,fp,g,n,c) on conflict do nothing returning id into award_id;
  end if;
@@ -3536,7 +3757,7 @@ revoke all on function public.quiz_learning_wrong_items(integer) from public, an
 grant execute on function public.quiz_learning_wrong_items(integer) to postgres;
 grant execute on function public.quiz_learning_wrong_items(integer) to service_role;
 
--- quiz_library_sessions(jsonb)  md5=1a092fa6bba0923cf3abce4f286ad50c
+-- quiz_library_sessions(jsonb)  md5=d58d0d37f03a186e6fb640b306860150
 CREATE OR REPLACE FUNCTION public.quiz_library_sessions(p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -3550,7 +3771,7 @@ begin
   select s.id,s.version_id,s.status,s.access_mode,g.display_name,g.created_at saved_at,g.config,g.actual_distribution
   from public.quiz_sessions s left join public.quiz_generated_papers g on g.session_id=s.id and g.user_id=auth.uid()
   where (s.access_mode<>'practice' or s.library_visible) and s.access_mode in ('practice','self') and (s.access_mode<>'self' or (g.session_id is not null and g.deleted_at is null))
-  and exists(select 1 from public.student_enrollments e where e.email=identity->>'email' and e.school_year=s.school_year and s.class_codes ? e.class_code)
+  and exists(select 1 from public.student_enrollments e where e.email=identity->>'email' and e.school_year=s.school_year and public.quiz_session_class_allowed(s.id,e.class_code))
  ), progress as (
   select a.session_id,count(x.question_id) answered,count(*) filter(where x.correct) correct
   from visible s join public.quiz_attempts a on a.session_id=s.id and a.user_id=auth.uid()
@@ -3719,7 +3940,7 @@ revoke all on function public.quiz_media_access_before_reports(text,uuid) from p
 grant execute on function public.quiz_media_access_before_reports(text,uuid) to postgres;
 grant execute on function public.quiz_media_access_before_reports(text,uuid) to service_role;
 
--- quiz_media_visible(text,uuid)  md5=c15ca3a0003a0c99a36dbe4308ffeb7e
+-- quiz_media_visible(text,uuid)  md5=71bb4be8d16988c6182d67f9edcab29a
 CREATE OR REPLACE FUNCTION public.quiz_media_visible(p_url text, p_attempt uuid)
  RETURNS boolean
  LANGUAGE plpgsql
@@ -3738,7 +3959,7 @@ begin
  if teacher then raise exception 'student_required';end if;
  if sess.access_mode='personal' then raise exception 'session_unavailable';end if;
  select lower(u.email) into v_email from auth.users u where u.id=uid and u.email_confirmed_at is not null;
- if not exists(select 1 from public.student_enrollments e where e.email=v_email and e.school_year=sess.school_year and sess.class_codes ? e.class_code) then raise exception 'roster_required';end if;
+ if not exists(select 1 from public.student_enrollments e where e.email=v_email and e.school_year=sess.school_year and public.quiz_session_class_allowed(sess.id,e.class_code)) then raise exception 'roster_required';end if;
  select document into d from public.quiz_versions where id=sess.version_id;
  -- Match the immutable attempt's question and option orders, including material.
  if exists(select 1 from jsonb_array_elements(d->'blocks') bx cross join lateral jsonb_array_elements(bx->'questions') qx
@@ -3843,6 +4064,107 @@ $function$;
 revoke all on function public.quiz_paper_card(uuid) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_paper_card(uuid) to postgres;
 grant execute on function public.quiz_paper_card(uuid) to service_role;
+
+-- quiz_partner_match_action(jsonb)  md5=43f61638bc14584862b84e7543520d54
+CREATE OR REPLACE FUNCTION public.quiz_partner_match_action(p jsonb)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare act text:=p->>'action';req text:=p->>'requestId';g int;policy partner_pilot.match_settings;
+ a partner_pilot.match_presence;t partner_pilot.match_teams;b partner_pilot.match_batches;prior partner_pilot.match_requests;
+ result jsonb;paper text;pid text;room jsonb;member uuid;hint uuid;old_host uuid;
+begin
+ if not partner_pilot.can_access() then raise exception 'ACCESS_DENIED';end if;
+ if jsonb_typeof(p) is distinct from 'object' or act is null or act not in('status','join','cancel','leave','catalog','select','ping','start') then raise exception 'INVALID_ACTION';end if;
+ perform pg_advisory_xact_lock(hashtextextended('partner-match-user:'||auth.uid(),0));
+ select left(e.class_code,1)::int into strict g from auth.users u join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 where u.id=auth.uid() for share of u,e;
+ select * into a from partner_pilot.match_presence where user_id=auth.uid();
+ perform pg_advisory_xact_lock(hashtextextended('partner-match-grade:'||least(coalesce(a.grade,g),g),0));
+ if a.grade is not null and a.grade<>g then perform pg_advisory_xact_lock(hashtextextended('partner-match-grade:'||greatest(a.grade,g),0));end if;
+ perform partner_pilot.register_self();select * into policy from partner_pilot.match_settings where grade=g;
+ if act in('join','catalog','select','start') or (act='status' and a.user_id is null and policy.enabled) then perform partner_pilot.sync_source_links();end if;
+ if act in('join','cancel','leave','select','ping','start') then
+  if req is null or length(req) not between 8 and 80 then raise exception 'REQUEST_ID_REQUIRED';end if;
+  select * into prior from partner_pilot.match_requests where user_id=auth.uid() and request_id=req;
+  if found then if prior.body<>p then raise exception 'REQUEST_REUSED';end if;return prior.result;end if;
+  if(select count(*) from partner_pilot.match_requests where user_id=auth.uid() and created_at>clock_timestamp()-interval '1 minute')>=20 then raise exception 'MATCH_RATE_LIMIT';end if;
+ end if;
+ if p ? 'teamId' then hint:=(p->>'teamId')::uuid;end if;
+ perform partner_pilot.match_sweep(coalesce(a.grade,g));select * into a from partner_pilot.match_presence where user_id=auth.uid();
+ if act='status' then
+  if a.user_id is not null and a.grade=g and a.seen_at<clock_timestamp()-interval '15 seconds' then update partner_pilot.match_presence set seen_at=clock_timestamp() where user_id=auth.uid();end if;
+  return partner_pilot.match_snapshot(hint);
+ end if;
+ if a.user_id is not null and a.grade<>g and act not in('cancel','leave') then raise exception 'MATCH_IDENTITY_CHANGED';end if;
+ if act='join' then
+  if not coalesce(policy.enabled,false) then raise exception 'MATCH_DISABLED';end if;
+  if not partner_pilot.match_available(g) then raise exception 'MATCH_NO_PAPER';end if;
+  if a.user_id is null then
+   select * into b from partner_pilot.match_batches where grade=g and not closed;
+   if b.id is null then insert into partner_pilot.match_batches(grade,deadline) values(g,clock_timestamp()+make_interval(secs=>policy.batch_seconds)) returning * into b;end if;
+   if(select count(*) from partner_pilot.match_presence where batch_id=b.id)>=2000 then raise exception 'MATCH_POOL_FULL';end if;
+   insert into partner_pilot.match_presence(user_id,grade,batch_id) values(auth.uid(),g,b.id);
+   if b.deadline is null then update partner_pilot.match_batches set deadline=clock_timestamp()+make_interval(secs=>policy.batch_seconds) where id=b.id;end if;
+  end if;
+ elsif act in('cancel','leave') then
+  if a.user_id is not null then
+   if a.ticket::text is distinct from p->>'ticket' or (hint is not null and hint is distinct from a.team_id) then raise exception 'MATCH_CHANGED';end if;
+   if a.team_id is not null then
+    select * into t from partner_pilot.match_teams where id=a.team_id for update;
+    if t.phase<>'selecting' then raise exception 'ALREADY_STARTED';end if;
+    t.participants:=array_remove(t.participants,auth.uid());
+    if cardinality(t.participants)<2 then update partner_pilot.match_teams set phase='closed',participants=t.participants,reason='alone',revision=revision+1 where id=t.id;delete from partner_pilot.match_presence where team_id=t.id;
+    else
+     old_host:=t.host;if t.host=auth.uid() then select u into t.host from unnest(t.participants) u order by random() limit 1;end if;
+     update partner_pilot.match_teams set participants=t.participants,host=t.host,selected_paper=case when old_host<>t.host and left(selected_paper,5)='self:' then null else selected_paper end,captain_at=case when old_host<>t.host then clock_timestamp() else captain_at end,revision=revision+1 where id=t.id;
+    end if;
+   end if;
+   delete from partner_pilot.match_presence where user_id=auth.uid();
+  end if;
+ else
+  if a.team_id is null or a.ticket::text is distinct from p->>'ticket' or hint is distinct from a.team_id then raise exception 'MATCH_CHANGED';end if;
+  select * into t from partner_pilot.match_teams where id=a.team_id for update;
+  if t.phase<>'selecting' then raise exception 'ALREADY_STARTED';end if;
+  if act='catalog' then
+   if t.host<>auth.uid() then raise exception 'HOST_ONLY';end if;
+   return jsonb_build_object('teamId',t.id,'revision',t.revision,'papers',coalesce((select jsonb_agg(jsonb_build_object('id',id,'title',title,'grade',grade,'subject',subject,'kind',kind,'total',total,'past',past_meta is not null) order by subject,title) from partner_pilot.papers where origin is null and grade=t.grade and enabled and is_real and (kind='flower' or total=20 or total=10 and cardinality(t.participants)=2) and partner_pilot.match_paper_ok(id,t.participants,t.host)),'[]')||coalesce((select jsonb_agg(x) from jsonb_array_elements(partner_pilot.self_catalog()) x where partner_pilot.match_paper_ok(x->>'id',t.participants,t.host)),'[]'));
+  elsif act='ping' then
+   update partner_pilot.match_teams set activity_at=clock_timestamp(),captain_at=case when host=auth.uid() then clock_timestamp() else captain_at end where id=t.id;
+  else
+   if t.host<>auth.uid() then raise exception 'HOST_ONLY';end if;
+   if t.revision is distinct from (p->>'revision')::int then raise exception 'STALE_REVISION';end if;
+   if act='select' then
+    if not partner_pilot.match_paper_ok(p->>'paper',t.participants,t.host) then raise exception 'MATCH_PAPER_UNAVAILABLE';end if;
+    update partner_pilot.match_teams set selected_paper=p->>'paper',activity_at=clock_timestamp(),captain_at=clock_timestamp(),revision=revision+1 where id=t.id;
+   elsif act='start' then
+    paper:=t.selected_paper;
+    if not partner_pilot.match_paper_ok(paper,t.participants,t.host) then raise exception 'MATCH_PAPER_UNAVAILABLE';end if;
+    perform 1 from auth.users u join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 where u.id=any(t.participants) for share of u,e;
+    if left(paper,5)='self:' then pid:='custom:'||encode(sha256(convert_to(auth.uid()::text||':match:'||req,'UTF8')),'hex');perform partner_pilot.copy_self(substring(paper from 6)::uuid,pid);
+    else
+     pid:=paper;
+     perform 1 from public.quiz_sessions s join partner_pilot.paper_sources ps on ps.session_id=s.id where ps.paper_id=pid for share of s;
+     perform 1 from public.quiz_past_papers s join partner_pilot.papers pp on pp.past_meta->>'sourcePaper'=s.id where pp.id=pid for share of s;
+    end if;
+    if not partner_pilot.match_paper_ok(paper,t.participants,t.host) then raise exception 'MATCH_PAPER_UNAVAILABLE';end if;
+    room:=partner_pilot.lobby_action(jsonb_build_object('action','create','paper',pid,'capacity',cardinality(t.participants),'theme','forest','team','一起練功隊','matchedTeam',t.id,'requestId',req||':create'));
+    foreach member in array t.participants loop insert into partner_pilot.members(room_id,user_id,ready) values((room->>'id')::uuid,member,true) on conflict(room_id,user_id) do update set ready=true;end loop;
+    room:=partner_pilot.lobby_action(jsonb_build_object('action','start','roomId',room->>'id','revision',room->'revision','requestId',req||':start'));
+    update partner_pilot.match_teams set phase='started',room_id=(room->>'id')::uuid,revision=revision+1 where id=t.id;
+    delete from partner_pilot.match_presence where team_id=t.id;
+    result:=jsonb_build_object('phase','active','roomId',room->>'id','now',clock_timestamp());
+   end if;
+  end if;
+ end if;
+ result:=coalesce(result,partner_pilot.match_snapshot(hint));
+ insert into partner_pilot.match_requests(user_id,request_id,body,result) values(auth.uid(),req,p,result);
+ return result;
+end $function$;
+revoke all on function public.quiz_partner_match_action(jsonb) from public, anon, authenticated, service_role;
+grant execute on function public.quiz_partner_match_action(jsonb) to postgres;
+grant execute on function public.quiz_partner_match_action(jsonb) to authenticated;
 
 -- quiz_partner_message_action(jsonb)  md5=502b19af05fbdb39f6295034af026a74
 CREATE OR REPLACE FUNCTION public.quiz_partner_message_action(p jsonb)
@@ -3975,7 +4297,7 @@ grant execute on function public.quiz_partner_pilot_access() to postgres;
 grant execute on function public.quiz_partner_pilot_access() to authenticated;
 grant execute on function public.quiz_partner_pilot_access() to service_role;
 
--- quiz_partner_pilot_action(jsonb)  md5=154f9f65eaff002236cb0dab15001b16
+-- quiz_partner_pilot_action(jsonb)  md5=e3b9c779a9f4f99471a086ba7b3eb789
 CREATE OR REPLACE FUNCTION public.quiz_partner_pilot_action(p jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -3985,6 +4307,7 @@ AS $function$
 declare act text:=p->>'action';rid uuid;r partner_pilot.rooms;result jsonb;pid text;aid uuid;req text;prior partner_pilot.requests;original jsonb:=p;sid uuid;
 begin
  perform partner_pilot.register_self();
+ if act in ('catalog','create','join','lookup') then perform pg_advisory_xact_lock(hashtextextended('partner-match-user:'||auth.uid(),0));perform pg_advisory_xact_lock(hashtextextended('partner-match-grade:'||(select left(e.class_code,1) from auth.users u join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 where u.id=auth.uid()),0));if act in ('create','join') and exists(select 1 from partner_pilot.match_presence where user_id=auth.uid()) then raise exception 'MATCH_ACTIVE';end if;end if;
  if act in ('catalog','create','join','lookup') then perform partner_pilot.sync_source_links();end if;
  if act='catalog' then result:=jsonb_build_object('papers',(select jsonb_agg(jsonb_build_object('id',id,'title',title,'grade',grade,'subject',subject,'kind',kind,'total',pp.total,'real',is_real,'past',past_meta is not null,'sourceSession',source_session,'sourceSessions',(select coalesce(jsonb_agg(s.id order by s.id),'[]') from public.quiz_sessions s where s.version_id=pp.source_version and (s.id=pp.source_session or s.access_mode='practice') and s.status='open' and s.library_visible and not exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id)),'sourcePaper',past_meta->>'sourcePaper') order by is_real desc,grade,subject,title) from partner_pilot.papers pp where enabled and pp.origin is null and partner_pilot.source_allowed(pp.id,false))); return jsonb_build_object('papers',coalesce(nullif(result->'papers','null'::jsonb),'[]'::jsonb)||partner_pilot.self_catalog()); end if;
  -- Self create stores the ORIGINAL request body for exact idempotency, never trusting client metadata.
@@ -4640,7 +4963,7 @@ grant execute on function public.quiz_pool_catalog() to postgres;
 grant execute on function public.quiz_pool_catalog() to authenticated;
 grant execute on function public.quiz_pool_catalog() to service_role;
 
--- quiz_question_report(jsonb)  md5=1edbd5dd51b6fa7311806403cdde3457
+-- quiz_question_report(jsonb)  md5=4cd12b935a83c67e45cdbb0b3596bd6d
 CREATE OR REPLACE FUNCTION public.quiz_question_report(p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -4675,7 +4998,7 @@ begin
   if src='quiz' then
    select * into a from public.quiz_attempts where id=aid and user_id=uid;
    select * into s from public.quiz_sessions where id=a.session_id;
-   if a.id is null or s.access_mode='personal' or not (s.class_codes ? (identity->>'class_code')) or not(a.question_order ? qid) then raise exception 'report_unavailable';end if;
+   if a.id is null or s.access_mode='personal' or not (public.quiz_session_class_allowed(s.id,identity->>'class_code')) or not(a.question_order ? qid) then raise exception 'report_unavailable';end if;
    vid:=s.version_id;select document into d from public.quiz_versions where id=vid;
    select block,question into b,q from jsonb_array_elements(d->'blocks') block,lateral jsonb_array_elements(block->'questions') question where question->>'id'=qid;
    if q is null then raise exception 'report_unavailable';end if;
@@ -4846,6 +5169,26 @@ end$function$;
 revoke all on function public.quiz_rewards_before_past_flowers(jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_rewards_before_past_flowers(jsonb) to postgres;
 grant execute on function public.quiz_rewards_before_past_flowers(jsonb) to service_role;
+
+-- quiz_session_class_allowed(uuid,text)  md5=01f5c8c3e05c49bc41799c8f4016e838
+CREATE OR REPLACE FUNCTION public.quiz_session_class_allowed(p_session uuid, p_class text)
+ RETURNS boolean
+ LANGUAGE sql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+ select coalesce((select case
+  when s.access_mode='practice' and m.catalog->>'volume' ~ '^[3469]年級'
+   and not exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id)
+   and not exists(select 1 from public.quiz_learning_sessions l where l.session_id=s.id)
+  then (p_class ~ '^[3469][0-9]{2}$' and left(p_class,1)=left(m.catalog->>'volume',1)
+   and (s.library_visible or exists(select 1 from public.quiz_attempts a where a.session_id=s.id and a.user_id=auth.uid())))
+   or (not s.library_visible and s.class_codes ? p_class)
+  else s.class_codes ? p_class end
+ from public.quiz_sessions s left join public.quiz_version_meta m on m.version_id=s.version_id where s.id=p_session),false)
+$function$;
+revoke all on function public.quiz_session_class_allowed(uuid,text) from public, anon, authenticated, service_role;
+grant execute on function public.quiz_session_class_allowed(uuid,text) to postgres;
 
 -- quiz_student_document(jsonb,jsonb,jsonb)  md5=5683cf3560f90306dac5c02b4f699e08
 CREATE OR REPLACE FUNCTION public.quiz_student_document(d jsonb, qo jsonb, oo jsonb)
@@ -5153,7 +5496,7 @@ revoke all on function public.quiz_wrong_questions_before_learning(jsonb) from p
 grant execute on function public.quiz_wrong_questions_before_learning(jsonb) to postgres;
 grant execute on function public.quiz_wrong_questions_before_learning(jsonb) to service_role;
 
--- quiz_wrong_refs(integer,text,text)  md5=8a9e9d04b91087e026650b1521b70b46
+-- quiz_wrong_refs(integer,text,text)  md5=12c8cfd9c238bec82c27ee365839c0d9
 CREATE OR REPLACE FUNCTION public.quiz_wrong_refs(p_grade integer, p_attempt text DEFAULT NULL::text, p_question text DEFAULT NULL::text)
  RETURNS TABLE(attempt_id uuid, session_id uuid, version_id uuid, question_id text, answered_at timestamp with time zone, title text, catalog jsonb, ordered_ids text[])
  LANGUAGE sql
@@ -5168,7 +5511,7 @@ AS $function$
   where a.user_id=auth.uid() and (p_attempt is null or a.id=case when p_attempt ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' then p_attempt::uuid end) and s.access_mode<>'personal'
   and coalesce(nullif(left(v.catalog->>'volume',1),''),p_grade::text)=p_grade::text
   and exists(select 1 from public.student_enrollments e join auth.users u on lower(u.email)=e.email
-   where u.id=auth.uid() and u.email_confirmed_at is not null and e.school_year=s.school_year and s.class_codes ? e.class_code)
+   where u.id=auth.uid() and u.email_confirmed_at is not null and e.school_year=s.school_year and public.quiz_session_class_allowed(s.id,e.class_code))
  ), progress as materialized (
   select x.attempt_id,jsonb_object_agg(x.question_id,true) answered from public.quiz_answers x join owned a on a.id=x.attempt_id group by x.attempt_id
  )
@@ -5526,14 +5869,14 @@ end $function$;
 revoke all on function partner_pilot.snapshot(uuid) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.snapshot(uuid) to postgres;
 
--- partner_pilot.source_allowed(text,boolean)  md5=116cbac1374d17a4e51086844ecff7c5
+-- partner_pilot.source_allowed(text,boolean)  md5=26bb60da71915052db82c85e533fbef7
 CREATE OR REPLACE FUNCTION partner_pilot.source_allowed(pid text, continuing boolean DEFAULT false)
  RETURNS boolean
  LANGUAGE sql
  STABLE SECURITY DEFINER
  SET search_path TO ''
 AS $function$
- select exists(select 1 from partner_pilot.papers p join auth.users u on u.id=auth.uid() join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 where p.id=pid and p.enabled and p.is_real and left(e.class_code,1)=p.grade::text and case when p.origin='self' then p.total in (10,20) and exists(select 1 from partner_pilot.rooms r join partner_pilot.members m on m.room_id=r.id where r.paper=p.id and m.user_id=auth.uid()) when p.past_meta is not null then exists(select 1 from public.quiz_past_papers s where s.id=p.past_meta->>'sourcePaper' and s.enabled and s.grade=p.grade and (continuing or exists(select 1 from partner_pilot.allocation_specs a where a.version=p.source_version)) and (continuing or s.active_version=p.source_version)) else p.total in (10,20) and exists(select 1 from partner_pilot.paper_sources ps join public.quiz_sessions s on s.id=ps.session_id where ps.paper_id=p.id and s.status='open' and s.library_visible and s.access_mode='practice' and s.school_year=115 and s.class_codes ? e.class_code and (continuing or s.version_id=p.source_version)) end)
+ select exists(select 1 from partner_pilot.papers p join auth.users u on u.id=auth.uid() join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 where p.id=pid and p.enabled and p.is_real and left(e.class_code,1)=p.grade::text and case when p.origin='self' then p.total in (10,20) and exists(select 1 from partner_pilot.rooms r join partner_pilot.members m on m.room_id=r.id where r.paper=p.id and m.user_id=auth.uid()) when p.past_meta is not null then exists(select 1 from public.quiz_past_papers s where s.id=p.past_meta->>'sourcePaper' and s.enabled and s.grade=p.grade and (continuing or exists(select 1 from partner_pilot.allocation_specs a where a.version=p.source_version)) and (continuing or s.active_version=p.source_version)) else p.total in (10,20) and exists(select 1 from partner_pilot.paper_sources ps join public.quiz_sessions s on s.id=ps.session_id where ps.paper_id=p.id and s.status='open' and s.library_visible and s.access_mode='practice' and s.school_year=115 and public.quiz_session_class_allowed(s.id,e.class_code) and (continuing or s.version_id=p.source_version)) end)
 $function$;
 revoke all on function partner_pilot.source_allowed(text,boolean) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.source_allowed(text,boolean) to postgres;
@@ -5609,14 +5952,17 @@ grant execute on function public.switch_test_identity(text) to postgres;
 grant execute on function public.switch_test_identity(text) to authenticated;
 grant execute on function public.switch_test_identity(text) to service_role;
 
--- partner_pilot.sync_source_links()  md5=d22e52601f2ca4e5253a04e43fe3aec7
+-- partner_pilot.sync_source_links()  md5=ca8e407b2b5d93ae4b011c5d615c7149
 CREATE OR REPLACE FUNCTION partner_pilot.sync_source_links()
  RETURNS void
  LANGUAGE sql
  SECURITY DEFINER
  SET search_path TO ''
 AS $function$
- insert into partner_pilot.paper_sources select p.id,s.id from partner_pilot.papers p join public.quiz_sessions s on s.version_id=p.source_version where p.past_meta is null and s.access_mode='practice' and s.status='open' and s.library_visible and s.school_year=115 and not exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id) on conflict do nothing
+ select pg_advisory_xact_lock(hashtextextended('partner-match-source-links',0));
+ insert into partner_pilot.paper_sources select p.id,s.id from partner_pilot.papers p join public.quiz_sessions s on s.version_id=p.source_version
+ where p.past_meta is null and s.access_mode='practice' and s.status='open' and s.library_visible and s.school_year=115
+ and not exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id) order by p.id,s.id on conflict do nothing
 $function$;
 revoke all on function partner_pilot.sync_source_links() from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.sync_source_links() to postgres;

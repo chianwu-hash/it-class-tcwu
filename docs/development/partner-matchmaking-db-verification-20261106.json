@@ -1,0 +1,207 @@
+{
+  "atUTC": "2026-11-06T06:17:51.801183+00:00",
+  "sourceMain": "8e904c856c1a2ef297d940d98f834b55246e67f3",
+  "applied": [
+    {
+      "file": "quiz-grade-sharing.sql",
+      "sourceMain": "8e904c856c1a2ef297d940d98f834b55246e67f3",
+      "sha256": "6052da47c2e849a367b6790d7503cebdc9dddf1798dbbc785ea33bdfe0a494b6",
+      "exit": 0,
+      "atUTC": "2026-11-06T06:10:27.627874+00:00"
+    },
+    {
+      "file": "quiz-partner-import-teacher.sql",
+      "sourceMain": "8e904c856c1a2ef297d940d98f834b55246e67f3",
+      "sha256": "73359ebf33ff63f930c898f6c052d6ef556c92f554f5dcc4c4bfc4e2a5d2b417",
+      "exit": 0,
+      "atUTC": "2026-11-06T06:10:33.890762+00:00"
+    },
+    {
+      "file": "quiz-teacher-midterm-twenty.sql",
+      "sourceMain": "8e904c856c1a2ef297d940d98f834b55246e67f3",
+      "sha256": "abc990ad033e9c2bf64c0273b06b89cb2bac427178fb087238fe74d9894655f5",
+      "exit": 0,
+      "atUTC": "2026-11-06T06:10:39.586057+00:00"
+    },
+    {
+      "file": "quiz-partner-sync-teacher-library.sql",
+      "sourceMain": "8e904c856c1a2ef297d940d98f834b55246e67f3",
+      "sha256": "02d972d814a6044cb3b0b73ba9e11d85407c1205875208a9ad6636101ae2363d",
+      "exit": 0,
+      "atUTC": "2026-11-06T06:10:46.663137+00:00"
+    },
+    {
+      "file": "quiz-partner-matchmaking.sql",
+      "sourceMain": "8e904c856c1a2ef297d940d98f834b55246e67f3",
+      "sha256": "f86d7283b8749020f51271a6e3064aa52044509d68aedf988b9fc1d2eab5bd2c",
+      "exit": 0,
+      "atUTC": "2026-11-06T06:10:51.718645+00:00"
+    }
+  ],
+  "snapshotCounts": {
+    "functions": 162,
+    "tables": 105,
+    "policies": 21,
+    "triggers": 13
+  },
+  "addedFunctions": [
+    "partner_pilot.import_teacher_library_session(uuid)",
+    "partner_pilot.match_available(integer)",
+    "partner_pilot.match_paper_ok(text,uuid[],uuid)",
+    "partner_pilot.match_partition(integer)",
+    "partner_pilot.match_self_key(jsonb,integer)",
+    "partner_pilot.match_snapshot(uuid)",
+    "partner_pilot.match_sweep(integer)",
+    "quiz_partner_match_action(jsonb)",
+    "quiz_session_class_allowed(uuid,text)"
+  ],
+  "changedFunctions": [
+    "admin_learning_action(text,text,jsonb)",
+    "admin_learning_paper_rows(uuid,integer,text)",
+    "admin_learning_rewards(text,text,jsonb)",
+    "partner_pilot.lobby_action(jsonb)",
+    "partner_pilot.source_allowed(text,boolean)",
+    "partner_pilot.sync_source_links()",
+    "quiz_action_before_learning(text,jsonb)",
+    "quiz_entry_context_before_learning(jsonb)",
+    "quiz_leaf_result_before_learning(uuid,boolean)",
+    "quiz_library_sessions(jsonb)",
+    "quiz_media_visible(text,uuid)",
+    "quiz_partner_pilot_action(jsonb)",
+    "quiz_question_report(jsonb)",
+    "quiz_wrong_refs(integer,text,text)"
+  ],
+  "removedFunctions": [],
+  "existingFunctionACLAndSecurityDefinerPreserved": true,
+  "live": {
+    "ok": true,
+    "functions": 162,
+    "sqlFiles": 88,
+    "live": true,
+    "failures": [],
+    "warnings": [
+      "supabase/quiz-order-fix.sql:6: redefines quiz_action without the learning wrapper; apply supabase/production-snapshot/functions.sql afterwards",
+      "supabase/quiz.sql:218: redefines quiz_action without the learning wrapper; apply supabase/production-snapshot/functions.sql afterwards",
+      "tables without a CREATE TABLE in supabase/*.sql (definition only in schema.json): book_wishes, content_comments, device_activity, reading_test_resets, sync_devices, sync_pairing_codes, sync_profiles, sync_states"
+    ]
+  },
+  "newPapers": [
+    {
+      "grade": 3,
+      "course": "115-1-hanlin-g3-english",
+      "meta_ok": true,
+      "questions": 20,
+      "partner_ok": true,
+      "session_ok": true,
+      "document_ok": true,
+      "partner_questions": 20,
+      "exact_source_questions": 20
+    },
+    {
+      "grade": 3,
+      "course": "115-1-hanlin-g3-math",
+      "meta_ok": true,
+      "questions": 20,
+      "partner_ok": true,
+      "session_ok": true,
+      "document_ok": true,
+      "partner_questions": 20,
+      "exact_source_questions": 20
+    },
+    {
+      "grade": 3,
+      "course": "115-1-hanlin-g3-science",
+      "meta_ok": true,
+      "questions": 20,
+      "partner_ok": true,
+      "session_ok": true,
+      "document_ok": true,
+      "partner_questions": 20,
+      "exact_source_questions": 20
+    },
+    {
+      "grade": 6,
+      "course": "115-1-hanlin-g6-math",
+      "meta_ok": true,
+      "questions": 20,
+      "partner_ok": true,
+      "session_ok": true,
+      "document_ok": true,
+      "partner_questions": 20,
+      "exact_source_questions": 20
+    },
+    {
+      "grade": 3,
+      "course": "115-1-kang-g3-ch",
+      "meta_ok": true,
+      "questions": 20,
+      "partner_ok": true,
+      "session_ok": true,
+      "document_ok": true,
+      "partner_questions": 20,
+      "exact_source_questions": 20
+    },
+    {
+      "grade": 3,
+      "course": "115-1-kang-g3-so",
+      "meta_ok": true,
+      "questions": 20,
+      "partner_ok": true,
+      "session_ok": true,
+      "document_ok": true,
+      "partner_questions": 20,
+      "exact_source_questions": 20
+    },
+    {
+      "grade": 6,
+      "course": "115-1-kang-g6-ch",
+      "meta_ok": true,
+      "questions": 20,
+      "partner_ok": true,
+      "session_ok": true,
+      "document_ok": true,
+      "partner_questions": 20,
+      "exact_source_questions": 20
+    },
+    {
+      "grade": 6,
+      "course": "115-1-kang-g6-en",
+      "meta_ok": true,
+      "questions": 20,
+      "partner_ok": true,
+      "session_ok": true,
+      "document_ok": true,
+      "partner_questions": 20,
+      "exact_source_questions": 20
+    },
+    {
+      "grade": 6,
+      "course": "115-1-nani-g6-science",
+      "meta_ok": true,
+      "questions": 20,
+      "partner_ok": true,
+      "session_ok": true,
+      "document_ok": true,
+      "partner_questions": 20,
+      "exact_source_questions": 20
+    },
+    {
+      "grade": 6,
+      "course": "115-1-nani-g6-social",
+      "meta_ok": true,
+      "questions": 20,
+      "partner_ok": true,
+      "session_ok": true,
+      "document_ok": true,
+      "partner_questions": 20,
+      "exact_source_questions": 20
+    }
+  ],
+  "newQuestionSourceComparisons": 200,
+  "postSnapshotNodeSQL": {
+    "passed": 43,
+    "failed": 0
+  },
+  "matchingEnabled": false,
+  "studentRecordsRewritten": false
+}
