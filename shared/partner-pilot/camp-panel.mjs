@@ -1,8 +1,8 @@
-import {createMessageComposers} from './message-composer.mjs';
+import {createMessageComposers} from './message-composer.mjs?v=20261106-draft';
 import {createCampAttention} from './camp-attention.mjs?v=20261106-button-alert';
 
 // A persistent modal panel. Updating notes never replaces a reply/composer input.
-export function createCampPanel({host,esc,getState,getViewer,drafts,capture,question,fragment,mountRich,submit,onRetry,onCount,storeMedia,readMedia,restoreMedia={}}){
+export function createCampPanel({host,esc,getState,getViewer,drafts,capture,question,fragment,mountRich,submit,onRetry,onCount,storeMedia,readMedia,restoreMedia={},onSaveDraft}){
  const attention=createCampAttention();let state=null,user=null,opener=null,scroll=0,previousOverflow='',closing=null,destroyed=false,scope='',askQid=null,transport={busy:false,pending:false,message:'',bad:false};
  let toastTimer=null,toastStarted=0,toastRemaining=5000,toastNotes=[];const readTimers=new Map(),visible=new Set();
  let alertTimer=null,alertPending=false,alertButton=null;
@@ -18,7 +18,7 @@ export function createCampPanel({host,esc,getState,getViewer,drafts,capture,ques
  dialog.innerHTML=`<div class="camp-panel"><header class="camp-panel-heading"><div><p>隨時可以問方法、交換發現</p><h2 id="camp-title">我們的共同營地</h2></div><button type="button" data-ui-only data-camp-close aria-label="關閉營地，回到答題">回到答題 ×</button></header><div class="camp-transport"><p role="status" data-camp-status></p><button type="button" data-ui-only data-camp-retry hidden>重送同一次操作</button></div><div class="camp-scroll"><section data-ask-composer hidden></section><p class="muted" data-camp-empty>還沒有人請教。自己先想，卡住時可以按題目上的「問夥伴」。</p><div class="camp-threads"></div><section class="camp-chat"><h3>大家的聊天小紙條</h3><div class="chat-log" aria-label="小隊聊天"><div class="camp-chat-messages"></div><span class="camp-read-end" data-read-chat></span></div><form data-form="chat"><label for="camp-chat-text">留給夥伴的話</label><textarea id="camp-chat-text" data-draft="chat-" maxlength="600" required></textarea><button>送到共同營地</button><span data-action-status role="status"></span></form></section></div></div>`;
  const toast=document.createElement('div');toast.className='partner-camp-toast';toast.hidden=true;toast.innerHTML='<span role="status" aria-live="polite"></span><button type="button" data-ui-only>去看看</button>';
  host.append(dialog,toast);const body=dialog.querySelector('.camp-scroll'),threads=dialog.querySelector('.camp-threads'),chat=dialog.querySelector('.camp-chat-messages'),composer=dialog.querySelector('[data-ask-composer]');
- const media=storeMedia&&readMedia?createMessageComposers({host:dialog,getScope:()=>({roomId:getState().id,userId:getViewer().id}),store:storeMedia,read:readMedia,restore:restoreMedia}):null;
+ const media=storeMedia&&readMedia?createMessageComposers({host:dialog,getScope:()=>({roomId:getState().id,userId:getViewer().id}),store:storeMedia,read:readMedia,restore:restoreMedia,onSaveDraft}):null;
  const idsFor=sentinel=>{
   const id=sentinel.dataset.readThread;
   return state?.exercise.notes.filter(n=>id?(String(n.id)===id||String(n.thread)===id):n.kind==='chat').filter(n=>attention.unread(n.id)).map(n=>n.id)||[];
@@ -62,7 +62,7 @@ export function createCampPanel({host,esc,getState,getViewer,drafts,capture,ques
  dialog.addEventListener('input',event=>{const el=event.target;if(el.dataset.draft)drafts.set(el.dataset.draft,el.value);});
  dialog.querySelector('textarea[data-draft="chat-"]').value=drafts.get('chat-')||'';bindForm(dialog.querySelector('form[data-form="chat"]'));
  return {update,open,close,setTransport,count:()=>attention.count(),
-  saveMedia:()=>media?.save()||Promise.resolve({}),
+  saveMedia:()=>media?.save()||Promise.resolve({}),draftSaved:()=>media?.draftSaved(),
   committed(p){media?.committed(p);if(!['ask','reply','chat'].includes(p.action))return;const target=dialog.querySelector(`form[data-form="${p.action}"]${p.action==='reply'?`[data-thread="${p.thread}"]`:p.action==='ask'?`[data-qid="${p.qid}"]`:''}`);if(target){const input=target.querySelector('textarea');if(input.value===p.text)input.value='';target.querySelector('[data-action-status]').textContent=input.value?'上一則已送出；新輸入的草稿仍保留。':'已送出，讓夥伴接著想。';}},
   clear(){destroyed=true;alertPending=false;stopAlert();media?.dispose();clearTimeout(closing);cancelRead();hideToast();observer.disconnect();document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',pageHide);document.removeEventListener('beforetoggle',modalToggle,true);if(dialog.open){dialog.close();document.body.style.overflow=previousOverflow;}dialog.remove();toast.remove();attention.clear();}};
 }
