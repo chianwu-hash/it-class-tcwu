@@ -1,7 +1,7 @@
 // Synthetic-only UI regression. Exact leased target; no real auth or data writes.
 const fs=require('node:fs/promises'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const puppeteer=require('D:/projects/cdp-tools/node_modules/puppeteer-core');
-const root=path.resolve(__dirname,'../..'),origin='http://127.0.0.1:4491',out=path.join(root,'.chat-mode/evidence/current-tab');
+const root=path.resolve(__dirname,'../..'),origin='http://127.0.0.1:4491',out=path.join(root,'.chat-mode/evidence/flow-actions');
 const server=http.createServer(async(req,res)=>{try{let name=new URL(req.url,origin).pathname;if(name==='/')name='/automation/fixtures/partner-focused.html';if(req.method!=='GET'||!/^\/(shared\/|automation\/fixtures\/partner-focused\.)/.test(name)||name.includes('..'))throw Error();const f=path.resolve(root,'.'+name);if(!f.startsWith(root+path.sep))throw Error();const types={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.webp':'image/webp','.png':'image/png'};res.writeHead(200,{'Content-Type':types[path.extname(f)]||'application/octet-stream','Cache-Control':'no-store'});res.end(await fs.readFile(f));}catch{res.writeHead(404);res.end();}});
 console.log('simple_tools_worker_started');
 (async()=>{await fs.mkdir(out,{recursive:true});console.log('evidence_ready');await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(4491,'127.0.0.1',resolve);});console.log('preview_listening');const b=await puppeteer.connect({browserURL:process.env.AI_WORK_BROWSER_CDP_URL,defaultViewport:null,protocolTimeout:30000}),t=b.targets().find(t=>t._targetId===process.env.AI_WORK_BROWSER_TARGET_ID);assert(t,'exact_target_required');console.log('leased_browser_ready');const p=await t.page(),checks=[],errors=[];
@@ -28,11 +28,17 @@ try{
  check('關閉營地後焦點回到操作列原按鈕',await p.evaluate(()=>document.activeElement===campControlRef));
  await click('.focus-team-info>summary');
  check('小隊選單展開不推低題目',await p.evaluate(()=>{const bar=document.querySelector('.focus-team-bar').getBoundingClientRect(),q=document.querySelector('.partner-workspace-question').getBoundingClientRect(),body=document.querySelector('.focus-team-info-body');return q.top-bar.bottom<=20&&getComputedStyle(body).position==='absolute'&&body.getBoundingClientRect().right<=innerWidth;}));
- await p.evaluate(()=>{window.beforeCurrentQuestion=document.querySelector('.partner-workspace-question');window.currentChoice=document.querySelector('form[data-form=answer] input[type=radio]');currentChoice.checked=true;currentChoice.dispatchEvent(new Event('change',{bubbles:true}));});
- check('我的題目明確標示目前頁面',await p.$eval('.learning-tabs [data-view=practice]',e=>e.getAttribute('aria-current')==='page'&&e.textContent.includes('目前')));
- await p.click('.learning-tabs [data-view=practice]');
- check('點目前題目收起選單並回到題目',await p.evaluate(()=>!document.querySelector('.focus-team-info').open&&document.activeElement===document.querySelector('#focus-question-heading')));
- check('點目前題目不重建或清空未送出的答案',await p.evaluate(()=>document.querySelector('.partner-workspace-question')===beforeCurrentQuestion&&currentChoice.checked));
+ check('小隊選單只有資訊，不放流程或更新按鈕',await p.$eval('.focus-team-info',e=>!e.querySelector('button')&&!e.querySelector('.learning-tabs')));
+ for(const width of [1366,390]){await p.setViewport({width,height:900});await p.screenshot({path:path.join(out,'team-menu-'+width+'.png'),fullPage:true});}await p.setViewport({width:1366,height:900});
+ await click('.focus-team-info>summary');
+ await p.evaluate(()=>qa.ui.setTransport({bad:true,message:'請先選擇答案'}));check('一般操作錯誤不誤報斷線',await p.$eval('[data-connection-recovery]',e=>e.hidden));await p.evaluate(()=>qa.ui.setTransport({bad:false,message:''}));
+ await p.evaluate(()=>qa.ui.setTransport({refreshBad:true}));check('進度讀取失敗提供恢復入口',await p.$eval('[data-connection-recovery]',e=>!e.hidden));await p.evaluate(()=>qa.ui.setTransport({refreshBad:false}));
+ check('正常同步不顯示手動更新',await p.$eval('[data-connection-recovery]',e=>e.hidden));
+ await p.evaluate(()=>qa.ui.setTransport({syncBad:true}));
+ check('同步異常才提供重新連線入口',await p.$eval('[data-connection-recovery]',e=>!e.hidden&&!e.querySelector('button').disabled));
+ await p.evaluate(()=>qa.ui.setTransport({pending:true}));
+ check('待確認操作不提供快照更新取代重送',await p.$eval('[data-connection-recovery]',e=>e.hidden));
+ await p.evaluate(()=>qa.ui.setTransport({pending:false,syncBad:false}));
  check('保留原本左右答題工作區',await p.$eval('[data-focus-content]',e=>e.classList.contains('workspace-desktop')));
  check('預設只顯示兩個支援操作',await p.$eval('.question-support-actions',e=>e.children.length===2&&e.textContent.includes('問夥伴')&&e.textContent.includes('這題不能只有我知道')));
  check('標記表單預設收起且無雙重摺疊標題',await p.evaluate(()=>!document.getElementById('mark-panel-101').open&&!document.querySelector('details.question-extras')&&document.getElementById('mark-panel-101').querySelector('summary').hidden));
@@ -62,8 +68,15 @@ try{
  await click('#mark-panel-201 form [type=submit]');check('只標記指定小題並保留其他展開區',await p.evaluate(()=>qa.actions.at(-1).qid===201&&qa.actions.at(-1).tag==='method'&&document.getElementById('mark-panel-202').open&&document.querySelectorAll('form[data-form=answer]').length===2));
  await p.evaluate(()=>{qa.reset();qa.showAllReview();});await click('[data-workspace-primary]');
  check('共同回顧的小隊說明維持正常文件流',await p.evaluate(()=>document.querySelector('form[data-form=review]')&&getComputedStyle(document.querySelector('.focus-team-info-body')).position==='static'&&!document.querySelector('.focus-team-bar>.focus-question-position')));
+ check('共同回顧有回題目入口且不提前開放紀錄冊',await p.evaluate(()=>document.querySelector('[data-focus-content] [data-view=practice]')&&!document.querySelector('[data-focus-content] [data-view=book]')));
  check('共同回顧時營地入口回到上方且不懸浮',await p.$eval('[data-camp-control]',e=>!!e.closest('.focus-team-bar')&&getComputedStyle(e).position==='static'));
- await click('.learning-tabs [data-view=practice]');check('回到答題仍只有一份題次標題',await p.$$eval('#focus-question-heading',es=>es.length===1&&es[0].closest('.focus-team-bar')));
+ await click('[data-focus-content] [data-view=practice]');check('回到答題仍只有一份題次標題',await p.$$eval('#focus-question-heading',es=>es.length===1&&es[0].closest('.focus-team-bar')));
+ await p.evaluate(()=>{qa.state.exercise.finished=true;qa.render();});await click('[data-workspace-primary]');
+ check('完成後從主流程打開共同紀錄冊',await p.evaluate(()=>document.querySelector('[data-focus-content] h2').textContent==='我們的共同紀錄冊'));
+ check('共同紀錄冊可回題目或共同回顧',await p.evaluate(()=>document.querySelector('[data-focus-content] [data-view=practice]')&&document.querySelector('[data-focus-content] [data-view=review]')));
+ await click('[data-focus-content] [data-view=practice]');check('總結返回保留送答紀錄',await p.evaluate(()=>qa.state.exercise.mine.every(q=>q.attempts.length)&&document.querySelector('[data-workspace-primary]')));
+ await p.evaluate(()=>{qa.reset();qa.state.exercise.privateDraft.state={view:'book'};qa.ui.clear();qa.render();});
+ check('舊草稿未完成紀錄冊回到答題階段',await p.evaluate(()=>!!document.querySelector('[data-workspace-primary]')&&!document.querySelector('.outcome-result')));
  check('無瀏覽器例外',errors.length===0);await fs.writeFile(path.join(out,'browser.json'),JSON.stringify({passed:checks.length,checks,errors},null,2));console.log(JSON.stringify({passed:checks.length,checks,errors}));
 }catch(e){await fs.writeFile(path.join(out,'failure.json'),JSON.stringify({error:e.message,checks,errors},null,2));throw e;}finally{await p.close();await b.disconnect();server.closeAllConnections();await new Promise(r=>server.close(r));}
 })().catch(e=>{console.error(e);process.exitCode=1;});
