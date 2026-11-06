@@ -1,5 +1,5 @@
 import {readInvite} from './invite.mjs?v=20261106-team-flow';
-import {mountTeamHome,mountWaitingTeam} from './team-flow.mjs?v=20261106-team-flow';
+import {mountTeamHome,mountWaitingTeam} from './team-flow.mjs?v=20261106-entry-order';
 import {createLearningUI} from './learning.js?v=20261106-button-alert';
 import {setPartnerStage,scene} from './presentation.mjs?v=20261106-team-flow';
 import * as auth from '../auth.js';
