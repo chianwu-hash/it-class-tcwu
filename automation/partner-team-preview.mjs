@@ -27,7 +27,7 @@ http.createServer(async(req,res)=>{const json=(status,value)=>{res.writeHead(sta
  let body;
  if(p==='/'||p==='/grade3/115-1/partner-practice.html'){
   body=await fs.readFile(path.join(root,'grade3/115-1/partner-practice.html'),'utf8');body=body.replace(/<link[^>]+https:[^>]+>/g,'').replace(/<script src="navbar[^>]+><\/script>/,'').replaceAll('../../shared/','/shared/');
- }else if(p.startsWith('/shared/')){body=await fs.readFile(path.join(root,p));if(p==='/shared/partner-pilot/app.mjs')body=body.toString().replace("'../auth.js'","'/__qa/auth.mjs'").replace("'../navbar-auth.js'","'/__qa/navbar.mjs'").replace("'../quiz-transport.mjs'","'/__qa/transport.mjs'");}
+ }else if(p.startsWith('/shared/')){body=await fs.readFile(path.join(root,p));if(p==='/shared/partner-pilot/app.mjs')body=body.toString().replace("'../auth.js'","'/__qa/auth.mjs'").replace("'../navbar-auth.js'","'/__qa/navbar.mjs'").replace(/'\.\.\/quiz-transport\.mjs(?:\?[^']*)?'/,"'/__qa/transport.mjs'");}
  else return json(404,{});
  res.writeHead(200,{'Content-Type':(mime[path.extname(p)]||'text/html')+'; charset=utf-8','Cache-Control':'no-store'});res.end(body);
  }catch(e){json(400,{error:e.message});}}).listen(port,'127.0.0.1',()=>console.log(`Synthetic team app: http://localhost:${port}/?actor=5 and /?actor=6`));

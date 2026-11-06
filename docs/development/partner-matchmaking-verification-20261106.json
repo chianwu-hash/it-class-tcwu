@@ -1,0 +1,357 @@
+{
+  "checkedAtUTC": "2026-11-06T06:06:34.014949+00:00",
+  "baseMain": "e001cc177f1d54792d47ed7f7c743e5bb1e2e764",
+  "productionChanged": false,
+  "productionDatabaseWrites": false,
+  "nodeSql": {
+    "passed": 43,
+    "failed": 0,
+    "skipped": 0,
+    "command": "node --test --test-concurrency=1 automation/tests/{teacher-midterm-selector,teacher-midterm-migration,quiz-grade-sharing,partner-matchmaking,partner-matchmaking-team,partner-matchmaking-content,quiz-partner-self,quiz-partner-allocation,quiz-partner-team-flow}.test.mjs",
+    "additionalSuites": [
+      "quiz-transport-auth",
+      "partner-matchmaking-quota"
+    ]
+  },
+  "browser": {
+    "passed": 15,
+    "errors": [],
+    "realBatchSeconds": 30,
+    "syntheticIdentities": 4,
+    "script": "automation/tests/partner-matchmaking-recovery-browser.cjs",
+    "checks": [
+      {
+        "name": "three entry choices and no empty resume section",
+        "ok": true
+      },
+      {
+        "name": "original invitation input retained",
+        "ok": true
+      },
+      {
+        "name": "voluntary consent before enqueue, grade-wide and self sharing disclosed",
+        "ok": true
+      },
+      {
+        "name": "uncertain join preserves same-request retry instead of enqueue twice",
+        "ok": true
+      },
+      {
+        "name": "four do not form early; waiting roster is private",
+        "ok": true
+      },
+      {
+        "name": "all four see the same four-person roster",
+        "ok": true
+      },
+      {
+        "name": "exactly one random captain controls selection and departure",
+        "ok": true
+      },
+      {
+        "name": "catalog failure has an explicit retry without rejoining or reloading page",
+        "ok": true
+      },
+      {
+        "name": "three/four-person team cannot pick a ten-question teacher paper",
+        "ok": true
+      },
+      {
+        "name": "post-start snapshot failure offers retry and home on all four pages",
+        "ok": true
+      },
+      {
+        "name": "all four enter original answer UI after explicit captain departure",
+        "ok": true
+      },
+      {
+        "name": "original task resume retained; historical task does not force matchmaking",
+        "ok": true
+      },
+      {
+        "name": "entry remains within mobile viewport",
+        "ok": true
+      },
+      {
+        "name": "leaving completed pre-team does not auto-enqueue",
+        "ok": true
+      },
+      {
+        "name": "no uncaught page exceptions",
+        "ok": true
+      }
+    ]
+  },
+  "realQuestionPlanLocalValidation": {
+    "passed": true,
+    "papers": [
+      {
+        "course": "115-1-hanlin-g3-english",
+        "total": 20,
+        "units": [
+          1,
+          2
+        ],
+        "detailed": 16,
+        "exactDocument": true
+      },
+      {
+        "course": "115-1-hanlin-g3-math",
+        "total": 20,
+        "units": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "detailed": 20,
+        "exactDocument": true
+      },
+      {
+        "course": "115-1-hanlin-g3-science",
+        "total": 20,
+        "units": [
+          1,
+          2
+        ],
+        "detailed": 20,
+        "exactDocument": true
+      },
+      {
+        "course": "115-1-kang-g3-ch",
+        "total": 20,
+        "units": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "detailed": 8,
+        "exactDocument": true
+      },
+      {
+        "course": "115-1-kang-g3-so",
+        "total": 20,
+        "units": [
+          1,
+          2
+        ],
+        "detailed": 10,
+        "exactDocument": true
+      },
+      {
+        "course": "115-1-hanlin-g6-math",
+        "total": 20,
+        "units": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "detailed": 20,
+        "exactDocument": true
+      },
+      {
+        "course": "115-1-kang-g6-ch",
+        "total": 20,
+        "units": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "detailed": 4,
+        "exactDocument": true
+      },
+      {
+        "course": "115-1-kang-g6-en",
+        "total": 20,
+        "units": [
+          1,
+          3
+        ],
+        "detailed": 20,
+        "exactDocument": true
+      },
+      {
+        "course": "115-1-nani-g6-science",
+        "total": 20,
+        "units": [
+          1,
+          2
+        ],
+        "detailed": 12,
+        "exactDocument": true
+      },
+      {
+        "course": "115-1-nani-g6-social",
+        "total": 20,
+        "units": [
+          1,
+          2
+        ],
+        "detailed": 7,
+        "exactDocument": true
+      }
+    ],
+    "questions": 200,
+    "idempotent": true,
+    "originalVersionsUnchanged": true
+  },
+  "productionReadonlyPastCapacity": [
+    {
+      "grade": 3,
+      "papers": 10,
+      "min_packs": 21,
+      "eligible_for_four": 10
+    },
+    {
+      "grade": 4,
+      "papers": 10,
+      "min_packs": 17,
+      "eligible_for_four": 10
+    },
+    {
+      "grade": 6,
+      "papers": 10,
+      "min_packs": 23,
+      "eligible_for_four": 10
+    },
+    {
+      "grade": 9,
+      "papers": 10,
+      "min_packs": 23,
+      "eligible_for_four": 10
+    }
+  ],
+  "productionReadonlyTeacherAdapter": [
+    {
+      "grade": 3,
+      "papers": 16,
+      "supported": 16,
+      "media_registered": 16
+    },
+    {
+      "grade": 4,
+      "papers": 23,
+      "supported": 23,
+      "media_registered": 23
+    },
+    {
+      "grade": 6,
+      "papers": 16,
+      "supported": 16,
+      "media_registered": 16
+    },
+    {
+      "grade": 9,
+      "papers": 30,
+      "supported": 0,
+      "media_registered": 30
+    }
+  ],
+  "notVerified": [
+    "real-Google-two-machine",
+    "real-Postgres-multi-connection-contention",
+    "physical-tablet-touch-and-microphone",
+    "all-original-media-downloads",
+    "production-positive-new-paper-and-match",
+    "production-snapshot-live"
+  ],
+  "rolloutDefaults": {
+    "enabled": false,
+    "batchSeconds": 30,
+    "leaseSecondsProvisional": 120,
+    "handoffSeconds": null,
+    "closeSeconds": null
+  },
+  "inviteRecoveryBrowser": {
+    "passed": 6,
+    "script": "automation/tests/partner-matchmaking-invite-browser.cjs",
+    "checks": [
+      {
+        "name": "pending invite remains while restoring an active queue",
+        "ok": true
+      },
+      {
+        "name": "cancel queue returns directly to retained invitation and joins exactly once",
+        "ok": true
+      },
+      {
+        "name": "retained invite joins the intended original room",
+        "ok": true
+      },
+      {
+        "name": "captain picker resolves requested source after invite skipped initial catalog",
+        "ok": true
+      },
+      {
+        "name": "invalid award link keeps authenticated entry instead of a false login screen",
+        "ok": true
+      },
+      {
+        "name": "no uncaught page exception",
+        "ok": true
+      }
+    ],
+    "errors": []
+  },
+  "independentCodeDiscussion": {
+    "worker": "AGY",
+    "mode": "supplied-text-only; no repository tools",
+    "reviewedRuntimeHead": "ab6862e28c9506508e7acf0b4247913383646430",
+    "finalConclusion": "在提供的程式與相依範圍未發現可確認P1/P2；不等於真兩機或真Postgres併發驗收",
+    "runs": [
+      {
+        "sessionId": "agy-match-server-20261106T053958Z",
+        "model": "gemini-4-argon-medium",
+        "version": "1.5.1",
+        "status": "completed",
+        "conversationViewerStarted": true,
+        "toolBoundaryVerified": true,
+        "elapsedSeconds": 123.437,
+        "completedAt": "2026-11-06T05:42:19.472761+00:00"
+      },
+      {
+        "sessionId": "agy-match-client-20261106T053958Z",
+        "model": "gemini-4-argon-medium",
+        "version": "1.5.1",
+        "status": "completed",
+        "conversationViewerStarted": true,
+        "toolBoundaryVerified": true,
+        "elapsedSeconds": 79.218,
+        "completedAt": "2026-11-06T05:41:35.260021+00:00"
+      },
+      {
+        "sessionId": "agy-match-sources-20261106T053958Z",
+        "model": "gemini-4-argon-medium",
+        "version": "1.5.1",
+        "status": "completed",
+        "conversationViewerStarted": true,
+        "toolBoundaryVerified": true,
+        "elapsedSeconds": 76.812,
+        "completedAt": "2026-11-06T05:41:32.841554+00:00"
+      },
+      {
+        "sessionId": "agy-match-final-20261106T055932Z",
+        "model": "gemini-4-argon-medium",
+        "version": "1.5.1",
+        "status": "completed",
+        "conversationViewerStarted": true,
+        "toolBoundaryVerified": true,
+        "elapsedSeconds": 55.937,
+        "completedAt": "2026-11-06T06:00:30.314748+00:00"
+      }
+    ]
+  },
+  "databaseReadonlyPreflight": {
+    "functionGuardsPassed": 14,
+    "plannedQuestionsMatched": 200,
+    "metaTriggerEnabled": true,
+    "newHelperAbsentBeforeMigration": true
+  }
+}

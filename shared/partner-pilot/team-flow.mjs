@@ -21,7 +21,7 @@ export function taskCardState(r){
 }
 const roster=r=>(r.members||[]).map(m=>m.name).join('、');
 
-export function mountTeamHome({root,esc,rooms=[],initialMode='home',initialCode='',picked=null,requested=false,loadPapers,onNavigate,onCreate,onJoin,onResume,onRefresh,onStage,notice}){
+export function mountTeamHome({root,esc,rooms=[],initialMode='home',initialCode='',picked=null,requested=false,loadPapers,onNavigate,onCreate,onJoin,onResume,onRefresh,onStage,notice,onFindPartner=null,resolvePicked=null}){
  root.innerHTML='<div data-team-home></div>';
  const frame=root.firstElementChild;let mode='home',token=0;
  const $=s=>frame.querySelector(s),live=t=>frame.isConnected&&t===token;
@@ -32,10 +32,10 @@ export function mountTeamHome({root,esc,rooms=[],initialMode='home',initialCode=
   if(next==='captain'){
    frame.innerHTML=`<section class="card"><h2>我當隊長：選一份卷，邀夥伴來</h2><p role="status">正在找可以一起練的題目…</p>${back}</section>`;bind();
    let papers;try{papers=await loadPapers();}catch(e){if(live(t)){notice(e.message,true);frame.querySelector('[role=status]').textContent='題目暫時無法載入，請返回後再試。';}return;}if(!live(t))return;
-   const selected=picked||(!requested?papers[0]:null);
+   const currentPicked=resolvePicked?.(papers)||picked;const selected=currentPicked||(!requested?papers[0]:null);
    frame.innerHTML=`<section class="card"><h2>我當隊長：選卷與人數</h2><form id="create"><div id="paper-picker"></div><label for="capacity">這次幾人一起練？（包含隊長）</label><select id="capacity"></select><details class="team-options"><summary>修改小隊名稱與主題人物</summary><label for="team">小隊名稱</label><input id="team" maxlength="24" value="森林探險隊" required><label for="theme">主題人物（只增加趣味）</label><select id="theme"><option value="forest">森林探險隊</option><option value="space">星際夥伴隊</option><option value="dora">哆啦A夢隊</option></select></details><div class="actions"><button class="primary" id="create-room">建立小隊，邀請夥伴 →</button>${back}</div></form></section>`;
    mountPaperPicker($('#paper-picker'),{papers,selected,esc,onChange:p=>{const sizes=partySizes(p),old=Number($('#capacity').value);$('#capacity').innerHTML=sizes.map(n=>`<option value="${n}" ${n===old?'selected':''}>${n} 人${sizes.length===1?'（10題固定2人）':''}</option>`).join('');$('#create-room').disabled=!p;}});
-   if(requested&&!picked)notice('這份卷目前無法組隊，請返回原卷，或明確改選另一份題組。',true);
+   if(requested&&!currentPicked)notice('這份卷目前無法組隊，請返回原卷，或明確改選另一份題組。',true);
    $('#create').onsubmit=e=>{e.preventDefault();const paper=$('#paper').value;if(!papers.some(p=>p.id===paper))return;onCreate({paper,capacity:Number($('#capacity').value),team:$('#team').value,theme:$('#theme').value});};bind();
   }else if(next==='member'){
    frame.innerHTML=`<section class="card team-join"><h2>我當隊員</h2><p>輸入隊長的邀請碼，加入後等隊長出發。</p><form id="join-code"><label for="code">六位數邀請碼</label><input id="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="off" required value="${esc(initialCode)}"><p id="join-feedback" role="status" aria-live="polite"></p><button class="green" id="join-team">加入小隊 →</button></form>${back}</section>`;
@@ -43,8 +43,8 @@ export function mountTeamHome({root,esc,rooms=[],initialMode='home',initialCode=
   }else if(next==='records'){
    const done=rooms.filter(r=>r.finished||r.phase==='completed');frame.innerHTML=`<section class="card"><h2>我的共同紀錄冊</h2>${done.length?cards(done):'<p>完成小隊任務後，紀錄會留在這裡。</p>'}${back}</section>`;bind();
   }else{
-   const pending=pendingTeams(rooms),done=rooms.some(r=>r.finished||r.phase==='completed');frame.innerHTML=`<div class="grid team-entry"><section class="card"><span class="badge">選卷・邀人</span><h2>我當隊長</h2><p>選好今天的題目，邀夥伴加入，人到齊後一起出發。</p><button type="button" class="primary" data-captain>選卷，邀夥伴 →</button></section><section class="card"><span class="badge">輸碼・加入</span><h2>我當隊員</h2><p>拿到隊長的邀請碼，加入後等隊長出發。</p><button type="button" class="green" data-member>輸入邀請碼 →</button></section></div>${pending.length?`<section class="card" id="resume-tasks"><h2>接續任務</h2><p>回到原來的小隊，不用重新組隊。</p>${cards(pending)}</section>`:''}<div class="actions"><button type="button" data-refresh>更新我的小隊</button>${done?'<button type="button" data-records>翻看共同紀錄冊</button>':''}</div>`;
-   $('[data-captain]').onclick=()=>show('captain');$('[data-member]').onclick=()=>show('member');$('[data-refresh]').onclick=()=>onRefresh();if($('[data-records]'))$('[data-records]').onclick=()=>show('records');bind();
+   const pending=pendingTeams(rooms),done=rooms.some(r=>r.finished||r.phase==='completed');frame.innerHTML=`<div class="grid team-entry"><section class="card"><span class="badge">選卷・邀人</span><h2>我當隊長</h2><p>選好今天的題目，邀夥伴加入，人到齊後一起出發。</p><button type="button" class="primary" data-captain>選卷，邀夥伴 →</button></section><section class="card"><span class="badge">輸碼・加入</span><h2>我當隊員</h2><p>拿到隊長的邀請碼，加入後等隊長出發。</p><button type="button" class="green" data-member>輸入邀請碼 →</button></section></div>${onFindPartner?'<section class="card match-entry"><div><span class="badge">自願參加・同年級跨班</span><h2>也可以幫我找夥伴</h2><p>先集合，再隨機安排 2～4 人小隊；成隊後由隊長選卷。</p></div><button type="button" class="green" data-find-partner>幫我找夥伴 →</button></section>':''}${pending.length?`<section class="card" id="resume-tasks"><h2>接續任務</h2><p>回到原來的小隊，不用重新組隊。</p>${cards(pending)}</section>`:''}<div class="actions"><button type="button" data-refresh>更新我的小隊</button>${done?'<button type="button" data-records>翻看共同紀錄冊</button>':''}</div>`;
+   if($('[data-find-partner]'))$('[data-find-partner]').onclick=onFindPartner;$('[data-captain]').onclick=()=>show('captain');$('[data-member]').onclick=()=>show('member');$('[data-refresh]').onclick=()=>onRefresh();if($('[data-records]'))$('[data-records]').onclick=()=>show('records');bind();
   }
  }
  show(initialMode);

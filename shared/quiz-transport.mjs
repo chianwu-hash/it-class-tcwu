@@ -5,16 +5,17 @@ export function createAuthenticatedTransport({ auth, getSession, fetcher = fetch
   if (baseUrl !== auth.SUPABASE_URL && (!['localhost', '127.0.0.1'].includes(location.hostname) || baseUrl !== location.origin))
     throw new Error('本機媒體服務設定不符。');
   return async (path, body) => {
+    const authError=message=>Object.assign(new Error(message),{code:'AUTH_REQUIRED'});
     const identity = getSession()?.user?.id;
-    if (!identity) throw new Error('請先登入學校帳號。');
+    if (!identity) throw authError('請先登入學校帳號。');
     const finishSession = diagnoseStep('quiz.auth_session');
     let authResult;
     try { authResult = await auth.supabase.auth.getSession(); finishSession(authResult.error ? 'auth_error' : 'ok'); }
-    catch (error) { finishSession(error?.name || 'auth_error'); throw error; }
+    catch (error) { finishSession(error?.name || 'auth_error'); throw authError('登入狀態暫時無法確認，請重新登入後再試。'); }
     const { data, error } = authResult;
     const session = data?.session;
     if (error || !session?.access_token || session.user?.id !== identity || getSession()?.user?.id !== identity)
-      throw new Error('登入已失效或身分已變更，請重新登入。');
+      throw authError('登入已失效或身分已變更，請重新登入。');
     let response;
     try {
       response = await measuredFetch(`${baseUrl}${path}`, {
@@ -31,7 +32,7 @@ export function createAuthenticatedTransport({ auth, getSession, fetcher = fetch
     const result = await response.json().catch(() => null);
     finishBody(result ? 'ok' : 'invalid_json');
     if (!response.ok) diagnoseResult(result?.code || result?.error || `http_${response.status}`);
-    if (getSession()?.user?.id !== identity) throw new Error('登入身分已變更，請重新加入。');
+    if (getSession()?.user?.id !== identity) throw authError('登入身分已變更，請重新加入。');
     if (!response.ok || !result || typeof result !== 'object') {
       // Gateway timeouts, pool exhaustion and statement timeouts mean the database is overloaded.
       const busy = [502, 503, 504].includes(response.status) || ['PGRST003', '57014'].includes(result?.code);
