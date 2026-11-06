@@ -11,7 +11,18 @@
 - 與正式任務目錄比對94項，missing=0、mismatched=0，不需SQL。完整checkout含既有排除教材目錄，直接執行build preflight會依來源排除規則拒絕；沒有刪教材或停用守衛。正式CLI依.vercelignore過濾後仍須由雲端preflight通過，失敗就停止。
 - 本機證據在本批 ignored .chat-mode/evidence/level-one/（純合成）；沿PR、新乾淨main及發布腳本流程。完成後補正式資產與教師檢視驗證、收據及封存清理。
 
-# 2026-11-06 夥伴練功原答題操作（使用者核准，待發布）
+# 2026-11-06 夥伴練功原答題操作（已正式發布）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-partner-original-workspace-20261106 | 2026-11-06T10:53:58.206Z | `0db7a8b` | `dpl_EpnHcYKxAxnqtNdRpipoW8W1KXwn` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/focused.css、shared/quiz-workspace.mjs | `dpl_7qKNYvxzyt97bN69uBrt4hAiFx75`／回滾 `dpl_EpnHcYKxAxnqtNdRpipoW8W1KXwn`（eolOnly 0） |
+
+- 使用者明確核准直接發布；PR70 已進 main，新乾淨 main 0db7a8b 經正式 start/deploy/promote，臺灣 2026-11-06 18:54:46 上線。完整樹 ok:true，8 修改／0 新增／0 刪除／0 非預期／eolOnly 0；正式 8 變更檔、共用工作區 CSS 與兩個教師樹入口共 11 檔位元組一致，保留最新教師努力樹發布，鎖已釋放。[發布收據](partner-original-workspace-release-20261106.json)。
+- AGY 第二輪 runtime495538d 無可確認P1/P2，29合成瀏覽器、8Node及桌機／手機截圖通；未做正式雙帳號整流程、實體觸控或真IME，未寫學生資料、未改SQL。
+- Vercel link 65.8 產生本機臨時檔及 .gitignore 修改，髒目錄被發布腳本擋下。清理命令遭自動審核拒絕（僅回報 blocked by policy），沒有改工具繞過刪除；保留該目錄，另建乾淨 main 僅放非機密專案綁定資料後正常發布。此目錄不得放入一般封存或強制清理。
+
 
 - 實班反映先前只共用 ABCD，送出位置與原習慣不同；本次直接接原 createQuizWorkspace 與 CSS，固定右下主要操作、題目／小幫手分欄、精簡小隊／導覽／請教控制。小隊認證、送答、紀錄、回顧與葉花路徑不變。唯一寫入者 Codex，branch codex/partner-original-answer-shell-20261106，base main c2476a0。[介面契約與驗證](partner-original-workspace-20261106.md)。
 - 8 Node／29 合成瀏覽器檢查與實際桌機截圖通過；真實雙帳號整流程、實體觸控與真 IME 未驗。不改 SQL。AGY 第二輪已完成且無可確認 P1／P2；runtime 基準 495538d，工具邊界／viewer／Git不變通過。使用者已明確指示「直接依 PR 流程發布」；正式尚未切換，依 PR、乾淨 main、正式發布腳本與收據流程處理，最後封存清理本批已完成目錄。
