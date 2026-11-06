@@ -9,13 +9,18 @@
 - 「我的題目」本來就是目前頁面，點擊後看不出反應。流程選項新增「目前」與aria-current；點目前頁面收起選單並聚焦題目，不重畫、不清除未送出選項。切換回顧／紀錄冊同樣收起選單並聚焦標題，忙碌拒絕切換仍保留原提示。
 - 11 Node與48合成瀏覽器通過，包含實際點目前題目、保留相同題目DOM／選項、訊息提醒、固定營地、草稿／失敗與回顧往返。無SQL、權限、配題、計獎或學生紀錄更動，保留最新畫筆顏色／橡皮擦。正式多人與實體觸控未重測。Codex唯一寫入者，收據進main後封存清理本批工作區。
 
-# 2026-11-06 畫筆顏色與整筆橡皮擦（發布中）
+# 2026-11-06 畫筆顏色與整筆橡皮擦（已正式發布）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-color-eraser-20261106 | 待start | PR後新乾淨main | 由alias與腳本鎖定 | 11修改、sketch-model新增；另更新媒體Edge | 待腳本驗證 |
+| 已完成 | Codex-color-eraser-20261106 | 2026-11-06T12:05:35.555Z | `c025c42` | `dpl_9EpBaWoyy9KoNqXFw18LZPVxCibU` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/camp-panel.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/media-contract.mjs、shared/partner-pilot/message-composer.mjs、shared/partner-pilot/message-media.css、shared/partner-pilot/sketch-editor.mjs、+shared/partner-pilot/sketch-model.mjs | `dpl_7HCEhGHiX32rioYdFfgbNSSDgrDN`／回滾 `dpl_9EpBaWoyy9KoNqXFw18LZPVxCibU`（eolOnly 0） |
+
+- 使用者允許繼續後，PR86（取代PR84）進main；乾淨main c025c42先更新quiz-partner-message-media Edge v1→v2（ACTIVE、verify_jwt=false維持，handler自驗JWT，未登入HTTP401），再經start/deploy/promote於臺灣2026-11-06 20:06:59上線。
+- 完整樹ok:true（11改、1新、0刪、0非預期、eolOnly0），正式13項檔案位元組與main一致，包含保留最新營地操作列樣式。鎖已釋放。[發布收據](partner-sketch-tools-release-20261106.json)。沒有SQL／學生資料／權限變更；35 Node、22整合後合成瀏覽器通過，真實平板／正式雙帳號未測。
+- 發布後的彩色附件須由v2媒體服務讀取；不可直接將Edge退回v1（會拒絕colors）。舊無colors附件雜湊維持相容；前端若回滾須同時評估彩色附件讀取，避免把單一前端回滾冒稱完整復原。
+- 收據PR進main後封存證據，僅清本批已完成未使用的目錄，使用中的AGY viewer／其他對話與共享依賴保留。
 
 - 使用者要求換色與橡皮擦。Codex唯一寫入者，fresh branch codex/partner-color-eraser-20261106。六色、整筆擦除、20步復原，保留清除確認與私有草稿。見[行為與驗證](partner-sketch-tools-20261106.md)。
 - 前端與Edge追加可選colors，既有格式／hash相容；不改SQL、權限、任務紀錄或獎勵。35 Node、22合成瀏覽器通過（本機實際SQL與Edge handler），真實平板／正式雙人未測。390px通過，已看桌機／手機圖。AGY第二輪9b15789無可確認P1/P2（第一輪空擦dirty已修）；viewer／工具拒絕／Git不變通過。使用者已允許繼續；從最新main 5af3c5a另開integration，保留已上線營地操作列，合併後35 Node／22合成瀏覽器再次通過。由新整合PR取代PR84。
