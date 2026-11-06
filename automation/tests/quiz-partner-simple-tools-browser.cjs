@@ -1,7 +1,7 @@
 // Synthetic-only UI regression. Exact leased target; no real auth or data writes.
 const fs=require('node:fs/promises'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const puppeteer=require('D:/projects/cdp-tools/node_modules/puppeteer-core');
-const root=path.resolve(__dirname,'../..'),origin='http://127.0.0.1:4491',out=path.join(root,'.chat-mode/evidence/compact-header');
+const root=path.resolve(__dirname,'../..'),origin='http://127.0.0.1:4491',out=path.join(root,'.chat-mode/evidence/camp-dock');
 const server=http.createServer(async(req,res)=>{try{let name=new URL(req.url,origin).pathname;if(name==='/')name='/automation/fixtures/partner-focused.html';if(req.method!=='GET'||!/^\/(shared\/|automation\/fixtures\/partner-focused\.)/.test(name)||name.includes('..'))throw Error();const f=path.resolve(root,'.'+name);if(!f.startsWith(root+path.sep))throw Error();const types={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.webp':'image/webp','.png':'image/png'};res.writeHead(200,{'Content-Type':types[path.extname(f)]||'application/octet-stream','Cache-Control':'no-store'});res.end(await fs.readFile(f));}catch{res.writeHead(404);res.end();}});
 console.log('simple_tools_worker_started');
 (async()=>{await fs.mkdir(out,{recursive:true});console.log('evidence_ready');await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(4491,'127.0.0.1',resolve);});console.log('preview_listening');const b=await puppeteer.connect({browserURL:process.env.AI_WORK_BROWSER_CDP_URL,defaultViewport:null,protocolTimeout:30000}),t=b.targets().find(t=>t._targetId===process.env.AI_WORK_BROWSER_TARGET_ID);assert(t,'exact_target_required');console.log('leased_browser_ready');const p=await t.page(),checks=[],errors=[];
@@ -11,13 +11,21 @@ try{
  const c=await p.target().createCDPSession();c.grantForegroundOnce('Page.bringToFront','驗證簡化請教與標記介面的桌機手機操作');await c.send('Page.bringToFront');
  await p.setViewport({width:1366,height:900});await p.goto(origin,{waitUntil:'domcontentloaded'});await wait(()=>window.qa&&document.querySelector('[data-toggle-mark]'));
  await p.evaluate(()=>{qa.state.paperInfo.title='三上國語：第一課　字的小旅行（10題）';qa.render();});
- for(const width of [1920,1366,1024,390]){
+ for(const width of [1920,1366,1024,390,320]){
   await p.setViewport({width,height:900});
   const h=await p.evaluate(()=>{const bar=document.querySelector('.focus-team-bar'),b=bar.getBoundingClientRect(),q=document.querySelector('.partner-workspace-question').getBoundingClientRect(),menu=bar.querySelector('.focus-team-info').getBoundingClientRect();return{height:b.height,gap:q.top-b.bottom,menuAtRight:menu.right>b.right-2,questionInBar:!!bar.querySelector('#focus-question-heading'),noOverflow:document.documentElement.scrollWidth<=innerWidth+1};});
   check(width+' 上方資訊不再堆成四列',h.height<=(width>=1000?78:120)&&h.questionInBar);check(width+' 題目貼近資訊列且用滿橫向空間',h.gap<=20&&h.menuAtRight&&h.noOverflow);
+  const dock=await p.evaluate(()=>{const b=document.querySelector('[data-camp-control]'),r=b.getBoundingClientRect(),primary=document.querySelector('[data-workspace-primary]');return{docked:!!b.closest('.quiz-workspace-dock .quiz-actions'),static:getComputedStyle(b).position==='static',unique:document.querySelectorAll('[data-camp-control]').length===1,differentColor:getComputedStyle(b).backgroundColor!==getComputedStyle(primary).backgroundColor,visible:r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight,minHeight:r.height>=44};});
+  check(width+' 單一營地入口收進操作列且與送答不同色',dock.docked&&dock.static&&dock.unique&&dock.differentColor&&dock.visible&&dock.minHeight);
   if(width===1920||width===390)await p.screenshot({path:path.join(out,'header-'+width+'.png'),fullPage:true});
  }
  await p.setViewport({width:1366,height:900});
+ await p.evaluate(()=>{window.campControlRef=document.querySelector('[data-camp-control]');qa.note('chat','新的未讀訊息');});
+ check('新訊息只提醒操作列按鈕，不開營地',await p.evaluate(()=>campControlRef.classList.contains('camp-has-new')&&!document.querySelector('#camp-dialog').open&&!campControlRef.querySelector('[data-message-count]').hidden));
+ await p.evaluate(()=>qa.render());await new Promise(r=>setTimeout(r,5500));
+ check('五秒後停止強調，未讀徽章仍保留',await p.evaluate(()=>document.querySelector('[data-camp-control]')===campControlRef&&!campControlRef.classList.contains('camp-has-new')&&!campControlRef.querySelector('[data-message-count]').hidden));
+ await p.click('[data-camp-control]');await p.click('[data-camp-close]');await wait(()=>!document.getElementById('camp-dialog').open);
+ check('關閉營地後焦點回到操作列原按鈕',await p.evaluate(()=>document.activeElement===campControlRef));
  await click('.focus-team-info>summary');
  check('小隊選單展開不推低題目',await p.evaluate(()=>{const bar=document.querySelector('.focus-team-bar').getBoundingClientRect(),q=document.querySelector('.partner-workspace-question').getBoundingClientRect(),body=document.querySelector('.focus-team-info-body');return q.top-bar.bottom<=20&&getComputedStyle(body).position==='absolute'&&body.getBoundingClientRect().right<=innerWidth;}));
  await click('.focus-team-info>summary');
@@ -39,7 +47,7 @@ try{
  check('成功後收起並顯示已標記',await p.evaluate(()=>!document.getElementById('mark-panel-101').open&&document.querySelector('[data-toggle-mark="101"]').textContent.includes('這題不能只有我知道')&&document.querySelector('[data-toggle-mark="101"]').title==='已加入共同回顧'));
  await click('[data-ask-q="101"]');check('問夥伴直接開啟正確題目的營地',await p.evaluate(()=>document.getElementById('camp-dialog').open&&document.querySelector('form[data-form=ask]')?.dataset.qid==='101'));await click('[data-camp-close]');await wait(()=>!document.getElementById('camp-dialog').open);
  await click('[data-workspace-primary]');await wait(()=>qa.state.exercise.mine[0].attempts.length===1);check('原本固定送答仍只送一份答案',await p.evaluate(()=>qa.actions.filter(a=>a.action==='answer'&&a.qid===101).length===1));
- await click('[data-workspace-primary]');await click('[data-toggle-mark="102"]');await p.evaluate(()=>qa.mode('offline'));await p.$eval('[data-draft="mark-102"]',e=>{e.value='離線先保留';e.dispatchEvent(new Event('input',{bubbles:true}));});await click('#mark-panel-102 form [type=submit]');check('儲存失敗保留表單與文字',await p.evaluate(()=>document.getElementById('mark-panel-102').open&&document.querySelector('[data-draft="mark-102"]').value==='離線先保留'));
+ await p.evaluate(()=>window.buttonBeforeQuestion=document.querySelector('[data-camp-control]'));await click('[data-workspace-primary]');check('換題重用同一個營地按鈕',await p.evaluate(()=>document.querySelector('[data-camp-control]')===buttonBeforeQuestion&&buttonBeforeQuestion.closest('.quiz-workspace-dock')));await click('[data-toggle-mark="102"]');await p.evaluate(()=>qa.mode('offline'));await p.$eval('[data-draft="mark-102"]',e=>{e.value='離線先保留';e.dispatchEvent(new Event('input',{bubbles:true}));});await click('#mark-panel-102 form [type=submit]');check('儲存失敗保留表單與文字',await p.evaluate(()=>document.getElementById('mark-panel-102').open&&document.querySelector('[data-draft="mark-102"]').value==='離線先保留'));
  await p.evaluate(()=>{qa.mode('normal');qa.ui.setTransport({pending:false,busy:false,bad:false,message:''});document.querySelector('#status').textContent='';});
  for(const width of [1366,390]){await p.setViewport({width,height:900});await p.evaluate(()=>qa.ui.setTransport({pending:false,busy:false}));const r=await p.evaluate(()=>{const a=document.querySelector('.question-support-actions').getBoundingClientRect(),b=document.getElementById('mark-panel-102').getBoundingClientRect();return{below:b.top>=a.bottom,wide:b.width>=a.width-2,noOverflow:document.documentElement.scrollWidth<=innerWidth+1};});check(width+' 標記區全寬且無水平溢出',r.below&&r.wide&&r.noOverflow);await p.screenshot({path:path.join(out,'tools-'+width+'.png'),fullPage:true});}
  await p.evaluate(()=>{qa.reset();qa.ui.setTransport({pending:false,busy:false,bad:false,message:''});});
@@ -50,6 +58,7 @@ try{
  await click('#mark-panel-201 form [type=submit]');check('只標記指定小題並保留其他展開區',await p.evaluate(()=>qa.actions.at(-1).qid===201&&qa.actions.at(-1).tag==='method'&&document.getElementById('mark-panel-202').open&&document.querySelectorAll('form[data-form=answer]').length===2));
  await p.evaluate(()=>{qa.reset();qa.showAllReview();});await click('[data-workspace-primary]');
  check('共同回顧的小隊說明維持正常文件流',await p.evaluate(()=>document.querySelector('form[data-form=review]')&&getComputedStyle(document.querySelector('.focus-team-info-body')).position==='static'&&!document.querySelector('.focus-team-bar>.focus-question-position')));
+ check('共同回顧時營地入口回到上方且不懸浮',await p.$eval('[data-camp-control]',e=>!!e.closest('.focus-team-bar')&&getComputedStyle(e).position==='static'));
  await click('.learning-tabs [data-view=practice]');check('回到答題仍只有一份題次標題',await p.$$eval('#focus-question-heading',es=>es.length===1&&es[0].closest('.focus-team-bar')));
  check('無瀏覽器例外',errors.length===0);await fs.writeFile(path.join(out,'browser.json'),JSON.stringify({passed:checks.length,checks,errors},null,2));console.log(JSON.stringify({passed:checks.length,checks,errors}));
 }catch(e){await fs.writeFile(path.join(out,'failure.json'),JSON.stringify({error:e.message,checks,errors},null,2));throw e;}finally{await p.close();await b.disconnect();server.closeAllConnections();await new Promise(r=>server.close(r));}
