@@ -1,10 +1,15 @@
-# 2026-11-06 夥伴回顧引導與自動結算（正式DB已驗，待前端發布）
+# 2026-11-06 夥伴回顧引導與自動結算（已正式發布）
 
 ## 發布登記
 
-| 狀態 | Agent | main來源 | 基準正式 | 預期變更 | 結果 |
-|---|---|---|---|---|---|
-| 發布中 | Codex-partner-review-completion-20261106 | PR55及PR56合併後的新乾淨main | `dpl_EFDgQZUtQ1gTqaEqewRahFSA2djn` | 四年級入口HTML與app/learning/team-flow/outcomes CSS共8檔 | 待官方發布腳本與完整樹驗證 |
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-partner-review-completion-20261106 | 2026-11-06T03:19:00.464Z | `66b9aef` | `dpl_EFDgQZUtQ1gTqaEqewRahFSA2djn` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/team-flow.mjs、shared/partner-pilot/outcomes.css | `dpl_YFLs7rxodob61WM3agfDWjXwahwa`／回滾 `dpl_EFDgQZUtQ1gTqaEqewRahFSA2djn`（eolOnly 0） |
+
+- PR55功能、PR56正式DB快照均已進main；新乾淨main `66b9aef`由官方release-from-main start→deploy→promote，臺灣2026-11-06 11:21:42上線。完整樹ok:true，8修改／0新增／0刪除／0非預期／0換行例外。候選與正式各8檔SHA256相符，正式頁4項載入／無pageerror、匿名RPC401，發布鎖已釋放；保留最新六年第10週等原站內容。
+- 37項Node/SQL、120項隔離Chrome及正式PG回滾／增量通過；schema snapshot/live153函式通過。曾有Supabase管理端502，依60秒退避後重查通過才promote。私有測試資料無殘留，未代舊任務補回顧或領獎。完整證據：[公開驗證收據](partner-review-completion-verification-20261106.json)。真Google兩台、實體錄音／觸控、報讀器及雙PG連線同時提交未驗，兩項歷史來源測試缺私有教材產出未跑。
+
+以下為本輪實作過程紀錄；其中「待發布」為當時狀態。
 
 - 功能PR55已合入main `a66d1f0`。從新乾淨main worktree `partner-review-db-main-20261106`執行正式PG回滾演練後增量，只更新3函式，21張既有資料表雜湊全同；合成Auth及作答無殘留。初輪演練選到私人自組來源及班級不符，均由原權限拒絕並rollback；改用真已發布老師卷與其允許班級的空座位合成身分後通過，不放寬權限。
 - 正式PG驗證首人回顧不結算、最後主動確認自動完成及1葉、同請求重送同獎、舊finish相容、本人清單與未作答不揭分數、非成員拒絕、原函式OID/owner/ACL保持及其他函式不變。最大現有清單8房約46.805ms。未做兩個PG連線同時送出，不冒稱併發實測。

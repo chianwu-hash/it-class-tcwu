@@ -1,0 +1,189 @@
+{
+  "status": "published",
+  "source": "66b9aef8f8615d8456b97ba5bc2efbc208cd3359",
+  "deployment": "dpl_YFLs7rxodob61WM3agfDWjXwahwa",
+  "rollback": "dpl_EFDgQZUtQ1gTqaEqewRahFSA2djn",
+  "promotedAt": "2026-11-06T03:21:42.810Z",
+  "nodeSql": {
+    "passed": 37,
+    "mode": "test-concurrency=1"
+  },
+  "browser": [
+    {
+      "script": "quiz-partner-focused-browser.cjs",
+      "passed": 17
+    },
+    {
+      "script": "quiz-partner-focused-actions-browser.cjs",
+      "passed": 12
+    },
+    {
+      "script": "quiz-partner-focused-edge-browser.cjs",
+      "passed": 10
+    },
+    {
+      "script": "quiz-partner-focused-read-browser.cjs",
+      "passed": 7
+    },
+    {
+      "script": "quiz-partner-focused-lightbox-browser.cjs",
+      "passed": 2
+    },
+    {
+      "script": "quiz-partner-outcomes-browser.cjs",
+      "passed": 41
+    },
+    {
+      "script": "review-completion-browser",
+      "passed": 19
+    },
+    {
+      "script": "review-completion-layout",
+      "passed": 12
+    }
+  ],
+  "browserTotal": 120,
+  "productionBrowser": {
+    "checks": [
+      {
+        "name": "correct grade and navbar",
+        "ok": true
+      },
+      {
+        "name": "review completion app and stylesheet are loaded",
+        "ok": true
+      },
+      {
+        "name": "public module matches new interaction contract",
+        "ok": true
+      },
+      {
+        "name": "no runtime exceptions",
+        "ok": true
+      }
+    ],
+    "errors": []
+  },
+  "assets": [
+    {
+      "file": "grade3/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "94eb24703c34bab1192e2aeede046d8a163421168e2cb09dec97383b79d68275"
+    },
+    {
+      "file": "grade4/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "e4da5f4801a229325aa20d7001be1931be4e5e719c4a37b256946f689691d7b9"
+    },
+    {
+      "file": "grade6/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "e81c20fe861a7d5278e9cbd7e203afd1d2731ec3fd87bce66a1e1250b92498f2"
+    },
+    {
+      "file": "grade9/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "b21370506cf4f0a43b1dbaf2761b79b359113ae0d810441a1763640f40e21a08"
+    },
+    {
+      "file": "shared/partner-pilot/app.mjs",
+      "ok": true,
+      "sha256": "b99c21ebc4edb61b12199f0b21ded1de4ba3f6fea81aa2cacc459b748d495087"
+    },
+    {
+      "file": "shared/partner-pilot/team-flow.mjs",
+      "ok": true,
+      "sha256": "44ab3b44dc0756645a7cd8d6ab97f2b0da37f13e44b00e00a0f223ce82c15ccf"
+    },
+    {
+      "file": "shared/partner-pilot/learning.js",
+      "ok": true,
+      "sha256": "d53714c48f39c0d0365ced1d5a0d05af38f4768fb56c573c992ddd5e360e7b4f"
+    },
+    {
+      "file": "shared/partner-pilot/outcomes.css",
+      "ok": true,
+      "sha256": "f97672ecfe09b8e682c580b57a3d845988eb7dd109a0e5981074bd5f3fdb9906"
+    }
+  ],
+  "candidateAssets": [
+    {
+      "file": "grade3/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "94eb24703c34bab1192e2aeede046d8a163421168e2cb09dec97383b79d68275"
+    },
+    {
+      "file": "grade4/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "e4da5f4801a229325aa20d7001be1931be4e5e719c4a37b256946f689691d7b9"
+    },
+    {
+      "file": "grade6/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "e81c20fe861a7d5278e9cbd7e203afd1d2731ec3fd87bce66a1e1250b92498f2"
+    },
+    {
+      "file": "grade9/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "b21370506cf4f0a43b1dbaf2761b79b359113ae0d810441a1763640f40e21a08"
+    },
+    {
+      "file": "shared/partner-pilot/app.mjs",
+      "ok": true,
+      "sha256": "b99c21ebc4edb61b12199f0b21ded1de4ba3f6fea81aa2cacc459b748d495087"
+    },
+    {
+      "file": "shared/partner-pilot/team-flow.mjs",
+      "ok": true,
+      "sha256": "44ab3b44dc0756645a7cd8d6ab97f2b0da37f13e44b00e00a0f223ce82c15ccf"
+    },
+    {
+      "file": "shared/partner-pilot/learning.js",
+      "ok": true,
+      "sha256": "d53714c48f39c0d0365ced1d5a0d05af38f4768fb56c573c992ddd5e360e7b4f"
+    },
+    {
+      "file": "shared/partner-pilot/outcomes.css",
+      "ok": true,
+      "sha256": "f97672ecfe09b8e682c580b57a3d845988eb7dd109a0e5981074bd5f3fdb9906"
+    }
+  ],
+  "anonymousStatus": 401,
+  "fullTree": {
+    "ok": true,
+    "changed": 8,
+    "added": 0,
+    "removed": 0,
+    "unexpected": 0,
+    "eolOnly": 0
+  },
+  "database": {
+    "functionsCheckedLive": 153,
+    "changedFunctions": 3,
+    "existingTablesUnchanged": 21,
+    "rollbackPassed": true,
+    "applyPassed": true,
+    "largestListRooms": 8,
+    "listMilliseconds": 46.805,
+    "noHistoricalBackfill": true
+  },
+  "claude": {
+    "reviews": [
+      "partner-review-completion-code-20261106",
+      "partner-review-completion-fix-20261106"
+    ],
+    "finalNoConfirmedP1P2": true
+  },
+  "notVerified": [
+    "真人Google兩帳號兩台裝置",
+    "真實麥克風與觸控",
+    "報讀器",
+    "兩個PostgreSQL連線同時提交",
+    "兩項缺私有教材產出的歷史來源測試"
+  ],
+  "recoveredIssues": [
+    "並行PGlite本機OOM：改單並行後37項通過",
+    "Supabase管理端502：依60秒退避重查153函式通過",
+    "正式回滾合成題源不符：維持權限並修正測試配對後通過"
+  ]
+}
