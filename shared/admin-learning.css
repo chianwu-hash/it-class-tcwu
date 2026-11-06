@@ -240,3 +240,6 @@ dialog .dialog-heading{padding:16px}
  .class-reward-table .class-garden-gaps{grid-column:1/-1;grid-row:5;border-left:0;border-top:1px solid var(--border)}
  .class-reward-table td[data-label]:not(.class-garden-gaps)::before{content:attr(data-label);display:block;font-size:.72rem;color:var(--muted);font-weight:500;margin-bottom:4px}
 }
+
+.student-tree-link{display:inline-flex;align-items:center;min-height:44px;padding:9px 15px;border:1px solid var(--border);border-radius:12px;background:var(--soft);font-weight:700;text-decoration:none}
+.student-tree-link:hover{background:#dfedf8}

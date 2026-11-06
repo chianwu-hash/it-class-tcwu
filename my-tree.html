@@ -513,6 +513,10 @@
         import {foundationTreeData} from './shared/typing-foundation-rewards.js?v=20261102-milestones';
 
         import { reconnectGrade3Progress } from './shared/grade3-google-course.js?v=20261007-identity';
+        if (new URLSearchParams(location.search).get('teacherView') === '1') {
+            // Separate read-only bootstrap; never construct student upgrade/choice clients.
+            await (await import('./shared/admin-student-tree.mjs?v=20261106-teacher')).mountTeacherTree();
+        } else {
         const subtitleEl = document.getElementById("subtitle");
         const courseHomeLinkEl = document.getElementById("course-home-link");
         const backPageBtn = document.getElementById("back-page-btn");
@@ -916,6 +920,7 @@
             setTimeout(loadAndRender, 0);
         });
         await loadAndRender();
+        }
     </script>
 </body>
 </html>

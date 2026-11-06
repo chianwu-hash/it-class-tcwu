@@ -20,7 +20,7 @@ export function createLearningRequest({local=false,readOnlyBridge=false,auth=nul
     if(!local&&(!identity||!auth.isTeacher(getSession())))throw Object.assign(new Error('teacher_required'),{code:'teacher_required'});
     const token=local?null:auth.getStoredAccessToken()||getSession()?.access_token;
     if(!local&&!token)throw Object.assign(new Error('teacher_required'),{code:'teacher_required'});
-    const rpc=['rewards','garden_status','class_rewards'].includes(action)?'admin_learning_rewards':'admin_learning_action';
+    const rpc=action==='tree_snapshot'?'admin_learning_tree':['rewards','garden_status','class_rewards'].includes(action)?'admin_learning_rewards':'admin_learning_action';
     const response=await fetcher(local?'/__learning-rpc':readOnlyBridge?'/__learning-live':`${auth.SUPABASE_URL}/rest/v1/rpc/${rpc}`,{
       method:'POST',signal:signal?AbortSignal.any([signal,AbortSignal.timeout(10000)]):AbortSignal.timeout(10000),
       headers:{'Content-Type':'application/json',...(local?{}:{apikey:auth.SUPABASE_ANON_KEY,Authorization:`Bearer ${token}`})},

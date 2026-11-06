@@ -37,7 +37,7 @@ function paging(root,data,load,total=data.total){
 }
 function closeDialog(){dialogEpoch++;dialogContext=null;if($('detail-dialog').open)$('detail-dialog').close();$('detail-content').replaceChildren();$('detail-paging').replaceChildren();}
 function clearStudent(){studentEpoch++;tabEpoch++;selected=null;cache.clear();cancelRequests(false);closeDialog();$('profile-content').hidden=true;$('empty-profile').hidden=false;$('records').replaceChildren();$('summary-cards').replaceChildren();
-  $('reward-section').hidden=true;$('reward-content').replaceChildren();
+  $('student-tree-actions').replaceChildren();$('reward-section').hidden=true;$('reward-content').replaceChildren();
   for(const id of ['student-title','student-meta','mapping-status','data-time'])$(id).textContent='';
   paperFilters={subject:'',state:'all',activity_type:'all'};$('paper-activity').value='all';$('paper-subject').replaceChildren(new Option('全部科目',''));$('paper-state').value='all';$('paper-filter-status').textContent='';$('paper-filters').hidden=true;}
 async function loadRoster(offset=0){
@@ -134,6 +134,10 @@ async function selectStudent(row){
       $('mapping-status').textContent=data.identity.mapping==='unlinked'?'尚未連結已驗證的 Google 帳號，暫不合併任何學習紀錄。':'帳號對應需要確認，暫不合併紀錄，以免顯示其他人的成果。';return;
     }
     $('mapping-status').textContent='已依本學年度名冊連結帳號；姓名以名冊為準。';
+    const treeLink=node('a','查看目前努力樹','student-tree-link');
+    treeLink.href='/my-tree.html?'+new URLSearchParams({teacherView:'1',course:$('course').value,...studentPayload(),...(local?{local:'1'}:{})});
+    treeLink.target='_blank';treeLink.rel='noopener';treeLink.id='student-tree-link';
+    $('student-tree-actions').append(treeLink);
     const summaries=[['weekly','週次活動',`${data.weekly.completed} / ${data.weekly.recorded}`,'完成／已記錄活動',data.weekly.last_at],
       ['typing','打字基礎',`英 ${data.typing.english}・中 ${data.typing.zhuyin}`,'各 12 大關的已存過關成果',data.typing.last_at],
       ['papers','考前練功坊',`${data.papers.completed} / ${data.papers.created}`,'完成／已建立試卷（本學年度）',data.papers.last_at]];

@@ -16,6 +16,11 @@ test('學習檔案：四年級／九年級、考古歷次版本、延伸卷、�
    create table public.quiz_past_answers(attempt_id uuid,group_id text,question_id text,response jsonb,correct boolean);
    revoke all on public.quiz_past_papers,public.quiz_past_versions,public.quiz_past_attempts,public.quiz_past_receipts,public.quiz_past_answers,public.quiz_learning_sessions from public,anon,authenticated;`);
   const blocks=splitSnapshot(await fs.readFile('supabase/production-snapshot/functions.sql','utf8'));
+  // Current production readers depend on grade-sharing metadata/helper. This
+  // older isolated fixture predates that view; install the exact read function.
+  await db.exec("create view public.quiz_version_meta as select id version_id,document->'catalog' catalog from public.quiz_versions");
+  await db.exec('alter table public.quiz_sessions add column library_visible boolean not null default true');
+  await db.exec(blocks.find(b=>b.signature==='quiz_session_class_allowed(uuid,text)').definition+';');
   for(const b of blocks.filter(b=>['admin_learning_action','admin_learning_paper_rows','admin_learning_media_access','admin_learning_rewards'].some(n=>b.signature.startsWith(n+'('))))await db.exec(b.definition+';');
   // PostgreSQL formats pg_get_functiondef differently in PGlite. Live rollback exercises the exact guard.
   const sql=(await fs.readFile('supabase/admin-learning-activities.sql','utf8')).replace(/do \$guard\$[\s\S]*?end \$guard\$;/,'');
