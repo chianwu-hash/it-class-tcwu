@@ -1,0 +1,60 @@
+{
+  "agent": "Codex-partner-camp-dock-20261106",
+  "commit": "8dafedc23d8a198e9b20086643425b9e6ecf497c",
+  "baseline": "dpl_G5VoPkbtoPAgw6wA4oegjjmxLmDW",
+  "expected": {
+    "changed": [
+      "shared/partner-pilot/learning.js",
+      "shared/partner-pilot/camp-panel.mjs",
+      "shared/partner-pilot/focused.css"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "startedAt": "2026-11-06T12:00:24.061Z",
+  "state": "promoted",
+  "candidate": "dpl_9EpBaWoyy9KoNqXFw18LZPVxCibU",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "shared/partner-pilot/camp-panel.mjs",
+      "shared/partner-pilot/focused.css",
+      "shared/partner-pilot/learning.js"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-06T12:00:54.460Z",
+  "promotedAt": "2026-11-06T12:01:17.183Z",
+  "alias": "dpl_9EpBaWoyy9KoNqXFw18LZPVxCibU",
+  "rollback": "dpl_G5VoPkbtoPAgw6wA4oegjjmxLmDW",
+  "handoffRow": "| 已完成 | Codex-partner-camp-dock-20261106 | 2026-11-06T12:00:24.061Z | `8dafedc` | `dpl_G5VoPkbtoPAgw6wA4oegjjmxLmDW` | shared/partner-pilot/learning.js、shared/partner-pilot/camp-panel.mjs、shared/partner-pilot/focused.css | `dpl_9EpBaWoyy9KoNqXFw18LZPVxCibU`／回滾 `dpl_G5VoPkbtoPAgw6wA4oegjjmxLmDW`（eolOnly 0） |",
+  "productionAssets": [
+    {
+      "path": "shared/partner-pilot/learning.js",
+      "sha256": "8edcb31bcdcc660c323dfa0c75db1880b53fd01ede4674511d87a14e85ddc259",
+      "matchesMain": true
+    },
+    {
+      "path": "shared/partner-pilot/camp-panel.mjs",
+      "sha256": "d7879d3f25ef07993b0573b64846b0bfbbea92774e13a05cc2a9f6e33292f5f4",
+      "matchesMain": true
+    },
+    {
+      "path": "shared/partner-pilot/focused.css",
+      "sha256": "8c4e9512492cfb08f4bacd298925c4244887450a724232b572be71a8b8738af7",
+      "matchesMain": true
+    }
+  ]
+}
