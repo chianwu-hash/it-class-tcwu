@@ -1,0 +1,152 @@
+{
+  "agent": "Codex-color-eraser-20261106",
+  "commit": "c025c42601a14c0e6c1b57cda0ee77a3855419ce",
+  "baseline": "dpl_9EpBaWoyy9KoNqXFw18LZPVxCibU",
+  "expected": {
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/camp-panel.mjs",
+      "shared/partner-pilot/learning.js",
+      "shared/partner-pilot/media-contract.mjs",
+      "shared/partner-pilot/message-composer.mjs",
+      "shared/partner-pilot/message-media.css",
+      "shared/partner-pilot/sketch-editor.mjs"
+    ],
+    "added": [
+      "shared/partner-pilot/sketch-model.mjs"
+    ],
+    "removed": []
+  },
+  "startedAt": "2026-11-06T12:05:35.555Z",
+  "state": "promoted",
+  "candidate": "dpl_7HCEhGHiX32rioYdFfgbNSSDgrDN",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/camp-panel.mjs",
+      "shared/partner-pilot/learning.js",
+      "shared/partner-pilot/media-contract.mjs",
+      "shared/partner-pilot/message-composer.mjs",
+      "shared/partner-pilot/message-media.css",
+      "shared/partner-pilot/sketch-editor.mjs"
+    ],
+    "added": [
+      "shared/partner-pilot/sketch-model.mjs"
+    ],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-06T12:06:34.284Z",
+  "promotedAt": "2026-11-06T12:06:59.324Z",
+  "alias": "dpl_7HCEhGHiX32rioYdFfgbNSSDgrDN",
+  "rollback": "dpl_9EpBaWoyy9KoNqXFw18LZPVxCibU",
+  "handoffRow": "| 已完成 | Codex-color-eraser-20261106 | 2026-11-06T12:05:35.555Z | `c025c42` | `dpl_9EpBaWoyy9KoNqXFw18LZPVxCibU` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/camp-panel.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/media-contract.mjs、shared/partner-pilot/message-composer.mjs、shared/partner-pilot/message-media.css、shared/partner-pilot/sketch-editor.mjs、+shared/partner-pilot/sketch-model.mjs | `dpl_7HCEhGHiX32rioYdFfgbNSSDgrDN`／回滾 `dpl_9EpBaWoyy9KoNqXFw18LZPVxCibU`（eolOnly 0） |",
+  "formalAssets": {
+    "ok": true,
+    "checks": [
+      {
+        "path": "grade3/115-1/partner-practice.html",
+        "exact": true,
+        "sha256": "9698fa5e3b4d25aa97d45ad723e3edb1dc286f22e72fbf17627702bbdd4c7af0"
+      },
+      {
+        "path": "grade4/115-1/partner-practice.html",
+        "exact": true,
+        "sha256": "1c016157159b9c3c32c4d1aae94c73359f7b6fd0db3ded89c3e58d8e45228437"
+      },
+      {
+        "path": "grade6/115-1/partner-practice.html",
+        "exact": true,
+        "sha256": "f9dedf9b7b6c83afb7f3af6508b1c8c798a541a13864a3db5b4cb13ddda12e3c"
+      },
+      {
+        "path": "grade9/115-1/partner-practice.html",
+        "exact": true,
+        "sha256": "7c87c92758f9c35d82c9de7cfee95be78cef456c7f1b098ddb3c1e8d897b9553"
+      },
+      {
+        "path": "shared/partner-pilot/app.mjs",
+        "exact": true,
+        "sha256": "1fb47811ce897fb99725994b22e14c214e04f639ee2b0114c22b6113e6659b33"
+      },
+      {
+        "path": "shared/partner-pilot/camp-panel.mjs",
+        "exact": true,
+        "sha256": "ac143deca833cd0ba903e26d0108656f533f4c1da208e35e3a245fd1b0da9ec4"
+      },
+      {
+        "path": "shared/partner-pilot/learning.js",
+        "exact": true,
+        "sha256": "dcbeba9625305b5a5d8c5e235121eedd30c3fb2eef159b2a32383fe2c9e10f97"
+      },
+      {
+        "path": "shared/partner-pilot/media-contract.mjs",
+        "exact": true,
+        "sha256": "1c43c7be00f7dd6c3ee2316dd797799e13df0eefe69698914b4287913a08127f"
+      },
+      {
+        "path": "shared/partner-pilot/message-composer.mjs",
+        "exact": true,
+        "sha256": "742228f25f6692888bc82da030d18491d9ea0456c72b8c7569a0ea8249b9c05c"
+      },
+      {
+        "path": "shared/partner-pilot/message-media.css",
+        "exact": true,
+        "sha256": "4979ce1eb266dac53b0c57d3a2ea6c58a3a7a45f09deec2241c1ec8f6c96e72c"
+      },
+      {
+        "path": "shared/partner-pilot/sketch-editor.mjs",
+        "exact": true,
+        "sha256": "948f79132de00d7bc7ab759d0fa67c1c91190804ffa03c97022e6074145a99b0"
+      },
+      {
+        "path": "shared/partner-pilot/sketch-model.mjs",
+        "exact": true,
+        "sha256": "adbf149992521c424de30ca17c6c1cc6f9882e92559ab9605076ee3ac99b0353"
+      },
+      {
+        "path": "shared/partner-pilot/focused.css",
+        "exact": true,
+        "sha256": "8c4e9512492cfb08f4bacd298925c4244887450a724232b572be71a8b8738af7"
+      }
+    ]
+  },
+  "edge": {
+    "projectRef": "upxgyusodibaqcrocdzj",
+    "before": {
+      "slug": "quiz-partner-message-media",
+      "version": 1,
+      "status": "ACTIVE",
+      "verify_jwt": false
+    },
+    "after": {
+      "slug": "quiz-partner-message-media",
+      "version": 2,
+      "status": "ACTIVE",
+      "verify_jwt": false
+    },
+    "source": "c025c42601a14c0e6c1b57cda0ee77a3855419ce",
+    "anonymousHTTP": 401,
+    "sqlChanged": false,
+    "realTwoAccountTested": false
+  }
+}
