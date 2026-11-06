@@ -11,7 +11,7 @@ try{
  const c=await p.target().createCDPSession();c.grantForegroundOnce('Page.bringToFront','驗證簡化請教與標記介面的桌機手機操作');await c.send('Page.bringToFront');
  await p.setViewport({width:1366,height:900});await p.goto(origin,{waitUntil:'domcontentloaded'});await wait(()=>window.qa&&document.querySelector('[data-toggle-mark]'));
  check('保留原本左右答題工作區',await p.$eval('[data-focus-content]',e=>e.classList.contains('workspace-desktop')));
- check('預設只顯示兩個支援操作',await p.$eval('.question-support-actions',e=>e.children.length===2&&e.textContent.includes('問夥伴')&&e.textContent.includes('標記這題')));
+ check('預設只顯示兩個支援操作',await p.$eval('.question-support-actions',e=>e.children.length===2&&e.textContent.includes('問夥伴')&&e.textContent.includes('這題不能只有我知道')));
  check('標記表單預設收起且無雙重摺疊標題',await p.evaluate(()=>!document.getElementById('mark-panel-101').open&&!document.querySelector('details.question-extras')&&document.getElementById('mark-panel-101').querySelector('summary').hidden));
  await click('[data-toggle-mark="101"]');check('展開狀態可被輔助技術辨識',await p.$eval('[data-toggle-mark="101"]',e=>e.getAttribute('aria-expanded')==='true'));
  check('完整表單位於兩按鈕下方',await p.evaluate(()=>{const a=document.querySelector('.question-support-actions').getBoundingClientRect(),b=document.getElementById('mark-panel-101').getBoundingClientRect();return b.top>=a.bottom&&b.width>=a.width-2;}));
@@ -25,7 +25,7 @@ try{
  check('標記操作不影響未送出的答案',await p.$eval('[data-normal-choices="101"] input[value="0"]',e=>e.checked));
  await click('#mark-panel-101 form [type=submit]');await wait(()=>qa.actions.some(a=>a.action==='mark'));
  check('送出的標記契約與內容不變',await p.evaluate(()=>{const a=qa.actions.find(a=>a.action==='mark');return a.qid===101&&a.tag==='interesting'&&a.text==='這題的圖很有意思'&&qa.state.exercise.mine[0].attempts.length===0;}));
- check('成功後收起並顯示已標記',await p.evaluate(()=>!document.getElementById('mark-panel-101').open&&document.querySelector('[data-toggle-mark="101"]').textContent.includes('已標記')));
+ check('成功後收起並顯示已標記',await p.evaluate(()=>!document.getElementById('mark-panel-101').open&&document.querySelector('[data-toggle-mark="101"]').textContent.includes('這題不能只有我知道')&&document.querySelector('[data-toggle-mark="101"]').title==='已加入共同回顧'));
  await click('[data-ask-q="101"]');check('問夥伴直接開啟正確題目的營地',await p.evaluate(()=>document.getElementById('camp-dialog').open&&document.querySelector('form[data-form=ask]')?.dataset.qid==='101'));await click('[data-camp-close]');await wait(()=>!document.getElementById('camp-dialog').open);
  await click('[data-workspace-primary]');await wait(()=>qa.state.exercise.mine[0].attempts.length===1);check('原本固定送答仍只送一份答案',await p.evaluate(()=>qa.actions.filter(a=>a.action==='answer'&&a.qid===101).length===1));
  await click('[data-workspace-primary]');await click('[data-toggle-mark="102"]');await p.evaluate(()=>qa.mode('offline'));await p.$eval('[data-draft="mark-102"]',e=>{e.value='離線先保留';e.dispatchEvent(new Event('input',{bubbles:true}));});await click('#mark-panel-102 form [type=submit]');check('儲存失敗保留表單與文字',await p.evaluate(()=>document.getElementById('mark-panel-102').open&&document.querySelector('[data-draft="mark-102"]').value==='離線先保留'));
