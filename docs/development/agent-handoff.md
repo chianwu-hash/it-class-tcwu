@@ -1,9 +1,19 @@
-# 2026-11-06 營地按鈕五秒新訊息提醒（發布中）
+# 2026-11-06 營地按鈕五秒新訊息提醒（已正式發布）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-partner-camp-alert-20261106 | 2026-11-06T01:53:14.538Z | `5a1eafa` | `dpl_BsS5NFTz2sCs4ShkueTmB3W7bYQ3` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/camp-panel.mjs、shared/partner-pilot/camp-attention.mjs、shared/partner-pilot/focused.css | `dpl_88MGFrgyvdTG998JhhuXBuMYMjvK`／回滾 `dpl_BsS5NFTz2sCs4ShkueTmB3W7bYQ3`（eolOnly 0） |
+
+- PR49進main，從新乾淨main `5a1eafa` 經release-from-main start→deploy→promote，臺灣2026-11-06 09:55:22正式切換 `dpl_88MGFrgyvdTG998JhhuXBuMYMjvK`；回滾 `dpl_BsS5NFTz2sCs4ShkueTmB3W7bYQ3`。完整樹ok:true，9修改／0新增／0刪除／0非預期／0換行例外；候選及正式各9檔SHA256均同main，鎖已釋放。
+- 4項Node、40項合成Chrome及正式4項載入讀回通過，pageerror0。無SQL或學生任務、作答、草稿、已讀規則與花葉資料改動。新16項提醒情境腳本保留於 `automation/tests/quiz-partner-camp-alert-browser.cjs`，需註冊瀏覽器租約、精確target與本機合成fixture。真實IME、裝置前背景切換、實體觸控與真人兩機仍未測。
+
+以下為實作及隔離驗證紀錄。
 
 - 使用者要求新訊息到達時懸浮按鈕醒目約5秒，不自動開營地，不打斷作答。沿用既有attention基準／未讀規則，新增opt-in includeChat供按鈕提醒；原toast仍只提示新請教及回覆本人，聊天只做按鈕提醒與未讀數。
 - 按鈕轉暖黃色、柔和外圈1.25秒共4次，JS五秒後移除；新一則重算5秒、相同snapshot不延長，歷史／本人不播，展開營地及clear／換房取消。背景新訊息排隊至前景才提醒；減少動態效果改靜態醒目5秒。沒有open／focus／scroll／讀取狀態或網路寫入操作。
 - 全新worktree `partner-camp-alert-20261106`，基底main1b0f02a，Codex唯一寫入者。4項Node及40項Chrome通過（新提醒16／原focused17／原已讀7），pageerror0；實際等待驗證5秒／續期／重複快照不重播，注音以CompositionEvent、前背景以visibilityState模擬，不冒稱真人輸入法或實體裝置測試。
-- 發布登記：`Codex-partner-camp-alert-20261106`；基準正式 `dpl_BsS5NFTz2sCs4ShkueTmB3W7bYQ3`，status無鎖。預期9個runtime修改（四入口cache、app／learning import cache、panel／attention／focused.css），無新增／刪除；沒有SQL／學生任務、作答、草稿或花葉資料改動。PR/main後新乾淨main執行release-from-main。
 
 # 2026-11-06 共同營地懸浮入口（已正式發布）
 
