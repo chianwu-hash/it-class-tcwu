@@ -1,0 +1,122 @@
+{
+  "agent": "Codex-drawing-draft-20261106",
+  "commit": "db4594ecf53e39c5fc7b7d9354bd986b429d38fe",
+  "baseline": "dpl_EJGnWZCFfX2ZUbWA3vVMVqhtKxtk",
+  "expected": {
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/learning.js",
+      "shared/partner-pilot/camp-panel.mjs",
+      "shared/partner-pilot/message-composer.mjs",
+      "shared/partner-pilot/sketch-editor.mjs"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "startedAt": "2026-11-06T11:41:41.113Z",
+  "state": "promoted",
+  "candidate": "dpl_H8aqWahtSsRcvn5zchMNga2UvRNj",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/camp-panel.mjs",
+      "shared/partner-pilot/learning.js",
+      "shared/partner-pilot/message-composer.mjs",
+      "shared/partner-pilot/sketch-editor.mjs"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-06T11:42:13.373Z",
+  "promotedAt": "2026-11-06T11:42:36.167Z",
+  "alias": "dpl_H8aqWahtSsRcvn5zchMNga2UvRNj",
+  "rollback": "dpl_EJGnWZCFfX2ZUbWA3vVMVqhtKxtk",
+  "handoffRow": "| 已完成 | Codex-drawing-draft-20261106 | 2026-11-06T11:41:41.113Z | `db4594e` | `dpl_EJGnWZCFfX2ZUbWA3vVMVqhtKxtk` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/camp-panel.mjs、shared/partner-pilot/message-composer.mjs、shared/partner-pilot/sketch-editor.mjs | `dpl_H8aqWahtSsRcvn5zchMNga2UvRNj`／回滾 `dpl_EJGnWZCFfX2ZUbWA3vVMVqhtKxtk`（eolOnly 0） |",
+  "formalAssets": {
+    "checks": [
+      {
+        "path": "grade3/115-1/partner-practice.html",
+        "exact": true,
+        "sha256": "70fb5ac429facdbdec073088696587c449e5c5113b5622df6453317cebc56eea"
+      },
+      {
+        "path": "grade4/115-1/partner-practice.html",
+        "exact": true,
+        "sha256": "9339e8135c22f5b7bbaba09fc43f3652c5754c9619db83b0e06545b772f1db7a"
+      },
+      {
+        "path": "grade6/115-1/partner-practice.html",
+        "exact": true,
+        "sha256": "db6959d26ccf3e5404c99912cc0d56406cc8437fa31fb9f9d91ee6e13be57626"
+      },
+      {
+        "path": "grade9/115-1/partner-practice.html",
+        "exact": true,
+        "sha256": "c3639cdaef2947dc5608dcf5d15c2e5c297a8f53facd75100f4d8c9ae58ca1b2"
+      },
+      {
+        "path": "shared/partner-pilot/app.mjs",
+        "exact": true,
+        "sha256": "493f2876dccaf4d96291430f7d023bbda318baab2a501c3456311cc43c8251a4"
+      },
+      {
+        "path": "shared/partner-pilot/learning.js",
+        "exact": true,
+        "sha256": "b599471522babfc007c891d34daa0d8d50807226f164a4f4967bb12732ce02f4"
+      },
+      {
+        "path": "shared/partner-pilot/camp-panel.mjs",
+        "exact": true,
+        "sha256": "66c470e1f2ec13b7c8909ef0e4885ae065be1c20d3365ebaf6f2575ce3381f28"
+      },
+      {
+        "path": "shared/partner-pilot/message-composer.mjs",
+        "exact": true,
+        "sha256": "998ffa46f45a0c43ff329083424a48e145b39ebbca241fa6836ad72ed3d549eb"
+      },
+      {
+        "path": "shared/partner-pilot/sketch-editor.mjs",
+        "exact": true,
+        "sha256": "9307656f087bcd6f07d6c8a831a71d94dda831623c6e4a28c2d8f9aa01ddbac5"
+      },
+      {
+        "path": "shared/partner-pilot/focused.css",
+        "exact": true,
+        "sha256": "f3751b0a8adbe8a34480de41f538a0da0c54f8623b3e48bd255111fec30878d2"
+      },
+      {
+        "path": "my-tree.html",
+        "exact": true,
+        "sha256": "17e945005bedecda4f6058edd45bd2b26e41457b0e09f317c125ca295a2dc00e"
+      },
+      {
+        "path": "shared/reward-tree-level-one.css",
+        "exact": true,
+        "sha256": "93bd0b516cf37dc90d463594dc0fa4e14344dd7284c017bb9873f65067e3e695"
+      }
+    ],
+    "ok": true,
+    "student_data_written": false,
+    "real_two_account_flow_tested": false
+  }
+}
