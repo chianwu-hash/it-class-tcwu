@@ -1,0 +1,125 @@
+{
+  "agent": "Codex-partner-review-layout-20261106",
+  "commit": "1bfe05899107693b70182a212d45b7c2fb60ff75",
+  "baseline": "dpl_37emDdg4VTzTBQEmQfpm7gLXSHNK",
+  "expected": {
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/learning.js"
+    ],
+    "added": [
+      "shared/partner-pilot/review-layout.mjs",
+      "shared/partner-pilot/review-layout.css"
+    ],
+    "removed": []
+  },
+  "startedAt": "2026-11-06T14:07:15.669Z",
+  "state": "promoted",
+  "candidate": "dpl_7VPwN9LXpA1TnmR1BsX14jjsfrUY",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/learning.js"
+    ],
+    "added": [
+      "shared/partner-pilot/review-layout.css",
+      "shared/partner-pilot/review-layout.mjs"
+    ],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-06T14:07:43.166Z",
+  "promotedAt": "2026-11-06T14:08:08.077Z",
+  "alias": "dpl_7VPwN9LXpA1TnmR1BsX14jjsfrUY",
+  "rollback": "dpl_37emDdg4VTzTBQEmQfpm7gLXSHNK",
+  "pullRequest": 96,
+  "validation": {
+    "nodeSql": 20,
+    "syntheticUI": 34,
+    "localSqlTwoClients": 12,
+    "agyRounds": 2,
+    "agyFinal": "no blockers",
+    "realGoogleTwoDeviceRetested": false,
+    "physicalTabletRetested": false
+  },
+  "productionAssets": {
+    "at": "2026-11-06T14:08:40.450Z",
+    "checks": [
+      {
+        "path": "grade3/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "c1546cfcb615af6bb11fe9aa2250d958852b23415d81894b9e728a1c2a4fd1d6",
+        "bytes": 2969
+      },
+      {
+        "path": "grade4/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "ab77df5d82a02992c16033581637f236c07dc08e01ee9f51f332405563e6bc49",
+        "bytes": 2969
+      },
+      {
+        "path": "grade6/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "d4d88ab63256f0f5b592e5024ab9ab51724b61550213742394ec33e60e9aeae2",
+        "bytes": 2969
+      },
+      {
+        "path": "grade9/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "62a84b28e1ede9f2b5eb31f3b0b19942ec83f0b7fb0a1ddcc9ed07028911c514",
+        "bytes": 2969
+      },
+      {
+        "path": "shared/partner-pilot/app.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "9eabdb37e44d7a0325058fbffe6c964103995bbfcea106099718f83693a2a5be",
+        "bytes": 20119
+      },
+      {
+        "path": "shared/partner-pilot/learning.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "ae343502c72206960b1690f2ef5eb5c8d316e732b6664627c387b832de828b26",
+        "bytes": 47191
+      },
+      {
+        "path": "shared/partner-pilot/review-layout.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "e9c664aaac53e832349ac1183fff3b103058224673a279cea28014d4b4015c96",
+        "bytes": 11174
+      },
+      {
+        "path": "shared/partner-pilot/review-layout.css",
+        "status": 200,
+        "ok": true,
+        "sha256": "56010cda92e3a89ae1a709b017d9a51e111809e0145d33ed97668715a02c2047",
+        "bytes": 9209
+      }
+    ]
+  }
+}

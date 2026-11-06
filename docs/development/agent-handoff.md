@@ -1,13 +1,17 @@
-# 2026-11-06 共同回顧摘要清單版面整合（AGY複核通過，待發布）
+# 2026-11-06 共同回顧摘要清單版面整合（已正式發布）
 
-- 使用者接受8851精簡原型，授權接回夥伴練功、AGY複核與驗證後走PR/main/發布腳本。唯一寫入者Codex，fresh origin/main 7b0daba，分支 codex/partner-review-layout-20261106。
-- 新 review-layout.mjs/css 接入learning.js，保留原transport、actions、draft keys、題目ID、review/finish/settle與server計獎。摘要列只展開一完整單元，考古材料一次、子題逐題保持身分；不使用past的佔位correct索引揭答。答案與既有解析直接可見、分享選填、努力沿用真實stories。回顧確認與等待名單；僅修改留言才顯示更新。
-- 修正review/discuss在操作結果回來前繼續輸入時的草稿保留。本人最後確認沿用自動進紀錄冊／慶祝；隊友完成時保持回顧頁與輸入DOM，出現紀錄冊入口。沒有SQL／Auth／RLS／權限／原作答記錄更動。
-- 合成UI 34項與正式app+本機SQL雙人12項通過；20項Node/SQL回歸。涵蓋題組、IME草稿、留言清空、20題全標、320/390/1024布局、最後確認自動發葉、去重／訂正／考古花、舊任務不變。已目視桌機與手機截圖。這是本機合成身分，不是真實Google兩機／實體平板驗收。
-- 變更範圍：4年級partner-practice.html、app.mjs、learning.js、新review-layout.mjs/css及專屬測試、合成fixture CSS與交接。未改共同營地／題庫／配題／後端。AGY僅討論供應的代碼與差異，不宣稱repo工具審查。
-- AGY首輪提出busy/pending鎖定、輸入期間即時標記、回顧選中單元接續三點；已補獨立鎖定與submit guard、沿用標記局部更新、以既有current物件保存/驗證reviewQid。真實本機SQL接受既有草稿格式，接回隊友題目與未送分享通過。待第二輪複核。
-- AGY第二輪供應代碼複核通過：無上線阻擋；run completed、toolBoundaryVerified及conversationViewerStarted皆true，Git前後一致。討論版本1.5.2、gemini-4-argon-medium；只讀供應文字，不冒稱repo或實機審查。完整兩輪請求／回覆／run留於本機ignored .chat-mode並在發布收尾封存。
-- 下一步：PR→main乾淨新worktree→發布腳本。不得從本feature worktree部署。發布後收據PR與本批封存清理，使用中的8850/8851原型與其他工作目錄保留。
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-partner-review-layout-20261106 | 2026-11-06T14:07:15.669Z | `1bfe058` | `dpl_37emDdg4VTzTBQEmQfpm7gLXSHNK` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、+shared/partner-pilot/review-layout.mjs、+shared/partner-pilot/review-layout.css | `dpl_7VPwN9LXpA1TnmR1BsX14jjsfrUY`／回滾 `dpl_37emDdg4VTzTBQEmQfpm7gLXSHNK`（eolOnly 0） |
+
+- PR96進main；乾淨main 1bfe058經發布腳本start/deploy/promote於臺灣2026-11-06 22:08:08上線。完整樹ok:true（6改、2新、0刪／非預期／eolOnly），正式8檔HTTP200且SHA-256與main一致；發布鎖已釋放。[發布收據](partner-review-layout-release-20261106.json)。
+- 使用者接受精簡原型並授權整合。摘要清單一次展開一完整單元；正確答案與固定解析直接可見，分享與留言按需展開。考古材料一次、每子題保持原ID／題號／帶來者；不以past佔位correct索引誤標正解。努力沿用真實stories、不比較個人題數；確認後顯示已完成與等待名單，僅修改留言才出現更新。
+- 保留原transport、草稿鍵、review/finish/settle、最後一人確認自動結算、原紀錄冊與慶祝。修正review/discuss結果回來前續打的草稿保留；加入獨立busy/pending/savingMedia鎖定、輸入期間live標記、既有current物件保存並驗證reviewQid。未改SQL／Auth／RLS／權限／配題／計獎政策，也未寫正式學生資料。
+- AGY兩輪供應代碼複核：首輪3點均修復，第二輪無上線阻擋。run completed、toolBoundaryVerified與conversationViewerStarted皆true，Git前後一致；版本1.5.2、gemini-4-argon-medium。AGY只討論供應文字，非repo工具／實機審查。
+- 20項Node/SQL、34項合成UI、12項正式app＋本機SQL雙瀏覽器流程通過，含題組／IME／草稿／接續隊友單元／忙碌重送／確認更新清空／自動發葉與原答案保留、訂正補達、去重與考古花／舊任務回歸。已目視桌機與手機截圖；真實Google兩機、實體平板鍵盤與旋轉未重測，不把本機合成測試當實班驗收。
+- 收據經PR進main後封存本批證據並正常清理；使用中的8850/8851原型、AGY檢視器與其他對話目錄保留。純文件收據不另部署。
 
 # 2026-11-06 媒體工具全圖示與畫布間距（已正式發布）
 
