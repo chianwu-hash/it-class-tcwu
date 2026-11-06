@@ -1,5 +1,13 @@
-# 2026-11-06 教師查看學生目前努力樹（已實作，待正式 SQL 核可）
+# 2026-11-06 教師查看學生目前努力樹（發布中）
 
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 發布中 | Codex-teacher-tree-20261106 | 2026-11-06T08:18:46.246Z | `aee99e0` 後續乾淨 main | `dpl_5NbCqVpDfsnK3uKTWqdB4Ff3VKKD` | admin-learning.html、my-tree.html、shared/admin-learning-api.mjs、shared/admin-learning.css、shared/admin-learning.mjs、shared/garden-test-rehearsal.mjs、shared/quiz-rewards.mjs、新增 shared/admin-student-tree-model.mjs、shared/admin-student-tree.mjs | PR66／67 已合併；使用者已核准上線，正式唯讀 SQL 與 snapshot live check 通過 |
+
+- 使用者已於本側邊對話核准「上線」。PR66 已合併，教師 reader 已從乾淨 main 81f4e41 套用；PR67 快照 163 函式／105 表／21 policy／13 trigger，live ok:true，舊函式未異動。正式教師角色正向查詢、額外目標鍵拒絕與學生狀態不變通過（唯讀交易 rollback，不是 Google UI 實測）。
+- Vercel link 自動新增環境檔與 .gitignore 行，已移除本次新增環境檔並還原該行，未公開憑證；正式尚未替換。先登記發布中，再從新乾淨 main 依腳本發布。登記前的 own start 已 abort。
 - 側邊對話獨立任務；主對話完成後，從 origin/main c2476a0 建立 `codex/teacher-student-tree-view-20261106`。本次唯一寫入者 Codex；工作區 `D:/projects/it-class-tcwu-worktrees/teacher-student-tree-view-20261106`。沒有合併、正式 SQL 套用或發布；沒有占用發布鎖。
 - 教師個人學習檔案新增「查看目前努力樹」，共用學生第一／二級視覺、寵物與紀念葉花；採教師專用唯讀 snapshot API，不觸發學生端升級、已讀或解鎖。詳 [設計、驗證與後續步驟](teacher-student-tree-20261106.md)。
 - 新增 `supabase/admin-learning-tree.sql`；正式套用需使用者在本側邊對話明確同意，再走 PR、main、快照 live check 與正式發布腳本。**不可沿用主對話其他任務的發布核准。**
