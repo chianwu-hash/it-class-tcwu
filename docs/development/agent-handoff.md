@@ -1,10 +1,12 @@
-# 2026-11-06 色盤與橡皮擦改純圖示（發布中）
+# 2026-11-06 色盤與橡皮擦改純圖示（已正式發布）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-sketch-icons-20261106 | 待start | PR後新乾淨main | 由alias與腳本鎖定 | sketch-editor、message-media.css及入口／模組cache共10檔 | 待驗證 |
+| 已完成 | Codex-sketch-icons-20261106 | 2026-11-06T12:39:12.980Z | `ce09ab4` | `dpl_Dp2ycRM6u644TvTVFAfj4c6Y22mb` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/camp-panel.mjs、shared/partner-pilot/message-composer.mjs、shared/partner-pilot/message-media.css、shared/partner-pilot/sketch-editor.mjs | `dpl_3jYJ84TsUBgaCTYUcC4nPP3XP26C`／回滾 `dpl_Dp2ycRM6u644TvTVFAfj4c6Y22mb`（eolOnly 0） |
+
+- PR90進main；乾淨main ce09ab4經start/deploy/promote於臺灣2026-11-06 20:39:59上線。完整樹ok:true（10改、0新增刪除／非預期／eolOnly），正式10檔與main一致；鎖已釋放。[發布收據](sketch-icons-release-20261106.json)。24合成瀏覽器通過，含手機與色盤無可見文字、aria／title／44px、擦除復原與草稿重試；已看手機截圖。無SQL與Edge改動，實體觸控／正式雙人未重測。
 
 - 使用者指定圖中的六色色盤與橡皮擦不顯示文字；改為色點與SVG橡皮擦。保留aria-label、title、aria-pressed選取框與44px點按範圍；其他復原／清除／草稿按鈕不在截圖指定範圍，維持原操作。唯一寫入者Codex，fresh branch codex/sketch-icon-tools-20261106。
 - 無SQL、Edge或格式改動。合成瀏覽器檢查包含換色／擦除／復原／草稿／錯誤重送、手機布局、圖示無可見文字與可及名稱／44px；實體筆與正式雙帳號未測。純呈現修改，不另加鏡像測試；證據在repo外本機私有位置，發布後依SOP封存清理。
