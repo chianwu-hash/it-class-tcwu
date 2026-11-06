@@ -77,5 +77,5 @@ export function createQuizWorkspace(root) {
     window.scrollTo({top:changed?0:savedScroll,behavior:'instant'});
   }
   window.addEventListener('resize', schedule);
-  return {apply, reset, destroy() {reset();window.removeEventListener('resize', schedule);}};
+  return {apply, reset, refresh:size, destroy() {reset();window.removeEventListener('resize', schedule);}};
 }
