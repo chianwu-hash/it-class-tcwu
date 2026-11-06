@@ -1,5 +1,9 @@
 # 六年級第 10 週課程網頁
 
+> **已正式發布**：PR #53 合併，main來源 `68a6371`；2026-11-06臺灣時間10:29:15經發布腳本切換 `dpl_EFDgQZUtQ1gTqaEqewRahFSA2djn`，回滾 `dpl_G8MP9zRkwPYwMKEwWHdNuYuNos9t`。完整樹ok:true（26修改／5新增／0刪除／0非預期）、正式31檔SHA256同來源、任務目錄94／94。第08週hidden、10顯示前後相同。發布鎖已釋放；[正式驗證收據](grade6-week10-production-20261106.json)。下方「尚未發布」為製作歷程。
+
+正式頁已確認標題、課本p.45～47、圖片載入、續練入口與無水平溢出。Playwright兩次連線逾時後，改Puppeteer選擇性連到同一租約實例的精確target成功；不以逾時當驗收通過。仍未代真實學生做閱讀分享或夥伴作答，實班多機待上課確認。GitHub連接器寫入PR遇403，改用已核對相同帳號的gh CLI完成PR與合併；沒有直接push main。
+
 > 發布準備：使用者於2026-11-06授權依規定發布。已fetch，從最新 `origin/main` `13e977a` 建立 `codex/grade6-week10-publish-20261106`／`D:/projects/it-class-tcwu-worktrees/grade6-week10-publish-20261106`，帶入核定頁面、圖卡與頁碼標示，保留同期最新組隊入口。正式唯讀已確認 `grade6-115-1 / 08` 為 `is_visible:false`、`10` 為true，不需改動08狀態。發布結果另補。
 
 > 樣式修訂：使用者指出初版灰綠風格偏離原有六年級週頁，已授權調整。當前交付移至新 worktree `D:/projects/it-class-tcwu-worktrees/grade6-week10-style-20261106`／分支 `codex/grade6-week10-style-20261106`，從最新 `origin/main` `2420b9b` 建立；保留最新夥伴營地正式版本，不沿用舊分支作為發布來源。下方初版製作／驗證為歷程，修訂結果見文末。

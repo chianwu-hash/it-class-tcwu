@@ -1,15 +1,16 @@
-# 2026-11-06 六年級第10週課程網頁（發布中）
+# 2026-11-06 六年級第10週課程網頁（已正式發布）
 
 ## 發布登記
 
-| 狀態 | Agent | main來源 | 基準正式 | 預期變更 | 結果 |
-|---|---|---|---|---|---|
-| 發布中 | Codex-grade6-week10-20261106 | 從 `13e977a` 開新分支，待本次PR合併 | `dpl_G8MP9zRkwPYwMKEwWHdNuYuNos9t` | 六年級第10週HTML/CSS/JS/圖卡、首頁週卡、navbar與同學期快取版本、後台defaults | 待發布腳本start/deploy/promote |
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-grade6-week10-20261106 | 2026-11-06T02:28:05.782Z | `68a6371` | `dpl_G8MP9zRkwPYwMKEwWHdNuYuNos9t` | admin-progress.html、grade6/115-1/boss-garden.html、grade6/115-1/homework.html、grade6/115-1/index.html、grade6/115-1/navbar.js、grade6/115-1/partner-practice.html、grade6/115-1/past-exam-review.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/typing-foundation.html、grade6/115-1/week01.html、grade6/115-1/week02.html、grade6/115-1/week03.html、grade6/115-1/week05-boss-en.html、grade6/115-1/week05-boss-zh.html、grade6/115-1/week05.html、grade6/115-1/week07-boss-en.html、grade6/115-1/week07-boss-zh.html、grade6/115-1/week07.html、grade6/115-1/week08-boss-en.html、grade6/115-1/week08-boss-zh.html、grade6/115-1/week08.html、grade6/115-1/week09-boss-en.html、grade6/115-1/week09-boss-zh.html、grade6/115-1/week09.html、grade6/115-1/zhuyin-foundation.html、+grade6/115-1/images/week10/week10-infographic-1920x1080-q80.webp、+grade6/115-1/week10.css、+grade6/115-1/week10.html、+grade6/115-1/week10.js、+grade6/LessonPlan/115-1/Week 10.md | `dpl_EFDgQZUtQ1gTqaEqewRahFSA2djn`／回滾 `dpl_G8MP9zRkwPYwMKEwWHdNuYuNos9t`（eolOnly 0） |
 
-- 使用者已授權依規定發布，第08週週卡維持隱藏。新worktree `D:/projects/it-class-tcwu-worktrees/grade6-week10-publish-20261106`／分支 `codex/grade6-week10-publish-20261106`；從最新main帶入核定第10週檔案，保留最新夥伴組隊入口與營地功能。Codex為本批唯一寫入者。
-- 本頁為B類說明頁，連至既有中英打、閱讀、魔王及夥伴服務，沒有新增activityKey、SQL函式、題庫或學生進度修改。班徽p.45～47、自選重交、原有紫色分色風格；任務卡標題已標課本頁碼。
-- 第10週閱讀期間11/02～11/08已建立並教師回讀；學生分享／真正多機夥伴流程由實班確認，不代作答。詳細前輪驗證與圖卡證據見[製作紀錄](grade6-week10-web-20261106.md)。
-- 下一步：本批最終檢查→commit/push→PR/main→新乾淨main由release-from-main start/deploy/promote，完整樹須ok且正式部署ID不變；完成後handoffRow另經PR登記。
+- 使用者授權依規定發布。PR #53 已進 main，來源 `68a6371`；2026-11-06 臺灣時間10:29:15，從新乾淨 main worktree 經 `release-from-main.mjs start → deploy → promote` 完成，正式網址指向 `dpl_EFDgQZUtQ1gTqaEqewRahFSA2djn`，發布鎖已釋放。回滾基準 `dpl_G8MP9zRkwPYwMKEwWHdNuYuNos9t`。
+- 完整檔案樹比對 `ok:true`：26修改、5新增、0刪除、0非預期、0僅換行差異。正式31檔逐一HTTP回讀SHA256與main來源相同；努力樹目錄94／94通過。沒有SQL函式、題庫或學生作答／草稿／獎勵修改。
+- 正式可見性前後皆為 `grade6-115-1 / 08 = false`、`10 = true`；第08週卡不顯示，原關卡檔案保留供續練。第10週含頁首資訊圖卡、班徽p.45～47標示、自選重交，以及中英打／閱讀／魔王／夥伴入口。
+- 發布前樣式版23項Chrome已通過；本次Playwright重連兩次逾時，改由註冊租約與精確target的Puppeteer選擇性連線，正式頁確認標題、頁碼、圖卡、7個續練連結與無水平溢出。未把連線逾時當通過，沒有代真實學生分享或雙人作答。閱讀第10週期間已建，學生分享與實班多機留課堂確認。
+- 交接證據：[正式驗證收據](grade6-week10-production-20261106.json)、[製作與限制](grade6-week10-web-20261106.md)。後續不重跑舊SQL或用功能分支發布；正式網址： https://it-class-tcwu.vercel.app/grade6/115-1/week10.html 。
 
 # 2026-11-06 組隊入口優先（已正式發布）
 
