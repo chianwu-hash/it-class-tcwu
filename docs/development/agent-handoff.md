@@ -1,5 +1,6 @@
 # 2026-11-06 幫我找夥伴／年級共用／期中20題（實作待複核，未發布）
 
+- 草稿[PR60](https://github.com/chianwu-hash/it-class-tcwu/pull/60)已建立，實作commit `5253cfe`，未merge。下一步於臺灣16:00額度恢復後，在本worktree執行 `python -B .chat-mode/prepare-match-review.py` 產生當下乾淨Git基準與新請求，再讀 `.chat-mode/next-claude-command.json` 依參數呼叫supervisor；此helper不會自動呼叫Claude，不可使用舊請求冒充最新複核。
 - 唯一寫入者Codex，worktree `D:/projects/it-class-tcwu-worktrees/partner-matchmaking-20261106`，分支 `codex/partner-matchmaking-20261106`，最新main基底 `e001cc1`。主對話已授權依側邊企劃實作，並補充老師卷／考古卷全年級跨班、三／六年級每科本次期中20題；自組卷不公開。不要沿用舊工作目錄發版。
 - 已完成年級權限builder／新SQL、10份凍結20題卷metadata migration、既有相容老師卷索引同步、伺服器30秒候配／2～4人分隊／隨機隊長選卷／原子出發、前端候配流程與重送。原邀請／答案／全員回顧／計獎維持既有路徑。普通room只在明確出發時建立。
 - 本機41項Node/SQL、四合成身分13項瀏覽器檢查通過，實際30秒集合、選卷後收合、接回答題／接續任務通；真實200題文件逐份本機比對與重跑通過。正式唯讀40份啟用考古卷來源／欄位／完整包對應通，最少17包。來源題200題中137有原詳解、63保留未提供詳解提示，沒有生成假解析。
