@@ -1,4 +1,4 @@
-import {createMessageComposers} from './message-composer.mjs?v=20261106-draft';
+import {createMessageComposers} from './message-composer.mjs?v=20261106-color';
 import {createCampAttention} from './camp-attention.mjs?v=20261106-button-alert';
 
 // A persistent modal panel. Updating notes never replaces a reply/composer input.

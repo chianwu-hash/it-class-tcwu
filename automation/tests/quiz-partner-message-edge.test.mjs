@@ -20,3 +20,5 @@ test('upstream outages and HTML responses are retryable service errors, never in
   assert.equal(response.status,503,failure);assert.equal((await response.json()).error,'MEDIA_UNAVAILABLE');
  }
 });
+
+test('colored payload is preserved by canonicalization while legacy payload hashes stay unchanged',async()=>{for(const colors of [undefined,['#b83246']]){const f=setup(),payload={version:1,strokes:[[[0,0],[1,1]]],...(colors?{colors}:{})};assert.equal((await f.call({...store,kind:'drawing_v1',base64:undefined,payload})).status,200);const intent=JSON.parse(f.calls.find(c=>c.url.endsWith('/quiz_partner_message_action')).options.body).p,final=JSON.parse(f.calls.find(c=>c.url.endsWith('/quiz_partner_message_finalize')).options.body);assert.deepEqual(final.p_payload,payload);assert.equal(intent.sha256,createHash('sha256').update(JSON.stringify(payload)).digest('hex'));}const f=setup();assert.equal((await f.call({...store,kind:'drawing_v1',base64:undefined,payload:{version:1,strokes:[[[0,0]]],colors:['url(unsafe)']}})).status,400);assert(!f.calls.some(c=>c.url.includes('/rpc/')));});
