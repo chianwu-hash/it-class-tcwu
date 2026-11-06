@@ -1,8 +1,9 @@
 // Synthetic identities + real local SQL, production app/UI. Never uses real auth or outbound APIs.
 import http from 'node:http';import fs from 'node:fs/promises';import path from 'node:path';import {fileURLToPath} from 'node:url';
 import {setupTeamDB} from './fixtures/partner-team-db.mjs';
-const root=fileURLToPath(new URL('../',import.meta.url)),port=8822;let queue=Promise.resolve();
-async function setup(){const f=await setupTeamDB();
+import {setupReviewDB} from './fixtures/partner-review-db.mjs';
+const root=fileURLToPath(new URL('../',import.meta.url)),port=Number(process.env.PORT||8822);let queue=Promise.resolve();
+async function setup(){const f=await (process.env.PARTNER_REVIEW_COMPLETION==='1'?setupReviewDB():setupTeamDB());
 for(const n of [5,6]){await f.db.query('insert into auth.users values($1,$2,now(),$3)',[f.uid(n),`qa${n}@example.invalid`,{providers:['google']}]);await f.db.query('insert into public.student_enrollments values(115,$1,$2,$3,$4)',[`qa${n}@example.invalid`,'301',n,'合成夥伴'+n]);}
 return f;}
 let f=await setup();

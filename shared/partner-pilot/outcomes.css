@@ -19,3 +19,15 @@
 @keyframes partner-keepsake-bloom{0%{transform:scale(.45) rotate(-18deg);opacity:.3}55%{transform:scale(1.16) rotate(7deg)}100%{transform:scale(1) rotate(0);opacity:1}}
 @media(prefers-reduced-motion:reduce){.partner-content .celebration-symbol{animation:none!important}}
 @media(max-width:600px){.partner-content .partner-celebration{display:grid;grid-template-columns:45px minmax(0,1fr);padding:16px;gap:10px}.partner-content .celebration-symbol{font-size:45px}.partner-content .celebration-close{grid-column:2;justify-self:end;margin:0}.partner-content .celebration-copy h2{font-size:20px}.partner-content .outcome-guide,.partner-content .outcome-result{padding:15px}.partner-content .outcome-guide button,.partner-content .outcome-result button{width:100%;margin-right:0}}
+.partner-content .review-stage h3{margin:0 0 8px;font-size:21px}
+.partner-content .review-callout{position:fixed;z-index:45;left:20px;bottom:20px;box-sizing:border-box;width:min(520px,calc(100vw - 180px));padding:14px 18px;border:2px solid #c9a34d;border-radius:16px;background:#fff8e5;color:#51401b;box-shadow:0 6px 24px #173e4020}
+.partner-content .review-callout[hidden],.partner-content:has(dialog[open]) .review-callout{display:none}
+.partner-content .review-callout p{margin:0 0 8px;font-weight:700;line-height:1.6}
+.partner-content .review-callout button{min-height:44px}
+.partner-content .partner-focus[data-awaiting-review=true]{padding-bottom:190px}
+.partner-content .task-state-detail{line-height:1.8;max-width:65ch}
+@media(max-width:900px){.partner-content .review-callout{left:12px;right:12px;bottom:calc(94px + env(safe-area-inset-bottom));width:auto;padding:10px 14px}.partner-content .review-callout p{font-size:14px}.partner-content .review-callout button{width:100%}.partner-content .partner-focus[data-awaiting-review=true]{padding-bottom:calc(150px + var(--review-callout-height,160px))}}
+@scope (.partner-content){
+ :scope:has(.review-callout:not([hidden])) .partner-camp-toast{bottom:calc(32px + var(--review-callout-height,160px))}
+ @media(max-width:900px){:scope:has(.review-callout:not([hidden])) .partner-camp-toast{bottom:calc(106px + env(safe-area-inset-bottom) + var(--review-callout-height,160px))}}
+}

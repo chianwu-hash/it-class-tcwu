@@ -1,0 +1,50 @@
+// Real local SQL + production app, two synthetic browser clients. No production writes.
+const {connectCdp}=require('D:/projects/cdp-tools/packages/cdp-safe-client');
+const puppeteer=require('D:/projects/browser-automation-workflow/node_modules/puppeteer-core');const fs=require('node:fs');
+(async()=>{const c=await connectCdp({puppeteer,cdpUrl:process.env.CDP_URL,targetUrl:process.env.PARTNER_PREVIEW_URL}),p=c.page,out=[],errors=[];let q;
+const check=(name,ok)=>{out.push({name,ok});if(!ok)throw Error(name);};
+const wait=(page,fn)=>page.waitForFunction(fn,{polling:5000,timeout:30000});
+const click=(page,s)=>page.$eval(s,e=>e.click());
+const call=(n,body)=>p.evaluate(async(n,body)=>{const r=await fetch('/__qa/action',{method:'POST',headers:{'Content-Type':'application/json','x-prototype-session':'synthetic-team-only','x-prototype-actor':String(n)},body:JSON.stringify({...body,requestId:crypto.randomUUID()})});const j=await r.json();if(!r.ok)throw Error(j.error);return j;},n,body);
+try{
+if(p.target()._targetId!==process.argv[2])throw Error('target mismatch');p.on('pageerror',e=>errors.push(e.message));
+c.session.grantForegroundOnce('Page.bringToFront','檢查雙人回顧切換與焦點保留');await c.session.send('Page.bringToFront');
+await p.reload({waitUntil:'domcontentloaded'});await p.waitForSelector('[data-captain]');
+await p.evaluate(()=>fetch('/__qa/reset',{method:'POST',headers:{'x-prototype-session':'synthetic-team-only'}}));await p.reload({waitUntil:'domcontentloaded'});await p.waitForSelector('[data-captain]');
+let room=await call(5,{action:'create',paper:'ten',team:'回顧合成小隊',theme:'forest',capacity:2});room=await call(6,{action:'join',roomId:room.id,code:room.code});room=await call(5,{action:'start',roomId:room.id,revision:room.revision});const id=room.id;
+await click(p,'[data-refresh]');await p.waitForSelector(`[data-resume="${id}"]`);await click(p,`[data-resume="${id}"]`);await p.waitForSelector('[data-normal-choices]');
+q=await c.browser.newPage();q.on('pageerror',e=>errors.push(e.message));await q.goto('http://localhost:8831/?actor=6',{waitUntil:'domcontentloaded'});await q.waitForSelector(`[data-resume="${id}"]`);await click(q,`[data-resume="${id}"]`);await q.waitForSelector('[data-normal-choices]');
+for(const page of [p,q]){for(let i=0;i<5;i++){await click(page,'.student-option');await click(page,'form[data-form=answer] button');await page.waitForSelector('.option-result');if(i<4){await click(page,'[data-unit-step="1"]');await page.waitForSelector('form[data-form=answer] button');}}
+if(page===p){await click(p,'.focus-team-bar [data-open-camp]');await p.$eval('#camp-chat-text',e=>{e.value='正在寫的提示';e.dispatchEvent(new Event('input',{bubbles:true}));});}}
+await wait(p,()=>document.querySelector('.review-callout p')?.textContent.includes('下一步'));
+check('last answer does not force either client into review',!!(await q.$('[data-normal-choices]')&&await p.$('#camp-dialog[open]')));
+check('peer completion keeps open camp draft and does not mark review',await p.$eval('#camp-chat-text',e=>e.value==='正在寫的提示'));
+check('no award or completion before explicit review',!(await call(5,{action:'snapshot',roomId:id})).exercise.finished);
+await click(p,'[data-camp-close]');await p.waitForFunction(()=>!document.querySelector('#camp-dialog').open,{polling:5000});
+await p.setViewport({width:360,height:800});await p.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
+check('persistent review button reachable at mobile scroll bottom',await p.$eval('[data-review-callout]',e=>{const r=e.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight&&getComputedStyle(e).display!=='none';}));
+check('mobile no horizontal overflow',await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+await click(p,'[data-callout-review]');await p.waitForSelector('form[data-form=review]');
+check('review starts with progress and no finish confirmation at beginning',await p.evaluate(()=>!!document.querySelector('.review-stage')&&!document.querySelector('[data-finish-review]')&&!document.querySelector('#finish-review')));
+await click(p,'form[data-form=review] button');await wait(p,()=>document.querySelector('[data-outcome-guide]').textContent.includes('合成夥伴6'));
+check('first explicit review waits for named peer and never awards',!(await call(5,{action:'snapshot',roomId:id})).exercise.award);
+await click(p,'[data-save-exit]');await p.waitForSelector('#resume-tasks');
+check('list exposes personal acknowledgment and peer wait',await p.$eval('#resume-tasks',e=>e.textContent.includes('你已回顧')&&e.textContent.includes('合成夥伴6')&&e.textContent.includes('1／2')));
+await click(q,'[data-save-exit]');await q.waitForSelector('#resume-tasks');check('other list says it is your turn to review',await q.$eval('#resume-tasks',e=>e.textContent.includes('待你共同回顧')));
+await click(q,`[data-resume="${id}"]`);await q.waitForSelector('form[data-form=review]');check('resumed task enters review directly',await q.$eval('.learning-tabs [data-view=review]',e=>e.getAttribute('aria-pressed')==='true'));
+await click(p,`[data-resume="${id}"]`);await p.waitForSelector('form[data-form=review]');
+await click(q,'form[data-form=review] button');await wait(q,()=>document.querySelector('[data-focus-content]').textContent.includes('我們的共同紀錄冊'));
+check('last review automatically shows summary and real awarded leaf',await q.$eval('[data-celebration]',e=>e.textContent.includes('1 片紀念葉')));
+check('explicit final acknowledgment focuses summary heading',await q.evaluate(()=>document.activeElement===document.querySelector('[data-focus-content] h2')));
+await wait(p,()=>document.querySelector('[data-celebration]').textContent.includes('1 片紀念葉'));
+check('waiting peer gets award celebration without forced page switch',await p.$eval('.learning-tabs [data-view=review]',e=>e.getAttribute('aria-pressed')==='true'));
+await click(q,'.learning-tabs [data-view=review]');await q.waitForSelector('form[data-form=review]');const beforeUpdate=(await call(6,{action:'snapshot',roomId:id})).revision;await click(q,'form[data-form=review] button');await wait(q,()=>!document.querySelector('form[data-form=review] button')?.disabled);
+check('review update actually committed before checking view',(await call(6,{action:'snapshot',roomId:id})).revision>beforeUpdate);
+check('updating a completed review stays on review instead of jumping away',await q.$eval('.learning-tabs [data-view=review]',e=>e.getAttribute('aria-pressed')==='true'));
+await click(q,'[data-save-exit]');await q.waitForSelector('[data-records]');check('completed task leaves pending list',!await q.$('#resume-tasks'));
+await click(q,'[data-records]');check('record card confirms leaf was credited',await q.evaluate(()=>document.querySelector('[data-team-home]').textContent.includes('1 片紀念葉')));
+await click(q,`[data-resume="${id}"]`);await q.waitForSelector('.outcome-result');check('reentry preserves result without replay or repeat award',await q.$eval('[data-celebration]',e=>!e.textContent));
+fs.mkdirSync('.chat-mode/evidence/review-completion',{recursive:true});await p.screenshot({path:'.chat-mode/evidence/review-completion/mobile-review.png',fullPage:true});check('uncaught errors zero',!errors.length);
+fs.writeFileSync('.chat-mode/evidence/review-completion/browser.json',JSON.stringify({out,errors},null,2));console.log(JSON.stringify({passed:out.length,out,errors}));
+}catch(e){fs.mkdirSync('.chat-mode/evidence/review-completion',{recursive:true});fs.writeFileSync('.chat-mode/evidence/review-completion/failure.json',JSON.stringify({out,error:e.message,errors}));console.error(e);process.exitCode=1;}finally{if(q)await q.close();await p.close();await c.disconnect();}})();
+
