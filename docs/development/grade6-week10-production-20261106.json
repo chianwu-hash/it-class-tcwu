@@ -1,0 +1,243 @@
+{
+  "files": [
+    {
+      "path": "admin-progress.html",
+      "bytes": 67390,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/boss-garden.html",
+      "bytes": 2051,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/homework.html",
+      "bytes": 1755,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/index.html",
+      "bytes": 16883,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/navbar.js",
+      "bytes": 5572,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/partner-practice.html",
+      "bytes": 2773,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/past-exam-review.html",
+      "bytes": 1440,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/past-exam.html",
+      "bytes": 2715,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/quiz-library.html",
+      "bytes": 3307,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/typing-foundation.html",
+      "bytes": 809,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week01.html",
+      "bytes": 40907,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week02.html",
+      "bytes": 35183,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week03.html",
+      "bytes": 17017,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week05-boss-en.html",
+      "bytes": 4505,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week05-boss-zh.html",
+      "bytes": 4608,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week05.html",
+      "bytes": 20562,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week07-boss-en.html",
+      "bytes": 4579,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week07-boss-zh.html",
+      "bytes": 4611,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week07.html",
+      "bytes": 25922,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week08-boss-en.html",
+      "bytes": 4636,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week08-boss-zh.html",
+      "bytes": 4593,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week08.html",
+      "bytes": 26972,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week09-boss-en.html",
+      "bytes": 4623,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week09-boss-zh.html",
+      "bytes": 4641,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week09.html",
+      "bytes": 10112,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/zhuyin-foundation.html",
+      "bytes": 904,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/images/week10/week10-infographic-1920x1080-q80.webp",
+      "bytes": 321252,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week10.css",
+      "bytes": 7688,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week10.html",
+      "bytes": 12486,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/115-1/week10.js",
+      "bytes": 175,
+      "sha256_matches": true
+    },
+    {
+      "path": "grade6/LessonPlan/115-1/Week 10.md",
+      "bytes": 18026,
+      "sha256_matches": true
+    }
+  ],
+  "visibility": [
+    {
+      "course_id": "grade6-115-1",
+      "week_code": "08",
+      "is_visible": false
+    },
+    {
+      "course_id": "grade6-115-1",
+      "week_code": "10",
+      "is_visible": true
+    }
+  ],
+  "all_files_match": true,
+  "sourceMain": "68a637191510c083b50b264776a127ceafa5e53b",
+  "deploymentId": "dpl_EFDgQZUtQ1gTqaEqewRahFSA2djn",
+  "rollbackDeploymentId": "dpl_G8MP9zRkwPYwMKEwWHdNuYuNos9t",
+  "promotedAt": "2026-11-06T02:29:15.753Z",
+  "fullTreeComparison": {
+    "ok": true,
+    "changed": [
+      "admin-progress.html",
+      "grade6/115-1/boss-garden.html",
+      "grade6/115-1/homework.html",
+      "grade6/115-1/index.html",
+      "grade6/115-1/navbar.js",
+      "grade6/115-1/partner-practice.html",
+      "grade6/115-1/past-exam-review.html",
+      "grade6/115-1/past-exam.html",
+      "grade6/115-1/quiz-library.html",
+      "grade6/115-1/typing-foundation.html",
+      "grade6/115-1/week01.html",
+      "grade6/115-1/week02.html",
+      "grade6/115-1/week03.html",
+      "grade6/115-1/week05-boss-en.html",
+      "grade6/115-1/week05-boss-zh.html",
+      "grade6/115-1/week05.html",
+      "grade6/115-1/week07-boss-en.html",
+      "grade6/115-1/week07-boss-zh.html",
+      "grade6/115-1/week07.html",
+      "grade6/115-1/week08-boss-en.html",
+      "grade6/115-1/week08-boss-zh.html",
+      "grade6/115-1/week08.html",
+      "grade6/115-1/week09-boss-en.html",
+      "grade6/115-1/week09-boss-zh.html",
+      "grade6/115-1/week09.html",
+      "grade6/115-1/zhuyin-foundation.html"
+    ],
+    "added": [
+      "grade6/115-1/images/week10/week10-infographic-1920x1080-q80.webp",
+      "grade6/115-1/week10.css",
+      "grade6/115-1/week10.html",
+      "grade6/115-1/week10.js",
+      "grade6/LessonPlan/115-1/Week 10.md"
+    ],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "browserLoadCheck": {
+    "title": "六年級資訊課｜第10週 班徽再進一步・夥伴一起練功",
+    "pageLabel": "課本 p.45～47",
+    "infographicLoaded": true,
+    "practiceLinks": [
+      "week08.html#typing-section",
+      "week09.html#typing-section",
+      "homework.html#reading",
+      "boss-garden.html",
+      "week08-boss-zh.html",
+      "week08-boss-en.html",
+      "/my-tree.html?course=grade6-115-1"
+    ],
+    "noOverflow": true
+  },
+  "trueStudentSubmissionTested": false,
+  "sqlFunctionsChanged": false
+}
