@@ -33,3 +33,9 @@
 修正後需再次提供最新程式與上述跨資料包相依，請AGY確認剩餘具體阻擋；Codex需保留實際回覆及檢查收據。正式Google兩機與真Postgres多連線競爭仍未驗，不把本機PGlite單連線當成併發證明。
 
 只有PR/main、新乾淨main套本批新SQL、snapshot/live與快照PR/main、官方發布腳本完整樹檢查通過，才可上線。候配enable在相容前端與必要正式檢查後才執行。
+
+## 第二輪完成
+
+`agy-match-final-20261106T055932Z`，程式基準`ab6862e`，completed、viewer與工具攔截探針通過、Git不變。AGY明確回覆「在本次提供的程式碼與相依契約範圍內，未發現可確認之P1／P2阻擋問題」。實際仍未查範圍依上文保留，Codex負責發版及正式驗證。
+
+修正後43項Node／SQL、15項四身分流程與故障恢復、6項邀請銜接通；真實200題本機再比對與重跑通。最後鎖序變更由43項SQL檢查覆蓋，瀏覽器主驗為前端恢復。固定遷移前測試基準另封存於automation/fixtures/partner-match-before（main e001cc1，只有DDL／函式、無資料列），避免更新正式快照後重播一次性遷移造成假失敗；此QA維護不改runtime。

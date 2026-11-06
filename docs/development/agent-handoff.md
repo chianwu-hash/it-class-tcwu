@@ -1,14 +1,18 @@
-# 2026-11-06 幫我找夥伴／年級共用／期中20題（實作待複核，未發布）
+# 2026-11-06 幫我找夥伴／年級共用／期中20題（已檢視，發布中）
 
-- 草稿[PR60](https://github.com/chianwu-hash/it-class-tcwu/pull/60)已建立，實作commit `5253cfe`，未merge。下一步於臺灣16:00額度恢復後，在本worktree執行 `python -B .chat-mode/prepare-match-review.py` 產生當下乾淨Git基準與新請求，再讀 `.chat-mode/next-claude-command.json` 依參數呼叫supervisor；此helper不會自動呼叫Claude，不可使用舊請求冒充最新複核。
-- 唯一寫入者Codex，worktree `D:/projects/it-class-tcwu-worktrees/partner-matchmaking-20261106`，分支 `codex/partner-matchmaking-20261106`，最新main基底 `e001cc1`。主對話已授權依側邊企劃實作，並補充老師卷／考古卷全年級跨班、三／六年級每科本次期中20題；自組卷不公開。不要沿用舊工作目錄發版。
-- 已完成年級權限builder／新SQL、10份凍結20題卷metadata migration、既有相容老師卷索引同步、伺服器30秒候配／2～4人分隊／隨機隊長選卷／原子出發、前端候配流程與重送。原邀請／答案／全員回顧／計獎維持既有路徑。普通room只在明確出發時建立。
-- 本機41項Node/SQL、四合成身分13項瀏覽器檢查通過，實際30秒集合、選卷後收合、接回答題／接續任務通；真實200題文件逐份本機比對與重跑通過。正式唯讀40份啟用考古卷來源／欄位／完整包對應通，最少17包。來源題200題中137有原詳解、63保留未提供詳解提示，沒有生成假解析。
-- 現行85份老師卷中55份（三16、四23、六16）符合普通卷adapter；九年級30份為非空共同material加10題，尚未逐份辨別是否為題組，安全跳過索引，不可硬拆。九年級個人卷仍按年級開放，候配可用考古卷；老師卷整包支援未完成。六英本次Unit1＋3，不可混入已隱藏的Unit2。
-- Claude本批程式複核尚未執行：先前每週額度至臺灣2026-11-06 16:00恢復，勿重複呼叫消耗；準備最新Git基準後依chat-mode supervisor只讀複核，顯示viewer，600秒／32turn／high／40000bytes。不把舊PR58複核當成本批通過。先讀[實作及未驗清單](partner-matchmaking-implementation-20261106.md)與[檢查收據](partner-matchmaking-verification-20261106.json)。
-- 尚無正式SQL寫入、snapshot/live、合併或發布。本批候配預設關閉，閒置交棒／收隊秒數NULL（未定案）；120秒心跳為待裝置實測值。新SQL順序、啟用／回復規劃在實作文件；只能PR/main後從新乾淨main套新SQL、snapshot/live及快照PR，再官方release腳本完整樹驗證發布。原正式仍 `dpl_HnPy1eaz92ktXsjut7Z9LnXeBcXo`，未占發布鎖。
-- 真Google兩機、真Postgres併發、實體平板與正式正向新卷／候配均未驗。localhost:8840是合成身分與本機記憶體DB原型，無正式API；PGlite角色單連線測試必須序列，不得Promise.all切換role。3個本次合成答題分頁因unsaved-or-busy清理保護被保留，不強制關閉；清理收據位於本機 `.chat-mode` 紀錄，非正式學生資料。
-- 原「未開始集合室刪除」仍另一個獨立草稿，不可混入；已開始任務提前結束仍暫緩。寵物動畫由使用者重整恢復，無動畫修改。
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 發布中 | Codex-partner-matchmaking-20261106 | 2026-11-06T06:06:34.045733+00:00 | PR60→main（待發布腳本鎖定） | `dpl_HnPy1eaz92ktXsjut7Z9LnXeBcXo` | 四年級partner-practice.html、partner app/matchmaking/team-flow/presentation/css、shared/quiz-transport.mjs | 待新SQL、快照live與官方發布檢查；尚未promote |
+
+- 使用者最新授權：改由AGY檢視、不等Claude，修正驗證後上線；含本批必要新SQL。不得再把16:00 Claude額度列為阻擋。
+- 草稿[PR60](https://github.com/chianwu-hash/it-class-tcwu/pull/60)，實作5253cfe、修正runtime ab6862e；唯一寫入者Codex，worktree `D:/projects/it-class-tcwu-worktrees/partner-matchmaking-20261106`。AGY僅討論提供程式碼，三包及第二輪均completed、viewer／工具攔截探針通、Git不變，第二輪無可確認P1/P2；Codex負責原碼與測試核對。[複核紀錄](partner-matchmaking-agy-review-20261106.md)、[收據](partner-matchmaking-verification-20261106.json)。
+- 43項Node／SQL、四合成身分15項流程與故障恢復、6項邀請銜接通；真實200題本機比對及重跑通。正式僅唯讀preflight：14函式hash、200來源指紋、meta trigger均符合；40份啟用考古卷題包映射通。原答案／回顧／計獎沿舊路徑，不碰學生資料或首次成長已讀。
+- 修正認證分類、catalog重試、出發後載入恢復、保留邀請及指定卷、隱藏卷新授權／既有個人紀錄、鎖順序及十間舊集合室卡住候配出發；手動配額與舊rooms不改。固定pre-upgrade QA基準在automation/fixtures/partner-match-before，不能隨正式snapshot覆寫。
+- 下一步：PR60進main後建立全新乾淨main worktree，只套實作文件列出的5個新SQL；做snapshot/live及快照PR/main，再另建新乾淨main，以release-from-main.mjs start/deploy/promote完整樹ok:true發布。相容前端與正式檢查後才套enable。發布鎖如被他人持有必須停。
+- 新20題僅3／6各五科，六英U1+3；137題有原詳解，63題保留原無詳解提示。老師／考古同年級跨班，自組維持私人。85老師卷中55相容；九30卷非空共同block仍待辨別是否題組，不硬拆，九個人卷仍全年級開放、候配可用考古卷。詳[實作](partner-matchmaking-implementation-20261106.md)。
+- 閒置交棒／收隊預設NULL，120秒心跳待實機測；真Google兩機、真Postgres多連線、實體平板／正式正向流程仍未驗，不能冒稱已驗。localhost:8840為合成身分原型，不呼叫正式API。原未開始集合室刪除仍獨立草稿；已開始任務提前結束仍暫緩。寵物動畫無改動。
 
 # 2026-11-06 夥伴紀念顯示修正（已正式發布）
 

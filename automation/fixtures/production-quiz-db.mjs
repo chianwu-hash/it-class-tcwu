@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import {PGlite} from '../../tmp/quiz-runtime/node_modules/@electric-sql/pglite/dist/index.js';
 const quote=s=>'"'+s.replaceAll('"','""')+'"';
 export async function setupProductionQuizDB(){
- const db=new PGlite(),schema=JSON.parse(await fs.readFile('supabase/production-snapshot/schema.json','utf8'));
+ const db=new PGlite(),schema=JSON.parse(await fs.readFile('automation/fixtures/partner-match-before/schema.json','utf8'));
  try{
  await db.exec(`create role anon;create role authenticated;create role service_role;create schema auth;create schema partner_pilot;create schema realtime;create schema storage;
  create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_app_meta_data jsonb default '{"providers":["google"]}');
@@ -22,7 +22,7 @@ export async function setupProductionQuizDB(){
   if(c.default&&!c.identity&&!c.generated)await db.exec(`alter table ${quote(t.schema)}.${quote(t.name)} alter column ${quote(c.name)} set default ${c.default}`);
   if(c.not_null)await db.exec(`alter table ${quote(t.schema)}.${quote(t.name)} alter column ${quote(c.name)} set not null`);
  }
- await db.exec(await fs.readFile('supabase/production-snapshot/functions.sql','utf8'));
+ await db.exec(await fs.readFile('automation/fixtures/partner-match-before/functions.sql','utf8'));
  // The production teacher allowlist is an external-auth boundary; keep a synthetic teacher here.
  await db.exec(`create or replace function public.is_teacher() returns boolean language sql stable security definer set search_path='' as $$select exists(select 1 from auth.users where id=auth.uid() and email='teacher@example.invalid')$$`);
  for(const foreign of [false,true])for(const t of schema.tables.filter(t=>t.kind==='r'||t.kind==='p'))for(const c of t.constraints){

@@ -1,20 +1,24 @@
 {
-  "checkedAtUTC": "2026-11-06T05:24:04.744603+00:00",
+  "checkedAtUTC": "2026-11-06T06:06:34.014949+00:00",
   "baseMain": "e001cc177f1d54792d47ed7f7c743e5bb1e2e764",
   "productionChanged": false,
   "productionDatabaseWrites": false,
   "nodeSql": {
-    "passed": 41,
+    "passed": 43,
     "failed": 0,
     "skipped": 0,
-    "command": "node --test --test-concurrency=1 automation/tests/{teacher-midterm-selector,teacher-midterm-migration,quiz-grade-sharing,partner-matchmaking,partner-matchmaking-team,partner-matchmaking-content,quiz-partner-self,quiz-partner-allocation,quiz-partner-team-flow}.test.mjs"
+    "command": "node --test --test-concurrency=1 automation/tests/{teacher-midterm-selector,teacher-midterm-migration,quiz-grade-sharing,partner-matchmaking,partner-matchmaking-team,partner-matchmaking-content,quiz-partner-self,quiz-partner-allocation,quiz-partner-team-flow}.test.mjs",
+    "additionalSuites": [
+      "quiz-transport-auth",
+      "partner-matchmaking-quota"
+    ]
   },
   "browser": {
-    "passed": 13,
+    "passed": 15,
     "errors": [],
     "realBatchSeconds": 30,
     "syntheticIdentities": 4,
-    "script": "automation/tests/partner-matchmaking-browser.cjs",
+    "script": "automation/tests/partner-matchmaking-recovery-browser.cjs",
     "checks": [
       {
         "name": "three entry choices and no empty resume section",
@@ -45,7 +49,15 @@
         "ok": true
       },
       {
+        "name": "catalog failure has an explicit retry without rejoining or reloading page",
+        "ok": true
+      },
+      {
         "name": "three/four-person team cannot pick a ten-question teacher paper",
+        "ok": true
+      },
+      {
+        "name": "post-start snapshot failure offers retry and home on all four pages",
         "ok": true
       },
       {
@@ -242,7 +254,6 @@
       "media_registered": 30
     }
   ],
-  "claudeReview": "pending-quota-reset-Taiwan-16:00",
   "notVerified": [
     "real-Google-two-machine",
     "real-Postgres-multi-connection-contention",
@@ -257,5 +268,90 @@
     "leaseSecondsProvisional": 120,
     "handoffSeconds": null,
     "closeSeconds": null
+  },
+  "inviteRecoveryBrowser": {
+    "passed": 6,
+    "script": "automation/tests/partner-matchmaking-invite-browser.cjs",
+    "checks": [
+      {
+        "name": "pending invite remains while restoring an active queue",
+        "ok": true
+      },
+      {
+        "name": "cancel queue returns directly to retained invitation and joins exactly once",
+        "ok": true
+      },
+      {
+        "name": "retained invite joins the intended original room",
+        "ok": true
+      },
+      {
+        "name": "captain picker resolves requested source after invite skipped initial catalog",
+        "ok": true
+      },
+      {
+        "name": "invalid award link keeps authenticated entry instead of a false login screen",
+        "ok": true
+      },
+      {
+        "name": "no uncaught page exception",
+        "ok": true
+      }
+    ],
+    "errors": []
+  },
+  "independentCodeDiscussion": {
+    "worker": "AGY",
+    "mode": "supplied-text-only; no repository tools",
+    "reviewedRuntimeHead": "ab6862e28c9506508e7acf0b4247913383646430",
+    "finalConclusion": "在提供的程式與相依範圍未發現可確認P1/P2；不等於真兩機或真Postgres併發驗收",
+    "runs": [
+      {
+        "sessionId": "agy-match-server-20261106T053958Z",
+        "model": "gemini-4-argon-medium",
+        "version": "1.5.1",
+        "status": "completed",
+        "conversationViewerStarted": true,
+        "toolBoundaryVerified": true,
+        "elapsedSeconds": 123.437,
+        "completedAt": "2026-11-06T05:42:19.472761+00:00"
+      },
+      {
+        "sessionId": "agy-match-client-20261106T053958Z",
+        "model": "gemini-4-argon-medium",
+        "version": "1.5.1",
+        "status": "completed",
+        "conversationViewerStarted": true,
+        "toolBoundaryVerified": true,
+        "elapsedSeconds": 79.218,
+        "completedAt": "2026-11-06T05:41:35.260021+00:00"
+      },
+      {
+        "sessionId": "agy-match-sources-20261106T053958Z",
+        "model": "gemini-4-argon-medium",
+        "version": "1.5.1",
+        "status": "completed",
+        "conversationViewerStarted": true,
+        "toolBoundaryVerified": true,
+        "elapsedSeconds": 76.812,
+        "completedAt": "2026-11-06T05:41:32.841554+00:00"
+      },
+      {
+        "sessionId": "agy-match-final-20261106T055932Z",
+        "model": "gemini-4-argon-medium",
+        "version": "1.5.1",
+        "status": "completed",
+        "conversationViewerStarted": true,
+        "toolBoundaryVerified": true,
+        "elapsedSeconds": 55.937,
+        "completedAt": "2026-11-06T06:00:30.314748+00:00"
+      }
+    ]
+  },
+  "databaseReadonlyPreflight": {
+    "functionGuardsPassed": 14,
+    "plannedQuestionsMatched": 200,
+    "metaTriggerEnabled": true,
+    "newHelperAbsentBeforeMigration": true
   }
 }
