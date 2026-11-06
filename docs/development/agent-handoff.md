@@ -1,7 +1,22 @@
-# 2026-11-06 夥伴練功原答題操作（複核完成，待核對預覽）
+# 2026-11-06 夥伴練功原答題操作（使用者核准，待發布）
 
 - 實班反映先前只共用 ABCD，送出位置與原習慣不同；本次直接接原 createQuizWorkspace 與 CSS，固定右下主要操作、題目／小幫手分欄、精簡小隊／導覽／請教控制。小隊認證、送答、紀錄、回顧與葉花路徑不變。唯一寫入者 Codex，branch codex/partner-original-answer-shell-20261106，base main c2476a0。[介面契約與驗證](partner-original-workspace-20261106.md)。
-- 8 Node／29 合成瀏覽器檢查與實際桌機截圖通過；真實雙帳號整流程、實體觸控與真 IME 未驗。不改 SQL。AGY 第二輪已完成且無可確認 P1／P2；runtime 基準 495538d，工具邊界／viewer／Git不變通過。正式未變，先供使用者核對桌機／手機預覽；取得發布指示後再依 PR、乾淨 main、正式發布腳本與收據流程處理，最後封存清理本批已完成目錄。
+- 8 Node／29 合成瀏覽器檢查與實際桌機截圖通過；真實雙帳號整流程、實體觸控與真 IME 未驗。不改 SQL。AGY 第二輪已完成且無可確認 P1／P2；runtime 基準 495538d，工具邊界／viewer／Git不變通過。使用者已明確指示「直接依 PR 流程發布」；正式尚未切換，依 PR、乾淨 main、正式發布腳本與收據流程處理，最後封存清理本批已完成目錄。
+
+# 2026-11-06 教師查看學生目前努力樹（已正式發布）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-teacher-tree-20261106 | 2026-11-06T08:19:49.167Z | `639a44e` | `dpl_5NbCqVpDfsnK3uKTWqdB4Ff3VKKD` | admin-learning.html、my-tree.html、shared/admin-learning-api.mjs、shared/admin-learning.css、shared/admin-learning.mjs、shared/garden-test-rehearsal.mjs、shared/quiz-rewards.mjs、+shared/admin-student-tree-model.mjs、+shared/admin-student-tree.mjs | `dpl_EpnHcYKxAxnqtNdRpipoW8W1KXwn`／回滾 `dpl_5NbCqVpDfsnK3uKTWqdB4Ff3VKKD`（eolOnly 0） |
+
+- 使用者已核准「上線」。PR66 實作、PR67 資料庫快照、PR68 發布登記均已進 main；新乾淨 main `639a44e` 經正式 start/deploy/promote，臺灣 2026-11-06 16:20:41 上線。
+- 完整樹 ok:true，7 修改／2 新增／0 刪除／0 非預期／eolOnly 0。正式 9 檔與 main 位元組相同，正式部署 `dpl_EpnHcYKxAxnqtNdRpipoW8W1KXwn`，鎖已釋放。[發布收據](teacher-student-tree-release-20261106.json)。
+- 僅新增教師唯讀函式；正式 snapshot/live check 通過（163 函式、105 表/view、21 policy、13 trigger），既有函式與資料表定義未變。正式教師角色讀取及額外目標鍵拒絕通過，唯讀交易前後成長、寵物、樹型、解鎖資料不變。
+- 真實 Google 教師已登入的工作瀏覽器，正式走過個人檔案選學生 → 查看目前努力樹 → 資料成功載入；未登入 RPC HTTP401。僅保留布林驗證結果，未保存正式學生明細／截圖。41 Node/SQL 與 19 合成瀏覽器檢查通過。
+- 本次寫入者 Codex。教師共用原樹形／寵物場景；花色是學生裝置偏好，教師明示採來源配色。詳 [設計與驗證](teacher-student-tree-20261106.md)。
+- 收據 PR 合併後依 SOP 封存必要證據並正常清理本次已完成工作目錄；未完成／使用中／其他對話目錄保留，純收尾收據留 repo 外，不再觸發網站發布。
 
 # 2026-11-06 夥伴答題底部下一步（已正式發布）
 

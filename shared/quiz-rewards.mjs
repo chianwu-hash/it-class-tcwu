@@ -3,6 +3,10 @@ import {wholeQuizLeaves} from './quiz-leaf-credit.mjs';
 import {partnerTreeData} from './quiz-partner-rewards.mjs';
 export async function quizTreeData(session,courseId){
  const request=await createQuizRequest({getSession:()=>session}),data=await request('rewards',{course_id:courseId});
+ return quizRewardTreeData(data,courseId);
+}
+// Shared projection: teacher previews and student trees must have identical reward IDs.
+export function quizRewardTreeData(data,courseId){
  const {leaves,pendingHalf}=wholeQuizLeaves((data.awards||[]).filter(a=>a.source_type!=='past_exam'));
  const flowers=data.flowers||[];
  const source=a=>`/grade${a.grade}/115-1/past-exam.html?paper=${encodeURIComponent(a.paper_id)}&attempt=${encodeURIComponent(a.attempt_id)}`;
