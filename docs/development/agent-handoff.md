@@ -1,11 +1,12 @@
-# 2026-11-06 共同營地收進固定答題操作列（發布中）
+# 2026-11-06 共同營地收進固定答題操作列（已正式發布）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-partner-camp-dock-20261106 | 待腳本登記 | 待PR合併 | `dpl_G5VoPkbtoPAgw6wA4oegjjmxLmDW` | shared/partner-pilot/learning.js、shared/partner-pilot/camp-panel.mjs、shared/partner-pilot/focused.css | 待驗證候選版 |
+| 已完成 | Codex-partner-camp-dock-20261106 | 2026-11-06T12:00:24.061Z | `8dafedc` | `dpl_G5VoPkbtoPAgw6wA4oegjjmxLmDW` | shared/partner-pilot/learning.js、shared/partner-pilot/camp-panel.mjs、shared/partner-pilot/focused.css | `dpl_9EpBaWoyy9KoNqXFw18LZPVxCibU`／回滾 `dpl_G5VoPkbtoPAgw6wA4oegjjmxLmDW`（eolOnly 0） |
 
+- PR83已進main，乾淨main 8dafedc經發布腳本上線。完整樹ok:true（3改／0非預期／eolOnly0），正式3檔與main位元組一致，發布鎖已釋放。[發布收據](partner-camp-dock-release-20261106.json)。
 - 固定答題時共同營地收進底部操作列，淡紫色與綠色送答區分；同一DOM換題沿用，回顧／紀錄冊回到上方普通入口，不懸浮。未讀徽章、5秒提醒、不自動開啟、關閉後焦點歸位均保留。「這題不能只有我知道」原文不變。
 - 11 Node與45合成瀏覽器檢查通過；1920／1366／1024／390／320px版面、未讀提醒、換題、草稿、失敗保留、考古子題、回顧往返均驗證，已目視桌機與手機截圖。沒有SQL、認證、作答或獎勵契約變更，不寫學生資料。實體觸控及正式多人流程未重測。
 - 唯一寫入者Codex，fresh branch codex/partner-camp-dock-20261106。經PR進main後只用新乾淨main及發布腳本；收據進main後封存清理本批工作區。
