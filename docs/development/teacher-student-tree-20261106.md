@@ -1,6 +1,6 @@
 # 教師檢視學生目前努力樹
 
-狀態：已實作與本機合成驗證；尚未合併、套用正式 SQL 或發布。
+狀態：2026-11-06 16:20:41（臺灣）正式發布。PR66／67／68 已合併；正式收據見 teacher-student-tree-release-20261106.json。
 
 ## 使用流程
 
@@ -35,7 +35,7 @@ SQL 使用短 lock/statement timeout 與 `CREATE FUNCTION`，若函式已存在�
 - Node／SQL 41 項通過：新教師 reader、來源模型、名冊與角色隔離、對應衝突、拒絕任意 UUID、目前正式 reader 相依函式、夥伴來源最小投影、花葉原流程、後台唯讀與活動解析回歸。
 - 新 reader 執行前後，public 與 partner_pilot 全部資料表的內容指紋一致；包含已存成長狀態，不消耗首次動畫的 seen_at。
 - 瀏覽器 19 項通過：教師個人檔案入口、第一級花葉來源、第二級 cat/dog/rabbit × a/b 樹型、素材載入、390px 無水平溢出、切換學生立即清空、登出阻擋晚到結果、讀取失敗不假報零成果、只呼叫教師 RPC、無未捕捉例外。
-- 真實 Google 教師登入與正式學生正向資料尚未驗證；需正式 reader 核准套用後補測。三、四、六、九年級來源語意沿用現有固定課程 adapter，瀏覽器合成場景主要使用三年級。
+- 正式 Google 教師已登入工作瀏覽器，個人檔案選學生、開啟目前努力樹與資料載入已驗證。正式資料庫教師角色正向查詢與目標鍵白名單也通過，未登入查詢 HTTP401。三、四、六、九年級來源語意沿用現有固定課程 adapter，瀏覽器合成場景主要使用三年級。
 - 初次同時啟動三個舊 PGlite suite 記憶體不足，改用 `--test-concurrency=1` 全部通過。舊活動測試缺年級共用 helper／metadata／library_visible，已只補本機 fixture，相同案例復跑通過，未改正式權限邏輯。
 - 首次背景瀏覽器工作未順利完成，停止自己註冊的 worker 並釋放租約；重跑啟用自己的精確目標分頁後通過。兩次均由租約工具清理本次暫存分頁，未操作既有分頁。
 
@@ -47,14 +47,10 @@ node --test --test-concurrency=1 automation/tests/admin-student-tree.test.mjs au
 
 瀏覽器腳本 `automation/tests/admin-student-tree-browser.cjs` 只啟動 localhost 合成服務與假登入模組，須透過 `ai-browser-launch` 租約及 `D:/ai-browser/run-background.cjs` 執行。證據在本 worktree 的 ignored `.chat-mode/evidence/teacher-tree/`；不含正式學生資訊。最後補上的狀態 live region 與第一級圖檔失敗診斷已一併重跑瀏覽器驗證；延遲回應案例確認請求仍在途時登出，再驗證資料沒有回填。
 
-## 待核准後的發布順序
+## 正式發布結果
 
-目前只有實作授權，尚無本側邊對話的正式 SQL 套用／發布授權。依 AGENTS.md 先請使用者同意，再依 main 發布規則進行；不要拿主對話舊核准代用。
+使用者已核准「上線」。PR66 合併後從新乾淨 main 套用唯一新增的教師唯讀函式；PR67 記錄快照，live ok:true（163 函式）。PR68 登記發布中後，由新乾淨 main 639a44e 執行 start/deploy/promote，完整樹 ok:true（7 改／2 新／0 其他差異）。正式 9 檔位元組與 main 一致，真實 Google 教師正向介面與未登入拒絕存取驗證通過。
 
-1. PR 複核與合併進 main；從最新 origin/main 建乾淨工作區。
-2. 使用者核准後，只套 `supabase/admin-learning-tree.sql`，不可重播舊 SQL。
-3. 更新 production snapshot，跑 `db-snapshot-check.mjs --live`；快照經 PR 進 main。正式教師／非教師拒絕與名冊正向來源查詢驗證須補做。
-4. 再建乾淨 main 工作區，依 start/deploy/promote 發布腳本流程，完整樹比對 ok:true、正式 ID 未異動，鎖衝突停止。
-5. 正式資產與教師實機驗收；handoffRow 經 PR 登記。完成發布與證據封存後，依 SOP 清理自己的已完成工作區。
+正式：dpl_EpnHcYKxAxnqtNdRpipoW8W1KXwn。回滾：dpl_5NbCqVpDfsnK3uKTWqdB4Ff3VKKD。發布鎖已釋放；發布收據經 PR 登記，後續不為收據重發網站。
 
 若需回復，先回復前端發布，再經授權移除這次新增的教師 reader；學生 API、獎勵與學習資料不需回復，因本功能沒有改寫它們。

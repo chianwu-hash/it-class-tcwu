@@ -1,19 +1,17 @@
-# 2026-11-06 教師查看學生目前努力樹（發布中）
+# 2026-11-06 教師查看學生目前努力樹（已正式發布）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-teacher-tree-20261106 | 2026-11-06T08:18:46.246Z | `aee99e0` 後續乾淨 main | `dpl_5NbCqVpDfsnK3uKTWqdB4Ff3VKKD` | admin-learning.html、my-tree.html、shared/admin-learning-api.mjs、shared/admin-learning.css、shared/admin-learning.mjs、shared/garden-test-rehearsal.mjs、shared/quiz-rewards.mjs、新增 shared/admin-student-tree-model.mjs、shared/admin-student-tree.mjs | PR66／67 已合併；使用者已核准上線，正式唯讀 SQL 與 snapshot live check 通過 |
+| 已完成 | Codex-teacher-tree-20261106 | 2026-11-06T08:19:49.167Z | `639a44e` | `dpl_5NbCqVpDfsnK3uKTWqdB4Ff3VKKD` | admin-learning.html、my-tree.html、shared/admin-learning-api.mjs、shared/admin-learning.css、shared/admin-learning.mjs、shared/garden-test-rehearsal.mjs、shared/quiz-rewards.mjs、+shared/admin-student-tree-model.mjs、+shared/admin-student-tree.mjs | `dpl_EpnHcYKxAxnqtNdRpipoW8W1KXwn`／回滾 `dpl_5NbCqVpDfsnK3uKTWqdB4Ff3VKKD`（eolOnly 0） |
 
-- 使用者已於本側邊對話核准「上線」。PR66 已合併，教師 reader 已從乾淨 main 81f4e41 套用；PR67 快照 163 函式／105 表／21 policy／13 trigger，live ok:true，舊函式未異動。正式教師角色正向查詢、額外目標鍵拒絕與學生狀態不變通過（唯讀交易 rollback，不是 Google UI 實測）。
-- Vercel link 自動新增環境檔與 .gitignore 行，已移除本次新增環境檔並還原該行，未公開憑證；正式尚未替換。先登記發布中，再從新乾淨 main 依腳本發布。登記前的 own start 已 abort。
-- 側邊對話獨立任務；主對話完成後，從 origin/main c2476a0 建立 `codex/teacher-student-tree-view-20261106`。本次唯一寫入者 Codex；工作區 `D:/projects/it-class-tcwu-worktrees/teacher-student-tree-view-20261106`。沒有合併、正式 SQL 套用或發布；沒有占用發布鎖。
-- 教師個人學習檔案新增「查看目前努力樹」，共用學生第一／二級視覺、寵物與紀念葉花；採教師專用唯讀 snapshot API，不觸發學生端升級、已讀或解鎖。詳 [設計、驗證與後續步驟](teacher-student-tree-20261106.md)。
-- 新增 `supabase/admin-learning-tree.sql`；正式套用需使用者在本側邊對話明確同意，再走 PR、main、快照 live check 與正式發布腳本。**不可沿用主對話其他任務的發布核准。**
-- Node／SQL 41 項通過；隔離瀏覽器 19 項通過（含三寵物×兩樹型、手機版、換帳號清空、輔助技術提示與圖檔失敗診斷）。真實 Google／正式學生正向資料尚未驗證；花色為裝置偏好，教師明示來源配色限制。最終 runtime 版本已重跑瀏覽器驗證。
-- 草稿 [PR66](https://github.com/chianwu-hash/it-class-tcwu/pull/66)，實作 commit `0a08a7b`。
-- 下一步：讓使用者檢視草稿 PR 與畫面，取得正式 SQL／發布同意後再接續；目前學生原流程不變、原任務與紀錄未寫入。
+- 使用者已核准「上線」。PR66 實作、PR67 資料庫快照、PR68 發布登記均已進 main；新乾淨 main `639a44e` 經正式 start/deploy/promote，臺灣 2026-11-06 16:20:41 上線。
+- 完整樹 ok:true，7 修改／2 新增／0 刪除／0 非預期／eolOnly 0。正式 9 檔與 main 位元組相同，正式部署 `dpl_EpnHcYKxAxnqtNdRpipoW8W1KXwn`，鎖已釋放。[發布收據](teacher-student-tree-release-20261106.json)。
+- 僅新增教師唯讀函式；正式 snapshot/live check 通過（163 函式、105 表/view、21 policy、13 trigger），既有函式與資料表定義未變。正式教師角色讀取及額外目標鍵拒絕通過，唯讀交易前後成長、寵物、樹型、解鎖資料不變。
+- 真實 Google 教師已登入的工作瀏覽器，正式走過個人檔案選學生 → 查看目前努力樹 → 資料成功載入；未登入 RPC HTTP401。僅保留布林驗證結果，未保存正式學生明細／截圖。41 Node/SQL 與 19 合成瀏覽器檢查通過。
+- 本次寫入者 Codex。教師共用原樹形／寵物場景；花色是學生裝置偏好，教師明示採來源配色。詳 [設計與驗證](teacher-student-tree-20261106.md)。
+- 收據 PR 合併後依 SOP 封存必要證據並正常清理本次已完成工作目錄；未完成／使用中／其他對話目錄保留，純收尾收據留 repo 外，不再觸發網站發布。
 
 # 2026-11-06 夥伴答題底部下一步（已正式發布）
 
