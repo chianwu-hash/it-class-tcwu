@@ -1,3 +1,15 @@
+# 2026-11-06 畫筆顏色與整筆橡皮擦（發布中）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 發布中 | Codex-color-eraser-20261106 | 待start | PR後新乾淨main | 由alias與腳本鎖定 | 11修改、sketch-model新增；另更新媒體Edge | 待腳本驗證 |
+
+- 使用者要求換色與橡皮擦。Codex唯一寫入者，fresh branch codex/partner-color-eraser-20261106。六色、整筆擦除、20步復原，保留清除確認與私有草稿。見[行為與驗證](partner-sketch-tools-20261106.md)。
+- 前端與Edge追加可選colors，既有格式／hash相容；不改SQL、權限、任務紀錄或獎勵。35 Node、22合成瀏覽器通過（本機實際SQL與Edge handler），真實平板／正式雙人未測。390px通過，已看桌機／手機圖。AGY第二輪9b15789無可確認P1/P2（第一輪空擦dirty已修）；viewer／工具拒絕／Git不變通過。下一步PR。
+- 若發布，必須PR進main後從新乾淨main部署Edge，再依正式發布腳本切前端；不重播任何SQL。發布鎖須空。按使用者既有授權與PR發布流程處理。
+
 # 2026-11-06 共同營地收進固定答題操作列（已正式發布）
 
 ## 發布登記

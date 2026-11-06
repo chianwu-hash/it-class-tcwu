@@ -6,3 +6,5 @@
  :scope .message-sketch-dialog{width:min(800px,96vw);max-height:95dvh;border:1px solid #b5d5c9;border-radius:18px;color:inherit}:scope .message-sketch-dialog::backdrop{background:#123f4b66}:scope .message-sketch-dialog svg{display:block;width:100%;background:white}
  @media(max-width:500px){:scope .media-modes{flex-wrap:nowrap}:scope .media-modes button{font-size:12px;padding:9px 6px;flex:1}}
 }
+
+.sketch-palette{gap:6px;margin-bottom:10px;flex-wrap:wrap}.sketch-palette button{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:8px 10px}.sketch-color-dot{display:inline-block;width:17px;height:17px;border-radius:50%;border:1px solid #fff;box-shadow:0 0 0 1px #7c9494}.sketch-palette [aria-pressed="true"]{outline:3px solid #137c7b;outline-offset:1px;background:#e1f4ee;color:#144c4e}.camp-sketch-board[data-tool="eraser"]{cursor:crosshair}
