@@ -1,0 +1,84 @@
+{
+  "production": "dpl_5NbCqVpDfsnK3uKTWqdB4Ff3VKKD",
+  "source": "5729738c86f53438c21a6a8c89aa9153e6e49cbf",
+  "rollback": "dpl_Es2QRFbCVEDHFCRAT3f7L1PZpanW",
+  "promotedAt": "2026-11-06T07:14:15.323Z",
+  "fullTree": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/learning.js",
+      "shared/partner-pilot/outcomes.css"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "formalAssets": [
+    {
+      "path": "grade3/115-1/partner-practice.html",
+      "status": 200,
+      "sha256": "94ed05f19aee5eaff6b5afb03668ca9d82d071a0716c9c0c4735d4d686f07bfb",
+      "matches_main_checkout": true
+    },
+    {
+      "path": "grade4/115-1/partner-practice.html",
+      "status": 200,
+      "sha256": "ef701a4477e0704a749ae547c806e57738ba1c810c7e00c5b361772680d9ab2e",
+      "matches_main_checkout": true
+    },
+    {
+      "path": "grade6/115-1/partner-practice.html",
+      "status": 200,
+      "sha256": "9c0b928b81dc1cf53e57a6eb696c4787f0cb85bbe8ad31db89356173a1aa64ea",
+      "matches_main_checkout": true
+    },
+    {
+      "path": "grade9/115-1/partner-practice.html",
+      "status": 200,
+      "sha256": "c1d5ec9db92758ad6d0cfb5c8d52a725c736d124c36a3ea5a349975be62f8cb5",
+      "matches_main_checkout": true
+    },
+    {
+      "path": "shared/partner-pilot/app.mjs",
+      "status": 200,
+      "sha256": "8735fe3a6270c66989bf4c13abb356a65cfa07b3079aed75e85c2ffd221caaae",
+      "matches_main_checkout": true
+    },
+    {
+      "path": "shared/partner-pilot/learning.js",
+      "status": 200,
+      "sha256": "8a8af34a1b79ed5e5010f81c5f0c147397fbe6323bdf25604c03e853e3306826",
+      "matches_main_checkout": true
+    },
+    {
+      "path": "shared/partner-pilot/outcomes.css",
+      "status": 200,
+      "sha256": "6069d3b2681030a2edd95b8b17316784a8e5ee36196e629b7f9fbfc71891bc01",
+      "matches_main_checkout": true
+    }
+  ],
+  "nodeTestsPassed": 8,
+  "syntheticBrowserDOMChecksPassed": 13,
+  "formalStudentDataWritten": false,
+  "unverified": [
+    "背景截圖及真滑鼠點擊",
+    "實體手機觸控",
+    "正式雙帳號完整作答／回顧／計獎"
+  ],
+  "accidentalProjectRemoved": "partner-next-step-release-20261106"
+}

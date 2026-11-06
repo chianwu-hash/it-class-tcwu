@@ -1,4 +1,14 @@
-# 2026-11-06 夥伴答題底部下一步（待發布）
+# 2026-11-06 夥伴答題底部下一步（已正式發布）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-partner-next-step-20261106 | 2026-11-06T07:13:15.917Z | `5729738` | `dpl_Es2QRFbCVEDHFCRAT3f7L1PZpanW` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/outcomes.css | `dpl_5NbCqVpDfsnK3uKTWqdB4Ff3VKKD`／回滾 `dpl_Es2QRFbCVEDHFCRAT3f7L1PZpanW`（eolOnly 0） |
+
+- PR64 已進 main，新乾淨 main 5729738 經官方發布腳本，臺灣 2026-11-06 15:14:15 上線。完整樹 ok:true、7 修改、0 新增／刪除／非預期／換行例外；正式 7 檔位元組與 main checkout 一致，發布鎖已釋放。[發布收據](partner-review-next-step-release-20261106.json)。
+- 初次候選因新目錄缺少 Vercel 綁定，被腳本的專案識別守衛阻擋，沒有替換正式站；已 abort 自己的鎖、修正綁定並刪除僅含該候選的誤建專案，再重新執行 start/deploy/promote。已把綁定檢查補入 SOP。
+
 
 - 本次唯一寫入者 Codex，分支 codex/partner-review-next-step-20261106，從最新 main c10c449 建立。答題底部新增未送出／等夥伴／共同回顧／紀錄冊的明確下一步，依既有 server 狀態切換，不變更回顧門檻、原任務、答案或計獎。詳 [實作與驗證](partner-review-next-step-20261106.md)。
 - 8 項 Node 與隔離瀏覽器 13 項 DOM 檢查通過，模組語法及 diff 檢查通過。背景截圖／真滑鼠及實體手機觸控、正式雙帳號未驗；不冒稱通過。沒有 SQL 變更。
