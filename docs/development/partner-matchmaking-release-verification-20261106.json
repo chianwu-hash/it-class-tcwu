@@ -1,0 +1,284 @@
+{
+  "recordedAtUTC": "2026-11-06T06:32:48.325945+00:00",
+  "release": {
+    "agent": "Codex-partner-matchmaking-20261106",
+    "commit": "fe0fb003a6ab9d455b547f1cb70d51d1685a3816",
+    "baseline": "dpl_HnPy1eaz92ktXsjut7Z9LnXeBcXo",
+    "expected": {
+      "changed": [
+        "grade3/115-1/partner-practice.html",
+        "grade4/115-1/partner-practice.html",
+        "grade6/115-1/partner-practice.html",
+        "grade9/115-1/partner-practice.html",
+        "shared/partner-pilot/app.mjs",
+        "shared/partner-pilot/presentation.mjs",
+        "shared/partner-pilot/team-flow.css",
+        "shared/partner-pilot/team-flow.mjs",
+        "shared/quiz-transport.mjs"
+      ],
+      "added": [
+        "shared/partner-pilot/matchmaking.mjs"
+      ],
+      "removed": []
+    },
+    "startedAt": "2026-11-06T06:20:14.440Z",
+    "state": "promoted",
+    "candidate": "dpl_Es2QRFbCVEDHFCRAT3f7L1PZpanW",
+    "comparison": {
+      "ok": true,
+      "changed": [
+        "grade3/115-1/partner-practice.html",
+        "grade4/115-1/partner-practice.html",
+        "grade6/115-1/partner-practice.html",
+        "grade9/115-1/partner-practice.html",
+        "shared/partner-pilot/app.mjs",
+        "shared/partner-pilot/presentation.mjs",
+        "shared/partner-pilot/team-flow.css",
+        "shared/partner-pilot/team-flow.mjs",
+        "shared/quiz-transport.mjs"
+      ],
+      "added": [
+        "shared/partner-pilot/matchmaking.mjs"
+      ],
+      "removed": [],
+      "eolOnly": 0,
+      "unexpected": [],
+      "missingFromChange": [],
+      "addedCheck": {
+        "missing": [],
+        "unexpected": []
+      },
+      "removedCheck": {
+        "missing": [],
+        "unexpected": []
+      }
+    },
+    "deployedAt": "2026-11-06T06:20:48.353Z",
+    "promotedAt": "2026-11-06T06:25:25.739Z",
+    "alias": "dpl_Es2QRFbCVEDHFCRAT3f7L1PZpanW",
+    "rollback": "dpl_HnPy1eaz92ktXsjut7Z9LnXeBcXo",
+    "handoffRow": "| 已完成 | Codex-partner-matchmaking-20261106 | 2026-11-06T06:20:14.440Z | `fe0fb00` | `dpl_HnPy1eaz92ktXsjut7Z9LnXeBcXo` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/presentation.mjs、shared/partner-pilot/team-flow.css、shared/partner-pilot/team-flow.mjs、shared/quiz-transport.mjs、+shared/partner-pilot/matchmaking.mjs | `dpl_Es2QRFbCVEDHFCRAT3f7L1PZpanW`／回滾 `dpl_HnPy1eaz92ktXsjut7Z9LnXeBcXo`（eolOnly 0） |"
+  },
+  "candidateAssets": [
+    {
+      "file": "grade3/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "d928719f12ec3c737a18b8faae55da73afa0119775e4f29e9632adca37c133b6"
+    },
+    {
+      "file": "grade4/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "5e4b2ecdd0a46237976bd8a8ee5ad802fa42daa67d9c5aa7e3c73a15a9a952d5"
+    },
+    {
+      "file": "grade6/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "42ed6bdab9dcc6183bed7015957941945b0eda2b140e5a6d5b043e97e3ea7851"
+    },
+    {
+      "file": "grade9/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "1d7ba426ac0d3ccf367042c57185168df4a6a0c0e71e9b00d5c170c39cb4c46e"
+    },
+    {
+      "file": "shared/partner-pilot/app.mjs",
+      "ok": true,
+      "sha256": "f37ef0cd0f79bf31224f4bd5ae8492063ff194aa3357ba284e5d719ebcdb9ec3"
+    },
+    {
+      "file": "shared/partner-pilot/presentation.mjs",
+      "ok": true,
+      "sha256": "8eb0f370cb72de5e45e0a7628544bba698b725070bd6b543104925574ba2ed6c"
+    },
+    {
+      "file": "shared/partner-pilot/team-flow.css",
+      "ok": true,
+      "sha256": "185b50a5f857d0a422f33762b0a8fd0034624ce8677d0f8e134e87ca7401a9ac"
+    },
+    {
+      "file": "shared/partner-pilot/team-flow.mjs",
+      "ok": true,
+      "sha256": "d57de89279f3b35e645dc76d48f024b04db3ae85e0114807ebc7a83fa8b8bfa8"
+    },
+    {
+      "file": "shared/quiz-transport.mjs",
+      "ok": true,
+      "sha256": "0d2d2116cb81f70bb40cec2ae1744e618894c06a464664ea849511cc08f20964"
+    },
+    {
+      "file": "shared/partner-pilot/matchmaking.mjs",
+      "ok": true,
+      "sha256": "f1e65a29ed2daac1528deacd8d61e8c611c795b5a2fbcc058edabe88ee13b67a"
+    }
+  ],
+  "productionAssets": [
+    {
+      "file": "grade3/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "d928719f12ec3c737a18b8faae55da73afa0119775e4f29e9632adca37c133b6"
+    },
+    {
+      "file": "grade4/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "5e4b2ecdd0a46237976bd8a8ee5ad802fa42daa67d9c5aa7e3c73a15a9a952d5"
+    },
+    {
+      "file": "grade6/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "42ed6bdab9dcc6183bed7015957941945b0eda2b140e5a6d5b043e97e3ea7851"
+    },
+    {
+      "file": "grade9/115-1/partner-practice.html",
+      "ok": true,
+      "sha256": "1d7ba426ac0d3ccf367042c57185168df4a6a0c0e71e9b00d5c170c39cb4c46e"
+    },
+    {
+      "file": "shared/partner-pilot/app.mjs",
+      "ok": true,
+      "sha256": "f37ef0cd0f79bf31224f4bd5ae8492063ff194aa3357ba284e5d719ebcdb9ec3"
+    },
+    {
+      "file": "shared/partner-pilot/presentation.mjs",
+      "ok": true,
+      "sha256": "8eb0f370cb72de5e45e0a7628544bba698b725070bd6b543104925574ba2ed6c"
+    },
+    {
+      "file": "shared/partner-pilot/team-flow.css",
+      "ok": true,
+      "sha256": "185b50a5f857d0a422f33762b0a8fd0034624ce8677d0f8e134e87ca7401a9ac"
+    },
+    {
+      "file": "shared/partner-pilot/team-flow.mjs",
+      "ok": true,
+      "sha256": "d57de89279f3b35e645dc76d48f024b04db3ae85e0114807ebc7a83fa8b8bfa8"
+    },
+    {
+      "file": "shared/quiz-transport.mjs",
+      "ok": true,
+      "sha256": "0d2d2116cb81f70bb40cec2ae1744e618894c06a464664ea849511cc08f20964"
+    },
+    {
+      "file": "shared/partner-pilot/matchmaking.mjs",
+      "ok": true,
+      "sha256": "f1e65a29ed2daac1528deacd8d61e8c611c795b5a2fbcc058edabe88ee13b67a"
+    }
+  ],
+  "productionBrowser": {
+    "checks": [
+      {
+        "name": "grade 3 deployed page boots with original navbar",
+        "ok": true
+      },
+      {
+        "name": "grade 3 loads reviewed matchmaking module",
+        "ok": true
+      },
+      {
+        "name": "grade 4 deployed page boots with original navbar",
+        "ok": true
+      },
+      {
+        "name": "grade 4 loads reviewed matchmaking module",
+        "ok": true
+      },
+      {
+        "name": "grade 6 deployed page boots with original navbar",
+        "ok": true
+      },
+      {
+        "name": "grade 6 loads reviewed matchmaking module",
+        "ok": true
+      },
+      {
+        "name": "grade 9 deployed page boots with original navbar",
+        "ok": true
+      },
+      {
+        "name": "grade 9 loads reviewed matchmaking module",
+        "ok": true
+      },
+      {
+        "name": "authorized test account sees enabled optional matchmaking",
+        "ok": true
+      },
+      {
+        "name": "authorized test account sees five new twenty-question teacher papers",
+        "ok": true
+      },
+      {
+        "name": "no uncaught page exceptions",
+        "ok": true
+      }
+    ],
+    "errors": [],
+    "formalTestAccountEntryAndCatalogVerified": true,
+    "realTwoMachineAndAnswersVerified": false,
+    "studentAnswersWritten": false
+  },
+  "anonymousAPI": [
+    {
+      "rpc": "quiz_partner_match_action",
+      "status": 401
+    },
+    {
+      "rpc": "quiz_partner_pilot_action",
+      "status": 401
+    }
+  ],
+  "matchingEnabled": {
+    "atUTC": "2026-11-06T06:28:17.846578+00:00",
+    "sourceMain": "fe0fb003a6ab9d455b547f1cb70d51d1685a3816",
+    "deployment": "dpl_Es2QRFbCVEDHFCRAT3f7L1PZpanW",
+    "sql": "supabase/quiz-partner-matchmaking-enable.sql",
+    "sha256": "6436253ea7506db76714f6e329148935f3dd3bcb7b73f90b13fb1e273ee1841c",
+    "policies": [
+      {
+        "grade": 3,
+        "enabled": true,
+        "batch_seconds": 30,
+        "lease_seconds": 120,
+        "handoff_seconds": null,
+        "close_seconds": null
+      },
+      {
+        "grade": 4,
+        "enabled": true,
+        "batch_seconds": 30,
+        "lease_seconds": 120,
+        "handoff_seconds": null,
+        "close_seconds": null
+      },
+      {
+        "grade": 6,
+        "enabled": true,
+        "batch_seconds": 30,
+        "lease_seconds": 120,
+        "handoff_seconds": null,
+        "close_seconds": null
+      },
+      {
+        "grade": 9,
+        "enabled": true,
+        "batch_seconds": 30,
+        "lease_seconds": 120,
+        "handoff_seconds": null,
+        "close_seconds": null
+      }
+    ],
+    "ok": true
+  },
+  "postReleaseStatus": {
+    "lock": null,
+    "production": "dpl_Es2QRFbCVEDHFCRAT3f7L1PZpanW",
+    "alias": "dpl_Es2QRFbCVEDHFCRAT3f7L1PZpanW",
+    "originMain": "fe0fb003a6ab9d455b547f1cb70d51d1685a3816"
+  },
+  "databaseVerification": "partner-matchmaking-db-verification-20261106.json",
+  "regressionVerification": "partner-matchmaking-verification-20261106.json",
+  "realTwoMachineFullLearningFlowVerified": false,
+  "realPostgresContentionVerified": false,
+  "physicalTabletAndMicrophoneVerified": false,
+  "allFormalQuestionMediaDownloadsVerified": false,
+  "studentAnswersWritten": false,
+  "growthFirstSeenConsumed": false
+}
