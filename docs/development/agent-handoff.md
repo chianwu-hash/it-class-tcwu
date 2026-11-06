@@ -10,6 +10,22 @@
 - Codex唯一寫入者，fresh branch codex/partner-compact-header-20261106。8 Node、33合成瀏覽器通過：1920／1366／1024／390px、含正常長題組名稱，桌機header<78px、手機<120px、題目間距<20px、選單靠右且展開不推題目，原請教標記草稿／送答、回顧來回與題次不重複皆通過；已看桌機與手機截圖，pageerror0。
 - 沒有SQL、認證、題庫、答題與計葉花改動。真實多人整流程／實體觸控未驗，不能把合成測試當實班驗證。證據在本批ignored .chat-mode/evidence/compact-header/；候選完整樹通過後發布，完成正式資產比對與收據，再封存清理本批工作區。
 
+# 2026-11-06 畫圖清除確認與儲存草稿（已正式發布）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-drawing-draft-20261106 | 2026-11-06T11:41:41.113Z | `db4594e` | `dpl_EJGnWZCFfX2ZUbWA3vVMVqhtKxtk` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/camp-panel.mjs、shared/partner-pilot/message-composer.mjs、shared/partner-pilot/sketch-editor.mjs | `dpl_H8aqWahtSsRcvn5zchMNga2UvRNj`／回滾 `dpl_EJGnWZCFfX2ZUbWA3vVMVqhtKxtk`（eolOnly 0） |
+
+- PR79已進main（取代PR75）；新乾淨main db4594e經start/deploy/promote，臺灣2026-11-06 19:42:36上線。完整樹ok:true（9改、0新增刪除、0非預期、eolOnly0）；正式9變更檔及最新共用樣式／努力樹共12檔與main位元組一致，鎖已釋放。[發布收據](partner-drawing-draft-release-20261106.json)。
+- 整合最新請教與標記介面，保留「這題不能只有我知道」文案及晚到回應的草稿保護；合併後31 Node、16本機合成瀏覽器通過。沒有SQL、作答／回顧／計獎格式變更。實體筆／平板與正式雙帳號整流程未測；不以合成測試冒稱實班驗收。
+- 清除／移除都先確認；新增儲存草稿可留在原地，成功提示不會傳給隊友，失敗保留，重新進入可接回。AGY第二輪無可確認P1/P2。收據進main後依SOP只清本批已完成、未使用目錄；使用中的AGY viewer與舊被拒絕清理目錄保留。
+
+- 使用者要求避免誤清，並能儲存畫圖草稿。唯一寫入者 Codex；fresh branch codex/partner-drawing-draft-20261106。不改資料庫與紀錄，不影響既有儲存退出。
+- 新增確認與留在原畫面的私有草稿保存；31 Node／16 合成瀏覽器通過，已看截圖；實體觸控／正式雙帳號未測。[行為與驗證](partner-drawing-draft-20261106.md)。
+- AGY 兩輪供應文字討論完成，修正移除按鈕同步後，第二輪無可確認 P1/P2；viewer／工具邊界／Git不變通過，runtime dcebaca。已依使用者指示透過PR、乾淨main與發布腳本上線，保留他人最新努力樹發布。從最新main 4673eea另開integration工作區，保留已上線請教／標記及原文案；合併後重跑31 Node／16合成瀏覽器通過。原PR75由新整合PR取代，部署只用全新乾淨main。
+
 # 2026-11-06 還原「這題不能只有我知道」（已正式發布）
 
 ## 發布登記
