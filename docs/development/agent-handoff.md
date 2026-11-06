@@ -1,14 +1,14 @@
-# 2026-11-06 還原「這題不能只有我知道」（發布中）
+# 2026-11-06 還原「這題不能只有我知道」（已正式發布）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-restore-sharing-copy-20261106 | 待start | PR合併後新乾淨main | 正式alias由腳本鎖定 | shared/partner-pilot/learning.js、focused.css | 還原使用者指定核心文案，不改流程或資料 |
+| 已完成 | Codex-restore-sharing-copy-20261106 | 2026-11-06T11:34:20.737Z | `06ed389` | `dpl_JAheFRzwF3bapEpUNVX6sxKLzdSA` | shared/partner-pilot/learning.js、shared/partner-pilot/focused.css | `dpl_EJGnWZCFfX2ZUbWA3vVMVqhtKxtk`／回滾 `dpl_JAheFRzwF3bapEpUNVX6sxKLzdSA`（eolOnly 0） |
 
-- 使用者明確指出「這題不能只有我知道」不能改。已以單一sharingLabel常數保留原文，未標記與已標記狀態都維持完整句子，僅星號／勾號與title區別狀態；隱藏summary同步原文。今後簡化介面不可把這句改成一般「標記這題」。
-- 保留剛完成的簡潔表單，只調整按鈕彈性寬度以容納完整中文。標記鍵、提交、草稿、回顧、答案與花葉皆未改；無SQL。唯一寫入者Codex，fresh branch codex/restore-question-sharing-copy-20261106。
-- 既有22項合成瀏覽器回歸通過，包含桌機／390px全寬無溢出、完整文案、標記狀態、草稿與原送答。模組語法與diff檢查通過。證據在本批ignored .chat-mode，完成發布後補收據與正式資產比對。
+- 使用者明確指定「這題不能只有我知道」不能改。已還原為單一sharingLabel固定文案，未標記／已標記都保留原句，以星號或勾號區別。後續簡化介面不得改寫這句。
+- PR77進main後，新乾淨main 06ed389依正式腳本發布；完整樹ok:true，2改／0新增刪除／0非預期／eolOnly0。正式2檔與main一致，完整文案已入正式來源；鎖已釋放。[發布收據](sharing-copy-release-20261106.json)。
+- 保留簡潔版面，僅調整按鈕彈性寬度容納原句。既有22項合成瀏覽器回歸、語法與diff檢查通過，含桌機與390px、標記狀態、草稿、考古小題及原送答；沒有SQL、任務、紀錄或計獎變更。唯一寫入者Codex，收據進main後封存並清理本批工作區。
 
 # 2026-11-06 請教與標記操作簡化（已正式發布）
 
