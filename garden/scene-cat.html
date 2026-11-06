@@ -199,7 +199,7 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
     POSES.surprise={size:a.canvas.size,anchor:a.canvas.anchor,medianVisibleH:a.canvas.referenceHeight,visibleBoxes:a.group.visibleBoxes};
     imgs.social.surprise=a.images;
   }));
-  waits.push(import('/shared/reward-source-colors.mjs').then(function(m){rewardColors=m}));
+  waits.push(import('/shared/reward-source-colors.mjs?v=20261106-keepsake').then(function(m){rewardColors=m;m.bindRewardHover(canvas,rewardAtPointer)}));
   var flowerAsset = loadImg('./assets/processed/motion-web/flower.webp'); imgs.flower = flowerAsset.im; waits.push(flowerAsset.p.catch(function(){imgs.flower=null;assetStatus.report("flower","部分花朵圖片暫時無法顯示，成果仍完整保留。",false)}));var pastFlower=loadImg('/assets/reward-tree/flowers/flower-forest.png');imgs.pastFlower=pastFlower.im;waits.push(pastFlower.p.catch(function(){imgs.pastFlower=null;assetStatus.report("past-flower","考古花圖片暫時無法顯示，成果仍完整保留。",false)}));
   CAT.frames.forEach(function (f) { var r = loadImg(CAT.base + f); imgs.cat.push(r.im); waits.push(r.p); });
   Object.keys(POSES).filter(function (k) { return k !== 'walk'; }).forEach(function (g) { imgs.social[g] = []; POSES[g].frames.forEach(function (f) { var r = loadImg(POSES[g].base + f); imgs.social[g].push(r.im); waits.push(r.p); }); });
@@ -449,7 +449,8 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
         ctx.beginPath(); ctx.moveTo(p.anchor[0], p.anchor[1]); ctx.lineTo(p.x, p.y); ctx.stroke();
         ctx.translate(p.x, p.y); ctx.rotate(p.angle); ctx.scale(.85, .85);
         var g = ctx.createRadialGradient(-4, -3, 1, 0, 0, 17);
-        var palette=rewardColors&&rewardColors.rewardPalette(reward,rewardColorMode);
+        if(rewardColors&&rewardColors.paintPartnerKeepsake(ctx,0,0,36,reward)){ctx.restore();return;}
+      var palette=rewardColors&&rewardColors.rewardPalette(reward,rewardColorMode);
         if(palette){palette.leaf.forEach(function(color,index){g.addColorStop(index/2,color)})}
         else if (p.kind === 'quiz') { g.addColorStop(0, '#92e0d3'); g.addColorStop(.55, '#39a9a3'); g.addColorStop(1, '#247b82'); }
         else { g.addColorStop(0, '#bbdf80'); g.addColorStop(.55, '#6fb14f'); g.addColorStop(1, '#3a7d47'); }
@@ -858,6 +859,7 @@ main{padding:0 4px 8px}body{background:#f3faf6}section[aria-label="所在地與�
   };
   window.__gardenShelterV21 = api;
   window.addEventListener('message',function(e){if(e.origin!==location.origin||e.source!==parent||e.data?.type!=='garden-state')return;api.configure(e.data);});
+  function rewardAtPointer(e){if(!FULL_LAYOUT||finishSkinTransition)return null;var b=canvas.getBoundingClientRect(),x=((e.clientX-b.left)/cssScale+view.cam-480)/1.16+380,y=((e.clientY-b.top)/cssScale-725)/1.16+690,best=null,distance=28;[['leaves',earnedLeaves],['flowers',earnedFlowers]].forEach(function(pair){FULL_LAYOUT[tree][pair[0]].forEach(function(p,i){if(!pair[1][i])return;var d=Math.hypot(p.x-x,p.y-y);if(d<distance){distance=d;best=pair[1][i]}})});return best;}
   canvas.addEventListener('click',function(e){if(!FULL_LAYOUT||finishSkinTransition)return;var b=canvas.getBoundingClientRect(),x=((e.clientX-b.left)/cssScale+view.cam-480)/1.16+380,y=((e.clientY-b.top)/cssScale-725)/1.16+690,best=null,distance=28;
     [['leaves',earnedLeaves],['flowers',earnedFlowers]].forEach(function(pair){FULL_LAYOUT[tree][pair[0]].forEach(function(p,i){if(!pair[1][i])return;var d=Math.hypot(p.x-x,p.y-y);if(d<distance){distance=d;best=pair[1][i];}});});
     var pendingHit=false;distance=Math.min(distance,20);[['leaves',pendingLeaves,earnedLeaves.length],['flowers',pendingFlowers,earnedFlowers.length]].forEach(function(pair){pair[1].forEach(function(r,i){var p=FULL_LAYOUT[tree][pair[0]][pair[2]+i];if(!p)return;var d=Math.hypot(p.x-x,p.y-y);if(d<distance){distance=d;best=r;pendingHit=true}})});

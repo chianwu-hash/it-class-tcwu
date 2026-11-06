@@ -8,6 +8,7 @@
 .partner-content .outcome-unsent{border-left:4px solid #c68b13;padding:10px 14px;border-radius:10px}
 .partner-content .partner-celebration{position:relative;background:linear-gradient(115deg,#eff9e9,#fff8e6);border:2px solid #b8cf91;display:flex;align-items:center;gap:20px}
 .partner-content .celebration-symbol{font-size:64px;display:block;flex-shrink:0;animation:partner-keepsake-bloom 1.4s ease-out 1}
+.partner-content .celebration-symbol svg{display:block;width:1em;height:1em;overflow:visible}
 .partner-content .celebration-copy{min-width:0;flex:1}
 .partner-content .celebration-copy h2{font-size:22px;margin:0}
 .partner-content .celebration-close{align-self:flex-start;white-space:nowrap}

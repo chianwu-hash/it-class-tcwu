@@ -273,6 +273,7 @@
       ctx.beginPath(); ctx.moveTo(p.anchor[0], p.anchor[1]); ctx.lineTo(p.x, p.y); ctx.stroke();
       ctx.translate(p.x, p.y); ctx.rotate(p.angle); ctx.scale(.85, .85);
       var g = ctx.createRadialGradient(-4, -3, 1, 0, 0, 17);
+      if(rewardColors&&rewardColors.paintPartnerKeepsake(ctx,0,0,36,earnedLeaves[i])){ctx.restore();return;}
       var palette=rewardColors&&rewardColors.rewardPalette(earnedLeaves[i],rewardColorMode);
       if(palette){palette.leaf.forEach(function(color,index){g.addColorStop(index/2,color)})}
       else if (quiz) { g.addColorStop(0, '#92e0d3'); g.addColorStop(.55, '#39a9a3'); g.addColorStop(1, '#247b82'); }
@@ -491,7 +492,7 @@
     loadJson(V3_ROOT + 'manifest.json').then(function (m) { v3m = m; }).catch(function () { v3m = null; }),
     loadJson(DIAG_ROOT + 'manifest.json').then(function (m) { diagM = m; }).catch(function () { diagM = null; }),
     loadJson('./assets/processed/full-tree-v12/layout.json').then(function (j) { layout = j; }).catch(function () {}),
-    import('/shared/reward-source-colors.mjs').then(function(m){rewardColors=m}),
+    import('/shared/reward-source-colors.mjs?v=20261106-keepsake').then(function(m){rewardColors=m;m.bindRewardHover(canvas,rewardAtPointer)}),
     loadImage('/assets/reward-tree/flowers/flower-forest.png').then(function(im){imgs.pastFlower=im}).catch(function(){assetStatus.report("past-flower","考古花圖片暫時無法顯示，成果仍完整保留。",false)}),
     loadImage('./assets/processed/motion-web/flower.webp').then(function (im) { imgs.flower = im; }).catch(function () {assetStatus.report('flower','部分花朵圖片暫時無法顯示，成果仍完整保留。',false)}),
     loadJson(HOME_ROOT + 'manifest.json').then(function (m) { homesM = m; return loadHomes(); }).catch(function () { homesM = null; homeError = '尚無 manifest'; })
@@ -506,6 +507,7 @@
     schedule();
   }).catch(function(e){loadError=e.message;playing=false;assetStatus.report('essential','花園圖片暫時無法讀取，請重新讀取。學習成果都保留著。',true);updateStatus(true)});
 
+  function rewardAtPointer(e){if(!rewardsOn||!layout||!layout[tree])return null;var b=canvas.getBoundingClientRect(),x=((e.clientX-b.left)/cssScale+CAM-480)/1.16+CENTER_X,y=((e.clientY-b.top)/cssScale-725)/1.16+ROOT_Y,best=null,distance=26;[['leaves',earnedLeaves],['flowers',earnedFlowers]].forEach(function(pair){pair[1].forEach(function(r,i){var p=layout[tree][pair[0]][i];if(!p||!r)return;var d=Math.hypot(p.x-x,p.y-y);if(d<distance){distance=d;best=r}})});return best;}
   canvas.addEventListener('click',function(e){
     if(!layout||!layout[tree])return;var b=canvas.getBoundingClientRect(),x=((e.clientX-b.left)/cssScale+CAM-480)/1.16+CENTER_X,y=((e.clientY-b.top)/cssScale-725)/1.16+ROOT_Y,best=null,pending=false,distance=26;
     [['leaves',earnedLeaves],['flowers',earnedFlowers]].forEach(function(pair){pair[1].forEach(function(r,i){var p=layout[tree][pair[0]][i];if(!p||!r)return;var d=Math.hypot(p.x-x,p.y-y);if(d<distance){distance=d;best=r}})});

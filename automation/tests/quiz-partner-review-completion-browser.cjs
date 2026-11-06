@@ -35,7 +35,8 @@ await click(q,`[data-resume="${id}"]`);await q.waitForSelector('form[data-form=r
 await click(p,`[data-resume="${id}"]`);await p.waitForSelector('form[data-form=review]');
 await click(q,'form[data-form=review] button');await wait(q,()=>document.querySelector('[data-focus-content]').textContent.includes('我們的共同紀錄冊'));
 check('last review automatically shows summary and real awarded leaf',await q.$eval('[data-celebration]',e=>e.textContent.includes('1 片紀念葉')));
-check('explicit final acknowledgment focuses summary heading',await q.evaluate(()=>document.activeElement===document.querySelector('[data-focus-content] h2')));
+check('explicit final acknowledgment focuses summary heading',await q.evaluate(()=>document.activeElement===document.querySelector('[data-celebration] h2')));
+check('celebration is inside viewport after final acknowledgment',await q.$eval('[data-celebration] h2',e=>{const r=e.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight&&e.contains(document.elementFromPoint(r.left+r.width/2,r.top+r.height/2));}));
 await wait(p,()=>document.querySelector('[data-celebration]').textContent.includes('1 片紀念葉'));
 check('waiting peer gets award celebration without forced page switch',await p.$eval('.learning-tabs [data-view=review]',e=>e.getAttribute('aria-pressed')==='true'));
 await click(q,'.learning-tabs [data-view=review]');await q.waitForSelector('form[data-form=review]');const beforeUpdate=(await call(6,{action:'snapshot',roomId:id})).revision;await click(q,'form[data-form=review] button');await wait(q,()=>!document.querySelector('form[data-form=review] button')?.disabled);
@@ -44,6 +45,7 @@ check('updating a completed review stays on review instead of jumping away',awai
 await click(q,'[data-save-exit]');await q.waitForSelector('[data-records]');check('completed task leaves pending list',!await q.$('#resume-tasks'));
 await click(q,'[data-records]');check('record card confirms leaf was credited',await q.evaluate(()=>document.querySelector('[data-team-home]').textContent.includes('1 片紀念葉')));
 await click(q,`[data-resume="${id}"]`);await q.waitForSelector('.outcome-result');check('reentry preserves result without replay or repeat award',await q.$eval('[data-celebration]',e=>!e.textContent));
+const awardBefore=(await call(6,{action:'snapshot',roomId:id})).exercise.award;await click(q,'[data-replay-keepsake]');check('manual replay shows existing award and no duplicate issuance',await q.$eval('[data-celebration]',e=>e.textContent.includes('回看已收藏')&&e.textContent.includes('不會重複')));check('manual replay does not change server award',JSON.stringify((await call(6,{action:'snapshot',roomId:id})).exercise.award)===JSON.stringify(awardBefore));check('keepsake art uses matching twin-leaf SVG',await q.$eval('.memento svg',e=>e.getAttribute('viewBox')==='0 0 64 44'));
 fs.mkdirSync('.chat-mode/evidence/review-completion',{recursive:true});await p.screenshot({path:'.chat-mode/evidence/review-completion/mobile-review.png',fullPage:true});check('uncaught errors zero',!errors.length);
 fs.writeFileSync('.chat-mode/evidence/review-completion/browser.json',JSON.stringify({out,errors},null,2));console.log(JSON.stringify({passed:out.length,out,errors}));
 }catch(e){fs.mkdirSync('.chat-mode/evidence/review-completion',{recursive:true});fs.writeFileSync('.chat-mode/evidence/review-completion/failure.json',JSON.stringify({out,error:e.message,errors}));console.error(e);process.exitCode=1;}finally{if(q)await q.close();await p.close();await c.disconnect();}})();
