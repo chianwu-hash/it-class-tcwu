@@ -1,0 +1,60 @@
+{
+  "agent": "Codex-partner-compact-header-20261106",
+  "commit": "f96395b88ffa4d5b915a7dd3adcc38f8eba9f927",
+  "baseline": "dpl_H8aqWahtSsRcvn5zchMNga2UvRNj",
+  "expected": {
+    "changed": [
+      "shared/partner-pilot/learning.js",
+      "shared/partner-pilot/focused.css"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "startedAt": "2026-11-06T11:46:14.581Z",
+  "state": "promoted",
+  "candidate": "dpl_G5VoPkbtoPAgw6wA4oegjjmxLmDW",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "shared/partner-pilot/focused.css",
+      "shared/partner-pilot/learning.js"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-06T11:46:37.597Z",
+  "promotedAt": "2026-11-06T11:47:08.324Z",
+  "alias": "dpl_G5VoPkbtoPAgw6wA4oegjjmxLmDW",
+  "rollback": "dpl_H8aqWahtSsRcvn5zchMNga2UvRNj",
+  "handoffRow": "| 已完成 | Codex-partner-compact-header-20261106 | 2026-11-06T11:46:14.581Z | `f96395b` | `dpl_H8aqWahtSsRcvn5zchMNga2UvRNj` | shared/partner-pilot/learning.js、shared/partner-pilot/focused.css | `dpl_G5VoPkbtoPAgw6wA4oegjjmxLmDW`／回滾 `dpl_H8aqWahtSsRcvn5zchMNga2UvRNj`（eolOnly 0） |",
+  "formalVerification": {
+    "assetsMatch": true,
+    "fileCount": 2,
+    "originalSharingCopyPreserved": true
+  },
+  "localVerification": {
+    "nodeTests": 11,
+    "browserChecks": 33,
+    "widths": [
+      1920,
+      1366,
+      1024,
+      390
+    ],
+    "desktopHeaderMaxPx": 78,
+    "mobileHeaderMaxPx": 120,
+    "questionGapMaxPx": 20,
+    "realMultiStudentFullFlow": false
+  }
+}
