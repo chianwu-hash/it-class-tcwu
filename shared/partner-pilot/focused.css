@@ -168,3 +168,27 @@ body.quiz-workspace-desktop.partner-pilot .partner-content[data-stage=practice] 
 /* Preserve the full sharing invitation, including on narrow screens. */
 .partner-content .question-support-actions button{flex:1 1 90px}
 .partner-content .question-support-actions [data-toggle-mark]{flex:2 1 170px;white-space:normal;line-height:1.5}
+
+/* Put the task context across the available width instead of four stacked rows. */
+.partner-content[data-stage=practice] .partner-focus>.focus-team-bar{display:grid;grid-template-columns:minmax(0,1fr) max-content max-content max-content;grid-template-areas:"paper position progress menu";align-items:center;gap:8px 18px;min-width:0;padding:8px 0 12px;margin:0}
+.partner-content[data-stage=practice] .focus-team-bar>div:first-child{grid-area:paper;min-width:0}
+.partner-content[data-stage=practice] .focus-team-bar [data-paper-title]{margin:0;font-size:17px;line-height:1.45;font-weight:700;color:#17666e;overflow-wrap:anywhere}
+.partner-content[data-stage=practice] .focus-team-bar>.actions{display:contents}
+.partner-content[data-stage=practice] .focus-team-bar>.focus-progress{grid-area:progress;min-width:0;margin:0;gap:8px;white-space:nowrap;font-size:13px}
+.partner-content[data-stage=practice] .focus-team-bar>.focus-progress progress{width:100px;height:7px;flex:0 0 100px}
+.partner-content[data-stage=practice] .focus-team-bar>.focus-question-position{grid-area:position;margin:0;min-width:0}
+.partner-content[data-stage=practice] .focus-team-bar>.focus-question-position h2{margin:0;padding:5px 9px;border:1px solid #d3e7e4;border-radius:9px;background:#ffffffb3;font-size:13px;line-height:1.5;white-space:nowrap;color:#456b70}
+.partner-content[data-stage=practice] .focus-team-bar>.focus-team-info{grid-area:menu;position:relative;margin:0;min-width:0}
+.partner-content[data-stage=practice] .focus-team-bar>.focus-team-info>summary{min-height:40px;display:flex;align-items:center;padding:7px 10px;border:1px solid #c8e0dc;border-radius:10px;background:#fff;font-size:13px;list-style:none;cursor:pointer;white-space:nowrap}
+.partner-content[data-stage=practice] .focus-team-bar>.focus-team-info>summary::after{content:'▾';margin-left:6px}
+.partner-content[data-stage=practice] .focus-team-bar>.focus-team-info[open]>summary::after{content:'▴'}
+.partner-content[data-stage=practice] .focus-team-info-body{position:absolute;top:calc(100% + 8px);right:0;z-index:45;box-sizing:border-box;width:min(420px,calc(100vw - 48px));max-height:min(65vh,500px);overflow:auto;padding:18px;border:1px solid #c8e0dc;border-radius:16px;background:#fff;box-shadow:0 12px 35px #214d4726}
+.partner-content[data-stage=practice] .focus-team-info-body h2{font-size:16px;margin:0 0 8px}
+.partner-content[data-stage=practice] .focus-team-info-body .learning-tabs{margin-top:12px}
+@media(max-width:999px){
+ .partner-content[data-stage=practice] .partner-focus>.focus-team-bar{grid-template-columns:minmax(0,1fr) max-content;grid-template-areas:"paper menu" "position progress";gap:7px 10px;padding-top:4px}
+ .partner-content[data-stage=practice] .focus-team-bar [data-paper-title]{font-size:15px}
+ .partner-content[data-stage=practice] .focus-team-bar>.focus-progress{justify-content:flex-end;font-size:12px}
+ .partner-content[data-stage=practice] .focus-team-bar>.focus-question-position h2{font-size:12px;padding:3px 6px}
+ .partner-content[data-stage=practice] .focus-team-bar>.focus-progress progress{display:none}
+}
