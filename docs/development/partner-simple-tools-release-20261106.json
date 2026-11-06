@@ -1,0 +1,103 @@
+{
+  "agent": "Codex-simple-question-tools-20261106",
+  "commit": "d1ef9af88edffbdbcb7edd09cc4ee60326a8e12c",
+  "baseline": "dpl_2u1ivxeoxUbx1y4gNvLFeSXZ3sby",
+  "expected": {
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/focused.css",
+      "shared/partner-pilot/learning.js"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "startedAt": "2026-11-06T11:27:31.967Z",
+  "state": "promoted",
+  "candidate": "dpl_JAheFRzwF3bapEpUNVX6sxKLzdSA",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/focused.css",
+      "shared/partner-pilot/learning.js"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-06T11:27:54.479Z",
+  "promotedAt": "2026-11-06T11:28:27.669Z",
+  "alias": "dpl_JAheFRzwF3bapEpUNVX6sxKLzdSA",
+  "rollback": "dpl_2u1ivxeoxUbx1y4gNvLFeSXZ3sby",
+  "handoffRow": "| 已完成 | Codex-simple-question-tools-20261106 | 2026-11-06T11:27:31.967Z | `d1ef9af` | `dpl_2u1ivxeoxUbx1y4gNvLFeSXZ3sby` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/focused.css、shared/partner-pilot/learning.js | `dpl_JAheFRzwF3bapEpUNVX6sxKLzdSA`／回滾 `dpl_2u1ivxeoxUbx1y4gNvLFeSXZ3sby`（eolOnly 0） |",
+  "formalVerification": {
+    "assetsMatch": true,
+    "count": 7,
+    "checks": [
+      {
+        "file": "grade3/115-1/partner-practice.html",
+        "ok": true,
+        "sha256": "d8ef30d27e0e9c39ad9f97d29de17a21a550e7d36c4ccc2b5eff9b2fa9e86a6c"
+      },
+      {
+        "file": "grade4/115-1/partner-practice.html",
+        "ok": true,
+        "sha256": "45b75c89a7d88fa1aef3730ec4953a74b6883cd91fc8e3b32402557931a3b8f6"
+      },
+      {
+        "file": "grade6/115-1/partner-practice.html",
+        "ok": true,
+        "sha256": "c1db46ebaabbfcf283316539a669c75e640e59423d8d1fc3f3cad9d2ecf00f50"
+      },
+      {
+        "file": "grade9/115-1/partner-practice.html",
+        "ok": true,
+        "sha256": "79651b7505b3fdda94f1beea75df869570cb1124ca6f6cadc5b8136b1a0eb857"
+      },
+      {
+        "file": "shared/partner-pilot/app.mjs",
+        "ok": true,
+        "sha256": "288319bb055218279a14aa5e50278dd6273565b47580de329c7ca26beb645c32"
+      },
+      {
+        "file": "shared/partner-pilot/focused.css",
+        "ok": true,
+        "sha256": "70f7c70faea37fc66f1f49585d9d06e62eddd57758faa5087ce9905b448a2e6b"
+      },
+      {
+        "file": "shared/partner-pilot/learning.js",
+        "ok": true,
+        "sha256": "40b2bf90e3c8eec46e1aecef768bec9756d7137b4e735f68a3dad2681886c90b"
+      }
+    ]
+  },
+  "localVerification": {
+    "nodeTests": 8,
+    "browserChecks": 22,
+    "widths": [
+      1366,
+      390
+    ],
+    "syntheticOnly": true,
+    "realTwoStudentFullFlow": false,
+    "physicalTouchOrIME": false
+  }
+}
