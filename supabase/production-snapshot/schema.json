@@ -2952,6 +2952,472 @@
    "acl": "{postgres=arwdDxtm/postgres}",
    "columns": [
     {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "grade",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "deadline",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "closed",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (grade) REFERENCES partner_pilot.match_settings(grade)",
+     "name": "match_batches_grade_fkey"
+    },
+    {
+     "def": "UNIQUE (id, grade)",
+     "name": "match_batches_id_grade_key"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "match_batches_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX match_batches_id_grade_key ON partner_pilot.match_batches USING btree (id, grade)",
+    "CREATE UNIQUE INDEX match_batches_pkey ON partner_pilot.match_batches USING btree (id)",
+    "CREATE UNIQUE INDEX match_one_open_batch ON partner_pilot.match_batches USING btree (grade) WHERE (NOT closed)"
+   ],
+   "kind": "r",
+   "name": "match_batches",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "ticket",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "grade",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "batch_id",
+     "not_null": false,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "team_id",
+     "not_null": false,
+     "type": "uuid"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "seen_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (batch_id, grade) REFERENCES partner_pilot.match_batches(id, grade)",
+     "name": "match_presence_batch_id_grade_fkey"
+    },
+    {
+     "def": "CHECK (((batch_id IS NULL) <> (team_id IS NULL)))",
+     "name": "match_presence_check"
+    },
+    {
+     "def": "PRIMARY KEY (user_id)",
+     "name": "match_presence_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (team_id, grade) REFERENCES partner_pilot.match_teams(id, grade)",
+     "name": "match_presence_team_id_grade_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "match_presence_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX match_presence_batch ON partner_pilot.match_presence USING btree (batch_id)",
+    "CREATE INDEX match_presence_team ON partner_pilot.match_presence USING btree (team_id)",
+    "CREATE UNIQUE INDEX match_presence_pkey ON partner_pilot.match_presence USING btree (user_id)"
+   ],
+   "kind": "r",
+   "name": "match_presence",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "request_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "body",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "result",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (user_id, request_id)",
+     "name": "match_requests_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id)",
+     "name": "match_requests_user_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX match_requests_pkey ON partner_pilot.match_requests USING btree (user_id, request_id)"
+   ],
+   "kind": "r",
+   "name": "match_requests",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "grade",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "enabled",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "30",
+     "generated": "",
+     "identity": "",
+     "name": "batch_seconds",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "120",
+     "generated": "",
+     "identity": "",
+     "name": "lease_seconds",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "60",
+     "generated": "",
+     "identity": "",
+     "name": "warning_seconds",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "handoff_seconds",
+     "not_null": false,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "close_seconds",
+     "not_null": false,
+     "type": "integer"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK ((batch_seconds = 30))",
+     "name": "match_settings_batch_seconds_check"
+    },
+    {
+     "def": "CHECK (((handoff_seconds IS NULL) OR (handoff_seconds > warning_seconds)))",
+     "name": "match_settings_check"
+    },
+    {
+     "def": "CHECK (((close_seconds IS NULL) OR (handoff_seconds IS NULL) OR (close_seconds > handoff_seconds)))",
+     "name": "match_settings_check1"
+    },
+    {
+     "def": "CHECK ((close_seconds >= 180))",
+     "name": "match_settings_close_seconds_check"
+    },
+    {
+     "def": "CHECK ((grade = ANY (ARRAY[3, 4, 6, 9])))",
+     "name": "match_settings_grade_check"
+    },
+    {
+     "def": "CHECK ((handoff_seconds >= 90))",
+     "name": "match_settings_handoff_seconds_check"
+    },
+    {
+     "def": "CHECK (((lease_seconds >= 60) AND (lease_seconds <= 900)))",
+     "name": "match_settings_lease_seconds_check"
+    },
+    {
+     "def": "PRIMARY KEY (grade)",
+     "name": "match_settings_pkey"
+    },
+    {
+     "def": "CHECK ((warning_seconds >= 30))",
+     "name": "match_settings_warning_seconds_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX match_settings_pkey ON partner_pilot.match_settings USING btree (grade)"
+   ],
+   "kind": "r",
+   "name": "match_settings",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": "gen_random_uuid()",
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "grade",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "host",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "participants",
+     "not_null": true,
+     "type": "uuid[]"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "selected_paper",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": "1",
+     "generated": "",
+     "identity": "",
+     "name": "revision",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "'selecting'::text",
+     "generated": "",
+     "identity": "",
+     "name": "phase",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "room_id",
+     "not_null": false,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "reason",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "activity_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": "clock_timestamp()",
+     "generated": "",
+     "identity": "",
+     "name": "captain_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (grade) REFERENCES partner_pilot.match_settings(grade)",
+     "name": "match_teams_grade_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (host) REFERENCES auth.users(id)",
+     "name": "match_teams_host_fkey"
+    },
+    {
+     "def": "UNIQUE (id, grade)",
+     "name": "match_teams_id_grade_key"
+    },
+    {
+     "def": "CHECK ((phase = ANY (ARRAY['selecting'::text, 'started'::text, 'closed'::text])))",
+     "name": "match_teams_phase_check"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "match_teams_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (room_id) REFERENCES partner_pilot.rooms(id)",
+     "name": "match_teams_room_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX match_selecting_teams ON partner_pilot.match_teams USING btree (grade) WHERE (phase = 'selecting'::text)",
+    "CREATE UNIQUE INDEX match_teams_id_grade_key ON partner_pilot.match_teams USING btree (id, grade)",
+    "CREATE UNIQUE INDEX match_teams_pkey ON partner_pilot.match_teams USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "match_teams",
+   "rls": true,
+   "schema": "partner_pilot",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
      "default": null,
      "generated": "",
      "identity": "",

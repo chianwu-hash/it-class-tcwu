@@ -5,6 +5,10 @@ export async function setupTeamDB(){
  const f=await setupMediaDB(),db=f.db;
  await db.exec(`create table public.quiz_versions(id uuid primary key,document jsonb);
  alter table public.quiz_generated_papers add column user_id uuid,add column config jsonb,add column display_name text,add column deleted_at timestamptz,add column created_at timestamptz default now();`);
+ // This light fixture exercises the original invitation flow with no active matching.
+ // The shipped wrapper/quota guard now reads these pre-stage relations; full matching DDL and behavior are tested by partner-match-db.mjs.
+ await db.exec(`create table partner_pilot.match_teams(id uuid primary key,host uuid,phase text,participants uuid[]);
+ create table partner_pilot.match_presence(user_id uuid primary key,team_id uuid);`);
  const snapshot=await read('supabase/production-snapshot/functions.sql');
  const install=async name=>{const i=snapshot.indexOf('CREATE OR REPLACE FUNCTION '+name+'(');if(i<0)throw Error(name);await db.exec(snapshot.slice(i,snapshot.indexOf('$function$;',i)+11));};
  for(const name of ['public.quiz_valid_runs','public.quiz_valid_content','public.quiz_validate'])await install(name);
