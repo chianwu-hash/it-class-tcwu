@@ -16,4 +16,4 @@ shared/typing-foundation-progress.js -text
 shared/zhuyin-foundation-app.js -text
 
 # Immutable pre-upgrade schema/function fixture for guarded migration tests.
-automation/fixtures/partner-match-before/** -text
+automation/fixtures/partner-match-before/** -text whitespace=cr-at-eol
