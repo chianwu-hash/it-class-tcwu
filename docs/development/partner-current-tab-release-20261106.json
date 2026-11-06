@@ -1,0 +1,44 @@
+{
+  "agent": "Codex-partner-current-tab-20261106",
+  "commit": "244de0cdd7bcdd0f4e9211bfa30847a94e238646",
+  "baseline": "dpl_7HCEhGHiX32rioYdFfgbNSSDgrDN",
+  "expected": {
+    "changed": [
+      "shared/partner-pilot/learning.js"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "startedAt": "2026-11-06T12:09:01.445Z",
+  "state": "promoted",
+  "candidate": "dpl_Dp2ycRM6u644TvTVFAfj4c6Y22mb",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "shared/partner-pilot/learning.js"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-06T12:09:23.005Z",
+  "promotedAt": "2026-11-06T12:09:41.882Z",
+  "alias": "dpl_Dp2ycRM6u644TvTVFAfj4c6Y22mb",
+  "rollback": "dpl_7HCEhGHiX32rioYdFfgbNSSDgrDN",
+  "handoffRow": "| 已完成 | Codex-partner-current-tab-20261106 | 2026-11-06T12:09:01.445Z | `244de0c` | `dpl_7HCEhGHiX32rioYdFfgbNSSDgrDN` | shared/partner-pilot/learning.js | `dpl_Dp2ycRM6u644TvTVFAfj4c6Y22mb`／回滾 `dpl_7HCEhGHiX32rioYdFfgbNSSDgrDN`（eolOnly 0） |",
+  "productionAsset": {
+    "path": "shared/partner-pilot/learning.js",
+    "sha256": "d7902351fbc9b3b29f30e2c19c1b125ba5ffd46f522dd0e32fec86697ebffdab",
+    "matchesMain": true
+  }
+}
