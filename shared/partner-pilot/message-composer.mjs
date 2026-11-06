@@ -1,6 +1,6 @@
 import {createVoiceRecorder} from './voice-recorder.mjs';
-import {createSketchEditor,sketchImage} from './sketch-editor.mjs?v=20261106-color';
-import {validateWav,validateSketch} from './media-contract.mjs?v=20261106-color';
+import {createSketchEditor,sketchImage} from './sketch-editor.mjs?v=20261106-icon-tools';
+import {validateWav,validateSketch} from './media-contract.mjs?v=20261106-icon-tools';
 const encode=async blob=>{const a=new Uint8Array(await blob.arrayBuffer());let s='';for(let i=0;i<a.length;i+=32768)s+=String.fromCharCode(...a.subarray(i,i+32768));return btoa(s);};
 const decode=text=>Uint8Array.from(atob(text),c=>c.charCodeAt(0));
 export function createMessageComposers({host,getScope,store,read,restore={},onSaveDraft}){

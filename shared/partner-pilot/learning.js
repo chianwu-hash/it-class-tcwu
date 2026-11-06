@@ -4,7 +4,7 @@ import {mountPastResults} from './past-results.js';
 import {mountPastAnswers} from './past-answer.js';
 import {createRichContent} from './rich-content.js';
 import {appendSingleChoiceOptions} from '../quiz-choice.mjs';
-import {createCampPanel} from './camp-panel.mjs?v=20261106-color';
+import {createCampPanel} from './camp-panel.mjs?v=20261106-icon-tools';
 import {practiceUnits} from './practice-model.mjs';
 import {unsentQuestions,taskOutcome,rewardLabel,createAwardTracker} from './outcome-model.mjs?v=20261106-keepsake';
 // User-owned sharing invitation: preserve this wording when simplifying the UI.
