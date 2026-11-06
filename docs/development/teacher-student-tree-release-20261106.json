@@ -1,0 +1,123 @@
+{
+  "agent": "Codex-teacher-tree-20261106",
+  "commit": "639a44e811eb3f0b28dcdd58989e97735a95fada",
+  "baseline": "dpl_5NbCqVpDfsnK3uKTWqdB4Ff3VKKD",
+  "expected": {
+    "changed": [
+      "admin-learning.html",
+      "my-tree.html",
+      "shared/admin-learning-api.mjs",
+      "shared/admin-learning.css",
+      "shared/admin-learning.mjs",
+      "shared/garden-test-rehearsal.mjs",
+      "shared/quiz-rewards.mjs"
+    ],
+    "added": [
+      "shared/admin-student-tree-model.mjs",
+      "shared/admin-student-tree.mjs"
+    ],
+    "removed": []
+  },
+  "startedAt": "2026-11-06T08:19:49.167Z",
+  "state": "promoted",
+  "candidate": "dpl_EpnHcYKxAxnqtNdRpipoW8W1KXwn",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "admin-learning.html",
+      "my-tree.html",
+      "shared/admin-learning-api.mjs",
+      "shared/admin-learning.css",
+      "shared/admin-learning.mjs",
+      "shared/garden-test-rehearsal.mjs",
+      "shared/quiz-rewards.mjs"
+    ],
+    "added": [
+      "shared/admin-student-tree-model.mjs",
+      "shared/admin-student-tree.mjs"
+    ],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-06T08:20:13.279Z",
+  "promotedAt": "2026-11-06T08:20:41.226Z",
+  "alias": "dpl_EpnHcYKxAxnqtNdRpipoW8W1KXwn",
+  "rollback": "dpl_5NbCqVpDfsnK3uKTWqdB4Ff3VKKD",
+  "handoffRow": "| 已完成 | Codex-teacher-tree-20261106 | 2026-11-06T08:19:49.167Z | `639a44e` | `dpl_5NbCqVpDfsnK3uKTWqdB4Ff3VKKD` | admin-learning.html、my-tree.html、shared/admin-learning-api.mjs、shared/admin-learning.css、shared/admin-learning.mjs、shared/garden-test-rehearsal.mjs、shared/quiz-rewards.mjs、+shared/admin-student-tree-model.mjs、+shared/admin-student-tree.mjs | `dpl_EpnHcYKxAxnqtNdRpipoW8W1KXwn`／回滾 `dpl_5NbCqVpDfsnK3uKTWqdB4Ff3VKKD`（eolOnly 0） |",
+  "formalVerification": {
+    "assets": [
+      {
+        "file": "admin-learning.html",
+        "ok": true,
+        "sha256": "074b47ce315cd0ff63f6d3ab87ab354059176f42b9f476d7d257719915385970"
+      },
+      {
+        "file": "my-tree.html",
+        "ok": true,
+        "sha256": "2a26e69d6ef2dc76646dc21a0fdaa21b96d6692af694e8a786b8f0448f43a104"
+      },
+      {
+        "file": "shared/admin-learning-api.mjs",
+        "ok": true,
+        "sha256": "4c299bf1dbb9654611233f12cc134f23e7e6e673ff2cdbe2a70fc43edeac02a4"
+      },
+      {
+        "file": "shared/admin-learning.css",
+        "ok": true,
+        "sha256": "f399cf60e86544178c3b764f1e0d152fabe0a4fd4102409607081a65a9ee19d5"
+      },
+      {
+        "file": "shared/admin-learning.mjs",
+        "ok": true,
+        "sha256": "805a94e70e572d219de7ec50e71103290a0c1fa1e11664cc24c4423fb734f003"
+      },
+      {
+        "file": "shared/garden-test-rehearsal.mjs",
+        "ok": true,
+        "sha256": "ccbd78f031ac5111b4f646e29f5b34176edfa0f528f1ee9e69f83caa365b008d"
+      },
+      {
+        "file": "shared/quiz-rewards.mjs",
+        "ok": true,
+        "sha256": "258bdebcdb057062d6f167587aa44eb629bbd76ff5a3f8c879a84b04193ef6b1"
+      },
+      {
+        "file": "shared/admin-student-tree-model.mjs",
+        "ok": true,
+        "sha256": "417cb604355eb2f828182508ed874022d6224e8096f9b36ba45277fd4fc3c399"
+      },
+      {
+        "file": "shared/admin-student-tree.mjs",
+        "ok": true,
+        "sha256": "21b8ec6cae934eae18fc5f0aeb50ce630d604dae3753c97ecb69cc1e0300a757"
+      }
+    ],
+    "anonymousRejected": true,
+    "status": 401
+  },
+  "browserVerification": {
+    "googleTeacherUI": true,
+    "sourceViewLoaded": true
+  },
+  "databaseVerification": {
+    "snapshotLivePassed": true,
+    "functions": 163,
+    "tables": 105,
+    "policies": 21,
+    "triggers": 13,
+    "teacherRoleProjectionPassed": true,
+    "studentGardenStateUnchanged": true,
+    "payloadWhitelistPassed": true,
+    "migration": "supabase/admin-learning-tree.sql"
+  }
+}
