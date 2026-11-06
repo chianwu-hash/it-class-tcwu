@@ -192,3 +192,25 @@ body.quiz-workspace-desktop.partner-pilot .partner-content[data-stage=practice] 
  .partner-content[data-stage=practice] .focus-team-bar>.focus-question-position h2{font-size:12px;padding:3px 6px}
  .partner-content[data-stage=practice] .focus-team-bar>.focus-progress progress{display:none}
 }
+
+/* One persistent camp control: docked while answering, inline in review/book. */
+.partner-content .partner-focus button[data-camp-control]{position:static;inset:auto;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:0;min-height:46px;width:auto;max-width:100%;margin:0;padding:10px 13px;border:1px solid #c8bce5;border-radius:13px;background:#f1ebfb;color:#63439b;box-shadow:none;font-size:14px;font-weight:700;line-height:1.4;white-space:nowrap}
+.partner-content .partner-focus button[data-camp-control]:hover{background:#e8ddf8;border-color:#a792ce}
+.partner-content .partner-focus button[data-camp-control]:focus-visible{outline:3px solid #9470c8;outline-offset:3px}
+.partner-content .partner-focus button[data-camp-control].camp-has-new{background:#fff1bd;color:#654608;border-color:#d4a438;animation:camp-soft-alert 1.25s ease-in-out 4}
+.partner-content .camp-unread-badge{display:inline-flex;align-items:center;justify-content:center;min-width:21px;height:21px;padding:0 5px;border-radius:999px;background:#7855b1;color:white;font-size:12px;font-weight:800}
+.partner-content .quiz-workspace-dock .quiz-actions{gap:8px!important}
+.partner-content .quiz-workspace-dock [data-camp-control]{flex:0 1 auto}
+@media(prefers-reduced-motion:reduce){.partner-content .partner-focus button[data-camp-control].camp-has-new{animation:none}}
+@media(max-width:700px){
+ .partner-content .quiz-workspace-dock .quiz-actions{display:grid!important;grid-template-columns:auto auto minmax(0,1fr);align-items:center;gap:6px!important}
+ .partner-content .quiz-workspace-dock button[data-camp-control]{padding:9px 8px;font-size:13px}
+ .partner-content .quiz-workspace-dock .quiz-back-link{padding:9px 4px;font-size:13px}
+ .partner-content .quiz-workspace-dock .quiz-primary{width:100%;padding:14px 10px;font-size:17px}
+}
+@media(max-width:359px){
+ .partner-content .quiz-workspace-dock .quiz-actions{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"camp exit" "primary primary"}
+ .partner-content .quiz-workspace-dock [data-camp-control]{grid-area:camp;justify-self:start}
+ .partner-content .quiz-workspace-dock [data-save-exit]{grid-area:exit}
+ .partner-content .quiz-workspace-dock .quiz-primary{grid-area:primary}
+}

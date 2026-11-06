@@ -10,7 +10,7 @@ export function createCampPanel({host,esc,getState,getViewer,drafts,capture,ques
  function beginAlert(){
   if(!alertPending||dialog.open||destroyed)return;
   if(!attention.count()){alertPending=false;stopAlert();return;}
-  stopAlert();alertButton=host.querySelector('.focus-team-bar [data-open-camp]');if(!alertButton)return;
+  stopAlert();alertButton=host.querySelector('[data-camp-control]');if(!alertButton)return;
   alertPending=false;void alertButton.offsetWidth;alertButton.classList.add('camp-has-new');alertTimer=setTimeout(stopAlert,5000);
  }
  function alertNew(fresh){if(!fresh.length||dialog.open)return;alertPending=true;if(document.visibilityState==='visible')beginAlert();}
