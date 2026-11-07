@@ -1,11 +1,19 @@
-# 2026-11-07 自動組隊成功角色提示（待 PR／發布）
+# 2026-11-07 自動組隊成功角色提示（已正式發布）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-match-role-notice-20261107 | 2026-11-07T01:34:16.755Z | `ca1158a` | `dpl_FiAA1524eDeLXfhdb2Qdup6X6zi7` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/matchmaking.mjs、shared/partner-pilot/team-flow.css | `dpl_2naqAWCDkhjFnXuxVbDhFdUJiFdu`／回滾 `dpl_FiAA1524eDeLXfhdb2Qdup6X6zi7`（eolOnly 0） |
+
+- PR102 進 main ca1158a；臺灣 2026-11-07 09:35 發布。完整樹 ok:true（7 改、0 新／刪／非預期／eolOnly），7 個正式資產 HTTP200 與 SHA-256 均符合 main；發布鎖已釋放。[發布收據](match-role-notice-release-20261107.json)。
 
 - 使用者要求成隊後明確彈出隊長／隊員下一步。fresh origin/main 60284db，Codex 唯一寫入者，codex/match-role-notice-20261107。
 - selecting 狀態以原生 modal dialog 顯示「組隊成功！」：隊長「你被選為隊長，接著請選全隊要練的卷。」、隊員「你是隊員，請等候隊長選卷。」；按知道了才關閉，不限時消失。焦點回到選卷或隊員上下文，具 aria 標題與描述。
 - 提示獨立於同步重繪區；同隊同隊長不因輪詢重彈，新隊或交棒可提示；出發、離開、換人 dispose 皆清除。共用模組與 3/4/6/9 年級引用同步更新版本。不改 RPC／SQL／出發規則／原任務或紀錄。
 - 15 項合成瀏覽器控制器檢查通過：雙角色、初始焦點、無障礙、重繪保留、關閉後焦點、重複同步、新隊／交棒、390px 版面、cancel handler、active／dispose 清理、零修改 RPC、零未捕捉例外。19 項既有 Node／隔離 SQL 組隊與原任務獎勵回歸通過。
 - 限制：非正式 Google 雙機驗收；背景瀏覽器截圖逾時、實體 Escape 未觸發，已改以原生 cancel 事件合成驗證處理函式，未冒稱實體按鍵或視覺截圖通過。證據 .chat-mode/evidence/match-role-browser.json；可重跑 automation/match-role-notice-preview.mjs 與 automation/tests/match-role-notice-browser.cjs。
-- 下一步：PR 進 main → 新乾淨 main 以 release-from-main.mjs 發布 → 正式七個資產 SHA-256 核對 → 收據 PR → 本批工作目錄封存清理；其他使用中目錄不動。
+- 已完成 PR → main → 新乾淨 main 發布與正式讀回；收據 PR 進 main 後依 SOP 封存清理本批已完成且未使用的目錄，其他使用中目錄保留。
 
 # 2026-11-07 練功坊共用名冊身分顯示修正（已正式發布）
 
