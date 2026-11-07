@@ -54,7 +54,7 @@
     currentScript.insertAdjacentHTML("beforebegin", navHTML);
     currentScript.remove();
     // Quiz pages pass the roster label from their own RPC; no extra enrollment request here.
-    if (quizMode) import('../../shared/grade6-nav-identity.js?v=20261030-identity-sync')
+    if (quizMode) import('../../shared/grade6-nav-identity.js?v=20261107-roster-nav')
         .then(({ initGrade6NavIdentity }) => initGrade6NavIdentity({ expanded: true, provided: true }))
         .catch(error => console.warn('練功坊導覽身分暫時無法讀取', error));
     return;

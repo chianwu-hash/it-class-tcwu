@@ -59,6 +59,15 @@
 
 ---
 
+## 導覽列學生身分：`shared/grade6-nav-identity.js`
+
+檔名沿用歷史名稱，但目前由三、四、六、九年級共用。不要在頁面直接改寫 `#auth-status` 或自行串接姓名格式；登入／登出仍由 `navbar-auth.js` 負責，這個模組只呈現本人名冊資訊。
+
+- 練功坊各頁使用同一模組 URL 與版本，避免不同 query 建立兩份 ES module 狀態。學生採 `expanded:true` 顯示「班級 班 座號 號 姓名」，Email放在title。六年級一般課程的compact模式保留。
+- 選卷、答題、考古題已有本人名冊回應時，呼叫 `provideNavIdentity({userId,email,row})`，不另查名冊；row.email必須符合登入信箱。
+- 夥伴練功的me回應沒有完整名冊欄位，於原onSessionResolved呼叫 `initGrade6NavIdentity({expanded:true,lookup:true})`，沿用同一模組的唯讀、快取與換帳號防護。lookup對本頁保持有效，較晚的navbar initializer不能將它關閉。
+- 無名冊／教師或暫時讀取失敗時，保留原登入Email，不影響作答或權限；不以顯示文字推導權限。登出、換人與同帳號名冊更新必須清除舊顯示，遲到回應不能覆蓋新身分。
+
 ## `shared/navbar-auth.js`
 
 **責任**：在 `document` 上設定點擊事件代理，管理 `#login-btn`、`#logout-btn`、`#auth-status`、`#reset-progress-btn`、`#admin-btn` 的顯示與行為。監聽 `course-navbar:rendered` 事件，在 navbar 重渲後刷新 UI 狀態。
