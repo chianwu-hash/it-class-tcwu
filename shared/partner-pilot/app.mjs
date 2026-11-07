@@ -2,7 +2,7 @@ import {initGrade6NavIdentity} from '../grade6-nav-identity.js?v=20261107-roster
 import {createMatchmaking,matchInstalledError} from './matchmaking.mjs?v=20261107-role-art';
 import {readInvite} from './invite.mjs?v=20261106-team-flow';
 import {mountTeamHome,mountWaitingTeam} from './team-flow.mjs?v=20261106-match-reviewed';
-import {createLearningUI} from './learning.js?v=20261107-partner-motion';
+import {createLearningUI} from './learning.js?v=20261107-keepsake-growth';
 import {setPartnerStage,scene} from './presentation.mjs?v=20261106-match';
 import * as auth from '../auth.js';
 import {initNavbarAuth} from '../navbar-auth.js';

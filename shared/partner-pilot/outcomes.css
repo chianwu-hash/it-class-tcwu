@@ -7,8 +7,8 @@
 .partner-content .outcome-unsent,.partner-content .outcome-result.needs-correction{background:#fff6df;border-color:#dec27d;color:#6b4c12}
 .partner-content .outcome-unsent{border-left:4px solid #c68b13;padding:10px 14px;border-radius:10px}
 .partner-content .partner-celebration{position:relative;background:linear-gradient(115deg,#eff9e9,#fff8e6);border:2px solid #b8cf91;display:flex;align-items:center;gap:20px}
-.partner-content .celebration-symbol{font-size:64px;display:block;flex-shrink:0;animation:partner-keepsake-bloom 1.4s ease-out 1}
-.partner-content .celebration-symbol svg{display:block;width:1em;height:1em;overflow:visible}
+.partner-content .celebration-symbol{display:block;flex-shrink:0;padding:4px 6px 0;border-radius:18px;background:radial-gradient(closest-side,#fffdf2,#fff8e000)}
+.partner-content .celebration-symbol .keepsake-growth{display:block;height:112px;width:auto;max-width:min(240px,100%);overflow:visible}
 .partner-content .celebration-copy{min-width:0;flex:1}
 .partner-content .celebration-copy h2{font-size:22px;margin:0}
 .partner-content .celebration-close{align-self:flex-start;white-space:nowrap}
@@ -17,9 +17,9 @@
 .partner-content .outcome-dialog::backdrop{background:#163f4380}
 .partner-content .outcome-dialog h2{font-size:23px;margin:0 0 12px}
 .partner-content .outcome-dialog button{white-space:normal;width:100%;margin-top:12px;min-height:44px}
-@keyframes partner-keepsake-bloom{0%{transform:scale(.45) rotate(-18deg);opacity:.3}55%{transform:scale(1.16) rotate(7deg)}100%{transform:scale(1) rotate(0);opacity:1}}
-@media(prefers-reduced-motion:reduce){.partner-content .celebration-symbol{animation:none!important}}
-@media(max-width:600px){.partner-content .partner-celebration{display:grid;grid-template-columns:45px minmax(0,1fr);padding:16px;gap:10px}.partner-content .celebration-symbol{font-size:45px}.partner-content .celebration-close{grid-column:2;justify-self:end;margin:0}.partner-content .celebration-copy h2{font-size:20px}.partner-content .outcome-guide,.partner-content .outcome-result{padding:15px}.partner-content .outcome-guide button,.partner-content .outcome-result button{width:100%;margin-right:0}}
+/* Growth motion lives in keepsake-growth.mjs (WAAPI, plays once); the static markup is the finished pose. */
+@media(prefers-reduced-motion:reduce){.partner-content .keepsake-growth *{animation:none!important;transition:none!important}}
+@media(max-width:600px){.partner-content .partner-celebration{display:grid;grid-template-columns:minmax(0,1fr) auto;padding:16px;gap:8px 10px}.partner-content .celebration-symbol{grid-column:1;grid-row:1;justify-self:center;margin-left:56px}.partner-content .celebration-symbol .keepsake-growth{height:96px}.partner-content .celebration-copy{grid-column:1/-1;grid-row:2}.partner-content .celebration-close{grid-column:2;grid-row:1;justify-self:end;margin:0}.partner-content .celebration-copy h2{font-size:20px}.partner-content .outcome-guide,.partner-content .outcome-result{padding:15px}.partner-content .outcome-guide button,.partner-content .outcome-result button{width:100%;margin-right:0}}
 .partner-content .review-stage h3{margin:0 0 8px;font-size:21px}
 .partner-content .review-callout{position:fixed;z-index:45;left:20px;bottom:20px;box-sizing:border-box;width:min(520px,calc(100vw - 180px));padding:14px 18px;border:2px solid #c9a34d;border-radius:16px;background:#fff8e5;color:#51401b;box-shadow:0 6px 24px #173e4020}
 .partner-content .review-callout[hidden],.partner-content:has(dialog[open]) .review-callout{display:none}

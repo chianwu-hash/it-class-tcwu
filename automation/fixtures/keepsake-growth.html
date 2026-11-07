@@ -1,0 +1,58 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>夥伴紀念葉花成長・合成預覽</title>
+<link rel="stylesheet" href="/shared/partner-pilot/outcomes.css?v=preview">
+<style>
+ body{margin:0;padding:16px;font-family:system-ui,"Noto Sans TC",sans-serif;background:#f7f5ee;color:#224c50}
+ main{max-width:860px;margin:0 auto}
+ h1{font-size:20px;margin:4px 0 12px}
+ .controls{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 6px}
+ .controls button{min-height:44px;padding:0 14px;border:2px solid #afd3c9;border-radius:12px;background:#fff;color:#224c50;font:inherit;cursor:pointer}
+ .controls button[aria-pressed=true]{background:#e3f4ec;border-color:#4caeaa;font-weight:700}
+ .note{font-size:13px;color:#5c6f6c;margin:6px 0 0}
+ .static-grid{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+ .static-grid figure{margin:0;padding:10px;border:1px solid #ddd6c3;border-radius:12px;background:#fff}
+ .static-grid figcaption{font-size:13px;text-align:center}
+ .static-grid svg{height:96px;width:auto;display:block}
+</style></head>
+<body><main class="partner-content">
+<h1>紀念葉花成長動畫・合成預覽（無登入、無資料庫、無 RPC）</h1>
+<div class="controls" role="group" aria-label="合成獎勵">
+ <button type="button" data-case="leaf1" aria-pressed="true">10 題：1 葉</button>
+ <button type="button" data-case="leaf2" aria-pressed="false">20 題：2 葉</button>
+ <button type="button" data-case="flower1" aria-pressed="false">考古題：1 花</button>
+ <button type="button" data-reduced aria-pressed="false">模擬減少動態</button>
+ <button type="button" data-replay>重播紀念慶祝</button>
+ <button type="button" data-sync>模擬隊友同步（不應重播）</button>
+ <button type="button" data-close>關閉／換房（停止）</button>
+</div>
+<p class="note" data-state>狀態：—</p>
+<div data-celebration class="partner-celebration" role="status" aria-live="polite"></div>
+<section class="static-grid" aria-label="靜態完成姿態"></section>
+</main>
+<script type="module">
+import {keepsakeGrowthSvg,createKeepsakeGrowth} from '/shared/partner-pilot/keepsake-growth.mjs?v=preview';
+import {partnerKeepsakeSvg} from '/shared/quiz-partner-rewards.mjs?v=preview';
+// Synthetic awards only — shaped like room.exercise.award, never real student data.
+const cases={leaf1:{id:'synthetic-0000-leaf1',leaves:1,flowers:0},leaf2:{id:'synthetic-0000-leaf2',leaves:2,flowers:0},flower1:{id:'synthetic-0000-flower',leaves:0,flowers:1}};
+const label=a=>[a.leaves?`${a.leaves} 片紀念葉`:'',a.flowers?`${a.flowers} 朵紀念花`:''].filter(Boolean).join('、');
+const host=document.querySelector('[data-celebration]'),state=document.querySelector('[data-state]'),growth=createKeepsakeGrowth();
+let pick='leaf1',reduced=false,key='',replay=false,plays=0;
+function render(force){
+ const a=cases[pick],html=`<span class="celebration-symbol" aria-hidden="true">${keepsakeGrowthSvg(a)}</span><div class="celebration-copy"><h2>${replay?'回看已收藏的夥伴紀念':'一起學會，留下夥伴紀念！'}</h2><p>每位夥伴各獲得 ${label(a)}，已計入努力樹。${replay?'重播不會重複領獎。':''}</p><button type="button">看看我們的共同紀錄冊</button></div><button class="celebration-close" data-close aria-label="關閉達標慶祝">關閉</button>`;
+ if(force)key='';
+ if(key===html){state.textContent=`狀態：markup 相同，未重播（已播放 ${plays} 次）`;return;}
+ growth.stop();host.innerHTML=html;key=html;plays++;
+ const run=growth.play(host,{reduced});const svg=host.querySelector('svg');
+ state.textContent=`狀態：${svg.dataset.growth}（已播放 ${plays} 次）`;
+ run.finished.then(r=>{if(host.contains(svg))state.textContent=`狀態：${svg.dataset.growth||r}（已播放 ${plays} 次）`;});
+}
+document.querySelector('.controls').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.case){pick=b.dataset.case;replay=false;document.querySelectorAll('[data-case]').forEach(x=>x.setAttribute('aria-pressed',x===b));render(true);}
+ else if('reduced' in b.dataset){reduced=!reduced;b.setAttribute('aria-pressed',reduced);render(true);}
+ else if('replay' in b.dataset){replay=true;render(true);}
+ else if('sync' in b.dataset)render(false);
+ else if('close' in b.dataset){growth.stop();host.innerHTML='';key='';state.textContent='狀態：已停止並清空';}
+});
+host.addEventListener('click',e=>{if(e.target.closest('[data-close]')){growth.stop();host.innerHTML='';key='';state.textContent='狀態：已關閉';}});
+document.querySelector('.static-grid').innerHTML=Object.entries(cases).map(([k,a])=>`<figure>${keepsakeGrowthSvg(a)}<figcaption>完成姿態・${label(a)}</figcaption></figure>`).join('')+`<figure><div style="display:flex;gap:6px;height:96px;align-items:center">${partnerKeepsakeSvg(false).replace('<svg','<svg style="height:44px"')}${partnerKeepsakeSvg(true).replace('<svg','<svg style="height:64px"')}</div><figcaption>努力樹正式識別（對照）</figcaption></figure>`;
+render(true);
+</script></body></html>

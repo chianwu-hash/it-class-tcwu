@@ -1,3 +1,13 @@
+# 2026-11-07 夥伴紀念葉花成長動畫（待發布）
+
+- 使用者指定 Computer Use 請 Claude Opus 5.5 設計並接入；已在 Claude Desktop 實際確認 Opus 5.5，兩輪 mailbox 設計／複核完成。新 worktree partner-keepsake-growth-20261107，codex/partner-keepsake-growth-20261107，基準 main 1547279。
+- Claude 原創 SVG／WAAPI 成長分鏡：種子 → 弧形莖 → 金邊雙葉舒展／五瓣花綻放 → 愛心花蕊與少量星光，約 3.2～4.4 秒後保留完整靜態姿態；1葉／2葉／1花取自伺服器真實 award。沿用努力樹紀念路徑與配色。詳見 [設計與驗證](partner-keepsake-growth-20261107.md)。
+- Codex 修整葉莖／花萼接點、完整 app 版本鏈、新獎完成後單次捲入可見處且不移動鍵盤焦點（有未送訂正則不捲動），並加 reduced-motion／背景中途停止及監聽清理。關閉／換房／退出取消動畫與捲動 frame。
+- 只改呈現，不改 outcome-model、quiz-partner-rewards、supabase、配題、評分、共同回顧、獎勵／紀錄資料；新獎自動觸發仍由 awardTracker 決定；原紀錄冊重播不發 RPC、不重領；同步同 DOM 不重播，舊獎重進不假裝新領獎。
+- 驗證：37 項實際 learning controller 的可見 Chrome 合成瀏覽器檢查通過（實播／停止、1葉2葉花、同步、重播不領獎、舊獎、reduce動態切換、退出、未達標、390px、pageerror0）；13 項既有 Node／隔離 SQL 回歸＋2 項新純 SVG／靜態 fallback 通過。已看桌面／手機截圖。Claude 第二輪讀回實檔複核通過，未再改 tracked 檔。
+- 限制：非正式學生帳號正向雙機；Safari／iPad transform-box 尚未實測；Chrome以 prefers-reduced-motion 媒體模擬，未改作業系統設定。
+- 下一步：PR → main → 新乾淨 main 執行 release-from-main start/deploy/promote。基準正式 dpl_2KEFmhck8Psu31tNo3UYgxFRyWMg，鎖被其他人持有即停止；不需 SQL 套用。發布後收據 PR、證據封存並只清本批完成未使用目錄。
+
 # 2026-11-07 夥伴答題補回原版寵物動畫（已正式發布）
 
 ## 發布登記

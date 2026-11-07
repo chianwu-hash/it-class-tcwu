@@ -2,6 +2,7 @@ import {createAnswerFeedbackMotion} from './answer-feedback-motion.mjs?v=2026110
 import {createReviewLayout} from './review-layout.mjs?v=20261107-boolean-choice';
 import {createQuizWorkspace} from '../quiz-workspace.mjs?v=20261106-partner-workspace';
 import {partnerKeepsakeSvg} from '../quiz-partner-rewards.mjs?v=20261106-keepsake';
+import {keepsakeGrowthSvg,createKeepsakeGrowth} from './keepsake-growth.mjs?v=20261107-keepsake-growth';
 import {answerFeedback} from './answer-feedback.mjs?v=20261107-partner-motion';
 import {mountPastResults} from './past-results.js?v=20261107-boolean-result';
 import {mountPastAnswers} from './past-answer.js?v=20261107-answer-feedback';
@@ -16,8 +17,8 @@ const tagLabels={hard:'有點難',interesting:'有意思',careful:'容易忽略'
 const tags={hard:'有點難，想一起弄清楚',interesting:'有意思，想讓大家看看',careful:'有個地方容易忽略',method:'想交換不同方法'};
 export function createLearningUI({container,esc,onAction,onHome,onRefresh,onRetry,notice,loadMedia,storeMessageMedia,readMessageMedia,onStage,scene=()=>''}){
  let current=null,viewer=null,view='practice',drafts=new Map(),editing=new Set(),markedOnly=false,panel=null,activeQuestion=null,contentKey='',composing=false,drawing=false,transport={},savingMedia=false,saveEpoch=0;
- const attemptsAtRender=new Map(),draftVersions=new Map();let workspace=null,activeAnswer=null,lastHeaderView=null,campButton=null;let content,units=[],exitDialog=null,guideKey='',celebrationKey='',summaryRequested=false,calloutObserver=null;
- const awardTracker=createAwardTracker(),feedbackMotion=createAnswerFeedbackMotion();
+ const attemptsAtRender=new Map(),draftVersions=new Map();let workspace=null,activeAnswer=null,lastHeaderView=null,campButton=null;let content,units=[],exitDialog=null,guideKey='',celebrationKey='',summaryRequested=false,calloutObserver=null,growthRevealFrame=0;
+ const awardTracker=createAwardTracker(),feedbackMotion=createAnswerFeedbackMotion(),keepsakeGrowth=createKeepsakeGrowth();
  const reviewLayout=createReviewLayout({isLocked:()=>!!transport.busy||!!transport.pending||savingMedia,getMarkedOnly:()=>markedOnly,setMarkedOnly:v=>{markedOnly=v;},esc,getRoom:()=>current,getViewer:()=>viewer,fragment:(...args)=>fragment(...args),marks:q=>marks(q),stories:()=>stories(),drafts,capture:()=>capture(),onBook:()=>navigate('book'),onFinish:()=>submit({action:'finish'}),rerender:()=>{contentKey='';render(current,viewer);}});
  const scopeRoot=container.closest('.partner-content')||container.parentElement;
  const key=(kind,qid='')=>kind+'-'+qid;
@@ -153,8 +154,14 @@ export function createLearningUI({container,esc,onAction,onHome,onRefresh,onRetr
    dockStatus.dataset.error=String(!!transport.bad);
   }
   const a=awardTracker.update(current,viewer),celebration=container.querySelector('[data-celebration]');
-  const art=partnerKeepsakeSvg(!!a?.flowers),celebrationHtml=a?`<span class="celebration-symbol" aria-hidden="true">${art}</span><div class="celebration-copy"><h2>${a.replay?'回看已收藏的夥伴紀念':'一起學會，留下夥伴紀念！'}</h2><p>每位夥伴各獲得 ${esc(rewardLabel(a))}，已計入努力樹。${a.replay?'重播不會重複領獎。':''}</p><button data-celebration-book>看看我們的共同紀錄冊</button></div><button class="celebration-close" data-celebration-close aria-label="關閉達標慶祝">關閉</button>`:'';
-  if(celebrationKey!==celebrationHtml){celebration.innerHTML=celebrationHtml;celebrationKey=celebrationHtml;}
+  const art=a?keepsakeGrowthSvg(a):'',celebrationHtml=a?`<span class="celebration-symbol" data-growth-count="${a.leaves+a.flowers}" aria-hidden="true">${art}</span><div class="celebration-copy"><h2>${a.replay?'回看已收藏的夥伴紀念':'一起學會，留下夥伴紀念！'}</h2><p>每位夥伴各獲得 ${esc(rewardLabel(a))}，已計入努力樹。${a.replay?'重播不會重複領獎。':''}</p><button data-celebration-book>看看我們的共同紀錄冊</button></div><button class="celebration-close" data-celebration-close aria-label="關閉達標慶祝">關閉</button>`:'';
+  // Growth plays only when the celebration markup is (re)created: a fresh server award or an explicit replay.
+  // Teammate syncs keep the same markup, so they never restart it.
+  if(celebrationKey!==celebrationHtml){cancelAnimationFrame(growthRevealFrame);keepsakeGrowth.stop();celebration.innerHTML=celebrationHtml;celebrationKey=celebrationHtml;if(a){keepsakeGrowth.play(celebration);
+   // All answers and reviews are complete. Reveal the reward without moving keyboard focus;
+   // preserve anyone still editing a correction. Explicit replay keeps its existing focus flow.
+   if(!a.replay&&current.exercise.finished&&!editing.size&&!pendingAnswers().length){const rid=current.id,aid=a.id;growthRevealFrame=requestAnimationFrame(()=>{if(current?.id===rid&&current.exercise.award?.id===aid&&celebration.isConnected)celebration.scrollIntoView({block:'center',behavior:'auto'});});}
+  }}
   const close=celebration.querySelector('[data-celebration-close]');if(close)close.onclick=()=>{const focusedHere=celebration.contains(document.activeElement);awardTracker.dismiss();updateOutcomeChrome();if(focusedHere){const target=guide.querySelector('button:not(:disabled)')||guide;target.tabIndex=target===guide?-1:0;target.focus({preventScroll:true});}};
   const book=celebration.querySelector('[data-celebration-book]');if(book){book.disabled=!!transport.busy||!!transport.pending||savingMedia;book.onclick=()=>navigate('book');}
   const replay=content.querySelector('[data-replay-keepsake]');if(replay)replay.disabled=!!transport.busy||!!transport.pending||savingMedia;
@@ -223,6 +230,6 @@ export function createLearningUI({container,esc,onAction,onHome,onRefresh,onRetr
  const answerChanged=event=>{const form=event.target.closest?.('form[data-form=answer]');if(form)activeAnswer=Number(form.dataset.qid);if(current&&!composing){capture();updateOutcomeChrome();}};
  container.addEventListener('input',answerChanged);container.addEventListener('change',answerChanged);container.addEventListener('pointerup',answerChanged);
  container.addEventListener('compositionstart',compositionStart);container.addEventListener('compositionend',compositionEnd);container.addEventListener('pointerdown',pointerStart);window.addEventListener('pointerup',pointerEnd);window.addEventListener('pointercancel',pointerEnd);container.addEventListener('focusout',blur);
- function clear(){feedbackMotion.clear(container);reviewLayout.clear();workspace?.destroy();workspace=null;activeAnswer=null;lastHeaderView=null;calloutObserver?.disconnect();calloutObserver=null;scopeRoot.style.removeProperty('--review-callout-height');summaryRequested=false;guideKey='';celebrationKey='';exitDialog?.remove();exitDialog=null;awardTracker.clear();saveEpoch++;savingMedia=false;rich.clear();panel?.clear();panel=null;current=null;viewer=null;campButton=null;drafts.clear();editing.clear();draftVersions.clear();attemptsAtRender.clear();activeQuestion=null;contentKey='';view='practice';markedOnly=false;composing=false;drawing=false;}
+ function clear(){cancelAnimationFrame(growthRevealFrame);feedbackMotion.clear(container);keepsakeGrowth.stop();reviewLayout.clear();workspace?.destroy();workspace=null;activeAnswer=null;lastHeaderView=null;calloutObserver?.disconnect();calloutObserver=null;scopeRoot.style.removeProperty('--review-callout-height');summaryRequested=false;guideKey='';celebrationKey='';exitDialog?.remove();exitDialog=null;awardTracker.clear();saveEpoch++;savingMedia=false;rich.clear();panel?.clear();panel=null;current=null;viewer=null;campButton=null;drafts.clear();editing.clear();draftVersions.clear();attemptsAtRender.clear();activeQuestion=null;contentKey='';view='practice';markedOnly=false;composing=false;drawing=false;}
  return {render,committed,clear,setTransport:next=>{transport={...transport,...next};panel?.setTransport({...transport,busy:transport.busy||savingMedia});if(current)updateOutcomeChrome();}};
 }
