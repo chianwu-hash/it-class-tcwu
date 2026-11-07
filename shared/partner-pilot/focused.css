@@ -214,3 +214,20 @@ body.quiz-workspace-desktop.partner-pilot .partner-content[data-stage=practice] 
  .partner-content .quiz-workspace-dock [data-save-exit]{grid-area:exit}
  .partner-content .quiz-workspace-dock .quiz-primary{grid-area:primary}
 }
+
+/* Match the original quiz: explicit result, retained choices, separate explanation. */
+@scope (.partner-content) {
+ .partner-focus .quiz-explanation-panel .partner-answer-feedback{margin:0 0 14px;padding:20px;border:2px solid #e0a561;border-radius:18px;background:#fff6e9;color:#513b2d}
+ .partner-focus .quiz-explanation-panel .partner-answer-feedback[data-feedback-state=correct]{border-color:#8abca0;background:#eff9f2;color:#284d39}
+ .partner-focus .quiz-explanation-panel .partner-answer-feedback[data-feedback-state=self-check]{border-color:#8baebc;background:#f1f8fb;color:#244c60}
+ .partner-answer-feedback .feedback-intro{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+ .partner-answer-feedback .feedback-intro strong{display:block;font-size:20px;line-height:1.5}
+ .partner-answer-feedback .feedback-intro p{font-size:16px;margin:8px 0 0;line-height:1.7}
+ .partner-answer-feedback .feedback-symbol{display:grid;place-items:center;flex:0 0 42px;min-height:42px;border-radius:50%;background:#fff9;font-size:28px;font-weight:800}
+ .partner-answer-feedback .feedback-reference{padding:12px 0;border-top:1px solid #0002;border-bottom:1px solid #0002;font-size:18px;line-height:1.7}
+ .partner-answer-feedback .feedback-reference>b{display:block}
+ .partner-answer-feedback .feedback-reference .rich-fragment{display:inline-block;vertical-align:top}
+ .partner-answer-feedback .feedback-reference .preview-content{margin:0}
+ .partner-answer-feedback .feedback-explanation{margin:14px 0;font-size:18px;line-height:1.8}
+ .partner-answer-feedback .feedback-explanation:empty{display:none}
+}

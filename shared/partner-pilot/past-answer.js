@@ -1,3 +1,4 @@
+import {revealedPastChoice} from './answer-feedback.mjs?v=20261107-answer-feedback';
 import {booleanChoicePresentation} from '../quiz-boolean-choice.mjs?v=20261107-boolean-choice';
 import {renderManualResponse} from './quiz-past-manual.js';
 import {attachPastInputKeyboard} from './quiz-past-input.js';
@@ -7,7 +8,8 @@ export function mountPastAnswers(root,{question,drafts,loadAsset}){
   if(host.dataset.pastMounted)continue;host.dataset.pastMounted='true';
   const q=question(Number(host.dataset.pastAnswer)),m=q.past,k='answer-'+q.id;let saved;
   try{saved=JSON.parse(drafts.get(k)||'null');}catch{}
-  const hidden=document.createElement('input');hidden.type='hidden';hidden.dataset.draft=k;host.append(hidden);const store=v=>{hidden.value=JSON.stringify(v);drafts.set(k,hidden.value);};
+  const locked=host.hasAttribute('data-past-locked'),last=q.attempts?.at(-1);if(locked)saved=last?.value;
+  const hidden=document.createElement('input');hidden.type='hidden';if(!locked)hidden.dataset.draft=k;host.append(hidden);const store=v=>{hidden.value=JSON.stringify(v);drafts.set(k,hidden.value);};
   const node=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
   if(m.kind==='manual'){
    const value=saved&&typeof saved==='object'?saved:{text:'',strokes:[],confirmed:false};store(value);
@@ -22,10 +24,10 @@ export function mountPastAnswers(root,{question,drafts,loadAsset}){
    host.append(node('p','依序輸入代號，以逗號分隔；順序會影響答案。'));const input=node('input');input.required=true;input.value=Array.isArray(saved)?saved.join(','):'';host.append(input,node('p',m.choices.map(c=>c.id+'：'+c.text).join('　')));input.oninput=()=>store(input.value.split(/[,，\s]+/).filter(Boolean));input.oninput();
   }else if(m.kind==='single'){
    const display=booleanChoicePresentation(m.choices,q.rich?.options);const fieldset=node('fieldset');fieldset.className='quiz-choices';fieldset.append(node('legend','選擇一個答案'));
-   appendSingleChoiceOptions(fieldset,{name:'past-choice-'+q.id,options:m.choices.map(o=>({...o,value:JSON.stringify(o.id)})),selected:JSON.stringify(saved),
+   appendSingleChoiceOptions(fieldset,{name:'past-choice-'+q.id,options:m.choices.map(o=>({...o,value:JSON.stringify(o.id)})),selected:JSON.stringify(saved),locked,result:locked&&last&&typeof last.correct==='boolean'?{chosen:JSON.stringify(last.value),...(revealedPastChoice(q)?{correct:JSON.stringify(q.pastReference)}:{}),chosenCorrect:last.correct}:null,
     onSelect:v=>store(JSON.parse(v)),decorateInput:input=>{input.required=true;},badgeForOption:(o,i)=>display?.[i].badge??o.id,
     renderBody:(body,o,i)=>{if(display){body.textContent=display[i].text;return;}const span=node('span');span.dataset.richQ=q.id;span.dataset.richPart='option';span.dataset.richIndex=i;body.append(span);}});
-   host.append(fieldset);store(saved??null);
+   host.append(fieldset);if(!locked)store(saved??null);
   }else{
    const options=m.kind==='mark'?[{id:true,text:'打勾／是'},{id:false,text:'不打勾／否'}]:m.kind==='set'?m.codes.map(id=>({id,text:id})):m.choices;
    for(const [i,o]of options.entries()){
