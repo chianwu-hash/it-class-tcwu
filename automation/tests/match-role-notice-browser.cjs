@@ -8,8 +8,11 @@ try{
  await wait(()=>window.ready&&document.querySelector('dialog[open]'));
  check('captain instruction',await p.locator('#match-role-description').textContent()==='你被選為隊長，接著請選全隊要練的卷。');
  const captainColors=await p.locator('dialog').evaluate(d=>({role:d.dataset.role,bg:getComputedStyle(d).backgroundColor,button:getComputedStyle(d.querySelector('button')).backgroundColor}));
- check('captain warm gold with crown',captainColors.role==='captain'&&captainColors.bg==='rgb(255, 252, 243)'&&await p.locator('[data-role-icon="crown"]').count()===1);
+ await wait(()=>document.querySelector('[data-role-art]')?.naturalWidth>0);
+ const captainMarker=await p.locator('dialog').evaluate(d=>({circle:getComputedStyle(d.querySelector('.match-role-symbol')).backgroundColor,label:getComputedStyle(d.querySelector('.match-role-label')).backgroundColor}));
+ check('captain warm gold with generated cat',captainColors.role==='captain'&&captainColors.bg==='rgb(255, 252, 243)'&&await p.locator('[data-role-art="captain"]').count()===1);
  check('acknowledgment gets initial focus',await p.evaluate(()=>document.activeElement.matches('[data-match-role-ok]')));
+ if(process.env.ROLE_ART_SCREENSHOTS==='1'){fs.mkdirSync('.chat-mode/evidence',{recursive:true});await p.screenshot({path:'.chat-mode/evidence/role-captain.png',timeout:10000});}
  check('modal accessible title and description',await p.evaluate(()=>{const d=document.querySelector('dialog');return d.getAttribute('aria-labelledby')==='match-role-title'&&d.getAttribute('aria-describedby')==='match-role-description';}));
  await p.evaluate(()=>teamUpdate({idleWarning:true}));await wait(()=>document.querySelector('.match-note'));
  check('poll rerender retains single notice',await p.locator('dialog[open]').count()===1);
@@ -21,10 +24,14 @@ try{
  await p.evaluate(()=>teamUpdate({host:'b'}));await wait(()=>document.querySelector('dialog[open]'));
  check('new role member instruction',await p.locator('#match-role-description').textContent()==='你是隊員，請等候隊長選卷。');
  const memberColors=await p.locator('dialog').evaluate(d=>({role:d.dataset.role,bg:getComputedStyle(d).backgroundColor,button:getComputedStyle(d.querySelector('button')).backgroundColor}));
- check('member blue with partner icon',memberColors.role==='member'&&memberColors.bg==='rgb(248, 251, 255)'&&await p.locator('[data-role-icon="partners"]').count()===1);
+ await wait(()=>document.querySelector('[data-role-art]')?.naturalWidth>0);
+ const memberMarker=await p.locator('dialog').evaluate(d=>({circle:getComputedStyle(d.querySelector('.match-role-symbol')).backgroundColor,label:getComputedStyle(d.querySelector('.match-role-label')).backgroundColor}));
+ check('circle and role label have distinct role colors',captainMarker.circle!==memberMarker.circle&&captainMarker.label!==memberMarker.label);
+ check('member blue with generated rabbit',memberColors.role==='member'&&memberColors.bg==='rgb(248, 251, 255)'&&await p.locator('[data-role-art="member"]').count()===1);
  check('role backgrounds and buttons visibly differ',captainColors.bg!==memberColors.bg&&captainColors.button!==memberColors.button);
  await p.setViewportSize({width:390,height:844});
  check('mobile dialog fits viewport',await p.locator('dialog').evaluate(d=>{const r=d.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight;}));
+ if(process.env.ROLE_ART_SCREENSHOTS==='1')await p.screenshot({path:'.chat-mode/evidence/role-member.png',timeout:10000});
  await p.locator('dialog').evaluate(d=>d.dispatchEvent(new Event('cancel',{cancelable:true})));
  await wait(()=>!document.querySelector('dialog'));
  check('native cancel handler dismisses and restores member context',await p.evaluate(()=>!document.querySelector('dialog')&&document.activeElement.matches('.match-panel h2')));

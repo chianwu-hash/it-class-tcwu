@@ -1,5 +1,5 @@
 import {initGrade6NavIdentity} from '../grade6-nav-identity.js?v=20261107-roster-nav';
-import {createMatchmaking,matchInstalledError} from './matchmaking.mjs?v=20261107-role-colors';
+import {createMatchmaking,matchInstalledError} from './matchmaking.mjs?v=20261107-role-art';
 import {readInvite} from './invite.mjs?v=20261106-team-flow';
 import {mountTeamHome,mountWaitingTeam} from './team-flow.mjs?v=20261106-match-reviewed';
 import {createLearningUI} from './learning.js?v=20261106-review-layout';
