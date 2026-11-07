@@ -1,6 +1,6 @@
 import {celebratePastFlower,stopPastFlowerCelebration} from './past-flower-celebration.mjs';
 import {afterGardenReward} from './garden-unlock-notice.mjs?v=20261102-grade9-release';
-import {initPastExamUI} from './quiz-past-ui.mjs?v=20261104-field-keyboard';
+import {initPastExamUI} from './quiz-past-ui.mjs?v=20261107-boolean-choice';
 import {createAuthenticatedTransport} from './quiz-transport.mjs?v=20261029-batch4';
 import {createMediaScope,configureQuizMedia} from './quiz-media.mjs';
 import {initImageLightbox} from './image-lightbox.js';

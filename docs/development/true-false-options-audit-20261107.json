@@ -1,0 +1,126 @@
+{
+  "documents": {
+    "bank_draft": 545,
+    "bank_version": 557,
+    "past_version": 82
+  },
+  "pastPapers": 50,
+  "pastEnabledPapers": 40,
+  "pastBlockedEntries": 212,
+  "questionTotals": {
+    "bank_draft": 5116,
+    "bank_version": 5226,
+    "partner_copy": 3335,
+    "past_version": 2555
+  },
+  "unitNote": "Past totals count group objects, not independently answerable fields; historical versions/copies may repeat the same source question.",
+  "kindTotals": [
+    {
+      "kind": "single",
+      "n": 5116,
+      "source": "bank_draft"
+    },
+    {
+      "kind": "single",
+      "n": 5226,
+      "source": "bank_version"
+    },
+    {
+      "kind": "code",
+      "n": 215,
+      "source": "partner_copy"
+    },
+    {
+      "kind": "manual",
+      "n": 195,
+      "source": "partner_copy"
+    },
+    {
+      "kind": "mark",
+      "n": 189,
+      "source": "partner_copy"
+    },
+    {
+      "kind": "sequence",
+      "n": 1,
+      "source": "partner_copy"
+    },
+    {
+      "kind": "set",
+      "n": 9,
+      "source": "partner_copy"
+    },
+    {
+      "kind": "short",
+      "n": 475,
+      "source": "partner_copy"
+    },
+    {
+      "kind": "single",
+      "n": 2251,
+      "source": "partner_copy"
+    },
+    {
+      "kind": "annotation",
+      "n": 3,
+      "source": "past_version"
+    },
+    {
+      "kind": "code",
+      "n": 189,
+      "source": "past_version"
+    },
+    {
+      "kind": "manual",
+      "n": 333,
+      "source": "past_version"
+    },
+    {
+      "kind": "mark",
+      "n": 64,
+      "source": "past_version"
+    },
+    {
+      "kind": "sequence",
+      "n": 3,
+      "source": "past_version"
+    },
+    {
+      "kind": "set",
+      "n": 29,
+      "source": "past_version"
+    },
+    {
+      "kind": "short",
+      "n": 405,
+      "source": "past_version"
+    },
+    {
+      "kind": "single",
+      "n": 1529,
+      "source": "past_version"
+    }
+  ],
+  "trueFalseSingleChoiceGroups": {
+    "past_version": 287,
+    "bank_version": 8,
+    "bank_draft": 8,
+    "partner_copy": 122
+  },
+  "patterns": {
+    "past_version O:O|X:X": 211,
+    "past_version O:○|X:╳": 41,
+    "past_version T:T|F:F": 33,
+    "past_version 1:正確|2:不正確": 1,
+    "past_version 1:○|2:×": 1,
+    "bank_version O:正確|X:不正確": 8,
+    "bank_draft O:正確|X:不正確": 8,
+    "partner_copy O:O|X:X": 81,
+    "partner_copy O:○|X:╳": 31,
+    "partner_copy T:T|F:F": 9,
+    "partner_copy 1:○|2:×": 1
+  },
+  "uncoveredCount": 0,
+  "scope": "all past versions, enabled/disabled; all normal bank drafts/versions; all partner copies; no student attempts or answers queried",
+  "dataChanged": false
+}
