@@ -4,6 +4,7 @@
 - 隊長暖金色＋皇冠SVG；隊員藍色＋雙人SVG，文字保留，不只依顏色辨識。共用dialog以data-role與CSS變數分色，四年級入口版本同步更新。
 - 前端集合說明改20秒；新遷移quiz-partner-match-20-seconds.sql只把match_settings.batch_seconds/default/check由30改20，保留既有batch deadline、啟用設定、隊伍、任務與獎勵。無函式／ACL／RLS變動，不重播歷史SQL。
 - 18項合成瀏覽器角色、顏色、圖示與關閉／生命週期檢查通過；19項既有組隊／原任務SQL回歸及1項遷移回歸通過，確認API新輪deadline為20秒、單人續候配後第二人加入20秒、遷移可重跑、不改既有deadline或紀錄。未做真實Google雙機與截圖驗收。
+- 候選版尚未promote；整合樣式檢查發現visual.css作用域的button.primary會覆蓋按鈕分色，已中止候選發布，補強選擇器並將正式quiz-theme/style/visual樣式加入測試fixture。
 - PR104已進main 0c4db8e；從乾淨main只套新SQL。正式3/4/6/9年級batch_seconds、default與check皆20；重建快照只差此default/check與匯出時間，163個函式定義／權限完全相同，db-snapshot-check --live ok:true。快照PR進main後再由全新乾淨main走發布腳本、正式讀回與收尾。
 
 # 2026-11-07 自動組隊成功角色提示（已正式發布）

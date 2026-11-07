@@ -34,6 +34,6 @@
 .match-role-symbol{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 12px;border-radius:50%;background:var(--role-tint);color:var(--role-accent);font-size:32px;font-weight:800}
 .match-role-notice .match-role-label{display:inline-block;background:var(--role-tint);border-radius:20px;padding:5px 16px;color:var(--role-accent);font-size:15px;font-weight:700;margin:0 0 12px}
 .match-role-notice h2{font-size:30px;line-height:1.35;margin:0 0 14px}.match-role-notice #match-role-description{font-size:21px;font-weight:700;line-height:1.8;margin:0 0 22px}
-.match-role-notice button{font:inherit;min-height:48px;width:100%;padding:13px 16px;border:1px solid var(--role-accent);border-radius:13px;background:var(--role-accent);color:#fff;font-weight:700;cursor:pointer}
+.partner-content .match-role-notice button.primary{font:inherit;min-height:48px;width:100%;padding:13px 16px;border:1px solid var(--role-accent);border-radius:13px;background:var(--role-accent);color:#fff;font-weight:700;cursor:pointer;margin:0;box-shadow:none}
 .match-role-notice button:focus-visible{outline:3px solid #e3b740;outline-offset:4px}
 @media(max-width:480px){.match-role-notice{padding:25px 20px}.match-role-notice h2{font-size:27px}.match-role-notice #match-role-description{font-size:19px}}
