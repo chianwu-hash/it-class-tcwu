@@ -1,0 +1,119 @@
+{
+  "agent": "Codex-match-role-colors-final-20261107",
+  "commit": "98ff18a5f598a3cd24fc5e6d478c79e182d4aad6",
+  "baseline": "dpl_2naqAWCDkhjFnXuxVbDhFdUJiFdu",
+  "expected": {
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/matchmaking.mjs",
+      "shared/partner-pilot/team-flow.css"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "startedAt": "2026-11-07T01:49:46.767Z",
+  "state": "promoted",
+  "candidate": "dpl_FbtkTEnVLSoyWpsbYBAroJ7U7Abc",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/matchmaking.mjs",
+      "shared/partner-pilot/team-flow.css"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-07T01:50:10.153Z",
+  "promotedAt": "2026-11-07T01:50:31.152Z",
+  "alias": "dpl_FbtkTEnVLSoyWpsbYBAroJ7U7Abc",
+  "rollback": "dpl_2naqAWCDkhjFnXuxVbDhFdUJiFdu",
+  "verification": {
+    "at": "2026-11-07T01:50:39.793Z",
+    "checks": [
+      {
+        "path": "grade3/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "61999f0af497e5ad2026523f43471d6f1b4537d5794de41ec355c6afb3b81043"
+      },
+      {
+        "path": "grade4/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "c6dd91e895d5774f0824c1f8a04a9152befacc77944ca254f4fc1ebf6e0598fd"
+      },
+      {
+        "path": "grade6/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "908e92631832f0567a4c5c90d38086758475376c7f4ceb93b45f909471c955f9"
+      },
+      {
+        "path": "grade9/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "e0521c01576675754ab30299e746a523280cd8d26df7809cb437e864f946c882"
+      },
+      {
+        "path": "shared/partner-pilot/app.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "20e775991325c5d936c26bc22d687ac7ede14f4fb02072cc29584809aa211bac"
+      },
+      {
+        "path": "shared/partner-pilot/matchmaking.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "7c6bf2c1b6d24fa7d55700aec43624695bce70e839ee160082794c4ba43a9761"
+      },
+      {
+        "path": "shared/partner-pilot/team-flow.css",
+        "status": 200,
+        "ok": true,
+        "sha256": "c779d3f3d980d650ecfd2cb26b936a9ccee462ef3440b28711ae834415bc30c7"
+      }
+    ]
+  },
+  "prs": [
+    104,
+    105,
+    106
+  ],
+  "browserChecks": 18,
+  "regressionChecks": 20,
+  "database": {
+    "migration": "quiz-partner-match-20-seconds.sql",
+    "grades": [
+      3,
+      4,
+      6,
+      9
+    ],
+    "batch_seconds": 20,
+    "default": 20,
+    "check": "batch_seconds = 20",
+    "functionDefinitionsAndACLUnchanged": true,
+    "liveCheck": true,
+    "inflightDeadlinePreserved": true
+  }
+}
