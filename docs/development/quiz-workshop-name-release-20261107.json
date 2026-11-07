@@ -1,0 +1,264 @@
+{
+  "agent": "Codex-quiz-workshop-name-20261107",
+  "commit": "5b19e23cdb60a1e4e0e6e577dc88aac99ab5e506",
+  "baseline": "dpl_7VPwN9LXpA1TnmR1BsX14jjsfrUY",
+  "expected": {
+    "changed": [
+      "grade3/115-1/index.html",
+      "grade3/115-1/learning.html",
+      "grade3/115-1/navbar.js",
+      "grade3/115-1/partner-practice.html",
+      "grade3/115-1/quiz-library.html",
+      "grade3/115-1/week09.html",
+      "grade4/115-1/index.html",
+      "grade4/115-1/navbar.js",
+      "grade4/115-1/partner-practice.html",
+      "grade4/115-1/quiz-library.html",
+      "grade6/115-1/index.html",
+      "grade6/115-1/navbar.js",
+      "grade6/115-1/partner-practice.html",
+      "grade6/115-1/quiz-library.html",
+      "grade6/115-1/week09.html",
+      "grade6/115-1/week10.html",
+      "grade9/115-1/navbar.js",
+      "grade9/115-1/partner-practice.html",
+      "my-tree.html",
+      "shared/admin-learning-rewards.mjs",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/paper-picker.mjs",
+      "shared/quiz-library.mjs",
+      "shared/quiz-past-style.css",
+      "shared/quiz-rewards.mjs",
+      "shared/quiz-student.mjs",
+      "shared/quiz-theme.css"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "startedAt": "2026-11-07T00:42:30.712Z",
+  "state": "promoted",
+  "candidate": "dpl_FXEFpqUnvs7mC4P5JRRxpMqrUnxg",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/index.html",
+      "grade3/115-1/learning.html",
+      "grade3/115-1/navbar.js",
+      "grade3/115-1/partner-practice.html",
+      "grade3/115-1/quiz-library.html",
+      "grade3/115-1/week09.html",
+      "grade4/115-1/index.html",
+      "grade4/115-1/navbar.js",
+      "grade4/115-1/partner-practice.html",
+      "grade4/115-1/quiz-library.html",
+      "grade6/115-1/index.html",
+      "grade6/115-1/navbar.js",
+      "grade6/115-1/partner-practice.html",
+      "grade6/115-1/quiz-library.html",
+      "grade6/115-1/week09.html",
+      "grade6/115-1/week10.html",
+      "grade9/115-1/navbar.js",
+      "grade9/115-1/partner-practice.html",
+      "my-tree.html",
+      "shared/admin-learning-rewards.mjs",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/paper-picker.mjs",
+      "shared/quiz-library.mjs",
+      "shared/quiz-past-style.css",
+      "shared/quiz-rewards.mjs",
+      "shared/quiz-student.mjs",
+      "shared/quiz-theme.css"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-07T00:43:01.427Z",
+  "promotedAt": "2026-11-07T00:43:27.367Z",
+  "alias": "dpl_FXEFpqUnvs7mC4P5JRRxpMqrUnxg",
+  "rollback": "dpl_7VPwN9LXpA1TnmR1BsX14jjsfrUY",
+  "pullRequest": 98,
+  "namingChanges": {
+    "files": 27,
+    "replacements": 52,
+    "exactTextOnlyVerified": true
+  },
+  "regressionTestsPassed": 11,
+  "productionAssets": {
+    "at": "2026-11-07T00:43:29.811Z",
+    "checks": [
+      {
+        "path": "grade3/115-1/index.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "1eff7f5475d54282c254908be794ac0708c7bb6393670b8e7cdb498e2bca9027"
+      },
+      {
+        "path": "grade3/115-1/learning.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "b73cce57cd944308470f8be00e1d245ba5dc9dc11847929f227c6cd4d1a5f63f"
+      },
+      {
+        "path": "grade3/115-1/navbar.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "d955a9b27d90c7ea415d6cb9b22eba912957dacace8483f8d67e71fc1561b49e"
+      },
+      {
+        "path": "grade3/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "bd021fdfcc058740f5daacf73248225fa564b09c6021cc1ec8824c7ec991510f"
+      },
+      {
+        "path": "grade3/115-1/quiz-library.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "4d9f008ebed1cad6b2416f424b7fc62e019404827f61bfbcf5c4b34b6745e40d"
+      },
+      {
+        "path": "grade3/115-1/week09.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "01162858f2a95ebf88efbe3896a80a98e9a2a9fe1ae89b629ea2ae3dfa1a61a1"
+      },
+      {
+        "path": "grade4/115-1/index.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "c40c9c71a993d8a7143c0ce609effaec643fdd03c330446a85cea91f3ae968f3"
+      },
+      {
+        "path": "grade4/115-1/navbar.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "fec8f8663eb48180c3066d68a56b8923a739b13bcf006b79a01731b8a6ee067f"
+      },
+      {
+        "path": "grade4/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "0b766ca16da770b0b998dbe1bab3aa2b49d168d6551c70be958a3bdf627f275d"
+      },
+      {
+        "path": "grade4/115-1/quiz-library.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "2d35d4491873318bca4f052d65776001de68a6297fb6210398b666811d46edd2"
+      },
+      {
+        "path": "grade6/115-1/index.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "88a39a5a7667930ed7b86a6ac9460c85df782bf68c5bf896a20129342c5a8319"
+      },
+      {
+        "path": "grade6/115-1/navbar.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "22696caab804c4aa62722873836eac6c4eb57e119ab30d8802ed7fb099f2b5dc"
+      },
+      {
+        "path": "grade6/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "a85f0c207784fa95b74bdf7123cfc64a03c059a82dea34cfd65eb119b561da77"
+      },
+      {
+        "path": "grade6/115-1/quiz-library.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "c1781864792ab60e315461897fcbe106970169a9ac3adb13fa610ba5c81fa10c"
+      },
+      {
+        "path": "grade6/115-1/week09.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "423063c0725717a151b4dcc41e897b0b089677a9d34fdf5893a05fd5dc52a033"
+      },
+      {
+        "path": "grade6/115-1/week10.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "ba8fa2fea6d271dd54457973267866c1d041c3ce3835f2002006e240a73adfd8"
+      },
+      {
+        "path": "grade9/115-1/navbar.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "587e29cbafcc9fa3a4b5130c901e3fa0e0ca382b595bc907ae1e56eca9713416"
+      },
+      {
+        "path": "grade9/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "4ab94c541dbe2b025cf6ec0c41f3b95ea018e53bd8e8ef85d8a4039222b86672"
+      },
+      {
+        "path": "my-tree.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "b70959eb216f0ad7194fdd12affcb7840746d83b1366ea01b1eaccb2f01e3a30"
+      },
+      {
+        "path": "shared/admin-learning-rewards.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "18bb03c14978c4e55c6c1b334de68f58b50bc96835f4ccb5f4553eb9a1f6f428"
+      },
+      {
+        "path": "shared/partner-pilot/app.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "c6acb829f3b42be228393a0e2ed521f6c11d0a06033e9a8591b71595275d2668"
+      },
+      {
+        "path": "shared/partner-pilot/paper-picker.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "910c8203798a99b5dce3827e73552fb9cde5fd31eca6152e580ed28180774cac"
+      },
+      {
+        "path": "shared/quiz-library.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "9f3a8b71e6a8b1039bd3462aa8a565a703f8a95ff029a3859bfc38b7b1e911dd"
+      },
+      {
+        "path": "shared/quiz-past-style.css",
+        "status": 200,
+        "ok": true,
+        "sha256": "0d28fbafba2d0298d886cae31f7b349a76864b90af21cf544a6fbe756524cf7b"
+      },
+      {
+        "path": "shared/quiz-rewards.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "66f6a1d68af6fe74c2f41b75d2b159279339d6cbd6445bebbd44b5c1fd64a7fc"
+      },
+      {
+        "path": "shared/quiz-student.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "764191ebfa198ab49bd0bfe6eca770681e6b55f59b999e4753d57b66674c421c"
+      },
+      {
+        "path": "shared/quiz-theme.css",
+        "status": 200,
+        "ok": true,
+        "sha256": "c9f170b5cf9b2654b7e647890ea6c3ef650c0e19592a41722a8e0b49c83cd14b"
+      }
+    ]
+  }
+}
