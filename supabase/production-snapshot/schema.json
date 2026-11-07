@@ -3188,7 +3188,7 @@
      "type": "boolean"
     },
     {
-     "default": "30",
+     "default": "20",
      "generated": "",
      "identity": "",
      "name": "batch_seconds",
@@ -3230,7 +3230,7 @@
    ],
    "constraints": [
     {
-     "def": "CHECK ((batch_seconds = 30))",
+     "def": "CHECK ((batch_seconds = 20))",
      "name": "match_settings_batch_seconds_check"
     },
     {
