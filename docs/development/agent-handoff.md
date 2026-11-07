@@ -1,9 +1,17 @@
-# 2026-11-07 考前練功坊名稱統一（待發布）
+# 2026-11-07 考前練功坊名稱統一（已正式發布）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-quiz-workshop-name-20261107 | 2026-11-07T00:42:30.712Z | `5b19e23` | `dpl_7VPwN9LXpA1TnmR1BsX14jjsfrUY` | grade3/115-1/index.html、grade3/115-1/learning.html、grade3/115-1/navbar.js、grade3/115-1/partner-practice.html、grade3/115-1/quiz-library.html、grade3/115-1/week09.html、grade4/115-1/index.html、grade4/115-1/navbar.js、grade4/115-1/partner-practice.html、grade4/115-1/quiz-library.html、grade6/115-1/index.html、grade6/115-1/navbar.js、grade6/115-1/partner-practice.html、grade6/115-1/quiz-library.html、grade6/115-1/week09.html、grade6/115-1/week10.html、grade9/115-1/navbar.js、grade9/115-1/partner-practice.html、my-tree.html、shared/admin-learning-rewards.mjs、shared/partner-pilot/app.mjs、shared/partner-pilot/paper-picker.mjs、shared/quiz-library.mjs、shared/quiz-past-style.css、shared/quiz-rewards.mjs、shared/quiz-student.mjs、shared/quiz-theme.css | `dpl_FXEFpqUnvs7mC4P5JRRxpMqrUnxg`／回滾 `dpl_7VPwN9LXpA1TnmR1BsX14jjsfrUY`（eolOnly 0） |
+
+- PR98進main；乾淨main 5b19e23經發布腳本於臺灣2026-11-07 08:43:27上線。完整樹ok:true（27改、0新／刪／非預期／eolOnly），27個正式資產HTTP200、SHA-256與main一致且無舊名稱；鎖已釋放。[發布收據](quiz-workshop-name-release-20261107.json)。
 
 - 使用者指出測驗導覽與其他頁不同並要求統一名稱。已確認各年級navbar以data-quiz=true啟用quizMode，同一shared/course-navbar.js，刻意不列每週課程，保留回選卷／努力樹／課程首頁／原身分。這次只說明原因，不改導覽配置或Auth事件。
 - Codex唯一寫入者，fresh origin/main 4c94747，分支codex/quiz-workshop-name-20261107。網站runtime 27檔共52處「練功房」改「練功坊」：各年級入口、navbar、選卷／答題／夥伴頁、提示與努力樹來源名稱，含文字註解；不改URL、識別鍵、題目、進度、紀錄、獎勵或資料庫。
 - 逐檔與Git基準比對，只允許完整文字「練功房→練功坊」，JavaScript語法與diff-check通過，11項努力樹摘要／年級路由回歸通過。未變動選單行為，未重跑真人登入／多人實測；歷史報告、既有Google Drive資料夾識別與舊測試資料不批次改寫。
-- 依PR→main→乾淨新main發布腳本；發布後正式文字／資產比對、收據PR、證據封存及本批未使用worktree正常清理，其他任務與使用中原型保留。
+- 已依PR→main→乾淨新main發布腳本完成；收據PR進main後封存證據及正常清理本批未使用worktree，其他任務與使用中原型保留。
 
 # 2026-11-06 共同回顧摘要清單版面整合（已正式發布）
 
