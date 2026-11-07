@@ -1,0 +1,33 @@
+{
+  "purpose": "組隊成功角色提示：隊長金色皇冠橘貓／隊員藍色領巾白兔",
+  "assets": [
+    {
+      "role": "captain",
+      "generator": "ChatGPT web Images",
+      "prompt": "automation/prompts/partner-roles/01-captain.txt",
+      "sourceSha256": "3a19d57dd228553415e17e1d7e81bfd88897be40bf3b0a0f60b11ad9040b611d",
+      "path": "shared/partner-pilot/art/role-captain-v1.webp",
+      "size": [
+        384,
+        384
+      ],
+      "bytes": 29552,
+      "sha256": "bae18f5b9e0575c16c932d85b542962af7030736367d693510b81e730032f3af",
+      "alpha": true
+    },
+    {
+      "role": "member",
+      "generator": "ChatGPT web Images",
+      "prompt": "automation/prompts/partner-roles/02-member.txt",
+      "sourceSha256": "d3fbcaaa6bc2d78c69238d3579ec04aa0221acbb6787d2df235c98d33c42c39a",
+      "path": "shared/partner-pilot/art/role-member-v1.webp",
+      "size": [
+        384,
+        384
+      ],
+      "bytes": 25538,
+      "sha256": "fddbb9d8d8c54cca38589e0f65562cc6ab3cc17b4eb49f366b7d551a1596da16",
+      "alpha": true
+    }
+  ]
+}
