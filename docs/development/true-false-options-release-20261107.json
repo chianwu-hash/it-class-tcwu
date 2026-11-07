@@ -1,0 +1,280 @@
+{
+  "releases": [
+    {
+      "agent": "Codex-true-false-options-20261107",
+      "commit": "ffb51861939ae15c94ad642e0df4ffc8ad05afce",
+      "baseline": "dpl_7cvY1k8R5osymmkX5AJyieds3FAm",
+      "expected": {
+        "changed": [
+          "grade3/115-1/partner-practice.html",
+          "grade3/115-1/past-exam-review.html",
+          "grade3/115-1/past-exam.html",
+          "grade4/115-1/partner-practice.html",
+          "grade4/115-1/past-exam.html",
+          "grade6/115-1/partner-practice.html",
+          "grade6/115-1/past-exam-review.html",
+          "grade6/115-1/past-exam.html",
+          "grade9/115-1/partner-practice.html",
+          "grade9/115-1/past-exam.html",
+          "shared/partner-pilot/app.mjs",
+          "shared/partner-pilot/learning.js",
+          "shared/partner-pilot/past-answer.js",
+          "shared/partner-pilot/review-layout.mjs",
+          "shared/quiz-module.js",
+          "shared/quiz-past-entry.mjs",
+          "shared/quiz-past-exams.mjs",
+          "shared/quiz-past-review.mjs",
+          "shared/quiz-past-teacher.mjs",
+          "shared/quiz-past-ui.mjs"
+        ],
+        "added": [
+          "shared/quiz-boolean-choice.mjs"
+        ],
+        "removed": []
+      },
+      "startedAt": "2026-11-07T05:10:02.774Z",
+      "state": "promoted",
+      "candidate": "dpl_B5HbL143yQuzbzTVACwZcUToA2h2",
+      "comparison": {
+        "ok": true,
+        "changed": [
+          "grade3/115-1/partner-practice.html",
+          "grade3/115-1/past-exam-review.html",
+          "grade3/115-1/past-exam.html",
+          "grade4/115-1/partner-practice.html",
+          "grade4/115-1/past-exam.html",
+          "grade6/115-1/partner-practice.html",
+          "grade6/115-1/past-exam-review.html",
+          "grade6/115-1/past-exam.html",
+          "grade9/115-1/partner-practice.html",
+          "grade9/115-1/past-exam.html",
+          "shared/partner-pilot/app.mjs",
+          "shared/partner-pilot/learning.js",
+          "shared/partner-pilot/past-answer.js",
+          "shared/partner-pilot/review-layout.mjs",
+          "shared/quiz-module.js",
+          "shared/quiz-past-entry.mjs",
+          "shared/quiz-past-exams.mjs",
+          "shared/quiz-past-review.mjs",
+          "shared/quiz-past-teacher.mjs",
+          "shared/quiz-past-ui.mjs"
+        ],
+        "added": [
+          "shared/quiz-boolean-choice.mjs"
+        ],
+        "removed": [],
+        "eolOnly": 0,
+        "unexpected": [],
+        "missingFromChange": [],
+        "addedCheck": {
+          "missing": [],
+          "unexpected": []
+        },
+        "removedCheck": {
+          "missing": [],
+          "unexpected": []
+        }
+      },
+      "deployedAt": "2026-11-07T05:10:28.768Z",
+      "promotedAt": "2026-11-07T05:10:57.159Z",
+      "alias": "dpl_B5HbL143yQuzbzTVACwZcUToA2h2",
+      "rollback": "dpl_7cvY1k8R5osymmkX5AJyieds3FAm"
+    },
+    {
+      "agent": "Codex-true-false-final-20261107",
+      "commit": "58d0e4c8cfba3752d8d2dfc4420aaa7a26f2c840",
+      "baseline": "dpl_B5HbL143yQuzbzTVACwZcUToA2h2",
+      "expected": {
+        "changed": [
+          "shared/partner-pilot/past-results.js",
+          "shared/partner-pilot/learning.js",
+          "shared/partner-pilot/app.mjs",
+          "grade3/115-1/partner-practice.html",
+          "grade4/115-1/partner-practice.html",
+          "grade6/115-1/partner-practice.html",
+          "grade9/115-1/partner-practice.html"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "startedAt": "2026-11-07T05:14:04.695Z",
+      "state": "promoted",
+      "candidate": "dpl_2sTF4agA6538zG93WbbBt19ndkfM",
+      "comparison": {
+        "ok": true,
+        "changed": [
+          "grade3/115-1/partner-practice.html",
+          "grade4/115-1/partner-practice.html",
+          "grade6/115-1/partner-practice.html",
+          "grade9/115-1/partner-practice.html",
+          "shared/partner-pilot/app.mjs",
+          "shared/partner-pilot/learning.js",
+          "shared/partner-pilot/past-results.js"
+        ],
+        "added": [],
+        "removed": [],
+        "eolOnly": 0,
+        "unexpected": [],
+        "missingFromChange": [],
+        "addedCheck": {
+          "missing": [],
+          "unexpected": []
+        },
+        "removedCheck": {
+          "missing": [],
+          "unexpected": []
+        }
+      },
+      "deployedAt": "2026-11-07T05:14:31.320Z",
+      "promotedAt": "2026-11-07T05:15:21.005Z",
+      "alias": "dpl_2sTF4agA6538zG93WbbBt19ndkfM",
+      "rollback": "dpl_B5HbL143yQuzbzTVACwZcUToA2h2"
+    }
+  ],
+  "verification": {
+    "at": "2026-11-07T05:15:39.978Z",
+    "checks": [
+      {
+        "path": "grade3/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "4502842cf34d0cd4ff0c4f5b801e03008836181ab6493eb523d911072c0520a7"
+      },
+      {
+        "path": "grade3/115-1/past-exam-review.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "296e32d745fe49efde670d1b846391034b6bf9756bbf36f35104c7ed0b72cbe6"
+      },
+      {
+        "path": "grade3/115-1/past-exam.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "39f5a3b3505547fca31fbfb70a6db5f20d122cd051ad4dedeb8dbd365d18d32e"
+      },
+      {
+        "path": "grade4/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "a18dd5f155f8549a67774d268173b883730c17c6b83287478c727dd3c54b7cca"
+      },
+      {
+        "path": "grade4/115-1/past-exam.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "b1192d26ebf593f758bee6a61bc6dd547e7c498572a9957fa1bfd3cb76b494aa"
+      },
+      {
+        "path": "grade6/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "315655001483c32026ed79fb36adb2e3cd523fefe63003e75e67a17dba67b944"
+      },
+      {
+        "path": "grade6/115-1/past-exam-review.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "af7b825e230214e48a6a61ddf8890e0e8cac58a9fd036e7609418af1d729cf6c"
+      },
+      {
+        "path": "grade6/115-1/past-exam.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "f97e3776d388a29bce186a538bdf2bfa3022a4f2ba949b629e230768801135bc"
+      },
+      {
+        "path": "grade9/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "56130076f0f04d1902ece5baeaecd7576eee9f38d19db831e500884c89e2bcd7"
+      },
+      {
+        "path": "grade9/115-1/past-exam.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "a74f7a75d0ad7d9f06f0e4609ee8887558d6c3a2b0a9db37ac4d51c197416ce4"
+      },
+      {
+        "path": "shared/partner-pilot/app.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "f3c620c373e1f45da34bfd0388e1254392d4822f2ce245d3237b51b33e2bb70b"
+      },
+      {
+        "path": "shared/partner-pilot/learning.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "138c1fc6818e71dd3ebd1c8a56c5424edf7a720b9a5a1fff7236c115c001a433"
+      },
+      {
+        "path": "shared/partner-pilot/past-answer.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "00fdee1d9fb0dc1804519c03d0a50c9311b42cd5f0f1deff277e7b3677ff21f2"
+      },
+      {
+        "path": "shared/partner-pilot/review-layout.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "1065af53a73e168eed5a5c043a0cbf100a4490faafbb086aef19d250eaf2ff7e"
+      },
+      {
+        "path": "shared/quiz-module.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "5e04726c2fe6ec7c8b0efd3b3dc2a982ef14e2ab588815ce6d101d2b2a7f0cfb"
+      },
+      {
+        "path": "shared/quiz-past-entry.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "b864d30732bb8c4daddbd3b2a5ade160776f23f28b06bedad806d8249bb5346f"
+      },
+      {
+        "path": "shared/quiz-past-exams.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "d3a21a978ee2a887773839a21b460a930c4c96bc55952ef75e6721cf9669ab07"
+      },
+      {
+        "path": "shared/quiz-past-review.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "a0d8b0df4ed8f4f05709a2260230198d017aab72e413488136762d85e26bb1fb"
+      },
+      {
+        "path": "shared/quiz-past-teacher.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "e70e50f4356131dc5b26162d1a137a6329f653393c5ac60a89354f178108937f"
+      },
+      {
+        "path": "shared/quiz-past-ui.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "94c6a24d31fbc26730fabb9030dab42de7abad36516428ecc73870252374f4d0"
+      },
+      {
+        "path": "shared/quiz-boolean-choice.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "96c7d76b8388e7639a038997e89c48a133e35acb7c6afeef6c2dc0fe2c8e50a6"
+      },
+      {
+        "path": "shared/partner-pilot/past-results.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "e0fdb880b1a383e6a128bb8b7fd8a6e6bd5688f3edc4d28164e3dade0367841e"
+      }
+    ]
+  },
+  "prs": [
+    110,
+    111
+  ],
+  "browserChecks": 45,
+  "regressionChecks": 11,
+  "dataChanged": false,
+  "audit": "true-false-options-audit-20261107.json",
+  "limits": "Synthetic browser/SQL; no real Google multi-computer or physical-device test."
+}
