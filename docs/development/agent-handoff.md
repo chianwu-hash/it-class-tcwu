@@ -1,10 +1,18 @@
-# 2026-11-07 組隊角色區塊分色與 ChatGPT 角色插圖（待 PR／發布）
+# 2026-11-07 組隊角色區塊分色與 ChatGPT 角色插圖（已正式發布）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-match-role-art-20261107 | 2026-11-07T04:47:20.401Z | `69eff25` | `dpl_FbtkTEnVLSoyWpsbYBAroJ7U7Abc` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/matchmaking.mjs、shared/partner-pilot/team-flow.css、+shared/partner-pilot/art/role-captain-v1.webp、+shared/partner-pilot/art/role-member-v1.webp | `dpl_7cvY1k8R5osymmkX5AJyieds3FAm`／回滾 `dpl_FbtkTEnVLSoyWpsbYBAroJ7U7Abc`（eolOnly 0） |
+
+- PR108進main 69eff25；經乾淨main發布腳本上線，完整樹ok:true（7改2新，0非預期／eolOnly），9個正式資產HTTP200與SHA-256符合main；鎖已釋放。[發布收據](match-role-art-release-20261107.json)。
 
 - 使用者明確指出上方圖示圓底與角色標籤需要分色，並指定到ChatGPT生兩種圖來放。fresh origin/main 44e7244，Codex唯一寫入者，codex/match-role-art-20261107。
 - 使用ChatGPT工作瀏覽器生成兩張不同寵物：隊長暖金皇冠橘貓、隊員藍領巾白兔，以上傳的網站既有橘貓／兔子作參考，真實透明背景；只縮放與WebP壓縮，不手動拼貼改造型。提示詞在automation/prompts/partner-roles；來源與輸出指紋在partner-role-art-20261107.json，原始生成證據留ignored .chat-mode/role-art。
 - 圓底與標籤使用較明確的金／藍色，104px圓底內放88px圖片；保留角色文字、確認與焦點行為，無RPC／登入／題目／SQL變動，20秒集合維持。四年級入口版本更新，圖片以import.meta.url解析共用資產。
 - 瀏覽器流程：portable共享租約與舊版repo SQLite allocator不相容；改由既有run-background共享入口註冊worker與續約，生圖前再次驗證共享租約與worker，沒有停用保護。使用者已明確允許顯示工作分頁；先核對可見帳號再上傳。首輪隊長圖下載成功後第二輪Images action未選取成功，尚未送第二圖；保留首圖，另開新對話只生第二圖，未重送已接受請求。
-- 驗證：19項角色圖載入／雙色／原生modal生命週期合成瀏覽器檢查與兩張實際畫面截圖；10項隔離SQL組隊／20秒與原任務獎勵回歸。未補做真實Google雙機。發布前須確認本段檢查與圖片實際通過，再經PR→main→新乾淨main發布腳本、9資產讀回、收據PR與本批封存清理。
+- 驗證：19項角色圖載入／雙色／原生modal生命週期合成瀏覽器檢查與兩張實際畫面截圖已逐張目視檢查；10項隔離SQL組隊／20秒與原任務獎勵回歸。未補做真實Google雙機。圖片與檢查均已實際通過；已完成PR→main→新乾淨main發布與9資產讀回。收據PR進main後依SOP封存本批證據與清理已完成未使用目錄，其他使用中目錄不動。
 
 # 2026-11-07 隊長／隊員辨識配色與 20 秒集合（已正式發布）
 

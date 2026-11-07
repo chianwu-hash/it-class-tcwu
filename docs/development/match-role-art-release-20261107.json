@@ -1,0 +1,123 @@
+{
+  "agent": "Codex-match-role-art-20261107",
+  "commit": "69eff25dccb12bda34f6933071890da06edbdf95",
+  "baseline": "dpl_FbtkTEnVLSoyWpsbYBAroJ7U7Abc",
+  "expected": {
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/matchmaking.mjs",
+      "shared/partner-pilot/team-flow.css"
+    ],
+    "added": [
+      "shared/partner-pilot/art/role-captain-v1.webp",
+      "shared/partner-pilot/art/role-member-v1.webp"
+    ],
+    "removed": []
+  },
+  "startedAt": "2026-11-07T04:47:20.401Z",
+  "state": "promoted",
+  "candidate": "dpl_7cvY1k8R5osymmkX5AJyieds3FAm",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/matchmaking.mjs",
+      "shared/partner-pilot/team-flow.css"
+    ],
+    "added": [
+      "shared/partner-pilot/art/role-captain-v1.webp",
+      "shared/partner-pilot/art/role-member-v1.webp"
+    ],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-07T04:47:48.241Z",
+  "promotedAt": "2026-11-07T04:48:21.794Z",
+  "alias": "dpl_7cvY1k8R5osymmkX5AJyieds3FAm",
+  "rollback": "dpl_FbtkTEnVLSoyWpsbYBAroJ7U7Abc",
+  "verification": {
+    "at": "2026-11-07T04:48:52.504Z",
+    "checks": [
+      {
+        "path": "grade3/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "a5c98b900f0e077ee664746f00ab379b5f80df0bf7e09571b90948ac317d317f"
+      },
+      {
+        "path": "grade4/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "779a6ec03cf5d24a5c503185993cf7e55949306ba9dedec44c6b6fba4b553388"
+      },
+      {
+        "path": "grade6/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "4d2117c3a05773516b56463e124825f0f4154be1e3b1ad981fd8a8ff204fe6f1"
+      },
+      {
+        "path": "grade9/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "13ad4ba894edf06adb76e9d4d5c4d78a9be4a258c206c103e98e41668b7d4f48"
+      },
+      {
+        "path": "shared/partner-pilot/app.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "46023bd236c26993ec7605bc565517552af9a73feacc9e49605e534dddbfefdd"
+      },
+      {
+        "path": "shared/partner-pilot/matchmaking.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "5a7f9f433a72e74340eacbfe9f5afca53551c2a45b1c34d05835aff2f72e0cc7"
+      },
+      {
+        "path": "shared/partner-pilot/team-flow.css",
+        "status": 200,
+        "ok": true,
+        "sha256": "2c21cc9451e1a2fcb0c577790e65a4f9cfe01b7d8111f96d5481cf17945137df"
+      },
+      {
+        "path": "shared/partner-pilot/art/role-captain-v1.webp",
+        "status": 200,
+        "ok": true,
+        "sha256": "bae18f5b9e0575c16c932d85b542962af7030736367d693510b81e730032f3af"
+      },
+      {
+        "path": "shared/partner-pilot/art/role-member-v1.webp",
+        "status": 200,
+        "ok": true,
+        "sha256": "fddbb9d8d8c54cca38589e0f65562cc6ab3cc17b4eb49f366b7d551a1596da16"
+      }
+    ]
+  },
+  "pr": 108,
+  "browserChecks": 19,
+  "regressionChecks": 10,
+  "visualScreenshotsInspected": [
+    "captain desktop",
+    "member 390px"
+  ],
+  "assets": "partner-role-art-20261107.json"
+}
