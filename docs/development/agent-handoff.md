@@ -1,11 +1,13 @@
-# 2026-11-07 考古題是非選項重複呈現全面修正（首輪已發布；摘要補齊待發布）
+# 2026-11-07 考古題是非選項重複呈現全面修正（已正式發布）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
+| 已完成 | Codex-true-false-final-20261107 | 2026-11-07T05:14:04.695Z | `58d0e4c` | `dpl_B5HbL143yQuzbzTVACwZcUToA2h2` | shared/partner-pilot/past-results.js、shared/partner-pilot/learning.js、shared/partner-pilot/app.mjs、grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html | `dpl_2sTF4agA6538zG93WbbBt19ndkfM`／回滾 `dpl_B5HbL143yQuzbzTVACwZcUToA2h2`（eolOnly 0） |
 | 已完成 | Codex-true-false-options-20261107 | 2026-11-07T05:10:02.774Z | `ffb5186` | `dpl_7cvY1k8R5osymmkX5AJyieds3FAm` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam-review.html、grade3/115-1/past-exam.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam-review.html、grade6/115-1/past-exam.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/past-answer.js、shared/partner-pilot/review-layout.mjs、shared/quiz-module.js、shared/quiz-past-entry.mjs、shared/quiz-past-exams.mjs、shared/quiz-past-review.mjs、shared/quiz-past-teacher.mjs、shared/quiz-past-ui.mjs、+shared/quiz-boolean-choice.mjs | `dpl_B5HbL143yQuzbzTVACwZcUToA2h2`／回滾 `dpl_7cvY1k8R5osymmkX5AJyieds3FAm`（eolOnly 0） |
 
+- PR111摘要補齊進main 58d0e4c，乾淨main經發布腳本完成（7改0新）；最終22個正式資產HTTP200與SHA-256符合main，完整樹ok:true、eolOnly0、發布鎖已釋放。[兩輪發布收據](true-false-options-release-20261107.json)。
 - PR110進main ffb5186，乾淨main經發布腳本完成，完整樹ok:true（20改1新、0非預期／eolOnly）；21個正式資產HTTP200與SHA-256符合main，鎖已釋放。
 
 - 使用者回報夥伴考古題OOXX，要求全面檢查題庫並補查轉化SOP。fresh origin/main 9588e49，Codex唯一寫入者，codex/true-false-options-20261107。
@@ -16,7 +18,7 @@
 - 收尾補查：已作答摘要的O・○／X・╳同義符號並列亦接入共用規則，不改儲存值；六種表示法均驗證。
 - 驗證：45項合成瀏覽器（六種表示法、四畫面、原始ID暫存與送答、一般A/B正文、390px選項、pageerror0）＋11項Node／隔離SQL規則及既有考古題回歸通過；非真實Google雙機與實體手機，未做正式學生作答。測試fixture的個人送答以合成捕捉拒寫，未拿它當真實判分證據；SQL回歸另測原葉片／版本／歷次。
 - shared/quiz-past-ui.mjs為-text混合換行檔，只改新增import與單選呈現那行，保留其他原始位元組，避免整檔換行污染。四年級入口與依賴query同步更新。
-- 下一步：摘要補齊PR→main→新乾淨main發布腳本（7改0新）；最終22資產讀回、收據PR與本批證據封存清理。沒有正式DB寫入，不需SQL套用或重建schema snapshot。
+- 已完成兩輪PR→main→新乾淨main發布與最終22資產讀回；收據PR進main後封存本批證據並只清已完成未使用目錄，其他工作／預覽保留。沒有正式DB寫入，不需SQL套用或重建schema snapshot。
 
 # 2026-11-07 組隊角色區塊分色與 ChatGPT 角色插圖（已正式發布）
 
