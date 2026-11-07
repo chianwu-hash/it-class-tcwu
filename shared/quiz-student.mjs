@@ -15,7 +15,7 @@ if (cloud) document.body.classList.add('quiz-skin');
 const gradeRoute = cloud ? await import('./quiz-grade-route.mjs?v=20261102-grade9-release') : null;
 if (cloud) {
   const grade = gradeRoute.quizPageGrade(location.pathname);
-  document.title = `${({3:'三',4:'四',6:'六',9:'九'})[grade]}年級考前練功房`;
+  document.title = `${({3:'三',4:'四',6:'六',9:'九'})[grade]}年級考前練功坊`;
   document.querySelector('.hero h1').textContent = document.title;
   document.querySelector('#quiz-lock p').textContent = '請使用名冊中的學生 Google 帳號登入，讀取並儲存自己的雲端作答。';
   const back = document.createElement('a'); back.className = 'quiz-back-link'; back.href = 'quiz-library.html'; back.textContent = '← 返回單元選卷';
@@ -37,7 +37,7 @@ async function start() {
     if (!descriptor.local) throw new Error('本機服務尚未啟動。');
     if(descriptor.pool){
       document.body.classList.add('quiz-skin');document.getElementById('server-quiz').dataset.subject='數學';
-      document.title='三年級數學｜本機試作';document.querySelector('.hero h1').textContent='三年級考前練功房';
+      document.title='三年級數學｜本機試作';document.querySelector('.hero h1').textContent='三年級考前練功坊';
       const back=document.createElement('a');back.className='quiz-back-link';back.href=`quiz-library.html?local=1&student=${student}`;back.textContent='← 返回選卷與錯題';document.querySelector('.hero .wrap').append(back);
     }
     document.getElementById('quiz-identity').textContent = `本機合成學生 ${student}｜${descriptor.pool?'進度存於本機測試資料庫，尚未同步雲端':'不是正式學生帳號'}`;
@@ -71,7 +71,7 @@ async function start() {
         const identity = await request('entry_context',{session_id:sessionId});
         if (token !== authGeneration || currentSession?.user?.id !== id) return;
         provideNavIdentity({ userId: id, email: currentSession.user.email, row: identity.identity });
-        if(identity.role!=='student')throw new Error('考前練功房僅限名冊中的學生帳號使用。');
+        if(identity.role!=='student')throw new Error('考前練功坊僅限名冊中的學生帳號使用。');
         const redirect = gradeRoute.quizStudentRedirect(identity, location.pathname, location.search);
         if (redirect) { location.replace(redirect); return; }
         if(params.get('learning')==='1'){

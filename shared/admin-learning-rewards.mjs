@@ -19,7 +19,7 @@ export function summarizeLearningRewards(data,courseId){
   };
   add(foundationTreeData(data.foundation,courseId),'打字基礎');
   const quiz=wholeQuizLeaves(data.awards);
-  add({activities:quiz.leaves.map(a=>({courseId,weekCode:'00',activityKey:'practice_'+a.id,type:'quiz',label:'考前練功房・'+a.title})),
+  add({activities:quiz.leaves.map(a=>({courseId,weekCode:'00',activityKey:'practice_'+a.id,type:'quiz',label:'考前練功坊・'+a.title})),
     rows:quiz.leaves.map(a=>({course_id:courseId,week_code:'00',activity_key:'practice_'+a.id,completed:true,updated_at:a.awarded_at}))},'考前練功坊');
   if(courseId==='grade6-115-1'){
     add(homeworkTreeData(data.assignments),'作業繳交與過關');
