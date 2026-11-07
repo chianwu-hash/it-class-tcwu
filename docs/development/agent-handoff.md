@@ -1,3 +1,11 @@
+# 2026-11-07 練功坊共用名冊身分顯示修正（待發布）
+
+- 使用者指出夥伴練功右上只顯示Email、內文已有班級姓名，要求同一套共用機制。查明partner me無完整enrollment，navbar卻以provided模式等待頁面供應；考古題另引用舊query造成獨立module狀態。
+- Codex唯一寫入者，fresh origin/main e028c0f，分支codex/quiz-nav-identity-20261107。全數runtime引用統一grade6-nav-identity.js?v=20261107-roster-nav；夥伴由原onSessionResolved以lookup:true使用共用唯讀名冊查詢，較晚的navbar initializer不能覆寫lookup。共用paint允許同一名冊row的既有label重新切compact/full，修正載入順序。
+- 61項合成瀏覽器檢查通過：3/4/6/9年級、選卷／答題／考古頁provider與實際partner app、姓名格式、Email title、每帳號一次查詢／provider零額外查詢、重繪與token刷新、晚初始化、換人遲到回應、教師與失敗fallback、原登入登出單一綁定、390px無橫向溢出。7項Node身分／路由回歸通過；runtime模組引用唯一性核對通過。非真實Google驗收，未操作正式學生資料。
+- 不改navbar-auth.js／auth.js／登入事件／navbar HTML配置／SQL／RLS／題目／原任務或紀錄。格式與查詢仍只有同一個共用模組；在shared-modules.md新增接線契約，禁止頁面自行改auth-status。
+- 下一步PR→main→全新乾淨main發布腳本，正式資產核對、收據PR、封存與只清本批未使用工作目錄；其他使用中原型保留。
+
 # 2026-11-07 考前練功坊名稱統一（已正式發布）
 
 ## 發布登記

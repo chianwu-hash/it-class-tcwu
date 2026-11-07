@@ -7,7 +7,7 @@ import { onTestIdentityChange } from './test-identity-state.mjs?v=20261030-ident
 
 const SCHOOL_YEAR = 115;
 let cached = { userId: null, email: null, identity: null };
-let pending = null, rerun = false, generation = 0, expanded = false, listening = false, provided = false;
+let pending = null, rerun = false, generation = 0, expanded = false, listening = false, provided = false, lookupRequired = false;
 const observed = new Map();
 
 function restoreCachedEmail() {
@@ -59,14 +59,18 @@ async function loadIdentity() {
 function paint() {
     const el = document.getElementById('auth-status');
     const { email, identity } = cached;
-    // Only replace the email navbar-auth.js wrote for this same user; never "未登入" or another account.
-    if (!el || !identity || !email || el.textContent.trim() !== email) return;
+    if (!el || !identity || !email) return;
     const seat = String(identity.seat_no).padStart(2, '0');
     if (!identity.class_code || !identity.display_name || !Number.isInteger(Number(identity.seat_no)) || Number(identity.seat_no) < 1) return;
+    const title = `${identity.class_code} 班 ${seat} 號 ${identity.display_name}\n${email}`;
+    // Only replace this user's raw email or the label we already painted for this
+    // same roster row. A late navbar initializer may switch compact/full format.
+    // Never overwrite "未登入" or a different account's label.
+    if (el.textContent.trim() !== email && el.title !== title) return;
     const short = expanded ? `${identity.class_code} 班 ${Number(identity.seat_no)} 號 ${identity.display_name}`
         : `${identity.student_code || identity.class_code + seat} ${identity.display_name}`;
     el.textContent = short;
-    el.title = `${identity.class_code} 班 ${seat} 號 ${identity.display_name}\n${email}`;
+    el.title = title;
 }
 
 function refresh() {
@@ -78,9 +82,12 @@ function refresh() {
     return pending;
 }
 
-export function initGrade6NavIdentity({ expanded: fullLabel = false, provided: pageProvided = false } = {}) {
+export function initGrade6NavIdentity({ expanded: fullLabel = false, provided: pageProvided = false, lookup = false } = {}) {
     expanded = fullLabel;
-    provided = pageProvided;
+    // A page whose own RPC has no enrollment (e.g. partner practice) opts into
+    // this same cached lookup. A later navbar import must not turn it off again.
+    lookupRequired ||= lookup;
+    provided = pageProvided && !lookupRequired;
     if (!listening) {
         listening = true;
         window.addEventListener('course-navbar:rendered', () => initGrade6NavIdentity({ expanded, provided }));

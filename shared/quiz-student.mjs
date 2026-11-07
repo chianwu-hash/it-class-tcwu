@@ -1,6 +1,6 @@
 import { initQuizModule } from './quiz-module.js?v=20261102-grade9-release';
 import { createQuizRequest } from './quiz-api.mjs?v=20261102-learning';
-import { provideNavIdentity } from './grade6-nav-identity.js?v=20261030-identity-sync';
+import { provideNavIdentity } from './grade6-nav-identity.js?v=20261107-roster-nav';
 import { initImageLightbox } from './image-lightbox.js';
 import {resolveQuizImage} from './quiz-media.mjs?v=20261029-load-batch1';
 import { onTestIdentityChange } from './test-identity-state.mjs?v=20261030-identity-sync';
