@@ -1,0 +1,163 @@
+{
+  "release": {
+    "agent": "Codex-partner-feedback-motion-20261107",
+    "commit": "f1bec4df4404941a1946b29f7e1f018e22054e78",
+    "baseline": "dpl_99iWYmPusFviT1gmWBipx4Y9qgCe",
+    "expected": {
+      "changed": [
+        "grade3/115-1/partner-practice.html",
+        "grade4/115-1/partner-practice.html",
+        "grade6/115-1/partner-practice.html",
+        "grade9/115-1/partner-practice.html",
+        "shared/partner-pilot/answer-feedback.mjs",
+        "shared/partner-pilot/app.mjs",
+        "shared/partner-pilot/focused.css",
+        "shared/partner-pilot/learning.js",
+        "shared/quiz-server.mjs",
+        "shared/quiz-student.css"
+      ],
+      "added": [
+        "shared/partner-pilot/answer-feedback-motion.mjs",
+        "shared/quiz-feedback-motion.css",
+        "shared/quiz-feedback-motion.mjs"
+      ],
+      "removed": []
+    },
+    "startedAt": "2026-11-07T08:47:36.940Z",
+    "state": "promoted",
+    "candidate": "dpl_2KEFmhck8Psu31tNo3UYgxFRyWMg",
+    "comparison": {
+      "ok": true,
+      "changed": [
+        "grade3/115-1/partner-practice.html",
+        "grade4/115-1/partner-practice.html",
+        "grade6/115-1/partner-practice.html",
+        "grade9/115-1/partner-practice.html",
+        "shared/partner-pilot/answer-feedback.mjs",
+        "shared/partner-pilot/app.mjs",
+        "shared/partner-pilot/focused.css",
+        "shared/partner-pilot/learning.js",
+        "shared/quiz-server.mjs",
+        "shared/quiz-student.css"
+      ],
+      "added": [
+        "shared/partner-pilot/answer-feedback-motion.mjs",
+        "shared/quiz-feedback-motion.css",
+        "shared/quiz-feedback-motion.mjs"
+      ],
+      "removed": [],
+      "eolOnly": 0,
+      "unexpected": [],
+      "missingFromChange": [],
+      "addedCheck": {
+        "missing": [],
+        "unexpected": []
+      },
+      "removedCheck": {
+        "missing": [],
+        "unexpected": []
+      }
+    },
+    "deployedAt": "2026-11-07T08:48:10.923Z",
+    "promotedAt": "2026-11-07T08:48:53.609Z",
+    "alias": "dpl_2KEFmhck8Psu31tNo3UYgxFRyWMg",
+    "rollback": "dpl_99iWYmPusFviT1gmWBipx4Y9qgCe"
+  },
+  "verification": {
+    "at": "2026-11-07T08:48:58.476Z",
+    "checks": [
+      {
+        "path": "grade3/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "8fe48ad1a040b351e1a31e17c37685e7159f033a12e6f4f911e6b5b4fb2a3bac"
+      },
+      {
+        "path": "grade4/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "2c603a5cc9bf37fc737820a399549eaa93086dff7b67668d230211f6e7a1d5fe"
+      },
+      {
+        "path": "grade6/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "de028265e67e94b3e1801a069250f510480d44dab19ce11ae531d8b584667adc"
+      },
+      {
+        "path": "grade9/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "db997586c2f22dc8bcb600af81f01f8798ebfc5e8df19cff48d4753387dc060d"
+      },
+      {
+        "path": "shared/partner-pilot/answer-feedback.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "bd03728f18f8d1972241ceba8e9fa058f7e1037faa9bf5d5fd1bfc7fb718878d"
+      },
+      {
+        "path": "shared/partner-pilot/answer-feedback-motion.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "1e971d9cfa6fcd6cae700e6a4892c088dd96ff41ffd5644a7127099c93d89115"
+      },
+      {
+        "path": "shared/partner-pilot/app.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "96f7528bcb5aeabc3842f9ce02def546aaeb9b8d93c955de67a911738b6863ce"
+      },
+      {
+        "path": "shared/partner-pilot/focused.css",
+        "status": 200,
+        "ok": true,
+        "sha256": "7de0c17cd0a95918d1a251c8d022dd7bd73fc855dac422ec192931aaa49bcf4b"
+      },
+      {
+        "path": "shared/partner-pilot/learning.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "c0f56087e939ae442de2cbf2353b4d4f5dcf5c887d65936f8b9b2b18f0284d81"
+      },
+      {
+        "path": "shared/quiz-server.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "79685f77cf55908b0098ce81cf3a8f48208a1aca0b3c7d4eece3c7a127bfa4d0"
+      },
+      {
+        "path": "shared/quiz-student.css",
+        "status": 200,
+        "ok": true,
+        "sha256": "8c8288dd8bdc714ee6606cd3d69c375a6222840264a71f4d4b60171b2d067259"
+      },
+      {
+        "path": "shared/quiz-feedback-motion.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "ad109520440592418b3124934b8b03e1fc87ac321e1563a650f1f177aac1935f"
+      },
+      {
+        "path": "shared/quiz-feedback-motion.css",
+        "status": 200,
+        "ok": true,
+        "sha256": "43c814609cf65bec0d0977a9faf9eb0eceba3e303a4c5f706e6141d4392c8be8"
+      }
+    ]
+  },
+  "pr": 116,
+  "animationBrowserChecks": 38,
+  "feedbackBrowserChecks": 30,
+  "regressionChecks": 16,
+  "extraction": {
+    "originalBase": "ef7c9ec8f80d6ff60b3b5b1a30be351528fc7847",
+    "actorDefinitionsUnchanged": true,
+    "personalControllerUnchangedExceptImport": true,
+    "animationStylesUnchanged": true,
+    "personalStylesUnchangedExceptImport": true,
+    "actorSha256": "2a2e39632539f7edee68ac1d9cdad0baf95b67fe3246f1bf77e8d3bbad1f1e2d"
+  },
+  "databaseChanged": false,
+  "limits": "Synthetic visible browser and isolated SQL; no real Google multi-computer or physical-device test."
+}

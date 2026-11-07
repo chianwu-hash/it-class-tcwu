@@ -361,3 +361,9 @@ linkControl.load();
 |---|---|---|
 | `grade3-115-1` | 週頁先提供 auth 容器，再由 `initClassCardAuth()` 隱藏 Google UI、換成課堂身分卡；navbar 仍會因週次可見性重渲 | 努力樹入口暫時隱藏；沒有六年級作業入口 |
 | `grade6-115-1` | `authBarHtml` 與 `showAuthBarOnWeekPages: true` 已啟用，使用學校 Google 登入 | 顯示交作業與努力樹入口 |
+
+## 答題回饋動畫共用（2026-11-07）
+
+- `shared/quiz-feedback-motion.mjs`／`.css` 是個人答題與夥伴練功十套角色、對錯動作、keyframe 與停止行為的共同來源；原樣由 quiz-server／quiz-student 抽出，避免新增第二套圖案與動畫。維護角色時修改這組檔案。
+- 個人 `quiz-server.mjs` 沿用既有播放控制；夥伴 `partner-pilot/answer-feedback-motion.mjs` 只在成功 committed(answer) 後播放。同步更新與回看顯示靜態角色，不重複播放；換房／離開要 stop／clear，減少動態效果／背景依原播放器規則不強播。
+- 沿用答題介面包含回饋動效，不能只檢查色卡與選項。新增共用入口時必須載入動畫 CSS，實際驗證 SVG、keyframe、播放及停止，不能只驗 class 名稱。
