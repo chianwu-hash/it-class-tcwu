@@ -1,6 +1,6 @@
 {
  "project": "upxgyusodibaqcrocdzj",
- "exportedAt": "2026-11-07T01:46:16.099Z",
+ "exportedAt": "2026-11-07T07:36:56.197Z",
  "counts": {
   "functions": 163,
   "tables": 105,
@@ -299,7 +299,7 @@
    "acl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
   },
   "partner_pilot.learning_snapshot(uuid)": {
-   "md5": "a6f57f58bf6c43d5ec0c5cffd02b00eb",
+   "md5": "36981e39eb1249040232951476079d99",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres}"
   },
@@ -824,5 +824,5 @@
    "acl": "{postgres=X/postgres,service_role=X/postgres,anon=X/postgres,authenticated=X/postgres}"
   }
  },
- "fileSha256": "d5776cba835c9b1a117d08ddc7fbb51a0eb03c54f336a215909badd88895e22c"
+ "fileSha256": "9ffe77af2c44b0dd6b33716ed7a724cb0908c464574869b8c9b3664435a7e6b5"
 }
