@@ -1,3 +1,12 @@
+# 2026-11-07 夥伴答題補回原版寵物動畫（待發布）
+
+- 使用者回報上次只補色卡、動畫未接入。fresh origin/main ef7c9ec，Codex 唯一寫入者，codex/partner-feedback-motion-20261107。
+- 從 quiz-server.mjs 原樣抽出十套角色、動作與播放生命週期到 quiz-feedback-motion.mjs；從 quiz-student.css 原樣抽出全部 qfm 樣式到 quiz-feedback-motion.css。個人答題保留控制邏輯，只改 import；夥伴共用同一模組／樣式。沒有複製第二套角色，也沒有改個人登入／送答／獎勵。
+- 夥伴 learning 成功 committed(answer) 才標記新播放，重繪時停止舊 actor；相同題目回看有靜態角色，隊友同步不重播。clear／換房停止並清空；reduced-motion／背景保留靜態姿勢，不強播。不改題庫、資料庫或既有任務與紀錄。
+- 正解摘要的 O・O 同步改走既有 booleanChoicePresentation，呈現 ○ 正確／× 不正確，保留原始 ID。
+- 驗證：38 項可見瀏覽器動畫檢查（真實播放與短時間停止、十套各對錯 keyframe、重同步不重播、reduced-motion、手機、pageerror0）＋原 30 項 feedback 操作檢查＋16 項 Node／隔離 SQL 回歸通過。實際看過 desktop.png；抽取比對證明角色與動畫樣式原樣移出、個人控制程式只差 import。未用正式 Google 學生雙機或實體平板。
+- 下一步：PR 進 main → 新乾淨 main 由 release-from-main start/deploy/promote 發布，基準 dpl_99iWYmPusFviT1gmWBipx4Y9qgCe；鎖被他人持有則停止。發布後登記收據、封存並清本批完成未使用 worktree。
+
 # 2026-11-07 夥伴考古題送答回饋對齊原答題介面（已正式發布）
 
 ## 發布登記

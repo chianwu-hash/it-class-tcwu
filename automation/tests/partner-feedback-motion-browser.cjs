@@ -1,0 +1,24 @@
+const fs=require('node:fs'),{createRequire}=require('node:module'),runtime=createRequire('D:/projects/cdp-tools/package.json');
+const {connectCdp,safeScreenshot}=require('D:/projects/cdp-tools/packages/cdp-safe-client');
+(async()=>{const {browser}=await connectCdp({cdpUrl:process.env.CDP_URL,targetUrl:'http://localhost:8857/',puppeteer:runtime('puppeteer-core')}),target=browser.targets().find(t=>t._targetId===process.argv[2]);if(!target)throw Error('exact target missing');const p=await target.page(),checks=[],errors=[];p.on('pageerror',e=>errors.push(e.message));const check=(name,ok)=>{checks.push({name,ok});if(!ok)throw Error(name);};
+try{
+ if(await p.evaluate(()=>document.hidden)){const cdp=await p.target().createCDPSession();try{cdp.grantForegroundOnce('Page.bringToFront','檢查本次答題寵物動畫實際播放與停止');await cdp.send('Page.bringToFront');}finally{await cdp.detach();}}
+ await p.waitForFunction(()=>window.ready,{polling:100,timeout:12000});check('visible page for real animation',await p.evaluate(()=>!document.hidden));await p.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'no-preference'}]);
+ const variants=await p.evaluate(async()=>{window.motion=(await import('/shared/quiz-feedback-motion.mjs?v=20261107-partner-motion')).quizFeedbackMotion;return motion.order;});check('same ten original variants',variants.length===10);
+ await p.evaluate(()=>{window.starts=0;document.addEventListener('qfm:start',()=>starts++);});
+ for(const status of['correct','incorrect']){
+ await p.evaluate(()=>loadCase('unanswered'));
+ await p.evaluate(s=>{const radio=document.querySelectorAll('.quiz-reading-panel input[type=radio]')[s==='correct'?1:0];radio.checked=true;radio.dispatchEvent(new Event('change',{bubbles:true}));document.querySelector('[data-workspace-primary]').click();},status);
+ check(status+' actor mounted',await p.$eval('.qfm-actor',(e,s)=>e.dataset.result===s,status));check(status+' actual playing class',await p.$eval('.qfm-actor',e=>e.classList.contains('qfm-playing')));
+ check(status+' CSS has running animation',await p.$eval('.qfm-actor',e=>e.getAnimations({subtree:true}).some(a=>a.playState==='running')));
+ await p.waitForFunction(()=>!document.querySelector('.qfm-actor.qfm-playing'),{polling:100,timeout:5000});check(status+' stops after short playback',await p.$$('.qfm-actor.qfm-playing').then(a=>!a.length));
+ const before=await p.evaluate(()=>starts);await p.evaluate(()=>{feedbackState.revision++;feedbackUI.render(feedbackState,{id:'me',name:'合成甲'});});check(status+' sync does not replay',await p.evaluate(n=>starts===n,before));
+ }
+ const motions=await p.evaluate(()=>{const area=document.createElement('section');area.id='animation-contract';document.body.append(area);const checks=[];for(const variant of motion.order)for(const result of['correct','incorrect']){const actor=motion.create({variant,result});if(['painter','chef','reader','xylo','builder'].includes(variant))actor.classList.add('qfm-second');area.append(actor);const played=motion.play(actor);checks.push({variant,result,played,css:actor.getAnimations({subtree:true}).length>0,svg:!!actor.querySelector('svg')});motion.stop(actor);}area.remove();return checks;});
+ for(const m of motions)check(m.variant+' '+m.result+' uses live shared keyframes',m.played&&m.css&&m.svg);
+ await p.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'reduce'}]);await p.evaluate(()=>loadCase('unanswered'));await p.evaluate(()=>{const radio=document.querySelectorAll('input[type=radio]')[1];radio.checked=true;radio.dispatchEvent(new Event('change',{bubbles:true}));document.querySelector('[data-workspace-primary]').click();});check('reduced motion retains static actor',await p.$$('.qfm-actor').then(a=>a.length===1));check('reduced motion does not play',await p.$$('.qfm-playing').then(a=>!a.length));
+ await p.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'no-preference'}]);await p.evaluate(()=>loadCase('wrong','single',true));check('reference TF not repeated',(await p.$eval('.feedback-reference',e=>e.textContent)).includes('× 不正確'));
+ await p.setViewport({width:1440,height:960});fs.mkdirSync('.chat-mode/feedback-motion',{recursive:true});await safeScreenshot(p,{path:'.chat-mode/feedback-motion/desktop.png',fullPage:false});
+ await p.setViewport({width:390,height:844});check('mobile no horizontal overflow',await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));check('mobile actor stays compact',await p.$eval('.qfm-actor',e=>e.getBoundingClientRect().width<=84));
+ check('no uncaught errors',errors.length===0);
+}catch(e){checks.push({failure:e.message});process.exitCode=1;}finally{fs.mkdirSync('.chat-mode/feedback-motion',{recursive:true});fs.writeFileSync('.chat-mode/feedback-motion/browser.json',JSON.stringify({checks,errors},null,2));console.log(JSON.stringify({passed:checks.filter(c=>c.ok).length,checks,errors}));await browser.disconnect();}})();

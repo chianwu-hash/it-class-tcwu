@@ -1,3 +1,4 @@
+@import url('../quiz-feedback-motion.css?v=20261107-partner-motion');
 @scope (.partner-content) {
  :scope [hidden]{display:none!important}
  :scope[data-stage=practice] .hero,:scope[data-stage=practice] main>.scope{display:none}
@@ -230,4 +231,10 @@ body.quiz-workspace-desktop.partner-pilot .partner-content[data-stage=practice] 
  .partner-answer-feedback .feedback-reference .preview-content{margin:0}
  .partner-answer-feedback .feedback-explanation{margin:14px 0;font-size:18px;line-height:1.8}
  .partner-answer-feedback .feedback-explanation:empty{display:none}
+}
+
+@scope (.partner-content) {
+ .partner-answer-feedback .feedback-character.qfm-character{display:grid;place-items:center;flex:0 0 76px;width:76px;height:76px}
+ .partner-answer-feedback .qfm-character .qfm-actor{min-width:0;width:76px;max-width:76px}
+ .partner-answer-feedback .qfm-character svg{width:100%;height:auto}
 }
