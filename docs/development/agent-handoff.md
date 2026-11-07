@@ -1,13 +1,22 @@
-# 2026-11-07 考古題是非選項重複呈現全面修正（待 PR／發布）
+# 2026-11-07 考古題是非選項重複呈現全面修正（首輪已發布；摘要補齊待發布）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-true-false-options-20261107 | 2026-11-07T05:10:02.774Z | `ffb5186` | `dpl_7cvY1k8R5osymmkX5AJyieds3FAm` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam-review.html、grade3/115-1/past-exam.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam-review.html、grade6/115-1/past-exam.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、shared/partner-pilot/app.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/past-answer.js、shared/partner-pilot/review-layout.mjs、shared/quiz-module.js、shared/quiz-past-entry.mjs、shared/quiz-past-exams.mjs、shared/quiz-past-review.mjs、shared/quiz-past-teacher.mjs、shared/quiz-past-ui.mjs、+shared/quiz-boolean-choice.mjs | `dpl_B5HbL143yQuzbzTVACwZcUToA2h2`／回滾 `dpl_7cvY1k8R5osymmkX5AJyieds3FAm`（eolOnly 0） |
+
+- PR110進main ffb5186，乾淨main經發布腳本完成，完整樹ok:true（20改1新、0非預期／eolOnly）；21個正式資產HTTP200與SHA-256符合main，鎖已釋放。
 
 - 使用者回報夥伴考古題OOXX，要求全面檢查題庫並補查轉化SOP。fresh origin/main 9588e49，Codex唯一寫入者，codex/true-false-options-20261107。
 - 原因：個人quiz-past-ui已有O/X特例（git blame f516982），夥伴past-answer及共同回顧把choice.id徽章與相同正文各畫一次；T/F也會重複，個人舊分支遇一般A/A、B/B另會清空正文。
 - 新增無狀態共用quiz-boolean-choice.mjs，只辨識兩個純文字、一正一反的表示法。個人、夥伴作答、共同回顧、教師預覽共用「○ 正確／× 不正確」；英文保留T/F。不改ID、順序、草稿／送答資料、評分、版本、權限、獎勵或SQL函式；圖片／layout／普通兩選項／mark、set、配對與排序保留。
 - 正式唯讀全庫盤點：50份考古卷（40啟用、10停用）、82個歷史版本，287組是非單選；一般557版本／545草稿各8組，夥伴3335個副本物件中122組。歷史／副本可能重複同一原題，不能相加當獨立題數；原卷group不等於子題數。212筆blocked條目保持不開放。候選表示法未涵蓋0；沒有查學生作答、身份或私有媒體URL。公開統計true-false-options-audit-20261107.json，原始選項只在ignored .chat-mode/tf-audit。
 - SOP原本只有全題型UI泛檢，現新增9.1是非專項與job-template欄位：保留原符號／答案ID、四畫面不重複、暫存與送答值不變、不可誤轉一般兩選項／圖文。提供可重跑唯讀audit CLI／SQL、共用規則Node測試與四畫面隔離瀏覽器fixture。
-- 驗證：39項合成瀏覽器（六種表示法、四畫面、原始ID暫存與送答、一般A/B正文、390px選項、pageerror0）＋11項Node／隔離SQL規則及既有考古題回歸通過；非真實Google雙機與實體手機，未做正式學生作答。測試fixture的個人送答以合成捕捉拒寫，未拿它當真實判分證據；SQL回歸另測原葉片／版本／歷次。
+- 收尾補查：已作答摘要的O・○／X・╳同義符號並列亦接入共用規則，不改儲存值；六種表示法均驗證。
+- 驗證：45項合成瀏覽器（六種表示法、四畫面、原始ID暫存與送答、一般A/B正文、390px選項、pageerror0）＋11項Node／隔離SQL規則及既有考古題回歸通過；非真實Google雙機與實體手機，未做正式學生作答。測試fixture的個人送答以合成捕捉拒寫，未拿它當真實判分證據；SQL回歸另測原葉片／版本／歷次。
 - shared/quiz-past-ui.mjs為-text混合換行檔，只改新增import與單選呈現那行，保留其他原始位元組，避免整檔換行污染。四年級入口與依賴query同步更新。
-- 下一步：PR→main→新乾淨main發布腳本，完整樹核對20改1新；正式21資產讀回；收據PR與本批證據封存清理。沒有正式DB寫入，不需SQL套用或重建schema snapshot。
+- 下一步：摘要補齊PR→main→新乾淨main發布腳本（7改0新）；最終22資產讀回、收據PR與本批證據封存清理。沒有正式DB寫入，不需SQL套用或重建schema snapshot。
 
 # 2026-11-07 組隊角色區塊分色與 ChatGPT 角色插圖（已正式發布）
 
