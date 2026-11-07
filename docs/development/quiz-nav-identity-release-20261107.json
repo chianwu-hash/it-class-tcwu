@@ -1,0 +1,167 @@
+{
+  "agent": "Codex-quiz-nav-identity-20261107",
+  "commit": "5367ab0ae011104b6e1a085e54078a2754ef7822",
+  "baseline": "dpl_FXEFpqUnvs7mC4P5JRRxpMqrUnxg",
+  "expected": {
+    "changed": [
+      "grade3/115-1/navbar.js",
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/index.html",
+      "grade4/115-1/navbar.js",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/navbar.js",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/index.html",
+      "grade9/115-1/navbar.js",
+      "grade9/115-1/partner-practice.html",
+      "shared/grade6-nav-identity.js",
+      "shared/partner-pilot/app.mjs",
+      "shared/quiz-library.mjs",
+      "shared/quiz-past-exams.mjs",
+      "shared/quiz-student.mjs"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "startedAt": "2026-11-07T01:01:24.671Z",
+  "state": "promoted",
+  "candidate": "dpl_FiAA1524eDeLXfhdb2Qdup6X6zi7",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/navbar.js",
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/index.html",
+      "grade4/115-1/navbar.js",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/navbar.js",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/index.html",
+      "grade9/115-1/navbar.js",
+      "grade9/115-1/partner-practice.html",
+      "shared/grade6-nav-identity.js",
+      "shared/partner-pilot/app.mjs",
+      "shared/quiz-library.mjs",
+      "shared/quiz-past-exams.mjs",
+      "shared/quiz-student.mjs"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-07T01:01:57.007Z",
+  "promotedAt": "2026-11-07T01:02:29.090Z",
+  "alias": "dpl_FiAA1524eDeLXfhdb2Qdup6X6zi7",
+  "rollback": "dpl_FXEFpqUnvs7mC4P5JRRxpMqrUnxg",
+  "pullRequest": 100,
+  "validation": {
+    "syntheticBrowser": 61,
+    "node": 7,
+    "realGoogleLoginRetested": false
+  },
+  "productionAssets": {
+    "at": "2026-11-07T01:02:38.528Z",
+    "checks": [
+      {
+        "path": "grade3/115-1/navbar.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "5565fdf8f89a4e3d4be93456e690398b279eaa76d11c8927404846bc57f150f1"
+      },
+      {
+        "path": "grade3/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "c6d90e265f43771b4fa62694f26eeccfca39ab5c7e04d98a9dd8c1fbc066c442"
+      },
+      {
+        "path": "grade4/115-1/index.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "472b257247b1b8be0fb04c26b06a93b7ea647f988b3ab4a8c5c54c137df71e71"
+      },
+      {
+        "path": "grade4/115-1/navbar.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "201a26fd5b83ee95179a6e84a229d6587a5ca260618189f5647a4d33ef7ada87"
+      },
+      {
+        "path": "grade4/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "8dc48f96339d4d22148c59599825fd65c3a6aa11b4e4dd0c332f406b1c0fc115"
+      },
+      {
+        "path": "grade6/115-1/navbar.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "8cf6d0f9a0aec525a8b01ec102f0470a6586c96ad8b17495a30f33d6ab6e713b"
+      },
+      {
+        "path": "grade6/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "72e0113d88be28bdb3ceacb4b8a2d78d40e259406084a02079bf09b9104c6214"
+      },
+      {
+        "path": "grade9/115-1/index.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "c397b03752bb8ce4fdd1b9195dc3d45f181f3bfae19d07ac50727f97659cde0d"
+      },
+      {
+        "path": "grade9/115-1/navbar.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "0b3d7069f44f4f596e835f6fbcbd1661dd505bfccbecae27d14de49f93fa4141"
+      },
+      {
+        "path": "grade9/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "b039b7ad1feba5d1da923d59c4fa3755462e597b421e626997d9db2ce85346be"
+      },
+      {
+        "path": "shared/grade6-nav-identity.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "41f85b5e4ebff42669e611df9e4ca6416ac635613093534899d2a035b92b1e55"
+      },
+      {
+        "path": "shared/partner-pilot/app.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "4a4b4d945b8c02455ef5ba0515ea57613bdbcdeda85c452fc50b06710dabaa79"
+      },
+      {
+        "path": "shared/quiz-library.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "18ea4aa67f7d97116a8e46135646653fde5f9fdabb5aa073f4493d65a31043a1"
+      },
+      {
+        "path": "shared/quiz-past-exams.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "e9c866e58dea5b40467c109dfd4a1f357fcd4ae14e64dabba6fb831ed91b2a6a"
+      },
+      {
+        "path": "shared/quiz-student.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "36bb8f0d69e76bdc3d88b6d92a6a10e7e37b8db5449ed3ced3fcef3e539e0a87"
+      }
+    ]
+  }
+}
