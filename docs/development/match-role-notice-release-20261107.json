@@ -1,0 +1,100 @@
+{
+  "agent": "Codex-match-role-notice-20261107",
+  "commit": "ca1158aa4620c59ca3051041602b2bf6412ca68f",
+  "baseline": "dpl_FiAA1524eDeLXfhdb2Qdup6X6zi7",
+  "expected": {
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/matchmaking.mjs",
+      "shared/partner-pilot/team-flow.css"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "startedAt": "2026-11-07T01:34:16.755Z",
+  "state": "promoted",
+  "candidate": "dpl_2naqAWCDkhjFnXuxVbDhFdUJiFdu",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade4/115-1/partner-practice.html",
+      "grade6/115-1/partner-practice.html",
+      "grade9/115-1/partner-practice.html",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/matchmaking.mjs",
+      "shared/partner-pilot/team-flow.css"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-07T01:34:49.523Z",
+  "promotedAt": "2026-11-07T01:35:24.216Z",
+  "alias": "dpl_2naqAWCDkhjFnXuxVbDhFdUJiFdu",
+  "rollback": "dpl_FiAA1524eDeLXfhdb2Qdup6X6zi7",
+  "verification": {
+    "at": "2026-11-07T01:35:32.605Z",
+    "checks": [
+      {
+        "path": "grade3/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "c4b085391ee501199d618dd7742f8261cf67e578b7d6dc74dbe4fe9bb70e9a85"
+      },
+      {
+        "path": "grade4/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "b79bf59f89ed94f00f1e783dcea343cd9da874887e42215f8cf285e1bde357a1"
+      },
+      {
+        "path": "grade6/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "f80818d0aadbe79b0db7de17729097e1ad4bbc04ecd95c215e3aa1b895dc184f"
+      },
+      {
+        "path": "grade9/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "7abc64c2b1ff2191230dd64bfb49f25d99d4fb6427569e9e33207f13a74ec41b"
+      },
+      {
+        "path": "shared/partner-pilot/app.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "1d2ce62a258fe33e2971d0065a8bf38e78fd580ac0dfa91c01a87f056f728de7"
+      },
+      {
+        "path": "shared/partner-pilot/matchmaking.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "33de4866ecbaa0d5e43b143668487890b6c55cab219075aba0c5da2362d33935"
+      },
+      {
+        "path": "shared/partner-pilot/team-flow.css",
+        "status": 200,
+        "ok": true,
+        "sha256": "d46662c55ace99669dc52771d5d550c9cc820d80a4c7daebd53c594a48db8ffd"
+      }
+    ]
+  },
+  "pr": 102,
+  "browserChecks": 15,
+  "regressionChecks": 19
+}
