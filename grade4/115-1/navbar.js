@@ -20,7 +20,7 @@
 
     const navConfig = {
         activeWeeks: [],
-        gradeLabel: quizMode ? "考前練功房｜土城四年級" : "土城四年級學習園地｜115-1",
+        gradeLabel: quizMode ? "考前練功坊｜土城四年級" : "土城四年級學習園地｜115-1",
         titleIconClass: "fa-solid fa-rocket text-cyan-600",
         titleClassName: "font-black text-gray-800 flex items-center text-lg tracking-wide whitespace-nowrap",
         navClassName: "bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-cyan-200 shadow-sm",
@@ -35,7 +35,7 @@
             { href: '/my-tree.html?course=grade4-115-1', label: '努力樹', iconClass: 'fa-solid fa-tree' },
             { href: 'index.html', label: '課程首頁' }
         ] : [
-            { href: 'quiz-library.html', label: iconLabel('fa-solid fa-dumbbell', '練功', '考前練功房') },
+            { href: 'quiz-library.html', label: iconLabel('fa-solid fa-dumbbell', '練功', '考前練功坊') },
                                     { href: '/my-tree.html?course=grade4-115-1', label: iconLabel('fa-solid fa-tree', '樹', '我的努力樹') }
         ],
         showAuthBarOnWeekPages: !/week01\.html$/.test(location.pathname),
@@ -56,7 +56,7 @@
     // Quiz pages pass the roster label from their own RPC; no extra enrollment request here.
     if (quizMode) import('../../shared/grade6-nav-identity.js?v=20261030-identity-sync')
         .then(({ initGrade6NavIdentity }) => initGrade6NavIdentity({ expanded: true, provided: true }))
-        .catch(error => console.warn('練功房導覽身分暫時無法讀取', error));
+        .catch(error => console.warn('練功坊導覽身分暫時無法讀取', error));
     return;
 
 })();

@@ -136,7 +136,7 @@ async function load({refreshComposer=true,refreshWrong=true}={}) {
   try {
     const data = await request('library_sessions');
     if (token !== generation) return;
-    if(data.role!=='student')throw Object.assign(new Error('考前練功房僅限名冊中的學生帳號使用。'),{code:'student_required'});
+    if(data.role!=='student')throw Object.assign(new Error('考前練功坊僅限名冊中的學生帳號使用。'),{code:'student_required'});
     const redirect = quizStudentRedirect(data, location.pathname);
     if (redirect) { location.replace(redirect); return; }
     pastPapers=[];pastCatalogError=false;
