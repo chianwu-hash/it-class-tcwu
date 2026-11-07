@@ -1,0 +1,119 @@
+{
+  "release": {
+    "agent": "Codex-partner-keepsake-growth-20261107",
+    "commit": "90f5745f20f3d6273f2252dc435540ef12569fd6",
+    "baseline": "dpl_2KEFmhck8Psu31tNo3UYgxFRyWMg",
+    "expected": {
+      "changed": [
+        "grade3/115-1/partner-practice.html",
+        "grade4/115-1/partner-practice.html",
+        "grade6/115-1/partner-practice.html",
+        "grade9/115-1/partner-practice.html",
+        "shared/partner-pilot/app.mjs",
+        "shared/partner-pilot/learning.js",
+        "shared/partner-pilot/outcomes.css"
+      ],
+      "added": [
+        "shared/partner-pilot/keepsake-growth.mjs"
+      ],
+      "removed": []
+    },
+    "startedAt": "2026-11-07T14:44:13.613Z",
+    "state": "promoted",
+    "candidate": "dpl_A81b7iTskvtCprBSbUP553DLPKN2",
+    "comparison": {
+      "ok": true,
+      "changed": [
+        "grade3/115-1/partner-practice.html",
+        "grade4/115-1/partner-practice.html",
+        "grade6/115-1/partner-practice.html",
+        "grade9/115-1/partner-practice.html",
+        "shared/partner-pilot/app.mjs",
+        "shared/partner-pilot/learning.js",
+        "shared/partner-pilot/outcomes.css"
+      ],
+      "added": [
+        "shared/partner-pilot/keepsake-growth.mjs"
+      ],
+      "removed": [],
+      "eolOnly": 0,
+      "unexpected": [],
+      "missingFromChange": [],
+      "addedCheck": {
+        "missing": [],
+        "unexpected": []
+      },
+      "removedCheck": {
+        "missing": [],
+        "unexpected": []
+      }
+    },
+    "deployedAt": "2026-11-07T14:44:46.290Z",
+    "promotedAt": "2026-11-07T14:45:22.925Z",
+    "alias": "dpl_A81b7iTskvtCprBSbUP553DLPKN2",
+    "rollback": "dpl_2KEFmhck8Psu31tNo3UYgxFRyWMg"
+  },
+  "verification": {
+    "at": "2026-11-07T14:46:15.620Z",
+    "checks": [
+      {
+        "path": "grade3/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "0966ccede15d0caabda84b9ba82101fa987cfebbed555506106fb608f15ab93e"
+      },
+      {
+        "path": "grade4/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "517dba43995c408f6efc70624e5c6f5cc6c19abca8264eb0eb14fe30bd5c8bc0"
+      },
+      {
+        "path": "grade6/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "7ff5ef9341f11c67e9cff6ef9bb1ce87de6b0447c333ef16feaaf39b0d0c6c03"
+      },
+      {
+        "path": "grade9/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "0e1e052724954742141787d51f60e68ee2439e078f5918a10430b86c27bd18ca"
+      },
+      {
+        "path": "shared/partner-pilot/app.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "658fcdee962e9ff2232d18b04d29f04c861eb1a588bb099ccfe51a4db038ae45"
+      },
+      {
+        "path": "shared/partner-pilot/learning.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "72743997a2659b2f139467fdeba975440c9e6ee6a1d36de6083f919053da980d"
+      },
+      {
+        "path": "shared/partner-pilot/outcomes.css",
+        "status": 200,
+        "ok": true,
+        "sha256": "37b23e035eb9987649069c0767bc2ba3c2e27acdcb81ec87294c40495938dbba"
+      },
+      {
+        "path": "shared/partner-pilot/keepsake-growth.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "498b59c4f89f51222c7b726f6545e7d2d8d521edb8a3ef14d59b71d7fe8a9868"
+      }
+    ]
+  },
+  "pr": 118,
+  "designAndReview": {
+    "model": "Claude Opus 5.5",
+    "transport": "Claude Desktop via Computer Use",
+    "review": "passed"
+  },
+  "browserChecks": 37,
+  "regressionChecks": 15,
+  "databaseChanged": false,
+  "limits": "Synthetic visible Chrome with actual learning controller and isolated SQL; no real Google two-computer or Safari/iPad test."
+}
