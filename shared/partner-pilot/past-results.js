@@ -1,8 +1,10 @@
+import {booleanChoicePresentation} from '../quiz-boolean-choice.mjs?v=20261107-boolean-choice';
 export function mountPastResults(root,{question,loadAsset}){
  for(const host of root.querySelectorAll('[data-past-result]')){
   const q=question(Number(host.dataset.pastResult)),value=q.attempts.at(-1)?.value;if(value===undefined)continue;
   const title=document.createElement('b');title.textContent='我這次留下的作答';host.append(title);const text=document.createElement('p');text.className='reply';
-  const label=v=>{const c=q.past.choices.find(c=>c.id===v);return typeof v==='boolean'?(v?'打勾／是':'不打勾／否'):c&&c.text&&c.text!==v?v+'・'+c.text:String(v);};
+  const display=q.past.kind==='single'?booleanChoicePresentation(q.past.choices,q.rich?.options):null;
+  const label=v=>{const i=q.past.choices.findIndex(c=>c.id===v),c=q.past.choices[i];return display&&i>=0?display[i].badge+' '+display[i].text:typeof v==='boolean'?(v?'打勾／是':'不打勾／否'):c&&c.text&&c.text!==v?v+'・'+c.text:String(v);};
   text.textContent=q.past.kind==='manual'?value.text:typeof value==='object'&&!Array.isArray(value)?value.answer+(value.working?'\n過程：'+value.working:''):Array.isArray(value)?value.map(label).join(q.past.kind==='sequence'?' → ':'、'):label(value);host.append(text);
   if(q.past.kind==='manual'&&value.strokes?.length){
    const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 1 1');svg.setAttribute('preserveAspectRatio','none');svg.setAttribute('class','drawing-board');svg.setAttribute('role','img');svg.setAttribute('aria-label','我留下的畫圖作答（唯讀）');const asset=q.rich.material.media?.find(m=>m.kind==='image'),ratio=asset?.renderWidth/asset?.renderHeight;
