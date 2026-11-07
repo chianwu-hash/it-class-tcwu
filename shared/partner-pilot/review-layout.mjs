@@ -1,3 +1,4 @@
+import {booleanChoicePresentation} from '../quiz-boolean-choice.mjs?v=20261107-boolean-choice';
 import {practiceUnits} from './practice-model.mjs';
 
 // Presentation only. Never reads peer attempts, grades answers or grants rewards.
@@ -14,7 +15,8 @@ export function createReviewLayout({esc,getRoom,getViewer,fragment,marks,stories
  function part(q,grouped=false){
   // past correct is a bank placeholder, not an option index. Its authoritative reference
   // is already included in the released explanation. Never mark its first option correct.
-  const choices=q.options?.length?`<div class="rv-choices" role="list" aria-label="答案選項">${q.options.map((_,i)=>`<div role="listitem" class="rv-choice ${!q.past&&q.correct===i?'rv-correct':''}"><span class="rv-letter">${esc(q.past?.choices?.[i]?.id??String.fromCharCode(65+i))}</span><div class="rv-option">${fragment(q,'option',i)}${!q.past&&q.correct===i?'<span class="rv-answer">✓ 正確答案</span>':''}</div></div>`).join('')}</div>`:'';
+  const display=q.past?.kind==='single'?booleanChoicePresentation(q.past.choices,q.rich?.options):null;
+  const choices=q.options?.length?`<div class="rv-choices" role="list" aria-label="答案選項">${q.options.map((_,i)=>`<div role="listitem" class="rv-choice ${!q.past&&q.correct===i?'rv-correct':''}"><span class="rv-letter">${esc(display?.[i].badge??q.past?.choices?.[i]?.id??String.fromCharCode(65+i))}</span><div class="rv-option">${display?esc(display[i].text):fragment(q,'option',i)}${!q.past&&q.correct===i?'<span class="rv-answer">✓ 正確答案</span>':''}</div></div>`).join('')}</div>`:'';
   const hasExplanation=Boolean(q.explanation||q.rich?.explanation?.text||q.rich?.explanation?.media?.length||q.rich?.explanation?.layout?.length);
   const notes=getRoom().exercise.notes.filter(n=>n.kind==='discuss'&&n.qid===q.id);
   return `<section class="rv-part" data-review-qid="${q.id}">${grouped?`<p class="rv-self">第 ${q.number??q.id} 小題・${esc(q.ownerName)}帶來</p>`:''}<h3 class="rv-prompt">${fragment(q,'prompt')}</h3>${q.past?.selfCheck?'<p class="rv-self">開放作答供自我核對，不列入正確率。</p>':''}${choices}<aside class="rv-explanation"><h4>${q.past?'參考答案與解析':'解析・為什麼選這個？'}</h4>${hasExplanation?fragment(q,'explanation'):'<p class="muted">這題未提供文字解析，可與夥伴討論。</p>'}</aside><div data-question-marks="${q.id}">${marks(q)}</div><div data-review-notes="${q.id}">${notes.map(noteHTML).join('')}</div><details class="rv-discovery" data-detail="discovery-${q.id}"><summary>我有新發現 <span class="rv-optional">選填</span></summary><form data-form="discuss" data-qid="${q.id}"><label for="review-note-${q.id}" class="sr-only">這一題的新發現</label><textarea id="review-note-${q.id}" data-draft="discuss-${q.id}" rows="2" maxlength="600" placeholder="原來這題要注意……" required>${esc(drafts.get('discuss-'+q.id)||'')}</textarea><button type="submit">分享在這一題</button></form></details></section>`;

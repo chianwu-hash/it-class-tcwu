@@ -1,3 +1,4 @@
+import {booleanChoicePresentation} from './quiz-boolean-choice.mjs?v=20261107-boolean-choice';
 import {initNavbarAuth} from './navbar-auth.js';
 import {createAuthenticatedTransport} from './quiz-transport.mjs?v=20261029-batch4';
 import {initImageLightbox} from './image-lightbox.js';
@@ -24,7 +25,7 @@ async function preview(id){
    const card=el('article',undefined,'question-card teacher-past-card');card.append(el('h2',g.title));
    rich(card,g.materialContent||{text:g.material,media:[]});if(g.promptContent?.text)rich(card,g.promptContent);
    for(const a of g.assets)art(card,a);
-   for(const c of g.choices){const row=el('div',undefined,'teacher-choice');row.append(el('b',c.id+'　'));rich(row,c.content||{text:c.text,media:[]});card.append(row);}
+   const display=g.kind==='single'?booleanChoicePresentation(g.choices):null;for(const [i,c] of g.choices.entries()){const row=el('div',undefined,'teacher-choice');row.append(el('b',(display?.[i].badge??c.id)+'　'));if(display)row.append(el('span',display[i].text));else rich(row,c.content||{text:c.text,media:[]});card.append(row);}
    for(const f of g.fields){const source=data.provenance.entries?.find(e=>e.id===f.id);card.append(el('p',f.text),el('p','官方答案：'+(['annotation','manual'].includes(g.kind)?f.reference||'請對照官方參考圖':JSON.stringify(f.answer))));if(source)card.append(el('p',`原卷第${source.source.page}頁／解答第${source.answerSource.page}頁；${f.points}分`,'source-label'));}
    if(g.referenceUrl){card.append(el('h3','官方參考圖（教師可見）'));art(card,{url:g.referenceUrl,alt:'官方解答局部參考'});}host.append(card);
   }

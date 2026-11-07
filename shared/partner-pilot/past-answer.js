@@ -1,3 +1,4 @@
+import {booleanChoicePresentation} from '../quiz-boolean-choice.mjs?v=20261107-boolean-choice';
 import {renderManualResponse} from './quiz-past-manual.js';
 import {attachPastInputKeyboard} from './quiz-past-input.js';
 import {appendSingleChoiceOptions} from '../quiz-choice.mjs';
@@ -20,10 +21,10 @@ export function mountPastAnswers(root,{question,drafts,loadAsset}){
   }else if(m.kind==='sequence'){
    host.append(node('p','依序輸入代號，以逗號分隔；順序會影響答案。'));const input=node('input');input.required=true;input.value=Array.isArray(saved)?saved.join(','):'';host.append(input,node('p',m.choices.map(c=>c.id+'：'+c.text).join('　')));input.oninput=()=>store(input.value.split(/[,，\s]+/).filter(Boolean));input.oninput();
   }else if(m.kind==='single'){
-   const fieldset=node('fieldset');fieldset.className='quiz-choices';fieldset.append(node('legend','選擇一個答案'));
+   const display=booleanChoicePresentation(m.choices,q.rich?.options);const fieldset=node('fieldset');fieldset.className='quiz-choices';fieldset.append(node('legend','選擇一個答案'));
    appendSingleChoiceOptions(fieldset,{name:'past-choice-'+q.id,options:m.choices.map(o=>({...o,value:JSON.stringify(o.id)})),selected:JSON.stringify(saved),
-    onSelect:v=>store(JSON.parse(v)),decorateInput:input=>{input.required=true;},badgeForOption:o=>o.id,
-    renderBody:(body,o,i)=>{const span=node('span');span.dataset.richQ=q.id;span.dataset.richPart='option';span.dataset.richIndex=i;body.append(span);}});
+    onSelect:v=>store(JSON.parse(v)),decorateInput:input=>{input.required=true;},badgeForOption:(o,i)=>display?.[i].badge??o.id,
+    renderBody:(body,o,i)=>{if(display){body.textContent=display[i].text;return;}const span=node('span');span.dataset.richQ=q.id;span.dataset.richPart='option';span.dataset.richIndex=i;body.append(span);}});
    host.append(fieldset);store(saved??null);
   }else{
    const options=m.kind==='mark'?[{id:true,text:'打勾／是'},{id:false,text:'不打勾／否'}]:m.kind==='set'?m.codes.map(id=>({id,text:id})):m.choices;
