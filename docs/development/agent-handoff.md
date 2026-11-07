@@ -1,11 +1,19 @@
-# 2026-11-07 夥伴考古題送答回饋對齊原答題介面（待發布）
+# 2026-11-07 夥伴考古題送答回饋對齊原答題介面（已正式發布）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-partner-answer-feedback-20261107 | 2026-11-07T07:38:13.883Z | `ec899f4` | `dpl_2sTF4agA6538zG93WbbBt19ndkfM` | grade3/115-1/partner-practice.html、grade4/115-1/partner-practice.html、grade6/115-1/partner-practice.html、grade9/115-1/partner-practice.html、shared/partner-pilot/app.mjs、shared/partner-pilot/focused.css、shared/partner-pilot/learning.js、shared/partner-pilot/past-answer.js、shared/partner-pilot/rich-content.js、+shared/partner-pilot/answer-feedback.mjs | `dpl_99iWYmPusFviT1gmWBipx4Y9qgCe`／回滾 `dpl_2sTF4agA6538zG93WbbBt19ndkfM`（eolOnly 0） |
+
+- PR113／114 進 main ec899f4，由新乾淨 main 依 start/deploy/promote 發布。完整樹 ok:true、9 改 1 新、eolOnly 0，正式 10 資產 HTTP200 與 SHA-256 符合 main。發布鎖已釋放。[發布收據](partner-answer-feedback-release-20261107.json)。
 
 - 使用者要求修正送答後選項消失、對錯不明顯、只顯示參考代號。Codex 唯一寫入者；fresh main 19e176e，codex/partner-past-feedback-20261107。
 - 單選考古題送答後保留所有選項，沿用共用 quiz-choice 的綠色正解／橘色錯答與文字標記；右欄提供明確對錯卡片、完整正確選項與解析。是非 ID、選項媒體與歷次作答不變；自我核對維持中性，不假判對錯。
 - 新增 supabase/quiz-partner-answer-feedback.sql：只覆寫 learning_snapshot 外層 wrapper，從既有 pre_message_media 取得會員檢查與揭答結果；只有已含 explanation 的考古 single 題，才加 pastReference 原始型別值。不以一般 correct=0 佔位欄當考古正解。保留附件合併與原 ACL；沒有改評分、配題、答案、回顧、紀念、進度或資料列。
 - frontend answer-feedback.mjs 共用呈現、past-answer 保留唯讀單選；rich-content 增加回饋解析片段。只在參考代號與已揭露 typed reference 完全相同且沒有 layout／底線座標時移除舊匯入前綴，保留真解析與媒體。
 - 驗證：16 項 Node／隔離 SQL（揭答界線、非會員、訂正初答、附件 wrapper、原任務回顧結算／葉花）及 30 項合成瀏覽器（實際 learning controller、對錯色卡、完整正解、是非、原始 ID 送答、訂正、一般題、自我核對、390px、pageerror 0）通過。未使用正式學生帳號送答，真實 Google 雙機與實體平板未測。
-- PR113 已進 main b0984fc；由新乾淨 main 只套本批 SQL 成功，匯出 163 函式／105 表，--live ok:true；diff 僅 learning_snapshot 及其 manifest，ACL 不變。快照 PR 合併後再從新乾淨 main 發布，基準正式與發布鎖未變。
+- PR113 已進 main b0984fc；由新乾淨 main 只套本批 SQL 成功，匯出 163 函式／105 表，--live ok:true；diff 僅 learning_snapshot 及其 manifest，ACL 不變。快照 PR114 已合併並完成上述正式發布，未重播任何舊 SQL。
 
 # 2026-11-07 考古題是非選項重複呈現全面修正（已正式發布）
 

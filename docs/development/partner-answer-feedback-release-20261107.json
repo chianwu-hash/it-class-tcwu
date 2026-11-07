@@ -1,0 +1,138 @@
+{
+  "release": {
+    "agent": "Codex-partner-answer-feedback-20261107",
+    "commit": "ec899f44484ad35cdf97f211ed3d11a1c4a91a71",
+    "baseline": "dpl_2sTF4agA6538zG93WbbBt19ndkfM",
+    "expected": {
+      "changed": [
+        "grade3/115-1/partner-practice.html",
+        "grade4/115-1/partner-practice.html",
+        "grade6/115-1/partner-practice.html",
+        "grade9/115-1/partner-practice.html",
+        "shared/partner-pilot/app.mjs",
+        "shared/partner-pilot/focused.css",
+        "shared/partner-pilot/learning.js",
+        "shared/partner-pilot/past-answer.js",
+        "shared/partner-pilot/rich-content.js"
+      ],
+      "added": [
+        "shared/partner-pilot/answer-feedback.mjs"
+      ],
+      "removed": []
+    },
+    "startedAt": "2026-11-07T07:38:13.883Z",
+    "state": "promoted",
+    "candidate": "dpl_99iWYmPusFviT1gmWBipx4Y9qgCe",
+    "comparison": {
+      "ok": true,
+      "changed": [
+        "grade3/115-1/partner-practice.html",
+        "grade4/115-1/partner-practice.html",
+        "grade6/115-1/partner-practice.html",
+        "grade9/115-1/partner-practice.html",
+        "shared/partner-pilot/app.mjs",
+        "shared/partner-pilot/focused.css",
+        "shared/partner-pilot/learning.js",
+        "shared/partner-pilot/past-answer.js",
+        "shared/partner-pilot/rich-content.js"
+      ],
+      "added": [
+        "shared/partner-pilot/answer-feedback.mjs"
+      ],
+      "removed": [],
+      "eolOnly": 0,
+      "unexpected": [],
+      "missingFromChange": [],
+      "addedCheck": {
+        "missing": [],
+        "unexpected": []
+      },
+      "removedCheck": {
+        "missing": [],
+        "unexpected": []
+      }
+    },
+    "deployedAt": "2026-11-07T07:38:42.092Z",
+    "promotedAt": "2026-11-07T07:39:06.542Z",
+    "alias": "dpl_99iWYmPusFviT1gmWBipx4Y9qgCe",
+    "rollback": "dpl_2sTF4agA6538zG93WbbBt19ndkfM"
+  },
+  "verification": {
+    "at": "2026-11-07T07:39:15.717Z",
+    "checks": [
+      {
+        "path": "grade3/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "cedb6d83b230695c200e5018f8a9fa34c65fdab9bea5a5137348e273565f5be6"
+      },
+      {
+        "path": "grade4/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "9c38c0b7a8cc9647f5f0af1e4a95a197361aaa545ff918adfa6c6ef7f4a77e7c"
+      },
+      {
+        "path": "grade6/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "50ad0078065d2cd3890091d659eba14bb89bbc94d25ef69d16f4244623f25895"
+      },
+      {
+        "path": "grade9/115-1/partner-practice.html",
+        "status": 200,
+        "ok": true,
+        "sha256": "289d7cb0d65fd5b621ae46478c4e4581e1c3e8c73b65024dd53107413429d6c8"
+      },
+      {
+        "path": "shared/partner-pilot/app.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "5924cf4d7d8f0afe055ff01efa923c9939986f8cc55ca5b9162298125c6fe712"
+      },
+      {
+        "path": "shared/partner-pilot/focused.css",
+        "status": 200,
+        "ok": true,
+        "sha256": "3b20c32d5f55517ce852b755a66d53a41eb0242a50f6a3bda04557b164762308"
+      },
+      {
+        "path": "shared/partner-pilot/learning.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "181d374dcd5a235149f69ecb662108ff3b620db203a95eecb65c57158f1d51e3"
+      },
+      {
+        "path": "shared/partner-pilot/past-answer.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "a446db53af8ced7a047415066794ed86e89a12e7f48ac8568293c64c741c3447"
+      },
+      {
+        "path": "shared/partner-pilot/rich-content.js",
+        "status": 200,
+        "ok": true,
+        "sha256": "57d3a22731bdadc2683b396c87da0116d4695f3bbbdcccc75e5a03542b338637"
+      },
+      {
+        "path": "shared/partner-pilot/answer-feedback.mjs",
+        "status": 200,
+        "ok": true,
+        "sha256": "721adaa74daf5fb138381288e32a2a70f08b531a4366516339ccd9e14b53f123"
+      }
+    ]
+  },
+  "prs": [
+    113,
+    114
+  ],
+  "browserChecks": 30,
+  "regressionChecks": 16,
+  "database": {
+    "changedFunction": "partner_pilot.learning_snapshot(uuid)",
+    "liveSnapshotCheck": true,
+    "studentRowsChanged": false,
+    "aclChanged": false
+  },
+  "limits": "Synthetic controller browser and isolated SQL tests; no real Google multi-computer or physical-device test."
+}
