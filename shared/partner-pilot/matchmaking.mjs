@@ -21,9 +21,9 @@ export function createMatchmaking({root,rpc,userId,esc,onExit,onActive,onStage,n
   closeRoleNotice();
   if(shownRoles.has(signature)||document.querySelector('dialog[open]'))return;
   const captain=t.host===userId,dialog=document.createElement('dialog');roleDialog=dialog;
-  dialog.className='match-role-notice';dialog.dataset.roleSignature=signature;
+  dialog.className='match-role-notice';dialog.dataset.roleSignature=signature;dialog.dataset.role=captain?'captain':'member';
   dialog.setAttribute('aria-labelledby','match-role-title');dialog.setAttribute('aria-describedby','match-role-description');
-  dialog.innerHTML=`<span class="match-role-symbol" aria-hidden="true">${captain?'★':'✓'}</span><p class="match-role-label">${captain?'你是隊長':'你是隊員'}</p><h2 id="match-role-title">組隊成功！</h2><p id="match-role-description">${captain?'你被選為隊長，接著請選全隊要練的卷。':'你是隊員，請等候隊長選卷。'}</p><button type="button" autofocus class="primary" data-match-role-ok>${captain?'知道了，去選卷':'知道了，等隊長選卷'}</button>`;
+  dialog.innerHTML=`<span class="match-role-symbol" aria-hidden="true"><svg viewBox="0 0 32 32" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" focusable="false" data-role-icon="${captain?'crown':'partners'}">${captain?'<path d="M5 23 3 9l8 6 5-10 5 10 8-6-2 14Z"/><path d="M6 27h20"/>':'<circle cx="11" cy="10" r="4"/><circle cx="24" cy="12" r="3"/><path d="M3 27v-3a8 8 0 0 1 16 0v3M22 20a6 6 0 0 1 7 6v1"/>'}</svg></span><p class="match-role-label">${captain?'你是隊長':'你是隊員'}</p><h2 id="match-role-title">組隊成功！</h2><p id="match-role-description">${captain?'你被選為隊長，接著請選全隊要練的卷。':'你是隊員，請等候隊長選卷。'}</p><button type="button" autofocus class="primary" data-match-role-ok>${captain?'知道了，去選卷':'知道了，等隊長選卷'}</button>`;
   (root.closest('.partner-content')||root.parentElement).append(dialog);
   const dismiss=()=>{if(roleDialog!==dialog)return;closeRoleNotice();if(disposed||state?.phase!=='selecting'||state.team.id!==t.id||state.team.host!==t.host)return;const target=captain?$('[data-match-picker] button:not(:disabled)')||$('.match-paper-options summary'):$('.match-panel h2');if(target){target.tabIndex=target.matches('button,summary')?0:-1;target.focus({preventScroll:true});target.scrollIntoView({block:'nearest'});}};
   dialog.querySelector('[data-match-role-ok]').onclick=dismiss;
@@ -31,7 +31,7 @@ export function createMatchmaking({root,rpc,userId,esc,onExit,onActive,onStage,n
   try{dialog.showModal();shownRoles.add(signature);}catch{closeRoleNotice();}
  }
  function schedule(){clearTimeout(poll);if(!disposed)poll=setTimeout(refresh,document.hidden?30000:8000);}
- function clock(){const e=$('[data-match-countdown]');if(!e||!state)return;const left=remainingSeconds(state.deadline,serverNow,performance.now()-clockAt);e.textContent=left===null?'等下一位夥伴加入，再開始新的 30 秒集合。':left>0?`這輪集合還有 ${left} 秒`:'正在整理這一輪的小隊，請稍等一下…';}
+ function clock(){const e=$('[data-match-countdown]');if(!e||!state)return;const left=remainingSeconds(state.deadline,serverNow,performance.now()-clockAt);e.textContent=left===null?'等下一位夥伴加入，再開始新的 20 秒集合。':left>0?`這輪集合還有 ${left} 秒`:'正在整理這一輪的小隊，請稍等一下…';}
  function requestArgs(){return {ticket:state?.ticket,...(state?.team?{teamId:state.team.id,revision:state.team.revision}:{})};}
  function feedback(text,bad=false){const el=$('[data-match-feedback]');if(el){el.textContent=text;el.className=bad?'error':'ok';}else notice(text,bad);}
  function locks(){root.querySelectorAll('button,input,select').forEach(e=>{if(e.dataset.matchRetry!==undefined)e.disabled=busy;else if(busy||pending){if(!e.hasAttribute('data-match-disabled'))e.dataset.matchDisabled=String(e.disabled);e.disabled=true;}else if(e.hasAttribute('data-match-disabled')){e.disabled=e.dataset.matchDisabled==='true';delete e.dataset.matchDisabled;}});const p=$('[data-match-pending]');if(p)p.hidden=!pending||busy;}
@@ -58,7 +58,7 @@ export function createMatchmaking({root,rpc,userId,esc,onExit,onActive,onStage,n
  function render(){
   onStage('match');clearInterval(tick);tick=null;
   if(state.phase==='idle'){
-   shell(`<span class="badge">自願參加・同年級跨班</span><h2>幫我找夥伴</h2>${state.reason==='alone'?'<p class="match-note">其他夥伴已退出，這次小隊還沒出發。你可以重新找夥伴。</p>':state.reason==='idle'?'<p class="match-note">這次小隊尚未出發，已先收起。需要時可以重新找夥伴。</p>':''}<p>和同年級的同學一起練，不比較成績，也不公布誰正在等。</p><ol><li>加入這輪 30 秒集合；時間到再安排 2～4 人的小隊。</li><li>成隊後隨機選一位隊長，由隊長選卷，再帶大家出發。</li><li>老師卷、考古卷跨班共用；隊長也可分享自己的 10／20 題自組卷。</li></ol><p>只有你一人時會繼續等候；出發前隨時可以退出。原有任務與紀錄會保留。</p><div class="actions"><button type="button" class="primary" data-match-join ${state.enabled&&state.available?'':'disabled'}>願意一起練，幫我找夥伴 →</button><button type="button" data-match-exit>回到組隊入口</button></div>${state.enabled&&state.available?'':'<p>目前暫無可候配的共用卷，仍可使用邀請碼組隊。</p>'}`);
+   shell(`<span class="badge">自願參加・同年級跨班</span><h2>幫我找夥伴</h2>${state.reason==='alone'?'<p class="match-note">其他夥伴已退出，這次小隊還沒出發。你可以重新找夥伴。</p>':state.reason==='idle'?'<p class="match-note">這次小隊尚未出發，已先收起。需要時可以重新找夥伴。</p>':''}<p>和同年級的同學一起練，不比較成績，也不公布誰正在等。</p><ol><li>加入這輪 20 秒集合；時間到再安排 2～4 人的小隊。</li><li>成隊後隨機選一位隊長，由隊長選卷，再帶大家出發。</li><li>老師卷、考古卷跨班共用；隊長也可分享自己的 10／20 題自組卷。</li></ol><p>只有你一人時會繼續等候；出發前隨時可以退出。原有任務與紀錄會保留。</p><div class="actions"><button type="button" class="primary" data-match-join ${state.enabled&&state.available?'':'disabled'}>願意一起練，幫我找夥伴 →</button><button type="button" data-match-exit>回到組隊入口</button></div>${state.enabled&&state.available?'':'<p>目前暫無可候配的共用卷，仍可使用邀請碼組隊。</p>'}`);
    $('[data-match-join]').onclick=()=>mutate('join');$('[data-match-exit]').onclick=()=>{dispose();onExit();};
   }else if(state.phase==='waiting'){
    shell('<span class="badge">正在幫你找夥伴</span><h2>這一輪，等等彼此</h2><p class="match-countdown" data-match-countdown role="timer"></p><p>集合時間到才安排小隊，不會因為先湊滿四人就提早出發。</p><p>不用一直按按鈕；你也可以取消後回去自己練。</p><button type="button" data-match-leave>取消找夥伴</button>');
