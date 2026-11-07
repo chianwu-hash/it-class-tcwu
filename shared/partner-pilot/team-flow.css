@@ -26,3 +26,13 @@
 .match-paper-options{margin-block:1rem 1.5rem}.match-paper-options summary{font-weight:700;cursor:pointer;padding-block:.75rem}.match-paper-options [data-match-select]{margin-top:1rem}
 .match-panel [data-match-feedback]:empty{display:none}
 @media(max-width:640px){.match-entry{align-items:stretch;flex-direction:column}.match-roster{grid-template-columns:1fr}.match-panel .actions button{flex:1 1 12rem}}
+
+/* Formation notice stays outside the polling panel, until the student dismisses it. */
+.match-role-notice{box-sizing:border-box;width:min(480px,calc(100vw - 32px));max-height:calc(100dvh - 40px);overflow:auto;border:2px solid #b4d9ce;border-radius:24px;padding:30px 28px;background:#fffefa;color:#174b4b;text-align:center;box-shadow:0 22px 70px #123f3c35;font-family:inherit}
+.match-role-notice::backdrop{background:#123f3c70;backdrop-filter:blur(3px)}
+.match-role-symbol{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 12px;border-radius:50%;background:#e5f3e6;color:#167969;font-size:32px;font-weight:800}
+.match-role-notice .match-role-label{display:inline-block;background:#e6f5ef;border-radius:20px;padding:5px 16px;color:#0f766e;font-size:15px;font-weight:700;margin:0 0 12px}
+.match-role-notice h2{font-size:30px;line-height:1.35;margin:0 0 14px}.match-role-notice #match-role-description{font-size:21px;font-weight:700;line-height:1.8;margin:0 0 22px}
+.match-role-notice button{font:inherit;min-height:48px;width:100%;padding:13px 16px;border:1px solid #0f766e;border-radius:13px;background:#0f766e;color:#fff;font-weight:700;cursor:pointer}
+.match-role-notice button:focus-visible{outline:3px solid #e3b740;outline-offset:4px}
+@media(max-width:480px){.match-role-notice{padding:25px 20px}.match-role-notice h2{font-size:27px}.match-role-notice #match-role-description{font-size:19px}}

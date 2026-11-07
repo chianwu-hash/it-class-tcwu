@@ -9,9 +9,27 @@ export function remainingSeconds(deadline,serverNow,elapsed=0){return deadline?M
 // One controller owns its timers and pending request. A retry never gets a new request ID.
 export function createMatchmaking({root,rpc,userId,esc,onExit,onActive,onStage,notice,returnToInvite=false}){
  let state=null,disposed=false,poll=null,tick=null,busy=false,fetching=false,epoch=0,pending=null,key='',serial=0,clockAt=0,serverNow=null,teamHint=null;
+ const shownRoles=new Set();let roleDialog=null;
  const $=s=>root.querySelector(s),alive=n=>!disposed&&n===serial;
  function stopTimers(){clearTimeout(poll);clearInterval(tick);poll=tick=null;}
- function dispose(){disposed=true;serial++;stopTimers();document.removeEventListener('visibilitychange',wake);window.removeEventListener('online',wake);}
+ function closeRoleNotice(){const dialog=roleDialog;roleDialog=null;if(dialog){if(dialog.open)dialog.close();dialog.remove();}}
+ function dispose(){disposed=true;serial++;stopTimers();closeRoleNotice();document.removeEventListener('visibilitychange',wake);window.removeEventListener('online',wake);}
+ function showRoleNotice(){
+  if(state.phase!=='selecting'){closeRoleNotice();return;}
+  const t=state.team,signature=t.id+':'+t.host;
+  if(roleDialog?.dataset.roleSignature===signature)return;
+  closeRoleNotice();
+  if(shownRoles.has(signature)||document.querySelector('dialog[open]'))return;
+  const captain=t.host===userId,dialog=document.createElement('dialog');roleDialog=dialog;
+  dialog.className='match-role-notice';dialog.dataset.roleSignature=signature;
+  dialog.setAttribute('aria-labelledby','match-role-title');dialog.setAttribute('aria-describedby','match-role-description');
+  dialog.innerHTML=`<span class="match-role-symbol" aria-hidden="true">${captain?'★':'✓'}</span><p class="match-role-label">${captain?'你是隊長':'你是隊員'}</p><h2 id="match-role-title">組隊成功！</h2><p id="match-role-description">${captain?'你被選為隊長，接著請選全隊要練的卷。':'你是隊員，請等候隊長選卷。'}</p><button type="button" autofocus class="primary" data-match-role-ok>${captain?'知道了，去選卷':'知道了，等隊長選卷'}</button>`;
+  (root.closest('.partner-content')||root.parentElement).append(dialog);
+  const dismiss=()=>{if(roleDialog!==dialog)return;closeRoleNotice();if(disposed||state?.phase!=='selecting'||state.team.id!==t.id||state.team.host!==t.host)return;const target=captain?$('[data-match-picker] button:not(:disabled)')||$('.match-paper-options summary'):$('.match-panel h2');if(target){target.tabIndex=target.matches('button,summary')?0:-1;target.focus({preventScroll:true});target.scrollIntoView({block:'nearest'});}};
+  dialog.querySelector('[data-match-role-ok]').onclick=dismiss;
+  dialog.addEventListener('cancel',event=>{event.preventDefault();dismiss();});
+  try{dialog.showModal();shownRoles.add(signature);}catch{closeRoleNotice();}
+ }
  function schedule(){clearTimeout(poll);if(!disposed)poll=setTimeout(refresh,document.hidden?30000:8000);}
  function clock(){const e=$('[data-match-countdown]');if(!e||!state)return;const left=remainingSeconds(state.deadline,serverNow,performance.now()-clockAt);e.textContent=left===null?'等下一位夥伴加入，再開始新的 30 秒集合。':left>0?`這輪集合還有 ${left} 秒`:'正在整理這一輪的小隊，請稍等一下…';}
  function requestArgs(){return {ticket:state?.ticket,...(state?.team?{teamId:state.team.id,revision:state.team.revision}:{})};}
@@ -21,7 +39,7 @@ export function createMatchmaking({root,rpc,userId,esc,onExit,onActive,onStage,n
   if(disposed)return;state=next;serverNow=next.now;clockAt=performance.now();teamHint=next.team?.id||teamHint;
   if(next.phase==='active'){dispose();await onActive(next.roomId);return;}
   const nextKey=JSON.stringify({...next,now:null,deadline:next.deadline});
-  if(nextKey!==key){key=nextKey;render();}clock();
+  if(nextKey!==key){key=nextKey;render();}clock();showRoleNotice();
  }
  async function refresh(){
   if(disposed||busy||pending||fetching){schedule();return;}fetching=true;const n=serial,atEpoch=epoch;
