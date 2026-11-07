@@ -13,6 +13,8 @@ test('正解使用伺服器原始ID；忽略考古題佔位correct=0，不猜未
  assert.equal(answerFeedback({...q,attempts:[]},{fragment,esc}),'');
  const rich={text:q.explanation,media:[{kind:'image',url:'synthetic-only'}]};assert.deepEqual(feedbackExplanation({...q,rich:{explanation:rich}}).media,rich.media);
  assert.equal(feedbackExplanation({...q,rich:{explanation:{...rich,layout:[{type:'paragraph',runs:[]}]}}}).text,rich.text);
+ const tf={...q,past:{kind:'single',choices:[{id:'O',text:'O'},{id:'X',text:'X'}]},pastReference:'O'};
+ assert.match(answerFeedback(tf,{fragment,esc}),/○ 正確/);assert.doesNotMatch(answerFeedback(tf,{fragment,esc}),/O・O/);
 });
 test('新增參考值沿用揭答界線、會員權限、媒體wrapper、歷次作答及評分',async()=>{
  const f=await setupMatchDB(),{db,call}=f;try{
