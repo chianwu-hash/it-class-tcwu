@@ -24,7 +24,7 @@
 ## 單一來源與產物
 
 - `shared/quiz-workshop-config.mjs`：課程 ID、原入口路徑、學校呈現名稱、年級標籤、科目、舊預設卷與注音閱讀輔助。**不授予權限。**
-- `shared/quiz-workshop/templates/{quiz,past,partner,library}.html`：四種模式 DOM 契約。Navbar 仍呼叫原年級 `navbar.js`，登入仍由 `initNavbarAuth()` 管理。
+- `shared/quiz-workshop/shells/{quiz,past,partner,library}.html`：四種模式 DOM 契約。Navbar 仍呼叫原年級 `navbar.js`，登入仍由 `initNavbarAuth()` 管理。
 - `automation/build-quiz-workshop.mjs`：由上述來源產生各年級入口、四種 CSS bundle 與資產 manifest。只讀取可達的模組依賴；navbar 的動態 import 也納入。
 - `shared/quiz-workshop-entry.mjs`：先安裝 canonical import map，再載入原 navbar／控制器。普通 quiz 保留原有 local／classroom／cloud 導覽生命週期。
 - `shared/quiz-workshop/generated/` 及 16 個 HTML 是可重現產物，禁止逐頁手改版本。執行 `npm run quiz:build`，再執行 `npm run quiz:check`。正式建置既有 `garden-preflight.mjs` 的 CLI 會先執行此核對；產物過期即擋下，沒有移除既有發布鎖與目錄檢查。

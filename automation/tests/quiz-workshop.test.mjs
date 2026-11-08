@@ -13,7 +13,7 @@ test('雲端發布來源不含 automation 也能執行相同產物檢查',async(
  const stage=await fs.mkdtemp(path.join(tmpdir(),'quiz-workshop-cloud-'));
  const source=new URL('../../',import.meta.url);
  try{
-  await fs.cp(new URL('shared/',source),path.join(stage,'shared'),{recursive:true});
+  await fs.cp(new URL('shared/',source),path.join(stage,'shared'),{recursive:true,filter:source=>!source.split(path.sep).includes('templates')});
   await fs.mkdir(path.join(stage,'release'));
   await fs.copyFile(new URL('release/quiz-workshop-build.mjs',source),path.join(stage,'release/quiz-workshop-build.mjs'));
   for(const course of workshopCourses){

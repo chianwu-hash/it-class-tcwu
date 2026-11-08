@@ -64,10 +64,10 @@ for(const [mode,files] of Object.entries(styles)){
  const bundle=(await Promise.all([...files,'shared/quiz-question-reports.css'].map(file=>css(file)))).join('\n');
  const bundleFile=`${generated}/${mode}.css`;outputs.set(bundleFile,bundle);
  const assets=`<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;800;900&display=swap">\n<link rel="stylesheet" data-quiz-report-style href="/${bundleFile}?v=${hash(bundle)}">\n<script defer src="${katexUrl}"></script>\n`;
- const template=await read(`shared/quiz-workshop/templates/${mode}.html`);
+ const template=await read(`shared/quiz-workshop/shells/${mode}.html`);
  for(const course of workshopCourses){
   const values={ASSETS:assets,ENTRY:`<script type="module" data-workshop-entry="${mode}" data-manifest="${manifestUrl}" src="${loaderUrl}"></script>`,GRADE:course.grade,GRADE_LABEL:course.label,COURSE_ID:course.courseId,GRADE_OPTIONS:workshopCourses.map(c=>`<option value="${c.grade}">${c.label}</option>`).join(''),SUBJECT_OPTIONS:'<option value="">全部科目</option>'+course.subjects.map(s=>`<option>${s}</option>`).join('')};
-  const html='<!-- 此檔由 automation/build-quiz-workshop.mjs 產生；請修改 shared/quiz-workshop/templates 或設定。 -->\n'+template.replace(/\{\{([A-Z_]+)\}\}/g,(_,key)=>{if(!(key in values))throw Error(key);return values[key];});
+  const html='<!-- 此檔由 automation/build-quiz-workshop.mjs 產生；請修改 shared/quiz-workshop/shells 或設定。 -->\n'+template.replace(/\{\{([A-Z_]+)\}\}/g,(_,key)=>{if(!(key in values))throw Error(key);return values[key];});
   outputs.set(course.basePath.slice(1)+({quiz:'quiz.html',past:'past-exam.html',partner:'partner-practice.html',library:'quiz-library.html'})[mode],html);
  }
 }
