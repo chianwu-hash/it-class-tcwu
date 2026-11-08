@@ -31,7 +31,7 @@ export async function runPreflight({root=process.cwd(),fetcher=fetch,timeoutMs=1
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  const args=process.argv.slice(2);let root=process.cwd();
  if(args.length){if(args.length!==2||args[0]!=='--root')throw Error('僅接受 --root <發布目錄>');root=path.resolve(args[1]);}
- try{execFileSync(process.execPath,[path.join(root,'automation/build-quiz-workshop.mjs'),'--check'],{cwd:root,stdio:'inherit'});const report=await runPreflight({root});console.log(JSON.stringify(report,null,2));if(!report.passed){console.error('努力樹升級任務目錄不一致，發布已阻擋。請先核對並套用正式資料庫目錄。');process.exitCode=1;}
+ try{execFileSync(process.execPath,[path.join(root,'release/quiz-workshop-build.mjs'),'--check'],{cwd:root,stdio:'inherit'});const report=await runPreflight({root});console.log(JSON.stringify(report,null,2));if(!report.passed){console.error('努力樹升級任務目錄不一致，發布已阻擋。請先核對並套用正式資料庫目錄。');process.exitCode=1;}
  else console.log('努力樹升級目錄檢查通過。');}
  catch(e){console.error('發布檢查失敗：'+e.message);process.exitCode=1;}
 }

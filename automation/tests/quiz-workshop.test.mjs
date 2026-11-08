@@ -5,8 +5,26 @@ import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {workshopCourses,workshopCourseForPath} from '../../shared/quiz-workshop-config.mjs';
 import {fixtureRPC} from '../fixtures/workshop-rpc.mjs';
+import {tmpdir} from 'node:os';
+import path from 'node:path';
 const read=async file=>(await fs.readFile(new URL('../../'+file,import.meta.url),'utf8')).replace(/\r\n/g,'\n');
 const hash=s=>createHash('sha256').update(s).digest('hex').slice(0,16);
+test('雲端發布來源不含 automation 也能執行相同產物檢查',async()=>{
+ const stage=await fs.mkdtemp(path.join(tmpdir(),'quiz-workshop-cloud-'));
+ const source=new URL('../../',import.meta.url);
+ try{
+  await fs.cp(new URL('shared/',source),path.join(stage,'shared'),{recursive:true});
+  await fs.mkdir(path.join(stage,'release'));
+  await fs.copyFile(new URL('release/quiz-workshop-build.mjs',source),path.join(stage,'release/quiz-workshop-build.mjs'));
+  for(const course of workshopCourses){
+   const dir=path.join(stage,course.basePath.slice(1));await fs.mkdir(dir,{recursive:true});
+   for(const file of ['quiz.html','past-exam.html','partner-practice.html','quiz-library.html','navbar.js'])await fs.copyFile(new URL(course.basePath.slice(1)+file,source),path.join(dir,file));
+  }
+  execFileSync(process.execPath,['release/quiz-workshop-build.mjs','--check'],{cwd:stage});
+  assert.match(await read('release/garden-preflight.mjs'),/release\/quiz-workshop-build\.mjs/);
+  await assert.rejects(fs.access(path.join(stage,'automation')));
+ }finally{await fs.rm(stage,{recursive:true,force:true});}
+});
 test('四課程四入口可重現；傳遞依賴與版本別名只有一個實體模組',async()=>{
  execFileSync(process.execPath,['automation/build-quiz-workshop.mjs','--check'],{cwd:new URL('../../',import.meta.url)});
  const manifest=JSON.parse(await read('shared/quiz-workshop/generated/assets.json'));
