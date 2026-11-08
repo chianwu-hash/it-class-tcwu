@@ -1,6 +1,6 @@
 # 共用模組說明
 
-## 考前練功坊入口與呈現（2026-11-08 候選）
+## 考前練功坊入口與呈現（2026-11-08 已正式發布）
 
 三／四／六／九年級的選卷、普通個人、個人原卷及夥伴入口由 `quiz-workshop-config.mjs` 與 `shared/quiz-workshop/shells/` 產生，不逐頁改 HTML 或版本。執行 `npm run quiz:build`／`quiz:check`；建置會核對產物，資產 manifest 統一可達模組的版本別名，CSS bundle 展開巢狀依賴。名冊新消費者使用 `quiz-nav-identity.mjs`，舊 `grade6-nav-identity.js` 保留為同一實作。
 

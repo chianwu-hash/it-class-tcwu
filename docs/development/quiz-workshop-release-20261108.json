@@ -1,0 +1,332 @@
+{
+  "status": "production",
+  "project": "it-class-tcwu",
+  "sourceCommit": "d7b9ff8df17b507aae3ad3406e5bbddb82efdfc6",
+  "deployment": "dpl_AvkasWz4M8ZnWSsG632dPwxnJi27",
+  "rollback": "dpl_A81b7iTskvtCprBSbUP553DLPKN2",
+  "promotedAt": "2026-11-08T12:35:30.598Z",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade3/115-1/past-exam.html",
+      "grade3/115-1/quiz-library.html",
+      "grade3/115-1/quiz.html",
+      "grade4/115-1/partner-practice.html",
+      "grade4/115-1/past-exam.html",
+      "grade4/115-1/quiz-library.html",
+      "grade4/115-1/quiz.html",
+      "grade6/115-1/partner-practice.html",
+      "grade6/115-1/past-exam.html",
+      "grade6/115-1/quiz-library.html",
+      "grade6/115-1/quiz.html",
+      "grade9/115-1/partner-practice.html",
+      "grade9/115-1/past-exam.html",
+      "grade9/115-1/quiz-library.html",
+      "grade9/115-1/quiz.html",
+      "package.json",
+      "release/garden-preflight.mjs",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/focused.css",
+      "shared/quiz-grade-route.mjs",
+      "shared/quiz-library.mjs",
+      "shared/quiz-past-entry.mjs",
+      "shared/quiz-past-exams.mjs",
+      "shared/quiz-past-ui.mjs",
+      "shared/quiz-student.css",
+      "shared/quiz-student.mjs",
+      "shared/quiz-workspace.mjs"
+    ],
+    "added": [
+      "release/quiz-workshop-build.mjs",
+      "shared/quiz-choice.css",
+      "shared/quiz-nav-identity.mjs",
+      "shared/quiz-workshop-config.mjs",
+      "shared/quiz-workshop-entry.mjs",
+      "shared/quiz-workshop.css",
+      "shared/quiz-workshop/generated/assets.json",
+      "shared/quiz-workshop/generated/library.css",
+      "shared/quiz-workshop/generated/partner.css",
+      "shared/quiz-workshop/generated/past.css",
+      "shared/quiz-workshop/generated/quiz.css",
+      "shared/quiz-workshop/shells/library.html",
+      "shared/quiz-workshop/shells/partner.html",
+      "shared/quiz-workshop/shells/past.html",
+      "shared/quiz-workshop/shells/quiz.html"
+    ],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "assets": [
+    {
+      "file": "grade3/115-1/partner-practice.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "257e96172f0f18d0e2a43e6907b4f6d230f9b59c0abe066d0e29a90601a87b81"
+    },
+    {
+      "file": "grade3/115-1/quiz-library.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "7fd6abf49e9c6f5d8db117f1f9c14aa1df1229018a501131d921dacaf85758f0"
+    },
+    {
+      "file": "grade3/115-1/quiz.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "124feb5da1dcd305658d75d2acf15bc8dfeb94245c08d30f58e47d2b7c582555"
+    },
+    {
+      "file": "grade4/115-1/partner-practice.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "2f6afeb06e25299b0724a053624da9b002e89319ab5b90e93b518abc2bef855f"
+    },
+    {
+      "file": "grade3/115-1/past-exam.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "989d7b0f4526c69945545629b329b085ad35aef34232cf6a0ae21bce8fc01a09"
+    },
+    {
+      "file": "grade6/115-1/partner-practice.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "dd6953d3290d57d2ac82a74e8fe63ceb4f882a08e03b445f95bbaaaa9da7b804"
+    },
+    {
+      "file": "grade6/115-1/past-exam.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "81eb5060381443256f4a5087708393a97478e19b8150f50939b4d0e7059977f2"
+    },
+    {
+      "file": "grade4/115-1/quiz-library.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "30814037a17449c730bcf4714e8348aeef0f520e79e891445962ba5a316a1321"
+    },
+    {
+      "file": "grade4/115-1/quiz.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "3bdda29621fec03bd68d1318990a7e278095244c9779e65585c0d83f5de2cc91"
+    },
+    {
+      "file": "grade4/115-1/past-exam.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "99275c43c449e1e578c4021e8fe04f5598ccc9706a9a779a1fc7ae2757fb5584"
+    },
+    {
+      "file": "grade9/115-1/quiz-library.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "599b1045e850f36368a9dc1895f8e9a7dc882aba7513745d309b8aa4d6d57b36"
+    },
+    {
+      "file": "grade9/115-1/past-exam.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "ff158605420a34397afb64787ade10a3e1d150df6875792d024994405d688bfa"
+    },
+    {
+      "file": "grade9/115-1/partner-practice.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "79bd22901141a887df8feb350707a853e9fa833e25677d1e2879416df860c858"
+    },
+    {
+      "file": "grade6/115-1/quiz.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "50664f8d727cf2d47e7703fe7732c9d6b529e9cce196ea3c9da10468aee42c2a"
+    },
+    {
+      "file": "grade6/115-1/quiz-library.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "7c5cc156bf3cec67fd7c2d58d9c0216ea401a753aecf2af60da475a5ad4dcaf4"
+    },
+    {
+      "file": "shared/partner-pilot/focused.css",
+      "status": 200,
+      "equal": true,
+      "sha256": "21e2e7d7e55d2ee032156aede6666d002f916b197033ffc2430b880b59527b30"
+    },
+    {
+      "file": "shared/quiz-grade-route.mjs",
+      "status": 200,
+      "equal": true,
+      "sha256": "ca3ba8070f105bdfaf2d2a3007e6ef97eaf4a638e668d1d15d571ab8c4eba11a"
+    },
+    {
+      "file": "grade9/115-1/quiz.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "fa8e20e5a116b6d373cc99a080d777220ee6b488a74f501a041878fdc1f40586"
+    },
+    {
+      "file": "shared/partner-pilot/app.mjs",
+      "status": 200,
+      "equal": true,
+      "sha256": "e9869e0a6a7cf4e83466c666ff69a3c30c27b118e2aff7bb031008d2ae7919bc"
+    },
+    {
+      "file": "shared/quiz-library.mjs",
+      "status": 200,
+      "equal": true,
+      "sha256": "69669d50eae00f8fcd12711843c91974346a8bbeace52096cf95cfc27e27f1b8"
+    },
+    {
+      "file": "shared/quiz-past-entry.mjs",
+      "status": 200,
+      "equal": true,
+      "sha256": "bd8cd08d9c14b6e30bb32bbc3e73483a42b3b1a4c4e0393f7d50302f05a0d66f"
+    },
+    {
+      "file": "shared/quiz-student.css",
+      "status": 200,
+      "equal": true,
+      "sha256": "df9e08dce35b5cb9ac676bce32db739c26f6d8f219f05341a5823394e8147cea"
+    },
+    {
+      "file": "shared/quiz-past-ui.mjs",
+      "status": 200,
+      "equal": true,
+      "sha256": "f6047927f7dd0880644ded4c3df85b666a03507732408ccaaa8090bd15de74de"
+    },
+    {
+      "file": "shared/quiz-past-exams.mjs",
+      "status": 200,
+      "equal": true,
+      "sha256": "520c40b6d00d30acef4024a83bf47eb5403000cd2eab2cdd8c9e70771d286407"
+    },
+    {
+      "file": "shared/quiz-student.mjs",
+      "status": 200,
+      "equal": true,
+      "sha256": "1cec0cb18bdb897bddf47ebc6c8ae049fc9101c5ceb3b66c06a03faa0c6d96aa"
+    },
+    {
+      "file": "shared/quiz-choice.css",
+      "status": 200,
+      "equal": true,
+      "sha256": "65e6fefa6a9fc111610003edfe00798553f7032ec705f74bf83ae7744099de1c"
+    },
+    {
+      "file": "shared/quiz-nav-identity.mjs",
+      "status": 200,
+      "equal": true,
+      "sha256": "790909b361b228424064afa63c4efe90b0b24c1186ac705597b4c2856d2a3632"
+    },
+    {
+      "file": "shared/quiz-workspace.mjs",
+      "status": 200,
+      "equal": true,
+      "sha256": "c46431dbf8312a61932e2c20da3e547961f2ee49e3da9a9728e549f31ba159ff"
+    },
+    {
+      "file": "shared/quiz-workshop-config.mjs",
+      "status": 200,
+      "equal": true,
+      "sha256": "680456b59057c6727956eba805c99acea5e45c657fa13a13e7054690c37f9a82"
+    },
+    {
+      "file": "shared/quiz-workshop-entry.mjs",
+      "status": 200,
+      "equal": true,
+      "sha256": "ed29d030a13868c6639914112bcef24eee7d7222b6f07876ac80943b710cc457"
+    },
+    {
+      "file": "shared/quiz-workshop/generated/assets.json",
+      "status": 200,
+      "equal": true,
+      "sha256": "41fe2c6c892729fe9a03ce2b996f5f754ad7c1822c41caab9cf28b99f65b4a61"
+    },
+    {
+      "file": "shared/quiz-workshop/generated/past.css",
+      "status": 200,
+      "equal": true,
+      "sha256": "fe2d3d95f1d8623e8e648d3bb6af43ec196071f215ecca82b73bd80c02803f4a"
+    },
+    {
+      "file": "shared/quiz-workshop/generated/library.css",
+      "status": 200,
+      "equal": true,
+      "sha256": "aef5637e87ff30d8437c1f2796f0ffc50170928a3d1aedc347cae4da61e6e905"
+    },
+    {
+      "file": "shared/quiz-workshop.css",
+      "status": 200,
+      "equal": true,
+      "sha256": "7e03946d6a276a21c2c1067d4a57dbc7ddd9b7f93de2ec06702111cfd9f7e8de"
+    },
+    {
+      "file": "shared/quiz-workshop/generated/partner.css",
+      "status": 200,
+      "equal": true,
+      "sha256": "cfa966840ffc394b45fbfcf757c35c029f11970b9822e17c97c5980ffb35e102"
+    },
+    {
+      "file": "shared/quiz-workshop/shells/partner.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "a2ccbf3e8798f5c4af53151a81070eb1e32f8fc04bb7694172c0e6d4d027d466"
+    },
+    {
+      "file": "shared/quiz-workshop/shells/library.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "a38461a5fb6bed53a2ae8ff81461e4afe2449635e332fd1a8e483dd7eac8ec1c"
+    },
+    {
+      "file": "shared/quiz-workshop/shells/quiz.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "c3d8043b3b624044ff8a798b66bbd0cf99486eb1cc6b4481d719e7c026318835"
+    },
+    {
+      "file": "shared/quiz-workshop/generated/quiz.css",
+      "status": 200,
+      "equal": true,
+      "sha256": "730439108e72a786a92422e8ccc0b0d424435f351a35f72067c2754b43947514"
+    },
+    {
+      "file": "shared/quiz-workshop/shells/past.html",
+      "status": 200,
+      "equal": true,
+      "sha256": "f36f27272194917fc5839ed3a3bea8879a63978ca539a3ccb0d35cbdce0042e2"
+    }
+  ],
+  "liveAnonymous": {
+    "passed": 98,
+    "exceptions": 0,
+    "backendRequests": 0,
+    "storage": "page-only in-memory storage; persistent sign-in untouched"
+  },
+  "syntheticBrowserChecks": 350,
+  "nodeAndSqlTests": 67,
+  "releaseGateTests": 17,
+  "sqlChanges": false,
+  "productionLearningWrites": 0,
+  "pullRequests": [
+    120,
+    121,
+    122
+  ],
+  "notes": [
+    "發布前補修 automation 與 templates 排除路徑，未放寬保護或略過關卡。",
+    "兩套舊原卷 SQL 測試缺私人題包，真實 Google 雙帳號與實體裝置未重驗。"
+  ]
+}
