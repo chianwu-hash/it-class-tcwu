@@ -1,19 +1,14 @@
+<!-- 此檔由 automation/build-quiz-workshop.mjs 產生；請修改 shared/quiz-workshop/templates 或設定。 -->
 <!doctype html>
 <html lang="zh-Hant"><head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex"><title>四年級考前練功坊</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap">
-  <link rel="stylesheet" href="../../shared/quiz-theme.css?v=20261028-nav">
-  <link rel="stylesheet" href="../../shared/vendor/katex/katex.min.css">
-  <link rel="stylesheet" href="../../shared/quiz-student.css">
-  <link rel="stylesheet" href="../../shared/image-lightbox.css">
-  <link rel="stylesheet" href="../../shared/quiz-wrong-questions.css?v=20261028-extension-feedback">
-  <script defer src="../../shared/vendor/katex/katex.min.js"></script>
-  <link rel="stylesheet" href="../../shared/quiz-library.css?v=20261030-midterms">
-  <link rel="stylesheet" href="../../shared/quiz-compose.css?v=20261028-student-only">
-<link rel="stylesheet" href="../../shared/quiz-learning.css?v=20261102"></head><body class="quiz-skin quiz-library-page" data-grade="4">
-  <script src="navbar.js?v=20261101-grade4" data-homework="true" data-quiz="true"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;800;900&display=swap">
+<link rel="stylesheet" data-quiz-report-style href="/shared/quiz-workshop/generated/library.css?v=aef5637e87ff30d8">
+<script defer src="/shared/vendor/katex/katex.min.js?v=e8d885505949f3a5"></script>
+</head><body class="quiz-skin quiz-library-page" data-grade="4">
+  <div data-workshop-navbar></div>
   <header class="library-hero"><div class="library-hero-inner">
     <div class="library-hero-copy"><a class="library-parent" href="/index.html">謙大叔的電腦教室</a><span class="library-grade">四年級</span>
       <h1><i class="fa-solid fa-dumbbell" aria-hidden="true"></i>考前練功坊</h1>
@@ -24,11 +19,10 @@
   <main>
     <section id="cloud-lock" class="panel"><h2><i class="fa-solid fa-user-lock" aria-hidden="true"></i>先登入，再開始</h2><p>請點上方的 Google 登入按鈕，使用名冊中的學生帳號登入。</p><p>登入後就能看見所屬年級的單元卷與已儲存的進度。本區僅提供名冊中的學生使用，不開放教師或其他帳號。</p></section>
     <section id="cloud-library" hidden>
-      <div class="filters"><label id="grade-filter-label" hidden>教師檢視年級 <select id="grade-filter"><option value="3">四年級</option><option value="4">四年級</option><option value="6">六年級</option></select></label>
+      <div class="filters"><label id="grade-filter-label" hidden>教師檢視年級 <select id="grade-filter"><option value="3">三年級</option><option value="4">四年級</option><option value="6">六年級</option><option value="9">九年級</option></select></label>
       <label>科目 <select id="subject-filter"><option value="">全部科目</option><option>國語</option><option>英語</option><option>數學</option><option>社會</option><option>自然</option></select></label>
       <button id="refresh-library"><i class="fa-solid fa-rotate-right" aria-hidden="true"></i>更新雲端進度</button></div>
       <p id="cloud-status" role="status" aria-live="polite"></p><div id="cloud-papers" class="papers"></div>
     </section>
   </main>
-  <script type="module" src="../../shared/quiz-library.mjs?v=20261102-learning"></script>
-<script type="module" src="../../shared/quiz-learning.mjs?v=20261102"></script><script type="module" src="../../shared/quiz-partner-pilot-entry.mjs?v=20261105-self"></script></body></html>
+<script type="module" data-workshop-entry="library" data-manifest="/shared/quiz-workshop/generated/assets.json?v=41fe2c6c892729fe" src="/shared/quiz-workshop-entry.mjs?v=ed29d030a13868c6"></script></body></html>

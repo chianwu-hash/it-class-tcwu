@@ -1,16 +1,14 @@
+<!-- 此檔由 automation/build-quiz-workshop.mjs 產生；請修改 shared/quiz-workshop/templates 或設定。 -->
 <!doctype html>
 <html lang="zh-Hant"><head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex"><title>考古題・考前練功坊</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="stylesheet" href="../../shared/quiz-author.css">
-  <link rel="stylesheet" href="../../shared/quiz-student.css">
-  <link rel="stylesheet" href="../../shared/quiz-theme.css?v=20261029-batch4">
-  <link rel="stylesheet" href="../../shared/image-lightbox.css">
-  <link rel="stylesheet" href="../../shared/quiz-past-style.css?v=20261030-audio">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;800;900&display=swap">
+<link rel="stylesheet" data-quiz-report-style href="/shared/quiz-workshop/generated/past.css?v=fe2d3d95f1d8623e">
+<script defer src="/shared/vendor/katex/katex.min.js?v=e8d885505949f3a5"></script>
 </head><body class="quiz-skin quiz-student-page past-exam-page" data-grade="3">
-  <script src="navbar.js?v=20261102-week10" data-homework="true" data-quiz="true"></script>
+  <div data-workshop-navbar></div>
   <main class="wrap student-wrap">
     <section id="quiz-lock" class="card"><h1>考古題</h1><h2>先登入，再開始練習</h2><p>請使用三年級名冊中的學生 Google 帳號。</p><p role="status" aria-live="polite"></p></section>
     <section id="quiz-content" hidden><div id="past-exam" class="past-exam-workspace">
@@ -26,5 +24,4 @@
       <section id="workspace" aria-label="作答區"></section>
     </div></section>
   </main>
-  <script type="module" src="../../shared/quiz-past-entry.mjs?v=20261107-boolean-choice"></script>
-</body></html>
+<script type="module" data-workshop-entry="past" data-manifest="/shared/quiz-workshop/generated/assets.json?v=41fe2c6c892729fe" src="/shared/quiz-workshop-entry.mjs?v=ed29d030a13868c6"></script></body></html>

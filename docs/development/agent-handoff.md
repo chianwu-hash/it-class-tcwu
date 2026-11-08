@@ -1,3 +1,13 @@
+# 2026-11-08 考前練功坊共用模組化（本機候選，未發布）
+
+- Codex 唯一寫入者；從最新 `origin/main a51dbef` 新建 `codex/quiz-common-20261108`，工作樹 `D:/projects/it-class-tcwu-worktrees/quiz-common-20261108`。不在 C 槽或 D 槽主工作區修改，未使用舊 worktree。
+- 16 個既有網址入口改為四種共用範本＋課程設定產生；集中資產指紋、canonical import map 與 CSS 巢狀依賴展開。`quiz:check` 及既有發布 preflight CLI 會擋下過期產物。名冊語意入口保留同一舊實作，不新增身分快取。
+- 個人原卷接回同一 workspace／單選元件及結果樣式，保留完整題組、group/field ID、整組提交與手動草稿；多欄位／自核組維持長頁，各欄回饋保留標籤，已存答後下一組在主要操作位置。注音放大改為課程設定，KaTeX／媒體與回報保留。
+- 沒有 SQL、Auth、名冊權限、題庫、原卷版本、學生紀錄或獎勵政策變動；紀念動畫與正式已完成任務均未修改。不能把前端 school 呈現設定當通用多校隔離能力。
+- 66 項 Node／隔離 SQL／產物與發布關卡通過。四課程×四入口×桌機／手機合成瀏覽器已驗正誤、下一題、group packet、草稿重載、換人清空、圖音與數學 UI、夥伴提交／UI重建；最終 350 項全通過，收據見 ignored `.chat-mode/evidence/workshop/browser.json`。已目視三模式桌機／手機代表截圖；背景截圖有一次逾時，行為矩陣與截圖分開核驗。
+- 真實 Google 雙帳號、多房實機、真題整卷、Safari／iPad、實體觸控與動畫可見播放尚未重驗；舊兩套原卷 SQL 測試缺私人 document 題包，未計為通過。全部使用合成身分，沒有切換正式測試帳號的年級。
+- 詳 [架構清冊與註冊契約](quiz-workshop-modularization-20261108.md)。預覽 `http://localhost:8868/grade4/115-1/past-exam.html?paper=synthetic` 是合成資料；開放審查，尚未核准發布，不自行合併或部署。後續先審 PR 與協調真登入回歸，再另行取得發布授權，照既有 main／發布鎖流程辦理。
+
 # 2026-11-07 夥伴紀念葉花成長動畫（已正式發布）
 
 ## 發布登記

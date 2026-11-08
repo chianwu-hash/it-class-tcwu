@@ -1,0 +1,50 @@
+{
+  "status": "draft-not-deployed",
+  "baseCommit": "a51dbefe6a958d9769f2b47b7b4324af1dbccd50",
+  "branch": "codex/quiz-common-20261108",
+  "nodeTests": {
+    "passed": 66,
+    "failed": 0
+  },
+  "browser": {
+    "passed": 350,
+    "failed": 0,
+    "uncaughtExceptions": 0,
+    "grades": [
+      3,
+      4,
+      6,
+      9
+    ],
+    "modes": [
+      "quiz",
+      "past-exam",
+      "partner-practice",
+      "quiz-library"
+    ],
+    "widths": [
+      1280,
+      390
+    ],
+    "auth": "synthetic-only",
+    "events": "background DOM events",
+    "lastRunScreenshots": false,
+    "representativeScreenshotsInspected": 6
+  },
+  "protectedPathsUnchanged": [
+    "supabase",
+    "shared/auth.js",
+    "shared/navbar-auth.js",
+    "shared/grade6-nav-identity.js",
+    "shared/quiz-feedback-motion.mjs",
+    "shared/partner-pilot/keepsake-growth.mjs",
+    "shared/partner-pilot/learning.js"
+  ],
+  "productionWrites": 0,
+  "limitations": [
+    "未執行正式 Google 登入及真實多房同步驗收。",
+    "Safari／iPad、實體觸控／鍵盤及可見動畫播放尚未重驗。",
+    "兩套舊考古題 SQL 測試缺少私人原卷 document 題包，未計入通過項目。",
+    "一次背景截圖逾時；最終行為矩陣不含截圖，代表畫面另外複查。"
+  ]
+}

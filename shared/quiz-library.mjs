@@ -1,6 +1,6 @@
 import { initNavbarAuth } from './navbar-auth.js';
 import { createQuizRequest } from './quiz-api.mjs?v=20261102-learning';
-import { provideNavIdentity } from './grade6-nav-identity.js?v=20261107-roster-nav';
+import { provideNavIdentity } from './quiz-nav-identity.mjs';
 import { quizPageGrade, quizLibraryPath, quizStudentRedirect } from './quiz-grade-route.mjs?v=20261102-grade9-release';
 import { initWrongQuestions } from './quiz-wrong-questions.mjs?v=20261102-learning';
 import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs?v=20261029-batch4';

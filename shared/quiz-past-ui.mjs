@@ -7,14 +7,19 @@ import {renderManualResponse} from './quiz-past-manual.mjs';
 import {attachPastInputKeyboard} from './quiz-past-input.mjs?v=20261102-math-audio';
 import {createQuestionReport} from './quiz-question-reports.mjs';
 import {renderPastLearningReview} from './quiz-past-learning-review.mjs';
+import {appendSingleChoiceOptions} from './quiz-choice.mjs';
+import {createQuizWorkspace} from './quiz-workspace.mjs';
 export function initPastExamUI({root,request,resolveAsset,onView,reportRequest,onPractice}){
 let active=true;
 const mediaScope={resolve:resolveAsset,active:()=>active};
-const renderLocalContent=(host,content)=>renderScopedContent(host,content,{mediaScope});
+const renderLocalContent=(host,content)=>renderScopedContent(host,content,{mediaScope,imageLoading:'eager'});
 const $=s=>root.querySelector(s),el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
+const workspace=createQuizWorkspace($('#workspace')),statusElement=$('#status');
+const onToolsToggle=()=>{if(active)workspace.refresh();};
+root.addEventListener('toggle',onToolsToggle,true);
 const button=(text,fn,cls)=>{const b=el('button',text,cls);b.type='button';b.addEventListener('click',fn);return b;};
 let state,index=0,busy=false;const drafts=new Map(),clean=new Map(),pending=new Map(),reports=new Map();let tool='point',cursor={x:.5,y:.5},arrowStart=null,undo=[],draftRequest=null;
-const say=t=>{if(active&&$('#status'))$('#status').textContent=t;};
+const say=t=>{if(active&&statusElement)statusElement.textContent=t;};
 const api=request;
 
 const isManual=g=>['annotation','manual'].includes(g.kind);
@@ -46,7 +51,7 @@ async function saveDraft(){
 function currentValue(g){const r=state.records[g.id];return r?(isManual(g)?r.responses[0].value:r.responses.map(x=>x.value)):draft(g);}
 function art(a){const f=el('figure',undefined,'figure');const link=el('a');link.href='#';link.dataset.imageLightbox='';const img=el('img');img.dataset.quizMediaUrl=a.url;resolveAsset(a.url).then(src=>{if(img.isConnected)img.src=src;}).catch(e=>say(e.message));img.alt=a.alt;applySourceCrop(link,img,a.viewBox);link.append(img);f.append(link,el('figcaption',a.alt));return f;}
 function officialText(g,value){if(g.kind==='mark')return value?'應打勾':'不打勾';if(Array.isArray(value))return value.join(g.kind==='sequence'?' → ':'、');return value;}
-function feedback(g,i,host){const r=state.records[g.id];if(!r||isManual(g))return;const result=r.results[i],box=el('div',undefined,'feedback'+(result.correct?'':' wrong'));box.append(el('strong',result.correct?'✓ 這一格核對正確':'這一格和核對答案不同'),el('span','核對答案：'+officialText(g,result.official)));host.append(box);}
+function feedback(g,i,host){const r=state.records[g.id];if(!r||isManual(g))return;const result=r.results[i],box=el('div',undefined,'feedback'+(result.correct?'':' wrong'));if(g.fields.length>1)box.dataset.fieldLabel=`（${g.fields[i].label}）${g.fields[i].text}`;box.append(el('strong',result.correct?'✓ 這一格核對正確':'這一格和核對答案不同'),el('span','核對答案：'+officialText(g,result.official)));host.append(box);}
 function renderPractice(){
  const host=$('#practice-progress'),p=state.practice;if(!host||!p)return;
  const box=el('div',undefined,'demo-note');
@@ -58,6 +63,7 @@ function renderPractice(){
  $('#restart').textContent=p.complete?'重新作答':'另開一次作答';
 }
 function render(){if(!active)return;
+ workspace.reset();
  stopAudio();
  const g=state.groups[index],saved=state.records[g.id],locked=Boolean(saved)||busy||pending.has(g.id);if(!saved)onView(g.id);const values=currentValue(g);const summary=state.summary;
  $('#score').textContent=summary.answered?`目前核對 ${summary.score}／${summary.max} 分`:'準備好，就從一組開始。';$('#progress').textContent=`已核對 ${summary.answered}／${summary.total} 個欄位${summary.drawingStatus==='self_checked'?'・開放題已有自我核對紀錄':''}`;
@@ -73,7 +79,16 @@ function render(){if(!active)return;
  if(g.assets.length&&g.kind!=='annotation'){const imgs=el('div',undefined,'art-grid'+(g.kind==='set'?' magnets':''));g.assets.forEach(a=>imgs.append(art(a)));left.append(imgs,el('p','點圖片可放大查看。','helper'));}
  if(g.kind==='single'||g.kind==='short'){
   const stem=el('div',undefined,'material');renderLocalContent(stem,g.promptContent);right.append(stem);
-  if(g.kind==='single'){const display=booleanChoicePresentation(g.choices),choices=el('div',undefined,'past-choices');for(const [i,c] of g.choices.entries()){const row=el('label',undefined,'choice-row student-option'),input=el('input');input.type='radio';input.name='single';input.value=c.id;input.checked=values[0]===c.id;input.disabled=locked;input.addEventListener('change',()=>draft(g)[0]=c.id);const text=el('span',undefined,'option-body');if(display)text.textContent=display[i].text;else renderLocalContent(text,c.content);row.append(input,el('span',display?.[i].badge??c.id,'option-badge'),text);choices.append(row);}right.append(choices);}
+  if(g.kind==='single'){
+   const display=booleanChoicePresentation(g.choices),choices=el('div',undefined,'past-choices');
+   const result=saved?.results?.[0];
+   appendSingleChoiceOptions(choices,{name:'single',options:g.choices.map(c=>({...c,value:c.id})),selected:values[0],locked,
+    onSelect:value=>{draft(g)[0]=value;},badgeForOption:(_c,i)=>display?.[i].badge??g.choices[i].id,
+    renderBody:(body,c,i)=>{if(display)body.textContent=display[i].text;else renderLocalContent(body,c.content);},
+    result:result?{chosen:values[0],correct:result.official,chosenCorrect:result.correct}:null});
+   for(const row of choices.children)row.classList.add('choice-row');
+   right.append(choices);
+  }
   else{g.fields.forEach((f,i)=>{const slot=el('div',undefined,'slot'),label=el('label',g.fields.length===1?'你的答案':`（${f.label}）${f.text}`,'field-label');label.htmlFor='short-answer-'+i;if(g.answerFormat==='math-v1'){slot.append(label);renderMathResponse({host:slot,id:'short-answer-'+i,value:values[i],locked,onChange:v=>{draft(g)[i]=v}});feedback(g,i,slot);right.append(slot);return;}const input=el('input');input.id='short-answer-'+i;input.type='text';input.maxLength=2000;input.value=values[i];input.disabled=locked;input.autocomplete='off';input.addEventListener('input',()=>draft(g)[i]=input.value);slot.append(label,input);attachPastInputKeyboard(slot,input,pastFieldInputAids(g,f));feedback(g,i,slot);right.append(slot);});}
   if(g.kind==='single')feedback(g,0,right);
  }else if(g.kind==='mark'){
@@ -110,13 +125,29 @@ function render(){if(!active)return;
   }right.append(review);
  }
  if(left.childNodes.length)grid.append(left,right);else{grid.classList.add('question-only');grid.append(right);}card.append(grid);const actions=el('div',undefined,'actions'),al=el('div',undefined,'actions-left');
- if(index>0)al.append(button('← 上一組',()=>{index--;say('');render();},'quiet'));if(index<state.groups.length-1)al.append(button('下一組 →',()=>{index++;say('');render();},'quiet'));actions.append(al);
+ if(index>0)al.append(button('← 上一組',()=>{index--;say('');render();},'quiet'));if(index<state.groups.length-1){const next=button('下一組 →',()=>{index++;say('');render();},'quiet');next.dataset.pastNext='';al.append(next);}actions.append(al);
  if(saved)actions.append(el('span',isManual(g)?'已保留這次作答・未自動判分':`這組已儲存並核對：${saved.score} 分`,'local-saved'));
  else {const submit=button(busy?'正在儲存…':pending.has(g.id)?'以同一份答案重試':isManual(g)?'完成並儲存作答':'送出這一組',submitGroup,'primary');submit.id='submit';submit.disabled=busy;actions.append(submit);}
  if(state.draft){const save=button('暫存作答',saveDraft,'quiet');save.id='save-past-draft';save.disabled=busy;al.append(save);const note=el('p',undefined,'helper');note.id='past-draft-status';note.setAttribute('role','status');card.append(note);}
+ if(saved){const next=al.querySelector('[data-past-next]');if(next){next.className='primary';actions.append(next);}}
  card.append(actions);
  if(reportRequest){const aid=state.attemptId,key=aid+':'+g.id;if(!reports.has(key))reports.set(key,createQuestionReport({request:reportRequest,context:{source:'past',attempt_id:aid,question_id:g.id},options:g.choices.map(c=>({...c,label:c.id})),valid:()=>active&&state?.attemptId===aid}));card.append(reports.get(key));}
- $('#workspace').replaceChildren(card);draftStatus();
+ // Only presentation moves: all group/field IDs, listeners, draft maps and
+ // request packets stay owned by this original-paper controller.
+ const feedbackPanel=el('aside',undefined,'answer-preview');
+ for(const node of [...card.querySelectorAll('.feedback,.reference,.past-learning-review')]){
+  if(node.dataset.fieldLabel)feedbackPanel.append(el('p',node.dataset.fieldLabel,'helper'));
+  feedbackPanel.append(node);
+ }
+ if(feedbackPanel.childNodes.length)card.append(feedbackPanel);card.classList.add('question');card.dataset.questionId=g.id;
+ actions.classList.add('quiz-actions');
+ const primary=actions.querySelector('.primary');if(primary)primary.classList.add('quiz-primary');
+ const draftNote=card.querySelector('#past-draft-status');
+ $('#workspace').replaceChildren(card);
+ workspace.apply({article:card,saved:Boolean(saved),complete:state.practice?.complete,closed:false,statusElement,
+  forceLongForm:g.fields.length>1||isManual(g)||['sequence','code','set'].includes(g.kind)});
+ if(draftNote)$('#workspace .quiz-workspace-status')?.append(draftNote);
+ draftStatus();
 }
 function renderDrawing(g,host,locked,value){
  const panel=el('div',undefined,'drawing-panel'),tools=el('div',undefined,'drawing-tools');
@@ -150,6 +181,6 @@ async function submitGroup(){const g=state.groups[index];let packet=pending.get(
 }
 let restartRequest=null;
 $('#restart').addEventListener('click',async()=>{if(busy)return;if(dirty()&&!window.confirm('還有未儲存的答案。要先暫存作答，請按取消。確定另開一次作答？'))return;busy=true;restartRequest??=crypto.randomUUID();try{const next=await api('/api/reset',{requestId:restartRequest});if(!active)return;state=next;restartRequest=null;drafts.clear();clean.clear();pending.clear();draftRequest=null;index=0;undo=[];arrowStart=null;say('');}catch(e){if(active)say(e.message);}finally{if(active){busy=false;render();}}});
-return {load(next){state=next;for(const [id,value] of Object.entries(next.draft?.groups||{})){if(!next.records[id]){drafts.set(id,structuredClone(value));clean.set(id,JSON.stringify(value));}}const found=state.groups.findIndex(g=>g.id===next.draft?.currentGroup);index=found>=0?found:Math.max(0,state.groups.findIndex(g=>!state.records[g.id]));render();draftStatus();},clear(){stopAudio();active=false;window.removeEventListener('beforeunload',warn);document.removeEventListener('click',leave);for(const event of ['input','change','click','pointerup','keydown'])root.removeEventListener(event,observe);drafts.clear();clean.clear();pending.clear();state=null;root.replaceChildren();}};
+return {load(next){state=next;for(const [id,value] of Object.entries(next.draft?.groups||{})){if(!next.records[id]){drafts.set(id,structuredClone(value));clean.set(id,JSON.stringify(value));}}const found=state.groups.findIndex(g=>g.id===next.draft?.currentGroup);index=found>=0?found:Math.max(0,state.groups.findIndex(g=>!state.records[g.id]));render();draftStatus();},clear(){root.removeEventListener('toggle',onToolsToggle,true);workspace.destroy();stopAudio();active=false;window.removeEventListener('beforeunload',warn);document.removeEventListener('click',leave);for(const event of ['input','change','click','pointerup','keydown'])root.removeEventListener(event,observe);drafts.clear();clean.clear();pending.clear();state=null;root.replaceChildren();}};
 
 }

@@ -4,7 +4,7 @@ import {initPastExamUI} from './quiz-past-ui.mjs?v=20261107-boolean-choice';
 import {createAuthenticatedTransport} from './quiz-transport.mjs?v=20261029-batch4';
 import {createMediaScope,configureQuizMedia} from './quiz-media.mjs';
 import {initImageLightbox} from './image-lightbox.js';
-import {provideNavIdentity} from './grade6-nav-identity.js?v=20261107-roster-nav';
+import {provideNavIdentity} from './quiz-nav-identity.mjs';
 import {quizError} from './quiz-api.mjs?v=20261030-question-reports';
 const messages={invalid_response:'答案格式不符，請修改後再送出。',answer_too_fast:'請先看清這一組題目，再送出答案。',paper_unavailable:'這份考古題尚未開放，或不適用目前年級。',roster_required:'請使用名冊中的學生帳號。',student_required:'此入口僅供學生作答，教師請使用預覽入口。',attempt_unavailable:'無法讀取這次作答，請重新選擇試卷。',submission_conflict:'這組已有儲存紀錄，請更新後查看。'};
 Object.assign(messages,{draft_conflict:'另一個分頁已更新這次作答。請先保留本頁內容，再重新開啟查看最新草稿。',invalid_draft:'草稿內容超出限制或格式不符，請保留本頁並檢查作答。',attempt_complete:'這次作答已完成，請另開一次作答。',version_changed:'作答版本不符，請重新開啟這次作答。'});

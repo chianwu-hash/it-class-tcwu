@@ -1,0 +1,4 @@
+/* Result presentation for the single choice renderer in every practice mode. */
+:is(#server-quiz,.partner-focus,.past-exam-workspace) .quiz-single-choice .option-result{grid-column:2;font-size:.85rem;font-weight:700}
+:is(#server-quiz,.partner-focus,.past-exam-workspace) .quiz-single-choice .student-option[data-result=correct]{background:#e7f6ed;border-color:#32815c;outline:none;box-shadow:0 4px 0 #cce7d6}
+:is(#server-quiz,.partner-focus,.past-exam-workspace) .quiz-single-choice .student-option[data-result=incorrect]{background:#fff1e6;border-color:#b55c2c;outline:none;box-shadow:0 4px 0 #f0d9c7}
