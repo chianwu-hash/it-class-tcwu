@@ -1,6 +1,6 @@
 # 考前練功坊共用架構與驗收
 
-狀態：本機實作候選，尚未發布。基準 `origin/main a51dbef`；分支 `codex/quiz-common-20261108`。本輪無 SQL、名冊、正式作答、配題或獎勵資料變更。
+狀態：2026-11-08 使用者授權後已正式發布；[發布收據](quiz-workshop-release-20261108.json)。基準 `origin/main a51dbef`；分支 `codex/quiz-common-20261108`。本輪無 SQL、名冊、正式作答、配題或獎勵資料變更。
 
 ## 查核與改進清冊
 
