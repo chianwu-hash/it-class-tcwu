@@ -26,6 +26,8 @@ For new week pages, also read:
 
 ## Core Rules
 
+- 考前練功坊的題庫／考古題／解析／參考圖及課本 WebP，先讀 `docs/development/quiz-media-storage-policy.md`：新圖片統一私有 Google Drive＋Cloudflare Worker，不自行新傳／複製至 Supabase 或其他圖床；未接通就列待完成，不能 fallback。儲存例外須有使用者明確授權。音檔、舊檔依該文件分開處理；此規則不授權遷移或刪除既有資料。
+
 - Do not hand-code navigation HTML. Use the grade `navbar.js` files and shared navbar modules.
 - Do not bind navbar login, logout, or reset buttons directly in page code. Use `initNavbarAuth()`.
 - Do not store student progress in `localStorage`. Use the shared progress modules, usually `initTypingChallenge()`.
