@@ -1,23 +1,13 @@
+<!-- 此檔由 automation/build-quiz-workshop.mjs 產生；請修改 shared/quiz-workshop/templates 或設定。 -->
 <!doctype html>
 <html lang="zh-Hant"><head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex"><title>我的課堂測驗</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap">
-  <link rel="stylesheet" href="../../shared/vendor/katex/katex.min.css">
-  <link rel="stylesheet" href="../../shared/quiz-author.css">
-  <link rel="stylesheet" href="../../shared/quiz-student.css?v=20261030-inline-options">
-  <link rel="stylesheet" href="../../shared/image-lightbox.css">
-  <link rel="stylesheet" href="../../shared/quiz-theme.css?v=20261028-nav">
-  <link rel="stylesheet" href="../../shared/quiz-workspace.css?v=20261029-workspace">
-  <style>
-    body[data-grade="4"] .quiz-embedded-image:has(img[alt="原題注音字形"]) {
-      zoom: 2;
-      max-width: 50%;
-    }
-  </style>
-  <script defer src="../../shared/vendor/katex/katex.min.js"></script>
-<link rel="stylesheet" href="../../shared/quiz-learning.css?v=20261102"></head><body class="quiz-student-page" data-grade="4">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;800;900&display=swap">
+<link rel="stylesheet" data-quiz-report-style href="/shared/quiz-workshop/generated/quiz.css?v=730439108e72a786">
+<script defer src="/shared/vendor/katex/katex.min.js?v=e8d885505949f3a5"></script>
+</head><body class="quiz-student-page" data-grade="4">
   <div id="quiz-navbar"></div>
   <header class="hero"><div class="wrap"><div class="quiz-brand"><span class="quiz-mascot" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="4" y="5" width="40" height="38" rx="13" fill="#dcd2ff"/><path d="M14 13l5-5m10 0l5 5" stroke="#8970cb" stroke-width="3" stroke-linecap="round"/><circle cx="17" cy="24" r="2" fill="#342554"/><circle cx="31" cy="24" r="2" fill="#342554"/><path d="M20 31q4 4 8 0" fill="none" stroke="#342554" stroke-width="2.5" stroke-linecap="round"/></svg></span><h1>我的課堂測驗</h1></div><p id="quiz-identity">正在確認身分…</p></div></header>
   <main class="wrap student-wrap">
@@ -25,5 +15,4 @@
     <section id="quiz-lock" class="card"><h2>先確認身分，再開始</h2><p>請使用名冊中的學校 Google 帳號登入。</p><p>若尚未拿到場次連結，請向老師確認。</p></section>
     <section id="quiz-content" class="card" hidden><div id="server-quiz"></div></section>
   </main>
-  <script type="module" src="../../shared/quiz-student.mjs?v=20261102-learning"></script>
-</body></html>
+<script type="module" data-workshop-entry="quiz" data-manifest="/shared/quiz-workshop/generated/assets.json?v=41fe2c6c892729fe" src="/shared/quiz-workshop-entry.mjs?v=ed29d030a13868c6"></script></body></html>

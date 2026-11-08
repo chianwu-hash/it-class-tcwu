@@ -1,9 +1,10 @@
 import { initQuizModule } from './quiz-module.js?v=20261102-grade9-release';
 import { createQuizRequest } from './quiz-api.mjs?v=20261102-learning';
-import { provideNavIdentity } from './grade6-nav-identity.js?v=20261107-roster-nav';
+import { provideNavIdentity } from './quiz-nav-identity.mjs';
 import { initImageLightbox } from './image-lightbox.js';
 import {resolveQuizImage} from './quiz-media.mjs?v=20261029-load-batch1';
 import { onTestIdentityChange } from './test-identity-state.mjs?v=20261030-identity-sync';
+import {workshopCourseForPath,workshopBrand} from './quiz-workshop-config.mjs';
 
 initImageLightbox({ root: document.getElementById('server-quiz'), selector: 'img', initialScale: 0.8, minScale: 0.2, zoomStep: 0.1,
   resolveImageSource: resolveQuizImage });
@@ -15,7 +16,7 @@ if (cloud) document.body.classList.add('quiz-skin');
 const gradeRoute = cloud ? await import('./quiz-grade-route.mjs?v=20261102-grade9-release') : null;
 if (cloud) {
   const grade = gradeRoute.quizPageGrade(location.pathname);
-  document.title = `${({3:'三',4:'四',6:'六',9:'九'})[grade]}年級考前練功坊`;
+  document.title = `${workshopCourseForPath(location.pathname)?.label||''}${workshopBrand}`;
   document.querySelector('.hero h1').textContent = document.title;
   document.querySelector('#quiz-lock p').textContent = '請使用名冊中的學生 Google 帳號登入，讀取並儲存自己的雲端作答。';
   const back = document.createElement('a'); back.className = 'quiz-back-link'; back.href = 'quiz-library.html'; back.textContent = '← 返回單元選卷';
@@ -44,7 +45,7 @@ async function start() {
     await quiz.handleAuthChange({ user: { id: `demo-student-${student}` } }); return;
   }
   // 課程導覽與 OAuth 仍由既有 navbar／navbar-auth 管理。
-  const script = document.createElement('script'); script.src = 'navbar.js?v=20261030-identity-sync'; script.dataset.homework = 'true';
+  const script = document.createElement('script'); script.src = document.body.dataset.workshopNavbarUrl || 'navbar.js?v=20261030-identity-sync'; script.dataset.homework = 'true';
   if (cloud) script.dataset.quiz = 'true';
   await new Promise((resolve, reject) => { script.onload = resolve; script.onerror = () => reject(new Error('導覽未能載入，請重新整理。')); document.getElementById('quiz-navbar').append(script); });
   const { initNavbarAuth } = await import('./navbar-auth.js');

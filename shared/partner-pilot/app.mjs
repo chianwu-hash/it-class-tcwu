@@ -1,4 +1,4 @@
-import {initGrade6NavIdentity} from '../grade6-nav-identity.js?v=20261107-roster-nav';
+import {initQuizNavIdentity as initGrade6NavIdentity} from '../quiz-nav-identity.mjs';
 import {createMatchmaking,matchInstalledError} from './matchmaking.mjs?v=20261107-role-art';
 import {readInvite} from './invite.mjs?v=20261106-team-flow';
 import {mountTeamHome,mountWaitingTeam} from './team-flow.mjs?v=20261106-match-reviewed';

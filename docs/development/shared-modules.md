@@ -1,5 +1,11 @@
 # 共用模組說明
 
+## 考前練功坊入口與呈現（2026-11-08 候選）
+
+三／四／六／九年級的選卷、普通個人、個人原卷及夥伴入口由 `quiz-workshop-config.mjs` 與 `shared/quiz-workshop/templates/` 產生，不逐頁改 HTML 或版本。執行 `npm run quiz:build`／`quiz:check`；建置會核對產物，資產 manifest 統一可達模組的版本別名，CSS bundle 展開巢狀依賴。名冊新消費者使用 `quiz-nav-identity.mjs`，舊 `grade6-nav-identity.js` 保留為同一實作。
+
+三種作答模式共用 `quiz-workspace.mjs`、`quiz-choice.mjs`／`.css`，各自保留原 RPC／權限／草稿／提交粒度；原卷仍完整一組展示。課程設定只控制呈現，不能擴充後端授權。詳見 [架構清冊、擴充契約與驗證限制](quiz-workshop-modularization-20261108.md)。
+
 > **2026-10-24 已核准新增**：`quiz-module.js` 的 opt-in `mode: 'server'` 交給 `quiz-server.mjs`；由 `server: { request, sessionId }` 接後端安全題目／送答／接回，不在前端接收未授權正解或評分。透過相同 `handleAuthChange(session)` 生命週期鎖定身分。新場次只記錄 `quiz_attempts/quiz_answers`，暫不接 `student_progress` 與努力樹。既有兩種模式維持原契約，詳見 [場次實作](quiz-implementation-20261024.md)。
 
 > **2026-10-06 三年級轉換更新**：教師已指定第 06 週接 Google 登入與努力樹。第 02～06 週改用本人名冊核對、一次性舊成果接回與正式 `student_progress`；下文身分卡／不顯示努力樹的敘述僅適用轉換前。第 01 週免身分例外保留。以 [三年級 Google 契約](grade3-google-course.md) 與已填驗收契約為準；正式 SQL 與網站已於2026-10-06獲授權後完成切換；詳見 [正式切換紀錄](grade3-week06-release.md)。

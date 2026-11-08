@@ -27,11 +27,11 @@ export function createQuizWorkspace(root) {
     document.body.classList.remove('quiz-workspace-page','quiz-workspace-desktop');
     document.body.style.removeProperty('--quiz-dock-height');
   }
-  function apply({article, saved, complete, closed}) {
+  function apply({article, saved, complete, closed, statusElement, forceLongForm = false}) {
     if (!document.body.classList.contains('quiz-skin')) return;
     document.body.classList.add('quiz-workspace-page'); root.classList.add('quiz-workspace-active');
     const actions = article.querySelector('.quiz-actions'), feedback = article.querySelector('.answer-preview');
-    const status = root.querySelector('[role="status"]');
+    const status = statusElement || root.querySelector('[role="status"]');
     const notices = [...root.children].filter(n => n.matches('.notice,.quiz-leaf-state'));
     const work = document.createElement('div'); work.className = 'quiz-workspace';
     reading = document.createElement('section'); reading.className = 'quiz-reading-panel';
@@ -47,7 +47,7 @@ export function createQuizWorkspace(root) {
       explanation.append(placeholder);
     }
     work.append(reading, explanation); article.replaceChildren(work);
-    longQuestion = reading.textContent.length > 1100 || Boolean(reading.querySelector('textarea'));
+    longQuestion = forceLongForm || reading.textContent.length > 1100 || Boolean(reading.querySelector('textarea'));
     dock = document.createElement('footer'); dock.className = 'quiz-workspace-dock';
     dock.setAttribute('aria-label','作答狀態與下一步');
     const statusRow = document.createElement('div'); statusRow.className = 'quiz-workspace-status';

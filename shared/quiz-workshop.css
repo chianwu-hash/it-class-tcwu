@@ -1,0 +1,27 @@
+/* Course-specific reading aid, configured by the course registry. */
+body[data-zhuyin-images="enlarged"] .quiz-embedded-image:has(img[alt="原題注音字形"]){zoom:2;max-width:50%}
+/* Original-paper groups share the question/explanation frame, while retaining
+   all fields, original material and the mode's own submission controller. */
+.past-exam-workspace .quiz-workspace-active>.question-card{padding:0;overflow:hidden}
+.past-exam-workspace .quiz-reading-panel .body-grid{grid-template-columns:minmax(0,1fr);padding:0;gap:16px}
+.past-exam-workspace .quiz-reading-panel .body-grid>div:empty{display:none}
+.past-exam-workspace .quiz-reading-panel .material{font-size:clamp(1.35rem,2.1vw,1.9rem)}
+.past-exam-workspace .quiz-reading-panel .preview-content img{max-height:390px}
+.past-exam-workspace .quiz-explanation-panel .feedback{margin:0 0 12px}
+.past-exam-workspace .quiz-workspace-dock .actions{position:static;padding:0;border:0;box-shadow:none;flex-wrap:wrap!important}
+.past-exam-workspace .quiz-workspace-dock .actions-left{display:flex;gap:8px;flex-wrap:wrap}
+.past-exam-workspace .quiz-workspace-dock .actions .primary{min-width:120px}
+.past-exam-workspace .quiz-workspace-dock .quiz-workspace-status{align-items:start}
+.past-exam-workspace .quiz-workspace-dock #status{margin:0;padding:0;background:transparent;border:0}
+.past-exam-workspace .quiz-workspace-dock #past-draft-status{margin:0;font-size:.8rem}
+.past-exam-workspace .quiz-workspace-dock .local-saved{max-width:220px}
+.past-exam-workspace .workspace-desktop{height:auto;grid-template-rows:none!important}
+.past-exam-workspace .workspace-desktop>.question-card{height:var(--quiz-workspace-height)}
+.past-exam-workspace .workspace-desktop .quiz-workspace{height:100%}
+.past-exam-workspace .quiz-explanation-panel .past-learning-review{margin:12px 0}
+@media(max-width:700px){
+ .past-exam-workspace .quiz-workspace-dock .actions{width:100%;justify-content:space-between}
+ .past-exam-workspace .quiz-workspace-dock .actions-left{flex:1 1 100%}
+ .past-exam-workspace .quiz-workspace-dock .actions .primary{flex:1}
+ .past-exam-workspace .quiz-workspace-dock .local-saved{max-width:none}
+}

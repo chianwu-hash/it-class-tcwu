@@ -1,20 +1,21 @@
+import {workshopCourse,workshopCourseForPath} from './quiz-workshop-config.mjs';
 // 網址決定呈現位置；學生權限與真正年級一律來自後端名冊。
 export function quizPageGrade(pathname) {
-  const match = pathname.match(/^\/grade([3469])\/115-1\//);
-  return match ? Number(match[1]) : null;
+  return workshopCourseForPath(pathname)?.grade ?? null;
 }
 export function quizLibraryPath(grade) {
-  if (![3,4,6,9].includes(Number(grade))) throw new Error('無法辨識測驗年級。');
-  return `/grade${Number(grade)}/115-1/quiz-library.html`;
+  const course=workshopCourse(grade);
+  if (!course) throw new Error('無法辨識測驗年級。');
+  return course.basePath+'quiz-library.html';
 }
 export function quizLibraryForEnrollment(enrollment) {
-  const grade = String(enrollment?.class_code || '').match(/^([3469])[0-9]{2}$/)?.[1];
-  return grade ? quizLibraryPath(Number(grade)) : null;
+  const grade = String(enrollment?.class_code || '').match(/^([0-9])[0-9]{2}$/)?.[1];
+  return workshopCourse(grade) ? quizLibraryPath(Number(grade)) : null;
 }
 export function quizStudentRedirect(identity, pathname, search = '') {
   if (identity.role !== 'student') return null;
   const grade = Number(identity.grade);
-  if (![3,4,6,9].includes(grade)) throw new Error('名冊年級尚未確認，請老師協助。');
+  if (!workshopCourse(grade)) throw new Error('名冊年級尚未確認，請老師協助。');
   if (quizPageGrade(pathname) === grade) return null;
-  return pathname.endsWith('/quiz.html') ? `/grade${grade}/115-1/quiz.html${search}` : quizLibraryPath(grade);
+  return pathname.endsWith('/quiz.html') ? `${workshopCourse(grade).basePath}quiz.html${search}` : quizLibraryPath(grade);
 }
