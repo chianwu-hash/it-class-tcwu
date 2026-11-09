@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
-import {workshopCourses} from '../shared/quiz-workshop-config.mjs';
+import {workshopCourses,workshopNavigation} from '../shared/quiz-workshop-config.mjs';
 
 const root=fileURLToPath(new URL('../',import.meta.url));
 const check=process.argv.includes('--check'), generated='shared/quiz-workshop/generated';
@@ -54,7 +54,7 @@ function rewrite(text,file){return text.replace(/url\(\s*(["']?)([^)'"\s]+)\1\s*
  const url=new URL(value,`https://workshop.invalid/${file}`);return `url("${url.pathname}${url.search}${url.hash}")`;
 });}
 const courses=[];
-for(const course of workshopCourses){const navbar=`${course.basePath.slice(1)}navbar.js`;courses.push({...course,navbar:`/${navbar}?v=${hash(await read(navbar))}`});}
+for(const course of workshopCourses){const navbar=`${course.basePath.slice(1)}navbar.js`;courses.push({...course,navigation:workshopNavigation(course),navbar:`/${navbar}?v=${hash(await read(navbar))}`});}
 const manifest={courses,entries:Object.fromEntries(Object.entries(entries).map(([mode,files])=>[mode,files.map(file=>imports[`/${file}`])])),imports:Object.fromEntries(Object.entries(imports).sort(([a],[b])=>a.localeCompare(b)))};
 const manifestText=JSON.stringify(manifest,null,2)+'\n', manifestUrl=`/${generated}/assets.json?v=${hash(manifestText)}`;
 outputs.set(`${generated}/assets.json`,manifestText);

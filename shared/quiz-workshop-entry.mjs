@@ -13,11 +13,13 @@ try {
   document.body.dataset.school = course.school;
   document.body.dataset.course = course.courseId;
   document.body.dataset.workshopNavbarUrl = course.navbar;
+  document.body.dataset.workshopNavigation = JSON.stringify(course.navigation);
   if (course.zhuyinImageScale) document.body.dataset.zhuyinImages = 'enlarged';
   // quiz-student retains its local/classroom/cloud navbar lifecycle.
   if (mode !== 'quiz') {
     const script = document.createElement('script');
     script.src = course.navbar; script.dataset.homework = 'true'; script.dataset.quiz = 'true';
+    script.dataset.workshopNavigation = JSON.stringify(course.navigation);
     await new Promise((resolve,reject)=>{
       script.onload=resolve; script.onerror=()=>reject(Error('導覽未能載入，請重新整理。'));
       document.querySelector('[data-workshop-navbar]').append(script);

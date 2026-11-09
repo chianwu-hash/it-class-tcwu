@@ -3,12 +3,29 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
-import {workshopCourses,workshopCourseForPath} from '../../shared/quiz-workshop-config.mjs';
+import {workshopCourses,workshopCourseForPath,workshopNavigation} from '../../shared/quiz-workshop-config.mjs';
 import {fixtureRPC} from '../fixtures/workshop-rpc.mjs';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 const read=async file=>(await fs.readFile(new URL('../../'+file,import.meta.url),'utf8')).replace(/\r\n/g,'\n');
 const hash=s=>createHash('sha256').update(s).digest('hex').slice(0,16);
+test('導覽品牌與課程路徑由設定供應，保留既有標籤及努力樹課程',()=>{
+ const labels={3:'考前練功坊｜三年級',4:'考前練功坊｜土城四年級',6:'考前練功坊｜六年級',9:'考前練功坊｜中正九年級'};
+ for(const course of workshopCourses){const navigation=workshopNavigation(course);assert.equal(navigation.gradeLabel,labels[course.grade]);assert.equal(navigation.homeHref,course.basePath+'quiz-library.html');assert.equal(new URL(navigation.extraLinks[0].href,'https://example.invalid').searchParams.get('course'),course.courseId);assert.equal(navigation.extraLinks[1].href,course.basePath+'index.html');assert.equal(course.pastExams,true);assert.ok(course.pastCatalogIntro);}
+});
+test('預覽重設只影響本輪合成命名空間，不清掉使用者正在檢視的其他練習',()=>{
+ const call=(namespace,action,data={})=>fixtureRPC({route:'/rest/v1/rpc/quiz_past_action',grade:4,user:'a',namespace,body:{p_action:action,p_data:data}});
+ call('preview-user','save_draft',{groups:{boolean:['O']},current_group:'boolean'});
+ call('default','save_draft',{groups:{boolean:['X']},current_group:'boolean'});
+ fixtureRPC({route:'reset'});assert.deepEqual(call('preview-user','resume').draft.groups.boolean,['O']);assert.deepEqual(call('default','resume').draft.groups,{});
+});
+test('合成夥伴走原房間及題號契約，訂正保留歷次作答，原卷同段完整保留',()=>{
+ const call=(action,data={},roomKind='normal')=>fixtureRPC({route:'/rest/v1/rpc/quiz_partner_pilot_action',grade:6,user:'a',namespace:'preview-unit',roomKind,body:{p:{action,...data}}});
+ const before=call('snapshot');assert.equal(before.exercise.mine.length,2);assert.equal(before.exercise.submitted,1);
+ const wrong=call('answer',{qid:1,choice:1});assert.equal(wrong.exercise.mine[0].attempts.at(-1).correct,false);
+ const corrected=call('answer',{qid:1,choice:0});assert.equal(corrected.exercise.mine[0].attempts.length,2);assert.equal(corrected.exercise.mine[0].attempts[0].correct,false);
+ const past=call('snapshot',{},'past');assert.equal(new Set(past.exercise.mine.map(q=>q.past.group)).size,1);assert.notEqual(past.exercise.mine[0].id,past.exercise.mine[1].id);
+});
 test('雲端發布來源不含 automation 也能執行相同產物檢查',async()=>{
  const stage=await fs.mkdtemp(path.join(tmpdir(),'quiz-workshop-cloud-'));
  const source=new URL('../../',import.meta.url);

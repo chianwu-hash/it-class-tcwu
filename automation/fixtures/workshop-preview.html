@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>跨校練功坊・比較預覽</title><link rel="stylesheet" href="/automation/fixtures/workshop-preview.css"></head>
+<body>
+ <header><div><span class="eyebrow">本機隔離預覽・不會上線</span><h1>同一套練功坊，切換比較</h1></div><p>真正的共用元件與模式控制器，搭配合成資料。沒有正式帳號、試卷或獎勵。</p></header>
+ <section class="controls" aria-label="預覽切換">
+  <label>學校與年級<select id="preview-course"></select></label>
+  <div class="mode-tabs" role="tablist" aria-label="答題模式"><button role="tab" id="mode-quiz" data-mode="quiz">一般答題</button><button role="tab" id="mode-past" data-mode="past">個人考古題</button><button role="tab" id="mode-partner" data-mode="partner">夥伴練功</button></div>
+  <label>畫面寬度<select id="preview-width"><option value="auto">隨視窗調整</option><option value="desktop">桌機・1280</option><option value="phone">手機・390</option></select></label>
+  <label>合成身分<select id="preview-user"><option value="a">合成同學甲</option><option value="b">合成同學乙</option></select></label>
+  <label id="partner-kind-label" hidden>小隊題目<select id="preview-partner-kind"><option value="normal">一般單題</option><option value="past">原卷完整題組</option></select></label>
+  <button id="preview-reset" class="quiet">重設此年級合成練習</button><a id="preview-open" target="_blank" rel="noopener">另開目前預覽 ↗</a>
+ </section>
+ <div class="context"><p id="preview-context" role="status" aria-live="polite"></p><details><summary>已測範圍與操作提醒</summary><div><p>可選答、送出、看正誤／固定解析，再到下一題或題組。個人考古題保留整組欄位；夥伴由原 app 載入合成小隊，可用共同營地、分享、訂正與回顧介面。</p><p>合成夥伴的進度預先備妥，不能視為真人雙機同步驗證。草稿與作答只保存在這個本機服務的記憶體；重啟服務即清空。預覽不發放正式葉花；錄音／附件及真實資料庫判分未在此預覽驗證。</p></div></details></div>
+ <main id="preview-stage" data-width="auto"><iframe id="preview-frame" title="練功坊操作預覽"></iframe></main>
+ <script type="module" src="/automation/fixtures/workshop-preview.mjs"></script>
+</body></html>

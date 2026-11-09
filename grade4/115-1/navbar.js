@@ -1,6 +1,7 @@
 (function () {
     const currentScript = document.currentScript;
     const quizMode = currentScript.dataset.quiz === 'true';
+    const workshopNav = currentScript.dataset.workshopNavigation ? JSON.parse(currentScript.dataset.workshopNavigation) : null;
     const quizPage = /\/quiz\.html$/.test(location.pathname);
 
     if (!window.__buildCourseNavbarHtml) {
@@ -20,7 +21,7 @@
 
     const navConfig = {
         activeWeeks: [],
-        gradeLabel: quizMode ? "考前練功坊｜土城四年級" : "土城四年級學習園地｜115-1",
+        gradeLabel: quizMode ? (workshopNav?.gradeLabel || "考前練功坊｜土城四年級") : "土城四年級學習園地｜115-1",
         titleIconClass: "fa-solid fa-rocket text-cyan-600",
         titleClassName: "font-black text-gray-800 flex items-center text-lg tracking-wide whitespace-nowrap",
         navClassName: "bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-cyan-200 shadow-sm",
@@ -29,12 +30,12 @@
         currentWeekClassName: "px-3 py-1.5 text-sm font-bold bg-cyan-100 text-cyan-800 rounded-lg shadow-sm whitespace-nowrap cursor-default",
         separatorClassName: "text-gray-300 mx-1",
         homeLabel: quizMode ? (quizPage ? '← 回上頁' : '單元選卷') : iconLabel('fa-solid fa-house', '首', '課程首頁'),
-        homeHref: quizMode ? 'quiz-library.html' : 'index.html',
+        homeHref: quizMode ? (workshopNav?.homeHref || 'quiz-library.html') : 'index.html',
         // Google 身分及正式成果由受控接回 RPC 核對。
-        extraLinks: quizMode ? [
+        extraLinks: quizMode ? (workshopNav?.extraLinks || [
             { href: '/my-tree.html?course=grade4-115-1', label: '努力樹', iconClass: 'fa-solid fa-tree' },
             { href: 'index.html', label: '課程首頁' }
-        ] : [
+        ]) : [
             { href: 'quiz-library.html', label: iconLabel('fa-solid fa-dumbbell', '練功', '考前練功坊') },
                                     { href: '/my-tree.html?course=grade4-115-1', label: iconLabel('fa-solid fa-tree', '樹', '我的努力樹') }
         ],
