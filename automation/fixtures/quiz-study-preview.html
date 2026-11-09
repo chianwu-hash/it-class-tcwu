@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>課本與學生解析・本機整合驗收</title>
+<style>body{margin:0;background:#f5f5f9;color:#203a35;font:16px/1.7 system-ui,sans-serif}main{padding:18px;max-width:1500px;margin:auto}h1{font-size:1.4rem;margin:0}p{margin:6px 0 14px}.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:12px 0}select,a{font:inherit;min-height:44px}select{padding:6px;border:1px solid #9ebeb2;border-radius:8px}a{color:#176753}iframe{display:block;width:100%;height:calc(100dvh - 235px);min-height:550px;border:1px solid #bbc9c1;border-radius:12px;background:white;margin:auto;box-sizing:border-box}iframe.phone{width:390px;max-width:100%}.note{background:#fff4d2;padding:10px 14px;border-radius:10px;font-size:14px}label{display:flex;align-items:center;gap:7px}</style>
+<main><h1>課本對照與學生版解析・本機整合驗收</h1>
+<p class="note">下方直接載入原本的答題網址與控制器。這是合成帳號、合成題目與課本示意圖，用來驗證接線；不讀寫正式學生資料，也不是正式 Drive 供圖。</p>
+<div class="controls"><label>答題模式<select id="mode"><option value="quiz">一般題庫</option><option value="past-exam">考古卷</option></select></label><label>畫面寬度<select id="width"><option value="auto">目前寬度</option><option value="phone">手機390px</option></select></label><a id="open" target="_blank" rel="noopener">另開原答題頁 →</a></div>
+<p>試試答前翻課本、送答看解析、整份回顧，以及返回後選答或草稿是否還在。</p>
+<iframe id="frame" title="原答題介面整合驗收"></iframe>
+<script type="module">
+ const namespace='preview-study-review-'+crypto.randomUUID(),frame=document.getElementById('frame'),mode=document.getElementById('mode'),width=document.getElementById('width');
+ function show(){const query=new URLSearchParams({preview:namespace,preview_user:'a',preview_study:'1'});if(mode.value==='quiz'){query.set('cloud','1');query.set('session','00000000-0000-4000-8000-000000000001');}else query.set('paper','synthetic');const url='/grade6/115-1/'+mode.value+'.html?'+query;frame.src=url;document.getElementById('open').href=url;}
+ mode.onchange=show;width.onchange=()=>frame.classList.toggle('phone',width.value==='phone');show();
+</script></main></html>

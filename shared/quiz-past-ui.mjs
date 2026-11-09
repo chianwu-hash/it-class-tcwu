@@ -9,7 +9,8 @@ import {createQuestionReport} from './quiz-question-reports.mjs';
 import {renderPastLearningReview} from './quiz-past-learning-review.mjs';
 import {appendSingleChoiceOptions} from './quiz-choice.mjs';
 import {createQuizWorkspace} from './quiz-workspace.mjs';
-export function initPastExamUI({root,request,resolveAsset,onView,reportRequest,onPractice}){
+import {createQuizStudy,studySourceLabel} from './quiz-study.mjs';
+export function initPastExamUI({root,request,resolveAsset,resolveTextbook,onView,reportRequest,onPractice}){
 let active=true;
 const mediaScope={resolve:resolveAsset,active:()=>active};
 const renderLocalContent=(host,content)=>renderScopedContent(host,content,{mediaScope,imageLoading:'eager'});
@@ -19,6 +20,7 @@ const onToolsToggle=()=>{if(active)workspace.refresh();};
 root.addEventListener('toggle',onToolsToggle,true);
 const button=(text,fn,cls)=>{const b=el('button',text,cls);b.type='button';b.addEventListener('click',fn);return b;};
 let state,index=0,busy=false;const drafts=new Map(),clean=new Map(),pending=new Map(),reports=new Map();let tool='point',cursor={x:.5,y:.5},arrowStart=null,undo=[],draftRequest=null;
+const study=createQuizStudy({root,kind:'past',getSnapshot:()=>state,resolvePage:resolveTextbook||(()=>Promise.reject(Error('課本暫時無法載入。')))});
 const say=t=>{if(active&&statusElement)statusElement.textContent=t;};
 const api=request;
 
@@ -62,7 +64,7 @@ function renderPractice(){
  p.history.forEach((h,i)=>{const row=el('tr');row.append(el('td',String(i+1)+(h.id===state.attemptId?'（目前）':'')),el('td',h.complete?`${h.score}／${h.max_score}`:`目前 ${h.score} 分`),el('td',h.complete?(h.passed?'達標':'未達60%'):'未完成'),el('td',h.earned_flower?'開出1朵':'—'));table.append(row);});wrap.append(table);details.append(wrap);box.append(details);host.replaceChildren(box);
  $('#restart').textContent=p.complete?'重新作答':'另開一次作答';
 }
-function render(){if(!active)return;
+function render(){if(!active)return;study.refresh();
  workspace.reset();
  stopAudio();
  const g=state.groups[index],saved=state.records[g.id],locked=Boolean(saved)||busy||pending.has(g.id);if(!saved)onView(g.id);const values=currentValue(g);const summary=state.summary;
@@ -89,7 +91,7 @@ function render(){if(!active)return;
    for(const row of choices.children)row.classList.add('choice-row');
    right.append(choices);
   }
-  else{g.fields.forEach((f,i)=>{const slot=el('div',undefined,'slot'),label=el('label',g.fields.length===1?'你的答案':`（${f.label}）${f.text}`,'field-label');label.htmlFor='short-answer-'+i;if(g.answerFormat==='math-v1'){slot.append(label);renderMathResponse({host:slot,id:'short-answer-'+i,value:values[i],locked,onChange:v=>{draft(g)[i]=v}});feedback(g,i,slot);right.append(slot);return;}const input=el('input');input.id='short-answer-'+i;input.type='text';input.maxLength=2000;input.value=values[i];input.disabled=locked;input.autocomplete='off';input.addEventListener('input',()=>draft(g)[i]=input.value);slot.append(label,input);attachPastInputKeyboard(slot,input,pastFieldInputAids(g,f));feedback(g,i,slot);right.append(slot);});}
+  else{g.fields.forEach((f,i)=>{const slot=el('div',undefined,'slot'),label=el('label',g.fields.length===1?'你的答案':`（${f.label}）${f.text}`,'field-label');label.htmlFor='short-answer-'+i;slot.dataset.studyQuestionId=f.id;if(g.answerFormat==='math-v1'){slot.append(label);renderMathResponse({host:slot,id:'short-answer-'+i,value:values[i],locked,onChange:v=>{draft(g)[i]=v}});feedback(g,i,slot);right.append(slot);return;}const input=el('input');input.id='short-answer-'+i;input.type='text';input.maxLength=2000;input.value=values[i];input.disabled=locked;input.autocomplete='off';input.addEventListener('input',()=>draft(g)[i]=input.value);slot.append(label,input);attachPastInputKeyboard(slot,input,pastFieldInputAids(g,f));feedback(g,i,slot);right.append(slot);});}
   if(g.kind==='single')feedback(g,0,right);
  }else if(g.kind==='mark'){
   right.append(el('p','勾選你認為正確的敘述。','helper'));const list=el('div',undefined,'answer-list');
@@ -113,14 +115,16 @@ function render(){if(!active)return;
   left.append(el('p',g.fields[0].text,'material'));renderDrawing(g,right,locked,values);
   if(saved){const ref=el('div',undefined,'reference');ref.append(el('h3','對照官方標記，自己檢查'),el('p','看看施力點的位置與箭頭方向。這是自我核對，不是老師評分，也不計入分數。'));ref.append(art({url:saved.referenceUrl,alt:'官方解答局部參考圖'}));right.append(ref);}
  }
- if(saved)renderPastLearningReview({host:right,group:g,record:saved,version:state.version,onPractice});
- const explanations=saved?.learningExplanations||(typeof saved?.learningExplanation==='string'?[{text:saved.learningExplanation,wrongReviewHref:saved.wrongReviewHref}]:[]);
+ const studentExplanations=saved?g.fields.flatMap(f=>{const explanation=study.explanation(f.id);return explanation?[{...explanation,label:f.label,questionId:f.id}]:[];}):[];
+ if(saved&&!studentExplanations.some(e=>e.questionId===saved.learningReview?.source?.questionId))renderPastLearningReview({host:right,group:g,record:saved,version:state.version,onPractice,showConcepts:false});
+ const legacyExplanations=saved?.learningExplanations||(typeof saved?.learningExplanation==='string'?[{text:saved.learningExplanation,wrongReviewHref:saved.wrongReviewHref}]:[]);
+ const explanations=[...studentExplanations,...legacyExplanations.filter(e=>studentExplanations.length!==g.fields.length&&!studentExplanations.some(s=>s.questionId===e.questionId||String(s.label)===String(e.label)))];
  for(const explanation of explanations){
-  const review=el('section',undefined,'past-learning-review');review.append(el('h3',explanation.selfCheck?'這題怎麼自我核對？':explanation.label?'第 '+explanation.label+' 欄怎麼想？':'這題怎麼想？'));renderLocalContent(review,{text:explanation.text,media:[]});review.append(el('p','補充解析由 AI 依題意整理，非官方解析。','helper'));
+  const review=el('section',undefined,'past-learning-review');review.append(el('h3',explanation.selfCheck?'這題怎麼自我核對？':explanation.label?'第（'+explanation.label+'）小題怎麼想？':'這題怎麼想？'));renderLocalContent(review,{text:explanation.text,media:[]});review.append(el('p',explanation.origin?studySourceLabel(explanation.origin):'補充解析由 AI 依題意整理，非官方解析。','helper'));
   if(typeof explanation.wrongReviewHref==='string'){
    const url=new URL(explanation.wrongReviewHref,location.origin);
    if(url.origin===location.origin&&/\/grade[3469]\/115-1\/quiz-library\.html$/.test(url.pathname)){
-    const link=el('a','到我的錯題選重點、練習 →');link.href=url.href;review.append(link);
+    const link=el('a','到我的錯題繼續練習 →');link.href=url.href;review.append(link);
    }
   }right.append(review);
  }
@@ -181,6 +185,6 @@ async function submitGroup(){const g=state.groups[index];let packet=pending.get(
 }
 let restartRequest=null;
 $('#restart').addEventListener('click',async()=>{if(busy)return;if(dirty()&&!window.confirm('還有未儲存的答案。要先暫存作答，請按取消。確定另開一次作答？'))return;busy=true;restartRequest??=crypto.randomUUID();try{const next=await api('/api/reset',{requestId:restartRequest});if(!active)return;state=next;restartRequest=null;drafts.clear();clean.clear();pending.clear();draftRequest=null;index=0;undo=[];arrowStart=null;say('');}catch(e){if(active)say(e.message);}finally{if(active){busy=false;render();}}});
-return {load(next){state=next;for(const [id,value] of Object.entries(next.draft?.groups||{})){if(!next.records[id]){drafts.set(id,structuredClone(value));clean.set(id,JSON.stringify(value));}}const found=state.groups.findIndex(g=>g.id===next.draft?.currentGroup);index=found>=0?found:Math.max(0,state.groups.findIndex(g=>!state.records[g.id]));render();draftStatus();},clear(){root.removeEventListener('toggle',onToolsToggle,true);workspace.destroy();stopAudio();active=false;window.removeEventListener('beforeunload',warn);document.removeEventListener('click',leave);for(const event of ['input','change','click','pointerup','keydown'])root.removeEventListener(event,observe);drafts.clear();clean.clear();pending.clear();state=null;root.replaceChildren();}};
+return {load(next){state=next;for(const [id,value] of Object.entries(next.draft?.groups||{})){if(!next.records[id]){drafts.set(id,structuredClone(value));clean.set(id,JSON.stringify(value));}}const found=state.groups.findIndex(g=>g.id===next.draft?.currentGroup);index=found>=0?found:Math.max(0,state.groups.findIndex(g=>!state.records[g.id]));render();draftStatus();},clear(){study.clear();root.removeEventListener('toggle',onToolsToggle,true);workspace.destroy();stopAudio();active=false;window.removeEventListener('beforeunload',warn);document.removeEventListener('click',leave);for(const event of ['input','change','click','pointerup','keydown'])root.removeEventListener(event,observe);drafts.clear();clean.clear();pending.clear();state=null;root.replaceChildren();}};
 
 }

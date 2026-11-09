@@ -11,8 +11,8 @@ const hash=text=>createHash('sha256').update(text).digest('hex').slice(0,16);
 const entries={quiz:['shared/quiz-student.mjs'],past:['shared/quiz-past-entry.mjs'],partner:['shared/partner-pilot/app.mjs'],library:['shared/quiz-library.mjs','shared/quiz-learning.mjs','shared/quiz-partner-pilot-entry.mjs']};
 const common=['shared/quiz-theme.css','shared/vendor/katex/katex.min.css','shared/image-lightbox.css'];
 const styles={
- quiz:['shared/quiz-author.css','shared/quiz-student.css',...common,'shared/quiz-workspace.css','shared/quiz-learning.css','shared/quiz-workshop.css'],
- past:['shared/quiz-author.css','shared/quiz-student.css',...common,'shared/quiz-past-style.css','shared/quiz-workspace.css','shared/quiz-workshop.css'],
+ quiz:['shared/quiz-author.css','shared/quiz-student.css',...common,'shared/quiz-workspace.css','shared/quiz-learning.css','shared/quiz-textbook-reader.css','shared/quiz-workshop.css'],
+ past:['shared/quiz-author.css','shared/quiz-student.css',...common,'shared/quiz-past-style.css','shared/quiz-workspace.css','shared/quiz-textbook-reader.css','shared/quiz-workshop.css'],
  partner:[...common,'shared/quiz-library.css',...['style','visual','focused','message-media','team-flow','outcomes'].map(s=>`shared/partner-pilot/${s}.css`),'shared/quiz-workspace.css','shared/partner-pilot/review-layout.css','shared/quiz-workshop.css'],
  library:[...common,'shared/quiz-student.css','shared/quiz-wrong-questions.css','shared/quiz-library.css','shared/quiz-compose.css','shared/quiz-learning.css','shared/quiz-workshop.css'],
 };

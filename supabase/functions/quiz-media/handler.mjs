@@ -56,6 +56,12 @@ export function createHandler({ env, fetcher = fetch }) {
         const value = await r.json(); if (!r.ok) fail(value.message || 'service_unavailable'); return value;
       };
       const storageHeaders = { apikey: service, ...(service.startsWith('sb_secret_') ? {} : { Authorization: `Bearer ${service}` }) };
+      if(body.action==='textbook'){
+        if(!['normal','past'].includes(body.kind)||!uuid(body.attempt_id)||!uuid(body.version_id)||typeof body.url!=='string')fail('media_unavailable');
+        const asset=await rpc('quiz_textbook_media_access',{p_kind:body.kind,p_attempt:body.attempt_id,p_version:body.version_id,p_url:body.url});
+        if(env('QUIZ_IMAGE_BACKEND')!=='drive'||asset.backend!=='drive'||asset.url!==body.url||asset.mime!=='image/webp')fail('media_unavailable');
+        return send(200,{url:await signDriveImage(asset,env)});
+      }
       if (body.action === 'read') {
         const asset = await rpc('quiz_media_access', { p_url: body.url, p_attempt: body.attempt_id || null });
         if (env('QUIZ_IMAGE_BACKEND') === 'drive' && asset.backend !== 'supabase' && asset.mime?.startsWith('image/')) {

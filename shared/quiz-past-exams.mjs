@@ -40,7 +40,12 @@ export function initPastExam({selectors,server}){
    if(root.querySelector('#paper-policy')&&next.policy){const p=next.policy;root.querySelector('#paper-policy').textContent=p.automaticPoints===0?"本卷採保存作答與官方參考自我核對，不自動計分或開出考古花。":`本卷自動核對共${p.automaticPoints}分；單次完整作答達60%，同卷同學期首次達標開出1朵考古花。`;root.querySelector('#paper-exclusions').textContent=`開放作答與畫圖題共${p.manualPoints}分採自我核對，不列入自動分數；${p.blockedFields}個暫停欄位共${p.blockedPoints}分不影響完成。`;}
    document.title=next.title+'・考前練功坊';
    const reportRequest=async(_action,data)=>{try{const result=await transport('/rest/v1/rpc/quiz_question_report',{p_data:data});if(token!==generation)throw Error('登入身分已變更。');return result;}catch(e){if(e.code)e.message=quizError(e.code);throw e;}};
-   ui=initPastExamUI({root,request,resolveAsset:url=>scope.resolve(url),onView,reportRequest});ui.load(next);
+   ui=initPastExamUI({root,request,resolveAsset:url=>scope.resolve(url),resolveTextbook:async url=>{
+    const aid=state.attemptId,version=state.version,context=generation;
+    const result=await transport('/functions/v1/quiz-media',{action:'textbook',url,kind:'past',attempt_id:aid,version_id:version});
+    if(context!==generation||state?.attemptId!==aid||state?.version!==version)throw Error('登入身分或題目已變更。');
+    return result.url;
+   },onView,reportRequest});ui.load(next);
   }catch(e){if(token!==generation)return;lock.querySelector('[role="status"]').textContent=e.message;}
  },destroy(){clear();user=null;transport=null;}};
 }

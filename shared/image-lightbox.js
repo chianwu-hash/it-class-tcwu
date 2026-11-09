@@ -1,6 +1,7 @@
 // Based on grade6/115-1/week01.html; no auth or progress dependencies.
+let imageLightboxController;
 export function initImageLightbox({ root = document, selector = '[data-image-lightbox]', initialScale = 1, minScale = 1, zoomStep = 0.35, resolveImageSource = null } = {}) {
-    if (document.getElementById('lightbox')) return;
+    if (document.getElementById('lightbox')) return imageLightboxController;
     document.body.insertAdjacentHTML('beforeend', `<div id="lightbox" class="image-lightbox hidden" role="dialog" aria-modal="true" aria-label="圖片放大檢視">
         <div class="image-lightbox-panel">
             <div class="image-lightbox-controls" aria-label="圖片縮放控制">
@@ -26,6 +27,17 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
         const lightboxZoomIn = document.getElementById("lightbox-zoom-in");
         const lightboxReset = document.getElementById("lightbox-reset");
         const lightboxCenter = document.getElementById("lightbox-center");
+        const extraControls = document.createElement('div');
+        extraControls.className = 'image-lightbox-extra';
+        extraControls.hidden = true;
+        lightboxStage.before(extraControls);
+        const topbar = document.createElement('header');
+        topbar.className = 'image-lightbox-topbar';
+        lightboxStage.before(topbar);
+        topbar.append(extraControls,lightboxClose.parentElement);
+        let viewOptions = {}, loadGeneration = 0, settleLoad = null;
+        const widthMode = () => viewOptions.fit === 'width';
+        const snapshot = () => ({scale:lightboxState.scale,x:lightboxState.x,y:lightboxState.y,width:lightboxStage.clientWidth});
         let previousFocus = null;
         const lightboxPointers = new Map();
         const lightboxState = {
@@ -44,11 +56,12 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
             lightboxImage.style.transform = `translate(${lightboxState.x}px, ${lightboxState.y}px) scale(${lightboxState.scale})`;
             lightboxScale.textContent = `${Math.round(lightboxState.scale * 100)}%`;
             lightboxStage.classList.toggle("is-zoomed", lightboxState.scale > 1);
+            viewOptions.onStateChange?.(snapshot());
         }
 
         function setLightboxScale(nextScale) {
             lightboxState.scale = Math.max(minScale, Math.min(5, nextScale));
-            if (lightboxState.scale <= 1) {
+            if (lightboxState.scale <= 1 && !widthMode()) {
                 lightboxState.x = 0;
                 lightboxState.y = 0;
             }
@@ -60,9 +73,9 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
         }
 
         function resetLightboxTransform() {
-            lightboxState.scale = initialScale;
+            lightboxState.scale = widthMode() ? 1 : initialScale;
             lightboxState.x = 0;
-            lightboxState.y = 0;
+            lightboxState.y = widthMode() ? (lightboxImage.clientHeight-lightboxStage.clientHeight)/2+12 : 0;
             applyLightboxTransform();
         }
 
@@ -72,26 +85,63 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
             return Math.hypot(pointers[0].x - pointers[1].x, pointers[0].y - pointers[1].y);
         }
 
-        const openLightbox = function(src, altText = "圖卡放大") {
-            previousFocus = document.activeElement;
-            lightboxImage.src = src;
+        const openLightbox = function(src, altText = "圖卡放大", options = {}) {
+            settleLoad?.(false);
+            lightboxPointers.clear();
+            const wasOpen = !lightboxEl.classList.contains('hidden');
+            if (!wasOpen) previousFocus = document.activeElement;
+            viewOptions = options;
+            lightboxEl.classList.toggle('is-textbook',widthMode());
+            lightboxReset.textContent = widthMode() ? '適合寬度' : '重設';
+            lightboxReset.setAttribute('aria-label',widthMode() ? '適合螢幕寬度' : '重設圖片縮放');
+            lightboxClose.textContent = widthMode() ? '回題目' : '關閉';
+            lightboxClose.setAttribute('aria-label',options.closeLabel || '關閉圖片燈箱');
+            lightboxClose.title = options.closeLabel || '關閉圖片燈箱';
+            extraControls.replaceChildren(...(options.toolbar ? [options.toolbar] : []));
+            extraControls.hidden = !options.toolbar;
             lightboxImage.alt = altText;
             lightboxEl.setAttribute("aria-label", altText);
-            lightboxState.previousOverflow = document.body.style.overflow;
+            if (!wasOpen) lightboxState.previousOverflow = document.body.style.overflow;
             document.body.style.overflow = "hidden";
-            resetLightboxTransform();
             lightboxEl.classList.remove("hidden");
-            lightboxClose.focus();
+            lightboxImage.style.visibility = 'hidden';
+            if (!wasOpen) lightboxClose.focus();
+            const generation = ++loadGeneration;
+            return new Promise(resolve => {
+                settleLoad = resolve;
+                lightboxImage.onload = () => {
+                    if (generation !== loadGeneration) return resolve(false);
+                    resetLightboxTransform();
+                    if (options.state) {
+                        const ratio = lightboxStage.clientWidth / (options.state.width || lightboxStage.clientWidth);
+                        Object.assign(lightboxState,{scale:options.state.scale,x:options.state.x*ratio,y:options.state.y*ratio});
+                        applyLightboxTransform();
+                    }
+                    lightboxImage.style.visibility = '';
+                    resolve(true);
+                };
+                lightboxImage.onerror = () => resolve(false);
+                lightboxImage.src = src;
+            });
         };
 
         const closeLightbox = function() {
+            if (lightboxEl.classList.contains('hidden')) return;
+            const options = viewOptions;
+            options.onStateChange?.(snapshot());
+            settleLoad?.(false);
+            settleLoad = null;
+            ++loadGeneration;
             lightboxEl.classList.add("hidden");
             lightboxImage.removeAttribute("src");
             previousFocus?.focus();
             lightboxPointers.clear();
             document.body.style.overflow = lightboxState.previousOverflow || "";
             lightboxState.previousOverflow = "";
-            resetLightboxTransform();
+            viewOptions = {};
+            extraControls.replaceChildren();
+            extraControls.hidden = true;
+            options.onClose?.();
         };
 
         lightboxEl.addEventListener("mousedown", (event) => {
@@ -131,7 +181,7 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
 
         lightboxStage.addEventListener("pointerdown", (event) => {
             if (lightboxEl.classList.contains("hidden")) return;
-            lightboxStage.setPointerCapture?.(event.pointerId);
+            if (event.isTrusted) lightboxStage.setPointerCapture?.(event.pointerId);
             lightboxPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
 
             if (lightboxPointers.size === 1) {
@@ -158,7 +208,7 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
                 return;
             }
 
-            if (!lightboxState.dragging || lightboxState.scale <= 1) return;
+            if (!lightboxState.dragging || (!widthMode() && lightboxState.scale <= 1)) return;
             lightboxState.x += event.clientX - lightboxState.lastX;
             lightboxState.y += event.clientY - lightboxState.lastY;
             lightboxState.lastX = event.clientX;
@@ -183,7 +233,7 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
 
         document.addEventListener("keydown", (event) => {
             if (!lightboxEl.classList.contains("hidden") && event.key === "Tab") {
-                const buttons = [...lightboxEl.querySelectorAll('button')];
+                const buttons = [...lightboxEl.querySelectorAll('button,select')].filter(n=>!n.disabled&&n.getClientRects().length);
                 const index = buttons.indexOf(document.activeElement);
                 event.preventDefault();
                 buttons[(index + (event.shiftKey ? -1 : 1) + buttons.length) % buttons.length].focus();
@@ -230,4 +280,6 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
     root.addEventListener('keydown', activateImage, true);
     const observer = new MutationObserver(prepareImages);
     observer.observe(root, { childList: true, subtree: true });
+    imageLightboxController = {open:openLightbox,close:closeLightbox,getState:snapshot};
+    return imageLightboxController;
 }
