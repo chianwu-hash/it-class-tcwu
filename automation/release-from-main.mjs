@@ -15,6 +15,7 @@
 // worktree of this repository sees it. Finished releases are appended to <git-common-dir>/release-history.ndjson.
 // After promote, add the printed row to docs/development/agent-handoff.md through a PR.
 import fs from 'node:fs/promises';
+import {readFileSync} from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { execFileSync } from 'node:child_process';
@@ -23,6 +24,11 @@ import { flattenTree, compareTrees } from './quiz-release-compare.mjs';
 
 export const PROJECT = 'it-class-tcwu';
 export const ALIAS = 'it-class-tcwu.vercel.app';
+export const PROJECT_ID = 'prj_eJ1qle57xyilS5MKy6ZS6OuYtyFb';
+export function candidateProjectMatches(info) {
+  const ids = [info.projectId, info.project?.id].filter(Boolean);
+  return ids.length > 0 && ids.every(id => id === PROJECT_ID);
+}
 
 export class ReleaseError extends Error {}
 const fail = msg => { throw new ReleaseError(msg); };
@@ -55,13 +61,19 @@ export function realEnv({ cwd = process.cwd(), globalConfig = process.env.VERCEL
     aliasTarget: () => api(`/v4/aliases/${ALIAS}`).deploymentId,
     tree: id => api(`/v6/deployments/${id}/files`),
     deployCandidate: () => {
+      // Refuse before invoking CLI: --yes can otherwise create a project named
+      // after this fresh worktree when .vercel/project.json is missing.
+      let linked;
+      try { linked = JSON.parse(readFileSync(path.join(cwd, '.vercel/project.json'), 'utf8')); }
+      catch { fail(`link this clean worktree to ${PROJECT} before deploying`); }
+      if (linked.projectId !== PROJECT_ID) fail(`linked Vercel project is not ${PROJECT}`);
       // CLI normally writes only the URL to stdout. Request structured output so the ID is reliable.
       const out = vercel('deploy', '--prod', '--skip-domain', '--yes', '--json');
       const id = out.match(/"id":\s*"(dpl_[A-Za-z0-9]+)"/)?.[1] || out.match(/dpl_[A-Za-z0-9]+/)?.[0];
       if (!id) fail('could not read the candidate deployment id from vercel deploy output');
       if (/"readyState":\s*"(ERROR|CANCELED)"/.test(out) || /"status":\s*"error"/.test(out)) fail(`candidate ${id} failed to build`);
       const info = api(`/v13/deployments/${id}`);
-      if (info.projectId !== 'prj_eJ1qle57xyilS5MKy6ZS6OuYtyFb' || info.target !== 'production' || info.readyState !== 'READY')
+      if (!candidateProjectMatches(info) || info.target !== 'production' || info.readyState !== 'READY')
         fail(`candidate ${id} is not a READY production-target deployment of ${PROJECT}`);
       return id;
     },
