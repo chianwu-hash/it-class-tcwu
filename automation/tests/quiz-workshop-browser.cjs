@@ -3,7 +3,7 @@ const {chromium}=require('D:/projects/browser-automation-workflow/node_modules/p
 const fs=require('node:fs');
 (async()=>{
  const browser=await chromium.connectOverCDP(process.env.CDP_URL),page=await browser.contexts()[0].newPage();
- const checks=[],errors=[],remote=[];const base='http://localhost:8868';
+ const checks=[],errors=[],remote=[];const base=process.env.WORKSHOP_PREVIEW_URL||'http://localhost:8868';
  const check=(name,ok)=>{checks.push({name,ok:Boolean(ok)});if(!ok)throw Error(name);};
  page.on('pageerror',e=>errors.push(e.message));
  await page.route('https://**/*',route=>{remote.push(route.request().url());return route.abort();});

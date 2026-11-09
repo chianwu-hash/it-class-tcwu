@@ -1,3 +1,18 @@
+# 2026-11-09 跨校比較預覽與設定化補修（已授權發布，驗證中）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 發布中 | Codex-workshop-settings-20261109 | 2026-11-09T02:45:31.169129+00:00 | 本 PR 合併後的乾淨 main | `dpl_AvkasWz4M8ZnWSsG632dPwxnJi27` | 共用課程設定／navbar／library／bootstrap及生成入口與 manifest | 已授權，待 main 發布腳本取鎖與完整樹比對 |
+
+
+- 前輪共用答題 runtime 已上線；本輪真正差異是 navbar 品牌／課程連結與 library 考古區能力／說明改由共用課程設定供應，保留原 UI 與 adapter，不重做整套頁面。
+- 單一成果預覽 http://localhost:8872/ 已開給使用者並保留；worktree 為 `D:/projects/it-class-tcwu-worktrees/quiz-workshop-preview-20261109`，分支 `codex/quiz-workshop-preview-20261109`，基準 origin/main 803986b。服務使用中，不清理此目錄。
+- 頂溪三／六、土城四、中正九可切一般／個人原卷／夥伴。iframe 使用真正生成入口與原控制器；夥伴已由原 app 的邀請／snapshot／mutate 進入合成房，不再手動掛 UI。合成小隊／答案／草稿皆只在 localhost 記憶體，CSP 禁止連正式資料服務。
+- 使用者先要求不要上線，後明確接受8872預覽並授權發布。發布前仍須完成測試、報告 PR／commit；比較台及 fixture 位於 automation，不得部署。正式任務、答案、草稿、訂正、名冊、花葉及紀念動畫均保留，不套 SQL。
+- 目前已通過164項跨校／模式／桌手機預覽檢查、350項既有瀏覽器回歸及70項 Node／隔離 SQL 測試，營地合成訊息已通過，pageerror0、正式請求0。來源與限制見 [本輪交付](quiz-workshop-preview-20261109.md)。正式部署仍為 dpl_AvkasWz4M8ZnWSsG632dPwxnJi27，發布鎖目前無持有人；本輪尚未部署。
+
 # 2026-11-08 考前練功坊共用模組化（已正式發布）
 
 ## 發布登記

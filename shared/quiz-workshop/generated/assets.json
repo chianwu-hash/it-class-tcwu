@@ -1,6 +1,8 @@
 {
   "courses": [
     {
+      "pastExams": true,
+      "pastCatalogIntro": "開放 113、114 學年度上學期期中考。",
       "grade": 3,
       "label": "三年級",
       "school": "頂溪國小",
@@ -14,11 +16,29 @@
         "自然"
       ],
       "defaultPastPaper": "dingxi-114-1-g3-exam1-science",
-      "navbar": "/grade3/115-1/navbar.js?v=521a39db875b7950"
+      "navigation": {
+        "gradeLabel": "考前練功坊｜三年級",
+        "homeHref": "/grade3/115-1/quiz-library.html",
+        "extraLinks": [
+          {
+            "href": "/my-tree.html?course=grade3-115-1",
+            "label": "努力樹",
+            "iconClass": "fa-solid fa-tree"
+          },
+          {
+            "href": "/grade3/115-1/index.html",
+            "label": "課程首頁"
+          }
+        ]
+      },
+      "navbar": "/grade3/115-1/navbar.js?v=9e6b3e8e120bd97f"
     },
     {
+      "pastExams": true,
+      "pastCatalogIntro": "開放 113、114 學年度上學期期中考。",
       "grade": 4,
       "label": "四年級",
+      "navLabel": "土城四年級",
       "school": "土城國小",
       "courseId": "grade4-115-1",
       "basePath": "/grade4/115-1/",
@@ -30,9 +50,26 @@
         "自然"
       ],
       "zhuyinImageScale": 2,
-      "navbar": "/grade4/115-1/navbar.js?v=2e39052664bf5a34"
+      "navigation": {
+        "gradeLabel": "考前練功坊｜土城四年級",
+        "homeHref": "/grade4/115-1/quiz-library.html",
+        "extraLinks": [
+          {
+            "href": "/my-tree.html?course=grade4-115-1",
+            "label": "努力樹",
+            "iconClass": "fa-solid fa-tree"
+          },
+          {
+            "href": "/grade4/115-1/index.html",
+            "label": "課程首頁"
+          }
+        ]
+      },
+      "navbar": "/grade4/115-1/navbar.js?v=b131e21fe9a63722"
     },
     {
+      "pastExams": true,
+      "pastCatalogIntro": "開放 113、114 學年度上學期期中考。",
       "grade": 6,
       "label": "六年級",
       "school": "頂溪國小",
@@ -45,11 +82,29 @@
         "社會",
         "自然"
       ],
-      "navbar": "/grade6/115-1/navbar.js?v=24d2534c001d0485"
+      "navigation": {
+        "gradeLabel": "考前練功坊｜六年級",
+        "homeHref": "/grade6/115-1/quiz-library.html",
+        "extraLinks": [
+          {
+            "href": "/my-tree.html?course=grade6-115-1",
+            "label": "努力樹",
+            "iconClass": "fa-solid fa-tree"
+          },
+          {
+            "href": "/grade6/115-1/index.html",
+            "label": "課程首頁"
+          }
+        ]
+      },
+      "navbar": "/grade6/115-1/navbar.js?v=bd70c9ef2677ac94"
     },
     {
+      "pastExams": true,
+      "pastCatalogIntro": "依中正國中 113、114 學年度九上第二次段考原卷整理。今年範圍尚未公告，歷年範圍僅供參考。",
       "grade": 9,
       "label": "九年級",
+      "navLabel": "中正九年級",
       "school": "中正國中",
       "courseId": "grade9-115-1",
       "basePath": "/grade9/115-1/",
@@ -62,12 +117,27 @@
         "公民",
         "自然"
       ],
-      "navbar": "/grade9/115-1/navbar.js?v=9fb9deae07a0231c"
+      "navigation": {
+        "gradeLabel": "考前練功坊｜中正九年級",
+        "homeHref": "/grade9/115-1/quiz-library.html",
+        "extraLinks": [
+          {
+            "href": "/my-tree.html?course=grade9-115-1",
+            "label": "努力樹",
+            "iconClass": "fa-solid fa-tree"
+          },
+          {
+            "href": "/grade9/115-1/index.html",
+            "label": "課程首頁"
+          }
+        ]
+      },
+      "navbar": "/grade9/115-1/navbar.js?v=b36ae227cdf44973"
     }
   ],
   "entries": {
     "quiz": [
-      "/shared/quiz-student.mjs?v=1cec0cb18bdb897b"
+      "/shared/quiz-student.mjs?v=d657952bacf6bba2"
     ],
     "past": [
       "/shared/quiz-past-entry.mjs?v=bd8cd08d9c14b6e3"
@@ -76,16 +146,16 @@
       "/shared/partner-pilot/app.mjs?v=e9869e0a6a7cf4e8"
     ],
     "library": [
-      "/shared/quiz-library.mjs?v=69669d50eae00f8f",
+      "/shared/quiz-library.mjs?v=9b5b58734d3f872b",
       "/shared/quiz-learning.mjs?v=1eea3f91fc174637",
       "/shared/quiz-partner-pilot-entry.mjs?v=caa40ae3f7a634c2"
     ]
   },
   "imports": {
-    "/grade3/115-1/navbar.js": "/grade3/115-1/navbar.js?v=521a39db875b7950",
-    "/grade4/115-1/navbar.js": "/grade4/115-1/navbar.js?v=2e39052664bf5a34",
-    "/grade6/115-1/navbar.js": "/grade6/115-1/navbar.js?v=24d2534c001d0485",
-    "/grade9/115-1/navbar.js": "/grade9/115-1/navbar.js?v=9fb9deae07a0231c",
+    "/grade3/115-1/navbar.js": "/grade3/115-1/navbar.js?v=9e6b3e8e120bd97f",
+    "/grade4/115-1/navbar.js": "/grade4/115-1/navbar.js?v=b131e21fe9a63722",
+    "/grade6/115-1/navbar.js": "/grade6/115-1/navbar.js?v=bd70c9ef2677ac94",
+    "/grade9/115-1/navbar.js": "/grade9/115-1/navbar.js?v=b36ae227cdf44973",
     "/shared/auth.js": "/shared/auth.js?v=b02e71a08e840119",
     "/shared/connection-diagnostics.mjs": "/shared/connection-diagnostics.mjs?v=7de3c3f77e225215",
     "/shared/connection-diagnostics.mjs?v=20261029-diagnostics-switch": "/shared/connection-diagnostics.mjs?v=7de3c3f77e225215",
@@ -167,7 +237,7 @@
     "/shared/quiz-grade-route.mjs?v=20261102-grade9-release": "/shared/quiz-grade-route.mjs?v=ca3ba8070f105bdf",
     "/shared/quiz-leaf-celebration.mjs": "/shared/quiz-leaf-celebration.mjs?v=cc1b034d980fb775",
     "/shared/quiz-learning.mjs": "/shared/quiz-learning.mjs?v=1eea3f91fc174637",
-    "/shared/quiz-library.mjs": "/shared/quiz-library.mjs?v=69669d50eae00f8f",
+    "/shared/quiz-library.mjs": "/shared/quiz-library.mjs?v=9b5b58734d3f872b",
     "/shared/quiz-math-response.mjs": "/shared/quiz-math-response.mjs?v=0eed3ac52fc958ba",
     "/shared/quiz-math-response.mjs?v=20261102-math-audio": "/shared/quiz-math-response.mjs?v=0eed3ac52fc958ba",
     "/shared/quiz-media.mjs": "/shared/quiz-media.mjs?v=2019f02509b800b5",
@@ -206,12 +276,12 @@
     "/shared/quiz-source-crop.mjs": "/shared/quiz-source-crop.mjs?v=ffc089e9ad7e65a0",
     "/shared/quiz-source-crop.mjs?v=20261102-transcribed": "/shared/quiz-source-crop.mjs?v=ffc089e9ad7e65a0",
     "/shared/quiz-state.mjs": "/shared/quiz-state.mjs?v=c927efee11db0813",
-    "/shared/quiz-student.mjs": "/shared/quiz-student.mjs?v=1cec0cb18bdb897b",
+    "/shared/quiz-student.mjs": "/shared/quiz-student.mjs?v=d657952bacf6bba2",
     "/shared/quiz-transport.mjs": "/shared/quiz-transport.mjs?v=056b96bce45a402d",
     "/shared/quiz-transport.mjs?v=20261029-batch4": "/shared/quiz-transport.mjs?v=056b96bce45a402d",
     "/shared/quiz-transport.mjs?v=20261106-auth-errors": "/shared/quiz-transport.mjs?v=056b96bce45a402d",
-    "/shared/quiz-workshop-config.mjs": "/shared/quiz-workshop-config.mjs?v=680456b59057c672",
-    "/shared/quiz-workshop-entry.mjs": "/shared/quiz-workshop-entry.mjs?v=ed29d030a13868c6",
+    "/shared/quiz-workshop-config.mjs": "/shared/quiz-workshop-config.mjs?v=7b451ffb6ecbacfa",
+    "/shared/quiz-workshop-entry.mjs": "/shared/quiz-workshop-entry.mjs?v=164a1304f9c4b7fa",
     "/shared/quiz-workspace.mjs": "/shared/quiz-workspace.mjs?v=c46431dbf8312a61",
     "/shared/quiz-workspace.mjs?v=20261029-workspace": "/shared/quiz-workspace.mjs?v=c46431dbf8312a61",
     "/shared/quiz-workspace.mjs?v=20261106-partner-workspace": "/shared/quiz-workspace.mjs?v=c46431dbf8312a61",

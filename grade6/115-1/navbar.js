@@ -1,6 +1,7 @@
 (function () {
     const currentScript = document.currentScript;
     const quizMode = currentScript.dataset.quiz === 'true';
+    const workshopNav = currentScript.dataset.workshopNavigation ? JSON.parse(currentScript.dataset.workshopNavigation) : null;
     const quizPage = /\/quiz\.html$/.test(location.pathname);
 
     if (!window.__buildCourseNavbarHtml) {
@@ -20,7 +21,7 @@
 
     const navHTML = window.__buildCourseNavbarHtml({
         activeWeeks: quizMode ? [] : [1, 2, 3, 5, 7, 9, 10],
-        gradeLabel: quizMode ? "考前練功坊｜六年級" : "六年級資訊課｜115-1",
+        gradeLabel: quizMode ? (workshopNav?.gradeLabel || "考前練功坊｜六年級") : "六年級資訊課｜115-1",
         titleIconClass: "fa-solid fa-graduation-cap text-violet-700",
         titleClassName: "font-black text-slate-800 flex items-center text-lg tracking-wide whitespace-nowrap",
         navClassName: "bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-violet-200 shadow-sm",
@@ -29,11 +30,11 @@
         currentWeekClassName: "px-2 py-1.5 text-sm font-bold bg-violet-100 text-violet-800 rounded-lg shadow-sm whitespace-nowrap cursor-default",
         separatorClassName: "text-gray-300 mx-1",
         homeLabel: quizMode ? (quizPage ? '← 回上頁' : '單元選卷') : iconLabel('fa-solid fa-house', '首', '課程首頁'),
-        homeHref: quizMode ? 'quiz-library.html' : 'index.html',
-        extraLinks: quizMode ? [
+        homeHref: quizMode ? (workshopNav?.homeHref || 'quiz-library.html') : 'index.html',
+        extraLinks: quizMode ? (workshopNav?.extraLinks || [
             { href: '/my-tree.html?course=grade6-115-1', label: '努力樹', iconClass: 'fa-solid fa-tree' },
             { href: 'index.html', label: '課程首頁' }
-        ] : [
+        ]) : [
             { href: 'quiz-library.html', label: iconLabel('fa-solid fa-dumbbell', '練功', '考前練功坊') },
             { href: 'boss-garden.html', label: iconLabel('fa-solid fa-crown', '魔', '魔王花園') },
             { href: 'typing-foundation.html', label: iconLabel('fa-solid fa-keyboard', '英', '英打基礎') },

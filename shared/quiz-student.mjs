@@ -46,7 +46,7 @@ async function start() {
   }
   // 課程導覽與 OAuth 仍由既有 navbar／navbar-auth 管理。
   const script = document.createElement('script'); script.src = document.body.dataset.workshopNavbarUrl || 'navbar.js?v=20261030-identity-sync'; script.dataset.homework = 'true';
-  if (cloud) script.dataset.quiz = 'true';
+  if (cloud) {script.dataset.quiz = 'true';if(document.body.dataset.workshopNavigation)script.dataset.workshopNavigation=document.body.dataset.workshopNavigation;}
   await new Promise((resolve, reject) => { script.onload = resolve; script.onerror = () => reject(new Error('導覽未能載入，請重新整理。')); document.getElementById('quiz-navbar').append(script); });
   const { initNavbarAuth } = await import('./navbar-auth.js');
   let authGeneration = 0, validatedUser = null, validatingUser = null, practiceRole = null;

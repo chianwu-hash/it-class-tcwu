@@ -8,10 +8,12 @@ import {comparePapers,paperRange,paperTitle,paperMix,isExtension,paperDifficulty
 import {difficultyAdjustment} from './quiz-difficulty.mjs';
 import {createPastCatalogReader,pastPaperDisplay} from './quiz-past-catalog.mjs?v=20261102-grade9-release';
 import { onTestIdentityChange } from './test-identity-state.mjs?v=20261030-identity-sync';
+import {workshopCourse} from './quiz-workshop-config.mjs';
 
 let currentSession = null, generation = 0, papers = [], busy = false, studentView=false, reloadAfter=false, focusPaperId=null;
 const el = id => document.getElementById(id);
 const pageGrade = quizPageGrade(location.pathname);
+const pageCourse = workshopCourse(pageGrade);
 el('grade-filter').value = String(pageGrade);
 const localContext = localPoolContext();
 const request = await createQuizRequest({ getSession: () => currentSession, local: Boolean(localContext), localStudent: localContext?.student });
@@ -21,11 +23,11 @@ ownSection.innerHTML='<header class="collection-heading"><span class="collection
 const presetSection=document.createElement('section');presetSection.id='system-papers-section';presetSection.className='paper-collection collection-preset';presetSection.setAttribute('aria-labelledby','system-papers-title');
 presetSection.innerHTML='<header class="collection-heading"><span class="collection-label">已準備好的練習</span><h2 id="system-papers-title">老師準備的卷 <span id="system-papers-count" class="collection-count"></span></h2><p>各科單元卷已經準備好，選一份就能開始練習。</p></header><p id="system-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的老師準備的卷。</p>';
 el('cloud-papers').before(presetSection);presetSection.append(el('cloud-papers'));presetSection.before(ownSection);
-const hasPastExams=[3,4,6,9].includes(pageGrade)&&!localContext;
+const hasPastExams=Boolean(pageCourse?.pastExams)&&!localContext;
 let pastPapers=[],pastCatalogError=false;
 const readPastCatalog=hasPastExams?await createPastCatalogReader(()=>currentSession):null;
 const pastSection=document.createElement('section');pastSection.id='past-papers-section';pastSection.className='paper-collection collection-past';pastSection.hidden=true;pastSection.setAttribute('aria-labelledby','past-papers-title');
-pastSection.innerHTML='<header class="collection-heading"><h2 id="past-papers-title">考古題專區 <span id="past-papers-count" class="collection-count">0卷</span></h2><p>'+(pageGrade===9?'依中正國中 113、114 學年度九上第二次段考原卷整理。今年範圍尚未公告，歷年範圍僅供參考。':'開放 113、114 學年度上學期期中考。')+'依照歷年原卷練習，保留各次成績；同一份試卷首次完整達標可取得一朵考古花。</p></header><p id="past-papers-empty" class="collection-empty">目前沒有符合篩選條件的考古題。</p><div id="past-papers" class="papers"></div><details id="past-unopened-section"><summary>未開放區 <span id="past-unopened-count" class="collection-count">0卷</span></summary><p>已整理的其他考古題暫不開放作答，既有成績與考古花紀錄仍保留。</p><div id="past-unopened" class="papers"></div></details>';
+pastSection.innerHTML='<header class="collection-heading"><h2 id="past-papers-title">考古題專區 <span id="past-papers-count" class="collection-count">0卷</span></h2><p>'+(pageCourse?.pastCatalogIntro||'')+'依照歷年原卷練習，保留各次成績；同一份試卷首次完整達標可取得一朵考古花。</p></header><p id="past-papers-empty" class="collection-empty">目前沒有符合篩選條件的考古題。</p><div id="past-papers" class="papers"></div><details id="past-unopened-section"><summary>未開放區 <span id="past-unopened-count" class="collection-count">0卷</span></summary><p>已整理的其他考古題暫不開放作答，既有成績與考古花紀錄仍保留。</p><div id="past-unopened" class="papers"></div></details>';
 presetSection.after(pastSection);
 // Compose returns the saved card in the library shape; insert it instead of reloading the whole list.
 document.addEventListener('quiz-paper-saved',e=>{const paper=e.detail?.paper;if(paper?.id&&!busy&&studentView){papers=[...papers.filter(p=>p.id!==paper.id),paper];render();return;}if(busy)reloadAfter=true;else load({refreshComposer:false,refreshWrong:false});});

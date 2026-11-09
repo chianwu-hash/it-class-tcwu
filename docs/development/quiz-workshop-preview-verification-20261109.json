@@ -1,0 +1,42 @@
+{
+  "status": "verified-awaiting-release",
+  "baseCommit": "803986badef41638f65056214bb0b10d970f3b0c",
+  "browser": {
+    "comparisonPreviewChecks": 164,
+    "existingRegressionChecks": 350,
+    "uncaughtExceptions": 0,
+    "productionRequests": 0,
+    "grades": [
+      3,
+      4,
+      6,
+      9
+    ],
+    "modes": [
+      "quiz",
+      "past",
+      "partner"
+    ],
+    "widths": [
+      1280,
+      390
+    ]
+  },
+  "nodeAndSqlTests": 70,
+  "protectedPathsUnchanged": [
+    "supabase",
+    "shared/auth.js",
+    "shared/navbar-auth.js",
+    "shared/quiz-server.mjs",
+    "shared/quiz-past-ui.mjs",
+    "shared/partner-pilot/app.mjs",
+    "shared/partner-pilot/learning.js",
+    "shared/partner-pilot/keepsake-growth.mjs",
+    "shared/quiz-feedback-motion.mjs"
+  ],
+  "previewExcludedFromDeployment": true,
+  "limitations": [
+    "未重驗真實 Google 雙帳號、真實多人同步、實體裝置與錄音附件。",
+    "舊原卷兩套 SQL 測試缺私人 document 題包。"
+  ]
+}
