@@ -8,7 +8,12 @@ import { onTestIdentityChange } from './test-identity-state.mjs?v=20261030-ident
 const SCHOOL_YEAR = 115;
 let cached = { userId: null, email: null, identity: null };
 let pending = null, rerun = false, generation = 0, expanded = false, listening = false, provided = false, lookupRequired = false;
+let fallbackRequired = false;
 const observed = new Map();
+
+function hasRosterLabel(row) {
+    return Boolean(row?.class_code && row?.display_name && Number.isInteger(Number(row.seat_no)) && Number(row.seat_no) >= 1);
+}
 
 function restoreCachedEmail() {
     const el = document.getElementById('auth-status');
@@ -22,28 +27,38 @@ onTestIdentityChange(({userId}) => {
     restoreCachedEmail();
     generation++;
     cached = {userId:null, email:null, identity:null};
+    fallbackRequired = false;
     // Page-provided labels must wait for a fresh page RPC, not a competing roster read.
     if (!provided) refresh();
 });
 
 // Quiz pages already receive the caller's roster row from their own RPC; they hand it
 // over here so the navbar does not issue a second enrollment request per page view.
-export function provideNavIdentity({ userId, email, row }) {
+// Partial past-exam snapshots may opt into the existing self-enrollment lookup.
+export function provideNavIdentity({ userId, email, row, lookupIfIncomplete = false }) {
     if (!userId || !email) return;
     if (row?.email?.toLowerCase() !== email.toLowerCase()) row = null;
-    if (cached.userId === userId) restoreCachedEmail();
+    const sameUser = cached.userId === userId && cached.email === email;
+    // A partial snapshot must not erase an already verified self-enrollment row.
+    if (lookupIfIncomplete && !hasRosterLabel(row) && sameUser && hasRosterLabel(cached.identity)) row = cached.identity;
+    if (sameUser) restoreCachedEmail();
     generation++;
     cached = { userId, email, identity: row || null };
+    fallbackRequired = lookupIfIncomplete && !hasRosterLabel(row);
     paint();
+    if (fallbackRequired) refresh();
 }
 
 async function loadIdentity() {
     const token = generation;
     const session = await resolveSession();
+    if (token !== generation) { rerun = true; return; }
     const user = session?.user;
-    if (!user) { cached = { userId: null, email: null, identity: null }; return; }
-    if (cached.userId === user.id && cached.email === (user.email || '')) return cached;
-    if (provided) return;
+    if (!user) { cached = { userId: null, email: null, identity: null }; fallbackRequired = false; return; }
+    const sameUser = cached.userId === user.id && cached.email === (user.email || '');
+    if (sameUser && !fallbackRequired) return cached;
+    // Only the current page's incomplete identity can opt a provided navbar in.
+    if (provided && (!fallbackRequired || !sameUser)) return;
     let row = null;
     try {
         const { data, error } = await supabase.rpc('get_my_student_enrollment', { p_school_year: SCHOOL_YEAR });
@@ -53,6 +68,7 @@ async function loadIdentity() {
     if (token !== generation || latest?.user?.id !== user.id) { rerun = true; return; }
     if (row?.email?.toLowerCase() !== user.email?.toLowerCase()) row = null;
     cached = { userId: user.id, email: user.email || '', identity: row || null };
+    fallbackRequired = false;
     return cached;
 }
 
@@ -61,7 +77,7 @@ function paint() {
     const { email, identity } = cached;
     if (!el || !identity || !email) return;
     const seat = String(identity.seat_no).padStart(2, '0');
-    if (!identity.class_code || !identity.display_name || !Number.isInteger(Number(identity.seat_no)) || Number(identity.seat_no) < 1) return;
+    if (!hasRosterLabel(identity)) return;
     const title = `${identity.class_code} 班 ${seat} 號 ${identity.display_name}\n${email}`;
     // Only replace this user's raw email or the label we already painted for this
     // same roster row. A late navbar initializer may switch compact/full format.
@@ -99,7 +115,7 @@ export function initGrade6NavIdentity({ expanded: fullLabel = false, provided: p
     if (!observed.has(el)) {
       const observer = new MutationObserver(() => {
         const text = el.textContent.trim();
-        if (text === '未登入') { generation++; cached = { userId: null, email: null, identity: null }; return; }
+        if (text === '未登入') { generation++; cached = { userId: null, email: null, identity: null }; fallbackRequired = false; return; }
         if (cached.identity && text === cached.email) paint();
         else if (text.includes('@') && text !== cached.email) refresh();
       });
