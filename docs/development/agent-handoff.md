@@ -1,3 +1,11 @@
+# 2026-11-09 個人考古 navbar 名冊補讀（PR 備妥，暫不合併／部署）
+
+- 主對話正式兩帳號驗證發現：考古 `start/resume` identity 只有 role／email／grade／class_code，沒有座號姓名；直接 provide 給 `provided:true` 的 navbar 會停留 Email。普通與夥伴正常。前輪合成 identity 完整，未驗到此差異。
+- 從最新 `origin/main b2adae4` 新建 `codex/past-navbar-identity-20261109`／`D:/projects/it-class-tcwu-worktrees/past-navbar-identity-20261109`。此工作樹僅本執行者擁有導覽身分與考古呈現修改，主對話不改 runtime；不沿用舊工作樹。
+- 考古頁 opt-in `lookupIfIncomplete`，只在資料不足時使用原本人名冊讀取；完整資料不加發請求、已有完整快取不被部分 snapshot 擦掉。沿用同一模組的 pending／generation／session 檢查；失敗安全保留 Email，不阻塞作答。未改 SQL／API／名冊權限／學生資料或產品測試身分。
+- 18項純 Node／隔離 VM 及產物／路由測試通過，含10項名冊生命週期／競態測試；生成入口與 manifest 已同步，產物檢查與 diff-check 通過。未操作01／02瀏覽器或正式帳號，未進行真登入回歸。
+- **暫不合併／部署**：主對話正在正式雙帳號驗證；保持基準部署 `dpl_GYRnWPyK5mDx4WbAus1Qags2gst2`，未取發布鎖。待主對話明確通知才進入正式發布。具體原因、檔案責任與下一步見 [修正說明](past-navbar-identity-20261109.md)。
+
 # 2026-11-09 跨校比較預覽與設定化補修（已正式發布）
 
 ## 發布登記
