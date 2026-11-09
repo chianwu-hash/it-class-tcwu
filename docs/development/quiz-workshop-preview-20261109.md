@@ -4,7 +4,7 @@
 
 前輪 PR120／121／122 的共用答題框架、單選呈現與生成式入口已於 2026-11-08 正式發布，來源 `d7b9ff8`、部署 `dpl_AvkasWz4M8ZnWSsG632dPwxnJi27`。本輪從最新 `origin/main 803986b` 接續，沒有另做一套仿製答題介面。
 
-使用者先要求比較預覽，之後已明確接受並授權「可以上線」。本輪真正待發布的 runtime 差異限於補齊學校／年級設定：
+使用者先要求比較預覽，之後已明確接受並授權「可以上線」。本輪已發布的 runtime 差異限於補齊學校／年級設定：
 
 - `workshopNavigation()` 集中品牌標籤、選卷／課程首頁／努力樹的課程路徑，經既有 bootstrap 傳給原年級 navbar。三種模式使用同一資料；未帶設定的舊課程頁保留既有 navbar fallback，登入事件仍走 `initNavbarAuth()`。
 - 考古題入口能力與各校考古區說明移至 `quiz-workshop-config.mjs`，移除 library 控制器中的九年級校名及年級陣列分支。
@@ -51,3 +51,7 @@ node automation/build-quiz-workshop.mjs --check
 `automation/tests/quiz-workshop-preview-browser.cjs` 須經共享租約的 `D:/ai-browser/run-background.cjs` 執行；`WORKSHOP_PREVIEW_URL` 可指定獨立驗證伺服器，使用者的8872成果服務保持不動。既有350項 `quiz-workshop-browser.cjs` 也支援該環境變數，避免誤驗舊預覽。
 
 未驗證：正式 Google 雙帳號、真實多人即時同步／斷線、正式資料庫原卷全題判分、真實獎勵新增／紀念播放、實體觸控／IME／Safari／iPad、錄音與附件上傳。兩套舊原卷 SQL 測試仍缺私人 document 題包，不計為通過。合成夥伴預先完成部分題目與回顧，不能冒稱真人雙機驗收。
+
+## 正式發布結果
+
+PR125 已合併至 main `796a277`，2026-11-09 依乾淨 main 與發布鎖腳本完成，正式部署 `dpl_GYRnWPyK5mDx4WbAus1Qags2gst2`。完整樹比對通過，候選／正式各31資產符合來源，98項正式匿名檢查通過。本機比較台仍保留，未部署合成身分或資料。[完整收據](quiz-workshop-settings-release-20261109.json)。
