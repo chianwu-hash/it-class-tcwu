@@ -404,12 +404,30 @@
       "shared/quiz-past-ui.mjs",
       "shared/partner-pilot/app.mjs",
       "shared/partner-pilot/learning.js"
-    ]
+    ],
+    "liveIdentityReportedByCoordinatingChat": {
+      "deployment": "dpl_4dzZgLLGzwJ8v8XfAkXebipaBxxA",
+      "accounts": 2,
+      "classes": [
+        "301",
+        "307"
+      ],
+      "navbarClassSeatNameCorrect": true,
+      "hoverEmailMatchesAccount": true,
+      "attemptIdsAndRecordsUnchanged": true,
+      "rewardsUnchanged": true,
+      "noReplayOrRewardOnReopen": true,
+      "existingRowsCompared": 730,
+      "existingDataCategories": 14,
+      "existingRowHashesUnchanged": true,
+      "additionalRowsLimitedToAuthorizedTest": true,
+      "source": "主對話於正式新版本完成後回報，本發布者未另行操作瀏覽器或帳號；公開收據不含姓名、Email、作答ID或私有資料。"
+    }
   },
   "scope": "僅考古部分身分資料的導覽名冊條件補讀，以及共用模組指紋更新。",
   "preserved": "未套用 SQL，未更動 API、名冊權限、任務、媒體、正式作答、草稿或獎勵。",
   "limitations": [
     "本發布者依交接要求未操作01／02瀏覽器及正式測試帳號。",
-    "上線後真登入 navbar 由主對話補驗；不能將原版本兩帳號全流程驗證視為本修正上線後已重驗。"
+    "本修正上線後真登入與原有資料雜湊驗證由主對話執行及回報；本收據記錄其結果，未公開私有資料。"
   ]
 }
