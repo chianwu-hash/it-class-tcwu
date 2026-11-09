@@ -18,11 +18,15 @@ git diff --check
 
 18 項全通過，其中10項以隔離 VM 執行完整的實際導覽身分模組，僅替代 DOM／Auth／RPC 邊界，涵蓋完整與部分 identity、本人讀取與快取、失敗、空名冊、錯誤 Email、換人、登出、年級切換、進行中請求失效、新完整資料優先，以及原夥伴 lookup 相容。其餘8項覆蓋年級路由、生成檔、canonical identity import 與既有合成隔離契約。四課程16入口與 manifest 已重建，CSS內容未變。
 
-本輪未操作01／02瀏覽器、正式測試帳號、正式作答資料或 SQL；未進行真登入瀏覽器驗證。正式仍保持 `dpl_GYRnWPyK5mDx4WbAus1Qags2gst2`，待主對話完成雙帳號驗證並明確允許後，才能進行合併及正式發布。此 PR 備妥不代表已上線。
+本輪未操作01／02瀏覽器、正式測試帳號、正式作答資料或 SQL；未進行真登入瀏覽器驗證。主對話後續完成原版本雙帳號驗證，明確通知合併與發布；PR127 已依流程上線。此修正的真登入 navbar 仍待主對話補驗。
 
 ## 接手資訊
 
 - 基準：`origin/main b2adae41b76f6cffd93fda114c26bc9678fd830d`
 - 分支：`codex/past-navbar-identity-20261109`
 - 工作樹：`D:/projects/it-class-tcwu-worktrees/past-navbar-identity-20261109`
-- 下一步：審查本 PR；獲得主對話明確發布通知後再依 main／發布腳本流程處理，並以真實兩帳號重驗考古 navbar。不要在主對話還在驗證時切換正式版。
+- 下一步：主對話以真實兩帳號重驗考古 navbar；本發布者未使用01／02。
+
+## 發布結果
+
+來源 main `a0b16ceb96899595988c0f70c1716b210d6ffe1c`，正式部署 `dpl_4dzZgLLGzwJ8v8XfAkXebipaBxxA`；完整樹及候選／正式各25項資產比對通過，發布鎖已釋放。[收據與限制](past-navbar-release-20261109.json)。
