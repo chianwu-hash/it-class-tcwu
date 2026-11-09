@@ -1,0 +1,96 @@
+{
+  "published": true,
+  "mainCommit": "00d9f07f815df614916e805e37312b19631713bc",
+  "deployment": "dpl_EQkf8XXrgxhsNLA43CFuo6Vk76t1",
+  "rollback": "dpl_4dzZgLLGzwJ8v8XfAkXebipaBxxA",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade3/115-1/past-exam.html",
+      "grade3/115-1/quiz-library.html",
+      "grade3/115-1/quiz.html",
+      "grade4/115-1/partner-practice.html",
+      "grade4/115-1/past-exam.html",
+      "grade4/115-1/quiz-library.html",
+      "grade4/115-1/quiz.html",
+      "grade6/115-1/partner-practice.html",
+      "grade6/115-1/past-exam.html",
+      "grade6/115-1/quiz-library.html",
+      "grade6/115-1/quiz.html",
+      "grade9/115-1/partner-practice.html",
+      "grade9/115-1/past-exam.html",
+      "grade9/115-1/quiz-library.html",
+      "grade9/115-1/quiz.html",
+      "release/quiz-workshop-build.mjs",
+      "shared/image-lightbox.css",
+      "shared/image-lightbox.js",
+      "shared/quiz-api.mjs",
+      "shared/quiz-past-exams.mjs",
+      "shared/quiz-past-learning-review.mjs",
+      "shared/quiz-past-ui.mjs",
+      "shared/quiz-server.mjs",
+      "shared/quiz-workshop/generated/assets.json",
+      "shared/quiz-workshop/generated/library.css",
+      "shared/quiz-workshop/generated/partner.css",
+      "shared/quiz-workshop/generated/past.css",
+      "shared/quiz-workshop/generated/quiz.css"
+    ],
+    "added": [
+      "shared/quiz-study-data.mjs",
+      "shared/quiz-study.mjs",
+      "shared/quiz-textbook-reader.css",
+      "shared/quiz-textbook-reader.mjs"
+    ],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "publishedAt": "2026-11-09T15:09:35.740Z",
+  "codePRs": [
+    130,
+    131
+  ],
+  "scope": {
+    "grade": 3,
+    "subject": "自然",
+    "schoolYear": 115,
+    "semester": 1,
+    "units": [
+      3,
+      4
+    ],
+    "trialPapers": 3,
+    "answerTargets": 29,
+    "textbookPages": 50,
+    "privateImages": 52,
+    "excludedSourceGapTargets": 1,
+    "pastExamIsExcerpt": true,
+    "originalFullPastPaperRemainsDisabled": true
+  },
+  "validation": {
+    "productionAssetsShaMatched": 33,
+    "workshopBrowserChecks": 350,
+    "studyBrowserChecks": 44,
+    "realPostgresSyntheticAnswersRolledBack": 29,
+    "workerReadbackShaMatched": 52,
+    "workerWithoutTicketStatus": 401,
+    "signedInLibraryTitlesConfirmed": 3,
+    "noAnswersSubmittedFromExistingBrowserAccount": true,
+    "physicalPhoneAndUserAcceptance": "pending_next_morning"
+  },
+  "notes": [
+    "既有10類學生紀錄於安裝交易中雜湊不變。",
+    "翻頁與卷名修正採用新固定資料版本，舊版本保留，沒有覆寫已保存作答。",
+    "未連結工作樹造成的暫存Vercel專案已刪除；PR131新增事前專案核對，正式別名在當時未改動。"
+  ]
+}

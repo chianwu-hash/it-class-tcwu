@@ -1,11 +1,18 @@
-# 2026-11-09 三年級自然Notebook＋Codex課本對照實測（準備發布）
+# 2026-11-09 三年級自然Notebook＋Codex課本對照實測（已正式發布）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-g3-notebook-study-20261109 | 2026-11-09T15:08:34.339Z | `00d9f07` | `dpl_4dzZgLLGzwJ8v8XfAkXebipaBxxA` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、release/quiz-workshop-build.mjs、shared/image-lightbox.css、shared/image-lightbox.js、shared/quiz-api.mjs、shared/quiz-past-exams.mjs、shared/quiz-past-learning-review.mjs、shared/quiz-past-ui.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-study-data.mjs、+shared/quiz-study.mjs、+shared/quiz-textbook-reader.css、+shared/quiz-textbook-reader.mjs | `dpl_EQkf8XXrgxhsNLA43CFuo6Vk76t1`／回滾 `dpl_4dzZgLLGzwJ8v8XfAkXebipaBxxA`（eolOnly 0） |
+
 
 - 使用者已授權本輪完成後上線，並同意9題考古題先以明確標示的節選練習上線，不開整卷。
 - 最新origin/main `3ce9bca` 新分支 `codex/grade3-notebook-learning-20261109`，獨立工作樹 `C:/Users/user/projects/worktrees/grade3-notebook-learning-20261109`；Codex唯一寫入者，未修改原六年級整合工作樹。
 - 重用既有候選課本模組，接一般及個人考古控制器。實際資料是3份一般固定實測卷：風與空氣11、奇妙的溶解9、考古節選9，共29目標；風箏疑義原題排除。原卷仍關閉，沒有整科擴張或即時AI。
 - 50張課本正文WebP及2張無答案原題圖已私有Drive回讀SHA核對，既有Worker追加白名單，未改原程式及綁定。正式SQL與固定資料裝入但卷及解析包仍關閉；Edge已更新，正式快照live check通過，既有10類學生紀錄雜湊未變。
 - 16項Node與44項原網址桌手機合成檢查通過；正式PostgreSQL以合成學生完成29送答及29則解析核驗後整筆回滾，合成帳號未保留。另補教師本人試答與跨人供圖拒絕。
-- 下一步：完成PR→乾淨main發布腳本→正式讀回→啟用這3份固定資料→收據PR。詳見[範圍及驗證](grade3-notebook-study-release-20261109.md)。真人Google與實體手機由使用者翌晨實測，未冒稱完成。
+- PR130／131已合併；乾淨main依發布腳本完成部署與promote，完整樹ok:true（29改4增、0非預期、eolOnly0），33正式資產SHA讀回符合；發布鎖已釋放。3份29目標及50頁課本已啟用，原考古整卷仍關閉。正式已登入選卷頁實際出現3份完整卷名，未替現有帳號送答；實體手機與使用者作答留待翌晨。詳[範圍及驗證](grade3-notebook-study-release-20261109.md)、[發布收據](grade3-study-release-receipt-20261109.json)。
 
 # 2026-11-09 個人考古 navbar 名冊補讀（已正式發布，兩帳號真登入補驗通過）
 
