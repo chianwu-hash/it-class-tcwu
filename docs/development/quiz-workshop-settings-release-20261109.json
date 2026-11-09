@@ -1,0 +1,890 @@
+{
+  "agent": "Codex-workshop-settings-20261109",
+  "commit": "796a2773e479e0d8c4475ec66b09dc4d7d6d5adb",
+  "baseline": "dpl_AvkasWz4M8ZnWSsG632dPwxnJi27",
+  "expected": {
+    "changed": [
+      "grade3/115-1/navbar.js",
+      "grade3/115-1/partner-practice.html",
+      "grade3/115-1/past-exam.html",
+      "grade3/115-1/quiz-library.html",
+      "grade3/115-1/quiz.html",
+      "grade4/115-1/navbar.js",
+      "grade4/115-1/partner-practice.html",
+      "grade4/115-1/past-exam.html",
+      "grade4/115-1/quiz-library.html",
+      "grade4/115-1/quiz.html",
+      "grade6/115-1/navbar.js",
+      "grade6/115-1/partner-practice.html",
+      "grade6/115-1/past-exam.html",
+      "grade6/115-1/quiz-library.html",
+      "grade6/115-1/quiz.html",
+      "grade9/115-1/navbar.js",
+      "grade9/115-1/partner-practice.html",
+      "grade9/115-1/past-exam.html",
+      "grade9/115-1/quiz-library.html",
+      "grade9/115-1/quiz.html",
+      "release/quiz-workshop-build.mjs",
+      "shared/quiz-library.mjs",
+      "shared/quiz-student.mjs",
+      "shared/quiz-workshop-config.mjs",
+      "shared/quiz-workshop-entry.mjs",
+      "shared/quiz-workshop/generated/assets.json"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "startedAt": "2026-11-09T02:48:30.945Z",
+  "state": "promoted",
+  "candidate": "dpl_GYRnWPyK5mDx4WbAus1Qags2gst2",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/navbar.js",
+      "grade3/115-1/partner-practice.html",
+      "grade3/115-1/past-exam.html",
+      "grade3/115-1/quiz-library.html",
+      "grade3/115-1/quiz.html",
+      "grade4/115-1/navbar.js",
+      "grade4/115-1/partner-practice.html",
+      "grade4/115-1/past-exam.html",
+      "grade4/115-1/quiz-library.html",
+      "grade4/115-1/quiz.html",
+      "grade6/115-1/navbar.js",
+      "grade6/115-1/partner-practice.html",
+      "grade6/115-1/past-exam.html",
+      "grade6/115-1/quiz-library.html",
+      "grade6/115-1/quiz.html",
+      "grade9/115-1/navbar.js",
+      "grade9/115-1/partner-practice.html",
+      "grade9/115-1/past-exam.html",
+      "grade9/115-1/quiz-library.html",
+      "grade9/115-1/quiz.html",
+      "release/quiz-workshop-build.mjs",
+      "shared/quiz-library.mjs",
+      "shared/quiz-student.mjs",
+      "shared/quiz-workshop-config.mjs",
+      "shared/quiz-workshop-entry.mjs",
+      "shared/quiz-workshop/generated/assets.json"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-09T02:48:53.819Z",
+  "promotedAt": "2026-11-09T02:52:31.261Z",
+  "alias": "dpl_GYRnWPyK5mDx4WbAus1Qags2gst2",
+  "rollback": "dpl_AvkasWz4M8ZnWSsG632dPwxnJi27",
+  "handoffRow": "| 已完成 | Codex-workshop-settings-20261109 | 2026-11-09T02:48:30.945Z | `796a277` | `dpl_AvkasWz4M8ZnWSsG632dPwxnJi27` | grade3/115-1/navbar.js、grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/navbar.js、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/navbar.js、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/navbar.js、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、release/quiz-workshop-build.mjs、shared/quiz-library.mjs、shared/quiz-student.mjs、shared/quiz-workshop-config.mjs、shared/quiz-workshop-entry.mjs、shared/quiz-workshop/generated/assets.json | `dpl_GYRnWPyK5mDx4WbAus1Qags2gst2`／回滾 `dpl_AvkasWz4M8ZnWSsG632dPwxnJi27`（eolOnly 0） |",
+  "publicUrl": "https://it-class-tcwu.vercel.app",
+  "pullRequest": "https://github.com/chianwu-hash/it-class-tcwu/pull/125",
+  "candidateUrl": "https://it-class-tcwu-965qyzfna-chianwu-4755s-projects.vercel.app",
+  "verification": {
+    "candidateAssets": {
+      "base": "https://it-class-tcwu-965qyzfna-chianwu-4755s-projects.vercel.app",
+      "checkedAt": "2026-11-09T02:52:11.141Z",
+      "commit": "796a2773e479e0d8c4475ec66b09dc4d7d6d5adb",
+      "ok": true,
+      "checks": [
+        {
+          "file": "grade3/115-1/navbar.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "9e6b3e8e120bd97f244e05bd1dc9974c552164a75a1b42b193511f8a59ebf9c1"
+        },
+        {
+          "file": "grade3/115-1/quiz.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "45e5bd1d204c1a5335cb74badbf512010286d510b8a427a037b6d71b6dc82849"
+        },
+        {
+          "file": "grade3/115-1/past-exam.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "0736800b70f1871141435d84eefac148e3fa7e297ee3c3682346c06ab13bb56b"
+        },
+        {
+          "file": "grade3/115-1/partner-practice.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "3dabae3d7523d7e75adef0734e6ae55069d48ebf5b087fd1198beccde89dc600"
+        },
+        {
+          "file": "grade3/115-1/quiz-library.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "87b2f02b5022c47028a1a63b3a28c8c3c39b27e148b3e1add6cda74e8f4d88bb"
+        },
+        {
+          "file": "grade4/115-1/past-exam.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "7b8027f7c8baa66a5139e77dd2d79ce51a50ceac636f75841e8cd091776a5141"
+        },
+        {
+          "file": "grade4/115-1/partner-practice.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "1f51e8c8f85974e3212b8407ea7f1d48839d27ecc7afe65f6b0659f03f5b1075"
+        },
+        {
+          "file": "grade4/115-1/navbar.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "b131e21fe9a637224359834495433ec03ee7e388f36fee9b21ef9b589ebf6014"
+        },
+        {
+          "file": "grade4/115-1/quiz.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "f50f18027a6087998d0809eed642a412bd3fca8385ab14fd8c2e7ac54a577c9f"
+        },
+        {
+          "file": "grade4/115-1/quiz-library.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "1e9df575d81368a686088a0ede923eaa0208855f8fdc45ef299e76c1d0519ec0"
+        },
+        {
+          "file": "grade6/115-1/partner-practice.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "1fad518c5bb4b7a0ebbdaa3cad29b1948c2c8fe9358437b10f8ed3f5ddd9b1d7"
+        },
+        {
+          "file": "grade6/115-1/navbar.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "bd70c9ef2677ac94b00544480b538004db8bba99e18de5c3b83dea3e75a58a36"
+        },
+        {
+          "file": "grade6/115-1/quiz-library.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "1adf59696540360826a26441440e22fcd9abd3295dc78715c6a8f5f1f59475a2"
+        },
+        {
+          "file": "grade6/115-1/quiz.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "27e4c8dde3cb6865cb1613064167bb6fe38320990b9b1dbc28df59a541d9d009"
+        },
+        {
+          "file": "grade6/115-1/past-exam.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "08258bb6bb6581e7268b06d827b54c31ddec41b4dcaf79cbbd5789a6384f1c78"
+        },
+        {
+          "file": "grade9/115-1/past-exam.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "c465fb7822e4f262ce6661303e76b16c4ff66d4626298d80f22943d477cad21b"
+        },
+        {
+          "file": "grade9/115-1/navbar.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "b36ae227cdf44973aeb7825f39377d87ce2612290a2cb38fa8171cd8b18f8868"
+        },
+        {
+          "file": "grade9/115-1/partner-practice.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "e87f25af618c97108a4c5806848750f4c190b0848168dac42c94a712c1dadf55"
+        },
+        {
+          "file": "grade9/115-1/quiz-library.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "4d6e2c66e62a3a1a1a0b5003b6019a7a80df4af6e5189ba56d405f647d8f8a3f"
+        },
+        {
+          "file": "grade9/115-1/quiz.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "3c99ffa499ab78e206ecd2864ea63a7896cd21c35f9cf6f625890997738898f0"
+        },
+        {
+          "file": "shared/quiz-workshop-entry.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "164a1304f9c4b7fab7da5c3d52aad70f1a9255a937dc6aec4a5ce7c41180b4fb"
+        },
+        {
+          "file": "shared/quiz-workshop-config.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "7b451ffb6ecbacfad7946cba5da179e0be8c2608de20f35c4f6acf4a1c8f3066"
+        },
+        {
+          "file": "shared/quiz-library.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "9b5b58734d3f872b0e1b79e51ad7b100c2f37907be502f343b7bc384233b4267"
+        },
+        {
+          "file": "shared/quiz-student.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "d657952bacf6bba254770330d2c7a686330abe00c80186d2f578ff436cde8555"
+        },
+        {
+          "file": "shared/quiz-workshop/generated/assets.json",
+          "status": 200,
+          "equal": true,
+          "sha256": "d1c3a08e1068ab1e08fd1ea8ce1f88a47e2f5624b6613afdfb3991c4e9fc091e"
+        },
+        {
+          "file": "shared/partner-pilot/outcomes.css",
+          "status": 200,
+          "equal": true,
+          "sha256": "8685ade831169c813f8d6c664d86ba177f7bbb2c184f641b5c003daa572ed97f"
+        },
+        {
+          "file": "shared/quiz-feedback-motion.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "115d0eaf34d8a936fa864fd79a4bdd6effaecd764e1b29ded02ea151e406509f"
+        },
+        {
+          "file": "shared/quiz-feedback-motion.css",
+          "status": 200,
+          "equal": true,
+          "sha256": "40f7f3641ca257a91584b89579ab7898a782090c2c071916c32d08291491ca32"
+        },
+        {
+          "file": "shared/partner-pilot/keepsake-growth.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "cfaf6d7243e2bdbcb3009b6a6d36ae81c07319e5c6e61a77efcb89ec7fbdf4b3"
+        },
+        {
+          "file": "shared/partner-pilot/learning.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "d995108e817ebf3ba714c67f15519d58a338f11e7575a6929f7ac70f4fd3b8db"
+        },
+        {
+          "file": "shared/reward-tree-config.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "faac73684c99da8d26b7a47681f2271e614fdc7b0da23978c8d0624fe07d3723"
+        }
+      ]
+    },
+    "productionAssets": {
+      "base": "https://it-class-tcwu.vercel.app",
+      "checkedAt": "2026-11-09T02:52:49.830Z",
+      "commit": "796a2773e479e0d8c4475ec66b09dc4d7d6d5adb",
+      "ok": true,
+      "checks": [
+        {
+          "file": "grade3/115-1/partner-practice.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "3dabae3d7523d7e75adef0734e6ae55069d48ebf5b087fd1198beccde89dc600"
+        },
+        {
+          "file": "grade3/115-1/quiz-library.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "87b2f02b5022c47028a1a63b3a28c8c3c39b27e148b3e1add6cda74e8f4d88bb"
+        },
+        {
+          "file": "grade3/115-1/quiz.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "45e5bd1d204c1a5335cb74badbf512010286d510b8a427a037b6d71b6dc82849"
+        },
+        {
+          "file": "grade3/115-1/navbar.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "9e6b3e8e120bd97f244e05bd1dc9974c552164a75a1b42b193511f8a59ebf9c1"
+        },
+        {
+          "file": "grade3/115-1/past-exam.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "0736800b70f1871141435d84eefac148e3fa7e297ee3c3682346c06ab13bb56b"
+        },
+        {
+          "file": "grade4/115-1/past-exam.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "7b8027f7c8baa66a5139e77dd2d79ce51a50ceac636f75841e8cd091776a5141"
+        },
+        {
+          "file": "grade4/115-1/navbar.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "b131e21fe9a637224359834495433ec03ee7e388f36fee9b21ef9b589ebf6014"
+        },
+        {
+          "file": "grade4/115-1/partner-practice.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "1f51e8c8f85974e3212b8407ea7f1d48839d27ecc7afe65f6b0659f03f5b1075"
+        },
+        {
+          "file": "grade4/115-1/quiz-library.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "1e9df575d81368a686088a0ede923eaa0208855f8fdc45ef299e76c1d0519ec0"
+        },
+        {
+          "file": "grade4/115-1/quiz.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "f50f18027a6087998d0809eed642a412bd3fca8385ab14fd8c2e7ac54a577c9f"
+        },
+        {
+          "file": "grade6/115-1/past-exam.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "08258bb6bb6581e7268b06d827b54c31ddec41b4dcaf79cbbd5789a6384f1c78"
+        },
+        {
+          "file": "grade6/115-1/partner-practice.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "1fad518c5bb4b7a0ebbdaa3cad29b1948c2c8fe9358437b10f8ed3f5ddd9b1d7"
+        },
+        {
+          "file": "grade6/115-1/quiz-library.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "1adf59696540360826a26441440e22fcd9abd3295dc78715c6a8f5f1f59475a2"
+        },
+        {
+          "file": "grade6/115-1/quiz.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "27e4c8dde3cb6865cb1613064167bb6fe38320990b9b1dbc28df59a541d9d009"
+        },
+        {
+          "file": "grade6/115-1/navbar.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "bd70c9ef2677ac94b00544480b538004db8bba99e18de5c3b83dea3e75a58a36"
+        },
+        {
+          "file": "grade9/115-1/navbar.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "b36ae227cdf44973aeb7825f39377d87ce2612290a2cb38fa8171cd8b18f8868"
+        },
+        {
+          "file": "grade9/115-1/quiz.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "3c99ffa499ab78e206ecd2864ea63a7896cd21c35f9cf6f625890997738898f0"
+        },
+        {
+          "file": "grade9/115-1/past-exam.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "c465fb7822e4f262ce6661303e76b16c4ff66d4626298d80f22943d477cad21b"
+        },
+        {
+          "file": "grade9/115-1/partner-practice.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "e87f25af618c97108a4c5806848750f4c190b0848168dac42c94a712c1dadf55"
+        },
+        {
+          "file": "grade9/115-1/quiz-library.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "4d6e2c66e62a3a1a1a0b5003b6019a7a80df4af6e5189ba56d405f647d8f8a3f"
+        },
+        {
+          "file": "shared/quiz-library.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "9b5b58734d3f872b0e1b79e51ad7b100c2f37907be502f343b7bc384233b4267"
+        },
+        {
+          "file": "shared/quiz-workshop-config.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "7b451ffb6ecbacfad7946cba5da179e0be8c2608de20f35c4f6acf4a1c8f3066"
+        },
+        {
+          "file": "shared/quiz-workshop-entry.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "164a1304f9c4b7fab7da5c3d52aad70f1a9255a937dc6aec4a5ce7c41180b4fb"
+        },
+        {
+          "file": "shared/quiz-workshop/generated/assets.json",
+          "status": 200,
+          "equal": true,
+          "sha256": "d1c3a08e1068ab1e08fd1ea8ce1f88a47e2f5624b6613afdfb3991c4e9fc091e"
+        },
+        {
+          "file": "shared/quiz-student.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "d657952bacf6bba254770330d2c7a686330abe00c80186d2f578ff436cde8555"
+        },
+        {
+          "file": "shared/partner-pilot/outcomes.css",
+          "status": 200,
+          "equal": true,
+          "sha256": "8685ade831169c813f8d6c664d86ba177f7bbb2c184f641b5c003daa572ed97f"
+        },
+        {
+          "file": "shared/partner-pilot/keepsake-growth.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "cfaf6d7243e2bdbcb3009b6a6d36ae81c07319e5c6e61a77efcb89ec7fbdf4b3"
+        },
+        {
+          "file": "shared/partner-pilot/learning.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "d995108e817ebf3ba714c67f15519d58a338f11e7575a6929f7ac70f4fd3b8db"
+        },
+        {
+          "file": "shared/quiz-feedback-motion.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "115d0eaf34d8a936fa864fd79a4bdd6effaecd764e1b29ded02ea151e406509f"
+        },
+        {
+          "file": "shared/quiz-feedback-motion.css",
+          "status": 200,
+          "equal": true,
+          "sha256": "40f7f3641ca257a91584b89579ab7898a782090c2c071916c32d08291491ca32"
+        },
+        {
+          "file": "shared/reward-tree-config.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "faac73684c99da8d26b7a47681f2271e614fdc7b0da23978c8d0624fe07d3723"
+        }
+      ]
+    },
+    "anonymous": {
+      "checks": [
+        {
+          "name": "3/quiz/1280: course registered",
+          "ok": true
+        },
+        {
+          "name": "3/quiz/1280: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "3/quiz/1280: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "3/past-exam/1280: course registered",
+          "ok": true
+        },
+        {
+          "name": "3/past-exam/1280: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "3/past-exam/1280: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "3/partner-practice/1280: course registered",
+          "ok": true
+        },
+        {
+          "name": "3/partner-practice/1280: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "3/partner-practice/1280: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "3/quiz-library/1280: course registered",
+          "ok": true
+        },
+        {
+          "name": "3/quiz-library/1280: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "3/quiz-library/1280: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "4/quiz/1280: course registered",
+          "ok": true
+        },
+        {
+          "name": "4/quiz/1280: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "4/quiz/1280: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "4/past-exam/1280: course registered",
+          "ok": true
+        },
+        {
+          "name": "4/past-exam/1280: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "4/past-exam/1280: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "4/partner-practice/1280: course registered",
+          "ok": true
+        },
+        {
+          "name": "4/partner-practice/1280: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "4/partner-practice/1280: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "4/quiz-library/1280: course registered",
+          "ok": true
+        },
+        {
+          "name": "4/quiz-library/1280: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "4/quiz-library/1280: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "6/quiz/1280: course registered",
+          "ok": true
+        },
+        {
+          "name": "6/quiz/1280: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "6/quiz/1280: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "6/past-exam/1280: course registered",
+          "ok": true
+        },
+        {
+          "name": "6/past-exam/1280: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "6/past-exam/1280: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "6/partner-practice/1280: course registered",
+          "ok": true
+        },
+        {
+          "name": "6/partner-practice/1280: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "6/partner-practice/1280: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "6/quiz-library/1280: course registered",
+          "ok": true
+        },
+        {
+          "name": "6/quiz-library/1280: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "6/quiz-library/1280: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "9/quiz/1280: course registered",
+          "ok": true
+        },
+        {
+          "name": "9/quiz/1280: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "9/quiz/1280: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "9/past-exam/1280: course registered",
+          "ok": true
+        },
+        {
+          "name": "9/past-exam/1280: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "9/past-exam/1280: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "9/partner-practice/1280: course registered",
+          "ok": true
+        },
+        {
+          "name": "9/partner-practice/1280: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "9/partner-practice/1280: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "9/quiz-library/1280: course registered",
+          "ok": true
+        },
+        {
+          "name": "9/quiz-library/1280: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "9/quiz-library/1280: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "3/quiz/390: course registered",
+          "ok": true
+        },
+        {
+          "name": "3/quiz/390: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "3/quiz/390: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "3/past-exam/390: course registered",
+          "ok": true
+        },
+        {
+          "name": "3/past-exam/390: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "3/past-exam/390: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "3/partner-practice/390: course registered",
+          "ok": true
+        },
+        {
+          "name": "3/partner-practice/390: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "3/partner-practice/390: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "3/quiz-library/390: course registered",
+          "ok": true
+        },
+        {
+          "name": "3/quiz-library/390: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "3/quiz-library/390: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "4/quiz/390: course registered",
+          "ok": true
+        },
+        {
+          "name": "4/quiz/390: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "4/quiz/390: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "4/past-exam/390: course registered",
+          "ok": true
+        },
+        {
+          "name": "4/past-exam/390: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "4/past-exam/390: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "4/partner-practice/390: course registered",
+          "ok": true
+        },
+        {
+          "name": "4/partner-practice/390: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "4/partner-practice/390: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "4/quiz-library/390: course registered",
+          "ok": true
+        },
+        {
+          "name": "4/quiz-library/390: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "4/quiz-library/390: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "6/quiz/390: course registered",
+          "ok": true
+        },
+        {
+          "name": "6/quiz/390: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "6/quiz/390: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "6/past-exam/390: course registered",
+          "ok": true
+        },
+        {
+          "name": "6/past-exam/390: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "6/past-exam/390: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "6/partner-practice/390: course registered",
+          "ok": true
+        },
+        {
+          "name": "6/partner-practice/390: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "6/partner-practice/390: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "6/quiz-library/390: course registered",
+          "ok": true
+        },
+        {
+          "name": "6/quiz-library/390: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "6/quiz-library/390: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "9/quiz/390: course registered",
+          "ok": true
+        },
+        {
+          "name": "9/quiz/390: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "9/quiz/390: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "9/past-exam/390: course registered",
+          "ok": true
+        },
+        {
+          "name": "9/past-exam/390: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "9/past-exam/390: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "9/partner-practice/390: course registered",
+          "ok": true
+        },
+        {
+          "name": "9/partner-practice/390: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "9/partner-practice/390: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "9/quiz-library/390: course registered",
+          "ok": true
+        },
+        {
+          "name": "9/quiz-library/390: anonymous remains locked",
+          "ok": true
+        },
+        {
+          "name": "9/quiz-library/390: viewport fits",
+          "ok": true
+        },
+        {
+          "name": "no uncaught browser exceptions",
+          "ok": true
+        },
+        {
+          "name": "no production backend request",
+          "ok": true
+        }
+      ],
+      "errors": [],
+      "backend": [],
+      "context": "page-only in-memory anonymous storage"
+    },
+    "localPreviewChecks": 164,
+    "existingBrowserRegression": 350,
+    "nodeAndIsolatedSqlTests": 70
+  },
+  "scope": "課程 navbar 與選卷能力設定化補修；本機比較台與 fixture 不部署。",
+  "preserved": "未套用 SQL，未更動題庫、原卷版本、登入權限、學生紀錄、草稿、獎勵或動畫。",
+  "limitations": [
+    "未重驗真實 Google 雙帳號／雙機、Safari／iPad、正式原卷全題判分與真人計獎。",
+    "匿名正式檢查使用單一頁面記憶體身分隔離，未操作持久登入或正式作答。"
+  ]
+}

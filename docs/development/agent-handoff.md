@@ -1,17 +1,17 @@
-# 2026-11-09 跨校比較預覽與設定化補修（已授權發布，驗證中）
+# 2026-11-09 跨校比較預覽與設定化補修（已正式發布）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-workshop-settings-20261109 | 2026-11-09T02:45:31.169129+00:00 | 本 PR 合併後的乾淨 main | `dpl_AvkasWz4M8ZnWSsG632dPwxnJi27` | 共用課程設定／navbar／library／bootstrap及生成入口與 manifest | 已授權，待 main 發布腳本取鎖與完整樹比對 |
+| 已完成 | Codex-workshop-settings-20261109 | 2026-11-09T02:48:30.945Z | `796a277` | `dpl_AvkasWz4M8ZnWSsG632dPwxnJi27` | grade3/115-1/navbar.js、grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/navbar.js、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/navbar.js、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/navbar.js、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、release/quiz-workshop-build.mjs、shared/quiz-library.mjs、shared/quiz-student.mjs、shared/quiz-workshop-config.mjs、shared/quiz-workshop-entry.mjs、shared/quiz-workshop/generated/assets.json | `dpl_GYRnWPyK5mDx4WbAus1Qags2gst2`／回滾 `dpl_AvkasWz4M8ZnWSsG632dPwxnJi27`（eolOnly 0） |
 
 
 - 前輪共用答題 runtime 已上線；本輪真正差異是 navbar 品牌／課程連結與 library 考古區能力／說明改由共用課程設定供應，保留原 UI 與 adapter，不重做整套頁面。
 - 單一成果預覽 http://localhost:8872/ 已開給使用者並保留；worktree 為 `D:/projects/it-class-tcwu-worktrees/quiz-workshop-preview-20261109`，分支 `codex/quiz-workshop-preview-20261109`，基準 origin/main 803986b。服務使用中，不清理此目錄。
 - 頂溪三／六、土城四、中正九可切一般／個人原卷／夥伴。iframe 使用真正生成入口與原控制器；夥伴已由原 app 的邀請／snapshot／mutate 進入合成房，不再手動掛 UI。合成小隊／答案／草稿皆只在 localhost 記憶體，CSP 禁止連正式資料服務。
 - 使用者先要求不要上線，後明確接受8872預覽並授權發布。發布前仍須完成測試、報告 PR／commit；比較台及 fixture 位於 automation，不得部署。正式任務、答案、草稿、訂正、名冊、花葉及紀念動畫均保留，不套 SQL。
-- 目前已通過164項跨校／模式／桌手機預覽檢查、350項既有瀏覽器回歸及70項 Node／隔離 SQL 測試，營地合成訊息已通過，pageerror0、正式請求0。來源與限制見 [本輪交付](quiz-workshop-preview-20261109.md)。正式部署仍為 dpl_AvkasWz4M8ZnWSsG632dPwxnJi27，發布鎖目前無持有人；本輪尚未部署。
+- 目前已通過164項跨校／模式／桌手機預覽檢查、350項既有瀏覽器回歸及70項 Node／隔離 SQL 測試，營地合成訊息已通過，pageerror0、正式請求0。來源與限制見 [本輪交付](quiz-workshop-preview-20261109.md)。PR125 已合併至 main `796a277`，由新乾淨 main worktree 以發布腳本部署／promote。完整樹 ok:true（26改、0增刪、0非預期、eolOnly0）；正式部署 `dpl_GYRnWPyK5mDx4WbAus1Qags2gst2`。候選與正式各31資產 HTTP200／SHA-256 符合 main，包含6個原有獎勵／動畫資產；98項正式匿名桌機／手機檢查通過，pageerror0、後端請求0，發布鎖已釋放。[發布收據](quiz-workshop-settings-release-20261109.json)。
 
 # 2026-11-08 考前練功坊共用模組化（已正式發布）
 
