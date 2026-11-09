@@ -1,17 +1,20 @@
-# 2026-11-09 個人考古 navbar 名冊補讀（已授權發布，發布中）
+# 2026-11-09 個人考古 navbar 名冊補讀（已正式發布，真登入待主對話補驗）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-past-navbar-20261109 | 發布腳本取鎖時登記 | 本 PR 合併後的乾淨 main | `dpl_GYRnWPyK5mDx4WbAus1Qags2gst2` | 共用導覽身分、考古入口及16個生成頁面與 manifest | 主對話正式雙帳號驗證後已通知可合併發布；待腳本取鎖及完整樹比對 |
+| 已完成 | Codex-past-navbar-20261109 | 2026-11-09T03:36:09.498Z | `a0b16ce` | `dpl_GYRnWPyK5mDx4WbAus1Qags2gst2` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/grade6-nav-identity.js、shared/quiz-past-exams.mjs、shared/quiz-workshop/generated/assets.json | `dpl_4dzZgLLGzwJ8v8XfAkXebipaBxxA`／回滾 `dpl_GYRnWPyK5mDx4WbAus1Qags2gst2`（eolOnly 0） |
 
-- [PR127](https://github.com/chianwu-hash/it-class-tcwu/pull/127) 已建立；實作 commit `5b69875a64f257f7779e31266f0564d3dc65e4ec`，後續僅補此交接連結。未合併、未部署。
+- [PR127](https://github.com/chianwu-hash/it-class-tcwu/pull/127) 已建立；實作 commit `5b69875a64f257f7779e31266f0564d3dc65e4ec`，後續文件提交登記發布，PR127 已合併，來源 main `a0b16ce`。
 - 主對話正式兩帳號驗證發現：考古 `start/resume` identity 只有 role／email／grade／class_code，沒有座號姓名；直接 provide 給 `provided:true` 的 navbar 會停留 Email。普通與夥伴正常。前輪合成 identity 完整，未驗到此差異。
 - 從最新 `origin/main b2adae4` 新建 `codex/past-navbar-identity-20261109`／`D:/projects/it-class-tcwu-worktrees/past-navbar-identity-20261109`。此工作樹僅本執行者擁有導覽身分與考古呈現修改，主對話不改 runtime；不沿用舊工作樹。
 - 考古頁 opt-in `lookupIfIncomplete`，只在資料不足時使用原本人名冊讀取；完整資料不加發請求、已有完整快取不被部分 snapshot 擦掉。沿用同一模組的 pending／generation／session 檢查；失敗安全保留 Email，不阻塞作答。未改 SQL／API／名冊權限／學生資料或產品測試身分。
 - 18項純 Node／隔離 VM 及產物／路由測試通過，含10項名冊生命週期／競態測試；生成入口與 manifest 已同步，產物檢查與 diff-check 通過。未操作01／02瀏覽器或正式帳號，未進行真登入回歸。
 - 主對話已完成原版本正式雙帳號流程，讀過實際 diff 並重跑18項測試與產物檢查，現已通知可依使用者既有授權合併與發布。發布不操作01／02或正式測試帳號，真登入 navbar 由主對話於發布後補驗。具體原因、檔案責任與下一步見 [修正說明](past-navbar-identity-20261109.md)。
+
+- 已由新乾淨 main worktree 執行 start／deploy／promote。完整樹 ok:true（19改、0增刪、0非預期、eolOnly0）；候選與正式各25資產 HTTP200／SHA-256 符合 main，包含6個原有獎勵／動畫檔。正式部署 `dpl_4dzZgLLGzwJ8v8XfAkXebipaBxxA`，回滾 `dpl_GYRnWPyK5mDx4WbAus1Qags2gst2`，發布鎖已釋放。[發布收據](past-navbar-release-20261109.json)。
+- 本輪未操作瀏覽器、測試帳號或正式資料；下一步由主對話以既有兩帳號確認 navbar 班級／座號／姓名與 Email title。新發布不冒稱已完成這項真登入驗證。
 
 # 2026-11-09 跨校比較預覽與設定化補修（已正式發布）
 

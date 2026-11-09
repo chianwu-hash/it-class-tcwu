@@ -1,0 +1,415 @@
+{
+  "agent": "Codex-past-navbar-20261109",
+  "commit": "a0b16ceb96899595988c0f70c1716b210d6ffe1c",
+  "baseline": "dpl_GYRnWPyK5mDx4WbAus1Qags2gst2",
+  "expected": {
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade3/115-1/past-exam.html",
+      "grade3/115-1/quiz-library.html",
+      "grade3/115-1/quiz.html",
+      "grade4/115-1/partner-practice.html",
+      "grade4/115-1/past-exam.html",
+      "grade4/115-1/quiz-library.html",
+      "grade4/115-1/quiz.html",
+      "grade6/115-1/partner-practice.html",
+      "grade6/115-1/past-exam.html",
+      "grade6/115-1/quiz-library.html",
+      "grade6/115-1/quiz.html",
+      "grade9/115-1/partner-practice.html",
+      "grade9/115-1/past-exam.html",
+      "grade9/115-1/quiz-library.html",
+      "grade9/115-1/quiz.html",
+      "shared/grade6-nav-identity.js",
+      "shared/quiz-past-exams.mjs",
+      "shared/quiz-workshop/generated/assets.json"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "startedAt": "2026-11-09T03:36:09.498Z",
+  "state": "promoted",
+  "candidate": "dpl_4dzZgLLGzwJ8v8XfAkXebipaBxxA",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade3/115-1/past-exam.html",
+      "grade3/115-1/quiz-library.html",
+      "grade3/115-1/quiz.html",
+      "grade4/115-1/partner-practice.html",
+      "grade4/115-1/past-exam.html",
+      "grade4/115-1/quiz-library.html",
+      "grade4/115-1/quiz.html",
+      "grade6/115-1/partner-practice.html",
+      "grade6/115-1/past-exam.html",
+      "grade6/115-1/quiz-library.html",
+      "grade6/115-1/quiz.html",
+      "grade9/115-1/partner-practice.html",
+      "grade9/115-1/past-exam.html",
+      "grade9/115-1/quiz-library.html",
+      "grade9/115-1/quiz.html",
+      "shared/grade6-nav-identity.js",
+      "shared/quiz-past-exams.mjs",
+      "shared/quiz-workshop/generated/assets.json"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-09T03:36:30.904Z",
+  "promotedAt": "2026-11-09T03:37:56.233Z",
+  "alias": "dpl_4dzZgLLGzwJ8v8XfAkXebipaBxxA",
+  "rollback": "dpl_GYRnWPyK5mDx4WbAus1Qags2gst2",
+  "handoffRow": "| 已完成 | Codex-past-navbar-20261109 | 2026-11-09T03:36:09.498Z | `a0b16ce` | `dpl_GYRnWPyK5mDx4WbAus1Qags2gst2` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/grade6-nav-identity.js、shared/quiz-past-exams.mjs、shared/quiz-workshop/generated/assets.json | `dpl_4dzZgLLGzwJ8v8XfAkXebipaBxxA`／回滾 `dpl_GYRnWPyK5mDx4WbAus1Qags2gst2`（eolOnly 0） |",
+  "publicUrl": "https://it-class-tcwu.vercel.app",
+  "pullRequest": "https://github.com/chianwu-hash/it-class-tcwu/pull/127",
+  "candidateUrl": "https://it-class-tcwu-nzpqk6l6y-chianwu-4755s-projects.vercel.app",
+  "verification": {
+    "candidateAssets": {
+      "base": "https://it-class-tcwu-nzpqk6l6y-chianwu-4755s-projects.vercel.app",
+      "checkedAt": "2026-11-09T03:37:06.455Z",
+      "commit": "a0b16ceb96899595988c0f70c1716b210d6ffe1c",
+      "ok": true,
+      "checks": [
+        {
+          "file": "grade3/115-1/quiz.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "38b5ba8ed0c777267f3d1dc5ea39fa25216b007d981ec5481f67f6af082502df"
+        },
+        {
+          "file": "grade3/115-1/past-exam.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "72af6102ba0dc4409bb642d3d5a1a2a8dbf8b2ce28204d045e6c7d82247107ae"
+        },
+        {
+          "file": "grade3/115-1/partner-practice.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "07db8a5ac9b9a5943c9cf56a16a1f34b7834a4663364dcda9bdb997b492ab67e"
+        },
+        {
+          "file": "grade3/115-1/quiz-library.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "3ce25cc78602d628866bdba55ab28a294840154b02b22ceb3301c9e3c3ec1fde"
+        },
+        {
+          "file": "grade4/115-1/partner-practice.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "11168a26e96723e10c13262a9f92235761792e03e159b5f700a29d5b36945161"
+        },
+        {
+          "file": "grade4/115-1/quiz.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "10410678e9bd779fc0665689ac81fd5509328ce7021e29b8b0f47034af463ae2"
+        },
+        {
+          "file": "grade4/115-1/quiz-library.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "b2379ab1be86080b9eb2f25f2bd192a83c1dcd6ed16037f720970715dda35db9"
+        },
+        {
+          "file": "grade4/115-1/past-exam.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "c0bbfdada29d409bbe28709e9eb50305c54dacc91a487018765c56f171b8869c"
+        },
+        {
+          "file": "grade6/115-1/partner-practice.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "93979072928011845ad773dcdb83a6a0d41e52aeb6425015984e5cb1b8572c50"
+        },
+        {
+          "file": "grade6/115-1/past-exam.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "d5d6d91b3531648b44ce6983d4dd3badeaa4ac5da7a402342b6742b91ed88ebf"
+        },
+        {
+          "file": "grade6/115-1/quiz.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "141a0bdc06341f596d3e32c51bf15835bf3be96aaef1404496757dab75a05ef3"
+        },
+        {
+          "file": "grade6/115-1/quiz-library.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "0917b71f4a43f8a04656b54aafdc1bc92ddd519393fc342744147042e61fbd20"
+        },
+        {
+          "file": "grade9/115-1/partner-practice.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "e79456c5a46d19f758d21484152bd6b9a4d1ffebb2636c151b885f77b318c4f8"
+        },
+        {
+          "file": "grade9/115-1/quiz-library.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "35674b8b2252630ffcd60d2b33f1c7875305f3d3dbde5ce9ceb491fd5d513b55"
+        },
+        {
+          "file": "grade9/115-1/past-exam.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "ebd88c2e3c5245fae7e985f29f55546493a97acf985d7addc0d70c89cd26d70a"
+        },
+        {
+          "file": "shared/grade6-nav-identity.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "1ec084fd7f64415ee2d364f83836a8542b98543ad4e09d851fb292e09df17eb2"
+        },
+        {
+          "file": "grade9/115-1/quiz.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "1f878ac9bd1e08d637c1e3548a895121605273554c6f5a6c7af6e651b54a7c12"
+        },
+        {
+          "file": "shared/quiz-past-exams.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "9bb79dcffe554f73ca092938ac6a461089c7eb286319ceb0dbb3cb58c1b3cb5e"
+        },
+        {
+          "file": "shared/quiz-workshop/generated/assets.json",
+          "status": 200,
+          "equal": true,
+          "sha256": "cb2172e095e5fd02f18aac1b8fcbf32e9eef00b796da9bfea34a31ae99a08a71"
+        },
+        {
+          "file": "shared/partner-pilot/keepsake-growth.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "cfaf6d7243e2bdbcb3009b6a6d36ae81c07319e5c6e61a77efcb89ec7fbdf4b3"
+        },
+        {
+          "file": "shared/partner-pilot/learning.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "d995108e817ebf3ba714c67f15519d58a338f11e7575a6929f7ac70f4fd3b8db"
+        },
+        {
+          "file": "shared/partner-pilot/outcomes.css",
+          "status": 200,
+          "equal": true,
+          "sha256": "8685ade831169c813f8d6c664d86ba177f7bbb2c184f641b5c003daa572ed97f"
+        },
+        {
+          "file": "shared/quiz-feedback-motion.css",
+          "status": 200,
+          "equal": true,
+          "sha256": "40f7f3641ca257a91584b89579ab7898a782090c2c071916c32d08291491ca32"
+        },
+        {
+          "file": "shared/quiz-feedback-motion.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "115d0eaf34d8a936fa864fd79a4bdd6effaecd764e1b29ded02ea151e406509f"
+        },
+        {
+          "file": "shared/reward-tree-config.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "faac73684c99da8d26b7a47681f2271e614fdc7b0da23978c8d0624fe07d3723"
+        }
+      ]
+    },
+    "productionAssets": {
+      "base": "https://it-class-tcwu.vercel.app",
+      "checkedAt": "2026-11-09T03:37:57.151Z",
+      "commit": "a0b16ceb96899595988c0f70c1716b210d6ffe1c",
+      "ok": true,
+      "checks": [
+        {
+          "file": "grade3/115-1/quiz-library.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "3ce25cc78602d628866bdba55ab28a294840154b02b22ceb3301c9e3c3ec1fde"
+        },
+        {
+          "file": "grade4/115-1/partner-practice.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "11168a26e96723e10c13262a9f92235761792e03e159b5f700a29d5b36945161"
+        },
+        {
+          "file": "grade3/115-1/partner-practice.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "07db8a5ac9b9a5943c9cf56a16a1f34b7834a4663364dcda9bdb997b492ab67e"
+        },
+        {
+          "file": "grade3/115-1/quiz.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "38b5ba8ed0c777267f3d1dc5ea39fa25216b007d981ec5481f67f6af082502df"
+        },
+        {
+          "file": "grade3/115-1/past-exam.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "72af6102ba0dc4409bb642d3d5a1a2a8dbf8b2ce28204d045e6c7d82247107ae"
+        },
+        {
+          "file": "grade6/115-1/past-exam.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "d5d6d91b3531648b44ce6983d4dd3badeaa4ac5da7a402342b6742b91ed88ebf"
+        },
+        {
+          "file": "grade6/115-1/partner-practice.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "93979072928011845ad773dcdb83a6a0d41e52aeb6425015984e5cb1b8572c50"
+        },
+        {
+          "file": "grade4/115-1/quiz.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "10410678e9bd779fc0665689ac81fd5509328ce7021e29b8b0f47034af463ae2"
+        },
+        {
+          "file": "grade4/115-1/quiz-library.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "b2379ab1be86080b9eb2f25f2bd192a83c1dcd6ed16037f720970715dda35db9"
+        },
+        {
+          "file": "grade4/115-1/past-exam.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "c0bbfdada29d409bbe28709e9eb50305c54dacc91a487018765c56f171b8869c"
+        },
+        {
+          "file": "grade9/115-1/past-exam.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "ebd88c2e3c5245fae7e985f29f55546493a97acf985d7addc0d70c89cd26d70a"
+        },
+        {
+          "file": "grade6/115-1/quiz-library.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "0917b71f4a43f8a04656b54aafdc1bc92ddd519393fc342744147042e61fbd20"
+        },
+        {
+          "file": "grade9/115-1/partner-practice.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "e79456c5a46d19f758d21484152bd6b9a4d1ffebb2636c151b885f77b318c4f8"
+        },
+        {
+          "file": "grade9/115-1/quiz-library.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "35674b8b2252630ffcd60d2b33f1c7875305f3d3dbde5ce9ceb491fd5d513b55"
+        },
+        {
+          "file": "grade6/115-1/quiz.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "141a0bdc06341f596d3e32c51bf15835bf3be96aaef1404496757dab75a05ef3"
+        },
+        {
+          "file": "grade9/115-1/quiz.html",
+          "status": 200,
+          "equal": true,
+          "sha256": "1f878ac9bd1e08d637c1e3548a895121605273554c6f5a6c7af6e651b54a7c12"
+        },
+        {
+          "file": "shared/quiz-past-exams.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "9bb79dcffe554f73ca092938ac6a461089c7eb286319ceb0dbb3cb58c1b3cb5e"
+        },
+        {
+          "file": "shared/partner-pilot/keepsake-growth.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "cfaf6d7243e2bdbcb3009b6a6d36ae81c07319e5c6e61a77efcb89ec7fbdf4b3"
+        },
+        {
+          "file": "shared/grade6-nav-identity.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "1ec084fd7f64415ee2d364f83836a8542b98543ad4e09d851fb292e09df17eb2"
+        },
+        {
+          "file": "shared/quiz-workshop/generated/assets.json",
+          "status": 200,
+          "equal": true,
+          "sha256": "cb2172e095e5fd02f18aac1b8fcbf32e9eef00b796da9bfea34a31ae99a08a71"
+        },
+        {
+          "file": "shared/quiz-feedback-motion.mjs",
+          "status": 200,
+          "equal": true,
+          "sha256": "115d0eaf34d8a936fa864fd79a4bdd6effaecd764e1b29ded02ea151e406509f"
+        },
+        {
+          "file": "shared/partner-pilot/outcomes.css",
+          "status": 200,
+          "equal": true,
+          "sha256": "8685ade831169c813f8d6c664d86ba177f7bbb2c184f641b5c003daa572ed97f"
+        },
+        {
+          "file": "shared/reward-tree-config.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "faac73684c99da8d26b7a47681f2271e614fdc7b0da23978c8d0624fe07d3723"
+        },
+        {
+          "file": "shared/partner-pilot/learning.js",
+          "status": 200,
+          "equal": true,
+          "sha256": "d995108e817ebf3ba714c67f15519d58a338f11e7575a6929f7ac70f4fd3b8db"
+        },
+        {
+          "file": "shared/quiz-feedback-motion.css",
+          "status": 200,
+          "equal": true,
+          "sha256": "40f7f3641ca257a91584b89579ab7898a782090c2c071916c32d08291491ca32"
+        }
+      ]
+    },
+    "nodeTests": 18,
+    "identityLifecycleTests": 10,
+    "generatedAssetsCheck": true,
+    "diffCheck": true,
+    "protectedPathsUnchanged": [
+      "supabase/",
+      "shared/auth.js",
+      "shared/navbar-auth.js",
+      "shared/quiz-server.mjs",
+      "shared/quiz-past-ui.mjs",
+      "shared/partner-pilot/app.mjs",
+      "shared/partner-pilot/learning.js"
+    ]
+  },
+  "scope": "僅考古部分身分資料的導覽名冊條件補讀，以及共用模組指紋更新。",
+  "preserved": "未套用 SQL，未更動 API、名冊權限、任務、媒體、正式作答、草稿或獎勵。",
+  "limitations": [
+    "本發布者依交接要求未操作01／02瀏覽器及正式測試帳號。",
+    "上線後真登入 navbar 由主對話補驗；不能將原版本兩帳號全流程驗證視為本修正上線後已重驗。"
+  ]
+}
