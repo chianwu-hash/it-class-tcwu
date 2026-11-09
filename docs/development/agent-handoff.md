@@ -1,5 +1,6 @@
 # 2026-11-09 個人考古 navbar 名冊補讀（PR 備妥，暫不合併／部署）
 
+- [PR127](https://github.com/chianwu-hash/it-class-tcwu/pull/127) 已建立；實作 commit `5b69875a64f257f7779e31266f0564d3dc65e4ec`，後續僅補此交接連結。未合併、未部署。
 - 主對話正式兩帳號驗證發現：考古 `start/resume` identity 只有 role／email／grade／class_code，沒有座號姓名；直接 provide 給 `provided:true` 的 navbar 會停留 Email。普通與夥伴正常。前輪合成 identity 完整，未驗到此差異。
 - 從最新 `origin/main b2adae4` 新建 `codex/past-navbar-identity-20261109`／`D:/projects/it-class-tcwu-worktrees/past-navbar-identity-20261109`。此工作樹僅本執行者擁有導覽身分與考古呈現修改，主對話不改 runtime；不沿用舊工作樹。
 - 考古頁 opt-in `lookupIfIncomplete`，只在資料不足時使用原本人名冊讀取；完整資料不加發請求、已有完整快取不被部分 snapshot 擦掉。沿用同一模組的 pending／generation／session 檢查；失敗安全保留 Email，不阻塞作答。未改 SQL／API／名冊權限／學生資料或產品測試身分。
