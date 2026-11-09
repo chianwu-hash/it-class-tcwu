@@ -3,6 +3,7 @@ import {afterGardenReward} from './garden-unlock-notice.mjs?v=20261102-grade9-re
 import { renderContent as renderQuizContent } from './quiz-render.mjs?v=20261029-load-batch1';
 import { mergeQuizSnapshot } from './quiz-state.mjs';
 import {createQuestionReport} from './quiz-question-reports.mjs';
+import {createQuizStudy,studySourceLabel} from './quiz-study.mjs';
 
 import {quizFeedbackMotion} from './quiz-feedback-motion.mjs?v=20261107-partner-motion';
 
@@ -31,6 +32,7 @@ export function initServerQuiz({ selectors, server }) {
     contentCache.set(key,box);return box;
   };
   let userId = null, generation = 0, state = null, cursor = 0, pending = null, selected = '', busy = false, loadError = '', showFullReview = false;
+  const study=createQuizStudy({root,kind:'normal',getSnapshot:()=>state,resolvePage:url=>server.request.resolveStudyPage?.(url,{kind:'normal',attempt_id:state?.attempt_id,version_id:state?.version_id})??Promise.reject(Error('課本暫時無法載入。'))});
   const reportForms=new Map();
   function report(q){
     const key=state.attempt_id+':'+q.id,g=generation;
@@ -98,10 +100,14 @@ export function initServerQuiz({ selectors, server }) {
     box.append(make('p', q.type === 'single'
       ? `正確選項：${String.fromCharCode(65 + q.options.findIndex(o => o.id === review.answer.option_id))}`
       : `可接受答案：${review.answer.accepted.join('、')}`));
-    renderContent(box, review.explanation); article.append(box);
+    const studentExplanation=study.explanation(q.id);
+    renderContent(box,studentExplanation?{text:studentExplanation.text,media:[]}:review.explanation);
+    if(studentExplanation)box.append(make('p',studySourceLabel(studentExplanation.origin),'helper'));
+    article.append(box);
     if (animate && actor) quizFeedbackMotion.play(actor);
   }
   function render() {
+    study.refresh();
     const view=state&&`${generation}:${state.attempt_id}:${state.version_id}:${showFullReview?'all':state.document.questions[Math.min(cursor,state.document.questions.length-1)]?.id}`;
     const changed=view!==mediaView;
     if(changed){stopAudio();mediaScope?.dispose();contentCache.clear();mediaView=view;
@@ -256,6 +262,7 @@ export function initServerQuiz({ selectors, server }) {
     const id = session?.user?.id || null;
     if (id === userId) return;
     stopQuizLeafCelebration();
+    study.clear();
     workspace.reset({forget:true});
     generation++; reportForms.clear();userId = id; busy = false; state = null; selected = ''; pending = null; loadError = ''; cursor = 0; showFullReview = false; feedbackAnimation = null;seenQuestion=null;
     if (lock) { lock.hidden = Boolean(id); lock.classList.toggle('hidden', Boolean(id)); }

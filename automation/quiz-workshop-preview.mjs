@@ -17,13 +17,18 @@ http.createServer(async(req,res)=>{
   }
   if(req.method!=='GET')throw Error('not_found');
   if(p==='/')return send('text/html',await fs.readFile(path.join(root,'automation/fixtures/workshop-preview.html')));
+  if(p==='/study')return send('text/html',await fs.readFile(path.join(root,'automation/fixtures/quiz-study-preview.html')));
   if(p==='/__workshop-image.svg')return send('image/svg+xml','<svg xmlns="http://www.w3.org/2000/svg" width="220" height="100"><rect width="220" height="100" fill="#e0f2fe"/><path d="M20 60h180l-30 30H50z" fill="#0f766e"/></svg>');
+  if(p==='/__workshop-study-page.svg'){
+   const wide=url.searchParams.get('spread')==='true';
+   return send('image/svg+xml',`<svg xmlns="http://www.w3.org/2000/svg" width="${wide?1640:820}" height="1160"><rect width="100%" height="100%" fill="#fffdf2"/>${Array.from({length:20},(_,i)=>`<text x="35" y="${60+i*50}" font-size="28" fill="#185e4c">Local textbook sample ${i+1}</text>`).join('')}</svg>`);
+  }
   if(p==='/__workshop-audio.wav'){
    const bytes=Buffer.alloc(44+1600);bytes.write('RIFF');bytes.writeUInt32LE(bytes.length-8,4);bytes.write('WAVEfmt ',8);bytes.writeUInt32LE(16,16);bytes.writeUInt16LE(1,20);bytes.writeUInt16LE(1,22);bytes.writeUInt32LE(8000,24);bytes.writeUInt32LE(16000,28);bytes.writeUInt16LE(2,32);bytes.writeUInt16LE(16,34);bytes.write('data',36);bytes.writeUInt32LE(1600,40);res.writeHead(200,{'Content-Type':'audio/wav'});return res.end(bytes);
   }
   if(p==='/shared/auth.js')return send('text/javascript',(await fs.readFile(path.join(root,'automation/fixtures/nav-identity-auth.mjs'),'utf8'))+'\nsupabase.auth.getSession=async()=>({data:{session:window.fixtureSession},error:null});const previewUser=new URLSearchParams(location.search).get("preview_user");if(["a","b"].includes(previewUser))window.fixtureSwitch(previewUser);');
   if(p==='/shared/garden-unlock-notice.mjs')return send('text/javascript','export function afterGardenReward(){};export function checkGardenUnlock(){}');
-  if(p==='/shared/quiz-transport.mjs')return send('text/javascript',`export function createAuthenticatedTransport({getSession}){return async(route,body)=>{window.workshopCalls??=[];window.workshopCalls.push({route,body});const params=new URLSearchParams(location.search);const r=await fetch('/__workshop-rpc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({route,body,grade:Number(document.body.dataset.grade),user:getSession()?.user?.id,namespace:params.get('preview')||'default',roomKind:params.get('preview_kind')||'normal'})});const result=await r.json();if(!r.ok)throw Error(result.error);if(window.workshopDropNext){window.workshopDropNext=false;throw TypeError('synthetic_lost_response');}return result;};}`);
+  if(p==='/shared/quiz-transport.mjs')return send('text/javascript',`export function createAuthenticatedTransport({getSession}){return async(route,body)=>{window.workshopCalls??=[];window.workshopCalls.push({route,body});const params=new URLSearchParams(location.search);const r=await fetch('/__workshop-rpc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({route,body,grade:Number(document.body.dataset.grade),user:getSession()?.user?.id,namespace:params.get('preview')||'default',roomKind:params.get('preview_kind')||'normal',study:params.get('preview_study')==='1'})});const result=await r.json();if(!r.ok)throw Error(result.error);if(window.workshopDropNext){window.workshopDropNext=false;throw TypeError('synthetic_lost_response');}return result;};}`);
   if(!p.startsWith('/shared/')&&!p.startsWith('/automation/fixtures/')&&!/^\/grade[3469]\/115-1\/(quiz|past-exam|partner-practice|quiz-library)\.html$/.test(p)&&!/^\/grade[3469]\/115-1\/navbar.js$/.test(p))throw Error('not_found');
   const file=path.resolve(root,'.'+p);if(!file.startsWith(path.resolve(root)+path.sep))throw Error('not_found');
   let bytes=await fs.readFile(file);

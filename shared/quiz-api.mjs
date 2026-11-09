@@ -87,5 +87,12 @@ export async function createQuizRequest({ getSession, localStudent = null, local
     return createMediaScope({context,read:readMedia,...rest,
       valid:()=>valid() && (local || (getSession?.()?.user?.id===context.user_id && testIdentityRevision(context.user_id)===revision))});
   };
+  request.resolveStudyPage=async(url,context)=>{
+    const revision=testIdentityRevision(getSession?.()?.user?.id),user=getSession?.()?.user?.id;
+    const body={action:'textbook',url,...context};
+    const result=local?await localCall('/__quiz-media',body):await transport('/functions/v1/quiz-media',body);
+    if(!local&&(getSession?.()?.user?.id!==user||testIdentityRevision(user)!==revision))throw Error('登入身分已變更。');
+    return result.url;
+  };
   return request;
 }

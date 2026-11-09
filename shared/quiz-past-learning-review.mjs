@@ -1,11 +1,13 @@
 // Only render reviewed content attached to an already disclosed answer record.
 // No question mappings, answers, network calls, or progress writes live here.
-export function renderPastLearningReview({host,group,record,version,onPractice}){
+export function renderPastLearningReview({host,group,record,version,onPractice,showConcepts=true}){
  const review=record?.learningReview,source=review?.source;
  if(review?.schema!==1||source?.versionId!==version||source?.groupId!==group.id||
   !group.fields.some(f=>f.id===source.questionId)||
   !record.results?.some(r=>r.questionId===source.questionId&&typeof r.correct==='boolean')||
-  typeof review.explanation!=='string'||!Array.isArray(review.concepts)||!review.concepts.length)return false;
+  typeof review.explanation!=='string')return false;
+ if(!showConcepts){const section=host.ownerDocument.createElement('section');section.className='past-learning-review';const h=host.ownerDocument.createElement('h3'),p=host.ownerDocument.createElement('p'),note=host.ownerDocument.createElement('p');h.textContent='這題怎麼想？';p.textContent=review.explanation;note.className='helper';note.textContent='補充解析由 AI 整理，非官方解析。';section.append(h,p,note);host.append(section);return true;}
+ if(!Array.isArray(review.concepts)||!review.concepts.length)return false;
  if(!review.concepts.every(c=>typeof c.id==='string'&&/^[a-z0-9-]{1,80}$/.test(c.id)&&typeof c.title==='string'&&
   typeof c.connection==='string'&&Array.isArray(c.points)&&c.points.every(p=>typeof p==='string')))return false;
  const doc=host.ownerDocument,make=(tag,text,cls)=>{const n=doc.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};

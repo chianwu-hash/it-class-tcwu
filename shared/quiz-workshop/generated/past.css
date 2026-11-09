@@ -931,6 +931,25 @@
 
 .image-lightbox-controls #lightbox-close { background: #fbbf24; color: #111827; }
 
+/* Opt-in full-width textbook mode; ordinary question images keep their layout. */
+.image-lightbox.is-textbook{z-index:1500}
+.is-textbook .image-lightbox-panel{width:98vw}
+.is-textbook .image-lightbox-controls{position:static;align-self:center;flex-wrap:wrap;justify-content:center;margin:8px;border-radius:14px}
+.is-textbook .image-lightbox-controls button{min-width:44px;min-height:44px}
+.is-textbook .image-lightbox-img{width:calc(100% - 24px);height:auto;object-fit:fill;flex-shrink:0;transition:none}
+.is-textbook .image-lightbox-hint{position:static;text-align:center;border-radius:0;flex-shrink:0}
+.image-lightbox-extra[hidden]{display:none}
+.image-lightbox-extra{flex-shrink:0;max-height:35dvh;overflow:auto}
+.image-lightbox-topbar{display:contents}
+.is-textbook .image-lightbox-topbar{display:flex;flex-shrink:0;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;padding:6px 10px;background:#f6f7f1}
+.is-textbook .image-lightbox-controls{margin:0;padding:0;border:0;box-shadow:none;backdrop-filter:none;background:transparent;gap:6px;max-width:none;flex-wrap:nowrap}
+.is-textbook .image-lightbox-controls button,.is-textbook .image-lightbox-controls span{color:#185e4c;background:#fff;border:1px solid #9ebeb2;border-radius:9px;min-width:44px;height:44px;font-size:14px}
+.is-textbook .image-lightbox-controls span{border:0;background:transparent;min-width:48px}
+.is-textbook #lightbox-close{background:#176753;color:#fff;padding:0 12px}
+.is-textbook #lightbox-reset{padding:0 10px}
+.is-textbook #lightbox-center,.is-textbook .image-lightbox-hint{display:none}
+.is-textbook .image-lightbox-extra{max-height:none;overflow:visible}
+
 
 .past-learning-review{margin-top:22px;padding:18px;border:2px solid var(--quiz-border);border-radius:18px;background:var(--quiz-tint);line-height:1.8;overflow-wrap:anywhere}
 .past-learning-review h3,.past-learning-review h4{font-size:1rem;color:var(--quiz-primary-dark);margin:0 0 8px}
@@ -1115,6 +1134,11 @@
  .quiz-context-status{line-height:1.4}
 }
 @media(prefers-reduced-motion:reduce){.quiz-workspace-active *{scroll-behavior:auto!important}}
+
+.qtb-entry,.qtb-open,.qtb-field-entry,.qtb-after-hint button,.qtb-book-toolbar button,.qtb-book-toolbar select{font:inherit;min-height:44px;border:1px solid #9ebeb2;border-radius:10px;background:#fff;color:#185e4c;padding:9px 14px;cursor:pointer;touch-action:manipulation}
+.qtb-entry{margin:2px 0 16px;font-weight:750;background:#eaf5ec}.qtb-card{border:1px solid #c9ddcf;border-radius:14px;padding:18px;background:#f7fbf5;margin:8px 0}.qtb-card strong{font-size:1.15rem}.qtb-card p{font-size:1rem;line-height:1.7}.qtb-open{background:#176753;color:#fff;font-weight:700}.qtb-field-entry{font-size:.9rem;margin-top:10px}.qtb-after-hint{border-top:1px solid #cadbcf;margin-top:16px;padding-top:12px}.qtb-after-hint p{font-size:1rem}
+.qtb-book-toolbar{color:#243f37;padding:0}.qtb-page-nav{display:flex;align-items:center;justify-content:center;gap:6px;margin:0}.qtb-page-nav button,.qtb-page-nav select{font-size:14px;height:44px;padding:6px 10px;white-space:nowrap}.qtb-page-nav button:first-child,.qtb-page-nav button:nth-of-type(2){min-width:44px;font-size:24px;padding:0}.qtb-page-nav select{width:150px;max-width:150px}.qtb-reading-status{font-size:.85rem;line-height:1.5;text-align:center;margin:4px 0}.qtb-book-toolbar>strong,.qtb-reading-status:not(.is-error){position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.qtb-book-toolbar button:disabled{opacity:.45;cursor:default}.qtb-book-toolbar [hidden]{display:none!important}.qtb-book-toolbar :focus-visible,.qtb-entry:focus-visible,.qtb-open:focus-visible,.qtb-field-entry:focus-visible{outline:3px solid #dc9f2c;outline-offset:3px}
+@media(max-width:700px){.is-textbook .image-lightbox-topbar{padding:6px;gap:6px}.qtb-page-nav select{width:140px;max-width:140px}.qtb-page-nav button,.qtb-page-nav select{font-size:13px;padding:6px 8px}.is-textbook .image-lightbox-controls{gap:6px}.is-textbook .image-lightbox-controls button,.is-textbook .image-lightbox-controls span{font-size:13px;min-width:44px}.is-textbook .image-lightbox-controls #lightbox-reset{padding:0 8px}}
 
 /* Course-specific reading aid, configured by the course registry. */
 body[data-zhuyin-images="enlarged"] .quiz-embedded-image:has(img[alt="原題注音字形"]){zoom:2;max-width:50%}

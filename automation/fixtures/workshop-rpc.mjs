@@ -1,6 +1,16 @@
 // Synthetic preview only. No production credentials, database or proxy.
 const c=(text,media=[])=>({text,media});
 const stores=new Map();
+const studyBook='00000000-0000-4000-8000-000000000099';
+const studyHash=n=>String(n).padStart(64,'a');
+function withStudy(snapshot,kind,enabled){
+ if(!enabled)return snapshot;const next=structuredClone(snapshot),past=kind==='past',refs={},explanations={};
+ for(const q of past?next.groups:next.document.questions){
+  refs[q.id]={bookId:studyBook,primary:past?114:q.id==='q1'?75:79,references:past?[114,111,4,5]:q.id==='q1'?[75,79,80]:[79,80,81],fields:past?q.fields.map(f=>({questionId:f.id,page:111})):[]};
+  if(past?next.records[q.id]:next.reviews.some(r=>r.question_id===q.id))for(const id of past?q.fields.map(f=>f.id):[q.id])explanations[id]={text:past?'先找出兩組實驗相同的條件，再比較不同的地方。':'水流變慢時，帶不動那麼多沙子，沙子就留下來。',origin:'ai'};
+ }
+ next.study={schema:1,kind,attemptId:past?next.attemptId:next.attempt_id,versionId:past?next.version:next.version_id,packageId:'synthetic-study-v1',pages:[4,5,75,79,81,111,114,115].map(n=>({id:String(n),bookId:studyBook,printedPages:n===79?[79,80]:[n],sequence:n<10?'prerequisites':'unit3-4',url:'https://quiz-media.invalid/'+studyBook+'/'+studyHash(n)})),references:refs,explanations};return next;
+}
 const choices=[{id:'O',text:'O',content:c('O')},{id:'X',text:'X',content:c('X')}];
 const groupTitles={boolean:'是非判斷',group:'整組勾選',math:'數學作答',media:'圖音觀察',manual:'自我核對',last:'綜合練習'};
 const group=(id,kind,extra={})=>({id,kind,title:'合成題組・'+groupTitles[id],sourceLabel:String(Object.keys(groupTitles).indexOf(id)+1),assets:[],material:'',promptContent:c('合成命題：水可以幫助船浮起來。'),fields:[{id:id+'-f',label:'1',text:'第一欄',points:1}],choices:kind==='single'?choices:[],...extra});
@@ -20,14 +30,21 @@ function partner(grade,user,kind){
   exercise:{mine:own,shared:[],notes:[],total:3,submitted:1,correct:1,gradedTotal:3,reviewOpen:false,finished:false,reviewers:[{user:'peer',text:'這是合成夥伴的示範回顧。'}],stories:[],award:null,privateDraft:{state:null,revision:0}},_peer:peer};
 }
 function publicRoom(room){const value=structuredClone(room);delete value._peer;return value;}
-export function fixtureRPC({route,body={},grade,user='a',namespace='default',roomKind='normal'}){
+export function fixtureRPC({route,body={},grade,user='a',namespace='default',roomKind='normal',study=false}){
  if(route==='reset'){for(const key of stores.keys())if(key.startsWith(namespace+':'))stores.delete(key);return {};}
  if(!/^[a-zA-Z0-9_-]{1,70}$/.test(namespace)||![3,4,6,9].includes(Number(grade)))throw Error('invalid_preview_scope');
  if(route==='reset_preview'){for(const key of stores.keys())if(key.startsWith(namespace+':'+grade+':'))stores.delete(key);return {};}
  const key=namespace+':'+grade+':'+user;
  if(!stores.has(key))stores.set(key,{past:past(grade,user),normal:normal(),partner:{normal:partner(grade,user,'normal'),past:partner(grade,user,'past')}});
  const store=stores.get(key),action=body.p_action||body.p?.action,data=body.p_data||body.p||{};
- if(route.includes('/quiz-media'))return {url:body.url.endsWith('a'.repeat(64))?'/__workshop-image.svg':'/__workshop-audio.wav'};
+ if(route.includes('/quiz-media')){
+  if(body.action==='textbook'){
+   const state=body.kind==='past'?store.past:store.normal,aid=body.kind==='past'?state.attemptId:state.attempt_id;
+   if(!study||body.attempt_id!==aid||body.version_id!==(body.kind==='past'?state.version:state.version_id)||!withStudy(state,body.kind,true).study.pages.some(p=>p.url===body.url))throw Error('media_unavailable');
+   return {url:'/__workshop-study-page.svg?spread='+String(body.url.endsWith(studyHash(79)))};
+  }
+  return {url:body.url.endsWith('a'.repeat(64))?'/__workshop-image.svg':'/__workshop-audio.wav'};
+ }
  const identity={class_code:grade+'01',seat_no:7,display_name:'合成同學',email:user+'@example.invalid'};
  if(route.includes('quiz_partner_match_action'))return {enabled:false,available:false};
  if(route.includes('quiz_partner_pilot_action')){
@@ -62,21 +79,21 @@ export function fixtureRPC({route,body={},grade,user='a',namespace='default',roo
   if(action==='save_draft'){state.draft={revision:state.draft.revision+1,groups:data.groups,currentGroup:data.current_group,updatedAt:new Date().toISOString()};return state.draft;}
   if(action==='restart'){store.past=past(grade,user);return store.past;}
   if(action==='submit'){
-   if(state.records[data.group_id])return state;
+   if(state.records[data.group_id])return withStudy(state,'past',study);
    const g=state.groups.find(g=>g.id===data.group_id),manual=g.kind==='manual';
    const official=g.kind==='mark'?true:g.answerFormat==='math-v1'?'1':'O';
    const results=manual?[]:data.responses.map(r=>({questionId:r.questionId,correct:(typeof r.value==='object'?r.value?.answer:r.value)===official,official}));
    const score=results.filter(r=>r.correct).length;
    state.records[g.id]={responses:data.responses,score,results,reference:manual?'這題採自我核對，不計分。':null,learningExplanations:manual?[]:[{text:g.answerFormat==='math-v1'?'固定合成解析：一半加一半等於一。':'固定合成解析：水的浮力可以托住船。'}]};
-   state.summary.answered+=g.fields.length;state.summary.score+=score;return state;
+   state.summary.answered+=g.fields.length;state.summary.score+=score;return withStudy(state,'past',study);
   }
-  if(['start','resume'].includes(action))return state;
+  if(['start','resume'].includes(action))return withStudy(state,'past',study);
  }
  if(route.endsWith('/quiz_action')){
   const state=store.normal;
   if(action==='view_question')return {};
   if(action==='submit'){state.responses[data.question_id]=data.response;state.reviews.push({question_id:data.question_id,correct:data.response==='a',answer:{option_id:'a'},explanation:c('固定合成解析：水的浮力可以托住船。')});state.complete=Object.keys(state.responses).length===2;}
-  return state;
+  return withStudy(state,'normal',study);
  }
  throw Error('unexpected_fixture_request: '+route+' '+action);
 }

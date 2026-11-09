@@ -106,3 +106,22 @@
         }
 
 .image-lightbox-controls #lightbox-close { background: #fbbf24; color: #111827; }
+
+/* Opt-in full-width textbook mode; ordinary question images keep their layout. */
+.image-lightbox.is-textbook{z-index:1500}
+.is-textbook .image-lightbox-panel{width:98vw}
+.is-textbook .image-lightbox-controls{position:static;align-self:center;flex-wrap:wrap;justify-content:center;margin:8px;border-radius:14px}
+.is-textbook .image-lightbox-controls button{min-width:44px;min-height:44px}
+.is-textbook .image-lightbox-img{width:calc(100% - 24px);height:auto;object-fit:fill;flex-shrink:0;transition:none}
+.is-textbook .image-lightbox-hint{position:static;text-align:center;border-radius:0;flex-shrink:0}
+.image-lightbox-extra[hidden]{display:none}
+.image-lightbox-extra{flex-shrink:0;max-height:35dvh;overflow:auto}
+.image-lightbox-topbar{display:contents}
+.is-textbook .image-lightbox-topbar{display:flex;flex-shrink:0;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;padding:6px 10px;background:#f6f7f1}
+.is-textbook .image-lightbox-controls{margin:0;padding:0;border:0;box-shadow:none;backdrop-filter:none;background:transparent;gap:6px;max-width:none;flex-wrap:nowrap}
+.is-textbook .image-lightbox-controls button,.is-textbook .image-lightbox-controls span{color:#185e4c;background:#fff;border:1px solid #9ebeb2;border-radius:9px;min-width:44px;height:44px;font-size:14px}
+.is-textbook .image-lightbox-controls span{border:0;background:transparent;min-width:48px}
+.is-textbook #lightbox-close{background:#176753;color:#fff;padding:0 12px}
+.is-textbook #lightbox-reset{padding:0 10px}
+.is-textbook #lightbox-center,.is-textbook .image-lightbox-hint{display:none}
+.is-textbook .image-lightbox-extra{max-height:none;overflow:visible}

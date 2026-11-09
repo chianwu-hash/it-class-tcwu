@@ -6825,6 +6825,438 @@
      "default": null,
      "generated": "",
      "identity": "",
+     "name": "kind",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "attempt_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "version_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "package_id",
+     "not_null": true,
+     "type": "uuid"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (package_id, kind, version_id) REFERENCES quiz_study_packages(id, kind, version_id)",
+     "name": "quiz_study_attempts_package_id_kind_version_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (kind, attempt_id)",
+     "name": "quiz_study_attempts_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX quiz_study_package_pins ON public.quiz_study_attempts USING btree (package_id)",
+    "CREATE UNIQUE INDEX quiz_study_attempts_pkey ON public.quiz_study_attempts USING btree (kind, attempt_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_study_attempts",
+   "rls": true,
+   "schema": "public",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "package_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "''::text",
+     "generated": "",
+     "identity": "",
+     "name": "group_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "question_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "book_id",
+     "not_null": false,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "primary_page",
+     "not_null": false,
+     "type": "integer"
+    },
+    {
+     "default": "'{}'::integer[]",
+     "generated": "",
+     "identity": "",
+     "name": "reference_pages",
+     "not_null": true,
+     "type": "integer[]"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "student_explanation",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "origin",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "'{}'::jsonb",
+     "generated": "",
+     "identity": "",
+     "name": "teacher_notes",
+     "not_null": true,
+     "type": "jsonb"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (book_id) REFERENCES quiz_textbooks(id)",
+     "name": "quiz_study_items_book_id_fkey"
+    },
+    {
+     "def": "CHECK ((((book_id IS NULL) AND (primary_page IS NULL) AND (cardinality(reference_pages) = 0)) OR ((book_id IS NOT NULL) AND (primary_page > 0) AND (primary_page = ANY (reference_pages)))))",
+     "name": "quiz_study_items_check"
+    },
+    {
+     "def": "CHECK ((origin = ANY (ARRAY['ai'::text, 'publisher'::text, 'official'::text])))",
+     "name": "quiz_study_items_origin_check"
+    },
+    {
+     "def": "FOREIGN KEY (package_id) REFERENCES quiz_study_packages(id)",
+     "name": "quiz_study_items_package_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (package_id, group_id, question_id)",
+     "name": "quiz_study_items_pkey"
+    },
+    {
+     "def": "CHECK (((length(student_explanation) >= 1) AND (length(student_explanation) <= 12000)))",
+     "name": "quiz_study_items_student_explanation_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_study_items_pkey ON public.quiz_study_items USING btree (package_id, group_id, question_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_study_items",
+   "rls": true,
+   "schema": "public",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "kind",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "version_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "approved",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "enabled",
+     "not_null": true,
+     "type": "boolean"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "provenance",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "UNIQUE (id, kind, version_id)",
+     "name": "quiz_study_packages_id_kind_version_id_key"
+    },
+    {
+     "def": "CHECK ((kind = ANY (ARRAY['normal'::text, 'past'::text])))",
+     "name": "quiz_study_packages_kind_check"
+    },
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "quiz_study_packages_pkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE INDEX quiz_study_version ON public.quiz_study_packages USING btree (kind, version_id, created_at DESC) WHERE (enabled AND approved)",
+    "CREATE UNIQUE INDEX quiz_study_packages_id_kind_version_id_key ON public.quiz_study_packages USING btree (id, kind, version_id)",
+    "CREATE UNIQUE INDEX quiz_study_packages_pkey ON public.quiz_study_packages USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "quiz_study_packages",
+   "rls": true,
+   "schema": "public",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "book_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "printed_pages",
+     "not_null": true,
+     "type": "integer[]"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "sequence",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "sha256",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "bytes",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": "'{}'::jsonb",
+     "generated": "",
+     "identity": "",
+     "name": "provenance",
+     "not_null": true,
+     "type": "jsonb"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (book_id) REFERENCES quiz_textbooks(id)",
+     "name": "quiz_textbook_pages_book_id_fkey"
+    },
+    {
+     "def": "UNIQUE (book_id, sha256)",
+     "name": "quiz_textbook_pages_book_id_sha256_key"
+    },
+    {
+     "def": "CHECK (((bytes >= 1) AND (bytes <= 8388608)))",
+     "name": "quiz_textbook_pages_bytes_check"
+    },
+    {
+     "def": "PRIMARY KEY (book_id, id)",
+     "name": "quiz_textbook_pages_pkey"
+    },
+    {
+     "def": "CHECK (((cardinality(printed_pages) > 0) AND (0 < ALL (printed_pages))))",
+     "name": "quiz_textbook_pages_printed_pages_check"
+    },
+    {
+     "def": "CHECK ((sha256 ~ '^[a-f0-9]{64}$'::text))",
+     "name": "quiz_textbook_pages_sha256_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_textbook_pages_book_id_sha256_key ON public.quiz_textbook_pages USING btree (book_id, sha256)",
+    "CREATE UNIQUE INDEX quiz_textbook_pages_pkey ON public.quiz_textbook_pages USING btree (book_id, id)"
+   ],
+   "kind": "r",
+   "name": "quiz_textbook_pages",
+   "rls": true,
+   "schema": "public",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "grade",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "school_year",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "semester",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "title",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "source_sha256",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "enabled",
+     "not_null": true,
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "PRIMARY KEY (id)",
+     "name": "quiz_textbooks_pkey"
+    },
+    {
+     "def": "CHECK ((source_sha256 ~ '^[a-f0-9]{64}$'::text))",
+     "name": "quiz_textbooks_source_sha256_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_textbooks_pkey ON public.quiz_textbooks USING btree (id)"
+   ],
+   "kind": "r",
+   "name": "quiz_textbooks",
+   "rls": true,
+   "schema": "public",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
      "name": "version_id",
      "not_null": true,
      "type": "uuid"
@@ -9128,6 +9560,55 @@
    "name": "quiz_catalog_invalidate",
    "schema": "public",
    "table": "quiz_question_pool"
+  },
+  {
+   "def": "CREATE TRIGGER study_immutable BEFORE DELETE OR UPDATE ON public.quiz_study_attempts FOR EACH ROW EXECUTE FUNCTION quiz_study_immutable()",
+   "enabled": "O",
+   "name": "study_immutable",
+   "schema": "public",
+   "table": "quiz_study_attempts"
+  },
+  {
+   "def": "CREATE TRIGGER study_immutable BEFORE DELETE OR UPDATE ON public.quiz_study_items FOR EACH ROW EXECUTE FUNCTION quiz_study_immutable()",
+   "enabled": "O",
+   "name": "study_immutable",
+   "schema": "public",
+   "table": "quiz_study_items"
+  },
+  {
+   "def": "CREATE TRIGGER study_insert_guard BEFORE INSERT ON public.quiz_study_items FOR EACH ROW EXECUTE FUNCTION quiz_study_insert_guard()",
+   "enabled": "O",
+   "name": "study_insert_guard",
+   "schema": "public",
+   "table": "quiz_study_items"
+  },
+  {
+   "def": "CREATE TRIGGER study_immutable BEFORE DELETE OR UPDATE ON public.quiz_study_packages FOR EACH ROW EXECUTE FUNCTION quiz_study_immutable()",
+   "enabled": "O",
+   "name": "study_immutable",
+   "schema": "public",
+   "table": "quiz_study_packages"
+  },
+  {
+   "def": "CREATE TRIGGER study_immutable BEFORE DELETE OR UPDATE ON public.quiz_textbook_pages FOR EACH ROW EXECUTE FUNCTION quiz_study_immutable()",
+   "enabled": "O",
+   "name": "study_immutable",
+   "schema": "public",
+   "table": "quiz_textbook_pages"
+  },
+  {
+   "def": "CREATE TRIGGER study_insert_guard BEFORE INSERT ON public.quiz_textbook_pages FOR EACH ROW EXECUTE FUNCTION quiz_study_insert_guard()",
+   "enabled": "O",
+   "name": "study_insert_guard",
+   "schema": "public",
+   "table": "quiz_textbook_pages"
+  },
+  {
+   "def": "CREATE TRIGGER study_immutable BEFORE DELETE OR UPDATE ON public.quiz_textbooks FOR EACH ROW EXECUTE FUNCTION quiz_study_immutable()",
+   "enabled": "O",
+   "name": "study_immutable",
+   "schema": "public",
+   "table": "quiz_textbooks"
   },
   {
    "def": "CREATE TRIGGER quiz_version_meta AFTER INSERT OR UPDATE OF document ON public.quiz_versions FOR EACH ROW EXECUTE FUNCTION quiz_version_meta_trigger()",

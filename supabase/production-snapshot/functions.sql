@@ -2953,22 +2953,22 @@ end $function$;
 revoke all on function partner_pilot.paused_snapshot(uuid) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.paused_snapshot(uuid) to postgres;
 
--- quiz_action(text,jsonb)  md5=19260721f94b89bc414cd42cc8fe48b7
+-- quiz_action(text,jsonb)  md5=195fda3e2c11f7da707bdb47d1d38455
 CREATE OR REPLACE FUNCTION public.quiz_action(p_action text, p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
 AS $function$
-declare data jsonb;begin
- if p_data ? 'session_id' and exists(select 1 from public.quiz_learning_sessions where session_id=(p_data->>'session_id')::uuid and user_id is distinct from auth.uid()) then raise exception 'attempt_unavailable';end if;
- data:=public.quiz_action_before_learning(p_action,p_data);
- if p_action='sessions' then
-  data:=jsonb_set(data,'{sessions}',coalesce((select jsonb_agg(x order by ord) from jsonb_array_elements(data->'sessions') with ordinality e(x,ord) where not exists(select 1 from public.quiz_learning_sessions ls where ls.session_id=(x->>'id')::uuid)),'[]'));
- elsif p_action='list' then
-  data:=jsonb_set(data,'{banks}',coalesce((select jsonb_agg(x order by ord) from jsonb_array_elements(data->'banks') with ordinality e(x,ord) where not exists(select 1 from public.quiz_learning_topics lt join public.quiz_versions v on v.id=lt.version_id where v.bank_id=(x->>'id')::uuid)),'[]'));
+declare result jsonb;study jsonb;disclosed jsonb;
+begin
+ result:=public.quiz_action_before_study(p_action,p_data);
+ if result ? 'attempt_id' and result ? 'version_id' and result ? 'reviews' then
+  select coalesce(jsonb_agg(r->>'question_id'),'[]') into disclosed from jsonb_array_elements(result->'reviews') r;
+  study:=public.quiz_study_payload('normal',(result->>'attempt_id')::uuid,(result->>'version_id')::uuid,disclosed);
+  if study<>'{}'::jsonb then result:=result||jsonb_build_object('study',study);end if;
  end if;
- return data;
+ return result;
 end$function$;
 revoke all on function public.quiz_action(text,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_action(text,jsonb) to postgres;
@@ -3196,6 +3196,27 @@ end $function$;
 revoke all on function public.quiz_action_before_learning(text,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_action_before_learning(text,jsonb) to postgres;
 grant execute on function public.quiz_action_before_learning(text,jsonb) to service_role;
+
+-- quiz_action_before_study(text,jsonb)  md5=d26e953f72e550c05d9f1badf9eaf373
+CREATE OR REPLACE FUNCTION public.quiz_action_before_study(p_action text, p_data jsonb DEFAULT '{}'::jsonb)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare data jsonb;begin
+ if p_data ? 'session_id' and exists(select 1 from public.quiz_learning_sessions where session_id=(p_data->>'session_id')::uuid and user_id is distinct from auth.uid()) then raise exception 'attempt_unavailable';end if;
+ data:=public.quiz_action_before_learning(p_action,p_data);
+ if p_action='sessions' then
+  data:=jsonb_set(data,'{sessions}',coalesce((select jsonb_agg(x order by ord) from jsonb_array_elements(data->'sessions') with ordinality e(x,ord) where not exists(select 1 from public.quiz_learning_sessions ls where ls.session_id=(x->>'id')::uuid)),'[]'));
+ elsif p_action='list' then
+  data:=jsonb_set(data,'{banks}',coalesce((select jsonb_agg(x order by ord) from jsonb_array_elements(data->'banks') with ordinality e(x,ord) where not exists(select 1 from public.quiz_learning_topics lt join public.quiz_versions v on v.id=lt.version_id where v.bank_id=(x->>'id')::uuid)),'[]'));
+ end if;
+ return data;
+end$function$;
+revoke all on function public.quiz_action_before_study(text,jsonb) from public, anon, authenticated, service_role;
+grant execute on function public.quiz_action_before_study(text,jsonb) to postgres;
+grant execute on function public.quiz_action_before_study(text,jsonb) to service_role;
 
 -- quiz_answer_guard(uuid,text,boolean)  md5=9adcf858128ce1ed8c9959e7eb42864f
 CREATE OR REPLACE FUNCTION public.quiz_answer_guard(aid uuid, qid text, submitting boolean)
@@ -4865,18 +4886,21 @@ revoke all on function public.quiz_past_immutable() from public, anon, authentic
 grant execute on function public.quiz_past_immutable() to postgres;
 grant execute on function public.quiz_past_immutable() to service_role;
 
--- quiz_past_snapshot(uuid)  md5=4768a4ce0088eb3e722cd66fe887edb4
+-- quiz_past_snapshot(uuid)  md5=2de82af6a04046ba2c77d0886a120738
 CREATE OR REPLACE FUNCTION public.quiz_past_snapshot(p_attempt uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
 AS $function$
-declare data jsonb;draft public.quiz_past_drafts;begin
- data:=public.quiz_past_snapshot_before_drafts(p_attempt);
- select * into draft from public.quiz_past_drafts where attempt_id=p_attempt;
- return data||jsonb_build_object('draft',jsonb_build_object('revision',coalesce(draft.revision,0),'groups',coalesce(draft.groups,'{}'),'currentGroup',draft.current_group,'updatedAt',draft.updated_at));
-end $function$;
+declare result jsonb;study jsonb;disclosed jsonb;
+begin
+ result:=public.quiz_past_snapshot_before_study(p_attempt);
+ select coalesce(jsonb_agg(a.question_id),'[]') into disclosed from public.quiz_past_answers a where a.attempt_id=p_attempt;
+ study:=public.quiz_study_payload('past',p_attempt,(result->>'version')::uuid,disclosed);
+ if study<>'{}'::jsonb then result:=result||jsonb_build_object('study',study);end if;
+ return result;
+end$function$;
 revoke all on function public.quiz_past_snapshot(uuid) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_past_snapshot(uuid) to postgres;
 grant execute on function public.quiz_past_snapshot(uuid) to service_role;
@@ -4978,6 +5002,22 @@ end$function$;
 revoke all on function public.quiz_past_snapshot_before_learning(uuid) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_past_snapshot_before_learning(uuid) to postgres;
 grant execute on function public.quiz_past_snapshot_before_learning(uuid) to service_role;
+
+-- quiz_past_snapshot_before_study(uuid)  md5=5b4c1a18985549900719e4912353a853
+CREATE OR REPLACE FUNCTION public.quiz_past_snapshot_before_study(p_attempt uuid)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare data jsonb;draft public.quiz_past_drafts;begin
+ data:=public.quiz_past_snapshot_before_drafts(p_attempt);
+ select * into draft from public.quiz_past_drafts where attempt_id=p_attempt;
+ return data||jsonb_build_object('draft',jsonb_build_object('revision',coalesce(draft.revision,0),'groups',coalesce(draft.groups,'{}'),'currentGroup',draft.current_group,'updatedAt',draft.updated_at));
+end $function$;
+revoke all on function public.quiz_past_snapshot_before_study(uuid) from public, anon, authenticated, service_role;
+grant execute on function public.quiz_past_snapshot_before_study(uuid) to postgres;
+grant execute on function public.quiz_past_snapshot_before_study(uuid) to service_role;
 
 -- quiz_past_validate(jsonb)  md5=bcb447487f20be3438afbcc348483527
 CREATE OR REPLACE FUNCTION public.quiz_past_validate(d jsonb)
@@ -5318,6 +5358,132 @@ end $function$;
 revoke all on function public.quiz_student_identity() from public, anon, authenticated, service_role;
 grant execute on function public.quiz_student_identity() to postgres;
 grant execute on function public.quiz_student_identity() to service_role;
+
+-- quiz_study_immutable()  md5=9546560cf92b8ad03f9ae274ec9e6260
+CREATE OR REPLACE FUNCTION public.quiz_study_immutable()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SET search_path TO ''
+AS $function$
+begin
+ if tg_op='DELETE' then raise exception 'study_fixed_version';end if;
+ if tg_table_name in('quiz_textbooks','quiz_study_packages') and (to_jsonb(new)-'enabled')=(to_jsonb(old)-'enabled') then return new;end if;
+ raise exception 'study_fixed_version';
+end$function$;
+revoke all on function public.quiz_study_immutable() from public, anon, authenticated, service_role;
+grant execute on function public.quiz_study_immutable() to public;
+grant execute on function public.quiz_study_immutable() to postgres;
+grant execute on function public.quiz_study_immutable() to anon;
+grant execute on function public.quiz_study_immutable() to authenticated;
+grant execute on function public.quiz_study_immutable() to service_role;
+
+-- quiz_study_insert_guard()  md5=ac30b3815d45c3dde0ecc5a778131c01
+CREATE OR REPLACE FUNCTION public.quiz_study_insert_guard()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SET search_path TO ''
+AS $function$
+begin
+ if tg_table_name='quiz_study_items' then
+  if exists(select 1 from public.quiz_study_packages p where p.id=new.package_id and p.enabled) or exists(select 1 from public.quiz_study_attempts a where a.package_id=new.package_id) then raise exception 'study_fixed_version';end if;
+ elsif exists(select 1 from public.quiz_textbooks b where b.id=new.book_id and b.enabled) or exists(select 1 from public.quiz_study_items i join public.quiz_study_attempts a on a.package_id=i.package_id where i.book_id=new.book_id) then raise exception 'study_fixed_version';end if;
+ return new;
+end$function$;
+revoke all on function public.quiz_study_insert_guard() from public, anon, authenticated, service_role;
+grant execute on function public.quiz_study_insert_guard() to public;
+grant execute on function public.quiz_study_insert_guard() to postgres;
+grant execute on function public.quiz_study_insert_guard() to anon;
+grant execute on function public.quiz_study_insert_guard() to authenticated;
+grant execute on function public.quiz_study_insert_guard() to service_role;
+
+-- quiz_study_payload(text,uuid,uuid,jsonb)  md5=217af41e87b728299f490684e66860b0
+CREATE OR REPLACE FUNCTION public.quiz_study_payload(p_kind text, p_attempt uuid, p_version uuid, p_disclosed jsonb DEFAULT '[]'::jsonb)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare identity jsonb;d jsonb;pkg public.quiz_study_packages;link public.quiz_study_items;
+ refs jsonb:='{}';explanations jsonb:='{}';pages jsonb;ref jsonb;known boolean;book_ids uuid[]:='{}';key text;field jsonb;
+begin
+ if not exists(select 1 from public.quiz_study_attempts where kind=p_kind and attempt_id=p_attempt and version_id=p_version)
+  and not exists(select 1 from public.quiz_study_packages where kind=p_kind and version_id=p_version and enabled and approved) then return '{}'::jsonb;end if;
+ if p_kind='normal' and coalesce(public.is_teacher(),false) then
+  -- The existing teacher trial joins only an owned session. Derive this book's
+  -- grade from that fixed version, never from a browser-provided identity.
+  select jsonb_build_object('grade',substring(v.document->'catalog'->>'volume' from '^([3469])')::integer) into identity
+   from public.quiz_attempts a join public.quiz_sessions s on s.id=a.session_id join public.quiz_versions v on v.id=s.version_id
+   where a.id=p_attempt and a.user_id=auth.uid() and s.owner_id=auth.uid() and v.id=p_version;
+  if identity is null then raise exception 'attempt_unavailable';end if;
+ else identity:=public.quiz_student_identity();end if;
+ if p_kind='normal' then
+  select v.document into d from public.quiz_attempts a join public.quiz_sessions s on s.id=a.session_id
+   join public.quiz_versions v on v.id=s.version_id where a.id=p_attempt and a.user_id=auth.uid() and v.id=p_version;
+ elsif p_kind='past' then
+  select v.document into d from public.quiz_past_attempts a join public.quiz_past_versions v on v.id=a.version_id
+   join public.quiz_past_papers p on p.id=a.paper_id where a.id=p_attempt and a.user_id=auth.uid() and v.id=p_version and p.grade=(identity->>'grade')::integer;
+ else raise exception 'study_unavailable';end if;
+ if d is null then raise exception 'attempt_unavailable';end if;
+ select p.* into pkg from public.quiz_study_attempts a join public.quiz_study_packages p on p.id=a.package_id
+  where a.kind=p_kind and a.attempt_id=p_attempt and a.version_id=p_version;
+ if pkg.id is null then
+  select * into pkg from public.quiz_study_packages p where p.kind=p_kind and p.version_id=p_version and p.enabled and p.approved order by p.created_at desc,p.id desc limit 1;
+  if pkg.id is null then return '{}'::jsonb;end if;
+  insert into public.quiz_study_attempts values(p_kind,p_attempt,p_version,pkg.id) on conflict do nothing;
+  select p.* into pkg from public.quiz_study_attempts a join public.quiz_study_packages p on p.id=a.package_id where a.kind=p_kind and a.attempt_id=p_attempt and a.version_id=p_version;
+ end if;
+ if not pkg.enabled or not pkg.approved then return '{}'::jsonb;end if;
+ for link in select * from public.quiz_study_items where package_id=pkg.id order by group_id,question_id loop
+  if p_kind='normal' then
+   known:=link.group_id='' and exists(select 1 from jsonb_array_elements(d->'blocks') b,jsonb_array_elements(b->'questions') q where q->>'id'=link.question_id);
+   key:=link.question_id;
+  else
+   known:=exists(select 1 from jsonb_array_elements(d->'groups') g,jsonb_array_elements(g->'fields') f where g->>'id'=link.group_id and f->>'id'=link.question_id);
+   key:=link.group_id;
+  end if;
+  if not known then continue;end if;
+  if link.book_id is not null and exists(select 1 from public.quiz_textbooks b where b.id=link.book_id and b.enabled and b.grade=(identity->>'grade')::integer)
+   and not exists(select 1 from unnest(link.reference_pages) n where not exists(select 1 from public.quiz_textbook_pages p where p.book_id=link.book_id and n=any(p.printed_pages))) then
+   if not link.book_id=any(book_ids) then book_ids:=array_append(book_ids,link.book_id);end if;
+   ref:=refs->key;
+   if ref is null then ref:=jsonb_build_object('bookId',link.book_id,'primary',link.primary_page,'references',to_jsonb(link.reference_pages),'fields','[]'::jsonb);
+   elsif ref->>'bookId'=link.book_id::text then ref:=jsonb_set(ref,'{references}',(ref->'references')||to_jsonb(link.reference_pages));end if;
+   if p_kind='past' and ref->>'bookId'=link.book_id::text then ref:=jsonb_set(ref,'{fields}',(ref->'fields')||jsonb_build_array(jsonb_build_object('questionId',link.question_id,'page',link.primary_page)));end if;
+   refs:=jsonb_set(refs,array[key],ref);
+  end if;
+  if link.student_explanation is not null and p_disclosed ? link.question_id then
+   explanations:=jsonb_set(explanations,array[link.question_id],jsonb_build_object('text',link.student_explanation,'origin',link.origin));
+  end if;
+ end loop;
+ select coalesce(jsonb_agg(jsonb_build_object('id',p.id,'bookId',p.book_id,'printedPages',p.printed_pages,
+  'sequence',p.book_id::text||':'||p.sequence,'url','https://quiz-media.invalid/'||p.book_id::text||'/'||p.sha256) order by p.book_id,p.printed_pages[1]),'[]') into pages
+  from public.quiz_textbook_pages p where p.book_id=any(book_ids);
+ return jsonb_build_object('schema',1,'kind',p_kind,'attemptId',p_attempt,'versionId',p_version,'packageId',pkg.id,'pages',pages,'references',refs,'explanations',explanations);
+end$function$;
+revoke all on function public.quiz_study_payload(text,uuid,uuid,jsonb) from public, anon, authenticated, service_role;
+grant execute on function public.quiz_study_payload(text,uuid,uuid,jsonb) to postgres;
+grant execute on function public.quiz_study_payload(text,uuid,uuid,jsonb) to service_role;
+
+-- quiz_textbook_media_access(text,uuid,uuid,text)  md5=8725d984bc5c17f5869da438e9ce97da
+CREATE OR REPLACE FUNCTION public.quiz_textbook_media_access(p_kind text, p_attempt uuid, p_version uuid, p_url text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare study jsonb;page jsonb;asset public.quiz_textbook_pages;
+begin
+ study:=public.quiz_study_payload(p_kind,p_attempt,p_version);
+ select value into page from jsonb_array_elements(coalesce(study->'pages','[]')) where value->>'url'=p_url;
+ if page is null then raise exception 'media_unavailable';end if;
+ select * into asset from public.quiz_textbook_pages p where p.book_id=(page->>'bookId')::uuid and p.id=page->>'id';
+ if asset.id is null then raise exception 'media_unavailable';end if;
+ return jsonb_build_object('url',p_url,'mime','image/webp','bytes',asset.bytes,'backend','drive');
+end$function$;
+revoke all on function public.quiz_textbook_media_access(text,uuid,uuid,text) from public, anon, authenticated, service_role;
+grant execute on function public.quiz_textbook_media_access(text,uuid,uuid,text) to postgres;
+grant execute on function public.quiz_textbook_media_access(text,uuid,uuid,text) to authenticated;
+grant execute on function public.quiz_textbook_media_access(text,uuid,uuid,text) to service_role;
 
 -- quiz_valid_content(jsonb)  md5=e75d9e82d4604ea5593c8fd14d283e66
 CREATE OR REPLACE FUNCTION public.quiz_valid_content(c jsonb)
