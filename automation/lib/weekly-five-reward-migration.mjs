@@ -1,8 +1,9 @@
 import {createHash} from 'node:crypto';
 export function buildWeeklyFiveRewardMigration(source) {
+ source=source.replaceAll('\r\n','\n');
  const old="   n:=greatest(0,least(r.total_levels-1,case when r.completed then r.total_levels-1 else coalesce(r.current_level,0)-1 end));";
  if(source.split(old).length!==2)throw Error('garden_growth leaf calculation changed');
- const next=source.replace(old,`   if r.reward_mode='five-then-flower' and r.total_levels=6 then
+ const next=source.includes("if r.reward_mode='five-then-flower'") ? source : source.replace(old,`   if r.reward_mode='five-then-flower' and r.total_levels=6 then
     n:=case when r.completed or coalesce(r.current_level,0)>=6 then 1 else 0 end;
    else
 ${old}

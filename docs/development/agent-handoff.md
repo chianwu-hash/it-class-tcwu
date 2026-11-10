@@ -1,5 +1,13 @@
 # 2026-11-10 三年級第 11 週：局部修改、正確指法與期中後六關（待複核發布）
 
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 發布中 | Codex-g3-week11-20261110 | 取得鎖後依腳本記錄 | PR133＋正式快照PR合併後的乾淨main | `dpl_EQkf8XXrgxhsNLA43CFuo6Vk76t1` | 第11週頁、首頁／navbar／後台、獎勵模型及版本產物 | 兩輪Claude均無阻擋；等待乾淨main發布腳本 |
+
+- 正式 SQL 與 169 函式快照 live check 已完成；95 項目錄一致。專用測試身分六關保存／重整與新葉花邊界通過，僅本次測試列已清理為0、舊進度未變。第二輪 Claude 補查快照、指紋、產生器與入口版本無阻擋；詳見第11週契約。Vercel專案／團隊與基準部署已核對。
+
 - 使用者授權：先完成教案、將新葉花規則寫入做網頁 SOP，再製作網頁；Codex 用 AI 工作瀏覽器測試，Claude 複核無問題後上線。
 - 新 worktree：`C:/Users/user/projects/it-class-tcwu-week11-postmidterm-20261110`，分支 `codex/grade3-week11-postmidterm-20261110`，來源 `origin/main f18787c`。Codex 唯一寫入者；Claude 僅唯讀複核，無檔案所有權。
 - 已完成教案與 SOP、六關週頁、首頁／navbar／教師後台同步、新模式 `five-then-flower` 前端及帶 MD5 保護的 SQL。內容為國語第七課 p.76、78 與英語 Unit 3 p.44–45；全過共一葉一花，舊週與其他活動不動。

@@ -31,7 +31,7 @@
           }
         ]
       },
-      "navbar": "/grade3/115-1/navbar.js?v=9e6b3e8e120bd97f"
+      "navbar": "/grade3/115-1/navbar.js?v=fc66305972b9c660"
     },
     {
       "pastExams": true,
@@ -152,7 +152,7 @@
     ]
   },
   "imports": {
-    "/grade3/115-1/navbar.js": "/grade3/115-1/navbar.js?v=9e6b3e8e120bd97f",
+    "/grade3/115-1/navbar.js": "/grade3/115-1/navbar.js?v=fc66305972b9c660",
     "/grade4/115-1/navbar.js": "/grade4/115-1/navbar.js?v=b131e21fe9a63722",
     "/grade6/115-1/navbar.js": "/grade6/115-1/navbar.js?v=bd70c9ef2677ac94",
     "/grade9/115-1/navbar.js": "/grade9/115-1/navbar.js?v=b36ae227cdf44973",
