@@ -1,5 +1,7 @@
 # 第 11 週：網頁內文字修改暖身
 
+> 本文件保留四題版本的發布歷史。最新版本為五題，新增Ctrl＋Z並允許復原誤刪後接續；以[復原教學契約](grade3-week11-undo.md)為準。
+
 2026-11-10 使用者要求把原本「打開記事本，跟老師修三題」改成網頁直接練習，並明確指定這次先不給 Claude 複核。Codex 從最新 `origin/main 7cb417c` 建立新 worktree `D:/projects/it-class-tcwu-week11-edit-practice-20261110`，為唯一寫入者。
 
 ## 功能契約
