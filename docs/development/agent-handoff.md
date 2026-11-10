@@ -1,3 +1,14 @@
+# 2026-11-10 第11週改為網頁直接修改練習（發布準備）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 發布中 | Codex-g3-week11-edit-20261110 | 取得鎖後依腳本記錄 | 本批PR合併後的最新乾淨main | `dpl_6XeVgsVWmViRQBKfUS5hHNQRGbUv` | week11.html、week11教案、+week11-edit-practice.mjs／css | Codex自測；依使用者最新指示本次不給Claude複核 |
+
+- 使用者指定原記事本三題改為頁內文字修改；四題各兩組，含原生方向鍵、左右刪除、局部替換、上下跨行、游標提示、檢查、重設、換題及輔助鍵。屬第08週同定位的免登入當堂暖身，不計分、不存雲端或localStorage、不加葉花；正式六關、帳號／進度／獎勵與SQL不變。
+- Codex唯一寫入者；從 `origin/main 7cb417c` 新建 `codex/grade3-week11-edit-practice-20261110`／同名D槽worktree。10項新練習與舊獎勵測試通過；AI工作瀏覽器01真實鍵盤四題×兩組、無寫入、無pageerror、桌機／手機、組字保護及六關模組缺載時暖身可用均通過。[本批契約](grade3-week11-edit-practice.md)。未啟動Claude。
+
 # 2026-11-10 三年級第 11 週：游標小醫生與期中後六關（已正式發布）
 
 ## 發布登記
