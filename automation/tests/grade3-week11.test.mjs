@@ -11,6 +11,16 @@ const {deriveRewardTreeModel}=await import(await load('shared/reward-tree-model.
 const {getRewardTreeCourses}=await import(await load('shared/reward-tree-config.js'));
 const courseId='grade3-115-1',a={courseId,type:'typing',weekCode:'11',activityKey:'typing_task_6',totalLevels:6,rewardMode:'five-then-flower',pageHref:'/grade3/115-1/week11.html',label:'本週'};
 const model=(n,activity=a)=>deriveRewardTreeModel([{course_id:activity.courseId,week_code:activity.weekCode,activity_key:activity.activityKey,current_level:Math.min(n+1,activity.totalLevels),completed:n===activity.totalLevels}], [activity]);
+test('提交的遷移函式與快照來源一致，指紋接受正式來源且沒有其他函式改寫',async()=>{
+ const {createHash}=await import('node:crypto');
+ const sql=(await read('supabase/grade3_week11_typing.sql')).replaceAll('\r\n','\n');
+ const source=splitSnapshot(await read('supabase/production-snapshot/functions.sql')).find(x=>x.signature==='garden_growth(text,text)').definition+'\n';
+ const digest=createHash('md5').update(source).digest('hex');assert(sql.includes("'"+digest+"'"));
+ const next=sql.slice(sql.indexOf('CREATE OR REPLACE FUNCTION public.garden_growth('),sql.lastIndexOf('commit;')).trim().replace(/;$/,'');
+ if(source.includes("if r.reward_mode='five-then-flower'"))assert.equal(next,source.trim());
+ else assert.equal(sql,buildWeeklyFiveRewardMigration(source));
+ assert.equal((sql.match(/CREATE OR REPLACE FUNCTION/g)||[]).length,1);
+});
 test('新六關在0～4關零葉、5關一葉、6關一葉一花；ID穩定且待領連到第5關',()=>{
  for(let n=0;n<=6;n++){const m=model(n);assert.equal(m.stats.leafCount,n>=5?1:0);assert.equal(m.stats.flowerCount,n===6?1:0);assert.equal(m.rewards.length+m.pendingRewards.length,2);if(n<5)assert.match(m.pendingRewards.find(r=>r.kind==='typing-leaf').href,/#block-level5$/);}
  assert.deepEqual(model(5).rewards.map(r=>r.id),model(6).rewards.filter(r=>r.kind==='typing-leaf').map(r=>r.id));
