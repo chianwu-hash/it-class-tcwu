@@ -183,8 +183,9 @@ export function deriveRewardTreeModel(progressRows, activities) {
                 return;
             }
 
-            const maxLeaves = totalLevels - 1;
-            const leafCount = row.completed === true
+            const grouped = activity.rewardMode === 'five-then-flower' && totalLevels === 6;
+            const maxLeaves = grouped ? 1 : totalLevels - 1;
+            const leafCount = grouped ? (row.completed === true || Number(row.current_level) >= 6 ? 1 : 0) : row.completed === true
                 ? maxLeaves
                 : clampNumber(Number(row.current_level ?? 0) - 1, 0, maxLeaves);
 
@@ -197,8 +198,14 @@ export function deriveRewardTreeModel(progressRows, activities) {
                     index,
                     total: totalLevels,
                     earned: isEarned,
-                    href: isEarned ? "" : buildTypingHref(activity, index)
+                    href: isEarned ? "" : buildTypingHref(activity, grouped ? 5 : index)
                 });
+
+                if (grouped) {
+                    reward.title = `${activity.label} ${isEarned ? '五關合計葉' : '尚未取得的五關合計葉'}`;
+                    reward.reason = isEarned ? '前五關全部完成，合計長出一片葉子。' : '前五關全部完成，才能長出一片葉子。';
+                    reward.detail = '前四關只記進度；第五關完成得一葉，第六關完成再得一花。';
+                }
 
                 if (isEarned) {
                     rewards.push(reward);

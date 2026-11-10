@@ -4,7 +4,7 @@ export function validateCatalog(rows){
  if(!Array.isArray(rows)||!rows.length||rows.length>10000)throw Error('任務目錄格式錯誤或為空');
  const keys=new Set();
  for(const r of rows){
-  if(!r||!/^grade\d+-\d{3}-[12]$/.test(r.course_id)||!/^([0-9]{2}|foundation)$/.test(r.week_code)||!/^[-\w]+$/.test(r.activity_key)||!['typing','quiz','practical','foundation'].includes(r.kind)||!Number.isInteger(r.total_levels)||r.total_levels<1||r.total_levels>1000||![null,'boss'].includes(r.reward_mode))throw Error('任務目錄欄位無效');
+  if(!r||!/^grade\d+-\d{3}-[12]$/.test(r.course_id)||!/^([0-9]{2}|foundation)$/.test(r.week_code)||!/^[-\w]+$/.test(r.activity_key)||!['typing','quiz','practical','foundation'].includes(r.kind)||!Number.isInteger(r.total_levels)||r.total_levels<1||r.total_levels>1000||![null,'boss','five-then-flower'].includes(r.reward_mode)||(r.reward_mode==='five-then-flower'&&(r.kind!=='typing'||r.total_levels!==6)))throw Error('任務目錄欄位無效');
   const key=catalogKey(r);if(keys.has(key))throw Error('任務目錄有重複活動：'+key);keys.add(key);
  }
  return rows;

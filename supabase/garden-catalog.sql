@@ -30,6 +30,7 @@ insert into public.garden_reward_catalog(course_id,week_code,activity_key,kind,t
 ('grade3-115-1','07','typing_task_5','typing','5',null),
 ('grade3-115-1','08','typing_task_5','typing','5',null),
 ('grade3-115-1','09','typing_task_6','typing','6',null),
+('grade3-115-1','11','typing_task_6','typing','6','five-then-flower'),
 ('grade3-115-1','10','typing_task_5','typing','5',null),
 ('grade6-115-1','09','typing_boss_zh_1','typing','1','boss'),
 ('grade6-115-1','09','typing_boss_en_1','typing','1','boss'),
