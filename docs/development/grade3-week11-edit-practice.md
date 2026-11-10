@@ -24,3 +24,5 @@
 ## 發布
 
 本次按使用者指示不送Claude，完成Codex自測後經PR合併，僅從最新乾淨main透過 `release-from-main.mjs` 發布與完整樹比對。正式部署、讀回結果與收據於完成後補記。
+
+2026-11-10 已正式發布：main `a772339`，部署 `dpl_9YugncouJeJsg2MW4wSVwmVu1x4t`，完整樹2改2增、eolOnly0。正式11檔HTTP200／雜湊符合來源，正式瀏覽器四題×兩組操作矩陣通過、pageerror0、寫入0。測試分頁／租約與發布鎖均已釋放。[收據](grade3-week11-edit-release.json)。

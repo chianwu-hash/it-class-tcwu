@@ -1,13 +1,15 @@
-# 2026-11-10 第11週改為網頁直接修改練習（發布準備）
+# 2026-11-10 第11週網頁直接修改練習（已正式發布）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-g3-week11-edit-20261110 | 取得鎖後依腳本記錄 | 本批PR合併後的最新乾淨main | `dpl_6XeVgsVWmViRQBKfUS5hHNQRGbUv` | week11.html、week11教案、+week11-edit-practice.mjs／css | Codex自測；依使用者最新指示本次不給Claude複核 |
+| 已完成 | Codex-g3-week11-edit-20261110 | 2026-11-10T05:28:29.228Z | `a772339` | `dpl_6XeVgsVWmViRQBKfUS5hHNQRGbUv` | grade3/115-1/week11.html、grade3/LessonPlan/115-1/Week 11.md、+grade3/115-1/week11-edit-practice.css、+grade3/115-1/week11-edit-practice.mjs | `dpl_9YugncouJeJsg2MW4wSVwmVu1x4t`／回滾 `dpl_6XeVgsVWmViRQBKfUS5hHNQRGbUv`（eolOnly 0） |
 
-- 使用者指定原記事本三題改為頁內文字修改；四題各兩組，含原生方向鍵、左右刪除、局部替換、上下跨行、游標提示、檢查、重設、換題及輔助鍵。屬第08週同定位的免登入當堂暖身，不計分、不存雲端或localStorage、不加葉花；正式六關、帳號／進度／獎勵與SQL不變。
-- Codex唯一寫入者；從 `origin/main 7cb417c` 新建 `codex/grade3-week11-edit-practice-20261110`／同名D槽worktree。10項新練習與舊獎勵測試通過；AI工作瀏覽器01真實鍵盤四題×兩組、無寫入、無pageerror、桌機／手機、組字保護及六關模組缺載時暖身可用均通過。[本批契約](grade3-week11-edit-practice.md)。未啟動Claude。
+- 使用者指定記事本三題改為網頁直接練習，且明確要求本次先不給Claude複核。Codex完成實作與AI工作瀏覽器自測，未啟動Claude；PR136進main，乾淨main `a772339` 依發布腳本完成，2改2增、完整樹ok:true、無非預期差異、eolOnly0，鎖已釋放。[完整收據](grade3-week11-edit-release.json)。
+- [第11週文字修改](https://it-class-tcwu.vercel.app/grade3/115-1/week11.html#edit-practice)：預填文字，四題各兩組，練Backspace、Delete、局部替換與上下跨行；游標左右字元提示、指定方法檢查、重新開始、換題及輔助按鍵。免登入當堂暖身，不寫資料庫／localStorage、不計分、不加葉花；正式六關、舊進度與五關一葉／全過一葉一花保留。
+- 10項Node／隔離SQL通過，本機原六關完整瀏覽器回歸通過；本機及正式AI工作瀏覽器01的四題×兩組原生鍵盤、錯鍵／整段重打拒絕、換題、重設、輔助鍵、桌機／手機、減少動態與組字保護皆通過，寫入0、pageerror0。模擬六關模組不可用時仍可暖身。正式11檔HTTP200／SHA-256符合main，包含第10週與原六關／獎勵檔案。
+- 私人證據位於本批ignored目錄並依收尾SOP封存；測試分頁已清理、租約已釋放。中文組字僅以composition事件測保護，未冒稱實體Microsoft注音候選窗已驗。[本批契約](grade3-week11-edit-practice.md)。
 
 # 2026-11-10 三年級第 11 週：游標小醫生與期中後六關（已正式發布）
 
