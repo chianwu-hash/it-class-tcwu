@@ -1712,7 +1712,7 @@ revoke all on function public.garden_convert_quiz_snapshot(jsonb,jsonb,text) fro
 grant execute on function public.garden_convert_quiz_snapshot(jsonb,jsonb,text) to postgres;
 grant execute on function public.garden_convert_quiz_snapshot(jsonb,jsonb,text) to service_role;
 
--- garden_growth(text,text)  md5=8bc24ef98fda10849ff743c6d7e3d4e4
+-- garden_growth(text,text)  md5=31aba33bcf3716c18bc183e7c3cdb754
 CREATE OR REPLACE FUNCTION public.garden_growth(p_course_id text, p_action text DEFAULT 'get'::text)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -1741,7 +1741,11 @@ begin
  loop
   prefix:=r.course_id||':'||r.week_code||':'||r.activity_key||':';
   if r.kind='typing' and not (coalesce(r.reward_mode,'')='boss' and r.total_levels=1) then
+   if r.reward_mode='five-then-flower' and r.total_levels=6 then
+    n:=case when r.completed or coalesce(r.current_level,0)>=6 then 1 else 0 end;
+   else
    n:=greatest(0,least(r.total_levels-1,case when r.completed then r.total_levels-1 else coalesce(r.current_level,0)-1 end));
+   end if;
    for i in 1..n loop result:=result||jsonb_build_array(jsonb_build_object('id',prefix||'typing-leaf:'||i,'kind','typing-leaf'));end loop;
    if r.completed then result:=result||jsonb_build_array(jsonb_build_object('id',prefix||'flower:'||r.total_levels,'kind','flower'));end if;
   elsif r.completed then

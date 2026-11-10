@@ -14,7 +14,7 @@ const model=(n,activity=a)=>deriveRewardTreeModel([{course_id:activity.courseId,
 test('提交的遷移函式與快照來源一致，指紋接受正式來源且沒有其他函式改寫',async()=>{
  const {createHash}=await import('node:crypto');
  const sql=(await read('supabase/grade3_week11_typing.sql')).replaceAll('\r\n','\n');
- const source=splitSnapshot(await read('supabase/production-snapshot/functions.sql')).find(x=>x.signature==='garden_growth(text,text)').definition+'\n';
+ const source=(splitSnapshot(await read('supabase/production-snapshot/functions.sql')).find(x=>x.signature==='garden_growth(text,text)').definition+'\n').replaceAll('\r\n','\n');
  const digest=createHash('md5').update(source).digest('hex');assert(sql.includes("'"+digest+"'"));
  const next=sql.slice(sql.indexOf('CREATE OR REPLACE FUNCTION public.garden_growth('),sql.lastIndexOf('commit;')).trim().replace(/;$/,'');
  if(source.includes("if r.reward_mode='five-then-flower'"))assert.equal(next,source.trim());
