@@ -1,0 +1,366 @@
+{
+  "project": "it-class-tcwu",
+  "agent": "Codex-g3-week11-20261110",
+  "commit": "83ab75bc7444c55ea6ed855270d7f2c02cc89bb0",
+  "baseline": "dpl_EQkf8XXrgxhsNLA43CFuo6Vk76t1",
+  "expected": {
+    "changed": [
+      "admin-progress.html",
+      "grade3/115-1/index.html",
+      "grade3/115-1/navbar.js",
+      "grade3/115-1/partner-practice.html",
+      "grade3/115-1/past-exam.html",
+      "grade3/115-1/quiz-library.html",
+      "grade3/115-1/quiz.html",
+      "grade4/115-1/partner-practice.html",
+      "grade4/115-1/past-exam.html",
+      "grade4/115-1/quiz-library.html",
+      "grade4/115-1/quiz.html",
+      "grade6/115-1/partner-practice.html",
+      "grade6/115-1/past-exam.html",
+      "grade6/115-1/quiz-library.html",
+      "grade6/115-1/quiz.html",
+      "grade9/115-1/partner-practice.html",
+      "grade9/115-1/past-exam.html",
+      "grade9/115-1/quiz-library.html",
+      "grade9/115-1/quiz.html",
+      "my-tree.html",
+      "release/garden-catalog.mjs",
+      "shared/admin-learning-rewards.mjs",
+      "shared/admin-student-tree-model.mjs",
+      "shared/quiz-workshop/generated/assets.json",
+      "shared/reward-tree-config.js",
+      "shared/reward-tree-model.js"
+    ],
+    "added": [
+      "grade3/115-1/week11-content.mjs",
+      "grade3/115-1/week11.css",
+      "grade3/115-1/week11.html",
+      "grade3/115-1/week11.js",
+      "grade3/LessonPlan/115-1/Week 11.md"
+    ],
+    "removed": []
+  },
+  "startedAt": "2026-11-10T05:01:27.477Z",
+  "state": "promoted",
+  "candidate": "dpl_6XeVgsVWmViRQBKfUS5hHNQRGbUv",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "admin-progress.html",
+      "grade3/115-1/index.html",
+      "grade3/115-1/navbar.js",
+      "grade3/115-1/partner-practice.html",
+      "grade3/115-1/past-exam.html",
+      "grade3/115-1/quiz-library.html",
+      "grade3/115-1/quiz.html",
+      "grade4/115-1/partner-practice.html",
+      "grade4/115-1/past-exam.html",
+      "grade4/115-1/quiz-library.html",
+      "grade4/115-1/quiz.html",
+      "grade6/115-1/partner-practice.html",
+      "grade6/115-1/past-exam.html",
+      "grade6/115-1/quiz-library.html",
+      "grade6/115-1/quiz.html",
+      "grade9/115-1/partner-practice.html",
+      "grade9/115-1/past-exam.html",
+      "grade9/115-1/quiz-library.html",
+      "grade9/115-1/quiz.html",
+      "my-tree.html",
+      "release/garden-catalog.mjs",
+      "shared/admin-learning-rewards.mjs",
+      "shared/admin-student-tree-model.mjs",
+      "shared/quiz-workshop/generated/assets.json",
+      "shared/reward-tree-config.js",
+      "shared/reward-tree-model.js"
+    ],
+    "added": [
+      "grade3/115-1/week11-content.mjs",
+      "grade3/115-1/week11.css",
+      "grade3/115-1/week11.html",
+      "grade3/115-1/week11.js",
+      "grade3/LessonPlan/115-1/Week 11.md"
+    ],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-10T05:01:54.829Z",
+  "promotedAt": "2026-11-10T05:02:33.794Z",
+  "alias": "dpl_6XeVgsVWmViRQBKfUS5hHNQRGbUv",
+  "rollback": "dpl_EQkf8XXrgxhsNLA43CFuo6Vk76t1",
+  "handoffRow": "| 已完成 | Codex-g3-week11-20261110 | 2026-11-10T05:01:27.477Z | `83ab75b` | `dpl_EQkf8XXrgxhsNLA43CFuo6Vk76t1` | admin-progress.html、grade3/115-1/index.html、grade3/115-1/navbar.js、grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、my-tree.html、release/garden-catalog.mjs、shared/admin-learning-rewards.mjs、shared/admin-student-tree-model.mjs、shared/quiz-workshop/generated/assets.json、shared/reward-tree-config.js、shared/reward-tree-model.js、+grade3/115-1/week11-content.mjs、+grade3/115-1/week11.css、+grade3/115-1/week11.html、+grade3/115-1/week11.js、+grade3/LessonPlan/115-1/Week 11.md | `dpl_6XeVgsVWmViRQBKfUS5hHNQRGbUv`／回滾 `dpl_EQkf8XXrgxhsNLA43CFuo6Vk76t1`（eolOnly 0） |",
+  "productionFiles": {
+    "passed": true,
+    "count": 34,
+    "checkedAt": "2026-11-10T05:02:34.819Z",
+    "files": [
+      {
+        "file": "admin-progress.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "398db1b46995413cf94c0c93917e070de3184267a5830f6948e59966a7c87031"
+      },
+      {
+        "file": "grade3/115-1/index.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "d392455238b9a57ca0bbb1779e04e5e7bc34d35a3cce13f0d974abfdccd26565"
+      },
+      {
+        "file": "grade3/115-1/navbar.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "97392e940e83a74013f4457c4de08f5bcb11bbb3bcbc18b1bccc4e4e2ff4a1f3"
+      },
+      {
+        "file": "grade3/115-1/partner-practice.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "3e7771e55ae605cc0cf6910382db2aaaf70cbd8ef703d446e458af3f9cea580f"
+      },
+      {
+        "file": "grade3/115-1/past-exam.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "6b27b876ae53ef10d0053f09b7a1eb3d027a5df33d14cf79799f837200e79f9e"
+      },
+      {
+        "file": "grade3/115-1/quiz-library.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "43f80f92024240eb4be19d4ab20c20bd5d29cd6ea8905a452dd24a8179fc9478"
+      },
+      {
+        "file": "grade3/115-1/quiz.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "716ab8744242e00eb21162c9ffe9fe7db0a7cfb24f3957619713cfaf8e788eff"
+      },
+      {
+        "file": "grade4/115-1/partner-practice.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "2f9c2a7fb7440e73636a7ae40c5133678882a74449b092f72bfcddaf530763a3"
+      },
+      {
+        "file": "grade4/115-1/past-exam.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "219d075620757d3f9a83b532936f60f36c3904738ba622795e97b6a6193c17a6"
+      },
+      {
+        "file": "grade4/115-1/quiz-library.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "e590c4ee0659a1a467afc60361145a3716f1ce17fccdc4b404f19dec4847861d"
+      },
+      {
+        "file": "grade4/115-1/quiz.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "d3561b7e65d92463e1e247f3a5e999823d7c7565c66d4a85a49389261aa6e6af"
+      },
+      {
+        "file": "grade6/115-1/partner-practice.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "5fafa77ba1be503d42f4c02a9a80a611d715365d4859620310c9f8333e93d003"
+      },
+      {
+        "file": "grade6/115-1/past-exam.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "929acdffd99cef0ffefb99ac95b8d08e85e36e22e180f8b2e540b8ad7b7abbe6"
+      },
+      {
+        "file": "grade6/115-1/quiz-library.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "d9374f73350fafe1a39a8a515ece7ed90f9046a8d42bd63c2396073b18239670"
+      },
+      {
+        "file": "grade6/115-1/quiz.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "e94d15b2c6b6dcc4f6690e5a57ca9bc4e6b151d361175aa9bfa3f5cb92b21ac5"
+      },
+      {
+        "file": "grade9/115-1/partner-practice.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "3291c7552b3dcef801b23c9a1ade830f25b479c09e8044aedd9ad3113be9299c"
+      },
+      {
+        "file": "grade9/115-1/past-exam.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "f9a53b2c7c08d74634b2baf2a7753f23308f2450c5e04238395b5aaedab3e1c4"
+      },
+      {
+        "file": "grade9/115-1/quiz-library.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "0db94f39ea69b2764308df64055693505c959bede2cb1369ed9ed3e2988d2b83"
+      },
+      {
+        "file": "grade9/115-1/quiz.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "21687d027645d0ffc617af77fed4b7517a9bad22e4f80a53eab3adbe3a358652"
+      },
+      {
+        "file": "my-tree.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "25743ce0c9f5594a606447441558b8ca3ee6ac177cde56eec9509a225c9336c6"
+      },
+      {
+        "file": "release/garden-catalog.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "f037001b4d650d81f78962fcf21932b6687ef06cc7ea1cc6fc928d0852b9f745"
+      },
+      {
+        "file": "shared/admin-learning-rewards.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "1b4b87bd8aad73aab03e36fd72412801d9f8a2b64332536cb156c0df5fa1e04e"
+      },
+      {
+        "file": "shared/admin-student-tree-model.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "ce07f4f564cb94387c3d51e142f8a0cb83865c6cafa9db79d8922ffd907ee4b4"
+      },
+      {
+        "file": "shared/quiz-workshop/generated/assets.json",
+        "status": 200,
+        "matched": true,
+        "sha256": "e08138f062fc00e45a89e597f2a0aa1e9618be1847cece43522f64ef6e4b0953"
+      },
+      {
+        "file": "shared/reward-tree-config.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "4f1786f2e517516361b93434e406a7fe2e0a44d7c0d1336e4007614ffb1e9431"
+      },
+      {
+        "file": "shared/reward-tree-model.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "09e05ec3f61599795dca49259122f72c5725e72f8bd78bce40f9daeb15872b7d"
+      },
+      {
+        "file": "grade3/115-1/week11-content.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "61657231acd368e9374ca33441bc662d4ea86133510bb41c51399401a7028ddd"
+      },
+      {
+        "file": "grade3/115-1/week11.css",
+        "status": 200,
+        "matched": true,
+        "sha256": "94a9b916342634ea41fe942b718054f6ae73e3ff2e3a3f8e612c5b1fb21729e1"
+      },
+      {
+        "file": "grade3/115-1/week11.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "2eef3b0bfcc86198927b42f157641e370924e00dd19d768926e96a920f42cefb"
+      },
+      {
+        "file": "grade3/115-1/week11.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "43160bf680063d12bf63835f12a8e580bd08b13a8e6ebff30a282e8b95766d07"
+      },
+      {
+        "file": "grade3/LessonPlan/115-1/Week 11.md",
+        "status": 200,
+        "matched": true,
+        "sha256": "ad4a1d15c2ece185073dc5c7bee9416491940ff1bcbcf2e0a74356e4fed015c2"
+      },
+      {
+        "file": "grade3/115-1/week10.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "d1f46e3ce5f3f43935fd6bc2c3a936f6143a8290b10f4c33341cfb4ccdc4e551"
+      },
+      {
+        "file": "grade3/115-1/week10.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "0e19cbf348a878f7460cc7b75d4b6e3d2664ac0d7ce3d7ac716f51688784605c"
+      },
+      {
+        "file": "grade3/115-1/week10-content.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "debbc98804c7a2cd9d105729c59fb48f93a98e845ec5980fa605caa1ea5b6265"
+      }
+    ]
+  },
+  "productionBrowser": {
+    "passed": true,
+    "origin": "production",
+    "pageerrors": [],
+    "desktopMobile": true,
+    "body": "identity-resolved"
+  },
+  "sql": {
+    "project": "upxgyusodibaqcrocdzj",
+    "functions": 169,
+    "liveCheck": true,
+    "catalogExpected": 95,
+    "catalogActual": 95,
+    "catalogMissing": 0,
+    "catalogMismatch": 0
+  },
+  "reviews": [
+    {
+      "session": "week11-review-20261110",
+      "version": "2.1.289",
+      "result": "no-blockers",
+      "readOnly": true
+    },
+    {
+      "session": "week11-final-review-20261110",
+      "version": "2.1.289",
+      "result": "no-blockers",
+      "readOnly": true
+    }
+  ],
+  "dedicatedAccountTest": {
+    "levels": 6,
+    "resume": true,
+    "boundaries": [
+      {
+        "completed": 4,
+        "leaves": 0,
+        "flowers": 0
+      },
+      {
+        "completed": 5,
+        "leaves": 1,
+        "flowers": 0
+      },
+      {
+        "completed": 6,
+        "leaves": 1,
+        "flowers": 1
+      }
+    ],
+    "remainingTestRows": 0,
+    "oldProgressPreserved": true
+  }
+}
