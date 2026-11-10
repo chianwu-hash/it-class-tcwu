@@ -1,14 +1,15 @@
-# 2026-11-10 第11週 Ctrl＋Z 復原（發布中）
+# 2026-11-10 第11週 Ctrl＋Z 復原（已正式發布）
 
 ## 發布登記
 
-| 狀態 | Agent | main來源 | 基準正式 | 變更檔案 |
-|---|---|---|---|---|
-| 發布中 | Codex-g3-week11-undo-20261110 | 本批PR合併後最新main | `dpl_9YugncouJeJsg2MW4wSVwmVu1x4t` | week11.html、week11-edit-practice.mjs／css、Week 11.md |
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-g3-week11-undo-20261110 | 2026-11-10T06:08:26.773Z | `e233e2a` | `dpl_9YugncouJeJsg2MW4wSVwmVu1x4t` | grade3/115-1/week11-edit-practice.css、grade3/115-1/week11-edit-practice.mjs、grade3/115-1/week11.html、grade3/LessonPlan/115-1/Week 11.md | `dpl_ZtLQuS77k8jZLZTX6NDWeDVaSpzG`／回滾 `dpl_9YugncouJeJsg2MW4wSVwmVu1x4t`（eolOnly 0） |
 
-- 使用者授權加入Ctrl＋Z教學、第五題救回誤刪與復原後接續練習，自測後上線，明確免Claude複核。Codex唯一寫入者，未啟動Claude。
-- [功能與驗證契約](grade3-week11-undo.md)：每題獨立編輯歷史，復原同步文字、游標與操作判定，重設／換題不跨題。無SQL、無共用登入／進度／葉花修改。
-- 14項Node／隔離SQL測試通過；AI工作瀏覽器五題×兩組、實際Ctrl＋Z、連續復原、先前正確操作保留、重設邊界、桌手機與六關離線獨立暖身通過，寫入0、pageerror0。原六關回歸完成後才合併及發布；以新乾淨main、正式發布腳本與完整樹比對完成，收據另補。
+- 使用者授權加入Ctrl＋Z教學、第五題救回誤刪與復原後接續練習，自測後上線，明確免Claude複核。Codex完成PR138合併，從乾淨main `e233e2a` 依腳本發布；4改、0增刪、完整樹ok:true、eolOnly0、無非預期差異，發布鎖已釋放。[發布收據](grade3-week11-undo-release.json)。
+- [正式第11週](https://it-class-tcwu.vercel.app/grade3/115-1/week11.html#edit-practice)：五題各兩組，每題獨立復原文字、游標與操作判定。整段誤刪後按Ctrl＋Z可接續局部修改；重設／換題不跨題復原。免登入當堂暖身、不寫資料庫／localStorage、不計分／加葉花；正式六關與第10週以前規則保留，無SQL。
+- 14項Node／隔離SQL及練功坊21檔核對通過；本機原六關完整回歸通過。本機與正式AI工作瀏覽器五題×兩組、實際Ctrl＋Z、連續復原、誤刪接續、先前操作保留、輔助鍵、跨題邊界、桌手機、組字事件保護與六關離線時獨立暖身皆通過，真學生寫入0、pageerror0。正式11檔HTTP200／SHA-256符合main，含舊週、原六關與獎勵檔案，桌手機截圖已檢視。
+- 未啟動Claude，測試分頁清理、租約釋放。中文組字測試不涵蓋實體Microsoft注音候選窗。私人證據依SOP在收尾封存，清理本批兩個工作目錄，不動其他對話。[功能契約](grade3-week11-undo.md)。
 
 # 2026-11-10 第11週網頁直接修改練習（已正式發布）
 

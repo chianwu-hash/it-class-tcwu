@@ -1,0 +1,158 @@
+{
+  "release": {
+    "agent": "Codex-g3-week11-undo-20261110",
+    "commit": "e233e2adc4928de4a79e81fa90ce0f2cc10eef48",
+    "baseline": "dpl_9YugncouJeJsg2MW4wSVwmVu1x4t",
+    "expected": {
+      "changed": [
+        "grade3/115-1/week11-edit-practice.css",
+        "grade3/115-1/week11-edit-practice.mjs",
+        "grade3/115-1/week11.html",
+        "grade3/LessonPlan/115-1/Week 11.md"
+      ],
+      "added": [],
+      "removed": []
+    },
+    "startedAt": "2026-11-10T06:08:26.773Z",
+    "state": "promoted",
+    "candidate": "dpl_ZtLQuS77k8jZLZTX6NDWeDVaSpzG",
+    "comparison": {
+      "ok": true,
+      "changed": [
+        "grade3/115-1/week11-edit-practice.css",
+        "grade3/115-1/week11-edit-practice.mjs",
+        "grade3/115-1/week11.html",
+        "grade3/LessonPlan/115-1/Week 11.md"
+      ],
+      "added": [],
+      "removed": [],
+      "eolOnly": 0,
+      "unexpected": [],
+      "missingFromChange": [],
+      "addedCheck": {
+        "missing": [],
+        "unexpected": []
+      },
+      "removedCheck": {
+        "missing": [],
+        "unexpected": []
+      }
+    },
+    "deployedAt": "2026-11-10T06:08:51.687Z",
+    "promotedAt": "2026-11-10T06:09:10.660Z",
+    "alias": "dpl_ZtLQuS77k8jZLZTX6NDWeDVaSpzG",
+    "rollback": "dpl_9YugncouJeJsg2MW4wSVwmVu1x4t",
+    "handoffRow": "| 已完成 | Codex-g3-week11-undo-20261110 | 2026-11-10T06:08:26.773Z | `e233e2a` | `dpl_9YugncouJeJsg2MW4wSVwmVu1x4t` | grade3/115-1/week11-edit-practice.css、grade3/115-1/week11-edit-practice.mjs、grade3/115-1/week11.html、grade3/LessonPlan/115-1/Week 11.md | `dpl_ZtLQuS77k8jZLZTX6NDWeDVaSpzG`／回滾 `dpl_9YugncouJeJsg2MW4wSVwmVu1x4t`（eolOnly 0） |"
+  },
+  "productionFiles": {
+    "passed": true,
+    "count": 11,
+    "checkedAt": "2026-11-10T06:09:11.778Z",
+    "files": [
+      {
+        "file": "grade3/115-1/week11-edit-practice.css",
+        "status": 200,
+        "matched": true,
+        "sha256": "decdd373fcfd9fa750154a52f39dadf941cc718c9b44ff9875c7bb359cc20106"
+      },
+      {
+        "file": "grade3/115-1/week11-edit-practice.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "3c304aff26a44f767249e317a9fc36c9bf114c9a22fcaffad84e76490c40164b"
+      },
+      {
+        "file": "grade3/115-1/week11.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "3582f7b391926477d1ec029efe1321969b11c4c7bd11cad43647eb1aab00dbed"
+      },
+      {
+        "file": "grade3/LessonPlan/115-1/Week 11.md",
+        "status": 200,
+        "matched": true,
+        "sha256": "d843fc7210cf5ac03551f905f37bc3d411307bab5c2d6c5f03d61f73fd1c8279"
+      },
+      {
+        "file": "grade3/115-1/week11.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "43160bf680063d12bf63835f12a8e580bd08b13a8e6ebff30a282e8b95766d07"
+      },
+      {
+        "file": "grade3/115-1/week11-content.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "61657231acd368e9374ca33441bc662d4ea86133510bb41c51399401a7028ddd"
+      },
+      {
+        "file": "shared/reward-tree-model.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "09e05ec3f61599795dca49259122f72c5725e72f8bd78bce40f9daeb15872b7d"
+      },
+      {
+        "file": "shared/reward-tree-config.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "4f1786f2e517516361b93434e406a7fe2e0a44d7c0d1336e4007614ffb1e9431"
+      },
+      {
+        "file": "grade3/115-1/week10.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "d1f46e3ce5f3f43935fd6bc2c3a936f6143a8290b10f4c33341cfb4ccdc4e551"
+      },
+      {
+        "file": "grade3/115-1/week10.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "0e19cbf348a878f7460cc7b75d4b6e3d2664ac0d7ce3d7ac716f51688784605c"
+      },
+      {
+        "file": "grade3/115-1/week10-content.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "debbc98804c7a2cd9d105729c59fb48f93a98e845ec5980fa605caa1ea5b6265"
+      }
+    ]
+  },
+  "productionBrowser": {
+    "passed": true,
+    "checks": [
+      "anonymous warm-up / weekly lock",
+      "five tasks x two variants with actual keyboard",
+      "wrong deletion key rejected",
+      "whole rewrite rejected",
+      "Ctrl+Z recovers whole deletion then passes",
+      "Ctrl+Z preserves prior correct editing",
+      "successive undo restores text and trace",
+      "reset/replay blocks cross-question undo",
+      "auxiliary undo and keyboard undo share history",
+      "paste/drop/cut blocked",
+      "IME composition guard",
+      "auxiliary keys and caret",
+      "desktop/mobile no overflow",
+      "reduced motion",
+      "warm-up works with weekly module unavailable"
+    ],
+    "writes": 0,
+    "pageerrors": []
+  },
+  "localTests": {
+    "nodeAndIsolatedPostgreSQL": 14,
+    "passed": true,
+    "warmupFiveTasksTwoVariants": true,
+    "originalSixLevelRegression": true,
+    "realStudentWrites": 0,
+    "pageerrors": [],
+    "quizBuildFiles": 21
+  },
+  "claudeReview": false,
+  "userAuthorizedNoClaude": true,
+  "databaseChanges": false,
+  "progressAndRewardsUnchanged": true,
+  "limitations": [
+    "中文組字以composition事件驗保護，未測實體Microsoft注音候選窗。"
+  ]
+}
