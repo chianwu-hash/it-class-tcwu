@@ -1,18 +1,16 @@
-# 2026-11-10 三年級第 11 週：局部修改、正確指法與期中後六關（待複核發布）
+# 2026-11-10 三年級第 11 週：游標小醫生與期中後六關（已正式發布）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-g3-week11-20261110 | 取得鎖後依腳本記錄 | PR133＋正式快照PR合併後的乾淨main | `dpl_EQkf8XXrgxhsNLA43CFuo6Vk76t1` | 第11週頁、首頁／navbar／後台、獎勵模型及版本產物 | 兩輪Claude均無阻擋；等待乾淨main發布腳本 |
+| 已完成 | Codex-g3-week11-20261110 | 2026-11-10T05:01:27.477Z | `83ab75b` | `dpl_EQkf8XXrgxhsNLA43CFuo6Vk76t1` | admin-progress.html、grade3/115-1/index.html、grade3/115-1/navbar.js、grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、my-tree.html、release/garden-catalog.mjs、shared/admin-learning-rewards.mjs、shared/admin-student-tree-model.mjs、shared/quiz-workshop/generated/assets.json、shared/reward-tree-config.js、shared/reward-tree-model.js、+grade3/115-1/week11-content.mjs、+grade3/115-1/week11.css、+grade3/115-1/week11.html、+grade3/115-1/week11.js、+grade3/LessonPlan/115-1/Week 11.md | `dpl_6XeVgsVWmViRQBKfUS5hHNQRGbUv`／回滾 `dpl_EQkf8XXrgxhsNLA43CFuo6Vk76t1`（eolOnly 0） |
 
-- 正式 SQL 與 169 函式快照 live check 已完成；95 項目錄一致。專用測試身分六關保存／重整與新葉花邊界通過，僅本次測試列已清理為0、舊進度未變。第二輪 Claude 補查快照、指紋、產生器與入口版本無阻擋；詳見第11週契約。Vercel專案／團隊與基準部署已核對。
-
-- 使用者授權：先完成教案、將新葉花規則寫入做網頁 SOP，再製作網頁；Codex 用 AI 工作瀏覽器測試，Claude 複核無問題後上線。
-- 新 worktree：`C:/Users/user/projects/it-class-tcwu-week11-postmidterm-20261110`，分支 `codex/grade3-week11-postmidterm-20261110`，來源 `origin/main f18787c`。Codex 唯一寫入者；Claude 僅唯讀複核，無檔案所有權。
-- 已完成教案與 SOP、六關週頁、首頁／navbar／教師後台同步、新模式 `five-then-flower` 前端及帶 MD5 保護的 SQL。內容為國語第七課 p.76、78 與英語 Unit 3 p.44–45；全過共一葉一花，舊週與其他活動不動。
-- 驗證：22 項獎勵／目錄／里程碑及 4 項身分／進度 PostgreSQL 測試通過；AI 工作瀏覽器分身 01 合成互動矩陣通過，pageerror 0，桌機／手機截圖已目視，正式學生寫入 0。正式帳號唯讀檢查顯示既有測試身分 30730，未切換名冊或更動學生資料。
-- 完整契約、實作檔案與限制見 [第 11 週契約](grade3-week11-contract.md)。待 Claude 複核後套用 `supabase/grade3_week11_typing.sql`、匯出快照／live check、PR 進 main、乾淨 main 用發布腳本上線與回寫收據。不得重跑舊 `quiz-order-fix.sql`。
+- 使用者指定教案 → 做網頁SOP → 網頁 → AI工作瀏覽器自測 → Claude複核 → 上線，已全部完成。PR133／134進main，乾淨main `83ab75b` 以發布腳本上傳與promote；完整樹26改5增、無非預期差異、eolOnly0，發布鎖已釋放。[發布收據](grade3-week11-release.json)。
+- 正式第11週：[游標小醫生，打錯只改那裡](https://it-class-tcwu.vercel.app/grade3/115-1/week11.html)。文字游標、方向鍵、Backspace／Delete、正確指法與英打基礎入口；六關採國語第七課p.76/78及英語Unit3 p.44/45。第11週起三年級新模式前五關合計一葉、全六關共一葉一花，舊週／其他活動維持原規則。
+- 兩輪Claude Code 2.1.289唯讀複核均無阻擋；固定SQL指紋、舊活動／正式函式隔離測試與身分存取回歸通過。AI工作瀏覽器分身01完成合成互動矩陣與專用30730正式六關寫入／重整；4/5/6關邊界正確、舊進度相同，僅本次專用測試列已清理為0。
+- 正式SQL已從main套用，169函式快照live check通過，95項正式目錄完全一致。正式34檔HTTP200且SHA-256符合發布main，包含第10週原檔；正式桌機／手機無橫向溢出、pageerror0，截圖已檢視。測試暫存分頁已清理、租約已釋放。
+- 限制：實體Microsoft注音候選窗與真正學生雙機不在本次覆蓋；指法影片來源已核對，未做影片逐秒內容審查。詳見[第11週功能契約](grade3-week11-contract.md)。私人課本頁圖／完整複核與瀏覽器證據保存於本次ignored工作目錄，收尾另依SOP封存；不提交課本、學生資料或憑證。
 
 # 2026-11-09 三年級自然Notebook＋Codex課本對照實測（已正式發布）
 
