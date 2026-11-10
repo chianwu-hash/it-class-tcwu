@@ -1,0 +1,160 @@
+{
+  "agent": "Codex-g3-week11-edit-20261110",
+  "commit": "a7723391092bb9748ef798630431bfe08d9035d6",
+  "baseline": "dpl_6XeVgsVWmViRQBKfUS5hHNQRGbUv",
+  "expected": {
+    "changed": [
+      "grade3/115-1/week11.html",
+      "grade3/LessonPlan/115-1/Week 11.md"
+    ],
+    "added": [
+      "grade3/115-1/week11-edit-practice.css",
+      "grade3/115-1/week11-edit-practice.mjs"
+    ],
+    "removed": []
+  },
+  "startedAt": "2026-11-10T05:28:29.228Z",
+  "state": "promoted",
+  "candidate": "dpl_9YugncouJeJsg2MW4wSVwmVu1x4t",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/week11.html",
+      "grade3/LessonPlan/115-1/Week 11.md"
+    ],
+    "added": [
+      "grade3/115-1/week11-edit-practice.css",
+      "grade3/115-1/week11-edit-practice.mjs"
+    ],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-10T05:28:52.539Z",
+  "promotedAt": "2026-11-10T05:29:22.918Z",
+  "alias": "dpl_9YugncouJeJsg2MW4wSVwmVu1x4t",
+  "rollback": "dpl_6XeVgsVWmViRQBKfUS5hHNQRGbUv",
+  "handoffRow": "| 已完成 | Codex-g3-week11-edit-20261110 | 2026-11-10T05:28:29.228Z | `a772339` | `dpl_6XeVgsVWmViRQBKfUS5hHNQRGbUv` | grade3/115-1/week11.html、grade3/LessonPlan/115-1/Week 11.md、+grade3/115-1/week11-edit-practice.css、+grade3/115-1/week11-edit-practice.mjs | `dpl_9YugncouJeJsg2MW4wSVwmVu1x4t`／回滾 `dpl_6XeVgsVWmViRQBKfUS5hHNQRGbUv`（eolOnly 0） |",
+  "project": "it-class-tcwu",
+  "productionFiles": {
+    "passed": true,
+    "count": 11,
+    "checkedAt": "2026-11-10T05:29:24.008Z",
+    "files": [
+      {
+        "file": "grade3/115-1/week11.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "7a6290bb3149bb469be50805ef4f9ebab9c7caa6f622293c15adfc98febd7842"
+      },
+      {
+        "file": "grade3/LessonPlan/115-1/Week 11.md",
+        "status": 200,
+        "matched": true,
+        "sha256": "b09b42d46028921f2d19167304d53cae6bb57deb892d765a777e9fb771f4da5d"
+      },
+      {
+        "file": "grade3/115-1/week11-edit-practice.css",
+        "status": 200,
+        "matched": true,
+        "sha256": "ee20f31e90ec9c66676a66e5731449e18b8be69f6281872944888a8fb1d64d40"
+      },
+      {
+        "file": "grade3/115-1/week11-edit-practice.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "a5dc56f85dc410b3d440551a4ab1e9f1f8722e9b4285517b7da1a85c4af19585"
+      },
+      {
+        "file": "grade3/115-1/week11.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "43160bf680063d12bf63835f12a8e580bd08b13a8e6ebff30a282e8b95766d07"
+      },
+      {
+        "file": "grade3/115-1/week11-content.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "61657231acd368e9374ca33441bc662d4ea86133510bb41c51399401a7028ddd"
+      },
+      {
+        "file": "shared/reward-tree-model.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "09e05ec3f61599795dca49259122f72c5725e72f8bd78bce40f9daeb15872b7d"
+      },
+      {
+        "file": "shared/reward-tree-config.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "4f1786f2e517516361b93434e406a7fe2e0a44d7c0d1336e4007614ffb1e9431"
+      },
+      {
+        "file": "grade3/115-1/week10.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "d1f46e3ce5f3f43935fd6bc2c3a936f6143a8290b10f4c33341cfb4ccdc4e551"
+      },
+      {
+        "file": "grade3/115-1/week10.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "0e19cbf348a878f7460cc7b75d4b6e3d2664ac0d7ce3d7ac716f51688784605c"
+      },
+      {
+        "file": "grade3/115-1/week10-content.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "debbc98804c7a2cd9d105729c59fb48f93a98e845ec5980fa605caa1ea5b6265"
+      }
+    ]
+  },
+  "productionBrowser": {
+    "passed": true,
+    "checks": [
+      "anonymous warm-up / weekly lock",
+      "four tasks x two variants with native keys",
+      "wrong deletion key rejected",
+      "whole rewrite rejected",
+      "paste/drop/cut blocked",
+      "IME composition guard",
+      "reset/replay/new question lock",
+      "auxiliary keys and caret",
+      "desktop/mobile no overflow",
+      "reduced motion",
+      "warm-up works with weekly module unavailable"
+    ],
+    "writes": 0,
+    "pageerrors": []
+  },
+  "localBrowser": {
+    "passed": true,
+    "checks": [
+      "anonymous warm-up / weekly lock",
+      "four tasks x two variants with native keys",
+      "wrong deletion key rejected",
+      "whole rewrite rejected",
+      "paste/drop/cut blocked",
+      "IME composition guard",
+      "reset/replay/new question lock",
+      "auxiliary keys and caret",
+      "desktop/mobile no overflow",
+      "reduced motion",
+      "warm-up works with weekly module unavailable"
+    ],
+    "writes": 0,
+    "pageerrors": []
+  },
+  "claudeReview": "skipped-per-explicit-user-instruction",
+  "databaseChanges": false,
+  "studentWrites": 0
+}
