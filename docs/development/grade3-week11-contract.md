@@ -2,7 +2,7 @@
 
 - 115-1 三年級；`grade3/115-1/week11.html`；C 類，沿用同學期第 10 週的 Google 本人身分與共用打字模組。
 - 第七課〈淡水小鎮〉p.76、78＋Here We Go 1 Unit 3 p.44、45；六關與六組替換題，固定版本，不即時呼叫 AI。
-- 修改教學在記事本實作，週頁提供靜態範例與任務；無匿名互動測驗、無上傳、無閱讀小卡、無額外即時開關；沒有資訊圖卡，本週以文字游標例子及鍵盤鍵帽說明。
+- 修改教學改為網頁內四題暖身，比照第08週免登入暖身，不是正式測驗或過關活動。只保留本次畫面結果、不記分、不存資料庫或localStorage、不加葉花；六關正式活動維持原契約。無上傳、無閱讀小卡、無額外即時開關，無新圖卡。
 - `courseId: grade3-115-1`／`weekCode: 11`／`activityKey: typing_task_6`／6 關。使用 `initGoogleCourseAuth()`（內含 `initNavbarAuth()`）、`createGoogleCourseProgress()`、`initTypingChallenge()`、`initTypingTools()`；正式過關寫本人 `student_progress`；手動草稿沿用 `typing_drafts`。
 - 未登入／身分失敗／讀取進度失敗均鎖定。保存失敗不解鎖；逐關保存、重整接續，六關各可換題再練，不倒退或重複保存。保留原生方向鍵、Backspace、Delete、中文組字及換行；阻擋貼上／拖入。
 - 週次三處同步：首頁最新卡、navbar `activeWeeks`、教師後台 `visibilityDefaults`。
@@ -29,3 +29,7 @@ navbar 改動後已執行正式練功坊產生器，16 個入口及 manifest 僅
 ## 正式發布收據
 
 2026-11-10 已由乾淨 main `83ab75b` 發布至 `dpl_6XeVgsVWmViRQBKfUS5hHNQRGbUv`；完整樹26改5增、eolOnly0、無非預期差異，正式34檔HTTP200／SHA-256符合main，桌機／手機瀏覽器檢查通過，pageerror0。發布鎖、測試分頁與租約均已釋放。[完整收據](grade3-week11-release.json)。
+
+## 2026-11-10 網頁內修改暖身修訂
+
+使用者指定截圖中的記事本三題改成網頁直接練習，並明確要求本次先不用 Claude 複核。Codex 唯一寫入者，從最新 origin/main 7cb417c 新建工作樹。新增四題各兩組，透過原生 beforeinput/input/keyup 記錄單字元刪除與跨行移動，只檢查當次練習方式；不是安全評分或雲端紀錄。文字與方法均符合才成功並啟用換題；整段清除／替換須復原。UI有游標左右字元提示、可觸控輔助鍵、重新開始、減少動態效果支援。模組獨立於 auth／週闖關初始化，因此身分或進度服務失敗時仍能暖身；不更動 SQL、活動鍵、六關內容、原有進度或獎勵。
