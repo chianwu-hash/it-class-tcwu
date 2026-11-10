@@ -1,3 +1,11 @@
+# 2026-11-10 三年級第 11 週：局部修改、正確指法與期中後六關（待複核發布）
+
+- 使用者授權：先完成教案、將新葉花規則寫入做網頁 SOP，再製作網頁；Codex 用 AI 工作瀏覽器測試，Claude 複核無問題後上線。
+- 新 worktree：`C:/Users/user/projects/it-class-tcwu-week11-postmidterm-20261110`，分支 `codex/grade3-week11-postmidterm-20261110`，來源 `origin/main f18787c`。Codex 唯一寫入者；Claude 僅唯讀複核，無檔案所有權。
+- 已完成教案與 SOP、六關週頁、首頁／navbar／教師後台同步、新模式 `five-then-flower` 前端及帶 MD5 保護的 SQL。內容為國語第七課 p.76、78 與英語 Unit 3 p.44–45；全過共一葉一花，舊週與其他活動不動。
+- 驗證：22 項獎勵／目錄／里程碑及 4 項身分／進度 PostgreSQL 測試通過；AI 工作瀏覽器分身 01 合成互動矩陣通過，pageerror 0，桌機／手機截圖已目視，正式學生寫入 0。正式帳號唯讀檢查顯示既有測試身分 30730，未切換名冊或更動學生資料。
+- 完整契約、實作檔案與限制見 [第 11 週契約](grade3-week11-contract.md)。待 Claude 複核後套用 `supabase/grade3_week11_typing.sql`、匯出快照／live check、PR 進 main、乾淨 main 用發布腳本上線與回寫收據。不得重跑舊 `quiz-order-fix.sql`。
+
 # 2026-11-09 三年級自然Notebook＋Codex課本對照實測（已正式發布）
 
 ## 發布登記

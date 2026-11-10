@@ -1,5 +1,5 @@
-import {getRewardTreeCourse} from './reward-tree-config.js';
-import {deriveRewardTreeModel} from './reward-tree-model.js';
+import {getRewardTreeCourse} from './reward-tree-config.js?v=20261110-week11';
+import {deriveRewardTreeModel} from './reward-tree-model.js?v=20261110-week11';
 import {foundationTreeData} from './typing-foundation-rewards.js';
 import {quizRewardTreeData} from './quiz-rewards.mjs';
 import {homeworkTreeData} from './homework-api.js';

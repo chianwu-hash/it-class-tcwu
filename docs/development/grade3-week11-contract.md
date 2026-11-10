@@ -1,0 +1,23 @@
+# 第 11 週功能契約與驗收
+
+- 115-1 三年級；`grade3/115-1/week11.html`；C 類，沿用同學期第 10 週的 Google 本人身分與共用打字模組。
+- 第七課〈淡水小鎮〉p.76、78＋Here We Go 1 Unit 3 p.44、45；六關與六組替換題，固定版本，不即時呼叫 AI。
+- 修改教學在記事本實作，週頁提供靜態範例與任務；無匿名互動測驗、無上傳、無閱讀小卡、無額外即時開關；沒有資訊圖卡，本週以文字游標例子及鍵盤鍵帽說明。
+- `courseId: grade3-115-1`／`weekCode: 11`／`activityKey: typing_task_6`／6 關。使用 `initGoogleCourseAuth()`（內含 `initNavbarAuth()`）、`createGoogleCourseProgress()`、`initTypingChallenge()`、`initTypingTools()`；正式過關寫本人 `student_progress`；手動草稿沿用 `typing_drafts`。
+- 未登入／身分失敗／讀取進度失敗均鎖定。保存失敗不解鎖；逐關保存、重整接續，六關各可換題再練，不倒退或重複保存。保留原生方向鍵、Backspace、Delete、中文組字及換行；阻擋貼上／拖入。
+- 週次三處同步：首頁最新卡、navbar `activeWeeks`、教師後台 `visibilityDefaults`。
+- 努力樹模式 `five-then-flower`，顯式登錄到新活動；前 4 關零葉零花，完成前 5 關一葉，全 6 關共一葉一花。舊週及其他類型模式維持原規則。新模式前端、教師摘要、正式目錄、伺服器 `garden_growth` 一致。
+- 遷移只插入第 11 週活動及目錄，並以原函式 MD5 守門更新單一計算分支；不改學生進度、baseline、已讀狀態、歷史花葉與權限。
+
+## 已完成的本機驗證
+
+- 22 項獎勵模型、全舊活動、基礎里程碑與發布目錄測試通過。
+- 4 項 PostgreSQL 身分／進度測試通過：六關 RPC 保存、匿名拒絕、另一位學生隔離、重送不倒退、衝突中止，以及既有名冊轉換回歸。
+- 隔離 PostgreSQL 執行正式 `garden_growth` 定義及新遷移，逐關比對前端獎勵 ID／數量；遷移可重跑、舊進度與 baseline／seen 保留。
+- AI 工作瀏覽器分身 01、有效租約與保護入口執行合成瀏覽器矩陣：匿名鎖定／OAuth 回跳、真實鍵盤方向鍵與左右刪除、草稿存取、首關與魔王保存失敗重試、六關保存、重整接續、六組重練不寫回、精準行次提示、登出、首頁／navbar 隱藏，以及 1280／390 寬無橫向溢出；pageerror 0。測試分頁已關閉、租約已釋放。
+- 目視桌機與手機截圖；已核對原始課本四頁。私有頁圖／合成證據位於 ignored `.chat-mode/evidence/`，不提交課本或帳號憑證。
+- 首次本機檢查正式快照 `db-snapshot-check.mjs --live` 通過，作為遷移前來源依據。SQL 尚待 Claude 複核後正式套用，再匯出快照與 live 檢查。
+
+## 發布前／後待完成
+
+Claude 唯讀複核與修正確認；正式受保護 SQL 套用與快照；新規則目錄 live 檢查；PR 進 main；乾淨 main 發布腳本完整樹比較、promote；正式來源讀回與最終收據。實體 Microsoft 注音候選窗及真正學生雙機仍屬人工課前檢核，不能把合成測試當成已覆蓋。
