@@ -1,0 +1,38 @@
+{
+  "phase": "preflight_passed_not_yet_enabled",
+  "date": "2026-11-12",
+  "approved_candidate_sha256": "019e5ae5ce765dfbbfdfc63fd88ce3977688abdb356a72a89bf5c599bec2d9b4",
+  "first_batch_pool_sha256": "2b2bfe1c61565d260dfa413c8cd286b401eb0bb7b03d933a1c5e0a29c2540ef9",
+  "new_fixed_question_versions": 378,
+  "upgrades_previously_usable": 225,
+  "restores_corrected_key": 1,
+  "additional_sources": 152,
+  "by_unit": {
+    "6": 109,
+    "7": 126,
+    "8": 79,
+    "9": 64
+  },
+  "question_types": {
+    "single_choice": 255,
+    "true_false": 123
+  },
+  "textbook_webp_pages": 70,
+  "new_question_native_images": 5,
+  "verified_media_hashes": 265,
+  "formal_sql_answer_reveal_cases": 378,
+  "formal_sql_legacy_extension_cases": 3,
+  "formal_sql_composition_cases": 8,
+  "local_tests_passed": 21,
+  "private_sql_sha256": {
+    "install-disabled.private.sql": "0f607d477bbe90dcd4ccd454981c4fffda87a64a1eb5e289beeb6c6f099048a3",
+    "activate-body.private.sql": "d160b4b75a421a7021465fabdd440da5785dcc9cc4e68789fb93ff16366106d0",
+    "rollback-disable.private.sql": "dffcb9f003f8deb06bd73b5ee33d21a2b543cbe6fafaf7d8726274d39a633691"
+  },
+  "student_history_regraded": false,
+  "database_functions_changed": false,
+  "vercel_deployment_needed": false,
+  "remaining_general_targets": 1707,
+  "remaining_past_in_scope_or_cross_scope_targets": 51,
+  "excluded_past_targets": 32
+}
