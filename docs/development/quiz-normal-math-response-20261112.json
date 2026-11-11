@@ -1,6 +1,6 @@
 {
   "date": "2026-11-12",
-  "phase": "verified_not_yet_installed",
+  "phase": "installed_snapshot_live_verified",
   "sql_sha256": "46eefff78d69b6df5f70f6b74256527c2939427b606f49bdd45dab4ccdfe3764",
   "function_changes": [
     {
@@ -24,5 +24,19 @@
   "frontend_deployment_required": false,
   "next_data_candidates": 203,
   "math_normalizer_candidate_questions": 89,
-  "remaining_scalar_candidates_pending": 90
+  "remaining_scalar_candidates_pending": 90,
+  "installed_main_head": "4b763e1ae385ed4c18407cd588d817c9064b0049",
+  "snapshot_functions": 171,
+  "snapshot_live_check_ok": true,
+  "actual_changed_functions": {
+    "quiz_action_before_learning(text,jsonb)": {
+      "before": "97e2df6be9620bd3b0e24ccd4ee1e81d",
+      "after": "ec8c39c6328b35b605521e4388d3cb0d"
+    },
+    "quiz_validate(jsonb)": {
+      "before": "64c1481d0c70f11162d71b1df5975783",
+      "after": "5aaee6af34ac1368995faff284919b31"
+    }
+  },
+  "existing_student_data_and_versions_unchanged": true
 }
