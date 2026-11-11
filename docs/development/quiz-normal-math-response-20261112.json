@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-12",
+  "phase": "verified_not_yet_installed",
+  "sql_sha256": "46eefff78d69b6df5f70f6b74256527c2939427b606f49bdd45dab4ccdfe3764",
+  "function_changes": [
+    {
+      "name": "quiz_validate",
+      "beforeHash": "64c1481d0c70f11162d71b1df5975783",
+      "afterHash": "5aaee6af34ac1368995faff284919b31"
+    },
+    {
+      "name": "quiz_action_before_learning",
+      "beforeHash": "97e2df6be9620bd3b0e24ccd4ee1e81d",
+      "afterHash": "ec8c39c6328b35b605521e4388d3cb0d"
+    }
+  ],
+  "normalizer_dependency_md5": "367a749f8772bd7415111f4abe85586f",
+  "new_tests_passed": 4,
+  "related_existing_tests_passed": 7,
+  "formal_rollback_cases": 4,
+  "ambiguous_mixed_number_rejections": 3,
+  "real_functions_restored_after_trial": true,
+  "student_answers_regraded": false,
+  "frontend_deployment_required": false,
+  "next_data_candidates": 203,
+  "math_normalizer_candidate_questions": 89,
+  "remaining_scalar_candidates_pending": 90
+}
