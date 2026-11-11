@@ -1,0 +1,83 @@
+{
+  "date": "2026-11-12",
+  "natural": {
+    "new_enabled_targets": 455,
+    "previous_enabled_targets": 29,
+    "total_enabled_in_textbook_scope": 484,
+    "new_pending_targets": 733,
+    "additional_old_kite_hold": 1,
+    "pending_conversion_reasons": {
+      "question_type_adapter_pending": 235,
+      "complete_group_adapter_pending": 428,
+      "past_exam_adapter_pending": 60,
+      "original_image_adapter_pending": 1,
+      "question_media_registration_pending": 7,
+      "held_or_manual": 2
+    },
+    "active_count_rechecked": {
+      "pool": 455,
+      "study_sources": 455
+    }
+  },
+  "math": {
+    "existing_math_pool_usable": 515,
+    "existing_math_scope_6_9_usable": 225,
+    "created_at": "2026-11-11T18:45:37.140501+00:00",
+    "general_source_parents_expected": 1546,
+    "general_reviewed_parents": 1546,
+    "general_pending_source_parents": 0,
+    "general_logical_targets": 2085,
+    "general_positions": 3749,
+    "general_unresolved_parents": [],
+    "general_conversion_categories": {
+      "awaiting_formal_adapter": 2000,
+      "manual_or_reference": 79,
+      "corrected_source_held": 6
+    },
+    "general_reviewed_unit_parents": {
+      "6": 403,
+      "7": 527,
+      "8": 320,
+      "9": 296
+    },
+    "past_reviewed_parents": 52,
+    "past_source_parents_expected": 52,
+    "past_logical_targets": 83,
+    "past_positions": 132,
+    "past_scope_counts": {
+      "in_scope": 44,
+      "outside_requested_scope": 32,
+      "cross_scope": 7
+    },
+    "past_unresolved_parents": [],
+    "past_pending_batches": [],
+    "new_math_published": 0,
+    "existing_math_wrong_key_disabled": 1,
+    "existing_empty_generated_session_paused": 1,
+    "student_saved_answers_or_grades_changed": false,
+    "provider_blocked": null,
+    "pipeline_stop_reason": "all_batches_processed",
+    "analysis_coverage_complete": true,
+    "status": "analysis_complete_pending_formal_adapter"
+  },
+  "math_private_candidate_sha256": "019e5ae5ce765dfbbfdfc63fd88ce3977688abdb356a72a89bf5c599bec2d9b4",
+  "publication": {
+    "new_math_enabled_targets": 0,
+    "new_frontend_deployment": false,
+    "worker_changed": false,
+    "student_saved_answers_or_grades_changed": false
+  },
+  "privacy": {
+    "copyrighted_sources_and_full_candidates_in_public_repo": false,
+    "student_data_in_public_repo": false,
+    "credentials_in_public_repo": false
+  },
+  "local_teacher_sample": {
+    "parents": 10,
+    "targets": 24,
+    "positions": 35,
+    "sha256": "1331918b540b46a15f40d0d799badb2a8666cd863434935ac4d405ec514e7bad",
+    "browser_visual_qa_performed": false,
+    "published": false
+  }
+}
