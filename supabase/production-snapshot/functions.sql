@@ -2979,7 +2979,7 @@ grant execute on function public.quiz_action(text,jsonb) to postgres;
 grant execute on function public.quiz_action(text,jsonb) to authenticated;
 grant execute on function public.quiz_action(text,jsonb) to service_role;
 
--- quiz_action_before_learning(text,jsonb)  md5=97e2df6be9620bd3b0e24ccd4ee1e81d
+-- quiz_action_before_learning(text,jsonb)  md5=ec8c39c6328b35b605521e4388d3cb0d
 CREATE OR REPLACE FUNCTION public.quiz_action_before_learning(p_action text, p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -3173,7 +3173,12 @@ begin
     correct:=(response#>>'{}')=q->'answer'->>'option_id';
    else
     -- 暫定僅去頭尾空白，比對教師列出的可接受答案，保留原始 response。
-    correct:=exists(select 1 from jsonb_array_elements_text(q->'answer'->'accepted') a where trim(a)=trim(response#>>'{}'));
+    -- Opt-in normal math answers v1
+    if q->'answer'->>'normalizer'='math-v1' and (response#>>'{}')~'[0-9０-９][[:space:]　]+[0-9０-９]' then raise exception 'invalid_response';end if;
+    correct:=case when q->'answer'->>'normalizer'='math-v1' then
+     exists(select 1 from jsonb_array_elements_text(q->'answer'->'accepted') a
+      where public.quiz_math_answer_normalize(a)=public.quiz_math_answer_normalize(response#>>'{}'))
+     else exists(select 1 from jsonb_array_elements_text(q->'answer'->'accepted') a where trim(a)=trim(response#>>'{}')) end;
    end if;
    insert into public.quiz_answers(attempt_id,question_id,request_id,response,correct) values(att.id,qid,(p_data->>'request_id')::uuid,response,correct);
    new_answer:=true;
@@ -5628,7 +5633,7 @@ revoke all on function public.quiz_valid_runs(jsonb,jsonb) from public, anon, au
 grant execute on function public.quiz_valid_runs(jsonb,jsonb) to postgres;
 grant execute on function public.quiz_valid_runs(jsonb,jsonb) to service_role;
 
--- quiz_validate(jsonb)  md5=64c1481d0c70f11162d71b1df5975783
+-- quiz_validate(jsonb)  md5=5aaee6af34ac1368995faff284919b31
 CREATE OR REPLACE FUNCTION public.quiz_validate(d jsonb)
  RETURNS void
  LANGUAGE plpgsql
@@ -5653,6 +5658,11 @@ begin
     or not public.quiz_valid_content(q->'prompt') or not public.quiz_valid_content(q->'explanation')
     or length(trim(q->'prompt'->>'text'))=0 or jsonb_typeof(q->'answer') is distinct from 'object' then raise exception 'invalid_question'; end if;
    ids:=array_append(ids,q->>'id');
+   -- Opt-in normal math answers v1
+   if q->'answer' ? 'normalizer' then
+    if q->>'type' is distinct from 'short' or jsonb_typeof(q->'answer'->'normalizer') is distinct from 'string'
+     or q->'answer'->>'normalizer' is distinct from 'math-v1' then raise exception 'invalid_answer';end if;
+   end if;
    if q->>'type'='single' then
     if jsonb_typeof(q->'options') is distinct from 'array' then raise exception 'invalid_options'; end if;
     if jsonb_array_length(q->'options') not between 2 and 8 then raise exception 'invalid_options'; end if;
@@ -5669,6 +5679,10 @@ begin
     if jsonb_array_length(q->'answer'->'accepted') not between 1 and 20 then raise exception 'invalid_answer'; end if;
     for a in select value from jsonb_array_elements(q->'answer'->'accepted') loop
      if jsonb_typeof(a) is distinct from 'string' or length(trim(a#>>'{}')) not between 1 and 2000 then raise exception 'invalid_answer'; end if;
+     if q->'answer'->>'normalizer'='math-v1' then
+      if (a#>>'{}')~'[0-9０-９][[:space:]　]+[0-9０-９]' then raise exception 'invalid_answer';end if;
+      perform public.quiz_math_answer_normalize(a#>>'{}');
+     end if;
     end loop;
    else raise exception 'invalid_question_type'; end if;
    -- 白名單投影仍是學生回傳的唯一來源，不信任教師輸入的額外欄位。

@@ -77,16 +77,12 @@ test('數學格式嚴格選用；無效分母、指令字串與非字串不能�
  }finally{await db.close()}
 });
 
-test('待部署SQL由主線快照定義產生，與已測的遷移生成器完全一致',async()=>{
- // Function bodies intentionally preserve mixed line endings from pg_get_functiondef.
- const snapshot=await readFile('supabase/production-snapshot/functions.sql','utf8');
- const defs=['quiz_validate','quiz_action_before_learning','quiz_math_answer_normalize'].map(proname=>{
-  const start=snapshot.indexOf('CREATE OR REPLACE FUNCTION public.'+proname+'(');
-  assert(start>=0);
-  const end=snapshot.indexOf('\nrevoke all on function public.'+proname+'(',start);
-  assert(end>start);
-  return {proname,definition:snapshot.slice(start,end).trimEnd().replace(/;$/,'')+'\n'};
- });
+test('待部署SQL由固定的升級前主線定義產生，正式快照更新後仍可逐字驗證',async()=>{
+ // Freeze the old definitions: production-snapshot advances after installation.
+ // JSON escapes preserve the function bodies' original mixed line endings.
+ const fixture=JSON.parse(await readFile('automation/fixtures/quiz-normal-math-before.json','utf8'));
+ assert.equal(fixture.source_main_commit,'6ad0f5555f3e516ef592507d0d6b00c1c2098cfa');
+ const defs=fixture.functions;
  const deployed=await readFile('supabase/quiz-normal-math-response.sql','utf8');
  assert.equal(deployed,buildNormalMathMigration(defs));
 });

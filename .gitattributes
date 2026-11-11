@@ -1,5 +1,5 @@
 # Byte-exact production snapshot (md5/sha256 are checked by automation/db-snapshot-check.mjs)
-supabase/production-snapshot/** -text
+supabase/production-snapshot/** -text whitespace=cr-at-eol
 supabase/quiz-normal-math-response.sql -text whitespace=cr-at-eol
 automation/fixtures/partner-review-before.sql -text whitespace=cr-at-eol
 
@@ -18,3 +18,4 @@ shared/zhuyin-foundation-app.js -text
 
 # Immutable pre-upgrade schema/function fixture for guarded migration tests.
 automation/fixtures/partner-match-before/** -text whitespace=cr-at-eol
+automation/fixtures/quiz-normal-math-before.json -text whitespace=cr-at-eol
