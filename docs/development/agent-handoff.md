@@ -1,15 +1,16 @@
-# 2026-11-11 三六年級固定風格與每週圖卡（發布中）
+# 2026-11-11 三六年級固定風格與每週圖卡（已正式發布）
 
 ## 發布登記
 
-| 狀態 | Agent | main來源 | 基準正式 | 變更檔案 |
-|---|---|---|---|---|
-| 發布中 | Codex-weekly-style-info-20261111 | 本批PR合併後最新main | `dpl_9ZSK5iogMsWwm2ER1YKDkfBqe2E3` | week11.html、Week 11.md、+week11-infographic.mjs／css、+images/week11 WebP |
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-weekly-style-info-20261111 | 2026-11-11T02:48:47.546Z | `2097bf9` | `dpl_9ZSK5iogMsWwm2ER1YKDkfBqe2E3` | grade3/115-1/week11.html、grade3/LessonPlan/115-1/Week 11.md、+grade3/115-1/images/week11/week11-infographic-1920x1080-q80.webp、+grade3/115-1/week11-infographic.css、+grade3/115-1/week11-infographic.mjs | `dpl_4jj9vesrQjgbB4jDBops7ZjWhZvQ`／回滾 `dpl_9ZSK5iogMsWwm2ER1YKDkfBqe2E3`（eolOnly 0） |
 
-- 使用者要求三六年級每週各自維持原風格、三年級也每週資訊圖卡，並選定第11週這次補做；沿用自驗後發布、免Claude複核指示。Codex唯一寫入者，新工作樹由main `ec43afb` 建立。
-- 新增六年級固定風格及共用每週圖卡SOP，既有dev-sop／lesson-to-web-sop／檢查表／prompt／圖像SOP均同步。三年級藍綠卡通、六年級紫靛水彩各自沿用；新正式上課週頁至少一張，不自動擴大回補所有歷史週。
-- 第11週以三年級第01週圖作實際風格參考，生圖／下載／目視完成，Cloudinary WebP 1920×1080、144814bytes回讀SHA一致。新增獨立共享燈箱入口，不依賴Auth／進度；無SQL、六關JS／題目／navbar／獎勵變更。[契約與驗證](weekly-style-infographic-20261111.md)。
-- 9項暖身邏輯及21檔建置核對通過。燈箱桌手機原生mouse／CDP雙指、失敗隔離與原六關回歸完成後才合併；乾淨main腳本／完整樹比對／正式讀回收據另補。雙擊驗證曾誤用舊clickCount參數，已查本機與官方文件修為count，未修改共用燈箱，[可重用筆記](browser-double-click-count-20261111.md)。
+- 使用者定案三六年級各自維持原風格，且每個新正式上課週頁至少一張資訊圖卡，三年級第11週本次補做。新增[六年級固定風格](grade6-visual-style.md)與[每週資訊圖卡SOP](weekly-infographic-sop.md)，同步dev-sop、教案轉網頁、檢查表、prompt及圖像SOP；三年級藍綠卡通與六年級紫靛水彩各自沿用，不自動擴大回補所有歷史週。
+- 第11週實際上傳三年級第01週參考圖生成，逐字／逐圖確認，1920×1080 WebP 144814bytes，Cloudinary回讀SHA一致；獨立模組沿用共享同頁燈箱，不依賴Auth／進度。無SQL、正式六關JS／題目、navbar或獎勵改動。六年級現有頁面本批未改。[契約](weekly-style-infographic-20261111.md)。
+- PR145合併後乾淨main `2097bf9` 依腳本發布，完整樹2改3增0刪、ok:true、eolOnly0；正式18檔HTTP200／SHA一致，鎖釋放。[正式收據](weekly-style-infographic-release-20261111.json)。
+- 本機暖身邏輯9項、練功坊21檔、原六關合成帳號回歸通過；本機及正式圖卡1280／390、真實mouse拖曳／滾輪／可信雙擊、CDP雙指、縮放／置中／重設／重開100%、Esc及焦點捲動恢復、Auth失敗隔離、匿名正式關鎖定通過，真實學生寫入0、pageerror0。正式四張圖卡／燈箱截圖已目視。實體手機硬體及注音候選窗未冒稱已驗。
+- 依使用者指示免Claude；決策更新長期記憶。測試頁已清理／租約釋放；保留本次ChatGPT原圖對話供教師檢視。收據進main後封存證據、正常移除本批兩個工作樹，其他對話與主工作區不動。
 
 # 2026-11-11 三年級固定風格與第11週小圖示（已正式發布）
 
