@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-11",
+  "kind": "database_content_release_no_frontend_deployment",
+  "new_general_targets": 455,
+  "units": {
+    "3": 259,
+    "4": 196
+  },
+  "new_true_false": 324,
+  "new_single_choice": 131,
+  "pending_general_targets": 673,
+  "pending_past_targets": 60,
+  "new_scope_pending_total": 733,
+  "existing_pilot_general_targets": 20,
+  "existing_pilot_past_targets": 9,
+  "current_scope_live_total": 484,
+  "tests": {
+    "related_node_pglite": 14,
+    "production_rollback_answer_targets": 455,
+    "private_book_pages_sha_readback": 50,
+    "anonymous_worker_status": 401,
+    "student_history_digest_unchanged": true,
+    "live_database_snapshot_check": true
+  },
+  "source_code_pr": 147,
+  "private_evidence": "repo外私有資料夾；不含於公開網站與Git"
+}
