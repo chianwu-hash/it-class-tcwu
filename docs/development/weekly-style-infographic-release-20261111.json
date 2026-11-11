@@ -1,0 +1,243 @@
+{
+  "release": {
+    "agent": "Codex-weekly-style-info-20261111",
+    "commit": "2097bf9fea25466c3369abf45931f9013528a922",
+    "baseline": "dpl_9ZSK5iogMsWwm2ER1YKDkfBqe2E3",
+    "expected": {
+      "changed": [
+        "grade3/115-1/week11.html",
+        "grade3/LessonPlan/115-1/Week 11.md"
+      ],
+      "added": [
+        "grade3/115-1/images/week11/week11-infographic-1920x1080-q80.webp",
+        "grade3/115-1/week11-infographic.css",
+        "grade3/115-1/week11-infographic.mjs"
+      ],
+      "removed": []
+    },
+    "startedAt": "2026-11-11T02:48:47.546Z",
+    "state": "promoted",
+    "candidate": "dpl_4jj9vesrQjgbB4jDBops7ZjWhZvQ",
+    "comparison": {
+      "ok": true,
+      "changed": [
+        "grade3/115-1/week11.html",
+        "grade3/LessonPlan/115-1/Week 11.md"
+      ],
+      "added": [
+        "grade3/115-1/images/week11/week11-infographic-1920x1080-q80.webp",
+        "grade3/115-1/week11-infographic.css",
+        "grade3/115-1/week11-infographic.mjs"
+      ],
+      "removed": [],
+      "eolOnly": 0,
+      "unexpected": [],
+      "missingFromChange": [],
+      "addedCheck": {
+        "missing": [],
+        "unexpected": []
+      },
+      "removedCheck": {
+        "missing": [],
+        "unexpected": []
+      }
+    },
+    "deployedAt": "2026-11-11T02:49:16.919Z",
+    "promotedAt": "2026-11-11T02:49:34.582Z",
+    "alias": "dpl_4jj9vesrQjgbB4jDBops7ZjWhZvQ",
+    "rollback": "dpl_9ZSK5iogMsWwm2ER1YKDkfBqe2E3",
+    "handoffRow": "| 已完成 | Codex-weekly-style-info-20261111 | 2026-11-11T02:48:47.546Z | `2097bf9` | `dpl_9ZSK5iogMsWwm2ER1YKDkfBqe2E3` | grade3/115-1/week11.html、grade3/LessonPlan/115-1/Week 11.md、+grade3/115-1/images/week11/week11-infographic-1920x1080-q80.webp、+grade3/115-1/week11-infographic.css、+grade3/115-1/week11-infographic.mjs | `dpl_4jj9vesrQjgbB4jDBops7ZjWhZvQ`／回滾 `dpl_9ZSK5iogMsWwm2ER1YKDkfBqe2E3`（eolOnly 0） |"
+  },
+  "productionFiles": {
+    "passed": true,
+    "count": 18,
+    "checkedAt": "2026-11-11T02:49:35.626Z",
+    "files": [
+      {
+        "file": "grade3/115-1/week11.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "9f3d53d2735b3f638954c209327633e207b1d3e8c3d60192192be1a9139b6efe"
+      },
+      {
+        "file": "grade3/LessonPlan/115-1/Week 11.md",
+        "status": 200,
+        "matched": true,
+        "sha256": "824ee80a6dea6e9382e3ef0202b38fa9605700107e87e2749ee68e350d9989d4"
+      },
+      {
+        "file": "grade3/115-1/images/week11/week11-infographic-1920x1080-q80.webp",
+        "status": 200,
+        "matched": true,
+        "sha256": "1fe83d938359fed8300ed70963391d27a3246c3e8d4c2803938a3c7c37e34cb4"
+      },
+      {
+        "file": "grade3/115-1/week11-infographic.css",
+        "status": 200,
+        "matched": true,
+        "sha256": "784449aa2b19cb7a565e6a7f56ccb3fec1fddf5877062fa4efb37f75e7538753"
+      },
+      {
+        "file": "grade3/115-1/week11-infographic.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "21fc0c15c3c8105476d5e1bc8c15c5935f687ad9fba2fbbb5c898e6c3e8301c2"
+      },
+      {
+        "file": "grade3/115-1/index.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "2e4ff799287d974262a3b51587210e38b783e0fb6c116797153c4e0cd5d34e23"
+      },
+      {
+        "file": "grade3/115-1/week11-edit-practice.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "72e70ba26bc80a3fb7fe8189b261d2db373a35a3222478115d23bcd01be60957"
+      },
+      {
+        "file": "grade3/115-1/week11-edit-practice.css",
+        "status": 200,
+        "matched": true,
+        "sha256": "2d48a12dae3e19c8920f96f642aae245e54d6552199760ad78b68b6867e7db57"
+      },
+      {
+        "file": "grade3/115-1/week11.css",
+        "status": 200,
+        "matched": true,
+        "sha256": "94a9b916342634ea41fe942b718054f6ae73e3ff2e3a3f8e612c5b1fb21729e1"
+      },
+      {
+        "file": "grade3/115-1/navbar.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "97392e940e83a74013f4457c4de08f5bcb11bbb3bcbc18b1bccc4e4e2ff4a1f3"
+      },
+      {
+        "file": "admin-progress.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "398db1b46995413cf94c0c93917e070de3184267a5830f6948e59966a7c87031"
+      },
+      {
+        "file": "grade3/115-1/week11.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "43160bf680063d12bf63835f12a8e580bd08b13a8e6ebff30a282e8b95766d07"
+      },
+      {
+        "file": "grade3/115-1/week11-content.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "61657231acd368e9374ca33441bc662d4ea86133510bb41c51399401a7028ddd"
+      },
+      {
+        "file": "shared/reward-tree-model.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "09e05ec3f61599795dca49259122f72c5725e72f8bd78bce40f9daeb15872b7d"
+      },
+      {
+        "file": "shared/reward-tree-config.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "4f1786f2e517516361b93434e406a7fe2e0a44d7c0d1336e4007614ffb1e9431"
+      },
+      {
+        "file": "grade3/115-1/week10.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "d1f46e3ce5f3f43935fd6bc2c3a936f6143a8290b10f4c33341cfb4ccdc4e551"
+      },
+      {
+        "file": "grade3/115-1/week10.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "0e19cbf348a878f7460cc7b75d4b6e3d2664ac0d7ce3d7ac716f51688784605c"
+      },
+      {
+        "file": "grade3/115-1/week10-content.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "debbc98804c7a2cd9d105729c59fb48f93a98e845ec5980fa605caa1ea5b6265"
+      }
+    ]
+  },
+  "productionBrowser": {
+    "passed": true,
+    "checks": [
+      "Cloudinary image 1920x1080 and matching link",
+      "7 colored task icons retained",
+      "1280/390 card and lightbox no overflow",
+      "zoom in/out percentage",
+      "actual mouse drag, wheel, double-click",
+      "center and reset",
+      "CDP two-finger pinch",
+      "Escape/close restores focus and scroll",
+      "reopen at 100%",
+      "lightbox survives unavailable auth/progress module",
+      "anonymous formal six levels remain locked"
+    ],
+    "realStudentWrites": 0,
+    "pageerrors": []
+  },
+  "localBrowser": {
+    "passed": true,
+    "checks": [
+      "Cloudinary image 1920x1080 and matching link",
+      "7 colored task icons retained",
+      "1280/390 card and lightbox no overflow",
+      "zoom in/out percentage",
+      "actual mouse drag, wheel, double-click",
+      "center and reset",
+      "CDP two-finger pinch",
+      "Escape/close restores focus and scroll",
+      "reopen at 100%",
+      "lightbox survives unavailable auth/progress module",
+      "anonymous formal six levels remain locked"
+    ],
+    "realStudentWrites": 0,
+    "pageerrors": []
+  },
+  "localSixLevels": {
+    "status": "passed",
+    "realStudentWrites": 0,
+    "checks": [
+      "anonymous/OAuth",
+      "Backspace/Delete/arrow real keyboard",
+      "drafts",
+      "six sequential saves",
+      "first/boss save failure",
+      "resume",
+      "six alternate replays without writes",
+      "precise mixed-language hints",
+      "logout",
+      "home/navbar visibility",
+      "unique week11 data marker and visible badge",
+      "home desktop/mobile and click week11",
+      "actual boss tree button and return click",
+      "desktop/mobile no overflow"
+    ],
+    "pageerrors": []
+  },
+  "localChecks": {
+    "warmupTestsPassed": 9,
+    "workshopFilesPassed": 21
+  },
+  "image": {
+    "passed": true,
+    "url": "https://res.cloudinary.com/dmqmjfqng/image/upload/v1794363978/it-class-tcwu/grade3/week11/115-1-week11-infographic-1920x1080-q80.webp",
+    "sha256": "1fe83d938359fed8300ed70963391d27a3246c3e8d4c2803938a3c7c37e34cb4",
+    "bytes": 144814,
+    "width": 1920,
+    "height": 1080,
+    "reference": "grade3/115-1/images/week01/week01-mouse-basics-card-chatgpt-final-1672x941-q82.webp",
+    "textAndDiagramReviewed": true
+  },
+  "limitations": [
+    "未使用實體手機硬體",
+    "未驗Microsoft注音候選窗"
+  ],
+  "noSql": true,
+  "noClaudeReviewPerUser": true
+}
