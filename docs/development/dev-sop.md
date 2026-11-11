@@ -54,7 +54,7 @@
 
 新增正式週卡時，必須完成「週卡三處同步」，缺一不可：
 
-1. 對應學年度首頁新增週卡並設定最新週標記。
+1. 對應學年度首頁新增週卡並設定最新週標記，將可見「本週／本週最新」徽章一起移到同一張卡；移除舊週資料標記、徽章及含糊的時效文字。只更新 `data-latest-week` 不算完成。
 2. 對應學年度 `navbar.js` 的 `activeWeeks` 加入本週。
 3. `admin-progress.html` 對應 `courseId` 的 `visibilityDefaults.weeks` 加入本週兩位數週碼，讓教師後台可以管理該卡片。
 
@@ -62,7 +62,7 @@
 
 ### 1.1 先確認年級身分分支
 
-- **三年級 115-1**：除教案明確的首週免身分例外外，課堂身分卡取代 Google 登入，互動進度寫入 `guest_progress`。目前不使用六年級作業／閱讀服務，努力樹尚未支援 guest progress，首頁、navbar 與完成提示不得顯示努力樹入口。
+- **三年級 115-1**：2026-10-06後已改為學校Google本人名冊與 `student_progress`，支援努力樹；第01週及明定的無保存暖身例外維持。不使用六年級作業／閱讀服務。歷史課堂身分卡規範只套用轉換前分支，不套用新週頁。
 - **六年級 115-1**：使用學校 Google 帳號；學生還要符合六年級名冊。中英打使用 `student_progress`，作業與閱讀使用各自的 homework／reading 資料與共用入口。自第 02 週起，只要建立正式任務週卡，就必須在同一次製作流程建立同週閱讀 period；沒有上課、沒有建立週卡的週次才保持缺號。
 
 不可以只看年級名稱，也要確認學年度資料夾；舊 `grade6/navbar.js` 與 `grade6/115-1/navbar.js` 的登入能力不同。
@@ -174,9 +174,9 @@ grep -r "activityKey\|activity_key" grade3/ grade6/
 - 倒數計時、進度條等 UI
 - 解鎖後顯示/隱藏的 UI 區塊（但觸發邏輯要橋接，不改 module）
 
-### Grade3 打字闖關頁的固定樣板
+### Grade3 打字闖關頁的歷史課堂身分卡樣板
 
-舊學期 Google 登入頁與 115-1 課堂身分卡頁不可共用同一段初始化。115-1 三年級頁的 module script 至少要包含：
+以下只供Google登入前的歷史課堂身分卡分支。現行115-1三年級Google週頁應參照 `grade3-google-course.md` 與同學期最新頁，使用 `initGoogleCourseAuth()`、`createGoogleCourseProgress()`，不可套用以下歷史初始化：
 
 ```javascript
 import { initNavbarAuth } from "../../shared/navbar-auth.js";
@@ -239,7 +239,7 @@ const classCardAuth = initClassCardAuth({ courseId: "grade3-115-1", mode: "requi
 - 教師只列已分享者，不顯示缺交或未分享人數
 - 分享後努力樹有繳交葉；過關後再有一葉；修改同週小卡不重複增加
 
-### 三年級 115-1 額外確認
+### 三年級Google登入前的歷史課堂身分卡分支額外確認
 
 - 課堂身分卡頁只顯示身分卡，不顯示 Google 登入
 - 進度寫入 `guest_progress`，後台可查詢／重設，重設後學生重新整理回到未完成
@@ -362,9 +362,9 @@ const classCardAuth = initClassCardAuth({ courseId: "grade3-115-1", mode: "requi
 □ Console 無紅色錯誤（F12 打開看一眼）
 □ 手機或小螢幕快速確認版面不爛
 □ 所有外連連結（外部網站）能開啟
-□ 新增正式週卡：首頁、navbar `activeWeeks`、教師後台 `visibilityDefaults` 三處都已同步
+□ 新增正式週卡：首頁、navbar `activeWeeks`、教師後台 `visibilityDefaults` 三處都已同步；首頁唯一最新資料標記與唯一可見本週徽章在同張卡，舊週沒有殘留，桌手機截圖已檢視
 □ 新增正式週卡：教師後台可看到本週，並已實測隱藏／顯示會讓對應學年度首頁週卡消失／恢復
-□ 三年級 115-1：只顯示課堂身分卡，首頁／navbar／完成提示沒有努力樹入口
+□ 三年級 115-1：按現行Google契約確認本人名冊、正式進度與努力樹；只有歷史課堂身分卡分支維持guest_progress例外
 □ 六年級有作業：教師已確認原始週次、名稱與收件狀態，學生入口能看到正確作業
 □ 六年級 115-1 第 02 週起：有任務週卡就已在同一次製作流程建立 reading period，學生入口能看到本週小卡
 □ 六年級作業／閱讀：努力樹文案與實際規則都是繳交一葉、過關再一葉

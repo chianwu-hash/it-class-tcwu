@@ -81,7 +81,7 @@
 **匯出**：`initNavbarAuth({ onResetProgress, onSessionResolved })`
 
 **被誰 import**：
-- grade3：舊學期週頁及 `grade3/115-1` 課堂身分卡週頁；身分卡頁保留它處理 navbar 事件，但不以 Google session 保存活動進度
+- grade3：舊學期週頁、現行 `grade3/115-1` Google週頁（由 `initGoogleCourseAuth()` 內含呼叫），以及Google登入前歷史身分卡頁；只有歷史身分卡分支不以Google session保存活動進度
 - grade6：舊學期週頁、`grade6/115-1` 週頁與學期共用交作業入口
 
 **關鍵設計**：使用 `document.addEventListener('click', handleClick)` 事件代理，**不是直接綁在按鈕元素上**，因此 grade3 navbar 重渲後 listener 不會消失。
@@ -343,7 +343,7 @@ linkControl.load();
 - `homeworkTreeData()` 動態加入非草稿作業與目前學生提交狀態。
 - `readingTreeData()` 只為已分享的小卡建立活動，未分享的自由閱讀週不產生待完成活動。
 
-三年級 115-1 目前不適用：課堂身分卡進度在 `guest_progress`，努力樹尚未讀取此資料來源，因此不得顯示入口或在完成提示中承諾會長葉。
+三年級 115-1 在2026-10-06後已使用Google本人名冊與 `student_progress`，支援努力樹；第11週起顯式 `five-then-flower` 六關活動為前五關合計一葉、全過一葉一花。只有Google登入前歷史課堂身分卡分支的 `guest_progress` 不適用，不得以該歷史例外略過現行週頁驗收。
 
 ---
 
@@ -365,7 +365,7 @@ linkControl.load();
 
 | 課程 | Navbar 身分現況 | 努力樹／作業入口 |
 |---|---|---|
-| `grade3-115-1` | 週頁先提供 auth 容器，再由 `initClassCardAuth()` 隱藏 Google UI、換成課堂身分卡；navbar 仍會因週次可見性重渲 | 努力樹入口暫時隱藏；沒有六年級作業入口 |
+| `grade3-115-1` | 現行週頁以 `initGoogleCourseAuth()` 確認Google本人名冊（內含 `initNavbarAuth()`）；navbar 仍會因週次可見性重渲 | 已支援努力樹；沒有六年級作業／閱讀入口 |
 | `grade6-115-1` | `authBarHtml` 與 `showAuthBarOnWeekPages: true` 已啟用，使用學校 Google 登入 | 顯示交作業與努力樹入口 |
 
 ## 答題回饋動畫共用（2026-11-07）
