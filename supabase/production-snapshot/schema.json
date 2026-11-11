@@ -6322,6 +6322,134 @@
      "default": null,
      "generated": "",
      "identity": "",
+     "name": "course_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "question",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "book_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "primary_page",
+     "not_null": true,
+     "type": "integer"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "reference_pages",
+     "not_null": true,
+     "type": "integer[]"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "student_explanation",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "teacher_notes",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "provenance",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "enabled",
+     "not_null": true,
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (book_id) REFERENCES quiz_textbooks(id)",
+     "name": "quiz_pool_study_sources_book_id_fkey"
+    },
+    {
+     "def": "CHECK (((cardinality(reference_pages) > 0) AND (primary_page = ANY (reference_pages))))",
+     "name": "quiz_pool_study_sources_check"
+    },
+    {
+     "def": "FOREIGN KEY (course_id) REFERENCES quiz_courses(id)",
+     "name": "quiz_pool_study_sources_course_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (question_id)",
+     "name": "quiz_pool_study_sources_pkey"
+    },
+    {
+     "def": "CHECK ((primary_page > 0))",
+     "name": "quiz_pool_study_sources_primary_page_check"
+    },
+    {
+     "def": "CHECK ((jsonb_typeof(question) = 'object'::text))",
+     "name": "quiz_pool_study_sources_question_check"
+    },
+    {
+     "def": "FOREIGN KEY (question_id) REFERENCES quiz_question_pool(question_id)",
+     "name": "quiz_pool_study_sources_question_id_fkey"
+    },
+    {
+     "def": "CHECK (((length(student_explanation) >= 1) AND (length(student_explanation) <= 12000)))",
+     "name": "quiz_pool_study_sources_student_explanation_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_pool_study_sources_pkey ON public.quiz_pool_study_sources USING btree (question_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_pool_study_sources",
+   "rls": true,
+   "schema": "public",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "question_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
      "name": "source_item_id",
      "not_null": true,
      "type": "text"
@@ -9527,6 +9655,13 @@
    "table": "quiz_courses"
   },
   {
+   "def": "CREATE TRIGGER bind_composed_study AFTER INSERT ON public.quiz_generated_papers FOR EACH ROW EXECUTE FUNCTION quiz_bind_composed_study()",
+   "enabled": "O",
+   "name": "bind_composed_study",
+   "schema": "public",
+   "table": "quiz_generated_papers"
+  },
+  {
    "def": "CREATE TRIGGER quiz_assign_paper_name BEFORE INSERT OR UPDATE ON public.quiz_generated_papers FOR EACH ROW EXECUTE FUNCTION quiz_assign_paper_name()",
    "enabled": "O",
    "name": "quiz_assign_paper_name",
@@ -9553,6 +9688,13 @@
    "name": "quiz_catalog_invalidate",
    "schema": "public",
    "table": "quiz_pool_membership"
+  },
+  {
+   "def": "CREATE TRIGGER pool_study_source_immutable BEFORE DELETE OR UPDATE ON public.quiz_pool_study_sources FOR EACH ROW EXECUTE FUNCTION quiz_pool_study_source_guard()",
+   "enabled": "O",
+   "name": "pool_study_source_immutable",
+   "schema": "public",
+   "table": "quiz_pool_study_sources"
   },
   {
    "def": "CREATE TRIGGER quiz_catalog_invalidate AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.quiz_question_pool FOR EACH STATEMENT EXECUTE FUNCTION quiz_catalog_invalidate()",
