@@ -1,3 +1,10 @@
+# 2026-11-11 夥伴練功獨立測試庫安全修正（已套用，無網站部署）
+
+- 使用者授權修正 Supabase 警告，並要求測試環境也具備適當安全控管。僅修改獨立測試庫 `partner-practice-staging / jazeolkwueoexcgkxhzr` 十表的 RLS／直接 API ACL；正式庫 `upxgyusodibaqcrocdzj`、網站、函式與原資料未改。
+- 匿名與登入者的十表直接請求均已拒絕；原 RPC 目錄 75 份、身分查詢保持。本機權限 86 項、實際結構副本 38 項、線上 HTTPS/RPC/私有 WebSocket 19 項通過。第一次訂閱失敗後唯讀重查及完整第二輪成功，未放寬權限。
+- Security Advisor 11 errors → 0 errors，仍 23 warnings。精確清理本批專用測試房／requestId 後，40 表原資料雜湊、42 函式及既有政策均保持。未冒稱真 Google／實體學生雙機或全站安全稽核完成。
+- [完整紀錄](staging-security-20261111.md)；SQL 在 `supabase/staging/20261111-api-table-security.sql`，不可套用至正式課程庫。使用者層級 `AGENTS.md` 與長期記憶已保存測試安全原則；私有證據在 repo 外，沒有提交學生資料、題庫副本或憑證。
+
 # 2026-11-11 第11週週卡與SOP補查（已正式發布）
 
 ## 發布登記
