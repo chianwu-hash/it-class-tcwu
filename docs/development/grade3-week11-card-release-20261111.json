@@ -1,0 +1,165 @@
+{
+  "release": {
+    "agent": "Codex-g3-week11-card-audit-20261111",
+    "commit": "2b20cdbf90e26d51bf31f3c1cbd341f80ae4026a",
+    "baseline": "dpl_ZtLQuS77k8jZLZTX6NDWeDVaSpzG",
+    "expected": {
+      "changed": [
+        "grade3/115-1/index.html"
+      ],
+      "added": [],
+      "removed": []
+    },
+    "startedAt": "2026-11-11T01:33:15.230Z",
+    "state": "promoted",
+    "candidate": "dpl_FrythbzmKzDbW1vM5PECZxbYjgeF",
+    "comparison": {
+      "ok": true,
+      "changed": [
+        "grade3/115-1/index.html"
+      ],
+      "added": [],
+      "removed": [],
+      "eolOnly": 0,
+      "unexpected": [],
+      "missingFromChange": [],
+      "addedCheck": {
+        "missing": [],
+        "unexpected": []
+      },
+      "removedCheck": {
+        "missing": [],
+        "unexpected": []
+      }
+    },
+    "deployedAt": "2026-11-11T01:33:39.334Z",
+    "promotedAt": "2026-11-11T01:34:03.796Z",
+    "alias": "dpl_FrythbzmKzDbW1vM5PECZxbYjgeF",
+    "rollback": "dpl_ZtLQuS77k8jZLZTX6NDWeDVaSpzG",
+    "handoffRow": "| 已完成 | Codex-g3-week11-card-audit-20261111 | 2026-11-11T01:33:15.230Z | `2b20cdb` | `dpl_ZtLQuS77k8jZLZTX6NDWeDVaSpzG` | grade3/115-1/index.html | `dpl_FrythbzmKzDbW1vM5PECZxbYjgeF`／回滾 `dpl_ZtLQuS77k8jZLZTX6NDWeDVaSpzG`（eolOnly 0） |"
+  },
+  "productionFiles": {
+    "passed": true,
+    "count": 14,
+    "checkedAt": "2026-11-11T01:34:04.830Z",
+    "files": [
+      {
+        "file": "grade3/115-1/index.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "2e4ff799287d974262a3b51587210e38b783e0fb6c116797153c4e0cd5d34e23"
+      },
+      {
+        "file": "grade3/115-1/week11.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "3582f7b391926477d1ec029efe1321969b11c4c7bd11cad43647eb1aab00dbed"
+      },
+      {
+        "file": "grade3/115-1/week11-edit-practice.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "3c304aff26a44f767249e317a9fc36c9bf114c9a22fcaffad84e76490c40164b"
+      },
+      {
+        "file": "grade3/115-1/week11-edit-practice.css",
+        "status": 200,
+        "matched": true,
+        "sha256": "decdd373fcfd9fa750154a52f39dadf941cc718c9b44ff9875c7bb359cc20106"
+      },
+      {
+        "file": "grade3/115-1/week11.css",
+        "status": 200,
+        "matched": true,
+        "sha256": "94a9b916342634ea41fe942b718054f6ae73e3ff2e3a3f8e612c5b1fb21729e1"
+      },
+      {
+        "file": "grade3/115-1/navbar.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "97392e940e83a74013f4457c4de08f5bcb11bbb3bcbc18b1bccc4e4e2ff4a1f3"
+      },
+      {
+        "file": "admin-progress.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "398db1b46995413cf94c0c93917e070de3184267a5830f6948e59966a7c87031"
+      },
+      {
+        "file": "grade3/115-1/week11.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "43160bf680063d12bf63835f12a8e580bd08b13a8e6ebff30a282e8b95766d07"
+      },
+      {
+        "file": "grade3/115-1/week11-content.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "61657231acd368e9374ca33441bc662d4ea86133510bb41c51399401a7028ddd"
+      },
+      {
+        "file": "shared/reward-tree-model.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "09e05ec3f61599795dca49259122f72c5725e72f8bd78bce40f9daeb15872b7d"
+      },
+      {
+        "file": "shared/reward-tree-config.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "4f1786f2e517516361b93434e406a7fe2e0a44d7c0d1336e4007614ffb1e9431"
+      },
+      {
+        "file": "grade3/115-1/week10.html",
+        "status": 200,
+        "matched": true,
+        "sha256": "d1f46e3ce5f3f43935fd6bc2c3a936f6143a8290b10f4c33341cfb4ccdc4e551"
+      },
+      {
+        "file": "grade3/115-1/week10.js",
+        "status": 200,
+        "matched": true,
+        "sha256": "0e19cbf348a878f7460cc7b75d4b6e3d2664ac0d7ce3d7ac716f51688784605c"
+      },
+      {
+        "file": "grade3/115-1/week10-content.mjs",
+        "status": 200,
+        "matched": true,
+        "sha256": "debbc98804c7a2cd9d105729c59fb48f93a98e845ec5980fa605caa1ea5b6265"
+      }
+    ]
+  },
+  "productionCardBrowser": {
+    "passed": true,
+    "checks": [
+      "unique visible badge and data marker agree on week11",
+      "old week10 has no badge",
+      "1280/390 no overlap or overflow",
+      "actual card click reaches week11",
+      "hidden badge follows card; no old-week relabel",
+      "restore card and navbar"
+    ],
+    "realStudentWrites": 0,
+    "pageerrors": []
+  },
+  "localTests": {
+    "nodeAndIsolatedSQL": 15,
+    "passed": true,
+    "sixLevelBrowserAndActualCelebrationReturn": true,
+    "quizBuildFiles": 21,
+    "liveSnapshotFunctions": 169
+  },
+  "realTeacherVisibility": {
+    "passed": true,
+    "restored": true,
+    "homepageAndNavbarAgreed": true,
+    "previousSemesterUnchanged": true
+  },
+  "claudeReview": false,
+  "databaseSchemaOrFunctionChanges": false,
+  "studentProgressWrites": 0,
+  "limitations": [
+    "實體Microsoft注音候選窗與真正學生雙機未補驗，保留人工課前檢核。",
+    "正式後台只有可見性設定的隱藏／恢復，沒有重設學生紀錄。"
+  ]
+}
