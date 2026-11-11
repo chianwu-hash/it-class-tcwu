@@ -1,0 +1,35 @@
+{
+  "phase": "preflight_passed_not_enabled",
+  "date": "2026-11-12",
+  "fixed_pool_sha256": "8ff85d660a163d37eb64c7e7ee36058694df00b1e120ea72083bf7c1a9f7b607",
+  "candidate_sha256": "019e5ae5ce765dfbbfdfc63fd88ce3977688abdb356a72a89bf5c599bec2d9b4",
+  "new_fixed_questions": 203,
+  "math_normalizer_questions": 89,
+  "types": {
+    "single": 113,
+    "short": 90
+  },
+  "by_unit": {
+    "6": 6,
+    "7": 122,
+    "8": 40,
+    "9": 35
+  },
+  "overlap_previous378": 0,
+  "formal_answer_reveal_rollback_cases": 203,
+  "verified_media_hashes": 151,
+  "new_private_drive_images": 57,
+  "metadata_registration_required": 80,
+  "private_sql_sha256": {
+    "install-disabled.private.sql": "ae546ad5cc5373220a6d74c35fde4a721fc169a8f6c0d8b001f6a63e2676094f",
+    "activate-body.private.sql": "4fb6cfedf7879fd222a4ed8f6b89f628a749f2a0a37f0d2a11d8d2d52a6303f8",
+    "rollback-disable.private.sql": "a6e30f44bf988ef5487e9e0d760d56db8be91e68f4eb024ae56917c5b7d1907a"
+  },
+  "expected_scope_after_activation": 581,
+  "remaining_general_targets_after_activation": 1504,
+  "remaining_past_scope_targets": 51,
+  "excluded_past_targets": 32,
+  "rewrites_existing_versions": false,
+  "vercel_deployment": false,
+  "additional_function_changes": false
+}
