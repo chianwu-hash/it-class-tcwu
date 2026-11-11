@@ -1,6 +1,8 @@
 ﻿# 圖像與首頁預告卡 SOP
 
-更新日期：2026-05-23
+更新日期：2026-11-11
+
+> 三、六年級每個正式上課週頁必有當週資訊圖卡（非選配），各自維持原風格。詳[每週資訊圖卡規範](development/weekly-infographic-sop.md)、[三年級風格](development/grade3-visual-style.md)、[六年級風格](development/grade6-visual-style.md)。三年級第11週本次補做，其他歷史缺圖週不自動回補。以下舊port只是歷史範例；實際用ai-browser-launch租約回傳端點及精確分頁，不自行另開profile。
 
 ## 1. 資訊圖卡預設規格
 

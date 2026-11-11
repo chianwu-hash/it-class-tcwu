@@ -19,6 +19,8 @@
 6. 找同類型的最近一頁作為結構參考，**必須先盤點該頁使用的 shared modules、登入流程、進度保存方式、解鎖方式**，確認理解後再開始實作（不可只看 HTML 結構）
 
 ## 硬性規定（不論何種類型都必須遵守）
+- 六年級另讀 `docs/development/grade6-visual-style.md`，維持同學期第09／10週紫／靛／藍綠漸層、黃色重點、半透明卡、4px彩框及圓形編號／圖示；三、六年級各自對照原風格，不互相套版
+- 三、六年級每個正式上課週頁都依 `docs/development/weekly-infographic-sop.md` 至少做一張當週資訊圖卡，不能因教案未提而略過；實際附同年級參考圖、逐字核對、壓WebP、上Cloudinary並驗同頁燈箱與桌手機，不自動回補所有歷史週
 - 三年級另讀 `docs/development/grade3-visual-style.md`，沿用固定視覺基準 `grade3/week20.html` 與同學期第09／10週的親切風格：藍綠漸層、黃色徽章、彩色圓形小圖示、白底圓角彩框卡、分色標題。不能因無AI圖卡或簡化HTML而省略小圖示。功能參考與視覺參考分開列，完成後保存1280／390同尺寸參考／新頁對照截圖並實際檢視
 - 頁面中引用 navbar.js 的 <script src> 必須加版本字串，格式：navbar.js?v=YYYYMMDD（今天日期）
 - 不可手刻 nav HTML
