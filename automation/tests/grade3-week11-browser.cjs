@@ -6,7 +6,9 @@ const user={user:{id:'synthetic-week11-a',email:'synthetic@apps.ntpc.edu.tw'},ac
 const fixture=`
 export const SUPABASE_URL='${base}/fake',SUPABASE_ANON_KEY='synthetic';
 window.fixtureListeners=[];window.fixtureSaves=[];window.fixtureLoginCalls=[];window.fixtureLogoutCount=0;
-export const resolveSession=async()=>window.fixtureUser,getSession=async()=>({session:window.fixtureUser});
+// Exercise the real tree/return UI anonymously so navigation cannot write garden growth.
+export const resolveSession=async()=>location.pathname==='/my-tree.html'?null:window.fixtureUser,getSession=async()=>({session:location.pathname==='/my-tree.html'?null:window.fixtureUser});
+export const signInWithGoogle=async()=>{},TEACHER_EMAILS=[],AUTH_STORAGE_KEY='synthetic-auth',LOGIN_RETURN_KEY='synthetic-return';
 export const isTeacher=()=>false,getStoredAccessToken=()=> 'synthetic';
 export function beginCentralizedLogin(options){window.fixtureLoginCalls.push(options);}
 export const signOutAndReload=async()=>{window.fixtureLogoutCount++;};
@@ -25,6 +27,7 @@ rpc(name,args){
  if(!p.url().startsWith(base+week+'?qa=week11')){await c.disconnect();throw new Error('exact task target missing; acquire the QA URL before running');}
  c.session.grantForegroundOnce('Page.bringToFront','Exercise keyboard focus, draft controls and course unlocks in the task tab.');
  await c.session.send('Page.bringToFront');
+ await p.goto('about:blank',{waitUntil:'load'});
  p.setDefaultTimeout(20000);
  p.on('pageerror',e=>errors.push(e.message));
  await p.setCacheEnabled(false);await p.setBypassServiceWorker(true);await p.setRequestInterception(true);
@@ -48,7 +51,7 @@ rpc(name,args){
  const check=id=>p.$eval(`[onclick="checkLevel(${id})"]`,e=>e.click());
  const settled=id=>p.waitForFunction(n=>document.querySelector('#input-level'+n).readOnly&&!document.querySelector('[data-replay="'+n+'"]').disabled,{},id);
  const visible=id=>p.$eval('#block-level'+id,e=>!e.classList.contains('hidden'));
- async function screenshot(width,name,section){await p.setViewport({width,height:900});await p.evaluate(id=>{document.documentElement.style.scrollBehavior='auto';if(id)document.getElementById(id).scrollIntoView();else scrollTo(0,0);},section);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'overflow '+width);await safeScreenshot(p,{path:`${out}/${name}.png`});}
+ async function screenshot(width,name,section){await p.setViewport({width,height:900});await p.evaluate(id=>{document.documentElement.style.scrollBehavior='auto';if(id){const e=document.getElementById(id)||document.querySelector(id);scrollTo(0,scrollY+e.getBoundingClientRect().top-(document.querySelector('body > nav')?.getBoundingClientRect().height||0)-16);}else scrollTo(0,0);},section);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'overflow '+width);await safeScreenshot(p,{path:`${out}/${name}.png`});}
  try{
   await scenario();assert.ok(await p.$eval('#typing-levels-container',e=>e.inert));assert.ok(await p.$eval('#input-level1',e=>e.disabled));
   await p.click('#login-btn');assert.equal(await p.evaluate(()=>fixtureLoginCalls[0].returnTo),base+week);
@@ -80,6 +83,12 @@ rpc(name,args){
   await value(6,levels[5].ans);await p.evaluate(()=>fixtureSaveFail=true);await check(6);await p.waitForFunction(()=>document.querySelector('#msg-level6').textContent.includes('合成儲存失敗'));assert.equal(await p.$('#celebration-overlay'),null);
   await p.evaluate(()=>fixtureSaveFail=false);await check(6);await settled(6);assert.match(await p.$eval('#celebration-overlay',e=>e.textContent),/一片葉、一朵花/);
   progress=await p.evaluate(()=>fixtureProgress);assert.deepEqual(progress,{current_level:6,completed:true,score:6});
+  await p.waitForFunction(()=>document.querySelector('#celebration-overlay a')?.getBoundingClientRect().width>100);
+  await Promise.all([p.waitForNavigation({waitUntil:'networkidle2'}),p.click('#celebration-overlay a')]);
+  assert.equal(new URL(p.url()).pathname,'/my-tree.html');assert.equal(new URL(p.url()).searchParams.get('course'),'grade3-115-1');
+  await p.waitForFunction(()=>!document.querySelector('#back-page-btn')?.classList.contains('hidden'));
+  assert.equal(await p.$eval('#back-page-btn',e=>new URL(e.href).pathname),week);
+  await Promise.all([p.waitForNavigation({waitUntil:'networkidle2'}),p.click('#back-page-btn')]);assert.equal(new URL(p.url()).pathname,week);assert.equal(await p.$('#celebration-overlay'),null);
   await scenario({user,progress});await p.waitForFunction(()=>document.querySelector('#input-level6').readOnly);assert.equal(await p.$('#celebration-overlay'),null);
   for(let id=1;id<=6;id++){await p.$eval('[data-replay="'+id+'"]',e=>e.click());assert.equal(await p.$eval('#target-level'+id,e=>e.textContent),levels[id-1].replay);await value(id,levels[id-1].replay);await check(id);await settled(id);if(id===6)await p.$eval('#celebration-overlay',e=>e.remove());}
   assert.equal(await p.evaluate(()=>fixtureSaves.length),0);
@@ -89,7 +98,12 @@ rpc(name,args){
   await scenario({user});await p.waitForFunction(()=>!document.querySelector('#typing-levels-container').inert);await p.evaluate(()=>{for(const fn of fixtureListeners)fn('TOKEN_REFRESHED',fixtureUser)});await value(1,levels[0].ans);await check(1);await settled(1);
   await p.click('#logout-btn');assert.equal(await p.evaluate(()=>fixtureLogoutCount),1);
   await scenario({},'/grade3/115-1/index.html');assert.equal(await p.$eval('[data-week="11"]',e=>e.dataset.latestWeek),'true');assert.equal(await p.$eval('[data-week="10"]',e=>e.dataset.latestWeek),undefined);
+  assert.equal(await p.$$eval('[data-latest-week="true"]',es=>es.length),1);
+  assert.deepEqual(await p.$$eval('.week-card-grid a > div > span,.week-card-grid a > div > div',es=>es.filter(e=>/^(本週|本週最新)$/.test(e.textContent.trim())).map(e=>e.closest('a').dataset.week)),['11']);
+  assert.equal(await p.$eval('[data-current-week-badge]',e=>e.closest('a').dataset.latestWeek),'true');
+  await screenshot(1280,'home-desktop','.week-card-grid');await screenshot(390,'home-mobile','.week-card-grid');assert.equal(await p.$eval('[data-week="11"]',e=>e.querySelector('[data-current-week-badge]').getBoundingClientRect().bottom<=e.querySelector('div > span').getBoundingClientRect().top),true,'mobile badge overlaps title');
+  await Promise.all([p.waitForNavigation({waitUntil:'networkidle2'}),p.click('[data-week="11"]')]);assert.equal(new URL(p.url()).pathname,week);
   await scenario({visibility:[{course_id:'grade3-115-1',week_code:'11',is_visible:false}]},'/grade3/115-1/index.html');await p.waitForFunction(()=>document.querySelector('[data-week="11"]').classList.contains('hidden'));assert.equal(await p.$('body > nav a[href="week11.html"]'),null);assert.equal(await p.$eval('[data-week="10"]',e=>e.classList.contains('hidden')),false);
-  assert.deepEqual(errors,[]);const result={status:'passed',realStudentWrites:0,checks:['anonymous/OAuth','Backspace/Delete/arrow real keyboard','drafts','six sequential saves','first/boss save failure','resume','six alternate replays without writes','precise mixed-language hints','logout','home/navbar visibility','desktop/mobile no overflow'],pageerrors:errors};fs.writeFileSync(out+'/synthetic-checks.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));
+  assert.deepEqual(errors,[]);const result={status:'passed',realStudentWrites:0,checks:['anonymous/OAuth','Backspace/Delete/arrow real keyboard','drafts','six sequential saves','first/boss save failure','resume','six alternate replays without writes','precise mixed-language hints','logout','home/navbar visibility','unique week11 data marker and visible badge','home desktop/mobile and click week11','actual boss tree button and return click','desktop/mobile no overflow'],pageerrors:errors};fs.writeFileSync(out+'/synthetic-checks.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));
  }finally{await p.setRequestInterception(false).catch(()=>{});await p.close().catch(()=>{});await c.disconnect();}
 })().catch(e=>{console.error(e.stack);process.exitCode=1;});
