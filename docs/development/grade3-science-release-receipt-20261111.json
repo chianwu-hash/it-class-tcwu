@@ -20,8 +20,22 @@
     "private_book_pages_sha_readback": 50,
     "anonymous_worker_status": 401,
     "student_history_digest_unchanged": true,
-    "live_database_snapshot_check": true
+    "live_database_snapshot_check": true,
+    "manual_citation_new_version_rollback_targets": 2,
+    "post_live_real_compose_questions": 20
   },
   "source_code_pr": 147,
-  "private_evidence": "repo外私有資料夾；不含於公開網站與Git"
+  "private_evidence": "repo外私有資料夾；不含於公開網站與Git",
+  "same_day_manual_citation_replacements": 2,
+  "math_continuation": {
+    "source_parents": 1546,
+    "native_storage_entries": 2207,
+    "reviewed_pilot_parents": 8,
+    "reviewed_pilot_targets": 17,
+    "pilot_positions": 25,
+    "unresolved_pilot_doubts": 0,
+    "math_new_published": 0,
+    "remaining_general_source_parents": 1538,
+    "queued_batches": 85
+  }
 }
