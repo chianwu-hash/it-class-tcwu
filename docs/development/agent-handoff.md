@@ -1,15 +1,16 @@
-# 2026-11-11 三年級固定風格與第11週小圖示（發布中）
+# 2026-11-11 三年級固定風格與第11週小圖示（已正式發布）
 
 ## 發布登記
 
-| 狀態 | Agent | main來源 | 基準正式 | 變更檔案 |
-|---|---|---|---|---|
-| 發布中 | Codex-g3-week11-style-20261111 | 本批PR合併後最新main | `dpl_FrythbzmKzDbW1vM5PECZxbYjgeF` | week11.html、week11-edit-practice.mjs／css |
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-g3-week11-style-20261111 | 2026-11-11T01:52:45.677Z | `ff39092` | `dpl_FrythbzmKzDbW1vM5PECZxbYjgeF` | grade3/115-1/week11-edit-practice.css、grade3/115-1/week11-edit-practice.mjs、grade3/115-1/week11.html | `dpl_9ZSK5iogMsWwm2ER1YKDkfBqe2E3`／回滾 `dpl_FrythbzmKzDbW1vM5PECZxbYjgeF`（eolOnly 0） |
 
-- 使用者指定固定風格寫入SOP避免每週提醒，並修第11週；沿用自驗後上線、免Claude複核指示，Codex唯一寫入者。新工作樹來源main `5a46479`。
-- 新增[三年級固定視覺風格](grade3-visual-style.md)，dev-sop／lesson-to-web-sop／new-page-checklist／prompt-template均連入；要求固定第20週視覺基準＋同學期第09／10週、保留小圖示及分色卡片、1280／390同尺寸畫面對照、來源與產物同步。
-- 第11週恢復六個任務圓形圖示／引導小標、頁首裝飾與區段導覽圖示，五題暖身加圓形小圖示。沿用既有圖示庫，無新AI圖卡、無SQL、無navbar／Auth／正式六關／進度／葉花改動。[本批契約與驗證](grade3-week11-style-20261111.md)。
-- 暖身9項邏輯測試及練功坊21檔核對通過；瀏覽器視覺對照與暖身五題×兩組回歸完成後才合併，乾淨main依發布腳本／完整樹比對／正式讀回，收據另補。
+- 使用者指定固定風格納入每週SOP並修第11週。新增[三年級固定視覺風格](grade3-visual-style.md)，dev-sop、lesson-to-web-sop、new-page-checklist、prompt-template均要求每週自動沿用、同尺寸1280／390前後對照、來源／產物同步；不因沒有AI圖卡而省略網頁小圖示。
+- 第11週補回六個任務的圓形分色圖示與小標、頁首及區段導覽裝飾、五題暖身小圖示。固定第20週視覺基準＋同學期第10週對照，沿用圖示庫、無新增AI資產。[本批契約](grade3-week11-style-20261111.md)。
+- PR142合併，乾淨main `ff39092` 依腳本發布；完整樹3改0增刪、ok:true、eolOnly0、無非預期差異，鎖已釋放。正式14檔HTTP200／SHA-256符合發布main，原六關JS／題目、登入、首頁週卡、舊週與葉花檔案保留。[正式收據](grade3-week11-style-release-20261111.json)。
+- 本機9項暖身邏輯與五題×兩組真正鍵盤回歸（Ctrl＋Z接續／連續復原、重設／換題、輔助鍵、貼上／拖入拒絕、離線暖身）通過，練功坊21檔核對通過。本機與正式各8張第20週／第10週／第11週1280／390圖示與頁首／任務對照已檢視，字型載入、圓形／分色、不重疊／溢出、減少動態、正式六關匿名鎖定通過，pageerror0、寫入0。
+- 依指示未啟動Claude；無SQL、Auth、navbar、正式六關／進度／獎勵改動。測試分頁清理／租約釋放，私人證據及本批兩個工作樹依SOP封存清理。組字測試不冒稱實體注音候選窗已驗。另保留同時進main的獨立測試庫安全修正交接，不改其檔案／成果。
 
 # 2026-11-11 夥伴練功獨立測試庫安全修正（已套用，無網站部署）
 
