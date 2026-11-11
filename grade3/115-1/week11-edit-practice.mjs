@@ -18,6 +18,7 @@ export const EDIT_TASKS = [
 ];
 const esc=s=>s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 export function renderEditPractice(){
+ const icons={backspace:'cat',delete:'paw',replace:'pencil',lines:'arrows-up-down',undo:'rotate-left'};
  return `<div id="edit-practice" class="edit-practice"><div class="edit-undo-lesson"><h3>刪錯先別急，Ctrl＋Z 復原！</h3>
  <p>先點進文字框，按住 <kbd>Ctrl</kbd>，再按一下 <kbd>Z</kbd>，就能撤銷剛才的一次編輯。還沒救回需要的文字，可以再按一次。</p>
  <ol><li>發現刪錯，先停下來。</li><li>按 Ctrl＋Z，把誤刪的文字救回來。</li><li>看看游標位置，再移到真正的錯字旁邊，只改那裡。</li></ol>
@@ -26,7 +27,7 @@ export function renderEditPractice(){
  <p>錯誤文字已放好了。點入輸入框，用鍵盤移動游標，只改需要的地方。</p>
  <p class="edit-summary" data-edit-summary role="status" aria-live="polite">本次練好 0／${EDIT_TASKS.length} 題</p>
  ${EDIT_TASKS.map(task=>`<article class="edit-task" data-edit-task="${task.id}">
- <h4>${task.title}</h4><p id="edit-hint-${task.id}" class="edit-hint">${task.hint}</p>
+ <h4><span class="edit-task-icon"><i class="fa-solid fa-${icons[task.id]}" aria-hidden="true"></i></span><span>${task.title}</span></h4><p id="edit-hint-${task.id}" class="edit-hint">${task.hint}</p>
  <p class="edit-target-label">要改成：</p><pre class="edit-target" data-edit-target>${esc(task.variants[0].target)}</pre>
  <label for="edit-input-${task.id}">在這裡修改文字</label>
  <textarea id="edit-input-${task.id}" rows="${task.id==='lines'?3:2}" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="edit-hint-${task.id} edit-caret-${task.id} edit-feedback-${task.id}">${esc(task.variants[0].seed)}</textarea>
