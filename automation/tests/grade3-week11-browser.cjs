@@ -45,7 +45,7 @@ rpc(name,args){
  async function scenario(config={},path=week){
   if(bootstrap)await p.removeScriptToEvaluateOnNewDocument(bootstrap.identifier);
   bootstrap=await p.evaluateOnNewDocument(data=>{window.fixtureUser=data.user||null;window.fixtureProgress=data.progress||null;window.fixtureSaveFail=Boolean(data.saveFail);window.fixtureLoadFail=Boolean(data.loadFail);window.fixtureImportFail=Boolean(data.importFail);window.fixtureVisibility=data.visibility||[];},config);
-  await p.goto(base+path,{waitUntil:'networkidle2'});await p.waitForFunction(()=>window.__navbarAuthController);
+  await p.goto(base+path,{waitUntil:'networkidle2'});await p.evaluate(()=>document.documentElement.style.scrollBehavior='auto');await p.waitForFunction(()=>window.__navbarAuthController);
  }
  const value=(id,text)=>p.$eval('#input-level'+id,(e,t)=>{e.value=t;e.dispatchEvent(new Event('input',{bubbles:true}));},text);
  const check=id=>p.$eval(`[onclick="checkLevel(${id})"]`,e=>e.click());
@@ -57,6 +57,8 @@ rpc(name,args){
   await p.click('#login-btn');assert.equal(await p.evaluate(()=>fixtureLoginCalls[0].returnTo),base+week);
   assert.equal(await p.$eval('#fingers a[href="typing-foundation.html"]',e=>e.textContent.includes('英打基礎')),true);
   await screenshot(1280,'week11-desktop');await screenshot(390,'week11-mobile');
+  await p.$eval('#infographic',e=>e.scrollIntoView({block:'center'}));await p.$eval('#infographic img',e=>e.decode());
+  await screenshot(1280,'week11-info-desktop','infographic');await screenshot(390,'week11-info-mobile','infographic');
   await scenario({user});await p.waitForFunction(()=>!document.querySelector('#input-level1').disabled);
   for(const event of ['paste','drop'])assert.equal(await p.$eval('#input-level1',(e,name)=>e.dispatchEvent(new Event(name,{cancelable:true})),event),false);
   // Real keyboard event path: edit only the wrong letter, preserving the suffix.
@@ -74,7 +76,7 @@ rpc(name,args){
   await p.evaluate(()=>fixtureSaveFail=false);await check(1);await settled(1);
   assert.deepEqual(await p.evaluate(()=>fixtureSaves.at(-1)),{p_week_code:'11',p_activity_key:'typing_task_6',p_score:1});
   let progress=await p.evaluate(()=>fixtureProgress);await scenario({user,progress});await p.waitForFunction(()=>document.querySelector('#input-level1').readOnly);
-  await p.click('[data-next="2"]');await p.type('#input-level2',levels[1].ans);await check(2);await settled(2);
+  await p.$eval('[data-next="2"]',e=>e.scrollIntoView({block:'center',behavior:'instant'}));await p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));const nextPoint=await p.$eval('[data-next="2"]',e=>{const r=e.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2};});assert.equal(await p.evaluate(q=>!!document.elementFromPoint(q.x,q.y)?.closest('[data-next="2"]'),nextPoint),true,'next button must be under pointer');await p.mouse.click(nextPoint.x,nextPoint.y);await p.type('#input-level2',levels[1].ans);await check(2);await settled(2);
   for(let id=3;id<=5;id++){assert.equal(await visible(id),true);await value(id,levels[id-1].ans);await check(id);await settled(id);}
   assert.match(await p.$eval('#msg-level5',e=>e.textContent),/一片葉/);
   await screenshot(390,'week11-typing-mobile','typing');
@@ -105,5 +107,5 @@ rpc(name,args){
   await Promise.all([p.waitForNavigation({waitUntil:'networkidle2'}),p.click('[data-week="11"]')]);assert.equal(new URL(p.url()).pathname,week);
   await scenario({visibility:[{course_id:'grade3-115-1',week_code:'11',is_visible:false}]},'/grade3/115-1/index.html');await p.waitForFunction(()=>document.querySelector('[data-week="11"]').classList.contains('hidden'));assert.equal(await p.$('body > nav a[href="week11.html"]'),null);assert.equal(await p.$eval('[data-week="10"]',e=>e.classList.contains('hidden')),false);
   assert.deepEqual(errors,[]);const result={status:'passed',realStudentWrites:0,checks:['anonymous/OAuth','Backspace/Delete/arrow real keyboard','drafts','six sequential saves','first/boss save failure','resume','six alternate replays without writes','precise mixed-language hints','logout','home/navbar visibility','unique week11 data marker and visible badge','home desktop/mobile and click week11','actual boss tree button and return click','desktop/mobile no overflow'],pageerrors:errors};fs.writeFileSync(out+'/synthetic-checks.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));
- }finally{await p.setRequestInterception(false).catch(()=>{});await p.close().catch(()=>{});await c.disconnect();}
+ }catch(error){console.error('Browser test location: '+p.url());throw error;}finally{await p.setRequestInterception(false).catch(()=>{});await p.close().catch(()=>{});await c.disconnect();}
 })().catch(e=>{console.error(e.stack);process.exitCode=1;});

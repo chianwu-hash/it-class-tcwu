@@ -1,3 +1,16 @@
+# 2026-11-11 三六年級固定風格與每週圖卡（發布中）
+
+## 發布登記
+
+| 狀態 | Agent | main來源 | 基準正式 | 變更檔案 |
+|---|---|---|---|---|
+| 發布中 | Codex-weekly-style-info-20261111 | 本批PR合併後最新main | `dpl_9ZSK5iogMsWwm2ER1YKDkfBqe2E3` | week11.html、Week 11.md、+week11-infographic.mjs／css、+images/week11 WebP |
+
+- 使用者要求三六年級每週各自維持原風格、三年級也每週資訊圖卡，並選定第11週這次補做；沿用自驗後發布、免Claude複核指示。Codex唯一寫入者，新工作樹由main `ec43afb` 建立。
+- 新增六年級固定風格及共用每週圖卡SOP，既有dev-sop／lesson-to-web-sop／檢查表／prompt／圖像SOP均同步。三年級藍綠卡通、六年級紫靛水彩各自沿用；新正式上課週頁至少一張，不自動擴大回補所有歷史週。
+- 第11週以三年級第01週圖作實際風格參考，生圖／下載／目視完成，Cloudinary WebP 1920×1080、144814bytes回讀SHA一致。新增獨立共享燈箱入口，不依賴Auth／進度；無SQL、六關JS／題目／navbar／獎勵變更。[契約與驗證](weekly-style-infographic-20261111.md)。
+- 9項暖身邏輯及21檔建置核對通過。燈箱桌手機原生mouse／CDP雙指、失敗隔離與原六關回歸完成後才合併；乾淨main腳本／完整樹比對／正式讀回收據另補。雙擊驗證曾誤用舊clickCount參數，已查本機與官方文件修為count，未修改共用燈箱，[可重用筆記](browser-double-click-count-20261111.md)。
+
 # 2026-11-11 三年級固定風格與第11週小圖示（已正式發布）
 
 ## 發布登記

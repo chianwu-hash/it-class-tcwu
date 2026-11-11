@@ -40,9 +40,11 @@
 
 - `docs/development/prompt-template.md`
 
-如果本週需要資訊圖卡，再讀：
+三、六年級正式上課週頁都要做資訊圖卡，必讀（其他頁有圖卡時也讀）：
 
 - `docs/image-and-preview-card-sop.md`
+- `docs/development/weekly-infographic-sop.md`
+- 對應的 `grade3-visual-style.md` 或 `grade6-visual-style.md`
 
 如果會用到 Gemini / ChatGPT / NotebookLM / Wayground 的瀏覽器自動化，再讀：
 
@@ -58,7 +60,7 @@
 2. 確認年級：`grade3` 或 `grade6`
 3. 確認週次：例如 `week11`
 4. 確認頁型（A / B / C / D / E）
-5. 確認是否需要資訊圖卡
+5. 三、六年級正式上課週頁必有本週資訊圖卡，依 `weekly-infographic-sop.md` 列出重點、同年級參考及驗收；其他頁才判斷是否需要
 6. 確認是否需要課本頁碼對照
 7. 確認是否要同步首頁週卡、navbar 與教師後台週卡管理；新增正式週卡時三者必須同步
 
@@ -374,7 +376,7 @@ npm.cmd run notebooklm:page-refs -- --input C:\Users\user\projects\it-class-tcwu
 
 ## 7. 第 4 階段：資訊圖卡流程
 
-如果本週需要資訊圖卡，先做圖，再做網頁。
+三、六年級每個正式上課週頁都要做資訊圖卡；先定文案、完成圖卡，再整合網頁。詳[每週資訊圖卡規範](weekly-infographic-sop.md)，不得因教案未提就略過。三年級第11週本次補做，其他歷史缺圖週不自動回補。
 
 ### 7.1 先定圖卡文案結構
 
@@ -388,7 +390,7 @@ npm.cmd run notebooklm:page-refs -- --input C:\Users\user\projects\it-class-tcwu
 
 ### 7.2 圖卡風格基準
 
-若無另外指定，六年級資訊圖卡先參考 week08：
+圖卡必須各自延續年級風格，不能只沿用以下通用排版要點：三年級參考第01週正式滑鼠／教室規則圖的低年級可愛卡通、白底藍綠／天藍、大字短句；六年級參考同學期第09／10週正式水彩圖的深藍粗圓字、紫／藍綠／橘／天藍分區及高年級兒童。生圖時實際附同年級參考圖，不複製舊週內容。詳 `grade3-visual-style.md`、`grade6-visual-style.md` 及 `weekly-infographic-sop.md`。
 
 - 淺色背景
 - 黑色粗標題
@@ -519,9 +521,11 @@ week11 已實測成功上傳，Cloudinary secure_url：
 
 ## 8. 第 5 階段：實作週頁 HTML
 
-### 三年級固定視覺契約
+### 三、六年級固定視覺契約
 
 三年級先套用 [固定視覺風格](grade3-visual-style.md)：視覺基準為 `grade3/week20.html`，現行115-1參考第09／10週；保留藍綠漸層、黃色徽章、主題裝飾、彩色圓形小圖示、白底圓角彩框卡與分色標題。這是每週預設，不依使用者有無再次提醒，也不以沒有AI圖卡為由省略。建置來源與HTML產物一起改。驗收需同尺寸1280／390的參考／新頁對照，實際看圖示與標題，不只查功能或圖示class。
+
+六年級依[固定視覺風格](grade6-visual-style.md)維持第09／10週紫／靛／藍綠頁首、黃色重點、半透明重點卡、4px彩框及圓形編號。兩年級各自每週對照，不共用同一套視覺、不把最新頁漏項當新基準；只有使用者指定改版或具體教學需求才能改並記理由。
 
 ### 8.1 新增週頁
 
@@ -738,7 +742,7 @@ navbar.js?v=YYYYMMDD
 3. 首頁週卡已更新
 4. navbar 入口已更新
 5. 教師後台週卡管理已加入本週，並驗證隱藏／顯示與對應首頁同步
-6. 若教案需要資訊圖卡，資產已落位；不需要時標記 N/A
+6. 三、六年級正式上課週頁已有當週圖卡、WebP／Cloudinary正式資產、同頁燈箱及完整驗收；其他頁不需要才可N/A，理由寫明
 7. 課本頁碼（若有）已回寫
 8. 本機已驗證
 9. 若為正式上站頁面，資訊圖卡優先改用 Cloudinary 正式網址，或已確認目標網路環境可穩定存取本機資產

@@ -1,0 +1,28 @@
+Generate ONE new 16:9 landscape educational infographic for Taiwan elementary grade 3. Use the uploaded grade-3 mouse card ONLY as the visual-family reference: cheerful younger children, clean friendly cartoon illustration, rounded chunky dark-teal Traditional Chinese lettering, bright white background, soft sky-blue clouds, teal/sky-blue rounded outlines and small warm yellow/orange accents. Preserve the grade-3 family; do not change to the grade-6 purple watercolor poster, corporate editorial design, or a plain text worksheet. Do not copy the reference's mouse lesson, mouse hand diagram, or its captions.
+
+Create a polished 2-by-2 layout of four spacious white rounded teaching panels, each with a large colorful numbered circle and a small cute relevant illustration. Large title at top and one short subtitle. Use clear visual grouping, substantial whitespace and oversized sharp text rendering suitable for classroom projection. Friendly keyboard/arrow-key/eraser/undo illustrations are secondary to readable text. A small smiling younger student at a computer can sit near a corner; correct anatomy, two arms only, no extra fingers, and no distracting decorations. No school crest, official mascots, logos, watermark, URLs, QR codes, lesson minutes or fabricated app screenshots. All wording is Taiwan Traditional Chinese except the literal key names.
+
+Exact visible text, do not add other captions:
+Title: 第11週｜游標小醫生
+Subtitle: 打錯只改那裡，不用整句重打！
+
+Panel 1 number: 1
+Panel 1 title: 移動游標
+Panel 1 line 1: ← → 找位置
+Panel 1 line 2: ↑ ↓ 換到另一行
+
+Panel 2 number: 2
+Panel 2 title: Backspace 往左擦
+Panel 2 line: 刪除游標左邊一個字
+
+Panel 3 number: 3
+Panel 3 title: Delete 往右擦
+Panel 3 line: 刪除游標右邊一個字
+
+Panel 4 number: 4
+Panel 4 title: Ctrl＋Z 救回誤刪
+Panel 4 line: 刪錯先復原，再繼續修改
+
+Bottom warm yellow ribbon: 手指回到 F、J，再練中英打
+
+Critical teaching accuracy: Backspace deletes the character LEFT of the text caret; Delete deletes the character RIGHT of the text caret. Ctrl+Z means undo the previous edit, not clear everything or restart. Direction arrows move the text caret; do not confuse it with the mouse arrow. You may show a simple blinking vertical caret symbol and keycaps, but avoid extra example sentences or complicated diagrams that could reverse left/right. Keyboard key labels must spell Backspace, Delete, Ctrl, Z, F and J correctly. Keep each arrow pair in the stated order and retain the plus sign in Ctrl＋Z. Use a balanced teal/sky-blue primary palette with orange/yellow panel accents matching the uploaded grade-3 reference.
