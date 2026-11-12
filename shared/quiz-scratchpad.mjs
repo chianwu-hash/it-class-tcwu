@@ -5,8 +5,8 @@ import {setToolIcon} from './tool-icons.mjs';
 export function createQuizScratchpad(){
  const drafts=new Map();let currentKey=null,editor=null,opener=null,destroyed=false;
  const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;return n;};
- const dialog=make('dialog',null,'quiz-scratchpad-dialog'),head=make('header',null,'quiz-scratchpad-heading'),title=make('h2','計算紙'),closeButton=make('button','×'),body=make('div',null,'quiz-scratchpad-body'),editorHost=make('div');
- title.id='scratchpad-'+crypto.randomUUID();dialog.setAttribute('aria-labelledby',title.id);closeButton.type='button';closeButton.setAttribute('aria-label','收起計算紙');closeButton.title='收起計算紙';head.append(title,closeButton);const note=make('p','重整／登出會清除','quiz-scratchpad-note');note.title='草稿只留在這個頁面，重新整理或登出會清除。';body.append(editorHost,note);dialog.append(head,body);
+ const dialog=make('dialog',null,'quiz-scratchpad-dialog'),head=make('header',null,'quiz-scratchpad-heading'),title=make('h2','計算紙'),closeButton=make('button','×'),body=make('div',null,'quiz-scratchpad-body'),editorHost=make('div'),toolbar=make('div',null,'quiz-scratchpad-tools sketch-editor');
+ title.id='scratchpad-'+crypto.randomUUID();dialog.setAttribute('aria-labelledby',title.id);dialog.setAttribute('aria-description','草稿只留在這個頁面，重新整理或登出會清除。');closeButton.type='button';closeButton.setAttribute('aria-label','收起計算紙');closeButton.title='收起計算紙';head.append(title,toolbar,closeButton);body.append(editorHost);dialog.append(head,body);
  const save=()=>{if(currentKey&&editor)drafts.set(currentKey,editor.getValue());};
  function close({restoreFocus=true}={}){save();if(dialog.open)dialog.close();if(opener?.isConnected){opener.setAttribute('aria-expanded','false');if(restoreFocus)opener.focus({preventScroll:true});}}
  closeButton.onclick=()=>close();
@@ -14,12 +14,12 @@ export function createQuizScratchpad(){
  document.addEventListener('keydown',escape);
  function attach({host,key,label='計算紙'}){
   if(destroyed||!key)return;
-  if(currentKey!==key){close({restoreFocus:false});editor?.destroy();editor=null;currentKey=key;title.textContent=label;}
-  const button=make('button',null,'quiz-scratchpad-entry');button.type='button';setToolIcon(button,'pen','計算紙');button.append(make('span','計算紙'));button.setAttribute('aria-expanded',String(dialog.open));button.setAttribute('aria-controls',title.id+'-panel');dialog.id=title.id+'-panel';
+  if(currentKey!==key){close({restoreFocus:false});editor?.destroy();editor=null;currentKey=key;title.textContent=label;head.title=label+'；重整或登出會清除草稿';}
+  const button=make('button',null,'quiz-scratchpad-entry');button.type='button';setToolIcon(button,'pen','計算紙');button.title='計算紙；重整或登出會清除草稿';button.append(make('span','計算紙'));button.setAttribute('aria-expanded',String(dialog.open));button.setAttribute('aria-controls',title.id+'-panel');dialog.id=title.id+'-panel';
   opener=button;button.onclick=()=>{
    if(dialog.open){close();return;}
    if(!dialog.isConnected)document.body.append(dialog);
-   if(!editor)editor=createSketchEditor(editorHost,{value:drafts.get(currentKey)||{version:1,strokes:[]},onChange:value=>drafts.set(currentKey,value),messages:{boardLabel:'計算紙，可用滑鼠、手指或觸控筆',capacityHint:'計算紙快寫滿了，可以擦掉不需要的筆畫。',fullHint:'計算紙寫滿了，可以擦掉不需要的筆畫，或清除後重寫。',clearConfirm:'確定要清除這題的計算紙嗎？清除後可按「復原一步」。'}});
+   if(!editor)editor=createSketchEditor(editorHost,{toolbarHost:toolbar,value:drafts.get(currentKey)||{version:1,strokes:[]},onChange:value=>drafts.set(currentKey,value),messages:{boardLabel:'計算紙，可用滑鼠、手指或觸控筆',capacityHint:'計算紙快寫滿了，可以擦掉不需要的筆畫。',fullHint:'計算紙寫滿了，可以擦掉不需要的筆畫，或清除後重寫。',clearConfirm:'確定要清除這題的計算紙嗎？清除後可按「復原一步」。'}});
    dialog.show();button.setAttribute('aria-expanded','true');
   };
   host.prepend(button);

@@ -2,7 +2,7 @@
 
 ## 共用畫板與個人計算紙（2026-11-12，本地未發布）
 
-`shared/sketch/editor.mjs`／`model.mjs`／`contract.mjs`及`editor.css`提取原夥伴畫板；舊partner入口保留re-export並共用核心。`createSketchEditor(host,{value,onChange,onSave,messages})`回傳getValue、setDisabled、destroy，資料仍為原version:1／strokes／可選colors，最多80筆／每筆128點。`shared/tool-icons.mjs`為原工具圖示的共用入口。
+`shared/sketch/editor.mjs`／`model.mjs`／`contract.mjs`及`editor.css`提取原夥伴畫板；舊partner入口保留re-export並共用核心。`createSketchEditor(host,{value,onChange,onSave,messages,toolbarHost})`回傳getValue、setDisabled、destroy，資料仍為原version:1／strokes／可選colors，最多80筆／每筆128點。可選toolbarHost讓個人計算紙把工具放入單列header，destroy會同步清掉外置工具；未指定則保留原夥伴結構。`shared/tool-icons.mjs`為原工具圖示的共用入口。
 
 `quiz-scratchpad.mjs`由`createQuizWorkspace(root,{scratchpaper:true})`選用，apply須提供scratchpadKey及scratchpadLabel。一般題及個人考古UI提供本人／attempt／版本／題目或完整題組key；reset({forget:true})與destroy清除草稿。僅當頁記憶體，不混入送答／附件／AI／localStorage。詳見[契約、限制及本機驗證](quiz-shared-scratchpad-local-20261112.md)。本段不代表正式站已啟用。
 

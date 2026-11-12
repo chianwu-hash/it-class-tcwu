@@ -1,21 +1,21 @@
 @import url('./sketch/editor.css');
 .quiz-scratchpad-entry{display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:750;min-height:44px;margin:0 0 12px;padding:8px 12px;border:1px solid #9ebeb2;border-radius:12px;background:#f0f8f6;color:#185e60;cursor:pointer}
 .quiz-scratchpad-entry .sketch-tool-icon{width:22px;height:22px}.quiz-scratchpad-entry[aria-expanded=true]{background:#185e60;color:white}
-.quiz-scratchpad-entry:focus-visible,.quiz-scratchpad-heading button:focus-visible{outline:3px solid #d69b2c;outline-offset:3px}
-.quiz-scratchpad-dialog{position:fixed;inset:130px 24px auto auto;margin:0;width:min(520px,37vw);min-width:300px;max-width:calc(100vw - 24px);max-height:calc(100dvh - 160px - var(--quiz-dock-height,100px));padding:0;border:2px solid #80b8a6;border-radius:18px;background:#f5fbf8;color:#203f3b;box-shadow:0 12px 42px #123f4b40;z-index:60;resize:both;overflow:auto;font-family:inherit}
-.quiz-scratchpad-dialog[open]{display:flex;flex-direction:column}.quiz-scratchpad-heading{display:flex;align-items:center;justify-content:space-between;background:#e2f1eb;border-bottom:1px solid #b8d8ca;flex:none}.quiz-scratchpad-heading h2{margin:0;overflow-wrap:anywhere}.quiz-scratchpad-heading button{font:inherit;color:#185e60;cursor:pointer;white-space:nowrap}.quiz-scratchpad-body{overflow:auto;min-height:0}.quiz-scratchpad-note{color:#536c67}
-@media(max-width:700px){.quiz-scratchpad-dialog{inset:auto 8px calc(var(--quiz-dock-height,100px) + 8px) 8px;width:auto!important;height:auto!important;min-width:0;max-width:calc(100vw - 16px);max-height:68dvh;resize:none}}
-
-/* Compact personal-paper chrome only; partner drawing keeps its existing sizes. */
-.quiz-scratchpad-heading{gap:6px;padding:4px 6px}.quiz-scratchpad-heading h2{font-size:13px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.quiz-scratchpad-heading button{display:grid;place-items:center;flex:none;width:28px;min-height:28px;height:28px;padding:0;border:0;border-radius:6px;background:transparent;font-size:24px;line-height:1}
-.quiz-scratchpad-heading button:hover{background:#fff}.quiz-scratchpad-body{padding:4px}
-.quiz-scratchpad-note{font-size:11px;line-height:1.4;margin:3px 2px 0}
-.quiz-scratchpad-dialog .sketch-editor{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:5px}
-.quiz-scratchpad-dialog .sketch-palette,.quiz-scratchpad-dialog .sketch-actions{gap:2px;margin:0;align-items:center}
-.quiz-scratchpad-dialog .sketch-editor button,.quiz-scratchpad-dialog .sketch-editor .media-icon-button{flex:0 0 28px;width:28px;min-width:28px;min-height:28px;height:28px;padding:3px;border-radius:6px}
-.quiz-scratchpad-dialog .sketch-color-dot{width:16px;height:16px}.quiz-scratchpad-dialog .sketch-tool-icon{width:18px;height:18px}
-.quiz-scratchpad-dialog .camp-sketch-board{grid-column:1/-1;border-width:1px;border-radius:6px}
+.quiz-scratchpad-entry:focus-visible,.quiz-scratchpad-heading button:focus-visible{outline:2px solid #d69b2c;outline-offset:1px}
+.quiz-scratchpad-dialog{position:fixed;inset:130px 24px auto auto;margin:0;width:min(520px,37vw);height:auto!important;min-width:300px;max-width:calc(100vw - 24px);max-height:calc(100dvh - 160px - var(--quiz-dock-height,100px));padding:0;border:1px solid #80b8a6;border-radius:10px;background:#fff;color:#203f3b;box-shadow:0 12px 42px #123f4b40;z-index:60;resize:horizontal;overflow:auto;font-family:inherit}
+.quiz-scratchpad-dialog[open]{display:flex;flex-direction:column}
+.quiz-scratchpad-heading{display:flex;align-items:center;gap:2px;padding:2px 3px;background:#e2f1eb;border-bottom:1px solid #b8d8ca;flex:none}
+.quiz-scratchpad-heading h2{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.quiz-scratchpad-heading>button{display:grid;place-items:center;flex:0 0 24px;width:24px;min-height:24px;height:24px;margin:0;padding:0;border:0;border-radius:4px;background:transparent;color:#185e60;font:24px/1 sans-serif;cursor:pointer}
+.quiz-scratchpad-heading>button:hover{background:#fff}
+.quiz-scratchpad-body{padding:0;overflow:auto;min-height:0}
+.quiz-scratchpad-dialog .quiz-scratchpad-tools{display:flex;align-items:center;gap:2px;flex:1;min-width:0}
+.quiz-scratchpad-dialog .sketch-palette,.quiz-scratchpad-dialog .sketch-actions{display:flex;align-items:center;flex-wrap:nowrap;gap:2px;margin:0}
+.quiz-scratchpad-dialog .sketch-palette{flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}.quiz-scratchpad-dialog .sketch-actions{flex:none}
+.quiz-scratchpad-dialog .sketch-editor button,.quiz-scratchpad-dialog .sketch-editor .media-icon-button{flex:0 0 24px;width:24px;min-width:24px;min-height:24px;height:24px;padding:2px;border-radius:4px}
+.quiz-scratchpad-dialog .sketch-color-dot{width:14px;height:14px}.quiz-scratchpad-dialog .sketch-tool-icon{width:16px;height:16px}
+.quiz-scratchpad-dialog .camp-sketch-board{border:0;border-radius:0}
 .quiz-scratchpad-dialog .sketch-editor>.muted{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-.quiz-scratchpad-dialog .sketch-editor:has(.camp-sketch-board>polyline:nth-child(70))>.muted{position:static;grid-column:1/-1;width:auto;height:auto;margin:0;clip-path:none;white-space:normal;font-size:11px}
-@media(max-width:700px),(pointer:coarse){.quiz-scratchpad-dialog .sketch-editor button,.quiz-scratchpad-dialog .sketch-editor .media-icon-button{flex-basis:36px;width:36px;min-width:36px;min-height:36px;height:36px}.quiz-scratchpad-dialog .sketch-color-dot{width:18px;height:18px}.quiz-scratchpad-dialog .sketch-tool-icon{width:20px;height:20px}.quiz-scratchpad-heading button{width:36px;min-height:36px;height:36px}}
+.quiz-scratchpad-dialog .sketch-editor:has(.camp-sketch-board>polyline:nth-child(70))>.muted{position:static;width:auto;height:auto;margin:0;clip-path:none;white-space:normal;font-size:11px}
+@media(max-width:700px){.quiz-scratchpad-dialog{inset:auto 8px calc(var(--quiz-dock-height,100px) + 8px) 8px;width:auto!important;min-width:0;max-width:calc(100vw - 16px);max-height:68dvh;resize:none}}
+@media(max-width:700px),(pointer:coarse){.quiz-scratchpad-dialog .sketch-editor button,.quiz-scratchpad-dialog .sketch-editor .media-icon-button{flex-basis:30px;width:30px;min-width:30px;min-height:30px;height:30px}.quiz-scratchpad-dialog .sketch-color-dot{width:16px;height:16px}.quiz-scratchpad-dialog .sketch-tool-icon{width:18px;height:18px}.quiz-scratchpad-heading>button{flex-basis:30px;width:30px;min-height:30px;height:30px}}
