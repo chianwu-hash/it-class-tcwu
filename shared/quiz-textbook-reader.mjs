@@ -1,4 +1,5 @@
 import {initImageLightbox} from './image-lightbox.js';
+import {textbookBookPages} from './quiz-study-data.mjs';
 
 // Book navigation only. Zoom, pan and touch belong to the shared lightbox.
 export function createTextbookReader({root,getContext,pages,resolvePage=page=>page.url,lightbox}) {
@@ -6,6 +7,7 @@ export function createTextbookReader({root,getContext,pages,resolvePage=page=>pa
   const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;return n;};
   const button=(text,fn,cls='')=>{const n=make('button',text,cls);n.type='button';n.onclick=fn;return n;};
   const allPages=()=>typeof pages==='function'?pages():pages;
+  const bookPages=()=>textbookBookPages(allPages(),current?.bookId);
   const bookName=()=>['國語','國文','英語','數學','社會','自然','地理','歷史','公民'].includes(root.dataset.subject)?root.dataset.subject+'課本':'課本';
   const byNumber=n=>allPages().find(p=>(!current?.bookId||p.bookId===current.bookId)&&p.printedPages.includes(Number(n)));
   const memories=new Map(),lastPages=new Map(),nodes=new WeakSet();
@@ -14,18 +16,18 @@ export function createTextbookReader({root,getContext,pages,resolvePage=page=>pa
   const nav=make('div',null,'qtb-page-nav');
   const prev=button('‹',()=>adjacent(-1)),next=button('›',()=>adjacent(1)),home=button('本題頁',()=>show(current.primary));
   prev.setAttribute('aria-label','前一頁');next.setAttribute('aria-label','下一頁');home.setAttribute('aria-label','回本題頁');prev.title='前一頁';next.title='下一頁';home.title='回本題頁';
-  const select=make('select');select.setAttribute('aria-label','本題其他參考頁');select.onchange=()=>{if(select.value)show(Number(select.value));};
+  const select=make('select');select.setAttribute('aria-label','選擇課本頁碼');select.onchange=()=>{if(select.value)show(Number(select.value));};
   const back=button('回到題目',()=>close()),retry=button('再試一次',()=>show(shown.printedPages[0],true));retry.hidden=true;
   nav.append(prev,select,next,home);toolbar.append(title,nav,status,retry);
   const remember=()=>{if(open&&ready&&current&&shown)memories.set(current.key+':'+shown.id,lightbox.getState());};
   function close(){++generation;remember();lightbox.close();open=false;ready=false;}
-  function adjacent(direction){const sequence=allPages().filter(p=>p.sequence===shown.sequence&&p.bookId===shown.bookId).sort((a,b)=>a.printedPages[0]-b.printedPages[0]),p=sequence[sequence.indexOf(shown)+direction];if(p)show(p.printedPages[0]);}
+  function adjacent(direction){const sequence=bookPages(),p=sequence[sequence.indexOf(shown)+direction];if(p)show(p.printedPages[0]);}
   async function show(number,retryLoad=false){
     const page=byNumber(number);if(!page||!current||disposed)return;
     remember();shown=page;lastPages.set(current.key,page.printedPages[0]);ready=false;open=true;const token=++generation;
     title.textContent=bookName()+'・印刷第'+page.printedPages.join('–')+'頁'+(page.printedPages.length>1?'・完整拉頁':'');
-    const sequence=allPages().filter(p=>p.sequence===page.sequence&&p.bookId===page.bookId).sort((a,b)=>a.printedPages[0]-b.printedPages[0]);prev.disabled=sequence.indexOf(page)===0;next.disabled=sequence.indexOf(page)===sequence.length-1;select.value=String(page.printedPages[0]);
-    if(!select.value){select.options[0].textContent='第'+page.printedPages.join('–')+'頁';}select.setAttribute('aria-label','目前第'+page.printedPages.join('–')+'頁；選擇本題參考頁');
+    const sequence=bookPages();prev.disabled=sequence.indexOf(page)===0;next.disabled=sequence.indexOf(page)===sequence.length-1;select.value=String(page.printedPages[0]);
+    select.setAttribute('aria-label','目前第'+page.printedPages.join('–')+'頁；選擇課本頁碼');
     status.textContent='正在開啟課本…';status.classList.remove('is-error');retry.hidden=true;
     const options={fit:'width',toolbar,closeLabel:back.textContent,state:memories.get(current.key+':'+page.id),onStateChange:state=>{if(ready&&token===generation)memories.set(current.key+':'+page.id,state);},onClose:()=>{
       ++generation;open=false;ready=false;window.scrollTo({top:questionScroll,behavior:'instant'});(opener?.isConnected?opener:article?.querySelector('.qtb-entry'))?.focus({preventScroll:true});
@@ -42,7 +44,7 @@ export function createTextbookReader({root,getContext,pages,resolvePage=page=>pa
   }
   function start(page,trigger){
     opener=trigger;questionScroll=window.scrollY;back.textContent='← 回到'+(trigger?.dataset.returnCaption||'題目');
-    const placeholder=make('option','本題參考頁');placeholder.value='';select.replaceChildren(placeholder,...current.references.map(n=>{const p=byNumber(n),o=make('option','第'+p.printedPages.join('–')+'頁');o.value=String(p.printedPages[0]);return o;}));
+    select.replaceChildren(...bookPages().map(p=>{const related=p.printedPages.some(n=>current.references.includes(n)),o=make('option','第'+p.printedPages.join('–')+'頁'+(related?'（本題參考）':''));o.value=String(p.printedPages[0]);return o;}));
     show(page??lastPages.get(current.key)??current.primary);
   }
   function attach(){

@@ -1,5 +1,8 @@
 import {isSavedMedia} from './quiz-media.mjs';
 
+// sequence is source ordering metadata, not a navigation or authorization boundary.
+export const textbookBookPages=(pages,bookId)=>pages.filter(p=>p.bookId===bookId).slice().sort((a,b)=>a.printedPages[0]-b.printedPages[0]);
+
 // Server-disclosed, version-bound data only. No mappings or answer corpus shipped here.
 export function readQuizStudy(snapshot,kind){
  const value=snapshot?.study,attempt=kind==='past'?snapshot?.attemptId:snapshot?.attempt_id,version=kind==='past'?snapshot?.version:snapshot?.version_id;
