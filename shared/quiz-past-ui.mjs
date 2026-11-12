@@ -120,7 +120,7 @@ function render(){if(!active)return;study.refresh();
  const legacyExplanations=saved?.learningExplanations||(typeof saved?.learningExplanation==='string'?[{text:saved.learningExplanation,wrongReviewHref:saved.wrongReviewHref}]:[]);
  const explanations=[...studentExplanations,...legacyExplanations.filter(e=>studentExplanations.length!==g.fields.length&&!studentExplanations.some(s=>s.questionId===e.questionId||String(s.label)===String(e.label)))];
  for(const explanation of explanations){
-  const review=el('section',undefined,'past-learning-review');review.append(el('h3',explanation.selfCheck?'這題怎麼自我核對？':explanation.label?'第（'+explanation.label+'）小題怎麼想？':'這題怎麼想？'));renderLocalContent(review,{text:explanation.text,media:[]});review.append(el('p',explanation.origin?studySourceLabel(explanation.origin):'補充解析由 AI 依題意整理，非官方解析。','helper'));
+  const review=el('section',undefined,'past-learning-review quiz-explanation-copy');if(!explanation.origin||explanation.origin==='ai')review.classList.add('quiz-explanation-ai');review.append(el('h3',explanation.selfCheck?'這題怎麼自我核對？':explanation.label?'第（'+explanation.label+'）小題怎麼想？':'這題怎麼想？'));renderLocalContent(review,{text:explanation.text,media:[]});review.append(el('p',explanation.origin?studySourceLabel(explanation.origin):'補充解析由 AI 依題意整理，非官方解析。','helper'));
   if(typeof explanation.wrongReviewHref==='string'){
    const url=new URL(explanation.wrongReviewHref,location.origin);
    if(url.origin===location.origin&&/\/grade[3469]\/115-1\/quiz-library\.html$/.test(url.pathname)){

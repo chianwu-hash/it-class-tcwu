@@ -98,12 +98,16 @@ export function initServerQuiz({ selectors, server }) {
     intro.append(character, message); box.append(intro);
     const animate = !showFullReview && feedbackAnimation === q.id;
     if (animate) { box.classList.add('feedback-fresh'); feedbackAnimation = null; }
-    box.append(make('p', q.type === 'fields' ? `核對每格：${fieldsAnswerSummary(q,review.answer)}` : q.type === 'single'
-      ? `正確選項：${String.fromCharCode(65 + q.options.findIndex(o => o.id === review.answer.option_id))}`
-      : `可接受答案：${review.answer.accepted.join('、')}`));
+    const answerSummary=make('p',undefined,'quiz-answer-summary');
+    if(q.type==='single')answerSummary.append(make('span','正確選項：'),make('strong',String.fromCharCode(65+q.options.findIndex(o=>o.id===review.answer.option_id)),'quiz-answer-value'));
+    else answerSummary.textContent=q.type==='fields'?`核對每格：${fieldsAnswerSummary(q,review.answer)}`:`可接受答案：${review.answer.accepted.join('、')}`;
+    box.append(answerSummary);
     const studentExplanation=study.explanation(q.id);
-    renderContent(box,studentExplanation?{text:studentExplanation.text,media:[]}:review.explanation);
-    if(studentExplanation)box.append(make('p',studySourceLabel(studentExplanation.origin),'helper'));
+    const explanation=make('section',undefined,'quiz-explanation-copy');
+    if(studentExplanation?.origin==='ai'){explanation.classList.add('quiz-explanation-ai');explanation.append(make('strong','AI 解析','quiz-explanation-caption'));}
+    renderContent(explanation,studentExplanation?{text:studentExplanation.text,media:[]}:review.explanation);
+    if(studentExplanation)explanation.append(make('p',studySourceLabel(studentExplanation.origin),'helper'));
+    box.append(explanation);
     article.append(box);
     if (animate && actor) quizFeedbackMotion.play(actor);
   }

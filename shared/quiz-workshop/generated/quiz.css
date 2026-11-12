@@ -978,6 +978,12 @@
 .quiz-explanation-panel{background:var(--quiz-tint);border-top:1px solid var(--quiz-border)}
 .quiz-explanation-panel>h3{margin:0 0 10px!important;color:var(--quiz-primary-dark)!important}
 .quiz-explanation-placeholder{color:#536c67;margin:16px 0}
+.quiz-answer-summary{display:flex;align-items:center;flex-wrap:wrap;gap:10px;font-weight:750;line-height:1.6}
+.quiz-answer-value{display:inline-flex;align-items:center;justify-content:center;min-width:48px;min-height:44px;padding:3px 14px;border-radius:12px;background:#12634e;color:#fff;font-size:1.4rem;box-shadow:0 2px 0 #0b4538}
+.quiz-explanation-copy.quiz-explanation-ai{--explanation-ink:#49318b;--explanation-surface:#f4f0ff;padding:14px 16px;margin:12px 0;border:1px solid #d5c9ef;border-left:4px solid #8061bf;border-radius:12px;background:var(--explanation-surface);color:var(--explanation-ink);line-height:1.8}
+.quiz-explanation-ai .quiz-explanation-caption,.quiz-explanation-ai>h3{display:block;color:var(--explanation-ink);font-weight:800;margin:0 0 8px}
+.quiz-explanation-ai p,.quiz-explanation-ai .quiz-content{color:var(--explanation-ink)}
+.quiz-explanation-ai .helper{color:#655184;font-size:.9rem;margin-bottom:0}
 .quiz-workspace-active .answer-preview{margin:0!important;padding:14px!important;font-size:1.1rem!important;line-height:1.65!important}
 .quiz-workspace-active .answer-preview .quiz-rich-paragraph{margin:8px 0}
 .quiz-workspace-active .feedback-intro{gap:10px!important;margin-bottom:6px!important}
@@ -1032,6 +1038,11 @@
 .qtb-entry,.qtb-open,.qtb-field-entry,.qtb-after-hint button,.qtb-book-toolbar button,.qtb-book-toolbar select{font:inherit;min-height:44px;border:1px solid #9ebeb2;border-radius:10px;background:#fff;color:#185e4c;padding:9px 14px;cursor:pointer;touch-action:manipulation}
 .qtb-entry{margin:2px 0 16px;font-weight:750;background:#eaf5ec}.qtb-card{border:1px solid #c9ddcf;border-radius:14px;padding:18px;background:#f7fbf5;margin:8px 0}.qtb-card strong{font-size:1.15rem}.qtb-card p{font-size:1rem;line-height:1.7}.qtb-open{background:#176753;color:#fff;font-weight:700}.qtb-field-entry{font-size:.9rem;margin-top:10px}.qtb-after-hint{border-top:1px solid #cadbcf;margin-top:16px;padding-top:12px}.qtb-after-hint p{font-size:1rem}
 .qtb-book-toolbar{color:#243f37;padding:0}.qtb-page-nav{display:flex;align-items:center;justify-content:center;gap:6px;margin:0}.qtb-page-nav button,.qtb-page-nav select{font-size:14px;height:44px;padding:6px 10px;white-space:nowrap}.qtb-page-nav button:first-child,.qtb-page-nav button:nth-of-type(2){min-width:44px;font-size:24px;padding:0}.qtb-page-nav select{width:150px;max-width:150px}.qtb-reading-status{font-size:.85rem;line-height:1.5;text-align:center;margin:4px 0}.qtb-book-toolbar>strong,.qtb-reading-status:not(.is-error){position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.qtb-book-toolbar button:disabled{opacity:.45;cursor:default}.qtb-book-toolbar [hidden]{display:none!important}.qtb-book-toolbar :focus-visible,.qtb-entry:focus-visible,.qtb-open:focus-visible,.qtb-field-entry:focus-visible{outline:3px solid #dc9f2c;outline-offset:3px}
+.qtb-after-hint .qtb-entry{position:relative;isolation:isolate;margin:4px 0 8px;background:#176753;color:#fff;border-color:#176753;font-weight:800}
+.qtb-after-hint .qtb-entry::after{content:"";position:absolute;inset:-4px;z-index:-1;border:3px solid #449d82;border-radius:14px;opacity:.18;pointer-events:none;animation:qtb-breathe 3.2s ease-in-out infinite}
+@keyframes qtb-breathe{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.65;transform:scale(1.04,1.12)}}
+.qtb-after-hint .qtb-entry:hover::after,.qtb-after-hint .qtb-entry:focus-visible::after{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){.qtb-after-hint .qtb-entry::after{animation:none;opacity:.3;transform:none}}
 @media(max-width:700px){.is-textbook .image-lightbox-topbar{padding:6px;gap:6px}.qtb-page-nav select{width:140px;max-width:140px}.qtb-page-nav button,.qtb-page-nav select{font-size:13px;padding:6px 8px}.is-textbook .image-lightbox-controls{gap:6px}.is-textbook .image-lightbox-controls button,.is-textbook .image-lightbox-controls span{font-size:13px;min-width:44px}.is-textbook .image-lightbox-controls #lightbox-reset{padding:0 8px}}
 
 /* Course-specific reading aid, configured by the course registry. */
