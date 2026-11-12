@@ -1,4 +1,13 @@
-# 發布登記：2026-11-12 四／九年級卷分類準備發布
+# 發布登記：2026-11-12 四／九年級卷分類已上線
+
+| 狀態 | agent | 開始時間 | main commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-scope-g4-g9-20261112 | 2026-11-12T08:14:06.777Z | `10a6887` | `dpl_3LgX8TiRnB1zg5BEo9ZCX43BGkaw` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-library.mjs、shared/quiz-practice-scope-reviewed.mjs、shared/quiz-practice-scope.mjs、shared/quiz-workshop/generated/assets.json | `dpl_769pnvWYF1k3BiXBZ3T4ps8BWAct`／回滾 `dpl_3LgX8TiRnB1zg5BEo9ZCX43BGkaw`（eolOnly 0） |
+
+- [正式收據](quiz-scope-g4-g9-release-20261112.md)／[機器可讀收據](quiz-scope-g4-g9-release-20261112.json)。四23依書商期中、九30依歷年本次範圍，530題位映射；兩年級待核對各0，四年級期中後教師新卷仍0。
+- 11分類／建置與50桌手機檢查通過，完整樹20改／額外0、正式25來源SHA讀回一致。50考古卷版本／enabled不變，原停用10卷等新版AI／課本對照／複核再開放；無SQL／學生送答／權限變更，鎖已釋放。
+
+# 本輪準備紀錄：2026-11-12 四／九年級卷分類
 
 - Codex-scope-g4-g9-20261112：依本側使用者最新授權，四年級23份依書商來源歸期中、九年級30份依歷年第二次段考歸本次，固定版本與來源徽章；四年級沒有新增期中後教師卷，不假改範圍。
 - [來源及驗證](quiz-scope-g4-g9-20261112.md)：530題位映射、11分類／建置與50四個年級桌手機檢查通過。50考古卷原metadata／enabled不變，10停用期末卷等新版AI／課本對照／複核完成後才開放。

@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-12",
+  "implementation_pr": 179,
+  "main_commit": "10a6887e8f5194a1af61c0e001209bb167342e80",
+  "deployment": "dpl_769pnvWYF1k3BiXBZ3T4ps8BWAct",
+  "rollback": "dpl_3LgX8TiRnB1zg5BEo9ZCX43BGkaw",
+  "full_tree_comparison_ok": true,
+  "changed_runtime_files": 20,
+  "added_runtime_files": 0,
+  "unexpected_files": [],
+  "post_live_sources_sha256_verified": 25,
+  "classification_build_tests": 11,
+  "browser_checks": 50,
+  "browser_widths": [
+    1280,
+    390
+  ],
+  "newly_classified_g4_before": 23,
+  "newly_classified_g9_historical_after": 30,
+  "source_slots_mapped": 530,
+  "g4_after_teacher_papers": 0,
+  "teacher_total": 110,
+  "teacher_before": 65,
+  "teacher_after": 44,
+  "teacher_unknown": 1,
+  "past_records_unchanged": 50,
+  "past_disabled_unchanged": 10,
+  "database_mutations": false,
+  "actual_student_submission": false
+}
