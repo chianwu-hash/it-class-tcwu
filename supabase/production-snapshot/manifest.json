@@ -1,8 +1,8 @@
 {
  "project": "upxgyusodibaqcrocdzj",
- "exportedAt": "2026-11-11T23:30:35.284Z",
+ "exportedAt": "2026-11-12T00:42:41.945Z",
  "counts": {
-  "functions": 171,
+  "functions": 175,
   "tables": 111,
   "policies": 21,
   "triggers": 22
@@ -374,7 +374,7 @@
    "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
   },
   "quiz_action_before_learning(text,jsonb)": {
-   "md5": "ec8c39c6328b35b605521e4388d3cb0d",
+   "md5": "c4436149a4941457c698759d8ab2dbf2",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
@@ -436,6 +436,26 @@
   "quiz_extension_source(uuid,text,jsonb,integer)": {
    "md5": "0e733c089ed0aa7e1ee8182d238b1840",
    "securityDefiner": true,
+   "acl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  "quiz_fields_grade(jsonb,text)": {
+   "md5": "8bfd6484ebdfbd9a6918ef4c31b2a044",
+   "securityDefiner": false,
+   "acl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  "quiz_fields_response(jsonb,text)": {
+   "md5": "d05e9328e438b1a8daf5bc2c87023ae6",
+   "securityDefiner": false,
+   "acl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  "quiz_fields_validate(jsonb)": {
+   "md5": "44014c918c926e07b4fb3edc3bb545f7",
+   "securityDefiner": false,
+   "acl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  "quiz_fields_value(jsonb,jsonb)": {
+   "md5": "4c13e5114d1d35e61dbee86952af0fe3",
+   "securityDefiner": false,
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
   "quiz_freeze_publish(uuid,uuid,integer,jsonb,jsonb,jsonb)": {
@@ -704,7 +724,7 @@
    "acl": "{postgres=X/postgres}"
   },
   "quiz_student_document(jsonb,jsonb,jsonb)": {
-   "md5": "5683cf3560f90306dac5c02b4f699e08",
+   "md5": "62628fda0f3c142afc25b43ccd3d3bc6",
    "securityDefiner": false,
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
@@ -744,7 +764,7 @@
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
   "quiz_validate(jsonb)": {
-   "md5": "5aaee6af34ac1368995faff284919b31",
+   "md5": "56ca473db561001ddf2a6f3dbd80d5b0",
    "securityDefiner": false,
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
@@ -764,7 +784,7 @@
    "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
   },
   "quiz_wrong_questions_before_learning(jsonb)": {
-   "md5": "561fa9e6da620c51a20752be34a8f8ca",
+   "md5": "dc1396432dd3d359dd70b428146f70a4",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
@@ -864,5 +884,5 @@
    "acl": "{postgres=X/postgres,service_role=X/postgres,anon=X/postgres,authenticated=X/postgres}"
   }
  },
- "fileSha256": "d734fd136507bc9fe2ea4e7c0ce67d195ff310b8c8ffce058a9207e11642c599"
+ "fileSha256": "a59184554051b997d44e5a1c030badc6bcbb5f066d39c609a0253d41eb31f0f0"
 }
