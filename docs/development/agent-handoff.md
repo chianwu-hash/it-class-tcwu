@@ -1,4 +1,13 @@
-# 發布登記：2026-11-12 解析重點及課本呼吸按鈕準備發布
+# 發布登記：2026-11-12 解析重點及課本呼吸按鈕已上線
+
+| 狀態 | agent | 開始時間 | main commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-explanation-emphasis-20261112 | 2026-11-12T08:44:02.092Z | `9fe78dc` | `dpl_769pnvWYF1k3BiXBZ3T4ps8BWAct` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-past-ui.mjs、shared/quiz-server.mjs、shared/quiz-textbook-reader.css、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、shared/quiz-workspace.css | `dpl_7rhfpW59LxVUcTXHeBkpauibfNAP`／回滾 `dpl_769pnvWYF1k3BiXBZ3T4ps8BWAct`（eolOnly 0） |
+
+- [正式收據](quiz-explanation-emphasis-release-20261112.md)／[機器可讀收據](quiz-explanation-emphasis-release-20261112.json)。正確代號徽章、紫色AI解析、課本按鈕柔和呼吸及減少動態；24改／額外0，正式29來源SHA吻合。
+- 使用者已驗收授權；29桌手機檢查、9 study／建置及21產物通過，無正式DB、學生作答、判分／解析文字／教材權限或考古卷enabled變更；鎖已釋放。
+
+# 本輪準備紀錄：2026-11-12 解析重點及課本呼吸按鈕
 
 - 使用者本側明確驗收「好，照這樣改，上線」。Codex-explanation-emphasis-20261112從最新main 8ef97b2新建explanation-emphasis-release-20261112，帶入已驗收本地版；9項study／建置及21產物重新通過，runtime與29項桌手機已驗版一致。
 - 只發布醒目正確代號、AI解析紫色區塊與答後課本按鈕柔和呼吸，無資料庫、學生資料、解析文字／正解或考古卷enabled變更。PR進main後從新乾淨main使用發布腳本，鎖由腳本取得，實際收據另PR補記。
