@@ -1,5 +1,6 @@
 import {grade3MathUnits} from './quiz-paper-display.mjs';
 import {difficultyModes,difficultyTarget,difficultyAdjustment} from './quiz-difficulty.mjs';
+import {unitPracticeScope,matchesPracticeScope} from './quiz-practice-scope.mjs';
 const make=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
 export function localPoolContext(){
  if(!['localhost','127.0.0.1'].includes(location.hostname)||document.querySelector('meta[name="quiz-pool-local"]')?.content!=='1'||new URLSearchParams(location.search).get('local')!=='1')return null;
@@ -15,9 +16,16 @@ export function initComposer({request,context}){
  const el=id=>panel.querySelector('#'+id),form=el('compose-form'),courseSelect=el('compose-course'),difficulty=el('compose-difficulty'),work=el('compose-work'),character=el('compose-character'),status=el('compose-status'),result=el('compose-result'),settings=el('compose-settings');
  for(const [value,m] of Object.entries(difficultyModes))difficulty.append(new Option(m.label,value,value==='medium',value==='medium'));
  let generation=0,busy=false,pending=null,courses=[],people=[],expanded=false,available=false,loading=false,studentEnabled=false,catalogLoaded=false,catalogPromise=null;
+ let practiceScope='after';
  const sync=()=>{panel.hidden=!available||!expanded;toggle.disabled=!studentEnabled||busy||loading;toggle.setAttribute('aria-busy',String(loading||busy));toggle.textContent=expanded?'收起組卷設定':'＋我要自組卷';toggle.setAttribute('aria-expanded',String(available&&expanded));};
  toggle.addEventListener('click',async()=>{if(!studentEnabled||busy)return;if(!expanded&&!await ensureCatalog())return;expanded=!expanded;sync();if(expanded)(settings.hidden?status:settings.querySelector('h2')).focus();else toggle.focus();});status.tabIndex=-1;
- function fillUnits(keep=false){const selected=keep?new Set([...el('compose-units').querySelectorAll('input:checked')].map(n=>n.value)):new Set();const c=courses.find(c=>c.id===courseSelect.value),box=el('compose-units');box.replaceChildren(make('legend','選擇單元（可複選）'));for(const u of c?.units||[]){const label=make('label'),input=make('input');input.type='checkbox';input.value=u.id;input.checked=selected.has(String(u.id));label.append(input,make('span',`${u.id}. ${u.title||grade3MathUnits[u.id-1]||'單元'}（${u.count}題）`));box.append(label);}}
+ function fillUnits(keep=false){
+  const selected=keep?new Set([...el('compose-units').querySelectorAll('input:checked')].map(n=>n.value)):new Set(),c=courses.find(c=>c.id===courseSelect.value),box=el('compose-units');
+  box.replaceChildren(make('legend','選擇單元（可複選）'));let count=0;
+  for(const u of c?.units||[]){if(!matchesPracticeScope(unitPracticeScope(c,u),practiceScope))continue;const label=make('label'),input=make('input');input.type='checkbox';input.value=u.id;input.checked=selected.has(String(u.id));label.append(input,make('span',`${u.id}. ${u.title||grade3MathUnits[u.id-1]||'單元'}（${u.count}題）`));box.append(label);count++;}
+  if(!count)box.append(make('p','這個科目在所選範圍尚無已核定單元；可切換「全部」自行選擇。'));
+ }
+ function setPracticeScope(value){if(busy)return false;practiceScope=['before','after','all'].includes(value)?value:'after';pending=null;fillUnits(true);result.replaceChildren();settings.hidden=false;status.textContent='';return true;}
  function fillCharacters(keep=false){const old=keep?character.value:'';character.replaceChildren(new Option('系統隨機',''),...people.filter(p=>p.work===work.value).map(p=>new Option(p.character,p.id)));if([...character.options].some(o=>o.value===old))character.value=old;character.disabled=!work.value||busy;}
  courseSelect.addEventListener('change',()=>fillUnits());work.addEventListener('change',()=>fillCharacters());
  const updateMix=()=>{const n=Number(el('compose-count').value),m=difficultyModes[difficulty.value],d=difficultyTarget(difficulty.value,n);el('compose-mix').textContent=`${m.label}；${n}題以${d.easy}題易、${d.medium}題中、${d.hard}題難為目標。${m.rule}組卷後顯示實際配比。`;};
@@ -37,5 +45,5 @@ export function initComposer({request,context}){
   }catch(e){if(g===generation)status.textContent=e.message;}
   finally{if(g===generation){busy=false;form.querySelectorAll('button,input,select').forEach(n=>n.disabled=false);character.disabled=!work.value;sync();}}
  });
- return {ready,ensureCatalog,async canExtend(catalog){await ensureCatalog();return !catalogLoaded||courses.some(c=>c.subject===catalog?.subject&&String(c.grade||3)===String(catalog?.volume||'').slice(0,1)&&c.extension_available!==false);},reset(){generation++;catalogLoaded=false;catalogPromise=null;studentEnabled=false;busy=false;pending=null;courses=[];people=[];expanded=false;available=false;loading=false;panel.dataset.available='false';form.reset();courseSelect.replaceChildren();el('compose-units').replaceChildren(make('legend','選擇單元（可複選）'));work.replaceChildren(new Option('系統隨機',''));fillCharacters();settings.hidden=false;updateMix();result.replaceChildren();status.textContent='';hint.textContent='正在準備可選範圍…';sync();},async extend(item){const r=await request('compose',{kind:'extension',count:3,request_id:item.request_id,attempt_id:item.attempt_id,question_id:item.question_id});document.dispatchEvent(new CustomEvent('quiz-paper-saved',{detail:{paper:r.paper}}));return {...r,url:paperUrl(r.session_id,context)};}};
+ return {ready,ensureCatalog,setPracticeScope,async canExtend(catalog){await ensureCatalog();return !catalogLoaded||courses.some(c=>c.subject===catalog?.subject&&String(c.grade||3)===String(catalog?.volume||'').slice(0,1)&&c.extension_available!==false);},reset(){generation++;catalogLoaded=false;catalogPromise=null;studentEnabled=false;busy=false;pending=null;courses=[];people=[];expanded=false;available=false;loading=false;panel.dataset.available='false';form.reset();courseSelect.replaceChildren();el('compose-units').replaceChildren(make('legend','選擇單元（可複選）'));work.replaceChildren(new Option('系統隨機',''));fillCharacters();settings.hidden=false;updateMix();result.replaceChildren();status.textContent='';hint.textContent='正在準備可選範圍…';sync();},async extend(item){const r=await request('compose',{kind:'extension',count:3,request_id:item.request_id,attempt_id:item.attempt_id,question_id:item.question_id});document.dispatchEvent(new CustomEvent('quiz-paper-saved',{detail:{paper:r.paper}}));return {...r,url:paperUrl(r.session_id,context)};}};
 }

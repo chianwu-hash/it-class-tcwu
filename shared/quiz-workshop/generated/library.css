@@ -969,6 +969,12 @@
 .wrong-extension{margin-top:22px;padding:20px;border:2px dashed var(--quiz-border);border-radius:18px;background:var(--quiz-tint);overflow-wrap:anywhere}.wrong-extension[data-state="saved"]{border-style:solid;border-color:var(--quiz-primary)}.wrong-extension h3{margin:0 0 12px;color:var(--quiz-primary-dark)}.wrong-extension p{line-height:1.8}.wrong-extension-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.wrong-extension-actions a,.wrong-extension-actions button{max-width:100%;white-space:normal}
 
 /* 選卷頁專用；年級色與導覽由 quiz-theme.css 提供。 */
+.practice-scope{padding:18px;background:white;border:2px solid var(--quiz-border,#ddd);border-radius:18px;margin:16px 0}
+.practice-scope h2{font-size:18px;margin:0 0 12px}.practice-scope p{margin:12px 0 0;font-size:14px}
+.practice-scope-options{display:flex;flex-wrap:wrap;gap:10px}.practice-scope-options button{min-height:44px;white-space:normal}
+.practice-scope-options [aria-pressed=true]{background:var(--quiz-primary,#6545b4);color:white;outline:2px solid var(--quiz-primary,#6545b4);outline-offset:2px}
+.scope-unclassified{grid-column:1/-1;padding:16px;border:1px dashed var(--quiz-border,#ddd);border-radius:14px}.scope-unclassified summary{font-weight:bold;cursor:pointer;min-height:32px}
+.paper-scope-badge{font-weight:bold;color:var(--quiz-primary-dark,#31445d);font-size:14px}
 .quiz-library-page {min-height:100vh}
 .quiz-library-page .library-hero {position:relative;overflow:hidden;background:linear-gradient(115deg,var(--quiz-hero-start),var(--quiz-hero-end));color:white;border-radius:0 0 40px 40px;box-shadow:0 10px 26px #164e6318}
 .quiz-library-page .library-hero-inner {max-width:1152px;margin:auto;padding:24px;position:relative}

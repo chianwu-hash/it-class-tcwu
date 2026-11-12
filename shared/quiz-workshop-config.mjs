@@ -1,7 +1,7 @@
 // 呈現與既有網址註冊；不是名冊、學校或年級的授權來源。
 export const workshopBrand = '考前練功坊';
 const elementarySubjects = ['國語','英語','數學','社會','自然'];
-const elementaryPastIntro='開放 113、114 學年度上學期期中考。';
+const elementaryPastIntro='依所選範圍顯示已開放的歷年原卷。';
 export const workshopCourses = Object.freeze([
   {grade:3,label:'三年級',school:'頂溪國小',courseId:'grade3-115-1',basePath:'/grade3/115-1/',subjects:elementarySubjects,defaultPastPaper:'dingxi-114-1-g3-exam1-science'},
   {grade:4,label:'四年級',navLabel:'土城四年級',school:'土城國小',courseId:'grade4-115-1',basePath:'/grade4/115-1/',subjects:elementarySubjects,zhuyinImageScale:2},
