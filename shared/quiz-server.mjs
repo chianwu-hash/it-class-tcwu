@@ -101,7 +101,7 @@ export function initServerQuiz({ selectors, server }) {
     const answerSummary=make('p',undefined,'quiz-answer-summary');
     if(q.type==='single')answerSummary.append(make('span','正確選項：'),make('strong',String.fromCharCode(65+q.options.findIndex(o=>o.id===review.answer.option_id)),'quiz-answer-value'));
     else answerSummary.textContent=q.type==='fields'?`核對每格：${fieldsAnswerSummary(q,review.answer)}`:`可接受答案：${review.answer.accepted.join('、')}`;
-    box.append(answerSummary);
+    const answerRow=make('div',undefined,'quiz-answer-row');answerRow.append(answerSummary);box.append(answerRow);
     const studentExplanation=study.explanation(q.id);
     const explanation=make('section',undefined,'quiz-explanation-copy');
     if(studentExplanation?.origin==='ai'){explanation.classList.add('quiz-explanation-ai');explanation.append(make('strong','AI 解析','quiz-explanation-caption'));}
