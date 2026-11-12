@@ -1098,6 +1098,7 @@
 .message-media-composer .sketch-palette{gap:4px}.message-media-composer .sketch-palette button{justify-content:center;flex:0 0 44px;width:44px;height:44px;padding:8px;margin:0}.sketch-palette .sketch-color-dot{width:22px;height:22px}.sketch-tool-icon{width:24px;height:24px;display:block;flex:none}
 
 .sketch-editor .sketch-actions{gap:8px;margin:12px 0}.sketch-editor .sketch-palette{margin-bottom:8px}.sketch-editor .muted{font-size:.9rem;color:#536c67;line-height:1.5}
+.sketch-editor .sketch-palette button{justify-content:center}.sketch-editor .sketch-color-dot{flex:none;margin:0}
 
 
 .quiz-scratchpad-entry{display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:750;min-height:44px;margin:0 0 12px;padding:8px 12px;border:1px solid #9ebeb2;border-radius:12px;background:#f0f8f6;color:#185e60;cursor:pointer}
