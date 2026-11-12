@@ -29,7 +29,9 @@ export function createQuizScratchpad(){
    if(!editor)editor=createSketchEditor(editorHost,{toolbarHost:toolbar,value:drafts.get(currentKey)||{version:1,strokes:[]},onChange:value=>drafts.set(currentKey,value),messages:{boardLabel:'計算紙，可用滑鼠、手指或觸控筆',capacityHint:'計算紙快寫滿了，可以擦掉不需要的筆畫。',fullHint:'計算紙寫滿了，可以擦掉不需要的筆畫，或清除後重寫。',clearConfirm:'確定要清除這題的計算紙嗎？清除後可按「復原一步」。'}});
    dialog.show();button.setAttribute('aria-expanded','true');
   };
-  host.prepend(button);
+  const heading=host.querySelector(':scope>.card-title')||host.querySelector(':scope>h3');
+  if(heading){heading.classList.add('quiz-question-toolbar');heading.insertBefore(button,heading.querySelector(':scope>.badge'));}
+  else{host.classList.add('quiz-scratchpad-anchor');button.classList.add('quiz-scratchpad-entry-floating');host.append(button);}
  }
  function clear(){close({restoreFocus:false});editor?.destroy();editor=null;drafts.clear();currentKey=null;opener=null;dialog.remove();}
  return {attach,close,clear,destroy(){clear();destroyed=true;document.removeEventListener('keydown',escape);}};
