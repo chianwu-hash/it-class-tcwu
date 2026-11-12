@@ -1,5 +1,7 @@
 # 計算紙左下調整角：本地驗證
 
+> 後續使用者要求縮放游標應為左下／右上斜向。最新8917版本採原生resize:both及nesw-resize，height:auto維持紙張等比例；65項回歸（含實際左下拖曳、右邊界固定與筆跡保留）通過。最新考古試用：http://localhost:8917/grade3/115-1/past-exam.html?paper=synthetic&preview_study=1&preview=preview-scratchpad-diagonal-user 。仍僅本地、禁止發布，下方8916為前版對照。
+
 2026-11-12，使用者指出計算紙右下的大小調整控制應放左側。從最新origin/main b3f9d76新建scratchpad-left-resize-20261112，帶入尚未發布的計算紙本地提交；仍禁止上線。
 
 以原生CSS resize控制將拖曳角移到左下，畫板右側位置固定，往左拖曳即加寬，畫紙維持等比例且筆跡保留。外層方向控制角的位置，header／body明確保持ltr，因此工具及畫寫不反轉。外層overflow:hidden避免RTL小數像素造成額外水平捲軸與底部留白，內層body保留必要捲動；手機維持不顯示大小調整角。
