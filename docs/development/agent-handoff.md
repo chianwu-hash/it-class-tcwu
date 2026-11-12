@@ -1,8 +1,8 @@
-# 發布登記：六年級國語、數學期末分類（發布中）
+# 發布完成：六年級國語、數學期末分類（2026-11-13 02:48）
 
-- 執行者Codex-g6-ch-math-scope-20261113；本PR合併後從乾淨最新main用正式發布腳本上線。[來源分界與驗證](quiz-g6-chinese-math-scope-20261113.md)。
-- 國語7～12課、數學5～8單元依115上實際課本核對；7個程式測試、37項桌機／手機操作及21產物核對通過。只改顯示分類，不提前啟用處理中的解析或題目。
-- 發布前重查共用鎖與正式alias；他人正在發布時不得覆寫。完成後另PR記正式handoffRow，將本段標為已完成。
+- PR197已合併並由乾淨完整main c71c56c用正式發布腳本上線；國語第7～12課、數學第5～8單元有已核資料後，可在預設期末直接選用。[來源與驗證](quiz-g6-chinese-math-scope-20261113.md)。
+- 正式dpl_Euit8obmZn4WW7tsf1ML1UhwdCwb；完整樹18檔預期異動ok:true、零額外差異，正式22檔HTTP讀回符合來源，鎖已釋放。7個程式測試、37項桌機／手機操作及21產物核對通過。
+- 這次只發布分類，國語216題及數學144題仍在Notebook／AGY／Codex疑義與資料驗證流程；未因分類發布而提前啟用題目、解析或課本權限。自然536、英語108新版解析及8份老師卷維持上線。
 
 # 六年級夜間進度：自然536、英語108新版解析與8份老師卷已上線
 
@@ -34,6 +34,7 @@
 
 | 狀態 | 執行者 | 開始時間UTC | main來源 | 基準部署 | 預期異動 | 結果／回滾 |
 |---|---|---|---|---|---|---|
+| 已完成 | Codex-g6-ch-math-scope-20261113 | 2026-11-12T18:47:10.240Z | `c71c56c` | `dpl_BNSHP9pcUyhcdvBTNUCuQAujU3vP` | 國語／數學期末分類與16入口，共18檔 | `dpl_Euit8obmZn4WW7tsf1ML1UhwdCwb`／回滾 `dpl_BNSHP9pcUyhcdvBTNUCuQAujU3vP`（完整樹ok:true；eolOnly 0） |
 | 已完成 | Codex-g6-scope-20261113 | 2026-11-12T17:33:43.640Z | `0de8ae7` | `dpl_ExHNM3wLdq51V6KHSvuLCtzySJHT` | 自然／英語期末分類及16入口，共18檔 | `dpl_BNSHP9pcUyhcdvBTNUCuQAujU3vP`／回滾 `dpl_ExHNM3wLdq51V6KHSvuLCtzySJHT`（完整樹ok:true；eolOnly 0） |
 | 已完成 | Codex-g3-chinese-20261112 | 2026-11-12T13:41:35.635Z | `2c5a694` | `dpl_GnoHtgYQSjr9p3zMNf9ieYj9Aa6N` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-fields.css、shared/quiz-fields.mjs、shared/quiz-practice-scope.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、shared/sketch/editor.css | `dpl_ExHNM3wLdq51V6KHSvuLCtzySJHT`／回滾 `dpl_GnoHtgYQSjr9p3zMNf9ieYj9Aa6N`（eolOnly 0） |
 
