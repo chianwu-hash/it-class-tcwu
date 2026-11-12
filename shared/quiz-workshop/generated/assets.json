@@ -146,7 +146,7 @@
       "/shared/partner-pilot/app.mjs?v=e9869e0a6a7cf4e8"
     ],
     "library": [
-      "/shared/quiz-library.mjs?v=35a0cadf1d37210e",
+      "/shared/quiz-library.mjs?v=4bc8ac2e49d38d41",
       "/shared/quiz-learning.mjs?v=1eea3f91fc174637",
       "/shared/quiz-partner-pilot-entry.mjs?v=caa40ae3f7a634c2"
     ]
@@ -238,7 +238,7 @@
     "/shared/quiz-grade-route.mjs?v=20261102-grade9-release": "/shared/quiz-grade-route.mjs?v=ca3ba8070f105bdf",
     "/shared/quiz-leaf-celebration.mjs": "/shared/quiz-leaf-celebration.mjs?v=cc1b034d980fb775",
     "/shared/quiz-learning.mjs": "/shared/quiz-learning.mjs?v=1eea3f91fc174637",
-    "/shared/quiz-library.mjs": "/shared/quiz-library.mjs?v=35a0cadf1d37210e",
+    "/shared/quiz-library.mjs": "/shared/quiz-library.mjs?v=4bc8ac2e49d38d41",
     "/shared/quiz-math-response.mjs": "/shared/quiz-math-response.mjs?v=0eed3ac52fc958ba",
     "/shared/quiz-math-response.mjs?v=20261102-math-audio": "/shared/quiz-math-response.mjs?v=0eed3ac52fc958ba",
     "/shared/quiz-media.mjs": "/shared/quiz-media.mjs?v=2019f02509b800b5",
@@ -268,8 +268,8 @@
     "/shared/quiz-past-ui.mjs?v=20261107-boolean-choice": "/shared/quiz-past-ui.mjs?v=f4dd9283a3502753",
     "/shared/quiz-past-underlines.mjs": "/shared/quiz-past-underlines.mjs?v=93fe43d2dae76798",
     "/shared/quiz-past-underlines.mjs?v=20261102-transcribed": "/shared/quiz-past-underlines.mjs?v=93fe43d2dae76798",
-    "/shared/quiz-practice-scope-reviewed.mjs": "/shared/quiz-practice-scope-reviewed.mjs?v=873392a85d580d64",
-    "/shared/quiz-practice-scope.mjs": "/shared/quiz-practice-scope.mjs?v=27376b1e8d4dd4b2",
+    "/shared/quiz-practice-scope-reviewed.mjs": "/shared/quiz-practice-scope-reviewed.mjs?v=def49ab97e8bd8ea",
+    "/shared/quiz-practice-scope.mjs": "/shared/quiz-practice-scope.mjs?v=cc8e144806765e33",
     "/shared/quiz-practice.js": "/shared/quiz-practice.js?v=77518ebb5499461d",
     "/shared/quiz-question-reports.mjs": "/shared/quiz-question-reports.mjs?v=6a2fd2d2d35bc696",
     "/shared/quiz-render.mjs": "/shared/quiz-render.mjs?v=494e48d9f6f57604",

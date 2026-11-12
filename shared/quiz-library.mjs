@@ -9,7 +9,7 @@ import {difficultyAdjustment} from './quiz-difficulty.mjs';
 import {createPastCatalogReader,pastPaperDisplay} from './quiz-past-catalog.mjs?v=20261102-grade9-release';
 import { onTestIdentityChange } from './test-identity-state.mjs?v=20261030-identity-sync';
 import {workshopCourse} from './quiz-workshop-config.mjs';
-import {practiceScopeOptions,paperPracticeScope,matchesPracticeScope,practiceScopeBadge} from './quiz-practice-scope.mjs';
+import {practiceScopeOptions,paperPracticeScope,paperPracticeScopeBasis,matchesPracticeScope,practiceScopeBadge} from './quiz-practice-scope.mjs';
 
 let currentSession = null, generation = 0, papers = [], busy = false, studentView=false, reloadAfter=false, focusPaperId=null;
 const el = id => document.getElementById(id);
@@ -84,7 +84,7 @@ function render() {
     const title = node('div'); title.append(node('span',isExtension(p)?'錯題延伸':p.generated?'自組卷':'老師準備的卷','paper-source-label'),node('p', p.catalog?.subject || '單元練習', 'paper-subject'), node('h3',p.generated?paperRange(p):p.catalog?.unit||p.title));
     header.append(icon,title); a.append(header);
     const body = node('div', undefined, 'paper-card-body');
-    body.append(node('p',practiceScopeBadge(classification,{grade:pageGrade}),'paper-scope-badge'));
+    body.append(node('p',practiceScopeBadge(classification,{grade:pageGrade,basis:paperPracticeScopeBasis(p)}),'paper-scope-badge'));
     const level=paperDifficulty(p);body.append(node('p',`${p.total} 題${level?'・'+level:''}`,'meta paper-difficulty'));
     if(p.generated)body.append(node('p',paperTitle(p),'paper-name'));
     const progress = node('progress'); progress.max = p.total; progress.value = p.answered;
