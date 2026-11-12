@@ -1,4 +1,14 @@
-# 發布登記：2026-11-12 計算紙色塊置中修正，已合併待發布
+# 發布登記：2026-11-12 三年級國語及計算紙色塊置中已上線
+
+- PR189國語介面及PR190色塊置中一起發布，來源乾淨main `2c5a694`，臺灣時間21:44完成；完整檔案樹比對26修改、零額外差異，正式26檔內容讀回符合來源，發布鎖已釋放。下列歷史紀錄的「待發布／尚未啟用」不再代表目前狀態。
+- 國語7～12課新增1,820筆父來源、2,812個實際作答欄位，新解析及課本對照已啟用；另514筆暫存。既有558筆可用資料保持不變。每課10題及20題各一份，共12份老師卷、180題已開放並完成正式讀回及跨年級／匿名拒絕檢查。
+- [本次資料與驗證收據](quiz-g3-chinese-live-20261112.md)。國語期末考古卷的新解析仍未完成，維持原停用狀態；不可把一般題庫完成視為考古卷完成。
+
+| 狀態 | 執行者 | 開始時間UTC | main來源 | 基準部署 | 預期異動 | 結果／回滾 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-g3-chinese-20261112 | 2026-11-12T13:41:35.635Z | `2c5a694` | `dpl_GnoHtgYQSjr9p3zMNf9ieYj9Aa6N` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-fields.css、shared/quiz-fields.mjs、shared/quiz-practice-scope.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、shared/sketch/editor.css | `dpl_ExHNM3wLdq51V6KHSvuLCtzySJHT`／回滾 `dpl_GnoHtgYQSjr9p3zMNf9ieYj9Aa6N`（eolOnly 0） |
+
+# 歷史準備紀錄：2026-11-12 計算紙色塊置中修正（已隨國語發布）
 
 - Codex-color-align-20261112，從最新main bfb764b建立新worktree。使用者回報色塊與外框偏移，選擇保留框並置中：共用畫筆按鈕補justify-content:center，色點固定不縮小且margin:0。
 - 85項桌手機瀏覽器檢查通過，包含六色圓點與按鈕的水平／垂直中心誤差小於0.75px；已查看桌機截圖。21產物核對通過。只修改樣式與重建頁面版本，不改資料或計算紙行為。
