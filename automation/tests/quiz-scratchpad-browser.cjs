@@ -1,7 +1,7 @@
 // Run through ai-browser/run-background.cjs with the exact leased page target.
 const fs=require('fs'),path=require('path'),{chromium}=require('D:/projects/browser-automation-workflow/node_modules/playwright'),P=path.resolve('.chat-mode/shared-scratchpad');
 fs.mkdirSync(P,{recursive:true});
-const base=process.env.SCRATCHPAD_PREVIEW_ORIGIN||'http://localhost:8913';if(!/^http:\/\/localhost:\d+$/.test(base))throw Error('Local synthetic preview required');
+const base=process.env.SCRATCHPAD_PREVIEW_ORIGIN||'http://localhost:8914';if(!/^http:\/\/localhost:\d+$/.test(base))throw Error('Local synthetic preview required');
 const checks=[],errors=[],stamp=Date.now();let lastShot=0;function check(name,ok){checks.push({name,ok:!!ok});fs.writeFileSync(path.join(P,'browser-progress.private.json'),JSON.stringify({checks,errors},null,2));if(!ok)throw Error(name)}
 (async()=>{const browser=await chromium.connectOverCDP(process.env.CDP_URL);try{
  const pages=browser.contexts().flatMap(c=>c.pages());if(pages.length!==1)throw Error('exact_target_required');const page=pages[0];page.on('pageerror',e=>errors.push(e.message));await page.route('https://**/*',r=>r.abort());
@@ -17,6 +17,11 @@ const checks=[],errors=[],stamp=Date.now();let lastShot=0;function check(name,ok
   const touch=width===390;await cdp.send('Emulation.setTouchEmulationEnabled',{enabled:touch,maxTouchPoints:1});await page.setViewportSize({width,height:950});
   const query=`preview=preview-scratch-${width}-${stamp}&preview_study=1&preview_user=a`;
   await page.goto(base+'/grade3/115-1/quiz.html?cloud=1&session=00000000-0000-4000-8000-000000000001&'+query);await page.locator('.quiz-scratchpad-entry').waitFor();check(`${width} initially collapsed`,await page.locator('.quiz-scratchpad-dialog[open]').count()===0);await open();
+  check(`${width} compact X close`,await page.locator('.quiz-scratchpad-heading button').innerText()==='×');
+  check(`${width} compact heading`,await page.locator('.quiz-scratchpad-heading').evaluate(n=>n.getBoundingClientRect().height<=46));
+  check(`${width} reduced toolbar overhead`,await board().evaluate(n=>n.getBoundingClientRect().top-n.closest('dialog').getBoundingClientRect().top<140));
+  check(`${width} whole paper visible`,await board().evaluate(n=>{const r=n.getBoundingClientRect(),d=n.closest('dialog').getBoundingClientRect();return r.top>=d.top&&r.bottom<=d.bottom-5}));
+  check(`${width} short notice follows paper`,await page.locator('.quiz-scratchpad-body').evaluate(n=>n.lastElementChild.classList.contains('quiz-scratchpad-note')&&n.lastElementChild.textContent==='重整／登出會清除'));
   check(`${width} original six pens`,await page.locator('.quiz-scratchpad-dialog [data-pen-color]').count()===6);check(`${width} no draft upload button`,await page.locator('.quiz-scratchpad-dialog [data-save-sketch-draft]').count()===0);
   await draw(touch);check(`${width} ${touch?'touch':'mouse'} draws`,await count()===1);
   await page.locator('.quiz-scratchpad-dialog button[aria-label="藍色畫筆"]').evaluate(n=>n.click());await line('.quiz-scratchpad-dialog[open] .camp-sketch-board',.15,.6,.6,.6,touch);check(`${width} blue pen`,await board().locator('polyline[stroke="#2459b3"]').count()===1);

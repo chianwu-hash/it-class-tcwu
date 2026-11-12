@@ -5,8 +5,8 @@ import {setToolIcon} from './tool-icons.mjs';
 export function createQuizScratchpad(){
  const drafts=new Map();let currentKey=null,editor=null,opener=null,destroyed=false;
  const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;return n;};
- const dialog=make('dialog',null,'quiz-scratchpad-dialog'),head=make('header',null,'quiz-scratchpad-heading'),title=make('h2','計算紙'),closeButton=make('button','收起計算紙'),body=make('div',null,'quiz-scratchpad-body'),editorHost=make('div');
- title.id='scratchpad-'+crypto.randomUUID();dialog.setAttribute('aria-labelledby',title.id);closeButton.type='button';head.append(title,closeButton);body.append(make('p','草稿只留在這個頁面，重新整理或登出會清除。','quiz-scratchpad-note'),editorHost);dialog.append(head,body);
+ const dialog=make('dialog',null,'quiz-scratchpad-dialog'),head=make('header',null,'quiz-scratchpad-heading'),title=make('h2','計算紙'),closeButton=make('button','×'),body=make('div',null,'quiz-scratchpad-body'),editorHost=make('div');
+ title.id='scratchpad-'+crypto.randomUUID();dialog.setAttribute('aria-labelledby',title.id);closeButton.type='button';closeButton.setAttribute('aria-label','收起計算紙');closeButton.title='收起計算紙';head.append(title,closeButton);const note=make('p','重整／登出會清除','quiz-scratchpad-note');note.title='草稿只留在這個頁面，重新整理或登出會清除。';body.append(editorHost,note);dialog.append(head,body);
  const save=()=>{if(currentKey&&editor)drafts.set(currentKey,editor.getValue());};
  function close({restoreFocus=true}={}){save();if(dialog.open)dialog.close();if(opener?.isConnected){opener.setAttribute('aria-expanded','false');if(restoreFocus)opener.focus({preventScroll:true});}}
  closeButton.onclick=()=>close();
