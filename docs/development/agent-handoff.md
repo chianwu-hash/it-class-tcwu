@@ -1,4 +1,10 @@
-# 2026-11-12 計算紙入口不另占一行：僅本地，禁止發布
+# 2026-11-12 夥伴隔離畫板空白工具修正：僅本地，禁止發布
+
+- 最新worktree partner-sketch-style-fix-20261112自main b3f9d76新建、帶入未發布原型。使用者回報原型筆色／圖示空白，確認其專用CSS漏載共用sketch/editor.css，已在最前方import，未另造CSS或改正式夥伴邏輯。
+- [最新來源、驗證及試用](quiz-partner-sketch-style-local-20261112.md)：83項桌手機回歸，新增實際色點／SVG顯示、選色、擦除、復原、清除、傳給模擬夥伴及放大預覽。21產物／diff檢查通過，未向真人發訊息。
+- 最新localhost:8920，夥伴試用為/automation/fixtures/partner-media.html；保留此worktree與8920服務。未push／PR／部署／正式資料變更，禁止自行上線。
+
+# 前版本地紀錄：2026-11-12 計算紙入口不另占一行
 
 - 最新worktree scratchpad-inline-entry-20261112自main b3f9d76新建，帶入未發布原型。使用者要求計算紙按鈕不再占一行；一般題併入既有題號、考古卷併入既有題組標題列，縮為28px小工具，無題號時浮動定位而非新增列。
 - [最新試用與驗證](quiz-scratchpad-inline-entry-local-20261112.md)：72項桌手機檢查及21產物／diff檢查通過。最新預覽localhost:8919，8918及以前為前版對照。
