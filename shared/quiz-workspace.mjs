@@ -1,5 +1,7 @@
+import {createQuizScratchpad} from './quiz-scratchpad.mjs';
 // Presentation only: leaves server grading, authorization and retry state untouched.
-export function createQuizWorkspace(root) {
+export function createQuizWorkspace(root,{scratchpaper=false}={}) {
+  const scratchpad=scratchpaper?createQuizScratchpad():null;
   let dock = null, reading = null, longQuestion = false, frame = 0, lastQuestion = null, savedScroll = 0;
   const observer = typeof ResizeObserver === 'function' ? new ResizeObserver(schedule) : null;
   function schedule() { cancelAnimationFrame(frame); frame = requestAnimationFrame(size); }
@@ -20,6 +22,8 @@ export function createQuizWorkspace(root) {
     }
   }
   function reset({forget=false}={}) {
+    if(forget)scratchpad?.clear();
+    queueMicrotask(()=>{if(!root.classList.contains('quiz-workspace-active'))scratchpad?.close({restoreFocus:false});});
     savedScroll=window.scrollY;
     if(forget || root.classList.contains('is-review')) lastQuestion=null;
     observer?.disconnect(); cancelAnimationFrame(frame); dock = null; reading = null;
@@ -27,7 +31,7 @@ export function createQuizWorkspace(root) {
     document.body.classList.remove('quiz-workspace-page','quiz-workspace-desktop');
     document.body.style.removeProperty('--quiz-dock-height');
   }
-  function apply({article, saved, complete, closed, statusElement, forceLongForm = false}) {
+  function apply({article, saved, complete, closed, statusElement, forceLongForm = false,scratchpadKey,scratchpadLabel}) {
     if (!document.body.classList.contains('quiz-skin')) return;
     document.body.classList.add('quiz-workspace-page'); root.classList.add('quiz-workspace-active');
     const actions = article.querySelector('.quiz-actions'), feedback = article.querySelector('.answer-preview');
@@ -46,6 +50,7 @@ export function createQuizWorkspace(root) {
       placeholder.textContent = saved ? '答案已儲存，正解與解析會在本場次開放後顯示。' : '送出後，一起核對想法。';
       explanation.append(placeholder);
     }
+    if(scratchpadKey)scratchpad?.attach({host:reading,key:scratchpadKey,label:scratchpadLabel});
     work.append(reading, explanation); article.replaceChildren(work);
     longQuestion = forceLongForm || reading.textContent.length > 1100 || Boolean(reading.querySelector('textarea'));
     dock = document.createElement('footer'); dock.className = 'quiz-workspace-dock';
@@ -77,5 +82,5 @@ export function createQuizWorkspace(root) {
     window.scrollTo({top:changed?0:savedScroll,behavior:'instant'});
   }
   window.addEventListener('resize', schedule);
-  return {apply, reset, refresh:size, destroy() {reset();window.removeEventListener('resize', schedule);}};
+  return {apply, reset, refresh:size, destroy() {reset();scratchpad?.destroy();window.removeEventListener('resize', schedule);}};
 }

@@ -1406,18 +1406,26 @@ body.quiz-workspace-desktop.partner-pilot .partner-content[data-stage=practice] 
  .partner-answer-feedback .qfm-character svg{width:100%;height:auto}
 }
 
+
+.sketch-editor .camp-sketch-board{display:block;width:100%;aspect-ratio:5/3;background:#fff;border:2px solid #a4c5bd;border-radius:10px;touch-action:none;user-select:none}
+.sketch-editor .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sketch-editor button{font:inherit;cursor:pointer;min-height:44px;border:1px solid #9ebeb2;border-radius:10px;background:#fff;color:#185e60;padding:8px}
+.sketch-editor button:disabled{opacity:.45;cursor:default}.sketch-editor button:focus-visible{outline:3px solid #d69b2c;outline-offset:2px}
+.sketch-editor .media-icon-button{display:inline-flex;align-items:center;justify-content:center;flex:0 0 44px;width:44px;height:44px;padding:8px}
+.sketch-palette{gap:6px;margin-bottom:10px;flex-wrap:wrap}.sketch-palette button{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:8px 10px}.sketch-color-dot{display:inline-block;width:17px;height:17px;border-radius:50%;border:1px solid #fff;box-shadow:0 0 0 1px #7c9494}.sketch-palette [aria-pressed="true"]{outline:3px solid #137c7b;outline-offset:1px;background:#e1f4ee;color:#144c4e}.camp-sketch-board[data-tool="eraser"]{cursor:crosshair}
+
+.message-media-composer .sketch-palette{gap:4px}.message-media-composer .sketch-palette button{justify-content:center;flex:0 0 44px;width:44px;height:44px;padding:8px;margin:0}.sketch-palette .sketch-color-dot{width:22px;height:22px}.sketch-tool-icon{width:24px;height:24px;display:block;flex:none}
+
+.sketch-editor .sketch-actions{gap:8px;margin:12px 0}.sketch-editor .sketch-palette{margin-bottom:8px}.sketch-editor .muted{font-size:.9rem;color:#536c67;line-height:1.5}
+
+
 @scope (.partner-content){
  :scope .media-modes{display:flex;gap:5px;margin:12px 0}:scope .media-modes button{font-size:14px;padding:9px 10px;margin:0}:scope .media-modes [aria-pressed=true]{background:#087c72;color:#fff}
  :scope .message-media-composer{margin:10px 0}:scope .message-media-composer p{font-size:14px}:scope .message-media-composer button,:scope [data-message-media] button{font-size:14px;padding:9px 12px;margin-top:5px}
  :scope .message-media-composer meter{display:block;width:100%;height:15px;margin:8px 0}:scope .message-media-composer audio,:scope [data-message-media] audio{display:block;width:100%;margin:10px 0}:scope [data-message-media] p{font-size:13px}:scope [data-error=true]{color:#923b27}
- :scope .camp-sketch-board{display:block;width:100%;aspect-ratio:5/3;background:#fff;border:2px solid #a4c5bd;border-radius:10px;touch-action:none;user-select:none}
  :scope .message-sketch-dialog{width:min(800px,96vw);max-height:95dvh;border:1px solid #b5d5c9;border-radius:18px;color:inherit}:scope .message-sketch-dialog::backdrop{background:#123f4b66}:scope .message-sketch-dialog svg{display:block;width:100%;background:white}
  @media(max-width:500px){:scope .media-modes{flex-wrap:nowrap}:scope .media-modes button{font-size:12px;padding:9px 6px;flex:1}}
 }
-
-.sketch-palette{gap:6px;margin-bottom:10px;flex-wrap:wrap}.sketch-palette button{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:8px 10px}.sketch-color-dot{display:inline-block;width:17px;height:17px;border-radius:50%;border:1px solid #fff;box-shadow:0 0 0 1px #7c9494}.sketch-palette [aria-pressed="true"]{outline:3px solid #137c7b;outline-offset:1px;background:#e1f4ee;color:#144c4e}.camp-sketch-board[data-tool="eraser"]{cursor:crosshair}
-
-.message-media-composer .sketch-palette{gap:4px}.message-media-composer .sketch-palette button{justify-content:center;flex:0 0 44px;width:44px;height:44px;padding:8px;margin:0}.sketch-palette .sketch-color-dot{width:22px;height:22px}.sketch-tool-icon{width:24px;height:24px;display:block;flex:none}
 
 .partner-content .media-icon-button{display:inline-flex;align-items:center;justify-content:center;flex:0 0 44px!important;width:44px;min-width:44px;height:44px;padding:8px!important;margin:0!important}.partner-content .media-icon-button[hidden]{display:none}.partner-content .media-modes{gap:8px}.partner-content .sketch-actions{gap:8px;margin:14px 0 18px}.partner-content .sketch-color-dot{flex:none}.partner-content .sketch-palette{margin-bottom:8px}
 
@@ -1503,6 +1511,29 @@ body.quiz-workspace-desktop.partner-pilot .partner-content[data-stage=practice] 
 .partner-content .answer-next-step p{margin:0 0 14px;line-height:1.8}
 .partner-content .answer-next-step button{min-height:48px;white-space:normal}
 @media(max-width:600px){.partner-content .answer-next-step{padding:16px}.partner-content .answer-next-step h3{font-size:20px}.partner-content .answer-next-step button{width:100%}}
+
+
+
+.sketch-editor .camp-sketch-board{display:block;width:100%;aspect-ratio:5/3;background:#fff;border:2px solid #a4c5bd;border-radius:10px;touch-action:none;user-select:none}
+.sketch-editor .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sketch-editor button{font:inherit;cursor:pointer;min-height:44px;border:1px solid #9ebeb2;border-radius:10px;background:#fff;color:#185e60;padding:8px}
+.sketch-editor button:disabled{opacity:.45;cursor:default}.sketch-editor button:focus-visible{outline:3px solid #d69b2c;outline-offset:2px}
+.sketch-editor .media-icon-button{display:inline-flex;align-items:center;justify-content:center;flex:0 0 44px;width:44px;height:44px;padding:8px}
+.sketch-palette{gap:6px;margin-bottom:10px;flex-wrap:wrap}.sketch-palette button{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:8px 10px}.sketch-color-dot{display:inline-block;width:17px;height:17px;border-radius:50%;border:1px solid #fff;box-shadow:0 0 0 1px #7c9494}.sketch-palette [aria-pressed="true"]{outline:3px solid #137c7b;outline-offset:1px;background:#e1f4ee;color:#144c4e}.camp-sketch-board[data-tool="eraser"]{cursor:crosshair}
+
+.message-media-composer .sketch-palette{gap:4px}.message-media-composer .sketch-palette button{justify-content:center;flex:0 0 44px;width:44px;height:44px;padding:8px;margin:0}.sketch-palette .sketch-color-dot{width:22px;height:22px}.sketch-tool-icon{width:24px;height:24px;display:block;flex:none}
+
+.sketch-editor .sketch-actions{gap:8px;margin:12px 0}.sketch-editor .sketch-palette{margin-bottom:8px}.sketch-editor .muted{font-size:.9rem;color:#536c67;line-height:1.5}
+
+
+.quiz-scratchpad-entry{display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:750;min-height:44px;margin:0 0 12px;padding:8px 12px;border:1px solid #9ebeb2;border-radius:12px;background:#f0f8f6;color:#185e60;cursor:pointer}
+.quiz-scratchpad-entry .sketch-tool-icon{width:22px;height:22px}.quiz-scratchpad-entry[aria-expanded=true]{background:#185e60;color:white}
+.quiz-scratchpad-dialog .sketch-palette{gap:4px}
+.quiz-scratchpad-entry:focus-visible,.quiz-scratchpad-heading button:focus-visible{outline:3px solid #d69b2c;outline-offset:3px}
+.quiz-scratchpad-dialog{position:fixed;inset:130px 24px auto auto;margin:0;width:min(520px,37vw);min-width:300px;max-width:calc(100vw - 24px);max-height:calc(100dvh - 160px - var(--quiz-dock-height,100px));padding:0;border:2px solid #80b8a6;border-radius:18px;background:#f5fbf8;color:#203f3b;box-shadow:0 12px 42px #123f4b40;z-index:60;resize:both;overflow:auto;font-family:inherit}
+.quiz-scratchpad-dialog[open]{display:flex;flex-direction:column}.quiz-scratchpad-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:#e2f1eb;border-bottom:1px solid #b8d8ca;flex:none}.quiz-scratchpad-heading h2{font-size:1.15rem;line-height:1.5;margin:0;overflow-wrap:anywhere}.quiz-scratchpad-heading button{font:inherit;min-height:44px;padding:8px 12px;border:1px solid #9ebeb2;border-radius:10px;background:white;color:#185e60;cursor:pointer;white-space:nowrap}.quiz-scratchpad-body{padding:12px 16px;overflow:auto;min-height:0}.quiz-scratchpad-note{font-size:.85rem;line-height:1.5;margin:0 0 12px;color:#536c67}
+@media(max-width:700px){.quiz-scratchpad-dialog{inset:auto 8px calc(var(--quiz-dock-height,100px) + 8px) 8px;width:auto!important;height:auto!important;min-width:0;max-width:calc(100vw - 16px);max-height:68dvh;resize:none}.quiz-scratchpad-heading{padding:8px 12px}.quiz-scratchpad-body{padding:10px}}
+
 
 /* Limited to the confirmed quiz-skin single-question workspace. */
 .quiz-workspace-page{--quiz-dock-height:130px;scroll-padding-bottom:calc(var(--quiz-dock-height) + 16px)}
