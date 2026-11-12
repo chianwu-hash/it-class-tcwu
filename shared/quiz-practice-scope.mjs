@@ -12,6 +12,8 @@ export const paperPracticeScopeBasis=p=>reviewedPaper(p)?.basis||null;
 // Presentation only: never grants access, enables a paper, or rewrites history.
 // Boundaries below come from the approved 115-1 textbook analysis receipts.
 const rules={
+ '115-1-nani-g6-science':{before:[1,2],after:[3,4]},
+ '115-1-kang-g6-en':{before:[1,2],after:[3,4]},
  '115-1-hanlin-g3-math':{before:[1,2,3,4,5],after:[6,7,8,9]},
  '115-1-hanlin-g3-science':{before:[1,2],after:[3,4]},
  '115-1-kang-g3-ch':{before:[1,2,3,4,5,6],after:[7,8,9,10,11,12]},
@@ -22,6 +24,14 @@ export function practiceScopeOptions(grade){return [
  ['before',Number(grade)===9?'前次範圍・第1次段考':'期中範圍'],['all','全部'],
 ];}
 export function scopeRule(c={}){
+ const six={
+  '115-1-nani-g6-science':{publisher:'南一',subject:'自然'},
+  '115-1-kang-g6-en':{publisher:'康軒',subject:'英語'},
+ }[c.course_id||c.id];
+ if(six){
+  if(c.school_year!==undefined&&String(c.school_year)!=='115'||c.grade!==undefined&&Number(c.grade)!==6||c.volume!==undefined&&c.volume!=='6年級上學期'||c.publisher!==undefined&&c.publisher!==six.publisher||c.subject!==undefined&&c.subject!==six.subject)return null;
+  return rules[c.course_id||c.id];
+ }
  if(rules[c.course_id||c.id]){
   const chinese=(c.course_id||c.id)==='115-1-kang-g3-ch';
   if(c.school_year!==undefined&&String(c.school_year)!=='115'||c.grade!==undefined&&Number(c.grade)!==3||c.volume!==undefined&&(chinese?c.volume!=='3年級上學期':!String(c.volume).startsWith('3'))||c.publisher!==undefined&&c.publisher!==(chinese?'康軒':'翰林'))return null;
