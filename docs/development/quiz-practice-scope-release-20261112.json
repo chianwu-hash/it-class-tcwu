@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-12",
+  "main_commit": "47ecb4e341eda68844e85591f1f22f125a8c1c60",
+  "implementation_pr": 167,
+  "deployment": "dpl_57UeReU5JTKbXxkV9ztkfk4wVJE9",
+  "rollback": "dpl_CDRiWyqFHg6BVPBjKepbZMGvAUf3",
+  "full_tree_comparison_ok": true,
+  "changed_runtime_files": 23,
+  "added_runtime_files": 1,
+  "unexpected_files": [],
+  "eol_only": 0,
+  "post_live_sources_sha256_verified": 29,
+  "local_classification_and_build_tests": 9,
+  "latest_main_browser_checks": 39,
+  "browser_widths": [
+    1280,
+    390
+  ],
+  "actual_student_submission": false,
+  "database_changes": false,
+  "shared_auth_and_previous_fields_kept": true
+}
