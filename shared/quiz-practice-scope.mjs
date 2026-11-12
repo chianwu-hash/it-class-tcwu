@@ -14,6 +14,8 @@ export const paperPracticeScopeBasis=p=>reviewedPaper(p)?.basis||null;
 const rules={
  '115-1-nani-g6-science':{before:[1,2],after:[3,4]},
  '115-1-kang-g6-en':{before:[1,2],after:[3,4]},
+ '115-1-kang-g6-ch':{before:[1,2,3,4,5,6],after:[7,8,9,10,11,12]},
+ '115-1-hanlin-g6-math':{before:[1,2,3,4],after:[5,6,7,8]},
  '115-1-hanlin-g3-math':{before:[1,2,3,4,5],after:[6,7,8,9]},
  '115-1-hanlin-g3-science':{before:[1,2],after:[3,4]},
  '115-1-kang-g3-ch':{before:[1,2,3,4,5,6],after:[7,8,9,10,11,12]},
@@ -27,6 +29,8 @@ export function scopeRule(c={}){
  const six={
   '115-1-nani-g6-science':{publisher:'南一',subject:'自然'},
   '115-1-kang-g6-en':{publisher:'康軒',subject:'英語'},
+  '115-1-kang-g6-ch':{publisher:'康軒',subject:'國語'},
+  '115-1-hanlin-g6-math':{publisher:'翰林',subject:'數學'},
  }[c.course_id||c.id];
  if(six){
   if(c.school_year!==undefined&&String(c.school_year)!=='115'||c.grade!==undefined&&Number(c.grade)!==6||c.volume!==undefined&&c.volume!=='6年級上學期'||c.publisher!==undefined&&c.publisher!==six.publisher||c.subject!==undefined&&c.subject!==six.subject)return null;
