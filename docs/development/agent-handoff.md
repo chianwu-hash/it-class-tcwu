@@ -1,4 +1,13 @@
-# 發布登記：2026-11-12 待核對卷分類準備發布
+# 發布登記：2026-11-12 待核對卷分類已上線
+
+| 狀態 | agent | 開始時間 | main commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-scope-evidence-side-20261112 | 2026-11-12T03:04:07.325Z | `4d2d818` | `dpl_57UeReU5JTKbXxkV9ztkfk4wVJE9` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-practice-scope.mjs、shared/quiz-workshop/generated/assets.json、+shared/quiz-practice-scope-reviewed.mjs | `dpl_3LgX8TiRnB1zg5BEo9ZCX43BGkaw`／回滾 `dpl_57UeReU5JTKbXxkV9ztkfk4wVJE9`（eolOnly 0） |
+
+- [正式收據](quiz-practice-scope-evidence-release-20261112.md)／[機器可讀收據](quiz-practice-scope-evidence-release-20261112.json)。36新增歸期中，54保留待核對；考古50卷分類及開放不變。18改1增完整樹／正式24來源SHA通過，鎖已釋放。
+- 10分類／建置及42桌手機合成身分檢查通過；無正式SQL、學生作答、權限或主對話題庫轉化變更。
+
+# 本輪準備紀錄：2026-11-12 待核對卷分類
 
 - Codex-scope-evidence-side-20261112：接續本側已授權的範圍收納，新增36份已核固定版本期中教師卷；54份保留待核對。考古50卷既有分類及40開放／10停用不變。
 - [核對來源、分類數與保留原因](quiz-practice-scope-evidence-20261112.md)。10項分類／建置與42項四年級別桌手機合成身分檢查通過；無SQL、學生作答、權限或主對話題庫轉化變更。
