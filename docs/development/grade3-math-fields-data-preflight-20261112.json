@@ -1,0 +1,42 @@
+{
+  "phase": "data_preflight_passed_not_enabled",
+  "date": "2026-11-12",
+  "fixed_pool_sha256": "592caabed2fb6f868e24cbbb2e13c785aaee8da3d9b981bd1fe59306d1be1a92",
+  "new_complete_parents": 74,
+  "new_logical_targets": 100,
+  "answer_positions": 213,
+  "by_unit_parents": {
+    "6": 19,
+    "7": 44,
+    "8": 2,
+    "9": 9
+  },
+  "by_unit_logical_targets": {
+    "6": 19,
+    "7": 59,
+    "8": 2,
+    "9": 20
+  },
+  "previous_new_targets_live": 581,
+  "expected_new_parent_count_scope": 655,
+  "expected_new_logical_targets_scope": 681,
+  "expected_all_math_usable_parents": 945,
+  "expected_remaining_general_targets": 1404,
+  "remaining_past_scope_targets": 51,
+  "excluded_outside_past_targets": 32,
+  "formal_parent_answer_reveal_rollback_cases": 74,
+  "verified_media_hashes": 103,
+  "new_private_drive_images": 30,
+  "media_metadata_new_rows": 31,
+  "private_sql_sha256": {
+    "install-disabled.private.sql": "1626793cbf2c1f078b2896153d90ca0b0506d815812b857d59f7bb3e35dfb3a0",
+    "activate-body.private.sql": "d1bca999b6e0c6fbedafea6204ca77d124d2d36f10ab3a8fe478c4f515d43fd5",
+    "rollback-disable.private.sql": "ea0936d8e40f718f917f86c4247b8ef75fe118fe35815bad19edba4658b57496"
+  },
+  "engine_main": "d5a1598",
+  "engine_snapshot_main": "221ff5e",
+  "source_candidate_sha256": "019e5ae5ce765dfbbfdfc63fd88ce3977688abdb356a72a89bf5c599bec2d9b4",
+  "overlap_previous_targets": 0,
+  "additional_function_changes": false,
+  "vercel_deployment_needed": false
+}
