@@ -1,0 +1,80 @@
+{
+  "phase": "enabled_post_live_verified",
+  "date": "2026-11-12",
+  "fixed_pool_sha256": "d448701aa25f5161be7d3769ef1cf27242c73859321ab0e15443adc9ef7f498b",
+  "new_complete_parents": 34,
+  "new_logical_targets": 48,
+  "answer_positions": 98,
+  "by_unit_parents": {
+    "8": 13,
+    "7": 8,
+    "9": 9,
+    "6": 4
+  },
+  "by_unit_logical_targets": {
+    "8": 19,
+    "7": 14,
+    "9": 11,
+    "6": 4
+  },
+  "previous_live_parents": 742,
+  "previous_live_targets": 855,
+  "expected_scope_parents": 776,
+  "expected_scope_targets": 903,
+  "expected_scope_positions": 1158,
+  "expected_all_math_usable_parents": 1066,
+  "expected_remaining_general_parents": 770,
+  "expected_remaining_general_targets": 1182,
+  "expected_remaining_general_positions": 2591,
+  "past_pending_targets": 51,
+  "outside_past_excluded": 32,
+  "formal_parent_answer_reveal_rollback_cases": 34,
+  "verified_media_hashes": 116,
+  "new_private_drive_images": 32,
+  "media_metadata_new_rows": 46,
+  "private_sql_sha256": {
+    "install-disabled.private.sql": "b78728725429d0eeaa37b093db1e27bee0f4fec6e3b83717d5c9066235053f7e",
+    "activate-body.private.sql": "b2125e163cf431bb6023ed447fe4f25c6556bc59b284c277c3487e7f440c18e3",
+    "rollback-disable.private.sql": "0425742d715956050ceddc17e0c65466932e88eeef4ac8b3f70f95c915a7201b"
+  },
+  "source_candidate_sha256": "019e5ae5ce765dfbbfdfc63fd88ce3977688abdb356a72a89bf5c599bec2d9b4",
+  "additional_function_changes": false,
+  "vercel_deployment_needed": false,
+  "overlap_previous_targets": 0,
+  "real_student_browser_test": false,
+  "claude_review": {
+    "session": "g3m-mixed-inputs-review-20261112",
+    "completed": true,
+    "elapsed_seconds": 152.554,
+    "viewer_started": true,
+    "git_unchanged": true,
+    "all_arithmetic_rechecked": false,
+    "actual_images_seen": false
+  },
+  "codex_original_images_and_inline_layout_verified": true,
+  "latin_code_correct_equivalents": 4,
+  "latin_code_wrong_rejections": 3,
+  "data_preflight_pr": 165,
+  "data_main_source": "0d83209",
+  "actual_scope_parents": 776,
+  "actual_scope_targets": 903,
+  "actual_scope_positions": 1158,
+  "actual_all_math_usable_parents": 1066,
+  "actual_by_unit_parents": {
+    "6": 192,
+    "7": 311,
+    "8": 145,
+    "9": 128
+  },
+  "actual_by_unit_targets": {
+    "6": 220,
+    "7": 345,
+    "8": 185,
+    "9": 153
+  },
+  "post_live_composed_parents": 60,
+  "post_live_fixed_references": 60,
+  "new_batch_actually_composed": true,
+  "student_history_and_existing_content_unchanged": true,
+  "synthetic_records_rolled_back": true
+}
