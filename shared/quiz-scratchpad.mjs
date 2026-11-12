@@ -3,12 +3,19 @@ import {setToolIcon} from './tool-icons.mjs';
 
 // Personal, page-lifetime working paper. Never submitted with answers or messages.
 export function createQuizScratchpad(){
- const drafts=new Map();let currentKey=null,editor=null,opener=null,destroyed=false;
+ const drafts=new Map();let currentKey=null,editor=null,opener=null,destroyed=false,resizing=null;
  const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;return n;};
- const dialog=make('dialog',null,'quiz-scratchpad-dialog'),head=make('header',null,'quiz-scratchpad-heading'),title=make('h2','計算紙'),closeButton=make('button','×'),body=make('div',null,'quiz-scratchpad-body'),editorHost=make('div'),toolbar=make('div',null,'quiz-scratchpad-tools sketch-editor');
+ const dialog=make('dialog',null,'quiz-scratchpad-dialog'),head=make('header',null,'quiz-scratchpad-heading'),title=make('h2','計算紙'),closeButton=make('button','×'),body=make('div',null,'quiz-scratchpad-body'),editorHost=make('div'),toolbar=make('div',null,'quiz-scratchpad-tools sketch-editor'),grip=make('button',null,'quiz-scratchpad-resize');
  title.id='scratchpad-'+crypto.randomUUID();dialog.setAttribute('aria-labelledby',title.id);dialog.setAttribute('aria-description','草稿只留在這個頁面，重新整理或登出會清除。');closeButton.type='button';closeButton.setAttribute('aria-label','收起計算紙');closeButton.title='收起計算紙';head.append(title,toolbar,closeButton);body.append(editorHost);dialog.append(head,body);
+ grip.type='button';grip.title='拖曳調整大小（↙／↗）';grip.setAttribute('aria-label','調整計算紙大小');grip.setAttribute('aria-description','使用左右方向鍵調整寬度。');grip.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 20 4M4 12v8h8M12 4h8v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';dialog.append(grip);
+ function resizeTo(width){const right=parseFloat(getComputedStyle(dialog).right)||0,max=Math.max(300,window.innerWidth-right-8);dialog.style.width=Math.round(Math.max(300,Math.min(max,width)))+'px';}
+ function stopResize(event){if(!resizing||event&&event.pointerId!==resizing.id)return;const id=resizing.id;resizing=null;if(grip.hasPointerCapture(id))grip.releasePointerCapture(id);}
+ grip.onpointerdown=event=>{if(resizing||event.button!==0)return;event.preventDefault();event.stopPropagation();resizing={id:event.pointerId,x:event.clientX,width:dialog.getBoundingClientRect().width};grip.setPointerCapture(event.pointerId);};
+ grip.onpointermove=event=>{if(resizing?.id!==event.pointerId)return;event.preventDefault();resizeTo(resizing.width+resizing.x-event.clientX);};
+ grip.onpointerup=grip.onpointercancel=grip.onlostpointercapture=stopResize;
+ grip.onkeydown=event=>{if(!['ArrowLeft','ArrowRight'].includes(event.key))return;event.preventDefault();resizeTo(dialog.getBoundingClientRect().width+(event.key==='ArrowLeft'?24:-24));};
  const save=()=>{if(currentKey&&editor)drafts.set(currentKey,editor.getValue());};
- function close({restoreFocus=true}={}){save();if(dialog.open)dialog.close();if(opener?.isConnected){opener.setAttribute('aria-expanded','false');if(restoreFocus)opener.focus({preventScroll:true});}}
+ function close({restoreFocus=true}={}){stopResize();save();if(dialog.open)dialog.close();if(opener?.isConnected){opener.setAttribute('aria-expanded','false');if(restoreFocus)opener.focus({preventScroll:true});}}
  closeButton.onclick=()=>close();
  const escape=e=>{if(e.key==='Escape'&&dialog.open&&!document.querySelector('#lightbox:not(.hidden)')){e.preventDefault();close();}};
  document.addEventListener('keydown',escape);

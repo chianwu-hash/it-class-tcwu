@@ -1531,8 +1531,10 @@ body.quiz-workspace-desktop.partner-pilot .partner-content[data-stage=practice] 
 .quiz-scratchpad-entry:focus-visible,.quiz-scratchpad-heading button:focus-visible{outline:2px solid #d69b2c;outline-offset:1px}
 .quiz-scratchpad-dialog{position:fixed;inset:130px 24px auto auto;margin:0;width:min(520px,37vw);height:auto!important;min-width:300px;max-width:calc(100vw - 24px);max-height:calc(100dvh - 160px - var(--quiz-dock-height,100px));padding:0;border:1px solid #80b8a6;border-radius:10px;background:#fff;color:#203f3b;box-shadow:0 12px 42px #123f4b40;z-index:60;resize:horizontal;overflow:auto;font-family:inherit}
 .quiz-scratchpad-dialog[open]{display:flex;flex-direction:column}
-/* Native resize grip follows direction; keep controls and handwriting left-to-right. */
-.quiz-scratchpad-dialog{direction:rtl;overflow:hidden;resize:both}.quiz-scratchpad-dialog::-webkit-resizer{cursor:nesw-resize}.quiz-scratchpad-heading,.quiz-scratchpad-body{direction:ltr}
+.quiz-scratchpad-dialog{direction:ltr;overflow:hidden;resize:none}
+.quiz-scratchpad-dialog .quiz-scratchpad-resize{position:absolute;left:0;bottom:0;z-index:2;display:grid;place-items:center;width:22px;min-width:22px;height:22px;min-height:22px;margin:0;padding:2px;border:0;border-top:1px solid #80b8a6;border-right:1px solid #80b8a6;border-radius:0 5px 0 8px;background:#e2f1eb;color:#185e60;cursor:nesw-resize;touch-action:none}
+.quiz-scratchpad-resize svg{display:block;width:17px;height:17px}.quiz-scratchpad-resize:focus-visible{outline:2px solid #d69b2c;outline-offset:-2px}
+@media(max-width:700px){.quiz-scratchpad-dialog .quiz-scratchpad-resize{display:none}}
 .quiz-scratchpad-heading{display:flex;align-items:center;gap:2px;padding:2px 3px;background:#e2f1eb;border-bottom:1px solid #b8d8ca;flex:none}
 .quiz-scratchpad-heading h2{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .quiz-scratchpad-heading>button{display:grid;place-items:center;flex:0 0 24px;width:24px;min-height:24px;height:24px;margin:0;padding:0;border:0;border-radius:4px;background:transparent;color:#185e60;font:24px/1 sans-serif;cursor:pointer}
