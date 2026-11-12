@@ -1,4 +1,12 @@
 import {presetOrdinal,grade3MathUnits} from './quiz-paper-display.mjs';
+import {reviewedPracticePapers} from './quiz-practice-scope-reviewed.mjs';
+
+const reviewed=new Map(reviewedPracticePapers.map(p=>[p.id,p]));
+function reviewedPaperScope(p){
+ const fixed=reviewed.get(p.id),c=p.catalog;
+ if(!fixed||p.generated||!c||p.version_id!==fixed.version_id||p.title!==fixed.title)return null;
+ return Object.entries(fixed.catalog).every(([key,value])=>c[key]===value)?fixed.scope:null;
+}
 
 // Presentation only: never grants access, enables a paper, or rewrites history.
 // Boundaries below come from the approved 115-1 textbook analysis receipts.
@@ -27,6 +35,7 @@ export function unitPracticeScope(course,unit){
 export function paperPracticeScope(p,{past=false}={}){
  const c=p.catalog||p,marked=explicit(c.practice_scope);if(marked)return marked;
  if(past){const exam=Number(c.exam);return exam===1?'before':exam===2?'after':'unknown';}
+ const verified=reviewedPaperScope(p);if(verified)return verified;
  const rule=scopeRule(c);if(!rule)return 'unknown';
  let units=p.unit_ids;
  if(!Array.isArray(units)||!units.length){let n=presetOrdinal(p);if(!Number.isFinite(n)&&c.subject==='數學')n=grade3MathUnits.indexOf(c.unit||p.title)+1;units=Number.isFinite(n)&&n>0?[n]:[];}
