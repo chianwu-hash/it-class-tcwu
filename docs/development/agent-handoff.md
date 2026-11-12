@@ -1,4 +1,13 @@
-# 發布登記：2026-11-12 答案與課本按鈕同排準備發布
+# 發布登記：2026-11-12 答案與課本按鈕同排已上線
+
+| 狀態 | agent | 開始時間 | main commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-answer-textbook-row-20261112 | 2026-11-12T11:04:36.590Z | `48007bb` | `dpl_7rhfpW59LxVUcTXHeBkpauibfNAP` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-server.mjs、shared/quiz-textbook-reader.css、shared/quiz-textbook-reader.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、shared/quiz-workspace.css | `dpl_BrTBJPdhMUbcWzpU3h58UN5BLbJL`／回滾 `dpl_7rhfpW59LxVUcTXHeBkpauibfNAP`（eolOnly 0） |
+
+- [正式收據](quiz-answer-textbook-row-release-20261112.md)／[機器可讀收據](quiz-answer-textbook-row-release-20261112.json)：答案左、課本右、解析之前，手機可換行；24改／額外0，正式29來源SHA通過，鎖已釋放。
+- 9 study／建置、21產物與32桌手機合成檢查通過；無DB、學生作答、教材權限或考古卷enabled變更。
+
+# 本輪準備紀錄：2026-11-12 答案與課本按鈕同排
 
 - Codex-answer-textbook-row-20261112接續已上線解析介面，依使用者最新要求把課本按鈕移到答案同排、解析之前；只調整DOM及樣式，呼吸與教材操作保持。
 - 新工作樹answer-textbook-row-20261112自最新main fe8542d建立；[變更與驗證](quiz-answer-textbook-row-20261112.md)。9 study／建置及21產物通過，瀏覽器合成桌手機驗證另附私有證據。無DB、學生作答、教材權限或考古卷enabled變更。
