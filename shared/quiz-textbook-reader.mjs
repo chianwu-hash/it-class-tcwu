@@ -58,7 +58,7 @@ export function createTextbookReader({root,getContext,pages,resolvePage=page=>pa
     host.querySelector('.quiz-explanation-placeholder')?.remove();
     if(!feedback){const card=make('section',null,'qtb-card');card.append(make('strong','一起翻翻課本，找找線索吧！'),make('p',bookName()+'第'+context.primary+'頁'),button('翻課本找線索',e=>begin(undefined,e.currentTarget),'qtb-entry qtb-open'));host.append(card);}
     for(const field of context.fields||[]){const target=found.querySelector(field.selector);if(target){const b=button('看課本第'+field.page+'頁',e=>begin(field.page,e.currentTarget),'qtb-field-entry');b.dataset.returnCaption=field.label;target.closest('.slot')?.append(b);}}
-    if(feedback){const hint=make('div',null,'qtb-after-hint');hint.append(make('p',context.afterHint||'可以翻回課本，再對照一次。'),button('對照課本第'+context.primary+'頁',e=>begin(undefined,e.currentTarget),'qtb-entry'));feedback.append(hint);}
+    if(feedback){const entry=button('對照課本第'+context.primary+'頁',e=>begin(undefined,e.currentTarget),'qtb-entry qtb-after-entry'),answerRow=feedback.querySelector('.quiz-answer-row');if(answerRow)answerRow.append(entry);else{const hint=make('div',null,'qtb-after-hint');hint.append(make('p',context.afterHint||'可以翻回課本，再對照一次。'),entry);feedback.append(hint);}}
     }
     if(open&&!activeFound)close();
   }
