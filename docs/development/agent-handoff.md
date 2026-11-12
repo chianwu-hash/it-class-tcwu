@@ -1,3 +1,12 @@
+# 發布登記：2026-11-12 考試範圍收納已上線
+
+| 狀態 | agent | 開始時間 | main commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-exam-scope-side-20261112 | 2026-11-12T02:19:48.553Z | `47ecb4e` | `dpl_CDRiWyqFHg6BVPBjKepbZMGvAUf3` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-compose.mjs、shared/quiz-library.css、shared/quiz-library.mjs、shared/quiz-workshop-config.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、+shared/quiz-practice-scope.mjs | `dpl_57UeReU5JTKbXxkV9ztkfk4wVJE9`／回滾 `dpl_CDRiWyqFHg6BVPBjKepbZMGvAUf3`（eolOnly 0） |
+
+- [正式發布收據](quiz-practice-scope-release-20261112.md)／[機器可讀收據](quiz-practice-scope-release-20261112.json)。完整樹23改1增、額外差異0，正式29來源SHA讀回一致；鎖已釋放，9分類／建置＋39桌手機檢查通過。
+- 使用者本側對話已明確授權上線；沒有SQL、正式題庫、學生作答或權限變更，保留最新主線fields功能。其他科目未知範圍仍待核對，不硬分類。
+
 # 2026-11-12 考試範圍收納：使用者已驗收並授權發布
 
 - 本側對話明確指示「可以，上線」，覆蓋前一階段僅本地的限制；只發布本版範圍呈現，不推進或改寫其他對話的題庫資料。
