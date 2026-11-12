@@ -1,0 +1,69 @@
+{
+  "phase": "enabled_post_live_verified",
+  "date": "2026-11-12",
+  "fixed_pool_sha256": "ec7527e2d72c302a64ca879c1de82bdadd52be9bb81f4bf9a7e8d58f0a3c411a",
+  "new_complete_parents": 31,
+  "new_logical_targets": 105,
+  "answer_positions": 120,
+  "by_unit_parents": {
+    "6": 14,
+    "7": 4,
+    "8": 11,
+    "9": 2
+  },
+  "by_unit_logical_targets": {
+    "6": 39,
+    "7": 13,
+    "8": 45,
+    "9": 8
+  },
+  "previous_live_parents": 655,
+  "previous_live_targets": 681,
+  "expected_scope_parents": 686,
+  "expected_scope_targets": 786,
+  "expected_scope_positions": 914,
+  "expected_all_math_usable_parents": 976,
+  "expected_remaining_general_parents": 860,
+  "expected_remaining_general_targets": 1299,
+  "expected_remaining_general_positions": 2835,
+  "past_pending_targets": 51,
+  "outside_past_excluded": 32,
+  "formal_parent_answer_reveal_rollback_cases": 31,
+  "verified_media_hashes": 114,
+  "new_private_drive_images": 33,
+  "media_metadata_new_rows": 42,
+  "private_sql_sha256": {
+    "install-disabled.private.sql": "0c292ecff546801e26db8ce8dace21c4391d81e9139c4f924daba8312b630551",
+    "activate-body.private.sql": "5e32f44625ceb11c1f8cde00a839472484b28e414b57654b92c89e115149222f",
+    "rollback-disable.private.sql": "10695501e8b2f3fb498c80c446c4de6c85dca2fdc93cdd3890d5eb56afd8b64f"
+  },
+  "source_candidate_sha256": "019e5ae5ce765dfbbfdfc63fd88ce3977688abdb356a72a89bf5c599bec2d9b4",
+  "engine_main": "d5a1598",
+  "additional_function_changes": false,
+  "vercel_deployment_needed": false,
+  "overlap_previous_targets": 0,
+  "real_student_browser_test": false,
+  "data_preflight_pr": 161,
+  "data_main_source": "2a2d9cd",
+  "actual_scope_parents": 686,
+  "actual_scope_targets": 786,
+  "actual_scope_positions": 914,
+  "actual_all_math_usable_parents": 976,
+  "actual_by_unit_parents": {
+    "6": 148,
+    "7": 296,
+    "8": 132,
+    "9": 110
+  },
+  "actual_by_unit_targets": {
+    "6": 173,
+    "7": 320,
+    "8": 166,
+    "9": 127
+  },
+  "post_live_composed_parents": 60,
+  "post_live_fixed_references": 60,
+  "new_batch_actually_composed": true,
+  "student_history_and_existing_content_unchanged": true,
+  "synthetic_records_rolled_back": true
+}
