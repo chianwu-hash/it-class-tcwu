@@ -1,0 +1,144 @@
+{
+  "phase": "enabled_post_live_verified",
+  "date": "2026-11-12",
+  "papers": 12,
+  "science_papers": 4,
+  "math_papers": 8,
+  "questions": 180,
+  "unique_source_families": 180,
+  "difficulty": "medium",
+  "mix_10": {
+    "easy": 2,
+    "medium": 6,
+    "hard": 2
+  },
+  "mix_20": {
+    "easy": 4,
+    "medium": 12,
+    "hard": 4
+  },
+  "fixed_plan_sha256": "3006891c72d94866b24630e61d5b0d9643279b40befdc120fdc63665b0a9538d",
+  "sql_sha256": {
+    "install-disabled.private.sql": "c2e6badb1f6bea70b70e6b732586b6ef7af885bac0c9e135ebd2df071d1bd782",
+    "activate.private.sql": "d94c39b1f3ef9253dfc762b33adcb6f6f95f0c05c536566324bf195502ae3fab",
+    "disable.private.sql": "ff4c0a0eab16a42920719a037789575114dd5795f01f1a202f8e39cb563c460f"
+  },
+  "real_sql_rollback_answers": 180,
+  "fixed_book_references": 180,
+  "partner_index_rollback": 12,
+  "protected_old_tables": 30,
+  "verified_images": 209,
+  "new_uploads": 0,
+  "frontend_scope_cases": 12,
+  "all_after_midterm": true,
+  "function_or_website_changes": false,
+  "real_student_browser_test": false,
+  "plans": [
+    {
+      "subject": "自然",
+      "unit": 3,
+      "count": 10,
+      "title": "三上自然第3單元：風與空氣（中等・10題）",
+      "session": "150c57af-6f5a-4460-b15b-6d52d5998f32",
+      "version": "4648c6fd-8f2d-4bb9-ac7c-ab87c18713bc"
+    },
+    {
+      "subject": "自然",
+      "unit": 3,
+      "count": 20,
+      "title": "三上自然第3單元：風與空氣（中等・20題）",
+      "session": "c8208ca0-0c4b-43f1-a0c4-0b1524859818",
+      "version": "eab742c9-5726-4a3b-a6aa-04793c68d173"
+    },
+    {
+      "subject": "自然",
+      "unit": 4,
+      "count": 10,
+      "title": "三上自然第4單元：奇妙的溶解（中等・10題）",
+      "session": "6b17f7ac-03af-4daf-9c58-d6009f7fc58d",
+      "version": "1ad9724b-fcd9-4923-9d08-abe837141983"
+    },
+    {
+      "subject": "自然",
+      "unit": 4,
+      "count": 20,
+      "title": "三上自然第4單元：奇妙的溶解（中等・20題）",
+      "session": "7106d6b9-3504-43af-b2ed-330557ca4679",
+      "version": "731c7407-a94d-45bb-b293-2da85d004413"
+    },
+    {
+      "subject": "數學",
+      "unit": 6,
+      "count": 10,
+      "title": "三上數學第6單元：除法（中等・10題）",
+      "session": "f87161b4-fb6c-4b84-a428-de6354c150da",
+      "version": "1f7af7c5-ce0a-4199-8e34-c0e63c96c656"
+    },
+    {
+      "subject": "數學",
+      "unit": 6,
+      "count": 20,
+      "title": "三上數學第6單元：除法（中等・20題）",
+      "session": "92770267-d6f1-437f-a067-bd16de88e6cb",
+      "version": "1c580e5f-d628-4b98-82a9-8be910beae2e"
+    },
+    {
+      "subject": "數學",
+      "unit": 7,
+      "count": 10,
+      "title": "三上數學第7單元：公斤與公克（中等・10題）",
+      "session": "14df4a51-0956-4615-81c4-61309a0f71fa",
+      "version": "1c007ab6-a41e-44fc-83cc-da7ab8ad3c75"
+    },
+    {
+      "subject": "數學",
+      "unit": 7,
+      "count": 20,
+      "title": "三上數學第7單元：公斤與公克（中等・20題）",
+      "session": "4936cd83-6404-49d4-938d-2b4b0dd1a581",
+      "version": "76138cd1-9780-4d54-afb9-018be1edfd7e"
+    },
+    {
+      "subject": "數學",
+      "unit": 8,
+      "count": 10,
+      "title": "三上數學第8單元：分數（中等・10題）",
+      "session": "fb4b2f83-7cb7-4bd4-801b-d7fe2067ee5a",
+      "version": "0bd83e6c-0d76-4f7b-9b1a-c93b771082b5"
+    },
+    {
+      "subject": "數學",
+      "unit": 8,
+      "count": 20,
+      "title": "三上數學第8單元：分數（中等・20題）",
+      "session": "0c0dc80a-3799-4a67-a218-7b9a70c25a81",
+      "version": "f5839702-b2ee-4533-abdf-84da1304ec43"
+    },
+    {
+      "subject": "數學",
+      "unit": 9,
+      "count": 10,
+      "title": "三上數學第9單元：列表與規律（中等・10題）",
+      "session": "a3474669-bb4f-4098-901e-5baf659a6c7f",
+      "version": "9bf4bbfc-33c7-4268-aa21-bf6707277a55"
+    },
+    {
+      "subject": "數學",
+      "unit": 9,
+      "count": 20,
+      "title": "三上數學第9單元：列表與規律（中等・20題）",
+      "session": "980048cf-7ed9-4510-ac61-68354869f529",
+      "version": "7cb987e6-0296-438f-be01-c520c5ec50ca"
+    }
+  ],
+  "data_preflight_pr": 177,
+  "data_main_source": "809a6bc",
+  "actual_live_papers": 12,
+  "actual_live_questions": 180,
+  "actual_fixed_book_references": 180,
+  "actual_partner_index": 12,
+  "grade3_library_visible": 12,
+  "grade6_list_hidden_and_join_denied": 12,
+  "anonymous_join_denied": true,
+  "synthetic_records_rolled_back": true
+}
