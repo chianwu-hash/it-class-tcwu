@@ -4,6 +4,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {fixtureRPC} from './fixtures/workshop-rpc.mjs';
+import {scopeCatalogRPC} from './fixtures/quiz-scope-rpc.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url)),port=Number(process.env.PORT||8872);
 const mime={'.html':'text/html','.mjs':'text/javascript','.js':'text/javascript','.json':'application/json','.css':'text/css','.svg':'image/svg+xml','.webp':'image/webp','.woff2':'font/woff2','.woff':'font/woff','.ttf':'font/ttf'};
 http.createServer(async(req,res)=>{
@@ -13,7 +14,7 @@ http.createServer(async(req,res)=>{
   if(req.method==='POST'&&p==='/__workshop-rpc'){
    if(req.headers.origin!==`http://localhost:${port}`)return send('text/plain','forbidden',403);
    let raw='';for await(const chunk of req){raw+=chunk;if(raw.length>500000)throw Error('too_large');}
-   return send('application/json',JSON.stringify(fixtureRPC(JSON.parse(raw))));
+   const payload=JSON.parse(raw);return send('application/json',JSON.stringify((payload.scope?scopeCatalogRPC(payload):null)??fixtureRPC(payload)));
   }
   if(req.method!=='GET')throw Error('not_found');
   if(p==='/')return send('text/html',await fs.readFile(path.join(root,'automation/fixtures/workshop-preview.html')));
@@ -28,7 +29,7 @@ http.createServer(async(req,res)=>{
   }
   if(p==='/shared/auth.js')return send('text/javascript',(await fs.readFile(path.join(root,'automation/fixtures/nav-identity-auth.mjs'),'utf8'))+'\nsupabase.auth.getSession=async()=>({data:{session:window.fixtureSession},error:null});const previewUser=new URLSearchParams(location.search).get("preview_user");if(["a","b"].includes(previewUser))window.fixtureSwitch(previewUser);');
   if(p==='/shared/garden-unlock-notice.mjs')return send('text/javascript','export function afterGardenReward(){};export function checkGardenUnlock(){}');
-  if(p==='/shared/quiz-transport.mjs')return send('text/javascript',`export function createAuthenticatedTransport({getSession}){return async(route,body)=>{window.workshopCalls??=[];window.workshopCalls.push({route,body});const params=new URLSearchParams(location.search);const r=await fetch('/__workshop-rpc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({route,body,grade:Number(document.body.dataset.grade),user:getSession()?.user?.id,namespace:params.get('preview')||'default',roomKind:params.get('preview_kind')||'normal',study:params.get('preview_study')==='1'})});const result=await r.json();if(!r.ok)throw Error(result.error);if(window.workshopDropNext){window.workshopDropNext=false;throw TypeError('synthetic_lost_response');}return result;};}`);
+  if(p==='/shared/quiz-transport.mjs')return send('text/javascript',`export function createAuthenticatedTransport({getSession}){return async(route,body)=>{window.workshopCalls??=[];window.workshopCalls.push({route,body});const params=new URLSearchParams(location.search);const r=await fetch('/__workshop-rpc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({route,body,grade:Number(document.body.dataset.grade),user:getSession()?.user?.id,namespace:params.get('preview')||'default',roomKind:params.get('preview_kind')||'normal',study:params.get('preview_study')==='1',scope:params.get('preview_scope')==='1'})});const result=await r.json();if(!r.ok)throw Error(result.error);if(window.workshopDropNext){window.workshopDropNext=false;throw TypeError('synthetic_lost_response');}return result;};}`);
   if(!p.startsWith('/shared/')&&!p.startsWith('/automation/fixtures/')&&!/^\/grade[3469]\/115-1\/(quiz|past-exam|partner-practice|quiz-library)\.html$/.test(p)&&!/^\/grade[3469]\/115-1\/navbar.js$/.test(p))throw Error('not_found');
   const file=path.resolve(root,'.'+p);if(!file.startsWith(path.resolve(root)+path.sep))throw Error('not_found');
   let bytes=await fs.readFile(file);
