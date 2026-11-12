@@ -80,3 +80,19 @@ test('六年級已核自然與英語期末單元可在預設範圍選用，版�
  }
  assert.equal(unitPracticeScope({id:'115-1-other-g6-science',grade:6},{id:3}),'unknown');
 });
+
+test('六年級康軒國語及翰林數學依115上實際課本區分期末，隔離版本及未知單元',()=>{
+ for(const [id,publisher,subject,before,after]of [
+  ['115-1-kang-g6-ch','康軒','國語',[1,2,3,4,5,6],[7,8,9,10,11,12]],
+  ['115-1-hanlin-g6-math','翰林','數學',[1,2,3,4],[5,6,7,8]],
+ ]){
+  const c={id,school_year:'115',grade:6,volume:'6年級上學期',publisher,subject};
+  const units=[...before,...after];
+  assert.deepEqual(units.filter(id=>matchesPracticeScope(unitPracticeScope(c,{id}),'after')),after);
+  assert.deepEqual(units.filter(id=>matchesPracticeScope(unitPracticeScope(c,{id}),'before')),before);
+  assert.equal(paperPracticeScope({catalog:{...c,course_id:id},unit_ids:after}),'after');
+  assert.equal(paperPracticeScope({catalog:{...c,course_id:id},unit_ids:[before.at(-1),after[0]]}),'mixed');
+  for(const invalid of [{school_year:'114'},{grade:3},{grade:4},{grade:9},{volume:'6年級下學期'},{publisher:'其他'},{subject:'其他'}])assert.equal(unitPracticeScope({...c,...invalid},{id:after[0]}),'unknown');
+  for(const id of [0,13,99])assert.equal(unitPracticeScope(c,{id}),'unknown');
+ }
+});
