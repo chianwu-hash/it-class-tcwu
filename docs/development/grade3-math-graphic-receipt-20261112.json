@@ -1,0 +1,211 @@
+{
+  "phase": "enabled_post_live_verified",
+  "fixed_pool_sha256": "0bfb963522d7197ef1a00c3a31424e0f6d52455d1ef3074cac96c88f439fb80d",
+  "new_complete_parents": 11,
+  "new_logical_targets": 11,
+  "answer_positions": 27,
+  "previous_parents": 827,
+  "previous_targets": 954,
+  "expected_scope_parents": 838,
+  "expected_scope_targets": 965,
+  "expected_scope_positions": 1295,
+  "expected_all_math_usable_parents": 1128,
+  "expected_pending_general_parents": 708,
+  "expected_pending_general_targets": 1120,
+  "expected_pending_general_positions": 2454,
+  "past_pending_targets": 51,
+  "pure_outside_past_excluded": 32,
+  "source_candidate_sha256": "019e5ae5ce765dfbbfdfc63fd88ce3977688abdb356a72a89bf5c599bec2d9b4",
+  "private_sql_sha256": {
+    "install-disabled.private.sql": "3581f5997a1dc86ac44982ae14c92630709461593201789655b35804c77a7da3",
+    "activate-body.private.sql": "a3f524cad283a9a3d6ab25a0943d53da24a8fd741f7c8f8003a72491197be0f7",
+    "rollback-disable.private.sql": "ceb99336b01fd1661c4a085a3cc1bb2322679024e45629692b8cbbfae0c8c633"
+  },
+  "formal_parent_answer_reveal_rollback_cases": 11,
+  "fraction_equivalence_and_wrong_cases": 8,
+  "verified_media_hashes": 81,
+  "new_private_drive_images": 11,
+  "new_media_metadata_rows": 11,
+  "frontend_document_validator_cases": 11,
+  "local_synthetic_browser": {
+    "passed": true,
+    "synthetic_only": true,
+    "real_sql": true,
+    "actual_source_images": true,
+    "widths": [
+      1280,
+      390
+    ],
+    "checks": [
+      {
+        "name": "1280_02392be8完整原圖已載入",
+        "ok": true
+      },
+      {
+        "name": "1280_02392be8答前解析保密",
+        "ok": true
+      },
+      {
+        "name": "1280_02392be8原題燈箱可放大閱讀",
+        "ok": true
+      },
+      {
+        "name": "1280_02392be8原題燈箱可縮放",
+        "ok": true
+      },
+      {
+        "name": "1280_02392be8原分數定位與分子標籤正確",
+        "ok": true
+      },
+      {
+        "name": "1280_02392be8翻課本保留輸入",
+        "ok": true
+      },
+      {
+        "name": "1280_02392be8真SQL全格判對及揭答",
+        "ok": true
+      },
+      {
+        "name": "1280_02392be8無整頁橫向溢出",
+        "ok": true
+      },
+      {
+        "name": "1280_046320d9完整原圖已載入",
+        "ok": true
+      },
+      {
+        "name": "1280_046320d9答前解析保密",
+        "ok": true
+      },
+      {
+        "name": "1280_046320d9原題燈箱可放大閱讀",
+        "ok": true
+      },
+      {
+        "name": "1280_046320d9原題燈箱可縮放",
+        "ok": true
+      },
+      {
+        "name": "1280_046320d9原分數定位與分子標籤正確",
+        "ok": true
+      },
+      {
+        "name": "1280_046320d9翻課本保留輸入",
+        "ok": true
+      },
+      {
+        "name": "1280_046320d9真SQL全格判對及揭答",
+        "ok": true
+      },
+      {
+        "name": "1280_046320d9無整頁橫向溢出",
+        "ok": true
+      },
+      {
+        "name": "390_02392be8完整原圖已載入",
+        "ok": true
+      },
+      {
+        "name": "390_02392be8答前解析保密",
+        "ok": true
+      },
+      {
+        "name": "390_02392be8原題燈箱可放大閱讀",
+        "ok": true
+      },
+      {
+        "name": "390_02392be8原題燈箱可縮放",
+        "ok": true
+      },
+      {
+        "name": "390_02392be8原分數定位與分子標籤正確",
+        "ok": true
+      },
+      {
+        "name": "390_02392be8翻課本保留輸入",
+        "ok": true
+      },
+      {
+        "name": "390_02392be8真SQL全格判對及揭答",
+        "ok": true
+      },
+      {
+        "name": "390_02392be8無整頁橫向溢出",
+        "ok": true
+      },
+      {
+        "name": "390_046320d9完整原圖已載入",
+        "ok": true
+      },
+      {
+        "name": "390_046320d9答前解析保密",
+        "ok": true
+      },
+      {
+        "name": "390_046320d9原題燈箱可放大閱讀",
+        "ok": true
+      },
+      {
+        "name": "390_046320d9原題燈箱可縮放",
+        "ok": true
+      },
+      {
+        "name": "390_046320d9原分數定位與分子標籤正確",
+        "ok": true
+      },
+      {
+        "name": "390_046320d9翻課本保留輸入",
+        "ok": true
+      },
+      {
+        "name": "390_046320d9真SQL全格判對及揭答",
+        "ok": true
+      },
+      {
+        "name": "390_046320d9無整頁橫向溢出",
+        "ok": true
+      },
+      {
+        "name": "無頁面JS錯誤",
+        "ok": true
+      }
+    ],
+    "errors": []
+  },
+  "claude": {
+    "completed": true,
+    "session": "g3m-graphic-fields-review-20261112",
+    "elapsed_seconds": 161.883,
+    "viewer_started": true,
+    "git_unchanged": true,
+    "p0": 0,
+    "p1_rank_anchor_fixed": true,
+    "all_11_contact_images_seen": true
+  },
+  "website_or_function_changes": false,
+  "real_student_browser_test": false,
+  "previous_targets_overlap": 0,
+  "data_preflight_pr": 175,
+  "data_main_source": "124fb68",
+  "actual_scope_parents": 838,
+  "actual_scope_targets": 965,
+  "actual_scope_positions": 1295,
+  "actual_all_math_usable_parents": 1128,
+  "actual_by_unit_parents": {
+    "6": 207,
+    "7": 321,
+    "8": 178,
+    "9": 132
+  },
+  "actual_by_unit_targets": {
+    "6": 235,
+    "7": 355,
+    "8": 218,
+    "9": 157
+  },
+  "post_live_composed_parents": 60,
+  "post_live_fixed_references": 60,
+  "new_batch_actually_composed": true,
+  "student_history_and_existing_content_unchanged": true,
+  "synthetic_records_rolled_back": true
+}
