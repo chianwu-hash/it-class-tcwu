@@ -1,0 +1,86 @@
+{
+  "phase": "enabled_post_live_verified",
+  "date": "2026-11-12",
+  "fixed_pool_sha256": "c465b776d919c91448e25688ae80456612f7e9f756752713c9c12afc6cda3d80",
+  "new_complete_parents": 56,
+  "new_logical_targets": 69,
+  "answer_positions": 146,
+  "by_unit_parents": {
+    "6": 40,
+    "7": 7,
+    "9": 9
+  },
+  "by_unit_logical_targets": {
+    "6": 43,
+    "7": 11,
+    "9": 15
+  },
+  "previous_live_parents": 686,
+  "previous_live_targets": 786,
+  "expected_scope_parents": 742,
+  "expected_scope_targets": 855,
+  "expected_scope_positions": 1060,
+  "expected_all_math_usable_parents": 1032,
+  "expected_remaining_general_parents": 804,
+  "expected_remaining_general_targets": 1230,
+  "expected_remaining_general_positions": 2689,
+  "past_pending_targets": 51,
+  "outside_past_excluded": 32,
+  "formal_parent_answer_reveal_rollback_cases": 56,
+  "verified_media_hashes": 76,
+  "new_private_drive_images": 6,
+  "media_metadata_new_rows": 6,
+  "private_sql_sha256": {
+    "install-disabled.private.sql": "592fef33fbf3282735e53f40679ba558995ca604cfbade37aed99f32ac0d6a5a",
+    "activate-body.private.sql": "56fdf1b01b34c9ff32d0c973bc7025450959f1024c5a5dc03a7c8edda81814fc",
+    "rollback-disable.private.sql": "1fd3e30548c133480390255d378f59daab9a2666711ca0ea332079317a2a5b07"
+  },
+  "source_candidate_sha256": "019e5ae5ce765dfbbfdfc63fd88ce3977688abdb356a72a89bf5c599bec2d9b4",
+  "additional_function_changes": false,
+  "vercel_deployment_needed": false,
+  "overlap_previous_targets": 0,
+  "real_student_browser_test": false,
+  "claude_reviews": [
+    {
+      "session": "g3m-numeric-lists-review-20261112",
+      "completed": true,
+      "findings_fixed_or_held": true,
+      "git_unchanged": true,
+      "arithmetic_all_questions_rechecked_by_claude": false
+    },
+    {
+      "session": "g3m-beads-image-review-20261112",
+      "completed": true,
+      "original_contact_sheet_read": true,
+      "git_unchanged": true
+    }
+  ],
+  "held_known_sources": [
+    "HL115G3M-01e6054f",
+    "HL115G3M-0479e63b",
+    "HL115G3M-01803039"
+  ],
+  "data_preflight_pr": 163,
+  "data_main_source": "d6b21d3",
+  "actual_scope_parents": 742,
+  "actual_scope_targets": 855,
+  "actual_scope_positions": 1060,
+  "actual_all_math_usable_parents": 1032,
+  "actual_by_unit_parents": {
+    "6": 188,
+    "7": 303,
+    "8": 132,
+    "9": 119
+  },
+  "actual_by_unit_targets": {
+    "6": 216,
+    "7": 331,
+    "8": 166,
+    "9": 142
+  },
+  "post_live_composed_parents": 60,
+  "post_live_fixed_references": 60,
+  "new_batch_actually_composed": true,
+  "student_history_and_existing_content_unchanged": true,
+  "synthetic_records_rolled_back": true
+}
