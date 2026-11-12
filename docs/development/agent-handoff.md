@@ -1,4 +1,13 @@
-# 發布登記：2026-11-12 課本前後翻閱修正準備發布
+# 發布登記：2026-11-12 課本前後翻閱修正已上線
+
+| 狀態 | agent | 開始時間 | main commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-textbook-page-navigation-20261112 | 2026-11-12T11:20:17.902Z | `dd9e3af` | `dpl_BrTBJPdhMUbcWzpU3h58UN5BLbJL` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-study-data.mjs、shared/quiz-textbook-reader.mjs、shared/quiz-workshop/generated/assets.json | `dpl_7j5nfys6Ex7Guecp1rKY98LFh77j`／回滾 `dpl_BrTBJPdhMUbcWzpU3h58UN5BLbJL`（eolOnly 0） |
+
+- [正式收據](quiz-textbook-navigation-release-20261112.md)／[機器可讀收據](quiz-textbook-navigation-release-20261112.json)：不再以逐頁sequence分組；同書已授權頁前後翻及全頁碼選單、本題參考標示、拉頁不拆。19改／額外0，正式24來源SHA吻合，鎖已釋放。
+- 10 study／建置／導航回歸、21產物與49桌手機合成檢查通過。無SQL、DB、學生作答、教材授權／Worker或考古卷enabled變更。
+
+# 本輪準備紀錄：2026-11-12 課本前後翻閱修正
 
 - Codex-textbook-page-navigation-20261112，最新main cd259e4新工作樹。使用者回報第110頁只能看一頁，確認來源sequence逐頁不同，舊閱讀器誤分組；改依後端已披露同bookId印刷頁排序，下拉列全書已授權頁並標本題參考，拉頁不拆、跨書隔離。
 - [來源與驗證](quiz-textbook-navigation-20261112.md)：49桌手機合成檢查及新增導航回歸；無DB、教材上傳、媒體驗權或考古卷enabled變更。PR進main後乾淨main發布，正式收據另補。
