@@ -1,0 +1,38 @@
+{
+  "phase": "engine_preflight_passed_not_deployed",
+  "date": "2026-11-12",
+  "live_math_new_targets": 581,
+  "new_sql_integrations": 6,
+  "formal_postgres_grading_cases": 6,
+  "formal_invalid_response_cases": 3,
+  "formal_all_changes_rolled_back": true,
+  "local_original_page_browser_checks": 31,
+  "browser_widths": [
+    1280,
+    390
+  ],
+  "browser_sql": "real_PGlite_synthetic_only",
+  "claude_core_review": "passed_no_P0_P1",
+  "claude_test_execution": false,
+  "unicode_error_code_fix_added_and_tested": true,
+  "source_files_sha256": {
+    "supabase/quiz-normal-fields-response.sql": "c3caeef18a4e29e34d0cb832f97dcddb5fb907378880f20ac8dcf54375458d09",
+    "supabase/quiz-normal-fields-helpers.sql": "b12edee76569979bc07592c1998f16bb4b9480ffbb4deb643a358c58763a81ec",
+    "automation/lib/quiz-normal-fields-migration.mjs": "c79bf695930933cec14fb6dd810c54842a84c800ca31386b75392b23fefb4493",
+    "automation/fixtures/quiz-normal-fields-before.json": "c1fa150a9a39a1cf4b6ba49aa6d3460c641c6363e4c1e6bea3d653eefb9b5da8",
+    "shared/quiz-fields.mjs": "7bdafd5788688303acdd10e27747ae10ceaf1eb5172a81ba00fd9611ee39e682",
+    "shared/quiz-fields.css": "22b39824665da1e4b49ec28252c44386c47780402cf8f7eef2efe961d8b05225",
+    "shared/quiz-server.mjs": "303b44046fc1fd8d5f147d5fb2a3e66ee6b3f8b4c1dcc4f315d09199cdf51316",
+    "shared/quiz-textbook-reader.mjs": "868d3b19efac36bad08d0bbbeab20d05b316cfa2aefac3e2fb726b734d563c98"
+  },
+  "candidate_group_parents": 74,
+  "candidate_logical_targets": 100,
+  "candidate_positions": 213,
+  "candidate_parents_formal_answer_reveal_rollback_verified": 74,
+  "candidate_media_verified": 103,
+  "candidate_new_private_drive_images": 30,
+  "candidates_enabled": 0,
+  "remaining_general_targets_live": 1504,
+  "remaining_past_targets_live": 51,
+  "outside_scope_excluded": 32
+}

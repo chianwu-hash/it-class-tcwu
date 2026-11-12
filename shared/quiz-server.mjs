@@ -4,6 +4,7 @@ import { renderContent as renderQuizContent } from './quiz-render.mjs?v=20261029
 import { mergeQuizSnapshot } from './quiz-state.mjs';
 import {createQuestionReport} from './quiz-question-reports.mjs';
 import {createQuizStudy,studySourceLabel} from './quiz-study.mjs';
+import {renderFieldsInputs,fieldsResponseError,fieldsResponseSummary,fieldsAnswerSummary} from './quiz-fields.mjs';
 
 import {quizFeedbackMotion} from './quiz-feedback-motion.mjs?v=20261107-partner-motion';
 
@@ -97,7 +98,7 @@ export function initServerQuiz({ selectors, server }) {
     intro.append(character, message); box.append(intro);
     const animate = !showFullReview && feedbackAnimation === q.id;
     if (animate) { box.classList.add('feedback-fresh'); feedbackAnimation = null; }
-    box.append(make('p', q.type === 'single'
+    box.append(make('p', q.type === 'fields' ? `核對每格：${fieldsAnswerSummary(q,review.answer)}` : q.type === 'single'
       ? `正確選項：${String.fromCharCode(65 + q.options.findIndex(o => o.id === review.answer.option_id))}`
       : `可接受答案：${review.answer.accepted.join('、')}`));
     const studentExplanation=study.explanation(q.id);
@@ -148,7 +149,7 @@ export function initServerQuiz({ selectors, server }) {
         const article = make('article', undefined, 'question'); article.dataset.questionId = q.id;
         article.append(make('h3', `第 ${index + 1} 題 / ${questions.length} 題`));
         renderContent(article, q.material); renderContent(article, q.prompt);
-        article.append(make('p', `你的答案：${q.type === 'single' ? String.fromCharCode(65 + q.options.findIndex(o => o.id === state.responses[q.id])) : state.responses[q.id]}`));
+        article.append(make('p', `你的答案：${q.type === 'fields' ? fieldsResponseSummary(q,state.responses[q.id]) : q.type === 'single' ? String.fromCharCode(65 + q.options.findIndex(o => o.id === state.responses[q.id])) : state.responses[q.id]}`));
         if (q.type === 'single') q.options.forEach((o, i) => { const row = make('div', undefined, 'preview-option'); row.append(make('strong', `${String.fromCharCode(65 + i)}. `)); renderContent(row, o.content); article.append(row); });
         renderReview(article, q); article.append(report(q));root.append(article);
       }
@@ -180,6 +181,8 @@ export function initServerQuiz({ selectors, server }) {
         onSelect:value=>{selected=value;}, renderBody:(body,o)=>renderContent(body,o.content),
         result:saved&&review?{chosen:state.responses[q.id],correct:review.answer.option_id}:null
       });
+    } else if(q.type==='fields'){
+      renderFieldsInputs(inputs,q,{raw:saved?state.responses[q.id]:pending?.response??selected,locked:choicesLocked,onChange:value=>{selected=value},renderContent});
     } else {
       const input = make('textarea'); input.setAttribute('aria-label', '簡答內容'); input.maxLength = 2000;
       input.disabled = choicesLocked;
@@ -196,7 +199,7 @@ export function initServerQuiz({ selectors, server }) {
     if (saved && cursor < questions.length - 1) actions.append(button('下一題', () => { cursor++; selected = ''; render(); if(root.classList.contains('quiz-workspace-active'))root.querySelector('.quiz-reading-panel')?.focus({preventScroll:true});else root.querySelector('.question')?.scrollIntoView({ block: 'start' }); }, 'quiz-primary'));
     if (state.complete && cursor === questions.length - 1) actions.append(button('查看整份作答與解析', () => { showFullReview = true; render(); }, 'quiz-primary'));
     actions.append(button('更新儲存狀態', () => load('resume', true), 'secondary quiz-refresh')); article.append(actions); root.append(article);
-    workspace.apply({article, saved, complete:state.complete, closed:state.status==='closed'});
+    workspace.apply({article, saved, complete:state.complete, closed:state.status==='closed',forceLongForm:q.type==='fields'});
     (article.querySelector('.quiz-reading-panel')||article).append(report(q));
     if (pending) say('這次答案的儲存狀態尚未確認，請以相同答案重試或更新狀態。', true);
   }
@@ -233,10 +236,11 @@ export function initServerQuiz({ selectors, server }) {
     if (answered(q)) return;
     if (!pending) {
       if (!selected.trim()) return say('請先選擇選項或填入答案。', true);
+      if(q.type==='fields'){const error=fieldsResponseError(q,selected);if(error)return say(error,true);}
       pending = { question_id: q.id, response: selected, request_id: crypto.randomUUID() };
     }
     const token = generation; busy = true;
-    root.querySelectorAll('.quiz-choices input,.quiz-choices textarea,.quiz-actions button').forEach(n=>n.disabled=true);
+    root.querySelectorAll('.quiz-choices input,.quiz-choices textarea,.quiz-choices select,.quiz-choices button,.quiz-actions button').forEach(n=>n.disabled=true);
     const saving=root.querySelector('#server-submit');if(saving)saving.textContent='正在儲存…';
     say('正在儲存答案…');
     try {

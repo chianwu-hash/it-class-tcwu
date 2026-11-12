@@ -19,3 +19,6 @@ shared/zhuyin-foundation-app.js -text
 # Immutable pre-upgrade schema/function fixture for guarded migration tests.
 automation/fixtures/partner-match-before/** -text whitespace=cr-at-eol
 automation/fixtures/quiz-normal-math-before.json -text whitespace=cr-at-eol
+automation/fixtures/quiz-normal-fields-before.json -text whitespace=cr-at-eol
+supabase/quiz-normal-fields-helpers.sql -text whitespace=cr-at-eol
+supabase/quiz-normal-fields-response.sql -text whitespace=cr-at-eol

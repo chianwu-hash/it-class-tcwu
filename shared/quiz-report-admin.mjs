@@ -1,4 +1,5 @@
 import {reportCategories,reportStatuses,reportNode as n,reportStyles} from './quiz-question-reports.mjs';
+import {fieldsAnswerSummary} from './quiz-fields.mjs';
 import {renderContent} from './quiz-render.mjs?v=20261029-load-batch1';
 export function initReportAdmin({root,request,getUserId}){
  reportStyles();root.classList.add('quiz-report-admin');root.id='question-reports';
@@ -30,7 +31,7 @@ export function initReportAdmin({root,request,getUserId}){
    if(r.source==='quiz'){
     const q=r.snapshot.question;content(body,q.material);content(body,q.prompt);
     for(const [i,o] of (q.options||[]).entries()){const row=n('div');row.append(n('strong',`${String.fromCharCode(65+i)}${o.id===r.option_id?'（學生回報此選項）':''}　`));content(row,o.content);body.append(row);}
-    const answer=q.type==='single'?String.fromCharCode(65+q.options.findIndex(o=>o.id===q.answer.option_id)):q.answer.accepted.join('、');body.append(n('h3',`固定版本正解：${answer}`));content(body,q.explanation);
+    const answer=q.type==='fields'?fieldsAnswerSummary(q,q.answer):q.type==='single'?String.fromCharCode(65+q.options.findIndex(o=>o.id===q.answer.option_id)):q.answer.accepted.join('、');body.append(n('h3',`固定版本正解：${answer}`));content(body,q.explanation);
    }else{
     const q=r.snapshot.group;body.append(n('h3',q.title));content(body,q.materialContent||{text:q.material||'',media:[]});content(body,q.promptContent);
     for(const o of q.choices||[]){const row=n('div');row.append(n('strong',`${o.id}${o.id===r.option_id?'（學生回報此選項）':''}　`));content(row,o.content||{text:o.text||'',media:[]});body.append(row);}

@@ -1,3 +1,4 @@
+import {fieldsResponseSummary,fieldsAnswerSummary} from './quiz-fields.mjs';
 import {renderContent} from './quiz-render.mjs?v=20261029-load-batch1';
 import {resolveQuizImage} from './quiz-media.mjs?v=20261029-load-batch1';
 import {initImageLightbox} from './image-lightbox.js';
@@ -72,6 +73,7 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
       if(data.past_review&&q.type!=='single'){
         const result=make('section',undefined,'answer-preview');result.append(make('h4','當時作答與核對'),make('p',`你的答案：${data.response_text}`),make('p',`本卷核對答案：${data.answer_text}`));article.append(result);
       }
+      else if(q.type==='fields'){explanation.append(make('p',`你的答案：${fieldsResponseSummary(q,data.response)}`),make('p',`核對每格：${fieldsAnswerSummary(q,data.review.answer)}`));}
       else if(q.type!=='single'){explanation.append(make('p',`你的答案：${data.response}`),make('p',`可接受的答案：${data.review.answer.accepted.join('、')}`));}
       else explanation.append(make('p',`正確選項：${String.fromCharCode(65+q.options.findIndex(o=>o.id===data.review.answer.option_id))}`));
       content(explanation,data.review.explanation);if(!data.past_review)article.append(explanation);detail.append(article);
