@@ -1,0 +1,21 @@
+{
+  "date": "2026-11-12",
+  "implementation_pr": 185,
+  "main_commit": "dd9e3af7750347ec0e2209cfa7b6015ca99aa1e6",
+  "deployment": "dpl_7j5nfys6Ex7Guecp1rKY98LFh77j",
+  "rollback": "dpl_BrTBJPdhMUbcWzpU3h58UN5BLbJL",
+  "full_tree_comparison_ok": true,
+  "changed_runtime_files": 19,
+  "unexpected_files": [],
+  "post_live_sources_sha256_verified": 24,
+  "study_build_navigation_tests": 10,
+  "browser_checks": 49,
+  "browser_widths": [
+    1280,
+    390
+  ],
+  "per_page_sequence_regression": true,
+  "database_mutations": false,
+  "actual_student_submission": false,
+  "past_enabled_changed": false
+}
