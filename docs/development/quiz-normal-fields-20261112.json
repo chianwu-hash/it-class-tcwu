@@ -1,5 +1,5 @@
 {
-  "phase": "engine_preflight_passed_not_deployed",
+  "phase": "engine_deployed_installed_snapshot_live_verified",
   "date": "2026-11-12",
   "live_math_new_targets": 581,
   "new_sql_integrations": 6,
@@ -35,5 +35,47 @@
   "remaining_general_targets_live": 1504,
   "remaining_past_targets_live": 51,
   "outside_scope_excluded": 32,
-  "source_hash_rule": "SQL與凍結fixture採原始位元組；其他文字來源先將CRLF轉為LF。"
+  "source_hash_rule": "SQL與凍結fixture採原始位元組；其他文字來源先將CRLF轉為LF。",
+  "source_main": "d5a159858bcfe24929a5d726dc0acb16676fa6c5",
+  "production_deployment": "dpl_CDRiWyqFHg6BVPBjKepbZMGvAUf3",
+  "rollback_deployment": "dpl_4jj9vesrQjgbB4jDBops7ZjWhZvQ",
+  "full_file_tree_comparison_ok": true,
+  "eol_only": 0,
+  "modified_function_hashes": {
+    "quiz_action_before_learning(text,jsonb)": {
+      "before": "ec8c39c6328b35b605521e4388d3cb0d",
+      "after": "c4436149a4941457c698759d8ab2dbf2"
+    },
+    "quiz_student_document(jsonb,jsonb,jsonb)": {
+      "before": "5683cf3560f90306dac5c02b4f699e08",
+      "after": "62628fda0f3c142afc25b43ccd3d3bc6"
+    },
+    "quiz_validate(jsonb)": {
+      "before": "5aaee6af34ac1368995faff284919b31",
+      "after": "56ca473db561001ddf2a6f3dbd80d5b0"
+    },
+    "quiz_wrong_questions_before_learning(jsonb)": {
+      "before": "561fa9e6da620c51a20752be34a8f8ca",
+      "after": "dc1396432dd3d359dd70b428146f70a4"
+    }
+  },
+  "new_private_helpers": [
+    "quiz_fields_grade(jsonb,text)",
+    "quiz_fields_response(jsonb,text)",
+    "quiz_fields_validate(jsonb)",
+    "quiz_fields_value(jsonb,jsonb)"
+  ],
+  "snapshot_counts": {
+    "functions": 175,
+    "tables": 111,
+    "policies": 21,
+    "triggers": 22
+  },
+  "snapshot_live_check_ok": true,
+  "existing_data_protected_tables": 23,
+  "live_web_entries": 16,
+  "live_module_hashes": 3,
+  "anonymous_rpc_rejections": 2,
+  "candidate_new_questions_enabled": 0,
+  "current_live_math_new_targets": 581
 }

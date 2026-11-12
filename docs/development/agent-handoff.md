@@ -2,11 +2,11 @@
 
 | 狀態 | 執行者 | 開始時間 | 主線來源 | 正式基準 | 本次範圍 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | Codex-g3-math-fields-20261112 | 2026-11-12T00:37:06.883823+00:00 | PR157合併後的乾淨main | `dpl_4jj9vesrQjgbB4jDBops7ZjWhZvQ` | 完整多格作答、逐格揭答／錯題、課本科目標題；題目資料仍未啟用 | 待release-from-main取得鎖、候選完整比對與promote |
+| 已完成 | Codex-g3-math-fields-20261112 | 2026-11-12T00:38:20.995Z | `d5a1598` | `dpl_4jj9vesrQjgbB4jDBops7ZjWhZvQ` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/official-render.js、shared/quiz-author.mjs、shared/quiz-document.mjs、shared/quiz-render.mjs、shared/quiz-report-admin.mjs、shared/quiz-server.mjs、shared/quiz-student.css、shared/quiz-textbook-reader.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、shared/quiz-wrong-questions.mjs、+shared/quiz-fields.css、+shared/quiz-fields.mjs | `dpl_CDRiWyqFHg6BVPBjKepbZMGvAUf3`／回滾 `dpl_4jj9vesrQjgbB4jDBops7ZjWhZvQ`（eolOnly 0） |
 
-# 2026-11-12 完整題組實作已通過核心複核，待發布
+# 2026-11-12 完整題組功能已正式發布，資料待啟用
 
-- 數學正式仍581新版目標；新fields功能僅本機，尚未發布及新增題目。
+- 數學正式仍581新版目標；fields功能PR157已正式發布並套用；尚未新增啟用題目，現有581保持。
 - [完整題組契約與證據](quiz-normal-fields-20261112.md)：四核心函式保護式差異＋四私密helper，前端五種欄位及讀圖科目標題修正；Codex唯一寫入，Claude唯讀核心複核通過，未跑測試；Codex驗證證據獨立保存。
 - 六項新SQL測試、31項桌機手機真PGlite操作、正式PG六判分／三拒絕／70頁教材全回滾通過，舊路徑及四課程建置回歸通過。
 - 下一步PR/main→乾淨main發布前端及套用後端→snapshot/live check→已驗證74父100目標213位置待啟用，另6父空格數未齊暫存；其餘一般1504與考古51仍待完成。不得先把候選計成上線。
