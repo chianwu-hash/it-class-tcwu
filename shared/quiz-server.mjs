@@ -186,7 +186,8 @@ export function initServerQuiz({ selectors, server }) {
         result:saved&&review?{chosen:state.responses[q.id],correct:review.answer.option_id}:null
       });
     } else if(q.type==='fields'){
-      renderFieldsInputs(inputs,q,{raw:saved?state.responses[q.id]:pending?.response??selected,locked:choicesLocked,onChange:value=>{selected=value},renderContent});
+      const chinese=root.dataset.subject==='國語';
+      renderFieldsInputs(inputs,q,{raw:saved?state.responses[q.id]:pending?.response??selected,locked:choicesLocked,onChange:value=>{selected=value},renderContent,textInputAids:{bopomofo:chinese,punctuation:chinese}});
     } else {
       const input = make('textarea'); input.setAttribute('aria-label', '簡答內容'); input.maxLength = 2000;
       input.disabled = choicesLocked;

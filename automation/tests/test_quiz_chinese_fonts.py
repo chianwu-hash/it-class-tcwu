@@ -46,7 +46,11 @@ class ChineseFontTests(unittest.TestCase):
     def test_reviewed_font_values_do_not_follow_dictionary_defaults(self):
         root = self.tree('書法居中（注音一）', '趟奮')
         convert_zhuyin_tree(root)
-        self.assertEqual(next(root.iter(W + 't')).text, 'ㄊㄤㄈㄣˋ')
+        self.assertEqual(next(root.iter(W + 't')).text, 'ㄊㄤˋㄈㄣˋ')
+        # 2026-11-12 原字型位圖複核：借用字碼「波」實際畫的是 ㄆㄛ。
+        root = self.tree('書法居中（注音一）', '波、泡')
+        convert_zhuyin_tree(root)
+        self.assertEqual(next(root.iter(W + 't')).text, 'ㄆㄛ、ㄆㄠˋ')
 
     def test_similar_glyphs_and_tones_remain_distinct(self):
         root = self.tree('書法居中（注音一）', '卓桌、嗙綁、貴軌、荒謊、闆扁')

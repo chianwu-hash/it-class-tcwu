@@ -51,3 +51,19 @@ test('考次收納不更改原學年度、開放狀態或整份卷，九年級�
  assert.equal(paperPracticeScope({catalog:{exam:3}},{past:true}),'unknown');
  assert.match(practiceScopeOptions(9)[0][1],/第2次段考/);assert.match(practiceScopeBadge('after',{past:true}),/依原卷範圍/);
 });
+
+test('115上康軒三年級國語依已核課本區分1–6及7–12課',()=>{
+ const c={id:'115-1-kang-g3-ch',school_year:'115',grade:3,volume:'3年級上學期',publisher:'康軒',subject:'國語'};
+ for(const id of [1,2,3,4,5,6])assert.equal(unitPracticeScope(c,{id}),'before');
+ for(const id of [7,8,9,10,11,12])assert.equal(unitPracticeScope(c,{id}),'after');
+ for(const id of [0,13,99])assert.equal(unitPracticeScope(c,{id}),'unknown');
+ const catalog={...c,course_id:c.id};
+ assert.equal(paperPracticeScope({catalog,unit_ids:[7,12]}),'after');
+ assert.equal(paperPracticeScope({catalog,unit_ids:[6,7]}),'mixed');
+ assert.equal(paperPracticeScope({catalog:{...catalog,unit:'第五課　飛舞的絲帶、第七課　淡水小鎮'}}),'mixed');
+ for(const unit of ['第5～8課','第5課至8課','第5課－第8課','期末綜合練習'])assert.equal(paperPracticeScope({catalog:{...catalog,unit}}),'unknown');
+ assert.equal(paperPracticeScope({catalog:{school_year:'115',volume:'3年級上學期',publisher:'康軒',subject:'國語'},unit_ids:[7]}),'after');
+ for(const invalid of [{school_year:'114'},{grade:6},{publisher:'翰林'},{volume:'3年級下學期'}])assert.equal(unitPracticeScope({...c,...invalid},{id:7}),'unknown');
+ assert.equal(unitPracticeScope({school_year:'115',grade:6,volume:'3年級上學期',publisher:'康軒',subject:'國語'},{id:7}),'unknown');
+ assert.equal(unitPracticeScope({school_year:'115',volume:'3年級下學期',publisher:'康軒',subject:'國語'},{id:7}),'unknown');
+});
