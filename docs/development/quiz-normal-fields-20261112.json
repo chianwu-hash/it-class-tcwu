@@ -22,8 +22,8 @@
     "automation/fixtures/quiz-normal-fields-before.json": "c1fa150a9a39a1cf4b6ba49aa6d3460c641c6363e4c1e6bea3d653eefb9b5da8",
     "shared/quiz-fields.mjs": "7bdafd5788688303acdd10e27747ae10ceaf1eb5172a81ba00fd9611ee39e682",
     "shared/quiz-fields.css": "22b39824665da1e4b49ec28252c44386c47780402cf8f7eef2efe961d8b05225",
-    "shared/quiz-server.mjs": "303b44046fc1fd8d5f147d5fb2a3e66ee6b3f8b4c1dcc4f315d09199cdf51316",
-    "shared/quiz-textbook-reader.mjs": "868d3b19efac36bad08d0bbbeab20d05b316cfa2aefac3e2fb726b734d563c98"
+    "shared/quiz-server.mjs": "cf40a4cd7cc927fd9e7d4d329ef07ca3eeab5ce37d6aa64c9353311ce3968291",
+    "shared/quiz-textbook-reader.mjs": "0031fd87ab5d8442d533f56f9f41258d9892b40f46622728340964313945d66f"
   },
   "candidate_group_parents": 74,
   "candidate_logical_targets": 100,
@@ -34,5 +34,6 @@
   "candidates_enabled": 0,
   "remaining_general_targets_live": 1504,
   "remaining_past_targets_live": 51,
-  "outside_scope_excluded": 32
+  "outside_scope_excluded": 32,
+  "source_hash_rule": "SQL與凍結fixture採原始位元組；其他文字來源先將CRLF轉為LF。"
 }
