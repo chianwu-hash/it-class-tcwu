@@ -1,5 +1,16 @@
 import test from 'node:test';import assert from 'node:assert/strict';
+import {reviewedPracticePapers} from '../../shared/quiz-practice-scope-reviewed.mjs';
 import{paperPracticeScope,unitPracticeScope,matchesPracticeScope,practiceScopeOptions,practiceScopeBadge}from'../../shared/quiz-practice-scope.mjs';
+test('已核固定教師卷依版本及來源分類，換版或相似名稱不套用',()=>{
+ assert.equal(reviewedPracticePapers.length,36);
+ for(const p of reviewedPracticePapers){const original=structuredClone(p);assert.equal(paperPracticeScope(p),'before');assert.deepEqual(p,original);}
+ const p=reviewedPracticePapers.find(p=>p.catalog.subject==='英語'&&p.catalog.volume.startsWith('6')&&!p.title.includes('期中'));
+ assert.ok(p);
+ for(const changed of [{version_id:'new-version'},{id:'another-session'},{title:'相似名稱'},{generated:true},{catalog:{...p.catalog,publisher:'翰林'}},{catalog:{...p.catalog,school_year:'114'}}])assert.equal(paperPracticeScope({...p,...changed}),'unknown');
+ assert.equal(paperPracticeScope({...p,catalog:{...p.catalog,practice_scope:'mixed'}}),'mixed');
+ assert.equal(paperPracticeScope({catalog:{school_year:'115',volume:'4年級上學期',publisher:'康軒',subject:'國語',unit:'第一課'},title:'期中練習'}),'unknown');
+ assert.equal(paperPracticeScope({catalog:{school_year:'115',volume:'9年級上學期',scope_status:'historical_reference',source_scope:'113、114上第二次段考參考'}}),'unknown');
+});
 test('已核範圍依課程／來源資料分前後，跨範圍保留，未知不硬配',()=>{
  const catalog={school_year:'115',volume:'3年級上學期',publisher:'翰林',subject:'數學'};
  assert.equal(paperPracticeScope({catalog:{...catalog,unit:'第5單元'}}),'before');
