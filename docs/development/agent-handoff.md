@@ -1,8 +1,9 @@
-# 發布登記：六年級自然、英語期末分類修正（發布中）
+# 六年級夜間進度：自然536、英語108新版解析與8份老師卷已上線
 
-- 執行者Codex-g6-scope-20261113；本PR合併後，從乾淨最新main執行正式發布腳本，目前尚未deploy。開始前已確認共用發布鎖無人持有，正式仍為dpl_ExHNM3wLdq51V6KHSvuLCtzySJHT。
-- [分類缺口、變更及驗證](quiz-g6-practice-scope-20261113.md)：自然／英語已核3、4單元在預設期末可直接選用；6項程式及27項桌手機操作、21產物核對通過。只改呈現分類，未改授權或學生資料。
-- 發布腳本取得鎖後以其完整樹比對及正式alias重查為準；若別人持有鎖或正式目標已變，不得覆寫。完成後另PR補上正式handoffRow並把本段改為已完成。
+- [正式數量、8卷入口、驗證及待辦](quiz-g6-overnight-live-20261113.md)。自然第3／4單元309／227，共536個完整來源、643個作答目標／欄位，全科676可用；英語第3／4單元各54，共108筆新解析，含40舊題升級、68淨新增，全科222可用。兩科各4卷共8份老師卷120題。
+- Notebook英語初次誤選來源已修正，全6批重新產出及AGY複核；4個疑義與Claude決定最小勘誤。通過後逐筆讀回、固定指紋啟用，原題、學生紀錄、函式及RLS保留。
+- PR195預設期末分類修正已正式發布，18檔完整樹比對ok:true、正式22檔內容讀回通過，鎖已釋放；正式部署dpl_BNSHP9pcUyhcdvBTNUCuQAujU3vP，main來源0de8ae7。
+- 仍待自然206來源、英語232來源與期末考古卷、其他六年級科目。持續推進，不把644筆新解析或兩科部分上線誤報成六年級全部完成。C、D約8.5／14.7GiB，新增大檔置F；原教材及固定證據保留。
 
 # 最新資料上線：六年級自然追加25個完整多欄來源（2026-11-13 00:20）
 
@@ -27,6 +28,7 @@
 
 | 狀態 | 執行者 | 開始時間UTC | main來源 | 基準部署 | 預期異動 | 結果／回滾 |
 |---|---|---|---|---|---|---|
+| 已完成 | Codex-g6-scope-20261113 | 2026-11-12T17:33:43.640Z | `0de8ae7` | `dpl_ExHNM3wLdq51V6KHSvuLCtzySJHT` | 自然／英語期末分類及16入口，共18檔 | `dpl_BNSHP9pcUyhcdvBTNUCuQAujU3vP`／回滾 `dpl_ExHNM3wLdq51V6KHSvuLCtzySJHT`（完整樹ok:true；eolOnly 0） |
 | 已完成 | Codex-g3-chinese-20261112 | 2026-11-12T13:41:35.635Z | `2c5a694` | `dpl_GnoHtgYQSjr9p3zMNf9ieYj9Aa6N` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-fields.css、shared/quiz-fields.mjs、shared/quiz-practice-scope.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、shared/sketch/editor.css | `dpl_ExHNM3wLdq51V6KHSvuLCtzySJHT`／回滾 `dpl_GnoHtgYQSjr9p3zMNf9ieYj9Aa6N`（eolOnly 0） |
 
 # 歷史準備紀錄：2026-11-12 計算紙色塊置中修正（已隨國語發布）
