@@ -15,7 +15,7 @@ let active=true;
 const mediaScope={resolve:resolveAsset,active:()=>active};
 const renderLocalContent=(host,content)=>renderScopedContent(host,content,{mediaScope,imageLoading:'eager'});
 const $=s=>root.querySelector(s),el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
-const workspace=createQuizWorkspace($('#workspace')),statusElement=$('#status');
+const workspace=createQuizWorkspace($('#workspace'),{scratchpaper:true}),statusElement=$('#status');
 const onToolsToggle=()=>{if(active)workspace.refresh();};
 root.addEventListener('toggle',onToolsToggle,true);
 const button=(text,fn,cls)=>{const b=el('button',text,cls);b.type='button';b.addEventListener('click',fn);return b;};
@@ -149,7 +149,7 @@ function render(){if(!active)return;study.refresh();
  const draftNote=card.querySelector('#past-draft-status');
  $('#workspace').replaceChildren(card);
  workspace.apply({article:card,saved:Boolean(saved),complete:state.practice?.complete,closed:false,statusElement,
-  forceLongForm:g.fields.length>1||isManual(g)||['sequence','code','set'].includes(g.kind)});
+  forceLongForm:g.fields.length>1||isManual(g)||['sequence','code','set'].includes(g.kind),scratchpadKey:JSON.stringify([state.attemptId,state.version,g.id]),scratchpadLabel:'原卷 '+g.sourceLabel+'・計算紙'});
  if(draftNote)$('#workspace .quiz-workspace-status')?.append(draftNote);
  draftStatus();
 }

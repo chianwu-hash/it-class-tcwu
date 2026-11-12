@@ -1,3 +1,4 @@
+@import url('./quiz-scratchpad.css');
 /* Limited to the confirmed quiz-skin single-question workspace. */
 .quiz-workspace-page{--quiz-dock-height:130px;scroll-padding-bottom:calc(var(--quiz-dock-height) + 16px)}
 .quiz-workspace-page #quiz-navbar:has(nav)~.hero{display:none}

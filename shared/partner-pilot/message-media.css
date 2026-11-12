@@ -1,14 +1,10 @@
+@import url('../sketch/editor.css');
 @scope (.partner-content){
  :scope .media-modes{display:flex;gap:5px;margin:12px 0}:scope .media-modes button{font-size:14px;padding:9px 10px;margin:0}:scope .media-modes [aria-pressed=true]{background:#087c72;color:#fff}
  :scope .message-media-composer{margin:10px 0}:scope .message-media-composer p{font-size:14px}:scope .message-media-composer button,:scope [data-message-media] button{font-size:14px;padding:9px 12px;margin-top:5px}
  :scope .message-media-composer meter{display:block;width:100%;height:15px;margin:8px 0}:scope .message-media-composer audio,:scope [data-message-media] audio{display:block;width:100%;margin:10px 0}:scope [data-message-media] p{font-size:13px}:scope [data-error=true]{color:#923b27}
- :scope .camp-sketch-board{display:block;width:100%;aspect-ratio:5/3;background:#fff;border:2px solid #a4c5bd;border-radius:10px;touch-action:none;user-select:none}
  :scope .message-sketch-dialog{width:min(800px,96vw);max-height:95dvh;border:1px solid #b5d5c9;border-radius:18px;color:inherit}:scope .message-sketch-dialog::backdrop{background:#123f4b66}:scope .message-sketch-dialog svg{display:block;width:100%;background:white}
  @media(max-width:500px){:scope .media-modes{flex-wrap:nowrap}:scope .media-modes button{font-size:12px;padding:9px 6px;flex:1}}
 }
-
-.sketch-palette{gap:6px;margin-bottom:10px;flex-wrap:wrap}.sketch-palette button{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:8px 10px}.sketch-color-dot{display:inline-block;width:17px;height:17px;border-radius:50%;border:1px solid #fff;box-shadow:0 0 0 1px #7c9494}.sketch-palette [aria-pressed="true"]{outline:3px solid #137c7b;outline-offset:1px;background:#e1f4ee;color:#144c4e}.camp-sketch-board[data-tool="eraser"]{cursor:crosshair}
-
-.message-media-composer .sketch-palette{gap:4px}.message-media-composer .sketch-palette button{justify-content:center;flex:0 0 44px;width:44px;height:44px;padding:8px;margin:0}.sketch-palette .sketch-color-dot{width:22px;height:22px}.sketch-tool-icon{width:24px;height:24px;display:block;flex:none}
 
 .partner-content .media-icon-button{display:inline-flex;align-items:center;justify-content:center;flex:0 0 44px!important;width:44px;min-width:44px;height:44px;padding:8px!important;margin:0!important}.partner-content .media-icon-button[hidden]{display:none}.partner-content .media-modes{gap:8px}.partner-content .sketch-actions{gap:8px;margin:14px 0 18px}.partner-content .sketch-color-dot{flex:none}.partner-content .sketch-palette{margin-bottom:8px}

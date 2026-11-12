@@ -13,10 +13,5 @@ export function validateWav(bytes){
  if(!tag(0,'RIFF')||!tag(8,'WAVE')||!tag(12,'fmt ')||!tag(36,'data')||v.getUint32(4,true)!==bytes.byteLength-8||v.getUint32(16,true)!==16||v.getUint16(20,true)!==1||v.getUint16(22,true)!==1||v.getUint32(24,true)!==AUDIO_RATE||v.getUint32(28,true)!==32000||v.getUint16(32,true)!==2||v.getUint16(34,true)!==16||size!==bytes.byteLength-44||size%2)throw Error('錄音格式不符。');
  const duration=size/(AUDIO_RATE*2);if(duration<MIN_SECONDS||duration>MAX_SECONDS)throw Error('錄音長度不符。');return {duration,byteLength:bytes.byteLength,mime:'audio/wav'};
 }
-export function validateSketch(value){
- if(!value||typeof value!=='object'||Object.keys(value).some(k=>!['version','strokes','colors'].includes(k))||value.version!==1||!Array.isArray(value.strokes)||value.strokes.length<1||value.strokes.length>80)throw Error('請先畫下想法，最多80筆。');
- if(Object.hasOwn(value,'colors')&&(!Array.isArray(value.colors)||value.colors.length!==value.strokes.length||value.colors.some(c=>!['#185e60','#2459b3','#b83246','#7643a8','#a94b0b','#263238'].includes(c))))throw Error('畫筆顏色不符。');
- for(const stroke of value.strokes){if(!Array.isArray(stroke)||!stroke.length||stroke.length>128)throw Error('畫圖點數超過限制。');for(const point of stroke)if(!Array.isArray(point)||point.length!==2||point.some(n=>!Number.isFinite(n)||n<0||n>1))throw Error('畫圖內容不符。');}
- if(new TextEncoder().encode(JSON.stringify(value)).length>262144)throw Error('畫圖內容太大。');return value;
-}
+export {validateSketch} from '../sketch/contract.mjs';
 export function hasMessageContent({text='',audio,sketch}){return !!(text.trim()||audio||sketch?.strokes?.length);}

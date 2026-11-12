@@ -1,5 +1,11 @@
 # 共用模組說明
 
+## 共用畫板與個人計算紙（2026-11-12，已驗收並核准發布）
+
+`shared/sketch/editor.mjs`／`model.mjs`／`contract.mjs`及`editor.css`提取原夥伴畫板；舊partner入口保留re-export並共用核心。`createSketchEditor(host,{value,onChange,onSave,messages,toolbarHost})`回傳getValue、setDisabled、destroy，資料仍為原version:1／strokes／可選colors，最多80筆／每筆128點。可選toolbarHost讓個人計算紙把工具放入單列header，destroy會同步清掉外置工具；未指定則保留原夥伴結構。`shared/tool-icons.mjs`為原工具圖示的共用入口。
+
+`quiz-scratchpad.mjs`由`createQuizWorkspace(root,{scratchpaper:true})`選用，apply須提供scratchpadKey及scratchpadLabel。一般題及個人考古UI提供本人／attempt／版本／題目或完整題組key；reset({forget:true})與destroy清除草稿。僅當頁記憶體，不混入送答／附件／AI／localStorage。詳見[契約、限制及本機驗證](quiz-shared-scratchpad-local-20261112.md)；實際正式狀態與部署識別以agent-handoff發布收據為準。
+
 ## 考前練功坊入口與呈現（2026-11-08 已正式發布）
 
 三／四／六／九年級的選卷、普通個人、個人原卷及夥伴入口由 `quiz-workshop-config.mjs` 與 `shared/quiz-workshop/shells/` 產生，不逐頁改 HTML 或版本。執行 `npm run quiz:build`／`quiz:check`；建置會核對產物，資產 manifest 統一可達模組的版本別名，CSS bundle 展開巢狀依賴。名冊新消費者使用 `quiz-nav-identity.mjs`，舊 `grade6-nav-identity.js` 保留為同一實作。

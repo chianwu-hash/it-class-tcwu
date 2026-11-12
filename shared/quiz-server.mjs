@@ -15,7 +15,7 @@ export function initServerQuiz({ selectors, server }) {
   if (!server?.request || !server?.sessionId) throw new Error('缺少測驗場次或後端連線。');
   const el = key => typeof selectors?.[key] === 'string' ? document.getElementById(selectors[key]) : selectors?.[key];
   const root = el('container'), lock = el('lock'), content = el('content');
-  const workspace = createQuizWorkspace(root);
+  const workspace = createQuizWorkspace(root,{scratchpaper:true});
   let mediaScope=null,mediaView=null,contentCache=new Map(),contentUses=new Map();
   const renderContent = (target, c) => {
     const serialized=JSON.stringify(c),index=contentUses.get(serialized)||0;contentUses.set(serialized,index+1);
@@ -203,7 +203,7 @@ export function initServerQuiz({ selectors, server }) {
     if (saved && cursor < questions.length - 1) actions.append(button('下一題', () => { cursor++; selected = ''; render(); if(root.classList.contains('quiz-workspace-active'))root.querySelector('.quiz-reading-panel')?.focus({preventScroll:true});else root.querySelector('.question')?.scrollIntoView({ block: 'start' }); }, 'quiz-primary'));
     if (state.complete && cursor === questions.length - 1) actions.append(button('查看整份作答與解析', () => { showFullReview = true; render(); }, 'quiz-primary'));
     actions.append(button('更新儲存狀態', () => load('resume', true), 'secondary quiz-refresh')); article.append(actions); root.append(article);
-    workspace.apply({article, saved, complete:state.complete, closed:state.status==='closed',forceLongForm:q.type==='fields'});
+    workspace.apply({article, saved, complete:state.complete, closed:state.status==='closed',forceLongForm:q.type==='fields',scratchpadKey:JSON.stringify([userId,state.attempt_id,state.version_id,q.id]),scratchpadLabel:'第'+(cursor+1)+'題・計算紙'});
     (article.querySelector('.quiz-reading-panel')||article).append(report(q));
     if (pending) say('這次答案的儲存狀態尚未確認，請以相同答案重試或更新狀態。', true);
   }
