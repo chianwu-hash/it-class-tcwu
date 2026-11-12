@@ -1,9 +1,13 @@
-# 發布登記：2026-11-12 共用畫板與個人計算紙，發布中
+# 發布登記：2026-11-12 共用畫板與個人計算紙已上線
 
 - 使用者完成一般題庫、考古卷與夥伴畫板本機驗收，明確授權「可以上線了」。此授權取代下列歷史紀錄的僅本地限制。
 - Codex-scratchpad-20261112：最新origin/main b3f9d76新建scratchpad-release-20261112，帶入已驗收的共用畫板與個人計算紙；PR進main後另開乾淨main工作樹，由release-from-main取得發布鎖、比對完整樹並發布。
 - 19項程式測試、83項桌手機瀏覽器操作、21產物核對通過。計算紙按題／完整題組隔離，當頁記憶體保存，重整／登出清除；不隨作答或夥伴訊息送出，不更動資料庫、評分、授權或考古卷開放狀態。
-- 本機舊驗收服務仍保留；正式部署識別與回滾目標將以發布腳本收據補記。
+- 臺灣時間2026-11-12 21:12正式上線。PR187合併來源main 8a6eec9，乾淨main執行start/deploy/promote；完整樹比對ok:true（29修改／7新增／零其他差異），發布鎖已釋放。正式網址讀回36個相關檔案，內容雜湊全部符合發布來源。本機舊驗收服務仍保留。
+
+| 狀態 | 執行者 | 開始時間UTC | main來源 | 基準部署 | 預期異動 | 結果／回滾 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-scratchpad-20261112 | 2026-11-12T13:11:42.815Z | `8a6eec9` | `dpl_7j5nfys6Ex7Guecp1rKY98LFh77j` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/media-contract.mjs、shared/partner-pilot/message-media.css、shared/partner-pilot/sketch-editor.mjs、shared/partner-pilot/sketch-model.mjs、shared/partner-pilot/tool-icons.mjs、shared/quiz-past-ui.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、shared/quiz-workspace.css、shared/quiz-workspace.mjs、+shared/quiz-scratchpad.css、+shared/quiz-scratchpad.mjs、+shared/sketch/contract.mjs、+shared/sketch/editor.css、+shared/sketch/editor.mjs、+shared/sketch/model.mjs、+shared/tool-icons.mjs | `dpl_GnoHtgYQSjr9p3zMNf9ieYj9Aa6N`／回滾 `dpl_7j5nfys6Ex7Guecp1rKY98LFh77j`（eolOnly 0） |
 
 # 歷史本機紀錄：2026-11-12 夥伴隔離畫板空白工具修正
 
