@@ -1,0 +1,199 @@
+{
+  "phase": "preflight_passed_not_enabled",
+  "date": "2026-11-12",
+  "fixed_pool_sha256": "29c8e4502a19447b3c1eb7d245a2ed589f4f19de2d91c3713137111497cc44da",
+  "new_complete_parents": 31,
+  "new_logical_targets": 31,
+  "answer_positions": 90,
+  "by_unit_parents": {
+    "7": 8,
+    "8": 23
+  },
+  "by_unit_logical_targets": {
+    "7": 8,
+    "8": 23
+  },
+  "previous_live_parents": 796,
+  "previous_live_targets": 923,
+  "expected_scope_parents": 827,
+  "expected_scope_targets": 954,
+  "expected_scope_positions": 1268,
+  "expected_all_math_usable_parents": 1117,
+  "expected_remaining_general_parents": 719,
+  "expected_remaining_general_targets": 1131,
+  "expected_remaining_general_positions": 2481,
+  "past_pending_targets": 51,
+  "outside_past_excluded": 32,
+  "formal_parent_answer_reveal_rollback_cases": 31,
+  "verified_media_hashes": 99,
+  "new_private_drive_images": 25,
+  "media_metadata_new_rows": 27,
+  "private_sql_sha256": {
+    "install-disabled.private.sql": "9e2d97df01eba2ea65c63a5d277c445cc35b8fe8177b342a59ebdc5524b19c5a",
+    "activate-body.private.sql": "49ca0701708ae58c264beb5f0a884ea2e03bd1e0ca72cac230dc93175e58e861",
+    "rollback-disable.private.sql": "537853aa6ef5ec4224152a8e4b86a42eeb86810e42a9a985b45b8436005f9508"
+  },
+  "source_candidate_sha256": "019e5ae5ce765dfbbfdfc63fd88ce3977688abdb356a72a89bf5c599bec2d9b4",
+  "additional_function_changes": false,
+  "vercel_deployment_needed": false,
+  "overlap_previous_targets": 0,
+  "real_student_browser_test": false,
+  "local_actual_image_synthetic_browser_checks": {
+    "passed": true,
+    "synthetic_only": true,
+    "real_sql": true,
+    "actual_source_images": true,
+    "widths": [
+      1280,
+      390
+    ],
+    "checks": [
+      {
+        "name": "1280_010cb69a完整原圖已載入",
+        "ok": true
+      },
+      {
+        "name": "1280_010cb69a答前解析保密",
+        "ok": true
+      },
+      {
+        "name": "1280_010cb69a原題燈箱可放大閱讀",
+        "ok": true
+      },
+      {
+        "name": "1280_010cb69a原題燈箱可縮放",
+        "ok": true
+      },
+      {
+        "name": "1280_010cb69a格式標籤正確",
+        "ok": true
+      },
+      {
+        "name": "1280_010cb69a翻課本保留輸入",
+        "ok": true
+      },
+      {
+        "name": "1280_010cb69a真SQL全格判對及揭答",
+        "ok": true
+      },
+      {
+        "name": "1280_010cb69a無整頁橫向溢出",
+        "ok": true
+      },
+      {
+        "name": "1280_03efd3c7完整原圖已載入",
+        "ok": true
+      },
+      {
+        "name": "1280_03efd3c7答前解析保密",
+        "ok": true
+      },
+      {
+        "name": "1280_03efd3c7原題燈箱可放大閱讀",
+        "ok": true
+      },
+      {
+        "name": "1280_03efd3c7原題燈箱可縮放",
+        "ok": true
+      },
+      {
+        "name": "1280_03efd3c7格式標籤正確",
+        "ok": true
+      },
+      {
+        "name": "1280_03efd3c7翻課本保留輸入",
+        "ok": true
+      },
+      {
+        "name": "1280_03efd3c7真SQL全格判對及揭答",
+        "ok": true
+      },
+      {
+        "name": "1280_03efd3c7無整頁橫向溢出",
+        "ok": true
+      },
+      {
+        "name": "390_010cb69a完整原圖已載入",
+        "ok": true
+      },
+      {
+        "name": "390_010cb69a答前解析保密",
+        "ok": true
+      },
+      {
+        "name": "390_010cb69a原題燈箱可放大閱讀",
+        "ok": true
+      },
+      {
+        "name": "390_010cb69a原題燈箱可縮放",
+        "ok": true
+      },
+      {
+        "name": "390_010cb69a格式標籤正確",
+        "ok": true
+      },
+      {
+        "name": "390_010cb69a翻課本保留輸入",
+        "ok": true
+      },
+      {
+        "name": "390_010cb69a真SQL全格判對及揭答",
+        "ok": true
+      },
+      {
+        "name": "390_010cb69a無整頁橫向溢出",
+        "ok": true
+      },
+      {
+        "name": "390_03efd3c7完整原圖已載入",
+        "ok": true
+      },
+      {
+        "name": "390_03efd3c7答前解析保密",
+        "ok": true
+      },
+      {
+        "name": "390_03efd3c7原題燈箱可放大閱讀",
+        "ok": true
+      },
+      {
+        "name": "390_03efd3c7原題燈箱可縮放",
+        "ok": true
+      },
+      {
+        "name": "390_03efd3c7格式標籤正確",
+        "ok": true
+      },
+      {
+        "name": "390_03efd3c7翻課本保留輸入",
+        "ok": true
+      },
+      {
+        "name": "390_03efd3c7真SQL全格判對及揭答",
+        "ok": true
+      },
+      {
+        "name": "390_03efd3c7無整頁橫向溢出",
+        "ok": true
+      },
+      {
+        "name": "無頁面JS錯誤",
+        "ok": true
+      }
+    ],
+    "errors": []
+  },
+  "claude_review": {
+    "session": "g3m-native-keys-review-v2-20261112",
+    "completed": true,
+    "elapsed_seconds": 239.111,
+    "viewer_started": true,
+    "git_unchanged": true,
+    "all_16_render_contact_images_seen": true,
+    "p0": 0,
+    "p1": 0,
+    "p2_guards_adopted": true
+  },
+  "native_rich_parents": 15,
+  "question_only_render_parents": 16
+}
