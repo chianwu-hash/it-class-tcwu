@@ -204,6 +204,20 @@
 
 
 
+.quiz-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:16px;width:100%;min-width:0}
+.quiz-fields>p{grid-column:1/-1;margin:0}
+.student-wrap .quiz-fields .quiz-field,.quiz-fields .quiz-field{min-width:0;border:1px solid #d9d9e7;border-radius:14px;padding:14px;margin:0}
+.quiz-fields .quiz-field:has(.student-option),.quiz-fields .quiz-field:has(select),.quiz-fields .quiz-field:has(input[type=checkbox]){grid-column:1/-1}
+.quiz-field>input[type=text],.quiz-field select{box-sizing:border-box;max-width:100%;width:100%;font:inherit;padding:10px;border:1px solid #8c8c9d;border-radius:8px;background:#fff;color:#18243d}
+.quiz-field label{display:flex;align-items:center;gap:10px;margin:8px 0;min-width:0}
+.quiz-field label:has(select){display:grid;grid-template-columns:4.5em minmax(0,1fr)}
+.quiz-field input[type=checkbox]{width:24px;height:24px;flex:0 0 24px}
+.quiz-field .past-input-keyboard{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.quiz-field button{min-width:44px;min-height:44px;font:inherit}
+.quiz-field .preview-content{overflow-wrap:anywhere}
+
+
+
 /* ============ QuizFeedbackMotion：只作用在 .qfm-actor 之下 ============ */
 .qfm-actor{display:block;width:100%;max-width:240px;min-width:120px;line-height:0}
 .qfm-actor svg{display:block;width:100%;height:auto;overflow:visible}

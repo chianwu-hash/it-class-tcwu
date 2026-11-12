@@ -1,4 +1,5 @@
 import { resolveQuizMedia, bindQuizMedia } from './quiz-media.mjs?v=20261029-load-batch1';
+import {fieldsAnswerSummary} from './quiz-fields.mjs';
 export function renderContent(container, content, { strict = false, loadMedia = true, imageLoading = 'lazy', mediaScope = null, deferMedia = false } = {}) {
   const box = document.createElement('div'); box.className = 'preview-content';
   if (content?.layout) {
@@ -103,7 +104,7 @@ export function renderTeacherPreview(container, doc, { strict = false, loadMedia
     section.append(heading); renderContent(section, block.material, { strict, loadMedia });
     for (const [i, q] of block.questions.entries()) {
       const article = document.createElement('article'); article.className = 'question';
-      const title = document.createElement('h4'); title.textContent = `${index + 1}-${i + 1}　${q.type === 'single' ? '選擇題' : '簡答題'}`; article.append(title);
+      const title = document.createElement('h4'); title.textContent = `${index + 1}-${i + 1}　${q.type === 'fields' ? '完整題組' : q.type === 'single' ? '選擇題' : '簡答題'}`; article.append(title);
       renderContent(article, q.prompt, { strict, loadMedia });
       for (const [j, option] of (q.options || []).entries()) {
         const row = document.createElement('div'); row.className = 'preview-option';
@@ -111,7 +112,7 @@ export function renderTeacherPreview(container, doc, { strict = false, loadMedia
         renderContent(row, option.content, { strict, loadMedia }); article.append(row);
       }
       const answer = document.createElement('div'); answer.className = 'answer-preview';
-      const label = document.createElement('strong'); label.textContent = q.type === 'single'
+      const label = document.createElement('strong'); label.textContent = q.type === 'fields' ? `核對每格：${fieldsAnswerSummary(q,q.answer)}` : q.type === 'single'
         ? `正解：${String.fromCharCode(65 + q.options.findIndex(o => o.id === q.answer.option_id))}`
         : `可接受答案：${q.answer.accepted.join('、')}`;
       answer.append(label); renderContent(answer, q.explanation, { strict, loadMedia }); article.append(answer); section.append(article);

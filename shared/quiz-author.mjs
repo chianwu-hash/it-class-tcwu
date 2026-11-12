@@ -78,6 +78,11 @@ function renderEditor() {
       const qhead = node('div', undefined, 'section-head'); qhead.append(node('h4', `子題 ${qi + 1}`));
       if (block.questions.length > 1) button(qhead, '刪除子題', () => { block.questions.splice(qi, 1); markDirty(); renderEditor(); }, 'danger compact');
       card.append(qhead);
+      if(q.type==='fields'){
+        renderTeacherPreview(card,{blocks:[{material:content(),questions:[q]}]});
+        card.append(node('p','這是保留原貌的完整題組，此處可預覽；各格答案請由來源資料一併修訂。','hint'));
+        section.append(card);return;
+      }
       const label = node('label', '題型'), select = node('select');
       for (const [value, text] of [['single', '選擇題（單選）'], ['short', '簡答題']]) {
         const option = node('option', text); option.value = value; select.append(option);
