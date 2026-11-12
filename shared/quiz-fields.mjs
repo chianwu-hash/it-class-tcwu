@@ -22,7 +22,7 @@ export function fieldsResponseError(q,raw){
  return '';
 }
 
-export function renderFieldsInputs(host,q,{raw='',locked=false,onChange,renderContent}){
+export function renderFieldsInputs(host,q,{raw='',locked=false,onChange,renderContent,textInputAids={}}){
  const values=fieldsValues(q,raw),group=make('div');group.className='quiz-fields';
  const changed=()=>onChange(JSON.stringify({v:1,f:values}));
  group.append(make('p','依照題目順序填好每格，再一起送出。'));
@@ -33,6 +33,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,onChange,renderCo
    if(f.input==='math')input.placeholder='分數可以用 / 表示';
    input.addEventListener('input',()=>{values[f.id]=input.value;changed()});slot.append(input);
    if(f.input==='math')attachPastInputKeyboard(slot,input,{math:true});
+   if(f.input==='text')attachPastInputKeyboard(slot,input,{bopomofo:textInputAids.bopomofo===true,punctuation:textInputAids.punctuation===true});
   }else if(f.input==='single'){
    appendSingleChoiceOptions(slot,{name:id,options:f.options.map(o=>({...o,value:o.id})),selected:values[f.id],locked,onSelect:v=>{values[f.id]=v;changed()},renderBody:(box,o)=>renderContent(box,o.content)});
   }else if(f.input==='set'){

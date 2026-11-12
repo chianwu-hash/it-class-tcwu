@@ -213,6 +213,7 @@
 .quiz-field label:has(select){display:grid;grid-template-columns:4.5em minmax(0,1fr)}
 .quiz-field input[type=checkbox]{width:24px;height:24px;flex:0 0 24px}
 .quiz-field .past-input-keyboard{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.quiz-field .past-input-keyboard[hidden]{display:none}
 .quiz-field button{min-width:44px;min-height:44px;font:inherit}
 .quiz-field .preview-content{overflow-wrap:anywhere}
 

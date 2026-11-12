@@ -14,6 +14,7 @@ export const paperPracticeScopeBasis=p=>reviewedPaper(p)?.basis||null;
 const rules={
  '115-1-hanlin-g3-math':{before:[1,2,3,4,5],after:[6,7,8,9]},
  '115-1-hanlin-g3-science':{before:[1,2],after:[3,4]},
+ '115-1-kang-g3-ch':{before:[1,2,3,4,5,6],after:[7,8,9,10,11,12]},
 };
 const explicit=value=>['before','after','mixed'].includes(value)?value:null;
 export function practiceScopeOptions(grade){return [
@@ -22,9 +23,11 @@ export function practiceScopeOptions(grade){return [
 ];}
 export function scopeRule(c={}){
  if(rules[c.course_id||c.id]){
-  if(c.school_year!==undefined&&String(c.school_year)!=='115'||c.grade!==undefined&&Number(c.grade)!==3||c.volume!==undefined&&!String(c.volume).startsWith('3')||c.publisher!==undefined&&c.publisher!=='翰林')return null;
+  const chinese=(c.course_id||c.id)==='115-1-kang-g3-ch';
+  if(c.school_year!==undefined&&String(c.school_year)!=='115'||c.grade!==undefined&&Number(c.grade)!==3||c.volume!==undefined&&(chinese?c.volume!=='3年級上學期':!String(c.volume).startsWith('3'))||c.publisher!==undefined&&c.publisher!==(chinese?'康軒':'翰林'))return null;
   return rules[c.course_id||c.id];
  }
+ if(String(c.school_year)==='115'&&c.volume==='3年級上學期'&&c.publisher==='康軒'&&c.subject==='國語'&&(c.grade===undefined||Number(c.grade)===3))return rules['115-1-kang-g3-ch'];
  if(String(c.school_year)!=='115'||!String(c.volume).startsWith('3')||c.publisher!=='翰林')return null;
  return rules['115-1-hanlin-g3-'+({'數學':'math','自然':'science'}[c.subject]||'') ]||null;
 }
@@ -39,7 +42,14 @@ export function paperPracticeScope(p,{past=false}={}){
  const verified=reviewedPaper(p);if(verified)return verified.scope;
  const rule=scopeRule(c);if(!rule)return 'unknown';
  let units=p.unit_ids;
- if(!Array.isArray(units)||!units.length){let n=presetOrdinal(p);if(!Number.isFinite(n)&&c.subject==='數學')n=grade3MathUnits.indexOf(c.unit||p.title)+1;units=Number.isFinite(n)&&n>0?[n]:[];}
+ if(!Array.isArray(units)||!units.length){
+  if(c.publisher==='康軒'&&c.subject==='國語'){
+   const label=String(c.unit||p.title||'');
+   // A range title is not evidence for its first lesson alone.
+   if(/[0-9零〇一二兩三四五六七八九十百]+\s*(?:課)?\s*[–—－~～至到-]\s*(?:第\s*)?[0-9零〇一二兩三四五六七八九十百]+\s*課/.test(label))return 'unknown';
+   units=[...label.matchAll(/第\s*[0-9零〇一二兩三四五六七八九十百]+\s*課/g)].map(m=>presetOrdinal({catalog:{unit:m[0]}}));
+  }else{let n=presetOrdinal(p);if(!Number.isFinite(n)&&c.subject==='數學')n=grade3MathUnits.indexOf(c.unit||p.title)+1;units=Number.isFinite(n)&&n>0?[n]:[];}
+ }
  if(!units.length)return 'unknown';
  const parts=units.map(id=>unitPracticeScope({...c,course_id:c.course_id},{id}));
  if(parts.includes('unknown'))return 'unknown';
