@@ -44,7 +44,7 @@ const write=x=>fs.writeFileSync(path.join(out,(before?'before':'after')+'.privat
   await select('79');check(prefix+'new spread starts 80%',await scale()===80);
   check(prefix+'full 79–80 spread',await page.locator('#lightbox-img').evaluate(n=>n.naturalWidth===1640)&&(await page.locator('.qtb-page-nav select option:checked').innerText()).includes('79–80'));
   await page.getByRole('button',{name:'下一頁',exact:true}).evaluate(n=>n.click());await ready();check(prefix+'next page',await page.locator('.qtb-page-nav select').inputValue()==='81');
-  await page.getByRole('button',{name:'前一頁',exact:true}).evaluate(n=>n.click());await ready();check(prefix+'previous page restores spread',await page.locator('.qtb-page-nav select').inputValue()==='79');
+  await page.getByRole('button',{name:'上一頁',exact:true}).evaluate(n=>n.click());await ready();check(prefix+'previous page restores spread',await page.locator('.qtb-page-nav select').inputValue()==='79');
   await select(initialPage);check(prefix+'return restores scale and pan',JSON.stringify(await state())===JSON.stringify(remembered));
   await click('#lightbox-close');check(prefix+'answer selection retained',await page.locator('input:checked').count()===checked);
   await open();check(prefix+'reopen restores scale and pan',JSON.stringify(await state())===JSON.stringify(remembered));

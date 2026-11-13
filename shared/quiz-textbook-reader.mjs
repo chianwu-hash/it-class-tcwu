@@ -1,5 +1,6 @@
 import {initImageLightbox} from './image-lightbox.js';
 import {textbookBookPages} from './quiz-study-data.mjs';
+import {textbookReadingDirection} from './quiz-textbook-settings.mjs';
 
 // Book navigation only. Zoom, pan and touch belong to the shared lightbox.
 export function createTextbookReader({root,getContext,pages,resolvePage=page=>page.url,lightbox}) {
@@ -15,7 +16,7 @@ export function createTextbookReader({root,getContext,pages,resolvePage=page=>pa
   const toolbar=make('div',null,'qtb-book-toolbar'),title=make('strong'),status=make('p','', 'qtb-reading-status');status.setAttribute('role','status');
   const nav=make('div',null,'qtb-page-nav');
   const prev=button('‹',()=>adjacent(-1)),next=button('›',()=>adjacent(1)),home=button('本題頁',()=>show(current.primary));
-  prev.setAttribute('aria-label','前一頁');next.setAttribute('aria-label','下一頁');home.setAttribute('aria-label','回本題頁');prev.title='前一頁';next.title='下一頁';home.title='回本題頁';
+  prev.setAttribute('aria-label','上一頁');next.setAttribute('aria-label','下一頁');home.setAttribute('aria-label','回本題頁');prev.title='上一頁';next.title='下一頁';home.title='回本題頁';
   const select=make('select');select.setAttribute('aria-label','選擇課本頁碼');select.onchange=()=>{if(select.value)show(Number(select.value));};
   const back=button('回到題目',()=>close()),retry=button('再試一次',()=>show(shown.printedPages[0],true));retry.hidden=true;
   nav.append(prev,select,next,home);toolbar.append(title,nav,status,retry);
@@ -44,6 +45,11 @@ export function createTextbookReader({root,getContext,pages,resolvePage=page=>pa
   }
   function start(page,trigger){
     opener=trigger;questionScroll=window.scrollY;back.textContent='← 回到'+(trigger?.dataset.returnCaption||'題目');
+    const direction=textbookReadingDirection(current.bookId),rtl=direction==='rtl';
+    if(nav.dataset.readingDirection!==direction){
+      nav.dataset.readingDirection=direction;prev.textContent=rtl?'›':'‹';next.textContent=rtl?'‹':'›';
+      nav.replaceChildren(...(rtl?[next,select,prev,home]:[prev,select,next,home]));
+    }
     select.replaceChildren(...bookPages().map(p=>{const related=p.printedPages.some(n=>current.references.includes(n)),o=make('option','第'+p.printedPages.join('–')+'頁'+(related?'（本題參考）':''));o.value=String(p.printedPages[0]);return o;}));
     show(page??lastPages.get(current.key)??current.primary);
   }

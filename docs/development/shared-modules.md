@@ -52,6 +52,8 @@
 
 課本由 `quiz-textbook-reader.mjs` 共用：每次 `controller.open()` 傳入 `initialScale:.8`、`minScale:.2`、`zoomStep:.1`，不沿用一般題圖先建立燈箱時的限制。新頁以適合寬度的80%開啟，按「適合寬度」回100%；已讀頁優先恢復倍率與平移。這些參數只套用該次檢視，關閉後一般題圖維持原初始化設定。
 
+翻頁方向由 `quiz-textbook-settings.mjs` 依已核教材ID設定，不依科目、年級或頁內文字的直橫排推測。RTL教材的左鍵是下一頁、右鍵是上一頁；頁碼與已授權頁排序仍遞增，完整拉頁不拆、不鏡射。未確認的教材維持LTR；新增版本須核對原頁後登記新ID。
+
 ## `shared/course-navbar.js`
 
 **責任**：純 HTML 字串生成。根據 config 產生 nav 的 HTML，不做 DOM 操作，不做 auth。定義 `window.__buildCourseNavbarHtml()`。
