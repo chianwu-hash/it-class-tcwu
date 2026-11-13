@@ -3,7 +3,7 @@ import {textbookBookPages} from './quiz-study-data.mjs';
 
 // Book navigation only. Zoom, pan and touch belong to the shared lightbox.
 export function createTextbookReader({root,getContext,pages,resolvePage=page=>page.url,lightbox}) {
-  lightbox ||= initImageLightbox({root,selector:'[data-image-lightbox]',initialScale:1,minScale:.5});
+  lightbox ||= initImageLightbox({root,selector:'[data-image-lightbox]'});
   const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;return n;};
   const button=(text,fn,cls='')=>{const n=make('button',text,cls);n.type='button';n.onclick=fn;return n;};
   const allPages=()=>typeof pages==='function'?pages():pages;
@@ -29,13 +29,13 @@ export function createTextbookReader({root,getContext,pages,resolvePage=page=>pa
     const sequence=bookPages();prev.disabled=sequence.indexOf(page)===0;next.disabled=sequence.indexOf(page)===sequence.length-1;select.value=String(page.printedPages[0]);
     select.setAttribute('aria-label','目前第'+page.printedPages.join('–')+'頁；選擇課本頁碼');
     status.textContent='正在開啟課本…';status.classList.remove('is-error');retry.hidden=true;
-    const options={fit:'width',toolbar,closeLabel:back.textContent,state:memories.get(current.key+':'+page.id),onStateChange:state=>{if(ready&&token===generation)memories.set(current.key+':'+page.id,state);},onClose:()=>{
+    const options={fit:'width',initialScale:.8,minScale:.2,zoomStep:.1,toolbar,closeLabel:back.textContent,state:memories.get(current.key+':'+page.id),onStateChange:state=>{if(ready&&token===generation)memories.set(current.key+':'+page.id,state);},onClose:()=>{
       ++generation;open=false;ready=false;window.scrollTo({top:questionScroll,behavior:'instant'});(opener?.isConnected?opener:article?.querySelector('.qtb-entry'))?.focus({preventScroll:true});
     }};
     try{
       const src=await resolvePage(page,{retry:retryLoad});if(token!==generation||disposed)return;
       const loaded=await lightbox.open(src,bookName()+'印刷第'+page.printedPages.join('、')+'頁',options);if(token!==generation||disposed)return;
-      if(!loaded)throw Error('image_unavailable');ready=true;remember();status.textContent='首次開啟適合螢幕寬度；可放大、縮小及拖曳閱讀。';
+      if(!loaded)throw Error('image_unavailable');ready=true;remember();status.textContent='首次以適合寬度的80%開啟；可放大、縮小及拖曳閱讀。';
     }catch{
       if(token!==generation||disposed)return;
       await lightbox.open('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/%3E','課本暫時無法載入',{...options,state:undefined});

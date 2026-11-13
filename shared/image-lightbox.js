@@ -37,6 +37,8 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
         topbar.append(extraControls,lightboxClose.parentElement);
         let viewOptions = {}, loadGeneration = 0, settleLoad = null;
         const widthMode = () => viewOptions.fit === 'width';
+        const minimumScale = () => viewOptions.minScale ?? minScale;
+        const openingScale = () => viewOptions.initialScale ?? (widthMode() ? 1 : initialScale);
         const snapshot = () => ({scale:lightboxState.scale,x:lightboxState.x,y:lightboxState.y,width:lightboxStage.clientWidth});
         let previousFocus = null;
         const lightboxPointers = new Map();
@@ -60,7 +62,7 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
         }
 
         function setLightboxScale(nextScale) {
-            lightboxState.scale = Math.max(minScale, Math.min(5, nextScale));
+            lightboxState.scale = Math.max(minimumScale(), Math.min(5, nextScale));
             if (lightboxState.scale <= 1 && !widthMode()) {
                 lightboxState.x = 0;
                 lightboxState.y = 0;
@@ -72,10 +74,10 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
             setLightboxScale(lightboxState.scale + delta);
         }
 
-        function resetLightboxTransform() {
-            lightboxState.scale = widthMode() ? 1 : initialScale;
+        function resetLightboxTransform(scale = widthMode() ? 1 : initialScale) {
+            lightboxState.scale = Math.max(minimumScale(), Math.min(5, scale));
             lightboxState.x = 0;
-            lightboxState.y = widthMode() ? (lightboxImage.clientHeight-lightboxStage.clientHeight)/2+12 : 0;
+            lightboxState.y = widthMode() ? (lightboxImage.clientHeight*lightboxState.scale-lightboxStage.clientHeight)/2+12 : 0;
             applyLightboxTransform();
         }
 
@@ -111,10 +113,10 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
                 settleLoad = resolve;
                 lightboxImage.onload = () => {
                     if (generation !== loadGeneration) return resolve(false);
-                    resetLightboxTransform();
+                    resetLightboxTransform(openingScale());
                     if (options.state) {
                         const ratio = lightboxStage.clientWidth / (options.state.width || lightboxStage.clientWidth);
-                        Object.assign(lightboxState,{scale:options.state.scale,x:options.state.x*ratio,y:options.state.y*ratio});
+                        Object.assign(lightboxState,{scale:Math.max(minimumScale(),Math.min(5,options.state.scale)),x:options.state.x*ratio,y:options.state.y*ratio});
                         applyLightboxTransform();
                     }
                     lightboxImage.style.visibility = '';
@@ -155,9 +157,9 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
             });
         });
         lightboxClose.addEventListener("click", closeLightbox);
-        lightboxZoomOut.addEventListener("click", () => zoomLightboxBy(-zoomStep));
-        lightboxZoomIn.addEventListener("click", () => zoomLightboxBy(zoomStep));
-        lightboxReset.addEventListener("click", resetLightboxTransform);
+        lightboxZoomOut.addEventListener("click", () => zoomLightboxBy(-(viewOptions.zoomStep ?? zoomStep)));
+        lightboxZoomIn.addEventListener("click", () => zoomLightboxBy(viewOptions.zoomStep ?? zoomStep));
+        lightboxReset.addEventListener("click", () => resetLightboxTransform());
         lightboxCenter.addEventListener("click", () => {
             lightboxState.x = 0;
             lightboxState.y = 0;
@@ -172,7 +174,7 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
 
         lightboxStage.addEventListener("dblclick", (event) => {
             event.preventDefault();
-            if (lightboxState.scale > initialScale + 0.05) {
+            if (lightboxState.scale > openingScale() + 0.05) {
                 resetLightboxTransform();
             } else {
                 setLightboxScale(2.2);
