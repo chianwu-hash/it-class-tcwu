@@ -147,7 +147,6 @@
     ],
     "library": [
       "/shared/quiz-library.mjs?v=05b87f88f9122797",
-      "/shared/quiz-learning.mjs?v=cf33a974377f7428",
       "/shared/quiz-partner-pilot-entry.mjs?v=844b77a7aebe8696"
     ]
   },
@@ -235,7 +234,6 @@
     "/shared/quiz-grade-route.mjs": "/shared/quiz-grade-route.mjs?v=ca3ba8070f105bdf",
     "/shared/quiz-grade-route.mjs?v=20261102-grade9-release": "/shared/quiz-grade-route.mjs?v=ca3ba8070f105bdf",
     "/shared/quiz-leaf-celebration.mjs": "/shared/quiz-leaf-celebration.mjs?v=cc1b034d980fb775",
-    "/shared/quiz-learning.mjs": "/shared/quiz-learning.mjs?v=cf33a974377f7428",
     "/shared/quiz-library-home.mjs": "/shared/quiz-library-home.mjs?v=1611826899349ad8",
     "/shared/quiz-library.mjs": "/shared/quiz-library.mjs?v=05b87f88f9122797",
     "/shared/quiz-math-response.mjs": "/shared/quiz-math-response.mjs?v=0eed3ac52fc958ba",

@@ -8,7 +8,7 @@ const root=fileURLToPath(new URL('../',import.meta.url));
 const check=process.argv.includes('--check'), generated='shared/quiz-workshop/generated';
 const read=async file=>(await fs.readFile(path.join(root,file),'utf8')).replace(/\r\n/g,'\n');
 const hash=text=>createHash('sha256').update(text).digest('hex').slice(0,16);
-const entries={quiz:['shared/quiz-student.mjs'],past:['shared/quiz-past-entry.mjs'],partner:['shared/partner-pilot/app.mjs'],library:['shared/quiz-library.mjs','shared/quiz-learning.mjs','shared/quiz-partner-pilot-entry.mjs']};
+const entries={quiz:['shared/quiz-student.mjs'],past:['shared/quiz-past-entry.mjs'],partner:['shared/partner-pilot/app.mjs'],library:['shared/quiz-library.mjs','shared/quiz-partner-pilot-entry.mjs']};
 const common=['shared/quiz-theme.css','shared/vendor/katex/katex.min.css','shared/image-lightbox.css'];
 const styles={
  quiz:['shared/quiz-author.css','shared/quiz-student.css',...common,'shared/quiz-workspace.css','shared/quiz-learning.css','shared/quiz-textbook-reader.css','shared/quiz-workshop.css'],

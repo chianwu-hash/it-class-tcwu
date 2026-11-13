@@ -16,11 +16,6 @@
 .library-home-layout [data-partner-pilot-entry="main"]>p,.library-home-layout .partner-entry-art{display:none}
 .library-home-layout [data-partner-pilot-entry="main"] .partner-entry-actions{display:flex;gap:12px;margin:0;padding:0;flex:1;justify-content:flex-end}
 .library-home-layout [data-partner-pilot-entry="main"] .paper-start{background:transparent;color:var(--quiz-primary-dark);box-shadow:none;border:0;font-size:14px;min-height:44px;padding:10px 8px;display:inline-flex;align-items:center}
-.library-home-layout #home-effort-slot .learning-summary{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:4px 0;margin:0 0 14px;border:0;box-shadow:none;background:transparent}
-.library-home-layout #home-effort-slot .learning-summary[hidden]{display:none}
-.library-home-layout #home-effort-slot .learning-summary>a{font-weight:750;color:var(--quiz-primary-dark);padding:8px 0;min-height:44px;display:inline-flex;align-items:center}
-.home-effort-details{font-size:14px;max-width:100%}.home-effort-details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;text-decoration:underline;text-underline-offset:3px}.home-effort-details[open]{flex-basis:100%;padding:12px;background:white;border:1px solid var(--quiz-border);border-radius:12px}
-.library-home-layout .home-effort-details h2{font-size:18px}.home-effort-details a{display:inline-block;margin-right:14px;padding:8px 0}
 .library-home-layout #continue-practice{padding:18px 20px;border:1px solid var(--quiz-border);border-left:5px solid var(--quiz-primary);background:white;border-radius:16px;margin:0 0 24px;display:block}
 .library-home-layout #continue-practice[hidden]{display:none}
 .library-home-layout #continue-practice h2{font-size:20px;margin:0 0 4px}.home-continue-hint{font-size:14px;margin:0 0 8px;color:var(--quiz-primary-dark)}

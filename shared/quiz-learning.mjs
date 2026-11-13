@@ -13,9 +13,7 @@ const refresh=make('button','更新累積');refresh.type='button';actions.append
 if(grade===3){const a=make('a','主動選學習重點');a.href=link('learning.html');actions.append(a);}
 const tree=make('a','看我的努力樹');tree.href='/my-tree.html?course=grade'+grade+'-115-1';actions.append(tree);
 box.append(h,count,bar,actions,status,make('p','延伸練習與5題自組卷，合計每10道不同題長1片延伸葉；答錯也算，同題同學期只計首次。原卷達標成果另外保留。','helper'));
-const homeSlot=document.getElementById('home-effort-slot');
-if(homeSlot){const details=make('details',undefined,'home-effort-details'),summary=make('summary','練習努力與說明');details.append(summary);for(const n of [...box.childNodes])if(n!==actions)details.append(n);actions.querySelectorAll('a').forEach(a=>{if(a!==tree)details.append(a);});details.append(refresh);box.replaceChildren(tree,details);homeSlot.append(box);}
-else(document.querySelector('#cloud-library')||document.querySelector('main')).prepend(box);
+(document.querySelector('#cloud-library')||document.querySelector('main')).prepend(box);
 async function load(){
  const g=generation,v=++readVersion,uid=session?.user?.id;if(!uid)return;
  try{const d=await request('learning',{action:'summary'});if(g!==generation||v!==readVersion||uid!==session?.user?.id)return;
