@@ -6,11 +6,13 @@
 - Drive12圖13檔owner-only、Worker只增12映射邏輯不變、HTTP/DB角色拒絕、9回滾及停用讀回/指紋啟用/上線後讀回、桌手機262項及備課頁149項通過。未做真學生OAuth全鏈。
 - 不部署前端，不改函式/RLS/既有作答。自然仍126來源，其他科持續；C/D/F容量監控，大檔在F。暫存刪除先前遭政策拒絕，保留且不繞過。
 
-# 發布登記：六年級第11週與魔王長文定位，發布準備中（2026-11-13）
+# 發布登記：六年級第11週與魔王長文定位，已上線（2026-11-13）
 
 | 狀態 | agent | 開始時間 | main commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | Codex-g6w11-20261113 | 2026-11-13 | PR218合併後登記 | `dpl_DzwiLThS7tD5sXGff44e1F4VjsKy` | 第11週頁、六關／魔王、五項快手、共用定位及入口快取，完整清單由發布鎖保存 | 待發布／回滾基準部署 |
+| 已完成 | Codex-g6w11-20261113 | 2026-11-13T04:24:32.680Z | `874b793` | `dpl_DzwiLThS7tD5sXGff44e1F4VjsKy` | admin-progress.html、grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/boss-garden.html、grade6/115-1/boss-garden.js、grade6/115-1/homework.html、grade6/115-1/index.html、grade6/115-1/navbar.js、grade6/115-1/partner-practice.html、grade6/115-1/past-exam-review.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade6/115-1/typing-foundation.html、grade6/115-1/week01.html、grade6/115-1/week02.html、grade6/115-1/week03.html、grade6/115-1/week05-boss-en.html、grade6/115-1/week05-boss-zh.html、grade6/115-1/week05-typing.js、grade6/115-1/week05.html、grade6/115-1/week07-boss-en.html、grade6/115-1/week07-boss-zh.html、grade6/115-1/week07-typing.js、grade6/115-1/week07.html、grade6/115-1/week08-boss-en.html、grade6/115-1/week08-boss-zh.html、grade6/115-1/week08-typing.js、grade6/115-1/week08.html、grade6/115-1/week09-boss-en.html、grade6/115-1/week09-boss-zh.html、grade6/115-1/week09-boss.js、grade6/115-1/week09-typing.js、grade6/115-1/week09.html、grade6/115-1/week10.html、grade6/115-1/zhuyin-foundation.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-workshop/generated/assets.json、shared/reward-tree-config.js、shared/typing-challenge.js、+grade6/115-1/images/week11/week11-infographic-1920x1080-q80.webp、+grade6/115-1/week11-boss-en.html、+grade6/115-1/week11-boss-zh.html、+grade6/115-1/week11-boss.js、+grade6/115-1/week11-typing-data.js、+grade6/115-1/week11-typing.js、+grade6/115-1/week11.css、+grade6/115-1/week11.html、+grade6/115-1/week11.js、+grade6/LessonPlan/115-1/Week 11.md、+shared/typing-error-locator.mjs、+shared/typing-text-diff.mjs | `dpl_Gg8WvrAT6GYt1vWXgnJeuLf7fu6Z`／回滾 `dpl_DzwiLThS7tD5sXGff44e1F4VjsKy`（eolOnly 0） |
+
+- [正式發布收據](grade6-week11-release-20261113.md)：PR218已合併，main `874b793c` 乾淨checkout經官方腳本發布，完整樹49改／12增／0刪、ok:true；61檔正式HTTP讀回SHA一致。正式桌手機匿名鎖定、五項快手、十魔王定位合成檢查通過，0POST／0pageerror；lock:null。收件／閱讀既有正式驗證與Claude限制保留。
 
 - 教師最新指示「好，這樣可以，依SOP上線」，取代先前暫停發布。已核定本機版本；Claude唯讀複核與採納修正測試紀錄保留。PR218合併main後，另建乾淨origin/main checkout，只用release-from-main腳本start／deploy／promote，完整樹比對須ok:true。
 
