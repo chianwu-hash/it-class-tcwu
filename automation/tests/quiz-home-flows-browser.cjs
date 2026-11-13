@@ -1,5 +1,6 @@
 const fs=require('node:fs'),path=require('node:path'),{chromium}=require('D:/projects/browser-automation-workflow/node_modules/playwright');
-const out=path.resolve('.chat-mode/home-prototype');fs.mkdirSync(out,{recursive:true});const base='http://localhost:8923',run=Date.now(),checks=[],errors=[];let shotAt=0;
+const out=path.resolve('.chat-mode/home-prototype');fs.mkdirSync(out,{recursive:true});const base=process.env.HOME_PREVIEW_ORIGIN||'http://localhost:8923',run=Date.now(),checks=[],errors=[];let shotAt=0;
+if(!/^http:\/\/localhost:\d+$/.test(base))throw Error('local_preview_required');
 const uid=key=>{const h=require('node:crypto').createHash('sha256').update(key).digest('hex');return `${h.slice(0,8)}-${h.slice(8,12)}-4000-8000-${h.slice(12,24)}`;};
 function check(name,ok){checks.push({name,ok:!!ok});fs.writeFileSync(path.join(out,'progress.private.json'),JSON.stringify({checks,errors},null,2));if(!ok)throw Error(name);}
 (async()=>{const browser=await chromium.connectOverCDP(process.env.CDP_URL);try{

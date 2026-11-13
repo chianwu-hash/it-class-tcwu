@@ -1253,6 +1253,61 @@ body[data-zhuyin-images="enlarged"] .quiz-embedded-image:has(img[alt="原題注�
  .library-home-layout .home-paper-row a.paper-start{grid-column:2;grid-row:1 / span 3;padding:10px;font-size:13px}.library-home-layout .home-paper-row a[data-partner-pilot-entry="paper"]{grid-column:2;grid-row:4;font-size:12px}.library-home-layout .home-paper-row .paper-manage{grid-column:1;grid-row:4}.home-paper-row .paper-manage[open]{grid-column:1/-1!important;grid-row:5!important}
 }
 
+/* Preserve the workshop's soft pet illustrations and grade themes. */
+.library-home-layout .library-hero-inner{display:grid;grid-template-columns:minmax(0,1fr) 180px;column-gap:20px;padding:8px 24px;min-height:116px}
+.library-home-layout .library-hero-copy{display:contents}
+.library-home-layout .library-hero h1{grid-column:1;grid-row:1;align-self:end;margin:0}
+.library-home-layout .library-hero h1>i{display:none}
+.library-home-layout .library-description{grid-column:1;grid-row:2;align-self:start}
+.home-welcome-pets{display:block;grid-column:2;grid-row:1/span 2;width:180px;height:100px;object-fit:contain;align-self:end;pointer-events:none}
+.library-home-layout #home-pick-title{display:flex;align-items:center;gap:12px;min-height:56px}
+.home-explore-pet{display:block;width:64px;height:56px;object-fit:contain;flex:none;pointer-events:none}
+.library-home-layout [data-partner-pilot-entry="main"] h2{display:flex;align-items:center;gap:10px}
+.library-home-layout [data-partner-pilot-entry="main"] .partner-entry-art{position:static;display:block;width:32px;height:48px;flex:none;object-fit:contain;margin:0;pointer-events:none}
+.library-home-layout .home-unit-group{border-radius:18px;box-shadow:0 3px 10px #153c3208;border-color:var(--home-subject-border,var(--quiz-border));border-left-width:4px}
+.library-home-layout [data-subject]{--home-subject-ink:var(--quiz-primary-dark);--home-subject-wash:var(--quiz-tint);--home-subject-border:var(--quiz-border)}
+.library-home-layout [data-subject="國語"],.library-home-layout [data-subject="國文"]{--home-subject-ink:#be123c;--home-subject-wash:#fff1f2;--home-subject-border:#fecdd3}
+.library-home-layout [data-subject="數學"]{--home-subject-ink:#c2410c;--home-subject-wash:#fff7ed;--home-subject-border:#fed7aa}
+.library-home-layout [data-subject="自然"]{--home-subject-ink:#047857;--home-subject-wash:#ecfdf5;--home-subject-border:#a7f3d0}
+.library-home-layout [data-subject="英語"]{--home-subject-ink:#1d4ed8;--home-subject-wash:#eff6ff;--home-subject-border:#bfdbfe}
+.library-home-layout [data-subject="社會"]{--home-subject-ink:#854d0e;--home-subject-wash:#fffbeb;--home-subject-border:#fcd34d}
+.library-home-layout [data-subject="地理"]{--home-subject-ink:#0e7490;--home-subject-wash:#ecfeff;--home-subject-border:#67e8f9}
+.library-home-layout [data-subject="歷史"]{--home-subject-ink:#78350f;--home-subject-wash:#fef3e2;--home-subject-border:#e9c99b}
+.library-home-layout [data-subject="公民"]{--home-subject-ink:#7e22ce;--home-subject-wash:#faf5ff;--home-subject-border:#d8b4fe}
+.home-subject-icon{display:inline-grid;place-items:center;flex:0 0 32px;width:32px;height:32px;background:var(--home-subject-wash,var(--quiz-tint));color:var(--home-subject-ink,var(--quiz-primary-dark));border-radius:50%;vertical-align:middle}
+.home-subject-icon>svg{display:block;width:21px;height:21px}
+.library-home-layout .home-unit-heading{background:var(--home-subject-wash);gap:10px;border-bottom:1px solid var(--home-subject-border)}
+.library-home-layout .home-unit-heading .home-subject-icon{background:white;box-shadow:0 2px 5px #153c3208}
+.library-home-layout .home-unit-subject{color:var(--home-subject-ink);font-size:13px}
+.library-home-layout .home-unit-heading h3{color:#243c35}
+.library-home-layout .home-subjects button{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.library-home-layout .home-subjects button .home-subject-icon{width:22px;height:22px;flex-basis:22px;background:transparent}
+.library-home-layout .home-subjects button .home-subject-icon>svg{width:19px;height:19px}
+.library-home-layout .home-subjects button[aria-pressed=true]{background:var(--home-subject-wash)!important;color:var(--home-subject-ink);outline-color:var(--home-subject-ink)}
+.library-home-layout .home-continue-row strong{display:flex;align-items:center;gap:8px;line-height:1.5}
+.library-home-layout .home-continue-row .home-subject-icon{width:28px;height:28px;flex-basis:28px}
+.library-home-layout .home-continue-row .home-subject-icon>svg{width:19px;height:19px}
+.library-home-layout .paper-card[data-subject] .paper-card-header{background:var(--home-subject-wash);color:var(--home-subject-ink)}
+.library-home-layout .paper-card[data-subject] .paper-subject{color:var(--home-subject-ink)}
+.library-home-layout .paper-card[data-subject] .subject-icon{color:var(--home-subject-ink)}
+.library-home-layout .paper-card[data-subject] .subject-icon>.home-subject-icon{background:transparent}
+.library-home-layout[data-grade="6"] .library-hero h1{color:#fef3c7}
+@media(max-width:600px){
+ .library-home-layout .library-hero-inner{grid-template-columns:minmax(0,1fr) 104px;column-gap:10px;min-height:118px;padding:8px 16px}
+ .library-home-layout .library-hero h1{font-size:26px;align-self:center}
+ .library-home-layout .library-description{grid-column:1/-1;grid-row:2}
+ .home-welcome-pets{grid-column:2;grid-row:1;width:104px;height:58px;align-self:center}
+ .library-home-layout #home-pick-title{gap:8px;min-height:44px}
+ .home-explore-pet{width:52px;height:44px}
+ .library-home-layout [data-partner-pilot-entry="main"] h2{gap:6px}
+ .library-home-layout [data-partner-pilot-entry="main"] .partner-entry-art{width:27px;height:40px}
+ .library-home-layout .home-unit-heading{flex-wrap:wrap;gap:6px 8px;padding:10px}
+ .library-home-layout .home-unit-heading h3{flex:1;min-width:160px}
+ .library-home-layout .home-unit-subject{font-size:13px}
+ .library-home-layout .home-subjects button{padding:8px;gap:4px}
+}
+@media(max-width:350px){.library-home-layout [data-partner-pilot-entry="main"] .partner-entry-art{display:none}}
+
 .quiz-question-report{margin:1.2rem 0;padding:1rem;border:1px solid #c8c1df;border-radius:1rem;background:#faf9ff;color:#29354b;font:1rem/1.65 system-ui,sans-serif;clear:both}
 .quiz-question-report .quiz-report-toggle{cursor:pointer;font-weight:700}.quiz-question-report form{display:grid;gap:.7rem;margin-top:.7rem}.quiz-question-report form[hidden]{display:none}.quiz-question-report p{margin:.2rem 0}
 .quiz-question-report select,.quiz-question-report textarea{box-sizing:border-box;max-width:100%;width:100%;font:inherit;padding:.6rem;border:1px solid #b5accd;border-radius:.5rem;background:white;color:#29354b}

@@ -11,6 +11,7 @@ import { onTestIdentityChange } from './test-identity-state.mjs?v=20261030-ident
 import {workshopCourse} from './quiz-workshop-config.mjs';
 import {practiceScopeOptions,paperPracticeScope,paperPracticeScopeBasis,matchesPracticeScope,practiceScopeBadge} from './quiz-practice-scope.mjs';
 import {initLibraryHome,groupLibraryCards} from './quiz-library-home.mjs';
+import {subjectMark,decorateSubjectCards} from './quiz-subject-visual.mjs';
 
 let currentSession = null, generation = 0, papers = [], busy = false, studentView=false, reloadAfter=false, focusPaperId=null;
 const el = id => document.getElementById(id);
@@ -140,6 +141,7 @@ function render() {
   }
   groupLibraryCards(el('cloud-papers'),shown);
   for(const box of el('cloud-papers').querySelectorAll('.scope-unclassified>.papers'))groupLibraryCards(box,shown);
+  decorateSubjectCards(el('cloud-library'));
   focusOwnPaper();
 }
 function clearPastPapers(){el('past-papers').replaceChildren();el('past-unopened').replaceChildren();el('past-unopened-section').hidden=true;el('past-unopened-count').textContent='0卷';el('past-papers-count').textContent='0卷';el('past-papers-empty').hidden=false;}
@@ -151,7 +153,7 @@ function renderContinue(){
   continueBox.append(node('h2','接著完成練習'),node('p','個人練習卷的進度在這裡，選一份接著練。','home-continue-hint'));
   const list=node('div',undefined,'home-continue-list'),more=node('details',undefined,'home-continue-more');
   if(unfinished.length>2)more.append(node('summary',`查看其他未完成練習（${unfinished.length-2}）`));
-  unfinished.forEach((p,i)=>{const row=node('div',undefined,'home-continue-row'),text=node('div'),a=node('a','接著練 →','paper-start');a.href=paperUrl(p.id,localContext);text.append(node('strong',(p.catalog?.subject||'')+'・'+(paperRange(p)||p.title)),node('span',`${p.total} 題・已作答 ${p.answered}／${p.total} 題`));row.append(text,a);(i<2?list:more).append(row);});
+  unfinished.forEach((p,i)=>{const row=node('div',undefined,'home-continue-row'),text=node('div'),a=node('a','接著練 →','paper-start');row.dataset.subject=p.catalog?.subject||'';a.href=paperUrl(p.id,localContext);const title=node('strong',(p.catalog?.subject||'')+'・'+(paperRange(p)||p.title));title.prepend(subjectMark(p.catalog?.subject));text.append(title,node('span',`${p.total} 題・已作答 ${p.answered}／${p.total} 題`));row.append(text,a);(i<2?list:more).append(row);});
   continueBox.append(list);if(unfinished.length>2)continueBox.append(more);
  }
  continueBox.hidden=!unfinished.length;applyView();
