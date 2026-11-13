@@ -5,7 +5,7 @@ import {renderMathResponse,mathResponseComplete,mathResponseError} from './quiz-
 import {renderLocalContent as renderScopedContent} from './quiz-past-content.mjs?v=20261102-transcribed';
 import {renderManualResponse} from './quiz-past-manual.mjs';
 import {attachPastInputKeyboard} from './quiz-past-input.mjs?v=20261102-math-audio';
-import {createQuestionReport} from './quiz-question-reports.mjs';
+import {createQuestionReport,mountQuestionReport} from './quiz-question-reports.mjs';
 import {renderPastLearningReview} from './quiz-past-learning-review.mjs';
 import {appendSingleChoiceOptions} from './quiz-choice.mjs';
 import {createQuizWorkspace} from './quiz-workspace.mjs';
@@ -135,7 +135,8 @@ function render(){if(!active)return;study.refresh();
  if(state.draft){const save=button('暫存作答',saveDraft,'quiet');save.id='save-past-draft';save.disabled=busy;al.append(save);const note=el('p',undefined,'helper');note.id='past-draft-status';note.setAttribute('role','status');card.append(note);}
  if(saved){const next=al.querySelector('[data-past-next]');if(next){next.className='primary';actions.append(next);}}
  card.append(actions);
- if(reportRequest){const aid=state.attemptId,key=aid+':'+g.id;if(!reports.has(key))reports.set(key,createQuestionReport({request:reportRequest,context:{source:'past',attempt_id:aid,question_id:g.id},options:g.choices.map(c=>({...c,label:c.id})),valid:()=>active&&state?.attemptId===aid}));card.append(reports.get(key));}
+ let reportBox=null;
+ if(reportRequest){const aid=state.attemptId,key=aid+':'+g.id;if(!reports.has(key))reports.set(key,createQuestionReport({request:reportRequest,context:{source:'past',attempt_id:aid,question_id:g.id},options:g.choices.map(c=>({...c,label:c.id})),valid:()=>active&&state?.attemptId===aid}));reportBox=reports.get(key);card.append(reportBox);}
  // Only presentation moves: all group/field IDs, listeners, draft maps and
  // request packets stay owned by this original-paper controller.
  const feedbackPanel=el('aside',undefined,'answer-preview');
@@ -150,6 +151,7 @@ function render(){if(!active)return;study.refresh();
  $('#workspace').replaceChildren(card);
  workspace.apply({article:card,saved:Boolean(saved),complete:state.practice?.complete,closed:false,statusElement,
   forceLongForm:g.fields.length>1||isManual(g)||['sequence','code','set'].includes(g.kind),scratchpadKey:JSON.stringify([state.attemptId,state.version,g.id]),scratchpadLabel:'原卷 '+g.sourceLabel+'・計算紙'});
+ if(reportBox)mountQuestionReport(card.querySelector('.quiz-reading-panel')||card,reportBox);
  if(draftNote)$('#workspace .quiz-workspace-status')?.append(draftNote);
  draftStatus();
 }

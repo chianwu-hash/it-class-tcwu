@@ -1,5 +1,6 @@
 export const reportCategories={question:'題目文字有誤',options:'選項有誤',answer:'正確答案有疑問',explanation:'解析有誤',media:'圖片或音檔有問題',other:'其他問題'};
 export const reportStatuses={pending:'待處理',processing:'處理中',resolved:'已處理',dismissed:'確認無需修改'};
+const reportControls=new WeakMap();
 export const reportNode=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
 export function reportStyles(){
  if(document.querySelector('[data-quiz-report-style]'))return;
@@ -12,7 +13,8 @@ export function createQuestionReport({request,context,options=[],valid=()=>true}
  const toggle=n('button','題目出錯回報');toggle.type='button';toggle.className='quiz-report-toggle';toggle.setAttribute('aria-expanded','false');box.append(toggle);
  const form=n('form'),category=n('select'),choice=n('select'),description=n('textarea'),status=n('p'),submit=n('button','送出回報');
  form.id='quiz-report-'+crypto.randomUUID();form.hidden=true;toggle.setAttribute('aria-controls',form.id);
- toggle.addEventListener('click',()=>{form.hidden=!form.hidden;toggle.setAttribute('aria-expanded',String(!form.hidden));if(!form.hidden)description.focus();});
+ const controls={toggle,form,toolbar:false};reportControls.set(box,controls);
+ toggle.addEventListener('click',()=>{form.hidden=!form.hidden;box.hidden=controls.toolbar&&form.hidden;toggle.setAttribute('aria-expanded',String(!form.hidden));if(!form.hidden)description.focus();});
  category.setAttribute('aria-label','問題類型');for(const [v,t] of Object.entries(reportCategories))category.append(new Option(t,v));
  choice.setAttribute('aria-label','有問題的選項');choice.append(new Option('整題／不指定選項',''));for(const [i,o] of options.entries())choice.append(new Option(`選項 ${o.label??String.fromCharCode(65+i)}`,o.id));
  description.required=true;description.maxLength=1000;description.rows=3;description.setAttribute('aria-label','問題說明');description.placeholder='請說明哪裡有問題，例如：選項 B 的文字和圖片不同。';
@@ -29,4 +31,16 @@ export function createQuestionReport({request,context,options=[],valid=()=>true}
   catch(e){if(valid())status.textContent=e.message||'尚未確認送出，請重試；你的說明仍保留。';}
   finally{busy=false;if(valid()&&!done)for(const el of [category,choice,description,submit])el.disabled=false;}
  });return box;
+}
+
+// Retain both nodes across host rerenders; only their presentation moves.
+export function mountQuestionReport(host,box){
+ const controls=reportControls.get(box),heading=host.querySelector(':scope>.card-title')||host.querySelector(':scope>h3');
+ if(controls&&heading){
+  controls.toolbar=true;heading.classList.add('quiz-question-toolbar');controls.toggle.classList.add('quiz-report-toolbar-toggle');
+  heading.append(controls.toggle);box.classList.add('is-toolbar-report');box.hidden=controls.form.hidden;
+ }else if(controls){
+  controls.toolbar=false;controls.toggle.classList.remove('quiz-report-toolbar-toggle');box.prepend(controls.toggle);box.classList.remove('is-toolbar-report');box.hidden=false;
+ }
+ host.append(box);
 }

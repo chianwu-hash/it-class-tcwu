@@ -2,7 +2,7 @@ import {appendSingleChoiceOptions} from './quiz-choice.mjs';
 import {afterGardenReward} from './garden-unlock-notice.mjs?v=20261102-grade9-release';
 import { renderContent as renderQuizContent } from './quiz-render.mjs?v=20261029-load-batch1';
 import { mergeQuizSnapshot } from './quiz-state.mjs';
-import {createQuestionReport} from './quiz-question-reports.mjs';
+import {createQuestionReport,mountQuestionReport} from './quiz-question-reports.mjs';
 import {createQuizStudy,studySourceLabel} from './quiz-study.mjs';
 import {renderFieldsInputs,fieldsResponseError,fieldsResponseSummary,fieldsAnswerSummary} from './quiz-fields.mjs';
 
@@ -155,7 +155,7 @@ export function initServerQuiz({ selectors, server }) {
         renderContent(article, q.material); renderContent(article, q.prompt);
         article.append(make('p', `你的答案：${q.type === 'fields' ? fieldsResponseSummary(q,state.responses[q.id]) : q.type === 'single' ? String.fromCharCode(65 + q.options.findIndex(o => o.id === state.responses[q.id])) : state.responses[q.id]}`));
         if (q.type === 'single') q.options.forEach((o, i) => { const row = make('div', undefined, 'preview-option'); row.append(make('strong', `${String.fromCharCode(65 + i)}. `)); renderContent(row, o.content); article.append(row); });
-        renderReview(article, q); article.append(report(q));root.append(article);
+        renderReview(article, q); mountQuestionReport(article,report(q));root.append(article);
       }
       return;
     }
@@ -205,7 +205,7 @@ export function initServerQuiz({ selectors, server }) {
     if (state.complete && cursor === questions.length - 1) actions.append(button('查看整份作答與解析', () => { showFullReview = true; render(); }, 'quiz-primary'));
     actions.append(button('更新儲存狀態', () => load('resume', true), 'secondary quiz-refresh')); article.append(actions); root.append(article);
     workspace.apply({article, saved, complete:state.complete, closed:state.status==='closed',forceLongForm:q.type==='fields',scratchpadKey:JSON.stringify([userId,state.attempt_id,state.version_id,q.id]),scratchpadLabel:'第'+(cursor+1)+'題・計算紙'});
-    (article.querySelector('.quiz-reading-panel')||article).append(report(q));
+    mountQuestionReport(article.querySelector('.quiz-reading-panel')||article,report(q));
     if (pending) say('這次答案的儲存狀態尚未確認，請以相同答案重試或更新狀態。', true);
   }
   async function load(action, preserveCursor = false) {
