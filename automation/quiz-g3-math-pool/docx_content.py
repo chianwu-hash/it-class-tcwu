@@ -61,6 +61,8 @@ def parse(file):
                         name=rels[refs[0]];raw=z.read(name);digest=hashlib.sha256(raw).hexdigest();ext=pathlib.PurePosixPath(name).suffix.lower()
                         fraction=visible_fraction(raw) if ext=='.wmf' else None
                         if fraction:
+                            crop=node.find('.//a:srcRect',ns)
+                            if crop is not None and any(int(v) for v in crop.attrib.values()):raise ValueError('cropped_formula_requires_review')
                             txt('$'+fraction+'$');formula_audit.append({'source_image_sha256':digest,'latex':fraction,'method':'visible_wmf_text_and_bar'});continue
                         web=digest+'.png' if ext in ('.emf','.wmf') else digest+ext
                         crop=node.find('.//a:srcRect',ns)
