@@ -5,11 +5,16 @@
 - 正答／全錯／相反概念／空白缺欄拒絕、兩組短詞等價提交、初始隱私、53書頁與跨角色拒絕、停用讀回、指紋啟用、上線後作答通過。正式元件118項、備課頁63項通過。
 - 不改前端、函式、RLS、Worker或既有紀錄；私有資料不提交。仍待其餘來源；注意容量，暫存刪除遭政策拒絕則保留，不繞過。
 
-# 本輪準備：共用課本閱讀器80%／20%（2026-11-13）
+# 發布登記：共用課本閱讀器80%／20%（2026-11-13）
 
+| 狀態 | agent | 開始時間 | main commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-textbook-zoom-20261113 | 2026-11-13T00:42:21.249Z | `20936ae` | `dpl_Euit8obmZn4WW7tsf1ML1UhwdCwb` | shared/image-lightbox.js、shared/quiz-textbook-reader.mjs、shared/quiz-workshop/generated/assets.json、grade3/115-1/quiz.html、grade3/115-1/past-exam.html、grade3/115-1/partner-practice.html、grade3/115-1/quiz-library.html、grade4/115-1/quiz.html、grade4/115-1/past-exam.html、grade4/115-1/partner-practice.html、grade4/115-1/quiz-library.html、grade6/115-1/quiz.html、grade6/115-1/past-exam.html、grade6/115-1/partner-practice.html、grade6/115-1/quiz-library.html、grade9/115-1/quiz.html、grade9/115-1/past-exam.html、grade9/115-1/partner-practice.html、grade9/115-1/quiz-library.html | `dpl_GQwWHajhTk2TZ2hAnM2y8YRJFnwu`／回滾 `dpl_Euit8obmZn4WW7tsf1ML1UhwdCwb`（eolOnly 0） |
+
+- [正式收據](quiz-textbook-zoom-release-20261113.md)／[機器可讀紀錄](quiz-textbook-zoom-release-20261113.json)：已由main20936ae發布，19改／額外0，正式19來源內容一致，發布鎖已釋放。
 - 使用者已授權修正、驗證通過後上線。Codex-textbook-zoom-20261113在最新main494a476新工作樹處理，與長線題庫資料轉化分開；無SQL、教材、學生作答或權限修改。
 - [變更、驗證及限制](quiz-textbook-zoom-20261113.md)：一般與考古共用閱讀器每次開啟指定初始80%／最小20%，不受入口先初始化影響；適合寬度100%，原翻頁／拉頁及位置記憶保留。
-- 83項桌手機實際入口合成操作、9項回歸、21產物及95正式任務前檢通過，桌手機截圖已檢視。接著PR進main、新乾淨main發布、正式回讀與補收據。
+- 83項桌手機實際入口合成操作、9項回歸、21產物及95正式任務前檢通過，桌手機截圖已檢視。已完成PR206、新乾淨main發布與正式回讀；純文件收據不另部署。
 
 # 六年級自然再增8短詞／分類題：四科新版1038來源（2026-11-13 07:51）
 
