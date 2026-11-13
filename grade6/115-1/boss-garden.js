@@ -1,11 +1,13 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
 import { SUPABASE_URL, SUPABASE_ANON_KEY, getStoredAccessToken } from '../../shared/auth.js';
-import { getRewardTreeCourse, getActivityId } from '../../shared/reward-tree-config.js?v=20261030-g6w09-boss';
+import { getRewardTreeCourse, getActivityId } from '../../shared/reward-tree-config.js?v=20261113-g6w11';
 import { deriveRewardTreeModel } from '../../shared/reward-tree-model.js';
 
 const courseId = 'grade6-115-1';
 const activities = getRewardTreeCourse(courseId).activities.filter(a => a.rewardMode === 'boss');
 const descriptions = {
+    '11:typing_boss_zh_1': { title: '雨季裡的拖鞋', icon: '👟', schoolYear: '115', publisher: '康軒', subject: '國語', lesson: '第7課', text: '〈大小剛好的鞋子〉p.81第二段全文，共4行。可以分次儲存草稿，完整過關開1朵花。' },
+    '11:typing_boss_en_1': { title: "Let's Make a Pizza!", icon: '🍕', schoolYear: '115', publisher: '康軒', subject: '英語', lesson: 'Unit 3', text: 'Reading p.55～57正文，共9行。依序輸入製作披薩的步驟，完整過關開1朵花。' },
     '09:typing_boss_zh_1': { title: '朱子治家格言選', icon: '📜', schoolYear: '115', publisher: '康軒', subject: '國語', lesson: '第2課', text: 'p.21～24四則格言原文整合，共8行。完整過關，開出1朵花。' },
     '09:typing_boss_en_1': { title: 'Whale Watching', icon: '🐋', schoolYear: '115', publisher: '康軒', subject: '英語', lesson: 'Unit 1', text: 'p.15～17 Story共18格完整對話，分24行。耐心完成，開出1朵花。' },
     '05:typing_boss_zh_1': { title: '臺灣美食詩選', icon: '🍜', schoolYear: '115', publisher: '康軒', subject: '國語', lesson: '第4課', text: '〈鼎邊趖〉＋〈肉圓〉，共25行。兩首全部完成，開出1朵花。' },

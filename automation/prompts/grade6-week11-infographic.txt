@@ -1,0 +1,28 @@
+Create ONE new 16:9 educational infographic image, 1920x1080, with sharp Traditional Chinese text rendering. Use the attached same-grade Week 09 image ONLY as the visual style reference: warm watercolor/pastel textures, dark navy rounded heavy lettering, purple/teal/orange/sky-blue accents, white rounded panels, cheerful upper-elementary children. Do not copy its old activities, timings or wording. No official school crest and no invented logos. Keep all required wording large and perfectly legible. No extra text. Keep generous outer margins so nothing is cropped.
+
+Headline: 第11週｜我們的班徽完工！
+Subtitle: 複製・平均分配・左右對稱・繳交成果
+
+Four clear numbered panels, left-to-right:
+01 星星排整齊
+Ctrl＋C／Ctrl＋V
+Shift 複選 → 垂直平均分配
+Illustration: three equal-size gold stars on the right edge of a generic bear class badge, with clearly equal vertical gaps.
+
+02 左右對稱
+Shift＋Alt 向左拖曳複製
+先放滑鼠，再放按鍵
+Illustration: original three gold stars at right retained, three copied stars at left, a straight horizontal leftward arrow. Symmetrical bear badge with ribbon but NO tiny illegible badge lettering.
+
+03 下載並繳交
+PNG → 透明背景 → 上傳
+看到「已繳交・待評」再離開
+Illustration: transparent checkerboard around the badge, a download icon followed by an upload icon and a clear checkmark. Do not suggest only downloading is enough.
+
+04 快手自己選
+中英打・魔王花園
+閱讀小卡・考前練功坊
+Illustration: keyboard, flower garden, reading book and small exercise notebook, four parallel choices, no imposed sequence.
+
+Footer: 先完成班徽與繳交，再依自己的進度練習。
+The third panel must keep its three different stages distinguishable. Do not invent rewards, deadlines or times. All characters must be Traditional Chinese, no simplified characters. Friendly detailed illustrations but spacious layout and large readable text dominate.

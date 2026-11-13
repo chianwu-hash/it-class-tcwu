@@ -1,0 +1,63 @@
+import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261113-locator';
+import { initTypingTools } from '../../shared/typing-tools.js';
+import { challenges } from './week11-typing-data.js?v=20261113';
+
+const challenge = challenges[document.body.dataset.challenge || 'regular'];
+const root = document.getElementById('typing-levels-container');
+challenge.levels.forEach(({ id, title = challenge.title, ans }, index) => {
+    const article = document.createElement('article');
+    article.id = `block-level${id}`;
+    article.className = `typing-level${index ? ' hidden' : ''}`;
+    const heading = document.createElement('h3');
+    heading.className = 'typing-title';
+    heading.textContent = challenge.boss ? `👑 ${title}` : `第${id}關｜${title}`;
+    const grid = document.createElement('div'); grid.className = 'typing-grid';
+    const source = document.createElement('div');
+    const targetLabel = document.createElement('p'); targetLabel.className = 'typing-label';
+    targetLabel.textContent = challenge.boss ? '📖 題目｜依 Enter 換行；畫面自動折行不用另按 Enter' : `📖 題目・${ans.split('\n').length}行｜依照換行逐字輸入`;
+    const target = document.createElement('pre'); target.className = 'typing-target select-none pointer-events-none'; target.textContent = ans;
+    source.append(targetLabel, target);
+    const work = document.createElement('div');
+    const label = document.createElement('label'); label.htmlFor = `input-level${id}`; label.className = 'typing-label'; label.textContent = '✍️ 我的輸入';
+    const input = document.createElement('textarea'); input.id = `input-level${id}`; input.className = 'typing-input'; input.disabled = true;
+    input.rows = challenge.boss ? Math.max(14, ans.split('\n').length + 1) : Math.min(8, ans.split('\n').length + 1);
+    input.placeholder = '照著題目逐字輸入，換行也要一致。';
+    input.spellcheck = false; input.autocomplete = 'off'; input.setAttribute('autocapitalize', 'off'); input.setAttribute('autocorrect', 'off');
+    input.setAttribute('onpaste', 'return false;'); input.setAttribute('ondrop', 'return false;');
+    const button = document.createElement('button'); button.type = 'button'; button.className = 'typing-check'; button.disabled = true;
+    button.setAttribute('onclick', `checkLevel(${id})`); button.textContent = challenge.boss ? '🌸 檢查全文・挑戰魔王' : '檢查答案';
+    const msg = document.createElement('div'); msg.id = `msg-level${id}`; msg.className = 'typing-message'; msg.setAttribute('aria-live', 'polite');
+    work.append(label, input, button, msg); grid.append(source, work); article.append(heading, grid); root.append(article);
+});
+
+function buildHint(value, answer) {
+    const actual = value.split('\n'), expected = answer.split('\n');
+    for (let line = 0; line < Math.max(actual.length, expected.length); line++) {
+        if (actual[line] === expected[line]) continue;
+        if (actual[line] === undefined) return `第${line + 1}行尚未完成，請檢查換行。`;
+        if (expected[line] === undefined) return `第${line + 1}行多出內容，請檢查換行。`;
+        let index = 0; while (actual[line][index] === expected[line][index] && index < expected[line].length) index++;
+        return `第${line + 1}行、第${index + 1}個字附近不同，請檢查文字、大小寫、空格與標點。`;
+    }
+    return '請逐行檢查。';
+}
+initTypingTools();
+initTypingChallenge({
+    courseId: 'grade6-115-1', weekCode: '11', activityKey: challenge.key,
+    levelsData: challenge.levels.map(({id, ans}) => ({id, ans})),
+    draftOptions: { enabled: true }, buildHint, errorLocator: Boolean(challenge.boss), lockOnLoadError: true,
+    levelEncouragements: Object.fromEntries(challenge.levels.map(({id}) => [id, challenge.boss ? '你耐心完成長文的逐行檢查，並修正到完全正確。' : ({1: '你仔細選字，也保留了句子的標點。', 2: '你注意大小寫、縮寫與空白，完成了點餐問答。', 3: '你檢查了引號，把句子完整保留下來。', 4: '你保留三行問答，並檢查 sandwiches 的拼字。', 5: '你逐段修正完成前五關，得到一片葉子；可以休息，下次再接續。', 6: '你靠逐行檢查完成中英切換，保留一葉，再開一花。'})[id]])),
+    progressMessages: {
+        loadError: '進度暫時讀取不到，闖關先暫停；已有輸入可先按「儲存草稿」，再重新整理重試。其他教學與快手入口仍可使用。',
+        completed: challenge.boss ? '🌸 這個魔王已完成，已取得1朵花。重新練習不會重複增加。' : '六關完成，共一葉一花。可以自由選擇快手任務，重練不重複給獎。',
+        resumed: level => `已接回${challenge.title}，從第${level}關繼續。未完成的文字請按「回復上次草稿」。`,
+        unauthenticated: '請先登入學校Google帳號，才能開始並保存自己的進度。',
+        saveCompleted: challenge.boss ? '🌸 完成紀錄已儲存，這個魔王開出1朵花。' : '第11週六關完成紀錄已儲存，共一葉一花。',
+        resetConfirm: `要重設「${challenge.title}」嗎？這會清除此活動進度與草稿，並收回它的獎勵；其他活動不受影響。`
+    },
+    celebrationContent: {
+        title: challenge.boss ? '🌸 你的魔王花開了！' : '中英打六關完成！',
+        message: challenge.boss ? '你把整篇文字逐行完成，這個挑戰留下1朵花。休息一下，或回去看看其他任務。' : '你靠檢查、修正與耐心完成六關，累積一葉一花。到努力樹看看自己的進步吧。',
+        buttonText: '去看我的努力樹', buttonHref: '/my-tree.html?course=grade6-115-1'
+    }
+});

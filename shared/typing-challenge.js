@@ -1,4 +1,5 @@
 import {afterGardenReward} from './garden-unlock-notice.mjs';
+import { renderTypingErrorLocator, trackTypingComposition } from './typing-error-locator.mjs?v=20261113-locator';
 import {
     getSession,
     getStoredAccessToken,
@@ -69,6 +70,8 @@ export function initTypingChallenge({
     celebrationContent = {},
     draftOptions = {},
     afterAuthUpdate = null,
+    lockOnLoadError = false,
+    errorLocator = false,
     autoScrollNext = true,
     requireAuth = true,
     guestProgress = null,
@@ -83,10 +86,19 @@ export function initTypingChallenge({
         requireAuth = false;
     }
     ensureTypingChallengeTextStyle();
+    if (errorLocator) {
+        levelsData.forEach(({ id }) => {
+            const input = document.getElementById(`input-level${id}`);
+            if (input) trackTypingComposition(input);
+        });
+    }
 
     const maxLevel = levelsData.length;
     const resolvedCourseId = getCurrentCourseId(courseId);
     let currentSession = null;
+    let progressLoadBlocked = lockOnLoadError;
+    let lastLoadedUserId = null;
+    const checkingLevels = new Set();
     let highestUnlockedLevel = 1;
     const messages = { ...DEFAULT_PROGRESS_MESSAGES, ...progressMessages };
     const celebration = { ...DEFAULT_CELEBRATION_CONTENT, ...celebrationContent };
@@ -271,9 +283,11 @@ export function initTypingChallenge({
             if (!button) {
                 return;
             }
-            button.disabled = isLocked;
-            button.classList.toggle("opacity-50", isLocked);
-            button.classList.toggle("cursor-not-allowed", isLocked);
+            const blocked = button === getDraftSaveButton(level) && canSaveBlockedDraft(inputEl)
+                ? isCompleted : isLocked;
+            button.disabled = blocked;
+            button.classList.toggle("opacity-50", blocked);
+            button.classList.toggle("cursor-not-allowed", blocked);
         });
     }
 
@@ -457,6 +471,11 @@ export function initTypingChallenge({
         }
     }
 
+    function canSaveBlockedDraft(inputEl, session = activeDraftSession()) {
+        return lockOnLoadError && progressLoadBlocked && Boolean(session?.user)
+            && lastLoadedUserId === session.user.id && Boolean(inputEl.value.trim());
+    }
+
     async function saveDraft(level) {
         const inputEl = document.getElementById(`input-level${level}`);
         const session = await refreshDraftSession();
@@ -466,7 +485,7 @@ export function initTypingChallenge({
             return;
         }
 
-        if (inputEl.disabled || inputEl.readOnly) {
+        if ((inputEl.disabled && !canSaveBlockedDraft(inputEl, session)) || inputEl.readOnly) {
             return;
         }
 
@@ -790,7 +809,7 @@ export function initTypingChallenge({
             adminBtn?.classList.add("hidden");
         }
 
-        setTypingLocked(requireAuth && !session?.user);
+        setTypingLocked(requireAuth && (!session?.user || progressLoadBlocked));
 
         if (typeof afterAuthUpdate === "function") {
             await afterAuthUpdate(session);
@@ -818,6 +837,10 @@ export function initTypingChallenge({
     }
 
     async function loadProgress() {
+        if (lockOnLoadError) {
+            progressLoadBlocked = true;
+            setTypingLocked(true);
+        }
         if (!currentSession?.user) {
             if (!requireAuth && guestProgress && typeof guestProgress.load === "function") {
                 const progress = await guestProgress.load();
@@ -857,6 +880,11 @@ export function initTypingChallenge({
             return;
         }
 
+        if (lockOnLoadError) {
+            lastLoadedUserId = currentSession.user.id;
+            progressLoadBlocked = false;
+            setTypingLocked(false);
+        }
         if (!data) {
             revealProgress(1, false);
             await loadDraftsOnce();
@@ -1114,6 +1142,15 @@ export function initTypingChallenge({
             return;
         }
 
+        if (checkingLevels.has(levelIndex)) return;
+        checkingLevels.add(levelIndex);
+        try {
+
+        if (lockOnLoadError && progressLoadBlocked) {
+            msgEl.textContent = currentSession?.user ? messages.loadError : messages.loginRequired;
+            return;
+        }
+
         if (inputEl.readOnly) {
             msgEl.textContent = levelEncouragements[levelIndex] || "你把這一關練好了，下次可以接著後面繼續練習。";
             msgEl.className = "text-center font-black mt-4 min-h-12 text-base md:text-lg text-green-600 leading-relaxed";
@@ -1200,19 +1237,26 @@ export function initTypingChallenge({
             void deleteDraft(levelIndex);
             triggerUltimateCelebration();
         } else {
-            const fallbackHint = typeof buildHint === "function"
-                ? buildHint(userVal, targetVal, levelIndex)
-                : null;
-            msgEl.innerHTML = typeof getWrongAnswerHtml === "function"
-                ? getWrongAnswerHtml({ levelIndex, userVal, targetVal, hint: fallbackHint })
-                : (fallbackHint
-                    ? `❌ 哎呀，還有一點點地方不一樣。<br>${fallbackHint}`
-                    : "❌ 哎呀，有錯字或少打換行/標點喔！再檢查一下！");
-            msgEl.className = "text-center font-bold mt-4 h-6 text-lg text-red-500";
+            if (errorLocator) {
+                renderTypingErrorLocator(msgEl, inputEl, targetVal);
+            } else {
+                const fallbackHint = typeof buildHint === "function"
+                    ? buildHint(userVal, targetVal, levelIndex)
+                    : null;
+                msgEl.innerHTML = typeof getWrongAnswerHtml === "function"
+                    ? getWrongAnswerHtml({ levelIndex, userVal, targetVal, hint: fallbackHint })
+                    : (fallbackHint
+                        ? `❌ 哎呀，還有一點點地方不一樣。<br>${fallbackHint}`
+                        : "❌ 哎呀，有錯字或少打換行/標點喔！再檢查一下！");
+                msgEl.className = "text-center font-bold mt-4 h-6 text-lg text-red-500";
+            }
             inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800");
             inputEl.classList.remove("shake");
             void inputEl.offsetWidth;
             inputEl.classList.add("shake", "border-red-500");
+        }
+        } finally {
+            checkingLevels.delete(levelIndex);
         }
     };
 

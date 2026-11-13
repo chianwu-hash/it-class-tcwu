@@ -97,7 +97,7 @@
           }
         ]
       },
-      "navbar": "/grade6/115-1/navbar.js?v=bd70c9ef2677ac94"
+      "navbar": "/grade6/115-1/navbar.js?v=4f0f40f20b0e566e"
     },
     {
       "pastExams": true,
@@ -153,7 +153,7 @@
   "imports": {
     "/grade3/115-1/navbar.js": "/grade3/115-1/navbar.js?v=fc66305972b9c660",
     "/grade4/115-1/navbar.js": "/grade4/115-1/navbar.js?v=b131e21fe9a63722",
-    "/grade6/115-1/navbar.js": "/grade6/115-1/navbar.js?v=bd70c9ef2677ac94",
+    "/grade6/115-1/navbar.js": "/grade6/115-1/navbar.js?v=4f0f40f20b0e566e",
     "/grade9/115-1/navbar.js": "/grade9/115-1/navbar.js?v=b36ae227cdf44973",
     "/shared/auth.js": "/shared/auth.js?v=b02e71a08e840119",
     "/shared/connection-diagnostics.mjs": "/shared/connection-diagnostics.mjs?v=7de3c3f77e225215",
