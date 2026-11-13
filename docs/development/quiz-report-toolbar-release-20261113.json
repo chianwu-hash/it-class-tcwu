@@ -1,0 +1,243 @@
+{
+  "schema": 1,
+  "agent": "Codex-report-toolbar-20261113",
+  "commit": "1469b2f9a485172d2f193456ae26953bd54ea8f1",
+  "pullRequest": 212,
+  "deployment": "dpl_8XxcTzgBKka7XxC4PF3TfJupv4ht",
+  "rollback": "dpl_H3yTtodMMqSWUc4WyZ2KZKhK2Y73",
+  "promotedAt": "2026-11-13T02:43:28.970Z",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade3/115-1/past-exam.html",
+      "grade3/115-1/quiz-library.html",
+      "grade3/115-1/quiz.html",
+      "grade4/115-1/partner-practice.html",
+      "grade4/115-1/past-exam.html",
+      "grade4/115-1/quiz-library.html",
+      "grade4/115-1/quiz.html",
+      "grade6/115-1/partner-practice.html",
+      "grade6/115-1/past-exam.html",
+      "grade6/115-1/quiz-library.html",
+      "grade6/115-1/quiz.html",
+      "grade9/115-1/partner-practice.html",
+      "grade9/115-1/past-exam.html",
+      "grade9/115-1/quiz-library.html",
+      "grade9/115-1/quiz.html",
+      "shared/quiz-past-ui.mjs",
+      "shared/quiz-question-reports.css",
+      "shared/quiz-question-reports.mjs",
+      "shared/quiz-server.mjs",
+      "shared/quiz-workshop/generated/assets.json",
+      "shared/quiz-workshop/generated/library.css",
+      "shared/quiz-workshop/generated/partner.css",
+      "shared/quiz-workshop/generated/past.css",
+      "shared/quiz-workshop/generated/quiz.css"
+    ],
+    "added": [],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "browserChecks": 102,
+  "regressionTests": 11,
+  "generatedOutputs": 21,
+  "http": {
+    "passed": true,
+    "at": "2026-11-13T02:44:00.582256+00:00",
+    "deployment": "dpl_8XxcTzgBKka7XxC4PF3TfJupv4ht",
+    "commit": "1469b2f9a485172d2f193456ae26953bd54ea8f1",
+    "files": [
+      {
+        "path": "shared/quiz-question-reports.mjs",
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "sha256_lf": "42e1b8fdfbf9f7941f72d33055d08ecff9b9e63adcb1d6bd38a2f14c16369c0d",
+        "matches_main": true
+      },
+      {
+        "path": "shared/quiz-question-reports.css",
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "sha256_lf": "6b7007f51fed5cb2017a2b4d3320b876be1f2e97ac35d1a0164011285362d78a",
+        "matches_main": true
+      },
+      {
+        "path": "shared/quiz-server.mjs",
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "sha256_lf": "70222a29c19ea84fe4655c4b84d52f9638921d3f29a3912688accf741cfaf1eb",
+        "matches_main": true
+      },
+      {
+        "path": "shared/quiz-past-ui.mjs",
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "sha256_lf": "143f5a719592e1bff72104e9e69086db7d1fefaad827c09dbd5828ba275a2d37",
+        "matches_main": true
+      },
+      {
+        "path": "shared/quiz-workshop/generated/assets.json",
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "sha256_lf": "0c30bb53d57b86ae46be75a88fee2a6d012c89eaf6149a7992b90e139e9de7bd",
+        "matches_main": true
+      },
+      {
+        "path": "shared/quiz-workshop/generated/quiz.css",
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "sha256_lf": "fd557efaf75544ef31941fb046cbbba563fd63bafc55e822e18070500e02f5b6",
+        "matches_main": true
+      },
+      {
+        "path": "shared/quiz-workshop/generated/past.css",
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "sha256_lf": "347bee5958e82232cbcff33c9ada0014f2baeaac717e9d46448eaa8a59ae65b6",
+        "matches_main": true
+      },
+      {
+        "path": "shared/quiz-workshop/generated/partner.css",
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "sha256_lf": "8e94dfb1ec158a0a3dd8fd2a0b85bb8297e45842461f7800ab74364a69d32034",
+        "matches_main": true
+      },
+      {
+        "path": "shared/quiz-workshop/generated/library.css",
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "sha256_lf": "8351ab30f3b42233ac3ee7ea84bb731f97cd1de2f32575e807b0f55e0c7eae0b",
+        "matches_main": true
+      },
+      {
+        "path": "grade3/115-1/quiz.html",
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "sha256_lf": "2a55a23773f38caa16c56fd327fb5df33e3e76cba50005d2a5c274dc585296b9",
+        "matches_main": true
+      },
+      {
+        "path": "grade3/115-1/past-exam.html",
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "sha256_lf": "74330379ab4824fddbea53cee9348010a152408259188658ec3e24087cf2eb42",
+        "matches_main": true
+      },
+      {
+        "path": "grade3/115-1/partner-practice.html",
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "sha256_lf": "7dc9fc54f6a66fdecfc9725ee71c026dbb1b58bea202539b50d21ac793dad04b",
+        "matches_main": true
+      },
+      {
+        "path": "grade3/115-1/quiz-library.html",
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "sha256_lf": "162d436f0b37593b289057c3ae0fbe40017f7a12d44087d5c365b09f9afe1919",
+        "matches_main": true
+      },
+      {
+        "path": "grade4/115-1/quiz.html",
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "sha256_lf": "f20bbdacfe28369052b3e8fe68087faa2984711d566ce7d9e78190e46c15456a",
+        "matches_main": true
+      },
+      {
+        "path": "grade4/115-1/past-exam.html",
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "sha256_lf": "4ffd31d156c64a9f9d066a6527547ca3f08a84777b4e9f197f5dc9f557c223c5",
+        "matches_main": true
+      },
+      {
+        "path": "grade4/115-1/partner-practice.html",
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "sha256_lf": "c6ad15ae36949a4df6ecb9f88487f75704e2c95d6a5155278e71dd5ec090d552",
+        "matches_main": true
+      },
+      {
+        "path": "grade4/115-1/quiz-library.html",
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "sha256_lf": "485188b48c4e1fe2f998f0f372ee16118ff4b597b867883707ac1367f18ff4b2",
+        "matches_main": true
+      },
+      {
+        "path": "grade6/115-1/quiz.html",
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "sha256_lf": "33dc5e36281b0727883b5ebc8829b27f766077310a4bcef793081696d28c0627",
+        "matches_main": true
+      },
+      {
+        "path": "grade6/115-1/past-exam.html",
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "sha256_lf": "7db4f234d32515631f3359e6704e3fe7a9872b4091711c8145c322476e73028a",
+        "matches_main": true
+      },
+      {
+        "path": "grade6/115-1/partner-practice.html",
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "sha256_lf": "e367afcd534ef1f2e7f6ea481a409b7730b7d81e0d1841c0fefcf8bc9d1db0bf",
+        "matches_main": true
+      },
+      {
+        "path": "grade6/115-1/quiz-library.html",
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "sha256_lf": "cdf5b22f262ef7009fb4b622d435a051b06f78eb5b829af1a4cab33454c39414",
+        "matches_main": true
+      },
+      {
+        "path": "grade9/115-1/quiz.html",
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "sha256_lf": "d74f64354f1265d913612e76c1114cf8f7fa61e660d151f769dc734f060db31b",
+        "matches_main": true
+      },
+      {
+        "path": "grade9/115-1/past-exam.html",
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "sha256_lf": "2117e5245fae115a9fadc7bc6ea6c0ea70308656ac735fc2960a3ab59ea875b2",
+        "matches_main": true
+      },
+      {
+        "path": "grade9/115-1/partner-practice.html",
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "sha256_lf": "a1795cba96ce6c1b4776258ef9cd5960d15378877cd23d1cd8decbe5cf1edc03",
+        "matches_main": true
+      },
+      {
+        "path": "grade9/115-1/quiz-library.html",
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "sha256_lf": "99cc85a3b694fe5a0521efd60bf58868b290d315ea86ed78ea1b6f521a88ab82",
+        "matches_main": true
+      }
+    ],
+    "no_student_data_accessed": true
+  },
+  "releaseLockReleased": true,
+  "databaseChanges": false,
+  "productionReportsSent": 0,
+  "studentRecordsAccessed": false
+}

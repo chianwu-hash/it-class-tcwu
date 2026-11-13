@@ -1,8 +1,13 @@
-# 本輪準備：題目回報移至右上角（2026-11-13）
+# 發布登記：題目回報移至右上角（2026-11-13）
 
+| 狀態 | agent | 開始時間 | main commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-report-toolbar-20261113 | 2026-11-13T02:42:27.247Z | `1469b2f` | `dpl_H3yTtodMMqSWUc4WyZ2KZKhK2Y73` | shared/quiz-question-reports.mjs、shared/quiz-question-reports.css、shared/quiz-server.mjs、shared/quiz-past-ui.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/quiz.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/library.css、grade3/115-1/quiz.html、grade3/115-1/past-exam.html、grade3/115-1/partner-practice.html、grade3/115-1/quiz-library.html、grade4/115-1/quiz.html、grade4/115-1/past-exam.html、grade4/115-1/partner-practice.html、grade4/115-1/quiz-library.html、grade6/115-1/quiz.html、grade6/115-1/past-exam.html、grade6/115-1/partner-practice.html、grade6/115-1/quiz-library.html、grade9/115-1/quiz.html、grade9/115-1/past-exam.html、grade9/115-1/partner-practice.html、grade9/115-1/quiz-library.html | `dpl_8XxcTzgBKka7XxC4PF3TfJupv4ht`／回滾 `dpl_H3yTtodMMqSWUc4WyZ2KZKhK2Y73`（eolOnly 0） |
+
+- [正式收據](quiz-report-toolbar-release-20261113.md)／[機器紀錄](quiz-report-toolbar-release-20261113.json)：main1469b2f，25改／額外0，正式25檔一致，鎖已釋放。
 - 使用者指定將「題目出錯回報」移至題目卡片右上角，使版面簡潔。Codex-report-toolbar-20261113從最新main2f6ee5f新工作樹修改，沿用本側驗證通過後發布流程。
 - [掛載方式與驗證](quiz-report-toolbar-20261113.md)：一般與考古共用表單，只移按鈕到標題列右側；收合時底框不占空間，手機考古長標題先占一列。未送說明、同一重試request_id、送出狀態與整份回顧保留；錯題詳情內嵌用法不變。
-- 102桌手機原入口合成檢查、10教材／建置回歸＋1既有真SQL回報權限／重試測試、21產物及95正式任務前檢通過。無正式學生作答／回報、SQL／RLS／教材／Worker變更。下一步PR進main、乾淨main發布與收據。
+- 102桌手機原入口合成檢查、10教材／建置回歸＋1既有真SQL回報權限／重試測試、21產物及95正式任務前檢通過。無正式學生作答／回報、SQL／RLS／教材／Worker變更。已完成PR212、乾淨main發布與正式讀回；收據純文件不另部署。
 
 # 發布登記：國語課本依教材設定翻頁方向（2026-11-13）
 
