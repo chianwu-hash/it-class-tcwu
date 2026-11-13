@@ -1,5 +1,11 @@
 # 共用模組說明
 
+## 練功坊首頁與努力說明（2026-11-13，已驗收並核准發布）
+
+`quiz-library-home.mjs`只重排既有控制項與卷卡，同單元按科目／範圍／版本來源做視覺分組，各卷session ID、題數、進度及操作仍獨立；`quiz-subject-visual.mjs`提供本機SVG圖示。`quiz-library-home.css`及`quiz-library-home-style.css`由builder納入library bundle。保留三／六年級主題、原寵物WebP、各科分色與原導航，不因簡化移除。
+
+首頁不再載入`quiz-learning.mjs`摘要，也不另放努力連結橫列。`my-tree.html`使用`quiz-effort-help.mjs`／`.css`提供原生details說明：初次摘要沿用既有quizTreeData.learning，手動更新僅讀learning summary；換人／換course／登出會reset，晚到回應不得覆蓋。說明不發獎、不寫進度，與原garden／auth分支分離；teacherView不掛載，歷史學期不套115上規則。learning.html的原主動選重點流程不變。實際正式部署識別以agent-handoff最新發布收據為準。
+
 ## 題目回報入口與表單（2026-11-13）
 
 `createQuestionReport()`保留原表單、請求及重試狀態；答題頁使用`mountQuestionReport(host,box)`把按鈕掛到該題標題列右側，收合時表單外框不占版面。主控制器仍按本人attempt／題目保存同一box，重繪、揭答及整份回顧重新掛載同一按鈕，登出／換人依原Map生命週期清除。沒有標題列時保留原內嵌用法；不把回報送出事件綁到答案送出按鈕。

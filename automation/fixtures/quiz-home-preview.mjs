@@ -1,0 +1,6 @@
+const frame=document.getElementById('preview'),scenario=document.getElementById('scenario'),grade=document.getElementById('grade');
+let screen='home';
+const load=()=>{frame.src=screen==='tree'?`/my-tree.html?course=grade${grade.value}-115-1&preview_home=1&open_help=1&preview=preview-home-user-review&preview_case=${scenario.value}`:`/grade${grade.value}/115-1/quiz-library.html?preview_home=1&preview=preview-home-user-review&preview_case=${scenario.value}`;};
+const destinations=document.createElement('div');destinations.className='review-destinations';for(const [value,label]of [['home','首頁'],['tree','努力樹說明']]){const button=document.createElement('button');button.type='button';button.textContent=label;button.dataset.screen=value;button.setAttribute('aria-pressed',String(value===screen));button.onclick=()=>{screen=value;for(const b of destinations.children)b.setAttribute('aria-pressed',String(b===button));load();};destinations.append(button);}document.querySelector('.review-tools strong').after(destinations);
+for(const id of ['desktop','phone'])document.getElementById(id).onclick=()=>{frame.classList.toggle('phone',id==='phone');for(const name of ['desktop','phone'])document.getElementById(name).setAttribute('aria-pressed',String(name===id));};
+scenario.onchange=grade.onchange=load;load();
