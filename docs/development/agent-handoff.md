@@ -1,9 +1,14 @@
-# 本輪準備：國語課本依教材設定翻頁方向（2026-11-13）
+# 發布登記：國語課本依教材設定翻頁方向（2026-11-13）
 
+| 狀態 | agent | 開始時間 | main commit | 基準正式部署 | 預期變更檔 | 新部署／回滾 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-textbook-direction-20261113 | 2026-11-13T02:08:45.179Z | `a8ae85c` | `dpl_GQwWHajhTk2TZ2hAnM2y8YRJFnwu` | shared/quiz-textbook-reader.mjs、shared/quiz-workshop/generated/assets.json、grade3/115-1/quiz.html、grade3/115-1/past-exam.html、grade3/115-1/partner-practice.html、grade3/115-1/quiz-library.html、grade4/115-1/quiz.html、grade4/115-1/past-exam.html、grade4/115-1/partner-practice.html、grade4/115-1/quiz-library.html、grade6/115-1/quiz.html、grade6/115-1/past-exam.html、grade6/115-1/partner-practice.html、grade6/115-1/quiz-library.html、grade9/115-1/quiz.html、grade9/115-1/past-exam.html、grade9/115-1/partner-practice.html、grade9/115-1/quiz-library.html、+shared/quiz-textbook-settings.mjs | `dpl_H3yTtodMMqSWUc4WyZ2KZKhK2Y73`／回滾 `dpl_GQwWHajhTk2TZ2hAnM2y8YRJFnwu`（eolOnly 0） |
+
+- [正式收據](quiz-textbook-direction-release-20261113.md)／[機器紀錄](quiz-textbook-direction-release-20261113.json)：main a8ae85c、18改1增／額外0、正式19檔一致，發布鎖已釋放。
 - 使用者已授權驗證通過後上線。Codex-textbook-direction-20261113在最新main3d2b543新工作樹處理，與主對話題庫轉化分開。
 - [設定、來源與驗證](quiz-textbook-direction-20261113.md)：核正式教材目錄與原頁後，只登記康軒115上三／六年級國語的RTL設定；左下一頁、右上一頁，印刷頁碼仍遞增。九年級國文教冊待原頁，不推測、不新增設定。
 - 方向99項＋縮放83項桌手機原入口合成驗證、10項回歸及21產物通過；95正式任務與排除來源0前檢通過。保留80%／20%、翻頁、完整拉頁、選答及每頁位置記憶；無SQL、權限、教材上傳或學生紀錄變更。
-- 接著PR進main、全新乾淨main發布，正式完整樹、HTTP讀回及收據另補。
+- 已完成PR210、全新乾淨main發布及正式HTTP回讀；收據純文件不另部署。
 
 # 六年級自然再增6原生圖表／分類：四科新版1051來源（2026-11-13）
 
