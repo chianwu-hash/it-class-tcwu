@@ -14,7 +14,7 @@ const styles={
  quiz:['shared/quiz-author.css','shared/quiz-student.css',...common,'shared/quiz-workspace.css','shared/quiz-learning.css','shared/quiz-textbook-reader.css','shared/quiz-workshop.css'],
  past:['shared/quiz-author.css','shared/quiz-student.css',...common,'shared/quiz-past-style.css','shared/quiz-workspace.css','shared/quiz-textbook-reader.css','shared/quiz-workshop.css'],
  partner:[...common,'shared/quiz-library.css',...['style','visual','focused','message-media','team-flow','outcomes'].map(s=>`shared/partner-pilot/${s}.css`),'shared/quiz-workspace.css','shared/partner-pilot/review-layout.css','shared/quiz-workshop.css'],
- library:[...common,'shared/quiz-student.css','shared/quiz-wrong-questions.css','shared/quiz-library.css','shared/quiz-compose.css','shared/quiz-learning.css','shared/quiz-workshop.css'],
+ library:[...common,'shared/quiz-student.css','shared/quiz-wrong-questions.css','shared/quiz-library.css','shared/quiz-compose.css','shared/quiz-learning.css','shared/quiz-workshop.css','shared/quiz-library-home.css'],
 };
 const outputs=new Map(), moduleSources=new Map(), imports={};
 const dependencyPattern=()=>/['"](\.{1,2}\/[^'"\s]+\.(?:m?js)(?:\?[^'"\s]*)?)['"]/g;

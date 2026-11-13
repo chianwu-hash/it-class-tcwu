@@ -1,0 +1,67 @@
+/* Home prototype: hierarchy changes only. Keep each original paper and control. */
+.library-home-layout .library-hero{border-radius:0 0 24px 24px}
+.library-home-layout .library-hero-inner{padding:18px 24px}
+.library-home-layout .library-hero h1{font-size:30px;margin:4px 0}
+.library-home-layout .library-parent,.library-home-layout .hero-ornament{display:none}
+.library-home-layout .library-hero .library-grade{display:none}
+.library-home-layout #cloud-identity{position:absolute;width:1px;height:1px;padding:0;margin:-1px;clip-path:inset(50%);overflow:hidden;white-space:nowrap}
+.home-filterbar{display:flex;align-items:stretch;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.library-home-layout .home-filterbar>.practice-scope{margin:0;flex:none}.library-home-layout .home-filterbar>.filters{flex:1}
+.library-home-layout .home-filterbar .practice-scope h2{display:none}
+.library-home-layout .library-grade{margin-left:0}
+.library-home-layout main{max-width:1100px;padding-top:18px}
+.library-home-layout #home-partner-slot:empty,.library-home-layout #home-effort-slot:empty{display:none}
+.library-home-layout [data-partner-pilot-entry="main"]{display:flex;align-items:center;gap:16px;padding:10px 16px;border:1px solid var(--quiz-border);border-radius:14px;box-shadow:none;margin-bottom:8px}
+.library-home-layout [data-partner-pilot-entry="main"] h2{font-size:17px;white-space:nowrap;margin:0}
+.library-home-layout [data-partner-pilot-entry="main"]>p,.library-home-layout .partner-entry-art{display:none}
+.library-home-layout [data-partner-pilot-entry="main"] .partner-entry-actions{display:flex;gap:12px;margin:0;padding:0;flex:1;justify-content:flex-end}
+.library-home-layout [data-partner-pilot-entry="main"] .paper-start{background:transparent;color:var(--quiz-primary-dark);box-shadow:none;border:0;font-size:14px;min-height:44px;padding:10px 8px;display:inline-flex;align-items:center}
+.library-home-layout #home-effort-slot .learning-summary{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:4px 0;margin:0 0 14px;border:0;box-shadow:none;background:transparent}
+.library-home-layout #home-effort-slot .learning-summary[hidden]{display:none}
+.library-home-layout #home-effort-slot .learning-summary>a{font-weight:750;color:var(--quiz-primary-dark);padding:8px 0;min-height:44px;display:inline-flex;align-items:center}
+.home-effort-details{font-size:14px;max-width:100%}.home-effort-details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;text-decoration:underline;text-underline-offset:3px}.home-effort-details[open]{flex-basis:100%;padding:12px;background:white;border:1px solid var(--quiz-border);border-radius:12px}
+.library-home-layout .home-effort-details h2{font-size:18px}.home-effort-details a{display:inline-block;margin-right:14px;padding:8px 0}
+.library-home-layout #continue-practice{padding:18px 20px;border:1px solid var(--quiz-border);border-left:5px solid var(--quiz-primary);background:white;border-radius:16px;margin:0 0 24px;display:block}
+.library-home-layout #continue-practice[hidden]{display:none}
+.library-home-layout #continue-practice h2{font-size:20px;margin:0 0 4px}.home-continue-hint{font-size:14px;margin:0 0 8px;color:var(--quiz-primary-dark)}
+.home-continue-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 0;border-top:1px solid var(--quiz-border)}.home-continue-row>div{min-width:0}.home-continue-row strong{display:block;font-size:16px}.home-continue-row span{display:block;font-size:13px;margin-top:5px;color:#52666b}
+.library-home-layout #continue-practice .paper-start{flex:none;font-size:14px;min-height:44px;padding:10px 16px;width:auto;margin:0}
+.home-continue-more summary{min-height:44px;align-content:center;cursor:pointer;font-size:14px;color:var(--quiz-primary-dark)}
+.library-home-layout #home-pick-title{font-size:24px;margin:0 0 5px;color:var(--quiz-primary-dark)}.home-pick-hint{font-size:15px;margin:0 0 14px}
+.library-home-layout .library-tabs{margin:0 0 12px;gap:6px}.library-home-layout .library-tabs button{min-height:44px;padding:10px 8px;font-size:15px}
+.library-home-layout .practice-scope{display:flex;align-items:center;gap:12px;padding:10px 14px;margin:0 0 8px;border-width:1px;border-radius:12px}.library-home-layout .practice-scope[hidden]{display:none}
+.library-home-layout .practice-scope h2{font-size:14px;white-space:nowrap;margin:0}.library-home-layout .practice-scope p{display:none}.library-home-layout .practice-scope-options{gap:8px}.library-home-layout .practice-scope-options button{font-size:14px;min-height:44px;padding:8px 12px;border-radius:9px}
+.library-home-layout .filters{padding:8px 12px;border-width:1px;border-radius:12px;gap:8px}.library-home-layout .filters[hidden]{display:none}
+.home-subjects{display:flex;flex-wrap:wrap;gap:6px}.library-home-layout .home-subjects button{font-size:14px;min-height:44px;padding:8px 12px;border-radius:9px;background:white}
+.home-subjects button[aria-pressed=true]{color:var(--quiz-primary-dark);background:var(--quiz-tint)!important;outline:2px solid var(--quiz-primary);outline-offset:-2px}
+.library-home-layout #refresh-library{font-size:12px;padding:8px;min-height:44px;border:0;background:transparent}
+.library-home-layout #cloud-status{font-size:12px;min-height:0;margin:8px 2px}
+.library-home-layout .paper-collection{padding:16px;background:white;border:1px solid var(--quiz-border);border-radius:16px;margin:10px 0}
+.library-home-layout .collection-heading{margin-bottom:14px}.library-home-layout .collection-heading h2{font-size:18px;margin:0}.library-home-layout .collection-heading>p,.library-home-layout .collection-label{display:none}
+.library-home-layout #cloud-papers,.library-home-layout #cloud-papers .scope-unclassified>.papers{display:flex;flex-direction:column;gap:14px}
+.home-unit-group{border:1px solid var(--quiz-border);border-radius:12px;overflow:hidden;background:white}
+.home-unit-heading{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--quiz-tint)}.home-unit-heading h3{margin:0;font-size:18px;line-height:1.5}.home-unit-subject{font-size:12px;font-weight:750;color:var(--quiz-primary-dark);white-space:nowrap}
+.library-home-layout .paper-collection .home-paper-row{border:0;border-radius:0;box-shadow:none;display:block;padding:0 16px}.library-home-layout .home-paper-row:hover{transform:none;box-shadow:none}.home-paper-row+.home-paper-row{border-top:1px solid var(--quiz-border)!important}
+.library-home-layout .home-paper-row .paper-card-header{display:none}
+.library-home-layout .home-paper-row .paper-card-body{display:grid;grid-template-columns:100px minmax(110px,1fr) auto;align-items:center;gap:8px 16px;padding:12px 0}
+.library-home-layout .home-paper-row .paper-scope-badge{display:none}
+.library-home-layout .home-paper-row p{margin:0;font-size:14px;line-height:1.5}.library-home-layout .home-paper-row .paper-difficulty{font-weight:750;color:var(--quiz-primary-dark)}
+.library-home-layout .home-paper-row progress{grid-column:2;grid-row:2;width:100%;height:5px;max-width:250px;margin:0;align-self:start}
+.library-home-layout .home-paper-row a.paper-start{grid-column:3;grid-row:1 / span 2;width:auto;margin:0;padding:10px 18px;font-size:14px;min-height:44px;box-shadow:none;border-radius:9px}
+.library-home-layout .home-paper-row a[data-partner-pilot-entry="paper"]{grid-column:3;grid-row:3;background:transparent;color:var(--quiz-primary-dark);border:0;box-shadow:none;min-height:44px;font-size:13px;padding:8px 0;margin:0!important;text-decoration:underline;text-underline-offset:3px}
+.library-home-layout .home-paper-row .paper-manage{grid-column:1 / span 2;grid-row:3;margin:0;border:0;padding:0;font-size:12px}.home-paper-row .paper-manage summary{cursor:pointer;min-height:44px;align-content:center}.home-paper-row .paper-manage[open]{grid-column:1/-1;grid-row:4}
+.library-home-layout .home-paper-row .paper-adjustment{grid-column:1 / span 2;grid-row:4}
+.home-compose-link{display:inline-flex;align-items:center;min-height:44px;margin-top:10px;font-size:14px;color:var(--quiz-primary-dark);text-underline-offset:4px}
+.library-home-layout #my-papers-section>#compose-entry{margin:0 0 16px}.library-home-layout #my-papers-section>#quiz-composer{margin-bottom:18px}
+@media(max-width:600px){
+ .library-home-layout .home-filterbar>.practice-scope,.library-home-layout .home-filterbar>.filters{flex:1 1 100%;width:100%;min-width:0}
+ .library-home-layout .library-hero-inner{padding:14px 16px}.library-home-layout .library-hero h1{font-size:26px}.library-home-layout .library-description{font-size:14px}.library-home-layout main{padding:12px 12px 28px}
+ .library-home-layout [data-partner-pilot-entry="main"]{padding:4px 10px;gap:6px;flex-wrap:wrap}.library-home-layout [data-partner-pilot-entry="main"] h2{font-size:15px}.library-home-layout [data-partner-pilot-entry="main"] .partner-entry-actions{gap:4px}.library-home-layout [data-partner-pilot-entry="main"] .paper-start{font-size:12px;padding:8px 4px}
+ .library-home-layout #continue-practice{padding:12px;margin-bottom:20px}.home-continue-row{gap:10px}.home-continue-row strong{font-size:14px}.library-home-layout #continue-practice .paper-start{padding:10px;font-size:13px}
+ .library-home-layout .library-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.library-home-layout .library-tabs button{font-size:14px}
+ .library-home-layout .practice-scope{flex-wrap:wrap;padding:8px;gap:6px}.library-home-layout .practice-scope h2{display:none}.library-home-layout .practice-scope-options{width:100%;gap:6px}.library-home-layout .practice-scope-options button{flex:1;padding:8px;font-size:13px}
+ .library-home-layout .filters{padding:6px 8px}.home-subjects{gap:4px}.library-home-layout .home-subjects button{padding:8px;font-size:13px}.library-home-layout #refresh-library{margin:0}
+ .library-home-layout .paper-collection{padding:10px}.home-unit-heading{padding:10px;gap:8px}.home-unit-heading h3{font-size:16px}.library-home-layout .home-paper-row{padding:0 10px}
+ .library-home-layout .home-paper-row .paper-card-body{grid-template-columns:1fr auto;gap:5px 8px;padding:10px 0}.library-home-layout .home-paper-row .paper-difficulty{grid-column:1;grid-row:1}.library-home-layout .home-paper-row .paper-progress-label{grid-column:1;grid-row:2;font-size:12px}.library-home-layout .home-paper-row progress{grid-column:1;grid-row:3}
+ .library-home-layout .home-paper-row a.paper-start{grid-column:2;grid-row:1 / span 3;padding:10px;font-size:13px}.library-home-layout .home-paper-row a[data-partner-pilot-entry="paper"]{grid-column:2;grid-row:4;font-size:12px}.library-home-layout .home-paper-row .paper-manage{grid-column:1;grid-row:4}.home-paper-row .paper-manage[open]{grid-column:1/-1!important;grid-row:5!important}
+}

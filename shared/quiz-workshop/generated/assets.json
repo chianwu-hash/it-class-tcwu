@@ -146,9 +146,9 @@
       "/shared/partner-pilot/app.mjs?v=e9869e0a6a7cf4e8"
     ],
     "library": [
-      "/shared/quiz-library.mjs?v=4bc8ac2e49d38d41",
-      "/shared/quiz-learning.mjs?v=1eea3f91fc174637",
-      "/shared/quiz-partner-pilot-entry.mjs?v=caa40ae3f7a634c2"
+      "/shared/quiz-library.mjs?v=cd0b6a744e22532b",
+      "/shared/quiz-learning.mjs?v=cf33a974377f7428",
+      "/shared/quiz-partner-pilot-entry.mjs?v=6daec8f77106da28"
     ]
   },
   "imports": {
@@ -235,8 +235,9 @@
     "/shared/quiz-grade-route.mjs": "/shared/quiz-grade-route.mjs?v=ca3ba8070f105bdf",
     "/shared/quiz-grade-route.mjs?v=20261102-grade9-release": "/shared/quiz-grade-route.mjs?v=ca3ba8070f105bdf",
     "/shared/quiz-leaf-celebration.mjs": "/shared/quiz-leaf-celebration.mjs?v=cc1b034d980fb775",
-    "/shared/quiz-learning.mjs": "/shared/quiz-learning.mjs?v=1eea3f91fc174637",
-    "/shared/quiz-library.mjs": "/shared/quiz-library.mjs?v=4bc8ac2e49d38d41",
+    "/shared/quiz-learning.mjs": "/shared/quiz-learning.mjs?v=cf33a974377f7428",
+    "/shared/quiz-library-home.mjs": "/shared/quiz-library-home.mjs?v=ce094533754a1840",
+    "/shared/quiz-library.mjs": "/shared/quiz-library.mjs?v=cd0b6a744e22532b",
     "/shared/quiz-math-response.mjs": "/shared/quiz-math-response.mjs?v=0eed3ac52fc958ba",
     "/shared/quiz-math-response.mjs?v=20261102-math-audio": "/shared/quiz-math-response.mjs?v=0eed3ac52fc958ba",
     "/shared/quiz-media.mjs": "/shared/quiz-media.mjs?v=2019f02509b800b5",
@@ -246,7 +247,7 @@
     "/shared/quiz-module.js?v=20261107-boolean-choice": "/shared/quiz-module.js?v=46bdef0bf2bec856",
     "/shared/quiz-nav-identity.mjs": "/shared/quiz-nav-identity.mjs?v=790909b361b22842",
     "/shared/quiz-paper-display.mjs": "/shared/quiz-paper-display.mjs?v=4ea9bffa1f1cf6fa",
-    "/shared/quiz-partner-pilot-entry.mjs": "/shared/quiz-partner-pilot-entry.mjs?v=caa40ae3f7a634c2",
+    "/shared/quiz-partner-pilot-entry.mjs": "/shared/quiz-partner-pilot-entry.mjs?v=6daec8f77106da28",
     "/shared/quiz-partner-rewards.mjs": "/shared/quiz-partner-rewards.mjs?v=57e960278d0e92bd",
     "/shared/quiz-partner-rewards.mjs?v=20261106-keepsake": "/shared/quiz-partner-rewards.mjs?v=57e960278d0e92bd",
     "/shared/quiz-past-catalog.mjs": "/shared/quiz-past-catalog.mjs?v=0a0ea774bdeb164a",

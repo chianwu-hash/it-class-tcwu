@@ -5,6 +5,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {fixtureRPC} from './fixtures/workshop-rpc.mjs';
 import {scopeCatalogRPC} from './fixtures/quiz-scope-rpc.mjs';
+import {homeCatalogRPC} from './fixtures/quiz-home-rpc.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url)),port=Number(process.env.PORT||8872);
 const mime={'.html':'text/html','.mjs':'text/javascript','.js':'text/javascript','.json':'application/json','.css':'text/css','.svg':'image/svg+xml','.webp':'image/webp','.woff2':'font/woff2','.woff':'font/woff','.ttf':'font/ttf'};
 http.createServer(async(req,res)=>{
@@ -14,11 +15,13 @@ http.createServer(async(req,res)=>{
   if(req.method==='POST'&&p==='/__workshop-rpc'){
    if(req.headers.origin!==`http://localhost:${port}`)return send('text/plain','forbidden',403);
    let raw='';for await(const chunk of req){raw+=chunk;if(raw.length>500000)throw Error('too_large');}
-   const payload=JSON.parse(raw);return send('application/json',JSON.stringify((payload.scope?scopeCatalogRPC(payload):null)??fixtureRPC(payload)));
+   const payload=JSON.parse(raw);return send('application/json',JSON.stringify((payload.home?homeCatalogRPC(payload):null)??(payload.scope?scopeCatalogRPC(payload):null)??fixtureRPC(payload)));
   }
   if(req.method!=='GET')throw Error('not_found');
   if(p==='/')return send('text/html',await fs.readFile(path.join(root,'automation/fixtures/workshop-preview.html')));
   if(p==='/study')return send('text/html',await fs.readFile(path.join(root,'automation/fixtures/quiz-study-preview.html')));
+  if(p==='/__home-preview-nav.mjs')return send('text/javascript',`document.addEventListener('click',e=>{const a=e.target.closest('a[href]');if(!a)return;const u=new URL(a.href,location.href);if(u.origin!==location.origin||!(/\\/grade[3469]\\/115-1\\//.test(u.pathname)||u.pathname==='/my-tree.html'))return;for(const k of ['preview_home','preview','preview_case']){const v=new URLSearchParams(location.search).get(k);if(v)u.searchParams.set(k,v);}a.href=u.href;},true);`);
+  if(p==='/my-tree.html'&&url.searchParams.get('preview_home')==='1')return send('text/html','<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>努力樹本機預覽</title><body style="font:18px/1.8 sans-serif;padding:24px"><h1>努力樹入口已保留</h1><p>這是首頁原型的本機導覽示意，不讀取或變更正式努力樹紀錄。</p><a href="/grade3/115-1/quiz-library.html?preview_home=1&preview=preview-home-demo">回首頁原型</a></body></html>');
   if(p==='/__workshop-image.svg')return send('image/svg+xml','<svg xmlns="http://www.w3.org/2000/svg" width="220" height="100"><rect width="220" height="100" fill="#e0f2fe"/><path d="M20 60h180l-30 30H50z" fill="#0f766e"/></svg>');
   if(p==='/__workshop-study-page.svg'){
    const wide=url.searchParams.get('spread')==='true';
@@ -27,13 +30,14 @@ http.createServer(async(req,res)=>{
   if(p==='/__workshop-audio.wav'){
    const bytes=Buffer.alloc(44+1600);bytes.write('RIFF');bytes.writeUInt32LE(bytes.length-8,4);bytes.write('WAVEfmt ',8);bytes.writeUInt32LE(16,16);bytes.writeUInt16LE(1,20);bytes.writeUInt16LE(1,22);bytes.writeUInt32LE(8000,24);bytes.writeUInt32LE(16000,28);bytes.writeUInt16LE(2,32);bytes.writeUInt16LE(16,34);bytes.write('data',36);bytes.writeUInt32LE(1600,40);res.writeHead(200,{'Content-Type':'audio/wav'});return res.end(bytes);
   }
-  if(p==='/shared/auth.js')return send('text/javascript',(await fs.readFile(path.join(root,'automation/fixtures/nav-identity-auth.mjs'),'utf8'))+'\nsupabase.auth.getSession=async()=>({data:{session:window.fixtureSession},error:null});const previewUser=new URLSearchParams(location.search).get("preview_user");if(["a","b"].includes(previewUser))window.fixtureSwitch(previewUser);');
+  if(p==='/shared/auth.js')return send('text/javascript',(await fs.readFile(path.join(root,'automation/fixtures/nav-identity-auth.mjs'),'utf8'))+'\nsupabase.auth.getSession=async()=>({data:{session:window.fixtureSession},error:null});const previewUser=new URLSearchParams(location.search).get("preview_user");if(["a","b"].includes(previewUser))window.fixtureSwitch(previewUser);if(new URLSearchParams(location.search).get("preview_home")==="1"){const original=supabase.rpc;supabase.rpc=async(name,body)=>{if(!["quiz_partner_pilot_access","quiz_partner_pilot_action"].includes(name))return original(name,body);const q=new URLSearchParams(location.search),r=await fetch("/__workshop-rpc",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({route:name,body,grade:Number(document.body.dataset.grade),user:window.fixtureSession?.user?.id,namespace:q.get("preview"),home:true,homeCase:q.get("preview_case")||"returning"})});return {data:await r.json(),error:null};};}');
   if(p==='/shared/garden-unlock-notice.mjs')return send('text/javascript','export function afterGardenReward(){};export function checkGardenUnlock(){}');
-  if(p==='/shared/quiz-transport.mjs')return send('text/javascript',`export function createAuthenticatedTransport({getSession}){return async(route,body)=>{window.workshopCalls??=[];window.workshopCalls.push({route,body});const params=new URLSearchParams(location.search);const r=await fetch('/__workshop-rpc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({route,body,grade:Number(document.body.dataset.grade),user:getSession()?.user?.id,namespace:params.get('preview')||'default',roomKind:params.get('preview_kind')||'normal',study:params.get('preview_study')==='1',scope:params.get('preview_scope')==='1'})});const result=await r.json();if(!r.ok)throw Error(result.error);if(window.workshopDropNext){window.workshopDropNext=false;throw TypeError('synthetic_lost_response');}return result;};}`);
-  if(!p.startsWith('/shared/')&&!p.startsWith('/automation/fixtures/')&&!/^\/grade[3469]\/115-1\/(quiz|past-exam|partner-practice|quiz-library)\.html$/.test(p)&&!/^\/grade[3469]\/115-1\/navbar.js$/.test(p))throw Error('not_found');
+  if(p==='/shared/quiz-transport.mjs')return send('text/javascript',`export function createAuthenticatedTransport({getSession}){return async(route,body)=>{window.workshopCalls??=[];window.workshopCalls.push({route,body});const params=new URLSearchParams(location.search);const r=await fetch('/__workshop-rpc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({route,body,grade:Number(document.body.dataset.grade),user:getSession()?.user?.id,namespace:params.get('preview')||'default',roomKind:params.get('preview_kind')||'normal',study:params.get('preview_study')==='1',scope:params.get('preview_scope')==='1',home:params.get('preview_home')==='1',homeCase:params.get('preview_case')||'returning'})});const result=await r.json();if(!r.ok)throw Error(result.error);if(window.workshopDropNext){window.workshopDropNext=false;throw TypeError('synthetic_lost_response');}return result;};}`);
+  if(!p.startsWith('/shared/')&&!p.startsWith('/automation/fixtures/')&&!/^\/grade[3469]\/115-1\/(quiz|past-exam|partner-practice|quiz-library|learning)\.html$/.test(p)&&!/^\/grade[3469]\/115-1\/navbar.js$/.test(p))throw Error('not_found');
   const file=path.resolve(root,'.'+p);if(!file.startsWith(path.resolve(root)+path.sep))throw Error('not_found');
   let bytes=await fs.readFile(file);
   if(/^\/grade[3469]\/115-1\/(quiz|past-exam|partner-practice|quiz-library)\.html$/.test(p))bytes=Buffer.from(bytes.toString('utf8').replace(/(<body[^>]*>)/,'$1<div data-preview-notice style="padding:7px 14px;background:#fff3cc;color:#674b15;font:700 13px sans-serif">本機合成預覽｜不是正式登入；作答、草稿與紀念均不寫入正式資料</div>'));
+  if(url.searchParams.get('preview_home')==='1'&&path.extname(file)==='.html')bytes=Buffer.from(bytes.toString('utf8').replace('</body>','<script type="module" src="/__home-preview-nav.mjs"></script></body>'));
   send(mime[path.extname(file)]||'application/octet-stream',bytes);
  }catch(error){send('application/json',JSON.stringify({error:error.message}),404);}
 }).listen(port,'127.0.0.1',()=>console.log(`練功坊比較預覽：http://localhost:${port}/`));

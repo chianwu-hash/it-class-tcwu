@@ -37,7 +37,8 @@ async function update(session){
   section.append(actions);
   const art=document.createElement('img');art.className='partner-entry-art';art.src=new URL('./partner-pilot/art/welcome-v1.webp',import.meta.url).href;art.alt='';art.setAttribute('aria-hidden','true');art.width=480;art.height=268;art.loading='lazy';art.decoding='async';section.append(art);
   // Also visible to an invited adult without a student roster. Existing student eligibility stays intact.
-  document.querySelector('main')?.prepend(section);
+  const homeSlot=document.getElementById('home-partner-slot');
+  if(homeSlot)homeSlot.append(section);else document.querySelector('main')?.prepend(section);
   function decorate(){
    if(epoch!==generation)return;
    for(const card of document.querySelectorAll('#cloud-papers .paper-card,#past-papers .paper-card,#my-papers .paper-card')){
