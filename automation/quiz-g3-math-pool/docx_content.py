@@ -4,35 +4,11 @@ import sys
 sys.stdout.reconfigure(encoding='utf-8')
 from lxml import etree as E
 from PIL import Image
-import struct
+from pathlib import Path
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"lib"))
+from quiz_fractions import visible_fraction
 formula_audit=[]
-def visible_fraction(raw):
-    # Read the actual visible WMF vector text and fraction bar, never stale OLE values.
-    if raw[:4]!=b'\xd7\xcd\xc6\x9a':return None
-    p=40;texts=[];lines=[];start=None
-    try:
-        while p+6<=len(raw):
-            words,fn=struct.unpack_from('<IH',raw,p)
-            if words<3 or p+words*2>len(raw):return None
-            b=raw[p+6:p+words*2]
-            if fn==0x0a32:
-                y,x,n,opts=struct.unpack_from('<hhhh',b);pos=8+(8 if opts&6 else 0)
-                t=b[pos:pos+n].decode('ascii').strip()
-                if t:texts.append((y,x,t))
-            elif fn==0x0521:
-                n=struct.unpack_from('<H',b)[0];t=b[2:2+n].decode('ascii').strip();y,x=struct.unpack_from('<hh',b,2+((n+1)//2)*2)
-                if t:texts.append((y,x,t))
-            elif fn==0x0214:start=struct.unpack_from('<hh',b)
-            elif fn==0x0213:
-                end=struct.unpack_from('<hh',b)
-                if start and start[0]==end[0] and abs(start[1]-end[1])>30:lines.append((start,end))
-                start=end
-            p+=words*2
-        if len(texts)!=2 or len(lines)!=1 or any(not re.fullmatch(r'[0-9]{1,4}',t[2]) for t in texts):return None
-        top,bottom=sorted(texts);bar=lines[0][0][0]
-        if not top[0]<bar<bottom[0] or int(bottom[2])==0:return None
-        return '\\frac{'+top[2]+'}{'+bottom[2]+'}'
-    except (ValueError,struct.error,UnicodeDecodeError):return None
+
 base=pathlib.Path(__file__).resolve().parent
 
 ns={'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main','a':'http://schemas.openxmlformats.org/drawingml/2006/main','r':'http://schemas.openxmlformats.org/officeDocument/2006/relationships','v':'urn:schemas-microsoft-com:vml','wp':'http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing'}
