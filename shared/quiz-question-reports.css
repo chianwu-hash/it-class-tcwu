@@ -2,5 +2,11 @@
 .quiz-question-report .quiz-report-toggle{cursor:pointer;font-weight:700}.quiz-question-report form{display:grid;gap:.7rem;margin-top:.7rem}.quiz-question-report form[hidden]{display:none}.quiz-question-report p{margin:.2rem 0}
 .quiz-question-report select,.quiz-question-report textarea{box-sizing:border-box;max-width:100%;width:100%;font:inherit;padding:.6rem;border:1px solid #b5accd;border-radius:.5rem;background:white;color:#29354b}
 .quiz-question-report button,.quiz-report-admin button{font:inherit;padding:.55rem .9rem;cursor:pointer}.quiz-question-report button{justify-self:start}
+.quiz-question-report[hidden]{display:none}
+.quiz-question-report.is-toolbar-report{margin:.8rem 0 0}
+.quiz-question-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.quiz-question-toolbar>.quiz-report-toolbar-toggle{flex:0 0 auto;align-self:center;margin:0 0 0 auto;min-height:36px;padding:6px 10px;border:1px solid #c8c1df;border-radius:8px;background:#faf9ff;color:#5744a5;font:700 .85rem/1.4 system-ui,sans-serif;white-space:nowrap;cursor:pointer}
+.quiz-report-toolbar-toggle:focus-visible{outline:3px solid #dc9f2c;outline-offset:2px}
+@media(max-width:700px){.quiz-question-toolbar{gap:6px}.card-title.quiz-question-toolbar>div{flex-basis:100%}.quiz-question-toolbar>.quiz-report-toolbar-toggle{min-height:44px;padding:6px 8px;font-size:12px}}
 .quiz-report-admin{margin:1rem 0;padding:1rem;border:1px solid #c8c1df;border-radius:1rem;overflow-wrap:anywhere}.quiz-report-admin .report-toolbar{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
 .quiz-report-admin article{border-top:1px solid #ddd;padding:1rem 0}.quiz-report-admin select,.quiz-report-admin textarea{font:inherit;max-width:100%;box-sizing:border-box;padding:.5rem}.quiz-report-admin textarea{display:block;width:100%;margin:.7rem 0}.quiz-report-admin dialog{width:min(850px,90vw);max-height:85vh;overflow:auto}.quiz-report-admin dialog::backdrop{background:#18203888}.quiz-report-admin img{max-width:100%;height:auto}.quiz-report-admin audio{max-width:100%}

@@ -1,5 +1,9 @@
 # 共用模組說明
 
+## 題目回報入口與表單（2026-11-13）
+
+`createQuestionReport()`保留原表單、請求及重試狀態；答題頁使用`mountQuestionReport(host,box)`把按鈕掛到該題標題列右側，收合時表單外框不占版面。主控制器仍按本人attempt／題目保存同一box，重繪、揭答及整份回顧重新掛載同一按鈕，登出／換人依原Map生命週期清除。沒有標題列時保留原內嵌用法；不把回報送出事件綁到答案送出按鈕。
+
 ## 共用畫板與個人計算紙（2026-11-12，已驗收並核准發布）
 
 `shared/sketch/editor.mjs`／`model.mjs`／`contract.mjs`及`editor.css`提取原夥伴畫板；舊partner入口保留re-export並共用核心。`createSketchEditor(host,{value,onChange,onSave,messages,toolbarHost})`回傳getValue、setDisabled、destroy，資料仍為原version:1／strokes／可選colors，最多80筆／每筆128點。可選toolbarHost讓個人計算紙把工具放入單列header，destroy會同步清掉外置工具；未指定則保留原夥伴結構。`shared/tool-icons.mjs`為原工具圖示的共用入口。
