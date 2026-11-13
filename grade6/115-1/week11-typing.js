@@ -48,7 +48,7 @@ initTypingChallenge({
     draftOptions: { enabled: true }, buildHint, lockOnLoadError: true,
     levelEncouragements: Object.fromEntries(challenge.levels.map(({id}) => [id, challenge.boss ? '你耐心完成長文的逐行檢查，並修正到完全正確。' : ({1: '你仔細選字，也保留了句子的標點。', 2: '你注意大小寫、縮寫與空白，完成了點餐問答。', 3: '你檢查了引號，把句子完整保留下來。', 4: '你保留三行問答，並檢查 sandwiches 的拼字。', 5: '你逐段修正完成前五關，得到一片葉子；可以休息，下次再接續。', 6: '你靠逐行檢查完成中英切換，保留一葉，再開一花。'})[id]])),
     progressMessages: {
-        loadError: '進度暫時讀取不到，闖關先暫停；請重新整理重試，其他教學與快手入口仍可使用。',
+        loadError: '進度暫時讀取不到，闖關先暫停；已有輸入可先按「儲存草稿」，再重新整理重試。其他教學與快手入口仍可使用。',
         completed: challenge.boss ? '🌸 這個魔王已完成，已取得1朵花。重新練習不會重複增加。' : '六關完成，共一葉一花。可以自由選擇快手任務，重練不重複給獎。',
         resumed: level => `已接回${challenge.title}，從第${level}關繼續。未完成的文字請按「回復上次草稿」。`,
         unauthenticated: '請先登入學校Google帳號，才能開始並保存自己的進度。',

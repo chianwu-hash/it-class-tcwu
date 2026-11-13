@@ -89,6 +89,8 @@ export function initTypingChallenge({
     const resolvedCourseId = getCurrentCourseId(courseId);
     let currentSession = null;
     let progressLoadBlocked = lockOnLoadError;
+    let lastLoadedUserId = null;
+    const checkingLevels = new Set();
     let highestUnlockedLevel = 1;
     const messages = { ...DEFAULT_PROGRESS_MESSAGES, ...progressMessages };
     const celebration = { ...DEFAULT_CELEBRATION_CONTENT, ...celebrationContent };
@@ -273,9 +275,11 @@ export function initTypingChallenge({
             if (!button) {
                 return;
             }
-            button.disabled = isLocked;
-            button.classList.toggle("opacity-50", isLocked);
-            button.classList.toggle("cursor-not-allowed", isLocked);
+            const blocked = button === getDraftSaveButton(level) && canSaveBlockedDraft(inputEl)
+                ? isCompleted : isLocked;
+            button.disabled = blocked;
+            button.classList.toggle("opacity-50", blocked);
+            button.classList.toggle("cursor-not-allowed", blocked);
         });
     }
 
@@ -459,6 +463,11 @@ export function initTypingChallenge({
         }
     }
 
+    function canSaveBlockedDraft(inputEl, session = activeDraftSession()) {
+        return lockOnLoadError && progressLoadBlocked && Boolean(session?.user)
+            && lastLoadedUserId === session.user.id && Boolean(inputEl.value.trim());
+    }
+
     async function saveDraft(level) {
         const inputEl = document.getElementById(`input-level${level}`);
         const session = await refreshDraftSession();
@@ -468,7 +477,7 @@ export function initTypingChallenge({
             return;
         }
 
-        if (inputEl.disabled || inputEl.readOnly) {
+        if ((inputEl.disabled && !canSaveBlockedDraft(inputEl, session)) || inputEl.readOnly) {
             return;
         }
 
@@ -864,6 +873,7 @@ export function initTypingChallenge({
         }
 
         if (lockOnLoadError) {
+            lastLoadedUserId = currentSession.user.id;
             progressLoadBlocked = false;
             setTypingLocked(false);
         }
@@ -1124,6 +1134,10 @@ export function initTypingChallenge({
             return;
         }
 
+        if (checkingLevels.has(levelIndex)) return;
+        checkingLevels.add(levelIndex);
+        try {
+
         if (lockOnLoadError && progressLoadBlocked) {
             msgEl.textContent = currentSession?.user ? messages.loadError : messages.loginRequired;
             return;
@@ -1228,6 +1242,9 @@ export function initTypingChallenge({
             inputEl.classList.remove("shake");
             void inputEl.offsetWidth;
             inputEl.classList.add("shake", "border-red-500");
+        }
+        } finally {
+            checkingLevels.delete(levelIndex);
         }
     };
 
