@@ -109,6 +109,8 @@
 
 ## `shared/typing-challenge.js`
 
+2026-11-13 新增可選 `lockOnLoadError: true`：Google 正式進度讀取中或失敗時鎖住輸入／檢查，連直接呼叫 `checkLevel()` 也不保存；成功接回後才開放。六年級115-1第11週及兩個獨立魔王明確啟用，預設false，舊頁及既有adapter維持原行為。請提供對應 `progressMessages.loadError`，說明重新整理重試。驗收以保存回覆、下一關顯示及資料庫讀回為準，不能因輸入框先變readOnly就立即重整。
+
 **責任**：管理多關卡打字練習的完整生命週期：session 解析、進度讀取、關卡解鎖、答案驗證、進度儲存、進度重置、慶祝動畫、auth UI 更新，以及 opt-in 的手動草稿暫存 / 回復。一般 Google 登入頁讀寫 Supabase `student_progress`；三年級 Google 登入前的課堂身分卡分支可透過 `guestProgress` adapter 讀寫 `guest_progress`。
 
 **匯出**：`initTypingChallenge({ weekCode, activityKey, levelsData, levelEncouragements, buildHint, getWrongAnswerHtml, progressMessages, celebrationContent, draftOptions, afterAuthUpdate, autoScrollNext, requireAuth, guestProgress })`

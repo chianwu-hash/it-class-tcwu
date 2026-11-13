@@ -26,7 +26,7 @@ test('新六關在0～4關零葉、5關一葉、6關一葉一花；ID穩定且�
  assert.deepEqual(model(5).rewards.map(r=>r.id),model(6).rewards.filter(r=>r.kind==='typing-leaf').map(r=>r.id));
 });
 test('所有舊活動按原規則保留：逐關葉、一般魔王花、獨立魔王',()=>{
- for(const c of getRewardTreeCourses())for(const entry of c.activities.filter(x=>x.type==='typing'&&!(c.id===courseId&&x.weekCode==='11'))){const x={...entry,courseId:c.id};for(let n=0;n<=x.totalLevels;n++){const m=model(n,x);assert.equal(m.stats.leafCount,x.rewardMode==='boss'?0:Math.min(n,x.totalLevels-1),c.id+':'+x.weekCode);assert.equal(m.stats.flowerCount,n===x.totalLevels?1:0);}}
+ for(const c of getRewardTreeCourses())for(const entry of c.activities.filter(x=>x.type==='typing'&&x.rewardMode!=='five-then-flower')){const x={...entry,courseId:c.id};for(let n=0;n<=x.totalLevels;n++){const m=model(n,x);assert.equal(m.stats.leafCount,x.rewardMode==='boss'?0:Math.min(n,x.totalLevels-1),c.id+':'+x.weekCode);assert.equal(m.stats.flowerCount,n===x.totalLevels?1:0);}}
 });
 test('目錄驗證接受新模式，拒絕錯關數與錯活動種類',()=>{
  const row={course_id:courseId,week_code:'11',activity_key:'typing_task_6',kind:'typing',total_levels:6,reward_mode:'five-then-flower'};

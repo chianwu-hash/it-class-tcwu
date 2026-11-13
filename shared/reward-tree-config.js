@@ -218,6 +218,9 @@ const GRADE3_114_2_ACTIVITIES = [
 ];
 
 const GRADE6_115_1_ACTIVITIES = [
+    { type: "typing", rewardMode: "five-then-flower", weekCode: "11", activityKey: "typing_task_6", totalLevels: 6, pageHref: "/grade6/115-1/week11.html#typing-section", label: "第 11 週 大小剛好的鞋子與點餐問答" },
+    { type: "typing", rewardMode: "boss", weekCode: "11", activityKey: "typing_boss_zh_1", totalLevels: 1, pageHref: "/grade6/115-1/week11-boss-zh.html", label: "第 11 週 國語進階魔王" },
+    { type: "typing", rewardMode: "boss", weekCode: "11", activityKey: "typing_boss_en_1", totalLevels: 1, pageHref: "/grade6/115-1/week11-boss-en.html", label: "第 11 週 英語進階魔王" },
     { type: "typing", rewardMode: "boss", weekCode: "09", activityKey: "typing_boss_zh_1", totalLevels: 1, pageHref: "/grade6/115-1/week09-boss-zh.html", label: "第 9 週 國語進階魔王" },
     { type: "typing", rewardMode: "boss", weekCode: "09", activityKey: "typing_boss_en_1", totalLevels: 1, pageHref: "/grade6/115-1/week09-boss-en.html", label: "第 9 週 英語進階魔王" },
     { type: "typing", weekCode: "09", activityKey: "typing_task_5", totalLevels: 5, pageHref: "/grade6/115-1/week09.html#typing-section", label: "第 9 週 珍珠奶茶與英語複習" },

@@ -69,6 +69,7 @@ export function initTypingChallenge({
     celebrationContent = {},
     draftOptions = {},
     afterAuthUpdate = null,
+    lockOnLoadError = false,
     autoScrollNext = true,
     requireAuth = true,
     guestProgress = null,
@@ -87,6 +88,7 @@ export function initTypingChallenge({
     const maxLevel = levelsData.length;
     const resolvedCourseId = getCurrentCourseId(courseId);
     let currentSession = null;
+    let progressLoadBlocked = lockOnLoadError;
     let highestUnlockedLevel = 1;
     const messages = { ...DEFAULT_PROGRESS_MESSAGES, ...progressMessages };
     const celebration = { ...DEFAULT_CELEBRATION_CONTENT, ...celebrationContent };
@@ -790,7 +792,7 @@ export function initTypingChallenge({
             adminBtn?.classList.add("hidden");
         }
 
-        setTypingLocked(requireAuth && !session?.user);
+        setTypingLocked(requireAuth && (!session?.user || progressLoadBlocked));
 
         if (typeof afterAuthUpdate === "function") {
             await afterAuthUpdate(session);
@@ -818,6 +820,10 @@ export function initTypingChallenge({
     }
 
     async function loadProgress() {
+        if (lockOnLoadError) {
+            progressLoadBlocked = true;
+            setTypingLocked(true);
+        }
         if (!currentSession?.user) {
             if (!requireAuth && guestProgress && typeof guestProgress.load === "function") {
                 const progress = await guestProgress.load();
@@ -857,6 +863,10 @@ export function initTypingChallenge({
             return;
         }
 
+        if (lockOnLoadError) {
+            progressLoadBlocked = false;
+            setTypingLocked(false);
+        }
         if (!data) {
             revealProgress(1, false);
             await loadDraftsOnce();
@@ -1111,6 +1121,11 @@ export function initTypingChallenge({
         const msgEl = document.getElementById(`msg-level${levelIndex}`);
 
         if (!inputEl || !msgEl) {
+            return;
+        }
+
+        if (lockOnLoadError && progressLoadBlocked) {
+            msgEl.textContent = currentSession?.user ? messages.loadError : messages.loginRequired;
             return;
         }
 
