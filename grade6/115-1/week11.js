@@ -32,4 +32,4 @@ if (demo) {
     }));
 }
 initNavbarAuth();
-import './week11-typing.js?v=20261113';
+import './week11-typing.js?v=20261113-locator';

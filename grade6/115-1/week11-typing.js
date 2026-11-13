@@ -1,4 +1,4 @@
-import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261113-g6w11';
+import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261113-locator';
 import { initTypingTools } from '../../shared/typing-tools.js';
 import { challenges } from './week11-typing-data.js?v=20261113';
 
@@ -14,7 +14,7 @@ challenge.levels.forEach(({ id, title = challenge.title, ans }, index) => {
     const grid = document.createElement('div'); grid.className = 'typing-grid';
     const source = document.createElement('div');
     const targetLabel = document.createElement('p'); targetLabel.className = 'typing-label';
-    targetLabel.textContent = `📖 題目・${ans.split('\n').length}行｜依照換行逐字輸入`;
+    targetLabel.textContent = challenge.boss ? '📖 題目｜依 Enter 換行；畫面自動折行不用另按 Enter' : `📖 題目・${ans.split('\n').length}行｜依照換行逐字輸入`;
     const target = document.createElement('pre'); target.className = 'typing-target select-none pointer-events-none'; target.textContent = ans;
     source.append(targetLabel, target);
     const work = document.createElement('div');
@@ -26,7 +26,7 @@ challenge.levels.forEach(({ id, title = challenge.title, ans }, index) => {
     input.setAttribute('onpaste', 'return false;'); input.setAttribute('ondrop', 'return false;');
     const button = document.createElement('button'); button.type = 'button'; button.className = 'typing-check'; button.disabled = true;
     button.setAttribute('onclick', `checkLevel(${id})`); button.textContent = challenge.boss ? '🌸 檢查全文・挑戰魔王' : '檢查答案';
-    const msg = document.createElement('p'); msg.id = `msg-level${id}`; msg.className = 'typing-message'; msg.setAttribute('aria-live', 'polite');
+    const msg = document.createElement('div'); msg.id = `msg-level${id}`; msg.className = 'typing-message'; msg.setAttribute('aria-live', 'polite');
     work.append(label, input, button, msg); grid.append(source, work); article.append(heading, grid); root.append(article);
 });
 
@@ -45,7 +45,7 @@ initTypingTools();
 initTypingChallenge({
     courseId: 'grade6-115-1', weekCode: '11', activityKey: challenge.key,
     levelsData: challenge.levels.map(({id, ans}) => ({id, ans})),
-    draftOptions: { enabled: true }, buildHint, lockOnLoadError: true,
+    draftOptions: { enabled: true }, buildHint, errorLocator: Boolean(challenge.boss), lockOnLoadError: true,
     levelEncouragements: Object.fromEntries(challenge.levels.map(({id}) => [id, challenge.boss ? '你耐心完成長文的逐行檢查，並修正到完全正確。' : ({1: '你仔細選字，也保留了句子的標點。', 2: '你注意大小寫、縮寫與空白，完成了點餐問答。', 3: '你檢查了引號，把句子完整保留下來。', 4: '你保留三行問答，並檢查 sandwiches 的拼字。', 5: '你逐段修正完成前五關，得到一片葉子；可以休息，下次再接續。', 6: '你靠逐行檢查完成中英切換，保留一葉，再開一花。'})[id]])),
     progressMessages: {
         loadError: '進度暫時讀取不到，闖關先暫停；已有輸入可先按「儲存草稿」，再重新整理重試。其他教學與快手入口仍可使用。',

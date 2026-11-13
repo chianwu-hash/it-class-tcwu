@@ -1,4 +1,5 @@
 import {afterGardenReward} from './garden-unlock-notice.mjs';
+import { renderTypingErrorLocator, trackTypingComposition } from './typing-error-locator.mjs?v=20261113-locator';
 import {
     getSession,
     getStoredAccessToken,
@@ -70,6 +71,7 @@ export function initTypingChallenge({
     draftOptions = {},
     afterAuthUpdate = null,
     lockOnLoadError = false,
+    errorLocator = false,
     autoScrollNext = true,
     requireAuth = true,
     guestProgress = null,
@@ -84,6 +86,12 @@ export function initTypingChallenge({
         requireAuth = false;
     }
     ensureTypingChallengeTextStyle();
+    if (errorLocator) {
+        levelsData.forEach(({ id }) => {
+            const input = document.getElementById(`input-level${id}`);
+            if (input) trackTypingComposition(input);
+        });
+    }
 
     const maxLevel = levelsData.length;
     const resolvedCourseId = getCurrentCourseId(courseId);
@@ -1229,15 +1237,19 @@ export function initTypingChallenge({
             void deleteDraft(levelIndex);
             triggerUltimateCelebration();
         } else {
-            const fallbackHint = typeof buildHint === "function"
-                ? buildHint(userVal, targetVal, levelIndex)
-                : null;
-            msgEl.innerHTML = typeof getWrongAnswerHtml === "function"
-                ? getWrongAnswerHtml({ levelIndex, userVal, targetVal, hint: fallbackHint })
-                : (fallbackHint
-                    ? `❌ 哎呀，還有一點點地方不一樣。<br>${fallbackHint}`
-                    : "❌ 哎呀，有錯字或少打換行/標點喔！再檢查一下！");
-            msgEl.className = "text-center font-bold mt-4 h-6 text-lg text-red-500";
+            if (errorLocator) {
+                renderTypingErrorLocator(msgEl, inputEl, targetVal);
+            } else {
+                const fallbackHint = typeof buildHint === "function"
+                    ? buildHint(userVal, targetVal, levelIndex)
+                    : null;
+                msgEl.innerHTML = typeof getWrongAnswerHtml === "function"
+                    ? getWrongAnswerHtml({ levelIndex, userVal, targetVal, hint: fallbackHint })
+                    : (fallbackHint
+                        ? `❌ 哎呀，還有一點點地方不一樣。<br>${fallbackHint}`
+                        : "❌ 哎呀，有錯字或少打換行/標點喔！再檢查一下！");
+                msgEl.className = "text-center font-bold mt-4 h-6 text-lg text-red-500";
+            }
             inputEl.classList.remove("border-green-400", "bg-green-50", "text-green-800");
             inputEl.classList.remove("shake");
             void inputEl.offsetWidth;
