@@ -43,8 +43,9 @@ function firstEdit(actual, expected) {
     const size = 64;
     const a = actual.slice(0, size), e = expected.slice(0, size);
     const cost = Array.from({ length: e.length + 1 }, () => new Uint16Array(a.length + 1));
-    for (let i = 0; i <= e.length; i++) cost[i][a.length] = e.length - i;
-    for (let j = 0; j <= a.length; j++) cost[e.length][j] = a.length - j;
+    // The cropped tail is unknown, not a real end of text. Do not charge for it twice.
+    for (let i = 0; i <= e.length; i++) cost[i][a.length] = actual.length > size ? 0 : e.length - i;
+    for (let j = 0; j <= a.length; j++) cost[e.length][j] = expected.length > size ? 0 : a.length - j;
     for (let i = e.length - 1; i >= 0; i--) {
         for (let j = a.length - 1; j >= 0; j--) {
             cost[i][j] = e[i].text === a[j].text ? cost[i + 1][j + 1]
@@ -78,7 +79,10 @@ export function findTypingDifference(raw, answer) {
         && actualTokens[index].text === expectedTokens[index].text) index++;
     const kind = firstEdit(actualTokens.slice(index), expectedTokens.slice(index));
     const actualCount = kind === 'missing' ? 0 : 1, expectedCount = kind === 'extra' ? 0 : 1;
-    const actualStart = actualTokens[index]?.start ?? actualTokens.at(-1)?.rawEnd ?? source.length;
+    const previous = actualTokens[index - 1];
+    // Insert before ignored trailing spaces, so adding a missing line-end character keeps them ignored.
+    const actualStart = kind === 'missing' && previous && previous.text !== '\n'
+        ? previous.rawEnd : actualTokens[index]?.start ?? actualTokens.at(-1)?.rawEnd ?? source.length;
     const actualEnd = actualCount ? actualTokens[index].rawEnd : actualStart;
     return { kind, actualStart, actualEnd,
         expectedStart: expectedTokens[index]?.index ?? expected.length,

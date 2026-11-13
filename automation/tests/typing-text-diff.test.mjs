@@ -17,10 +17,19 @@ test('錯字、多字、少字與尾端定位',()=>{
   ['abc def','abcdef','extra',3,4],['abcdef','abc def','missing',3,3],
   ['甲\n乙','甲乙','extra',1,2],['甲乙','甲\n乙','missing',1,1],
   ['甲,乙','甲，乙','replace',1,2],['甲甲甲乙','甲甲乙','extra',2,3],
+  ['Hello \nNext','Hello.\nNext','missing',5,5],
+  ['Hello  ','Hello.','missing',5,5],['\n  ello','\nHello','missing',3,3],
   ['😀錯文','😀對文','replace',2,3],['Ae\u0301B','AéB','replace',1,3],
   ['A👨‍👩‍👧B','A😀B','replace',1,9]
  ]) {const d=diff(actual,expected);assert.deepEqual([d.kind,d.actualStart,d.actualEnd],[kind,start,end],actual);}
  const prefix='這是一段會在窄螢幕折成很多行的長文。'.repeat(80);
  const d=diff(prefix+'汽象'+prefix,prefix+'氣象'+prefix);
  assert.equal(d.actualStart,prefix.length);assert.equal(d.actualText,'汽');assert.equal(d.expectedText,'氣');assert.ok(d.actualContext.moreBefore);
+});
+
+test('長文截斷視窗不把漏字誤算成兩次替換',()=>{
+ for(const size of [5,63,64,65,100,1000]){
+  const tail='春夏秋冬山川草木'.repeat(size);
+  for(const [a,e,kind] of [['一三'+tail,'一二三'+tail,'missing'],['一多二三'+tail,'一二三'+tail,'extra'],['一錯三'+tail,'一二三'+tail,'replace']])assert.equal(diff(a,e).kind,kind,`${size}:${kind}`);
+ }
 });

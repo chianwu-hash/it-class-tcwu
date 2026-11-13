@@ -7,6 +7,7 @@ export function trackTypingComposition(input) {
     compositions.set(input, state);
     input.addEventListener('compositionstart', () => { state.active = true; });
     input.addEventListener('compositionend', () => { state.active = false; });
+    input.addEventListener('blur', () => { state.active = false; });
 }
 
 function ensureStyle() {

@@ -71,7 +71,7 @@ export const supabase={auth:{getSession,onAuthStateChange(f){listeners.push(f);r
      const {renderTypingErrorLocator:render}=await import('/shared/typing-error-locator.mjs?v=20261113-locator');
      const input=document.querySelector('#input-level1'),root=document.querySelector('#msg-level1');
      const results=[];
-     for(const [actual,answer,kind,start,end] of [['甲丙','甲乙丙','少了',1,1],['甲多乙丙','甲乙丙','多了',1,2],['甲乙','甲\n乙','Enter',1,1],['甲,乙','甲，乙','全形',1,2],['😀錯','😀好','需要',2,3]]) {
+     for(const [actual,answer,kind,start,end] of [['甲丙','甲乙丙','少了',1,1],['甲多乙丙','甲乙丙','多了',1,2],['甲乙','甲\n乙','Enter',1,1],['甲,乙','甲，乙','全形',1,2],['😀錯','😀好','需要',2,3],['Hello \nNext','Hello.\nNext','少了',5,5],['一三'+'四'.repeat(100),'一二三'+'四'.repeat(100),'少了',1,1]]) {
        input.value=actual;render(root,input,answer);root.querySelector('button').click();
        results.push({ok:root.textContent.includes(kind)&&input.selectionStart===start&&input.selectionEnd===end&&input.value===actual,actual});
      }
@@ -80,6 +80,7 @@ export const supabase={auth:{getSession,onAuthStateChange(f){listeners.push(f);r
      input.value='甲乙丙';root.querySelector('button').click();results.push({ok:root.textContent.includes('請再按'),actual:'fixed'});
      input.value='甲錯丙';render(root,input,'甲乙丙');input.setSelectionRange(0,0);input.dispatchEvent(new CompositionEvent('compositionstart'));root.querySelector('button').click();
      results.push({ok:input.selectionStart===0&&input.selectionEnd===0&&root.textContent.includes('完成注音選字'),actual:'IME'});
+     input.dispatchEvent(new Event('blur'));root.querySelector('button').click();results.push({ok:input.selectionStart===1&&input.selectionEnd===2,actual:'composition blur recovery'});
      input.dispatchEvent(new CompositionEvent('compositionend'));input.readOnly=true;root.querySelector('button').click();results.push({ok:root.textContent.includes('目前未開放'),actual:'locked'});input.readOnly=false;
      input.value='<img src=x onerror=alert(1)>';render(root,input,'正常文字');results.push({ok:root.querySelectorAll('img,script').length===0,actual:'literal markup'});
      return results;
@@ -92,8 +93,7 @@ export const supabase={auth:{getSession,onAuthStateChange(f){listeners.push(f);r
    checks.push('all ten garden bosses use locator');
    await open();assert.equal(await page.locator('#practice article.resource').count(),5);
    assert.equal(await page.locator('#practice a[href="zhuyin-foundation.html"]').count(),1);assert.equal(await page.locator('#practice a[href="typing-foundation.html"]').count(),1);
-   for(const width of [1280,390]){await page.setViewportSize({width,height:900});await page.locator('#practice').scrollIntoViewIfNeeded();await page.screenshot({path:`${out}/fast-five-${width}.png`});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));}
+   for(const width of [1280,390]){await page.setViewportSize({width,height:900});await page.locator('.foundation-resource').scrollIntoViewIfNeeded();await page.screenshot({path:`${out}/fast-five-${width}.png`});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));}
    assert.deepEqual(errors,[]);assert.equal(writes.length,0);fs.writeFileSync(out+'/locator-checks.json',JSON.stringify({status:'passed',synthetic:true,checks,cases,writeCount:writes.length,pageerrors:errors},null,2));console.log(JSON.stringify({status:'passed',checks,cases,writeCount:writes.length,pageerrors:errors}));
  }finally{await page.close().catch(()=>{});await browser.close();}
 })().catch(e=>{console.error(e.stack);process.exitCode=1;});
-
