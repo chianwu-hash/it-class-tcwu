@@ -3,11 +3,12 @@ import pathlib,zipfile,json,hashlib,re,posixpath,copy,unicodedata
 import sys
 sys.path.insert(0,str(pathlib.Path(__file__).resolve().parent))
 from quiz_chinese_fonts import convert_zhuyin_tree
+from quiz_fractions import visible_fraction
 from lxml import etree as E
 ns={'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main','a':'http://schemas.openxmlformats.org/drawingml/2006/main','r':'http://schemas.openxmlformats.org/officeDocument/2006/relationships','v':'urn:schemas-microsoft-com:vml','wp':'http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing'}
 class Native:
  def __init__(self,file,base,transform_fonts=True):
-  self.z=zipfile.ZipFile(file);self.base=pathlib.Path(base);self.root=E.fromstring(self.z.read('word/document.xml'));self.media=[];self.flags=[]
+  self.z=zipfile.ZipFile(file);self.base=pathlib.Path(base);self.root=E.fromstring(self.z.read('word/document.xml'));self.media=[];self.flags=[];self.formula_audit=[]
   self.font_changes=convert_zhuyin_tree(self.root) if transform_fonts else []
   self.rels={x.get('Id'):posixpath.normpath('word/'+x.get('Target')) for x in E.fromstring(self.z.read('word/_rels/document.xml.rels'))}
   for d in ['original-images','web-images']:(self.base/d).mkdir(exist_ok=True)
@@ -48,6 +49,9 @@ class Native:
      (self.base/'original-images'/original).write_bytes(raw)
      if ext not in ['.emf','.wmf']:(self.base/'web-images'/web).write_bytes(raw)
      if n.xpath('.//a:srcRect[@l or @t or @r or @b]',namespaces=ns):raise ValueError('cropped original requires verification')
+     fraction=visible_fraction(raw) if ext=='.wmf' else None
+     if fraction:
+      text('$'+fraction+'$');self.formula_audit.append({'source_sha256':sha,'latex':fraction,'method':'visible_wmf_text_and_bar'});continue
      url='https://publisher-local.example.invalid/'+web
      idx=next((i for i,m in enumerate(self.media) if m['url']==url),None)
      if idx is None:idx=len(self.media);self.media.append({'kind':'image','url':url,'alt':'書商原圖'})
