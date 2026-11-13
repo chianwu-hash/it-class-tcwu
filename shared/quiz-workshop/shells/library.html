@@ -3,18 +3,21 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex"><title>{{GRADE_LABEL}}考前練功坊</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-{{ASSETS}}</head><body class="quiz-skin quiz-library-page" data-grade="{{GRADE}}">
+{{ASSETS}}</head><body class="quiz-skin quiz-library-page library-home-layout" data-grade="{{GRADE}}">
   <div data-workshop-navbar></div>
   <header class="library-hero"><div class="library-hero-inner">
     <div class="library-hero-copy"><a class="library-parent" href="/index.html">謙大叔的電腦教室</a><span class="library-grade">{{GRADE_LABEL}}</span>
       <h1><i class="fa-solid fa-dumbbell" aria-hidden="true"></i>考前練功坊</h1>
       <p class="library-description">挑一份練習，或自己選範圍。進度自動儲存，隨時接著練。</p>
       <p id="cloud-identity" role="status">正在確認登入狀態…</p>
-    </div><i class="fa-solid fa-dumbbell hero-ornament" aria-hidden="true"></i></div>
+    </div><img class="home-welcome-pets" src="/shared/partner-pilot/art/welcome-v1.webp" width="480" height="268" alt="" aria-hidden="true" decoding="async"><i class="fa-solid fa-dumbbell hero-ornament" aria-hidden="true"></i></div>
   </header>
   <main>
+    <div id="home-partner-slot"></div>
     <section id="cloud-lock" class="panel"><h2><i class="fa-solid fa-user-lock" aria-hidden="true"></i>先登入，再開始</h2><p>請點上方的 Google 登入按鈕，使用名冊中的學生帳號登入。</p><p>登入後就能看見所屬年級的單元卷與已儲存的進度。本區僅提供名冊中的學生使用，不開放教師或其他帳號。</p></section>
     <section id="cloud-library" hidden>
+      <div id="home-continue-slot"></div>
+      <h2 id="home-pick-title"><img class="home-explore-pet" src="/shared/partner-pilot/art/discover-v1.webp" width="480" height="408" alt="" aria-hidden="true" decoding="async">自己挑練習</h2><p class="home-pick-hint">選想練的科目，挑一課開始。也可以自己組一份。</p>
       <div class="filters"><label id="grade-filter-label" hidden>教師檢視年級 <select id="grade-filter">{{GRADE_OPTIONS}}</select></label>
       <label>科目 <select id="subject-filter">{{SUBJECT_OPTIONS}}</select></label>
       <button id="refresh-library"><i class="fa-solid fa-rotate-right" aria-hidden="true"></i>更新雲端進度</button></div>

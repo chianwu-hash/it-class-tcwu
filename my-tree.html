@@ -421,6 +421,8 @@
             </div>
         </header>
 
+        <details id="quiz-effort-help" class="effort-help" hidden></details>
+
         <section class="dashboard">
             <article class="tree-shell" aria-label="努力樹">
                 <div id="tree-level-one">
@@ -481,6 +483,7 @@
     <link rel="stylesheet" href="./shared/reward-tree-level-one.css?v=20261106-alignment">
     <link rel="stylesheet" href="./shared/effort-garden-v2.css?v=20261031-level2">
     <link rel="stylesheet" href="./shared/typing-foundation-milestones.css?v=20261102-milestones">
+    <link rel="stylesheet" href="./shared/quiz-effort-help.css?v=20261113-effort-help">
     <script type="module">
         import {createGardenUpgrade} from './shared/effort-garden-v2.mjs?v=20261106-keepsake';
         import {withGardenTestRewards} from './shared/garden-test-rehearsal.mjs?v=20261030-rehearsal';
@@ -509,6 +512,8 @@
         import { readingRequest, readingTreeData } from './shared/reading-api.js';
         import { homeworkRequest, homeworkTreeData } from "./shared/homework-api.js";
         import {quizTreeData} from './shared/quiz-rewards.mjs?v=20261104-partner';
+        import {createQuizEffortHelp} from './shared/quiz-effort-help.mjs?v=20261113-effort-help';
+        import {createQuizRequest} from './shared/quiz-api.mjs?v=20261102-learning';
         import {quizLibraryForEnrollment} from './shared/quiz-grade-route.mjs?v=20261102-grade9-release';
         import {createFoundationProgress} from './shared/typing-foundation-progress.js?v=20261006-google';
         import {foundationTreeData} from './shared/typing-foundation-rewards.js?v=20261102-milestones';
@@ -553,6 +558,7 @@
         let practiceEnrollment = null;
         let treeLoadVersion = 0;
         let selectedCourseId = resolveInitialCourseId();
+        const effortHelp=createQuizEffortHelp({root:document.getElementById('quiz-effort-help'),getContext:()=>({courseId:selectedCourseId,userId:currentSession?.user?.id}),readSummary:async()=>{const request=await createQuizRequest({getSession:()=>currentSession});return request('learning',{action:'summary'});}});
         const returnTarget = resolveReturnTarget();
 
         const upgrade=createGardenUpgrade({supabase,getSession:()=>currentSession,stage:document.getElementById('tree-level-one'),onSelect:r=>selectReward(r,detailTitleEl,detailTextEl)});
@@ -829,6 +835,7 @@
 
         async function loadAndRender() {
             const version = ++treeLoadVersion;
+            effortHelp.reset();
             upgrade.reset();
             hideNotice();
             rewardLayerEl.replaceChildren();document.getElementById('tree-leaf-pages')?.remove();
@@ -865,7 +872,7 @@
                     } catch(error) { showNotice(`基礎練習成果暫時無法讀取：${error.message}`, 'info'); }
                 }
                 if (['grade3-115-1','grade4-115-1','grade6-115-1','grade9-115-1'].includes(loadingCourse) && currentSession?.user && !mockMode) {
-                    try {const quiz=await quizTreeData(currentSession,loadingCourse);activities.push(...quiz.activities);rows.push(...quiz.rows);}catch(error){showNotice(`考前練功成果暫時無法讀取：${error.message}`,'info');}
+                    try {const quiz=await quizTreeData(currentSession,loadingCourse);if(version!==treeLoadVersion||selectedCourseId!==loadingCourse||currentSession?.user?.id!==loadingUser)return;effortHelp.setSummary({courseId:loadingCourse,userId:loadingUser,summary:quiz.learning});activities.push(...quiz.activities);rows.push(...quiz.rows);}catch(error){showNotice(`考前練功成果暫時無法讀取：${error.message}`,'info');}
                 }
                 if (loadingCourse === 'grade6-115-1' && currentSession?.user && !mockMode) {
                     try {
@@ -910,6 +917,7 @@
         supabase.auth.onAuthStateChange((_event, session) => {
             if ((session?.user?.id ?? null) === (currentSession?.user?.id ?? null)) return;
             currentSession = session;
+            effortHelp.reset();
             treeLoadVersion++;
             upgrade.reset();
             currentEnrollment = null;
