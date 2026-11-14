@@ -4,6 +4,7 @@ import { renderContent as renderQuizContent } from './quiz-render.mjs?v=20261029
 import { mergeQuizSnapshot } from './quiz-state.mjs';
 import {createQuestionReport,mountQuestionReport} from './quiz-question-reports.mjs';
 import {createQuizStudy,studySourceLabel} from './quiz-study.mjs';
+import {renderExplanation} from './quiz-explanation-render.mjs';
 import {renderFieldsInputs,fieldsResponseError,fieldsResponseSummary,fieldsAnswerSummary} from './quiz-fields.mjs';
 
 import {quizFeedbackMotion} from './quiz-feedback-motion.mjs?v=20261107-partner-motion';
@@ -105,7 +106,8 @@ export function initServerQuiz({ selectors, server }) {
     const studentExplanation=study.explanation(q.id);
     const explanation=make('section',undefined,'quiz-explanation-copy');
     if(studentExplanation?.origin==='ai'){explanation.classList.add('quiz-explanation-ai');explanation.append(make('strong','AI 解析','quiz-explanation-caption'));}
-    renderContent(explanation,studentExplanation?{text:studentExplanation.text,media:[]}:review.explanation);
+    if(studentExplanation)renderExplanation(explanation,studentExplanation.text);
+    else renderContent(explanation,review.explanation);
     if(studentExplanation)explanation.append(make('p',studySourceLabel(studentExplanation.origin),'helper'));
     box.append(explanation);
     article.append(box);

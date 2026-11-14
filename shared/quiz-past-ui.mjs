@@ -10,6 +10,7 @@ import {renderPastLearningReview} from './quiz-past-learning-review.mjs';
 import {appendSingleChoiceOptions} from './quiz-choice.mjs';
 import {createQuizWorkspace} from './quiz-workspace.mjs';
 import {createQuizStudy,studySourceLabel} from './quiz-study.mjs';
+import {renderExplanation} from './quiz-explanation-render.mjs';
 export function initPastExamUI({root,request,resolveAsset,resolveTextbook,onView,reportRequest,onPractice}){
 let active=true;
 const mediaScope={resolve:resolveAsset,active:()=>active};
@@ -120,7 +121,7 @@ function render(){if(!active)return;study.refresh();
  const legacyExplanations=saved?.learningExplanations||(typeof saved?.learningExplanation==='string'?[{text:saved.learningExplanation,wrongReviewHref:saved.wrongReviewHref}]:[]);
  const explanations=[...studentExplanations,...legacyExplanations.filter(e=>studentExplanations.length!==g.fields.length&&!studentExplanations.some(s=>s.questionId===e.questionId||String(s.label)===String(e.label)))];
  for(const explanation of explanations){
-  const review=el('section',undefined,'past-learning-review quiz-explanation-copy');if(!explanation.origin||explanation.origin==='ai')review.classList.add('quiz-explanation-ai');review.append(el('h3',explanation.selfCheck?'這題怎麼自我核對？':explanation.label?'第（'+explanation.label+'）小題怎麼想？':'這題怎麼想？'));renderLocalContent(review,{text:explanation.text,media:[]});review.append(el('p',explanation.origin?studySourceLabel(explanation.origin):'補充解析由 AI 依題意整理，非官方解析。','helper'));
+  const review=el('section',undefined,'past-learning-review quiz-explanation-copy');if(!explanation.origin||explanation.origin==='ai')review.classList.add('quiz-explanation-ai');review.append(el('h3',explanation.selfCheck?'這題怎麼自我核對？':explanation.label?'第（'+explanation.label+'）小題怎麼想？':'這題怎麼想？'));renderExplanation(review,explanation.text);review.append(el('p',explanation.origin?studySourceLabel(explanation.origin):'補充解析由 AI 依題意整理，非官方解析。','helper'));
   if(typeof explanation.wrongReviewHref==='string'){
    const url=new URL(explanation.wrongReviewHref,location.origin);
    if(url.origin===location.origin&&/\/grade[3469]\/115-1\/quiz-library\.html$/.test(url.pathname)){
