@@ -1,0 +1,69 @@
+{
+  "agent": "Codex-ai-explanation-math-20261114",
+  "commit": "3358011375d9b082772bd57b52d5894c53f16faa",
+  "baseline": "dpl_Gg8WvrAT6GYt1vWXgnJeuLf7fu6Z",
+  "candidate": "dpl_6AcvQRtsK5v95nvwuhvbjPogpFjj",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade3/115-1/past-exam.html",
+      "grade3/115-1/quiz-library.html",
+      "grade3/115-1/quiz.html",
+      "grade4/115-1/partner-practice.html",
+      "grade4/115-1/past-exam.html",
+      "grade4/115-1/quiz-library.html",
+      "grade4/115-1/quiz.html",
+      "grade6/115-1/partner-practice.html",
+      "grade6/115-1/past-exam.html",
+      "grade6/115-1/quiz-library.html",
+      "grade6/115-1/quiz.html",
+      "grade9/115-1/partner-practice.html",
+      "grade9/115-1/past-exam.html",
+      "grade9/115-1/quiz-library.html",
+      "grade9/115-1/quiz.html",
+      "shared/quiz-past-learning-review.mjs",
+      "shared/quiz-past-ui.mjs",
+      "shared/quiz-server.mjs",
+      "shared/quiz-workshop/generated/assets.json",
+      "shared/quiz-workshop/generated/partner.css",
+      "shared/quiz-workshop/generated/past.css",
+      "shared/quiz-workshop/generated/quiz.css",
+      "shared/quiz-workspace.css"
+    ],
+    "added": [
+      "shared/quiz-explanation-render.mjs"
+    ],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "promotedAt": "2026-11-14T14:23:54.494Z",
+  "rollback": "dpl_Gg8WvrAT6GYt1vWXgnJeuLf7fu6Z",
+  "codePR": 242,
+  "checks": {
+    "nodeSuites": 14,
+    "syntheticWorkshopBrowser": 350,
+    "mathWidths": [
+      1280,
+      390
+    ],
+    "mathModes": [
+      "一般固定學生解析",
+      "舊版考古AI解析"
+    ],
+    "productionAssetsShaMatched": 25,
+    "databaseWrites": 0,
+    "aiQueries": 0,
+    "physicalTouchAndRealOAuth": "未重驗"
+  }
+}

@@ -1,8 +1,15 @@
-# AI解析數學排版修正（2026-11-14，發布中）
+# AI解析數學排版修正（2026-11-14，已正式發布）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-ai-explanation-math-20261114 | 2026-11-14T14:21:24.156Z | `3358011` | `dpl_Gg8WvrAT6GYt1vWXgnJeuLf7fu6Z` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-past-learning-review.mjs、shared/quiz-past-ui.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、shared/quiz-workspace.css、+shared/quiz-explanation-render.mjs | `dpl_6AcvQRtsK5v95nvwuhvbjPogpFjj`／回滾 `dpl_Gg8WvrAT6GYt1vWXgnJeuLf7fu6Z`（eolOnly 0） |
+
 
 - 使用者回報水果重量題的AI解析仍顯示「1又2/3」與斜線算式。固定資料是純文字，現有KaTeX僅識別公式標記；本輪只在已揭答解析的顯示層轉換，不修改來源、答案、評分或學生紀錄，不重送任何AI。
 - Codex唯一寫入者，新工作樹 `D:/projects/worktrees/ai-explanation-math-20261114`，新分支 `codex/ai-explanation-math-20261114`，基準最新main `ef36d3af`。一般固定學生解析、個人考古及舊版AI回顧共用 `quiz-explanation-render.mjs`；手機長公式限自身橫捲，既有書商圖文解析維持原路徑。
-- 14項格式／隔離SQL／原圖與建置檢查通過；以使用者提供的算式於1280／390px、一般／考古解析實際渲染核對分數、日期及HTML不誤解、零排版錯誤及整頁溢出。四課程四入口350項合成回歸亦全通過；首次背景分頁載入逾時未計通過，啟用自有測試頁後重跑，零JS錯誤。正式部署收據後補；實體手機與真人OAuth不冒稱完成。詳[修正說明](quiz-explanation-math-20261114.md)。
+- 14項格式／隔離SQL／原圖與建置檢查通過；以使用者提供的算式於1280／390px、一般／考古解析實際渲染核對分數、日期及HTML不誤解、零排版錯誤及整頁溢出。四課程四入口350項合成回歸亦全通過；首次背景分頁載入逾時未計通過，啟用自有測試頁後重跑，零JS錯誤。PR242已合併，以乾淨main經發布腳本完成；完整樹ok:true（24改1增、0非預期、eolOnly0），25正式資產SHA讀回符合，鎖已釋放。[正式收據](quiz-explanation-math-release-20261114.json)；實體手機與真人OAuth不冒稱完成。詳[修正說明](quiz-explanation-math-20261114.md)。
 - 正式發布仍須PR→main→新乾淨checkout→發布腳本start/deploy/promote與完整樹比對；發布鎖被占用即停止，不改動其他執行者的題庫分析工作。無SQL／Edge／Worker／權限變更。
 
 # 六年級數學已核24選擇題子集：四科新版1439（2026-11-14）
