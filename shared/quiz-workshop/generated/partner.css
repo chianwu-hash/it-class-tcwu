@@ -1581,6 +1581,7 @@ body.quiz-workspace-desktop.partner-pilot .partner-content[data-stage=practice] 
 .quiz-explanation-ai .quiz-explanation-caption,.quiz-explanation-ai>h3{display:block;color:var(--explanation-ink);font-weight:800;margin:0 0 8px}
 .quiz-explanation-ai p,.quiz-explanation-ai .quiz-content{color:var(--explanation-ink)}
 .quiz-explanation-ai .helper{color:#655184;font-size:.9rem;margin-bottom:0}
+.quiz-explanation-formula{display:inline-block;max-width:100%;overflow-x:auto;vertical-align:middle;padding:.15em 0}
 .quiz-workspace-active .answer-preview{margin:0!important;padding:14px!important;font-size:1.1rem!important;line-height:1.65!important}
 .quiz-workspace-active .answer-preview .quiz-rich-paragraph{margin:8px 0}
 .quiz-workspace-active .feedback-intro{gap:10px!important;margin-bottom:6px!important}
