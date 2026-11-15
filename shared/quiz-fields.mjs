@@ -1,5 +1,7 @@
 import {appendSingleChoiceOptions} from './quiz-choice.mjs';
 import {attachPastInputKeyboard} from './quiz-past-input.mjs';
+import {fieldPresentation,fieldsAreSingleChoice} from './quiz-fields-presentation.mjs';
+export {fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
 
 const own=(o,k)=>o&&Object.hasOwn(o,k);
 const object=o=>o!==null&&typeof o==='object'&&!Array.isArray(o);
@@ -12,7 +14,8 @@ export function fieldsResponseError(q,raw){
  if(typeof raw!=='string'||!raw||raw.length>2000)return '請完成每個答案欄；整組答案請保持在2000字以內。';
  let d;try{d=JSON.parse(raw)}catch{return '答案格式不完整，請更新儲存狀態後再試。'}
  if(!object(d)||d.v!==1||!object(d.f)||Object.keys(d).some(k=>!['v','f'].includes(k))||Object.keys(d.f).length!==q.fields.length)return '請完成每個答案欄。';
- for(const f of q.fields){
+ for(const storedField of q.fields){
+  const f=fieldPresentation(q,storedField);
   const v=d.f[f.id];if(!own(d.f,f.id))return '請完成每個答案欄。';
   if(['math','text','single'].includes(f.input)){
    if(typeof v!=='string'||!v.trim()||v.length>250)return `請完成「${f.label}」，每格最多250字。`;
@@ -23,10 +26,11 @@ export function fieldsResponseError(q,raw){
 }
 
 export function renderFieldsInputs(host,q,{raw='',locked=false,onChange,renderContent,textInputAids={}}){
- const values=fieldsValues(q,raw),group=make('div');group.className='quiz-fields';
+ const values=fieldsValues(q,raw),group=make('div');group.className='quiz-fields';group.classList.toggle('quiz-fields-single',q.fields.length===1);
  const changed=()=>onChange(JSON.stringify({v:1,f:values}));
- group.append(make('p','依照題目順序填好每格，再一起送出。'));
- for(const f of q.fields){
+ if(!fieldsAreSingleChoice(q))group.append(make('p',q.fields.length===1?'填好答案後送出。':'依照題目順序填好每格，再一起送出。'));
+ for(const storedField of q.fields){
+  const f=fieldPresentation(q,storedField);
   const slot=make('fieldset'),legend=make('legend',f.label),id='field-'+q.id+'-'+f.id;slot.className='quiz-field';slot.append(legend);
   if(['math','text'].includes(f.input)){
    const input=make('input');input.id=id;input.type='text';input.maxLength=250;input.value=typeof values[f.id]==='string'?values[f.id]:'';input.disabled=locked;input.autocomplete='off';input.setAttribute('aria-label',f.label);
@@ -35,7 +39,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,onChange,renderCo
    if(f.input==='math')attachPastInputKeyboard(slot,input,{math:true});
    if(f.input==='text')attachPastInputKeyboard(slot,input,{bopomofo:textInputAids.bopomofo===true,punctuation:textInputAids.punctuation===true});
   }else if(f.input==='single'){
-   appendSingleChoiceOptions(slot,{name:id,options:f.options.map(o=>({...o,value:o.id})),selected:values[f.id],locked,onSelect:v=>{values[f.id]=v;changed()},renderBody:(box,o)=>renderContent(box,o.content)});
+   appendSingleChoiceOptions(slot,{name:id,options:f.options.map(o=>({...o,value:o.id})),selected:values[f.id],locked,badgeForOption:f!==storedField?o=>o.id:undefined,onSelect:v=>{values[f.id]=v;changed()},renderBody:(box,o)=>renderContent(box,o.content)});
   }else if(f.input==='set'){
    const checks=[];const update=()=>{values[f.id]=checks.filter(x=>x.input.checked).map(x=>x.id);none.checked=values[f.id].length===0;changed()};
    for(const o of f.options){const label=make('label'),input=make('input');input.type='checkbox';input.disabled=locked;input.checked=Array.isArray(values[f.id])&&values[f.id].includes(o.id);const body=make('span');renderContent(body,o.content);label.append(input,body);slot.append(label);checks.push({id:o.id,input});input.addEventListener('change',update)}
@@ -53,9 +57,9 @@ const formatted=(f,v)=>{
  const one=id=>{const i=f.options?.findIndex(o=>o.id===id)??-1;return i<0?String(id):f.options[i].content.text||`選項${i+1}`};
  return Array.isArray(v)?v.map(one).join(f.input==='sequence'?' → ':'、')||'都不選':['single'].includes(f.input)?one(v):String(v??'未填');
 };
-export function fieldsResponseSummary(q,raw){const v=fieldsValues(q,raw);return q.fields.map(f=>`${f.label}：${formatted(f,v[f.id])}`).join('；');}
+export function fieldsResponseSummary(q,raw){const v=fieldsValues(q,raw);return q.fields.map(storedField=>{const f=fieldPresentation(q,storedField);return `${f.label}：${formatted(f,v[f.id])}`}).join('；');}
 export function fieldsAnswerSummary(q,answer){
- const parts=q.fields.map(f=>`${f.label}：${(answer.fields[f.id]||[]).map(v=>formatted(f,v)).join(' 或 ')}`);
+ const parts=q.fields.map(storedField=>{const f=fieldPresentation(q,storedField);return `${f.label}：${(answer.fields[f.id]||[]).map(v=>formatted(f,v)).join(' 或 ')}`});
  for(const tuple of answer.tuples||[])parts.push('可接受的完整配對：'+tuple.accepted.map(a=>tuple.fields.map(id=>{const f=q.fields.find(f=>f.id===id);return `${f.label} ${formatted(f,a[id])}`}).join('、')).join('；'));
  return parts.join('；');
 }

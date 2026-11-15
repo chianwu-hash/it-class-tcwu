@@ -5,7 +5,7 @@ import {renderFieldsInputs} from '../../shared/quiz-fields.mjs';
 
 // Small DOM harness exercises the real controls and their input events.
 class Element{
- constructor(tag){this.tagName=tag;this.children=[];this.listeners={};this.attributes={};this.value='';this.selectionStart=0;this.selectionEnd=0;}
+ constructor(tag){this.tagName=tag;this.children=[];this.listeners={};this.attributes={};this.value='';this.selectionStart=0;this.selectionEnd=0;this.classList={toggle(){},add(){}};}
  append(...nodes){this.children.push(...nodes);}
  setAttribute(k,v){this.attributes[k]=v;}
  addEventListener(k,fn){(this.listeners[k]??=[]).push(fn);}
