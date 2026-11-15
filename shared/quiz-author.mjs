@@ -78,9 +78,9 @@ function renderEditor() {
       const qhead = node('div', undefined, 'section-head'); qhead.append(node('h4', `子題 ${qi + 1}`));
       if (block.questions.length > 1) button(qhead, '刪除子題', () => { block.questions.splice(qi, 1); markDirty(); renderEditor(); }, 'danger compact');
       card.append(qhead);
-      if(q.type==='fields'){
+      if(['fields','open'].includes(q.type)){
         renderTeacherPreview(card,{blocks:[{material:content(),questions:[q]}]});
-        card.append(node('p','這是保留原貌的完整題組，此處可預覽；各格答案請由來源資料一併修訂。','hint'));
+        card.append(node('p',q.type==='open'?'這是保留原作答方式的開放題，此處可預覽參考例答與自評重點；例答不作唯一正解。':'這是保留原貌的完整題組，此處可預覽；各格答案請由來源資料一併修訂。','hint'));
         section.append(card);return;
       }
       const label = node('label', '題型'), select = node('select');

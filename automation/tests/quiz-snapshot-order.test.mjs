@@ -33,6 +33,15 @@ async function setup({ applySnapshot, unordered = false }) {
   for (const f of LEGACY) await db.exec(await sql(f));
   if (applySnapshot) {
     await db.exec(LEARNING_STUBS);
+    // The current top-level snapshot also wraps study disclosure. This suite isolates
+    // next-question ordering; the real study/media path has separate integration tests.
+    const all = splitSnapshot(await readFile('supabase/production-snapshot/functions.sql', 'utf8'));
+    await db.exec('alter table public.quiz_sessions add column if not exists library_visible boolean not null default true;');
+    const classAllowed = all.find(b => b.signature === 'quiz_session_class_allowed(uuid,text)');
+    if (classAllowed) await db.exec(classAllowed.definition + ';');
+    const studyWrapper = all.find(b => b.signature === 'quiz_action_before_study(text,jsonb)');
+    if (studyWrapper) await db.exec(studyWrapper.definition + ';');
+    await db.exec("create or replace function public.quiz_study_payload(text,uuid,uuid,jsonb) returns jsonb language sql as $$select '{}'::jsonb$$;");
     // Legacy replay leaves quiz_action as the pre-learning function; the snapshot restores both layers.
     for (const b of await snapshotQuizFunctions()) {
       const def = unordered ? unorder(b.definition) : b.definition;
