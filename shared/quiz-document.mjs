@@ -1,4 +1,5 @@
 import {validateFieldsQuestion} from './quiz-fields.mjs';
+import {validateOpenQuestion} from './quiz-open-response.mjs';
 export const content = (text = '', media = []) => ({ text, media });
 export const newQuestion = (type = 'single') => ({
   id: crypto.randomUUID(), type, prompt: content('請輸入題目'), explanation: content(),
@@ -69,7 +70,7 @@ export function validateDocument(doc) {
     blocks.add(b.id); checkContent(b.material);
     for (const q of b.questions) {
       if (!object(q) || !id(q.id) || questions.has(q.id) || !object(q.answer)
-        || Object.keys(q).some(k => !['id', 'type', 'prompt', 'explanation', 'options', 'answer'].includes(k)&&!(k==='fields'&&q.type==='fields'))) fail('題目識別碼、答案或欄位不完整。');
+        || Object.keys(q).some(k => !['id', 'type', 'prompt', 'explanation', 'options', 'answer'].includes(k)&&!(k==='fields'&&['fields','open'].includes(q.type)))) fail('題目識別碼、答案或欄位不完整。');
       questions.add(q.id); checkContent(q.prompt); checkContent(q.explanation);
       if (!q.prompt.text.trim()) fail('請填入題幹。');
       if (q.type === 'single') {
@@ -84,6 +85,7 @@ export function validateDocument(doc) {
         if ('options' in q || !Array.isArray(q.answer.accepted) || !q.answer.accepted.length || q.answer.accepted.length > 20
           || q.answer.accepted.some(a => typeof a !== 'string' || !a.trim() || a.length > 2000)) fail('請填入簡答題可接受答案。');
       } else if(q.type==='fields')validateFieldsQuestion(q,checkContent);
+      else if(q.type==='open')validateOpenQuestion(q,checkContent);
       else fail('不支援此題型。');
     }
   }

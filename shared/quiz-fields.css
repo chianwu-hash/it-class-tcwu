@@ -10,3 +10,10 @@
 .quiz-field .past-input-keyboard[hidden]{display:none}
 .quiz-field button{min-width:44px;min-height:44px;font:inherit}
 .quiz-field .preview-content{overflow-wrap:anywhere}
+.quiz-open-inputs .quiz-field{grid-column:1/-1}
+.quiz-open-inputs textarea,.quiz-open-review textarea{box-sizing:border-box;display:block;width:100%;max-width:100%;min-height:80px;resize:vertical;font:inherit;line-height:1.65;padding:10px;border:1px solid #8c8c9d;border-radius:8px;background:#fff;color:#18243d}
+.quiz-open-reference{margin:14px 0;padding:14px;border:1px solid #d9d9e7;border-radius:12px;overflow-wrap:anywhere}
+.quiz-open-reference h5{font-size:1rem;margin:0 0 10px}
+.quiz-open-reference li{line-height:1.7}
+.quiz-open-review>label{display:block;margin:16px 0}
+.quiz-open-self-check{flex-wrap:wrap}

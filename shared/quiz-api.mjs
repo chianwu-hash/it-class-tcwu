@@ -2,6 +2,7 @@ import { createAuthenticatedTransport } from './quiz-transport.mjs?v=20261029-ba
 import { configureQuizMedia, createMediaScope } from './quiz-media.mjs?v=20261029-load-batch1';
 import { testIdentityRevision } from './test-identity-state.mjs?v=20261030-identity-sync';
 const errors = {learning_unavailable:'這份卷目前尚未開放重點練習。',learning_incomplete:'先完整完成原卷，就能主動選重點練習。',
+  open_answer_required:'請先儲存這題的完整答案，再查看參考並自評。',invalid_self_check:'請選擇自評結果，想法最多250字。',
   report_conflict:'這個回報的內容已變更，請重新開啟題目後回報。',report_rate_limit:'這一小時已送出較多回報，請稍後再試。',
   report_unavailable:'無法核對這次作答與題目，請重新開啟試卷。',report_changed:'其他老師已更新這筆回報，請關閉後重新查看。',
   paper_name_choice_invalid: '這個主題或角色目前無法使用，請更新後重新選擇。',
