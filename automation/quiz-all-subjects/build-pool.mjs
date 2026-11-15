@@ -4,6 +4,7 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {validateDocument} from '../../shared/quiz-document.mjs';
+import {convertChoiceQuestion} from '../../shared/quiz-choice-conversion.mjs';
 const base='automation/output/quiz/all-midterm-local',out='automation/output/quiz/all-subjects-pool';await fs.mkdir(out+'/qa',{recursive:true});
 const read=async p=>JSON.parse(await fs.readFile(p,'utf8')),hash=x=>createHash('sha256').update(x).digest('hex');
 const plans=await read(base+'/runtime/paper-plan.json'),inventory=await read('automation/output/quiz/drive-library/inventory.json'),manifest=await read('automation/output/quiz/drive-library/manifest.json'),registered=await read('automation/output/quiz/drive-library/supabase-assets.json');
@@ -26,7 +27,7 @@ for(const [folder,grade,subject,publisher] of dataSets){
   if(!r.question||r.question.type!=='single'||ids.get(r.id)>1)throw Error('非獨立單選或同原題多子題，待題組流程');
   if(!r.units.length||r.units.some(n=>!unitTitles[n]))throw Error('非本次期中範圍或單元無法可靠對應');
   if(![-3,0,3].includes(r.difficulty))throw Error('難度未核對');
-  const q=structuredClone(r.question),originalId=q.id;
+  let q=structuredClone(r.question);const originalId=q.id;
   if(/承上題|根據上題|接續上題/.test(q.prompt.text))throw Error('依賴其他題目');
   if(/[①②③④]|選項\s*[1-4A-D]|[（(][1-4][)）].{0,3}(?:皆|都)對/.test(q.explanation.text))throw Error('解析或題意引用原選項位置');
   if(q.options.length<2||q.options.length>8||!q.options.some(o=>o.id===q.answer.option_id))throw Error('答案或選項結構不符');
@@ -50,6 +51,7 @@ for(const [folder,grade,subject,publisher] of dataSets){
   await media(q.prompt);for(const o of q.options)await media(o.content);await media(q.explanation);
   const optionFingerprints=q.options.map(o=>hash(JSON.stringify(o.content)));if(new Set(optionFingerprints).size!==q.options.length)throw Error('重複選項');
   q.id='mp_'+hash(courseId+'|'+r.id+'|native-v2-formula|'+hash(JSON.stringify(r))).slice(0,32);
+  const choiceConversion=convertChoiceQuestion(q);if(choiceConversion.issues.length)throw Error('choice_source_mapping_required');q=choiceConversion.question;
   validateDocument({schema:1,title:'期中題池核對',catalog:course.definition,blocks:[{id:'b_'+q.id,material:{text:'',media:[]},questions:[q]}]});
   const knowledge=(r.sections||[]).map(id=>sections.find(s=>s.id===id)).filter(s=>s?.isKnowledgeNode).sort((a,b)=>a.id.localeCompare(b.id));
   const detailed=!!r.publisher_explanation_present&&(!!q.explanation.media.length||!!q.explanation.text.trim()&&!/書商未提供這一題|這一題目前沒有詳細解析/.test(q.explanation.text));

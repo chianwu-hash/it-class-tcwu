@@ -1,7 +1,9 @@
+import {choiceQuestionPresentation} from './quiz-choice-conversion.mjs';
 // Compatibility for the reviewed Chinese import's circled-code choice fields.
 // Only the view changes: the original field ID, circled values and fields-v1
 // response envelope remain exactly as stored. Never read or infer an answer.
 export function fieldPresentation(q,field){
+ const converted=choiceQuestionPresentation(q);if(converted!==q)return converted.fields?.find(f=>f.id===field.id)??field;
  if(q.type!=='fields'||!q.id?.startsWith('kg6ch_')||q.fields?.length!==1||field.input!=='text'||
   !/^選擇題(?:[\s\-－—:：]|$)/u.test(q.prompt?.text||'')||q.prompt?.media?.length||
   q.prompt?.layout?.some(p=>p.type!=='paragraph'||p.runs.some(r=>r.type!=='text')))return field;
@@ -17,6 +19,7 @@ export function fieldPresentation(q,field){
 export const fieldsAreSingleChoice=q=>q.type==='fields'&&q.fields?.length===1&&fieldPresentation(q,q.fields[0]).input==='single';
 
 export function fieldsPromptPresentation(q){
+ const converted=choiceQuestionPresentation(q);if(converted!==q)return converted.prompt;
  if(q.fields?.length!==1||fieldPresentation(q,q.fields[0])===q.fields[0])return q.prompt;
  const label=q.fields[0].label.trim(),text=q.prompt.text.trimEnd();
  // Retain the complete original prompt in storage and full-paper review. Only
