@@ -2979,7 +2979,7 @@ grant execute on function public.quiz_action(text,jsonb) to postgres;
 grant execute on function public.quiz_action(text,jsonb) to authenticated;
 grant execute on function public.quiz_action(text,jsonb) to service_role;
 
--- quiz_action_before_learning(text,jsonb)  md5=c4436149a4941457c698759d8ab2dbf2
+-- quiz_action_before_learning(text,jsonb)  md5=fc7ef9980e3bdaa81b84ed7ee224e433
 CREATE OR REPLACE FUNCTION public.quiz_action_before_learning(p_action text, p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -2992,11 +2992,11 @@ declare
  bank public.quiz_banks; ver public.quiz_versions; sess public.quiz_sessions; att public.quiz_attempts; ans public.quiz_answers;
  d jsonb; b jsonb; q jsonb; o jsonb; qo jsonb; oo jsonb:='{}'; result jsonb; reviews jsonb:='[]'; responses jsonb;
  target uuid; qid text; response jsonb; correct boolean; done boolean; groupdone boolean; n integer; cls text; mode text; student_grade integer;
- new_answer boolean:=false; leaf jsonb:='{}'; identity jsonb; correct_map jsonb; prior_lock_timeout text; compact boolean:=p_action='submit' and coalesce(p_data->'compact'='true'::jsonb,false);
+ new_answer boolean:=false; leaf jsonb:='{}'; identity jsonb; correct_map jsonb; completed_map jsonb; open_state jsonb; open_row public.quiz_open_responses; prior_lock_timeout text; compact boolean:=p_action in('submit','self_check') and coalesce(p_data->'compact'='true'::jsonb,false);
 begin
  if uid is null then raise exception 'login_required'; end if;
  -- Practice pages and answer APIs are student-only; teacher authoring/monitoring remains separate.
- if teacher and p_action in ('library_sessions','join','resume','submit','view_question') then raise exception 'student_required';end if;
+ if teacher and p_action in ('library_sessions','join','resume','submit','self_check','view_question') then raise exception 'student_required';end if;
  if p_action in ('list','get','save','publish','versions','open','monitor','close','sessions','personal_sessions') and not teacher then raise exception 'teacher_required'; end if;
  if p_action='library_sessions' then return public.quiz_library_sessions(p_data);end if;
  if p_action in ('personal_sessions','library_sessions') then
@@ -3014,7 +3014,7 @@ begin
    from public.quiz_sessions s join public.quiz_versions v on v.id=s.version_id
    left join public.quiz_generated_papers g on g.session_id=s.id and g.user_id=uid
    left join (select a.session_id,count(x.question_id) answered,count(*) filter(where x.correct) correct
-    from public.quiz_attempts a left join public.quiz_answers x on x.attempt_id=a.id where a.user_id=uid group by a.session_id) progress on progress.session_id=s.id
+    from public.quiz_attempts a left join lateral public.quiz_response_rows(a.id) x on x.completed where a.user_id=uid group by a.session_id) progress on progress.session_id=s.id
    where (teacher and s.owner_id=uid and s.access_mode='personal')
     or (not teacher and s.access_mode in ('practice','self') and (s.access_mode<>'self' or exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id and g.user_id=uid and g.deleted_at is null)) and exists(select 1 from public.student_enrollments e
      where e.email=v_email and e.school_year=s.school_year and public.quiz_session_class_allowed(s.id,e.class_code)));
@@ -3095,15 +3095,15 @@ begin
    exception when lock_not_available then raise exception 'session_busy';end;
    update public.quiz_sessions set status='closed' where id=sess.id;return jsonb_build_object('ok',true);
   end if;
-  select coalesce(jsonb_agg(jsonb_build_object('user_id',a.user_id,'answered',(select count(*) from public.quiz_answers x where x.attempt_id=a.id),
+  select coalesce(jsonb_agg(jsonb_build_object('user_id',a.user_id,'answered',(select count(*) from public.quiz_response_rows(a.id) x where x.completed),
    'total',jsonb_array_length(a.question_order),'class_code',e.class_code,'seat_no',e.seat_no,'display_name',e.display_name,
-   'last_submitted_at',(select max(x.created_at) from public.quiz_answers x where x.attempt_id=a.id)) order by a.created_at),'[]') into result
+   'last_submitted_at',(select max(x.created_at) from public.quiz_response_rows(a.id) x where x.completed)) order by a.created_at),'[]') into result
    from public.quiz_attempts a join auth.users u on u.id=a.user_id
     left join public.student_enrollments e on e.email=lower(u.email) and e.school_year=sess.school_year
    where a.session_id=sess.id;
   return jsonb_build_object('status',sess.status,'students',result);
  end if;
- if p_action not in ('join','resume','submit','view_question') then raise exception 'invalid_action'; end if;
+ if p_action not in ('join','resume','submit','self_check','view_question') then raise exception 'invalid_action'; end if;
  if sess.access_mode='personal' then
   if not teacher or sess.owner_id<>uid then raise exception 'session_unavailable'; end if;
  else
@@ -3115,10 +3115,10 @@ begin
  -- Shared admission protects close; per-attempt locks isolate different students.
  if p_action='join' and sess.access_mode='classroom' then
   perform pg_advisory_xact_lock(1364542026,hashtext(sess.id::text));
- elsif p_action in ('join','submit') then
+ elsif p_action in ('join','submit','self_check') then
   perform pg_advisory_xact_lock_shared(1364542026,hashtext(sess.id::text));
  end if;
- if p_action in ('join','submit') then select * into sess from public.quiz_sessions where id=sess.id;end if;
+ if p_action in ('join','submit','self_check') then select * into sess from public.quiz_sessions where id=sess.id;end if;
  if p_action='resume' then
   select * into att from public.quiz_attempts where session_id=sess.id and user_id=uid for share;
  else
@@ -3147,22 +3147,36 @@ begin
  end if;
  if p_action='view_question' then
   qid:=p_data->>'question_id';
-  select value#>>'{}' into cls from jsonb_array_elements(att.question_order) with ordinality x(value,ord) where not exists(select 1 from public.quiz_answers a where a.attempt_id=att.id and a.question_id=x.value#>>'{}') order by ord limit 1;
+  select value#>>'{}' into cls from jsonb_array_elements(att.question_order) with ordinality x(value,ord) where not exists(select 1 from public.quiz_response_rows(att.id) a where a.completed and a.question_id=x.value#>>'{}') order by ord limit 1;
   if cls is distinct from qid then raise exception 'question_order';end if;
   if to_regprocedure('public.quiz_answer_guard(uuid,text,boolean)') is not null then perform public.quiz_answer_guard(att.id,qid,false);end if;
   return jsonb_build_object('viewed',true);
  end if;
  if ver.id is null then select * into ver from public.quiz_versions where id=sess.version_id;d:=ver.document;end if;
- if p_action='submit' then
+ if p_action in('submit','self_check') then
   qid:=p_data->>'question_id';response:=p_data->'response';
   select bx,qx into b,q from jsonb_array_elements(d->'blocks') bx,lateral jsonb_array_elements(bx->'questions') qx where qx->>'id'=qid;
   if q is null then raise exception 'question_unavailable'; end if;
+  if q->>'type'='open' then
+   select * into open_row from public.quiz_open_responses where attempt_id=att.id and question_id=qid;
+   if open_row.attempt_id is null or(p_action='self_check' and open_row.status<>'self_checked') then
+    if sess.status<>'open' then raise exception 'session_closed';end if;
+    select value#>>'{}' into cls from jsonb_array_elements(att.question_order) with ordinality x(value,ord) where not exists(select 1 from public.quiz_response_rows(att.id) a where a.completed and a.question_id=x.value#>>'{}') order by ord limit 1;
+    if cls is distinct from qid then raise exception 'question_order';end if;
+    if p_action='submit' and to_regprocedure('public.quiz_answer_guard(uuid,text,boolean)') is not null then
+     result:=public.quiz_answer_guard(att.id,qid,true);if result ? 'warning' then return result;end if;
+    end if;
+   end if;
+   new_answer:=public.quiz_open_submit(att.id,q,p_data,p_action='self_check');
+  elsif p_action='self_check' then raise exception 'invalid_question_type';
+  else
+   if exists(select 1 from public.quiz_open_responses where attempt_id=att.id and(request_id=(p_data->>'request_id')::uuid or self_check_request_id=(p_data->>'request_id')::uuid)) then raise exception 'submission_conflict';end if;
   select * into ans from public.quiz_answers where attempt_id=att.id and (question_id=qid or request_id=(p_data->>'request_id')::uuid) limit 1;
   if ans.attempt_id is not null then
    if ans.question_id<>qid or ans.request_id is distinct from (p_data->>'request_id')::uuid or ans.response is distinct from response then raise exception 'submission_conflict'; end if;
   else
    if sess.status<>'open' then raise exception 'session_closed'; end if;
-   select value#>>'{}' into cls from jsonb_array_elements(att.question_order) with ordinality x(value,ord) where not exists(select 1 from public.quiz_answers a where a.attempt_id=att.id and a.question_id=x.value#>>'{}') order by ord limit 1;
+   select value#>>'{}' into cls from jsonb_array_elements(att.question_order) with ordinality x(value,ord) where not exists(select 1 from public.quiz_response_rows(att.id) a where a.completed and a.question_id=x.value#>>'{}') order by ord limit 1;
    if cls is distinct from qid then raise exception 'question_order'; end if;
    if to_regprocedure('public.quiz_answer_guard(uuid,text,boolean)') is not null then
     result:=public.quiz_answer_guard(att.id,qid,true);if result ? 'warning' then return result;end if;
@@ -3185,15 +3199,19 @@ begin
    insert into public.quiz_answers(attempt_id,question_id,request_id,response,correct) values(att.id,qid,(p_data->>'request_id')::uuid,response,correct);
    new_answer:=true;
   end if;
- end if;
- select count(*)=jsonb_array_length(att.question_order),coalesce(jsonb_object_agg(a.question_id,a.response),'{}'),coalesce(jsonb_object_agg(a.question_id,a.correct),'{}') into done,responses,correct_map from public.quiz_answers a where a.attempt_id=att.id;
- for b in select value from jsonb_array_elements(d->'blocks') loop
-  select not exists(select 1 from jsonb_array_elements(b->'questions') x where not(responses ? (x->>'id'))) into groupdone;
-  if (sess.reveal='complete' and done) or (sess.reveal='immediate' and groupdone) then
-   for q in select value from jsonb_array_elements(b->'questions') loop
-    reviews:=reviews||jsonb_build_array(jsonb_build_object('question_id',q->>'id','answer',q->'answer','explanation',q->'explanation','correct',correct_map->(q->>'id')));
-   end loop;
   end if;
+ end if;
+ select count(*)filter(where a.completed)=jsonb_array_length(att.question_order),coalesce(jsonb_object_agg(a.question_id,a.response),'{}'),coalesce(jsonb_object_agg(a.question_id,a.correct),'{}'),coalesce(jsonb_object_agg(a.question_id,a.completed),'{}') into done,responses,correct_map,completed_map from public.quiz_response_rows(att.id) a;
+ select coalesce(jsonb_object_agg(question_id,jsonb_build_object('status',status,'rating',self_rating,'note',self_note)),'{}') into open_state from public.quiz_open_responses where attempt_id=att.id;
+ for b in select value from jsonb_array_elements(d->'blocks') loop
+  select not exists(select 1 from jsonb_array_elements(b->'questions') x where not coalesce((completed_map->>(x->>'id'))::boolean,false)) into groupdone;
+  for q in select value from jsonb_array_elements(b->'questions') loop
+   if q->>'type'='open' and responses ? (q->>'id') then
+    reviews:=reviews||jsonb_build_array(jsonb_build_object('question_id',q->>'id','answer',q->'answer','explanation',q->'explanation','correct',null,'assessment',open_state->(q->>'id')));
+   elsif q->>'type'<>'open' and((sess.reveal='complete' and done) or(sess.reveal='immediate' and groupdone)) then
+    reviews:=reviews||jsonb_build_array(jsonb_build_object('question_id',q->>'id','answer',q->'answer','explanation',q->'explanation','correct',correct_map->(q->>'id')));
+   end if;
+  end loop;
  end loop;
  if sess.access_mode='self' then
   select display_name into cls from public.quiz_generated_papers where session_id=sess.id and user_id=uid;
@@ -3201,6 +3219,7 @@ begin
  end if;
  if to_regprocedure('public.quiz_leaf_result(uuid,boolean)') is not null then leaf:=public.quiz_leaf_result(att.id,new_answer);end if;
  result:=jsonb_build_object('attempt_id',att.id,'session_id',sess.id,'version_id',sess.version_id,'status',sess.status,'complete',done,'leaf',leaf,'responses',responses,'reviews',reviews);
+ if exists(select 1 from jsonb_array_elements(d->'blocks') bx,lateral jsonb_array_elements(bx->'questions') qx where qx->>'type'='open') then result:=result||jsonb_build_object('open_responses',open_state);end if;
  if compact then return result||jsonb_build_object('compact',true);end if;
  return result||jsonb_build_object('document',public.quiz_student_document(d,att.question_order,att.option_orders));
 end $function$;
@@ -3405,7 +3424,7 @@ revoke all on function public.quiz_catalog_invalidate() from public, anon, authe
 grant execute on function public.quiz_catalog_invalidate() to postgres;
 grant execute on function public.quiz_catalog_invalidate() to service_role;
 
--- quiz_compose(jsonb)  md5=77fbf95d263e50b92b57e3297f0dfc87
+-- quiz_compose(jsonb)  md5=86de418fb370205254077d7a1983d7db
 CREATE OR REPLACE FUNCTION public.quiz_compose(p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -3472,8 +3491,8 @@ begin
  end if;
  -- Freeze this caller's exposure counts once; do not rescan answers for every candidate.
  select coalesce(jsonb_object_agg(history.question_id,history.n),'{}'::jsonb) into seen_counts from (
-  select a.question_id,count(*) n from public.quiz_answers a join public.quiz_attempts at on at.id=a.attempt_id
-  where at.user_id=uid and a.question_id is not null group by a.question_id) history;
+  select a.question_id,count(*) n from public.quiz_attempts at cross join lateral public.quiz_response_rows(at.id) a
+  where at.user_id=uid and a.completed and a.question_id is not null group by a.question_id) history;
  seed:=request::text;
  -- Eligibility and static ordering are evaluated once, without question/check payloads.
  select array_agg(row(p.question_id,p.group_key,p.unit_ids,p.knowledge_code,p.difficulty,
@@ -3845,7 +3864,7 @@ revoke all on function public.quiz_leaf_result(uuid,boolean) from public, anon, 
 grant execute on function public.quiz_leaf_result(uuid,boolean) to postgres;
 grant execute on function public.quiz_leaf_result(uuid,boolean) to service_role;
 
--- quiz_leaf_result_before_learning(uuid,boolean)  md5=703060d59ca758c80cfa1e401fe66f07
+-- quiz_leaf_result_before_learning(uuid,boolean)  md5=b53b508012201038e7ff86270adca227
 CREATE OR REPLACE FUNCTION public.quiz_leaf_result_before_learning(aid uuid, new_answer boolean)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -3859,19 +3878,19 @@ begin
  select * into s from public.quiz_sessions where id=a.session_id;
  select * into v from public.quiz_versions where id=s.version_id;
  select * into settings from public.quiz_integrity_settings where id;
- n:=jsonb_array_length(a.question_order);
+ select count(*) into n from jsonb_array_elements(v.document->'blocks') bx,lateral jsonb_array_elements(bx->'questions') qx where qx->>'type'<>'open';
  select count(*) filter(where correct) into c from public.quiz_answers where attempt_id=aid;
  select * into existing from public.quiz_leaf_awards where attempt_id=aid;
  if existing.id is not null then return jsonb_build_object('earned',true,'earned_now',false,'id',existing.id);end if;
  if n<10 then return jsonb_build_object('earned',false,'reason','short_paper');end if;
  if not settings.enabled or coalesce(public.is_teacher(),false) or s.access_mode not in ('practice','self') then return jsonb_build_object('earned',false,'reason','not_eligible');end if;
- if (select count(*) from public.quiz_answers where attempt_id=aid)<>n then return jsonb_build_object('earned',false,'reason','incomplete');end if;
+ if (select count(*) from public.quiz_response_rows(aid) where completed)<>jsonb_array_length(a.question_order) then return jsonb_build_object('earned',false,'reason','incomplete');end if;
  if c*100<n*60 then return jsonb_build_object('earned',false,'reason','accuracy');end if;
- select count(*) into timed from public.quiz_question_timing t where t.attempt_id=aid and t.accepted_seconds>=settings.min_seconds;
+ select count(*) into timed from public.quiz_question_timing t where t.attempt_id=aid and t.accepted_seconds>=settings.min_seconds and exists(select 1 from jsonb_array_elements(v.document->'blocks') bx,lateral jsonb_array_elements(bx->'questions') qx where qx->>'id'=t.question_id and qx->>'type'<>'open');
  if timed<>n then return jsonb_build_object('earned',false,'reason','timing_unverified');end if;
  select md5(string_agg(x.fingerprint,'' order by x.fingerprint)) into fp from (
   select md5((q->'prompt')::text||coalesce((select string_agg((o->'content')::text,'' order by (o->'content')::text) from jsonb_array_elements(q->'options') o),'')) fingerprint
-  from jsonb_array_elements(v.document->'blocks') b,lateral jsonb_array_elements(b->'questions') q) x;
+  from jsonb_array_elements(v.document->'blocks') b,lateral jsonb_array_elements(b->'questions') q where q->>'type'<>'open') x;
  g:=substring(v.document->'catalog'->>'volume' from '^([3469])')::integer;
  if g is null or not exists(select 1 from public.student_enrollments e join auth.users u on lower(u.email)=e.email where u.id=auth.uid() and u.email_confirmed_at is not null and e.school_year=s.school_year and public.quiz_session_class_allowed(s.id,e.class_code) and left(e.class_code,1)::integer=g) then return jsonb_build_object('earned',false,'reason','not_eligible');end if;
  if new_answer then
@@ -4090,7 +4109,7 @@ revoke all on function public.quiz_learning_wrong_items(integer) from public, an
 grant execute on function public.quiz_learning_wrong_items(integer) to postgres;
 grant execute on function public.quiz_learning_wrong_items(integer) to service_role;
 
--- quiz_library_sessions(jsonb)  md5=d58d0d37f03a186e6fb640b306860150
+-- quiz_library_sessions(jsonb)  md5=bd331323acd8c39996913a1f59fd4b86
 CREATE OR REPLACE FUNCTION public.quiz_library_sessions(p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -4108,7 +4127,7 @@ begin
  ), progress as (
   select a.session_id,count(x.question_id) answered,count(*) filter(where x.correct) correct
   from visible s join public.quiz_attempts a on a.session_id=s.id and a.user_id=auth.uid()
-  left join public.quiz_answers x on x.attempt_id=a.id group by a.session_id
+  left join lateral public.quiz_response_rows(a.id) x on x.completed group by a.session_id
  )
  select coalesce(jsonb_agg(jsonb_build_object('id',s.id,'version_id',s.version_id,'title',v.title,'catalog',v.catalog,'status',s.status,
  'generated',s.access_mode='self','display_name',s.display_name,'saved_at',s.saved_at,'generated_kind',s.config->>'kind',
@@ -4273,7 +4292,7 @@ revoke all on function public.quiz_media_access_before_reports(text,uuid) from p
 grant execute on function public.quiz_media_access_before_reports(text,uuid) to postgres;
 grant execute on function public.quiz_media_access_before_reports(text,uuid) to service_role;
 
--- quiz_media_visible(text,uuid)  md5=71bb4be8d16988c6182d67f9edcab29a
+-- quiz_media_visible(text,uuid)  md5=93188b517085556ea174e1dc63ce33aa
 CREATE OR REPLACE FUNCTION public.quiz_media_visible(p_url text, p_attempt uuid)
  RETURNS boolean
  LANGUAGE plpgsql
@@ -4301,9 +4320,12 @@ begin
    or exists(select 1 from jsonb_array_elements(coalesce(qx->'options','[]')) o
     where coalesce(att.option_orders->(qx->>'id'),'[]') ? (o->>'id')
     and exists(select 1 from jsonb_path_query(o->'content','$.**.media[*].url') u where u#>>'{}'=p_url)))) then return true;end if;
- select count(*)=jsonb_array_length(att.question_order) into done from public.quiz_answers where attempt_id=att.id;
+ select count(*)=jsonb_array_length(att.question_order) into done from public.quiz_response_rows(att.id) where completed;
+ if exists(select 1 from jsonb_array_elements(d->'blocks') bx,lateral jsonb_array_elements(bx->'questions') qx
+  where qx->>'type'='open' and exists(select 1 from public.quiz_open_responses r where r.attempt_id=att.id and r.question_id=qx->>'id')
+  and exists(select 1 from jsonb_path_query(qx->'explanation','$.**.media[*].url') u where u#>>'{}'=p_url)) then return true;end if;
  for b in select value from jsonb_array_elements(d->'blocks') loop
-  select not exists(select 1 from jsonb_array_elements(b->'questions') x where not exists(select 1 from public.quiz_answers a where a.attempt_id=att.id and a.question_id=x->>'id')) into groupdone;
+  select not exists(select 1 from jsonb_array_elements(b->'questions') x where not exists(select 1 from public.quiz_response_rows(att.id) a where a.completed and a.question_id=x->>'id')) into groupdone;
   if (sess.reveal='complete' and done) or (sess.reveal='immediate' and groupdone) then
    if exists(select 1 from jsonb_array_elements(b->'questions') x cross join lateral jsonb_path_query(x->'explanation','$.**.media[*].url') u where u#>>'{}'=p_url) then return true;end if;
   end if;
@@ -4330,7 +4352,7 @@ grant execute on function public.quiz_monitor(jsonb) to postgres;
 grant execute on function public.quiz_monitor(jsonb) to authenticated;
 grant execute on function public.quiz_monitor(jsonb) to service_role;
 
--- quiz_monitor_before_learning(jsonb)  md5=9c751fe61df616bb2e5b8478f2231fd2
+-- quiz_monitor_before_learning(jsonb)  md5=c40b5046e8e348b8c0059e099fbf1844
 CREATE OR REPLACE FUNCTION public.quiz_monitor_before_learning(p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -4346,8 +4368,8 @@ begin
  if sess.access_mode='self' and not exists(select 1 from public.quiz_generated_papers g where g.session_id=sess.id and g.user_id=uid) then raise exception 'session_unavailable';end if;
  with attempts as materialized (select * from public.quiz_attempts where session_id=sess.id),
  progress as materialized (
-  select x.attempt_id,count(*) answered,max(x.created_at) last_submitted_at
-  from public.quiz_answers x join attempts a on a.id=x.attempt_id group by x.attempt_id
+  select a.id attempt_id,count(*) answered,max(x.created_at) last_submitted_at
+  from attempts a cross join lateral public.quiz_response_rows(a.id) x where x.completed group by a.id
  )
  select coalesce(jsonb_agg(jsonb_build_object('user_id',a.user_id,'answered',coalesce(p.answered,0),
   'total',jsonb_array_length(a.question_order),'class_code',e.class_code,'seat_no',e.seat_no,'display_name',e.display_name,
@@ -4376,7 +4398,80 @@ revoke all on function public.quiz_nav_identity(text) from public, anon, authent
 grant execute on function public.quiz_nav_identity(text) to postgres;
 grant execute on function public.quiz_nav_identity(text) to service_role;
 
--- quiz_paper_card(uuid)  md5=b6b7c7d445245c36873bf13233d71e68
+-- quiz_open_submit(uuid,jsonb,jsonb,boolean)  md5=70d3f94dfd94712fe917eaa43d4ef28b
+CREATE OR REPLACE FUNCTION public.quiz_open_submit(p_attempt uuid, p_question jsonb, p_data jsonb, p_self_check boolean)
+ RETURNS boolean
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare row public.quiz_open_responses;rid uuid;raw text;rating text;note text;canonical jsonb;
+begin
+ if auth.uid() is null or not exists(select 1 from public.quiz_attempts where id=p_attempt and user_id=auth.uid()) then raise exception 'attempt_unavailable';end if;
+ if p_question->>'type' is distinct from 'open' then raise exception 'invalid_question_type';end if;
+ rid:=(p_data->>'request_id')::uuid;if rid is null then raise exception 'invalid_request';end if;
+ if exists(select 1 from public.quiz_answers where attempt_id=p_attempt and request_id=rid) then raise exception 'submission_conflict';end if;
+ select * into row from public.quiz_open_responses where attempt_id=p_attempt and question_id=p_question->>'id' for update;
+ if p_self_check then
+  if row.attempt_id is null then raise exception 'open_answer_required';end if;
+  if jsonb_typeof(p_data->'self_rating') is distinct from 'string' or coalesce(p_data->>'self_rating','') not in('understood','practice')
+   or jsonb_typeof(p_data->'self_note') is distinct from 'string' or length(p_data->>'self_note')>250 then raise exception 'invalid_self_check';end if;
+  rating:=p_data->>'self_rating';note:=p_data->>'self_note';
+  if row.status='self_checked' then
+   if row.self_check_request_id is distinct from rid or row.self_rating is distinct from rating or row.self_note is distinct from note then raise exception 'submission_conflict';end if;
+   return false;
+  end if;
+  if exists(select 1 from public.quiz_open_responses where attempt_id=p_attempt and(request_id=rid or self_check_request_id=rid)) then raise exception 'submission_conflict';end if;
+  update public.quiz_open_responses set status='self_checked',self_check_request_id=rid,self_rating=rating,self_note=note,self_checked_at=now() where attempt_id=p_attempt and question_id=p_question->>'id';
+  return true;
+ end if;
+ if jsonb_typeof(p_data->'response') is distinct from 'string' then raise exception 'invalid_response';end if;
+ raw:=p_data->>'response';canonical:=public.quiz_fields_response(p_question,raw);
+ if row.attempt_id is not null then
+  if row.request_id is distinct from rid or row.response is distinct from p_data->'response' then raise exception 'submission_conflict';end if;
+  return false;
+ end if;
+ if exists(select 1 from public.quiz_open_responses where attempt_id=p_attempt and(request_id=rid or self_check_request_id=rid)) then raise exception 'submission_conflict';end if;
+ insert into public.quiz_open_responses(attempt_id,question_id,request_id,response) values(p_attempt,p_question->>'id',rid,p_data->'response');
+ return true;
+end $function$;
+revoke all on function public.quiz_open_submit(uuid,jsonb,jsonb,boolean) from public, anon, authenticated, service_role;
+grant execute on function public.quiz_open_submit(uuid,jsonb,jsonb,boolean) to postgres;
+grant execute on function public.quiz_open_submit(uuid,jsonb,jsonb,boolean) to service_role;
+
+-- quiz_open_validate(jsonb)  md5=30186743eceb8403887d6bb202e72b32
+CREATE OR REPLACE FUNCTION public.quiz_open_validate(q jsonb)
+ RETURNS void
+ LANGUAGE plpgsql
+ IMMUTABLE
+ SET search_path TO ''
+AS $function$
+declare f jsonb;r jsonb;v jsonb;k text;fake jsonb;
+begin
+ if q->>'type' is distinct from 'open' or jsonb_typeof(q->'fields') is distinct from 'array'
+  or q->'answer'->>'format' is distinct from 'self-review-v1' or jsonb_typeof(q->'answer'->'fields') is distinct from 'object'
+  or exists(select 1 from jsonb_object_keys(q->'answer') x where x not in('format','fields')) then raise exception 'invalid_open_question';end if;
+ select jsonb_object_agg(x->>'id',jsonb_build_array('validation-only')) into fake from jsonb_array_elements(q->'fields') x;
+ perform public.quiz_fields_validate(jsonb_set(q,'{answer}',jsonb_build_object('format','fields-v1','fields',fake)));
+ if (select count(*) from jsonb_object_keys(q->'answer'->'fields'))<>jsonb_array_length(q->'fields') then raise exception 'invalid_open_question';end if;
+ for f in select * from jsonb_array_elements(q->'fields') loop
+  if f->>'input' is distinct from 'text' then raise exception 'invalid_open_question';end if;
+  r:=q->'answer'->'fields'->(f->>'id');
+  if jsonb_typeof(r) is distinct from 'object' or exists(select 1 from jsonb_object_keys(r) x where x not in('examples','criteria')) then raise exception 'invalid_open_reference';end if;
+  foreach k in array array['examples','criteria'] loop
+   if jsonb_typeof(r->k) is distinct from 'array' then raise exception 'invalid_open_reference';end if;
+   if jsonb_array_length(r->k) not between 1 and (case when k='examples' then 3 else 4 end) then raise exception 'invalid_open_reference';end if;
+   for v in select * from jsonb_array_elements(r->k) loop
+    if jsonb_typeof(v) is distinct from 'string' or length(trim(v#>>'{}')) not between 1 and (case when k='examples' then 500 else 150 end) then raise exception 'invalid_open_reference';end if;
+   end loop;
+  end loop;
+ end loop;
+end $function$;
+revoke all on function public.quiz_open_validate(jsonb) from public, anon, authenticated, service_role;
+grant execute on function public.quiz_open_validate(jsonb) to postgres;
+grant execute on function public.quiz_open_validate(jsonb) to service_role;
+
+-- quiz_paper_card(uuid)  md5=dc5f76f7f4aac640b3194bd06989bfae
 CREATE OR REPLACE FUNCTION public.quiz_paper_card(p_session uuid)
  RETURNS jsonb
  LANGUAGE sql
@@ -4388,8 +4483,8 @@ AS $function$
  'unit_ids',g.config->'units','distribution',g.actual_distribution,
  'learning_point',case when g.config->>'kind'='extension' then regexp_replace(v.catalog->>'unit','^同重點再練習[：:]\s*','') else null end,
  'total',v.total,
- 'answered',coalesce((select count(x.question_id) from public.quiz_attempts a join public.quiz_answers x on x.attempt_id=a.id where a.session_id=s.id and a.user_id=auth.uid()),0),
- 'correct',coalesce((select count(*) filter(where x.correct) from public.quiz_attempts a join public.quiz_answers x on x.attempt_id=a.id where a.session_id=s.id and a.user_id=auth.uid()),0))
+ 'answered',coalesce((select count(x.question_id) from public.quiz_attempts a join lateral public.quiz_response_rows(a.id) x on x.completed where a.session_id=s.id and a.user_id=auth.uid()),0),
+ 'correct',coalesce((select count(*) filter(where x.correct) from public.quiz_attempts a join lateral public.quiz_response_rows(a.id) x on x.completed where a.session_id=s.id and a.user_id=auth.uid()),0))
  from public.quiz_sessions s join public.quiz_generated_papers g on g.session_id=s.id and g.user_id=auth.uid() and g.deleted_at is null
  join public.quiz_version_meta v on v.version_id=s.version_id
  where s.id=p_session and s.access_mode='self'
@@ -5431,6 +5526,22 @@ grant execute on function public.quiz_rename_paper(jsonb) to postgres;
 grant execute on function public.quiz_rename_paper(jsonb) to authenticated;
 grant execute on function public.quiz_rename_paper(jsonb) to service_role;
 
+-- quiz_response_rows(uuid)  md5=f9f0005771228f4607f88654326fa2e2
+CREATE OR REPLACE FUNCTION public.quiz_response_rows(p_attempt uuid)
+ RETURNS TABLE(question_id text, response jsonb, correct boolean, completed boolean, created_at timestamp with time zone)
+ LANGUAGE sql
+ STABLE
+ SET search_path TO ''
+AS $function$
+ select a.question_id,a.response,a.correct,true,a.created_at from public.quiz_answers a where a.attempt_id=p_attempt
+ union all
+ select a.question_id,a.response,null::boolean,a.status='self_checked',coalesce(a.self_checked_at,a.created_at)
+ from public.quiz_open_responses a where a.attempt_id=p_attempt
+$function$;
+revoke all on function public.quiz_response_rows(uuid) from public, anon, authenticated, service_role;
+grant execute on function public.quiz_response_rows(uuid) to postgres;
+grant execute on function public.quiz_response_rows(uuid) to service_role;
+
 -- quiz_rewards(jsonb)  md5=ea32573b06d0dd148a87334099a79b07
 CREATE OR REPLACE FUNCTION public.quiz_rewards(p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
@@ -5556,7 +5667,7 @@ $function$;
 revoke all on function public.quiz_session_class_allowed(uuid,text) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_session_class_allowed(uuid,text) to postgres;
 
--- quiz_student_document(jsonb,jsonb,jsonb)  md5=62628fda0f3c142afc25b43ccd3d3bc6
+-- quiz_student_document(jsonb,jsonb,jsonb)  md5=535c6fddb398bb38ea052dd81a3e0bb7
 CREATE OR REPLACE FUNCTION public.quiz_student_document(d jsonb, qo jsonb, oo jsonb)
  RETURNS jsonb
  LANGUAGE sql
@@ -5573,7 +5684,7 @@ AS $function$
    'block_id',b->>'id','material',b->'material','options',
    (select coalesce(jsonb_agg(jsonb_build_object('id',o->>'id','content',o->'content') order by ord),'[]'::jsonb)
     from jsonb_array_elements(coalesce(q->'options','[]')) o
-    join jsonb_array_elements_text(coalesce(oo->(q->>'id'),'[]')) with ordinality opt(id,ord) on o->>'id'=opt.id))||case when q->>'type'='fields' then jsonb_build_object('fields',(select coalesce(jsonb_agg(jsonb_build_object('id',f->>'id','label',f->>'label','input',f->>'input')
+    join jsonb_array_elements_text(coalesce(oo->(q->>'id'),'[]')) with ordinality opt(id,ord) on o->>'id'=opt.id))||case when q->>'type' in('fields','open') then jsonb_build_object('fields',(select coalesce(jsonb_agg(jsonb_build_object('id',f->>'id','label',f->>'label','input',f->>'input')
  ||case when f ? 'options' then jsonb_build_object('options',(select jsonb_agg(jsonb_build_object('id',o->>'id','content',o->'content')order by ord)from jsonb_array_elements(f->'options')with ordinality opts(o,ord)))else '{}'::jsonb end order by n),'[]'::jsonb)
  from jsonb_array_elements(q->'fields')with ordinality fields(f,n)))else '{}'::jsonb end item
   from jsonb_array_elements(qo) with ordinality r(qid,n)
@@ -5810,7 +5921,7 @@ revoke all on function public.quiz_valid_runs(jsonb,jsonb) from public, anon, au
 grant execute on function public.quiz_valid_runs(jsonb,jsonb) to postgres;
 grant execute on function public.quiz_valid_runs(jsonb,jsonb) to service_role;
 
--- quiz_validate(jsonb)  md5=56ca473db561001ddf2a6f3dbd80d5b0
+-- quiz_validate(jsonb)  md5=944e211b9d4532043d40b17bf255db52
 CREATE OR REPLACE FUNCTION public.quiz_validate(d jsonb)
  RETURNS void
  LANGUAGE plpgsql
@@ -5862,10 +5973,11 @@ begin
      end if;
     end loop;
    elsif q->>'type'='fields' then perform public.quiz_fields_validate(q);
+   elsif q->>'type'='open' then perform public.quiz_open_validate(q);
    else raise exception 'invalid_question_type'; end if;
    -- 白名單投影仍是學生回傳的唯一來源，不信任教師輸入的額外欄位。
    for k in select jsonb_object_keys(q) loop
-    if k not in ('id','type','prompt','explanation','options','answer') and not(k='fields' and q->>'type'='fields') then raise exception 'invalid_question_field'; end if;
+    if k not in ('id','type','prompt','explanation','options','answer') and not(k='fields' and q->>'type' in('fields','open')) then raise exception 'invalid_question_field'; end if;
    end loop;
   end loop;
  end loop;
@@ -5943,7 +6055,7 @@ grant execute on function public.quiz_wrong_questions(jsonb) to postgres;
 grant execute on function public.quiz_wrong_questions(jsonb) to authenticated;
 grant execute on function public.quiz_wrong_questions(jsonb) to service_role;
 
--- quiz_wrong_questions_before_learning(jsonb)  md5=dc1396432dd3d359dd70b428146f70a4
+-- quiz_wrong_questions_before_learning(jsonb)  md5=b85e2d3c80ab6e9b54109f05a6dc9475
 CREATE OR REPLACE FUNCTION public.quiz_wrong_questions_before_learning(p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -5965,7 +6077,7 @@ begin
   select * into att from public.quiz_attempts where id=r.attempt_id and user_id=auth.uid();
   -- List eligibility historically checks missing ids; resume disclosure additionally
   -- requires the exact answer count. Retain that distinction for malformed records.
-  if sess.reveal='complete' and (select count(*) from public.quiz_answers where attempt_id=att.id)<>jsonb_array_length(att.question_order) then raise exception 'wrong_question_unavailable';end if;
+  if sess.reveal='complete' and (select count(*) from public.quiz_response_rows(att.id) where completed)<>jsonb_array_length(att.question_order) then raise exception 'wrong_question_unavailable';end if;
   select bx,qx into b,q from public.quiz_versions v cross join lateral jsonb_array_elements(v.document->'blocks') bx
    cross join lateral jsonb_array_elements(bx->'questions') qx where v.id=r.version_id and qx->>'id'=r.question_id;
   if q is null or not(att.question_order ? r.question_id) then raise exception 'wrong_question_unavailable';end if;
@@ -6002,7 +6114,7 @@ revoke all on function public.quiz_wrong_questions_before_learning(jsonb) from p
 grant execute on function public.quiz_wrong_questions_before_learning(jsonb) to postgres;
 grant execute on function public.quiz_wrong_questions_before_learning(jsonb) to service_role;
 
--- quiz_wrong_refs(integer,text,text)  md5=12c8cfd9c238bec82c27ee365839c0d9
+-- quiz_wrong_refs(integer,text,text)  md5=764514d212bcebbfc3bc3b6659a99d85
 CREATE OR REPLACE FUNCTION public.quiz_wrong_refs(p_grade integer, p_attempt text DEFAULT NULL::text, p_question text DEFAULT NULL::text)
  RETURNS TABLE(attempt_id uuid, session_id uuid, version_id uuid, question_id text, answered_at timestamp with time zone, title text, catalog jsonb, ordered_ids text[])
  LANGUAGE sql
@@ -6019,7 +6131,7 @@ AS $function$
   and exists(select 1 from public.student_enrollments e join auth.users u on lower(u.email)=e.email
    where u.id=auth.uid() and u.email_confirmed_at is not null and e.school_year=s.school_year and public.quiz_session_class_allowed(s.id,e.class_code))
  ), progress as materialized (
-  select x.attempt_id,jsonb_object_agg(x.question_id,true) answered from public.quiz_answers x join owned a on a.id=x.attempt_id group by x.attempt_id
+  select a.id attempt_id,jsonb_object_agg(x.question_id,true) answered from owned a cross join lateral public.quiz_response_rows(a.id) x where x.completed group by a.id
  )
  select a.id,a.session_id,a.version_id,x.question_id,x.created_at,a.title,a.catalog,a.ordered_ids
  from owned a join progress p on p.attempt_id=a.id join public.quiz_answers x on x.attempt_id=a.id and not x.correct
