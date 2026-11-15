@@ -1,8 +1,17 @@
-# 是非／選擇共用程式修正候選已驗收（2026-11-16，待正式發布）
+# 是非／選擇共用程式與舊題相容修正已上線（2026-11-16）
 
 - 使用者授權程式優先、批次修正兩類已轉化缺陷、驗收後上線，禁止整庫重送AI。新共用轉換／檢查供建池與舊卷相容呈現使用；不改正式題庫、原ID／答案／作答／函式或媒體權限，不重匯題庫。來源未明會退修，真正數字與排序保留。
 - [修正與驗收](quiz-choice-conversion-repair-20261116.md)：題池1,054候選來源，1,053來源相容修正（六社587、六國305、六自然59、六英33、六數1、三數31、三國37），1排序來源保持。19回歸、本機PG逐來源正／錯／非法、原ID／答案／媒體／冪等及未揭答payload、桌手機2,108次呈現／27,032檢查通過；另126固定版本／草稿及夥伴共同回顧／摘要通過，沒有逐題模型呼叫。
-- 權威私有證據 `D:/AI-Work/choice-repair-20261116/`。本輪瀏覽器為隔離身分及合成回應，不冒稱真人登入或正式送答。尚未promote，發布完成再用收據更新此狀態；以下PR260的「尚未修正」保留歷程，不能當作本候選驗收失敗或已正式發布。
+- 權威私有證據 `D:/AI-Work/choice-repair-20261116/`。本輪瀏覽器為隔離身分及合成回應，不冒稱真人登入或正式送答。PR261已合併並正式發布；以下PR260的「尚未修正」僅保留歷程，已由本次正式狀態取代。原卷重新整理即可套用，不必重新組卷。
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-choice-conversion-20261116 | 2026-11-15T23:27:25.149Z | `b37e3f2` | `dpl_C5yqy7WRGAqB8QrW7tbfsCBb48SZ` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/answer-feedback.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/review-layout.mjs、shared/quiz-boolean-choice.mjs、shared/quiz-choice.mjs、shared/quiz-fields-presentation.mjs、shared/quiz-fields.mjs、shared/quiz-render.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-wrong-questions.mjs、+shared/partner-pilot/choice-presentation.mjs、+shared/quiz-choice-conversion.mjs | `dpl_5tXY5h9BPtZurjWTorJqtzsfG7BE`／回滾 `dpl_C5yqy7WRGAqB8QrW7tbfsCBb48SZ`（eolOnly 0） |
+
+- PR261，乾淨main `b37e3f22299f6aeef1a1c940280c30d6224a877e`；完整比較27改／2增／0刪、0額外差異、eolOnly0。正式29檔HTTP200且SHA-256逐檔一致，鎖已釋放。沒有資料庫函式／題庫／作答寫回，沒有逐題AI呼叫。
+
 
 # 是非選項重複標示再次回報：SOP 補強（2026-11-16）
 
