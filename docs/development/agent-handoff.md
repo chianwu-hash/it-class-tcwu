@@ -1,13 +1,13 @@
-# 六上國語開放自評正式 SQL 已套用（2026-11-15，前端待發布）
+# 六上國語開放自評功能已正式發布（2026-11-15）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | codex-g6ch-open-20261115 | 2026-11-15T12:19:19.468972+00:00 | PR247／248 已進main；最終commit以發布腳本為準 | `dpl_6AcvQRtsK5v95nvwuhvbjPogpFjj` | 一般開放作答前端27改1增 | 已核正式SQL與回滾驗收；待取得腳本鎖、完整樹比對及promote。 |
+| 已完成 | codex-g6ch-open-20261115 | 2026-11-15T12:20:13.652Z | `af370ec` | `dpl_6AcvQRtsK5v95nvwuhvbjPogpFjj` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-api.mjs、shared/quiz-author.mjs、shared/quiz-document.mjs、shared/quiz-fields.css、shared/quiz-render.mjs、shared/quiz-report-admin.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-open-response.mjs | `dpl_FMtWUmEREKzjMQqUvs8N9jFZhmhc`／回滾 `dpl_6AcvQRtsK5v95nvwuhvbjPogpFjj`（eolOnly 0） |
 
 - 使用者指定造詞／造句等378來源保留原開放作答；採先保存、再看參考與檢核重點、最後自評，例答不作唯一正解。功能與限制見 [開放自評候選驗收](quiz-open-self-review-20261115.md)。既有數學、自然、英語上線收據不重做。
-- 使用者已明確同意本次 SQL；PR247→main `3524cb50`，11原函式新鮮指紋一致後套用。正式178函式快照與live check通過（11改／3增／0刪），新自評表RLS與ACL讀回符合。正式合成回滾驗證通過，6個歷次合成帳號皆不存在，自評不混入自動對錯；本機21項、桌手機28項仍有效，未冒稱真人OAuth。前端尚待乾淨main發布腳本。
+- 使用者已明確同意本次 SQL；PR247→main `3524cb50`，11原函式新鮮指紋一致後套用。正式178函式快照與live check通過（11改／3增／0刪），新自評表RLS與ACL讀回符合。正式合成回滾驗證通過，6個歷次合成帳號皆不存在，自評不混入自動對錯；本機21項、桌手機28項仍有效，未冒稱真人OAuth。前端已依乾淨main發布腳本完成，27改1增、完整樹ok、28正式資產逐位元組一致，鎖已釋放；[發布收據](quiz-open-self-review-release-20261115.json)。國語2,002來源尚未啟用。
 - 國語本批2,002來源尚在內容／媒體驗收，不可宣稱整科完成。不得使用已撤銷的開放題選答改編候選，原件與既有216新版保持。私有資料與狀態留工作碟，不提交公開 repo。
 
 # 六上英語第3、4單元全數上線（2026-11-15）
