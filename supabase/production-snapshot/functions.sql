@@ -3307,7 +3307,7 @@ revoke all on function public.quiz_assign_paper_name() from public, anon, authen
 grant execute on function public.quiz_assign_paper_name() to postgres;
 grant execute on function public.quiz_assign_paper_name() to service_role;
 
--- quiz_bind_composed_study()  md5=95d092bdb45f2b697379869d432db5b7
+-- quiz_bind_composed_study()  md5=76fc3552b43d5989c17c8832938a3833
 CREATE OR REPLACE FUNCTION public.quiz_bind_composed_study()
  RETURNS trigger
  LANGUAGE plpgsql
@@ -3329,8 +3329,9 @@ begin
   join public.quiz_question_pool pool on pool.question_id=src.question_id and pool.usable and pool.question=q
   join public.quiz_pool_membership member on member.question_id=pool.question_id and member.course_id=src.course_id
   join public.quiz_courses course on course.id=src.course_id and course.enabled
-  join public.quiz_textbooks book on book.id=src.book_id and book.enabled and book.grade=course.grade
+  left join public.quiz_textbooks book on book.id=src.book_id and book.enabled and book.grade=course.grade
   where d->'catalog'->>'course_id'=src.course_id
+   and (src.book_id is null or book.id is not null)
    and not exists(select 1 from unnest(src.reference_pages) page_number
     where not exists(select 1 from public.quiz_textbook_pages page
      where page.book_id=src.book_id and page_number=any(page.printed_pages)))
