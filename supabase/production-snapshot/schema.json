@@ -5503,6 +5503,140 @@
      "default": null,
      "generated": "",
      "identity": "",
+     "name": "question_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "request_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "response",
+     "not_null": true,
+     "type": "jsonb"
+    },
+    {
+     "default": "'saved'::text",
+     "generated": "",
+     "identity": "",
+     "name": "status",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "self_check_request_id",
+     "not_null": false,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "self_rating",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "self_note",
+     "not_null": false,
+     "type": "text"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "created_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "self_checked_at",
+     "not_null": false,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "FOREIGN KEY (attempt_id) REFERENCES quiz_attempts(id)",
+     "name": "quiz_open_responses_attempt_id_fkey"
+    },
+    {
+     "def": "UNIQUE (attempt_id, request_id)",
+     "name": "quiz_open_responses_attempt_id_request_id_key"
+    },
+    {
+     "def": "UNIQUE (attempt_id, self_check_request_id)",
+     "name": "quiz_open_responses_attempt_id_self_check_request_id_key"
+    },
+    {
+     "def": "CHECK ((((status = 'saved'::text) AND (self_check_request_id IS NULL) AND (self_rating IS NULL) AND (self_note IS NULL) AND (self_checked_at IS NULL)) OR ((status = 'self_checked'::text) AND (self_check_request_id IS NOT NULL) AND (self_rating IS NOT NULL) AND (self_note IS NOT NULL) AND (self_checked_at IS NOT NULL))))",
+     "name": "quiz_open_responses_check"
+    },
+    {
+     "def": "PRIMARY KEY (attempt_id, question_id)",
+     "name": "quiz_open_responses_pkey"
+    },
+    {
+     "def": "CHECK (((jsonb_typeof(response) = 'string'::text) AND ((length((response #>> '{}'::text[])) >= 1) AND (length((response #>> '{}'::text[])) <= 2000))))",
+     "name": "quiz_open_responses_response_check"
+    },
+    {
+     "def": "CHECK ((length(self_note) <= 250))",
+     "name": "quiz_open_responses_self_note_check"
+    },
+    {
+     "def": "CHECK ((self_rating = ANY (ARRAY['understood'::text, 'practice'::text])))",
+     "name": "quiz_open_responses_self_rating_check"
+    },
+    {
+     "def": "CHECK ((status = ANY (ARRAY['saved'::text, 'self_checked'::text])))",
+     "name": "quiz_open_responses_status_check"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_open_responses_attempt_id_request_id_key ON public.quiz_open_responses USING btree (attempt_id, request_id)",
+    "CREATE UNIQUE INDEX quiz_open_responses_attempt_id_self_check_request_id_key ON public.quiz_open_responses USING btree (attempt_id, self_check_request_id)",
+    "CREATE UNIQUE INDEX quiz_open_responses_pkey ON public.quiz_open_responses USING btree (attempt_id, question_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_open_responses",
+   "rls": true,
+   "schema": "public",
+   "view_def": null
+  },
+  {
+   "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "attempt_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
      "name": "group_id",
      "not_null": true,
      "type": "text"
