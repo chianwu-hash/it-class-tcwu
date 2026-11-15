@@ -68,8 +68,8 @@ test('115上康軒三年級國語依已核課本區分1–6及7–12課',()=>{
  assert.equal(unitPracticeScope({school_year:'115',volume:'3年級下學期',publisher:'康軒',subject:'國語'},{id:7}),'unknown');
 });
 
-test('六年級已核自然與英語期末單元可在預設範圍選用，版本及科目隔離',()=>{
- for(const [id,publisher,subject]of [['115-1-nani-g6-science','南一','自然'],['115-1-kang-g6-en','康軒','英語']]){
+test('六年級已核自然、社會與英語期末單元可在預設範圍選用，版本及科目隔離',()=>{
+ for(const [id,publisher,subject]of [['115-1-nani-g6-science','南一','自然'],['115-1-nani-g6-social','南一','社會'],['115-1-kang-g6-en','康軒','英語']]){
   const c={id,school_year:'115',grade:6,volume:'6年級上學期',publisher,subject};
   assert.deepEqual([1,2,3,4].filter(id=>matchesPracticeScope(unitPracticeScope(c,{id}),'after')),[3,4]);
   assert.deepEqual([1,2,3,4].filter(id=>matchesPracticeScope(unitPracticeScope(c,{id}),'before')),[1,2]);

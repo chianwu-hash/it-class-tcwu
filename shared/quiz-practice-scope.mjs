@@ -12,6 +12,7 @@ export const paperPracticeScopeBasis=p=>reviewedPaper(p)?.basis||null;
 // Presentation only: never grants access, enables a paper, or rewrites history.
 // Boundaries below come from the approved 115-1 textbook analysis receipts.
 const rules={
+ '115-1-nani-g6-social':{before:[1,2],after:[3,4]},
  '115-1-nani-g6-science':{before:[1,2],after:[3,4]},
  '115-1-kang-g6-en':{before:[1,2],after:[3,4]},
  '115-1-kang-g6-ch':{before:[1,2,3,4,5,6],after:[7,8,9,10,11,12]},
@@ -27,6 +28,7 @@ export function practiceScopeOptions(grade){return [
 ];}
 export function scopeRule(c={}){
  const six={
+  '115-1-nani-g6-social':{publisher:'南一',subject:'社會'},
   '115-1-nani-g6-science':{publisher:'南一',subject:'自然'},
   '115-1-kang-g6-en':{publisher:'康軒',subject:'英語'},
   '115-1-kang-g6-ch':{publisher:'康軒',subject:'國語'},
