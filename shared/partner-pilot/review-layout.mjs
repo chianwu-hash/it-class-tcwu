@@ -15,7 +15,7 @@ export function createReviewLayout({esc,getRoom,getViewer,fragment,marks,stories
  function part(q,grouped=false){
   // past correct is a bank placeholder, not an option index. Its authoritative reference
   // is already included in the released explanation. Never mark its first option correct.
-  const display=q.past?.kind==='single'?booleanChoicePresentation(q.past.choices,q.rich?.options):null;
+  const display=q.past?.kind==='single'?booleanChoicePresentation(q.past.choices,q.rich?.options):!q.past?booleanChoicePresentation(q.options.map(text=>({text})),q.rich?.options):null;
   const choices=q.options?.length?`<div class="rv-choices" role="list" aria-label="答案選項">${q.options.map((_,i)=>`<div role="listitem" class="rv-choice ${!q.past&&q.correct===i?'rv-correct':''}"><span class="rv-letter">${esc(display?.[i].badge??q.past?.choices?.[i]?.id??String.fromCharCode(65+i))}</span><div class="rv-option">${display?esc(display[i].text):fragment(q,'option',i)}${!q.past&&q.correct===i?'<span class="rv-answer">✓ 正確答案</span>':''}</div></div>`).join('')}</div>`:'';
   const hasExplanation=Boolean(q.explanation||q.rich?.explanation?.text||q.rich?.explanation?.media?.length||q.rich?.explanation?.layout?.length);
   const notes=getRoom().exercise.notes.filter(n=>n.kind==='discuss'&&n.qid===q.id);

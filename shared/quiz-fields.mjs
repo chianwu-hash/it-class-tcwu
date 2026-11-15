@@ -1,6 +1,7 @@
 import {appendSingleChoiceOptions} from './quiz-choice.mjs';
 import {attachPastInputKeyboard} from './quiz-past-input.mjs';
 import {fieldPresentation,fieldsAreSingleChoice} from './quiz-fields-presentation.mjs';
+import {booleanChoicePresentation} from './quiz-boolean-choice.mjs';
 export {fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
 
 const own=(o,k)=>o&&Object.hasOwn(o,k);
@@ -39,7 +40,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,onChange,renderCo
    if(f.input==='math')attachPastInputKeyboard(slot,input,{math:true});
    if(f.input==='text')attachPastInputKeyboard(slot,input,{bopomofo:textInputAids.bopomofo===true,punctuation:textInputAids.punctuation===true});
   }else if(f.input==='single'){
-   appendSingleChoiceOptions(slot,{name:id,options:f.options.map(o=>({...o,value:o.id})),selected:values[f.id],locked,badgeForOption:f!==storedField?o=>o.id:undefined,onSelect:v=>{values[f.id]=v;changed()},renderBody:(box,o)=>renderContent(box,o.content)});
+   appendSingleChoiceOptions(slot,{name:id,options:f.options.map(o=>({...o,value:o.id})),selected:values[f.id],locked,badgeForOption:storedField.input==='text'&&f!==storedField?o=>o.id:undefined,onSelect:v=>{values[f.id]=v;changed()},renderBody:(box,o)=>renderContent(box,o.content)});
   }else if(f.input==='set'){
    const checks=[];const update=()=>{values[f.id]=checks.filter(x=>x.input.checked).map(x=>x.id);none.checked=values[f.id].length===0;changed()};
    for(const o of f.options){const label=make('label'),input=make('input');input.type='checkbox';input.disabled=locked;input.checked=Array.isArray(values[f.id])&&values[f.id].includes(o.id);const body=make('span');renderContent(body,o.content);label.append(input,body);slot.append(label);checks.push({id:o.id,input});input.addEventListener('change',update)}
@@ -52,6 +53,12 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,onChange,renderCo
   group.append(slot);
  }
  host.append(group);return group;
+}
+export function renderFieldsChoices(host,q,{renderContent}){
+ for(const stored of q.fields||[]){const f=fieldPresentation(q,stored);if(!f.options)continue;
+  const section=make('section');section.className='quiz-field-preview';section.append(make('h5',f.label));const display=f.input==='single'?booleanChoicePresentation(f.options):null;
+  f.options.forEach((o,i)=>{const row=make('div');row.className='preview-option';row.append(make('strong',(display?.[i].badge??String.fromCharCode(65+i))+' '));if(display)row.append(make('span',display[i].text));else renderContent(row,o.content);section.append(row);});host.append(section);
+ }
 }
 const formatted=(f,v)=>{
  const one=id=>{const i=f.options?.findIndex(o=>o.id===id)??-1;return i<0?String(id):f.options[i].content.text||`選項${i+1}`};

@@ -1,5 +1,7 @@
 import { resolveQuizMedia, bindQuizMedia } from './quiz-media.mjs?v=20261029-load-batch1';
-import {fieldsAnswerSummary} from './quiz-fields.mjs';
+import {fieldsAnswerSummary,renderFieldsChoices,fieldsPromptPresentation} from './quiz-fields.mjs';
+import {choiceQuestionPresentation,choiceAnswerLabel} from './quiz-choice-conversion.mjs';
+import {booleanChoicePresentation} from './quiz-boolean-choice.mjs';
 import {openReferenceSummary} from './quiz-open-response.mjs';
 export function renderContent(container, content, { strict = false, loadMedia = true, imageLoading = 'lazy', mediaScope = null, deferMedia = false } = {}) {
   const box = document.createElement('div'); box.className = 'preview-content';
@@ -103,18 +105,21 @@ export function renderTeacherPreview(container, doc, { strict = false, loadMedia
     const section = document.createElement('section'); section.className = 'block';
     const heading = document.createElement('h3'); heading.textContent = `區塊 ${index + 1}${block.questions.length > 1 ? ' · 共用材料題組' : ''}`;
     section.append(heading); renderContent(section, block.material, { strict, loadMedia });
-    for (const [i, q] of block.questions.entries()) {
+    for (const [i, stored] of block.questions.entries()) {
+      const q=choiceQuestionPresentation(stored);
       const article = document.createElement('article'); article.className = 'question';
       const title = document.createElement('h4'); title.textContent = `${index + 1}-${i + 1}　${q.type==='open'?'開放作答與自評':q.type === 'fields' ? '完整題組' : q.type === 'single' ? '選擇題' : '簡答題'}`; article.append(title);
-      renderContent(article, q.prompt, { strict, loadMedia });
+      renderContent(article, fieldsPromptPresentation(q), { strict, loadMedia });
+      if(q.type==='fields')renderFieldsChoices(article,q,{renderContent:(host,c)=>renderContent(host,c,{strict,loadMedia})});
+      const display=q.type==='single'?booleanChoicePresentation(q.options):null;
       for (const [j, option] of (q.options || []).entries()) {
         const row = document.createElement('div'); row.className = 'preview-option';
-        const label = document.createElement('strong'); label.textContent = `${String.fromCharCode(65 + j)}. `; row.append(label);
-        renderContent(row, option.content, { strict, loadMedia }); article.append(row);
+        const label = document.createElement('strong'); label.textContent = (display?.[j].badge??String.fromCharCode(65+j))+' '; row.append(label);
+        if(display)row.append(document.createTextNode(display[j].text));else renderContent(row, option.content, { strict, loadMedia }); article.append(row);
       }
       const answer = document.createElement('div'); answer.className = 'answer-preview';
       const label = document.createElement('strong'); label.textContent = q.type==='open'?`參考與自評重點（非唯一答案）：${openReferenceSummary(q)}`:q.type === 'fields' ? `核對每格：${fieldsAnswerSummary(q,q.answer)}` : q.type === 'single'
-        ? `正解：${String.fromCharCode(65 + q.options.findIndex(o => o.id === q.answer.option_id))}`
+        ? `正解：${choiceAnswerLabel(q,q.answer.option_id)}`
         : `可接受答案：${q.answer.accepted.join('、')}`;
       answer.append(label); renderContent(answer, q.explanation, { strict, loadMedia }); article.append(answer); section.append(article);
     }

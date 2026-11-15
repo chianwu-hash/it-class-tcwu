@@ -1,4 +1,7 @@
 import {appendSingleChoiceOptions} from './quiz-choice.mjs';
+import {choiceQuestionPresentation,choiceAnswerLabel} from './quiz-choice-conversion.mjs';
+import {renderFieldsChoices} from './quiz-fields.mjs';
+import {booleanChoicePresentation} from './quiz-boolean-choice.mjs';
 import {afterGardenReward} from './garden-unlock-notice.mjs?v=20261102-grade9-release';
 import { renderContent as renderQuizContent } from './quiz-render.mjs?v=20261029-load-batch1';
 import { mergeQuizSnapshot } from './quiz-state.mjs';
@@ -111,7 +114,7 @@ export function initServerQuiz({ selectors, server }) {
     const animate = !showFullReview && feedbackAnimation === q.id;
     if (animate) { box.classList.add('feedback-fresh'); feedbackAnimation = null; }
     const answerSummary=make('p',undefined,'quiz-answer-summary');
-    if(q.type==='single')answerSummary.append(make('span','正確選項：'),make('strong',String.fromCharCode(65+q.options.findIndex(o=>o.id===review.answer.option_id)),'quiz-answer-value'));
+    if(q.type==='single')answerSummary.append(make('span','正確選項：'),make('strong',choiceAnswerLabel(q,review.answer.option_id),'quiz-answer-value'));
     else answerSummary.textContent=q.type==='fields'?`核對每格：${fieldsAnswerSummary(q,review.answer)}`:`可接受答案：${review.answer.accepted.join('、')}`;
     const answerRow=make('div',undefined,'quiz-answer-row');answerRow.append(answerSummary);box.append(answerRow);
     const studentExplanation=study.explanation(q.id);
@@ -140,7 +143,7 @@ export function initServerQuiz({ selectors, server }) {
       if (loadError) root.append(button('重新加入', () => load('join')));
       return;
     }
-    const questions = state.document.questions;
+    const questions = state.document.questions.map(choiceQuestionPresentation);
     const count = questions.filter(completed).length;
     const heading = make('div', undefined, 'quiz-heading');
     heading.append(make('h2', state.document.title), make('p', `已作答 ${count} / ${questions.length} 題`, 'progress-label'));
@@ -166,9 +169,10 @@ export function initServerQuiz({ selectors, server }) {
       for (const [index, q] of questions.entries()) {
         const article = make('article', undefined, 'question'); article.dataset.questionId = q.id;
         article.append(make('h3', `第 ${index + 1} 題 / ${questions.length} 題`));
-        renderContent(article, q.material); renderContent(article, q.prompt);
-        article.append(make('p', `你的答案：${['fields','open'].includes(q.type) ? fieldsResponseSummary(q,state.responses[q.id]) : q.type === 'single' ? String.fromCharCode(65 + q.options.findIndex(o => o.id === state.responses[q.id])) : state.responses[q.id]}`));
-        if (q.type === 'single') q.options.forEach((o, i) => { const row = make('div', undefined, 'preview-option'); row.append(make('strong', `${String.fromCharCode(65 + i)}. `)); renderContent(row, o.content); article.append(row); });
+        renderContent(article, q.material); renderContent(article, fieldsPromptPresentation(q));
+        article.append(make('p', `你的答案：${['fields','open'].includes(q.type) ? fieldsResponseSummary(q,state.responses[q.id]) : q.type === 'single' ? choiceAnswerLabel(q,state.responses[q.id]) : state.responses[q.id]}`));
+        if(q.type==='fields')renderFieldsChoices(article,q,{renderContent});
+        if (q.type === 'single') {const display=booleanChoicePresentation(q.options);q.options.forEach((o, i) => { const row = make('div', undefined, 'preview-option'); row.append(make('strong', (display?.[i].badge??String.fromCharCode(65+i))+' ')); if(display)row.append(make('span',display[i].text));else renderContent(row, o.content); article.append(row); });}
         renderReview(article, q); mountQuestionReport(article,report(q));root.append(article);
       }
       return;

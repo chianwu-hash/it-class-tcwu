@@ -1,4 +1,6 @@
-import {fieldsResponseSummary,fieldsAnswerSummary} from './quiz-fields.mjs';
+import {fieldsResponseSummary,fieldsAnswerSummary,renderFieldsChoices,fieldsPromptPresentation} from './quiz-fields.mjs';
+import {choiceQuestionPresentation,choiceAnswerLabel} from './quiz-choice-conversion.mjs';
+import {booleanChoicePresentation} from './quiz-boolean-choice.mjs';
 import {renderContent} from './quiz-render.mjs?v=20261029-load-batch1';
 import {resolveQuizImage} from './quiz-media.mjs?v=20261029-load-batch1';
 import {initImageLightbox} from './image-lightbox.js';
@@ -58,13 +60,14 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
       detail.dataset.subject=data.catalog?.subject||'';detail.replaceChildren();const article=make('article',undefined,'question');
       el('wrong-title').textContent=`${data.catalog?.subject||'未分類'}・${data.catalog?.unit||data.title}・${ref.source_type==='past_exam'?'原卷 '+data.source_label+'（'+data.field_label+'）':'第 '+data.number+' 題'}`;
       el('wrong-meta').textContent=`${ref.source_type==='past_exam'?'考古題｜本次開始時間':'作答時間'}：${new Date(data.answered_at).toLocaleString('zh-TW')}｜以下保留你當時的選項順序。`;
-      const q=data.question;if(q.material?.text||q.material?.media?.length){const material=make('section',undefined,'wrong-material');material.append(make('h4','共用材料'));content(material,q.material);article.append(material);}
-      content(article,q.prompt);
-      const choices=make('div',undefined,'wrong-choices');
+      const q=choiceQuestionPresentation(data.question);if(q.material?.text||q.material?.media?.length){const material=make('section',undefined,'wrong-material');material.append(make('h4','共用材料'));content(material,q.material);article.append(material);}
+      content(article,fieldsPromptPresentation(q));
+      if(q.type==='fields')renderFieldsChoices(article,q,{renderContent:content});
+      const choices=make('div',undefined,'wrong-choices'),display=q.type==='single'?booleanChoicePresentation(q.options):null;
       for(const [index,o] of (q.options||[]).entries()){
         const option=make('div',undefined,'wrong-option'),body=make('div');
-        if(ref.source_type!=='past_exam')option.append(make('strong',String.fromCharCode(65+index)));else option.classList.add('past-wrong-option');
-        content(body,o.content);
+        if(display)option.append(make('strong',display[index].badge));else if(ref.source_type!=='past_exam')option.append(make('strong',String.fromCharCode(65+index)));else option.classList.add('past-wrong-option');
+        if(display)body.append(make('span',display[index].text));else content(body,o.content);
         if(o.id===data.response){body.append(make('p','你的答案','wrong-selected'));option.classList.add('was-selected');}
         if(o.id===data.review.answer.option_id){body.append(make('p',ref.source_type==='past_exam'?'✓ 核對答案':'✓ 正確答案','wrong-correct'));option.classList.add('is-correct');}
         option.append(body);choices.append(option);
@@ -75,7 +78,7 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
       }
       else if(q.type==='fields'){explanation.append(make('p',`你的答案：${fieldsResponseSummary(q,data.response)}`),make('p',`核對每格：${fieldsAnswerSummary(q,data.review.answer)}`));}
       else if(q.type!=='single'){explanation.append(make('p',`你的答案：${data.response}`),make('p',`可接受的答案：${data.review.answer.accepted.join('、')}`));}
-      else explanation.append(make('p',`正確選項：${String.fromCharCode(65+q.options.findIndex(o=>o.id===data.review.answer.option_id))}`));
+      else explanation.append(make('p',`正確選項：${choiceAnswerLabel(q,data.review.answer.option_id)}`));
       content(explanation,data.review.explanation);if(!data.past_review)article.append(explanation);detail.append(article);
       if(ref.source_type==='past_exam'&&data.past_review){
         renderPastLearningReview({host:article,...data.past_review,onPractice:async({source,conceptId,requestId})=>{
