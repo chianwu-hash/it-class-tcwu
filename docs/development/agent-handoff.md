@@ -1,3 +1,17 @@
+# 六上社會期末組卷空白已修正（2026-11-16）
+
+使用者回報預設期末範圍沒有社會單元；原因是前端範圍表漏列已啟用的社會課程，不是題庫遺失。已補南一115上六年級社會第1／2單元期中、第3／4單元期末，以及產生器的manifest指紋。第3單元284、第4單元417；既有題庫、作答、函式及獎勵不變，不重跑匯入／啟用。
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-g6-social-scope-20261116 | 2026-11-15T22:19:22.083Z | `42310cf` | `dpl_F6rPjsk2swxmgBUydYUxi7dfhgdX` | shared/quiz-practice-scope.mjs、shared/quiz-workshop/generated/assets.json、grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html | `dpl_C5yqy7WRGAqB8QrW7tbfsCBb48SZ`／回滾 `dpl_F6rPjsk2swxmgBUydYUxi7dfhgdX`（eolOnly 0） |
+
+- 程式PR257、指紋PR258；完整檔案樹比較ok:true，18改／0增刪／0額外差異，正式18檔逐一SHA-256一致，發布鎖已釋放。首次未同步產物的候選被雲端阻擋，未promote；補齊後重新走完整發布關卡。
+- 正式目錄唯讀990來源；舊版空白重現，新版實際composer1280／390px可選284+417、切換期中及全部／勾選／送出參數正常，7項範圍回歸與產生器21檔核對通過。隔離組卷回應不代表本輪正式學生送答；工作分身無合適學生session，沒有冒稱真人登入驗收。
+- [修正與驗證紀錄](quiz-g6-social-scope-fix-20261116.md)。私有正式讀回、模型外的UI測試與發布收據在 `D:/AI-Work/g6-social-scope-fix-20261116/`；自有工作頁及服務收尾，不動其他對話。
+
 # 六上社會第3、4單元完整題庫已上線（2026-11-15）
 
 - [正式驗收收據](quiz-g6-social-complete-live-20261115.md)：新增701完整來源／945欄（第3單元284、第4單元417），本範圍剩餘0；14父題保留文字自評、4來源不硬配課本頁。社會可用990包含原前半289，不能混稱990皆新版。
