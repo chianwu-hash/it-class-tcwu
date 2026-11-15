@@ -1,0 +1,102 @@
+{
+  "agent": "codex-g6ch-open-20261115",
+  "commit": "af370eca04efa73799aef7964471566e51cd141a",
+  "baseline": "dpl_6AcvQRtsK5v95nvwuhvbjPogpFjj",
+  "expected": {
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade3/115-1/past-exam.html",
+      "grade3/115-1/quiz-library.html",
+      "grade3/115-1/quiz.html",
+      "grade4/115-1/partner-practice.html",
+      "grade4/115-1/past-exam.html",
+      "grade4/115-1/quiz-library.html",
+      "grade4/115-1/quiz.html",
+      "grade6/115-1/partner-practice.html",
+      "grade6/115-1/past-exam.html",
+      "grade6/115-1/quiz-library.html",
+      "grade6/115-1/quiz.html",
+      "grade9/115-1/partner-practice.html",
+      "grade9/115-1/past-exam.html",
+      "grade9/115-1/quiz-library.html",
+      "grade9/115-1/quiz.html",
+      "shared/quiz-api.mjs",
+      "shared/quiz-author.mjs",
+      "shared/quiz-document.mjs",
+      "shared/quiz-fields.css",
+      "shared/quiz-render.mjs",
+      "shared/quiz-report-admin.mjs",
+      "shared/quiz-server.mjs",
+      "shared/quiz-workshop/generated/assets.json",
+      "shared/quiz-workshop/generated/library.css",
+      "shared/quiz-workshop/generated/past.css",
+      "shared/quiz-workshop/generated/quiz.css"
+    ],
+    "added": [
+      "shared/quiz-open-response.mjs"
+    ],
+    "removed": []
+  },
+  "startedAt": "2026-11-15T12:20:13.652Z",
+  "candidate": "dpl_FMtWUmEREKzjMQqUvs8N9jFZhmhc",
+  "comparison": {
+    "ok": true,
+    "changed": [
+      "grade3/115-1/partner-practice.html",
+      "grade3/115-1/past-exam.html",
+      "grade3/115-1/quiz-library.html",
+      "grade3/115-1/quiz.html",
+      "grade4/115-1/partner-practice.html",
+      "grade4/115-1/past-exam.html",
+      "grade4/115-1/quiz-library.html",
+      "grade4/115-1/quiz.html",
+      "grade6/115-1/partner-practice.html",
+      "grade6/115-1/past-exam.html",
+      "grade6/115-1/quiz-library.html",
+      "grade6/115-1/quiz.html",
+      "grade9/115-1/partner-practice.html",
+      "grade9/115-1/past-exam.html",
+      "grade9/115-1/quiz-library.html",
+      "grade9/115-1/quiz.html",
+      "shared/quiz-api.mjs",
+      "shared/quiz-author.mjs",
+      "shared/quiz-document.mjs",
+      "shared/quiz-fields.css",
+      "shared/quiz-render.mjs",
+      "shared/quiz-report-admin.mjs",
+      "shared/quiz-server.mjs",
+      "shared/quiz-workshop/generated/assets.json",
+      "shared/quiz-workshop/generated/library.css",
+      "shared/quiz-workshop/generated/past.css",
+      "shared/quiz-workshop/generated/quiz.css"
+    ],
+    "added": [
+      "shared/quiz-open-response.mjs"
+    ],
+    "removed": [],
+    "eolOnly": 0,
+    "unexpected": [],
+    "missingFromChange": [],
+    "addedCheck": {
+      "missing": [],
+      "unexpected": []
+    },
+    "removedCheck": {
+      "missing": [],
+      "unexpected": []
+    }
+  },
+  "deployedAt": "2026-11-15T12:20:43.664Z",
+  "promotedAt": "2026-11-15T12:21:30.734Z",
+  "alias": "dpl_FMtWUmEREKzjMQqUvs8N9jFZhmhc",
+  "rollback": "dpl_6AcvQRtsK5v95nvwuhvbjPogpFjj",
+  "sql_PR": 247,
+  "snapshot_PR": 248,
+  "registration_PR": 249,
+  "production_snapshot_functions": 178,
+  "live_snapshot_check": true,
+  "synthetic_production_transaction_rolled_back": true,
+  "live_runtime_files_verified": 28,
+  "real_OAuth_test": false,
+  "whole_chinese_bank_published": false
+}
