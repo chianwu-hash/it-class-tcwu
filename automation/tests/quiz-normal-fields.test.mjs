@@ -44,6 +44,17 @@ async function join(db,p,uid=studentId(1)){
 }
 const submit=(db,p,raw,uid=studentId(1),request=randomUUID())=>quizCall(db,uid,'submit',{session_id:p.session,question_id:p.q.id,response:raw,request_id:request,compact:true});
 
+test('舊圈號選擇題保留 fields-v1 原欄位，點選值送達後端仍正確判分',async()=>{
+ const db=await database();try{
+  const q={id:'kg6ch_synthetic',type:'fields',prompt:content('選擇題-字音字形\n合成題目\n①ㄅ②ㄆ③ㄇ④ㄈ。'),explanation:content('合成解析'),fields:[{id:'f1',label:'①ㄅ②ㄆ③ㄇ④ㄈ。',input:'text'}],answer:{format:'fields-v1',fields:{f1:['②']}}};
+  const p=await seed(db,q);const s=await join(db,p);
+  const raw=response({f1:'②'});assert.equal(fieldsResponseError(s.document.questions[0],raw),'');
+  assert.equal((await submit(db,p,raw)).reviews[0].correct,true);
+  assert.deepEqual((await db.query('select response,correct from public.quiz_answers where attempt_id=$1',[s.attempt_id])).rows,[{response:raw,correct:true}]);
+  await join(db,p,studentId(2));assert.equal((await submit(db,p,response({f1:'①'}),studentId(2))).reviews[0].correct,false);
+ }finally{await db.close();}
+});
+
 test('完整父題一次送答，五種欄位、重送、公開投影與舊簡答行為保持',async()=>{
  const db=await database(false);try{
   const old=await seed(db,{id:'old',type:'short',prompt:content('合成舊簡答'),explanation:content('舊解析'),answer:{accepted:['1/2']}});

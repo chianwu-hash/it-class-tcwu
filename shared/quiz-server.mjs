@@ -5,7 +5,7 @@ import { mergeQuizSnapshot } from './quiz-state.mjs';
 import {createQuestionReport,mountQuestionReport} from './quiz-question-reports.mjs';
 import {createQuizStudy,studySourceLabel} from './quiz-study.mjs';
 import {renderExplanation} from './quiz-explanation-render.mjs';
-import {renderFieldsInputs,fieldsResponseError,fieldsResponseSummary,fieldsAnswerSummary} from './quiz-fields.mjs';
+import {renderFieldsInputs,fieldsResponseError,fieldsResponseSummary,fieldsAnswerSummary,fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields.mjs';
 import {renderOpenInputs,renderOpenReview,openResponseError} from './quiz-open-response.mjs';
 
 import {quizFeedbackMotion} from './quiz-feedback-motion.mjs?v=20261107-partner-motion';
@@ -183,7 +183,7 @@ export function initServerQuiz({ selectors, server }) {
     if (q.material.text || q.material.media.length) {
       const material = make('section', undefined, 'material'); material.append(make('h4', '共用材料')); renderContent(material, q.material); article.append(material);
     }
-    renderContent(article, q.prompt);
+    renderContent(article, fieldsPromptPresentation(q));
     const inputs = make('fieldset');
     // 鎖住作答控制項，保留已作答選項內圖片的燈箱操作。
     const choicesLocked = saved || Boolean(pending) || busy || state.status === 'closed';
@@ -191,7 +191,7 @@ export function initServerQuiz({ selectors, server }) {
     inputs.className = 'quiz-choices';
     // 長文、表格或複雜圖文選項使用整列，避免四格擠壓閱讀空間。
     inputs.classList.toggle('long-options', q.type !== 'single' || q.options.some(o => o.content.text.length > 34 || o.content.layout?.some(p => p.type === 'table') || o.content.media.length > 1));
-    const legend = make('legend', q.type === 'single' ? '選擇一個答案' : '填入你的答案'); inputs.append(legend);
+    const legend = make('legend', q.type === 'single'||fieldsAreSingleChoice(q) ? '選擇一個答案' : '填入你的答案'); inputs.append(legend);
     if (q.type === 'single') {
       appendSingleChoiceOptions(inputs, {
         name:`q-${q.id}`, options:q.options.map(o=>({...o,value:o.id})),
@@ -221,7 +221,7 @@ export function initServerQuiz({ selectors, server }) {
     if (completed(q) && cursor < questions.length - 1) actions.append(button('下一題', () => { cursor++; selected = ''; render(); if(root.classList.contains('quiz-workspace-active'))root.querySelector('.quiz-reading-panel')?.focus({preventScroll:true});else root.querySelector('.question')?.scrollIntoView({ block: 'start' }); }, 'quiz-primary'));
     if (state.complete && cursor === questions.length - 1) actions.append(button('查看整份作答與解析', () => { showFullReview = true; render(); }, 'quiz-primary'));
     actions.append(button('更新儲存狀態', () => load('resume', true), 'secondary quiz-refresh')); article.append(actions); root.append(article);
-    workspace.apply({article, saved, complete:state.complete, closed:state.status==='closed',forceLongForm:['fields','open'].includes(q.type),scratchpadKey:JSON.stringify([userId,state.attempt_id,state.version_id,q.id]),scratchpadLabel:'第'+(cursor+1)+'題・計算紙'});
+    workspace.apply({article, saved, complete:state.complete, closed:state.status==='closed',forceLongForm:['fields','open'].includes(q.type)&&!fieldsAreSingleChoice(q),scratchpadKey:JSON.stringify([userId,state.attempt_id,state.version_id,q.id]),scratchpadLabel:'第'+(cursor+1)+'題・計算紙'});
     mountQuestionReport(article.querySelector('.quiz-reading-panel')||article,report(q));
     if (pending) say('這次答案的儲存狀態尚未確認，請以相同答案重試或更新狀態。', true);
   }
