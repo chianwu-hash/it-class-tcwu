@@ -6473,7 +6473,7 @@
      "generated": "",
      "identity": "",
      "name": "book_id",
-     "not_null": true,
+     "not_null": false,
      "type": "uuid"
     },
     {
@@ -6481,7 +6481,7 @@
      "generated": "",
      "identity": "",
      "name": "primary_page",
-     "not_null": true,
+     "not_null": false,
      "type": "integer"
     },
     {
@@ -6531,10 +6531,6 @@
      "name": "quiz_pool_study_sources_book_id_fkey"
     },
     {
-     "def": "CHECK (((cardinality(reference_pages) > 0) AND (primary_page = ANY (reference_pages))))",
-     "name": "quiz_pool_study_sources_check"
-    },
-    {
      "def": "FOREIGN KEY (course_id) REFERENCES quiz_courses(id)",
      "name": "quiz_pool_study_sources_course_id_fkey"
     },
@@ -6553,6 +6549,10 @@
     {
      "def": "FOREIGN KEY (question_id) REFERENCES quiz_question_pool(question_id)",
      "name": "quiz_pool_study_sources_question_id_fkey"
+    },
+    {
+     "def": "CHECK (((((book_id IS NULL) AND (primary_page IS NULL) AND (cardinality(reference_pages) = 0) AND ((teacher_notes ->> 'book_match_status'::text) = 'no_reliable_match'::text) AND (length(btrim((teacher_notes ->> 'unmatched_explanation'::text))) > 0)) OR ((book_id IS NOT NULL) AND (primary_page IS NOT NULL) AND (primary_page > 0) AND (cardinality(reference_pages) > 0) AND (primary_page = ANY (reference_pages)) AND (0 < ALL (reference_pages)) AND (array_position(reference_pages, NULL::integer) IS NULL))) IS TRUE))",
+     "name": "quiz_pool_study_sources_reference_shape"
     },
     {
      "def": "CHECK (((length(student_explanation) >= 1) AND (length(student_explanation) <= 12000)))",
