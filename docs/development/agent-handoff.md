@@ -1,14 +1,15 @@
-# 選擇題／注音鍵盤修正（2026-11-15）
+# 選擇題／注音鍵盤修正已正式發布（2026-11-15）
 
 ## 發布登記
 
-| 狀態 | Agent | 範圍 | 結果 |
-|---|---|---|---|
-| 發布中 | Codex-choice-zhuyin-20261115 | 舊匯入圈號選擇題恢復點選；真正注音填空鍵盤橫向自動換欄 | 待正式驗證 |
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-choice-zhuyin-20261115 | 2026-11-15T14:08:48.474Z | `aa9fc7b` | `dpl_FMtWUmEREKzjMQqUvs8N9jFZhmhc` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-fields.css、shared/quiz-fields.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-fields-presentation.mjs | `dpl_F6rPjsk2swxmgBUydYUxi7dfhgdX`／回滾 `dpl_FMtWUmEREKzjMQqUvs8N9jFZhmhc`（eolOnly 0） |
 
-- [修正與驗證](quiz-choice-zhuyin-fix-20261115.md)。本輪只改前端呈現，不改固定題庫、答案、版本、作答或正式 SQL；不重跑國語匯入／啟用。
+- [修正與驗證](quiz-choice-zhuyin-fix-20261115.md)，程式 PR254 已進 main。完整檔案樹比較通過，23 改動／1 新增、0 額外變更、eolOnly 0；正式網址指向候選版，24 檔 SHA-256 與乾淨 main checkout 一致，發布鎖已釋放。
 - 2,002 來源只讀盤點，15 題符合狹義相容條件、0 答案圈號衝突；實際回報題桌手機四寬驗證通過，原欄位答案封裝不變。18 項針對性測試及 8 個開放自評行為子項通過；既有完整自評套件有 Windows CRLF 指紋斷言限制，詳見驗證文。
-- 私有證據 `D:/AI-Work/choice-zhuyin-fix-20261115`；不得將教材或原題提交公開 repo。
+- 本輪只改前端呈現；固定題庫、答案、版本、作答及正式 SQL 保持。不重跑國語匯入／啟用，不冒稱驗證真人 OAuth 或正式學生送答。重新整理既有卷可套用呈現修正。
+- 私有證據及工作目錄清理收據：D:/AI-Work/choice-zhuyin-fix-20261115；不提交教材或原題。
 
 # 六上國語第7～12課完整題庫已上線（2026-11-15）
 
