@@ -33,3 +33,9 @@
 - 發布前接到最新main，保留另一輪已上線的課本拖曳修正；不以舊checkout覆蓋新CSS或燈箱。產物由原builder更新依賴指紋，只變載入版本。
 
 私有權威：`D:/AI-Work/all-converted-content-audit-20261116/`中的只讀匯出、全量報告、來源對照、候選、判分、桌手機、外層／最終候選SHA與正式發布收據。未提交原題全文、教材、學生資料或憑證。
+
+## 正式發布驗證
+
+- PR [#268](https://github.com/chianwu-hash/it-class-tcwu/pull/268)已合併；由乾淨main `55b0083061f20ad19860ae9a99ea3bd265cc8c3b` 經發布腳本start／deploy／promote。
+- 正式部署 `dpl_2P1isy2878XVPh8G6L1fThfHQvrm`；完整檔案樹比較 `ok:true`，promote前正式指向保持基準，切換後alias核對一致。
+- 正式網站21修改檔與2新增檔共23檔逐位元回讀，與乾淨main完全一致；原外層與課本拖曳修正保持。發布鎖已釋放；未進行正式學生送答或資料庫寫入。
