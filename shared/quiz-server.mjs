@@ -117,7 +117,7 @@ export function initServerQuiz({ selectors, server }) {
     if (animate) { box.classList.add('feedback-fresh'); feedbackAnimation = null; }
     const answerSummary=make('p',undefined,'quiz-answer-summary');
     if(q.type==='single')answerSummary.append(make('span','正確選項：'),make('strong',choiceAnswerLabel(q,review.answer.option_id),'quiz-answer-value'));
-    else answerSummary.textContent=q.type==='fields'?`核對每格：${fieldsAnswerSummary(q,review.answer)}`:`可接受答案：${review.answer.accepted.join('、')}`;
+    else answerSummary.textContent=q.type==='fields'?'各小題已在原作答欄旁標示核對結果；本題仍按整組計分。':`可接受答案：${review.answer.accepted.join('、')}`;
     const answerRow=make('div',undefined,'quiz-answer-row');answerRow.append(answerSummary);box.append(answerRow);
     const studentExplanation=study.explanation(q.id);
     const explanation=make('section',undefined,'quiz-explanation-copy');
@@ -173,7 +173,7 @@ export function initServerQuiz({ selectors, server }) {
         article.append(make('h3', `第 ${index + 1} 題 / ${questions.length} 題`));
         renderContent(article, q.material); renderContent(article, fieldsPromptPresentation(q));
         article.append(make('p', `你的答案：${['fields','open'].includes(q.type) ? fieldsResponseSummary(q,state.responses[q.id]) : q.type === 'single' ? choiceAnswerLabel(q,state.responses[q.id]) : state.responses[q.id]}`));
-        if(q.type==='fields')renderFieldsChoices(article,q,{renderContent});
+        if(q.type==='fields')renderFieldsChoices(article,q,{renderContent,raw:state.responses[q.id],review:state.reviews.find(r=>r.question_id===q.id)});
         if (q.type === 'single') {const display=booleanChoicePresentation(q.options);q.options.forEach((o, i) => { const row = make('div', undefined, 'preview-option'); row.append(make('strong', (display?.[i].badge??String.fromCharCode(65+i))+' ')); if(display)row.append(make('span',display[i].text));else renderContent(row, o.content); article.append(row); });}
         renderReview(article, q); mountQuestionReport(article,report(q));root.append(article);
       }
@@ -199,7 +199,7 @@ export function initServerQuiz({ selectors, server }) {
     inputs.className = 'quiz-choices';
     // 長文、表格或複雜圖文選項使用整列，避免四格擠壓閱讀空間。
     inputs.classList.toggle('long-options', q.type !== 'single' || q.options.some(o => o.content.text.length > 34 || o.content.layout?.some(p => p.type === 'table') || o.content.media.length > 1));
-    const legend = make('legend', q.type === 'single'||fieldsAreSingleChoice(q) ? '選擇一個答案' : '填入你的答案'); inputs.append(legend);
+    const legend = make('legend', q.type==='fields'&&saved?(review?'逐小題核對作答':'已儲存的作答'):q.type === 'single'||fieldsAreSingleChoice(q) ? '選擇一個答案' : '填入你的答案'); inputs.append(legend);
     if (q.type === 'single') {
       appendSingleChoiceOptions(inputs, {
         name:`q-${q.id}`, options:q.options.map(o=>({...o,value:o.id})),
@@ -211,7 +211,7 @@ export function initServerQuiz({ selectors, server }) {
       renderOpenInputs(inputs,q,{raw:saved?state.responses[q.id]:pending?.response??selected,locked:choicesLocked,onChange:value=>{selected=value}});
     } else if(q.type==='fields'){
       const chinese=root.dataset.subject==='國語';
-      renderFieldsInputs(inputs,q,{raw:saved?state.responses[q.id]:pending?.response??selected,locked:choicesLocked,onChange:value=>{selected=value},renderContent,textInputAids:{bopomofo:chinese,punctuation:chinese}});
+      renderFieldsInputs(inputs,q,{raw:saved?state.responses[q.id]:pending?.response??selected,locked:choicesLocked,onChange:value=>{selected=value},renderContent,textInputAids:{bopomofo:chinese,punctuation:chinese},review:saved?review:null});
     } else {
       const input = make('textarea'); input.setAttribute('aria-label', '簡答內容'); input.maxLength = 2000;
       input.disabled = choicesLocked;
@@ -284,8 +284,12 @@ export function initServerQuiz({ selectors, server }) {
       state = next; pending = null; busy = false; render(); say('答案已儲存。');
       if(next.leaf?.learning?.earned_now){celebrateQuizLeaf({leaves:next.leaf.learning.earned_now,kind:'learning'});afterGardenReward();}
       if(next.leaf?.credit_added_now || next.leaf?.earned_now){celebrateQuizLeaf({leaves:next.leaf.awarded_leaf_count??1});afterGardenReward();}
-      root.querySelector('.answer-preview')?.focus({preventScroll:true});
-      if(root.classList.contains('quiz-workspace-active')&&!root.classList.contains('workspace-desktop'))root.querySelector('.answer-preview')?.scrollIntoView({block:'start',behavior:'instant'});
+      const fieldReview=q.type==='fields'?(root.querySelector('.quiz-field[data-field-review=incorrect]')||root.querySelector('.quiz-field[data-field-review=paired]')||root.querySelector('.quiz-field[data-field-review=reference]')):null;
+      if(fieldReview){fieldReview.tabIndex=-1;fieldReview.focus({preventScroll:true});fieldReview.scrollIntoView({block:'start',behavior:'instant'});}
+      else{
+        root.querySelector('.answer-preview')?.focus({preventScroll:true});
+        if(root.classList.contains('quiz-workspace-active')&&!root.classList.contains('workspace-desktop'))root.querySelector('.answer-preview')?.scrollIntoView({block:'start',behavior:'instant'});
+      }
     } catch (e) { if (generation === token) { busy = false;
       if(e.code==='quiz_snapshot_mismatch'){await load('resume',true);return;}
       // The server's next question differs from this page (another tab/device or a lost response):

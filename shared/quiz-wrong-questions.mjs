@@ -62,7 +62,7 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
       el('wrong-meta').textContent=`${ref.source_type==='past_exam'?'考古題｜本次開始時間':'作答時間'}：${new Date(data.answered_at).toLocaleString('zh-TW')}｜以下保留你當時的選項順序。`;
       const q=choiceQuestionPresentation(data.question);if(q.material?.text||q.material?.media?.length){const material=make('section',undefined,'wrong-material');material.append(make('h4','共用材料'));content(material,q.material);article.append(material);}
       content(article,fieldsPromptPresentation(q));
-      if(q.type==='fields')renderFieldsChoices(article,q,{renderContent:content});
+      if(q.type==='fields')renderFieldsChoices(article,q,{renderContent:content,raw:data.response,review:data.review});
       const choices=make('div',undefined,'wrong-choices'),display=q.type==='single'?booleanChoicePresentation(q.options):null;
       for(const [index,o] of (q.options||[]).entries()){
         const option=make('div',undefined,'wrong-option'),body=make('div');
@@ -76,7 +76,7 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
       if(data.past_review&&q.type!=='single'){
         const result=make('section',undefined,'answer-preview');result.append(make('h4','當時作答與核對'),make('p',`你的答案：${data.response_text}`),make('p',`本卷核對答案：${data.answer_text}`));article.append(result);
       }
-      else if(q.type==='fields'){explanation.append(make('p',`你的答案：${fieldsResponseSummary(q,data.response)}`),make('p',`核對每格：${fieldsAnswerSummary(q,data.review.answer)}`));}
+      else if(q.type==='fields'){explanation.append(make('p','各小題的作答與核對結果已標在上方原題旁。'));}
       else if(q.type!=='single'){explanation.append(make('p',`你的答案：${data.response}`),make('p',`可接受的答案：${data.review.answer.accepted.join('、')}`));}
       else explanation.append(make('p',`正確選項：${choiceAnswerLabel(q,data.review.answer.option_id)}`));
       content(explanation,data.review.explanation);if(!data.past_review)article.append(explanation);detail.append(article);
