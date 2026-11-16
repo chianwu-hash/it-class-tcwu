@@ -1,15 +1,15 @@
-# 全題型內容稽核：原外層保持，正式發布中（2026-11-16）
+# 全題型內容稽核：原外層保持，正式已上線（2026-11-16）
 
 - 使用者要求其他已轉化題型一起掃描，只修內容、不動原外層，機械處理不送AI。[全量紀錄](quiz-all-types-content-audit-20261116.md)與長線SOP已補齊；原作答／自評／保存／重載及欄位型別保持。
 - 全量16,456題庫列＋20,304固定／草稿／考古／夥伴副本；2,072來源列與22副本套內容修正。沒有新增可用來源選項缺漏；1筆上一輪已停用的舊缺項版本保持留存、不重跑匯入啟用。25組聽力75選項依原圖與代號保留，不能誤當空選項。
 - 10,989欄實際型別與基準一致，39回歸＋開放自評9行為子項通過；1,702 PG正／1,693改答／1,702非法、392開放參考回應保持；桌手機4,188次／25,128檢查及原外層4案例通過。無真人OAuth／正式學生送答宣稱，沒有DB／函式／權限寫入或模型呼叫。私有證據 `D:/AI-Work/all-converted-content-audit-20261116/`。
-- 已接main最新課本拖曳修正；本次不覆蓋燈箱／CSS或使用舊發布包。
+- 已接main最新課本拖曳修正；本次不覆蓋燈箱／CSS或使用舊發布包。PR #268已合併；正式23檔逐位元回讀與乾淨main一致，完整檔案樹比較通過，發布鎖已釋放。
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-all-content-20261116 | 2026-11-16 | 本次PR合併後main | `dpl_3h8zCqGqFMASti1NowEovDqmYvdi` | 共用內容函式／純呈現adapter、2新模組與載入版本；原UI／CSS保持 | 待發布腳本完整樹比較與正式回讀 |
+| 已完成 | Codex-all-content-20261116 | 2026-11-16T05:59:17.342Z | `55b0083` | `dpl_3h8zCqGqFMASti1NowEovDqmYvdi` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-checkbox-presentation.mjs、shared/quiz-choice-conversion.mjs、shared/quiz-content-slices.mjs、shared/quiz-fields-presentation.mjs、shared/quiz-workshop/generated/assets.json、+shared/quiz-reviewed-editorial-versions.mjs、+shared/quiz-student-content.mjs | `dpl_2P1isy2878XVPh8G6L1fThfHQvrm`／回滾 `dpl_3h8zCqGqFMASti1NowEovDqmYvdi`（eolOnly 0） |
 
 # 課本拖曳修正已正式發布（2026-11-16）
 
