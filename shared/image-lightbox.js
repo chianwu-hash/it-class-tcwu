@@ -181,8 +181,14 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
             }
         });
 
+        // Stop native image/text dragging without suppressing the compatibility
+        // mouse events that the existing double-click zoom needs.
+        lightboxStage.addEventListener('mousedown', event => {
+            if (event.button === 0) event.preventDefault();
+        });
         lightboxStage.addEventListener("pointerdown", (event) => {
             if (lightboxEl.classList.contains("hidden")) return;
+            if (event.pointerType === 'mouse' && event.button !== 0) return;
             if (event.isTrusted) lightboxStage.setPointerCapture?.(event.pointerId);
             lightboxPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
 
@@ -232,6 +238,8 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
 
         lightboxStage.addEventListener("pointerup", endLightboxPointer);
         lightboxStage.addEventListener("pointercancel", endLightboxPointer);
+        lightboxStage.addEventListener("lostpointercapture", endLightboxPointer);
+        lightboxStage.addEventListener("dragstart", event => event.preventDefault());
 
         document.addEventListener("keydown", (event) => {
             if (!lightboxEl.classList.contains("hidden") && event.key === "Tab") {
