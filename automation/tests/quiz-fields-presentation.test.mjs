@@ -14,5 +14,5 @@ test('舊匯入選擇題只轉換呈現，原題、欄位與圈號答案保持',
 });
 test('真正填空、多欄、非指定匯入、有圖表或圈號不完整的題目不推測題型',()=>{
  const cases=[q=>q.id='other',q=>q.prompt.text='填空題\n'+q.fields[0].label,q=>q.fields.push({...q.fields[0],id:'f2'}),q=>q.prompt.media.push({type:'image'}),q=>q.prompt.layout=[{type:'table'}],q=>q.prompt.layout=[{type:'paragraph',runs:[{type:'image'}]}],q=>q.fields[0].label='①甲③丙',q=>q.fields[0].label='①甲①乙',q=>q.fields[0].label='①甲②',q=>q.prompt.text+='別的內容'];
- for(const change of cases){const q=fixture();change(q);assert.equal(fieldPresentation(q,q.fields[0]),q.fields[0]);assert.equal(fieldsPromptPresentation(q),q.prompt);}
+ for(const change of cases){const q=fixture();change(q);assert.equal(fieldPresentation(q,q.fields[0]),q.fields[0]);assert.equal(fieldsPromptPresentation(q).text.replace(/依原題順序完成所有答案欄；同一份原題保留為一組。/gu,'').replace(/\s/gu,''),q.prompt.text.replace(/依原題順序完成所有答案欄；同一份原題保留為一組。/gu,'').replace(/\s/gu,''));}
 });

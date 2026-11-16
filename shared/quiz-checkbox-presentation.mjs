@@ -1,5 +1,5 @@
 // Student content only: outer controls, response types, IDs and answers stay put.
-import {sourceStream,sliceContent,omitRanges} from './quiz-content-slices.mjs';
+import {sourceStream,sliceContent,omitRanges,replaceTextRange,compactParagraphs} from './quiz-content-slices.mjs';
 const plain=text=>({text,media:[]});
 const normalize=s=>s.normalize('NFKC').replace(/\s/gu,'').replace(/\$|\\[()]/gu,'').replace(/\\(?:d?frac)\{([^{}]+)\}\{([^{}]+)\}/gu,'$1/$2').replace(/\(([0-9]+\/[0-9]+)\)/gu,'$1');
 const marker=/^\s*(?:(?:[（(][ \t　]*[）)]|[□☐])\s*)?(?:[（(]([0-9０-９]+)[）)]|([①②③④⑤⑥⑦⑧⑨⑩])|([0-9０-９]+)(?=[^0-9０-９]))\s*|^\s*[□☐]\s*/u;
@@ -26,20 +26,6 @@ function fieldLines(lines,f){
  const roots=lines.filter(l=>/^\s*[（(]([0-9０-９]+)[）)](?=[^（(])/u.test(l.text));
  const starts=roots.filter(l=>Number(l.text.match(/[0-9０-９]+/u)[0].normalize('NFKC'))===Number(n.normalize('NFKC')));
  if(starts.length!==1)return lines;const start=starts[0].start,end=roots.find(l=>l.start>start)?.start??Infinity;return lines.filter(l=>l.start>start&&l.start<end);
-}
-function replaceTextRange(c,start,end,value){
- const text=sourceStream(c);if(!c.layout)return plain(text.slice(0,start)+value+text.slice(end));let pos=0;
- const layout=c.layout.map(p=>{const runs=p.runs.map(r=>{const length=r.type==='text'?r.text.length:1,a=Math.max(start,pos),b=Math.min(end,pos+length);let run=r;if(a<b&&r.type==='text')run={...r,text:r.text.slice(0,a-pos)+(start>=pos?value:'')+r.text.slice(b-pos)};pos+=length;return run});pos++;return {...p,runs}});
- return {...c,text:text.slice(0,start)+value+text.slice(end),layout};
-}
-function compactParagraphs(c){
- if(!c.layout)return {...c,text:c.text.trim().replace(/\n{3,}/gu,'\n\n')};
- const layout=c.layout.map(p=>{
-  const runs=p.runs.map(r=>r.type==='text'?{...r,text:r.text.replace(/\n{3,}/gu,'\n\n')}:r);
-  while(runs[0]?.type==='text'&&!runs[0].text.trim())runs.shift();while(runs.at(-1)?.type==='text'&&!runs.at(-1).text.trim())runs.pop();
-  if(runs[0]?.type==='text')runs[0]={...runs[0],text:runs[0].text.trimStart()};if(runs.at(-1)?.type==='text')runs[runs.length-1]={...runs.at(-1),text:runs.at(-1).text.trimEnd()};return {...p,runs};
- }).filter(p=>p.runs.length);
- return {...c,layout,text:layout.map(p=>p.runs.filter(r=>r.type==='text').map(r=>r.text).join('')).join('\n').trim()};
 }
 export function checkboxPresentationIssues(source,view){
  const issues=[],fail=code=>issues.push({code});
