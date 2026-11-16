@@ -1,12 +1,12 @@
-# 題型標題與亂序解析引用：發布中（2026-11-16）
+# 題型標題與亂序解析引用：正式完成（2026-11-16）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-explanation-reference-20261116 | 2026-11-16T12:42:32Z | 本次PR合併後main | `dpl_3ghScPW7Rktt9TyfwBYYkRhWd75p` | 共用題幹／解析、原序ID映射與生成資源版本 | 待唯一發布腳本 |
+| 已完成 | Codex-explanation-reference-20261116 | 2026-11-16T12:51:12.692Z | `0643431` | `dpl_3ghScPW7Rktt9TyfwBYYkRhWd75p` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/rich-content.js、shared/quiz-explanation-render.mjs、shared/quiz-fields-presentation.mjs、shared/quiz-question-contract.mjs、shared/quiz-server.mjs、shared/quiz-student-content.mjs、shared/quiz-workshop/generated/assets.json、+shared/quiz-explanation-references.mjs、+shared/quiz-reviewed-option-orders.mjs | `dpl_3FrR5Vz4DpyWasM7iRJXu1KXj2Jp`／回滾 `dpl_3ghScPW7Rktt9TyfwBYYkRhWd75p`（eolOnly 0） |
 
-- [修正與盤點](quiz-explanation-option-reference-20261116.md)：隱去學生題幹的獨立題型標題；依原來源選項ID引用內容，修正亂序後AI解析仍用原①的問題，SOP加入凍結前機器檢查。68個啟用來源／共126版本相容修正、1,058輪替與53桌手機驗收通過；固定資料、答案、作答、亂序及原外層不變，沒有SQL／資料庫寫入或整庫AI。私有證據 `D:/AI-Work/quiz-type-caption-evidence-20261116/`。
+- [PR #275](https://github.com/chianwu-hash/it-class-tcwu/pull/275) 已進main並發布，[修正與正式收據](quiz-explanation-option-reference-20261116.md)：隱去學生題幹的獨立題型標題；依原來源選項ID引用內容，修正亂序後AI解析仍用原①的問題，SOP加入凍結前機器檢查。68個啟用來源／共126版本相容修正、1,058輪替、155回歸與53桌手機驗收通過；完整樹23改／2增、正式25檔逐位元回讀通過，發布鎖釋放；固定資料、答案、作答、亂序及原外層不變，沒有SQL／資料庫寫入或整庫AI。私有證據 `D:/AI-Work/quiz-type-caption-evidence-20261116/`。
 
 # 共用選項間距修正：正式完成（2026-11-16）
 
