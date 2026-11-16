@@ -12328,7 +12328,7 @@
       "activeVersion": "06f4142e-4387-44c9-92c4-683df7683642",
       "documentSha256": "c4603fcf92ea77d85fb15116a17522d03885c1dc3ce59438a8552ff6f44fee5d",
       "grade": 3,
-      "enabled": false,
+      "enabled": true,
       "reviewStatus": "reviewed-printed-items",
       "independentQuestionCount": 31,
       "bundleCount": 11,
