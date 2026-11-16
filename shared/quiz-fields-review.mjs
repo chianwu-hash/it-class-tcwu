@@ -36,7 +36,7 @@ export function decorateFieldReviewOption(row,feedback){
  if(!feedback||feedback.state==='neutral')return;
  row.dataset.fieldResult=feedback.state;row.dataset.result=feedback.state==='correct'||feedback.state==='answer'?'correct':feedback.state==='wrong'?'incorrect':feedback.state;
  row.classList.add('quiz-field-review-option');
- if(feedback.text){const body=row.querySelector('.option-body')||row.querySelector('input+span')||row,note=node('span',feedback.text);note.className='quiz-field-review-note';body.append(note);}
+ if(feedback.text){const body=row.querySelector('.option-body,.option-content,.rv-option')||row.querySelector('input+span')||row,note=node('span',feedback.text);note.className='quiz-field-review-note';body.append(note);}
 }
 export function appendFieldReviewReference(host,feedback,format,formatPair){
  if(!feedback)return;

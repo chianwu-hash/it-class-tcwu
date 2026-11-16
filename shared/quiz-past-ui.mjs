@@ -11,6 +11,7 @@ import {appendSingleChoiceOptions} from './quiz-choice.mjs';
 import {createQuizWorkspace} from './quiz-workspace.mjs';
 import {createQuizStudy,studySourceLabel} from './quiz-study.mjs';
 import {renderExplanation} from './quiz-explanation-render.mjs';
+import {choiceReviewModel,decorateFieldReviewOption} from './quiz-review-choices.mjs';
 export function initPastExamUI({root,request,resolveAsset,resolveTextbook,onView,reportRequest,onPractice}){
 let active=true;
 const mediaScope={resolve:resolveAsset,active:()=>active};
@@ -54,7 +55,11 @@ async function saveDraft(){
 function currentValue(g){const r=state.records[g.id];return r?(isManual(g)?r.responses[0].value:r.responses.map(x=>x.value)):draft(g);}
 function art(a){const f=el('figure',undefined,'figure');const link=el('a');link.href='#';link.dataset.imageLightbox='';const img=el('img');img.dataset.quizMediaUrl=a.url;resolveAsset(a.url).then(src=>{if(img.isConnected)img.src=src;}).catch(e=>say(e.message));img.alt=a.alt;applySourceCrop(link,img,a.viewBox);link.append(img);f.append(link,el('figcaption',a.alt));return f;}
 function officialText(g,value){if(g.kind==='mark')return value?'應打勾':'不打勾';if(Array.isArray(value))return value.join(g.kind==='sequence'?' → ':'、');return value;}
-function feedback(g,i,host){const r=state.records[g.id];if(!r||isManual(g))return;const result=r.results[i],box=el('div',undefined,'feedback'+(result.correct?'':' wrong'));if(g.fields.length>1)box.dataset.fieldLabel=`（${g.fields[i].label}）${g.fields[i].text}`;box.append(el('strong',result.correct?'✓ 這一格核對正確':'這一格和核對答案不同'),el('span','核對答案：'+officialText(g,result.official)));host.append(box);}
+function feedback(g,i,host){const r=state.records[g.id];if(!r||isManual(g)||!r.results?.[i])return;const result=r.results[i],box=el('div',undefined,'feedback'+(result.correct?'':' wrong'));box.dataset.localReview='true';const names=v=>Array.isArray(v)?v.map(names).join(g.kind==='sequence'?' → ':'、'):g.choices.find(c=>c.id===v)?.text||officialText(g,v);box.append(el('strong',result.correct?'✓ 這一格核對正確':'✕ 這一格需要修正'));if(Object.hasOwn(result,'official'))box.append(el('span','核對答案：'+names(result.official)));host.append(box);
+ const value=r.responses[i]?.value,model=choiceReviewModel({kind:g.kind,choices:g.choices,codes:g.codes,value,official:result.official,correct:result.correct,revealed:Object.hasOwn(result,'official')});if(!model)return;host.classList.add('quiz-choice-review');
+ if(g.kind==='mark'){const row=host.querySelector('label'),state=value===true?(result.official?'correct':'wrong'):(result.official?'missing':'correct');decorateFieldReviewOption(row,{state,text:state==='wrong'?'✕ 這項不該勾選':state==='missing'?'＋ 這項漏選了':value?'✓ 你勾對了':'✓ 不勾選是正確的'});}
+ if(g.kind==='set')host.querySelectorAll('.codes>button').forEach((row,j)=>decorateFieldReviewOption(row,model.options[j]));
+}
 function renderPractice(){
  const host=$('#practice-progress'),p=state.practice;if(!host||!p)return;
  const box=el('div',undefined,'demo-note');
@@ -141,7 +146,7 @@ function render(){if(!active)return;study.refresh();
  // Only presentation moves: all group/field IDs, listeners, draft maps and
  // request packets stay owned by this original-paper controller.
  const feedbackPanel=el('aside',undefined,'answer-preview');
- for(const node of [...card.querySelectorAll('.feedback,.reference,.past-learning-review')]){
+ for(const node of [...card.querySelectorAll('.feedback:not([data-local-review]),.reference,.past-learning-review')]){
   if(node.dataset.fieldLabel)feedbackPanel.append(el('p',node.dataset.fieldLabel,'helper'));
   feedbackPanel.append(node);
  }
