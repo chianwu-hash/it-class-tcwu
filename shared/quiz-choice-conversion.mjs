@@ -1,6 +1,7 @@
 // Deterministic source-to-choice conversion, shared by import and legacy views.
 // Never reads answers, changes IDs, or mutates a fixed document.
 import {booleanChoicePresentation} from './quiz-boolean-choice.mjs';
+import {convertCheckboxQuestion} from './quiz-checkbox-presentation.mjs';
 const circles='①②③④⑤⑥⑦⑧';
 const instructions=['依原題完成全部答案欄，再一起送出。','依原題順序完成所有答案欄；同一份原題保留為一組。'];
 const compact=s=>s.replace(/\s/gu,'');
@@ -81,7 +82,8 @@ function sharedOptions(content,fields,coded){
  if(!Number.isFinite(end))return null;
  return splitOptions(content,options,bank[0].index,end);
 }
-export function convertChoiceQuestion(q){
+export function convertChoiceQuestion(q,options={}){
+ if(q?.type==='fields'&&q.fields?.length===1&&q.fields[0].input==='set')return convertCheckboxQuestion(q,options);
  const changes=[],issues=[];if(!q||!['fields','single'].includes(q.type))return {question:q,changes,issues};
  const fields=q.type==='single'?[{id:'$single',input:'single',options:q.options}]:q.fields;
  if(!Array.isArray(fields))return {question:q,changes,issues};
