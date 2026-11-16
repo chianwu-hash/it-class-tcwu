@@ -1,3 +1,4 @@
+import {explanationReferenceContent} from './quiz-explanation-references.mjs';
 import {appendSingleChoiceOptions} from './quiz-choice.mjs';
 import {choiceQuestionPresentation,choiceAnswerLabel} from './quiz-choice-conversion.mjs';
 import {renderFieldsChoices} from './quiz-fields.mjs';
@@ -82,7 +83,7 @@ export function initServerQuiz({ selectors, server }) {
       const box=renderOpenReview(article,q,review,{busy:busy||state.status==='closed',pending:Boolean(pending),draftNote:pending?.self_note??openNotes.get(q.id)??'',onNoteChange:value=>openNotes.set(q.id,value),onSelfCheck:selfCheck});
       const explanation=make('section',undefined,'quiz-explanation-copy'),studentExplanation=study.explanation(q.id);
       if(studentExplanation?.origin==='ai'){explanation.classList.add('quiz-explanation-ai');explanation.append(make('strong','AI 解析','quiz-explanation-caption'));}
-      if(studentExplanation)renderExplanation(explanation,studentExplanation.text);else renderContent(explanation,review.explanation);
+      if(studentExplanation)renderExplanation(explanation,studentExplanation.text,q);else renderContent(explanation,explanationReferenceContent(q,review.explanation));
       if(studentExplanation)explanation.append(make('p',studySourceLabel(studentExplanation.origin),'helper'));
       box.append(explanation);return;
     }
@@ -120,8 +121,8 @@ export function initServerQuiz({ selectors, server }) {
     const studentExplanation=study.explanation(q.id);
     const explanation=make('section',undefined,'quiz-explanation-copy');
     if(studentExplanation?.origin==='ai'){explanation.classList.add('quiz-explanation-ai');explanation.append(make('strong','AI 解析','quiz-explanation-caption'));}
-    if(studentExplanation)renderExplanation(explanation,studentExplanation.text);
-    else renderContent(explanation,review.explanation);
+    if(studentExplanation)renderExplanation(explanation,studentExplanation.text,q);
+    else renderContent(explanation,explanationReferenceContent(q,review.explanation));
     if(studentExplanation)explanation.append(make('p',studySourceLabel(studentExplanation.origin),'helper'));
     box.append(explanation);
     article.append(box);

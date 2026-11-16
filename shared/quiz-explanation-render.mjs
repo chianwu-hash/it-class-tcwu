@@ -1,4 +1,5 @@
 import {renderContent} from './quiz-render.mjs';
+import {explanationReferencePresentation} from './quiz-explanation-references.mjs';
 
 // Display-only conversion for reviewed prose. Never evaluate or change answers.
 // A small numeric grammar deliberately rejects dates, units inside expressions,
@@ -43,8 +44,9 @@ export function formatExplanationMath(text){
  }).join('');
 }
 
-export function renderExplanation(container,text){
- const box=renderContent(container,{text:formatExplanationMath(text),media:[]});
+export function renderExplanation(container,text,question){
+ const presented=question?explanationReferencePresentation(question,text).text:text;
+ const box=renderContent(container,{text:formatExplanationMath(presented),media:[]});
  for(const span of box.children)if(span.querySelector?.('.katex'))span.classList.add('quiz-explanation-formula');
  return box;
 }

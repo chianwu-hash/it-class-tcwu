@@ -62,6 +62,21 @@ function correction(q){
  }
  return {question:q,changes:[],issues:[{code:'editorial_source_mapping_required'}]};
 }
+export function studentPromptContent(content){
+ if(typeof content?.text!=='string')return content;
+ let text=content.text,count=0,match;
+ const heading=/^\s*(?:是非題|選擇題)[ \t　]*[:：]?[ \t　]*(?:\r?\n|$)/u;
+ while((match=text.match(heading))){text=text.slice(match[0].length);count++;}
+ if(!count||!text.trim())return content;
+ if(!content.layout)return {...content,text:text.trimStart()};
+ // Drop text-only heading paragraphs; keep all media indices, tables and runs.
+ const layout=[...content.layout];let removed=0;
+ while(layout.length){const p=layout[0];if(p.type!=='paragraph'||p.runs.some(r=>r.type!=='text'))break;
+  const line=p.runs.map(r=>r.text).join('').trim();if(!line){layout.shift();continue;}
+  if(removed<count&&/^(?:是非題|選擇題)[ \t　]*[:：]?$/u.test(line)){layout.shift();removed++;continue;}break;
+ }
+ return removed===count?{...content,text:text.trimStart(),layout}:content;
+}
 export function convertStudentContent(q){
  const original=q,changes=[],issues=[];if(!q||!['single','fields','short','open'].includes(q.type))return {question:q,changes,issues};
  const revised=correction(q);q=revised.question;changes.push(...revised.changes);issues.push(...revised.issues);
