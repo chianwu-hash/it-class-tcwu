@@ -187,6 +187,7 @@
 
 ## 7. 瀏覽器、視窗、磁碟與免費用量
 
+- 背景畫面驗收不要依賴`waitForFunction`預設的`raf`輪詢；以明確間隔（通常5000ms）核實圖片自然尺寸、可見性、印刷頁及返回原作答狀態。逾時先留DOM／圖片／狀態，不以重載或改網站猜修；實例與官方依據見[背景載圖等待](browser-background-polling-20261117.md)。
 - 保留使用者指定的 Notebook 本體登入，不默換分身重新請登入。使用 shared launcher 租約／心跳、worker註冊、精確target及 finally釋放；其他測試使用可分配實例。不要掃全部 profiles 或接管使用者 Chrome。
 - 使用者已要求背景執行時，走 supervisor 真正的 background 分支；run 記錄須誠實標 viewer=false／background=true，保留 canary、OAuth、tool boundary、Git、marker與SHA。完成才關確切自有頁籤／viewer，不刪雲端Notebook來源、不關其他人的視窗。等待人工輸入時不可讓背景工作搶前景。
 - 大檔／TEMP用已核定工作碟。每科完成後清可重建暫存，保留原件／審查／正式收據；刪除前核絕對路徑與所有權，既有自動審查拒絕不可重試繞過。
