@@ -18,3 +18,9 @@
 - `quiz:build`／`quiz:check`通過；測試分頁已關閉，不重送AI。私有證據 `D:/AI-Work/quiz-type-caption-evidence-20261116/`。
 
 正式部署識別與收據依 agent-handoff 頂部登記。長線新題轉化仍依使用者指示暫停，本次僅修共用顯示／新來源規則。
+
+## 正式收據
+
+- PR #275 合併 main `0643431a`，從乾淨main依唯一腳本發布；正式 `dpl_3FrR5Vz4DpyWasM7iRJXu1KXj2Jp`，回滾 `dpl_3ghScPW7Rktt9TyfwBYYkRhWd75p`。
+- 完整檔案樹23修改／2新增／0刪除，無額外內容差異、換行差異0；正式25檔HTTP 200且逐位元符合發布main，發布鎖釋放。
+- 未重寫任何來源／固定版本／作答資料，未停用原亂序；無SQL／資料庫寫入或AI重送。SOP與新來源凍結前檢查均已進main。
