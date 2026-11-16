@@ -1,5 +1,6 @@
 import {choiceQuestionPresentation} from './quiz-choice-conversion.mjs';
 import {studentPromptContent} from './quiz-student-content.mjs';
+import {readingPresentation} from './quiz-reading-presentation.mjs';
 // Compatibility for the reviewed Chinese import's circled-code choice fields.
 // Only the view changes: the original field ID, circled values and fields-v1
 // response envelope remain exactly as stored. Never read or infer an answer.
@@ -21,6 +22,7 @@ export const fieldsAreSingleChoice=q=>q.type==='fields'&&q.fields?.length===1&&f
 
 export function fieldsPromptPresentation(q){
  const converted=choiceQuestionPresentation(q);q=converted;
+ const reading=readingPresentation(q);if(reading)return reading.passage;
  if(q.fields?.length!==1||fieldPresentation(q,q.fields[0])===q.fields[0])return studentPromptContent(q.prompt);
  const label=q.fields[0].label.trim(),text=q.prompt.text.trimEnd();
  // Retain the complete original prompt in storage and full-paper review. Only
