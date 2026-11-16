@@ -42,7 +42,8 @@ test('structured self papers preserve grading, privacy, old copies, drafts and c
 
  await db.exec((await read('supabase/quiz-partner-message-media.sql')).split('-- Copy the old body')[0]+'commit;');
  const names=['public.quiz_math_answer_normalize','public.quiz_fields_response','public.quiz_fields_grade','public.quiz_fields_value','public.quiz_fields_validate','public.quiz_open_validate','partner_pilot.self_document_ok','partner_pilot.copy_self','partner_pilot.import_teacher_library_session','partner_pilot.action_core','partner_pilot.learning_snapshot_pre_message_media','partner_pilot.learning_snapshot','partner_pilot.team_rooms'];
- for(const name of names){const i=snapshot.indexOf('CREATE OR REPLACE FUNCTION '+name+'(');assert(i>=0,name);await db.exec(snapshot.slice(i,snapshot.indexOf('$function$;',i)+11));}
+ const beforeDefinitions=JSON.parse(await read('automation/fixtures/quiz-partner-structured-before.json')).definitions;
+ for(const name of names){const i=snapshot.indexOf('CREATE OR REPLACE FUNCTION '+name+'(');assert(i>=0,name);await db.exec(beforeDefinitions[name]??snapshot.slice(i,snapshot.indexOf('$function$;',i)+11));}
  await db.exec(await read('supabase/quiz-partner-structured-answers.sql'));
  const structured=document(10);
  const field=(id,input,extra={})=>({id,label:'原題答案',input,...extra});

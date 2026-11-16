@@ -4193,6 +4193,14 @@
      "name": "past_answer",
      "not_null": false,
      "type": "jsonb"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "normal_question",
+     "not_null": false,
+     "type": "jsonb"
     }
    ],
    "constraints": [

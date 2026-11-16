@@ -1,13 +1,13 @@
-# 單選題型與期末自組卷夥伴修正：發布中（2026-11-16）
+# 單選題型與期末自組卷夥伴修正：正式完成（2026-11-16）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-canonical-types-20261116 | 2026-11-16T07:41:51Z | PR #271 合併後的 main | `dpl_2P1isy2878XVPh8G6L1fThfHQvrm` | 共用來源型別、夥伴作答／入口與生成資源雜湊 | 待 main 唯一發布腳本 |
+| 已完成 | Codex-canonical-types-20261116 | 2026-11-16T07:43:01.351Z | `2135595` | `dpl_2P1isy2878XVPh8G6L1fThfHQvrm` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/answer-feedback.mjs、shared/partner-pilot/choice-presentation.mjs、shared/partner-pilot/learning.js、shared/partner-pilot/outcome-model.mjs、shared/partner-pilot/review-layout.mjs、shared/quiz-partner-pilot-entry.mjs、shared/quiz-workshop/generated/assets.json、+shared/partner-pilot/structured-answer.js、+shared/quiz-question-contract.mjs | `dpl_95B3nYwMhwUcB4Fa8LwndGsA8wGM`／回滾 `dpl_2P1isy2878XVPh8G6L1fThfHQvrm`（eolOnly 505） |
 
-- [PR #271](https://github.com/chianwu-hash/it-class-tcwu/pull/271)，[驗證與 SOP](quiz-canonical-types-repair-20261116.md)。使用者已明確核准本次 `supabase/quiz-partner-structured-answers.sql`；先發布相容前端，再套用 SQL 與 1,084 個新不可變來源版本，更新 production-snapshot 並 live check。原固定卷 44 筆副本、作答／獎勵保留。
-- 145 回歸、34 桌手機操作、11 批共 1,084 來源所有選項正式 PG 判分回滾及 SQL 基準回滾通過。無 AI 呼叫、正式學生送答；C 約18.47GiB，暫存與私有證據在 `D:/AI-Work/quiz-canonical-types-audit-20261116/`，測試分頁已關閉、租約釋放。
+- [PR #271](https://github.com/chianwu-hash/it-class-tcwu/pull/271) 已進 main，[完整收據](quiz-canonical-types-repair-20261116.md)。依本次明確核准，SQL 已正式套用、1,084 個新不可變來源版本已啟用並全量正式回讀通過；44 筆固定卷／草稿副本及既有作答保留。另補入6份原先缺夥伴索引的教師卷，所有原卷／房間題目不改寫。
+- 145 回歸、34 桌手機操作及全部原選項 PG 判分通過；正式25檔逐位元回讀一致、完整樹23改／2增及505換行差異通過，發布鎖釋放。178函式 live snapshot 通過，僅6個核准函式變更，全部函式權限保持。私有證據在 `D:/AI-Work/quiz-canonical-types-audit-20261116/`；無 AI／正式學生送答，測試分頁與租約已清理。
 - 長線新題轉化仍維持使用者要求的暫停，本次僅修復共用規則、既有資料與夥伴支援。
 
 # 三上國語7～12課一般題庫補齊；依使用者要求暫停（2026-11-16）

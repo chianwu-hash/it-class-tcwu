@@ -4,7 +4,7 @@
 -- so every function ends at the production definition (e.g. quiz_action with ordered next-question lookup).
 -- Check: node automation/db-snapshot-check.mjs
 
--- partner_pilot.action_core(jsonb)  md5=71a4b9c68066965e08435c333143aee6
+-- partner_pilot.action_core(jsonb)  md5=1eb8fb0c9925d775b631c050428665b4
 CREATE OR REPLACE FUNCTION partner_pilot.action_core(p jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -43,7 +43,18 @@ begin
   select count(*) into count_attempt from partner_pilot.answers a where a.room_id=rid and a.qid=(p->>'qid')::int;
   if count_attempt is distinct from (p->>'expectedAttempt')::int then raise exception 'ANSWER_CHANGED'; end if;
   select * into strict qb from partner_pilot.question_bank where id=qid;
-  if qb.past_meta is not null then
+  if qb.normal_question is not null then
+   if jsonb_typeof(p->'response') is distinct from 'string' or length(p->>'response') not between 1 and 2000 then raise exception 'invalid_response';end if;
+   response_value:=p->'response';
+   if qb.normal_question->>'type' in ('fields','open') then
+    perform public.quiz_fields_response(qb.normal_question,p->>'response');
+    is_correct:=case when qb.normal_question->>'type'='open' then null else public.quiz_fields_grade(qb.normal_question,p->>'response') end;
+   elsif qb.normal_question->>'type'='short' then
+    if qb.normal_question#>>'{answer,normalizer}'='math-v1' and (p->>'response')~'[0-9０-９][[:space:]　]+[0-9０-９]' then raise exception 'invalid_response';end if;
+    is_correct:=case when qb.normal_question#>>'{answer,normalizer}'='math-v1' then exists(select 1 from jsonb_array_elements_text(qb.normal_question#>'{answer,accepted}') a where public.quiz_math_answer_normalize(a)=public.quiz_math_answer_normalize(p->>'response')) else exists(select 1 from jsonb_array_elements_text(qb.normal_question#>'{answer,accepted}') a where trim(a)=trim(p->>'response')) end;
+   else raise exception 'invalid_question_type';end if;
+   insert into partner_pilot.answers(room_id,user_id,qid,attempt,choice,correct,created_at,response) values(rid,uid,qid,count_attempt+1,-1,is_correct,clock_timestamp(),response_value);
+  elsif qb.past_meta is not null then
    response_value:=partner_pilot.quiz_past_canonical(qb.past_config,p->'value');
    is_correct:=case when qb.past_meta->>'selfCheck'='true' then null when qb.past_meta->>'kind'='short' then exists(select 1 from jsonb_array_elements_text(qb.past_answer) a where case when qb.past_meta->>'answerFormat'='math-v1' then partner_pilot.quiz_math_answer_normalize(a)=response_value->>'answer' else trim(a)=trim(response_value#>>'{}') end) else response_value=qb.past_answer end;
    insert into partner_pilot.answers(room_id,user_id,qid,attempt,choice,correct,created_at,response) values(rid,uid,qid,count_attempt+1,-1,is_correct,clock_timestamp(),response_value);
@@ -78,7 +89,7 @@ begin
  end if;
  if act in ('answer','chat','ask','reply','mark','discuss','review') then
   k:=(case act when 'review' then 'reflection' else act end)||'-'||case when act='reply' then p->>'thread' when act in ('answer','ask','mark','discuss') then p->>'qid' else '' end;
-  update partner_pilot.drafts d set state=d.state#-array['drafts',k],revision=d.revision+1,saved_at=clock_timestamp() where d.room_id=rid and d.user_id=uid and d.state#>>array['drafts',k]=case when act='answer' then p->>'choice' else coalesce(p->>'text','') end;
+  update partner_pilot.drafts d set state=d.state#-array['drafts',k],revision=d.revision+1,saved_at=clock_timestamp() where d.room_id=rid and d.user_id=uid and d.state#>>array['drafts',k]=case when act='answer' then coalesce(p->>'response',p->>'choice') else coalesce(p->>'text','') end;
  end if;
  update partner_pilot.rooms set revision=revision+1 where id=rid returning * into r;
  result:=partner_pilot.learning_snapshot(rid);
@@ -1423,7 +1434,7 @@ end $function$;
 revoke all on function partner_pilot.claim_award(uuid) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.claim_award(uuid) to postgres;
 
--- partner_pilot.copy_self(uuid,text)  md5=c3da408c532d9e011b52154d2b2a06ea
+-- partner_pilot.copy_self(uuid,text)  md5=427f1441f2987cb1cdebd919176989c2
 CREATE OR REPLACE FUNCTION partner_pilot.copy_self(sid uuid, pid text)
  RETURNS void
  LANGUAGE plpgsql
@@ -1466,11 +1477,12 @@ begin
  for b in select value from jsonb_array_elements(doc->'blocks') loop
   q:=b->'questions'->0;n:=n+1;
   select jsonb_agg(o->'content' order by i),min((i-1)::int) filter(where o->>'id'=q#>>'{answer,option_id}') into opts,correct_index
-  from jsonb_array_elements(q->'options') with ordinality a(o,i);
+  from jsonb_array_elements(coalesce(q->'options','[]')) with ordinality a(o,i);
   rich:=jsonb_build_object('material',b->'material','prompt',q->'prompt','options',opts,'explanation',q->'explanation');
+  if q->>'type'<>'single' then opts:='[]';correct_index:=-1;rich:=rich||jsonb_build_object('normal',q-'answer'-'explanation');end if;
   qid:=nextval('partner_pilot.self_question_id');
-  insert into partner_pilot.question_bank(id,title,prompt,options,correct,explanation,rich)
-  values(qid,'第'||n||'題',q#>>'{prompt,text}',(select jsonb_agg(o->>'text' order by i) from jsonb_array_elements(opts) with ordinality a(o,i)),correct_index,q#>>'{explanation,text}',rich);
+  insert into partner_pilot.question_bank(id,title,prompt,options,correct,explanation,rich,normal_question)
+  values(qid,'第'||n||'題',q#>>'{prompt,text}',(select coalesce(jsonb_agg(o->>'text' order by i),'[]'::jsonb) from jsonb_array_elements(opts) with ordinality a(o,i)),correct_index,q#>>'{explanation,text}',rich,case when q->>'type'<>'single' then q end);
   insert into partner_pilot.paper_items values(pid,n,qid);
  end loop;
 end $function$;
@@ -2475,7 +2487,7 @@ grant execute on function public.homework_thumbnail_access(text,boolean) to post
 grant execute on function public.homework_thumbnail_access(text,boolean) to authenticated;
 grant execute on function public.homework_thumbnail_access(text,boolean) to service_role;
 
--- partner_pilot.import_teacher_library_session(uuid)  md5=ff98627fa80e9f62f955961910611466
+-- partner_pilot.import_teacher_library_session(uuid)  md5=fa85911cc4158970ce1009390481e7b9
 CREATE OR REPLACE FUNCTION partner_pilot.import_teacher_library_session(sid uuid)
  RETURNS text
  LANGUAGE plpgsql
@@ -2511,11 +2523,12 @@ begin
  for b in select value from jsonb_array_elements(d->'blocks') loop
   q:=b->'questions'->0;n:=n+1;
   select jsonb_agg(o->'content' order by i),min((i-1)::int) filter(where o->>'id'=q#>>'{answer,option_id}') into opts,correct_index
-  from jsonb_array_elements(q->'options') with ordinality a(o,i);
+  from jsonb_array_elements(coalesce(q->'options','[]')) with ordinality a(o,i);
   rich:=jsonb_build_object('material',b->'material','prompt',q->'prompt','options',opts,'explanation',q->'explanation');
+  if q->>'type'<>'single' then opts:='[]';correct_index:=-1;rich:=rich||jsonb_build_object('normal',q-'answer'-'explanation');end if;
   qid:=nextval('partner_pilot.self_question_id');
-  insert into partner_pilot.question_bank(id,title,prompt,options,correct,explanation,rich)
-  values(qid,'第'||n||'題',q#>>'{prompt,text}',(select jsonb_agg(o->>'text' order by i) from jsonb_array_elements(opts) with ordinality a(o,i)),correct_index,q#>>'{explanation,text}',rich);
+  insert into partner_pilot.question_bank(id,title,prompt,options,correct,explanation,rich,normal_question)
+  values(qid,'第'||n||'題',q#>>'{prompt,text}',(select coalesce(jsonb_agg(o->>'text' order by i),'[]'::jsonb) from jsonb_array_elements(opts) with ordinality a(o,i)),correct_index,q#>>'{explanation,text}',rich,case when q->>'type'<>'single' then q end);
   insert into partner_pilot.paper_items values(pid,n,qid);
  end loop;
  insert into partner_pilot.paper_sources values(pid,sid);
@@ -2575,7 +2588,7 @@ end $function$;
 revoke all on function partner_pilot.learning_snapshot(uuid) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.learning_snapshot(uuid) to postgres;
 
--- partner_pilot.learning_snapshot_pre_message_media(uuid)  md5=b532c66a1abc43d2c13e19d5d3f9faca
+-- partner_pilot.learning_snapshot_pre_message_media(uuid)  md5=c3a88880e9ea4fad0cdc59d185cea86f
 CREATE OR REPLACE FUNCTION partner_pilot.learning_snapshot_pre_message_media(rid uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -2594,11 +2607,11 @@ begin
  select count(*) into first_correct from partner_pilot.answers where room_id=rid and attempt=1 and correct;
  for q in select b.*,i.number from partner_pilot.question_bank b join partner_pilot.paper_items i on i.qid=b.id where i.paper_id=r.paper order by i.number loop
   owner:=partner_pilot.owner_of(rid,q.id);
-  item:=jsonb_build_object('id',q.id,'number',q.number,'title',q.title,'text',q.prompt,'options',q.options,'past',q.past_meta,'rich',q.rich-'explanation','owner',owner,'ownerName',(select display_name from partner_pilot.allowed_users where user_id=owner));
+  item:=jsonb_build_object('id',q.id,'number',q.number,'title',q.title,'text',q.prompt,'options',q.options,'past',q.past_meta,'normal',q.normal_question-'answer'-'explanation','rich',q.rich-'explanation','owner',owner,'ownerName',(select display_name from partner_pilot.allowed_users where user_id=owner));
   if owner=auth.uid() then
    item:=item||jsonb_build_object('attempts',coalesce((select jsonb_agg(jsonb_build_object('choice',a.choice,'value',a.response,'correct',a.correct,'at',a.created_at) order by a.attempt) from partner_pilot.answers a where a.room_id=rid and a.qid=q.id),'[]'::jsonb));
   end if;
-  if submitted=total or exists(select 1 from partner_pilot.answers where room_id=rid and qid=q.id and user_id=auth.uid()) then item:=item||jsonb_build_object('correct',q.correct,'explanation',q.explanation,'rich',q.rich); end if;
+  if submitted=total or exists(select 1 from partner_pilot.answers where room_id=rid and qid=q.id and user_id=auth.uid()) then item:=item||jsonb_build_object('normalReference',q.normal_question->'answer','correct',q.correct,'explanation',q.explanation,'rich',q.rich); end if;
   if owner=auth.uid() then mine:=mine||jsonb_build_array(item); end if;
   if submitted=total or exists(select 1 from partner_pilot.notes where room_id=rid and qid=q.id and kind in ('ask','mark')) then shared:=shared||jsonb_build_array(item-'attempts'); end if;
  end loop;
@@ -2616,7 +2629,7 @@ begin
  end loop;
  select array_agg(user_id order by user_id),string_agg(user_id::text,',' order by user_id) into roster,memberkey from partner_pilot.members where room_id=rid;
  select jsonb_build_object('id',id,'room',room_id,'leaves',leaves,'flowers',flowers,'record',record,'at',created_at,'earnedHere',room_id=rid) into award from partner_pilot.awards where content_key=(select content_key from partner_pilot.papers where id=r.paper) and member_key=memberkey;
- return base||jsonb_build_object('exercise',jsonb_build_object('total',total,'submitted',submitted,'correct',correct_count,'initialCorrect',first_correct,'gradedTotal',(select count(*) from partner_pilot.paper_items pi join partner_pilot.question_bank qb on qb.id=pi.qid where pi.paper_id=r.paper and coalesce(qb.past_meta->>'selfCheck','false')<>'true'),'reviewOpen',submitted=total,'finished',r.finished,'mine',mine,'shared',shared,'notes',notes,'reviewers',reviewers,'stories',stories,'award',award,'privateDraft',coalesce((select jsonb_build_object('state',d.state,'revision',d.revision,'at',d.saved_at) from partner_pilot.drafts d where d.room_id=rid and d.user_id=auth.uid()),jsonb_build_object('state',null,'revision',0))));
+ return base||jsonb_build_object('exercise',jsonb_build_object('total',total,'submitted',submitted,'correct',correct_count,'initialCorrect',first_correct,'gradedTotal',(select count(*) from partner_pilot.paper_items pi join partner_pilot.question_bank qb on qb.id=pi.qid where pi.paper_id=r.paper and coalesce(qb.past_meta->>'selfCheck','false')<>'true' and coalesce(qb.normal_question->>'type','')<>'open'),'reviewOpen',submitted=total,'finished',r.finished,'mine',mine,'shared',shared,'notes',notes,'reviewers',reviewers,'stories',stories,'award',award,'privateDraft',coalesce((select jsonb_build_object('state',d.state,'revision',d.revision,'at',d.saved_at) from partner_pilot.drafts d where d.room_id=rid and d.user_id=auth.uid()),jsonb_build_object('state',null,'revision',0))));
 end $function$;
 revoke all on function partner_pilot.learning_snapshot_pre_message_media(uuid) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.learning_snapshot_pre_message_media(uuid) to postgres;
@@ -6456,7 +6469,7 @@ $function$;
 revoke all on function partner_pilot.self_catalog() from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.self_catalog() to postgres;
 
--- partner_pilot.self_document_ok(jsonb)  md5=915ff31ec471fde42f9781da15f04400
+-- partner_pilot.self_document_ok(jsonb)  md5=0af88ac01aae134d195e0fbbeb220bd4
 CREATE OR REPLACE FUNCTION partner_pilot.self_document_ok(doc jsonb)
  RETURNS boolean
  LANGUAGE sql
@@ -6465,7 +6478,7 @@ CREATE OR REPLACE FUNCTION partner_pilot.self_document_ok(doc jsonb)
 AS $function$
  select (select count(*) from jsonb_array_elements(doc->'blocks') b cross join lateral jsonb_array_elements(b->'questions') q) in (10,20)
  and not exists(select 1 from jsonb_array_elements(doc->'blocks') b where jsonb_array_length(b->'questions')<>1)
- and not exists(select 1 from jsonb_array_elements(doc->'blocks') b cross join lateral jsonb_array_elements(b->'questions') q where q->>'type' is distinct from 'single')
+ and not exists(select 1 from jsonb_array_elements(doc->'blocks') b cross join lateral jsonb_array_elements(b->'questions') q where coalesce(q->>'type','') not in ('single','fields','short','open'))
 $function$;
 revoke all on function partner_pilot.self_document_ok(jsonb) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.self_document_ok(jsonb) to postgres;
@@ -6586,7 +6599,7 @@ $function$;
 revoke all on function partner_pilot.sync_source_links() from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.sync_source_links() to postgres;
 
--- partner_pilot.team_rooms()  md5=4d86f90d9ee87ec31dff42e3b94480e3
+-- partner_pilot.team_rooms()  md5=fb026928de1052c2b8d76f4785f9cf54
 CREATE OR REPLACE FUNCTION partner_pilot.team_rooms()
  RETURNS jsonb
  LANGUAGE sql
@@ -6616,7 +6629,7 @@ AS $function$
  from partner_pilot.rooms r join partner_pilot.members mine on mine.room_id=r.id and mine.user_id=auth.uid() join partner_pilot.papers p on p.id=r.paper
  cross join lateral (select partner_pilot.paper_total(r.paper) total,
   (select count(distinct a.qid) from partner_pilot.answers a where a.room_id=r.id) submitted,
-  (select count(*) from partner_pilot.paper_items i join partner_pilot.question_bank q on q.id=i.qid where i.paper_id=r.paper and coalesce(q.past_meta->>'selfCheck','false')<>'true') graded,
+  (select count(*) from partner_pilot.paper_items i join partner_pilot.question_bank q on q.id=i.qid where i.paper_id=r.paper and coalesce(q.past_meta->>'selfCheck','false')<>'true' and coalesce(q.normal_question->>'type','')<>'open') graded,
   (select count(*) from (select distinct on(a.qid) a.correct from partner_pilot.answers a where a.room_id=r.id order by a.qid,a.attempt desc)x where correct) correct) s
 $function$;
 revoke all on function partner_pilot.team_rooms() from public, anon, authenticated, service_role;
