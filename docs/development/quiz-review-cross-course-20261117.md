@@ -25,3 +25,9 @@
 - 代表題無需重取外部圖片；原媒體／題文保持，沒有以佔位圖冒稱全庫媒體重驗。個人整份單選及手機考古共同回顧另留實際畫面供目視核對。
 
 私有清單、課程索引、原件匯出與逐項結果：`D:/AI-Work/quiz-review-coverage-evidence-20261116/`。工作分頁依租約精確關閉；暫存與驗收留D碟，發布後封存／清理本次工作樹。正式收據發布後補記。
+
+## 正式收據
+
+- [PR #287](https://github.com/chianwu-hash/it-class-tcwu/pull/287) 合併main `b4dc1b3af51e86be074504c3cd1dfeb16e7cb3d8`，乾淨main經唯一發布腳本完成；正式 `dpl_3sTeS8gip6gdsUFdt7FVA5DcF9tA`，回滾 `dpl_45QbnVe2y1cXQgFaYRuH8zDK1jCR`。
+- 完整檔案樹29修改／1新增／0刪除，`ok:true`，純換行差異0；正式30檔HTTP 200且逐位元符合發布main，發布鎖釋放。
+- 原作答、判分與原外層保持；沒有AI或SQL。自有工作樹封存清理，分頁／worker已關閉；新題轉化仍暫停。
