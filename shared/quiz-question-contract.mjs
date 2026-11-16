@@ -1,10 +1,14 @@
 // Source conversion only. Fixed documents and saved responses are never rewritten.
 import {convertChoiceQuestion} from './quiz-choice-conversion.mjs';
 import {fieldPresentation,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
+import {explanationReferenceContent,referenceChoiceGroups} from './quiz-explanation-references.mjs';
 
 export function canonicalizeQuestion(source){
  const converted=convertChoiceQuestion(source);
  if(converted.issues.length)return {...converted,mapping:null};
+ const orders=Object.fromEntries(referenceChoiceGroups(source).map(g=>[g.id,g.options.map(o=>o.id)]));
+ const explanation=explanationReferenceContent(converted.question,converted.question.explanation,{orders});
+ if(explanation!==converted.question.explanation){converted.question={...converted.question,explanation};converted.changes.push({kind:'stable_explanation_option_content'});}
  const q=converted.question;
  if(q.type!=='fields'||q.fields?.length!==1||q.answer?.tuples?.length)return {...converted,mapping:null};
  const original=q.fields[0],field=fieldPresentation(q,original),accepted=q.answer?.fields?.[field.id];

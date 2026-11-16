@@ -1,4 +1,5 @@
 import {choiceQuestionPresentation} from './quiz-choice-conversion.mjs';
+import {studentPromptContent} from './quiz-student-content.mjs';
 // Compatibility for the reviewed Chinese import's circled-code choice fields.
 // Only the view changes: the original field ID, circled values and fields-v1
 // response envelope remain exactly as stored. Never read or infer an answer.
@@ -20,10 +21,10 @@ export const fieldsAreSingleChoice=q=>q.type==='fields'&&q.fields?.length===1&&f
 
 export function fieldsPromptPresentation(q){
  const converted=choiceQuestionPresentation(q);q=converted;
- if(q.fields?.length!==1||fieldPresentation(q,q.fields[0])===q.fields[0])return q.prompt;
+ if(q.fields?.length!==1||fieldPresentation(q,q.fields[0])===q.fields[0])return studentPromptContent(q.prompt);
  const label=q.fields[0].label.trim(),text=q.prompt.text.trimEnd();
  // Retain the complete original prompt in storage and full-paper review. Only
  // remove duplicated options/importer instructions beside the actual controls.
- if(!text.endsWith(label))return q.prompt;
- return {text:text.slice(0,-label.length).replace('依原題順序完成所有答案欄；同一份原題保留為一組。','').replace(/\n{3,}/gu,'\n\n').trim(),media:[]};
+ if(!text.endsWith(label))return studentPromptContent(q.prompt);
+ return studentPromptContent({text:text.slice(0,-label.length).replace('依原題順序完成所有答案欄；同一份原題保留為一組。','').replace(/\n{3,}/gu,'\n\n').trim(),media:[]});
 }
