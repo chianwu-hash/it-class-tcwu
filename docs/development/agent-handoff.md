@@ -1,12 +1,12 @@
-# 閱讀剩餘53筆原件核對：發布中（2026-11-16）
+# 閱讀剩餘53筆原件核對：正式完成（2026-11-16）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-reading-nas-20261116 | 待腳本登記 | 待PR合併main | `dpl_HVtJ1mGJSAk2A8uovnDQBCjDKZh2` | 共用閱讀、欄位內容、夥伴欄位樣式與四課程產物 | 驗收通過，待main發布 |
+| 已完成 | Codex-reading-nas-20261116 | 2026-11-16T14:31:36.645Z | `4f2b008` | `dpl_HVtJ1mGJSAk2A8uovnDQBCjDKZh2` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/focused.css、shared/quiz-fields.css、shared/quiz-fields.mjs、shared/quiz-reading-numbered.mjs、shared/quiz-reading-presentation.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-reading-reviewed-sources.mjs、+shared/quiz-reading-reviewed.mjs、+shared/quiz-reading-signature.mjs | `dpl_3NZ4MaKL3VbWeKEqbPdfgfQArdtX`／回滾 `dpl_HVtJ1mGJSAk2A8uovnDQBCjDKZh2`（eolOnly 507） |
 
-- [53筆原件核對與驗收](quiz-reading-nas-review-20261116.md)：49種內容／47原始父題，37取自NAS、10英語核已保存且SHA符合正式溯源原件；57原頁、49實際圖片SHA核對。31,636筆重新掃描，原53筆均已解除待查，整批待查0；573桌手機完整、109圖片補驗、61夥伴元件補驗通過。沒有AI、SQL或來源／作答改寫，原外層與整組一次送出保留。SOP已補原件／指紋／實圖驗收規則；私有證據`D:/AI-Work/quiz-reading-nas-evidence-20261116/`。新題轉化維持暫停。
+- [PR #281](https://github.com/chianwu-hash/it-class-tcwu/pull/281) 已進main並發布：完整樹27改／3增，正式30檔HTTP 200且逐位元一致，發布鎖釋放。[53筆原件核對與驗收](quiz-reading-nas-review-20261116.md)：49種內容／47原始父題，37取自NAS、10英語核已保存且SHA符合正式溯源原件；57原頁、49實際圖片SHA核對。31,636筆重新掃描，原53筆均已解除待查，整批待查0；573桌手機完整、109圖片補驗、61夥伴元件補驗通過。沒有AI、SQL或來源／作答改寫，原外層與整組一次送出保留。SOP已補原件／指紋／實圖驗收規則；私有證據`D:/AI-Work/quiz-reading-nas-evidence-20261116/`。新題轉化維持暫停。
 
 # 跨科目與舊卷閱讀盤點：已發布通過子集（2026-11-16）
 
