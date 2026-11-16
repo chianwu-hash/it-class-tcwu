@@ -1,12 +1,12 @@
-# 閱讀題組對照：發布中（2026-11-16）
+# 閱讀題組對照：正式完成（2026-11-16）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-reading-layout-20261116 | 待腳本登記 | PR合併後main | `dpl_3FrR5Vz4DpyWasM7iRJXu1KXj2Jp` | 共用閱讀投影、fields呈現／樣式、個人文章對照、夥伴題幹及產生入口 | 驗收通過，待乾淨main腳本發布 |
+| 已完成 | Codex-reading-layout-20261116 | 2026-11-16T13:06:11.112Z | `5da265b` | `dpl_3FrR5Vz4DpyWasM7iRJXu1KXj2Jp` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/rich-content.js、shared/quiz-fields-presentation.mjs、shared/quiz-fields.css、shared/quiz-fields.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-reading-presentation.mjs | `dpl_5WiCC5dhUfp1bkWFqPthEM5MgrVE`／回滾 `dpl_3FrR5Vz4DpyWasM7iRJXu1KXj2Jp`（eolOnly 0） |
 
-- [修正與驗收](quiz-reading-layout-20261116.md)：小題題文放到各自選項上方，個人桌機文章與作答左右對照、手機文章限高捲動；勾選文字與整列點選改善。來源9筆／固定出現2筆適用，40項程式回歸、27項桌手機檢查通過；保留原欄位與答案、整組一次送出與原外層dock，沒有SQL／資料庫寫入或AI重送。私有證據 `D:/AI-Work/quiz-reading-layout-evidence-20261116/`。長線新題轉化維持暫停。
+- [PR #277](https://github.com/chianwu-hash/it-class-tcwu/pull/277) 已進main並發布，[修正與驗收](quiz-reading-layout-20261116.md)：小題題文放到各自選項上方，個人桌機文章與作答左右對照、手機文章限高捲動；勾選文字與整列點選改善。來源9筆／固定出現2筆適用，40項程式回歸、27項桌手機檢查通過；完整樹25改／1增、正式26檔逐位元回讀通過、發布鎖釋放；保留原欄位與答案、整組一次送出與原外層dock，沒有SQL／資料庫寫入或AI重送。私有證據 `D:/AI-Work/quiz-reading-layout-evidence-20261116/`。長線新題轉化維持暫停。
 
 # 題型標題與亂序解析引用：正式完成（2026-11-16）
 

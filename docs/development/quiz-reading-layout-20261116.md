@@ -12,3 +12,9 @@
 - 新增合成測試覆蓋完整對應、錯序、錯標籤、未知題尾、圖表／圖片與不相關題型。
 - 實際回報來源於1366px／390px走原initServerQuiz與合成身分／mock RPC，27項檢查通過：六欄題目、文章及說明保留、無橫溢、原dock單一送出、六欄ID與完整封包、鎖定接回、都不選、一般期中／期末／舊fields回歸。不是對真正學生寫入的測試。
 - 截圖已目視檢查；私有來源／截圖／測試封包保留 `D:/AI-Work/quiz-reading-layout-evidence-20261116/`，不進公開repo。
+
+## 正式收據
+
+- PR #277 合併 main `5da265be`，從乾淨main依唯一腳本發布；正式 `dpl_5WiCC5dhUfp1bkWFqPthEM5MgrVE`，回滾 `dpl_3FrR5Vz4DpyWasM7iRJXu1KXj2Jp`。
+- 完整檔案樹25修改／1新增／0刪除，無額外內容差異、換行差異0；正式26檔HTTP 200且逐位元符合發布main，發布鎖釋放。
+- 40項相關程式回歸與27項桌手機檢查通過；無SQL／正式資料寫入或整庫AI。
