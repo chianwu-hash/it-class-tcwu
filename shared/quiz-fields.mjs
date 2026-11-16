@@ -29,7 +29,7 @@ export function fieldsResponseError(q,raw){
 export function renderFieldsInputs(host,q,{raw='',locked=false,onChange,renderContent,textInputAids={}}){
  const values=fieldsValues(q,raw),group=make('div');group.className='quiz-fields';group.classList.toggle('quiz-fields-single',q.fields.length===1);
  const changed=()=>onChange(JSON.stringify({v:1,f:values}));
- if(!fieldsAreSingleChoice(q)&&!(q.fields.length===1&&q.fields[0].input==='set'))group.append(make('p',q.fields.length===1?'填好答案後送出。':'依照題目順序填好每格，再一起送出。'));
+ if(!fieldsAreSingleChoice(q))group.append(make('p',q.fields.length===1?'填好答案後送出。':'依照題目順序填好每格，再一起送出。'));
  for(const storedField of q.fields){
   const f=fieldPresentation(q,storedField);
   const slot=make('fieldset'),legend=make('legend',f.label),id='field-'+q.id+'-'+f.id;slot.className='quiz-field';slot.append(legend);

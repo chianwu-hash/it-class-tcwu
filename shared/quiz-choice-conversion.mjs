@@ -2,44 +2,11 @@
 // Never reads answers, changes IDs, or mutates a fixed document.
 import {booleanChoicePresentation} from './quiz-boolean-choice.mjs';
 import {convertCheckboxQuestion} from './quiz-checkbox-presentation.mjs';
+import {sourceStream,sliceContent,omitRanges} from './quiz-content-slices.mjs';
 const circles='①②③④⑤⑥⑦⑧';
 const instructions=['依原題完成全部答案欄，再一起送出。','依原題順序完成所有答案欄；同一份原題保留為一組。'];
 const compact=s=>s.replace(/\s/gu,'');
 const plain=text=>({text,media:[]});
-function sourceStream(c){
- if(!c?.layout)return typeof c?.text==='string'&&!c.media?.length?c.text:null;
- if(c.layout.some(p=>p.type!=='paragraph'||!Array.isArray(p.runs)||p.runs.some(r=>!['text','image'].includes(r.type))))return null;
- // A placeholder gives each original image a stable source position.
- return c.layout.map(p=>p.runs.map(r=>r.type==='text'?r.text:'\ufffc').join('')).join('\n');
-}
-function sliceContent(c,start,end){
- if(!c.layout)return plain(c.text.slice(start,end).trim());
- let cursor=0;const layout=[],media=[],indices=new Map();
- for(const p of c.layout){const runs=[];
-  for(const r of p.runs){const length=r.type==='text'?r.text.length:1,a=Math.max(start,cursor),b=Math.min(end,cursor+length);
-   if(a<b){if(r.type==='text')runs.push({...r,text:r.text.slice(a-cursor,b-cursor)});
-    else{if(!indices.has(r.media_index)){indices.set(r.media_index,media.length);media.push(c.media[r.media_index]);}runs.push({...r,media_index:indices.get(r.media_index)});}}
-   cursor+=length;
-  }
-  if(runs.length)layout.push({...p,runs});cursor++;
- }
- const text=layout.map(p=>p.runs.filter(r=>r.type==='text').map(r=>r.text).join('')).join('\n').trim();
- return {text,media,layout};
-}
-function omitRanges(c,ranges){
- const text=sourceStream(c);if(text===null)return c;
- if(!c.layout){let result=text;for(const [a,b]of [...ranges].sort((a,b)=>b[0]-a[0]))result=result.slice(0,a)+result.slice(b);return plain(result.trim());}
- // Keep paragraph/run styles and source images. Adjacent retained slices are
- // complete paragraphs except at a choice boundary; empty pieces are harmless.
- const sorted=[...ranges].sort((a,b)=>a[0]-b[0]),parts=[];let pos=0;
- for(const [a,b]of sorted){if(a>pos)parts.push(sliceContent(c,pos,a));pos=Math.max(pos,b);}if(pos<text.length)parts.push(sliceContent(c,pos,text.length));
- const media=[],layout=[];for(const part of parts){const offset=media.length;media.push(...part.media);layout.push(...part.layout.map(p=>({...p,runs:p.runs.map(r=>r.type==='image'?{...r,media_index:r.media_index+offset}:r)})));}
- // Audio is attached to the content rather than an inline run. It stays with
- // the prompt, including when only an importer instruction is removed.
- const referenced=new Set(c.layout.flatMap(p=>p.runs.filter(r=>r.type==='image').map(r=>r.media_index)));
- media.push(...(c.media||[]).filter((_,i)=>!referenced.has(i)));
- return {text:layout.map(p=>p.runs.filter(r=>r.type==='text').map(r=>r.text).join('')).join('\n').trim(),media,layout};
-}
 function codeOptions(options){
  if(!Array.isArray(options)||options.length<2||options.length>8)return false;
  return new Set(options.map(o=>o.content?.text?.trim())).size===options.length&&options.every(o=>o.content?.text?.trim().length===1&&circles.slice(0,options.length).includes(o.content.text.trim())&&!o.content.media?.length&&
@@ -82,8 +49,7 @@ function sharedOptions(content,fields,coded){
  if(!Number.isFinite(end))return null;
  return splitOptions(content,options,bank[0].index,end);
 }
-export function convertChoiceQuestion(q,options={}){
- if(q?.type==='fields'&&q.fields?.length===1&&q.fields[0].input==='set')return convertCheckboxQuestion(q,options);
+function convertSingleChoiceQuestion(q){
  const changes=[],issues=[];if(!q||!['fields','single'].includes(q.type))return {question:q,changes,issues};
  const fields=q.type==='single'?[{id:'$single',input:'single',options:q.options}]:q.fields;
  if(!Array.isArray(fields))return {question:q,changes,issues};
@@ -110,6 +76,10 @@ export function convertChoiceQuestion(q,options={}){
  if(!changes.length)return {question:q,changes,issues};
  const question=q.type==='single'?{...q,prompt,options:converted[0].options}:{...q,prompt,fields:converted};
  return {question,changes,issues};
+}
+export function convertChoiceQuestion(q,options={}){
+ const checkbox=convertCheckboxQuestion(q,options),single=convertSingleChoiceQuestion(checkbox.question);
+ return {...single,changes:[...checkbox.changes,...single.changes],issues:[...checkbox.issues,...single.issues]};
 }
 export const choiceQuestionPresentation=q=>convertChoiceQuestion(q).question;
 export function choiceAnswerLabel(q,value){const options=choiceQuestionPresentation(q).options||[],i=options.findIndex(o=>o.id===value);if(i<0)return '未選';const display=booleanChoicePresentation(options)?.[i];return display?display.badge+' '+display.text:String.fromCharCode(65+i);}
