@@ -1,4 +1,4 @@
-# 勾選題內容修正：保持原外層，正式發布中（2026-11-16）
+# 勾選題內容修正：保持原外層，正式已上線（2026-11-16）
 
 - 使用者已核定內容去重，明確要求不動原外層作答介面。原 quiz-server／quiz-fields／CSS／workspace保持；只改共用內容呈現，勾選、一次送出及保存重載保持。SOP及[修正驗收紀錄](quiz-checkbox-content-repair-20261116.md)已更新。
 - 正式初掃198來源／12固定副本；修復後199來源，80來源可套內容修正（79可用、1原已停用），另2副本。1筆數學原四項只存三項已依原題／原解析恢復新版本，原鍵仍2、3；正式回讀其餘來源等值、歷史版本／作答指紋保持。可用來源未解0，停用舊缺項版本留存不竄改。
@@ -8,7 +8,9 @@
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-checkbox-content-20261116 | 2026-11-16 | 本次PR合併後main | `dpl_5tXY5h9BPtZurjWTorJqtzsfG7BE` | quiz-choice-conversion、2個新內容模組、builder指紋及入口載入版本；外層元件／CSS保持 | 待正式發布腳本及完整樹比較 |
+| 已完成 | Codex-checkbox-content-20261116 | 2026-11-16T03:20:13.832Z | `d0ab4bf` | `dpl_5tXY5h9BPtZurjWTorJqtzsfG7BE` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-choice-conversion.mjs、shared/quiz-workshop/generated/assets.json、+shared/quiz-checkbox-presentation.mjs、+shared/quiz-content-slices.mjs | `dpl_8EkMRGQMo3gwWuq5BT37jYRoA8wB`／回滾 `dpl_5tXY5h9BPtZurjWTorJqtzsfG7BE`（eolOnly 0） |
+
+- PR264已合併，乾淨main `d0ab4bfafe801bc83ecffad4aa148cc7163d9d63`；正式 `dpl_8EkMRGQMo3gwWuq5BT37jYRoA8wB`。完整檔案樹比較18改／2增／0刪、0額外差異、eolOnly0；正式20檔HTTP200且SHA逐檔一致，發布鎖已釋放。重新整理既有試卷即可套內容修正，不改外層或要求重作。
 
 # 流程補正：課本參考頁碼對照為獨立必經階段（2026-11-16）
 
