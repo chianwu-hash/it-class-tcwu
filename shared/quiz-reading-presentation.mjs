@@ -1,7 +1,9 @@
 import {sourceStream,sliceContent,omitRanges,compactParagraphs} from './quiz-content-slices.mjs';
+import {numberedReadingPresentation} from './quiz-reading-numbered.mjs';
+import {labelledReadingPresentation} from './quiz-reading-context.mjs';
 
 // View only: require a complete ordered question list. No answer inference.
-export function readingPresentation(q){
+function strictPresentation(q){
  if(q.type!=='fields'||!q.fields||q.fields.length<2||q.fields.some(f=>!['set','single'].includes(f.input))||q.prompt?.media?.some(m=>m.kind==='audio'))return null;
  const text=sourceStream(q.prompt);
  if(text===null||!/^閱讀理解題\s*\n/u.test(text))return null;
@@ -19,3 +21,4 @@ export function readingPresentation(q){
  if(passage.text.length<100)return null;
  return {passage,questions};
 }
+export function readingPresentation(q){return strictPresentation(q)??numberedReadingPresentation(q)??labelledReadingPresentation(q);}

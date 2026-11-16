@@ -34,9 +34,9 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,onChange,renderCo
  const changed=()=>onChange(JSON.stringify({v:1,f:values}));
  if(!fieldsAreSingleChoice(q))group.append(make('p',q.fields.length===1?'填好答案後送出。':'依照題目順序填好每格，再一起送出。'));
  for(const [fieldIndex,storedField] of q.fields.entries()){
-  const f=fieldPresentation(q,storedField);
+  const f=reading?.fields?.[fieldIndex]??fieldPresentation(q,storedField);
   const slot=make('fieldset'),legend=make('legend',f.label),id='field-'+q.id+'-'+f.id;slot.className='quiz-field';slot.append(legend);
-  if(reading){legend.textContent='';renderContent(legend,reading.questions[fieldIndex]);slot.append(make('p',f.input==='set'?'勾選所有正確選項。':'選擇一個答案。'));}
+  if(reading?.questions[fieldIndex]){legend.textContent=reading.numbered?`(${reading.numbers[fieldIndex]}) `:'';renderContent(legend,reading.questions[fieldIndex]);slot.append(make('p',f.input==='set'?'勾選所有正確選項。':f.input==='single'?'選擇一個答案。':'請填寫答案。'));}
   if(['math','text'].includes(f.input)){
    const input=make('input');input.id=id;input.type='text';input.maxLength=250;input.value=typeof values[f.id]==='string'?values[f.id]:'';input.disabled=locked;input.autocomplete='off';input.setAttribute('aria-label',f.label);
    if(f.input==='math')input.placeholder='分數可以用 / 表示';
@@ -60,8 +60,8 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,onChange,renderCo
 }
 export function renderFieldsChoices(host,q,{renderContent}){
  const reading=readingPresentation(choiceQuestionPresentation(q));
- for(const [index,stored] of (q.fields||[]).entries()){const f=fieldPresentation(q,stored);if(!f.options)continue;
-  const section=make('section');section.className='quiz-field-preview';const title=make('h5',reading?'':f.label);if(reading)renderContent(title,reading.questions[index]);section.append(title);const display=f.input==='single'?booleanChoicePresentation(f.options):null;
+ for(const [index,stored] of (q.fields||[]).entries()){const f=reading?.fields?.[index]??fieldPresentation(q,stored);if(!f.options)continue;
+  const section=make('section');section.className='quiz-field-preview';const title=make('h5',reading?.questions[index]?(reading.numbered?`(${reading.numbers[index]}) `:''):f.label);if(reading?.questions[index])renderContent(title,reading.questions[index]);section.append(title);const display=f.input==='single'?booleanChoicePresentation(f.options):null;
   f.options.forEach((o,i)=>{const row=make('div');row.className='preview-option';row.append(make('strong',(display?.[i].badge??String.fromCharCode(65+i))+' '));if(display)row.append(make('span',display[i].text));else renderContent(row,o.content);section.append(row);});host.append(section);
  }
 }
@@ -69,9 +69,10 @@ const formatted=(f,v)=>{
  const one=id=>{const i=f.options?.findIndex(o=>o.id===id)??-1;return i<0?String(id):f.options[i].content.text||`選項${i+1}`};
  return Array.isArray(v)?v.map(one).join(f.input==='sequence'?' → ':'、')||'都不選':['single'].includes(f.input)?one(v):String(v??'未填');
 };
-export function fieldsResponseSummary(q,raw){const v=fieldsValues(q,raw);return q.fields.map(storedField=>{const f=fieldPresentation(q,storedField);return `${f.label}：${formatted(f,v[f.id])}`}).join('；');}
+export function fieldsResponseSummary(q,raw){const v=fieldsValues(q,raw),reading=readingPresentation(choiceQuestionPresentation(q));return q.fields.map((storedField,i)=>{const f=reading?.fields?.[i]??fieldPresentation(q,storedField);return `${f.label}：${formatted(f,v[f.id])}`}).join('；');}
 export function fieldsAnswerSummary(q,answer){
- const parts=q.fields.map(storedField=>{const f=fieldPresentation(q,storedField);return `${f.label}：${(answer.fields[f.id]||[]).map(v=>formatted(f,v)).join(' 或 ')}`});
+ const reading=readingPresentation(choiceQuestionPresentation(q));
+ const parts=q.fields.map((storedField,i)=>{const f=reading?.fields?.[i]??fieldPresentation(q,storedField);return `${f.label}：${(answer.fields[f.id]||[]).map(v=>formatted(f,v)).join(' 或 ')}`});
  for(const tuple of answer.tuples||[])parts.push('可接受的完整配對：'+tuple.accepted.map(a=>tuple.fields.map(id=>{const f=q.fields.find(f=>f.id===id);return `${f.label} ${formatted(f,a[id])}`}).join('、')).join('；'));
  return parts.join('；');
 }
