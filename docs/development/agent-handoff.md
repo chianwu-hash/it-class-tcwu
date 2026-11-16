@@ -1,12 +1,12 @@
-# 共用選項間距修正：發布中（2026-11-16）
+# 共用選項間距修正：正式完成（2026-11-16）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-option-spacing-20261116 | 2026-11-16T09:47:36Z | 本次 PR 合併後的 main | `dpl_95B3nYwMhwUcB4Fa8LwndGsA8wGM` | shared/quiz-choice.css、四份生成CSS及16個入口資源雜湊 | 待唯一發布腳本 |
+| 已完成 | Codex-option-spacing-20261116 | 2026-11-16T09:49:16.069Z | `b2d0e10` | `dpl_95B3nYwMhwUcB4Fa8LwndGsA8wGM` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-choice.css、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css | `dpl_3ghScPW7Rktt9TyfwBYYkRhWd75p`／回滾 `dpl_95B3nYwMhwUcB4Fa8LwndGsA8wGM`（eolOnly 0） |
 
-- [修正與驗收](quiz-option-spacing-20261116.md)：純共用 CSS，沒有題目、作答、JS控制器或 SQL／資料庫變更。73項桌手機驗收通過，涵蓋期中／期末 single、歷史 fields、是非、多欄、勾選、原單一送出及接回／鎖定。測試分頁已關閉；私有證據 `D:/AI-Work/quiz-option-spacing-evidence-20261116/`。
+- [PR #273](https://github.com/chianwu-hash/it-class-tcwu/pull/273) 已合併並發布，[正式收據](quiz-option-spacing-20261116.md)。純 CSS，沒有題目、作答、JS控制器或 SQL／資料庫變更。73項桌手機驗收通過；完整檔案樹21改／0增／0刪，正式21檔HTTP 200且逐位元一致，發布鎖釋放。測試分頁已關閉；私有證據 `D:/AI-Work/quiz-option-spacing-evidence-20261116/`。
 
 # 單選題型與期末自組卷夥伴修正：正式完成（2026-11-16）
 
