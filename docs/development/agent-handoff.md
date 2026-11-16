@@ -1,14 +1,15 @@
-# 課本拖曳修正（2026-11-16）
+# 課本拖曳修正已正式發布（2026-11-16）
 
 ## 發布登記
 
-| 狀態 | Agent | 範圍 | 結果 |
-|---|---|---|---|
-| 發布中 | Codex-textbook-drag-20261116 | 共用燈箱阻止原生圖片拖放，維持拖曳平移 | 待正式發布驗證 |
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 已完成 | Codex-textbook-drag-20261116 | 2026-11-16T05:34:52.302Z | `5316439` | `dpl_8EkMRGQMo3gwWuq5BT37jYRoA8wB` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/image-lightbox.css、shared/image-lightbox.js、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css | `dpl_3h8zCqGqFMASti1NowEovDqmYvdi`／回滾 `dpl_8EkMRGQMo3gwWuq5BT37jYRoA8wB`（eolOnly 0） |
 
-- [修正與驗證](quiz-textbook-drag-fix-20261116.md)：以左鍵 mousedown／dragstart 攔截及 CSS 防護，保留雙擊、雙指縮放與閱讀記憶；lost capture 結束追蹤。沒有教材、題庫、作答、權限或正式 SQL 變更。
+- [修正與驗證](quiz-textbook-drag-fix-20261116.md)：PR266 已合併；乾淨 main 發布，完整樹比較23改／0增／0刪、0額外差異、eolOnly0；正式23檔HTTP200及SHA-256全符，發布鎖釋放。
+- 左鍵 mousedown／dragstart 及 CSS 防護，保留雙擊、雙指縮放、頁碼與閱讀記憶；lost capture 結束追蹤。沒有教材、題庫、作答、權限或正式 SQL 變更。原頁重新整理即可。
 - 原版在圖片可原生拖放條件重現；新版24真瀏覽器檢查、既有83縮放檢查、9單元／入口測試全過。一般題庫與考古卷桌手機均測，採合成帳號教材，不冒稱真人OAuth或使用者當時Chrome環境。
-- 私有證據：D:/AI-Work/textbook-drag-fix-20261116。先前清理遭拒的其他工作目錄保持，不在本輪繞過清理。
+- 私有證據及收尾：D:/AI-Work/textbook-drag-fix-20261116。先前清理遭拒的其他工作目錄保持，不在本輪繞過清理。
 
 # 勾選題內容修正：保持原外層，正式已上線（2026-11-16）
 
