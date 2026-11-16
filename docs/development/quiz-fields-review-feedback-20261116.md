@@ -26,3 +26,9 @@
 - 桌手機實際截圖已檢視，完整證據在`D:/AI-Work/quiz-field-review-evidence-20261116/`。測試只用本機隔離頁與假身分／回應，不寫正式學生作答；使用已分配工作分頁，結束關頁／釋放租約。
 
 沒有SQL／資料庫函式、來源版本／答案、既有作答或AI呼叫；原媒體與原外層保持。原長線新題轉化仍暫停。正式收據發布後補記。
+
+## 正式收據
+
+- [PR #285](https://github.com/chianwu-hash/it-class-tcwu/pull/285) 合併main `5dff3934`，乾淨main使用唯一腳本發布；正式 `dpl_45QbnVe2y1cXQgFaYRuH8zDK1jCR`，回滾 `dpl_HtYv64JKcHpmn4kS5BC3bk4d9ed7`。
+- 完整樹26修改／1新增／0刪除，`ok:true`，純換行差異0；正式27檔HTTP 200且逐位元符合發布main，發布鎖釋放。
+- 58回歸、73個人桌手機／47夥伴元件及5,617多欄題組相容檢查通過；未揭答無標記、原後端計分／作答與外層保持。沒有AI或SQL。收尾依SOP封存並移除本次三份工作樹、自有分頁／worker；新題轉化仍暫停。
