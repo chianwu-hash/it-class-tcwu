@@ -18,8 +18,8 @@
 
 原件目視另記一個西瓜題的單位誤植，在候選修正並保留原Word；一個量杯排序題的書商縮圖與原教師Word不同，以原Word、固定複核及獨立分數比較核對，不能把帶答案縮圖當學生題圖。實際題文、答案及圖片只留私有證據。
 
-原共用renderer、fields及workspace的本機桌手機驗收：首56父題786項，加12表格父題170項通過，含全部圖檔實際載入、答格數、原單次送出、未揭答案、輸入封包、原值重繪及橫向溢出；兩張代表截圖另已目視。這是合成呈現／重繪，沒有冒稱正式登入、雲端接回或夥伴房間。89候選媒體中僅2筆已在正式registry有相同URL／MIME／大小，87筆尚需註冊及實際授權供圖驗收，未上傳。
+原共用renderer、fields及workspace的本機桌手機驗收：首56父題786項，加12表格父題170項通過，含全部圖檔實際載入、答格數、原單次送出、未揭答案、輸入封包、原值重繪及橫向溢出。表格初版雖通過合成檢查，目視發現手機的長格號擠成多行；已只改內容為短圈號、答欄加原列／欄名稱，重跑170項並目視新版桌手機，原外層及欄位ID／值保持。四張代表截圖另已目視；12表格／57位置也依原印數字完成獨立除法餘數、複名數加減、行列合計推算及圖形層數核對，均與教師鍵一致。這是合成呈現／重繪，沒有冒稱正式登入、雲端接回或夥伴房間。89候選媒體中僅2筆已在正式registry有相同URL／MIME／大小，87筆尚需註冊及實際授權供圖驗收，未上傳。
 
 候選仍須完成實際保存與完整回顧、課本／媒體正式存取、實際組卷與送答回滾、保護既有資料及精確啟用前檢。未完成者不減正式剩餘數；不修改資料庫函式或正式學生紀錄。
 
-權威證據：`D:/AI-Work/g3math-remaining-20261117/`，包含`remaining-reconciled.private.json`、`reparse-proof.private.json`、`numeric-screen.private.json`、`numeric-candidate.private.json`及`numeric-grading-proof.private.json`。新AI呼叫0，正式新增0。
+權威證據：`D:/AI-Work/g3math-remaining-20261117/`，最新`resume-state.private.json`、`numeric-preflight-frozen.private.json`及精確SHA保留下一階段狀態；原候選與前檢收據不覆寫。共用核鍵工具與首輪SOP已由[PR #291](https://github.com/chianwu-hash/it-class-tcwu/pull/291)進main；沒有網站部署或正式數學資料啟用。舊工作樹已封存移除，下一階段依最新main建立乾淨工作樹。新AI呼叫0，正式新增0。
