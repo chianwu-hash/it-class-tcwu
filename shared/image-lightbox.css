@@ -32,6 +32,7 @@
             overflow: hidden;
             cursor: grab;
             touch-action: none;
+            user-select: none;
         }
         .image-lightbox-stage.is-zoomed {
             cursor: grabbing;
@@ -44,6 +45,7 @@
             max-height: none;
             object-fit: contain;
             user-select: none;
+            -webkit-user-drag: none;
             pointer-events: none;
             transform-origin: center center;
             transition: transform 0.08s ease-out;
