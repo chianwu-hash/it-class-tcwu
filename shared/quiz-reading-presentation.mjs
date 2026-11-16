@@ -1,6 +1,7 @@
 import {sourceStream,sliceContent,omitRanges,compactParagraphs} from './quiz-content-slices.mjs';
 import {numberedReadingPresentation} from './quiz-reading-numbered.mjs';
 import {labelledReadingPresentation} from './quiz-reading-context.mjs';
+import {reviewedReadingPresentation} from './quiz-reading-reviewed.mjs';
 
 // View only: require a complete ordered question list. No answer inference.
 function strictPresentation(q){
@@ -21,4 +22,4 @@ function strictPresentation(q){
  if(passage.text.length<100)return null;
  return {passage,questions};
 }
-export function readingPresentation(q){return strictPresentation(q)??numberedReadingPresentation(q)??labelledReadingPresentation(q);}
+export function readingPresentation(q){return reviewedReadingPresentation(q)??strictPresentation(q)??numberedReadingPresentation(q)??labelledReadingPresentation(q);}
