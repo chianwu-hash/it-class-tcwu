@@ -1,5 +1,9 @@
 # 共用模組說明
 
+## 單選與多欄題內選項間距（2026-11-16）
+
+`quiz-choice.css` 統一 `quiz-field.quiz-single-choice` 內的選項間距，沿用一般 single 的 workspace 12px／非 workspace 桌機14px、個人手機12px。不要只替期末或單一題型補 inline style；目視驗收須同時覆蓋期中、期末、保留歷史回應的 fields 舊卷、是非與多欄單選，另核對勾選型別、已選值及原外層單次送出保持。詳見[間距修正與驗收](quiz-option-spacing-20261116.md)。
+
 ## 練功坊首頁與努力說明（2026-11-13，已驗收並核准發布）
 
 `quiz-library-home.mjs`只重排既有控制項與卷卡，同單元按科目／範圍／版本來源做視覺分組，各卷session ID、題數、進度及操作仍獨立；`quiz-subject-visual.mjs`提供本機SVG圖示。`quiz-library-home.css`及`quiz-library-home-style.css`由builder納入library bundle。保留三／六年級主題、原寵物WebP、各科分色與原導航，不因簡化移除。
