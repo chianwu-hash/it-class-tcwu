@@ -224,6 +224,10 @@
 .quiz-reading-fields .quiz-field>label:has(input:checked){background:#eef6ff;border-color:#6798cb}
 .quiz-reading-fields .quiz-field>label .preview-content{font:inherit!important;line-height:inherit!important;margin:0!important}
 .quiz-reading-fields .quiz-field input[type=checkbox]{margin-top:4px}
+.quiz-reading-fields .quiz-field-material{font-size:1.2rem;line-height:1.7;margin-bottom:12px}
+.quiz-reading-fields .quiz-field-material .preview-content{font:inherit!important;line-height:inherit!important;margin:0!important}
+.quiz-reading-fields .quiz-field-material .quiz-embedded-image{display:block;width:min(100%,280px)!important;margin:12px 0}
+.quiz-reading-fields .quiz-field-material img{max-width:100%;height:auto}
 .quiz-reading-group .quiz-question-prompt .preview-content{font-size:1.15rem!important;line-height:1.9!important;white-space:pre-wrap;overflow-wrap:anywhere}
 .quiz-reading-group .quiz-question-prompt{min-width:0;padding:18px;background:#f7f9fc;border:1px solid #d9d9e7;border-radius:14px}
 .quiz-reading-group .quiz-question-prompt>h4{font-size:1.1rem;margin:0 0 12px}

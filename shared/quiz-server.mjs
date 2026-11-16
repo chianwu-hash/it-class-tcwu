@@ -189,7 +189,8 @@ export function initServerQuiz({ selectors, server }) {
     if (q.material.text || q.material.media.length) {
       const material = make('section', undefined, 'material'); material.append(make('h4', '共用材料')); renderContent(material, q.material); article.append(material);
     }
-    if(readingPresentation(q)){const promptHost=make('section',undefined,'quiz-question-prompt');promptHost.tabIndex=0;promptHost.setAttribute('aria-label','閱讀文章與補充說明');promptHost.append(make('h4','閱讀文章'),make('p','文章可向下捲動；各小題與選項在作答區。','helper'));renderContent(promptHost,fieldsPromptPresentation(q));article.append(promptHost);}
+    const readingLayout=readingPresentation(q);
+    if(readingLayout&&!readingLayout.standalone){const promptHost=make('section',undefined,'quiz-question-prompt');promptHost.tabIndex=0;promptHost.setAttribute('aria-label','閱讀文章與補充說明');promptHost.append(make('h4','閱讀文章'),make('p','文章可向下捲動；各小題與選項在作答區。','helper'));renderContent(promptHost,fieldsPromptPresentation(q));article.append(promptHost);}
     else renderContent(article, fieldsPromptPresentation(q));
     const inputs = make('fieldset');
     // 鎖住作答控制項，保留已作答選項內圖片的燈箱操作。
@@ -218,7 +219,7 @@ export function initServerQuiz({ selectors, server }) {
       input.addEventListener('input', () => { selected = input.value; }); inputs.append(input);
     }
     article.append(inputs);
-    if(inputs.querySelector('.quiz-reading-fields'))article.classList.add('quiz-reading-group');
+    if(inputs.querySelector('.quiz-reading-fields')&&!readingLayout?.standalone)article.classList.add('quiz-reading-group');
     const actions = make('div', undefined, 'toolbar quiz-actions');
     if (saved) renderReview(article, q);
     else if (state.status === 'open') {

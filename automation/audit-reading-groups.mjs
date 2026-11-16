@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import {choiceQuestionPresentation} from '../shared/quiz-choice-conversion.mjs';
 import {readingPresentation} from '../shared/quiz-reading-presentation.mjs';
 import {sourceStream} from '../shared/quiz-content-slices.mjs';
+import {reviewedReadingSources} from '../shared/quiz-reading-reviewed-sources.mjs';
 
 export function auditReadingRows(rows){
  const findings=[];let mutated=0;
@@ -16,6 +17,7 @@ export function auditReadingRows(rows){
   const explicit=/閱讀理解|閱讀測驗|Reading Comprehension|閱讀下[文列]|閱讀以下文章/iu.test(text);
   let status=projected?'projected':!choices.length?'reference_fields':/^(?:hg6math|hlg3m)_/u.test(q.id)&&!explicit?'math_reference':'needs_review';
   const reasons=[];
+  if(reviewedReadingSources[q.id]&&!projected?.reviewed){status='needs_review';reasons.push('reviewed_source_signature_mismatch');}
   if(status==='needs_review'){
    if(sourceStream(q.prompt)===null)reasons.push('table_or_unanchored_media');
    if(q.fields.some(f=>!['single','set'].includes(f.input)))reasons.push('mixed_fields');
@@ -23,7 +25,7 @@ export function auditReadingRows(rows){
    if(!reasons.length)reasons.push('nonstandard_numbering_or_context');
   }
   if(JSON.stringify(original)!==before)mutated++;
-  findings.push({source:row.source??'input',docId:row.doc_id??null,id:q.id,active:row.usable??null,hash:crypto.createHash('sha256').update(before).digest('hex'),status,mode:projected?(projected.context?'context':projected.numbered?'numbered':'strict'):null,reasons,fields:q.fields.length,issues:projected?.issues??[]});
+  findings.push({source:row.source??'input',docId:row.doc_id??null,id:q.id,active:row.usable??null,hash:crypto.createHash('sha256').update(before).digest('hex'),status,mode:projected?(projected.context?'context':projected.numbered?'numbered':'strict'):null,sourceReviewed:projected?.reviewed===true,reviewKind:projected?.reviewKind??null,reasons,fields:q.fields.length,issues:projected?.issues??[]});
  }
  const counts={};for(const f of findings)counts[f.status]=(counts[f.status]??0)+1;
  return {scanned:rows.length,candidates:findings.length,uniqueCandidates:new Set(findings.map(f=>f.hash)).size,mutated,counts,findings};

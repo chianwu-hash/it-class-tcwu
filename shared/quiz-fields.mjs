@@ -17,8 +17,9 @@ export function fieldsResponseError(q,raw){
  if(typeof raw!=='string'||!raw||raw.length>2000)return '請完成每個答案欄；整組答案請保持在2000字以內。';
  let d;try{d=JSON.parse(raw)}catch{return '答案格式不完整，請更新儲存狀態後再試。'}
  if(!object(d)||d.v!==1||!object(d.f)||Object.keys(d).some(k=>!['v','f'].includes(k))||Object.keys(d.f).length!==q.fields.length)return '請完成每個答案欄。';
- for(const storedField of q.fields){
-  const f=fieldPresentation(q,storedField);
+ const reading=readingPresentation(choiceQuestionPresentation(q));
+ for(const [i,storedField] of q.fields.entries()){
+  const f=reading?.fields?.[i]??fieldPresentation(q,storedField);
   const v=d.f[f.id];if(!own(d.f,f.id))return '請完成每個答案欄。';
   if(['math','text','single'].includes(f.input)){
    if(typeof v!=='string'||!v.trim()||v.length>250)return `請完成「${f.label}」，每格最多250字。`;
@@ -36,7 +37,11 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,onChange,renderCo
  for(const [fieldIndex,storedField] of q.fields.entries()){
   const f=reading?.fields?.[fieldIndex]??fieldPresentation(q,storedField);
   const slot=make('fieldset'),legend=make('legend',f.label),id='field-'+q.id+'-'+f.id;slot.className='quiz-field';slot.append(legend);
-  if(reading?.questions[fieldIndex]){legend.textContent=reading.numbered?`(${reading.numbers[fieldIndex]}) `:'';renderContent(legend,reading.questions[fieldIndex]);slot.append(make('p',f.input==='set'?'勾選所有正確選項。':f.input==='single'?'選擇一個答案。':'請填寫答案。'));}
+  if(reading?.questions[fieldIndex]){const question=reading.questions[fieldIndex];
+   if(question.media.length){legend.textContent=reading.numbered?`第${reading.numbers[fieldIndex]}小題`:f.label;const material=make('div');material.className='quiz-field-material';renderContent(material,reading.reviewKind==='picture-bank'?{...question,text:'',layout:question.layout.slice(1)}:question);slot.append(material);}
+   else{legend.textContent=reading.numbered?`(${reading.numbers[fieldIndex]}) `:'';renderContent(legend,question);}
+   slot.append(make('p',f.input==='set'?'勾選所有正確選項。':f.input==='single'?'選擇一個答案。':'請填寫答案。'));
+  }
   if(['math','text'].includes(f.input)){
    const input=make('input');input.id=id;input.type='text';input.maxLength=250;input.value=typeof values[f.id]==='string'?values[f.id]:'';input.disabled=locked;input.autocomplete='off';input.setAttribute('aria-label',f.label);
    if(f.input==='math')input.placeholder='分數可以用 / 表示';
@@ -60,8 +65,9 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,onChange,renderCo
 }
 export function renderFieldsChoices(host,q,{renderContent}){
  const reading=readingPresentation(choiceQuestionPresentation(q));
- for(const [index,stored] of (q.fields||[]).entries()){const f=reading?.fields?.[index]??fieldPresentation(q,stored);if(!f.options)continue;
-  const section=make('section');section.className='quiz-field-preview';const title=make('h5',reading?.questions[index]?(reading.numbered?`(${reading.numbers[index]}) `:''):f.label);if(reading?.questions[index])renderContent(title,reading.questions[index]);section.append(title);const display=f.input==='single'?booleanChoicePresentation(f.options):null;
+ for(const [index,stored] of (q.fields||[]).entries()){const f=reading?.fields?.[index]??fieldPresentation(q,stored);if(!f.options&&!reading?.questions[index])continue;
+  const section=make('section');section.className='quiz-field-preview';const question=reading?.questions[index],hasMedia=question?.media.length;const title=make('h5',question&&!hasMedia?(reading.numbered?`(${reading.numbers[index]}) `:''):f.label);if(question&&!hasMedia)renderContent(title,question);section.append(title);if(hasMedia)renderContent(section,reading.reviewKind==='picture-bank'?{...question,text:'',layout:question.layout.slice(1)}:question);const display=f.input==='single'?booleanChoicePresentation(f.options):null;
+  if(!f.options){host.append(section);continue;}
   f.options.forEach((o,i)=>{const row=make('div');row.className='preview-option';row.append(make('strong',(display?.[i].badge??String.fromCharCode(65+i))+' '));if(display)row.append(make('span',display[i].text));else renderContent(row,o.content);section.append(row);});host.append(section);
  }
 }
