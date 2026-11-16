@@ -3,6 +3,7 @@ import {setupMediaDB} from './partner-message-db.mjs';
 const read=p=>fs.readFile(new URL('../../'+p,import.meta.url),'utf8');
 export async function setupTeamDB(){
  const f=await setupMediaDB(),db=f.db;
+ await db.exec('alter table partner_pilot.question_bank add column normal_question jsonb');
  await db.exec(`create table public.quiz_versions(id uuid primary key,document jsonb);
  alter table public.quiz_generated_papers add column user_id uuid,add column config jsonb,add column display_name text,add column deleted_at timestamptz,add column created_at timestamptz default now();`);
  // This light fixture exercises the original invitation flow with no active matching.
