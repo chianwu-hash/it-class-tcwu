@@ -124,6 +124,16 @@ export const reviewedReadingSources={
       "guard": "c9db5c88fdc4989e",
       "kind": "context",
       "sourceSha256": "91ce1c52b081362069020a62f833688eb840be61989b4aceb90fe42eeee7fc5f"
+    },
+    {
+      "guard": "f1cff23db7eff1be",
+      "kind": "context",
+      "sourceSha256": "91ce1c52b081362069020a62f833688eb840be61989b4aceb90fe42eeee7fc5f"
+    },
+    {
+      "guard": "7bc494d25a6addae",
+      "kind": "context",
+      "sourceSha256": "91ce1c52b081362069020a62f833688eb840be61989b4aceb90fe42eeee7fc5f"
     }
   ],
   "nani6s_N933494_vdcc5b4e34161": [
@@ -312,6 +322,11 @@ export const reviewedReadingSources={
       "guard": "bad6a62f94141483",
       "kind": "context",
       "sourceSha256": "33785f50c12324e4f745858de8e41cc54be94d4e3ab883f5510dd31bc7d31d02"
+    },
+    {
+      "guard": "f8de86251956b7a3",
+      "kind": "context",
+      "sourceSha256": "33785f50c12324e4f745858de8e41cc54be94d4e3ab883f5510dd31bc7d31d02"
     }
   ],
   "nani6s_N1473118_vf5ab1ba5be72": [
@@ -331,6 +346,12 @@ export const reviewedReadingSources={
   "ng6so_1504676_v84979691909f": [
     {
       "guard": "1739b8b5120bc260",
+      "kind": "matching",
+      "firstCount": 3,
+      "sourceSha256": "da0c732f78c99d4895384f2610ab4e9e72ebee530cc982d1ee56daa6f6b3ba39"
+    },
+    {
+      "guard": "e79a31833b9d8f26",
       "kind": "matching",
       "firstCount": 3,
       "sourceSha256": "da0c732f78c99d4895384f2610ab4e9e72ebee530cc982d1ee56daa6f6b3ba39"
@@ -363,6 +384,12 @@ export const reviewedReadingSources={
       "kind": "matching",
       "firstCount": 4,
       "sourceSha256": "eb51c4b0255748f98fa4056ab9cdc64ae22428b6ecc7931a8206ad65229e95d8"
+    },
+    {
+      "guard": "7bf6b6da498878df",
+      "kind": "matching",
+      "firstCount": 4,
+      "sourceSha256": "eb51c4b0255748f98fa4056ab9cdc64ae22428b6ecc7931a8206ad65229e95d8"
     }
   ],
   "ng6so_1504918_v5441ec14cf20": [
@@ -385,6 +412,17 @@ export const reviewedReadingSources={
   "ng6so_1215778_v7d9f245a1e58": [
     {
       "guard": "ed457db49a48a427",
+      "kind": "table",
+      "indices": [
+        0
+      ],
+      "numbers": [
+        1
+      ],
+      "sourceSha256": "db4d3c87da3c2ddd74105c66dd27f27eb6733b69f66975eb180afae03335b52f"
+    },
+    {
+      "guard": "6ef311e9f236c9a7",
       "kind": "table",
       "indices": [
         0
