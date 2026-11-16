@@ -1,6 +1,7 @@
 // Presentation only: persisted attempts, completion and awards remain server-owned.
 export function hasAnswerDraft(q, raw) {
  if (typeof raw !== 'string' || !raw.trim()) return false;
+ if(q.normal){if(q.normal.type==='short')return !!raw.trim();try{const v=JSON.parse(raw);return v?.v===1&&Object.values(v.f||{}).some(x=>typeof x==='string'?!!x.trim():Array.isArray(x));}catch{return false;}}
  if (!q.past) return /^\d+$/.test(raw) && Number(raw) < q.options.length;
  let v; try { v = JSON.parse(raw); } catch { return false; }
  if (v === null || v === undefined) return false;

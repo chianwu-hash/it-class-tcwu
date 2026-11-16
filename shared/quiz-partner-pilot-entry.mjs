@@ -6,6 +6,9 @@ function ensureEntryStyle(){
  if(document.getElementById('partner-pilot-entry-style'))return;
  const style=document.createElement('style');style.id='partner-pilot-entry-style';
  style.textContent=`
+ .paper-start.partner-paper-start,.library-home-layout .home-paper-row a.paper-start.partner-paper-start{background:#0f766e;color:#fff;box-shadow:0 3px 0 #115e59;text-decoration:none}
+ .paper-start.partner-paper-start:hover{background:#115e59}
+ .paper-start.partner-paper-start:focus-visible{outline:3px solid #0369a1;outline-offset:4px}
  [data-partner-pilot-entry="main"]{position:relative;padding-right:190px}
  [data-partner-pilot-entry="main"] .partner-entry-art{position:absolute;right:24px;bottom:14px;width:130px;height:100px;object-fit:contain;object-position:center bottom;pointer-events:none}
  @media(max-width:850px){[data-partner-pilot-entry="main"]{padding-right:24px}[data-partner-pilot-entry="main"] .partner-entry-art{display:none}}
@@ -48,7 +51,7 @@ async function update(session){
     const url=new URL(start.href,location.href);
     const paper=catalog.find(p=>(card.dataset.sessionId&&(p.sourceSession===card.dataset.sessionId||p.sourceSessions?.includes(card.dataset.sessionId)))||(url.searchParams.has('paper')&&p.sourcePaper===url.searchParams.get('paper')));
     if(!paper)continue;
-    const a=document.createElement('a');a.dataset.partnerPilotEntry='paper';a.className='paper-start';a.textContent='邀夥伴練這份';a.href=href(paper.sourcePaper?{paper:paper.sourcePaper}:{session:paper.sourceSession});a.style.marginTop='.75rem';start.after(a);
+    const a=document.createElement('a');a.dataset.partnerPilotEntry='paper';a.className='paper-start partner-paper-start';a.textContent='邀夥伴練這份';a.href=href(paper.sourcePaper?{paper:paper.sourcePaper}:{session:paper.sourceSession});a.style.marginTop='.75rem';start.after(a);
    }
   }
   // A newly composed paper is rendered without a page reload. Refresh only this optional catalog.

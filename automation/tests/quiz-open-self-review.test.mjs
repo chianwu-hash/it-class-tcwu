@@ -8,7 +8,7 @@ import {newDocument,content,validateDocument} from '../../shared/quiz-document.m
 import {openResponseError} from '../../shared/quiz-open-response.mjs';
 import {buildOpenSelfReviewMigration} from '../lib/quiz-open-self-review-migration.mjs';
 const {definitions}=JSON.parse(await readFile('automation/fixtures/quiz-open-self-review-before.json','utf8'));
-const helpers=await readFile('supabase/quiz-open-self-review-helpers.sql','utf8');
+const helpers=(await readFile('supabase/quiz-open-self-review-helpers.sql','utf8')).replace(/\r\n/g,'\n');
 const migration=buildOpenSelfReviewMigration(definitions,helpers);
 const raw=f=>JSON.stringify({v:1,f});
 const open=(id='open')=>({id,type:'open',prompt:content('合成原開放題：用「努力」造句，並寫一句自己的想法。'),explanation:content('例句只供參考，其他合理答案也可以。'),fields:[{id:'sentence',label:'原第1空：造句',input:'text'},{id:'idea',label:'原第2空：自己的想法',input:'text'}],answer:{format:'self-review-v1',fields:{sentence:{examples:['秘密參考例句42：我努力完成今天的練習。'],criteria:['句子使用努力且語意通順']},idea:{examples:['我會分段練習。'],criteria:['自己的想法清楚完整']}}}});
@@ -100,7 +100,7 @@ test('開放作答原生自評：儲存、揭參考、冪等、接回、權限�
    await db.exec('reset enable_nestloop;reset enable_mergejoin;reset enable_indexscan;reset enable_bitmapscan;reset enable_indexonlyscan');
   });
   await t.test('重複套用保護及未知 baseline／helper 拒絕，固定版本原文保持',async()=>{
-   assert.equal(await readFile('supabase/quiz-open-self-review.sql','utf8'),migration);
+   assert.equal((await readFile('supabase/quiz-open-self-review.sql','utf8')).replace(/\r\n/g,'\n'),migration.replace(/\r\n/g,'\n'));
    const p=await seed(db);const before=(await db.query('select md5(document::text)h from public.quiz_versions where id=$1',[p.version])).rows[0].h;await db.exec(migration);assert.equal((await db.query('select md5(document::text)h from public.quiz_versions where id=$1',[p.version])).rows[0].h,before);
    await db.exec("create or replace function public.quiz_open_validate(q jsonb) returns void language plpgsql immutable set search_path='' as $$begin raise exception 'tampered';end$$;");await assert.rejects(db.exec(migration),/open_review_helper_changed/);await db.exec('rollback;');await db.exec(helpers);
   });
