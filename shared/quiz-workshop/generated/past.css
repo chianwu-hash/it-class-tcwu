@@ -15,6 +15,12 @@
 
 
 /* Result presentation for the single choice renderer in every practice mode. */
+/* Nested field choices keep the same row spacing as the surrounding single choices. */
+:where(#server-quiz,.partner-focus,.past-exam-workspace){--quiz-option-gap:14px}
+@media(max-width:700px){:where(#server-quiz){--quiz-option-gap:12px}}
+.quiz-workspace-active{--quiz-option-gap:12px}
+:is(#server-quiz,.partner-focus,.past-exam-workspace) .quiz-field.quiz-single-choice{display:grid;grid-template-columns:minmax(0,1fr);row-gap:var(--quiz-option-gap,14px)}
+:is(#server-quiz,.partner-focus,.past-exam-workspace) .quiz-field.quiz-single-choice>.student-option{margin:0}
 :is(#server-quiz,.partner-focus,.past-exam-workspace) .quiz-single-choice .option-result{grid-column:2;font-size:.85rem;font-weight:700}
 :is(#server-quiz,.partner-focus,.past-exam-workspace) .quiz-single-choice .student-option[data-result=correct]{background:#e7f6ed;border-color:#32815c;outline:none;box-shadow:0 4px 0 #cce7d6}
 :is(#server-quiz,.partner-focus,.past-exam-workspace) .quiz-single-choice .student-option[data-result=incorrect]{background:#fff1e6;border-color:#b55c2c;outline:none;box-shadow:0 4px 0 #f0d9c7}
