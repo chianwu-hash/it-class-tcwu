@@ -1,12 +1,12 @@
-# 跨科與舊卷核對覆蓋：發布中（2026-11-17）
+# 跨科與舊卷核對覆蓋：正式完成（2026-11-17）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-review-coverage-20261117 | 待腳本登記 | 待PR合併main | `dpl_45QbnVe2y1cXQgFaYRuH8zDK1jCR` | 個人／原卷／夥伴共用核對及四課程產物 | 驗收通過，待main發布 |
+| 已完成 | Codex-review-coverage-20261117 | 2026-11-16T16:28:10.178Z | `b4dc1b3` | `dpl_45QbnVe2y1cXQgFaYRuH8zDK1jCR` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/learning.js、shared/partner-pilot/past-answer.js、shared/partner-pilot/past-results.js、shared/partner-pilot/review-layout.mjs、shared/quiz-fields-review.mjs、shared/quiz-fields.css、shared/quiz-past-ui.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-review-choices.mjs | `dpl_3sTeS8gip6gdsUFdt7FVA5DcF9tA`／回滾 `dpl_45QbnVe2y1cXQgFaYRuH8zDK1jCR`（eolOnly 0） |
 
-- [跨科與舊卷覆蓋](quiz-review-cross-course-20261117.md)：22課程／31,636來源與固定卷、83考古版本／2,607組全量盤點，10,419一般多欄及2,704原卷選擇類欄位相容；未知參考與來源修改0。補一般單選整份回顧、原卷逐欄結果不搬頁尾、夥伴原卷保留原控制鎖定與共同回顧typed參考。73回歸、713個人桌手機及1,063夥伴隔離檢查通過。原作答／答案、計分、原外層不變，沒有AI或SQL；SOP已補矩陣關卡。私有證據`D:/AI-Work/quiz-review-coverage-evidence-20261116/`；新題轉化仍暫停。
+- [PR #287](https://github.com/chianwu-hash/it-class-tcwu/pull/287) 已進main並發布：完整樹29改／1增、正式30檔逐位元回讀通過，發布鎖釋放。[跨科與舊卷覆蓋](quiz-review-cross-course-20261117.md)：22課程／31,636來源與固定卷、83考古版本／2,607組全量盤點，10,419一般多欄及2,704原卷選擇類欄位相容；未知參考與來源修改0。補一般單選整份回顧、原卷逐欄結果不搬頁尾、夥伴原卷保留原控制鎖定與共同回顧typed參考。73回歸、713個人桌手機及1,063夥伴隔離檢查通過。原作答／答案、計分、原外層不變，沒有AI或SQL；SOP已補矩陣關卡。私有證據`D:/AI-Work/quiz-review-coverage-evidence-20261116/`；新題轉化仍暫停。
 
 # 多欄題逐小題核對：正式完成（2026-11-16）
 
