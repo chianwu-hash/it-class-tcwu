@@ -7,9 +7,14 @@ const read=p=>fs.readFile(new URL('../../'+p,import.meta.url),'utf8');
 // The browser modules are ES modules with a .js extension; load an exact copy as ESM in Node.
 async function loadRichContent(){
  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'partner-pilot-'));
- await fs.cp(fileURLToPath(new URL('../../shared/partner-pilot/',import.meta.url)),dir,{recursive:true});
- await fs.writeFile(path.join(dir,'package.json'),'{"type":"module"}');
- return (await import(pathToFileURL(path.join(dir,'rich-content.js')).href)).createRichContent;
+ try{
+  const source=fileURLToPath(new URL('../../shared/',import.meta.url));
+  for(const name of await fs.readdir(source))if(/\.(?:js|mjs)$/.test(name))await fs.copyFile(path.join(source,name),path.join(dir,name));
+  await fs.mkdir(path.join(dir,'partner-pilot'));
+  for(const name of await fs.readdir(path.join(source,'partner-pilot')))if(/\.(?:js|mjs)$/.test(name))await fs.copyFile(path.join(source,'partner-pilot',name),path.join(dir,'partner-pilot',name));
+  await fs.writeFile(path.join(dir,'package.json'),'{"type":"module"}');
+  return (await import(pathToFileURL(path.join(dir,'partner-pilot','rich-content.js')).href)).createRichContent;
+ }finally{if(!path.resolve(dir).startsWith(path.resolve(os.tmpdir())+path.sep))throw Error('unsafe_test_cleanup');await fs.rm(dir,{recursive:true});}
 }
 
 async function setup(){

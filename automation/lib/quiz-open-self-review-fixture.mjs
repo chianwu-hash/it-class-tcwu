@@ -4,7 +4,7 @@ import {buildOpenSelfReviewMigration} from './quiz-open-self-review-migration.mj
 
 // Synthetic local-only fixture. It never connects to Supabase or loads credentials.
 export async function createOpenSelfReviewDb(){
- const load=name=>readFile(new URL('../../supabase/'+name,import.meta.url),'utf8');
+ const load=async name=>(await readFile(new URL('../../supabase/'+name,import.meta.url),'utf8')).replace(/\r\n/g,'\n');
  const {definitions}=JSON.parse(await readFile(new URL('../fixtures/quiz-open-self-review-before.json',import.meta.url),'utf8'));
  const db=await createQuizDb(undefined,{batch2:true,batch3:true,batch4:true});db.exec=PGlite.prototype.exec.bind(db);
  try{
