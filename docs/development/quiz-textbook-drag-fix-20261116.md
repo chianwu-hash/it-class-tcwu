@@ -18,3 +18,7 @@
 - 原版在同一可拖曳條件可重現原生 dragstart；修正版同條件為0且繼續平移。測試走本機合成帳號、合成教材及真控制器，不讀寫正式學生，不代表已在使用者當時的 Chrome 工作階段驗證。
 
 私有證據：`D:/AI-Work/textbook-drag-fix-20261116`，含原版重現、新版驗證、縮放截圖及正式發布證據。公開 repo 不放課本或學生資料。
+
+## 正式發布
+
+PR266；乾淨 main 5316439043347b3b2cf6fecac41bc09ca6428e9e；正式 dpl_3h8zCqGqFMASti1NowEovDqmYvdi。完整檔案樹比對及23檔正式回讀SHA全符，鎖釋放。回滾 dpl_8EkMRGQMo3gwWuq5BT37jYRoA8wB。收據另經文件 PR 回 main，不重新部署文件。
