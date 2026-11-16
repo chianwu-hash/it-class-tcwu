@@ -3,13 +3,15 @@ import {booleanChoicePresentation} from '../quiz-boolean-choice.mjs?v=20261107-b
 import {renderManualResponse} from './quiz-past-manual.js';
 import {attachPastInputKeyboard} from './quiz-past-input.js';
 import {appendSingleChoiceOptions} from '../quiz-choice.mjs';
+import {choiceReviewModel,decorateFieldReviewOption} from '../quiz-review-choices.mjs';
+import {appendFieldReviewStatus} from '../quiz-fields-review.mjs';
 export function mountPastAnswers(root,{question,drafts,loadAsset}){
  for(const host of root.querySelectorAll('[data-past-answer]')){
   if(host.dataset.pastMounted)continue;host.dataset.pastMounted='true';
   const q=question(Number(host.dataset.pastAnswer)),m=q.past,k='answer-'+q.id;let saved;
   try{saved=JSON.parse(drafts.get(k)||'null');}catch{}
   const locked=host.hasAttribute('data-past-locked'),last=q.attempts?.at(-1);if(locked)saved=last?.value;
-  const hidden=document.createElement('input');hidden.type='hidden';if(!locked)hidden.dataset.draft=k;host.append(hidden);const store=v=>{hidden.value=JSON.stringify(v);drafts.set(k,hidden.value);};
+  const hidden=document.createElement('input');hidden.type='hidden';hidden.value=saved===undefined?'':JSON.stringify(saved);if(!locked)hidden.dataset.draft=k;host.append(hidden);const store=v=>{hidden.value=JSON.stringify(v);drafts.set(k,hidden.value);};
   const node=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
   if(m.kind==='manual'){
    const value=saved&&typeof saved==='object'?saved:{text:'',strokes:[],confirmed:false};store(value);
@@ -37,6 +39,8 @@ export function mountPastAnswers(root,{question,drafts,loadAsset}){
    }
    store(saved??(m.kind==='set'?[]:null));
   }
-  [...host.querySelectorAll('input:not([type=hidden]),textarea')].forEach((e,i)=>e.dataset.pastFocus=q.id+'-'+i);
+  [...host.querySelectorAll('input:not([type=hidden]),textarea')].forEach((e,i)=>{e.dataset.pastFocus=q.id+'-'+i;if(m.kind!=='manual')e.disabled=locked;});
+  const model=choiceReviewModel({kind:m.kind,choices:m.choices,codes:m.codes,value:locked?last?.value:undefined,official:q.pastReference,correct:last?.correct,revealed:locked&&Object.hasOwn(q,'pastReference'),selfCheck:m.selfCheck});
+  if(model){host.classList.add('quiz-choice-review');appendFieldReviewStatus(host,model);host.querySelectorAll(':scope>label.option').forEach((row,i)=>decorateFieldReviewOption(row,model.options[i]));if(m.kind==='sequence'){const p=node('p','參考順序：'+q.pastReference.map(id=>m.choices.find(c=>c.id===id)?.text||id).join(' → '));p.className='quiz-field-review-reference';host.append(p);}}
  }
 }

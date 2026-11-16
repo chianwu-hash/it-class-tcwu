@@ -11,6 +11,7 @@ import {createQuizStudy,studySourceLabel} from './quiz-study.mjs';
 import {renderExplanation} from './quiz-explanation-render.mjs';
 import {renderFieldsInputs,fieldsResponseError,fieldsResponseSummary,fieldsAnswerSummary,fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields.mjs';
 import {readingPresentation} from './quiz-reading-presentation.mjs';
+import {choiceReviewModel,decorateFieldReviewOption} from './quiz-review-choices.mjs';
 import {renderOpenInputs,renderOpenReview,openResponseError} from './quiz-open-response.mjs';
 
 import {quizFeedbackMotion} from './quiz-feedback-motion.mjs?v=20261107-partner-motion';
@@ -174,7 +175,7 @@ export function initServerQuiz({ selectors, server }) {
         renderContent(article, q.material); renderContent(article, fieldsPromptPresentation(q));
         article.append(make('p', `你的答案：${['fields','open'].includes(q.type) ? fieldsResponseSummary(q,state.responses[q.id]) : q.type === 'single' ? choiceAnswerLabel(q,state.responses[q.id]) : state.responses[q.id]}`));
         if(q.type==='fields')renderFieldsChoices(article,q,{renderContent,raw:state.responses[q.id],review:state.reviews.find(r=>r.question_id===q.id)});
-        if (q.type === 'single') {const display=booleanChoicePresentation(q.options);q.options.forEach((o, i) => { const row = make('div', undefined, 'preview-option'); row.append(make('strong', (display?.[i].badge??String.fromCharCode(65+i))+' ')); if(display)row.append(make('span',display[i].text));else renderContent(row, o.content); article.append(row); });}
+        if (q.type === 'single') {const display=booleanChoicePresentation(q.options),review=state.reviews.find(r=>r.question_id===q.id),feedback=choiceReviewModel({kind:'single',choices:q.options,value:state.responses[q.id],official:review?.answer?.option_id,correct:review?.correct,revealed:Boolean(review)});if(feedback)article.classList.add('quiz-choice-review');q.options.forEach((o, i) => { const row = make('div', undefined, 'preview-option'); row.append(make('strong', (display?.[i].badge??String.fromCharCode(65+i))+' ')); if(display)row.append(make('span',display[i].text));else renderContent(row, o.content);decorateFieldReviewOption(row,feedback?.options[i]);article.append(row); });}
         renderReview(article, q); mountQuestionReport(article,report(q));root.append(article);
       }
       return;
