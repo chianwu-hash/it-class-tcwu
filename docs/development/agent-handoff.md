@@ -1,12 +1,12 @@
-# 跨科目與舊卷閱讀盤點：發布中（2026-11-16）
+# 跨科目與舊卷閱讀盤點：已發布通過子集（2026-11-16）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-reading-audit-20261116 | 待腳本登記 | PR合併後main | `dpl_5WiCC5dhUfp1bkWFqPthEM5MgrVE` | 跨科目編號／代號來源投影、fields共用呈現、產生入口 | 待乾淨main腳本發布 |
+| 已完成 | Codex-reading-audit-20261116 | 2026-11-16T13:30:27.218Z | `6caf667` | `dpl_5WiCC5dhUfp1bkWFqPthEM5MgrVE` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-fields.mjs、shared/quiz-reading-presentation.mjs、shared/quiz-workshop/generated/assets.json、+shared/quiz-reading-context.mjs、+shared/quiz-reading-numbered.mjs | `dpl_HVtJ1mGJSAk2A8uovnDQBCjDKZh2`／回滾 `dpl_5WiCC5dhUfp1bkWFqPthEM5MgrVE`（eolOnly 0） |
 
-- [跨科目盤點與界線](quiz-reading-cross-subject-audit-20261116.md)：31,636筆一般／固定出現紀錄，219筆可投影或對照；原媒體與欄位ID／型別不變。另查50份考古卷83版本、375多欄容器均有欄位題文。**53筆出現紀錄／49種內容仍待原件或圖位核對，未算通過**；私有清單與HTML `D:/AI-Work/quiz-reading-audit-evidence-20261116/`。沒有AI重送、SQL／資料寫入，原外層與整組送出不變；長線新題轉化維持暫停。
+- [PR #279](https://github.com/chianwu-hash/it-class-tcwu/pull/279) 已合併並發布，[跨科目盤點與界線](quiz-reading-cross-subject-audit-20261116.md)：完整樹19改／2增、正式21檔逐位元回讀通過，發布鎖釋放；47程式回歸與93桌手機檢查通過。31,636筆一般／固定出現紀錄，219筆可投影或對照；原媒體與欄位ID／型別不變。另查50份考古卷83版本、375多欄容器均有欄位題文。**53筆出現紀錄／49種內容仍待原件或圖位核對，未算通過**；私有清單與HTML `D:/AI-Work/quiz-reading-audit-evidence-20261116/`。沒有AI重送、SQL／資料寫入，原外層與整組送出不變；長線新題轉化維持暫停。
 
 # 閱讀題組對照：正式完成（2026-11-16）
 
