@@ -52,7 +52,7 @@ def parse_teacher_numeric_key(text, *, question_text="", allow_final_line=True):
         value = re.sub(label_pattern, lambda m: ";" if m.start() else "", value)
         labels.extend(numbers)
     for alphabet in ALPHABETS:
-        pattern = r"(?:^|[；;])\s*([" + alphabet + r"])\s*"
+        pattern = r"(?:^|[；;])\s*([" + alphabet + r"])\s*[:：]?\s*"
         found = re.findall(pattern, value)
         if not found:
             continue

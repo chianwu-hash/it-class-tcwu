@@ -7,6 +7,13 @@ from quiz_numeric_teacher_keys import parse_teacher_numeric_key as parse, compar
 
 
 class NumericTeacherKeysTests(unittest.TestCase):
+    def test_original_symbol_labels_with_colon_keep_all_values(self):
+        key = parse("答案：ㄅ：1；100；ㄆ：1；950", question_text="ㄅ：（ ）公斤（ ）公克；ㄆ：（ ）公斤（ ）公克")
+        self.assertEqual(key["values"], ["1", "100", "1", "950"])
+        self.assertTrue(compare(key, [1, 100, 1, 950]))
+        with self.assertRaisesRegex(ValueError, "not_visible"):
+            parse("答案：ㄅ：1；100", question_text="只有一張未標號的圖")
+
     def test_original_labels_before_nfkc(self):
         key = parse("答案：①2/8；②3/8", question_text="①（ ）②（ ）")
         self.assertEqual(key["values"], ["2/8", "3/8"])
