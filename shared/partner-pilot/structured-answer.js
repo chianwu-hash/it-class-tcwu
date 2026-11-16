@@ -1,4 +1,4 @@
-import {renderFieldsInputs,fieldsResponseError,fieldsResponseSummary,fieldsAnswerSummary} from '../quiz-fields.mjs';
+import {renderFieldsInputs,renderFieldsChoices,fieldsResponseError,fieldsResponseSummary,fieldsAnswerSummary} from '../quiz-fields.mjs';
 import {renderOpenInputs,openReferenceSummary} from '../quiz-open-response.mjs';
 import {renderContent} from './past-content.js';
 
@@ -15,7 +15,7 @@ export function mountStructuredAnswers(root,{question,drafts,loadAsset,onChange}
   const hidden=node('input');hidden.type='hidden';hidden.value=raw;if(!locked)hidden.dataset.draft=k;host.append(hidden);
   const store=value=>{hidden.value=value;drafts.set(k,value);onChange(q.id);};
   const render=(box,content)=>renderContent(box,content,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}});
-  if(normal.type==='fields')renderFieldsInputs(host,normal,{raw,locked,onChange:store,renderContent:render});
+  if(normal.type==='fields')renderFieldsInputs(host,normal,{raw,locked,onChange:store,renderContent:render,review:locked&&q.normalReference?{answer:q.normalReference,correct:q.attempts.at(-1)?.correct}:null});
   else if(normal.type==='open'){
    const group=renderOpenInputs(host,normal,{raw,locked,onChange:store});
    group.firstElementChild.textContent='請依題意寫下答案。送出後，和參考內容核對；共同回顧時可與夥伴討論。';
@@ -26,6 +26,12 @@ export function mountStructuredAnswers(root,{question,drafts,loadAsset,onChange}
  for(const host of root.querySelectorAll('[data-structured-reference]')){
   const q=question(Number(host.dataset.structuredReference));if(!q?.normalReference)continue;
   const normal=q.normal,last=q.attempts?.at(-1);
+  if(normal.type==='fields'&&last&&typeof last.correct==='boolean'){
+   renderFieldsChoices(host,normal,{raw:last.value,review:{answer:q.normalReference,correct:last.correct},renderContent:(box,content)=>renderContent(box,content,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});continue;
+  }
+  if(normal.type==='fields'){
+   renderFieldsChoices(host,normal,{referenceAnswer:q.normalReference,renderContent:(box,content)=>renderContent(box,content,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});continue;
+  }
   if(last){host.append(node('b','我這次留下的作答'),node('p',normal.type==='short'?last.value:fieldsResponseSummary(normal,last.value)));}
   const answer=normal.type==='open'?openReferenceSummary(normal,q.normalReference):normal.type==='fields'?fieldsAnswerSummary(normal,q.normalReference):q.normalReference.accepted.join(' 或 ');
   host.append(node('b',normal.type==='open'?'參考例答與檢核重點':'參考答案'),node('p',answer));
