@@ -2,6 +2,8 @@ import {appendSingleChoiceOptions} from './quiz-choice.mjs';
 import {attachPastInputKeyboard} from './quiz-past-input.mjs';
 import {fieldPresentation,fieldsAreSingleChoice} from './quiz-fields-presentation.mjs';
 import {booleanChoicePresentation} from './quiz-boolean-choice.mjs';
+import {choiceQuestionPresentation} from './quiz-choice-conversion.mjs';
+import {readingPresentation} from './quiz-reading-presentation.mjs';
 export {fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
 
 const own=(o,k)=>o&&Object.hasOwn(o,k);
@@ -28,11 +30,13 @@ export function fieldsResponseError(q,raw){
 
 export function renderFieldsInputs(host,q,{raw='',locked=false,onChange,renderContent,textInputAids={}}){
  const values=fieldsValues(q,raw),group=make('div');group.className='quiz-fields';group.classList.toggle('quiz-fields-single',q.fields.length===1);
+ const reading=readingPresentation(choiceQuestionPresentation(q));group.classList.toggle('quiz-reading-fields',Boolean(reading));
  const changed=()=>onChange(JSON.stringify({v:1,f:values}));
  if(!fieldsAreSingleChoice(q))group.append(make('p',q.fields.length===1?'填好答案後送出。':'依照題目順序填好每格，再一起送出。'));
- for(const storedField of q.fields){
+ for(const [fieldIndex,storedField] of q.fields.entries()){
   const f=fieldPresentation(q,storedField);
   const slot=make('fieldset'),legend=make('legend',f.label),id='field-'+q.id+'-'+f.id;slot.className='quiz-field';slot.append(legend);
+  if(reading){legend.textContent='';renderContent(legend,reading.questions[fieldIndex]);slot.append(make('p',f.input==='set'?'勾選所有正確選項。':'選擇一個答案。'));}
   if(['math','text'].includes(f.input)){
    const input=make('input');input.id=id;input.type='text';input.maxLength=250;input.value=typeof values[f.id]==='string'?values[f.id]:'';input.disabled=locked;input.autocomplete='off';input.setAttribute('aria-label',f.label);
    if(f.input==='math')input.placeholder='分數可以用 / 表示';
@@ -55,8 +59,9 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,onChange,renderCo
  host.append(group);return group;
 }
 export function renderFieldsChoices(host,q,{renderContent}){
- for(const stored of q.fields||[]){const f=fieldPresentation(q,stored);if(!f.options)continue;
-  const section=make('section');section.className='quiz-field-preview';section.append(make('h5',f.label));const display=f.input==='single'?booleanChoicePresentation(f.options):null;
+ const reading=readingPresentation(choiceQuestionPresentation(q));
+ for(const [index,stored] of (q.fields||[]).entries()){const f=fieldPresentation(q,stored);if(!f.options)continue;
+  const section=make('section');section.className='quiz-field-preview';const title=make('h5',reading?'':f.label);if(reading)renderContent(title,reading.questions[index]);section.append(title);const display=f.input==='single'?booleanChoicePresentation(f.options):null;
   f.options.forEach((o,i)=>{const row=make('div');row.className='preview-option';row.append(make('strong',(display?.[i].badge??String.fromCharCode(65+i))+' '));if(display)row.append(make('span',display[i].text));else renderContent(row,o.content);section.append(row);});host.append(section);
  }
 }
