@@ -1,12 +1,12 @@
-# 多欄題逐小題核對：發布中（2026-11-16）
+# 多欄題逐小題核對：正式完成（2026-11-16）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-field-review-20261116 | 待腳本登記 | 待PR合併main | `dpl_HtYv64JKcHpmn4kS5BC3bk4d9ed7` | 共用欄位核對、原個人／錯題／夥伴串接與四課程產物 | 驗收通過，待main發布 |
+| 已完成 | Codex-field-review-20261116 | 2026-11-16T15:36:00.828Z | `5dff393` | `dpl_HtYv64JKcHpmn4kS5BC3bk4d9ed7` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/structured-answer.js、shared/quiz-fields.css、shared/quiz-fields.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、shared/quiz-wrong-questions.mjs、+shared/quiz-fields-review.mjs | `dpl_45QbnVe2y1cXQgFaYRuH8zDK1jCR`／回滾 `dpl_HtYv64JKcHpmn4kS5BC3bk4d9ed7`（eolOnly 0） |
 
-- [逐小題核對與驗收](quiz-fields-review-feedback-20261116.md)：選對、選錯、漏選在原選項旁就地標示，不再以底下整段正解代替；未揭答／編輯無標記，多接受答案／配對／數學文字保守核對。58回歸、73個人桌手機、47夥伴元件檢查通過；既存5,617多欄／10,419欄位不變性核對通過。原題／答案、作答、後端計分、原外層與整組提交不變，沒有AI或SQL。SOP已補；私有證據`D:/AI-Work/quiz-field-review-evidence-20261116/`；新題轉化仍暫停。
+- [PR #285](https://github.com/chianwu-hash/it-class-tcwu/pull/285) 已進main並發布：完整樹26改／1增、正式27檔逐位元回讀通過，發布鎖釋放。[逐小題核對與驗收](quiz-fields-review-feedback-20261116.md)：選對、選錯、漏選在原選項旁就地標示，不再以底下整段正解代替；未揭答／編輯無標記，多接受答案／配對／數學文字保守核對。58回歸、73個人桌手機、47夥伴元件檢查通過；既存5,617多欄／10,419欄位不變性核對通過。原題／答案、作答、後端計分、原外層與整組提交不變，沒有AI或SQL。SOP已補；私有證據`D:/AI-Work/quiz-field-review-evidence-20261116/`；新題轉化仍暫停。
 
 # 單選選項原序標記重複：正式完成（2026-11-16）
 
