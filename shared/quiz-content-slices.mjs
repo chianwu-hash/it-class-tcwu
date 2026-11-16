@@ -34,3 +34,18 @@ export function omitRanges(c,ranges){
  media.push(...(c.media||[]).filter((_,i)=>!referenced.has(i)));
  return {text:layout.map(p=>p.runs.filter(r=>r.type==='text').map(r=>r.text).join('')).join('\n').trim(),media,layout};
 }
+
+export function replaceTextRange(c,start,end,value){
+ const text=sourceStream(c);if(!c.layout)return plain(text.slice(0,start)+value+text.slice(end));let pos=0;
+ const layout=c.layout.map(p=>{const runs=p.runs.map(r=>{const length=r.type==='text'?r.text.length:1,a=Math.max(start,pos),b=Math.min(end,pos+length);let run=r;if(a<b&&r.type==='text')run={...r,text:r.text.slice(0,a-pos)+(start>=pos?value:'')+r.text.slice(b-pos)};pos+=length;return run});pos++;return {...p,runs}});
+ return {...c,text:text.slice(0,start)+value+text.slice(end),layout};
+}
+export function compactParagraphs(c){
+ if(!c.layout)return {...c,text:c.text.trim().replace(/\n{3,}/gu,'\n\n')};
+ const layout=c.layout.map(p=>{
+  const runs=p.runs.map(r=>r.type==='text'?{...r,text:r.text.replace(/\n{3,}/gu,'\n\n')}:r);
+  while(runs[0]?.type==='text'&&!runs[0].text.trim())runs.shift();while(runs.at(-1)?.type==='text'&&!runs.at(-1).text.trim())runs.pop();
+  if(runs[0]?.type==='text')runs[0]={...runs[0],text:runs[0].text.trimStart()};if(runs.at(-1)?.type==='text')runs[runs.length-1]={...runs.at(-1),text:runs.at(-1).text.trimEnd()};return {...p,runs};
+ }).filter(p=>p.runs.length);
+ return {...c,layout,text:layout.map(p=>p.runs.filter(r=>r.type==='text').map(r=>r.text).join('')).join('\n').trim()};
+}
