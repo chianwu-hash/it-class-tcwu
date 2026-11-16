@@ -26,3 +26,9 @@
 - 沒有AI送出、SQL／資料庫修改或答案重建。原欄位、選項與送答值、原外層、整組一次送出均保留。完整私有輸出存`D:/AI-Work/quiz-option-prefix-evidence-20261116/`；來源及圖片不進公開repo。
 
 前一項閱讀原件／圖位／字詞庫／特殊表格的規則已在PR #281寫入SOP，本次再補交叉驗收要求與選項標記專節，避免把內容清理當成原件核對的替代。正式收據發布後補記。
+
+## 正式收據
+
+- [PR #283](https://github.com/chianwu-hash/it-class-tcwu/pull/283) 合併main `855bc60b`，乾淨main使用唯一腳本發布；正式 `dpl_HtYv64JKcHpmn4kS5BC3bk4d9ed7`，回滾 `dpl_3NZ4MaKL3VbWeKEqbPdfgfQArdtX`。
+- 完整檔案樹20修改／1新增／0刪除，`ok:true`，純換行差異0；正式21檔HTTP 200且逐位元符合發布main，發布鎖釋放。
+- 50回歸、1,165多欄桌手機／241單選桌手機／61夥伴元件檢查通過，私有證據保留；來源／答案／作答與原外層未改，沒有AI、SQL或新題轉化。收尾依SOP封存並移除本次三份工作樹與自有分頁／worker。

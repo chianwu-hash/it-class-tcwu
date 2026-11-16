@@ -1,12 +1,12 @@
-# 單選選項原序標記重複：發布中（2026-11-16）
+# 單選選項原序標記重複：正式完成（2026-11-16）
 
 ## 發布登記
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-option-prefix-20261116 | 待腳本登記 | 待PR合併main | `dpl_3NZ4MaKL3VbWeKEqbPdfgfQArdtX` | 共用選項轉換、夥伴純文字／rich、閱讀相容指紋與四課程產物 | 驗收通過，待main發布 |
+| 已完成 | Codex-option-prefix-20261116 | 2026-11-16T15:03:47.737Z | `855bc60` | `dpl_3NZ4MaKL3VbWeKEqbPdfgfQArdtX` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/choice-presentation.mjs、shared/quiz-choice-conversion.mjs、shared/quiz-reading-reviewed-sources.mjs、shared/quiz-workshop/generated/assets.json、+shared/quiz-option-labels.mjs | `dpl_HtYv64JKcHpmn4kS5BC3bk4d9ed7`／回滾 `dpl_3NZ4MaKL3VbWeKEqbPdfgfQArdtX`（eolOnly 0） |
 
-- [選項消標記與掃描](quiz-option-prefix-repair-20261116.md)：31,636筆、124題／284不同單選欄位、294次出現修正，另查83考古版本／2,607組，兩組原文句子引用保留。50程式回歸、1,165多欄／241單選桌手機與61夥伴補驗通過；來源／答案、ID、既有作答與原外層不變，沒有AI或SQL。前批53筆原件核對仍全通過；SOP已補前批與本次防回歸規則。私有證據`D:/AI-Work/quiz-option-prefix-evidence-20261116/`；新題轉化維持暫停。
+- [PR #283](https://github.com/chianwu-hash/it-class-tcwu/pull/283) 已進main並發布：完整樹20改／1增、正式21檔逐位元回讀通過，發布鎖釋放。[選項消標記與掃描](quiz-option-prefix-repair-20261116.md)：31,636筆、124題／284不同單選欄位、294次出現修正，另查83考古版本／2,607組，兩組原文句子引用保留。50程式回歸、1,165多欄／241單選桌手機與61夥伴補驗通過；來源／答案、ID、既有作答與原外層不變，沒有AI或SQL。前批53筆原件核對仍全通過；SOP已補前批與本次防回歸規則。私有證據`D:/AI-Work/quiz-option-prefix-evidence-20261116/`；新題轉化維持暫停。
 
 # 閱讀剩餘53筆原件核對：正式完成（2026-11-16）
 
