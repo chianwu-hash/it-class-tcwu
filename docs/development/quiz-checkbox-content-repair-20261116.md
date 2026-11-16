@@ -24,3 +24,7 @@
 - 練功坊產物由原builder更新依賴指紋，CSS及外層HTML結構保持，只更新載入版本。SOP已要求來源留存／學生呈現分層及作答流程不增加。
 
 私有正式匯出、候選、交易／判分／桌手機／外層指紋及發布收據位於 `D:/AI-Work/checkbox-content-audit-20261116/`，不提交原題、教材或學生資料。正式部署識別以`agent-handoff.md`發布收據為準。
+
+## 正式發布收據
+
+PR264合併後，由乾淨main `d0ab4bfafe801bc83ecffad4aa148cc7163d9d63` 經正式發布腳本上傳、完整樹比較及promote，正式部署 `dpl_8EkMRGQMo3gwWuq5BT37jYRoA8wB`；基準／回滾 `dpl_5tXY5h9BPtZurjWTorJqtzsfG7BE`。18改／2增／0刪、0額外差異、eolOnly0；20正式檔HTTP200且逐一SHA與main一致，鎖已釋放。外層元件／CSS保持，既有試卷重新整理即可套用內容呈現；漏項的新版本供後續組卷，舊不可變資料不竄改。
