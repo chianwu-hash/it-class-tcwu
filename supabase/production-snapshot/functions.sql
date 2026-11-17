@@ -2588,7 +2588,7 @@ end $function$;
 revoke all on function partner_pilot.learning_snapshot(uuid) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.learning_snapshot(uuid) to postgres;
 
--- partner_pilot.learning_snapshot_pre_message_media(uuid)  md5=c3a88880e9ea4fad0cdc59d185cea86f
+-- partner_pilot.learning_snapshot_pre_message_media(uuid)  md5=67df6624c1cc1d1ddabfba4950ea7a50
 CREATE OR REPLACE FUNCTION partner_pilot.learning_snapshot_pre_message_media(rid uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -2613,7 +2613,13 @@ begin
   end if;
   if submitted=total or exists(select 1 from partner_pilot.answers where room_id=rid and qid=q.id and user_id=auth.uid()) then item:=item||jsonb_build_object('normalReference',q.normal_question->'answer','correct',q.correct,'explanation',q.explanation,'rich',q.rich); end if;
   if owner=auth.uid() then mine:=mine||jsonb_build_array(item); end if;
-  if submitted=total or exists(select 1 from partner_pilot.notes where room_id=rid and qid=q.id and kind in ('ask','mark')) then shared:=shared||jsonb_build_array(item-'attempts'); end if;
+  if submitted=total or exists(select 1 from partner_pilot.notes where room_id=rid and qid=q.id and kind in ('ask','mark')) then shared:=shared||jsonb_build_array((item-'attempts')||case
+   when submitted=total and q.normal_question->>'type'='open'
+    and exists(select 1 from jsonb_array_elements(q.normal_question->'fields') f where f->>'input'='sketch')
+   then jsonb_build_object('attempts',coalesce((
+    select jsonb_build_array(jsonb_build_object('choice',a.choice,'value',a.response,'correct',a.correct,'at',a.created_at))
+    from partner_pilot.answers a where a.room_id=rid and a.qid=q.id and a.user_id=owner
+    order by a.attempt desc limit 1),'[]'::jsonb)) else '{}'::jsonb end); end if;
  end loop;
  select coalesce(jsonb_agg(jsonb_build_object('id',n.id,'user',n.user_id,'name',u.display_name,'kind',n.kind,'qid',n.qid,'thread',n.thread_id,'tag',n.tag,'text',n.text,'at',n.created_at) order by n.id),'[]'::jsonb) into notes from partner_pilot.notes n join partner_pilot.allowed_users u on u.user_id=n.user_id where n.room_id=rid;
  select coalesce(jsonb_agg(jsonb_build_object('user',v.user_id,'name',u.display_name,'reflection',v.reflection) order by v.created_at),'[]'::jsonb) into reviewers from partner_pilot.review_seen v join partner_pilot.allowed_users u using(user_id) where v.room_id=rid;
