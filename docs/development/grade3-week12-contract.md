@@ -4,6 +4,14 @@
 
 程式提交 `7e7cf024`，草稿 [PR #302](https://github.com/chianwu-hash/it-class-tcwu/pull/302)，尚未合併。GitHub連接器建立PR遭403，改用已登入的本機gh建立同一分支草稿，沒有重複PR。
 
+## 2026-11-17 過關小慶祝補強
+
+使用者檢視截圖後要求五關過關時有小動畫。原版僅成功訊息輕微縮放，現補「✓ 過關！」徽章彈出與六顆彩色星星散開、約1.1秒淡出；只在本題從未過關變成答對時播放，重複按檢查不連播，換題／重新開始後可再慶祝，答錯／修改時立即取消。特效以absolute定位且pointer-events:none，不改版面、不搶焦點、不擋按鈕；成功文字持續保留，減少動態效果下不播放特效。
+
+從最新main重新建立 `codex/grade3-week12-celebration-20261117`／同名工作樹，再fast-forward納入未合併的PR302內容；完成後以fast-forward更新原PR，不直接push main。只改本週renderer／CSS／builder／產物與針對性驗收，不改登入、進度、花葉或SQL。
+
+瀏覽器驗收涵蓋五關各兩組：檢查答對後徽章與六星共7個CSS動畫實際running、徽章transform隨時間改變、星星可見且移出徽章、逾時自動隱藏、重複檢查不重播、答錯／換題清理、減少動態效果仍保留成功文字，以及原生剪貼／undo／redo回歸。證據在新工作樹 `.chat-mode/evidence/clipboard/`。本機預覽仍為127.0.0.1:3000，來源已切換至新工作樹。
+
 ## 開發前契約
 
 - [x] 以最新 origin/main `e98d6e4b` 新建 `codex/grade3-week12-web-20261117` 與獨立 worktree，不修改主工作區。

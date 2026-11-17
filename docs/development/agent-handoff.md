@@ -1,5 +1,7 @@
 # 三年級第12週：本機版完成，待審查上線（2026-11-17）
 
+- **過關動畫補強**：依使用者截圖要求新增五關局部「✓ 過關！」與六星慶祝，約1.1秒自動停止，換題／答錯清理、不連點重播、減少動態效果保留文字。最新工作樹 `D:/projects/it-class-tcwu-worktrees/grade3-week12-celebration-20261117`（從最新main建立後FF納入PR302），本機3000預覽已改用此來源；只補本週視覺與測試，不改資料庫或正式發布狀態。
+
 - 使用者採用五關設計後指示先讀SOP再做網頁。新工作樹 `D:/projects/it-class-tcwu-worktrees/grade3-week12-web-20261117`、分支 `codex/grade3-week12-web-20261117`，從最新main `e98d6e4b` 建立，Codex唯一寫入者；沒有委派Claude實作。
 - 程式提交 `7e7cf024`，草稿 [PR #302](https://github.com/chianwu-hash/it-class-tcwu/pull/302)，尚未合併main。所有本次測試／生圖暫存分頁已精確關閉；本機服務保留供使用者檢視，工作樹保留待審查，未執行發布鎖或部署。
 - 已完成文字選取／複製／剪下／判斷／貼上取代五關，每關兩組、原生剪貼與復原／重做、換題隔離；另外接續英打、已核對課文中英打六關及期末練功入口。[完整契約](grade3-week12-contract.md)、[教案](../../grade3/LessonPlan/115-1/Week%2012.md)。文字練習不發花葉；六關前五關一葉、魔王再一花。

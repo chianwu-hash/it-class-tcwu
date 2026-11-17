@@ -25,7 +25,8 @@ export function renderClipboardPractice(){return `<p class="clip-summary" data-c
  <textarea id="clip-input-${t.id}" rows="${t.id==='select'?2:3}" ${t.id==='select'?'readonly':''} spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="clip-goal-${t.id} clip-selection-${t.id} clip-feedback-${t.id}">${esc(t.variants[0].seed)}</textarea>
  <p id="clip-selection-${t.id}" class="clip-selection" data-clip-selection>點入文字框，試著選取指定文字。</p>
  <div class="clip-actions"><button type="button" data-clip-check>檢查這一關</button><button type="button" data-clip-hint>給我提示</button><button type="button" data-clip-reset>重新開始這題</button><button type="button" data-clip-replay disabled>再練一次（換題）</button></div>
- <p id="clip-feedback-${t.id}" data-clip-feedback class="clip-feedback" role="status" aria-live="polite">${t.id==='select'?'看反白範圍，不多也不少。':'先選對文字，再點好目的地。快捷鍵或右鍵選單都可以。'}</p>
+ <div class="clip-feedback-wrap"><p id="clip-feedback-${t.id}" data-clip-feedback class="clip-feedback" role="status" aria-live="polite">${t.id==='select'?'看反白範圍，不多也不少。':'先選對文字，再點好目的地。快捷鍵或右鍵選單都可以。'}</p>
+ <span class="clip-celebration" data-clip-celebration aria-hidden="true" hidden><span class="clip-cheer">✓ 過關！</span>${Array.from({length:6},()=>'<span class="clip-spark">★</span>').join('')}</span></div>
  </article>`).join('');}
 
 export const freshClipboardState=()=>({record:null,proof:false});
@@ -69,7 +70,16 @@ export function initClipboardPractice(root){
   let frames=[],position=0,lastSelection='';
   const variant=()=>task.variants[variantIndex];
   const feedback=card.querySelector('[data-clip-feedback]'),replay=card.querySelector('[data-clip-replay]');
-  const invalidate=()=>{done.delete(task.id);card.classList.remove('clip-passed');replay.disabled=true;summary();};
+  const celebration=card.querySelector('[data-clip-celebration]');let celebrationTimer=null;
+  const stopCelebration=()=>{clearTimeout(celebrationTimer);celebrationTimer=null;celebration.hidden=true;card.classList.remove('clip-celebrating');};
+  const celebrate=()=>{
+   stopCelebration();
+   // The persistent success text is the reduced-motion alternative; never steal focus.
+   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+   celebration.hidden=false;card.classList.add('clip-celebrating');
+   celebrationTimer=setTimeout(stopCelebration,1150);
+  };
+  const invalidate=()=>{stopCelebration();done.delete(task.id);card.classList.remove('clip-passed');replay.disabled=true;summary();};
   const report=(message,ok=null)=>{feedback.textContent=message;if(typeof ok==='boolean')card.classList.toggle('clip-passed',ok);};
   const selection=()=>input.value.slice(input.selectionStart,input.selectionEnd);
   const snapshot=()=>({value:input.value,state:clone(state)});
@@ -126,8 +136,9 @@ export function initClipboardPractice(root){
   card.querySelectorAll('button').forEach(b=>b.addEventListener('mousedown',e=>{if(e.button===0)e.preventDefault();}));
   card.querySelector('[data-clip-check]').addEventListener('click',()=>{
    if(composing)return;
+   const wasPassed=done.has(task.id);
    const result=checkClipboard(variant(),state,input.value,selection());if(!result.ok)invalidate();report(result.message,result.ok);
-   if(result.ok){done.add(task.id);replay.disabled=false;summary();}
+   if(result.ok){done.add(task.id);replay.disabled=false;summary();if(!wasPassed)celebrate();}
   });
   card.querySelector('[data-clip-hint]').addEventListener('click',()=>{
    hints++;
