@@ -2,6 +2,8 @@
 
 2026-11-17，本機版完成，待PR審查與正式上線。使用者已採用五關情境設計並指示讀SOP開始製作網頁；尚未套用正式SQL或發布。
 
+程式提交 `7e7cf024`，草稿 [PR #302](https://github.com/chianwu-hash/it-class-tcwu/pull/302)，尚未合併。GitHub連接器建立PR遭403，改用已登入的本機gh建立同一分支草稿，沒有重複PR。
+
 ## 開發前契約
 
 - [x] 以最新 origin/main `e98d6e4b` 新建 `codex/grade3-week12-web-20261117` 與獨立 worktree，不修改主工作區。

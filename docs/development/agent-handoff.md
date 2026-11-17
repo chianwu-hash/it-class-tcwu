@@ -1,6 +1,7 @@
 # 三年級第12週：本機版完成，待審查上線（2026-11-17）
 
 - 使用者採用五關設計後指示先讀SOP再做網頁。新工作樹 `D:/projects/it-class-tcwu-worktrees/grade3-week12-web-20261117`、分支 `codex/grade3-week12-web-20261117`，從最新main `e98d6e4b` 建立，Codex唯一寫入者；沒有委派Claude實作。
+- 程式提交 `7e7cf024`，草稿 [PR #302](https://github.com/chianwu-hash/it-class-tcwu/pull/302)，尚未合併main。所有本次測試／生圖暫存分頁已精確關閉；本機服務保留供使用者檢視，工作樹保留待審查，未執行發布鎖或部署。
 - 已完成文字選取／複製／剪下／判斷／貼上取代五關，每關兩組、原生剪貼與復原／重做、換題隔離；另外接續英打、已核對課文中英打六關及期末練功入口。[完整契約](grade3-week12-contract.md)、[教案](../../grade3/LessonPlan/115-1/Week%2012.md)。文字練習不發花葉；六關前五關一葉、魔王再一花。
 - 17項單元／隔離DB與四支合成瀏覽器矩陣通過，原生pointer／剪貼快捷鍵、匿名／他人拒絕、重送不倒退、0～4／5／6花葉、逐關保存失敗重試與接回、草稿、六組重練、首頁徽章／隱藏、圖卡燈箱、1280／390參考對照及減少動態效果。真實學生寫入0、pageerror0；沒有把合成測試當正式驗收。
 - 圖卡以已核對帳號ChatGPT工作瀏覽器附三年級參考生成，1920×1080 WebP 158,678 bytes，Cloudinary HTTP200與SHA相同，正式URL與prompt／參考見圖卡receipt；原圖metadata與測試證據在ignored `.chat-mode/evidence/`。
