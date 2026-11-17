@@ -1,5 +1,7 @@
 // NAS source review: IDs, fingerprints and structural plans only. No keys or source text.
+import {comparisonReadingSources} from './quiz-comparison-reviewed-sources.mjs';
 export const reviewedReadingSources={
+  ...comparisonReadingSources,
   "kg6en_EWW1507000554_v6083caa6809f": [
     {
       "guard": "c4760aaba0b8068a",
