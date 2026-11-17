@@ -1,5 +1,8 @@
 # 三年級第12週：本機版完成，待審查上線（2026-11-17）
 
+- **本次授權與下一步**：使用者已指示「先給Claude複核，沒問題後上線」。以新建工作樹 `D:/projects/it-class-tcwu-worktrees/grade3-week12-review-20261117` 複核PR302的 `ae003c3d`。Claude只讀本週runtime／剪貼／SQL／測試與必要共用模組，無寫入／網路／憑證／部署權；Codex唯一寫入者。確認阻擋問題排除後，自行完成PR進main、本週兩筆活動／獎勵登記、正式測試與乾淨main發布，不重問已授權的上線。若他人持有發布鎖，依SOP停止詢問，不刪他人鎖。
+- **Claude已通過**：Code2.1.323、session `20261117-g3-week12-release-review`，完整run狀態completed且Git前後一致，結論沒有阻擋上線的程式問題。原生剪貼、動畫、六關auth／progress、SQL與花葉已複核；完整圖卡／manifest／草稿等仍由Codex既有證據負責。正式180函式live快照一致，17項Node／隔離DB再過。下一步PR302進main後以mainSQL登記、正式專用帳號驗收、乾淨main發布；目前發布鎖空閒，正式基準 `dpl_3sTeS8gip6gdsUFdt7FVA5DcF9tA`。
+
 - **過關動畫補強**：依使用者截圖要求新增五關局部「✓ 過關！」與六星慶祝，約1.1秒自動停止，換題／答錯清理、不連點重播、減少動態效果保留文字。最新工作樹 `D:/projects/it-class-tcwu-worktrees/grade3-week12-celebration-20261117`（從最新main建立後FF納入PR302），本機3000預覽已改用此來源；只補本週視覺與測試，不改資料庫或正式發布狀態。
 
 - 使用者採用五關設計後指示先讀SOP再做網頁。新工作樹 `D:/projects/it-class-tcwu-worktrees/grade3-week12-web-20261117`、分支 `codex/grade3-week12-web-20261117`，從最新main `e98d6e4b` 建立，Codex唯一寫入者；沒有委派Claude實作。

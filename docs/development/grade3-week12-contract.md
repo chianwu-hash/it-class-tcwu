@@ -4,6 +4,14 @@
 
 程式提交 `7e7cf024`，草稿 [PR #302](https://github.com/chianwu-hash/it-class-tcwu/pull/302)，尚未合併。GitHub連接器建立PR遭403，改用已登入的本機gh建立同一分支草稿，沒有重複PR。
 
+## 發布前Claude複核（2026-11-17）
+
+使用者已明確要求複核通過後上線。Claude Code 2.1.323經chat-mode監督器、訂閱OAuth、唯讀Read／Glob／Grep複核 `ae003c3d`；session `20261117-g3-week12-release-review`，回覆「未發現阻擋上線的程式問題，可以進入正式登記與發布驗收」。監督器完成、viewer已啟動、前後分支／HEAD／status／upstream相同；Codex另外核對檔案與測試，沒有把Claude唯讀複核稱為它親自執行測試。
+
+複核覆蓋剪貼／undo／重設／組字、小慶祝與減少動態效果、六關身分與進度adapter、防貼上邊界、固定教材及本週登記／獎勵設定。非阻擋建議：套用前核對正式garden_growth版本、套用後回讀兩筆登記，以及徽章短暫覆在按鈕上／標籤空格的小外觀。Codex先跑正式180函式live snapshot通過，確認既有five-then-flower計算一致；登記後另做精確回讀，未擴大重寫函式。
+
+Claude未完整閱讀圖卡／HTML課文、manifest、其他頁navbar、草稿段落及style／infographic測試本體，這些由既有Codex實測與builder／差異核對補足；原生右鍵選單、實體注音候選窗與真實雙機仍不冒稱已驗。原始request、response與run在同工作樹 `.chat-mode/sessions/20261117-g3-week12-release-review/`，後續依SOP封存。
+
 ## 2026-11-17 過關小慶祝補強
 
 使用者檢視截圖後要求五關過關時有小動畫。原版僅成功訊息輕微縮放，現補「✓ 過關！」徽章彈出與六顆彩色星星散開、約1.1秒淡出；只在本題從未過關變成答對時播放，重複按檢查不連播，換題／重新開始後可再慶祝，答錯／修改時立即取消。特效以absolute定位且pointer-events:none，不改版面、不搶焦點、不擋按鈕；成功文字持續保留，減少動態效果下不播放特效。
