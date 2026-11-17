@@ -1,6 +1,6 @@
 {
  "project": "upxgyusodibaqcrocdzj",
- "exportedAt": "2026-11-17T08:38:37.895Z",
+ "exportedAt": "2026-11-17T22:49:40.499Z",
  "counts": {
   "functions": 180,
   "tables": 112,
@@ -9,7 +9,7 @@
  },
  "functions": {
   "partner_pilot.action_core(jsonb)": {
-   "md5": "9de0e11eb5add96127ca557bca21f0ad",
+   "md5": "28657e37a327992c1c178f45f1f05e3e",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres}"
   },
@@ -304,7 +304,7 @@
    "acl": "{postgres=X/postgres}"
   },
   "partner_pilot.learning_snapshot_pre_message_media(uuid)": {
-   "md5": "67df6624c1cc1d1ddabfba4950ea7a50",
+   "md5": "1064d2e6dece7ae4d027182dc2b42530",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres}"
   },
@@ -374,7 +374,7 @@
    "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
   },
   "quiz_action_before_learning(text,jsonb)": {
-   "md5": "fc7ef9980e3bdaa81b84ed7ee224e433",
+   "md5": "fcd825c196e1925d820a8f391644b7b6",
    "securityDefiner": true,
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
@@ -444,12 +444,12 @@
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
   "quiz_fields_response(jsonb,text)": {
-   "md5": "d05e9328e438b1a8daf5bc2c87023ae6",
+   "md5": "b7d7661560eb342f6a5bb37c3f7c11b3",
    "securityDefiner": false,
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
   "quiz_fields_validate(jsonb)": {
-   "md5": "44014c918c926e07b4fb3edc3bb545f7",
+   "md5": "beb06f22a582a38e360b14bd9c94598d",
    "securityDefiner": false,
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
@@ -749,7 +749,7 @@
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
   "quiz_student_document(jsonb,jsonb,jsonb)": {
-   "md5": "535c6fddb398bb38ea052dd81a3e0bb7",
+   "md5": "aa3c856e957f4e5b3692dbf51da950ae",
    "securityDefiner": false,
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
@@ -789,7 +789,7 @@
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
   "quiz_validate(jsonb)": {
-   "md5": "944e211b9d4532043d40b17bf255db52",
+   "md5": "a7a2f93324834a4a2984ca407e7e818f",
    "securityDefiner": false,
    "acl": "{postgres=X/postgres,service_role=X/postgres}"
   },
@@ -909,5 +909,5 @@
    "acl": "{postgres=X/postgres,service_role=X/postgres,anon=X/postgres,authenticated=X/postgres}"
   }
  },
- "fileSha256": "cdbb6990f786e7155cb144b88323448275517115c08a5fc1a75591751db42d78"
+ "fileSha256": "6bc3a5b4d46516a05d01822598fd9b738c564a497340168f2f7870e042fa4ec6"
 }
