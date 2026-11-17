@@ -400,7 +400,7 @@ linkControl.load();
 | `grade3-115-1` | 現行週頁以 `initGoogleCourseAuth()` 確認Google本人名冊（內含 `initNavbarAuth()`）；navbar 仍會因週次可見性重渲 | 已支援努力樹；沒有六年級作業／閱讀入口 |
 | `grade6-115-1` | `authBarHtml` 與 `showAuthBarOnWeekPages: true` 已啟用，使用學校 Google 登入 | 顯示交作業與努力樹入口 |
 
-## 固定答案與計算過程（2026-11-18，SQL已核准套用）
+## 固定答案與計算過程（2026-11-18，SQL及前端已正式發布）
 
 - `quiz-fields.mjs` 沿用原欄位及一次送答，只有明確 opt-in 的 `fields` 題可另帶 `work:{input:'expression'|'sketch',label}`；一般算式用輸入／數字符號按鍵，來源明確要求直式才用手寫。共用 `quiz-work-response.mjs` 不新增內層送出或自評階段。
 - 同一原生回應為 `{v:1,f:{原答案欄},w:計算過程}`。`quiz_fields_grade` 仍只判原答案欄；回饋限定「答案欄答對」，過程供核對參考解法。`w` 不是可判分的答案欄，也不是獨立 Map、文字塞圖或計算紙。未 opt-in 的舊題仍只接受原 `{v:1,f}`，舊卷與舊作答不改。
