@@ -4,10 +4,13 @@
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-g3-week12-20261117 | 2026-11-17T14:41:03.355Z | PR302／程式main `96afccd4`，實際發布HEAD由腳本鎖定 | `dpl_3sTeS8gip6gdsUFdt7FVA5DcF9tA` | 第12週與navbar／首頁／後台／獎勵；main既有未發布手寫共用模組；完整樹預檢51改11增，逐檔清單留發布證據 | Claude複核通過，本週活動／獎勵各1列已套用且回讀；180函式live一致，準備乾淨main發布 |
+| 已完成 | Codex-g3-week12-20261117 | 2026-11-17T14:42:27.395Z | `79eedbd` | `dpl_3sTeS8gip6gdsUFdt7FVA5DcF9tA` | admin-progress.html、grade3/115-1/index.html、grade3/115-1/learning.html、grade3/115-1/mouse-double-click.html、grade3/115-1/mouse-left-click.html、grade3/115-1/mouse-right-click.html、grade3/115-1/navbar.js、grade3/115-1/partner-practice.html、grade3/115-1/past-exam-review.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade3/115-1/typing-foundation.html、grade3/115-1/week01.html、grade3/115-1/week02-mail.html、grade3/115-1/week02.html、grade3/115-1/week03.html、grade3/115-1/week04.html、grade3/115-1/week05.html、grade3/115-1/week06.html、grade3/115-1/week07.html、grade3/115-1/week08.html、grade3/115-1/week09.html、grade3/115-1/week10.html、grade3/115-1/week11.html、grade3/115-1/zhuyin-foundation.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/learning.js、shared/partner-pilot/structured-answer.js、shared/quiz-fields.css、shared/quiz-fields.mjs、shared/quiz-open-response.mjs、shared/quiz-reading-reviewed-sources.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、shared/reward-tree-config.js、+grade3/115-1/images/week12/infographic.json、+grade3/115-1/images/week12/week12-infographic-1920x1080-q80.webp、+grade3/115-1/week12-clipboard.mjs、+grade3/115-1/week12-content.mjs、+grade3/115-1/week12.css、+grade3/115-1/week12.html、+grade3/115-1/week12.js、+grade3/LessonPlan/115-1/Week 12.md、+shared/quiz-comparison-reviewed-sources.mjs、+shared/quiz-open-sketch.css、+shared/quiz-open-sketch.mjs | `dpl_BiwL27rdTrEZZcqJKrgqCo5pj9bR`／回滾 `dpl_3sTeS8gip6gdsUFdt7FVA5DcF9tA`（eolOnly 0） |
 
-- 使用者明確授權Claude複核無阻擋後上線；PR302已合併。登記SQL來自main `96afccd4`，有garden_growth版本守衛及交易內兩筆postcondition，catalog98→99、activity14→15；學生資料／函式／RLS未改。
-- main另含PR295已合併而未發布的手寫支援與後續已核准SQL快照；本次依唯一main來源一併發布，補跑對應回歸，不啟用新數學題。正式專用測試／教師後台及完整樹比對仍需執行，完成後把本列更新為正式收據。
+- **已正式發布**：[第12週](https://it-class-tcwu.vercel.app/grade3/115-1/week12.html)、[完整收據](grade3-week12-release.md)。Claude只讀複核無阻擋後，PR302／303進main；乾淨main發布腳本完成且釋放鎖，完整樹51改11增0非預期，62檔正式HTTP／SHA與main一致。
+- 本週限定活動／花葉各1列已套用，180函式live一致、目錄99／99。專用測試逐關保存、3／6關重整接回、0～4／5／6的花葉、教師回讀與隱藏／恢復通過；僅清掉專用新進度1列、剩0，成長已讀未碰。正式五關兩組原生剪貼、實際慶祝動畫及1280／390通過。
+- main既有未發布手寫共用支援一併發布，補26項回歸通過，不啟用新數學題。17項本週單元／隔離DB與21項練功坊產物檢查通過；原生右鍵選單／實體注音候選窗／真正雙裝置保留人工限制。完整私有證據依SOP封存，未提交教案草稿保留。
+
+以下為本週實作與審查歷史，未上線／待辦敘述已由上方正式收據取代。
 
 # 三年級第12週：本機版完成，待審查上線（2026-11-17）
 
