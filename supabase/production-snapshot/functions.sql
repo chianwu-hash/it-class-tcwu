@@ -4,7 +4,7 @@
 -- so every function ends at the production definition (e.g. quiz_action with ordered next-question lookup).
 -- Check: node automation/db-snapshot-check.mjs
 
--- partner_pilot.action_core(jsonb)  md5=9de0e11eb5add96127ca557bca21f0ad
+-- partner_pilot.action_core(jsonb)  md5=28657e37a327992c1c178f45f1f05e3e
 CREATE OR REPLACE FUNCTION partner_pilot.action_core(p jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -44,7 +44,7 @@ begin
   if count_attempt is distinct from (p->>'expectedAttempt')::int then raise exception 'ANSWER_CHANGED'; end if;
   select * into strict qb from partner_pilot.question_bank where id=qid;
   if qb.normal_question is not null then
-   if jsonb_typeof(p->'response') is distinct from 'string' or (case when qb.normal_question->>'type'='open' and exists(select 1 from jsonb_array_elements(qb.normal_question->'fields') fs where fs->>'input'='sketch') then octet_length(p->>'response') not between 1 and 300000 else length(p->>'response') not between 1 and 2000 end) then raise exception 'invalid_response';end if;
+   if jsonb_typeof(p->'response') is distinct from 'string' or (case when(qb.normal_question->>'type'='open' and exists(select 1 from jsonb_array_elements(qb.normal_question->'fields') fs where fs->>'input'='sketch'))or(qb.normal_question->>'type'='fields' and qb.normal_question#>>'{work,input}'='sketch')then octet_length(p->>'response') not between 1 and 300000 else length(p->>'response') not between 1 and 2000 end) then raise exception 'invalid_response';end if;
    response_value:=p->'response';
    if qb.normal_question->>'type' in ('fields','open') then
     perform case when qb.normal_question->>'type'='open' then public.quiz_open_response(qb.normal_question,p->>'response') else public.quiz_fields_response(qb.normal_question,p->>'response') end;
@@ -2588,7 +2588,7 @@ end $function$;
 revoke all on function partner_pilot.learning_snapshot(uuid) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.learning_snapshot(uuid) to postgres;
 
--- partner_pilot.learning_snapshot_pre_message_media(uuid)  md5=67df6624c1cc1d1ddabfba4950ea7a50
+-- partner_pilot.learning_snapshot_pre_message_media(uuid)  md5=1064d2e6dece7ae4d027182dc2b42530
 CREATE OR REPLACE FUNCTION partner_pilot.learning_snapshot_pre_message_media(rid uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -2614,8 +2614,8 @@ begin
   if submitted=total or exists(select 1 from partner_pilot.answers where room_id=rid and qid=q.id and user_id=auth.uid()) then item:=item||jsonb_build_object('normalReference',q.normal_question->'answer','correct',q.correct,'explanation',q.explanation,'rich',q.rich); end if;
   if owner=auth.uid() then mine:=mine||jsonb_build_array(item); end if;
   if submitted=total or exists(select 1 from partner_pilot.notes where room_id=rid and qid=q.id and kind in ('ask','mark')) then shared:=shared||jsonb_build_array((item-'attempts')||case
-   when submitted=total and q.normal_question->>'type'='open'
-    and exists(select 1 from jsonb_array_elements(q.normal_question->'fields') f where f->>'input'='sketch')
+   when submitted=total and((q.normal_question->>'type'='open'
+    and exists(select 1 from jsonb_array_elements(q.normal_question->'fields') f where f->>'input'='sketch'))or(q.normal_question->>'type'='fields' and q.normal_question ? 'work'))
    then jsonb_build_object('attempts',coalesce((
     select jsonb_build_array(jsonb_build_object('choice',a.choice,'value',a.response,'correct',a.correct,'at',a.created_at))
     from partner_pilot.answers a where a.room_id=rid and a.qid=q.id and a.user_id=owner
@@ -2998,7 +2998,7 @@ grant execute on function public.quiz_action(text,jsonb) to postgres;
 grant execute on function public.quiz_action(text,jsonb) to authenticated;
 grant execute on function public.quiz_action(text,jsonb) to service_role;
 
--- quiz_action_before_learning(text,jsonb)  md5=fc7ef9980e3bdaa81b84ed7ee224e433
+-- quiz_action_before_learning(text,jsonb)  md5=fcd825c196e1925d820a8f391644b7b6
 CREATE OR REPLACE FUNCTION public.quiz_action_before_learning(p_action text, p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -3200,7 +3200,7 @@ begin
    if to_regprocedure('public.quiz_answer_guard(uuid,text,boolean)') is not null then
     result:=public.quiz_answer_guard(att.id,qid,true);if result ? 'warning' then return result;end if;
    end if;
-   if jsonb_typeof(response) is distinct from 'string' or length(response#>>'{}') not between 1 and 2000 or (p_data->>'request_id')::uuid is null then raise exception 'invalid_response'; end if;
+   if jsonb_typeof(response) is distinct from 'string' or (case when q->>'type'='fields' and q#>>'{work,input}'='sketch' then octet_length(response#>>'{}') not between 1 and 300000 else length(response#>>'{}') not between 1 and 2000 end) or (p_data->>'request_id')::uuid is null then raise exception 'invalid_response'; end if;
    if q->>'type'='single' then
     if not exists(select 1 from jsonb_array_elements(q->'options') opt where opt->>'id'=response#>>'{}') then raise exception 'invalid_response'; end if;
     correct:=(response#>>'{}')=q->'answer'->>'option_id';
@@ -3695,7 +3695,7 @@ revoke all on function public.quiz_fields_grade(jsonb,text) from public, anon, a
 grant execute on function public.quiz_fields_grade(jsonb,text) to postgres;
 grant execute on function public.quiz_fields_grade(jsonb,text) to service_role;
 
--- quiz_fields_response(jsonb,text)  md5=d05e9328e438b1a8daf5bc2c87023ae6
+-- quiz_fields_response(jsonb,text)  md5=b7d7661560eb342f6a5bb37c3f7c11b3
 CREATE OR REPLACE FUNCTION public.quiz_fields_response(q jsonb, raw text)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -3704,15 +3704,24 @@ CREATE OR REPLACE FUNCTION public.quiz_fields_response(q jsonb, raw text)
 AS $function$
 declare original json;v jsonb;f jsonb;result jsonb:='{}';
 begin
- if length(raw) not between 1 and 2000 then raise exception 'invalid_response';end if;
+ if raw is null or(case when q->>'type'='fields' and q#>>'{work,input}'='sketch' then octet_length(raw) not between 1 and 300000 else length(raw) not between 1 and 2000 end)then raise exception 'invalid_response';end if;
  begin original:=raw::json;v:=original::jsonb;exception when others then raise exception 'invalid_response';end;
  if json_typeof(original) is distinct from 'object' then raise exception 'invalid_response';end if;
  -- Keep the original JSON for duplicate checks; jsonb discards duplicate keys.
- if (select count(*) from json_object_keys(original))<>2 or json_typeof(original->'f') is distinct from 'object' then raise exception 'invalid_response';end if;
+ if (select count(*) from json_object_keys(original))<>(case when q ? 'work' then 3 else 2 end) or json_typeof(original->'f') is distinct from 'object' then raise exception 'invalid_response';end if;
  if (select count(*) from json_object_keys(original->'f'))<>(select count(distinct k) from json_object_keys(original->'f') k) then raise exception 'invalid_response';end if;
- if v->'v' is distinct from '1'::jsonb or not(v ? 'f') or exists(select 1 from jsonb_object_keys(v) k where k not in('v','f'))
+ if v->'v' is distinct from '1'::jsonb or not(v ? 'f') or exists(select 1 from jsonb_object_keys(v) k where k not in('v','f') and not(k='w' and q ? 'work'))
   or (select count(*) from jsonb_object_keys(v->'f'))<>jsonb_array_length(q->'fields')
   or exists(select 1 from jsonb_object_keys(v->'f') k where not exists(select 1 from jsonb_array_elements(q->'fields') x where x->>'id'=k)) then raise exception 'invalid_response';end if;
+ if q ? 'work' then
+  if q->>'type' is distinct from 'fields' or not(v ? 'w') then raise exception 'invalid_response';end if;
+  if q#>>'{work,input}'='expression' then
+   if jsonb_typeof(v->'w') is distinct from 'string' or length(trim(v->>'w')) not between 1 and 250 then raise exception 'invalid_response';end if;
+  elsif q#>>'{work,input}'='sketch' then
+   if not public.quiz_sketch_valid(v->'w') then raise exception 'invalid_response';end if;
+   if (select count(*) from json_object_keys(original->'w'))<>(select count(distinct k) from json_object_keys(original->'w') k) then raise exception 'invalid_response';end if;
+  else raise exception 'invalid_response';end if;
+ end if;
  for f in select * from jsonb_array_elements(q->'fields') loop
   result:=result||jsonb_build_object(f->>'id',public.quiz_fields_value(f,v->'f'->(f->>'id')));
  end loop;
@@ -3722,7 +3731,7 @@ revoke all on function public.quiz_fields_response(jsonb,text) from public, anon
 grant execute on function public.quiz_fields_response(jsonb,text) to postgres;
 grant execute on function public.quiz_fields_response(jsonb,text) to service_role;
 
--- quiz_fields_validate(jsonb)  md5=44014c918c926e07b4fb3edc3bb545f7
+-- quiz_fields_validate(jsonb)  md5=beb06f22a582a38e360b14bd9c94598d
 CREATE OR REPLACE FUNCTION public.quiz_fields_validate(q jsonb)
  RETURNS void
  LANGUAGE plpgsql
@@ -3732,6 +3741,13 @@ AS $function$
 declare f jsonb;o jsonb;a jsonb;t jsonb;alt jsonb;key text;fid text;
  ids text[]:='{}';opts text[];coupled text[];n integer;
 begin
+ if q ? 'work' then
+  if q->>'type' is distinct from 'fields' or jsonb_typeof(q->'work') is distinct from 'object' then raise exception 'invalid_question';end if;
+  if (select count(*) from jsonb_object_keys(q->'work'))<>2
+   or exists(select 1 from jsonb_object_keys(q->'work') k where k not in('input','label'))
+   or coalesce(q#>>'{work,input}','') not in('expression','sketch')
+   or jsonb_typeof(q#>'{work,label}') is distinct from 'string' or length(trim(q#>>'{work,label}')) not between 1 and 120 then raise exception 'invalid_question';end if;
+ end if;
  if q ? 'options' or jsonb_typeof(q->'fields') is distinct from 'array' then raise exception 'invalid_question';end if;
  if jsonb_array_length(q->'fields') not between 1 and 20 then raise exception 'invalid_question';end if;
  for f in select * from jsonb_array_elements(q->'fields') loop
@@ -5763,7 +5779,7 @@ revoke all on function public.quiz_sketch_valid(jsonb) from public, anon, authen
 grant execute on function public.quiz_sketch_valid(jsonb) to postgres;
 grant execute on function public.quiz_sketch_valid(jsonb) to service_role;
 
--- quiz_student_document(jsonb,jsonb,jsonb)  md5=535c6fddb398bb38ea052dd81a3e0bb7
+-- quiz_student_document(jsonb,jsonb,jsonb)  md5=aa3c856e957f4e5b3692dbf51da950ae
 CREATE OR REPLACE FUNCTION public.quiz_student_document(d jsonb, qo jsonb, oo jsonb)
  RETURNS jsonb
  LANGUAGE sql
@@ -5782,7 +5798,7 @@ AS $function$
     from jsonb_array_elements(coalesce(q->'options','[]')) o
     join jsonb_array_elements_text(coalesce(oo->(q->>'id'),'[]')) with ordinality opt(id,ord) on o->>'id'=opt.id))||case when q->>'type' in('fields','open') then jsonb_build_object('fields',(select coalesce(jsonb_agg(jsonb_build_object('id',f->>'id','label',f->>'label','input',f->>'input')
  ||case when f ? 'options' then jsonb_build_object('options',(select jsonb_agg(jsonb_build_object('id',o->>'id','content',o->'content')order by ord)from jsonb_array_elements(f->'options')with ordinality opts(o,ord)))else '{}'::jsonb end order by n),'[]'::jsonb)
- from jsonb_array_elements(q->'fields')with ordinality fields(f,n)))else '{}'::jsonb end item
+ from jsonb_array_elements(q->'fields')with ordinality fields(f,n)))else '{}'::jsonb end||case when q->>'type'='fields' and q ? 'work' then jsonb_build_object('work',jsonb_build_object('input',q#>'{work,input}','label',q#>'{work,label}'))else '{}'::jsonb end item
   from jsonb_array_elements(qo) with ordinality r(qid,n)
   left join source on source.id=r.qid#>>'{}'
  ) select jsonb_build_object('title',d->>'title','questions',coalesce(jsonb_agg(item order by n),'[]'::jsonb)) from items;
@@ -6017,7 +6033,7 @@ revoke all on function public.quiz_valid_runs(jsonb,jsonb) from public, anon, au
 grant execute on function public.quiz_valid_runs(jsonb,jsonb) to postgres;
 grant execute on function public.quiz_valid_runs(jsonb,jsonb) to service_role;
 
--- quiz_validate(jsonb)  md5=944e211b9d4532043d40b17bf255db52
+-- quiz_validate(jsonb)  md5=a7a2f93324834a4a2984ca407e7e818f
 CREATE OR REPLACE FUNCTION public.quiz_validate(d jsonb)
  RETURNS void
  LANGUAGE plpgsql
@@ -6073,7 +6089,7 @@ begin
    else raise exception 'invalid_question_type'; end if;
    -- 白名單投影仍是學生回傳的唯一來源，不信任教師輸入的額外欄位。
    for k in select jsonb_object_keys(q) loop
-    if k not in ('id','type','prompt','explanation','options','answer') and not(k='fields' and q->>'type' in('fields','open')) then raise exception 'invalid_question_field'; end if;
+    if k not in ('id','type','prompt','explanation','options','answer') and not(k='fields' and q->>'type' in('fields','open')) and not(k='work' and q->>'type'='fields') then raise exception 'invalid_question_field'; end if;
    end loop;
   end loop;
  end loop;
