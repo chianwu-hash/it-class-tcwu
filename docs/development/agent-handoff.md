@@ -1,3 +1,18 @@
+# 三年級第12週：本機版完成，待審查上線（2026-11-17）
+
+- **本次授權與下一步**：使用者已指示「先給Claude複核，沒問題後上線」。以新建工作樹 `D:/projects/it-class-tcwu-worktrees/grade3-week12-review-20261117` 複核PR302的 `ae003c3d`。Claude只讀本週runtime／剪貼／SQL／測試與必要共用模組，無寫入／網路／憑證／部署權；Codex唯一寫入者。確認阻擋問題排除後，自行完成PR進main、本週兩筆活動／獎勵登記、正式測試與乾淨main發布，不重問已授權的上線。若他人持有發布鎖，依SOP停止詢問，不刪他人鎖。
+- **Claude已通過**：Code2.1.323、session `20261117-g3-week12-release-review`，完整run狀態completed且Git前後一致，結論沒有阻擋上線的程式問題。原生剪貼、動畫、六關auth／progress、SQL與花葉已複核；完整圖卡／manifest／草稿等仍由Codex既有證據負責。正式180函式live快照一致，17項Node／隔離DB再過。下一步PR302進main後以mainSQL登記、正式專用帳號驗收、乾淨main發布；目前發布鎖空閒，正式基準 `dpl_3sTeS8gip6gdsUFdt7FVA5DcF9tA`。
+
+- **過關動畫補強**：依使用者截圖要求新增五關局部「✓ 過關！」與六星慶祝，約1.1秒自動停止，換題／答錯清理、不連點重播、減少動態效果保留文字。最新工作樹 `D:/projects/it-class-tcwu-worktrees/grade3-week12-celebration-20261117`（從最新main建立後FF納入PR302），本機3000預覽已改用此來源；只補本週視覺與測試，不改資料庫或正式發布狀態。
+
+- 使用者採用五關設計後指示先讀SOP再做網頁。新工作樹 `D:/projects/it-class-tcwu-worktrees/grade3-week12-web-20261117`、分支 `codex/grade3-week12-web-20261117`，從最新main `e98d6e4b` 建立，Codex唯一寫入者；沒有委派Claude實作。
+- 程式提交 `7e7cf024`，草稿 [PR #302](https://github.com/chianwu-hash/it-class-tcwu/pull/302)，尚未合併main。所有本次測試／生圖暫存分頁已精確關閉；本機服務保留供使用者檢視，工作樹保留待審查，未執行發布鎖或部署。
+- 已完成文字選取／複製／剪下／判斷／貼上取代五關，每關兩組、原生剪貼與復原／重做、換題隔離；另外接續英打、已核對課文中英打六關及期末練功入口。[完整契約](grade3-week12-contract.md)、[教案](../../grade3/LessonPlan/115-1/Week%2012.md)。文字練習不發花葉；六關前五關一葉、魔王再一花。
+- 17項單元／隔離DB與四支合成瀏覽器矩陣通過，原生pointer／剪貼快捷鍵、匿名／他人拒絕、重送不倒退、0～4／5／6花葉、逐關保存失敗重試與接回、草稿、六組重練、首頁徽章／隱藏、圖卡燈箱、1280／390參考對照及減少動態效果。真實學生寫入0、pageerror0；沒有把合成測試當正式驗收。
+- 圖卡以已核對帳號ChatGPT工作瀏覽器附三年級參考生成，1920×1080 WebP 158,678 bytes，Cloudinary HTTP200與SHA相同，正式URL與prompt／參考見圖卡receipt；原圖metadata與測試證據在ignored `.chat-mode/evidence/`。
+- 尚未套正式SQL、未合併main、未發布。正式目錄98項，本版99項只缺 `grade3-115-1:12:typing_task_6`，其餘差異0；`supabase/grade3_week12_typing.sql`只新增本週活動白名單及花葉目錄各一列，不改函式／RLS／學生資料。後續正式上線要套本週限定登記、核正式保存／接回與測試列清理、教師後台真實隱藏／顯示，再用乾淨main發布腳本。
+- 尚留人工檢核：Windows原生右鍵選單、實體注音候選窗及真實雙分頁。測試分頁依租約清理；本機預覽服務只綁127.0.0.1:3000，供使用者檢視，正式版尚未更新。
+
 # 已恢復：共同回顧筆跡正式通過，續三上數學（2026-11-17）
 
 - **18 手寫候選已退修作答提示，改以 `work-prompt-retouch-candidate.private.json` 為準。** 移除與算式／直式要求衝突的「只填數值」，答案欄／參考／固定解析保持，重算候選 ID，不改舊資料。54 原件 SHA、3 程式測試、新 ID 正式保存／重試／自評／接回、36 組桌手機個人／完整回顧及夥伴 10 題正式回滾、共同回顧 40 組通過。[收據](quiz-work-prompt-retouch-20261117.md)。候選仍 146、剩 562，不把退修 18 重複加數，沒有新 SQL 或啟用。

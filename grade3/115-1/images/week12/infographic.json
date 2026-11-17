@@ -1,0 +1,11 @@
+{
+  "url": "https://res.cloudinary.com/dmqmjfqng/image/upload/v1794913450/it-class-tcwu/grade3/115-1/week12/week12-infographic-20261117.webp",
+  "sha256": "b3860b63c14b316e4aac5a4a5833ccad4bc0a1b6e23d324bb8485ce0b001f325",
+  "bytes": 158678,
+  "width": 1920,
+  "height": 1080,
+  "http": 200,
+  "prompt": "automation/prompts/week12-clipboard-card.txt",
+  "reference": "grade3/115-1/images/week01/week01-mouse-basics-card-chatgpt-final-1672x941-q82.webp",
+  "review": "Traditional Chinese, shortcuts C/X/V/Z, select-only word, copy retains source, cut source empty, style visually reviewed; source metadata kept ignored."
+}
