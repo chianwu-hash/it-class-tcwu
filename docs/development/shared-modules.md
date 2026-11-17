@@ -1,8 +1,8 @@
 # 共用模組說明
 
-## 原生手寫開放作答（2026-11-17，候選待正式 SQL 核准）
+## 原生手寫開放作答（2026-11-17，SQL已套用，前端未發布）
 
-`quiz-open-sketch.mjs`／`.css` 延伸 open 的 `input:sketch`，沿用共用 sketch editor；`quiz-open-response.mjs` 負責手寫輸入／已保存 SVG／既有自評。個人與 partner structured-answer 共用，原外層送出保持。SQL未核准前不得將這類候選啟用；筆跡保存不代表自動判對，舊文字與自動答案維持原契約。詳見[契約、驗收及界線](quiz-open-sketch-20261117.md)。
+`quiz-open-sketch.mjs`／`.css` 延伸 open 的 `input:sketch`，沿用共用 sketch editor；`quiz-open-response.mjs` 負責手寫輸入／已保存 SVG／既有自評。個人與 partner structured-answer 共用，原外層送出保持。核准SQL已套用，但正式共同回顧尚未提供他人筆跡，前端及新題均未發布／啟用；不能宣稱整條功能完成。筆跡保存不代表自動判對，舊文字與自動答案維持原契約。詳見[正式收據、缺口及暫停狀態](quiz-open-sketch-20261117.md)。
 
 ## 單選與多欄題內選項間距（2026-11-16）
 

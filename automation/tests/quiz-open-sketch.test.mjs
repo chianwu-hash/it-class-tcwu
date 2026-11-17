@@ -24,7 +24,8 @@ const call=(db,p,action,data={},uid=studentId(1))=>quizCall(db,uid,action,{sessi
 const send=(db,p,response=raw(),request=randomUUID(),uid=studentId(1))=>call(db,p,'submit',{question_id:'handwritten',response,request_id:request,compact:true},uid);
 async function install(db){
  const definitions=[];for(const [proname,args]of[['quiz_open_validate','jsonb'],['quiz_open_submit','uuid,jsonb,jsonb,boolean']])definitions.push({proname,definition:(await db.query('select pg_get_functiondef($1::regprocedure) d',[`public.${proname}(${args})`])).rows[0].d});
- const sql=buildOpenSketchMigration(definitions,await readFile('supabase/quiz-open-sketch-helpers.sql','utf8'));
+ const helpers=await readFile('supabase/quiz-open-sketch-helpers.sql','utf8'),sql=buildOpenSketchMigration(definitions,helpers);
+ assert.equal(buildOpenSketchMigration(definitions.map(d=>({...d,definition:d.definition.replaceAll('\n','\r\n')})),helpers.replaceAll('\r\n','\n').replaceAll('\n','\r\n')),sql,'LF and Windows CRLF must reproduce the same approved migration');
  assert.equal(sql,(await readFile('supabase/quiz-open-sketch.sql','utf8')).replaceAll('\r\n','\n'),'test the exact generated production candidate');await db.exec(sql);return sql;
 }
 
