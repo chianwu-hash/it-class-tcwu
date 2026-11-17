@@ -70,7 +70,7 @@ export function validateDocument(doc) {
     blocks.add(b.id); checkContent(b.material);
     for (const q of b.questions) {
       if (!object(q) || !id(q.id) || questions.has(q.id) || !object(q.answer)
-        || Object.keys(q).some(k => !['id', 'type', 'prompt', 'explanation', 'options', 'answer'].includes(k)&&!(k==='fields'&&['fields','open'].includes(q.type)))) fail('題目識別碼、答案或欄位不完整。');
+        || Object.keys(q).some(k => !['id', 'type', 'prompt', 'explanation', 'options', 'answer'].includes(k)&&!(k==='fields'&&['fields','open'].includes(q.type))&&!(k==='work'&&q.type==='fields'))) fail('題目識別碼、答案或欄位不完整。');
       questions.add(q.id); checkContent(q.prompt); checkContent(q.explanation);
       if (!q.prompt.text.trim()) fail('請填入題幹。');
       if (q.type === 'single') {

@@ -28,7 +28,7 @@ export function mountStructuredAnswers(root,{question,drafts,loadAsset,onChange}
   const q=question(Number(host.dataset.structuredReference));if(!q?.normalReference)continue;
   const normal=q.normal,last=q.attempts?.at(-1);
   if(normal.type==='fields'&&last&&typeof last.correct==='boolean'){
-   renderFieldsChoices(host,normal,{raw:last.value,review:{answer:q.normalReference,correct:last.correct},renderContent:(box,content)=>renderContent(box,content,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});continue;
+   renderFieldsChoices(host,normal,{raw:last.value,showWork:!root.querySelector(`[data-structured-answer="${q.id}"]`),review:{answer:q.normalReference,correct:last.correct},renderContent:(box,content)=>renderContent(box,content,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});continue;
   }
   if(normal.type==='fields'){
    renderFieldsChoices(host,normal,{referenceAnswer:q.normalReference,renderContent:(box,content)=>renderContent(box,content,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});continue;
