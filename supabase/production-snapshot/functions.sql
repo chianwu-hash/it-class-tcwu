@@ -4,7 +4,7 @@
 -- so every function ends at the production definition (e.g. quiz_action with ordered next-question lookup).
 -- Check: node automation/db-snapshot-check.mjs
 
--- partner_pilot.action_core(jsonb)  md5=1eb8fb0c9925d775b631c050428665b4
+-- partner_pilot.action_core(jsonb)  md5=9de0e11eb5add96127ca557bca21f0ad
 CREATE OR REPLACE FUNCTION partner_pilot.action_core(p jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -44,10 +44,10 @@ begin
   if count_attempt is distinct from (p->>'expectedAttempt')::int then raise exception 'ANSWER_CHANGED'; end if;
   select * into strict qb from partner_pilot.question_bank where id=qid;
   if qb.normal_question is not null then
-   if jsonb_typeof(p->'response') is distinct from 'string' or length(p->>'response') not between 1 and 2000 then raise exception 'invalid_response';end if;
+   if jsonb_typeof(p->'response') is distinct from 'string' or (case when qb.normal_question->>'type'='open' and exists(select 1 from jsonb_array_elements(qb.normal_question->'fields') fs where fs->>'input'='sketch') then octet_length(p->>'response') not between 1 and 300000 else length(p->>'response') not between 1 and 2000 end) then raise exception 'invalid_response';end if;
    response_value:=p->'response';
    if qb.normal_question->>'type' in ('fields','open') then
-    perform public.quiz_fields_response(qb.normal_question,p->>'response');
+    perform case when qb.normal_question->>'type'='open' then public.quiz_open_response(qb.normal_question,p->>'response') else public.quiz_fields_response(qb.normal_question,p->>'response') end;
     is_correct:=case when qb.normal_question->>'type'='open' then null else public.quiz_fields_grade(qb.normal_question,p->>'response') end;
    elsif qb.normal_question->>'type'='short' then
     if qb.normal_question#>>'{answer,normalizer}'='math-v1' and (p->>'response')~'[0-9０-９][[:space:]　]+[0-9０-９]' then raise exception 'invalid_response';end if;
@@ -4412,7 +4412,43 @@ revoke all on function public.quiz_nav_identity(text) from public, anon, authent
 grant execute on function public.quiz_nav_identity(text) to postgres;
 grant execute on function public.quiz_nav_identity(text) to service_role;
 
--- quiz_open_submit(uuid,jsonb,jsonb,boolean)  md5=70d3f94dfd94712fe917eaa43d4ef28b
+-- quiz_open_response(jsonb,text)  md5=a42b5497e31b79551db5e4073296175a
+CREATE OR REPLACE FUNCTION public.quiz_open_response(q jsonb, raw text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ IMMUTABLE
+ SET search_path TO ''
+AS $function$
+declare original json;v jsonb;f jsonb;value jsonb;result jsonb:='{}';
+begin
+ if not exists(select 1 from jsonb_array_elements(q->'fields') fs where fs->>'input'='sketch') then
+  return public.quiz_fields_response(q,raw);
+ end if;
+ if q->>'type' is distinct from 'open' or raw is null or octet_length(raw) not between 1 and 300000 then raise exception 'invalid_response';end if;
+ begin original:=raw::json;v:=original::jsonb;exception when others then raise exception 'invalid_response';end;
+ if json_typeof(original) is distinct from 'object' then raise exception 'invalid_response';end if;
+ if (select count(*) from json_object_keys(original))<>2 or json_typeof(original->'f') is distinct from 'object' then raise exception 'invalid_response';end if;
+ if (select count(*) from json_object_keys(original->'f'))<>(select count(distinct k) from json_object_keys(original->'f') k) then raise exception 'invalid_response';end if;
+ if v->'v' is distinct from '1'::jsonb or exists(select 1 from jsonb_object_keys(v) k where k not in('v','f'))
+  or (select count(*) from jsonb_object_keys(v->'f'))<>jsonb_array_length(q->'fields')
+  or exists(select 1 from jsonb_object_keys(v->'f') k where not exists(select 1 from jsonb_array_elements(q->'fields') x where x->>'id'=k)) then raise exception 'invalid_response';end if;
+ for f in select * from jsonb_array_elements(q->'fields') loop
+  value:=v->'f'->(f->>'id');
+  if f->>'input'='sketch' then
+   if not public.quiz_sketch_valid(value) then raise exception 'invalid_response';end if;
+   if (select count(*) from json_object_keys(original->'f'->(f->>'id')))<>(select count(distinct k) from json_object_keys(original->'f'->(f->>'id')) k) then raise exception 'invalid_response';end if;
+  elsif f->>'input'='text' then
+   if jsonb_typeof(value) is distinct from 'string' or length(trim(value#>>'{}')) not between 1 and 250 then raise exception 'invalid_response';end if;
+  else raise exception 'invalid_response';end if;
+  result:=result||jsonb_build_object(f->>'id',value);
+ end loop;
+ return result;
+end $function$;
+revoke all on function public.quiz_open_response(jsonb,text) from public, anon, authenticated, service_role;
+grant execute on function public.quiz_open_response(jsonb,text) to postgres;
+grant execute on function public.quiz_open_response(jsonb,text) to service_role;
+
+-- quiz_open_submit(uuid,jsonb,jsonb,boolean)  md5=4b263c2c550414b6d576d28034938308
 CREATE OR REPLACE FUNCTION public.quiz_open_submit(p_attempt uuid, p_question jsonb, p_data jsonb, p_self_check boolean)
  RETURNS boolean
  LANGUAGE plpgsql
@@ -4440,7 +4476,7 @@ begin
   return true;
  end if;
  if jsonb_typeof(p_data->'response') is distinct from 'string' then raise exception 'invalid_response';end if;
- raw:=p_data->>'response';canonical:=public.quiz_fields_response(p_question,raw);
+ raw:=p_data->>'response';canonical:=public.quiz_open_response(p_question,raw);
  if row.attempt_id is not null then
   if row.request_id is distinct from rid or row.response is distinct from p_data->'response' then raise exception 'submission_conflict';end if;
   return false;
@@ -4453,23 +4489,24 @@ revoke all on function public.quiz_open_submit(uuid,jsonb,jsonb,boolean) from pu
 grant execute on function public.quiz_open_submit(uuid,jsonb,jsonb,boolean) to postgres;
 grant execute on function public.quiz_open_submit(uuid,jsonb,jsonb,boolean) to service_role;
 
--- quiz_open_validate(jsonb)  md5=30186743eceb8403887d6bb202e72b32
+-- quiz_open_validate(jsonb)  md5=f9958b8a6cb7bf6e9ccc654402bfccc3
 CREATE OR REPLACE FUNCTION public.quiz_open_validate(q jsonb)
  RETURNS void
  LANGUAGE plpgsql
  IMMUTABLE
  SET search_path TO ''
 AS $function$
-declare f jsonb;r jsonb;v jsonb;k text;fake jsonb;
+declare f jsonb;r jsonb;v jsonb;k text;fake jsonb;projected jsonb;
 begin
  if q->>'type' is distinct from 'open' or jsonb_typeof(q->'fields') is distinct from 'array'
   or q->'answer'->>'format' is distinct from 'self-review-v1' or jsonb_typeof(q->'answer'->'fields') is distinct from 'object'
   or exists(select 1 from jsonb_object_keys(q->'answer') x where x not in('format','fields')) then raise exception 'invalid_open_question';end if;
  select jsonb_object_agg(x->>'id',jsonb_build_array('validation-only')) into fake from jsonb_array_elements(q->'fields') x;
- perform public.quiz_fields_validate(jsonb_set(q,'{answer}',jsonb_build_object('format','fields-v1','fields',fake)));
+ select jsonb_agg(case when fs.item->>'input'='sketch' then jsonb_set(fs.item,'{input}','"text"') else fs.item end order by fs.n) into projected from jsonb_array_elements(q->'fields')with ordinality fs(item,n);
+ perform public.quiz_fields_validate(jsonb_set(jsonb_set(q,'{fields}',projected),'{answer}',jsonb_build_object('format','fields-v1','fields',fake)));
  if (select count(*) from jsonb_object_keys(q->'answer'->'fields'))<>jsonb_array_length(q->'fields') then raise exception 'invalid_open_question';end if;
  for f in select * from jsonb_array_elements(q->'fields') loop
-  if f->>'input' is distinct from 'text' then raise exception 'invalid_open_question';end if;
+  if f->>'input' is null or f->>'input' not in('text','sketch') then raise exception 'invalid_open_question';end if;
   r:=q->'answer'->'fields'->(f->>'id');
   if jsonb_typeof(r) is distinct from 'object' or exists(select 1 from jsonb_object_keys(r) x where x not in('examples','criteria')) then raise exception 'invalid_open_reference';end if;
   foreach k in array array['examples','criteria'] loop
@@ -5680,6 +5717,45 @@ AS $function$
 $function$;
 revoke all on function public.quiz_session_class_allowed(uuid,text) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_session_class_allowed(uuid,text) to postgres;
+
+-- quiz_sketch_valid(jsonb)  md5=464532f210068f0ed630354c1cbe28e7
+CREATE OR REPLACE FUNCTION public.quiz_sketch_valid(v jsonb)
+ RETURNS boolean
+ LANGUAGE plpgsql
+ IMMUTABLE
+ SET search_path TO ''
+AS $function$
+declare s jsonb;p jsonb;c jsonb;
+begin
+ if jsonb_typeof(v) is distinct from 'object' then return false;end if;
+ if v->'version' is distinct from '1'::jsonb or jsonb_typeof(v->'strokes') is distinct from 'array'
+  or exists(select 1 from jsonb_object_keys(v) k where k not in('version','strokes','colors'))
+  or octet_length(v::text)>262144 then return false;end if;
+ if jsonb_array_length(v->'strokes') not between 1 and 80 then return false;end if;
+ if v ? 'colors' then
+  if jsonb_typeof(v->'colors') is distinct from 'array' then return false;end if;
+  if jsonb_array_length(v->'colors')<>jsonb_array_length(v->'strokes') then return false;end if;
+  for c in select * from jsonb_array_elements(v->'colors') loop
+   if jsonb_typeof(c) is distinct from 'string' or c#>>'{}' not in('#185e60','#2459b3','#b83246','#7643a8','#a94b0b','#263238') then return false;end if;
+  end loop;
+ end if;
+ for s in select * from jsonb_array_elements(v->'strokes') loop
+  if jsonb_typeof(s) is distinct from 'array' then return false;end if;
+  if jsonb_array_length(s) not between 1 and 128 then return false;end if;
+  for p in select * from jsonb_array_elements(s) loop
+   if jsonb_typeof(p) is distinct from 'array' then return false;end if;
+   if jsonb_array_length(p)<>2 then return false;end if;
+   for c in select * from jsonb_array_elements(p) loop
+    if jsonb_typeof(c) is distinct from 'number' then return false;end if;
+    if (c#>>'{}')::numeric not between 0 and 1 then return false;end if;
+   end loop;
+  end loop;
+ end loop;
+ return true;
+end $function$;
+revoke all on function public.quiz_sketch_valid(jsonb) from public, anon, authenticated, service_role;
+grant execute on function public.quiz_sketch_valid(jsonb) to postgres;
+grant execute on function public.quiz_sketch_valid(jsonb) to service_role;
 
 -- quiz_student_document(jsonb,jsonb,jsonb)  md5=535c6fddb398bb38ea052dd81a3e0bb7
 CREATE OR REPLACE FUNCTION public.quiz_student_document(d jsonb, qo jsonb, oo jsonb)

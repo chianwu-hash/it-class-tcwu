@@ -2,6 +2,7 @@ import {createHash} from 'node:crypto';
 const md5=s=>createHash('md5').update(s).digest('hex');
 const replace=(source,from,to)=>{if(source.split(from).length!==2)throw Error('sketch_baseline_changed:'+from.slice(0,50));return source.replace(from,to);};
 export function buildOpenSketchMigration(definitions,helpers){
+ helpers=helpers.replaceAll('\r\n','\n');
  const changes=['quiz_open_validate','quiz_open_submit'].map(name=>{
   const entry=definitions.filter(d=>d.proname===name);if(entry.length!==1)throw Error('sketch_definition_missing:'+name);
   const before=entry[0].definition.replaceAll('\r\n','\n');let after=before;

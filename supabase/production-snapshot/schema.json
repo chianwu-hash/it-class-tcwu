@@ -5602,7 +5602,7 @@
      "name": "quiz_open_responses_pkey"
     },
     {
-     "def": "CHECK (((jsonb_typeof(response) = 'string'::text) AND ((length((response #>> '{}'::text[])) >= 1) AND (length((response #>> '{}'::text[])) <= 2000))))",
+     "def": "CHECK (((jsonb_typeof(response) = 'string'::text) AND ((octet_length((response #>> '{}'::text[])) >= 1) AND (octet_length((response #>> '{}'::text[])) <= 300000))))",
      "name": "quiz_open_responses_response_check"
     },
     {
