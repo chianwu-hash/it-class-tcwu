@@ -116,5 +116,33 @@ test('structured self papers preserve grading, privacy, old copies, drafts and c
  await call(owner,{action:'answer',roomId:mr.id,qid:mq.id,expectedAttempt:0,response:JSON.stringify({v:1,f:{one:'2'}})});assert.equal((await readMedia(owner,audio)).mime,'audio/mpeg');
  await assert.rejects(db.exec(await read('supabase/quiz-partner-structured-answers.sql')),/BASELINE_CHANGED/);await db.exec('rollback');
  for(const sig of ['copy_self(uuid,text)','self_document_ok(jsonb)','action_core(jsonb)'])assert.equal((await db.query("select has_function_privilege('authenticated',$1,'execute') ok",['partner_pilot.'+sig])).rows[0].ok,false);
+ // Opt-in handwritten open tasks use the same partner form and retain raw strokes.
+ await db.exec(await read('supabase/quiz-open-sketch-helpers.sql'));
+ const openMigration=await read('supabase/quiz-open-sketch.sql'),openStart=openMigration.indexOf('CREATE OR REPLACE FUNCTION public.quiz_open_validate(');
+ await db.exec(openMigration.slice(openStart,openMigration.indexOf('$function$;',openStart)+11));
+ await db.exec(await read('supabase/quiz-partner-open-sketch.sql'));
+ const handwriting=document(10),ink={version:1,strokes:Array.from({length:20},(_,i)=>Array.from({length:50},(_,j)=>[i/20,j/50]))},penRaw=JSON.stringify({v:1,f:{work:ink}});
+ assert(penRaw.length>2000);
+ for(const b of handwriting.blocks){const original=b.questions[0];b.questions=[{id:original.id,type:'open',prompt:content('合成列式題，保留手寫過程'),explanation:content('自行核對步驟，不判筆跡正確'),fields:[{id:'work',label:'手寫過程',input:'sketch'}],answer:{format:'self-review-v1',fields:{work:{examples:['合成參考'],criteria:['保留完整計算']}}}}];}
+ const penSource=await seed(10,1,handwriting),personalBefore=(await personal()).rows[0].data;
+ let penRoom=await create(1,penSource);penRoom=await call(2,{action:'join',roomId:penRoom.id,code:penRoom.code});
+ for(const n of[1,2]){penRoom=await call(n,{action:'snapshot',roomId:penRoom.id});penRoom=await call(n,{action:'ready',roomId:penRoom.id,revision:penRoom.revision,ready:true});}
+ penRoom=await call(2,{action:'start',roomId:penRoom.id,revision:penRoom.revision});assert.equal(penRoom.exercise.gradedTotal,0);
+ for(const n of[1,2]){
+  const current=await call(n,{action:'snapshot',roomId:penRoom.id});assert(!JSON.stringify(current).includes('合成參考'));
+  for(const q of current.exercise.mine){
+   const request={action:'answer',roomId:penRoom.id,qid:q.id,expectedAttempt:0,response:penRaw,requestId:crypto.randomUUID()};
+   await assert.rejects(call(n===1?2:1,{...request}),/OWN_QUESTION_ONLY/);
+   await assert.rejects(call(n,{...request,response:JSON.stringify({v:1,f:{work:{version:1,strokes:[]}}})}),/invalid_response/);
+   const saved=(await call(n,request)).exercise.mine.find(x=>x.id===q.id);assert.equal(saved.attempts[0].correct,null);assert.equal(saved.attempts[0].value,penRaw);
+   assert.equal((await call(n,request)).exercise.mine.find(x=>x.id===q.id).attempts.length,1);
+  }
+ }
+ penRoom=await call(1,{action:'snapshot',roomId:penRoom.id});assert(penRoom.exercise.reviewOpen);assert.equal(penRoom.exercise.correct,0);
+ for(const n of[1,2])penRoom=await call(n,{action:'review',roomId:penRoom.id,text:'核對手寫過程'});
+ penRoom=await call(1,{action:'finish',roomId:penRoom.id});assert(penRoom.exercise.finished);
+ assert.deepEqual((await personal()).rows[0].data,personalBefore,'handwritten partner work does not change personal answers');
+ await assert.rejects(call(3,{action:'snapshot',roomId:penRoom.id}),/NOT_MEMBER/);
+ await assert.rejects(db.exec(await read('supabase/quiz-partner-open-sketch.sql')),/partner_sketch_baseline_changed/);await db.exec('rollback');
  }finally{await db.close();}
 });

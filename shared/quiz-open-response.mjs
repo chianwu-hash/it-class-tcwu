@@ -1,10 +1,12 @@
 import {fieldsValues,fieldsResponseError,validateFieldsQuestion} from './quiz-fields.mjs';
 import {attachPastInputKeyboard} from './quiz-past-input.mjs';
+import {hasSketchFields,openSketchResponseError} from './quiz-open-sketch.mjs';
+import {createSketchEditor,sketchImage} from './sketch/editor.mjs';
 
 const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 const only=(v,keys)=>object(v)&&Object.keys(v).every(k=>keys.includes(k));
 const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
-export const openResponseError=fieldsResponseError;
+export const openResponseError=(q,raw)=>hasSketchFields(q)?openSketchResponseError(q,raw):fieldsResponseError(q,raw);
 export const openReferenceSummary=(q,answer=q.answer)=>q.fields.map(f=>{
  const ref=answer.fields[f.id];return `${f.label}：參考例答 ${ref.examples.join('／')}；檢核 ${ref.criteria.join('、')}`;
 }).join('；');
@@ -12,9 +14,9 @@ export const openReferenceSummary=(q,answer=q.answer)=>q.fields.map(f=>{
 // Examples are review material, never an accepted-answer list for grading.
 export function validateOpenQuestion(q,checkContent){
  const fail=()=>{throw Error('題庫格式錯誤：開放作答的欄位、參考例答或檢核重點不完整。');};
- if(!Array.isArray(q.fields)||q.fields.some(f=>f.input!=='text')||!only(q.answer,['format','fields'])||q.answer.format!=='self-review-v1'||!object(q.answer.fields))fail();
+ if(!Array.isArray(q.fields)||q.fields.some(f=>!['text','sketch'].includes(f.input))||!only(q.answer,['format','fields'])||q.answer.format!=='self-review-v1'||!object(q.answer.fields))fail();
  const placeholders=Object.fromEntries(q.fields.map(f=>[f.id,['validation-only']]));
- validateFieldsQuestion({...q,type:'fields',answer:{format:'fields-v1',fields:placeholders}},checkContent);
+ validateFieldsQuestion({...q,type:'fields',fields:q.fields.map(f=>f.input==='sketch'?{...f,input:'text'}:f),answer:{format:'fields-v1',fields:placeholders}},checkContent);
  if(Object.keys(q.answer.fields).length!==q.fields.length||Object.keys(q.answer.fields).some(id=>!q.fields.some(f=>f.id===id)))fail();
  for(const field of q.fields){
   const ref=q.answer.fields[field.id];if(!only(ref,['examples','criteria']))fail();
@@ -29,6 +31,16 @@ export function renderOpenInputs(host,q,{raw='',locked=false,onChange}){
  const values=fieldsValues(q,raw),group=make('div',undefined,'quiz-fields quiz-open-inputs');
  group.append(make('p','請依原題寫下自己的答案。儲存後可以查看參考例答與檢核重點，再完成自評。'));
  for(const field of q.fields){
+  if(field.input==='sketch'){
+   const slot=make('fieldset',undefined,'quiz-field quiz-open-sketch');slot.append(make('legend',field.label));
+   if(locked){appendSketch(slot,values[field.id],field.label);}
+   else{
+    const board=make('div');slot.append(board);
+    const editor=createSketchEditor(board,{value:object(values[field.id])?values[field.id]:{version:1,strokes:[]},onChange:value=>{values[field.id]=value;onChange(JSON.stringify({v:1,f:values}));},messages:{clearConfirm:'確定清除這一欄的手寫內容？可按「復原一步」恢復。',capacityHint:'最多80筆；請確認算式、直式或圖形完整，再一起送出。'}});
+    group.sketchEditors??=[];group.sketchEditors.push(editor);
+   }
+   group.append(slot);continue;
+  }
   const slot=make('fieldset',undefined,'quiz-field'),legend=make('legend',field.label),input=make('textarea');
   input.id='open-'+q.id+'-'+field.id;input.maxLength=250;input.rows=3;input.disabled=locked;input.autocomplete='off';input.setAttribute('aria-label',field.label);input.value=typeof values[field.id]==='string'?values[field.id]:'';
   input.addEventListener('input',()=>{values[field.id]=input.value;onChange(JSON.stringify({v:1,f:values}));});slot.append(legend,input);
@@ -37,6 +49,18 @@ export function renderOpenInputs(host,q,{raw='',locked=false,onChange}){
  }
  host.append(group);return group;
 }
+
+function appendSketch(host,value,label){
+ if(!value?.strokes?.length){host.append(make('p','這一欄尚未儲存手寫內容。','helper'));return;}
+ const svg=sketchImage(value);svg.setAttribute('aria-label',label+'・已儲存手寫內容');svg.classList.add('quiz-open-sketch-saved');host.append(svg,make('p','手寫內容已儲存，請對照參考例答與檢核重點。','helper'));
+}
+export function renderOpenSavedSketches(host,q,raw){
+ if(!hasSketchFields(q))return;
+ const values=fieldsValues(q,raw);
+ for(const field of q.fields.filter(f=>f.input==='sketch')){const slot=make('section',undefined,'quiz-field quiz-open-sketch');slot.append(make('h4',field.label));appendSketch(slot,values[field.id],field.label);host.append(slot);}
+}
+export function destroyOpenSketchEditors(root){root?.querySelectorAll('.quiz-open-inputs').forEach(group=>group.sketchEditors?.forEach(editor=>editor.destroy()));}
+export function disableOpenSketchEditors(root,disabled){root?.querySelectorAll('.quiz-open-inputs').forEach(group=>group.sketchEditors?.forEach(editor=>editor.setDisabled(disabled)));}
 
 export function renderOpenReview(host,q,review,{busy=false,pending=false,draftNote='',onNoteChange=()=>{},onSelfCheck}){
  const box=make('section',undefined,'answer-preview quiz-open-review');box.tabIndex=-1;
