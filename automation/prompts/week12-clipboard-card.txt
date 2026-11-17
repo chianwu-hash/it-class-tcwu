@@ -1,0 +1,13 @@
+Create one polished 16:9 classroom infographic image, 1920x1080 composition. Use the attached reference ONLY for the visual style: clear cute cartoon for eight-year-old elementary pupils, white background, sky blue and teal, sunny yellow/orange emphasis, thick rounded Traditional Chinese type, numbered rounded cards. Do not copy the old mouse lesson content. Sharp text rendering. Use only Taiwan Traditional Chinese, never Simplified Chinese. No school logo, no watermark, no extra paragraphs.
+
+Title exactly:「文字搬家小高手」
+Small badge:「第12週」
+Four large numbered panels with simple accurate text-editor diagrams, labels exactly:
+1「先選取」and「拖曳反白，選得剛剛好」. Diagram highlights only the word「小貓」inside「我喜歡小貓。」, not the punctuation.
+2「複製 Ctrl＋C」and「多一份，原處還在」. Diagram shows a selected「名牌」in the source and an additional identical「名牌」at a second destination; source remains.
+3「剪下 Ctrl＋X」and「搬位置，原處不留」. Diagram shows selected「課本」moving from a source label to「書包」with source empty afterward. Do not show duplicated remaining source text.
+4「貼上 Ctrl＋V」and「點好目的地，再貼上」. Diagram has a clear insertion caret at the destination then pasted text. Keep it separate from the concept of selecting replacement text.
+Bottom reminder exactly:「貼錯別著急，Ctrl＋Z 復原再試！」
+Bottom small line:「先選取，再決定；貼上後，兩邊都檢查。」
+
+Large readable text, generous spacing, tiny cheerful elementary child and mouse/keyboard accents confined to corners. All hands anatomically plausible. The four steps and shortcut letters must be correct; do not change labels or invent extra shortcuts. No English except Ctrl and shortcut letters. No flowers/leaves or reward promises on this illustration.
