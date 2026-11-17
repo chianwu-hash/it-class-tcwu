@@ -4,6 +4,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "lib"))
 from quiz_source_work_requirements import source_work_requirements as requirements, assert_result_only_source_allowed as allow
+from quiz_source_work_requirements import source_work_input
+from quiz_source_work_requirements import assert_source_work_adapter
 
 
 def catalog(name):
@@ -11,6 +13,19 @@ def catalog(name):
 
 
 class SourceWorkRequirementsTests(unittest.TestCase):
+    def test_equation_input_and_explicit_vertical_handwriting_are_distinct(self):
+        self.assertEqual(source_work_input(requirements(catalog('寫出算式做做看'))), 'expression')
+        self.assertEqual(source_work_input(requirements(catalog('寫出直式算算看'))), 'sketch')
+        self.assertIsNone(source_work_input(requirements(catalog('填填看'), '計算除法，教師解答採直式。')))
+        with self.assertRaisesRegex(ValueError, 'source_specific'):
+            source_work_input(requirements(catalog('畫畫看')))
+
+    def test_native_adapter_gate_rejects_equation_handwriting_and_missing_process(self):
+        q = {'type': 'fields', 'fields': [{'input': 'math'}], 'answer': {'format': 'fields-v1'},
+             'work': {'input': 'expression'}}
+        self.assertTrue(assert_source_work_adapter(catalog('寫出算式做做看'), q))
+        with self.assertRaisesRegex(ValueError, 'mismatch'): assert_source_work_adapter(catalog('寫出直式算算看'), q)
+        with self.assertRaisesRegex(ValueError, 'unrequested'): assert_source_work_adapter(catalog('選擇題'), q)
     def test_header_requires_equation_even_when_docx_body_omits_it(self):
         with self.assertRaisesRegex(ValueError, "equation"):
             allow(catalog("寫出算式做做看"), "一條繩子長17公分，每5公分剪一段，最多幾段？")

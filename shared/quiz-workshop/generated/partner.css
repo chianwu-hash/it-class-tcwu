@@ -588,6 +588,14 @@ textarea{width:100%;min-height:88px;resize:vertical;font:inherit;color:inherit;p
 .quiz-open-sketch{min-width:0;grid-column:1/-1}
 
 
+.quiz-work-input,.quiz-saved-work,.quiz-pending-work{grid-column:1/-1;min-width:0}
+.quiz-work-input>label{display:block;font-weight:bold;margin-bottom:8px}
+.quiz-work-input>input{box-sizing:border-box;width:100%;padding:12px;font:inherit}
+.quiz-work-keys{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.quiz-work-keys>button{min-width:44px;min-height:44px;font:inherit}
+.quiz-work-input .camp-sketch-board{background-image:linear-gradient(#e4efed 1px,transparent 1px),linear-gradient(90deg,#e4efed 1px,transparent 1px);background-size:24px 24px}
+.quiz-saved-work>svg{display:block;width:100%;max-width:720px;aspect-ratio:5/3;background:white;border:1px solid #a4c5bd}
+.quiz-saved-work>p{white-space:pre-wrap;overflow-wrap:anywhere}
 .quiz-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:16px;width:100%;min-width:0}
 .quiz-fields>p{grid-column:1/-1;margin:0}
 .quiz-fields-single{grid-template-columns:minmax(0,1fr)}

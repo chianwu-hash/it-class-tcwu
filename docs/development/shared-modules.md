@@ -400,6 +400,13 @@ linkControl.load();
 | `grade3-115-1` | 現行週頁以 `initGoogleCourseAuth()` 確認Google本人名冊（內含 `initNavbarAuth()`）；navbar 仍會因週次可見性重渲 | 已支援努力樹；沒有六年級作業／閱讀入口 |
 | `grade6-115-1` | `authBarHtml` 與 `showAuthBarOnWeekPages: true` 已啟用，使用學校 Google 登入 | 顯示交作業與努力樹入口 |
 
+## 固定答案與計算過程（2026-11-18 候選，尚待 SQL 核准）
+
+- `quiz-fields.mjs` 沿用原欄位及一次送答，只有明確 opt-in 的 `fields` 題可另帶 `work:{input:'expression'|'sketch',label}`；一般算式用輸入／數字符號按鍵，來源明確要求直式才用手寫。共用 `quiz-work-response.mjs` 不新增內層送出或自評階段。
+- 同一原生回應為 `{v:1,f:{原答案欄},w:計算過程}`。`quiz_fields_grade` 仍只判原答案欄；回饋限定「答案欄答對」，過程供核對參考解法。`w` 不是可判分的答案欄，也不是獨立 Map、文字塞圖或計算紙。未 opt-in 的舊題仍只接受原 `{v:1,f}`，舊卷與舊作答不改。
+- 算式最多250字；直式沿用80筆／每筆128點／座標與顏色白名單，僅此類回應上限為300000 UTF-8 bytes。後端拒絕重複鍵、空白過程、未知鍵與跨規格值。`quiz-saved-work.sql` 只更新7個既有函式，保留權限與資料表，須先核准才套用正式庫。
+- 個人接回／整份回顧顯示原保存過程；夥伴同一畫面僅顯示一份，全組送答前不把作答過程洩漏給夥伴，完成後共同回顧讀最新已保存版本。逾時或回應遺失時只顯示待確認，不能冒稱已保存；沿用原 request ID 重試。離題、登出與重渲須釋放手寫控制器。
+
 ## 答題回饋動畫共用（2026-11-07）
 
 - `shared/quiz-feedback-motion.mjs`／`.css` 是個人答題與夥伴練功十套角色、對錯動作、keyframe 與停止行為的共同來源；原樣由 quiz-server／quiz-student 抽出，避免新增第二套圖案與動畫。維護角色時修改這組檔案。

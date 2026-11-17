@@ -6,17 +6,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'lib'))
 from quiz_work_prompt import RESULT_ONLY_HINT, replace_result_only_work_hint
 
 
-def question():
-    return {'id': 'synthetic', 'type': 'open', 'prompt': {'text': '合成題\n' + RESULT_ONLY_HINT,
+def question(mode='expression'):
+    return {'id': 'synthetic', 'type': 'fields', 'work': {'input': mode, 'label': '算式' if mode == 'expression' else '直式'}, 'prompt': {'text': '合成題\n' + RESULT_ONLY_HINT,
         'media': [], 'layout': [{'type': 'paragraph', 'runs': [{'type': 'text', 'text': '合成題'}]},
                                {'type': 'paragraph', 'runs': [{'type': 'text', 'text': RESULT_ONLY_HINT}]}]},
-        'fields': [{'id': 'work', 'input': 'sketch'}], 'answer': {'format': 'self-review-v1'}}
+        'fields': [{'id': 'f1', 'input': 'math'}], 'answer': {'format': 'fields-v1', 'fields': {'f1': ['3']}}}
 
 
 class WorkPromptTest(unittest.TestCase):
     def test_preserves_original_fields_reference_and_specific_requirement(self):
         for kind, word in [('equation', '算式'), ('vertical_work', '直式')]:
-            q = question();before = copy.deepcopy(q)
+            q = question('sketch' if kind == 'vertical_work' else 'expression');before = copy.deepcopy(q)
             result, receipt = replace_result_only_work_hint(q, [{'kind': kind}])
             self.assertEqual(q, before)
             self.assertEqual(result['fields'], q['fields'])
@@ -24,10 +24,12 @@ class WorkPromptTest(unittest.TestCase):
             self.assertIn(word, result['prompt']['text'])
             self.assertNotIn('只填數值', result['prompt']['text'])
             self.assertTrue(receipt['fields_and_reference_unchanged'])
+            if kind == 'equation': self.assertNotIn('手寫', result['prompt']['text'])
 
     def test_refuses_missing_native_storage_or_unrelated_work(self):
-        for q, requirements in [(dict(question(), type='fields'), [{'kind': 'equation'}]),
-                                (dict(question(), fields=[]), [{'kind': 'vertical_work'}]),
+        for q, requirements in [(dict(question(), type='open'), [{'kind': 'equation'}]),
+                                (question('expression'), [{'kind': 'vertical_work'}]),
+                                (question('sketch'), [{'kind': 'equation'}]),
                                 (question(), [{'kind': 'drawing'}]), (question(), [])]:
             with self.subTest(q=q, requirements=requirements), self.assertRaises(ValueError):
                 replace_result_only_work_hint(q, requirements)

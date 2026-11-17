@@ -59,8 +59,8 @@ export function renderOpenSavedSketches(host,q,raw){
  const values=fieldsValues(q,raw);
  for(const field of q.fields.filter(f=>f.input==='sketch')){const slot=make('section',undefined,'quiz-field quiz-open-sketch');slot.append(make('h4',field.label));appendSketch(slot,values[field.id],field.label);host.append(slot);}
 }
-export function destroyOpenSketchEditors(root){root?.querySelectorAll('.quiz-open-inputs').forEach(group=>group.sketchEditors?.forEach(editor=>editor.destroy()));}
-export function disableOpenSketchEditors(root,disabled){root?.querySelectorAll('.quiz-open-inputs').forEach(group=>group.sketchEditors?.forEach(editor=>editor.setDisabled(disabled)));}
+export function destroyOpenSketchEditors(root){root?.querySelectorAll('.quiz-open-inputs,.quiz-fields').forEach(group=>group.sketchEditors?.forEach(editor=>editor.destroy()));}
+export function disableOpenSketchEditors(root,disabled){root?.querySelectorAll('.quiz-open-inputs,.quiz-fields').forEach(group=>group.sketchEditors?.forEach(editor=>editor.setDisabled(disabled)));}
 
 export function renderOpenReview(host,q,review,{busy=false,pending=false,draftNote='',onNoteChange=()=>{},onSelfCheck}){
  const box=make('section',undefined,'answer-preview quiz-open-review');box.tabIndex=-1;

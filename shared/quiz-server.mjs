@@ -110,7 +110,8 @@ export function initServerQuiz({ selectors, server }) {
       character.append(make('span', '', 'feedback-spark spark-one'), make('span', '', 'feedback-spark spark-two'), make('span', '', 'feedback-spark spark-three'));
     }
     const message = make('div', undefined, 'feedback-message');
-    message.append(make('strong', review.correct ? '這題答對了 ✓' : '這題還沒答對，一起看看解題想法。'));
+    message.append(make('strong', q.work?(review.correct?'答案欄答對了 ✓':'答案欄還沒全對，一起核對解法。'):(review.correct ? '這題答對了 ✓' : '這題還沒答對，一起看看解題想法。')));
+    if(q.work)message.append(make('p','計算過程已保存，請對照參考解法核對；系統只判分答案欄。'));
     const phrases = review.correct ? encouragement.correct : encouragement.incorrect;
     message.append(make('p', phrases[Math.max(0, index) % phrases.length], 'feedback-encouragement'));
     intro.append(character, message); box.append(intro);
@@ -137,7 +138,7 @@ export function initServerQuiz({ selectors, server }) {
     if(changed){stopAudio();mediaScope?.dispose();contentCache.clear();mediaView=view;
       mediaScope=state?server.request.createMediaScope?.({user_id:userId,session_id:server.sessionId,attempt_id:state.attempt_id,version_id:state.version_id,generation,view}):null;}
     contentUses.clear();
-    root.querySelectorAll('.quiz-open-inputs').forEach(group=>group.sketchEditors?.forEach(editor=>editor.destroy()));
+    root.querySelectorAll('.quiz-open-inputs,.quiz-fields').forEach(group=>group.sketchEditors?.forEach(editor=>editor.destroy()));
     workspace.reset();
     root.querySelectorAll('.qfm-actor').forEach(quizFeedbackMotion.stop); root.replaceChildren();
     const status = make('p', ''); status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite'); root.append(status);
@@ -214,7 +215,7 @@ export function initServerQuiz({ selectors, server }) {
       renderOpenInputs(inputs,q,{raw:saved?state.responses[q.id]:pending?.response??selected,locked:choicesLocked,onChange:value=>{selected=value}});
     } else if(q.type==='fields'){
       const chinese=root.dataset.subject==='國語';
-      renderFieldsInputs(inputs,q,{raw:saved?state.responses[q.id]:pending?.response??selected,locked:choicesLocked,onChange:value=>{selected=value},renderContent,textInputAids:{bopomofo:chinese,punctuation:chinese},review:saved?review:null});
+      renderFieldsInputs(inputs,q,{raw:saved?state.responses[q.id]:pending?.response??selected,locked:choicesLocked,saved,onChange:value=>{selected=value},renderContent,textInputAids:{bopomofo:chinese,punctuation:chinese},review:saved?review:null});
     } else {
       const input = make('textarea'); input.setAttribute('aria-label', '簡答內容'); input.maxLength = 2000;
       input.disabled = choicesLocked;
@@ -275,7 +276,7 @@ export function initServerQuiz({ selectors, server }) {
       pending = { question_id: q.id, response: selected, request_id: crypto.randomUUID() };
     }
     const token = generation; busy = true;
-    root.querySelectorAll('.quiz-open-inputs').forEach(group=>group.sketchEditors?.forEach(editor=>editor.setDisabled(true)));
+    root.querySelectorAll('.quiz-open-inputs,.quiz-fields').forEach(group=>group.sketchEditors?.forEach(editor=>editor.setDisabled(true)));
     root.querySelectorAll('.quiz-choices input,.quiz-choices textarea,.quiz-choices select,.quiz-choices button,.quiz-actions button').forEach(n=>n.disabled=true);
     const saving=root.querySelector('#server-submit');if(saving)saving.textContent='正在儲存…';
     say('正在儲存答案…');

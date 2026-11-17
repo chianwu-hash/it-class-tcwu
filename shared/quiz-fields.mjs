@@ -5,6 +5,7 @@ import {booleanChoicePresentation} from './quiz-boolean-choice.mjs';
 import {choiceQuestionPresentation} from './quiz-choice-conversion.mjs';
 import {readingPresentation} from './quiz-reading-presentation.mjs';
 import {fieldsReviewPresentation,appendFieldReviewStatus,decorateFieldReviewOption,appendFieldReviewReference} from './quiz-fields-review.mjs';
+import {validWorkSpec,workValue,workResponseError,renderWorkInput,renderSavedWork} from './quiz-work-response.mjs';
 export {fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
 
 const own=(o,k)=>o&&Object.hasOwn(o,k);
@@ -15,9 +16,10 @@ export function fieldsValues(q,raw){
  return Object.fromEntries(q.fields.map(f=>[f.id,['set','sequence'].includes(f.input)?null:'']));
 }
 export function fieldsResponseError(q,raw){
- if(typeof raw!=='string'||!raw||raw.length>2000)return '請完成每個答案欄；整組答案請保持在2000字以內。';
+ if(typeof raw!=='string'||!raw||(q.work?.input==='sketch'?new TextEncoder().encode(raw).length>300000:raw.length>2000))return '請完成每個答案欄與要求的計算過程。';
  let d;try{d=JSON.parse(raw)}catch{return '答案格式不完整，請更新儲存狀態後再試。'}
- if(!object(d)||d.v!==1||!object(d.f)||Object.keys(d).some(k=>!['v','f'].includes(k))||Object.keys(d.f).length!==q.fields.length)return '請完成每個答案欄。';
+ if(!object(d)||d.v!==1||!object(d.f)||Object.keys(d).some(k=>!(q.work?['v','f','w']:['v','f']).includes(k))||Object.keys(d.f).length!==q.fields.length)return '請完成每個答案欄。';
+ const workError=workResponseError(q,d.w);if(workError)return workError;
  const reading=readingPresentation(choiceQuestionPresentation(q));
  for(const [i,storedField] of q.fields.entries()){
   const f=reading?.fields?.[i]??fieldPresentation(q,storedField);
@@ -30,12 +32,14 @@ export function fieldsResponseError(q,raw){
  return '';
 }
 
-export function renderFieldsInputs(host,q,{raw='',locked=false,onChange,renderContent,textInputAids={},review=null}){
+export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onChange,renderContent,textInputAids={},review=null}){
  const values=fieldsValues(q,raw),group=make('div');group.className='quiz-fields';group.classList.toggle('quiz-fields-single',q.fields.length===1);
  const reading=readingPresentation(choiceQuestionPresentation(q));group.classList.toggle('quiz-reading-fields',Boolean(reading));
  const shown=q.fields.map((f,i)=>reading?.fields?.[i]??fieldPresentation(q,f)),feedback=locked?fieldsReviewPresentation({...q,fields:shown},raw,review):null;
  const formatPair=(id,value)=>{const f=shown.find(f=>f.id===id);return f.label+'：'+formatted(f,value)};
- const changed=()=>onChange(JSON.stringify({v:1,f:values}));
+ let work=workValue(raw);
+ const changed=()=>onChange(JSON.stringify({v:1,f:values,...(q.work?{w:work}:{} )}));
+ const editor=renderWorkInput(group,q,{raw,locked,saved,onChange:value=>{work=value;changed()}});group.sketchEditors=editor?[editor]:[];
  if(!fieldsAreSingleChoice(q))group.append(make('p',feedback?'你原本的作答已保留；請看各小題旁的核對結果。':q.fields.length===1?'填好答案後送出。':'依照題目順序填好每格，再一起送出。'));
  for(const [fieldIndex,storedField] of q.fields.entries()){
   const f=reading?.fields?.[fieldIndex]??fieldPresentation(q,storedField);
@@ -68,7 +72,8 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,onChange,renderCo
  }
  host.append(group);return group;
 }
-export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,referenceAnswer=null}){
+export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,referenceAnswer=null,showWork=true}){
+ if(showWork&&raw&&q.work)renderSavedWork(host,q,raw);
  const reading=readingPresentation(choiceQuestionPresentation(q));
  const shown=(q.fields||[]).map((f,i)=>reading?.fields?.[i]??fieldPresentation(q,f)),feedback=fieldsReviewPresentation({...q,fields:shown},raw,review),formatPair=(id,v)=>{const f=shown.find(f=>f.id===id);return f.label+'：'+formatted(f,v)};
  for(const [index,stored] of (q.fields||[]).entries()){const f=shown[index],reference=referenceAnswer?.format==='fields-v1'?referenceAnswer.fields?.[f.id]:null;if(!f.options&&!reading?.questions[index]&&!feedback?.[index]&&!reference)continue;
@@ -99,6 +104,7 @@ export function fieldsAnswerSummary(q,answer){
 export function validateFieldsQuestion(q,checkContent){
  const fail=()=>{throw Error('題庫格式錯誤：多格題組的欄位或答案不完整。')};
  const keys=(o,allowed)=>object(o)&&Object.keys(o).every(k=>allowed.includes(k));
+ if(own(q,'work')&&!validWorkSpec(q))fail();
  if('options'in q||!Array.isArray(q.fields)||q.fields.length<1||q.fields.length>20||!keys(q.answer,['format','fields','tuples'])||q.answer.format!=='fields-v1'||!object(q.answer.fields))fail();
  const ids=new Set();
  for(const f of q.fields){

@@ -33,3 +33,26 @@ def assert_result_only_source_allowed(catalog, question_text=""):
     if requirements:
         raise ValueError("source_work_response_storage_required:" + ",".join(sorted({r["kind"] for r in requirements})))
     return True
+
+
+def source_work_input(requirements):
+    """Choose the saved response from explicit publisher evidence, never from unit name."""
+    kinds = {r["kind"] for r in requirements}
+    if not kinds:
+        return None
+    if not kinds <= {"equation", "vertical_work"}:
+        raise ValueError("source_specific_work_adapter_required:" + ",".join(sorted(kinds)))
+    return "sketch" if "vertical_work" in kinds else "expression"
+
+
+def assert_source_work_adapter(catalog, question, question_text=""):
+    """Mandatory source-to-adapter gate; a stored result alone is insufficient."""
+    expected = source_work_input(source_work_requirements(catalog, question_text))
+    if expected is None:
+        if 'work' in question: raise ValueError('unrequested_work_adapter')
+        return True
+    if question.get('type') != 'fields' or question.get('work', {}).get('input') != expected:
+        raise ValueError('source_work_input_mismatch:' + expected)
+    if not question.get('fields') or any(f.get('input') != 'math' for f in question['fields']) or question.get('answer', {}).get('format') != 'fields-v1':
+        raise ValueError('fixed_math_answer_contract_required')
+    return True
