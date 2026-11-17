@@ -82,6 +82,7 @@ export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,ref
  }
 }
 const formatted=(f,v)=>{
+ if(f.input==='sketch')return v?.strokes?.length?'已儲存手寫內容（'+v.strokes.length+'筆）':'未填';
  const one=id=>{const i=f.options?.findIndex(o=>o.id===id)??-1;return i<0?String(id):f.options[i].content.text||`選項${i+1}`};
  return Array.isArray(v)?v.map(one).join(f.input==='sequence'?' → ':'、')||'都不選':['single'].includes(f.input)?one(v):String(v??'未填');
 };

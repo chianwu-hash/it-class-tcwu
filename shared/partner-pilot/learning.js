@@ -1,4 +1,5 @@
 import {mountStructuredAnswers,structuredResponseError} from './structured-answer.js';
+import {destroyOpenSketchEditors,disableOpenSketchEditors} from '../quiz-open-response.mjs';
 import {partnerChoicePresentation} from './choice-presentation.mjs';
 import {createAnswerFeedbackMotion} from './answer-feedback-motion.mjs?v=20261107-partner-motion';
 import {createReviewLayout} from './review-layout.mjs?v=20261107-boolean-choice';
@@ -78,6 +79,7 @@ export function createLearningUI({container,esc,onAction,onHome,onRefresh,onRetr
  }
  function updateOutcomeChrome(){
   if(!current||!content)return;
+  disableOpenSketchEditors(content,!!transport.busy||!!transport.pending||savingMedia);
   if(view==='review')reviewLayout.update();
   const e=current.exercise,o=taskOutcome(current),pending=pendingAnswers();const recovery=container.querySelector('[data-connection-recovery]');recovery.hidden=!(transport.syncBad||transport.refreshBad)||!!transport.pending;recovery.querySelector('button').disabled=!!transport.busy||savingMedia;
   for(const el of content.querySelectorAll('[data-answer-state]')){
@@ -214,6 +216,7 @@ export function createLearningUI({container,esc,onAction,onHome,onRefresh,onRetr
   const typing=content?.contains(document.activeElement)&&document.activeElement.matches('textarea,input[type=text]');
   const mediaBusy=[...content.querySelectorAll('audio')].some(a=>!a.paused&&!a.ended)||!!document.querySelector('#lightbox[open]');
   if(next!==contentKey&&!composing&&!drawing&&(!mediaBusy||contentKey==='')&&(!typing||!same||contentKey==='')){
+   destroyOpenSketchEditors(content);
    const open=[...content.querySelectorAll('details[open]')].map(e=>e.dataset.detail).filter(Boolean);container.querySelector('.focus-team-bar>.focus-question-position')?.remove();if(campButton)container.querySelector('.focus-team-bar>.actions').prepend(campButton);feedbackMotion.stop(container);workspace.reset();rich.prepare(content);content.innerHTML=view==='practice'?practice(unit,index):view==='review'?review():book();attemptsAtRender.clear();for(const q of r.exercise.mine)attemptsAtRender.set(q.id,q.attempts.length);bindContent();mountPastAnswers(content,{question,drafts,loadAsset:rich.resolve});mountPastResults(content,{question,loadAsset:rich.resolve});mountStructuredAnswers(content,{question,drafts,loadAsset:rich.resolve,onChange:qid=>{activeAnswer=qid;draftVersions.set(qid,attemptsAtRender.get(qid));updateOutcomeChrome();}});rich.mount(content);if(view==='practice'){const position=content.querySelector('.focus-question-position');if(position)container.querySelector('.focus-team-bar').append(position);const article=content.querySelector('.partner-workspace-question');if(article){let feedback=article.querySelector('.answer-preview');if(!feedback){feedback=document.createElement('aside');feedback.className='answer-preview';const placeholder=document.createElement('p');placeholder.className='quiz-explanation-placeholder';placeholder.textContent='送出後，一起核對想法。';feedback.append(placeholder);article.append(feedback);}for(const extra of article.querySelectorAll('.question-extras'))feedback.append(extra);workspace.apply({article,saved:unit?.questions.every(q=>q.attempts.length),complete:false,closed:false});content.querySelector('.quiz-workspace-dock .quiz-actions').prepend(campButton);content.querySelector('.quiz-message-tray').dataset.detail='workspace-tray';content.querySelector('.quiz-message-tray summary').textContent='儲存與提示';}}for(const id of (same?open:r.exercise.privateDraft?.state?.open||[])){const el=[...content.querySelectorAll('details')].find(e=>e.dataset.detail===id);if(el)el.open=true;}feedbackMotion.mount(content,question);workspace?.refresh();contentKey=next;
   }
   for(const node of content.querySelectorAll('[data-question-marks]')){const html=marks(question(Number(node.dataset.questionMarks)));if(node.innerHTML!==html)node.innerHTML=html;}
@@ -223,7 +226,7 @@ export function createLearningUI({container,esc,onAction,onHome,onRefresh,onRetr
   updateCampCount(panel.count());
  }
  const compositionStart=()=>{composing=true;},compositionEnd=()=>{composing=false;queueMicrotask(()=>{if(current)render(current,viewer);});};
- const pointerStart=event=>{if(event.target.closest?.('.drawing-board'))drawing=true;},pointerEnd=()=>{if(drawing){drawing=false;queueMicrotask(()=>{if(current)render(current,viewer);});}};
+ const pointerStart=event=>{if(event.target.closest?.('.drawing-board,.quiz-open-sketch .camp-sketch-board'))drawing=true;},pointerEnd=()=>{if(drawing){drawing=false;queueMicrotask(()=>{if(current)render(current,viewer);});}};
  const mediaIdle=event=>{if(event.type==='close'&&event.target.id!=='lightbox')return;queueMicrotask(()=>{if(current)render(current,viewer);});};
  container.addEventListener('pause',mediaIdle,true);container.addEventListener('ended',mediaIdle,true);document.addEventListener('close',mediaIdle,true);
  const blur=()=>setTimeout(()=>{if(current)render(current,viewer);},0);
@@ -232,6 +235,6 @@ export function createLearningUI({container,esc,onAction,onHome,onRefresh,onRetr
  const answerChanged=event=>{const form=event.target.closest?.('form[data-form=answer]');if(form)activeAnswer=Number(form.dataset.qid);if(current&&!composing){capture();updateOutcomeChrome();}};
  container.addEventListener('input',answerChanged);container.addEventListener('change',answerChanged);container.addEventListener('pointerup',answerChanged);
  container.addEventListener('compositionstart',compositionStart);container.addEventListener('compositionend',compositionEnd);container.addEventListener('pointerdown',pointerStart);window.addEventListener('pointerup',pointerEnd);window.addEventListener('pointercancel',pointerEnd);container.addEventListener('focusout',blur);
- function clear(){cancelAnimationFrame(growthRevealFrame);feedbackMotion.clear(container);keepsakeGrowth.stop();reviewLayout.clear();workspace?.destroy();workspace=null;activeAnswer=null;lastHeaderView=null;calloutObserver?.disconnect();calloutObserver=null;scopeRoot.style.removeProperty('--review-callout-height');summaryRequested=false;guideKey='';celebrationKey='';exitDialog?.remove();exitDialog=null;awardTracker.clear();saveEpoch++;savingMedia=false;rich.clear();panel?.clear();panel=null;current=null;viewer=null;campButton=null;drafts.clear();editing.clear();draftVersions.clear();attemptsAtRender.clear();activeQuestion=null;contentKey='';view='practice';markedOnly=false;composing=false;drawing=false;}
+ function clear(){destroyOpenSketchEditors(container);cancelAnimationFrame(growthRevealFrame);feedbackMotion.clear(container);keepsakeGrowth.stop();reviewLayout.clear();workspace?.destroy();workspace=null;activeAnswer=null;lastHeaderView=null;calloutObserver?.disconnect();calloutObserver=null;scopeRoot.style.removeProperty('--review-callout-height');summaryRequested=false;guideKey='';celebrationKey='';exitDialog?.remove();exitDialog=null;awardTracker.clear();saveEpoch++;savingMedia=false;rich.clear();panel?.clear();panel=null;current=null;viewer=null;campButton=null;drafts.clear();editing.clear();draftVersions.clear();attemptsAtRender.clear();activeQuestion=null;contentKey='';view='practice';markedOnly=false;composing=false;drawing=false;}
  return {render,committed,clear,setTransport:next=>{transport={...transport,...next};panel?.setTransport({...transport,busy:transport.busy||savingMedia});if(current)updateOutcomeChrome();}};
 }

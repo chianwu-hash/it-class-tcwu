@@ -1,9 +1,10 @@
 import {renderFieldsInputs,renderFieldsChoices,fieldsResponseError,fieldsResponseSummary,fieldsAnswerSummary} from '../quiz-fields.mjs';
-import {renderOpenInputs,openReferenceSummary} from '../quiz-open-response.mjs';
+import {renderOpenInputs,openReferenceSummary,openResponseError,renderOpenSavedSketches} from '../quiz-open-response.mjs';
 import {renderContent} from './past-content.js';
 
 export function structuredResponseError(q,raw){
- if(q.type==='fields'||q.type==='open')return fieldsResponseError(q,raw);
+ if(q.type==='open')return openResponseError(q,raw);
+ if(q.type==='fields')return fieldsResponseError(q,raw);
  return typeof raw==='string'&&raw.trim()&&raw.length<=2000?'':'請填寫答案，最多2000字。';
 }
 const node=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
@@ -32,7 +33,7 @@ export function mountStructuredAnswers(root,{question,drafts,loadAsset,onChange}
   if(normal.type==='fields'){
    renderFieldsChoices(host,normal,{referenceAnswer:q.normalReference,renderContent:(box,content)=>renderContent(box,content,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});continue;
   }
-  if(last){host.append(node('b','我這次留下的作答'),node('p',normal.type==='short'?last.value:fieldsResponseSummary(normal,last.value)));}
+  if(last){host.append(node('b','我這次留下的作答'),node('p',normal.type==='short'?last.value:fieldsResponseSummary(normal,last.value)));if(normal.type==='open'&&!root.querySelector(`[data-structured-answer="${q.id}"]`))renderOpenSavedSketches(host,normal,last.value);}
   const answer=normal.type==='open'?openReferenceSummary(normal,q.normalReference):normal.type==='fields'?fieldsAnswerSummary(normal,q.normalReference):q.normalReference.accepted.join(' 或 ');
   host.append(node('b',normal.type==='open'?'參考例答與檢核重點':'參考答案'),node('p',answer));
  }

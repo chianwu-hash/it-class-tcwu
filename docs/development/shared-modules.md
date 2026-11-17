@@ -1,5 +1,9 @@
 # 共用模組說明
 
+## 原生手寫開放作答（2026-11-17，候選待正式 SQL 核准）
+
+`quiz-open-sketch.mjs`／`.css` 延伸 open 的 `input:sketch`，沿用共用 sketch editor；`quiz-open-response.mjs` 負責手寫輸入／已保存 SVG／既有自評。個人與 partner structured-answer 共用，原外層送出保持。SQL未核准前不得將這類候選啟用；筆跡保存不代表自動判對，舊文字與自動答案維持原契約。詳見[契約、驗收及界線](quiz-open-sketch-20261117.md)。
+
 ## 單選與多欄題內選項間距（2026-11-16）
 
 `quiz-choice.css` 統一 `quiz-field.quiz-single-choice` 內的選項間距，沿用一般 single 的 workspace 12px／非 workspace 桌機14px、個人手機12px。不要只替期末或單一題型補 inline style；目視驗收須同時覆蓋期中、期末、保留歷史回應的 fields 舊卷、是非與多欄單選，另核對勾選型別、已選值及原外層單次送出保持。詳見[間距修正與驗收](quiz-option-spacing-20261116.md)。

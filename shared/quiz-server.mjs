@@ -12,7 +12,7 @@ import {renderExplanation} from './quiz-explanation-render.mjs';
 import {renderFieldsInputs,fieldsResponseError,fieldsResponseSummary,fieldsAnswerSummary,fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields.mjs';
 import {readingPresentation} from './quiz-reading-presentation.mjs';
 import {choiceReviewModel,decorateFieldReviewOption} from './quiz-review-choices.mjs';
-import {renderOpenInputs,renderOpenReview,openResponseError} from './quiz-open-response.mjs';
+import {renderOpenInputs,renderOpenReview,openResponseError,renderOpenSavedSketches} from './quiz-open-response.mjs';
 
 import {quizFeedbackMotion} from './quiz-feedback-motion.mjs?v=20261107-partner-motion';
 
@@ -137,6 +137,7 @@ export function initServerQuiz({ selectors, server }) {
     if(changed){stopAudio();mediaScope?.dispose();contentCache.clear();mediaView=view;
       mediaScope=state?server.request.createMediaScope?.({user_id:userId,session_id:server.sessionId,attempt_id:state.attempt_id,version_id:state.version_id,generation,view}):null;}
     contentUses.clear();
+    root.querySelectorAll('.quiz-open-inputs').forEach(group=>group.sketchEditors?.forEach(editor=>editor.destroy()));
     workspace.reset();
     root.querySelectorAll('.qfm-actor').forEach(quizFeedbackMotion.stop); root.replaceChildren();
     const status = make('p', ''); status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite'); root.append(status);
@@ -175,6 +176,7 @@ export function initServerQuiz({ selectors, server }) {
         renderContent(article, q.material); renderContent(article, fieldsPromptPresentation(q));
         article.append(make('p', `你的答案：${['fields','open'].includes(q.type) ? fieldsResponseSummary(q,state.responses[q.id]) : q.type === 'single' ? choiceAnswerLabel(q,state.responses[q.id]) : state.responses[q.id]}`));
         if(q.type==='fields')renderFieldsChoices(article,q,{renderContent,raw:state.responses[q.id],review:state.reviews.find(r=>r.question_id===q.id)});
+        if(q.type==='open')renderOpenSavedSketches(article,q,state.responses[q.id]);
         if (q.type === 'single') {const display=booleanChoicePresentation(q.options),review=state.reviews.find(r=>r.question_id===q.id),feedback=choiceReviewModel({kind:'single',choices:q.options,value:state.responses[q.id],official:review?.answer?.option_id,correct:review?.correct,revealed:Boolean(review)});if(feedback)article.classList.add('quiz-choice-review');q.options.forEach((o, i) => { const row = make('div', undefined, 'preview-option'); row.append(make('strong', (display?.[i].badge??String.fromCharCode(65+i))+' ')); if(display)row.append(make('span',display[i].text));else renderContent(row, o.content);decorateFieldReviewOption(row,feedback?.options[i]);article.append(row); });}
         renderReview(article, q); mountQuestionReport(article,report(q));root.append(article);
       }
@@ -273,6 +275,7 @@ export function initServerQuiz({ selectors, server }) {
       pending = { question_id: q.id, response: selected, request_id: crypto.randomUUID() };
     }
     const token = generation; busy = true;
+    root.querySelectorAll('.quiz-open-inputs').forEach(group=>group.sketchEditors?.forEach(editor=>editor.setDisabled(true)));
     root.querySelectorAll('.quiz-choices input,.quiz-choices textarea,.quiz-choices select,.quiz-choices button,.quiz-actions button').forEach(n=>n.disabled=true);
     const saving=root.querySelector('#server-submit');if(saving)saving.textContent='正在儲存…';
     say('正在儲存答案…');
