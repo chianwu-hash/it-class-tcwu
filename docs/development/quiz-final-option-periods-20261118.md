@@ -37,3 +37,7 @@ node automation/audit-option-periods.mjs --courses <私有課程索引> --pool <
 ```
 
 每次更新清冊後執行對應回歸、正式安全投影核對、桌手機，以及 `npm run quiz:build`／`quiz:check`。正式前須重新比對最新來源；範圍外不能因共用模組載入而產生內容差異。
+
+## 正式發布收據
+
+PR308合併main後，由乾淨`325d430664181c5916537a6404f07c55c587614f`透過發布腳本上線。正式部署`dpl_DDWAD2YHDAeNR7Lwffq3NcJPfrn7`，回滾基準`dpl_AjNQ2kVEFdehvuadi6Pdkc6Aeatm`；完整樹18改2增、0非預期、eolOnly0，候選5檔及正式20檔HTTP精確SHA核對通過，發布鎖已釋放。各入口共用資產版本更新，不擴大資料修正範圍。

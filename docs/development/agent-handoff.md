@@ -1,8 +1,10 @@
-# 期末短選項句點：發布登記（2026-11-18）
+# 期末短選項句點：已正式發布（2026-11-18）
+
+- PR308已合併main；乾淨`325d430`由發布腳本完成18改2增、完整樹`ok:true`、eolOnly0，正式`dpl_DDWAD2YHDAeNR7Lwffq3NcJPfrn7`。候選5檔受保護HTTP與正式20檔HTTP／SHA符合main，發布鎖已釋放。無SQL／資料DML；原學生作答保留。
 
 | 狀態 | agent | 開始日期 | main 來源 | 基準正式部署 | 預期變更 | 新部署／回滾 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | Codex-final-option-period-20261118 | 2026-11-18 | 本 PR 合併後的乾淨最新 main，由發布腳本鎖定 SHA | `dpl_AjNQ2kVEFdehvuadi6Pdkc6Aeatm` | 共用 conversion、顯示指紋清冊／模組、workshop assets 與16入口快取；無 SQL／題目 DML | 待發布腳本收據 |
+| 已完成 | Codex-final-option-period-20261118 | 2026-11-18T00:44:35.225Z | `325d430` | `dpl_AjNQ2kVEFdehvuadi6Pdkc6Aeatm` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-choice-conversion.mjs、shared/quiz-workshop/generated/assets.json、+shared/quiz-option-periods-reviewed.mjs、+shared/quiz-option-periods.mjs | `dpl_DDWAD2YHDAeNR7Lwffq3NcJPfrn7`／回滾 `dpl_AjNQ2kVEFdehvuadi6Pdkc6Aeatm`（eolOnly 0） |
 
 - 使用者授權僅期末，程式掃22課程18,054來源索引及既有副本；明確期末啟用562題568組安全清理。完整句子、引文、標點題、期中、未知與混合來源保留；原來源、固定版本、ID／正解／作答及外層一次送出保持。詳[範圍與驗收](quiz-final-option-periods-20261118.md)。
 - 576真來源的582組正式安全投影反向亂序、205夥伴副本、90回歸、8案例16桌手機個人／整份回顧通過。全程程式，無新增AI呼叫；只讀DB匯出，無正式學生答案提交。臨時測試頁與server已關，使用者驗收卷／清單頁保留。
