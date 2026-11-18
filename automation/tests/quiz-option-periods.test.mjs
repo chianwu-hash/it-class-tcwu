@@ -26,6 +26,13 @@ test('numeric quantities retain decimals and units, removing only the Chinese te
  const q=fixture();q.prompt=content('總重量是多少？');q.options.forEach((o,i)=>o.content=content(['1.25 公斤','2.5 公斤','3 公斤','4.75 公斤。'][i]));
  assert.equal(terminalOptionPeriodCandidate(q,group(q)).kind,'numeric_quantity');assert.equal(finalOptionPeriodProjection(q,registry(q)).options[3].content.text,'4.75 公斤');
 });
+test('a stem mentioning a sentence must not exclude character-valued spelling choices',()=>{
+ const q=fixture();q.prompt=content('句子中哪個字是錯誤的？');q.options.forEach((o,i)=>o.content=content(['桶','網','愈','硬。'][i]));
+ assert.equal(terminalOptionPeriodCandidate(q,group(q)).status,'candidate');assert.equal(finalOptionPeriodProjection(q,registry(q)).options[3].content.text,'硬');
+ q.options.forEach((o,i)=>o.content=content(['的','得','地','是。'][i]));assert.equal(finalOptionPeriodProjection(q,registry(q)).options[3].content.text,'是');
+ q.prompt=content('句子中哪個字應加引號？');assert.equal(finalOptionPeriodProjection(q,registry(q)),q);
+ q.prompt=content('句子中哪個字是錯誤的？');q.options.forEach((o,i)=>o.content=content(['人在家','鳥在飛','魚在游','狗在跑。'][i]));assert.equal(finalOptionPeriodProjection(q,registry(q)),q);
+});
 test('rich runs keep styles, spaces and source bytes; media and mismatched text are retained',()=>{
  const q=fixture();q.options[3].content={text:'丁國。 ',media:[],layout:[{type:'paragraph',align:'left',runs:[{type:'text',text:'丁國',bold:true},{type:'text',text:'。 ' }]}]};const original=structuredClone(q),view=finalOptionPeriodProjection(q,registry(q));
  assert.equal(view.options[3].content.text,'丁國 ');assert.deepEqual(view.options[3].content.layout[0].runs,[{type:'text',text:'丁國',bold:true},{type:'text',text:' '}]);assert.deepEqual(q,original);
