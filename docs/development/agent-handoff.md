@@ -1,6 +1,12 @@
-# 原框詞與句子選項對位：待發布（2026-11-18）
+# 原框詞與句子選項對位：已正式發布（2026-11-18）
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-boxed-word-layout-20261118 | 2026-11-18T13:48:55.578Z | `8e6e7cc` | `dpl_Er1ctme3mL6BQFgk3dJ9BTZ4Thez` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/official-render.js、shared/quiz-fields.css、shared/quiz-reading-presentation.mjs、shared/quiz-render.mjs、shared/quiz-student-content.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-source-box-render.mjs、+shared/quiz-source-boxes-sources.mjs、+shared/quiz-source-boxes.mjs | `dpl_85W2bJKUdU5a1V7hbc6CVCFGYv6z`／回滾 `dpl_Er1ctme3mL6BQFgk3dJ9BTZ4Thez`（eolOnly 0） |
 
 - Codex-boxed-word-layout-20261118唯一寫入者，最新main `83a1416a`新工作樹；2513原件框線盤點，5修改來源重抽NAS SHA一致，5版本加3副本。保留原答案／作答／一次送出／外層，無SQL／DML／AI。49內容與29相關DB回歸（有重疊）、21產物通過，5來源／30組三尺寸三入口流程檢查通過。詳[驗收與限制](quiz-boxed-word-layout-20261118.md)。
+
+- PR330合併，乾淨main `8e6e7cc6`依發布腳本上線至 `dpl_85W2bJKUdU5a1V7hbc6CVCFGYv6z`，完整樹26改3增0刪／eolOnly0，候選8檔與正式29檔HTTP／SHA一致；回滾 `dpl_Er1ctme3mL6BQFgk3dJ9BTZ4Thez`，發布鎖已釋放。指定帳號原卷第27題1280／390核到4個完整框詞及每句各自5選項，前後responses／open_responses一致，未送正式答案／自評。測試服務與分頁已關閉；私有證據 `D:/AI-Work/boxed-word-layout-evidence-20261118/`，收據合併後依SOP清理本次工作目錄，保留原使用者示範服務。
 
 # 題型作答要求與欄名：已正式發布（2026-11-18）
 
