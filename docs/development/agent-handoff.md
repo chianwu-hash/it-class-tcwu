@@ -1,6 +1,12 @@
-# 題型作答要求與欄名：待發布（2026-11-18）
+# 題型作答要求與欄名：已正式發布（2026-11-18）
 
-- Codex-task-instructions-20261118 唯一寫入者；由 `d3c96619` 新工作樹處理。NAS 2,513 原件、2,655 版本；1,549 版本與 57 副本補說明／欄名，含47多餘字題，無 SQL／DML／整庫 AI。保留原答案／作答／一次送出／外層。48項內容、41項相關DB、6項改錯相容回歸（有重疊）、21產物與75來源／300桌手機三入口檢查通過；準備依 main 流程發布；[範圍與限制](quiz-task-instructions-20261118.md)。
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-task-instructions-20261118 | 2026-11-18T13:25:24.244Z | `4582b8b` | `dpl_5JZn9Lw3wh3Uq5ZNAzgXXgcbhHsz` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-choice-conversion.mjs、shared/quiz-correction-presentation.mjs、shared/quiz-correction-reviewed-sources.mjs、shared/quiz-open-response.mjs、shared/quiz-reading-presentation.mjs、shared/quiz-student-content.mjs、shared/quiz-workshop/generated/assets.json、+shared/quiz-presentation-signature.mjs、+shared/quiz-task-instructions-sources.mjs、+shared/quiz-task-instructions.mjs | `dpl_Er1ctme3mL6BQFgk3dJ9BTZ4Thez`／回滾 `dpl_5JZn9Lw3wh3Uq5ZNAzgXXgcbhHsz`（eolOnly 0） |
+
+- Codex-task-instructions-20261118 唯一寫入者；由 `d3c96619` 新工作樹處理。NAS 2,513 原件、2,655 版本；1,549 版本與 57 副本補說明／欄名，含47多餘字題，無 SQL／DML／整庫 AI。保留原答案／作答／一次送出／外層。48項內容、41項相關DB、6項改錯相容回歸（有重疊）、21產物與75來源／300桌手機三入口檢查通過；已依 main 流程發布；[範圍與限制](quiz-task-instructions-20261118.md)。
+
+- PR328合併，乾淨main `4582b8b0`發布至 `dpl_Er1ctme3mL6BQFgk3dJ9BTZ4Thez`，完整樹23改3增0刪／eolOnly0，候選8檔及正式26檔HTTP／SHA一致；回滾 `dpl_5JZn9Lw3wh3Uq5ZNAzgXXgcbhHsz`，發布鎖已釋放。指定帳號原卷第25題1280／390核到新增指示與「多餘的字」欄名，前後responses／open_responses一致，未送正式答案或自評。測試分頁／服務已關；證據在 `D:/AI-Work/question-task-instructions-evidence-20261118/`，收據合併後正常清理本次工作樹，保留先前使用者示範。
 
 # 改錯題指示與欄名：已正式發布（2026-11-18）
 
