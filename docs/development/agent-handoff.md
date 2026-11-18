@@ -1,10 +1,17 @@
-# 三年級國語第13題課本頁碼：發布登記（2026-11-18）
+# 三年級國語第13題課本頁碼：已正式發布（2026-11-18）
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-g3ch-page94-20261118 | 2026-11-18T05:03:07.138Z | `ba95f85` | `dpl_67QYk8DRDuFtGPsSe6xidUSj8tL3` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-study-data.mjs、shared/quiz-workshop/generated/assets.json、+shared/quiz-study-page-corrections.mjs | `dpl_2Wt8aiz1jbVuYFDpmfBhcTLHniMM`／回滾 `dpl_67QYk8DRDuFtGPsSe6xidUSj8tL3`（eolOnly 0） |
+
 
 | 狀態 | agent | main基準 | 正式基準 | 範圍 |
 | --- | --- | --- | --- | --- |
-| 發布中 | Codex-g3ch-page94-20261118 | `7d5d7125` | `dpl_67QYk8DRDuFtGPsSe6xidUSj8tL3` | 一筆固定課本頁碼勘誤、共用讀取器、建置產物 |
+| 已完成 | Codex-g3ch-page94-20261118 | `ba95f851` | `dpl_67QYk8DRDuFtGPsSe6xidUSj8tL3` | 一筆固定課本頁碼勘誤、共用讀取器、建置產物 |
 
-- 使用者指定第94頁，Codex已核原PDF印刷94／PDF97與來源SHA一致；原對照95～96頁。只修已授權頁的學生對照投影，原來源與已答版本不變；無SQL／DML／AI。詳[證據與限制](quiz-g3ch-page94-20261118.md)。下一步PR進main、乾淨main發布與正式標示／實際開頁／草稿保留驗收。
+- 使用者指定第94頁，Codex已核原PDF印刷94／PDF97與來源SHA一致；原對照95～96頁。只修已授權頁的學生對照投影，原來源與已答版本不變；無SQL／DML／AI。詳[證據與限制](quiz-g3ch-page94-20261118.md)。
+- PR320合併，以乾淨main `ba95f851`依腳本發布至 `dpl_2Wt8aiz1jbVuYFDpmfBhcTLHniMM`，完整樹18改1增0刪／eolOnly0，候選4檔與正式19檔HTTP／SHA一致；回滾 `dpl_67QYk8DRDuFtGPsSe6xidUSj8tL3`，發布鎖釋放。
+- 指定學校帳號正式原題1280／390均標示與開啟94頁，媒體實際下載SHA符合登錄原件；關閉保留草稿，前後resume的responses／open_responses一致，pageerror0，未送出答案或自評。獨立測試分頁已關閉，私有證據保留repo外。
 
 # 答案工具按鈕與浮動鍵盤：已正式發布（2026-11-18）
 
