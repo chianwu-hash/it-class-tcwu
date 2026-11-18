@@ -1,4 +1,8 @@
-# 共用連連看：驗收通過，待補圖SQL核准（2026-11-18）
+# 共用連連看：原SQL回滾，待修正版核准（2026-11-19）
+
+- 使用者核准PR334原1函式SQL；正式交易被ALLOCATION_SOURCE_FROZEN拒絕，完整回滾，讀回原函式／原卷／三rich指紋相同。未發布、無發布鎖。先前隔離未安裝source triggers，已補SOP。
+- 最新工作樹D:/AI-Work/matching-final-20261119由最新origin/main ba95b908新建。修正版更新2既有函式（public.quiz_past_has_media、partner_pilot.learning_snapshot），原圖僅投影至授權mine/shared；加媒體映射，不UPDATE凍結題目、不改trigger／作答／配題。第二函式需本次重新明確核准，尚未套用。
+- 安裝實際allocation source triggers與已分配小隊的12組隔離驗收通過；證據D:/AI-Work/matching-release-evidence-20261119/。前端仍是615情境已驗版本。下一步核准修正版後套用、snapshot／live check、PR進main、全新乾淨main依release-from-main發布。下方2026-11-18為原始進度，SQL範圍以上列修正為準。
 
 - Codex-shared-matching-20261118唯一寫入者；由最新origin/main `ba95b908`新工作樹 `D:/AI-Work/shared-matching-20261118`，分支 `codex/shared-matching-20261118`。尚未持有發布鎖，未發布中。
 - 題庫全域掃描後納入74一般版本／76連線區、27舊卷組與29夥伴銀行位置；7固定／草稿副本沿用相同來源指紋。共用真實連線卡片供個人、整份回顧、夥伴使用；保留欄位／值、既有作答、一次送出與外層。NAS原件、原圖及來源SHA核對，未送外部AI。

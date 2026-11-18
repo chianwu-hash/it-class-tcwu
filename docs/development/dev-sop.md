@@ -410,4 +410,6 @@ const classCardAuth = initClassCardAuth({ courseId: "grade3-115-1", mode: "requi
 5. 圖片驗收須量到實際可見尺寸與裁切框，不能只檢查naturalWidth；整份回顧依既有延遲載入捲到原圖，並驗原圖放大及手機無水平溢出。卡片圖片不能攔截連線操作去開燈箱。
 6. 用 automation/audit-matching-questions.mjs 檢查私有匯出、原值對應與未核來源；不把原件／原答提交公開repo，不整批重送AI。若補圖需要正式SQL，先完成隔離驗證與可審查PR，取得本案核准後套用、snapshot／live check、再由乾淨main發布。
 
+7. SQL隔離驗收必須安裝本案會碰到的正式trigger，並涵蓋已開始且allocation_version=1的既有小隊；只有schema／function scaffold不足以證明能更新已使用題目。不得暫停guard或改凍結來源來補圖；採既有授權讀取投影時，驗完整題目列hash、原作答／配題不變，未揭答／跨人／匿名拒絕。若需增加既有函式更新，先補具體PR及隔離證據，再取得明確SQL核准。
+
 詳見[來源與驗收](quiz-matching-20261118.md)。

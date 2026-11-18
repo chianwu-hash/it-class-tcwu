@@ -1,5 +1,15 @@
 # 連連看共用介面與原圖補接
 
+## 2026-11-19 正式套用退回與修正版（優先於下方原紀錄）
+
+使用者已核准PR334原SQL。正式交易因三筆題目已有allocation_version=1小隊，觸發ALLOCATION_SOURCE_FROZEN，完整回滾。讀回原媒體函式、原卷及三筆rich指紋均相同；沒有發布。先前隔離驗收未安裝來源凍結trigger，漏測此狀態，原8組結果不足以證明已使用小隊可安裝。
+
+修正版不再UPDATE question_bank，只在既有partner_pilot.learning_snapshot(uuid)的已授權mine／shared結果中補三張原圖；原quiz_partner_pilot_media_descriptor沿用該snapshot驗權。以題目ID及原rich指紋限制，保留未揭答、成員、年級、來源及媒體映射檢查。原題列、配題、答案、作答及所有guard保持。
+
+修正版SQL更新2個既有函式（quiz_past_has_media與learning_snapshot），加原媒體映射，沒有題目列更新或trigger變更。新增的函式更新超出上次明示範圍，須再取得本案核准；修正版尚未套用正式庫，未產生新版production-snapshot，未發布。
+
+修正版在完整production scaffold安裝實際3個allocation source triggers，建立已開始／已分配小隊，12組隔離驗證通過：前後凍結更新均拒絕、三筆完整題目列hash不變、本人三圖可讀、未揭答夥伴／外人／匿名／錯圖／錯房拒絕，以及原74版本正錯判分。前端仍是615情境已驗版本；實際snapshot投影另核對共用adapter。修正版證據：D:/AI-Work/matching-release-evidence-20261119/。
+
 使用者核准將獨立示範擴展到題庫所有實際連連看。共用元件把原題項目和選項放在同一個連線區，支援滑鼠／觸控筆拖曳、點兩端及鍵盤按鈕操作；手機點兩端，不要求精準拖線。沿用原本一次送出，保留既有作答及外層介面。
 
 ## 範圍與來源
