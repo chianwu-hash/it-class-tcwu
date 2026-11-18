@@ -28,7 +28,9 @@ export function attachPastInputKeyboard(host,input,{bopomofo=false,punctuation=f
    const viewport=view.visualViewport,left=(viewport?.offsetLeft||0)+12,top=(viewport?.offsetTop||0)+12,right=left+(viewport?.width||view.innerWidth)-24;
    let bottom=top+(viewport?.height||view.innerHeight)-24;
    for(const dock of doc.querySelectorAll('.quiz-workspace-dock')){const r=dock.getBoundingClientRect();if(r.height&&r.top>top&&r.top<bottom)bottom=r.top-10;}
-   const width=Math.min(520,right-left),room=bottom-top;if(room<120){close();return;}panel.style.width=width+'px';panel.style.maxHeight=Math.min(380,room)+'px';
+   const width=Math.min(520,right-left),room=bottom-top;if(room<120){close();return;}
+   // Size to every key, rather than cutting the default off at 380px.
+   panel.style.width=width+'px';panel.style.maxHeight=room+'px';
    const rect=input.getBoundingClientRect(),height=Math.min(panel.getBoundingClientRect().height,room);let x,y;
    if((viewport?.width||view.innerWidth)>=900&&rect.right+width+12<=right){x=rect.right+10;y=Math.max(top,Math.min(rect.top,bottom-height));}
    else{x=Math.max(left,Math.min(rect.left,right-width));y=bottom-height;if((viewport?.width||view.innerWidth)>=700&&rect.bottom+height+10<bottom)y=rect.bottom+10;else if(rect.top-height-10>=top)y=rect.top-height-10;}
@@ -43,7 +45,12 @@ export function attachPastInputKeyboard(host,input,{bopomofo=false,punctuation=f
    position();
    if(view&&opened){
     const r=input.getBoundingClientRect(),p=panel.getBoundingClientRect();
-    if(r.top<12||r.bottom>p.bottom||(r.bottom>p.top-10&&r.top<p.bottom&&r.left<p.right&&r.right>p.left)){input.scrollIntoView({block:'start',inline:'nearest',behavior:'instant'});position();}
+    if(r.top<12||r.bottom>p.bottom||(r.bottom>p.top-10&&r.top<p.bottom&&r.left<p.right&&r.right>p.left)){
+     const margin=input.style.scrollMarginBlockStart;
+     input.style.scrollMarginBlockStart=Math.max(12,Math.min(88,p.top-r.height-12))+'px';
+     try{input.scrollIntoView({block:'start',inline:'nearest',behavior:'instant'});}finally{input.style.scrollMarginBlockStart=margin;}
+     position();
+    }
     events=new view.AbortController();const signal=events.signal;
     doc.addEventListener('pointerdown',e=>{if(!panel.contains(e.target)&&!tools.contains(e.target)&&e.target!==input)close();},{capture:true,signal});
     doc.addEventListener('focusin',e=>{if(e.target!==input&&!panel.contains(e.target)&&!tools.contains(e.target))close();},{signal});

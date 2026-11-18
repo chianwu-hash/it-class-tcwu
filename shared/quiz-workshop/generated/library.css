@@ -242,7 +242,7 @@ input:has(+.past-input-tools),textarea:has(+.past-input-tools){scroll-margin-blo
 .past-input-header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}
 .past-input-header>strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:1.05rem;line-height:1.5}
 .past-input-header>.past-input-close{flex:0 0 auto;min-width:72px;min-height:44px;margin:0;padding:8px 12px;border:1px solid #d7dce7;border-radius:10px;background:#f4f6fb;color:#34405b;font:inherit;font-size:1rem;font-weight:700;cursor:pointer}
-.past-input-popover>.past-input-keyboard{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:7px;min-height:0;margin:0;padding:2px;background:transparent;border-radius:0;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.past-input-popover>.past-input-keyboard{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:7px;min-height:0;margin:0;padding:2px;background:transparent;border-radius:0;overflow:auto;overscroll-behavior:contain}
 .past-input-popover>.past-input-keyboard>button{min-width:0;min-height:44px;margin:0;padding:6px 2px;border:1px solid #cfd6e5;border-radius:10px;background:#f3f6fc;color:#263853;font:inherit;font-size:1.2rem;line-height:1.35;cursor:pointer;box-shadow:0 2px 0 #dce2ee}
 .past-input-popover>.past-input-keyboard>button:hover{background:#e5edfb;border-color:#8da2c5}
 .past-input-popover>.past-input-keyboard>.past-input-delete{grid-column:span 2;font-size:1rem;font-weight:700;background:#fff1ea;color:#874328}
