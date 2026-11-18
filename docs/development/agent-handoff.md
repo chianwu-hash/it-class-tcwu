@@ -1,10 +1,17 @@
-# 答案工具按鈕與浮動鍵盤：發布登記（2026-11-18）
+# 答案工具按鈕與浮動鍵盤：已正式發布（2026-11-18）
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-floating-keyboard-20261118 | 2026-11-18T04:49:29.205Z | `77f9bbc` | `dpl_DC7ej9tL7dTmnDHqbg8SLmn6t3it` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/style.css、shared/quiz-fields.css、shared/quiz-past-input.mjs、shared/quiz-past-style.css、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-input-keyboard.css、+shared/quiz-input-keyboard.mjs | `dpl_67QYk8DRDuFtGPsSe6xidUSj8tL3`／回滾 `dpl_DC7ej9tL7dTmnDHqbg8SLmn6t3it`（eolOnly 0） |
+
 
 | 狀態 | agent | main基準 | 正式基準 | 範圍 |
 | --- | --- | --- | --- | --- |
-| 發布中 | Codex-floating-keyboard-20261118 | `ff0f87c6` | `dpl_DC7ej9tL7dTmnDHqbg8SLmn6t3it` | 共用鍵盤兩個新檔、舊匯出與三處樣式、21個建置產物 |
+| 已完成 | Codex-floating-keyboard-20261118 | `77f9bbcb` | `dpl_DC7ej9tL7dTmnDHqbg8SLmn6t3it` | 共用鍵盤兩個新檔、舊匯出與三處樣式、21個建置產物 |
 
-- Codex唯一寫入者；工具間距10px、單一可關閉浮層、答案格與送出列避讓，原完整符號、輸入與一次送出保持。無SQL／DML／AI內容轉化。55回歸、21產物與6桌手機流程通過；只讀來源投影配記憶體保存替身，不寫正式答案。詳[契約與驗收限制](quiz-floating-keyboard-20261118.md)。下一步經PR進main後由乾淨main依發布腳本部署、比對與核對正式檔案，回填收據。
+- Codex唯一寫入者；工具間距10px、單一可關閉浮層、答案格與送出列避讓，原完整符號、輸入與一次送出保持。無SQL／DML／AI內容轉化。55回歸、21產物與6桌手機流程通過；只讀來源投影配記憶體保存替身，不寫正式答案。詳[契約與驗收限制](quiz-floating-keyboard-20261118.md)。
+- PR318已合併，以乾淨main `77f9bbcb`依腳本發布；完整樹25改2增0刪、eolOnly0，候選7檔與正式27檔HTTP／SHA一致。正式部署 `dpl_67QYk8DRDuFtGPsSe6xidUSj8tL3`，回滾 `dpl_DC7ej9tL7dTmnDHqbg8SLmn6t3it`，發布鎖已釋放。
+- 正式網站指定學校帳號核身後，於本次獨立分頁掛載明示不儲存的正式模組預覽；第12題安全投影於1880／390共6流程通過，保存請求仍為記憶體替身。前後resume確認既有responses／open_responses一致，無正式送答或自評改動，測試分頁已關閉。觸控為模擬，未冒稱實體手機測試。
 
 # 勾選選項字級：已正式發布（2026-11-18）
 
