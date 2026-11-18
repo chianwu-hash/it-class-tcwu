@@ -4,14 +4,14 @@
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-g3-week12-pages-20261118 | 待發布腳本登記 | PR310，實際乾淨main由腳本鎖定 | `dpl_DDWAD2YHDAeNR7Lwffq3NcJPfrn7` | grade3/115-1/week12.html、grade3/115-1/week12.css、grade3/115-1/week12-clipboard.mjs、grade3/LessonPlan/115-1/Week 12.md | Claude複核無阻擋；12項測試、十組原生剪貼與進階拖曳／復原、桌手機通過；無SQL |
+| 已完成 | Codex-g3-week12-pages-20261118 | 2026-11-18T01:46:00.471Z | `74e2217` | `dpl_DDWAD2YHDAeNR7Lwffq3NcJPfrn7` | grade3/115-1/week12.html、grade3/115-1/week12.css、grade3/115-1/week12-clipboard.mjs、grade3/LessonPlan/115-1/Week 12.md | `dpl_8gQ2si8DKeiqqAEWMeEYRxatsQ25`／回滾 `dpl_DDWAD2YHDAeNR7Lwffq3NcJPfrn7`（eolOnly 0） |
 
 - Claude複核 `0d6058ec` 通過（session `20261118-g3-week12-book-pages`、run completed、可見viewer啟動、Git前後一致）；原頁為Codex目視，Claude依已核摘要查實際內容，不冒稱獨立看原頁。書名小標題確實出現於原頁；S088原件未被Git追蹤，教材目錄亦由Vercel排除。本次只新增靜態頁碼與自由textarea，原生選練／計數隔離已由瀏覽器驗證，不為低風險文案重寫產品測試。
 
 - 使用者追加「剪貼技能對照課本」及「滑鼠拖曳放最後，進階、不要求一定要會」。Codex在最新main `6b8875bb` 新建 `grade3-week12-book-pages-20261118` 工作樹，唯一寫入者；Claude依先前授權只讀複核，無部署／資料庫／網路權限。
 - S088原頁p.88、89、126、127、128已目視：文字選取p.126–127、複製／定位／貼上p.127，剪下p.88原為檔案、文字明標延伸；貼上取代不是p.128原步驟，列教師補充。四技能卡、五關及教案同步頁碼。
 - 五關最後放預設收合的文字拖曳自由練習，區分拖曳選取與拖動反白文字；不要求、無檢查／進度／花葉。已實測原生pointer選取、拖曳文字搬至第二行、Ctrl＋Z復原、五關計數不變，1280／390無溢出、pageerror0、真實學生寫入0。12項既有本週測試通過。
-- 程式與教案待Claude複核後經PR進main，再依已授權流程以乾淨main發布。本次無SQL或正式學生資料變更；發布前仍須登記及取得腳本鎖。
+- **已發布**：PR310進main，乾淨 `74e2217d` 經指定腳本完成4改0增0刪，完整樹兩次ok、正式4檔HTTP200及SHA相符；候選HTML以Vercel CLI授權驗證。正式原生拖曳／復原、五關隔離、預設收合與1280／390通過，pageerror0、學生寫入0；發布鎖已釋放，無SQL。完整Claude與瀏覽器／發布證據依SOP私有封存；既有未提交教案草稿保留。
 
 # 期末短選項句點：已正式發布（2026-11-18）
 

@@ -1,5 +1,15 @@
 # 三年級115-1第12週正式發布收據
 
+## 2026-11-18 課本頁碼與進階選練更新
+
+- [PR310](https://github.com/chianwu-hash/it-class-tcwu/pull/310) 經Claude只讀複核無阻擋後合併；正式來源乾淨main `74e2217d835ca52c48873f062c676b83e4f83749`，部署 `dpl_8gQ2si8DKeiqqAEWMeEYRxatsQ25`，回滾 `dpl_DDWAD2YHDAeNR7Lwffq3NcJPfrn7`。
+- 使用既有main發布腳本，完整樹4改0增0刪、unexpected0、eolOnly0；受保護候選HTML與main一致，正式4檔HTTP200與SHA／bytes相同，alias確認且鎖已釋放。
+- 課本原頁p.88、89、126～128由Codex目視；四技能卡及五關顯示頁碼，教案另列完整對照。檔案剪下／拖曳延伸到文字、反白取代為教師補充，均明確標註。
+- 五關後新增預設收合進階文字拖曳練習，不要求一定要會、不檢查過關、不計五關、不給花葉。Chrome原生pointer拖曳選取、拖動反白文字至第二行、Ctrl＋Z復原與五關計數隔離，在本機及正式來源通過；1280／390無溢出、pageerror0、真實學生寫入0。
+- 12項既有本週測試與十組原生剪貼／動畫回歸通過；本次無SQL、auth/progress或獎勵規則變更，未重寫或清除學生進度。Claude依提供的原頁摘要檢查實際程式，未獨立檢閱私有課本或重跑瀏覽器，完整run及原始response封存。
+
+以下為2026-11-17首次發布紀錄。
+
 - 授權：使用者指示「先給Claude複核，沒問題後上線」。[課程契約](grade3-week12-contract.md)、[PR302](https://github.com/chianwu-hash/it-class-tcwu/pull/302)、[發布登記PR303](https://github.com/chianwu-hash/it-class-tcwu/pull/303)。
 - 正式入口：https://it-class-tcwu.vercel.app/grade3/115-1/week12.html
 - 唯一發布來源：乾淨 `origin/main`，commit `79eedbdc6dabf100d4a0504c4ea2ea50a088e16c`。
