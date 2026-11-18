@@ -1,3 +1,15 @@
+# 三年級第12週：補上Ctrl＋拖曳複製（2026-11-18）
+
+## 發布登記
+
+| 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
+|---|---|---|---|---|---|---|
+| 發布中 | Codex-g3-week12-ctrl-drag-20261118 | 待發布腳本登記 | PR312，實際乾淨main由腳本鎖定 | `dpl_8gQ2si8DKeiqqAEWMeEYRxatsQ25` | grade3/115-1/week12.html、grade3/LessonPlan/115-1/Week 12.md | Claude複核無阻擋，原生搬移／Ctrl拖曳複製／來源保留／復原及桌手機通過；無SQL |
+
+- 使用者已明確要求改完上線；最新main `8efd0f26` 新建 `grade3-week12-ctrl-drag-20261118` 工作樹。Codex唯一寫入者，Claude依既有授權只讀複核文案及實際差異，無網路／憑證／資料庫／部署權。
+- 只補五關最後的進階說明：直接拖曳搬移、先按住Ctrl再拖曳複製，強調先放滑鼠再放Ctrl；兩者不要求、無過關／進度／花葉。自由框改為「桌上：彩色鉛筆／筆筒：」，同步教案及功能契約；沒有改JS／CSS或課本頁碼。
+- 12項本週測試通過；Chrome原生Ctrl＋拖曳複製保留來源、直接拖曳移除來源，兩者Ctrl＋Z復原通過；1280／390無溢出、pageerror0、真實學生寫入0。Claude已複核 `20e66f7f` 無阻擋（session `20261118-g3-week12-ctrl-drag`、run completed、viewer啟動、Git前後一致），只讀文案差異，沒有冒稱實機驗證。準備PR進main後用乾淨main發布腳本；無SQL或學生資料變更。
+
 # 三年級第12週：課本頁碼與進階選練補充（2026-11-18）
 
 ## 發布登記
