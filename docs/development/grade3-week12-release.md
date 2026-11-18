@@ -1,5 +1,13 @@
 # 三年級115-1第12週正式發布收據
 
+## 2026-11-18 追加Ctrl＋拖曳複製
+
+- 使用者明確要求改完上線。[PR312](https://github.com/chianwu-hash/it-class-tcwu/pull/312) 經Claude只讀複核無阻擋後合併，來源乾淨main `b652314d296b151b2c1fc3714e5e80472f2068c7`，正式 `dpl_E23V5KdC7e7n3p9asCZANtkoVAKt`，回滾 `dpl_8gQ2si8DKeiqqAEWMeEYRxatsQ25`。
+- 指定main發布腳本完成2改0增0刪，完整樹兩次ok／unexpected0／eolOnly0；受保護候選HTML與main一致，正式HTML及教案HTTP200、bytes／SHA相符；alias確認、鎖已釋放。
+- 五關最後的進階區加入直接拖曳搬移與先按Ctrl再拖曳複製，強調先放滑鼠、再放Ctrl。自由框「桌上：彩色鉛筆／筆筒：」可復原後比較；仍預設收合、不要求一定要會、不計五關／花葉，明列教師補充。
+- 12項本週既有測試通過。本機及正式來源隔離Auth的Chrome原生pointer／鍵盤實測：直接拖曳移除來源、Ctrl＋拖曳保留來源且目的地多一份、兩者Ctrl＋Z復原、五關計數不變；1280／390無溢出，pageerror0、真實學生寫入0。
+- Claude review `20e66f7f`、session `20261118-g3-week12-ctrl-drag` completed，viewer啟動且Git前後一致；Claude只讀文案及程式差異，未親自重跑實機。本次無JS／CSS、課本頁碼、auth／progress／reward或SQL變更。完整原始review與瀏覽器／發布證據依SOP私有封存。
+
 ## 2026-11-18 課本頁碼與進階選練更新
 
 - [PR310](https://github.com/chianwu-hash/it-class-tcwu/pull/310) 經Claude只讀複核無阻擋後合併；正式來源乾淨main `74e2217d835ca52c48873f062c676b83e4f83749`，部署 `dpl_8gQ2si8DKeiqqAEWMeEYRxatsQ25`，回滾 `dpl_DDWAD2YHDAeNR7Lwffq3NcJPfrn7`。
