@@ -1,6 +1,12 @@
-# 框詞小題字級：待發布（2026-11-18）
+# 框詞小題字級：已正式發布（2026-11-18）
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-boxed-word-font-20261118 | 2026-11-18T14:04:11.151Z | `d31bad9` | `dpl_85W2bJKUdU5a1V7hbc6CVCFGYv6z` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-fields.css、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css | `dpl_9yvvb9rXMBmo6SJUDh5sUzFLdbb4`／回滾 `dpl_85W2bJKUdU5a1V7hbc6CVCFGYv6z`（eolOnly 0） |
 
 - Codex-boxed-word-font-20261118由最新main `3e95f7dc`新工作樹處理，僅共用CSS與建置產物：框詞小題句子及回顧標題改為一般題文字級clamp(1.4rem,2.1vw,1.9rem)，框詞同步繼承。保留題目、作答、一次送出與外層；無JS／SQL／DML。21產物核對通過，5來源／30組桌機1280、平板768、手機390之個人提交／整份回顧／夥伴提交接回回顧檢查通過；實際DOM框詞字級至少22.3px、完整框線且無水平溢出。
+
+- PR332合併，由乾淨main `d31bad95`依發布腳本上線至 `dpl_9yvvb9rXMBmo6SJUDh5sUzFLdbb4`，完整樹21改0增0刪／eolOnly0，候選6及正式21檔HTTP／SHA一致；回滾 `dpl_85W2bJKUdU5a1V7hbc6CVCFGYv6z`，發布鎖已釋放。指定帳號原卷第27題1280／390唯讀驗證4框詞字級至少22.3px、完整框與原選答值，前後responses／open_responses一致，未送正式答案或自評。測試服務／分頁已結束；證據在 `D:/AI-Work/boxed-word-font-evidence-20261118/`，收據合併後依SOP清理本次3工作樹。
 
 # 原框詞與句子選項對位：已正式發布（2026-11-18）
 
