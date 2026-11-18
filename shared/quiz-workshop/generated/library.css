@@ -231,6 +231,25 @@
 .quiz-open-sketch{min-width:0;grid-column:1/-1}
 
 
+
+.past-input-tools{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px}
+input:has(+.past-input-tools),textarea:has(+.past-input-tools){scroll-margin-block-start:88px}
+.past-input-tools>.past-input-toggle{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;margin:0;padding:10px 14px;border:1px solid var(--quiz-border,#c9c3e7);border-radius:12px;background:#f6f4ff;color:var(--quiz-primary-dark,#493a88);font:inherit;font-size:1rem;font-weight:700;line-height:1.4;cursor:pointer;box-shadow:0 2px 0 #ddd8ee}
+.past-input-tools>.past-input-toggle:hover{background:#ece7ff}
+.past-input-tools>.past-input-toggle[aria-expanded=true]{background:var(--quiz-primary,#5a47b8);color:#fff;border-color:var(--quiz-primary,#5a47b8)}
+.past-input-popover{position:fixed;inset:auto;margin:0;box-sizing:border-box;display:grid;grid-template-rows:auto minmax(0,1fr);gap:12px;max-width:calc(100vw - 24px);padding:14px;border:1px solid #bfb8da;border-radius:18px;background:#fff;color:#24334d;box-shadow:0 12px 36px #18243d33;overflow:hidden;z-index:10000}
+.past-input-popover[hidden]{display:none!important}
+.past-input-header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}
+.past-input-header>strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:1.05rem;line-height:1.5}
+.past-input-header>.past-input-close{flex:0 0 auto;min-width:72px;min-height:44px;margin:0;padding:8px 12px;border:1px solid #d7dce7;border-radius:10px;background:#f4f6fb;color:#34405b;font:inherit;font-size:1rem;font-weight:700;cursor:pointer}
+.past-input-popover>.past-input-keyboard{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:7px;min-height:0;margin:0;padding:2px;background:transparent;border-radius:0;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.past-input-popover>.past-input-keyboard>button{min-width:0;min-height:44px;margin:0;padding:6px 2px;border:1px solid #cfd6e5;border-radius:10px;background:#f3f6fc;color:#263853;font:inherit;font-size:1.2rem;line-height:1.35;cursor:pointer;box-shadow:0 2px 0 #dce2ee}
+.past-input-popover>.past-input-keyboard>button:hover{background:#e5edfb;border-color:#8da2c5}
+.past-input-popover>.past-input-keyboard>.past-input-delete{grid-column:span 2;font-size:1rem;font-weight:700;background:#fff1ea;color:#874328}
+.past-input-popover button:focus-visible,.past-input-tools button:focus-visible{outline:3px solid var(--quiz-primary,#5a47b8);outline-offset:2px}
+@media(max-width:420px){.past-input-popover{padding:12px;gap:10px}.past-input-popover>.past-input-keyboard{gap:6px;grid-template-columns:repeat(7,minmax(0,1fr))}}
+
+
 .quiz-work-input,.quiz-saved-work,.quiz-pending-work{grid-column:1/-1;min-width:0}
 .quiz-work-input>label{display:block;font-weight:bold;margin-bottom:8px}
 .quiz-work-input>input{box-sizing:border-box;width:100%;padding:12px;font:inherit}
@@ -295,11 +314,7 @@
 .quiz-field label{display:flex;align-items:center;gap:10px;margin:8px 0;min-width:0}
 .quiz-field label:has(select){display:grid;grid-template-columns:4.5em minmax(0,1fr)}
 .quiz-field input[type=checkbox]{width:24px;height:24px;flex:0 0 24px}
-.quiz-fields .quiz-field:has(.past-input-keyboard:not([hidden])){grid-column:1/-1}
-.quiz-field .past-input-keyboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(44px,1fr));gap:6px;margin-top:8px;padding:12px;box-sizing:border-box;width:100%;max-width:560px;background:var(--quiz-tint,#f4f1fd);border-radius:12px}
-.quiz-field .past-input-keyboard button{min-width:0;min-height:44px;padding:6px 2px;font-size:1rem}
-.quiz-fields-single .quiz-field>input[type=text],.quiz-field:has(.past-input-keyboard:not([hidden]))>input[type=text]{max-width:560px}
-.quiz-field .past-input-keyboard[hidden]{display:none}
+.quiz-fields-single .quiz-field>input[type=text]{max-width:560px}
 .quiz-field button{min-width:44px;min-height:44px;font:inherit}
 .quiz-field .preview-content{overflow-wrap:anywhere}
 /* Checkbox statements use the same readable scale as single-choice bodies.
