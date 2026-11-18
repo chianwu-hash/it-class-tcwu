@@ -1,10 +1,12 @@
 import {choiceQuestionPresentation} from './quiz-choice-conversion.mjs';
 import {studentPromptContent} from './quiz-student-content.mjs';
 import {readingPresentation} from './quiz-reading-presentation.mjs';
+import {sequenceFieldPresentation,sequencePromptPresentation} from './quiz-sequence-presentation.mjs';
 // Compatibility for the reviewed Chinese import's circled-code choice fields.
 // Only the view changes: the original field ID, circled values and fields-v1
 // response envelope remain exactly as stored. Never read or infer an answer.
 export function fieldPresentation(q,field){
+ const sequence=sequenceFieldPresentation(q,field);if(sequence!==field)return sequence;
  const converted=choiceQuestionPresentation(q),presented=converted.fields?.find(f=>f.id===field.id)??field;if(presented!==field)return presented;
  if(q.type!=='fields'||!q.id?.startsWith('kg6ch_')||q.fields?.length!==1||field.input!=='text'||
   !/^選擇題(?:[\s\-－—:：]|$)/u.test(q.prompt?.text||'')||q.prompt?.media?.length||
@@ -21,6 +23,7 @@ export function fieldPresentation(q,field){
 export const fieldsAreSingleChoice=q=>q.type==='fields'&&q.fields?.length===1&&fieldPresentation(q,q.fields[0]).input==='single';
 
 export function fieldsPromptPresentation(q){
+ const sequence=sequencePromptPresentation(q);if(sequence)return sequence;
  const converted=choiceQuestionPresentation(q);q=converted;
  const reading=readingPresentation(q);if(reading)return reading.passage;
  if(q.fields?.length!==1||fieldPresentation(q,q.fields[0])===q.fields[0])return studentPromptContent(q.prompt);

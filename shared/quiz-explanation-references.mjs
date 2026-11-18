@@ -1,6 +1,7 @@
 import {fieldPresentation} from './quiz-fields-presentation.mjs';
 import {reviewedOptionOrders} from './quiz-reviewed-option-orders.mjs';
 import {sourceStream,replaceTextRange} from './quiz-content-slices.mjs';
+import {reviewedSequenceQuestion,sequenceExplanationChanges} from './quiz-sequence-presentation.mjs';
 const circles='①②③④⑤⑥⑦⑧',numerals='一二三四五六七八';
 const indexOf=code=>circles.includes(code)?circles.indexOf(code):numerals.includes(code)?numerals.indexOf(code):/^[A-H]$/.test(code)?code.charCodeAt(0)-65:Number(code)-1;
 export function choiceReferenceTokens(text){
@@ -18,6 +19,11 @@ export function referenceChoiceGroups(q){
  return (q.fields||[]).map(f=>fieldPresentation(q,f)).filter(f=>f.options?.length).map(f=>({id:f.id,options:f.options}));
 }
 export function explanationReferencePresentation(q,text,{orders=reviewedOptionOrders[q.id]}={}){
+ if(reviewedSequenceQuestion(q)){
+  text=String(text??'');const changes=sequenceExplanationChanges(q,text);let result=text;
+  for(const c of [...changes].reverse())result=result.slice(0,c.start)+c.replacement+result.slice(c.end);
+  return {text:result,changes,issues:[]};
+ }
  text=String(text??'');const tokens=choiceReferenceTokens(text),groups=referenceChoiceGroups(q),changes=[],issues=[];let result=text;
  // Current nested multi-field choices are not shuffled. Their circled numbers
  // may identify subquestions; never reinterpret them as a global option index.

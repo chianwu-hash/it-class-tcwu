@@ -6,6 +6,7 @@ import {choiceQuestionPresentation} from './quiz-choice-conversion.mjs';
 import {readingPresentation} from './quiz-reading-presentation.mjs';
 import {fieldsReviewPresentation,appendFieldReviewStatus,decorateFieldReviewOption,appendFieldReviewReference} from './quiz-fields-review.mjs';
 import {validWorkSpec,workValue,workResponseError,renderWorkInput,renderSavedWork} from './quiz-work-response.mjs';
+import {renderSequenceCards} from './quiz-sequence.mjs';
 export {fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
 
 const own=(o,k)=>o&&Object.hasOwn(o,k);
@@ -64,9 +65,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
    for(const [i,o]of f.options.entries()){const label=make('label'),input=make('input');input.type='checkbox';input.disabled=locked;input.checked=Array.isArray(values[f.id])&&values[f.id].includes(o.id);const body=make('span');renderContent(body,o.content);label.append(input,body);slot.append(label);decorateFieldReviewOption(label,feedback?.[fieldIndex]?.options[i]);checks.push({id:o.id,input});input.addEventListener('change',update)}
    const label=make('label'),none=make('input');none.type='checkbox';none.disabled=locked;none.checked=Array.isArray(values[f.id])&&values[f.id].length===0;none.addEventListener('change',()=>{if(none.checked)checks.forEach(x=>x.input.checked=false);values[f.id]=none.checked?[]:null;changed()});label.append(none,make('span','這些選項都不選'));slot.append(label);decorateFieldReviewOption(label,feedback?.[fieldIndex]?.none);
   }else if(f.input==='sequence'){
-   f.options.forEach((_,i)=>{const label=make('label',`第${i+1}個：`),select=make('select');select.disabled=locked;select.id=id+'-'+i;const empty=make('option','請選擇');empty.value='';select.append(empty);f.options.forEach((o,n)=>{const option=make('option',o.content.text||`選項${n+1}`);option.value=o.id;select.append(option)});select.value=values[f.id]?.[i]||'';select.addEventListener('change',()=>{const next=Array.isArray(values[f.id])?[...values[f.id]]:Array(f.options.length).fill('');next[i]=select.value;values[f.id]=next;changed()});label.append(select);slot.append(label)});
-   // Keep the complete original option content, including diagrams, beside the ordering controls.
-   f.options.forEach((o,i)=>{const row=make('div');row.append(make('strong',`選項${i+1}　`));renderContent(row,o.content);slot.append(row)});
+   renderSequenceCards(slot,f,{value:values[f.id],locked,onChange:value=>{values[f.id]=value;changed()},renderContent,accepted:feedback?.[fieldIndex]?.accepted});
   }
   appendFieldReviewReference(slot,feedback?.[fieldIndex],v=>formatted(f,v),formatPair);group.append(slot);
  }
@@ -79,7 +78,8 @@ export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,ref
  for(const [index,stored] of (q.fields||[]).entries()){const f=shown[index],reference=referenceAnswer?.format==='fields-v1'?referenceAnswer.fields?.[f.id]:null;if(!f.options&&!reading?.questions[index]&&!feedback?.[index]&&!reference)continue;
   const section=make('section');section.className='quiz-field-preview'+(f.input==='set'?' quiz-field-preview-set':'');const question=reading?.questions[index],hasMedia=question?.media.length;const title=make('h5',question&&!hasMedia?(reading.numbered?`(${reading.numbers[index]}) `:''):f.label);if(question&&!hasMedia)renderContent(title,question);section.append(title);if(hasMedia)renderContent(section,reading.reviewKind==='picture-bank'?{...question,text:'',layout:question.layout.slice(1)}:question);const display=f.input==='single'?booleanChoicePresentation(f.options):null;
   appendFieldReviewStatus(section,feedback?.[index]);
-  if(f.options)f.options.forEach((o,i)=>{const row=make('div');row.className='preview-option';row.append(make('strong',(display?.[i].badge??String.fromCharCode(65+i))+' '));if(display)row.append(make('span',display[i].text));else renderContent(row,o.content);decorateFieldReviewOption(row,feedback?.[index]?.options[i]);section.append(row);});
+  if(f.input==='sequence')renderSequenceCards(section,f,{value:raw?fieldsValues(q,raw)[f.id]:reference?.[0],locked:true,renderContent,accepted:feedback?.[index]?.accepted});
+  else if(f.options)f.options.forEach((o,i)=>{const row=make('div');row.className='preview-option';row.append(make('strong',(display?.[i].badge??String.fromCharCode(65+i))+' '));if(display)row.append(make('span',display[i].text));else renderContent(row,o.content);decorateFieldReviewOption(row,feedback?.[index]?.options[i]);section.append(row);});
   if(feedback?.[index]?.none&&feedback[index].none.state!=='neutral'){const row=make('div','這些選項都不選');row.className='preview-option';decorateFieldReviewOption(row,feedback[index].none);section.append(row);}
   appendFieldReviewReference(section,feedback?.[index],v=>formatted(f,v),formatPair);host.append(section);
   if(!feedback?.[index]&&Array.isArray(reference)){const box=make('div');box.className='quiz-field-review-reference';box.append(make('p','參考答案：'+reference.map(v=>formatted(f,v)).join(' 或 ')));section.append(box);}
