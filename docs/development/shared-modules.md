@@ -1,5 +1,9 @@
 # 共用模組說明
 
+## 勾選選項字級（2026-11-18）
+
+`quiz-fields.css`讓set選項、明確都不選、閱讀／已答與回顧沿用單選的響應式字級，內層preview-content僅繼承字級及行高，不覆蓋國語字型。`quiz-fields.mjs`為set回顧加樣式類別，原資料／選項ID／勾選方式及外層一次送出保持。詳[實作與驗收](quiz-checkbox-font-20261118.md)。
+
 ## 期末短選項的紙本結尾句點（2026-11-18）
 
 `quiz-choice-conversion.mjs` 串接 `quiz-option-periods.mjs`，僅對 `quiz-option-periods-reviewed.mjs` 已核定期末 ID、完整選項組與題文指紋做顯示投影。只去除明確短詞／數量組原末項的「。」；保留原來源、ID、正解、既有作答與亂序，個人／整份回顧／夥伴沿用原共用入口及原一次送出。期中、未知範圍、完整句子、引文與標點辨識題不擴大清理。新來源須由 `automation/audit-option-periods.mjs` 重掃後才能擴充清冊；詳[範圍、驗收與限制](quiz-final-option-periods-20261118.md)。
