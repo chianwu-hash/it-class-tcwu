@@ -40,6 +40,18 @@ test('注音及標點沿完整鍵盤輸入、替換與刪除，儲存同一份�
 });
 test('已送答鎖住且無鍵盤，未選用科目也不增加鍵盤',async()=>{
  for(const opts of [{locked:true},{aids:false}])assert(!render(opts).all.some(n=>n.className==='past-input-keyboard'));
- const css=await readFile(new URL('../../shared/quiz-fields.css',import.meta.url),'utf8');
- assert.match(css,/\.quiz-field \.past-input-keyboard\[hidden\]\{display:none\}/);
+ const css=await readFile(new URL('../../shared/quiz-input-keyboard.css',import.meta.url),'utf8');
+ assert.match(css,/\.past-input-popover\[hidden\]\{display:none!important\}/);
+});
+
+test('切換格子或關閉工具只收起面板，不改寫答案',()=>{
+ const a=render(),b=render(),toggle=r=>r.all.find(n=>n.textContent==='注音鍵盤'),panel=r=>r.all.find(n=>n.attributes['aria-label']==='注音鍵盤');
+ const input=a.all.find(n=>n.tagName==='input');input.value='原本答案';
+ toggle(a).click();assert.equal(panel(a).hidden,false);toggle(b).click();assert.equal(panel(a).hidden,true);assert.equal(toggle(a).attributes['aria-expanded'],'false');assert.equal(panel(b).hidden,false);
+ b.all.find(n=>n.attributes['aria-label']==='關閉注音鍵盤').click();assert.equal(panel(b).hidden,true);assert.equal(input.value,'原本答案');assert.equal(a.changes.length,0);assert.equal(b.changes.length,0);
+});
+
+test('刪除不拆開Unicode字元，超過原欄位上限時不插入也不送變更',()=>{
+ const r=render(),input=r.all.find(n=>n.tagName==='input');input.value='😀';input.setSelectionRange(2,2);r.all.find(n=>n.textContent==='刪除').click();assert.equal(input.value,'');
+ input.value='ab';input.maxLength=3;input.setSelectionRange(2,2);const before=r.changes.length;r.all.find(n=>n.attributes['aria-label']==='輸入——').click();assert.equal(input.value,'ab');assert.equal(r.changes.length,before);
 });
