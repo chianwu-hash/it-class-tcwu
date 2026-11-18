@@ -1,9 +1,10 @@
 import {isSavedMedia} from './quiz-media.mjs';
+import {reviewedStudyReference} from './quiz-study-page-corrections.mjs';
 
 // sequence is source ordering metadata, not a navigation or authorization boundary.
 export const textbookBookPages=(pages,bookId)=>pages.filter(p=>p.bookId===bookId).slice().sort((a,b)=>a.printedPages[0]-b.printedPages[0]);
 
-// Server-disclosed, version-bound data only. No mappings or answer corpus shipped here.
+// Server-disclosed, version-bound data only; reviewed errata use disclosed pages.
 export function readQuizStudy(snapshot,kind){
  const value=snapshot?.study,attempt=kind==='past'?snapshot?.attemptId:snapshot?.attempt_id,version=kind==='past'?snapshot?.version:snapshot?.version_id;
  const empty={pages:[],references:{},explanations:{}};
@@ -12,7 +13,7 @@ export function readQuizStudy(snapshot,kind){
  const pages=value.pages.filter(p=>p&&typeof p.id==='string'&&typeof p.bookId==='string'&&typeof p.sequence==='string'&&isSavedMedia(p.url)&&Array.isArray(p.printedPages)&&p.printedPages.length>0&&p.printedPages.every(n=>Number.isInteger(n)&&n>0));
  const references={},explanations={},groups=kind==='past'?snapshot.groups||[]:snapshot.document?.questions||[];
  for(const q of groups){
-  const ref=value.references[q.id];
+  const ref=reviewedStudyReference(kind,q.id,value.references[q.id],pages);
   if(ref&&typeof ref.bookId==='string'&&Number.isInteger(ref.primary)&&Array.isArray(ref.references)&&ref.references.includes(ref.primary)&&ref.references.every(n=>pages.some(p=>p.bookId===ref.bookId&&p.printedPages.includes(n)))){
    const fields=kind==='past'?(q.fields||[]).flatMap(f=>{const field=Array.isArray(ref.fields)?ref.fields.find(x=>x&&x.questionId===f.id):null;return field&&pages.some(p=>p.bookId===ref.bookId&&p.printedPages.includes(field.page))?[{selector:'[data-study-question-id='+JSON.stringify(f.id)+']',page:field.page,label:'第（'+f.label+'）小題'}]:[];}):[];
    references[q.id]={bookId:ref.bookId,primary:ref.primary,references:[...new Set(ref.references)],fields,key:attempt+':'+version+':'+value.packageId+':'+q.id};
