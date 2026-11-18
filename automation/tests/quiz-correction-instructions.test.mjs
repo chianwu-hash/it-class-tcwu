@@ -1,12 +1,20 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readingSignature} from '../../shared/quiz-reading-signature.mjs';
+import {presentationSignature} from '../../shared/quiz-presentation-signature.mjs';
 import {sourceStream} from '../../shared/quiz-content-slices.mjs';
 import {correctionQuestionPresentation,pastCorrectionPrompt,pastCorrectionFieldLabel} from '../../shared/quiz-correction-presentation.mjs';
 import {auditCorrectionInstructions} from '../audit-correction-instructions.mjs';
 
 const make=()=>({id:'synthetic-correction',type:'fields',prompt:{text:'（　）（　）甲句錯字與乙句錯字。',media:[]},fields:[{id:'original-a',label:'第1格',input:'text'},{id:'original-b',label:'第2格',input:'text'}],answer:{format:'fields-v1',fields:{'original-a':['甲'],'original-b':['乙']}}});
 const registry=q=>({[q.id]:[{guard:readingSignature(q),sourceSha256:'a'.repeat(64)}]});
+test('reviewed correction captions survive the partner media namespace without changing the media ticket',()=>{
+ const q=make(),hash='a'.repeat(64);q.prompt.media=[{kind:'image',url:'https://quiz-media.invalid/00000000-0000-0000-0000-000000000000/'+hash}];
+ q.prompt.layout=[{type:'paragraph',runs:[{type:'text',text:q.prompt.text},{type:'image',media_index:0}]}];
+ const r={[q.id]:[{guard:presentationSignature(q)}]},partner=structuredClone(q);partner.prompt.media[0].url='https://partner-media.invalid/'+hash;
+ const view=correctionQuestionPresentation(partner,r);assert.equal(view.fields[0].label,'第1個正確的字');assert.deepEqual(view.prompt.media,partner.prompt.media);
+ partner.prompt.media[0].url='https://partner-media.invalid/'+'b'.repeat(64);assert.equal(correctionQuestionPresentation(partner,r),partner);
+});
 test('source-reviewed projection states task, output and order without rewriting intended errors or response contract',()=>{
  const q=make(),saved=structuredClone(q),view=correctionQuestionPresentation(q,registry(q));assert.deepEqual(q,saved);
  assert.match(view.prompt.text,/2 個錯字，依出現順序填入正確的字/u);assert(view.prompt.text.endsWith(q.prompt.text));assert.deepEqual(view.fields.map(f=>f.label),['第1個正確的字','第2個正確的字']);

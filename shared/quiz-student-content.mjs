@@ -2,6 +2,7 @@
 import {sourceStream,sliceContent,omitRanges,replaceTextRange,compactParagraphs} from './quiz-content-slices.mjs';
 import {reviewedEditorialVersions} from './quiz-reviewed-editorial-versions.mjs';
 import {correctionQuestionPresentation} from './quiz-correction-presentation.mjs';
+import {taskQuestionPresentation} from './quiz-task-instructions.mjs';
 const norm=s=>s.normalize('NFKC').replace(/\s/gu,'');
 const labelBody=s=>s.replace(/^[①②③④⑤⑥⑦⑧]\s*/u,'');
 export const importerInstructions=[
@@ -78,7 +79,7 @@ export function studentPromptContent(content){
  }
  return removed===count?{...content,text:text.trimStart(),layout}:content;
 }
-export function convertStudentContent(q){
+export function convertStudentContent(q,{taskInstructions=true}={}){
  const original=q,changes=[],issues=[];if(!q||!['single','fields','short','open'].includes(q.type))return {question:q,changes,issues};
  const correctionView=correctionQuestionPresentation(q);if(correctionView!==q){q=correctionView;changes.push({kind:'source_reviewed_correction_instruction'});}
  const revised=correction(q);q=revised.question;changes.push(...revised.changes);issues.push(...revised.issues);
@@ -97,6 +98,7 @@ export function convertStudentContent(q){
   if(!['text','math'].includes(f.input)||/[①②③④⑤⑥⑦⑧]/u.test(f.label)||norm(f.label).length<=12||!stem.includes(norm(f.label)))return f;
   const unit=f.label.match(/[（(]([^（）()]{1,12})[）)]$/u)?.[0]||'';changes.push({kind:'repeated_field_caption',field:f.id});return {...f,label:(q.fields.length===1?'答案':`第${i+1}欄答案`)+unit};
  });if(fields.some((f,i)=>f!==q.fields[i]))q={...q,fields};}
- if(changes.length){q={...q,prompt:compactParagraphs(q.prompt)};return {question:q,changes,issues};}
- return {question:original,changes,issues};
+ if(changes.length)q={...q,prompt:compactParagraphs(q.prompt)};
+ const task=taskInstructions?taskQuestionPresentation(q):q;if(task!==q){q=task;changes.push({kind:'source_reviewed_task_instruction'});}
+ return {question:changes.length?q:original,changes,issues};
 }

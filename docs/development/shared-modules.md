@@ -438,3 +438,8 @@ linkControl.load();
 - `shared/quiz-feedback-motion.mjs`／`.css` 是個人答題與夥伴練功十套角色、對錯動作、keyframe 與停止行為的共同來源；原樣由 quiz-server／quiz-student 抽出，避免新增第二套圖案與動畫。維護角色時修改這組檔案。
 - 個人 `quiz-server.mjs` 沿用既有播放控制；夥伴 `partner-pilot/answer-feedback-motion.mjs` 只在成功 committed(answer) 後播放。同步更新與回看顯示靜態角色，不重複播放；換房／離開要 stop／clear，減少動態效果／背景依原播放器規則不強播。
 - 沿用答題介面包含回饋動效，不能只檢查色卡與選項。新增共用入口時必須載入動畫 CSS，實際驗證 SVG、keyframe、播放及停止，不能只驗 class 名稱。
+
+
+### 來源核定的題型說明與欄名（2026-11-18）
+
+`quiz-task-instructions.mjs` 與無原題／解答的 `quiz-task-instructions-sources.mjs` 在 `convertStudentContent` 共用鏈補指示及泛用欄名；`quiz-open-response.mjs` 也從同一鏈讀取，涵蓋夥伴直接傳入原題的入口。`quiz-reading-presentation.mjs` 先解析未修改來源再裝飾呈現，不重算原圖位。`quiz-presentation-signature.mjs` 僅將同一 hash 的個人／夥伴媒體命名空間視為相同呈現來源，不改 URL 或授權。來源指紋不符即不套用；禁止以此更改答案、欄位 ID、保存或送出流程。詳[規則與驗收](quiz-task-instructions-20261118.md)。
