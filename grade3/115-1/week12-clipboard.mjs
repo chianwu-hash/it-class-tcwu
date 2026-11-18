@@ -1,25 +1,25 @@
 // Classroom practice only. Native clipboard and native undo; no auth, storage or rewards.
 export const CLIPBOARD_TASKS = [
- {id:'select',title:'① 選得剛剛好',icon:'computer-mouse',intro:'拖曳滑鼠，只選取指定詞語，不多選標點。',variants:[
+ {id:'select',title:'① 選得剛剛好',icon:'computer-mouse',bookRef:'課本 p.126–127｜按住左鍵拖曳，確認文字反白。',intro:'拖曳滑鼠，只選取指定詞語，不多選標點。',variants:[
   {seed:'午餐有白飯和玉米湯。',word:'玉米湯',goal:'只反白「玉米湯」，不要選到句號。'},
   {seed:'書桌上有鉛筆和橡皮擦。',word:'橡皮擦',goal:'只反白「橡皮擦」，不要選到句號。'}]},
- {id:'copy',title:'② 名牌多一份',icon:'copy',intro:'同樣的文字要多一份，原本的也要留下來。',variants:[
+ {id:'copy',title:'② 名牌多一份',icon:'copy',bookRef:'課本 p.127｜複製 Ctrl＋C，點好目的地，再貼上 Ctrl＋V。',intro:'同樣的文字要多一份，原本的也要留下來。',variants:[
   {seed:'我的名牌：三年級小作家\n書包吊牌：',word:'三年級小作家',target:'我的名牌：三年級小作家\n書包吊牌：三年級小作家',kind:'copy',goal:'把「三年級小作家」複製到第二行冒號後，原處保留。'},
   {seed:'門口海報：歡迎光臨小書店\n教室海報：',word:'歡迎光臨小書店',target:'門口海報：歡迎光臨小書店\n教室海報：歡迎光臨小書店',kind:'copy',goal:'把「歡迎光臨小書店」複製到第二行冒號後，原處保留。'}]},
- {id:'cut',title:'③ 文字搬回家',icon:'scissors',intro:'文字放錯地方了，搬到新位置，原處不留那段字。',variants:[
+ {id:'cut',title:'③ 文字搬回家',icon:'scissors',bookRef:'課本 p.88｜剪下 Ctrl＋X、貼上 Ctrl＋V；原書搬移檔案，本關延伸到文字。',intro:'文字放錯地方了，搬到新位置，原處不留那段字。',variants:[
   {seed:'放錯位置：國語課本\n書包：',word:'國語課本',target:'放錯位置：\n書包：國語課本',kind:'cut',goal:'剪下「國語課本」，搬到第二行「書包：」後。'},
   {seed:'放錯位置：彩色鉛筆\n筆筒：',word:'彩色鉛筆',target:'放錯位置：\n筆筒：彩色鉛筆',kind:'cut',goal:'剪下「彩色鉛筆」，搬到第二行「筆筒：」後。'}]},
- {id:'decide',title:'④ 自己決定：多一份，還是搬過去？',icon:'lightbulb',extra:true,intro:'讀故事，先想想：原處的文字還要留下來嗎？',variants:[
+ {id:'decide',title:'④ 自己決定：多一份，還是搬過去？',icon:'lightbulb',extra:true,bookRef:'對照課本 p.127、88｜比較複製與剪下；故事為教師自編。',intro:'讀故事，先想想：原處的文字還要留下來嗎？',variants:[
   {seed:'小貓的盤子：魚餅乾\n小狗的盤子：',word:'魚餅乾',target:'小貓的盤子：魚餅乾\n小狗的盤子：魚餅乾',kind:'copy',goal:'小狗也要一份「魚餅乾」，小貓的要留著。你要怎麼做？'},
   {seed:'小貓的盤子：\n小狗的盤子：魚餅乾',word:'魚餅乾',target:'小貓的盤子：魚餅乾\n小狗的盤子：',kind:'cut',goal:'這份「魚餅乾」是小貓的，放錯盤子了。搬回小貓的盤子。'}]},
- {id:'replace',title:'⑤ 貼上換新詞',icon:'wand-magic-sparkles',extra:true,intro:'先複製詞語卡，再反白要換掉的詞，貼上就會取代它。',variants:[
+ {id:'replace',title:'⑤ 貼上換新詞',icon:'wand-magic-sparkles',extra:true,bookRef:'對照課本 p.127–128「複製／貼上與修改」；反白後貼上取代是教師補充練習。',intro:'先複製詞語卡，再反白要換掉的詞，貼上就會取代它。',variants:[
   {seed:'詞語卡：長頸鹿\n我最喜歡的動物是大象。',word:'長頸鹿',replace:'大象',target:'詞語卡：長頸鹿\n我最喜歡的動物是長頸鹿。',kind:'copy',goal:'複製「長頸鹿」，選取第二行「大象」再貼上，其餘文字保留。'},
   {seed:'詞語卡：向日葵\n我最喜歡的花是玫瑰。',word:'向日葵',replace:'玫瑰',target:'詞語卡：向日葵\n我最喜歡的花是向日葵。',kind:'copy',goal:'複製「向日葵」，選取第二行「玫瑰」再貼上，其餘文字保留。'}]}
 ];
 const esc=s=>s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 export function renderClipboardPractice(){return `<p class="clip-summary" data-clip-summary role="status">本次練好 0／5 關；先練前 3 關，後面自由挑戰。</p>`+CLIPBOARD_TASKS.map(t=>`<article class="clip-task" data-clip-task="${t.id}">
  <h3><span class="clip-icon"><i class="fa-solid fa-${t.icon}" aria-hidden="true"></i></span><span>${t.title}</span></h3>
- <p class="clip-role">${t.extra?'快手延伸':'跟著練習'}</p><p>${t.intro}</p>
+ <p class="clip-role">${t.extra?'快手延伸':'跟著練習'}</p><p class="book-ref">${esc(t.bookRef)}</p><p>${t.intro}</p>
  <p id="clip-goal-${t.id}" class="clip-goal" data-clip-goal>${esc(t.variants[0].goal)}</p>
  <label for="clip-input-${t.id}">${t.id==='select'?'在這裡選取文字':'在這裡選取、複製或搬動文字'}</label>
  <textarea id="clip-input-${t.id}" rows="${t.id==='select'?2:3}" ${t.id==='select'?'readonly':''} spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="clip-goal-${t.id} clip-selection-${t.id} clip-feedback-${t.id}">${esc(t.variants[0].seed)}</textarea>

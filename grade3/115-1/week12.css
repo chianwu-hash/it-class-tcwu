@@ -1,6 +1,7 @@
 @import url('./week11.css?v=20261110');
 @import url('./week11-infographic.css?v=20261111');
 .card .notice{display:block}.card .notice p+p{margin-top:12px}
+#drag-extension label{display:block;font-weight:800;margin:14px 0 8px}#clip-drag-extension{display:block;width:100%;box-sizing:border-box;min-height:150px;padding:16px;border:2px solid #94a3b8;border-radius:12px;background:#fff;color:#0f172a;font:500 24px/1.8 'Noto Sans TC',sans-serif;resize:vertical;white-space:pre-wrap;overflow-wrap:anywhere}#clip-drag-extension:focus{outline:3px solid #38bdf8;outline-offset:3px}
 .clip-task{border:2px solid #99f6e4;border-radius:22px;padding:24px;margin:24px 0;background:#fff}
 .clip-task:nth-of-type(even){border-color:#bae6fd;background:#f7fcff}.clip-task h3{display:flex;align-items:center;gap:12px;font-size:24px;line-height:1.45}
 .clip-icon{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:48px;height:48px;border-radius:50%;background:#ccfbf1;color:#0f766e}
