@@ -6,6 +6,9 @@ import {appendSingleChoiceOptions} from '../quiz-choice.mjs';
 import {choiceReviewModel,decorateFieldReviewOption} from '../quiz-review-choices.mjs';
 import {appendFieldReviewStatus} from '../quiz-fields-review.mjs';
 import {isPastCorrection} from '../quiz-correction-presentation.mjs';
+import {partnerMatchingPresentation} from '../quiz-matching-past.mjs';
+import {renderMatchingBoard} from '../quiz-matching.mjs';
+import {renderContent} from './past-content.js';
 export function mountPastAnswers(root,{question,drafts,loadAsset}){
  for(const host of root.querySelectorAll('[data-past-answer]')){
   if(host.dataset.pastMounted)continue;host.dataset.pastMounted='true';
@@ -14,7 +17,10 @@ export function mountPastAnswers(root,{question,drafts,loadAsset}){
   const locked=host.hasAttribute('data-past-locked'),last=q.attempts?.at(-1);if(locked)saved=last?.value;
   const hidden=document.createElement('input');hidden.type='hidden';hidden.value=saved===undefined?'':JSON.stringify(saved);if(!locked)hidden.dataset.draft=k;host.append(hidden);const store=v=>{hidden.value=JSON.stringify(v);drafts.set(k,hidden.value);};
   const node=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
-  if(m.kind==='manual'){
+  const matching=partnerMatchingPresentation(q);
+  if(matching){
+   renderMatchingBoard(host,matching.board,{values:{answer:saved},locked,accepted:locked&&Object.hasOwn(q,'pastReference')?{answer:[q.pastReference]}:null,onChange:next=>{store(next.answer);hidden.dispatchEvent(new Event('input',{bubbles:true}));},renderContent:(box,c)=>renderContent(box,c,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});
+  }else if(m.kind==='manual'){
    const value=saved&&typeof saved==='object'?saved:{text:'',strokes:[],confirmed:false};store(value);
    renderManualResponse({host,value,locked:false,asset:q.rich.material.media?.find(a=>a.kind==='image'),resolveAsset:loadAsset});
    host.querySelector('textarea').id='manual-'+q.id;host.querySelector('label').htmlFor='manual-'+q.id;
@@ -42,6 +48,6 @@ export function mountPastAnswers(root,{question,drafts,loadAsset}){
   }
   [...host.querySelectorAll('input:not([type=hidden]),textarea')].forEach((e,i)=>{e.dataset.pastFocus=q.id+'-'+i;if(m.kind!=='manual')e.disabled=locked;});
   const model=choiceReviewModel({kind:m.kind,choices:m.choices,codes:m.codes,value:locked?last?.value:undefined,official:q.pastReference,correct:last?.correct,revealed:locked&&Object.hasOwn(q,'pastReference'),selfCheck:m.selfCheck});
-  if(model){host.classList.add('quiz-choice-review');appendFieldReviewStatus(host,model);host.querySelectorAll(':scope>label.option').forEach((row,i)=>decorateFieldReviewOption(row,model.options[i]));if(m.kind==='sequence'){const p=node('p','參考順序：'+q.pastReference.map(id=>m.choices.find(c=>c.id===id)?.text||id).join(' → '));p.className='quiz-field-review-reference';host.append(p);}}
+  if(model&&!matching){host.classList.add('quiz-choice-review');appendFieldReviewStatus(host,model);host.querySelectorAll(':scope>label.option').forEach((row,i)=>decorateFieldReviewOption(row,model.options[i]));if(m.kind==='sequence'){const p=node('p','參考順序：'+q.pastReference.map(id=>m.choices.find(c=>c.id===id)?.text||id).join(' → '));p.className='quiz-field-review-reference';host.append(p);}}
  }
 }

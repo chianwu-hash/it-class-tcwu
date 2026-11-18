@@ -13,6 +13,8 @@ import {createQuizStudy,studySourceLabel} from './quiz-study.mjs';
 import {renderExplanation} from './quiz-explanation-render.mjs';
 import {choiceReviewModel,decorateFieldReviewOption} from './quiz-review-choices.mjs';
 import {pastCorrectionPrompt,pastCorrectionFieldLabel} from './quiz-correction-presentation.mjs';
+import {pastMatchingPresentation} from './quiz-matching-past.mjs';
+import {renderMatchingBoard} from './quiz-matching.mjs';
 export function initPastExamUI({root,request,resolveAsset,resolveTextbook,onView,reportRequest,onPractice}){
 let active=true;
 const mediaScope={resolve:resolveAsset,active:()=>active};
@@ -74,7 +76,7 @@ function renderPractice(){
 function render(){if(!active)return;study.refresh();
  workspace.reset();
  stopAudio();
- const g=state.groups[index],saved=state.records[g.id],locked=Boolean(saved)||busy||pending.has(g.id);if(!saved)onView(g.id);const values=currentValue(g);const summary=state.summary;
+ const g=state.groups[index],saved=state.records[g.id],locked=Boolean(saved)||busy||pending.has(g.id);if(!saved)onView(g.id);const values=currentValue(g),matching=pastMatchingPresentation(g);const summary=state.summary;
  $('#score').textContent=summary.answered?`目前核對 ${summary.score}／${summary.max} 分`:'準備好，就從一組開始。';$('#progress').textContent=`已核對 ${summary.answered}／${summary.total} 個欄位${summary.drawingStatus==='self_checked'?'・開放題已有自我核對紀錄':''}`;
  const meter=$('#past-progress');if(meter){meter.max=summary.total;meter.value=summary.answered;}
  renderPractice();
@@ -85,9 +87,12 @@ function render(){if(!active)return;study.refresh();
  const hasMaterial=g.materialContent?Boolean(g.materialContent.text.trim()||g.materialContent.layout?.length||g.materialContent.media.length):Boolean(g.material?.trim());
  if(hasMaterial){const material=el('div',undefined,'material material-box');if(g.materialContent)renderLocalContent(material,g.materialContent);else material.textContent=g.material;left.append(material);}
  if(g.notice)left.append(el('p',g.notice,'demo-note'));
- if(g.choices.length&&g.kind!=='single'){const bank=el('div',undefined,'choice-bank');g.choices.forEach(c=>{const row=el('div',undefined,'past-bank-choice');row.append(el('b',c.id+'　'));renderLocalContent(row,c.content||{text:c.text,media:[]});bank.append(row);});left.append(bank);}
- if(g.assets.length&&g.kind!=='annotation'){const imgs=el('div',undefined,'art-grid'+(g.kind==='set'?' magnets':''));g.assets.forEach(a=>imgs.append(art(a)));left.append(imgs,el('p','點圖片可放大查看。','helper'));}
- if(g.kind==='single'||g.kind==='short'){
+ if(g.choices.length&&g.kind!=='single'&&!matching){const bank=el('div',undefined,'choice-bank');g.choices.forEach(c=>{const row=el('div',undefined,'past-bank-choice');row.append(el('b',c.id+'　'));renderLocalContent(row,c.content||{text:c.text,media:[]});bank.append(row);});left.append(bank);}
+ if(g.assets.length&&g.kind!=='annotation'&&!matching){const imgs=el('div',undefined,'art-grid'+(g.kind==='set'?' magnets':''));g.assets.forEach(a=>imgs.append(art(a)));left.append(imgs,el('p','點圖片可放大查看。','helper'));}
+ if(matching){
+  grid.classList.add('qm-past-body');
+  renderMatchingBoard(right,matching.board,{values:Object.fromEntries(g.fields.map((f,i)=>[f.id,values[i]])),locked,accepted:saved?Object.fromEntries(g.fields.filter((_,i)=>Object.hasOwn(saved.results?.[i]||{},'official')).map(f=>[f.id,[saved.results[g.fields.indexOf(f)].official]])):null,renderContent:renderLocalContent,onChange:next=>{g.fields.forEach((f,i)=>draft(g)[i]=next[f.id]);}});
+ }else if(g.kind==='single'||g.kind==='short'){
   const stem=el('div',undefined,'material');renderLocalContent(stem,g.promptContent);right.append(stem);
   if(g.kind==='single'){
    const display=booleanChoicePresentation(g.choices),choices=el('div',undefined,'past-choices');

@@ -2,9 +2,12 @@ import {booleanChoicePresentation} from '../quiz-boolean-choice.mjs?v=20261107-b
 import {choiceReviewModel,appendChoiceReview,decorateFieldReviewOption} from '../quiz-review-choices.mjs';
 import {revealedPastChoice} from './answer-feedback.mjs';
 import {renderContent} from './past-content.js';
+import {partnerMatchingPresentation} from '../quiz-matching-past.mjs';
+import {renderMatchingBoard} from '../quiz-matching.mjs';
 export function mountPastResults(root,{question,loadAsset}){
  for(const host of root.querySelectorAll('[data-past-result]')){
   const q=question(Number(host.dataset.pastResult)),value=q.attempts.at(-1)?.value;if(value===undefined&&(!Object.hasOwn(q,'pastReference')||q.past.selfCheck||['manual','annotation','short'].includes(q.past.kind)))continue;
+  const matching=partnerMatchingPresentation(q);if(matching){if(!root.querySelector(`[data-past-answer="${q.id}"][data-past-locked]`))renderMatchingBoard(host,matching.board,{values:{answer:value},locked:true,referenceOnly:value===undefined,accepted:Object.hasOwn(q,'pastReference')?{answer:[q.pastReference]}:null,renderContent:(box,c)=>renderContent(box,c,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});continue;}
   const title=document.createElement('b');title.textContent=value===undefined?'本小題參考答案':'我這次留下的作答';host.append(title);const text=document.createElement('p');text.className='reply';
   const display=q.past.kind==='single'?booleanChoicePresentation(q.past.choices,q.rich?.options):null;
   const label=v=>{const i=q.past.choices.findIndex(c=>c.id===v),c=q.past.choices[i];return display&&i>=0?display[i].badge+' '+display[i].text:typeof v==='boolean'?(v?'打勾／是':'不打勾／否'):c&&c.text&&c.text!==v?v+'・'+c.text:String(v);};

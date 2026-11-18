@@ -1,3 +1,11 @@
+# 共用連連看：驗收通過，待補圖SQL核准（2026-11-18）
+
+- Codex-shared-matching-20261118唯一寫入者；由最新origin/main `ba95b908`新工作樹 `D:/AI-Work/shared-matching-20261118`，分支 `codex/shared-matching-20261118`。尚未持有發布鎖，未發布中。
+- 題庫全域掃描後納入74一般版本／76連線區、27舊卷組與29夥伴銀行位置；7固定／草稿副本沿用相同來源指紋。共用真實連線卡片供個人、整份回顧、夥伴使用；保留欄位／值、既有作答、一次送出與外層。NAS原件、原圖及來源SHA核對，未送外部AI。
+- 615項桌機／平板／手機瀏覽器情境、75項相關回歸、另11項quiz基礎回歸、21產物、隔離SQL8組驗證通過。證據 `D:/AI-Work/shared-matching-evidence-20261118/`；[範圍與限制](quiz-matching-20261118.md)。
+- `supabase/quiz-matching-original-media.sql`尚未核准／未套用：1個既有私有媒體判斷函式，只對完整原卷指紋補3張既有原圖；3筆夥伴rich及媒體映射，不改原卷／答案／作答／權限。需使用者本次明確核准，既有PR295／298／305核准不涵蓋。核准後套用精確SQL，更新production-snapshot與live check、PR進main，再依release-from-main發布。不可先發布造成舊卷缺圖。
+- 下一步：具體PR請使用者核准SQL；核准前不操作正式庫。正式基準仍 `dpl_9yvvb9rXMBmo6SJUDh5sUzFLdbb4`。本機QA服務／分頁已關，先前使用者連連看與排序示範保留。
+
 # 框詞小題字級：已正式發布（2026-11-18）
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
