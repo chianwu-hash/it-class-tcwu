@@ -1,8 +1,10 @@
-# 期末短選項句點漏例：發布登記（2026-11-18）
+# 期末短選項句點漏例：已正式發布（2026-11-18）
 
 | 狀態 | agent | 開始日期 | main來源 | 基準正式 | 預期變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | Codex-final-option-period-followup-20261118 | 2026-11-18 | 本PR合併後的乾淨最新main，由腳本鎖定SHA | `dpl_E23V5KdC7e7n3p9asCZANtkoVAKt` | 期末選項呈現模組／指紋清冊、資產與16入口快取 | 待腳本收據 |
+| 已完成 | Codex-final-option-period-followup-20261118 | 2026-11-18T03:52:16.570Z | `a434cdd` | `dpl_E23V5KdC7e7n3p9asCZANtkoVAKt` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-option-periods-reviewed.mjs、shared/quiz-option-periods.mjs、shared/quiz-workshop/generated/assets.json | `dpl_5BL3LyGK2XY4U4F3dy3STChSTTfB`／回滾 `dpl_E23V5KdC7e7n3p9asCZANtkoVAKt`（eolOnly 0） |
+
+- PR314已合併，乾淨main `a434cdd2`發布至`dpl_5BL3LyGK2XY4U4F3dy3STChSTTfB`，完整樹19改0增／eolOnly0、候選5與正式19檔HTTP／SHA通過，鎖已釋放。正式指定測試帳號核第5題1280／390實際DOM均顯示「硬」，原資料仍「硬。」；前後答案／自評一致、未送答。Git連線失敗後僅本次程序用HTTP/1.1完成必要fetch，沒有跳過檢查。
 
 - 題幹含「句子」被誤當作句子選項，漏掉辨字題；明確區分字詞作答與標點／真正句子選項，補上本次回報原題及功能字／完整句子反例。只補期末43個啟用來源，累計605題611組；原資料／版本／回應／外層介面保持，無SQL／DML或AI呼叫。
 - 620真來源626組正式安全投影、214夥伴副本、91回歸、9案例18桌手機通過。發布後須核本次實際題目的正式呈現，不能只驗本機；詳[漏例、範圍及收據](quiz-final-option-periods-20261118.md)。
