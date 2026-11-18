@@ -2,12 +2,13 @@ import {fieldsValues,fieldsResponseError,validateFieldsQuestion} from './quiz-fi
 import {attachPastInputKeyboard} from './quiz-past-input.mjs';
 import {hasSketchFields,openSketchResponseError} from './quiz-open-sketch.mjs';
 import {createSketchEditor,sketchImage} from './sketch/editor.mjs';
+import {choiceQuestionPresentation} from './quiz-choice-conversion.mjs';
 
 const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 const only=(v,keys)=>object(v)&&Object.keys(v).every(k=>keys.includes(k));
 const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 export const openResponseError=(q,raw)=>hasSketchFields(q)?openSketchResponseError(q,raw):fieldsResponseError(q,raw);
-export const openReferenceSummary=(q,answer=q.answer)=>q.fields.map(f=>{
+export const openReferenceSummary=(q,answer=q.answer)=>choiceQuestionPresentation(q).fields.map(f=>{
  const ref=answer.fields[f.id];return `${f.label}：參考例答 ${ref.examples.join('／')}；檢核 ${ref.criteria.join('、')}`;
 }).join('；');
 
@@ -28,6 +29,7 @@ export function validateOpenQuestion(q,checkContent){
 }
 
 export function renderOpenInputs(host,q,{raw='',locked=false,onChange}){
+ q=choiceQuestionPresentation(q);
  const values=fieldsValues(q,raw),group=make('div',undefined,'quiz-fields quiz-open-inputs');
  group.append(make('p','請依原題寫下自己的答案。儲存後可以查看參考例答與檢核重點，再完成自評。'));
  for(const field of q.fields){
@@ -63,6 +65,7 @@ export function destroyOpenSketchEditors(root){root?.querySelectorAll('.quiz-ope
 export function disableOpenSketchEditors(root,disabled){root?.querySelectorAll('.quiz-open-inputs,.quiz-fields').forEach(group=>group.sketchEditors?.forEach(editor=>editor.setDisabled(disabled)));}
 
 export function renderOpenReview(host,q,review,{busy=false,pending=false,draftNote='',onNoteChange=()=>{},onSelfCheck}){
+ q=choiceQuestionPresentation(q);
  const box=make('section',undefined,'answer-preview quiz-open-review');box.tabIndex=-1;
  box.append(make('h4','開放作答・核對自己的想法'));
  box.append(make('p','這題不以單一例答判對錯。請對照原題要求與下方重點，確認自己的答案。'));

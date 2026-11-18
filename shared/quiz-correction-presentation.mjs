@@ -1,4 +1,5 @@
 import {readingSignature} from './quiz-reading-signature.mjs';
+import {presentationSignature} from './quiz-presentation-signature.mjs';
 import {sourceStream,omitRanges} from './quiz-content-slices.mjs';
 import {reviewedCorrectionSources} from './quiz-correction-reviewed-sources.mjs';
 
@@ -8,7 +9,7 @@ export const correctionLabel=(index,count)=>count===1?'正確的字':`第${index
 // Source type, field order and teacher key were checked offline. Never infer
 // a correction exercise from spelling, the stored answer or a loose keyword.
 export function correctionQuestionPresentation(q,registry=reviewedCorrectionSources){
- const plans=registry[q?.id];if(q?.type!=='fields'||!plans?.some(p=>p.guard===readingSignature(q)))return q;
+ const plans=registry[q?.id];if(q?.type!=='fields'||!plans?.some(p=>p.guard===readingSignature(q)||p.guard===presentationSignature(q)))return q;
  if(!q.fields?.length||q.fields.some(f=>f.input!=='text'))return q;
  const stream=sourceStream(q.prompt);if(stream===null)return q;
  const ranges=[];let pos=0;

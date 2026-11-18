@@ -82,7 +82,7 @@ function convertSingleChoiceQuestion(q){
 }
 export function convertChoiceQuestion(q,options={}){
  const checkbox=convertCheckboxQuestion(q,options),single=convertSingleChoiceQuestion(checkbox.question);
- const content=convertStudentContent(single.question);
+ const content=convertStudentContent(single.question,options);
  const labelled=options.preserveOptionLabels===true?content.question:normalizeQuestionOptionLabels(content.question);
  const question=options.preserveOptionPeriods===true?labelled:finalOptionPeriodProjection(labelled);
  return {...content,question,changes:[...checkbox.changes,...single.changes,...content.changes,...(labelled!==content.question?[{kind:'redundant_option_labels'}]:[]),...(question!==labelled?[{kind:'final_option_terminal_period'}]:[])],issues:[...checkbox.issues,...single.issues,...content.issues]};

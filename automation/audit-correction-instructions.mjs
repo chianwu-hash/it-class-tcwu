@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import {pathToFileURL} from 'node:url';
-import {readingSignature} from '../shared/quiz-reading-signature.mjs';
+import {presentationSignature} from '../shared/quiz-presentation-signature.mjs';
 import {sourceStream} from '../shared/quiz-content-slices.mjs';
 import {correctionQuestionPresentation,isPastCorrection,pastCorrectionPrompt} from '../shared/quiz-correction-presentation.mjs';
 
@@ -14,7 +14,7 @@ export function auditCorrectionInstructions({pool,native,copies=[],past=[],partn
   const key=n.key.replace(/^《答案》/u,'').trim().split('，').map(s=>s.trim());
   for(const [field,fix]of Object.entries(reviewedKeys[q.id]||{})){const i=q.fields.findIndex(f=>f.id===field);if(i<0||fix.sourceSha256!==n.sha256||key[i]!==fix.original||!fix.evidence)throw Error('reviewed_key_evidence_required');key[i]=fix.corrected;}
   if(q.type!=='fields'||!q.fields?.length||q.fields.some(f=>f.input!=='text')||sourceStream(q.prompt)===null||key.length!==q.fields.length||q.fields.some((f,i)=>!q.answer?.fields?.[f.id]?.includes(key[i]))){issues.push({id:q.id,code:'original_field_mapping_required'});continue;}
-  const entry={guard:readingSignature(q),sourceSha256:n.sha256};registry[q.id]??=[];
+  const entry={guard:presentationSignature(q),sourceSha256:n.sha256};registry[q.id]??=[];
   if(!registry[q.id].some(e=>e.guard===entry.guard))registry[q.id].push(entry);
   findings.push({id:q.id,source:n.id,fields:q.fields.length,type:n.type_code});
  }
