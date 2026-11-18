@@ -1,11 +1,16 @@
-# 改錯題指示與欄名：驗收及發布中（2026-11-18）
+# 改錯題指示與欄名：已正式發布（2026-11-18）
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-correction-instructions-20261118 | 2026-11-18T09:11:55.814Z | `5861fc4` | `dpl_ASKRQqt3pD8JzLHagTMYNHXizJ4y` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/past-answer.js、shared/quiz-past-ui.mjs、shared/quiz-student-content.mjs、shared/quiz-workshop/generated/assets.json、+shared/quiz-correction-presentation.mjs、+shared/quiz-correction-reviewed-sources.mjs | `dpl_5JZn9Lw3wh3Uq5ZNAzgXXgcbhHsz`／回滾 `dpl_ASKRQqt3pD8JzLHagTMYNHXizJ4y`（eolOnly 0） |
 
 | 狀態 | agent | main基準 | 正式基準 | 範圍 |
 | --- | --- | --- | --- | --- |
-| 發布中 | Codex-correction-instructions-20261118 | `a54f2c2c` | `dpl_ASKRQqt3pD8JzLHagTMYNHXizJ4y` | 共用改錯指示／清冊、舊卷與夥伴舊簡答標示、SOP及建置產物 |
+| 已完成 | Codex-correction-instructions-20261118 | `5861fc46` | `dpl_ASKRQqt3pD8JzLHagTMYNHXizJ4y` | 共用改錯指示／清冊、舊卷與夥伴舊簡答標示、SOP及建置產物 |
 
 - Codex唯一寫入者；先核NAS原件與MDB出版類型，261題／407欄及8副本補「改正後的字」指示，另掃各科與83考古版本／2,607組，39組舊改錯簡答同步標示。原句故意錯字、答案、既有作答、欄位ID、一次送出與原外層保持，無SQL／DML／整庫AI。詳[來源、驗收與限制](quiz-correction-instructions-20261118.md)。
-- 私有證據在 `D:/AI-Work/correction-instructions-evidence-20261118/`；發布只走乾淨main腳本。桌手機完整矩陣通過後再依既有授權發布，正式原帳號唯讀檢查及收據完成後清理自有資源。
+- PR326合併，乾淨main `5861fc46`依腳本發布至`dpl_5JZn9Lw3wh3Uq5ZNAzgXXgcbhHsz`；完整樹20改2增0刪／eolOnly0，候選8與正式22檔HTTP／SHA一致，回滾`dpl_ASKRQqt3pD8JzLHagTMYNHXizJ4y`，鎖已釋放。261題／407欄、31相關回歸、另28內容回歸（有重疊）、21產物、桌手機138情境及8舊夥伴元件情境通過。兩份缺歷史私有考古bundle的測試限制如實記錄，另以39組真舊卷UI隔離驗收。
+- 指定帳號正式原卷第22題1280／390核到指示、欄名、原值與一次送出；前後responses／open_responses一致，未送正式答案或自評。完整提交矩陣用隔離替身，不冒稱正式夥伴房提交。私有證據在 `D:/AI-Work/correction-instructions-evidence-20261118/`；測試頁已關，收據後依SOP正常清理本次完成工作樹，保留先前使用者示範服務。
 
 # 9題共用排序卡片：已正式發布（2026-11-18）
 
