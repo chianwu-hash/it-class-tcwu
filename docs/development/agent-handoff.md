@@ -1,10 +1,17 @@
-# 浮動鍵盤完整尺寸：發布登記（2026-11-18）
+# 浮動鍵盤完整尺寸：已正式發布（2026-11-18）
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-keyboard-fit-20261118 | 2026-11-18T05:31:34.645Z | `61717b4` | `dpl_2Wt8aiz1jbVuYFDpmfBhcTLHniMM` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-input-keyboard.css、shared/quiz-input-keyboard.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css | `dpl_4g2VYKXpBAumjsa31CJ3gvNuNRXT`／回滾 `dpl_2Wt8aiz1jbVuYFDpmfBhcTLHniMM`（eolOnly 0） |
+
 
 | 狀態 | agent | main基準 | 正式基準 | 範圍 |
 | --- | --- | --- | --- | --- |
-| 發布中 | Codex-keyboard-fit-20261118 | `c6299f1c` | `dpl_2Wt8aiz1jbVuYFDpmfBhcTLHniMM` | 共用鍵盤JS／CSS與建置產物 |
+| 已完成 | Codex-keyboard-fit-20261118 | `61717b49` | `dpl_2Wt8aiz1jbVuYFDpmfBhcTLHniMM` | 共用鍵盤JS／CSS與建置產物 |
 
-- Codex唯一寫入者；移除380px固定上限，預設依完整內容高度，移除捲軸預留空間；較窄視窗定位時暫用較小scroll margin並還原。原鍵、欄位、答案與一次送出保持，無SQL／DML。4回歸、21產物與1880／1280／390／320共12流程通過，逐鍵可見且無內部捲動。詳[契約與驗收](quiz-floating-keyboard-20261118.md)。下一步PR進main、依腳本發布及正式模組核對。
+- Codex唯一寫入者；移除380px固定上限，預設依完整內容高度，移除捲軸預留空間；較窄視窗定位時暫用較小scroll margin並還原。原鍵、欄位、答案與一次送出保持，無SQL／DML。4回歸、21產物與1880／1280／390／320共12流程通過，逐鍵可見且無內部捲動。詳[契約與驗收](quiz-floating-keyboard-20261118.md)。
+- PR322進main，乾淨`61717b49`依腳本發布至`dpl_4g2VYKXpBAumjsa31CJ3gvNuNRXT`；完整樹23改0增0刪／eolOnly0，候選6檔及正式23檔HTTP／SHA一致，回滾`dpl_2Wt8aiz1jbVuYFDpmfBhcTLHniMM`。正式核身後獨立分頁掛載不儲存的正式模組預覽，4尺寸12流程再通過，所有按鍵含最後一排完整可見、無內部溢出，原帳號作答／自評前後一致；分頁已關、鎖已釋放。
+- 使用者另詢句子排序卡片可行性，唯讀盤點目前啟用sequence題9筆：三國語5（片段重組4、情節1）、六社會4（時間3、地理1）。拖曳＋上移／下移、保留原欄位ID與一次送出為建議，尚未實作或發布；詳[盤點與建議](quiz-sequence-ui-assessment-20261118.md)。
 
 # 三年級國語第13題課本頁碼：已正式發布（2026-11-18）
 
