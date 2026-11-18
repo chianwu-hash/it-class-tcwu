@@ -1,5 +1,9 @@
 # 共用模組說明
 
+## 期末短選項的紙本結尾句點（2026-11-18）
+
+`quiz-choice-conversion.mjs` 串接 `quiz-option-periods.mjs`，僅對 `quiz-option-periods-reviewed.mjs` 已核定期末 ID、完整選項組與題文指紋做顯示投影。只去除明確短詞／數量組原末項的「。」；保留原來源、ID、正解、既有作答與亂序，個人／整份回顧／夥伴沿用原共用入口及原一次送出。期中、未知範圍、完整句子、引文與標點辨識題不擴大清理。新來源須由 `automation/audit-option-periods.mjs` 重掃後才能擴充清冊；詳[範圍、驗收與限制](quiz-final-option-periods-20261118.md)。
+
 ## 原生手寫開放作答（2026-11-17，SQL已套用，前端未發布）
 
 `quiz-open-sketch.mjs`／`.css` 延伸 open 的 `input:sketch`，沿用共用 sketch editor；`quiz-open-response.mjs` 負責手寫輸入／已保存 SVG／既有自評。個人與 partner structured-answer 共用，原外層送出保持。核准SQL已套用，但正式共同回顧尚未提供他人筆跡，前端及新題均未發布／啟用；不能宣稱整條功能完成。筆跡保存不代表自動判對，舊文字與自動答案維持原契約。詳見[正式收據、缺口及暫停狀態](quiz-open-sketch-20261117.md)。

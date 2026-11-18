@@ -5,6 +5,7 @@ import {convertCheckboxQuestion} from './quiz-checkbox-presentation.mjs';
 import {sourceStream,sliceContent,omitRanges} from './quiz-content-slices.mjs';
 import {convertStudentContent} from './quiz-student-content.mjs';
 import {normalizeQuestionOptionLabels} from './quiz-option-labels.mjs';
+import {finalOptionPeriodProjection} from './quiz-option-periods.mjs';
 const circles='①②③④⑤⑥⑦⑧';
 const instructions=['依原題完成全部答案欄，再一起送出。','依原題順序完成所有答案欄；同一份原題保留為一組。'];
 const compact=s=>s.replace(/\s/gu,'');
@@ -82,8 +83,9 @@ function convertSingleChoiceQuestion(q){
 export function convertChoiceQuestion(q,options={}){
  const checkbox=convertCheckboxQuestion(q,options),single=convertSingleChoiceQuestion(checkbox.question);
  const content=convertStudentContent(single.question);
- const question=options.preserveOptionLabels===true?content.question:normalizeQuestionOptionLabels(content.question);
- return {...content,question,changes:[...checkbox.changes,...single.changes,...content.changes,...(question!==content.question?[{kind:'redundant_option_labels'}]:[])],issues:[...checkbox.issues,...single.issues,...content.issues]};
+ const labelled=options.preserveOptionLabels===true?content.question:normalizeQuestionOptionLabels(content.question);
+ const question=options.preserveOptionPeriods===true?labelled:finalOptionPeriodProjection(labelled);
+ return {...content,question,changes:[...checkbox.changes,...single.changes,...content.changes,...(labelled!==content.question?[{kind:'redundant_option_labels'}]:[]),...(question!==labelled?[{kind:'final_option_terminal_period'}]:[])],issues:[...checkbox.issues,...single.issues,...content.issues]};
 }
 export const choiceQuestionPresentation=q=>convertChoiceQuestion(q).question;
 export function choiceAnswerLabel(q,value){const options=choiceQuestionPresentation(q).options||[],i=options.findIndex(o=>o.id===value);if(i<0)return '未選';const display=booleanChoicePresentation(options)?.[i];return display?display.badge+' '+display.text:String.fromCharCode(65+i);}
