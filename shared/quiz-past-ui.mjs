@@ -12,6 +12,7 @@ import {createQuizWorkspace} from './quiz-workspace.mjs';
 import {createQuizStudy,studySourceLabel} from './quiz-study.mjs';
 import {renderExplanation} from './quiz-explanation-render.mjs';
 import {choiceReviewModel,decorateFieldReviewOption} from './quiz-review-choices.mjs';
+import {pastCorrectionPrompt,pastCorrectionFieldLabel} from './quiz-correction-presentation.mjs';
 export function initPastExamUI({root,request,resolveAsset,resolveTextbook,onView,reportRequest,onPractice}){
 let active=true;
 const mediaScope={resolve:resolveAsset,active:()=>active};
@@ -80,6 +81,7 @@ function render(){if(!active)return;study.refresh();
  $('#steps').replaceChildren(...state.groups.map((item,i)=>{const b=button('',()=>{index=i;arrowStart=null;undo=[];say('');render();},'step'+(i===index?' active':''));b.setAttribute('aria-current',i===index?'step':'false');b.append(el('b',String(i+1)));const t=el('span',item.title);t.append(el('small',state.records[item.id]?(isManual(item)?'已自我核對':'已核對'):'試試看'));b.append(t);return b;}));
  const card=el('div',undefined,'question-card'),head=el('header',undefined,'card-title'),title=el('div');card.dataset.kind=g.kind;card.dataset.groupId=g.id;title.append(el('span','原卷 '+g.sourceLabel,'source-label'),el('h2',g.title));head.append(title,el('span',isManual(g)?'不自動計分':`${g.fields.reduce((n,f)=>n+f.points,0)} 分`,'badge'));card.append(head);
  const grid=el('div',undefined,'body-grid'+(g.assets.length?'':' no-art')),left=el('div'),right=el('div');
+ const correctionPrompt=pastCorrectionPrompt(g);if(correctionPrompt)renderLocalContent(left,correctionPrompt);
  const hasMaterial=g.materialContent?Boolean(g.materialContent.text.trim()||g.materialContent.layout?.length||g.materialContent.media.length):Boolean(g.material?.trim());
  if(hasMaterial){const material=el('div',undefined,'material material-box');if(g.materialContent)renderLocalContent(material,g.materialContent);else material.textContent=g.material;left.append(material);}
  if(g.notice)left.append(el('p',g.notice,'demo-note'));
@@ -97,7 +99,7 @@ function render(){if(!active)return;study.refresh();
    for(const row of choices.children)row.classList.add('choice-row');
    right.append(choices);
   }
-  else{g.fields.forEach((f,i)=>{const slot=el('div',undefined,'slot'),label=el('label',g.fields.length===1?'你的答案':`（${f.label}）${f.text}`,'field-label');label.htmlFor='short-answer-'+i;slot.dataset.studyQuestionId=f.id;if(g.answerFormat==='math-v1'){slot.append(label);renderMathResponse({host:slot,id:'short-answer-'+i,value:values[i],locked,onChange:v=>{draft(g)[i]=v}});feedback(g,i,slot);right.append(slot);return;}const input=el('input');input.id='short-answer-'+i;input.type='text';input.maxLength=2000;input.value=values[i];input.disabled=locked;input.autocomplete='off';input.addEventListener('input',()=>draft(g)[i]=input.value);slot.append(label,input);attachPastInputKeyboard(slot,input,pastFieldInputAids(g,f));feedback(g,i,slot);right.append(slot);});}
+  else{g.fields.forEach((f,i)=>{const slot=el('div',undefined,'slot'),label=el('label',pastCorrectionFieldLabel(g,f,i)??(g.fields.length===1?'你的答案':`（${f.label}）${f.text}`),'field-label');label.htmlFor='short-answer-'+i;slot.dataset.studyQuestionId=f.id;if(g.answerFormat==='math-v1'){slot.append(label);renderMathResponse({host:slot,id:'short-answer-'+i,value:values[i],locked,onChange:v=>{draft(g)[i]=v}});feedback(g,i,slot);right.append(slot);return;}const input=el('input');input.id='short-answer-'+i;input.type='text';input.maxLength=2000;input.value=values[i];input.disabled=locked;input.autocomplete='off';input.addEventListener('input',()=>draft(g)[i]=input.value);slot.append(label,input);attachPastInputKeyboard(slot,input,pastFieldInputAids(g,f));feedback(g,i,slot);right.append(slot);});}
   if(g.kind==='single')feedback(g,0,right);
  }else if(g.kind==='mark'){
   right.append(el('p','勾選你認為正確的敘述。','helper'));const list=el('div',undefined,'answer-list');

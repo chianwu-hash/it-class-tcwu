@@ -1,6 +1,7 @@
 // Pure content projection. No DOM, response types, control flow, IDs or grading.
 import {sourceStream,sliceContent,omitRanges,replaceTextRange,compactParagraphs} from './quiz-content-slices.mjs';
 import {reviewedEditorialVersions} from './quiz-reviewed-editorial-versions.mjs';
+import {correctionQuestionPresentation} from './quiz-correction-presentation.mjs';
 const norm=s=>s.normalize('NFKC').replace(/\s/gu,'');
 const labelBody=s=>s.replace(/^[①②③④⑤⑥⑦⑧]\s*/u,'');
 export const importerInstructions=[
@@ -79,6 +80,7 @@ export function studentPromptContent(content){
 }
 export function convertStudentContent(q){
  const original=q,changes=[],issues=[];if(!q||!['single','fields','short','open'].includes(q.type))return {question:q,changes,issues};
+ const correctionView=correctionQuestionPresentation(q);if(correctionView!==q){q=correctionView;changes.push({kind:'source_reviewed_correction_instruction'});}
  const revised=correction(q);q=revised.question;changes.push(...revised.changes);issues.push(...revised.issues);
  if(issues.length)return revised;
  const lines=linesOf(q.prompt);if(!lines)return {question:q,changes,issues};const ranges=[];

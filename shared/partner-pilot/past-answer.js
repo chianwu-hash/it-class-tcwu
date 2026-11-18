@@ -5,6 +5,7 @@ import {attachPastInputKeyboard} from './quiz-past-input.js';
 import {appendSingleChoiceOptions} from '../quiz-choice.mjs';
 import {choiceReviewModel,decorateFieldReviewOption} from '../quiz-review-choices.mjs';
 import {appendFieldReviewStatus} from '../quiz-fields-review.mjs';
+import {isPastCorrection} from '../quiz-correction-presentation.mjs';
 export function mountPastAnswers(root,{question,drafts,loadAsset}){
  for(const host of root.querySelectorAll('[data-past-answer]')){
   if(host.dataset.pastMounted)continue;host.dataset.pastMounted='true';
@@ -19,7 +20,7 @@ export function mountPastAnswers(root,{question,drafts,loadAsset}){
    host.querySelector('textarea').id='manual-'+q.id;host.querySelector('label').htmlFor='manual-'+q.id;
    for(const ev of ['input','change','pointermove','pointerup','click'])host.addEventListener(ev,()=>store(value));
   }else if(m.kind==='short'){
-   const math=m.answerFormat==='math-v1',input=node('input');input.type='text';input.maxLength=math?250:2000;input.required=true;input.id='past-'+q.id;input.value=math?saved?.answer||'':typeof saved==='string'?saved:'';const label=node('label','我的答案');label.htmlFor=input.id;host.append(label,input);
+   const math=m.answerFormat==='math-v1',input=node('input');input.type='text';input.maxLength=math?250:2000;input.required=true;input.id='past-'+q.id;input.value=math?saved?.answer||'':typeof saved==='string'?saved:'';const correction=isPastCorrection({kind:m.kind,title:q.title,fields:[{}]});const label=node('label',correction?'正確的字':'我的答案');label.htmlFor=input.id;if(correction)host.append(node('p','找出這個作答位置的錯字，填入改正後的字。'));host.append(label,input);
    let work;if(math){const wl=node('label','計算或推想過程（可略過）');work=node('textarea');work.maxLength=5000;work.value=saved?.working||'';wl.append(work);host.append(wl);}
    const update=()=>store(math?{answer:input.value,working:work.value}:input.value);input.oninput=update;if(work)work.oninput=update;update();attachPastInputKeyboard(host,input,{bopomofo:true,punctuation:true});
   }else if(m.kind==='sequence'){

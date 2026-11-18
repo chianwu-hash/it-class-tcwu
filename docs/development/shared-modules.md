@@ -1,5 +1,11 @@
 # 共用模組說明
 
+## 改錯題指示與欄名（2026-11-18）
+
+`quiz-correction-presentation.mjs` 配合 NAS 核對後的 `quiz-correction-reviewed-sources.mjs`，以完整題文／欄位指紋補「填入正確的字」指示與有意義欄名，透過 `quiz-student-content.mjs` 接一般題共用呈現。故意錯字、原 ID、答案、固定版本及既有回應保持。未知來源不能由語感推測；來源或欄位換版後須重掃。
+
+舊卷只有明確 `short`＋改錯字標題才補指示／欄名；已清楚指示、段落定位及其他型別保留。夥伴舊簡答沿原欄位保存，只補相同語意的標示。均沿用原外層一次送出，無 SQL／資料改寫。詳[核對與驗收](quiz-correction-instructions-20261118.md)。
+
 ## 共用排序卡片（2026-11-18）
 
 `quiz-sequence.mjs`／`.css` 由 `quiz-fields.mjs` 輸入與回顧共用，夥伴沿原structured-answer入口。`quiz-sequence-model.mjs` 僅處理原ID陣列，初始不送變更、已答順序原樣讀回；拖曳／上移下移／鍵盤沿原onChange及一次送出。已答與回顧鎖住並顯示位置核對，拖曳取消／卸載清理。`quiz-sequence-presentation.mjs` 僅清理已核9版本的重複紙本控制與代號，保留2張時間軸原圖及原資料；共用解析改用內容引用。詳[契約與驗收](quiz-sequence-cards-20261118.md)。
