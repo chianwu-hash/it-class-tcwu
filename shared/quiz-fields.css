@@ -1,6 +1,11 @@
 @import './quiz-open-sketch.css';
 @import './quiz-sequence.css';
 @import './quiz-input-keyboard.css';
+.quiz-source-box{display:inline-block;border:2px solid currentColor;border-radius:3px;padding:.03em .15em;white-space:nowrap;line-height:1.25;vertical-align:baseline}
+.quiz-source-box>.preview-content{display:inline!important;font:inherit!important;line-height:inherit!important;white-space:pre-wrap}
+.quiz-reading-fields .quiz-field>legend:has(.quiz-source-box){font-size:1.3rem!important}
+.quiz-reading-fields .quiz-field>legend:has(.quiz-source-box)>.preview-content{display:inline!important}
+.quiz-reading-fields .quiz-field>legend:has(.quiz-source-box) .quiz-rich-paragraph{display:inline!important}
 .quiz-work-input,.quiz-saved-work,.quiz-pending-work{grid-column:1/-1;min-width:0}
 .quiz-work-input>label{display:block;font-weight:bold;margin-bottom:8px}
 .quiz-work-input>input{box-sizing:border-box;width:100%;padding:12px;font:inherit}

@@ -3,6 +3,7 @@ import {sourceStream,sliceContent,omitRanges,replaceTextRange,compactParagraphs}
 import {reviewedEditorialVersions} from './quiz-reviewed-editorial-versions.mjs';
 import {correctionQuestionPresentation} from './quiz-correction-presentation.mjs';
 import {taskQuestionPresentation} from './quiz-task-instructions.mjs';
+import {sourceBoxQuestion} from './quiz-source-boxes.mjs';
 const norm=s=>s.normalize('NFKC').replace(/\s/gu,'');
 const labelBody=s=>s.replace(/^[①②③④⑤⑥⑦⑧]\s*/u,'');
 export const importerInstructions=[
@@ -79,7 +80,7 @@ export function studentPromptContent(content){
  }
  return removed===count?{...content,text:text.trimStart(),layout}:content;
 }
-export function convertStudentContent(q,{taskInstructions=true}={}){
+export function convertStudentContent(q,{taskInstructions=true,sourceBoxes=true}={}){
  const original=q,changes=[],issues=[];if(!q||!['single','fields','short','open'].includes(q.type))return {question:q,changes,issues};
  const correctionView=correctionQuestionPresentation(q);if(correctionView!==q){q=correctionView;changes.push({kind:'source_reviewed_correction_instruction'});}
  const revised=correction(q);q=revised.question;changes.push(...revised.changes);issues.push(...revised.issues);
@@ -100,5 +101,6 @@ export function convertStudentContent(q,{taskInstructions=true}={}){
  });if(fields.some((f,i)=>f!==q.fields[i]))q={...q,fields};}
  if(changes.length)q={...q,prompt:compactParagraphs(q.prompt)};
  const task=taskInstructions?taskQuestionPresentation(q):q;if(task!==q){q=task;changes.push({kind:'source_reviewed_task_instruction'});}
+ const boxes=sourceBoxes?sourceBoxQuestion(q):q;if(boxes!==q){q=boxes;changes.push({kind:'source_reviewed_boxes'});}
  return {question:changes.length?q:original,changes,issues};
 }

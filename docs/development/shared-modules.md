@@ -443,3 +443,8 @@ linkControl.load();
 ### 來源核定的題型說明與欄名（2026-11-18）
 
 `quiz-task-instructions.mjs` 與無原題／解答的 `quiz-task-instructions-sources.mjs` 在 `convertStudentContent` 共用鏈補指示及泛用欄名；`quiz-open-response.mjs` 也從同一鏈讀取，涵蓋夥伴直接傳入原題的入口。`quiz-reading-presentation.mjs` 先解析未修改來源再裝飾呈現，不重算原圖位。`quiz-presentation-signature.mjs` 僅將同一 hash 的個人／夥伴媒體命名空間視為相同呈現來源，不改 URL 或授權。來源指紋不符即不套用；禁止以此更改答案、欄位 ID、保存或送出流程。詳[規則與驗收](quiz-task-instructions-20261118.md)。
+
+
+### NAS原框詞與句子選項對位（2026-11-18）
+
+`quiz-source-boxes.mjs`／`quiz-source-boxes-sources.mjs` 在共用呈現鏈依來源指紋補原框線；不改存檔schema或題目資料。已核定的詞義題使用既有 numbered reading／standalone 結構，使句子與選項同組；原題與原選項ID保持。`quiz-source-box-render.mjs` 是個人render與夥伴official-render共用的安全文字run畫框方式，`quiz-fields.css` 保證整個詞框及原小題內容可讀。新轉化時同步驗來源邊框與學生DOM，不能只保留純文字。詳[驗收](quiz-boxed-word-layout-20261118.md)。

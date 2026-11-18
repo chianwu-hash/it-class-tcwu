@@ -1,5 +1,6 @@
 import { resolveQuizMedia, bindQuizMedia } from './bank-media.js';
 import {fieldsAnswerSummary} from '../quiz-fields.mjs';
+import {renderSourceText} from '../quiz-source-box-render.mjs';
 export function renderContent(container, content, { strict = false, loadMedia = true, imageLoading = 'lazy', mediaScope = null, deferMedia = false } = {}) {
   const box = document.createElement('div'); box.className = 'preview-content';
   if (content?.layout) {
@@ -7,7 +8,7 @@ export function renderContent(container, content, { strict = false, loadMedia = 
     const runs = (parent, values) => {
       for (const run of values) {
         if (run.type === 'text') {
-          renderContent(parent, { text: run.text, media: [] }, { strict, loadMedia, imageLoading, mediaScope, deferMedia });
+          renderSourceText(parent,run,(target,text)=>renderContent(target,{text,media:[]},{strict,loadMedia,imageLoading,mediaScope,deferMedia}));
         } else {
           const media = content.media[run.media_index];
           const image = document.createElement('span'); image.className = 'quiz-embedded-image';

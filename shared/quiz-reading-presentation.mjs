@@ -3,6 +3,7 @@ import {numberedReadingPresentation} from './quiz-reading-numbered.mjs';
 import {labelledReadingPresentation} from './quiz-reading-context.mjs';
 import {reviewedReadingPresentation} from './quiz-reading-reviewed.mjs';
 import {taskReadingSource,taskReadingPresentation} from './quiz-task-instructions.mjs';
+import {sourceBoxReading} from './quiz-source-boxes.mjs';
 
 // View only: require a complete ordered question list. No answer inference.
 function strictPresentation(q){
@@ -23,4 +24,4 @@ function strictPresentation(q){
  if(passage.text.length<100)return null;
  return {passage,questions};
 }
-export function readingPresentation(q){const source=taskReadingSource(q);return taskReadingPresentation(q,reviewedReadingPresentation(source)??strictPresentation(source)??numberedReadingPresentation(source)??labelledReadingPresentation(source));}
+export function readingPresentation(q){const boxes=sourceBoxReading(q);if(boxes)return boxes;const source=taskReadingSource(q);return taskReadingPresentation(q,reviewedReadingPresentation(source)??strictPresentation(source)??numberedReadingPresentation(source)??labelledReadingPresentation(source));}
