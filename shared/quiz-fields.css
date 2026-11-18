@@ -1,4 +1,5 @@
 @import './quiz-open-sketch.css';
+@import './quiz-sequence.css';
 @import './quiz-input-keyboard.css';
 .quiz-work-input,.quiz-saved-work,.quiz-pending-work{grid-column:1/-1;min-width:0}
 .quiz-work-input>label{display:block;font-weight:bold;margin-bottom:8px}

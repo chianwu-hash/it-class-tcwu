@@ -1,5 +1,9 @@
 # 共用模組說明
 
+## 共用排序卡片（2026-11-18）
+
+`quiz-sequence.mjs`／`.css` 由 `quiz-fields.mjs` 輸入與回顧共用，夥伴沿原structured-answer入口。`quiz-sequence-model.mjs` 僅處理原ID陣列，初始不送變更、已答順序原樣讀回；拖曳／上移下移／鍵盤沿原onChange及一次送出。已答與回顧鎖住並顯示位置核對，拖曳取消／卸載清理。`quiz-sequence-presentation.mjs` 僅清理已核9版本的重複紙本控制與代號，保留2張時間軸原圖及原資料；共用解析改用內容引用。詳[契約與驗收](quiz-sequence-cards-20261118.md)。
+
 ## 已發卷的課本頁碼勘誤（2026-11-18）
 
 `quiz-study-page-corrections.mjs` 由 `readQuizStudy()` 套用固定的題目／教材／原對照勘誤；只選伺服器已授權且指紋符合的正確頁。主頁標示與閱讀器使用相同context，無正確素材即隱去已知錯誤對照，不生成URL、不改歷史作答。現有一筆三年級國語95～96→94頁；詳[證據與限制](quiz-g3ch-page94-20261118.md)。
