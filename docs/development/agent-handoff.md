@@ -1,8 +1,10 @@
-# 勾選選項字級：發布登記（2026-11-18）
+# 勾選選項字級：已正式發布（2026-11-18）
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | Codex-checkbox-font-20261118 | 2026-11-18 | 本PR合併後乾淨main，由腳本鎖定SHA | `dpl_5BL3LyGK2XY4U4F3dy3STChSTTfB` | fields共用CSS與set回顧樣式類別、4CSS bundle／assets及16入口快取 | 待發布收據 |
+| 已完成 | Codex-checkbox-font-20261118 | 2026-11-18T04:17:39.901Z | `6d1a252` | `dpl_5BL3LyGK2XY4U4F3dy3STChSTTfB` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-fields.css、shared/quiz-fields.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css | `dpl_DC7ej9tL7dTmnDHqbg8SLmn6t3it`／回滾 `dpl_5BL3LyGK2XY4U4F3dy3STChSTTfB`（eolOnly 0） |
+
+- PR316由乾淨main `6d1a2521`發布，正式`dpl_DC7ej9tL7dTmnDHqbg8SLmn6t3it`，完整樹23改0增／eolOnly0、候選5與正式23檔HTTP／SHA通過，發布鎖已釋放。指定帳號正式第9題1880／390實測24.8／19.2px，原國語字型與保存答案／自評不變，無送答；測試頁已關。
 
 - 使用者要求放大第9題勾選文字，維持原形式。共用set文字沿用single相同響應字級，僅字級／行高及set回顧樣式類別；不改內容、作答、勾選或外層一次送出，無SQL／DML。45回歸、21產物與12桌手機共用呈現案例通過；詳[驗收](quiz-checkbox-font-20261118.md)。
 
