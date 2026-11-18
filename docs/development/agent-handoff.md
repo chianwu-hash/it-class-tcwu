@@ -1,10 +1,17 @@
-# 9題共用排序卡片：發布登記（2026-11-18）
+# 9題共用排序卡片：已正式發布（2026-11-18）
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-shared-sequence-20261118 | 2026-11-18T08:31:20.646Z | `3404845` | `dpl_4g2VYKXpBAumjsa31CJ3gvNuNRXT` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-explanation-references.mjs、shared/quiz-fields-presentation.mjs、shared/quiz-fields.css、shared/quiz-fields.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-sequence-model.mjs、+shared/quiz-sequence-presentation.mjs、+shared/quiz-sequence.css、+shared/quiz-sequence.mjs | `dpl_ASKRQqt3pD8JzLHagTMYNHXizJ4y`／回滾 `dpl_4g2VYKXpBAumjsa31CJ3gvNuNRXT`（eolOnly 0） |
+
 
 | 狀態 | agent | main基準 | 正式基準 | 範圍 |
 | --- | --- | --- | --- | --- |
-| 發布中 | Codex-shared-sequence-20261118 | `fba18372` | `dpl_4g2VYKXpBAumjsa31CJ3gvNuNRXT` | 共用排序模型／卡片／呈現／樣式，fields與解析入口、建置產物 |
+| 已完成 | Codex-shared-sequence-20261118 | `34048455` | `dpl_4g2VYKXpBAumjsa31CJ3gvNuNRXT` | 共用排序模型／卡片／呈現／樣式，fields與解析入口、建置產物 |
 
-- 使用者已核准9題共用化及驗收後上線；Codex唯一寫入者，無SQL／DML／AI。原ID／已答順序／外層與一次送出保持；三國語5、六社會4，2張原圖SHA核對保留，兩題解析原字母改內容引用。72相關回歸、另8DB契約、21產物、40桌手機三入口及5拖曳生命週期檢查通過。題目／正解／私有證據留repo外。詳[契約、驗收與限制](quiz-sequence-cards-20261118.md)。下一步PR進main、由乾淨main依腳本發布，核正式來源與指定帳號紀錄保持。
+- 使用者已核准9題共用化及驗收後上線；Codex唯一寫入者，無SQL／DML／AI。原ID／已答順序／外層與一次送出保持；三國語5、六社會4，2張原圖SHA核對保留，兩題解析原字母改內容引用。72相關回歸、另8DB契約、21產物、40桌手機三入口及5拖曳生命週期檢查通過。題目／正解／私有證據留repo外。詳[契約、驗收與限制](quiz-sequence-cards-20261118.md)。
+- PR324合併，以乾淨main `34048455`依腳本發布至`dpl_ASKRQqt3pD8JzLHagTMYNHXizJ4y`；完整樹25改4增0刪／eolOnly0，候選10檔及正式29檔HTTP／SHA一致。回滾`dpl_4g2VYKXpBAumjsa31CJ3gvNuNRXT`，發布鎖已釋放。
+- 指定學校帳號正式原驗收卷第21題1280／390核原選項ID與保存順序、卡片內容、無下拉與無水平溢出；前後resume之responses／open_responses一致，未送正式答案或自評。個人／整份／夥伴三入口完整提交矩陣使用上列隔離替身及合成DB驗收，未冒稱正式夥伴房間測試。測試分頁已關，私人證據封存後清理本次工作樹；原使用者示範服務與交付頁不屬本次清理範圍。
 
 # 浮動鍵盤完整尺寸：已正式發布（2026-11-18）
 
