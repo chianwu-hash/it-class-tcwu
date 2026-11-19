@@ -2,6 +2,23 @@ import {presentationSignature} from './quiz-presentation-signature.mjs';
 import {sourceStream,sliceContent,omitRanges} from './quiz-content-slices.mjs';
 import {taskReadingSource,taskReadingPresentation} from './quiz-task-instructions.mjs';
 import {answerTemplateSources} from './quiz-answer-template-sources.mjs';
+import {openCompositionSources} from './quiz-open-composition-sources.mjs';
+
+// Width comes from the publisher's populated example, never a reference answer
+// or the student's response. A differing or ambiguous pattern keeps its width.
+export function exampleSlotCharacters(plan){
+ if(plan?.mode!=='blanks')return null;const text=sourceStream(plan.source.prompt);if(text===null)return null;
+ const examples=text.slice(0,plan.start).split('\n').toReversed(),result={};
+ for(const row of plan.rows.filter(r=>r.fields.length)){
+  const blanks=plan.blanks.filter(b=>row.fields.includes(b.field));
+  const matches=examples.map(line=>({line,parts:[...line.matchAll(/[（(]([^（）()\n]+)[）)]/gu)]})).filter(({line,parts})=>parts.length===blanks.length&&parts.every((p,i)=>{
+   const value=p[1].replace(/[\sˉ]/gu,'');if(!value||/[^\p{Script=Han}０-９]/u.test(value)||[...value].length>40)return false;
+   return i===parts.length-1||line.slice(p.index+p[0].length,parts[i+1].index).replace(/\s/gu,'')===text.slice(blanks[i].end,blanks[i+1].start).replace(/\s/gu,'');
+  }));
+  const counts=matches.map(m=>m.parts.map(p=>[...p[1].replace(/[\sˉ]/gu,'')].length));if(!counts.length||counts.some(c=>c.some((n,i)=>n!==counts[0][i])))return null;blanks.forEach((b,i)=>result[b.field]=counts[0][i]);
+ }
+ return Object.keys(result).length===plan.source.fields.length?result:null;
+}
 
 // Only empty publisher blanks, never a populated example, unit or answer.
 const blankPattern=({symbols=false,underscores=false}={})=>new RegExp('[（(][\\s　ˉ_＿﹏…．.]*[）)]'+(symbols?'|□':'')+(underscores?'|[_＿]{2,}':''),'gu');
@@ -55,6 +72,7 @@ export function mountAnswerTemplate(group,q,{renderContent,registry}={}){
  const plan=answerTemplatePresentation(q,registry);if(!plan)return false;
  const slots=[...group.querySelectorAll(':scope > .quiz-field')];if(slots.length!==q.fields.length)return false;
  const byId=new Map(q.fields.map((f,i)=>[f.id,slots[i]]));
+ const exampleSource=openCompositionSources[plan.source.id],characters=exampleSource?.guard===presentationSignature(plan.source)?exampleSlotCharacters(plan):null;
  slots.forEach(slot=>slot.classList.add('quiz-answer-paired-field'));
  if(plan.source.prompt.media.length&&!renderContent)throw Error('answer_template_media_renderer_required');
  const doc=group.ownerDocument,container=doc.createElement('div');container.className='quiz-answer-templates';let number=0;
@@ -87,6 +105,7 @@ export function mountAnswerTemplate(group,q,{renderContent,registry}={}){
   for(const blank of plan.blanks.filter(b=>row.fields.includes(b.field))){
    text(at,blank.start);const slot=byId.get(blank.field),input=slot.querySelector('input[type=text],textarea');if(!input)throw Error('answer_template_original_input_required');
    prepare(slot,input,blank.width,`${number?`第${number}組・`:''}${slot.querySelector('legend').textContent}`);
+   if(characters){slot.classList.add('quiz-answer-example-width');slot.style.setProperty('--answer-slot-characters',characters[blank.field]);}
    line.append(slot);at=blank.end;
   }
   text(at,row.end);container.append(box);
