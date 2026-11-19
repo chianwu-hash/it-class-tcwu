@@ -1,8 +1,14 @@
-# 閱讀原位批改：待main發布（2026-11-19）
+# 閱讀原位批改：已正式發布（2026-11-19）
+
+## 發布登記
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-reading-inline-feedback-20261119 | 2026-11-19T14:29:53.766Z | `4f2a083` | `dpl_HvR48YDJNJo4hTcdKsyAZw5WMuZG` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-fields.css、shared/quiz-fields.mjs、shared/quiz-reading-inline.mjs、shared/quiz-reading-workbench.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css | `dpl_FoeTtAgd3coLPrvFjRniEqgh44ee`／回滾 `dpl_HvR48YDJNJo4hTcdKsyAZw5WMuZG`（eolOnly 0） |
 
 - Codex-reading-inline-feedback-20261119從最新origin/main `857149aa`建立新工作樹。12原位閱讀來源的原答案格，授權揭答後直接綠框＋答對／紅框＋旁註正確答案，取代文章底部逐格折疊。原錯字與原字串保留，原控制項、一次提交、評分、鍵盤、認證與SQL不動；配對限制等不確定狀態仍保留原核對。
 - 字串核對僅在已授權fields review及來源映射文字格使用，沿正式quiz_fields_value的ASCII空格trim契約，接受所有已揭答替代答案；不推論數學等價或從q.answer取隱藏解答。44單元回歸、12來源×三尺寸×個人已答／整份回顧／夥伴保存與共同回顧144項、48連續鍵盤與21產物通過。證據 `D:/AI-Work/reading-inline-feedback-evidence-20261119/`。
-- 下一步：PR進main、確認無他人發布鎖後乾淨main發布、正式唯讀核對與收據。既有九年級理化工作保留。
+- PR367合併main `4f2a0838`，乾淨main腳本發布`dpl_FoeTtAgd3coLPrvFjRniEqgh44ee`；完整樹25改0增0刪／eolOnly0，候選6及正式25檔HTTP／SHA一致。正式載入renderer以獨立合成資料在1280／390確認11格批改（9綠、2紅），正解在錯字旁、無文章底部逐格折疊，未送正式答案／自評或改名冊，截圖已核。真實三年級場次唯讀驗收受阻：工作瀏覽器帳號名冊現為九年級922，entry_context導向九年級且拒絕三年級場次；已詢問使用者，未冒稱真實場次通過。回滾`dpl_HvR48YDJNJo4hTcdKsyAZw5WMuZG`，發布鎖／租約釋放，收據後封存清本次工作樹。既有九年級理化工作保留。
 
 # 中正九年級113／114上二段理化：已正式啟用（2026-11-19）
 
