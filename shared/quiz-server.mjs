@@ -28,7 +28,8 @@ export function initServerQuiz({ selectors, server }) {
   const renderContent = (target, c) => {
     const serialized=JSON.stringify(c),index=contentUses.get(serialized)||0;contentUses.set(serialized,index+1);
     const key=serialized+'#'+index,previous=contentCache.get(key);
-    if(previous){target.append(previous);return previous;}
+    // 原位表格已插入當次作答控制項，重繪須重新產生原表格，避免搬回舊欄位。
+    if(previous&&!previous.querySelector('.quiz-answer-paired-field')){target.append(previous);return previous;}
     const box=renderQuizContent(target, {
     ...c,
     text: c?.text?.trim() === '書商未提供這一題的詳細解析。'
@@ -177,7 +178,7 @@ export function initServerQuiz({ selectors, server }) {
         renderContent(article, q.material); renderContent(article, fieldsPromptPresentation(q));
         article.append(make('p', `你的答案：${['fields','open'].includes(q.type) ? fieldsResponseSummary(q,state.responses[q.id]) : q.type === 'single' ? choiceAnswerLabel(q,state.responses[q.id]) : state.responses[q.id]}`));
         if(q.type==='fields')renderFieldsChoices(article,q,{renderContent,raw:state.responses[q.id],review:state.reviews.find(r=>r.question_id===q.id)});
-        if(q.type==='open')renderOpenSavedSketches(article,q,state.responses[q.id]);
+        if(q.type==='open')renderOpenSavedSketches(article,q,state.responses[q.id],{renderContent});
         if (q.type === 'single') {const display=booleanChoicePresentation(q.options),review=state.reviews.find(r=>r.question_id===q.id),feedback=choiceReviewModel({kind:'single',choices:q.options,value:state.responses[q.id],official:review?.answer?.option_id,correct:review?.correct,revealed:Boolean(review)});if(feedback)article.classList.add('quiz-choice-review');q.options.forEach((o, i) => { const row = make('div', undefined, 'preview-option'); row.append(make('strong', (display?.[i].badge??String.fromCharCode(65+i))+' ')); if(display)row.append(make('span',display[i].text));else renderContent(row, o.content);decorateFieldReviewOption(row,feedback?.options[i]);article.append(row); });}
         renderReview(article, q); mountQuestionReport(article,report(q));root.append(article);
       }
@@ -212,7 +213,7 @@ export function initServerQuiz({ selectors, server }) {
         result:saved&&review?{chosen:state.responses[q.id],correct:review.answer.option_id}:null
       });
     } else if(q.type==='open'){
-      renderOpenInputs(inputs,q,{raw:saved?state.responses[q.id]:pending?.response??selected,locked:choicesLocked,onChange:value=>{selected=value}});
+      renderOpenInputs(inputs,q,{raw:saved?state.responses[q.id]:pending?.response??selected,locked:choicesLocked,onChange:value=>{selected=value},renderContent});
     } else if(q.type==='fields'){
       const chinese=root.dataset.subject==='國語';
       renderFieldsInputs(inputs,q,{raw:saved?state.responses[q.id]:pending?.response??selected,locked:choicesLocked,saved,onChange:value=>{selected=value},renderContent,textInputAids:{bopomofo:chinese,punctuation:chinese},review:saved?review:null});

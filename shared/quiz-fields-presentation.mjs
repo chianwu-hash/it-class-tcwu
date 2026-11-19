@@ -4,6 +4,7 @@ import {readingPresentation} from './quiz-reading-presentation.mjs';
 import {sequenceFieldPresentation,sequencePromptPresentation} from './quiz-sequence-presentation.mjs';
 import {matchingPresentation} from './quiz-matching-presentation.mjs';
 import {openSubquestionPresentation} from './quiz-open-subquestions.mjs';
+import {answerTemplatePresentation} from './quiz-answer-templates.mjs';
 // Compatibility for the reviewed Chinese import's circled-code choice fields.
 // Only the view changes: the original field ID, circled values and fields-v1
 // response envelope remain exactly as stored. Never read or infer an answer.
@@ -31,6 +32,7 @@ export function fieldsPromptPresentation(q){
  const open=openSubquestionPresentation(q);if(open)return open.passage;
  const matching=matchingPresentation(q);if(matching)return matching.passage;
  const reading=readingPresentation(q);if(reading)return reading.passage;
+ const template=answerTemplatePresentation(q);if(template)return template.passage;
  if(q.fields?.length!==1||fieldPresentation(q,q.fields[0])===q.fields[0])return studentPromptContent(q.prompt);
  const label=q.fields[0].label.trim(),text=q.prompt.text.trimEnd();
  // Retain the complete original prompt in storage and full-paper review. Only
