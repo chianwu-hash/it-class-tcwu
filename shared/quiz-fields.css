@@ -1,5 +1,6 @@
 @import './quiz-open-sketch.css';
 @import './quiz-sequence.css';
+@import './quiz-matching.css';
 @import './quiz-input-keyboard.css';
 .quiz-source-box{display:inline-block;border:2px solid currentColor;border-radius:3px;padding:.03em .15em;white-space:nowrap;line-height:1.25;vertical-align:baseline}
 .quiz-source-box>.preview-content{display:inline!important;font:inherit!important;line-height:inherit!important;white-space:pre-wrap}

@@ -448,3 +448,8 @@ linkControl.load();
 ### NAS原框詞與句子選項對位（2026-11-18）
 
 `quiz-source-boxes.mjs`／`quiz-source-boxes-sources.mjs` 在共用呈現鏈依來源指紋補原框線；不改存檔schema或題目資料。已核定的詞義題使用既有 numbered reading／standalone 結構，使句子與選項同組；原題與原選項ID保持。`quiz-source-box-render.mjs` 是個人render與夥伴official-render共用的安全文字run畫框方式，`quiz-fields.css` 保證整個詞框及原小題內容可讀。新轉化時同步驗來源邊框與學生DOM，不能只保留純文字。詳[驗收](quiz-boxed-word-layout-20261118.md)。
+
+
+### 共用連連看（2026-11-18；2026-11-19修正版待核准）
+
+quiz-matching-model.mjs 管原值與連線、quiz-matching-presentation.mjs／sources 管來源指紋與裁圖，quiz-matching.mjs 為原生按鈕與SVG連線介面；quiz-matching-past.mjs／past-sources 接舊卷及夥伴純量／陣列。quiz-fields、舊卷個人／教師及夥伴作答／回顧共用，不另建送答API。樣式由 quiz-fields.css 匯入並納入workshop雜湊產物。補圖SQL仍需本案核准；詳[驗收與限制](quiz-matching-20261118.md)。

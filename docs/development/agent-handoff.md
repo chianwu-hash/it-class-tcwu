@@ -1,3 +1,18 @@
+# 共用連連看：修正版SQL已套用，待發布（2026-11-19）
+
+- 使用者已明確核准PR334 c3e8098a修正版兩函式SQL；本次已成功套用。正式前後原卷／三筆凍結rich與答案設定／quiz_answers、quiz_open_responses、quiz_past_attempts、partner answers整表摘要相同；只更新核准兩函式及媒體映射。180函式production snapshot已更新，db-snapshot-check --live通過。未動guard、未送學生答案。
+- 最新工作樹D:/AI-Work/matching-publish-20261119由最新origin/main新建承接PR334；下一步合併PR、全新乾淨main依release-from-main發布，再正式唯讀驗收與收據PR。下方待核准為本次核准前的歷史紀錄，不再等待相同SQL核准。
+
+- 使用者核准PR334原1函式SQL；正式交易被ALLOCATION_SOURCE_FROZEN拒絕，完整回滾，讀回原函式／原卷／三rich指紋相同。未發布、無發布鎖。先前隔離未安裝source triggers，已補SOP。
+- 最新工作樹D:/AI-Work/matching-final-20261119由最新origin/main ba95b908新建。修正版更新2既有函式（public.quiz_past_has_media、partner_pilot.learning_snapshot），原圖僅投影至授權mine/shared；加媒體映射，不UPDATE凍結題目、不改trigger／作答／配題。第二函式需本次重新明確核准，尚未套用。
+- 安裝實際allocation source triggers與已分配小隊的12組隔離驗收通過；證據D:/AI-Work/matching-release-evidence-20261119/。前端仍是615情境已驗版本。下一步核准修正版後套用、snapshot／live check、PR進main、全新乾淨main依release-from-main發布。下方2026-11-18為原始進度，SQL範圍以上列修正為準。
+
+- Codex-shared-matching-20261118唯一寫入者；由最新origin/main `ba95b908`新工作樹 `D:/AI-Work/shared-matching-20261118`，分支 `codex/shared-matching-20261118`。尚未持有發布鎖，未發布中。
+- 題庫全域掃描後納入74一般版本／76連線區、27舊卷組與29夥伴銀行位置；7固定／草稿副本沿用相同來源指紋。共用真實連線卡片供個人、整份回顧、夥伴使用；保留欄位／值、既有作答、一次送出與外層。NAS原件、原圖及來源SHA核對，未送外部AI。
+- 615項桌機／平板／手機瀏覽器情境、75項相關回歸、另11項quiz基礎回歸、21產物、隔離SQL8組驗證通過。證據 `D:/AI-Work/shared-matching-evidence-20261118/`；[範圍與限制](quiz-matching-20261118.md)。
+- `supabase/quiz-matching-original-media.sql`尚未核准／未套用：1個既有私有媒體判斷函式，只對完整原卷指紋補3張既有原圖；3筆夥伴rich及媒體映射，不改原卷／答案／作答／權限。需使用者本次明確核准，既有PR295／298／305核准不涵蓋。核准後套用精確SQL，更新production-snapshot與live check、PR進main，再依release-from-main發布。不可先發布造成舊卷缺圖。
+- 下一步：具體PR請使用者核准SQL；核准前不操作正式庫。正式基準仍 `dpl_9yvvb9rXMBmo6SJUDh5sUzFLdbb4`。本機QA服務／分頁已關，先前使用者連連看與排序示範保留。
+
 # 框詞小題字級：已正式發布（2026-11-18）
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |

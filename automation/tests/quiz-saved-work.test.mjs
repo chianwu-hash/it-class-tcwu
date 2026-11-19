@@ -27,6 +27,10 @@ test('算式／直式原生一次送答、固定答案判分、保存與隔離�
   const old=await seed(legacy);await call(old,'join');await send(old,JSON.stringify({v:1,f:{q:'3',r:'1'}}));
   const oldRows=(await db.query('select md5(row_to_json(a)::text) hash from public.quiz_answers a')).rows;
   const fixture=JSON.parse(await fs.readFile('automation/fixtures/quiz-saved-work-before.json','utf8'));
+  // The production snapshot already contains this migration. Restore its exact
+  // pre-migration functions in this synthetic database before testing the guard,
+  // upgrade and preservation of the legacy response seeded above.
+  for(const definition of fixture.definitions)await db.exec(definition.definition.replaceAll('\r\n','\n'));
   const migration=buildSavedWorkMigration(fixture.definitions);assert.equal(migration,(await fs.readFile('supabase/quiz-saved-work.sql','utf8')).replaceAll('\r\n','\n'));
   assert.equal(buildSavedWorkMigration(fixture.definitions.map(d=>({...d,definition:d.definition.replaceAll('\n','\r\n')}))),migration);
   await db.exec(migration);

@@ -7,6 +7,8 @@ import {readingPresentation} from './quiz-reading-presentation.mjs';
 import {fieldsReviewPresentation,appendFieldReviewStatus,decorateFieldReviewOption,appendFieldReviewReference} from './quiz-fields-review.mjs';
 import {validWorkSpec,workValue,workResponseError,renderWorkInput,renderSavedWork} from './quiz-work-response.mjs';
 import {renderSequenceCards} from './quiz-sequence.mjs';
+import {matchingPresentation} from './quiz-matching-presentation.mjs';
+import {renderMatchingBoard,appendMatchingOriginal} from './quiz-matching.mjs';
 export {fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
 
 const own=(o,k)=>o&&Object.hasOwn(o,k);
@@ -37,12 +39,17 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
  const values=fieldsValues(q,raw),group=make('div');group.className='quiz-fields';group.classList.toggle('quiz-fields-single',q.fields.length===1);
  const reading=readingPresentation(choiceQuestionPresentation(q));group.classList.toggle('quiz-reading-fields',Boolean(reading));
  const shown=q.fields.map((f,i)=>reading?.fields?.[i]??fieldPresentation(q,f)),feedback=locked?fieldsReviewPresentation({...q,fields:shown},raw,review):null;
+ const matching=matchingPresentation(choiceQuestionPresentation(q),shown);
  const formatPair=(id,value)=>{const f=shown.find(f=>f.id===id);return f.label+'：'+formatted(f,value)};
  let work=workValue(raw);
  const changed=()=>onChange(JSON.stringify({v:1,f:values,...(q.work?{w:work}:{} )}));
  const editor=renderWorkInput(group,q,{raw,locked,saved,onChange:value=>{work=value;changed()}});group.sketchEditors=editor?[editor]:[];
  if(!fieldsAreSingleChoice(q))group.append(make('p',feedback?'你原本的作答已保留；請看各小題旁的核對結果。':q.fields.length===1?'填好答案後送出。':'依照題目順序填好每格，再一起送出。'));
  for(const [fieldIndex,storedField] of q.fields.entries()){
+  if(matching?.covered.has(fieldIndex)){
+   const board=matching.boards.find(b=>b.indices[0]===fieldIndex);if(board)renderMatchingBoard(group,board,{values,locked,renderContent,accepted:feedback?Object.fromEntries(board.left.map(l=>[l.id,feedback[shown.findIndex(f=>f.id===l.id)]?.accepted])):null,onChange:next=>{Object.assign(values,next);changed();}});
+   continue;
+  }
   const f=reading?.fields?.[fieldIndex]??fieldPresentation(q,storedField);
   const slot=make('fieldset'),legend=make('legend',f.label),id='field-'+q.id+'-'+f.id;slot.className='quiz-field';slot.append(legend);
   if(reading?.questions[fieldIndex]){const question=reading.questions[fieldIndex];
@@ -69,13 +76,16 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
   }
   appendFieldReviewReference(slot,feedback?.[fieldIndex],v=>formatted(f,v),formatPair);group.append(slot);
  }
- host.append(group);return group;
+ if(matching)appendMatchingOriginal(group,matching.original,renderContent);host.append(group);return group;
 }
 export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,referenceAnswer=null,showWork=true}){
  if(showWork&&raw&&q.work)renderSavedWork(host,q,raw);
  const reading=readingPresentation(choiceQuestionPresentation(q));
  const shown=(q.fields||[]).map((f,i)=>reading?.fields?.[i]??fieldPresentation(q,f)),feedback=fieldsReviewPresentation({...q,fields:shown},raw,review),formatPair=(id,v)=>{const f=shown.find(f=>f.id===id);return f.label+'：'+formatted(f,v)};
- for(const [index,stored] of (q.fields||[]).entries()){const f=shown[index],reference=referenceAnswer?.format==='fields-v1'?referenceAnswer.fields?.[f.id]:null;if(!f.options&&!reading?.questions[index]&&!feedback?.[index]&&!reference)continue;
+ const matching=matchingPresentation(choiceQuestionPresentation(q),shown);
+ for(const [index,stored] of (q.fields||[]).entries()){const f=shown[index],reference=referenceAnswer?.format==='fields-v1'?referenceAnswer.fields?.[f.id]:null;
+  if(matching?.covered.has(index)){const board=matching.boards.find(b=>b.indices[0]===index);if(board)renderMatchingBoard(host,board,{values:fieldsValues(q,raw),locked:true,referenceOnly:!raw&&referenceAnswer?.format==='fields-v1',renderContent,accepted:review?.answer?.format==='fields-v1'?review.answer.fields:referenceAnswer?.format==='fields-v1'?referenceAnswer.fields:null});continue;}
+  if(!f.options&&!reading?.questions[index]&&!feedback?.[index]&&!reference)continue;
   const section=make('section');section.className='quiz-field-preview'+(f.input==='set'?' quiz-field-preview-set':'');const question=reading?.questions[index],hasMedia=question?.media.length;const title=make('h5',question&&!hasMedia?(reading.numbered?`(${reading.numbers[index]}) `:''):f.label);if(question&&!hasMedia)renderContent(title,question);section.append(title);if(hasMedia)renderContent(section,reading.reviewKind==='picture-bank'?{...question,text:'',layout:question.layout.slice(1)}:question);const display=f.input==='single'?booleanChoicePresentation(f.options):null;
   appendFieldReviewStatus(section,feedback?.[index]);
   if(f.input==='sequence')renderSequenceCards(section,f,{value:raw?fieldsValues(q,raw)[f.id]:reference?.[0],locked:true,renderContent,accepted:feedback?.[index]?.accepted});
@@ -85,6 +95,7 @@ export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,ref
   if(!feedback?.[index]&&Array.isArray(reference)){const box=make('div');box.className='quiz-field-review-reference';box.append(make('p','參考答案：'+reference.map(v=>formatted(f,v)).join(' 或 ')));section.append(box);}
   if(!feedback?.[index])for(const tuple of referenceAnswer?.tuples||[])if(tuple.fields[0]===f.id){const box=make('div');box.className='quiz-field-review-reference';box.append(make('strong','這些欄位須同時符合的完整配對'));for(const accepted of tuple.accepted)box.append(make('p',tuple.fields.map(id=>formatPair(id,accepted[id])).join('；')));section.append(box);}
  }
+ if(matching)appendMatchingOriginal(host,matching.original,renderContent);
 }
 const formatted=(f,v)=>{
  if(f.input==='sketch')return v?.strokes?.length?'已儲存手寫內容（'+v.strokes.length+'筆）':'未填';

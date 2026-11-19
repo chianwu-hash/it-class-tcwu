@@ -4,6 +4,8 @@ import {createAuthenticatedTransport} from './quiz-transport.mjs?v=20261029-batc
 import {initImageLightbox} from './image-lightbox.js';
 import {renderContent} from './quiz-render.mjs';
 import {createMediaScope} from './quiz-media.mjs';
+import {pastMatchingPresentation} from './quiz-matching-past.mjs';
+import {renderMatchingBoard} from './quiz-matching.mjs';
 let session=null,generation=0,scope=null;
 const host=document.getElementById('teacher-preview'),status=document.getElementById('teacher-status'),picker=document.getElementById('teacher-paper');
 const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
@@ -24,8 +26,9 @@ async function preview(id){
   for(const g of data.document.groups){
    const card=el('article',undefined,'question-card teacher-past-card');card.append(el('h2',g.title));
    rich(card,g.materialContent||{text:g.material,media:[]});if(g.promptContent?.text)rich(card,g.promptContent);
-   for(const a of g.assets)art(card,a);
-   const display=g.kind==='single'?booleanChoicePresentation(g.choices):null;for(const [i,c] of g.choices.entries()){const row=el('div',undefined,'teacher-choice');row.append(el('b',(display?.[i].badge??c.id)+'　'));if(display)row.append(el('span',display[i].text));else rich(row,c.content||{text:c.text,media:[]});card.append(row);}
+   const matching=pastMatchingPresentation(g);if(matching)renderMatchingBoard(card,matching.board,{locked:true,referenceOnly:true,accepted:Object.fromEntries(g.fields.map(f=>[f.id,[f.answer]])),renderContent:rich});
+   else{for(const a of g.assets)art(card,a);
+   const display=g.kind==='single'?booleanChoicePresentation(g.choices):null;for(const [i,c] of g.choices.entries()){const row=el('div',undefined,'teacher-choice');row.append(el('b',(display?.[i].badge??c.id)+'　'));if(display)row.append(el('span',display[i].text));else rich(row,c.content||{text:c.text,media:[]});card.append(row);}}
    for(const f of g.fields){const source=data.provenance.entries?.find(e=>e.id===f.id);card.append(el('p',f.text),el('p','官方答案：'+(['annotation','manual'].includes(g.kind)?f.reference||'請對照官方參考圖':JSON.stringify(f.answer))));if(source)card.append(el('p',`原卷第${source.source.page}頁／解答第${source.answerSource.page}頁；${f.points}分`,'source-label'));}
    if(g.referenceUrl){card.append(el('h3','官方參考圖（教師可見）'));art(card,{url:g.referenceUrl,alt:'官方解答局部參考'});}host.append(card);
   }
