@@ -41,3 +41,7 @@ Codex額外實測修正4個接寫來源的框詞遺失，投影只限完全相�
 - 不變更資料庫、名冊、既有學生答案、自評或固定參考答案；本機案例使用隔離替身，正式驗收只讀。
 
 私有證據：`D:/AI-Work/question-type-review-evidence-20261119/`；完整Claude信箱、請求／回應、四次run與來源指紋保留在本機，不提交私有題目、學生資料或憑證。
+
+## 發布與正式唯讀驗收
+
+PR370合併main `35b7f439`，乾淨main透過release-from-main發布 `dpl_2VMNTtU2r4NL2CdgMmYbncMkgo5S`；完整檔案樹30改0增0刪、eolOnly0，候選10檔與正式30檔HTTP／SHA相同。分身01正式三年級場次第38題桌機／手機11格9綠2紅、正確答案旁註與圖例正常；原responses／open_responses前後一致，未送答案或自評、未改名冊，截圖已目視核。回滾 `dpl_FoeTtAgd3coLPrvFjRniEqgh44ee`，發布鎖與暫存頁租約釋放。
