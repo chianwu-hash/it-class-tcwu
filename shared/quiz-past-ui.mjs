@@ -4,6 +4,8 @@ import {applySourceCrop} from './quiz-source-crop.mjs?v=20261102-transcribed';
 import {renderMathResponse,mathResponseComplete,mathResponseError} from './quiz-math-response.mjs?v=20261102-math-audio';
 import {renderLocalContent as renderScopedContent} from './quiz-past-content.mjs?v=20261102-transcribed';
 import {renderManualResponse} from './quiz-past-manual.mjs';
+import {pastWritingGuide} from './quiz-writing-past.mjs';
+import {renderWritingSupplement} from './quiz-open-response.mjs';
 import {attachPastInputKeyboard} from './quiz-past-input.mjs?v=20261102-math-audio';
 import {createQuestionReport,mountQuestionReport} from './quiz-question-reports.mjs';
 import {renderPastLearningReview} from './quiz-past-learning-review.mjs';
@@ -123,7 +125,7 @@ function render(){if(!active)return;study.refresh();
  }else if(g.kind==='manual'){
   const manualPrompt=el('div',undefined,'material');renderLocalContent(manualPrompt,{text:g.fields[0].text,media:[]});right.append(manualPrompt);
   renderManualResponse({host:right,value:values,locked,asset:g.assets[0],resolveAsset});
-  if(saved){const ref=el('div',undefined,'reference');ref.append(el('h3',saved.referenceStatus==='not_provided'?'作答已保留・不自動判分':saved.referenceStatus==='partial'?'對照已確認的官方參考':'對照官方參考，自己檢查'));renderLocalContent(ref,{text:saved.reference||'這題採自我核對。',media:[]});if(saved.referenceUrl)ref.append(art({url:saved.referenceUrl,alt:'官方解答局部參考圖'}));right.append(ref);}
+  if(saved){const ref=el('div',undefined,'reference');ref.append(el('h3',saved.referenceStatus==='not_provided'?'作答已保留・不自動判分':saved.referenceStatus==='partial'?'對照已確認的官方參考':'對照官方參考，自己檢查'));renderLocalContent(ref,{text:saved.reference||'這題採自我核對。',media:[]});if(saved.referenceUrl)ref.append(art({url:saved.referenceUrl,alt:'官方解答局部參考圖'}));renderWritingSupplement(ref,pastWritingGuide(g),{family:/短語/u.test(g.title)?'phrase':'sentence',explain:true});right.append(ref);}
  }else if(g.kind==='annotation'){
   left.append(el('p',g.fields[0].text,'material'));renderDrawing(g,right,locked,values);
   if(saved){const ref=el('div',undefined,'reference');ref.append(el('h3','對照官方標記，自己檢查'),el('p','看看施力點的位置與箭頭方向。這是自我核對，不是老師評分，也不計入分數。'));ref.append(art({url:saved.referenceUrl,alt:'官方解答局部參考圖'}));right.append(ref);}

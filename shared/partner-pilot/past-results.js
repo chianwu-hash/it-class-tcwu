@@ -4,6 +4,8 @@ import {revealedPastChoice} from './answer-feedback.mjs';
 import {renderContent} from './past-content.js';
 import {partnerMatchingPresentation} from '../quiz-matching-past.mjs';
 import {renderMatchingBoard} from '../quiz-matching.mjs';
+import {partnerWritingGuide} from '../quiz-writing-past.mjs';
+import {renderWritingSupplement} from '../quiz-open-response.mjs';
 export function mountPastResults(root,{question,loadAsset}){
  for(const host of root.querySelectorAll('[data-past-result]')){
   const q=question(Number(host.dataset.pastResult)),value=q.attempts.at(-1)?.value;if(value===undefined&&(!Object.hasOwn(q,'pastReference')||q.past.selfCheck||['manual','annotation','short'].includes(q.past.kind)))continue;
@@ -12,6 +14,7 @@ export function mountPastResults(root,{question,loadAsset}){
   const display=q.past.kind==='single'?booleanChoicePresentation(q.past.choices,q.rich?.options):null;
   const label=v=>{const i=q.past.choices.findIndex(c=>c.id===v),c=q.past.choices[i];return display&&i>=0?display[i].badge+' '+display[i].text:typeof v==='boolean'?(v?'打勾／是':'不打勾／否'):c&&c.text&&c.text!==v?v+'・'+c.text:String(v);};
   if(value!==undefined){text.textContent=q.past.kind==='manual'?value.text:typeof value==='object'&&!Array.isArray(value)?value.answer+(value.working?'\n過程：'+value.working:''):Array.isArray(value)?value.map(label).join(q.past.kind==='sequence'?' → ':'、'):label(value);host.append(text);}
+  if(q.past.kind==='manual'&&value!==undefined)renderWritingSupplement(host,partnerWritingGuide(q),{family:/短語/u.test(q.title)?'phrase':'sentence',explain:true});
   const model=choiceReviewModel({kind:q.past.kind,choices:q.past.choices,codes:q.past.codes,value,official:q.pastReference,correct:q.attempts.at(-1)?.correct,revealed:Object.hasOwn(q,'pastReference'),selfCheck:q.past.selfCheck});
   if(model&&!root.querySelector(`[data-past-answer="${q.id}"][data-past-locked]`))appendChoiceReview(host,model,{renderContent:(box,c)=>renderContent(box,c,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});
   if(q.past.kind==='manual'&&value?.strokes?.length){
