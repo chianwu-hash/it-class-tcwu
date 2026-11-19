@@ -7,12 +7,13 @@ import {openSubquestionPresentation} from './quiz-open-subquestions.mjs';
 import {answerTemplatePresentation,mountAnswerTemplate} from './quiz-answer-templates.mjs';
 import {openCompositionReview} from './quiz-open-composition.mjs';
 import {phoneticWordFields} from './quiz-field-input-aids.mjs';
+import {phoneticWordReview} from './quiz-phonetic-word-review.mjs';
 
 const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 const only=(v,keys)=>object(v)&&Object.keys(v).every(k=>keys.includes(k));
 const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 export const openResponseError=(q,raw)=>hasSketchFields(q)?openSketchResponseError(q,raw):fieldsResponseError(q,raw);
-export const openReferenceSummary=(q,answer=q.answer)=>{const composed=openCompositionReview(choiceQuestionPresentation(q),answer);if(composed)return composed.groups.map(g=>g.title+'：'+g.examples.join('／')).join('；')+'；整組檢核：'+composed.criteria.join('、');return (openSubquestionPresentation(choiceQuestionPresentation(q))?.fields??choiceQuestionPresentation(q).fields).map(f=>{
+export const openReferenceSummary=(q,answer=q.answer)=>{const phonetic=phoneticWordReview(choiceQuestionPresentation(q),answer);if(phonetic)return phonetic.cards.map(c=>c.character+'：'+c.entries.map(e=>'注音 '+e.readings.join('／')+'；造詞 '+[...e.words,...e.given].join('、')).join('；')).join('；');const composed=openCompositionReview(choiceQuestionPresentation(q),answer);if(composed)return composed.groups.map(g=>g.title+'：'+g.examples.join('／')).join('；')+'；整組檢核：'+composed.criteria.join('、');return (openSubquestionPresentation(choiceQuestionPresentation(q))?.fields??choiceQuestionPresentation(q).fields).map(f=>{
  const ref=answer.fields[f.id];return `${f.label}：參考例答 ${ref.examples.join('／')}；檢核 ${ref.criteria.join('、')}`;
 }).join('；');};
 
@@ -73,7 +74,7 @@ export function destroyOpenSketchEditors(root){root?.querySelectorAll('.quiz-ope
 export function disableOpenSketchEditors(root,disabled){root?.querySelectorAll('.quiz-open-inputs,.quiz-fields').forEach(group=>group.sketchEditors?.forEach(editor=>editor.setDisabled(disabled)));}
 
 export function renderOpenReferences(host,q,answer,{raw=''}={}){
- q=choiceQuestionPresentation(q);const composed=openCompositionReview(q,answer,{raw});if(!composed)return false;
+ q=choiceQuestionPresentation(q);const phonetic=phoneticWordReview(q,answer,{raw});if(phonetic){renderPhoneticWordReferences(host,phonetic);return true;}const composed=openCompositionReview(q,answer,{raw});if(!composed)return false;
  const box=make('div',undefined,'quiz-open-composition-review');
  for(const group of composed.groups){
   const section=make('section',undefined,'quiz-open-reference');section.append(make('h5',group.title));
@@ -85,6 +86,23 @@ export function renderOpenReferences(host,q,answer,{raw=''}={}){
  const criteria=make('ul');for(const text of [...new Set([...composed.criteria,...(composed.guide?.checks||[])])])criteria.append(make('li',text));notes.append(criteria);box.append(notes);
  renderWritingSupplement(box,composed.guide,{family:composed.family});
  host.append(box);return true;
+}
+
+function renderPhoneticWordReferences(host,model){
+ const box=make('div',undefined,'quiz-open-composition-review quiz-phonetic-word-review');
+ for(const card of model.cards){
+  const section=make('section',undefined,'quiz-open-reference quiz-phonetic-word-card');section.append(make('h5',card.character),make('p',card.note));
+  for(const [i,entry]of card.entries.entries()){
+   const group=make('div',undefined,'quiz-phonetic-word-reading');if(card.entries.length>1)group.append(make('h6','第'+(i+1)+'組讀音'+(entry.given.length?'（'+entry.given.join('、')+'）':'')));
+   if(entry.student){group.append(make('p','你的作答：','helper'));const own=make('dl',undefined,'quiz-phonetic-word-original');own.append(make('dt','注音'),make('dd',entry.student.phonetic||'【未填】'));if(entry.wordField)own.append(make('dt','造詞'),make('dd',entry.student.word||'【未填】'));group.append(own);}
+   const reference=make('dl',undefined,'quiz-phonetic-word-original');reference.append(make('dt','注音參考'),make('dd',entry.readings.join('／')));if(entry.words.length)reference.append(make('dt','造詞原參考'),make('dd',entry.words.join('、')));if(entry.given.length)reference.append(make('dt','原題提供的詞'),make('dd',entry.given.join('、')));group.append(reference);
+   for(const text of entry.issues)group.append(make('p',text,'quiz-phonetic-word-issue'));
+   if(entry.supplements.length){group.append(make('h6','更多造詞（同讀音）'));for(const supplement of entry.supplements){if(entry.readings.length>1)group.append(make('p',supplement.reading+'：'));const list=make('ul',undefined,'quiz-phonetic-word-examples');for(const word of supplement.words){const item=make('li');item.append(make('strong',word.word),make('span',word.reading));list.append(item);}group.append(list);}}
+   else group.append(make('p','這個讀音可用的常見組合較少，先熟悉上面的原參考，不必為了數量拼湊詞語。','helper'));
+   const details=make('details'),summary=make('summary','原檢核要求'),list=make('ul');for(const text of entry.criteria)list.append(make('li',text));details.append(summary,list);group.append(details);section.append(group);
+  }box.append(section);
+ }
+ const source=make('p','補充詞例為學習參考，不是唯一答案或自動判分條件。詞目與讀音核對：','helper');for(const [title,url]of [['教育部《國語辭典簡編本》','https://language.moe.gov.tw/001/Upload/Files/site_content/M0001/respub/dict_concised_download.html'],['《重編國語辭典修訂本》','https://language.moe.gov.tw/001/Upload/Files/site_content/M0001/respub/dict_reviseddict_download.html']]){const link=make('a',title);link.href=url;link.target='_blank';link.rel='noopener';source.append(link,document.createTextNode(' '));}source.append(document.createTextNode('20260929版；量詞組合另為用法示範。'));box.append(source);host.append(box);
 }
 
 export function renderWritingSupplement(host,guide,{family='sentence',explain=false}={}){
