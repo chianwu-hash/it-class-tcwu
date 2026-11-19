@@ -1,9 +1,13 @@
-# 剩餘題型原位作答：待發布（2026-11-19）
+# 剩餘題型原位作答：已正式發布（2026-11-19）
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-remaining-answer-20261119 | 2026-11-19T01:35:06.484Z | `5964de8` | `dpl_82CosB6JSJL11pkPLgB2xvM1py6r` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/rich-content.js、shared/partner-pilot/structured-answer.js、shared/quiz-fields-presentation.mjs、shared/quiz-fields.css、shared/quiz-fields.mjs、shared/quiz-open-response.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-answer-template-sources.mjs、+shared/quiz-answer-templates.css、+shared/quiz-answer-templates.mjs | `dpl_21ecW6TRci1RnMmPLRYJrxtu27Aw`／回滾 `dpl_82CosB6JSJL11pkPLgB2xvM1py6r`（eolOnly 0） |
 
 - Codex-remaining-answer-20261119由最新origin/main 3f6bb620建立新工作樹。第32題六欄改兩組原句內作答，擴大核對2,717完整候選；2,309來源／5,954原欄位採共用對位，其餘已有共用呈現或完整任務／明確欄名者保留。
 - 原件、媒體SHA核對；42回歸、4,618全來源桌手機輸入／鎖定及330桌平板手機個人／整份回顧／夥伴完整流程通過。舊卷83版本／2,607組同步掃描，51相關組已有完整欄名。無SQL、DML、正式作答或AI呼叫。
 - 保留原ID、作答值、自評、一次送出與外層；完整圖題同卡，不猜座標。新表格控制項DOM不可從內容快取重用，回顧不得附第二組原欄。詳[來源及驗收](quiz-answer-templates-20261119.md)。私有證據D:/AI-Work/remaining-answer-evidence-20261119/。
-- 下一步：經PR進main，乾淨main由release-from-main發布、HTTP比對及指定帳號原卷第32題唯讀驗收，完成收據PR後清理本案工作樹；保留使用者示範服務。
+- PR338已合併，乾淨main 5964de82由release-from-main發布，完整樹28改3增0刪／eolOnly0；候選9檔、正式31檔HTTP／SHA一致。正式部署 dpl_21ecW6TRci1RnMmPLRYJrxtu27Aw，回滾 dpl_82CosB6JSJL11pkPLgB2xvM1py6r。指定帳號原卷第32題1280／390唯讀核到兩組各三框與連接詞，responses／open_responses前後相同，未送答案或自評。發布鎖及測試瀏覽器租約釋放；收據PR後清理本案工作樹，保留使用者示範服務。
 
 # 同部首小題與作答框：已正式發布（2026-11-19）
 
