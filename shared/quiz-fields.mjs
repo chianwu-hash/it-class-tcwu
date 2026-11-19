@@ -9,6 +9,7 @@ import {validWorkSpec,workValue,workResponseError,renderWorkInput,renderSavedWor
 import {renderSequenceCards} from './quiz-sequence.mjs';
 import {matchingPresentation} from './quiz-matching-presentation.mjs';
 import {renderMatchingBoard,appendMatchingOriginal} from './quiz-matching.mjs';
+import {answerTemplatePresentation,mountAnswerTemplate} from './quiz-answer-templates.mjs';
 export {fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
 
 const own=(o,k)=>o&&Object.hasOwn(o,k);
@@ -76,9 +77,10 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
   }
   appendFieldReviewReference(slot,feedback?.[fieldIndex],v=>formatted(f,v),formatPair);group.append(slot);
  }
- if(matching)appendMatchingOriginal(group,matching.original,renderContent);host.append(group);return group;
+ if(matching)appendMatchingOriginal(group,matching.original,renderContent);else if(!reading)mountAnswerTemplate(group,choiceQuestionPresentation(q),{renderContent});host.append(group);return group;
 }
 export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,referenceAnswer=null,showWork=true}){
+ if(raw&&answerTemplatePresentation(choiceQuestionPresentation(q))){if(host.querySelector('.quiz-has-answer-template'))return;renderFieldsInputs(host,showWork?q:{...q,work:undefined},{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
  if(showWork&&raw&&q.work)renderSavedWork(host,q,raw);
  const reading=readingPresentation(choiceQuestionPresentation(q));
  const shown=(q.fields||[]).map((f,i)=>reading?.fields?.[i]??fieldPresentation(q,f)),feedback=fieldsReviewPresentation({...q,fields:shown},raw,review),formatPair=(id,v)=>{const f=shown.find(f=>f.id===id);return f.label+'：'+formatted(f,v)};

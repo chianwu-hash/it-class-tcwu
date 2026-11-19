@@ -4,6 +4,7 @@ import {hasSketchFields,openSketchResponseError} from './quiz-open-sketch.mjs';
 import {createSketchEditor,sketchImage} from './sketch/editor.mjs';
 import {choiceQuestionPresentation} from './quiz-choice-conversion.mjs';
 import {openSubquestionPresentation} from './quiz-open-subquestions.mjs';
+import {answerTemplatePresentation,mountAnswerTemplate} from './quiz-answer-templates.mjs';
 
 const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 const only=(v,keys)=>object(v)&&Object.keys(v).every(k=>keys.includes(k));
@@ -29,7 +30,7 @@ export function validateOpenQuestion(q,checkContent){
  return q;
 }
 
-export function renderOpenInputs(host,q,{raw='',locked=false,onChange}){
+export function renderOpenInputs(host,q,{raw='',locked=false,onChange,renderContent}){
  q=choiceQuestionPresentation(q);
  const presentation=openSubquestionPresentation(q);
  const values=fieldsValues(q,raw),group=make('div',undefined,'quiz-fields quiz-open-inputs');
@@ -52,15 +53,15 @@ export function renderOpenInputs(host,q,{raw='',locked=false,onChange}){
   if(field.label.includes('注音'))attachPastInputKeyboard(slot,input,{bopomofo:true});
   group.append(slot);
  }
- host.append(group);return group;
+ mountAnswerTemplate(group,q,{renderContent});host.append(group);return group;
 }
 
 function appendSketch(host,value,label){
  if(!value?.strokes?.length){host.append(make('p','這一欄尚未儲存手寫內容。','helper'));return;}
  const svg=sketchImage(value);svg.setAttribute('aria-label',label+'・已儲存手寫內容');svg.classList.add('quiz-open-sketch-saved');host.append(svg,make('p','手寫內容已儲存，請對照參考例答與檢核重點。','helper'));
 }
-export function renderOpenSavedSketches(host,q,raw){
- if(openSubquestionPresentation(choiceQuestionPresentation(q))){renderOpenInputs(host,q,{raw,locked:true,onChange:()=>{}});return;}
+export function renderOpenSavedSketches(host,q,raw,{renderContent}={}){
+ if(openSubquestionPresentation(choiceQuestionPresentation(q))||answerTemplatePresentation(choiceQuestionPresentation(q))){renderOpenInputs(host,q,{raw,locked:true,onChange:()=>{},renderContent});return;}
  if(!hasSketchFields(q))return;
  const values=fieldsValues(q,raw);
  for(const field of q.fields.filter(f=>f.input==='sketch')){const slot=make('section',undefined,'quiz-field quiz-open-sketch');slot.append(make('h4',field.label));appendSketch(slot,values[field.id],field.label);host.append(slot);}
