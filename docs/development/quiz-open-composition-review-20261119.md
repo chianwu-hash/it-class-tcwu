@@ -23,4 +23,4 @@
 - 29版本×1280／768／390×個人／夥伴，共174完整流程：送答前無參考、原欄位一次提交、完整例答、學生原值組合、個人自評備註／practice原樣保存及整份回顧、夥伴接回與共同回顧、無溢出及瀏覽器錯誤。正式作答不提交。
 - 21練功坊產物核對；私有原件核對、封包與截圖在D:/AI-Work/open-review-evidence-20261119/。
 
-狀態：待main發布及正式原卷唯讀驗收。
+狀態：PR340合併main 28eeab9d，由乾淨main依release-from-main發布至dpl_69z7YTAwd9eKRgEroXBGAj4q6Rbn。完整樹26改2增0刪／eolOnly0，候選7及正式28檔HTTP／SHA一致。正式原卷第32題1280／390唯讀確認兩組完整參考、四個補充短語與兩個句子，學生原字串組合正確，responses／open_responses前後相同，未送答案或自評。回滾dpl_21ecW6TRci1RnMmPLRYJrxtu27Aw；發布鎖、測試分頁及租約釋放，收據見agent-handoff。

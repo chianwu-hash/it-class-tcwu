@@ -1,9 +1,13 @@
-# 仿寫與接寫完整參考：待發布（2026-11-19）
+# 仿寫與接寫完整參考：已正式發布（2026-11-19）
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-open-composition-20261119 | 2026-11-19T02:45:10.067Z | `28eeab9` | `dpl_21ecW6TRci1RnMmPLRYJrxtu27Aw` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/structured-answer.js、shared/quiz-explanation-references.mjs、shared/quiz-fields.css、shared/quiz-open-response.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-open-composition-sources.mjs、+shared/quiz-open-composition.mjs | `dpl_69z7YTAwd9eKRgEroXBGAj4q6Rbn`／回滾 `dpl_21ecW6TRci1RnMmPLRYJrxtu27Aw`（eolOnly 0） |
 
 - Codex-open-composition-20261119由最新origin/main 4c39984f新工作樹處理。895開放版本盤點，核定29版本／44組（18短語、8造句、3接寫），原DOCX重新核SHA；原例答按原空格／連接詞完整組合，去重檢核，不改學生值或判分。
 - 指定第32題補四個短語及兩個句子用法，明說原題要求短語；只有三種核定結構採教學補充。原位作答、自評、一次送出、權限與外層保持。兩筆解析尾端頁碼雜訊以題文＋解析雙指紋投影移除，原資料不改。
 - 50回歸與174桌平板手機個人／整份／夥伴完整流程、21產物核對；無SQL、DML、即時AI或正式送答。詳[報告](quiz-open-composition-review-20261119.md)，私有證據D:/AI-Work/open-review-evidence-20261119/。
-- 下一步：PR進main、乾淨main由release-from-main發布及正式原卷第32題唯讀驗收，收據PR後清自有資源；不要重做PR338或其他已完成修正。
+- PR340合併main 28eeab9d，由乾淨main依release-from-main發布至dpl_69z7YTAwd9eKRgEroXBGAj4q6Rbn；完整樹26改2增0刪／eolOnly0，候選7及正式28檔HTTP／SHA一致。正式原卷第32題1280／390唯讀確認兩組完整參考、四個補充短語、兩個句子及原作答組合；responses／open_responses前後相同，未送答案／自評。回滾dpl_21ecW6TRci1RnMmPLRYJrxtu27Aw。發布鎖、測試分頁及租約釋放，收據PR後清本次工作樹；保留使用者示範，不重做已完成修正。
 
 # 剩餘題型原位作答：已正式發布（2026-11-19）
 
