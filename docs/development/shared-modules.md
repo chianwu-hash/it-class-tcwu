@@ -1,5 +1,9 @@
 # 共用模組說明
 
+## 單純造詞的簡潔解析（2026-11-19）
+
+`quiz-word-meaning-review.mjs`以既有來源題型與模板指紋識別單純造詞，`quiz-word-meaning-guides.mjs`提供固定的簡短字義和多個例詞。`quiz-open-response.mjs`共用一字詞一卡，`quiz-server.mjs`及夥伴feedback／共同回顧在完整引導已可呈現時省去重複說明；缺來源、引導或授權仍沿原流程。原答案、原欄位、保存、自評與權限不變。詳[範圍與驗收](quiz-word-meaning-review-20261119.md)。
+
 ## 改錯題指示與欄名（2026-11-18）
 
 `quiz-correction-presentation.mjs` 配合 NAS 核對後的 `quiz-correction-reviewed-sources.mjs`，以完整題文／欄位指紋補「填入正確的字」指示與有意義欄名，透過 `quiz-student-content.mjs` 接一般題共用呈現。故意錯字、原 ID、答案、固定版本及既有回應保持。未知來源不能由語感推測；來源或欄位換版後須重掃。

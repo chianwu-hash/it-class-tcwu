@@ -1,4 +1,5 @@
 import {booleanChoicePresentation} from '../quiz-boolean-choice.mjs?v=20261107-boolean-choice';
+import {wordMeaningReview} from '../quiz-word-meaning-review.mjs';
 // Presentation only. pastReference is supplied by the server after its reveal gate.
 export function revealedPastChoice(q){
  if(q.past?.kind!=='single'||q.past.selfCheck||!Object.hasOwn(q,'pastReference'))return null;
@@ -16,6 +17,7 @@ export function feedbackExplanation(q){
 }
 export function answerFeedback(q,{fragment,esc}){
  const last=q.attempts?.at(-1);if(!last)return '';
+ if(wordMeaningReview(q.normal,q.normalReference))return `<section class="feedback partner-answer-feedback" data-feedback-state="self-check"><div data-structured-reference="${q.id}"></div></section>`;
  const state=last.correct===true?'correct':last.correct===false?'incorrect':'self-check',choice=revealedPastChoice(q);
  const heading=q.normal?.work?(state==='correct'?'答案欄答對了！':'答案欄還沒全對，一起核對解法。'):state==='correct'?'這題答對了！':state==='incorrect'?'這題還沒答對，一起看看解題想法。':'已留下作答，請和參考內容自我核對。';
  const display=choice?booleanChoicePresentation(q.past.choices,q.rich?.options)?.[choice.index]:null;
