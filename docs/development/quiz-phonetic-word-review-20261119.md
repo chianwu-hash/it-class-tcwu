@@ -25,4 +25,4 @@
 - 少數詞例完成選詞後，另42代表流程複驗通過，涵蓋第36題、同列兩對、多音字及三個參考疑義。
 - 21產物核對。私有證據`D:/AI-Work/phonetic-word-review-evidence-20261119/`。
 
-發布狀態：待依main發布。
+發布狀態：PR355合併main `8b5f6a96`，乾淨main發布至`dpl_6JSUzDvvqWTvGsnZYkoh3YCvTY8o`。完整樹23改2增0刪／eolOnly0，候選7與正式25檔HTTP／SHA符合main。正式第36題桌手機4字卡、每卡6個額外詞例及原注音／造詞原字串均符合；原responses／open_responses前後相同，未送答案／自評。回滾`dpl_FLqd9aVGVGHuFGKMfmEaqkBNUoA6`，發布鎖、測試租約與分頁釋放。

@@ -1,8 +1,14 @@
-# 字音造詞逐字分組解析：待依main發布（2026-11-19）
+# 字音造詞逐字分組解析：已正式發布（2026-11-19）
+
+## 發布登記
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-phonetic-word-review-20261119 | 2026-11-19T11:56:31.119Z | `8b5f6a9` | `dpl_FLqd9aVGVGHuFGKMfmEaqkBNUoA6` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-fields.css、shared/quiz-open-response.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-phonetic-word-examples.mjs、+shared/quiz-phonetic-word-review.mjs | `dpl_6JSUzDvvqWTvGsnZYkoh3YCvTY8o`／回滾 `dpl_FLqd9aVGVGHuFGKMfmEaqkBNUoA6`（eolOnly 0） |
 
 - Codex-phonetic-word-review-20261119從最新origin/main 59ae170c新工作樹處理第36題八格各一張解析的問題。176原生版本／320原欄組按字合為308卡，同字多音分開讀音；學生原值、原注音／造詞參考與原題給詞保留，原檢核折疊在字組，另列多個同讀音詞例及全文讀音。題目、答案、JSON、一次送出、自評、外層及SQL不改。
 - 程式核教育部兩部辭典20260929版，272字音指引／1773詞例條目、依來源扣原例後1578筆補充呈現；優先適合任務的詞，不硬湊罕見詞。176份NAS原件清冊DOCX重讀核SHA，30回歸、1056三尺寸個人／夥伴完整流程及21產物通過；最後選詞的42代表流程複驗通過。詳[來源與驗收](quiz-phonetic-word-review-20261119.md)，私有證據D:/AI-Work/phonetic-word-review-evidence-20261119/。
-- 靦／靦腆、佼好／姣好與耶的辭典標音分歧只明列說明，不改原答；舊卷跨題／整包手寫不猜拆。本次不外送AI，不開未整科驗收的數學題。下一步：代表複驗、PR進main、乾淨main腳本發布、正式第36題四卡與原作答唯讀驗收、收據及清理。
+- 靦／靦腆、佼好／姣好與耶的辭典標音分歧只明列說明，不改原答；舊卷跨題／整包手寫不猜拆。本次不外送AI，不開未整科驗收的數學題。PR355合併main `8b5f6a96`，乾淨main依腳本發布至`dpl_6JSUzDvvqWTvGsnZYkoh3YCvTY8o`；完整樹23改2增0刪／eolOnly0，候選7及正式25檔HTTP／SHA一致。正式第36題1280／390確認植、直、值、殖四卡，每卡6個額外同讀音詞，原注音／造詞字串、responses／open_responses前後一致，未送答案／自評。回滾`dpl_FLqd9aVGVGHuFGKMfmEaqkBNUoA6`。發布鎖、測試租約與分頁釋放，收據PR後清本次工作樹，保留使用者示範。
 
 ## 發布登記
 
