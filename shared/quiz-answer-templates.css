@@ -14,6 +14,8 @@
 .quiz-answer-template-slot .quiz-input-keyboard-tools{flex-wrap:wrap}
 .quiz-answer-template-slot .past-input-tools{display:none;position:absolute;top:100%;left:0;width:max-content;max-width:min(320px,85vw);padding:7px;background:#fff;border:1px solid #d2dee2;border-radius:10px;box-shadow:0 4px 12px #18243d22;z-index:8}
 .quiz-answer-template-slot:focus-within .past-input-tools{display:flex}
+.quiz-answer-template-slot.quiz-answer-bopomofo-slot .past-input-tools{display:flex;position:static;width:max-content;max-width:100%;padding:4px 0 0;border:0;border-radius:0;background:transparent;box-shadow:none;z-index:auto}
+.quiz-answer-template-line:has(.quiz-answer-bopomofo-slot){align-items:flex-start}
 .quiz-answer-group-stem .preview-content{font-size:clamp(1.4rem,2.1vw,1.9rem)!important;line-height:1.8!important}
 .quiz-answer-group-controls,.quiz-answer-source-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:14px;min-width:0;margin-top:14px}
 .quiz-answer-group-controls .quiz-field,.quiz-answer-source-controls .quiz-field{grid-column:auto!important}
