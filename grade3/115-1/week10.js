@@ -3,6 +3,8 @@ import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261028
 import { initTypingTools } from '../../shared/typing-tools.js?v=20261028-keyboard';
 import { WEEK10_LEVELS, describeWeek10Mismatch } from './week10-content.mjs?v=20261102-week10';
 
+import { getTextbookKeyboardTarget } from './textbook-keyboard-target.mjs?v=20261119-zhuyin';
+
 const levelsData = WEEK10_LEVELS.map(({ id, ans }) => ({ id, ans }));
 const container = document.getElementById('typing-levels-container');
 let focusedLevel = 1;
@@ -10,7 +12,7 @@ const tools = initTypingTools({ keyboardGuide: true, getKeyboardTarget: () => {
     const input = document.getElementById(`input-level${focusedLevel}`);
     const line = (input?.value.slice(0, input.selectionStart ?? 0).match(/\n/g) || []).length;
     const text = levelsData[focusedLevel - 1].ans.split('\n')[line] ?? '';
-    return /[\u4e00-\u9fff]/.test(text) ? { lang: 'zh', text } : text;
+    return getTextbookKeyboardTarget(text);
 } });
 function refreshGuide() { tools?.refreshKeyboardGuide?.(); }
 container.querySelectorAll('input,textarea').forEach(input => {
