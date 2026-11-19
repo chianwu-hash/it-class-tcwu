@@ -1,9 +1,13 @@
-# 造句、短語與接寫補充例句：待依main發布（2026-11-19）
+# 造句、短語與接寫補充例句：已正式發布（2026-11-19）
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-composition-more-examples-20261119 | 2026-11-19T04:06:28.386Z | `855b31c` | `dpl_BNhh3g6aYJjFkhfTXVmXKMc1DFMR` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/past-results.js、shared/quiz-open-composition-sources.mjs、shared/quiz-open-composition.mjs、shared/quiz-open-response.mjs、shared/quiz-past-ui.mjs、shared/quiz-workshop/generated/assets.json、+shared/quiz-composition-example-guides.mjs、+shared/quiz-writing-example-guides.mjs、+shared/quiz-writing-past-sources.mjs、+shared/quiz-writing-past.mjs | `dpl_Cxv1RroCHdLnBRqCAynBfAY5bRfh`／回滾 `dpl_BNhh3g6aYJjFkhfTXVmXKMc1DFMR`（eolOnly 0） |
 
 - Codex-composition-more-examples-20261119由最新origin/main 73f0940d新分支／工作樹處理。168原生版本（18短語、8照樣造句、123詞語造句、19接寫）各有至少3個完整教學補充，原生適用呈現共506例；舊卷10版本35組與17夥伴凍結副本一併加入。原參考、作答、筆跡、自評、一次送出與外層不變，無SQL／DML／外部AI。
 - 60項回歸加6項夥伴完成回歸、1008原生三尺寸完整流程、156舊卷／夥伴三尺寸情境及21產物通過。兩組舊RPC套件缺已移除私有bundle，未以占位檔假稱通過；詳[範圍與證據](quiz-writing-examples-20261119.md)。私有證據D:/AI-Work/composition-more-examples-evidence-20261119/。
 - 原生168份沿既有NAS原件清冊重讀DOCX核SHA；舊卷依已核定凍結快照及既有原PDF審查紀錄，本次重核找得到的3份PDF，不冒稱重取全部舊原件。情境／字數／標點另編，原生接寫的原參考片段原樣保留；1筆新增解析頁碼雜訊採雙指紋顯示清理。SOP已補3至5完整例子規則。
-- 下一步：PR合併main、乾淨main發布腳本、候選／正式HTTP與正式第33題唯讀驗收、收據PR與清理。先前數學長線整科驗收尚未因此完成，不啟用未整科通過的內容。
+- PR346合併main 855b31cb，乾淨main依發布腳本上線至`dpl_Cxv1RroCHdLnBRqCAynBfAY5bRfh`；完整樹22改4增0刪、eolOnly0，候選7檔／正式26檔HTTP及SHA一致。正式第33題1280／390確認4個完整補充例句，responses／open_responses前後一致，未送答案或自評。回滾`dpl_BNhh3g6aYJjFkhfTXVmXKMc1DFMR`。發布鎖、測試分頁與租約釋放，收據PR後清本次工作樹；保留使用者示範。先前數學長線整科驗收尚未因此完成，不啟用未整科通過的內容。
 
 # 仿寫輸入超過基準後向右延伸：已正式發布（2026-11-19）
 

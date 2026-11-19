@@ -26,4 +26,4 @@
 - 另6項夥伴回顧完成／授權回歸通過。舊`quiz-past-exams`與`quiz-past-drafts`兩組RPC套件依賴已移除的舊私有bundle（主工作區該檔只有owner／notice），無有效fixture而未通過；不以占位檔宣稱完成。此次未改RPC／SQL，舊卷實際UI及原生資料庫自評測試已另驗。
 - 21練功坊產物核對，無SQL／DML／外部AI呼叫。私有原件／來源／瀏覽器證據：`D:/AI-Work/composition-more-examples-evidence-20261119/`。
 
-發布狀態：驗收中，尚未發布。
+發布狀態：PR346合併main `855b31cb`，乾淨main發布至`dpl_Cxv1RroCHdLnBRqCAynBfAY5bRfh`。完整樹22改4增0刪／eolOnly0，候選7檔及正式26檔HTTP／SHA一致。正式原卷第33題桌手機確認4個完整示範，原responses／open_responses前後相同，未提交答案或自評。回滾`dpl_BNhh3g6aYJjFkhfTXVmXKMc1DFMR`，發布鎖與測試租約已釋放。
