@@ -6370,6 +6370,16 @@
     "savedWorkCandidates": 64,
     "newMathCandidatesEnabled": false,
     "productionStudentWrites": 0,
-    "realStudentOAuthTested": false
+    "realStudentOAuthTested": false,
+    "relatedUnitTests": 84
+  },
+  "release": {
+    "commit": "eeadddbc387c05caa3e5465ddcfda35937b01cdf",
+    "candidate": "dpl_6wm6o1ukgs7Pg9TaBLiXogGE3cxa",
+    "rollback": "dpl_2VMNTtU2r4NL2CdgMmYbncMkgo5S",
+    "promotedAt": "2026-11-19T22:48:25.890Z",
+    "pullRequest": 372,
+    "fullTreeMatches": true,
+    "httpFiles": 22
   }
 }

@@ -1,4 +1,10 @@
-# 各科原始題型與驗收補齊：本輪驗收完成，待發布（2026-11-20）
+# 各科原始題型與驗收補齊：本輪共用改善已正式發布（2026-11-20）
+
+## 發布登記
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-subject-types-20261120 | 2026-11-19T22:46:46.800Z | `eeadddb` | `dpl_2VMNTtU2r4NL2CdgMmYbncMkgo5S` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/bank-media.js、shared/quiz-media.mjs、shared/quiz-reading-workbench.mjs、shared/quiz-render.mjs、shared/quiz-work-response.mjs、shared/quiz-workshop/generated/assets.json | `dpl_6wm6o1ukgs7Pg9TaBLiXogGE3cxa`／回滾 `dpl_2VMNTtU2r4NL2CdgMmYbncMkgo5S`（eolOnly 0） |
 
 - 使用者已授權先整理「各科×原始題型×作答方式×驗收狀態」，再依數學過程／原圖操作、英語聽力、多媒體混合題順序驗證並改進；不是只做國語或把上一輪14類介面當全科完成。
 - Codex唯一寫入者；新工作樹 `D:/AI-Work/subject-type-coverage-20261120`，從最新origin/main `2e26a413` 建立。私有證據 `D:/AI-Work/subject-type-coverage-evidence-20261120/`。不讀學生作答做題型盤點，不改既有答案／名冊；新資料庫函式若有必要，另備具體SQL並依規則取得核准。
@@ -7,7 +13,7 @@
 - 原圖一般272代表×4寬度1,088與考古83代表×4寬度332介面檢查、520媒體SHA、282不同一般題池音檔原生解碼、84相關單元／SQL、11標準quiz測試、21產物通過。當前正式函式快照PGlite另驗42考古文件、8原生作答契約（保存／重送／接回／揭答隔離／跨人拒絕）；64數學候選19算式45手寫再驗保存通過，仍未啟用。
 - 4歷史測試檔不列為通過：2缺歷史私有候選，2舊遷移與目前bundle新格式不相容；以當前snapshot補驗42／8，不改正式SQL迎合舊fixture。瀏覽器用合成身分／隔離請求，未冒稱真人OAuth全鏈；正式只讀固定資料與原始媒體，未讀寫真人作答或名冊，未改函式／RLS／媒體權限。
 - 還沒完整涵蓋：三年級數學46既有來源缺過程的換版仍候選、708父來源未轉接完成；六年級45「畫畫看」與自然實驗仍保留原紙上／實作要求，不以數值選答冒充原圖操作。依來源換版／整科門檻另續，不把本輪介面驗收當整科製作完成。
-- 下一步：PR進main後，依release-from-main鎖定乾淨main、完整樹比對與正式驗證發布；發布收據另經PR更新。不沿用本工作樹部署。
+- PR372進main後從乾淨`eeadddbc`依release-from-main發布；完整樹比對ok、eolOnly0，候選與正式22 HTTP檔案SHA核對通過。無資料庫變更。下一步沿上列來源換版與原圖實作缺口續作，不把共用介面驗收當全科製作完成。
 
 # 本輪各題型總驗證與 Claude 複核：已正式發布（2026-11-19）
 
