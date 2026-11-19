@@ -79,6 +79,10 @@
 :is(#server-quiz,.partner-focus,.past-exam-workspace) :is(.quiz-field>label:has(>input[type=checkbox]),.quiz-field-preview-set>.preview-option){font-size:clamp(1.2rem,1.75vw,1.55rem);line-height:1.65}
 :is(#server-quiz,.partner-focus,.past-exam-workspace) :is(.quiz-field>label:has(>input[type=checkbox]),.quiz-field-preview-set>.preview-option) .preview-content{font-size:inherit!important;line-height:inherit!important}
 .quiz-open-inputs .quiz-field{grid-column:1/-1}
+.quiz-open-subquestions>p{grid-column:1/-1}
+.quiz-open-inputs.quiz-open-subquestions .quiz-field{grid-column:auto}
+.quiz-open-subquestions .quiz-field>legend{font-size:clamp(1.4rem,2.1vw,1.9rem)!important;line-height:1.65!important;color:#18243d}
+.quiz-open-inputs.quiz-open-subquestions textarea{min-height:64px;font-size:clamp(1.4rem,2.1vw,1.9rem);line-height:1.65}
 .quiz-open-inputs textarea,.quiz-open-review textarea{box-sizing:border-box;display:block;width:100%;max-width:100%;min-height:80px;resize:vertical;font:inherit;line-height:1.65;padding:10px;border:1px solid #8c8c9d;border-radius:8px;background:#fff;color:#18243d}
 .quiz-open-reference{margin:14px 0;padding:14px;border:1px solid #d9d9e7;border-radius:12px;overflow-wrap:anywhere}
 .quiz-open-reference h5{font-size:1rem;margin:0 0 10px}
