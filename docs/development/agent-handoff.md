@@ -1,8 +1,14 @@
-# 閱讀注音連續輸入：待main發布（2026-11-19）
+# 閱讀注音連續輸入：已正式發布（2026-11-19）
+
+## 發布登記
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-reading-keyboard-keep-open-20261119 | 2026-11-19T14:01:05.829Z | `f03b89c` | `dpl_2TyfYFfgiCS5JAAj3iFvHDQk4DkE` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-reading-workbench.mjs、shared/quiz-workshop/generated/assets.json | `dpl_HvR48YDJNJo4hTcdKsyAZw5WMuZG`／回滾 `dpl_2TyfYFfgiCS5JAAj3iFvHDQk4DkE`（eolOnly 0） |
 
 - Codex-reading-keyboard-keep-open-20261119從最新origin/main `2b419034`建立新工作樹。已重現第38題第6格每按注音即關閉：符號插入後input.focus觸發activate重建工具列，原浮層被卸載。現在同一input返回焦點保留工具列，只在換欄位時重建。
 - 12版本 × 1280／390 × 個人／夥伴，共48組真實點擊通過：連續四符號、選取替換、刪除、關閉／Esc、換格分流與零提交；另41回歸與21產物通過。測試先在修正前重現失敗，加入 `automation/tests/quiz-reading-keyboard-browser.cjs`。原欄值、一次提交、認證及SQL不變。證據 `D:/AI-Work/reading-keyboard-keep-open-evidence-20261119/`。
-- 下一步：PR進main、乾淨main發布、正式唯讀檢查及收據。數學長線維持原界限。
+- PR363合併main `f03b89c6`，乾淨main發布`dpl_HvR48YDJNJo4hTcdKsyAZw5WMuZG`；完整樹18改0增0刪／eolOnly0，候選4及正式18檔HTTP／SHA一致。正式第38題來源以正式載入renderer建立獨立暫時DOM、僅本機onChange，1280／390第6格真實連按ㄎㄨㄞˋ後浮層及同一工具列保持；正式學生原格未試填，原值與responses／open_responses前後同，未送答案／自評。手機截圖已目視核。回滾`dpl_2TyfYFfgiCS5JAAj3iFvHDQk4DkE`，發布鎖／租約釋放，收據後封存清本次工作樹。數學長線維持原界限。
 
 # 閱讀文章原位填字：已正式發布（2026-11-19）
 
