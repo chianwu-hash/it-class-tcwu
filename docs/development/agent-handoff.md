@@ -1,8 +1,12 @@
-# 同部首小題與作答框：驗收通過，待發布（2026-11-19）
+# 同部首小題與作答框：已正式發布（2026-11-19）
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-open-subquestion-20261119 | 2026-11-19T00:21:11.026Z | `f437494` | `dpl_7L5kFXZq2r59mFf4KwwJmGcLLJv9` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/rich-content.js、shared/quiz-fields-presentation.mjs、shared/quiz-fields.css、shared/quiz-open-response.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-open-subquestions-sources.mjs、+shared/quiz-open-subquestions.mjs | `dpl_82CosB6JSJL11pkPLgB2xvM1py6r`／回滾 `dpl_7L5kFXZq2r59mFf4KwwJmGcLLJv9`（eolOnly 0） |
 
 - Codex-open-subquestion-20261119由最新main f63e14e9新工作樹處理；17個開放版本／32欄NAS原DOCX重抽SHA及原文核對。來源指紋核定後提示字與輸入框同組，共用詞庫保留；不改題目／答案／既有作答／自評／一次送出／外層，無SQL或DML。
 - 102桌機／平板／手機個人與夥伴保存／重載／整份回顧情境、18相關回歸及21產物通過。既有2,655國語候選與83舊卷版本掃描，2個既有選擇型未替換，舊卷無同部首命中。詳[報告](quiz-open-subquestions-20261119.md)，私有證據D:/AI-Work/open-subquestion-evidence-20261119/。
-- 下一步PR進main，再全新乾淨main依release-from-main發布；正式原卷第30題唯讀驗證不送答案。基準正式dpl_7L5kFXZq2r59mFf4KwwJmGcLLJv9。測試服務／分頁已關，使用者先前示範保留。
+- PR336合併，乾淨main f4374947依release-from-main發布，完整樹25改2增0刪／eolOnly0；候選7及正式27檔HTTP／SHA一致。正式原卷第30題1280／390唯讀核到夕／蒼／統與各框同組，大字與無溢出，responses／open_responses前後相同，未送正式答案／自評。正式部署 dpl_82CosB6JSJL11pkPLgB2xvM1py6r，回滾 dpl_7L5kFXZq2r59mFf4KwwJmGcLLJv9；發布鎖、瀏覽器租約已釋放，分頁／服務已關，原使用者示範保留。收據PR合併後清理本次工作樹。
 
 # 共用連連看：已正式發布（2026-11-19）
 

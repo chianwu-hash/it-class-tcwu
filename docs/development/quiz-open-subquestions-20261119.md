@@ -19,4 +19,4 @@
 - 17題×1280／768／390×個人／夥伴，共102情境通過：大字欄名緊鄰輸入、accessible label、一次送出原JSON、保存鎖定、個人整份回顧及夥伴重載／回顧、無溢出與瀏覽器錯誤。使用原控制器，提交只到本機替身，未代學生正式作答。
 - 21練功坊產物核對通過；私有原件／封包／截圖在D:/AI-Work/open-subquestion-evidence-20261119/，不提交公開repo。
 
-狀態：前端驗收通過，待PR／main及正式發布；正式收據見agent-handoff。
+狀態：已正式發布。PR336合併main f4374947，由乾淨main依腳本上線至 dpl_82CosB6JSJL11pkPLgB2xvM1py6r。完整樹25改2增0刪／eolOnly0；候選7及正式27檔HTTP／SHA一致。指定帳號原卷第30題1280／390唯讀呈現與原保存值驗證通過，responses／open_responses前後相同，未送正式答案或自評。回滾 dpl_7L5kFXZq2r59mFf4KwwJmGcLLJv9；發布鎖／租約釋放，測試分頁及服務已關。收據見agent-handoff。
