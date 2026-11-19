@@ -1,3 +1,10 @@
+# 中正九年級113／114上二段理化：複核完成，流程驗收中（2026-11-19）
+
+- 使用者指定沿既有兩卷補齊理化，並授權疑義先與Claude討論、自主依正確性定案後上線。Codex為唯一寫入者，工作樹 `D:/AI-Work/zhongzheng-g9-physics-release-20261119`，從最新 `origin/main` 的 `763d26d4` 建立；不修改主工作區。
+- Claude唯讀CLI session `g9-physics-review-20261119` completed，Code 2.1.323、subscription OAuth、可見viewer已啟動、Git前後一致；實讀7頁原卷與2頁官方解答，核51理化解析、17重點與28書商題。原件SHA及Word對照由Codex程式核驗，不冒稱Claude重算SHA。22地科保留未重審。
+- 採認113第26／27題在作答前另標「本平台新增，非原卷文字」補必要假設／太陽光電限定；原題、選項、官方答案、分值與舊作答保留。補清功率、力矩等解析，不以AI多數票取代來源。3重點無可靠兩題維持缺項。
+- 已有授權範圍內準備新不可變版、固定學習圖與14組兩題延伸，新夥伴副本與配題計畫；舊副本／小隊不改，content_key保留避免重複獎勵。尚未寫正式資料／發布，下一步真PostgreSQL及完整作答／媒體／舊版驗收，通過後經PR與main流程發布。函式若確需更動仍依AGENTS明示SQL核准；目前以既有函式資料登錄為目標。
+- 自有檔案為 `automation/lib/grade9-physics-enrichment.mjs`、其test、本案報告及本段交接；其餘範圍按實際配題產物變更列入。私有證據 `D:/AI-Work/zhongzheng-g9-physics-release-evidence-20261119/`，前一候選證據另留；Claude不可讀憑證或部署，Codex驗實檔後採認。
 # 閱讀注音連續輸入：已正式發布（2026-11-19）
 
 ## 發布登記
