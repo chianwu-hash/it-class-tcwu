@@ -1,3 +1,14 @@
+# 共用連連看：已正式發布（2026-11-19）
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-shared-matching-20261119 | 2026-11-19T00:04:17.549Z | `d79581b` | `dpl_9yvvb9rXMBmo6SJUDh5sUzFLdbb4` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/past-answer.js、shared/partner-pilot/past-results.js、shared/quiz-fields-presentation.mjs、shared/quiz-fields.css、shared/quiz-fields.mjs、shared/quiz-past-teacher.mjs、shared/quiz-past-ui.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-matching-model.mjs、+shared/quiz-matching-past-sources.mjs、+shared/quiz-matching-past.mjs、+shared/quiz-matching-presentation.mjs、+shared/quiz-matching-sources.mjs、+shared/quiz-matching.css、+shared/quiz-matching.mjs | `dpl_7L5kFXZq2r59mFf4KwwJmGcLLJv9`／回滾 `dpl_9yvvb9rXMBmo6SJUDh5sUzFLdbb4`（eolOnly 0） |
+
+- PR334已合併，使用者核准修正版兩函式SQL已成功套用，180函式snapshot及live check通過；原卷、三筆凍結題目、原答案設定及四類作答摘要相同。未解除guard或更新題目副本。最初交易因guard回滾，修正與新增測試已列SOP。
+- 乾淨main `d79581bc`由release-from-main發布，完整樹28改7增0刪／eolOnly0；候選8檔及正式35檔HTTP／SHA一致。正式部署 `dpl_7L5kFXZq2r59mFf4KwwJmGcLLJv9`，回滾 `dpl_9yvvb9rXMBmo6SJUDh5sUzFLdbb4`，發布鎖已釋放。
+- 615項桌平板手機三入口本機驗收、修正版12組含凍結小隊隔離SQL、18項最後回歸與21產物重驗通過。正式指定帳號原卷第28題1280／390唯讀確認4對卡片、原題及無溢出，responses／open_responses前後相同，未送正式答案／自評。正式驗收分頁已關、租約釋放；先前使用者示範保留。證據D:/AI-Work/matching-release-evidence-20261119/及前一日原件與615情境目錄。收據PR合併後清理本次工作樹。
+- 下一步才接續使用者長線題庫任務；不得重跑本案SQL或把已完成範圍當待辦。下方均為歷史進度。
+
 # 共用連連看：修正版SQL已套用，待發布（2026-11-19）
 
 - 使用者已明確核准PR334 c3e8098a修正版兩函式SQL；本次已成功套用。正式前後原卷／三筆凍結rich與答案設定／quiz_answers、quiz_open_responses、quiz_past_attempts、partner answers整表摘要相同；只更新核准兩函式及媒體映射。180函式production snapshot已更新，db-snapshot-check --live通過。未動guard、未送學生答案。
