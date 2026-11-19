@@ -25,4 +25,4 @@
 - 55個各來源類型／媒體／表格／過程代表×1280／768／390×個人與夥伴，共330完整流程：一次送出、鎖定、個人整份回顧、夥伴接回及回顧。正式作答完全未提交。
 - 媒體載入與浮動鍵盤另驗桌手機；21練功坊產物核對。私有原件、逐來源結果、封包及截圖保存在D:/AI-Work/remaining-answer-evidence-20261119/，不提交公開repo。
 
-發布狀態：待main發布及正式唯讀驗收，實際部署收據另記agent-handoff。
+發布狀態：PR338合併main 5964de82，依release-from-main由乾淨main上線至dpl_21ecW6TRci1RnMmPLRYJrxtu27Aw。完整樹28改3增0刪／eolOnly0，候選9檔及正式31檔HTTP／SHA一致。指定帳號原卷第32題1280／390唯讀確認兩組各三框、連接詞及原值；responses／open_responses前後相同。回滾dpl_82CosB6JSJL11pkPLgB2xvM1py6r，發布鎖與測試租約已釋放，完整收據記agent-handoff。
