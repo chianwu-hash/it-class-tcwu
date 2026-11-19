@@ -1,8 +1,15 @@
-# 字音欄確定性核對：待依main發布（2026-11-19）
+# 字音欄確定性核對：已正式發布（2026-11-19）
+
+## 發布登記
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-phonetic-check-20261119 | 2026-11-19T12:22:47.470Z | `63f8bc3` | `dpl_6JSUzDvvqWTvGsnZYkoh3YCvTY8o` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-fields.css、shared/quiz-open-response.mjs、shared/quiz-phonetic-word-review.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-moe-readings.mjs、+shared/quiz-phonetic-check.mjs | `dpl_FWKUg8cD6eakZLeM6ChSnk4M5ck1`／回滾 `dpl_6JSUzDvvqWTvGsnZYkoh3YCvTY8o`（eolOnly 0） |
 
 - Codex-phonetic-check-20261119從最新origin/main 7c5badff新工作樹處理。256目標字完整核教育部三典20260929單字音／變體音，6475筆簡編詞音；已授權揭答後按字組標綠／紅／橙及理由。多音核詞、重編獨有音與未知詞待核對；只核注音，不改造詞／整題自評。原值、來源、參考、一次送出、外層及SQL不動。
 - 55回歸、176來源／320組盤點、1056三尺寸個人／整份回顧／夥伴完整流程及44重點情境、21產物通過；桌手機三色截圖已核。原參考靦腆矛盾與耶／勁分歧保留說明。詳[政策與驗收](quiz-phonetic-check-20261119.md)，私有證據D:/AI-Work/phonetic-check-evidence-20261119/。
-- 下一步：PR進main、乾淨main腳本發布、正式第36題唯讀複驗、收據及清理；數學長線仍不開未整科驗收題目。
+- PR357合併main `63f8bc3a`，乾淨main腳本發布至`dpl_FWKUg8cD6eakZLeM6ChSnk4M5ck1`；完整樹24改2增0刪／eolOnly0、候選8及正式26檔HTTP／SHA一致。正式第36題1280／390確認植／值／殖綠色、直ㄓˋ紅色並提示ㄓˊ，學生原注音／造詞及responses／open_responses前後相同，未送答案／自評；手機截圖已目視核。回滾`dpl_6JSUzDvvqWTvGsnZYkoh3YCvTY8o`。發布鎖與測試租約釋放，收據PR合併後封存清本次工作樹，保留使用者示範。
+- 數學長線仍不開未整科驗收題目。
 
 # 字音造詞逐字分組解析：已正式發布（2026-11-19）
 
