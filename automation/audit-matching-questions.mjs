@@ -11,7 +11,7 @@ import {matchingPresentation} from '../shared/quiz-matching-presentation.mjs';
 import {pastMatchingPresentation,partnerMatchingPresentation} from '../shared/quiz-matching-past.mjs';
 import {matchingReference} from '../shared/quiz-matching-model.mjs';
 export function matchingOptionOrderIssues(fields){
- const reference=fields[0]?.options;if(!reference)return [];
+ const reference=fields.find(f=>f.options)?.options;if(!reference)return [];
  return fields.filter(f=>f.options&&(f.options.length!==reference.length||f.options.some((o,i)=>JSON.stringify(o.content)!==JSON.stringify(reference[i]?.content)))).map(f=>f.id);
 }
 export function auditMatchingQuestions({pool=[],past=[],partner=[]}={}){
