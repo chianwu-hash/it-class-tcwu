@@ -11,6 +11,7 @@ export function physicsRegistrationSql(plan,phase){
  assert.equal(plan.schema,1);assert(['stage','activate','rollback'].includes(phase));
  assert.deepEqual(plan.papers.map(p=>p.paperId).sort(),['zhongzheng-113-1-g9-exam2-science','zhongzheng-114-1-g9-exam2-science']);
  assert.equal(plan.practices.length,14);
+ assert.equal(new Set(plan.papers.map(p=>p.owner)).size,1,'shared practice owner must match');
  assert(!/\$(?:guard|allocation|practice|ready|question|topics|topic|rollback|media)\$/.test(JSON.stringify(plan)),'reserved SQL delimiter');
  for(const p of plan.papers){
   for(const id of [p.version,p.owner,p.previousVersion])uuid(id);
@@ -21,6 +22,9 @@ export function physicsRegistrationSql(plan,phase){
   assert.equal(p.questions.length,p.bundle.document.groups.length);
   assert.equal(p.allocation.version,p.version);assert.equal(p.allocation.document_sha,p.bundle.sha256);
   assert.equal(p.previousPartnerId,'past-'+p.previousVersion);assert(p.mediaMap?.length>0);
+  const referenced=[...new Set([...JSON.stringify(p.questions).matchAll(/https:\/\/partner-media\.invalid\/([a-f0-9]{64})/g)].map(m=>m[1]))].sort();
+  assert.deepEqual(p.mediaMap.map(m=>m.hash).sort(),referenced,'every partner image must have exactly one mapping');
+  assert(p.mediaMap.every(m=>m.source_url.endsWith('/'+m.hash)),'media source hash must match');
  }
  const guard=p=>`do $guard$begin if not exists(select 1 from public.quiz_past_papers p join public.quiz_past_versions v on v.id=p.active_version where p.id=${lit(p.paperId)} and p.enabled and p.grade=9 and p.owner_id=${lit(p.owner)}::uuid and p.active_version=${lit(p.previousVersion)}::uuid and v.sha256=${lit(p.previousSha)}) then raise exception 'PHYSICS_SOURCE_CHANGED';end if;end $guard$;`;
  let sql=`begin;set local lock_timeout='3s';set local statement_timeout='90s';set transaction isolation level repeatable read;select pg_advisory_xact_lock(hashtextextended('g9-physics-enrichment-20261119',0));\n`;
