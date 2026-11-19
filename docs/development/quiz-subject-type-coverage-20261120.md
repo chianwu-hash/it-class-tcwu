@@ -78,3 +78,7 @@
 ## 重現清冊
 
 `automation/audit-subject-type-coverage.mjs` 接收私有 `--pool`、`--courses`、`--source-types`、選用 `--past`／`--past-papers`，以 `--out` 指定聚合JSON。逐筆ID只用來對回，不輸出題文、答案、媒體URL或來源路徑；複合出版標籤不重複計題。原始資料與來源metadata的SHA留在本機私有證據。`automation/tests/quiz-subject-adaptations-browser.cjs` 可在登記租約的隔離fixture執行合成算式／原生音訊回歸，禁止拿正式頁面作送答測試。
+
+## 正式發布
+
+[PR #372](https://github.com/chianwu-hash/it-class-tcwu/pull/372) 已合併；由乾淨 main `eeadddbc387c05caa3e5465ddcfda35937b01cdf` 依發布腳本部署。正式 `dpl_6wm6o1ukgs7Pg9TaBLiXogGE3cxa`，回滾 `dpl_2VMNTtU2r4NL2CdgMmYbncMkgo5S`；完整檔案樹比對 `ok:true`、eolOnly 0，候選與正式各22個變更檔案HTTP SHA核對通過。沒有套用SQL或啟用數學候選。
