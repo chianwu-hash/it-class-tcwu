@@ -8,7 +8,7 @@
 
 驗收必須包含正式頁相同的`student-wrap`外層，量按鈕white-space、scrollWidth／clientWidth、44至46px實際高度、欄位padding／border及整頁溢出，不能只驗按鈕存在。1280／768／390／320四尺寸、176版本個人及夥伴共1408流程通過。沒有修改題目、ID、JS、原值、一次送出、自評、外層或資料庫。
 
-本次私有證據：`D:/AI-Work/phonetic-button-layout-evidence-20261119/`。發布狀態：待依main發布。
+本次私有證據：`D:/AI-Work/phonetic-button-layout-evidence-20261119/`。發布狀態：修改經PR進main `b5d243c4`，乾淨main腳本發布至`dpl_FLqd9aVGVGHuFGKMfmEaqkBNUoA6`；完整樹21改／非預期0，候選4與正式21檔HTTP／SHA符合main。正式第36題桌機、390及320核四個按鈕單行44px、無巢狀框與文字溢出、42鍵完整，原作答／自評前後一致。回滾`dpl_vj3x62enUEsGWk8vhQfyZFar1BUC`，發布鎖與測試租約釋放。
 
 驗收卷第36題為「植、直、值、殖」先寫注音再造詞，每組第一格應有注音鍵盤。原開放題只依欄名是否含「注音」決定工具，原欄名是「第1格」的版本因此漏接；原位格的工具另受focus隱藏規則影響。
 
