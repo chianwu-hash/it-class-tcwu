@@ -8,6 +8,7 @@ import {answerTemplatePresentation,mountAnswerTemplate} from './quiz-answer-temp
 import {openCompositionReview} from './quiz-open-composition.mjs';
 import {phoneticWordFields} from './quiz-field-input-aids.mjs';
 import {phoneticWordReview} from './quiz-phonetic-word-review.mjs';
+import {wordMeaningReview} from './quiz-word-meaning-review.mjs';
 
 const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 const only=(v,keys)=>object(v)&&Object.keys(v).every(k=>keys.includes(k));
@@ -74,6 +75,7 @@ export function destroyOpenSketchEditors(root){root?.querySelectorAll('.quiz-ope
 export function disableOpenSketchEditors(root,disabled){root?.querySelectorAll('.quiz-open-inputs,.quiz-fields').forEach(group=>group.sketchEditors?.forEach(editor=>editor.setDisabled(disabled)));}
 
 export function renderOpenReferences(host,q,answer,{raw=''}={}){
+ const words=wordMeaningReview(q,answer);if(words){renderWordMeanings(host,words);return true;}
  q=choiceQuestionPresentation(q);const phonetic=phoneticWordReview(q,answer,{raw});if(phonetic){renderPhoneticWordReferences(host,phonetic);return true;}const composed=openCompositionReview(q,answer,{raw});if(!composed)return false;
  const box=make('div',undefined,'quiz-open-composition-review');
  for(const group of composed.groups){
@@ -86,6 +88,11 @@ export function renderOpenReferences(host,q,answer,{raw=''}={}){
  const criteria=make('ul');for(const text of [...new Set([...composed.criteria,...(composed.guide?.checks||[])])])criteria.append(make('li',text));notes.append(criteria);box.append(notes);
  renderWritingSupplement(box,composed.guide,{family:composed.family});
  host.append(box);return true;
+}
+
+function renderWordMeanings(host,model){
+ const box=make('div',undefined,'quiz-word-meaning-review');
+ for(const card of model.cards){const section=make('section',undefined,'quiz-open-reference quiz-word-meaning-card');section.append(make('h5',card.character),make('p',card.meaning,'quiz-word-meaning-text'));const list=make('ul',undefined,'quiz-word-meaning-examples');for(const word of card.examples)list.append(make('li',word));section.append(list);box.append(section);}host.append(box);
 }
 
 function renderPhoneticWordReferences(host,model){
@@ -120,8 +127,8 @@ export function renderOpenReview(host,q,review,{busy=false,pending=false,draftNo
  q=choiceQuestionPresentation(q);
  const presentation=openSubquestionPresentation(q);
  const box=make('section',undefined,'answer-preview quiz-open-review');box.tabIndex=-1;
- box.append(make('h4','開放作答・核對自己的想法'));
- box.append(make('p','這題不以單一例答判對錯。請對照原題要求與下方重點，確認自己的答案。'));
+ const words=wordMeaningReview(q,review.answer);
+ if(!words){box.append(make('h4','開放作答・核對自己的想法'));box.append(make('p','這題不以單一例答判對錯。請對照原題要求與下方重點，確認自己的答案。'));}
  if(!renderOpenReferences(box,q,review.answer,{raw}))for(const field of presentation?.fields??q.fields){
   const ref=review.answer.fields[field.id],section=make('section',undefined,'quiz-open-reference');section.append(make('h5',field.label),make('p','參考例答（其他合理答案也可以）：'));
   const examples=make('ul');for(const text of ref.examples)examples.append(make('li',text));section.append(examples,make('p','檢核重點：'));const criteria=make('ul');for(const text of ref.criteria)criteria.append(make('li',text));section.append(criteria);box.append(section);
