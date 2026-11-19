@@ -72,7 +72,7 @@ export function renderContent(container, content, { strict = false, loadMedia = 
     if(mediaScope)bindQuizMedia(element,mediaScope);
     element.dataset.quizMediaUrl = url.href;
     if (media.kind === 'image') { element.alt = media.alt; element.loading = imageLoading; }
-    else { element.controls = true; element.preload = 'none'; }
+    else { element.controls = true; element.preload = 'none'; mediaScope?.bindAudio?.(element); }
     const failed = () => {
       if (!figure.querySelector('[role="alert"]')) {
         const error = document.createElement('p'); error.setAttribute('role', 'alert');

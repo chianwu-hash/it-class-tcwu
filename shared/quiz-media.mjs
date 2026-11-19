@@ -15,7 +15,16 @@ export async function resolveQuizMedia(url) {
 }
 
 const imageResolvers = new WeakMap();
-export function bindQuizMedia(element, scope) { imageResolvers.set(element, scope); }
+const playingAudio = new WeakMap();
+export function bindQuizMedia(element, scope) {
+  imageResolvers.set(element, scope);
+  if(element.tagName==='AUDIO')element.addEventListener('play',()=>{
+    if(!scope.active()){element.pause();return;}
+    const previous=playingAudio.get(element.ownerDocument)?.deref();
+    if(previous&&previous!==element)previous.pause();
+    playingAudio.set(element.ownerDocument,new WeakRef(element));
+  });
+}
 export function resolveQuizImage(image) {
   const url=image.dataset.quizMediaUrl || image.currentSrc || image.src;
   return imageResolvers.has(image) ? imageResolvers.get(image).resolve(url) : resolveQuizMedia(url);
@@ -42,13 +51,21 @@ export function createMediaScope({context, read, valid=()=>true, ttl=45000, conc
     }).finally(()=>pending.delete(url));
     pending.set(url,promise);return promise;
   };
-  const callbacks=new Map();
+  const callbacks=new Map(),audio=new Set();
   return {context:identity,active,resolve,
+    bindAudio(element){
+      if(audio.has(element))return;
+      audio.add(element);
+      element.addEventListener('play',()=>{
+        if(!active()){element.pause();return;}
+        for(const other of audio)if(other!==element)other.pause();
+      });
+    },
     observe(element,begin){
       if(typeof IntersectionObserver==='undefined'){queueMicrotask(()=>{if(active()&&element.isConnected)begin();});return;}
       observer??=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting){const fn=callbacks.get(e.target);callbacks.delete(e.target);observer.unobserve(e.target);if(active())fn?.();}},{rootMargin:'100px'});
       callbacks.set(element,begin);observer.observe(element);
     },
-    dispose(){alive=false;cache.clear();observer?.disconnect();callbacks.clear();for(const job of jobs.splice(0))job.reject(expired());},
+    dispose(){alive=false;for(const element of audio){element.pause();element.removeAttribute('src');element.load();}audio.clear();cache.clear();observer?.disconnect();callbacks.clear();for(const job of jobs.splice(0))job.reject(expired());},
   };
 }

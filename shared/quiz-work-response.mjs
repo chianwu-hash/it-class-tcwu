@@ -37,9 +37,9 @@ export function renderWorkInput(host,q,{raw,locked,saved=locked,onChange}){
   const input=make('input');input.id='work-'+q.id;input.type='text';input.maxLength=250;input.autocomplete='off';input.value=typeof workValue(raw)==='string'?workValue(raw):'';label.htmlFor=input.id;
   input.addEventListener('input',()=>onChange(input.value));section.append(input);
   const keys=make('div');keys.className='quiz-work-keys';keys.setAttribute('role','group');keys.setAttribute('aria-label','算式輸入按鍵');
-  const insert=value=>{if(input.disabled)return;const a=input.selectionStart??input.value.length,b=input.selectionEnd??a;if(input.value.length-b+a+value.length>250)return;input.setRangeText(value,a,b,'end');input.dispatchEvent(new Event('input',{bubbles:true}));input.focus({preventScroll:true});};
-  for(const key of ['7','8','9','＋','−','4','5','6','×','÷','1','2','3','＝','餘','0','（','）','.','；']){const button=make('button',key);button.type='button';button.setAttribute('aria-label','輸入'+key);button.addEventListener('click',()=>insert(key));keys.append(button);}
-  const erase=make('button','刪除');erase.type='button';erase.onclick=()=>{let a=input.selectionStart??input.value.length,b=input.selectionEnd??a;if(a===b)a=Math.max(0,a-1);input.setSelectionRange(a,b);insert('');};keys.append(erase);section.append(keys);
+  const insert=(value,event)=>{if(input.disabled)return;const a=input.selectionStart??input.value.length,b=input.selectionEnd??a;if(input.value.length-b+a+value.length>250)return;input.setRangeText(value,a,b,'end');input.dispatchEvent(new Event('input',{bubbles:true}));if(event.detail>0)input.focus({preventScroll:true});};
+  for(const key of ['7','8','9','＋','−','4','5','6','×','÷','1','2','3','＝','餘','0','（','）','.','；']){const button=make('button',key);button.type='button';button.setAttribute('aria-label','輸入'+key);button.addEventListener('click',event=>insert(key,event));keys.append(button);}
+  const erase=make('button','刪除');erase.type='button';erase.onclick=event=>{let a=input.selectionStart??input.value.length,b=input.selectionEnd??a;if(a===b)a=Math.max(0,a-([...input.value.slice(0,a)].at(-1)?.length??0));input.setSelectionRange(a,b);insert('',event);};keys.append(erase);section.append(keys);
  }
  section.append(make('p','填好計算過程與答案後，一起送出。'));host.append(section);return editor;
 }

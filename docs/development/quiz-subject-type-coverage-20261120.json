@@ -1,0 +1,6375 @@
+{
+  "schema": 1,
+  "scope": "一般題庫當下紀錄；不代表完整原始光碟、考古卷或學生操作已驗收",
+  "total": 18054,
+  "usable": 16524,
+  "missingSourceTypes": 0,
+  "invalid": 0,
+  "groups": [
+    {
+      "course": "115-1-g9-hanlin-chinese",
+      "grade": 9,
+      "subject": "國文",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "單一選擇題"
+      ],
+      "total": 529,
+      "usable": 529,
+      "held": 0,
+      "formats": {
+        "single": 529
+      },
+      "inputs": {},
+      "images": 10,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-g9-hanlin-math",
+      "grade": 9,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "單一選擇題"
+      ],
+      "total": 129,
+      "usable": 129,
+      "held": 0,
+      "formats": {
+        "single": 129
+      },
+      "inputs": {},
+      "images": 108,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-g9-hanlin-science",
+      "grade": 9,
+      "subject": "自然",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "單一選擇題"
+      ],
+      "total": 665,
+      "usable": 665,
+      "held": 0,
+      "formats": {
+        "single": 665
+      },
+      "inputs": {},
+      "images": 242,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-g9-kang-civics",
+      "grade": 9,
+      "subject": "公民",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇"
+      ],
+      "total": 249,
+      "usable": 249,
+      "held": 0,
+      "formats": {
+        "single": 249
+      },
+      "inputs": {},
+      "images": 64,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-g9-kang-geography",
+      "grade": 9,
+      "subject": "地理",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇"
+      ],
+      "total": 466,
+      "usable": 466,
+      "held": 0,
+      "formats": {
+        "single": 466
+      },
+      "inputs": {},
+      "images": 174,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-g9-kang-history",
+      "grade": 9,
+      "subject": "歷史",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇"
+      ],
+      "total": 409,
+      "usable": 409,
+      "held": 0,
+      "formats": {
+        "single": 409
+      },
+      "inputs": {},
+      "images": 51,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-g9-nani-english",
+      "grade": 9,
+      "subject": "英語",
+      "publisher": "南一",
+      "sourceTypes": [
+        "文法"
+      ],
+      "total": 164,
+      "usable": 164,
+      "held": 0,
+      "formats": {
+        "single": 164
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-g9-nani-english",
+      "grade": 9,
+      "subject": "英語",
+      "publisher": "南一",
+      "sourceTypes": [
+        "字彙選擇(認識字彙)"
+      ],
+      "total": 9,
+      "usable": 9,
+      "held": 0,
+      "formats": {
+        "single": 9
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-g9-nani-english",
+      "grade": 9,
+      "subject": "英語",
+      "publisher": "南一",
+      "sourceTypes": [
+        "字彙選擇(應用字彙)"
+      ],
+      "total": 96,
+      "usable": 96,
+      "held": 0,
+      "formats": {
+        "single": 96
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-english",
+      "grade": 3,
+      "subject": "英語",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "Listen and Choose 仔細聽，選出正確的句子"
+      ],
+      "total": 8,
+      "usable": 8,
+      "held": 0,
+      "formats": {
+        "single": 8
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 8,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-english",
+      "grade": 3,
+      "subject": "英語",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "Listen and Choose 仔細聽，選出正確的單字圖片"
+      ],
+      "total": 10,
+      "usable": 10,
+      "held": 0,
+      "formats": {
+        "single": 10
+      },
+      "inputs": {},
+      "images": 10,
+      "audio": 10,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-english",
+      "grade": 3,
+      "subject": "英語",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "Listen and Choose 仔細聽，選出正確的圖片"
+      ],
+      "total": 8,
+      "usable": 8,
+      "held": 0,
+      "formats": {
+        "single": 8
+      },
+      "inputs": {},
+      "images": 8,
+      "audio": 8,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-english",
+      "grade": 3,
+      "subject": "英語",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "Listen and Choose 仔細聽，選出空格中發音不同的字母"
+      ],
+      "total": 10,
+      "usable": 10,
+      "held": 0,
+      "formats": {
+        "single": 10
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 10,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-english",
+      "grade": 3,
+      "subject": "英語",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "Listen and Choose 仔細聽兩個例字，選出字首發音的字母"
+      ],
+      "total": 10,
+      "usable": 10,
+      "held": 0,
+      "formats": {
+        "single": 10
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 10,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-english",
+      "grade": 3,
+      "subject": "英語",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "Look and Choose 看圖選出正確的單字"
+      ],
+      "total": 10,
+      "usable": 10,
+      "held": 0,
+      "formats": {
+        "single": 10
+      },
+      "inputs": {},
+      "images": 10,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-english",
+      "grade": 3,
+      "subject": "英語",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "Read and Choose 文法選擇"
+      ],
+      "total": 10,
+      "usable": 10,
+      "held": 0,
+      "formats": {
+        "single": 10
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-english",
+      "grade": 3,
+      "subject": "英語",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "Read and Choose 選出正確的對應句"
+      ],
+      "total": 8,
+      "usable": 8,
+      "held": 0,
+      "formats": {
+        "single": 8
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-math",
+      "grade": 3,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "勾選題"
+      ],
+      "total": 39,
+      "usable": 26,
+      "held": 13,
+      "formats": {
+        "fields": 26,
+        "single": 13
+      },
+      "inputs": {
+        "single": 13,
+        "set": 13
+      },
+      "images": 19,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-math",
+      "grade": 3,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "回答問題"
+      ],
+      "total": 2,
+      "usable": 2,
+      "held": 0,
+      "formats": {
+        "fields": 1,
+        "short": 1
+      },
+      "inputs": {
+        "math": 3
+      },
+      "images": 2,
+      "audio": 0,
+      "reading": 1,
+      "readingWorkbench": 1,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-math",
+      "grade": 3,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "看圖做做看"
+      ],
+      "total": 1,
+      "usable": 1,
+      "held": 0,
+      "formats": {
+        "fields": 1
+      },
+      "inputs": {
+        "text": 4
+      },
+      "images": 1,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-math",
+      "grade": 3,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "看圖填填看"
+      ],
+      "total": 42,
+      "usable": 42,
+      "held": 0,
+      "formats": {
+        "fields": 29,
+        "short": 13
+      },
+      "inputs": {
+        "math": 96,
+        "text": 11
+      },
+      "images": 40,
+      "audio": 0,
+      "reading": 1,
+      "readingWorkbench": 1,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-math",
+      "grade": 3,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "做做看"
+      ],
+      "total": 16,
+      "usable": 16,
+      "held": 0,
+      "formats": {
+        "fields": 14,
+        "single": 2
+      },
+      "inputs": {
+        "single": 51
+      },
+      "images": 7,
+      "audio": 0,
+      "reading": 4,
+      "readingWorkbench": 4,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-math",
+      "grade": 3,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "圈圈看"
+      ],
+      "total": 19,
+      "usable": 19,
+      "held": 0,
+      "formats": {
+        "single": 11,
+        "fields": 8
+      },
+      "inputs": {
+        "math": 6,
+        "set": 7
+      },
+      "images": 1,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-math",
+      "grade": 3,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "填入＞、＜或＝"
+      ],
+      "total": 52,
+      "usable": 52,
+      "held": 0,
+      "formats": {
+        "single": 51,
+        "fields": 1
+      },
+      "inputs": {
+        "text": 3
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-math",
+      "grade": 3,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "填填看"
+      ],
+      "total": 196,
+      "usable": 196,
+      "held": 0,
+      "formats": {
+        "short": 70,
+        "fields": 118,
+        "single": 8
+      },
+      "inputs": {
+        "math": 307,
+        "text": 35
+      },
+      "images": 59,
+      "audio": 0,
+      "reading": 3,
+      "readingWorkbench": 3,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-math",
+      "grade": 3,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "對的打ˇ，錯的打×"
+      ],
+      "total": 17,
+      "usable": 17,
+      "held": 0,
+      "formats": {
+        "fields": 17
+      },
+      "inputs": {
+        "single": 69
+      },
+      "images": 13,
+      "audio": 0,
+      "reading": 11,
+      "readingWorkbench": 11,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-math",
+      "grade": 3,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "對的畫○，錯的打×（是非題）"
+      ],
+      "total": 164,
+      "usable": 164,
+      "held": 0,
+      "formats": {
+        "single": 164
+      },
+      "inputs": {},
+      "images": 51,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-math",
+      "grade": 3,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "算算看"
+      ],
+      "total": 2,
+      "usable": 2,
+      "held": 0,
+      "formats": {
+        "fields": 2
+      },
+      "inputs": {
+        "math": 16
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-math",
+      "grade": 3,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "寫出直式算算看"
+      ],
+      "total": 39,
+      "usable": 39,
+      "held": 0,
+      "formats": {
+        "fields": 39
+      },
+      "inputs": {
+        "math": 78
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-math",
+      "grade": 3,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "寫出直式算算看",
+        "算算看"
+      ],
+      "total": 1,
+      "usable": 1,
+      "held": 0,
+      "formats": {
+        "fields": 1
+      },
+      "inputs": {
+        "math": 2
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-math",
+      "grade": 3,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "寫出算式做做看"
+      ],
+      "total": 6,
+      "usable": 6,
+      "held": 0,
+      "formats": {
+        "short": 6
+      },
+      "inputs": {},
+      "images": 2,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-math",
+      "grade": 3,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "選出正確的答案（選擇題）"
+      ],
+      "total": 251,
+      "usable": 251,
+      "held": 0,
+      "formats": {
+        "single": 251
+      },
+      "inputs": {},
+      "images": 87,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-math",
+      "grade": 3,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "選擇題"
+      ],
+      "total": 4,
+      "usable": 4,
+      "held": 0,
+      "formats": {
+        "single": 4
+      },
+      "inputs": {},
+      "images": 2,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-science",
+      "grade": 3,
+      "subject": "自然",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "對的畫○，錯的打×（是非題）"
+      ],
+      "total": 326,
+      "usable": 324,
+      "held": 2,
+      "formats": {
+        "single": 326
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g3-science",
+      "grade": 3,
+      "subject": "自然",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "選出正確的答案（選擇題）"
+      ],
+      "total": 308,
+      "usable": 308,
+      "held": 0,
+      "formats": {
+        "single": 308
+      },
+      "inputs": {},
+      "images": 19,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g4-english",
+      "grade": 4,
+      "subject": "英語",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "Listen and Choose 仔細聽，依聽到的句子，選出正確的單字"
+      ],
+      "total": 8,
+      "usable": 8,
+      "held": 0,
+      "formats": {
+        "single": 8
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 8,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g4-english",
+      "grade": 4,
+      "subject": "英語",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "Listen and Choose 仔細聽，選出正確的句子"
+      ],
+      "total": 5,
+      "usable": 5,
+      "held": 0,
+      "formats": {
+        "single": 5
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 5,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g4-english",
+      "grade": 4,
+      "subject": "英語",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "Listen and Choose 仔細聽，選出正確的發音字母"
+      ],
+      "total": 12,
+      "usable": 12,
+      "held": 0,
+      "formats": {
+        "single": 12
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 12,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g4-english",
+      "grade": 4,
+      "subject": "英語",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "Listen and Choose 仔細聽，選出正確的圖片"
+      ],
+      "total": 8,
+      "usable": 8,
+      "held": 0,
+      "formats": {
+        "single": 8
+      },
+      "inputs": {},
+      "images": 8,
+      "audio": 8,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g4-english",
+      "grade": 4,
+      "subject": "英語",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "Look and Choose 看圖選出句中的單字"
+      ],
+      "total": 12,
+      "usable": 12,
+      "held": 0,
+      "formats": {
+        "single": 12
+      },
+      "inputs": {},
+      "images": 12,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g4-english",
+      "grade": 4,
+      "subject": "英語",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "Look and Choose 看圖選出正確的單字"
+      ],
+      "total": 12,
+      "usable": 12,
+      "held": 0,
+      "formats": {
+        "single": 12
+      },
+      "inputs": {},
+      "images": 12,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g4-english",
+      "grade": 4,
+      "subject": "英語",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "Read and Choose 文法選擇"
+      ],
+      "total": 4,
+      "usable": 4,
+      "held": 0,
+      "formats": {
+        "single": 4
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g4-english",
+      "grade": 4,
+      "subject": "英語",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "Read and Choose 選出正確的對應句"
+      ],
+      "total": 5,
+      "usable": 5,
+      "held": 0,
+      "formats": {
+        "single": 5
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g4-english",
+      "grade": 4,
+      "subject": "英語",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "Reading Comprehension 閱讀測驗"
+      ],
+      "total": 1,
+      "usable": 1,
+      "held": 0,
+      "formats": {
+        "single": 1
+      },
+      "inputs": {},
+      "images": 1,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g4-social",
+      "grade": 4,
+      "subject": "社會",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "選擇題"
+      ],
+      "total": 200,
+      "usable": 200,
+      "held": 0,
+      "formats": {
+        "single": 200
+      },
+      "inputs": {},
+      "images": 17,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "勾選題"
+      ],
+      "total": 87,
+      "usable": 61,
+      "held": 26,
+      "formats": {
+        "fields": 62,
+        "single": 25
+      },
+      "inputs": {
+        "set": 28,
+        "text": 18,
+        "single": 27
+      },
+      "images": 40,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "比比看"
+      ],
+      "total": 2,
+      "usable": 2,
+      "held": 0,
+      "formats": {
+        "fields": 2
+      },
+      "inputs": {
+        "text": 8
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "回答問題"
+      ],
+      "total": 41,
+      "usable": 41,
+      "held": 0,
+      "formats": {
+        "fields": 41
+      },
+      "inputs": {
+        "math": 118,
+        "text": 25,
+        "single": 14
+      },
+      "images": 28,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "把做法和答案記下來"
+      ],
+      "total": 74,
+      "usable": 74,
+      "held": 0,
+      "formats": {
+        "fields": 74
+      },
+      "inputs": {
+        "math": 94,
+        "text": 19
+      },
+      "images": 26,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "是非題"
+      ],
+      "total": 126,
+      "usable": 126,
+      "held": 0,
+      "formats": {
+        "single": 126
+      },
+      "inputs": {},
+      "images": 16,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "看圖做做看"
+      ],
+      "total": 133,
+      "usable": 133,
+      "held": 0,
+      "formats": {
+        "fields": 133
+      },
+      "inputs": {
+        "math": 151,
+        "single": 2,
+        "text": 7
+      },
+      "images": 133,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "看圖填填看"
+      ],
+      "total": 91,
+      "usable": 91,
+      "held": 0,
+      "formats": {
+        "fields": 91
+      },
+      "inputs": {
+        "text": 164,
+        "math": 277
+      },
+      "images": 89,
+      "audio": 0,
+      "reading": 1,
+      "readingWorkbench": 1,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "計算題"
+      ],
+      "total": 13,
+      "usable": 13,
+      "held": 0,
+      "formats": {
+        "fields": 13
+      },
+      "inputs": {
+        "math": 13
+      },
+      "images": 2,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "做做看"
+      ],
+      "total": 30,
+      "usable": 30,
+      "held": 0,
+      "formats": {
+        "fields": 30
+      },
+      "inputs": {
+        "math": 78,
+        "text": 28,
+        "single": 4,
+        "set": 4
+      },
+      "images": 20,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "圈圈看"
+      ],
+      "total": 13,
+      "usable": 10,
+      "held": 3,
+      "formats": {
+        "fields": 10,
+        "single": 3
+      },
+      "inputs": {
+        "set": 3,
+        "single": 11,
+        "text": 1
+      },
+      "images": 13,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "連連看"
+      ],
+      "total": 3,
+      "usable": 3,
+      "held": 0,
+      "formats": {
+        "fields": 3
+      },
+      "inputs": {
+        "single": 3,
+        "text": 6
+      },
+      "images": 3,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "畫畫看"
+      ],
+      "total": 45,
+      "usable": 45,
+      "held": 0,
+      "formats": {
+        "fields": 45
+      },
+      "inputs": {
+        "math": 119,
+        "text": 9
+      },
+      "images": 42,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "填充題"
+      ],
+      "total": 228,
+      "usable": 228,
+      "held": 0,
+      "formats": {
+        "fields": 228
+      },
+      "inputs": {
+        "math": 354,
+        "text": 75
+      },
+      "images": 25,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "填填看"
+      ],
+      "total": 29,
+      "usable": 29,
+      "held": 0,
+      "formats": {
+        "fields": 29
+      },
+      "inputs": {
+        "text": 20,
+        "math": 65
+      },
+      "images": 2,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "對的打ˇ，錯的打×"
+      ],
+      "total": 3,
+      "usable": 3,
+      "held": 0,
+      "formats": {
+        "fields": 3
+      },
+      "inputs": {
+        "single": 14
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "算算看"
+      ],
+      "total": 14,
+      "usable": 14,
+      "held": 0,
+      "formats": {
+        "fields": 14
+      },
+      "inputs": {
+        "math": 16
+      },
+      "images": 5,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "寫出算式做做看"
+      ],
+      "total": 225,
+      "usable": 225,
+      "held": 0,
+      "formats": {
+        "fields": 225
+      },
+      "inputs": {
+        "math": 296,
+        "text": 14
+      },
+      "images": 47,
+      "audio": 0,
+      "reading": 3,
+      "readingWorkbench": 3,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "閱讀測驗"
+      ],
+      "total": 5,
+      "usable": 5,
+      "held": 0,
+      "formats": {
+        "fields": 5
+      },
+      "inputs": {
+        "math": 19,
+        "text": 1,
+        "single": 1
+      },
+      "images": 3,
+      "audio": 0,
+      "reading": 1,
+      "readingWorkbench": 1,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "選擇題"
+      ],
+      "total": 625,
+      "usable": 589,
+      "held": 36,
+      "formats": {
+        "single": 625
+      },
+      "inputs": {},
+      "images": 118,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-hanlin-g6-math",
+      "grade": 6,
+      "subject": "數學",
+      "publisher": "翰林",
+      "sourceTypes": [
+        "應用題"
+      ],
+      "total": 529,
+      "usable": 529,
+      "held": 0,
+      "formats": {
+        "fields": 529
+      },
+      "inputs": {
+        "text": 52,
+        "math": 639,
+        "single": 9,
+        "set": 1
+      },
+      "images": 118,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "主題修辭進階"
+      ],
+      "total": 1,
+      "usable": 1,
+      "held": 0,
+      "formats": {
+        "fields": 1
+      },
+      "inputs": {
+        "set": 1
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "主題詞語進階"
+      ],
+      "total": 6,
+      "usable": 6,
+      "held": 0,
+      "formats": {
+        "fields": 4,
+        "open": 2
+      },
+      "inputs": {
+        "text": 19,
+        "set": 3,
+        "single": 4
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 3,
+      "readingWorkbench": 3,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "主題寫作題型"
+      ],
+      "total": 1,
+      "usable": 1,
+      "held": 0,
+      "formats": {
+        "open": 1
+      },
+      "inputs": {
+        "text": 1
+      },
+      "images": 1,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "回答問題"
+      ],
+      "total": 32,
+      "usable": 32,
+      "held": 0,
+      "formats": {
+        "open": 31,
+        "fields": 1
+      },
+      "inputs": {
+        "text": 35
+      },
+      "images": 4,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "改錯字"
+      ],
+      "total": 121,
+      "usable": 120,
+      "held": 1,
+      "formats": {
+        "fields": 121
+      },
+      "inputs": {
+        "text": 147
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "改錯字-短文式"
+      ],
+      "total": 6,
+      "usable": 6,
+      "held": 0,
+      "formats": {
+        "fields": 6
+      },
+      "inputs": {
+        "text": 37
+      },
+      "images": 1,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "是非題"
+      ],
+      "total": 148,
+      "usable": 145,
+      "held": 3,
+      "formats": {
+        "single": 148
+      },
+      "inputs": {},
+      "images": 2,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "看圖填字"
+      ],
+      "total": 7,
+      "usable": 7,
+      "held": 0,
+      "formats": {
+        "fields": 7
+      },
+      "inputs": {
+        "text": 8
+      },
+      "images": 7,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "根據提示填寫答案"
+      ],
+      "total": 125,
+      "usable": 124,
+      "held": 1,
+      "formats": {
+        "fields": 96,
+        "single": 18,
+        "open": 11
+      },
+      "inputs": {
+        "text": 139,
+        "single": 65,
+        "set": 1,
+        "sequence": 1
+      },
+      "images": 3,
+      "audio": 0,
+      "reading": 1,
+      "readingWorkbench": 1,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "圈圈看"
+      ],
+      "total": 98,
+      "usable": 97,
+      "held": 1,
+      "formats": {
+        "fields": 73,
+        "single": 25
+      },
+      "inputs": {
+        "text": 49,
+        "set": 16,
+        "single": 60
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "國字注音-句子式"
+      ],
+      "total": 113,
+      "usable": 112,
+      "held": 1,
+      "formats": {
+        "fields": 113
+      },
+      "inputs": {
+        "text": 289
+      },
+      "images": 4,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "國字注音-短文式"
+      ],
+      "total": 21,
+      "usable": 20,
+      "held": 1,
+      "formats": {
+        "fields": 21
+      },
+      "inputs": {
+        "text": 148,
+        "single": 3
+      },
+      "images": 1,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "國字注音-短文式閱讀測驗"
+      ],
+      "total": 5,
+      "usable": 5,
+      "held": 0,
+      "formats": {
+        "fields": 5
+      },
+      "inputs": {
+        "text": 59,
+        "single": 15
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 2,
+      "readingWorkbench": 2,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "國字注音-詞語式"
+      ],
+      "total": 210,
+      "usable": 209,
+      "held": 1,
+      "formats": {
+        "fields": 210
+      },
+      "inputs": {
+        "text": 237
+      },
+      "images": 210,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "排出正確的順序"
+      ],
+      "total": 20,
+      "usable": 20,
+      "held": 0,
+      "formats": {
+        "fields": 20
+      },
+      "inputs": {
+        "single": 83,
+        "sequence": 4
+      },
+      "images": 1,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "接寫句子"
+      ],
+      "total": 12,
+      "usable": 12,
+      "held": 0,
+      "formats": {
+        "open": 12
+      },
+      "inputs": {
+        "text": 14
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "造句"
+      ],
+      "total": 58,
+      "usable": 58,
+      "held": 0,
+      "formats": {
+        "open": 58
+      },
+      "inputs": {
+        "text": 58
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "造詞-先寫寫看再造詞"
+      ],
+      "total": 269,
+      "usable": 269,
+      "held": 0,
+      "formats": {
+        "open": 269
+      },
+      "inputs": {
+        "text": 802
+      },
+      "images": 7,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "造詞-造詞"
+      ],
+      "total": 83,
+      "usable": 83,
+      "held": 0,
+      "formats": {
+        "open": 83
+      },
+      "inputs": {
+        "text": 110
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "連連看"
+      ],
+      "total": 29,
+      "usable": 29,
+      "held": 0,
+      "formats": {
+        "fields": 29
+      },
+      "inputs": {
+        "single": 115
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "畫掉多餘的字"
+      ],
+      "total": 20,
+      "usable": 20,
+      "held": 0,
+      "formats": {
+        "fields": 20
+      },
+      "inputs": {
+        "text": 20
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "填入適合的字或詞-填入適合的字"
+      ],
+      "total": 46,
+      "usable": 46,
+      "held": 0,
+      "formats": {
+        "fields": 44,
+        "single": 2
+      },
+      "inputs": {
+        "text": 110,
+        "single": 15
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "填入適合的字或詞-填入適合的詞"
+      ],
+      "total": 46,
+      "usable": 44,
+      "held": 2,
+      "formats": {
+        "fields": 38,
+        "single": 8
+      },
+      "inputs": {
+        "text": 64
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "填標點符號"
+      ],
+      "total": 26,
+      "usable": 26,
+      "held": 0,
+      "formats": {
+        "fields": 26
+      },
+      "inputs": {
+        "text": 143
+      },
+      "images": 2,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "照樣造句"
+      ],
+      "total": 6,
+      "usable": 6,
+      "held": 0,
+      "formats": {
+        "open": 6
+      },
+      "inputs": {
+        "text": 44
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "照樣寫短語"
+      ],
+      "total": 12,
+      "usable": 12,
+      "held": 0,
+      "formats": {
+        "open": 12
+      },
+      "inputs": {
+        "text": 61
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "寫出相同的部分"
+      ],
+      "total": 24,
+      "usable": 22,
+      "held": 2,
+      "formats": {
+        "fields": 24
+      },
+      "inputs": {
+        "text": 24
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "寫同部首的字"
+      ],
+      "total": 17,
+      "usable": 17,
+      "held": 0,
+      "formats": {
+        "open": 17
+      },
+      "inputs": {
+        "text": 32
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "寫相反詞"
+      ],
+      "total": 20,
+      "usable": 20,
+      "held": 0,
+      "formats": {
+        "fields": 15,
+        "single": 4,
+        "open": 1
+      },
+      "inputs": {
+        "text": 19
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "寫筆畫數"
+      ],
+      "total": 1,
+      "usable": 1,
+      "held": 0,
+      "formats": {
+        "fields": 1
+      },
+      "inputs": {
+        "text": 4
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "閱讀測驗-成語故事閱讀測驗"
+      ],
+      "total": 6,
+      "usable": 6,
+      "held": 0,
+      "formats": {
+        "fields": 6
+      },
+      "inputs": {
+        "single": 18
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 6,
+      "readingWorkbench": 6,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "閱讀測驗-延伸閱讀測驗"
+      ],
+      "total": 14,
+      "usable": 14,
+      "held": 0,
+      "formats": {
+        "fields": 14
+      },
+      "inputs": {
+        "single": 48
+      },
+      "images": 1,
+      "audio": 0,
+      "reading": 14,
+      "readingWorkbench": 14,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-文意理解"
+      ],
+      "total": 238,
+      "usable": 237,
+      "held": 1,
+      "formats": {
+        "single": 238
+      },
+      "inputs": {},
+      "images": 11,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-生字延伸成語"
+      ],
+      "total": 70,
+      "usable": 70,
+      "held": 0,
+      "formats": {
+        "single": 70
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-字音字形"
+      ],
+      "total": 368,
+      "usable": 367,
+      "held": 1,
+      "formats": {
+        "single": 368
+      },
+      "inputs": {},
+      "images": 11,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-字詞義及運用"
+      ],
+      "total": 357,
+      "usable": 353,
+      "held": 4,
+      "formats": {
+        "single": 357
+      },
+      "inputs": {},
+      "images": 1,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-其他"
+      ],
+      "total": 180,
+      "usable": 177,
+      "held": 3,
+      "formats": {
+        "single": 180
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-基本修辭"
+      ],
+      "total": 36,
+      "usable": 36,
+      "held": 0,
+      "formats": {
+        "single": 36
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-標點符號"
+      ],
+      "total": 61,
+      "usable": 61,
+      "held": 0,
+      "formats": {
+        "single": 61
+      },
+      "inputs": {},
+      "images": 1,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-ch",
+      "grade": 3,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "TASALW-±,nW"
+      ],
+      "total": 1,
+      "usable": 1,
+      "held": 0,
+      "formats": {
+        "fields": 1
+      },
+      "inputs": {
+        "single": 3
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 1,
+      "readingWorkbench": 1,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g3-so",
+      "grade": 3,
+      "subject": "社會",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題"
+      ],
+      "total": 415,
+      "usable": 415,
+      "held": 0,
+      "formats": {
+        "single": 415
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g4-chinese",
+      "grade": 4,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-文意理解"
+      ],
+      "total": 121,
+      "usable": 121,
+      "held": 0,
+      "formats": {
+        "single": 121
+      },
+      "inputs": {},
+      "images": 1,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g4-chinese",
+      "grade": 4,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-生字延伸成語"
+      ],
+      "total": 60,
+      "usable": 60,
+      "held": 0,
+      "formats": {
+        "single": 60
+      },
+      "inputs": {},
+      "images": 5,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g4-chinese",
+      "grade": 4,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-字音字形"
+      ],
+      "total": 208,
+      "usable": 208,
+      "held": 0,
+      "formats": {
+        "single": 208
+      },
+      "inputs": {},
+      "images": 52,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g4-chinese",
+      "grade": 4,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-字詞義及運用"
+      ],
+      "total": 206,
+      "usable": 206,
+      "held": 0,
+      "formats": {
+        "single": 206
+      },
+      "inputs": {},
+      "images": 9,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g4-chinese",
+      "grade": 4,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-其他"
+      ],
+      "total": 56,
+      "usable": 56,
+      "held": 0,
+      "formats": {
+        "single": 56
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g4-chinese",
+      "grade": 4,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-基本修辭"
+      ],
+      "total": 29,
+      "usable": 29,
+      "held": 0,
+      "formats": {
+        "single": 29
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g4-chinese",
+      "grade": 4,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-標點符號"
+      ],
+      "total": 27,
+      "usable": 27,
+      "held": 0,
+      "formats": {
+        "single": 27
+      },
+      "inputs": {},
+      "images": 2,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "主題修辭進階"
+      ],
+      "total": 7,
+      "usable": 7,
+      "held": 0,
+      "formats": {
+        "fields": 7
+      },
+      "inputs": {
+        "single": 24
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 3,
+      "readingWorkbench": 3,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "主題詞語進階"
+      ],
+      "total": 7,
+      "usable": 7,
+      "held": 0,
+      "formats": {
+        "fields": 7
+      },
+      "inputs": {
+        "single": 33
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 6,
+      "readingWorkbench": 6,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "回答問題"
+      ],
+      "total": 60,
+      "usable": 60,
+      "held": 0,
+      "formats": {
+        "open": 60
+      },
+      "inputs": {
+        "text": 62
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "改錯字"
+      ],
+      "total": 127,
+      "usable": 127,
+      "held": 0,
+      "formats": {
+        "fields": 127
+      },
+      "inputs": {
+        "text": 172
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "改錯字-短文式"
+      ],
+      "total": 7,
+      "usable": 7,
+      "held": 0,
+      "formats": {
+        "fields": 7
+      },
+      "inputs": {
+        "text": 51
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "是非題"
+      ],
+      "total": 310,
+      "usable": 155,
+      "held": 155,
+      "formats": {
+        "fields": 155,
+        "single": 155
+      },
+      "inputs": {
+        "single": 155
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "根據提示填寫答案"
+      ],
+      "total": 223,
+      "usable": 139,
+      "held": 84,
+      "formats": {
+        "fields": 139,
+        "single": 84
+      },
+      "inputs": {
+        "single": 242,
+        "text": 16
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 15,
+      "readingWorkbench": 15,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "圈圈看"
+      ],
+      "total": 138,
+      "usable": 92,
+      "held": 46,
+      "formats": {
+        "fields": 92,
+        "single": 46
+      },
+      "inputs": {
+        "single": 146
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "國字注音-句子式"
+      ],
+      "total": 134,
+      "usable": 134,
+      "held": 0,
+      "formats": {
+        "fields": 134
+      },
+      "inputs": {
+        "text": 192
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "國字注音-短文式"
+      ],
+      "total": 23,
+      "usable": 23,
+      "held": 0,
+      "formats": {
+        "fields": 23
+      },
+      "inputs": {
+        "text": 138
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "國字注音-短文式閱讀測驗"
+      ],
+      "total": 6,
+      "usable": 6,
+      "held": 0,
+      "formats": {
+        "fields": 6
+      },
+      "inputs": {
+        "text": 63,
+        "single": 18
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 6,
+      "readingWorkbench": 6,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "國字注音-詞語式"
+      ],
+      "total": 174,
+      "usable": 174,
+      "held": 0,
+      "formats": {
+        "fields": 174
+      },
+      "inputs": {
+        "text": 189
+      },
+      "images": 174,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "排出正確的順序"
+      ],
+      "total": 19,
+      "usable": 19,
+      "held": 0,
+      "formats": {
+        "fields": 19
+      },
+      "inputs": {
+        "text": 19
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "接寫句子"
+      ],
+      "total": 7,
+      "usable": 7,
+      "held": 0,
+      "formats": {
+        "open": 7
+      },
+      "inputs": {
+        "text": 8
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "造句"
+      ],
+      "total": 65,
+      "usable": 65,
+      "held": 0,
+      "formats": {
+        "open": 65
+      },
+      "inputs": {
+        "text": 65
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "造詞-先寫寫看再造詞"
+      ],
+      "total": 158,
+      "usable": 158,
+      "held": 0,
+      "formats": {
+        "open": 158
+      },
+      "inputs": {
+        "text": 537
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "造詞-造詞"
+      ],
+      "total": 80,
+      "usable": 80,
+      "held": 0,
+      "formats": {
+        "open": 80
+      },
+      "inputs": {
+        "text": 160
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "連連看"
+      ],
+      "total": 13,
+      "usable": 13,
+      "held": 0,
+      "formats": {
+        "fields": 13
+      },
+      "inputs": {
+        "text": 20,
+        "single": 31
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "畫掉多餘的字"
+      ],
+      "total": 27,
+      "usable": 27,
+      "held": 0,
+      "formats": {
+        "fields": 27
+      },
+      "inputs": {
+        "text": 27
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "填入適合的字或詞-填入適合的字"
+      ],
+      "total": 63,
+      "usable": 62,
+      "held": 1,
+      "formats": {
+        "fields": 62,
+        "single": 1
+      },
+      "inputs": {
+        "single": 158
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "填入適合的字或詞-填入適合的詞"
+      ],
+      "total": 66,
+      "usable": 64,
+      "held": 2,
+      "formats": {
+        "fields": 64,
+        "single": 2
+      },
+      "inputs": {
+        "single": 147,
+        "text": 6
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "填標點符號"
+      ],
+      "total": 21,
+      "usable": 21,
+      "held": 0,
+      "formats": {
+        "fields": 21
+      },
+      "inputs": {
+        "text": 118
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "照樣造句"
+      ],
+      "total": 2,
+      "usable": 2,
+      "held": 0,
+      "formats": {
+        "open": 2
+      },
+      "inputs": {
+        "text": 10
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "照樣寫短語"
+      ],
+      "total": 6,
+      "usable": 6,
+      "held": 0,
+      "formats": {
+        "open": 6
+      },
+      "inputs": {
+        "text": 19
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "閱讀測驗-成語故事閱讀測驗"
+      ],
+      "total": 8,
+      "usable": 8,
+      "held": 0,
+      "formats": {
+        "fields": 8
+      },
+      "inputs": {
+        "single": 20
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 8,
+      "readingWorkbench": 8,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "閱讀測驗-延伸閱讀測驗"
+      ],
+      "total": 19,
+      "usable": 19,
+      "held": 0,
+      "formats": {
+        "fields": 19
+      },
+      "inputs": {
+        "single": 53
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 19,
+      "readingWorkbench": 19,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-文意理解"
+      ],
+      "total": 247,
+      "usable": 246,
+      "held": 1,
+      "formats": {
+        "fields": 88,
+        "single": 159
+      },
+      "inputs": {
+        "text": 87,
+        "single": 1
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-生字延伸成語"
+      ],
+      "total": 68,
+      "usable": 68,
+      "held": 0,
+      "formats": {
+        "fields": 53,
+        "single": 15
+      },
+      "inputs": {
+        "text": 53
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-字音字形"
+      ],
+      "total": 324,
+      "usable": 309,
+      "held": 15,
+      "formats": {
+        "fields": 168,
+        "single": 156
+      },
+      "inputs": {
+        "text": 168
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-字詞義及運用"
+      ],
+      "total": 314,
+      "usable": 313,
+      "held": 1,
+      "formats": {
+        "fields": 153,
+        "single": 161
+      },
+      "inputs": {
+        "text": 152,
+        "single": 1
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-其他"
+      ],
+      "total": 76,
+      "usable": 76,
+      "held": 0,
+      "formats": {
+        "single": 42,
+        "fields": 34
+      },
+      "inputs": {
+        "text": 34
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-基本修辭"
+      ],
+      "total": 35,
+      "usable": 35,
+      "held": 0,
+      "formats": {
+        "fields": 23,
+        "single": 12
+      },
+      "inputs": {
+        "text": 23
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-ch",
+      "grade": 6,
+      "subject": "國語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "選擇題-標點符號"
+      ],
+      "total": 36,
+      "usable": 36,
+      "held": 0,
+      "formats": {
+        "single": 35,
+        "fields": 1
+      },
+      "inputs": {
+        "text": 1
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "克漏字-Read and Choose　請讀一讀，選出正確的答案"
+      ],
+      "total": 2,
+      "usable": 2,
+      "held": 0,
+      "formats": {
+        "fields": 2
+      },
+      "inputs": {
+        "single": 8
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "素養題-Reading Comprehension　閱讀測驗"
+      ],
+      "total": 8,
+      "usable": 8,
+      "held": 0,
+      "formats": {
+        "fields": 8
+      },
+      "inputs": {
+        "single": 16,
+        "text": 18
+      },
+      "images": 8,
+      "audio": 0,
+      "reading": 5,
+      "readingWorkbench": 5,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Listening：Phonics-Listen and Choose　請仔細聽，選出正確的發音例字"
+      ],
+      "total": 70,
+      "usable": 30,
+      "held": 40,
+      "formats": {
+        "fields": 20,
+        "single": 50
+      },
+      "inputs": {
+        "single": 20
+      },
+      "images": 0,
+      "audio": 70,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Listening：Phonics-Listen and Choose　請仔細聽單字中的母音，選出發相同母音的單字"
+      ],
+      "total": 28,
+      "usable": 12,
+      "held": 16,
+      "formats": {
+        "fields": 8,
+        "single": 20
+      },
+      "inputs": {
+        "single": 8
+      },
+      "images": 0,
+      "audio": 28,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Listening：Phonics-Listen and Circle　請仔細聽，圈出與單字對應的母音"
+      ],
+      "total": 40,
+      "usable": 20,
+      "held": 20,
+      "formats": {
+        "fields": 20,
+        "single": 20
+      },
+      "inputs": {
+        "single": 20
+      },
+      "images": 0,
+      "audio": 40,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Listening：Phonics-Listen and Mark “O” or “X”　請仔細聽，母音發音相同畫 “O”，不同畫 “X”"
+      ],
+      "total": 16,
+      "usable": 8,
+      "held": 8,
+      "formats": {
+        "single": 8,
+        "fields": 8
+      },
+      "inputs": {
+        "single": 8
+      },
+      "images": 0,
+      "audio": 16,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Listening：Phonics-Listen, Circle, and Write　請仔細聽，圈出對應的發音組合，並寫下來"
+      ],
+      "total": 16,
+      "usable": 8,
+      "held": 8,
+      "formats": {
+        "single": 8,
+        "fields": 8
+      },
+      "inputs": {
+        "single": 8
+      },
+      "images": 0,
+      "audio": 16,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Listening：Sentences-Listen and Choose　請仔細聽，根據所聽到的句子，選出適當的回應句"
+      ],
+      "total": 35,
+      "usable": 15,
+      "held": 20,
+      "formats": {
+        "fields": 10,
+        "single": 25
+      },
+      "inputs": {
+        "single": 10
+      },
+      "images": 0,
+      "audio": 35,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Listening：Sentences-Listen and Choose　請仔細聽，根據所聽到的句子或對話，選出對應的圖片"
+      ],
+      "total": 21,
+      "usable": 9,
+      "held": 12,
+      "formats": {
+        "single": 15,
+        "fields": 6
+      },
+      "inputs": {
+        "single": 6
+      },
+      "images": 21,
+      "audio": 21,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Listening：Sentences-Listen and Choose　請仔細聽，根據所聽到的敘述，選出適當的答案"
+      ],
+      "total": 14,
+      "usable": 6,
+      "held": 8,
+      "formats": {
+        "fields": 4,
+        "single": 10
+      },
+      "inputs": {
+        "single": 4
+      },
+      "images": 0,
+      "audio": 14,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Listening：Sentences-Listen and Mark “O” or “X”　請仔細聽，句子與圖片相符畫 “O”，不符畫 “X”"
+      ],
+      "total": 16,
+      "usable": 8,
+      "held": 8,
+      "formats": {
+        "single": 8,
+        "fields": 8
+      },
+      "inputs": {
+        "single": 8
+      },
+      "images": 16,
+      "audio": 16,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Listening：Sentences-Listen and Write　請仔細聽，選出正確的句子代號"
+      ],
+      "total": 12,
+      "usable": 12,
+      "held": 0,
+      "formats": {
+        "fields": 12
+      },
+      "inputs": {
+        "text": 12
+      },
+      "images": 12,
+      "audio": 12,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Listening：Vocabulary-Listen and Choose　請仔細聽，選出句中的單字"
+      ],
+      "total": 35,
+      "usable": 15,
+      "held": 20,
+      "formats": {
+        "fields": 10,
+        "single": 25
+      },
+      "inputs": {
+        "single": 10
+      },
+      "images": 0,
+      "audio": 35,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Listening：Vocabulary-Listen and Choose　請仔細聽，選出正確的單字圖片"
+      ],
+      "total": 56,
+      "usable": 24,
+      "held": 32,
+      "formats": {
+        "fields": 16,
+        "single": 40
+      },
+      "inputs": {
+        "single": 16
+      },
+      "images": 56,
+      "audio": 56,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Sentences-Fill In　讀短文或對話，填寫正確的答案"
+      ],
+      "total": 18,
+      "usable": 18,
+      "held": 0,
+      "formats": {
+        "fields": 18
+      },
+      "inputs": {
+        "text": 58
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 5,
+      "readingWorkbench": 5,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Sentences-Look and Choose　請看圖片，選出最符合圖意的句子"
+      ],
+      "total": 10,
+      "usable": 10,
+      "held": 0,
+      "formats": {
+        "single": 10
+      },
+      "inputs": {},
+      "images": 10,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Sentences-Look, Read, and Choose　請看圖片，填入對應的句子代號"
+      ],
+      "total": 6,
+      "usable": 6,
+      "held": 0,
+      "formats": {
+        "fields": 6
+      },
+      "inputs": {
+        "single": 18
+      },
+      "images": 6,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Sentences-Look, Read, and Choose　請看圖片，選出最適當的答案"
+      ],
+      "total": 60,
+      "usable": 36,
+      "held": 24,
+      "formats": {
+        "single": 60
+      },
+      "inputs": {},
+      "images": 60,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Sentences-Look, Read, and Mark “O” or “X”　請看圖片，圖文相符畫 “O”，不符畫 “X”"
+      ],
+      "total": 28,
+      "usable": 14,
+      "held": 14,
+      "formats": {
+        "single": 14,
+        "fields": 14
+      },
+      "inputs": {
+        "single": 14
+      },
+      "images": 28,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Sentences-Look, Read, and Write　請根據對話內容，在空格中填入適當的答案"
+      ],
+      "total": 8,
+      "usable": 8,
+      "held": 0,
+      "formats": {
+        "fields": 8
+      },
+      "inputs": {
+        "text": 16
+      },
+      "images": 8,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Sentences-Look, Read, and Write　請根據對話內容，寫出適當的回應句"
+      ],
+      "total": 10,
+      "usable": 10,
+      "held": 0,
+      "formats": {
+        "fields": 10
+      },
+      "inputs": {
+        "text": 10
+      },
+      "images": 10,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Sentences-Read and Choose　請依句子或對話選出相對應的圖片"
+      ],
+      "total": 35,
+      "usable": 21,
+      "held": 14,
+      "formats": {
+        "single": 35
+      },
+      "inputs": {},
+      "images": 35,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Sentences-Read and Choose　請讀一讀，選出最適當的答案"
+      ],
+      "total": 65,
+      "usable": 39,
+      "held": 26,
+      "formats": {
+        "single": 65
+      },
+      "inputs": {},
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Sentences-Reading Comprehension　閱讀測驗"
+      ],
+      "total": 8,
+      "usable": 8,
+      "held": 0,
+      "formats": {
+        "fields": 8
+      },
+      "inputs": {
+        "single": 26,
+        "text": 6
+      },
+      "images": 1,
+      "audio": 0,
+      "reading": 6,
+      "readingWorkbench": 6,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Sentences-Unscramble　重組句子"
+      ],
+      "total": 12,
+      "usable": 12,
+      "held": 0,
+      "formats": {
+        "fields": 12
+      },
+      "inputs": {
+        "text": 12
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Vocabulary-Look and Choose　請看圖片，選出正確的單字"
+      ],
+      "total": 18,
+      "usable": 18,
+      "held": 0,
+      "formats": {
+        "single": 18
+      },
+      "inputs": {},
+      "images": 18,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Vocabulary-Look and Spell　請看圖片，依提示拼寫出圖片所代表的單字"
+      ],
+      "total": 6,
+      "usable": 6,
+      "held": 0,
+      "formats": {
+        "fields": 6
+      },
+      "inputs": {
+        "text": 6
+      },
+      "images": 6,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Vocabulary-Look and Write　請看圖片，選出正確單字，並寫下來"
+      ],
+      "total": 10,
+      "usable": 10,
+      "held": 0,
+      "formats": {
+        "fields": 10
+      },
+      "inputs": {
+        "text": 10
+      },
+      "images": 10,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-kang-g6-en",
+      "grade": 6,
+      "subject": "英語",
+      "publisher": "康軒",
+      "sourceTypes": [
+        "Vocabulary-Read and Choose　請依單字選出正確的圖片"
+      ],
+      "total": 40,
+      "usable": 24,
+      "held": 16,
+      "formats": {
+        "single": 40
+      },
+      "inputs": {},
+      "images": 40,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g4-math",
+      "grade": 4,
+      "subject": "數學",
+      "publisher": "南一",
+      "sourceTypes": [
+        "選擇題"
+      ],
+      "total": 366,
+      "usable": 366,
+      "held": 0,
+      "formats": {
+        "single": 366
+      },
+      "inputs": {},
+      "images": 93,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g4-science",
+      "grade": 4,
+      "subject": "自然",
+      "publisher": "南一",
+      "sourceTypes": [
+        "選擇題"
+      ],
+      "total": 222,
+      "usable": 222,
+      "held": 0,
+      "formats": {
+        "single": 222
+      },
+      "inputs": {},
+      "images": 5,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-science",
+      "grade": 6,
+      "subject": "自然",
+      "publisher": "南一",
+      "sourceTypes": [
+        "勾選題"
+      ],
+      "total": 38,
+      "usable": 38,
+      "held": 0,
+      "formats": {
+        "fields": 38
+      },
+      "inputs": {
+        "set": 36,
+        "single": 10
+      },
+      "images": 17,
+      "audio": 0,
+      "reading": 1,
+      "readingWorkbench": 1,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-science",
+      "grade": 6,
+      "subject": "自然",
+      "publisher": "南一",
+      "sourceTypes": [
+        "是的打ˇ．不是的打╳"
+      ],
+      "total": 41,
+      "usable": 41,
+      "held": 0,
+      "formats": {
+        "fields": 41
+      },
+      "inputs": {
+        "single": 161
+      },
+      "images": 14,
+      "audio": 0,
+      "reading": 3,
+      "readingWorkbench": 3,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-science",
+      "grade": 6,
+      "subject": "自然",
+      "publisher": "南一",
+      "sourceTypes": [
+        "是非題"
+      ],
+      "total": 338,
+      "usable": 336,
+      "held": 2,
+      "formats": {
+        "single": 335,
+        "fields": 3
+      },
+      "inputs": {
+        "single": 4
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-science",
+      "grade": 6,
+      "subject": "自然",
+      "publisher": "南一",
+      "sourceTypes": [
+        "活用題"
+      ],
+      "total": 12,
+      "usable": 11,
+      "held": 1,
+      "formats": {
+        "fields": 11,
+        "single": 1
+      },
+      "inputs": {
+        "set": 10,
+        "single": 1
+      },
+      "images": 2,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-science",
+      "grade": 6,
+      "subject": "自然",
+      "publisher": "南一",
+      "sourceTypes": [
+        "看圖回答問題"
+      ],
+      "total": 16,
+      "usable": 16,
+      "held": 0,
+      "formats": {
+        "fields": 16
+      },
+      "inputs": {
+        "single": 64,
+        "set": 4
+      },
+      "images": 16,
+      "audio": 0,
+      "reading": 15,
+      "readingWorkbench": 15,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-science",
+      "grade": 6,
+      "subject": "自然",
+      "publisher": "南一",
+      "sourceTypes": [
+        "科學閱讀"
+      ],
+      "total": 18,
+      "usable": 18,
+      "held": 0,
+      "formats": {
+        "fields": 18
+      },
+      "inputs": {
+        "single": 69,
+        "set": 7
+      },
+      "images": 4,
+      "audio": 0,
+      "reading": 15,
+      "readingWorkbench": 15,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-science",
+      "grade": 6,
+      "subject": "自然",
+      "publisher": "南一",
+      "sourceTypes": [
+        "配合題"
+      ],
+      "total": 17,
+      "usable": 17,
+      "held": 0,
+      "formats": {
+        "fields": 17
+      },
+      "inputs": {
+        "single": 49,
+        "set": 2
+      },
+      "images": 16,
+      "audio": 0,
+      "reading": 2,
+      "readingWorkbench": 2,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-science",
+      "grade": 6,
+      "subject": "自然",
+      "publisher": "南一",
+      "sourceTypes": [
+        "圈圈看"
+      ],
+      "total": 17,
+      "usable": 10,
+      "held": 7,
+      "formats": {
+        "single": 7,
+        "fields": 10
+      },
+      "inputs": {
+        "single": 11,
+        "set": 2
+      },
+      "images": 6,
+      "audio": 0,
+      "reading": 1,
+      "readingWorkbench": 1,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-science",
+      "grade": 6,
+      "subject": "自然",
+      "publisher": "南一",
+      "sourceTypes": [
+        "連連看"
+      ],
+      "total": 18,
+      "usable": 18,
+      "held": 0,
+      "formats": {
+        "fields": 18
+      },
+      "inputs": {
+        "single": 69
+      },
+      "images": 18,
+      "audio": 0,
+      "reading": 1,
+      "readingWorkbench": 0,
+      "readingExcluded": {
+        "連線題保留整體操作": 1
+      },
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-science",
+      "grade": 6,
+      "subject": "自然",
+      "publisher": "南一",
+      "sourceTypes": [
+        "填充題"
+      ],
+      "total": 7,
+      "usable": 7,
+      "held": 0,
+      "formats": {
+        "fields": 7
+      },
+      "inputs": {
+        "text": 17,
+        "single": 4
+      },
+      "images": 1,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-science",
+      "grade": 6,
+      "subject": "自然",
+      "publisher": "南一",
+      "sourceTypes": [
+        "填填看"
+      ],
+      "total": 15,
+      "usable": 14,
+      "held": 1,
+      "formats": {
+        "fields": 14,
+        "single": 1
+      },
+      "inputs": {
+        "single": 78,
+        "set": 3
+      },
+      "images": 10,
+      "audio": 0,
+      "reading": 2,
+      "readingWorkbench": 2,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-science",
+      "grade": 6,
+      "subject": "自然",
+      "publisher": "南一",
+      "sourceTypes": [
+        "選擇題"
+      ],
+      "total": 306,
+      "usable": 306,
+      "held": 0,
+      "formats": {
+        "single": 306
+      },
+      "inputs": {},
+      "images": 6,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-science",
+      "grade": 6,
+      "subject": "自然",
+      "publisher": "南一",
+      "sourceTypes": [
+        "簡答題"
+      ],
+      "total": 25,
+      "usable": 20,
+      "held": 5,
+      "formats": {
+        "fields": 20,
+        "single": 5
+      },
+      "inputs": {
+        "single": 19,
+        "text": 12,
+        "set": 2
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 3,
+      "readingWorkbench": 3,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-science",
+      "grade": 6,
+      "subject": "自然",
+      "publisher": "南一",
+      "sourceTypes": [
+        "題組"
+      ],
+      "total": 35,
+      "usable": 30,
+      "held": 5,
+      "formats": {
+        "fields": 35
+      },
+      "inputs": {
+        "single": 216,
+        "set": 13
+      },
+      "images": 33,
+      "audio": 0,
+      "reading": 27,
+      "readingWorkbench": 27,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-social",
+      "grade": 6,
+      "subject": "社會",
+      "publisher": "南一",
+      "sourceTypes": [
+        "勾選題"
+      ],
+      "total": 1,
+      "usable": 1,
+      "held": 0,
+      "formats": {
+        "open": 1
+      },
+      "inputs": {
+        "text": 2
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-social",
+      "grade": 6,
+      "subject": "社會",
+      "publisher": "南一",
+      "sourceTypes": [
+        "是的打ˇ．不是的打╳"
+      ],
+      "total": 33,
+      "usable": 33,
+      "held": 0,
+      "formats": {
+        "fields": 33
+      },
+      "inputs": {
+        "single": 41,
+        "set": 26
+      },
+      "images": 1,
+      "audio": 0,
+      "reading": 9,
+      "readingWorkbench": 9,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-social",
+      "grade": 6,
+      "subject": "社會",
+      "publisher": "南一",
+      "sourceTypes": [
+        "是非題"
+      ],
+      "total": 688,
+      "usable": 344,
+      "held": 344,
+      "formats": {
+        "single": 344,
+        "fields": 344
+      },
+      "inputs": {
+        "single": 344
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-social",
+      "grade": 6,
+      "subject": "社會",
+      "publisher": "南一",
+      "sourceTypes": [
+        "高層次思考題"
+      ],
+      "total": 4,
+      "usable": 2,
+      "held": 2,
+      "formats": {
+        "fields": 2,
+        "single": 2
+      },
+      "inputs": {
+        "single": 2
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-social",
+      "grade": 6,
+      "subject": "社會",
+      "publisher": "南一",
+      "sourceTypes": [
+        "圈圈看"
+      ],
+      "total": 22,
+      "usable": 13,
+      "held": 9,
+      "formats": {
+        "fields": 13,
+        "single": 9
+      },
+      "inputs": {
+        "single": 9,
+        "set": 4
+      },
+      "images": 10,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-social",
+      "grade": 6,
+      "subject": "社會",
+      "publisher": "南一",
+      "sourceTypes": [
+        "連連看"
+      ],
+      "total": 10,
+      "usable": 10,
+      "held": 0,
+      "formats": {
+        "fields": 10
+      },
+      "inputs": {
+        "single": 42
+      },
+      "images": 10,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-social",
+      "grade": 6,
+      "subject": "社會",
+      "publisher": "南一",
+      "sourceTypes": [
+        "填充題"
+      ],
+      "total": 8,
+      "usable": 8,
+      "held": 0,
+      "formats": {
+        "fields": 7,
+        "open": 1
+      },
+      "inputs": {
+        "single": 14,
+        "sequence": 4,
+        "text": 3
+      },
+      "images": 3,
+      "audio": 0,
+      "reading": 1,
+      "readingWorkbench": 1,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-social",
+      "grade": 6,
+      "subject": "社會",
+      "publisher": "南一",
+      "sourceTypes": [
+        "圖表題"
+      ],
+      "total": 7,
+      "usable": 7,
+      "held": 0,
+      "formats": {
+        "fields": 5,
+        "open": 2
+      },
+      "inputs": {
+        "set": 2,
+        "text": 10,
+        "single": 16
+      },
+      "images": 7,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-social",
+      "grade": 6,
+      "subject": "社會",
+      "publisher": "南一",
+      "sourceTypes": [
+        "對的畫○．不對的打╳"
+      ],
+      "total": 1,
+      "usable": 1,
+      "held": 0,
+      "formats": {
+        "fields": 1
+      },
+      "inputs": {
+        "set": 1
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-social",
+      "grade": 6,
+      "subject": "社會",
+      "publisher": "南一",
+      "sourceTypes": [
+        "閱讀理解題"
+      ],
+      "total": 30,
+      "usable": 29,
+      "held": 1,
+      "formats": {
+        "fields": 24,
+        "open": 5,
+        "single": 1
+      },
+      "inputs": {
+        "single": 38,
+        "text": 29,
+        "set": 65
+      },
+      "images": 5,
+      "audio": 0,
+      "reading": 22,
+      "readingWorkbench": 22,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-social",
+      "grade": 6,
+      "subject": "社會",
+      "publisher": "南一",
+      "sourceTypes": [
+        "選擇題"
+      ],
+      "total": 758,
+      "usable": 524,
+      "held": 234,
+      "formats": {
+        "single": 523,
+        "fields": 234,
+        "open": 1
+      },
+      "inputs": {
+        "single": 234,
+        "text": 1
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-social",
+      "grade": 6,
+      "subject": "社會",
+      "publisher": "南一",
+      "sourceTypes": [
+        "簡答題"
+      ],
+      "total": 3,
+      "usable": 3,
+      "held": 0,
+      "formats": {
+        "open": 3
+      },
+      "inputs": {
+        "text": 3
+      },
+      "images": 0,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "115-1-nani-g6-social",
+      "grade": 6,
+      "subject": "社會",
+      "publisher": "南一",
+      "sourceTypes": [
+        "題組"
+      ],
+      "total": 15,
+      "usable": 15,
+      "held": 0,
+      "formats": {
+        "fields": 14,
+        "open": 1
+      },
+      "inputs": {
+        "single": 25,
+        "set": 28,
+        "text": 2
+      },
+      "images": 8,
+      "audio": 0,
+      "reading": 12,
+      "readingWorkbench": 12,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "legacy-unassigned",
+      "grade": null,
+      "subject": "舊題庫待對應",
+      "publisher": "",
+      "sourceTypes": [
+        "選出正確的答案（選擇題）"
+      ],
+      "total": 510,
+      "usable": 288,
+      "held": 222,
+      "formats": {
+        "single": 510
+      },
+      "inputs": {},
+      "images": 171,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    },
+    {
+      "course": "legacy-unassigned",
+      "grade": null,
+      "subject": "舊題庫待對應",
+      "publisher": "",
+      "sourceTypes": [
+        "選擇題"
+      ],
+      "total": 6,
+      "usable": 2,
+      "held": 4,
+      "formats": {
+        "single": 6
+      },
+      "inputs": {},
+      "images": 3,
+      "audio": 0,
+      "reading": 0,
+      "readingWorkbench": 0,
+      "readingExcluded": {},
+      "expression": 0,
+      "sketch": 0,
+      "openSketch": 0,
+      "invalid": 0,
+      "validation": "代表案例介面通過；來源語意沿既有固定複核"
+    }
+  ],
+  "past": {
+    "scope": "啟用考古卷的當前固定版本；kind 是平台契約，不冒稱書商原始題型",
+    "papers": 50,
+    "enabledPapers": 42,
+    "activeVersions": 42,
+    "missingActiveVersions": 0,
+    "historicalVersions": 85,
+    "totalGroups": 1600,
+    "groups": [
+      {
+        "grade": 4,
+        "subject": "社會",
+        "kind": "single",
+        "total": 31,
+        "fields": 31
+      },
+      {
+        "grade": 4,
+        "subject": "社會",
+        "kind": "mark",
+        "total": 7,
+        "fields": 40
+      },
+      {
+        "grade": 4,
+        "subject": "社會",
+        "kind": "code",
+        "total": 5,
+        "fields": 21
+      },
+      {
+        "grade": 4,
+        "subject": "社會",
+        "kind": "short",
+        "total": 2,
+        "fields": 6
+      },
+      {
+        "grade": 4,
+        "subject": "國語",
+        "kind": "manual",
+        "total": 43,
+        "fields": 43
+      },
+      {
+        "grade": 4,
+        "subject": "國語",
+        "kind": "single",
+        "total": 27,
+        "fields": 27
+      },
+      {
+        "grade": 4,
+        "subject": "國語",
+        "kind": "code",
+        "total": 1,
+        "fields": 5
+      },
+      {
+        "grade": 4,
+        "subject": "國語",
+        "kind": "mark",
+        "total": 1,
+        "fields": 4
+      },
+      {
+        "grade": 3,
+        "subject": "國語",
+        "kind": "short",
+        "total": 32,
+        "fields": 97
+      },
+      {
+        "grade": 3,
+        "subject": "國語",
+        "kind": "single",
+        "total": 52,
+        "fields": 52
+      },
+      {
+        "grade": 3,
+        "subject": "國語",
+        "kind": "manual",
+        "total": 24,
+        "fields": 24
+      },
+      {
+        "grade": 3,
+        "subject": "國語",
+        "kind": "code",
+        "total": 4,
+        "fields": 20
+      },
+      {
+        "grade": 3,
+        "subject": "英語",
+        "kind": "single",
+        "total": 48,
+        "fields": 48
+      },
+      {
+        "grade": 3,
+        "subject": "英語",
+        "kind": "code",
+        "total": 6,
+        "fields": 12
+      },
+      {
+        "grade": 3,
+        "subject": "英語",
+        "kind": "short",
+        "total": 13,
+        "fields": 30
+      },
+      {
+        "grade": 3,
+        "subject": "英語",
+        "kind": "manual",
+        "total": 8,
+        "fields": 8
+      },
+      {
+        "grade": 3,
+        "subject": "數學",
+        "kind": "short",
+        "total": 26,
+        "fields": 65
+      },
+      {
+        "grade": 3,
+        "subject": "數學",
+        "kind": "single",
+        "total": 11,
+        "fields": 11
+      },
+      {
+        "grade": 3,
+        "subject": "數學",
+        "kind": "code",
+        "total": 2,
+        "fields": 6
+      },
+      {
+        "grade": 3,
+        "subject": "數學",
+        "kind": "manual",
+        "total": 29,
+        "fields": 29
+      },
+      {
+        "grade": 3,
+        "subject": "自然",
+        "kind": "single",
+        "total": 52,
+        "fields": 52
+      },
+      {
+        "grade": 3,
+        "subject": "自然",
+        "kind": "code",
+        "total": 12,
+        "fields": 18
+      },
+      {
+        "grade": 3,
+        "subject": "自然",
+        "kind": "mark",
+        "total": 9,
+        "fields": 29
+      },
+      {
+        "grade": 3,
+        "subject": "自然",
+        "kind": "manual",
+        "total": 1,
+        "fields": 1
+      },
+      {
+        "grade": 3,
+        "subject": "社會",
+        "kind": "single",
+        "total": 64,
+        "fields": 64
+      },
+      {
+        "grade": 3,
+        "subject": "社會",
+        "kind": "code",
+        "total": 7,
+        "fields": 30
+      },
+      {
+        "grade": 3,
+        "subject": "社會",
+        "kind": "mark",
+        "total": 6,
+        "fields": 27
+      },
+      {
+        "grade": 6,
+        "subject": "國語",
+        "kind": "short",
+        "total": 16,
+        "fields": 56
+      },
+      {
+        "grade": 6,
+        "subject": "國語",
+        "kind": "code",
+        "total": 3,
+        "fields": 19
+      },
+      {
+        "grade": 6,
+        "subject": "國語",
+        "kind": "single",
+        "total": 44,
+        "fields": 44
+      },
+      {
+        "grade": 6,
+        "subject": "國語",
+        "kind": "manual",
+        "total": 4,
+        "fields": 4
+      },
+      {
+        "grade": 6,
+        "subject": "英語",
+        "kind": "single",
+        "total": 59,
+        "fields": 59
+      },
+      {
+        "grade": 6,
+        "subject": "英語",
+        "kind": "set",
+        "total": 4,
+        "fields": 4
+      },
+      {
+        "grade": 6,
+        "subject": "英語",
+        "kind": "short",
+        "total": 19,
+        "fields": 30
+      },
+      {
+        "grade": 6,
+        "subject": "英語",
+        "kind": "code",
+        "total": 2,
+        "fields": 11
+      },
+      {
+        "grade": 6,
+        "subject": "英語",
+        "kind": "manual",
+        "total": 4,
+        "fields": 4
+      },
+      {
+        "grade": 6,
+        "subject": "數學",
+        "kind": "single",
+        "total": 18,
+        "fields": 18
+      },
+      {
+        "grade": 6,
+        "subject": "數學",
+        "kind": "manual",
+        "total": 36,
+        "fields": 36
+      },
+      {
+        "grade": 6,
+        "subject": "數學",
+        "kind": "short",
+        "total": 20,
+        "fields": 31
+      },
+      {
+        "grade": 6,
+        "subject": "數學",
+        "kind": "code",
+        "total": 6,
+        "fields": 6
+      },
+      {
+        "grade": 6,
+        "subject": "自然",
+        "kind": "single",
+        "total": 97,
+        "fields": 97
+      },
+      {
+        "grade": 6,
+        "subject": "自然",
+        "kind": "code",
+        "total": 11,
+        "fields": 27
+      },
+      {
+        "grade": 6,
+        "subject": "自然",
+        "kind": "mark",
+        "total": 2,
+        "fields": 12
+      },
+      {
+        "grade": 6,
+        "subject": "自然",
+        "kind": "short",
+        "total": 13,
+        "fields": 30
+      },
+      {
+        "grade": 6,
+        "subject": "自然",
+        "kind": "manual",
+        "total": 6,
+        "fields": 6
+      },
+      {
+        "grade": 6,
+        "subject": "社會",
+        "kind": "single",
+        "total": 70,
+        "fields": 70
+      },
+      {
+        "grade": 6,
+        "subject": "社會",
+        "kind": "code",
+        "total": 3,
+        "fields": 19
+      },
+      {
+        "grade": 6,
+        "subject": "社會",
+        "kind": "manual",
+        "total": 3,
+        "fields": 3
+      },
+      {
+        "grade": 3,
+        "subject": "數學",
+        "kind": "mark",
+        "total": 2,
+        "fields": 6
+      },
+      {
+        "grade": 3,
+        "subject": "自然",
+        "kind": "sequence",
+        "total": 1,
+        "fields": 1
+      },
+      {
+        "grade": 3,
+        "subject": "自然",
+        "kind": "set",
+        "total": 3,
+        "fields": 5
+      },
+      {
+        "grade": 3,
+        "subject": "自然",
+        "kind": "short",
+        "total": 1,
+        "fields": 1
+      },
+      {
+        "grade": 3,
+        "subject": "自然",
+        "kind": "annotation",
+        "total": 1,
+        "fields": 1
+      },
+      {
+        "grade": 3,
+        "subject": "社會",
+        "kind": "manual",
+        "total": 1,
+        "fields": 1
+      },
+      {
+        "grade": 6,
+        "subject": "社會",
+        "kind": "mark",
+        "total": 3,
+        "fields": 12
+      },
+      {
+        "grade": 4,
+        "subject": "數學",
+        "kind": "single",
+        "total": 15,
+        "fields": 15
+      },
+      {
+        "grade": 4,
+        "subject": "數學",
+        "kind": "code",
+        "total": 1,
+        "fields": 5
+      },
+      {
+        "grade": 4,
+        "subject": "數學",
+        "kind": "manual",
+        "total": 26,
+        "fields": 26
+      },
+      {
+        "grade": 4,
+        "subject": "數學",
+        "kind": "short",
+        "total": 22,
+        "fields": 57
+      },
+      {
+        "grade": 4,
+        "subject": "自然",
+        "kind": "single",
+        "total": 27,
+        "fields": 27
+      },
+      {
+        "grade": 4,
+        "subject": "自然",
+        "kind": "mark",
+        "total": 10,
+        "fields": 65
+      },
+      {
+        "grade": 4,
+        "subject": "自然",
+        "kind": "code",
+        "total": 8,
+        "fields": 22
+      },
+      {
+        "grade": 4,
+        "subject": "英語",
+        "kind": "single",
+        "total": 47,
+        "fields": 47
+      },
+      {
+        "grade": 4,
+        "subject": "英語",
+        "kind": "short",
+        "total": 11,
+        "fields": 28
+      },
+      {
+        "grade": 4,
+        "subject": "英語",
+        "kind": "manual",
+        "total": 3,
+        "fields": 3
+      },
+      {
+        "grade": 4,
+        "subject": "國語",
+        "kind": "short",
+        "total": 1,
+        "fields": 6
+      },
+      {
+        "grade": 4,
+        "subject": "自然",
+        "kind": "short",
+        "total": 4,
+        "fields": 7
+      },
+      {
+        "grade": 4,
+        "subject": "自然",
+        "kind": "manual",
+        "total": 2,
+        "fields": 2
+      },
+      {
+        "grade": 9,
+        "subject": "國文",
+        "kind": "short",
+        "total": 20,
+        "fields": 20
+      },
+      {
+        "grade": 9,
+        "subject": "國文",
+        "kind": "manual",
+        "total": 12,
+        "fields": 12
+      },
+      {
+        "grade": 9,
+        "subject": "國文",
+        "kind": "single",
+        "total": 77,
+        "fields": 77
+      },
+      {
+        "grade": 9,
+        "subject": "英語",
+        "kind": "single",
+        "total": 80,
+        "fields": 80
+      },
+      {
+        "grade": 9,
+        "subject": "英語",
+        "kind": "short",
+        "total": 27,
+        "fields": 27
+      },
+      {
+        "grade": 9,
+        "subject": "英語",
+        "kind": "manual",
+        "total": 4,
+        "fields": 4
+      },
+      {
+        "grade": 9,
+        "subject": "數學",
+        "kind": "short",
+        "total": 46,
+        "fields": 46
+      },
+      {
+        "grade": 9,
+        "subject": "數學",
+        "kind": "single",
+        "total": 7,
+        "fields": 7
+      },
+      {
+        "grade": 9,
+        "subject": "數學",
+        "kind": "manual",
+        "total": 2,
+        "fields": 2
+      },
+      {
+        "grade": 9,
+        "subject": "自然",
+        "kind": "single",
+        "total": 73,
+        "fields": 73
+      },
+      {
+        "grade": 9,
+        "subject": "社會",
+        "kind": "single",
+        "total": 99,
+        "fields": 99
+      },
+      {
+        "grade": 9,
+        "subject": "社會",
+        "kind": "manual",
+        "total": 1,
+        "fields": 1
+      }
+    ]
+  },
+  "verification": {
+    "generalCases": 272,
+    "generalViewportChecks": 1088,
+    "pastCases": 83,
+    "pastViewportChecks": 332,
+    "widths": [
+      1280,
+      768,
+      390,
+      320
+    ],
+    "readingSupportedBefore": 168,
+    "readingSupportedAfter": 238,
+    "decodedDistinctAudio": 282,
+    "currentPastVersionsValidated": 42,
+    "currentPastResponseContracts": 8,
+    "savedWorkCandidates": 64,
+    "newMathCandidatesEnabled": false,
+    "productionStudentWrites": 0,
+    "realStudentOAuthTested": false
+  }
+}

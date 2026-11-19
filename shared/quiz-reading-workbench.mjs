@@ -3,7 +3,7 @@ import {sourceStream,sliceContent} from './quiz-content-slices.mjs';
 import {attachPastInputKeyboard} from './quiz-past-input.mjs';
 import {matchingPresentation} from './quiz-matching-presentation.mjs';
 let dialogId=0;
-export const readingWorkbenchSupported=(q,reading)=>Boolean(q?.type==='fields'&&reading&&!reading.standalone&&!reading.passage.media.length&&!q.work&&!matchingPresentation(q));
+export const readingWorkbenchSupported=(q,reading)=>Boolean(q?.type==='fields'&&reading&&!reading.standalone&&reading.passage.media.every(m=>['image','audio'].includes(m.kind))&&!q.work&&!matchingPresentation(q));
 
 // Move original inputs, listeners and feedback. No new response, scoring or
 // persistence path. The same article DOM moves into the mobile dialog.
