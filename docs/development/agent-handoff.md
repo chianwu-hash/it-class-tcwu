@@ -1,4 +1,7 @@
-# 共用連連看：原SQL回滾，待修正版核准（2026-11-19）
+# 共用連連看：修正版SQL已套用，待發布（2026-11-19）
+
+- 使用者已明確核准PR334 c3e8098a修正版兩函式SQL；本次已成功套用。正式前後原卷／三筆凍結rich與答案設定／quiz_answers、quiz_open_responses、quiz_past_attempts、partner answers整表摘要相同；只更新核准兩函式及媒體映射。180函式production snapshot已更新，db-snapshot-check --live通過。未動guard、未送學生答案。
+- 最新工作樹D:/AI-Work/matching-publish-20261119由最新origin/main新建承接PR334；下一步合併PR、全新乾淨main依release-from-main發布，再正式唯讀驗收與收據PR。下方待核准為本次核准前的歷史紀錄，不再等待相同SQL核准。
 
 - 使用者核准PR334原1函式SQL；正式交易被ALLOCATION_SOURCE_FROZEN拒絕，完整回滾，讀回原函式／原卷／三rich指紋相同。未發布、無發布鎖。先前隔離未安裝source triggers，已補SOP。
 - 最新工作樹D:/AI-Work/matching-final-20261119由最新origin/main ba95b908新建。修正版更新2既有函式（public.quiz_past_has_media、partner_pilot.learning_snapshot），原圖僅投影至授權mine/shared；加媒體映射，不UPDATE凍結題目、不改trigger／作答／配題。第二函式需本次重新明確核准，尚未套用。

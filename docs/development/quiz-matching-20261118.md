@@ -1,5 +1,9 @@
 # 連連看共用介面與原圖補接
 
+## 2026-11-19 修正版已核准並套用
+
+使用者明確核准c3e8098a兩函式修正版後，已成功套用。正式前後原卷、三筆凍結題目的完整rich／past_config／past_answer及四類作答資料摘要保持一致；quiz_past_has_media與learning_snapshot更新符合預期。已匯出180函式production snapshot並通過db-snapshot-check --live。沒有解除凍結、更新原題列或送正式答案。下一步PR進main及正式發布；下方待核准敘述為歷史紀錄。
+
 ## 2026-11-19 正式套用退回與修正版（優先於下方原紀錄）
 
 使用者已核准PR334原SQL。正式交易因三筆題目已有allocation_version=1小隊，觸發ALLOCATION_SOURCE_FROZEN，完整回滾。讀回原媒體函式、原卷及三筆rich指紋均相同；沒有發布。先前隔離驗收未安裝來源凍結trigger，漏測此狀態，原8組結果不足以證明已使用小隊可安裝。

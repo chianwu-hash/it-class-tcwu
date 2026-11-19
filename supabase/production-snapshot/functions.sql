@@ -2556,7 +2556,7 @@ grant execute on function public.is_teacher() to anon;
 grant execute on function public.is_teacher() to authenticated;
 grant execute on function public.is_teacher() to service_role;
 
--- partner_pilot.learning_snapshot(uuid)  md5=36981e39eb1249040232951476079d99
+-- partner_pilot.learning_snapshot(uuid)  md5=ed117acd31cce89bd7622c60288bb307
 CREATE OR REPLACE FUNCTION partner_pilot.learning_snapshot(rid uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -2569,6 +2569,10 @@ begin
  if result#>'{exercise,notes}' is null then return result;end if;
  foreach part in array array['mine','shared'] loop
   select coalesce(jsonb_agg(n.value || case
+   when q.id=657772880 and md5(q.rich::text)='0798d13238fecfb3fa2c2dfd7480d321' then jsonb_build_object('rich',jsonb_set(n.value->'rich','{prompt,media}',jsonb_build_array(jsonb_build_object('kind','image','alt','原卷第2頁・上排第2張圖卡','url','https://partner-media.invalid/8425314fafb48eec6aee9eec51d69d993992a81f0fb724ac7c01c47351e89dfd'))))
+   when q.id=717570551 and md5(q.rich::text)='d423375ecd56d45f23efb772f0c6e898' then jsonb_build_object('rich',jsonb_set(n.value->'rich','{prompt,media}',jsonb_build_array(jsonb_build_object('kind','image','alt','原卷第2頁・上排第3張圖卡','url','https://partner-media.invalid/2179540fb5b48d812a3877cb99885e435235edf1bdaebb87040654dbcc22f290'))))
+   when q.id=664978118 and md5(q.rich::text)='c8a4fc27a17160763940ea7364416c47' then jsonb_build_object('rich',jsonb_set(n.value->'rich','{prompt,media}',jsonb_build_array(jsonb_build_object('kind','image','alt','原卷第2頁・上排第1張圖卡','url','https://partner-media.invalid/009146ed4b4eea6cf0d8e1e8d03313b6f1c80a8812290002fb215a6a674bb3ad'))))
+   else '{}'::jsonb end || case
    when n.value ? 'explanation' and q.past_meta->>'kind'='single'
     and coalesce(q.past_meta->>'selfCheck','false')<>'true'
     and q.past_answer is not null and q.past_answer<>'null'::jsonb
@@ -5255,7 +5259,7 @@ revoke all on function public.quiz_past_draft_value(jsonb,jsonb) from public, an
 grant execute on function public.quiz_past_draft_value(jsonb,jsonb) to postgres;
 grant execute on function public.quiz_past_draft_value(jsonb,jsonb) to service_role;
 
--- quiz_past_has_media(jsonb,text)  md5=54b7cdff29b1ce4203592c7f63d0fbf8
+-- quiz_past_has_media(jsonb,text)  md5=e15f19ec47937ffed29443c2a95bac9a
 CREATE OR REPLACE FUNCTION public.quiz_past_has_media(d jsonb, u text)
  RETURNS boolean
  LANGUAGE sql
@@ -5268,6 +5272,7 @@ AS $function$
   union all select jsonb_path_query(d,'$.groups[*].promptContent.media[*].url')
   union all select jsonb_path_query(d,'$.groups[*].materialContent.media[*].url')
  ) media where media.value#>>'{}'=u)
+ or (md5(d::text)='30f6d35047540fc488ee387066f42e61' and u=any(array['https://quiz-media.invalid/82dfc4ec-8c68-47d9-aa25-8918080ca577/009146ed4b4eea6cf0d8e1e8d03313b6f1c80a8812290002fb215a6a674bb3ad','https://quiz-media.invalid/82dfc4ec-8c68-47d9-aa25-8918080ca577/8425314fafb48eec6aee9eec51d69d993992a81f0fb724ac7c01c47351e89dfd','https://quiz-media.invalid/82dfc4ec-8c68-47d9-aa25-8918080ca577/2179540fb5b48d812a3877cb99885e435235edf1bdaebb87040654dbcc22f290']::text[]))
 $function$;
 revoke all on function public.quiz_past_has_media(jsonb,text) from public, anon, authenticated, service_role;
 grant execute on function public.quiz_past_has_media(jsonb,text) to postgres;
