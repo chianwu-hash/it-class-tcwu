@@ -1,3 +1,9 @@
+# 閱讀注音連續輸入：待main發布（2026-11-19）
+
+- Codex-reading-keyboard-keep-open-20261119從最新origin/main `2b419034`建立新工作樹。已重現第38題第6格每按注音即關閉：符號插入後input.focus觸發activate重建工具列，原浮層被卸載。現在同一input返回焦點保留工具列，只在換欄位時重建。
+- 12版本 × 1280／390 × 個人／夥伴，共48組真實點擊通過：連續四符號、選取替換、刪除、關閉／Esc、換格分流與零提交；另41回歸與21產物通過。測試先在修正前重現失敗，加入 `automation/tests/quiz-reading-keyboard-browser.cjs`。原欄值、一次提交、認證及SQL不變。證據 `D:/AI-Work/reading-keyboard-keep-open-evidence-20261119/`。
+- 下一步：PR進main、乾淨main發布、正式唯讀檢查及收據。數學長線維持原界限。
+
 # 閱讀文章原位填字：已正式發布（2026-11-19）
 
 ## 發布登記
