@@ -3,12 +3,13 @@ import {attachPastInputKeyboard} from './quiz-past-input.mjs';
 import {hasSketchFields,openSketchResponseError} from './quiz-open-sketch.mjs';
 import {createSketchEditor,sketchImage} from './sketch/editor.mjs';
 import {choiceQuestionPresentation} from './quiz-choice-conversion.mjs';
+import {openSubquestionPresentation} from './quiz-open-subquestions.mjs';
 
 const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 const only=(v,keys)=>object(v)&&Object.keys(v).every(k=>keys.includes(k));
 const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 export const openResponseError=(q,raw)=>hasSketchFields(q)?openSketchResponseError(q,raw):fieldsResponseError(q,raw);
-export const openReferenceSummary=(q,answer=q.answer)=>choiceQuestionPresentation(q).fields.map(f=>{
+export const openReferenceSummary=(q,answer=q.answer)=>(openSubquestionPresentation(choiceQuestionPresentation(q))?.fields??choiceQuestionPresentation(q).fields).map(f=>{
  const ref=answer.fields[f.id];return `${f.label}：參考例答 ${ref.examples.join('／')}；檢核 ${ref.criteria.join('、')}`;
 }).join('；');
 
@@ -30,9 +31,11 @@ export function validateOpenQuestion(q,checkContent){
 
 export function renderOpenInputs(host,q,{raw='',locked=false,onChange}){
  q=choiceQuestionPresentation(q);
+ const presentation=openSubquestionPresentation(q);
  const values=fieldsValues(q,raw),group=make('div',undefined,'quiz-fields quiz-open-inputs');
+ group.classList.toggle('quiz-open-subquestions',Boolean(presentation));
  group.append(make('p','請依原題寫下自己的答案。儲存後可以查看參考例答與檢核重點，再完成自評。'));
- for(const field of q.fields){
+ for(const field of presentation?.fields??q.fields){
   if(field.input==='sketch'){
    const slot=make('fieldset',undefined,'quiz-field quiz-open-sketch');slot.append(make('legend',field.label));
    if(locked){appendSketch(slot,values[field.id],field.label);}
@@ -44,7 +47,7 @@ export function renderOpenInputs(host,q,{raw='',locked=false,onChange}){
    group.append(slot);continue;
   }
   const slot=make('fieldset',undefined,'quiz-field'),legend=make('legend',field.label),input=make('textarea');
-  input.id='open-'+q.id+'-'+field.id;input.maxLength=250;input.rows=3;input.disabled=locked;input.autocomplete='off';input.setAttribute('aria-label',field.label);input.value=typeof values[field.id]==='string'?values[field.id]:'';
+  input.id='open-'+q.id+'-'+field.id;input.maxLength=250;input.rows=presentation?1:3;input.disabled=locked;input.autocomplete='off';input.setAttribute('aria-label',field.label);input.value=typeof values[field.id]==='string'?values[field.id]:'';
   input.addEventListener('input',()=>{values[field.id]=input.value;onChange(JSON.stringify({v:1,f:values}));});slot.append(legend,input);
   if(field.label.includes('注音'))attachPastInputKeyboard(slot,input,{bopomofo:true});
   group.append(slot);
@@ -57,6 +60,7 @@ function appendSketch(host,value,label){
  const svg=sketchImage(value);svg.setAttribute('aria-label',label+'・已儲存手寫內容');svg.classList.add('quiz-open-sketch-saved');host.append(svg,make('p','手寫內容已儲存，請對照參考例答與檢核重點。','helper'));
 }
 export function renderOpenSavedSketches(host,q,raw){
+ if(openSubquestionPresentation(choiceQuestionPresentation(q))){renderOpenInputs(host,q,{raw,locked:true,onChange:()=>{}});return;}
  if(!hasSketchFields(q))return;
  const values=fieldsValues(q,raw);
  for(const field of q.fields.filter(f=>f.input==='sketch')){const slot=make('section',undefined,'quiz-field quiz-open-sketch');slot.append(make('h4',field.label));appendSketch(slot,values[field.id],field.label);host.append(slot);}
@@ -66,10 +70,11 @@ export function disableOpenSketchEditors(root,disabled){root?.querySelectorAll('
 
 export function renderOpenReview(host,q,review,{busy=false,pending=false,draftNote='',onNoteChange=()=>{},onSelfCheck}){
  q=choiceQuestionPresentation(q);
+ const presentation=openSubquestionPresentation(q);
  const box=make('section',undefined,'answer-preview quiz-open-review');box.tabIndex=-1;
  box.append(make('h4','開放作答・核對自己的想法'));
  box.append(make('p','這題不以單一例答判對錯。請對照原題要求與下方重點，確認自己的答案。'));
- for(const field of q.fields){
+ for(const field of presentation?.fields??q.fields){
   const ref=review.answer.fields[field.id],section=make('section',undefined,'quiz-open-reference');section.append(make('h5',field.label),make('p','參考例答（其他合理答案也可以）：'));
   const examples=make('ul');for(const text of ref.examples)examples.append(make('li',text));section.append(examples,make('p','檢核重點：'));const criteria=make('ul');for(const text of ref.criteria)criteria.append(make('li',text));section.append(criteria);box.append(section);
  }

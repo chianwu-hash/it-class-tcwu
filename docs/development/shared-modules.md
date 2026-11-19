@@ -452,4 +452,6 @@ linkControl.load();
 
 ### 共用連連看（2026-11-18；2026-11-19修正版已發布）
 
+同部首開放題另使用`quiz-open-subquestions.mjs`與來源範圍登錄，在原open renderer／prompt鏈使各提示字緊鄰輸入框；原值／自評／一次送出不變。個人整份回顧與夥伴使用同一欄名；詳[驗收](quiz-open-subquestions-20261119.md)。
+
 quiz-matching-model.mjs 管原值與連線、quiz-matching-presentation.mjs／sources 管來源指紋與裁圖，quiz-matching.mjs 為原生按鈕與SVG連線介面；quiz-matching-past.mjs／past-sources 接舊卷及夥伴純量／陣列。quiz-fields、舊卷個人／教師及夥伴作答／回顧共用，不另建送答API。樣式由 quiz-fields.css 匯入並納入workshop雜湊產物。補圖修正版兩函式SQL已獲本案核准並套用，授權快照補圖而不更新凍結題目；後續新SQL仍須核准。詳[驗收與限制](quiz-matching-20261118.md)。
