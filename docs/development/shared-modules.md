@@ -459,3 +459,7 @@ linkControl.load();
 同部首開放題另使用`quiz-open-subquestions.mjs`與來源範圍登錄，在原open renderer／prompt鏈使各提示字緊鄰輸入框；原值／自評／一次送出不變。個人整份回顧與夥伴使用同一欄名；詳[驗收](quiz-open-subquestions-20261119.md)。
 
 quiz-matching-model.mjs 管原值與連線、quiz-matching-presentation.mjs／sources 管來源指紋與裁圖，quiz-matching.mjs 為原生按鈕與SVG連線介面；quiz-matching-past.mjs／past-sources 接舊卷及夥伴純量／陣列。quiz-fields、舊卷個人／教師及夥伴作答／回顧共用，不另建送答API。樣式由 quiz-fields.css 匯入並納入workshop雜湊產物。補圖修正版兩函式SQL已獲本案核准並套用，授權快照補圖而不更新凍結題目；後續新SQL仍須核准。詳[驗收與限制](quiz-matching-20261118.md)。
+# 閱讀作答工作區（2026-11-19）
+
+`shared/quiz-reading-workbench.mjs`由原fields控制項建立文章／小題分區；桌機分別捲動，手機與低高度改為同一文章DOM的對話框。`quiz-reading-inline.mjs`與`quiz-reading-inline-sources.mjs`只在來源指紋、原欄序及標記相符時，把原填字格放在文章標記旁。個人、整份回顧與夥伴共用，保持原回應及一次送出。詳[來源與驗收](quiz-reading-inline-workspace-20261119.md)。
+

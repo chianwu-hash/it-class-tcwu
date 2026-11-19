@@ -117,3 +117,36 @@
 .quiz-word-meaning-text{font-size:clamp(1.25rem,2.1vw,1.6rem);line-height:1.8}
 .quiz-word-meaning-examples{display:flex;flex-wrap:wrap;gap:10px;padding:0!important;margin:16px 0 4px;list-style:none}
 .quiz-word-meaning-examples li{font-size:clamp(1.35rem,2.3vw,1.8rem);line-height:1.6;border:1px solid #c4d9da;border-radius:12px;background:#fff;padding:8px 14px;margin:0!important;overflow-wrap:anywhere;max-width:100%;box-sizing:border-box}
+.quiz-fields.quiz-reading-workbench{display:block!important;min-width:0}
+.quiz-reading-group .quiz-reading-panel:has(.quiz-reading-workbench){display:block}
+.quiz-reading-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:stretch}
+.quiz-reading-story,.quiz-reading-questions{min-width:0;box-sizing:border-box;height:var(--reading-pane-height,65dvh);overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.quiz-reading-story{padding:16px;background:#f7f9fc;border:1px solid #cbd8df;border-radius:14px}
+.quiz-reading-story>h4{margin:0 0 8px;font-size:1.2rem}
+.quiz-reading-story>.helper{font-size:1rem;line-height:1.6}
+.quiz-reading-source,.quiz-reading-source .preview-content{font-size:clamp(1.25rem,1.75vw,1.55rem)!important;line-height:2!important;white-space:pre-wrap;overflow-wrap:anywhere}
+.quiz-reading-piece,.quiz-reading-piece :is(.preview-content,.quiz-rich-paragraph){display:contents!important}
+.quiz-reading-inline-paragraph{margin:8px 0;line-height:2.1}
+.quiz-fields .quiz-field.quiz-inline-slot,.student-wrap .quiz-fields .quiz-field.quiz-inline-slot{display:inline-flex;vertical-align:middle;align-items:center;gap:3px;border:0;border-radius:8px;padding:0!important;margin:2px 4px!important;max-width:100%;min-width:0;font:inherit}
+.quiz-inline-label{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.quiz-inline-slot .quiz-inline-number{font:700 .7rem sans-serif;color:#42626c;align-self:flex-start}
+.quiz-field.quiz-inline-slot>input[type=text]{display:inline-block;min-width:max(44px,var(--reading-slot-min));max-width:min(100%,28em);min-height:44px;height:2.2em;padding:4px 6px;font:inherit!important;line-height:1.35!important;border:2px solid #6f9faa;background:#fff}
+.quiz-inline-slot.is-reading-active>input{outline:3px solid #0f766e;outline-offset:2px}
+.quiz-reading-inline-tools{position:sticky;top:0;z-index:3;display:flex;align-items:center;flex-wrap:wrap;gap:8px;min-height:44px;margin:10px 0;font-size:1rem;background:#f7f9fc}
+.quiz-reading-inline-tools .past-input-tools{margin:0}
+.quiz-reading-questions>.quiz-field{margin:14px 0!important}
+.quiz-reading-navigation{position:sticky;top:0;z-index:2;background:#fff;padding:8px 0;display:flex;flex-wrap:wrap;gap:8px}
+.quiz-reading-navigation button{min-width:44px;min-height:44px;padding:8px 12px;white-space:nowrap}
+.quiz-reading-navigation button[aria-current]{outline:3px solid #0f766e;outline-offset:1px}
+.quiz-reading-open{display:none}
+.quiz-reading-active-label{display:none;font:700 .8rem sans-serif;margin-left:8px;color:#0f766e}
+.quiz-reading-questions .quiz-field.is-reading-active{border-color:#0f766e}
+.quiz-reading-questions .quiz-field.is-reading-active .quiz-reading-active-label{display:inline}
+.quiz-reading-dialog{width:min(92vw,760px);max-height:88dvh;box-sizing:border-box;padding:12px;border:2px solid #8fb7ba;border-radius:16px;color:inherit}
+.quiz-reading-dialog::backdrop{background:#102e3b88}
+.quiz-reading-dialog-header{display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;background:#fff;z-index:3;padding:6px 0 12px}
+.quiz-reading-dialog-header button{min-height:44px}
+.quiz-reading-dialog .quiz-reading-story{display:block;height:auto;max-height:none;overflow:visible;padding:10px}
+.quiz-reading-dialog .quiz-reading-inline-tools{top:64px}
+.quiz-inline-reference{font-size:1rem;margin:10px 0;line-height:1.6;white-space:normal}
+@media(max-width:899px),(max-height:600px){.quiz-reading-layout{display:block}.quiz-reading-layout>.quiz-reading-story{display:none}.quiz-reading-questions{height:auto;overflow:visible}.quiz-reading-open{display:inline-block}.quiz-reading-navigation{top:0}.quiz-reading-source,.quiz-reading-source .preview-content{font-size:1.2rem!important}}

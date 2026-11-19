@@ -11,6 +11,8 @@ import {matchingPresentation} from './quiz-matching-presentation.mjs';
 import {renderMatchingBoard,appendMatchingOriginal} from './quiz-matching.mjs';
 import {answerTemplatePresentation,mountAnswerTemplate} from './quiz-answer-templates.mjs';
 import {phoneticWordFields} from './quiz-field-input-aids.mjs';
+import {inlineReadingPlan} from './quiz-reading-inline.mjs';
+import {mountReadingWorkbench,readingWorkbenchSupported} from './quiz-reading-workbench.mjs';
 export {fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
 
 const own=(o,k)=>o&&Object.hasOwn(o,k);
@@ -39,7 +41,7 @@ export function fieldsResponseError(q,raw){
 
 export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onChange,renderContent,textInputAids={},review=null}){
  const values=fieldsValues(q,raw),group=make('div'),phonetic=phoneticWordFields(choiceQuestionPresentation(q));group.className='quiz-fields';group.classList.toggle('quiz-fields-single',q.fields.length===1);
- const reading=readingPresentation(choiceQuestionPresentation(q));group.classList.toggle('quiz-reading-fields',Boolean(reading));
+ const inline=inlineReadingPlan(q),reading=inline?.reading??readingPresentation(choiceQuestionPresentation(q));group.classList.toggle('quiz-reading-fields',Boolean(reading));
  const shown=q.fields.map((f,i)=>reading?.fields?.[i]??fieldPresentation(q,f)),feedback=locked?fieldsReviewPresentation({...q,fields:shown},raw,review):null;
  const matching=matchingPresentation(choiceQuestionPresentation(q),shown);
  const formatPair=(id,value)=>{const f=shown.find(f=>f.id===id);return f.label+'：'+formatted(f,value)};
@@ -66,7 +68,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
    input.addEventListener('input',()=>{values[f.id]=input.value;changed()});slot.append(input);
    if(f.input==='math')attachPastInputKeyboard(slot,input,{math:true});
    if(phonetic.has(f.id))slot.classList.add('quiz-answer-bopomofo-slot');
-   if(f.input==='text')attachPastInputKeyboard(slot,input,{bopomofo:phonetic.size?phonetic.has(f.id):textInputAids.bopomofo===true,punctuation:textInputAids.punctuation===true});
+   if(f.input==='text'&&!inline?.slots.some(s=>s.field===f.id))attachPastInputKeyboard(slot,input,{bopomofo:phonetic.size?phonetic.has(f.id):textInputAids.bopomofo===true,punctuation:textInputAids.punctuation===true});
   }else if(f.input==='single'){
    appendSingleChoiceOptions(slot,{name:id,options:f.options.map(o=>({...o,value:o.id})),selected:values[f.id],locked,badgeForOption:storedField.input==='text'&&f!==storedField?o=>o.id:undefined,onSelect:v=>{values[f.id]=v;changed()},renderBody:(box,o)=>renderContent(box,o.content)});
    if(feedback?.[fieldIndex])slot.querySelectorAll(':scope > .student-option').forEach((row,i)=>decorateFieldReviewOption(row,feedback[fieldIndex].options[i]));
@@ -79,9 +81,11 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
   }
   appendFieldReviewReference(slot,feedback?.[fieldIndex],v=>formatted(f,v),formatPair);group.append(slot);
  }
- if(matching)appendMatchingOriginal(group,matching.original,renderContent);else if(!reading)mountAnswerTemplate(group,choiceQuestionPresentation(q),{renderContent});host.append(group);return group;
+ if(matching)appendMatchingOriginal(group,matching.original,renderContent);else if(!reading)mountAnswerTemplate(group,choiceQuestionPresentation(q),{renderContent});
+ mountReadingWorkbench(group,q,reading,{renderContent});host.append(group);return group;
 }
 export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,referenceAnswer=null,showWork=true}){
+ if(raw&&readingWorkbenchSupported(q,readingPresentation(choiceQuestionPresentation(q)))){if(host.querySelector('.quiz-reading-workbench'))return;renderFieldsInputs(host,q,{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
  if(raw&&answerTemplatePresentation(choiceQuestionPresentation(q))){if(host.querySelector('.quiz-has-answer-template'))return;renderFieldsInputs(host,showWork?q:{...q,work:undefined},{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
  if(showWork&&raw&&q.work)renderSavedWork(host,q,raw);
  const reading=readingPresentation(choiceQuestionPresentation(q));
