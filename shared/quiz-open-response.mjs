@@ -75,16 +75,24 @@ export function renderOpenReferences(host,q,answer,{raw=''}={}){
  const box=make('div',undefined,'quiz-open-composition-review');
  for(const group of composed.groups){
   const section=make('section',undefined,'quiz-open-reference');section.append(make('h5',group.title));
-  if(group.student!==null)section.append(make('p','你的整組作答：'),make('p',group.student,'quiz-open-complete-text'));
-  section.append(make('p','參考例答（其他合理答案也可以）：'));const list=make('ul',undefined,'quiz-open-complete-examples');for(const text of group.examples)list.append(make('li',text));section.append(list);box.append(section);
+  if(group.student!==null)section.append(make('p',group.fragment?'你的接寫內容：':'你的整組作答：'),make('p',group.student,'quiz-open-complete-text'));
+  section.append(make('p',group.fragment?'原參考接寫片段（請連同上方原句閱讀）：':'參考例答（其他合理答案也可以）：'));const list=make('ul',undefined,'quiz-open-complete-examples');for(const text of group.examples)list.append(make('li',text));section.append(list);box.append(section);
  }
  const notes=make('section',undefined,'quiz-open-reference');notes.append(make('h5','把整組連起來想'));
  if(composed.guide)notes.append(make('p',composed.guide.explanation));
  const criteria=make('ul');for(const text of [...new Set([...composed.criteria,...(composed.guide?.checks||[])])])criteria.append(make('li',text));notes.append(criteria);box.append(notes);
- if(composed.guide){const extra=make('section',undefined,'quiz-open-reference');extra.append(make('h5','更多仿寫例子'),make('p','以下是補充的用法示範，不是唯一答案，也不是系統判分條件。'));const list=make('ul',undefined,'quiz-open-complete-examples');for(const text of composed.guide.examples)list.append(make('li',text));extra.append(list);
-  if(composed.guide.sentences.length){extra.append(make('h5','放進完整句子讀一讀'));const sentences=make('ul',undefined,'quiz-open-complete-examples');for(const text of composed.guide.sentences)sentences.append(make('li',text));extra.append(sentences);}box.append(extra);
- }
+ renderWritingSupplement(box,composed.guide,{family:composed.family});
  host.append(box);return true;
+}
+
+export function renderWritingSupplement(host,guide,{family='sentence',explain=false}={}){
+ if(!guide)return false;
+ const wrapper=make('div',undefined,'quiz-open-composition-review'),extra=make('section',undefined,'quiz-open-reference quiz-writing-supplement');
+ extra.append(make('h5',guide.kind==='usage'?'更多完整句子用法':family==='phrase'?'更多短語例子':'更多造句例子'),make('p','以下是補充的用法示範，不是唯一答案，也不是系統判分條件。'));
+ if(explain){extra.append(make('p',guide.explanation));const checks=make('ul');for(const text of guide.checks??[])checks.append(make('li',text));extra.append(checks);}
+ const list=make('ul',undefined,'quiz-open-complete-examples');for(const text of guide.examples)list.append(make('li',text));extra.append(list);
+ if(guide.sentences?.length){extra.append(make('h5','放進完整句子讀一讀'));const sentences=make('ul',undefined,'quiz-open-complete-examples');for(const text of guide.sentences)sentences.append(make('li',text));extra.append(sentences);}
+ wrapper.append(extra);host.append(wrapper);return true;
 }
 
 export function renderOpenReview(host,q,review,{busy=false,pending=false,draftNote='',onNoteChange=()=>{},onSelfCheck,raw=''}){
