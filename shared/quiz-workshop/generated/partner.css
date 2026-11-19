@@ -790,6 +790,9 @@ input:has(+.past-input-tools),textarea:has(+.past-input-tools){scroll-margin-blo
 .quiz-open-reference li{line-height:1.7}
 .quiz-open-review>label{display:block;margin:16px 0}
 .quiz-open-self-check{flex-wrap:wrap}
+.quiz-open-composition-review .quiz-open-complete-text,.quiz-open-composition-review .quiz-open-complete-examples li{font-size:clamp(1.35rem,2.1vw,1.8rem);line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
+.quiz-open-composition-review .quiz-open-complete-text{padding:12px;border-radius:10px;background:#fff}
+.quiz-open-composition-review h5{font-size:1.1rem;line-height:1.6}
 
 
 

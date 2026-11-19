@@ -83,7 +83,7 @@ export function initServerQuiz({ selectors, server }) {
     const review = state.reviews.find(r => r.question_id === q.id);
     if (!review) { article.append(make('p', '已儲存；正解與解析會在符合本場次揭答條件後顯示。', 'notice')); return; }
     if(q.type==='open'){
-      const box=renderOpenReview(article,q,review,{busy:busy||state.status==='closed',pending:Boolean(pending),draftNote:pending?.self_note??openNotes.get(q.id)??'',onNoteChange:value=>openNotes.set(q.id,value),onSelfCheck:selfCheck});
+      const box=renderOpenReview(article,q,review,{raw:state.responses[q.id],busy:busy||state.status==='closed',pending:Boolean(pending),draftNote:pending?.self_note??openNotes.get(q.id)??'',onNoteChange:value=>openNotes.set(q.id,value),onSelfCheck:selfCheck});
       const explanation=make('section',undefined,'quiz-explanation-copy'),studentExplanation=study.explanation(q.id);
       if(studentExplanation?.origin==='ai'){explanation.classList.add('quiz-explanation-ai');explanation.append(make('strong','AI 解析','quiz-explanation-caption'));}
       if(studentExplanation)renderExplanation(explanation,studentExplanation.text,q);else renderContent(explanation,explanationReferenceContent(q,review.explanation));

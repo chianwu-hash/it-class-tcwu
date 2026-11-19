@@ -5,14 +5,15 @@ import {createSketchEditor,sketchImage} from './sketch/editor.mjs';
 import {choiceQuestionPresentation} from './quiz-choice-conversion.mjs';
 import {openSubquestionPresentation} from './quiz-open-subquestions.mjs';
 import {answerTemplatePresentation,mountAnswerTemplate} from './quiz-answer-templates.mjs';
+import {openCompositionReview} from './quiz-open-composition.mjs';
 
 const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 const only=(v,keys)=>object(v)&&Object.keys(v).every(k=>keys.includes(k));
 const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 export const openResponseError=(q,raw)=>hasSketchFields(q)?openSketchResponseError(q,raw):fieldsResponseError(q,raw);
-export const openReferenceSummary=(q,answer=q.answer)=>(openSubquestionPresentation(choiceQuestionPresentation(q))?.fields??choiceQuestionPresentation(q).fields).map(f=>{
+export const openReferenceSummary=(q,answer=q.answer)=>{const composed=openCompositionReview(choiceQuestionPresentation(q),answer);if(composed)return composed.groups.map(g=>g.title+'：'+g.examples.join('／')).join('；')+'；整組檢核：'+composed.criteria.join('、');return (openSubquestionPresentation(choiceQuestionPresentation(q))?.fields??choiceQuestionPresentation(q).fields).map(f=>{
  const ref=answer.fields[f.id];return `${f.label}：參考例答 ${ref.examples.join('／')}；檢核 ${ref.criteria.join('、')}`;
-}).join('；');
+}).join('；');};
 
 // Examples are review material, never an accepted-answer list for grading.
 export function validateOpenQuestion(q,checkContent){
@@ -69,13 +70,30 @@ export function renderOpenSavedSketches(host,q,raw,{renderContent}={}){
 export function destroyOpenSketchEditors(root){root?.querySelectorAll('.quiz-open-inputs,.quiz-fields').forEach(group=>group.sketchEditors?.forEach(editor=>editor.destroy()));}
 export function disableOpenSketchEditors(root,disabled){root?.querySelectorAll('.quiz-open-inputs,.quiz-fields').forEach(group=>group.sketchEditors?.forEach(editor=>editor.setDisabled(disabled)));}
 
-export function renderOpenReview(host,q,review,{busy=false,pending=false,draftNote='',onNoteChange=()=>{},onSelfCheck}){
+export function renderOpenReferences(host,q,answer,{raw=''}={}){
+ q=choiceQuestionPresentation(q);const composed=openCompositionReview(q,answer,{raw});if(!composed)return false;
+ const box=make('div',undefined,'quiz-open-composition-review');
+ for(const group of composed.groups){
+  const section=make('section',undefined,'quiz-open-reference');section.append(make('h5',group.title));
+  if(group.student!==null)section.append(make('p','你的整組作答：'),make('p',group.student,'quiz-open-complete-text'));
+  section.append(make('p','參考例答（其他合理答案也可以）：'));const list=make('ul',undefined,'quiz-open-complete-examples');for(const text of group.examples)list.append(make('li',text));section.append(list);box.append(section);
+ }
+ const notes=make('section',undefined,'quiz-open-reference');notes.append(make('h5','把整組連起來想'));
+ if(composed.guide)notes.append(make('p',composed.guide.explanation));
+ const criteria=make('ul');for(const text of [...new Set([...composed.criteria,...(composed.guide?.checks||[])])])criteria.append(make('li',text));notes.append(criteria);box.append(notes);
+ if(composed.guide){const extra=make('section',undefined,'quiz-open-reference');extra.append(make('h5','更多仿寫例子'),make('p','以下是補充的用法示範，不是唯一答案，也不是系統判分條件。'));const list=make('ul',undefined,'quiz-open-complete-examples');for(const text of composed.guide.examples)list.append(make('li',text));extra.append(list);
+  if(composed.guide.sentences.length){extra.append(make('h5','放進完整句子讀一讀'));const sentences=make('ul',undefined,'quiz-open-complete-examples');for(const text of composed.guide.sentences)sentences.append(make('li',text));extra.append(sentences);}box.append(extra);
+ }
+ host.append(box);return true;
+}
+
+export function renderOpenReview(host,q,review,{busy=false,pending=false,draftNote='',onNoteChange=()=>{},onSelfCheck,raw=''}){
  q=choiceQuestionPresentation(q);
  const presentation=openSubquestionPresentation(q);
  const box=make('section',undefined,'answer-preview quiz-open-review');box.tabIndex=-1;
  box.append(make('h4','開放作答・核對自己的想法'));
  box.append(make('p','這題不以單一例答判對錯。請對照原題要求與下方重點，確認自己的答案。'));
- for(const field of presentation?.fields??q.fields){
+ if(!renderOpenReferences(box,q,review.answer,{raw}))for(const field of presentation?.fields??q.fields){
   const ref=review.answer.fields[field.id],section=make('section',undefined,'quiz-open-reference');section.append(make('h5',field.label),make('p','參考例答（其他合理答案也可以）：'));
   const examples=make('ul');for(const text of ref.examples)examples.append(make('li',text));section.append(examples,make('p','檢核重點：'));const criteria=make('ul');for(const text of ref.criteria)criteria.append(make('li',text));section.append(criteria);box.append(section);
  }

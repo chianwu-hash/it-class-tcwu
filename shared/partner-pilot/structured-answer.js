@@ -1,5 +1,5 @@
 import {renderFieldsInputs,renderFieldsChoices,fieldsResponseError,fieldsResponseSummary,fieldsAnswerSummary} from '../quiz-fields.mjs';
-import {renderOpenInputs,openReferenceSummary,openResponseError,renderOpenSavedSketches} from '../quiz-open-response.mjs';
+import {renderOpenInputs,openReferenceSummary,openResponseError,renderOpenSavedSketches,renderOpenReferences} from '../quiz-open-response.mjs';
 import {renderContent} from './past-content.js';
 
 export function structuredResponseError(q,raw){
@@ -27,6 +27,10 @@ export function mountStructuredAnswers(root,{question,drafts,loadAsset,onChange}
  for(const host of root.querySelectorAll('[data-structured-reference]')){
   const q=question(Number(host.dataset.structuredReference));if(!q?.normalReference)continue;
   const normal=q.normal,last=q.attempts?.at(-1);
+  if(normal.type==='open'&&renderOpenReferences(host,normal,q.normalReference,{raw:last?.value||''})){
+   if(last&&!root.querySelector(`[data-structured-answer="${q.id}"]`))renderOpenSavedSketches(host,normal,last.value,{renderContent:(box,content)=>renderContent(box,content,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});
+   continue;
+  }
   if(normal.type==='fields'&&root.querySelector(`[data-structured-answer="${q.id}"] .quiz-has-answer-template`))continue;
   if(normal.type==='fields'&&last&&typeof last.correct==='boolean'){
    renderFieldsChoices(host,normal,{raw:last.value,showWork:!root.querySelector(`[data-structured-answer="${q.id}"]`),review:{answer:q.normalReference,correct:last.correct},renderContent:(box,content)=>renderContent(box,content,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});continue;
