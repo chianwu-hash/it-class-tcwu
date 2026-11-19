@@ -798,6 +798,18 @@ input:has(+.past-input-tools),textarea:has(+.past-input-tools){scroll-margin-blo
 .quiz-open-composition-review .quiz-open-complete-text,.quiz-open-composition-review .quiz-open-complete-examples li{font-size:clamp(1.35rem,2.1vw,1.8rem);line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
 .quiz-open-composition-review .quiz-open-complete-text{padding:12px;border-radius:10px;background:#fff}
 .quiz-open-composition-review h5{font-size:1.1rem;line-height:1.6}
+.quiz-phonetic-word-review .quiz-phonetic-word-card>h5{font-size:1.8rem!important;margin:0 0 12px!important}
+.quiz-phonetic-word-reading{min-width:0;margin:12px 0 20px}
+.quiz-phonetic-word-reading h6{font-size:1.15rem;line-height:1.6;margin:16px 0 10px}
+.quiz-phonetic-word-original{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 16px;align-items:start;margin:10px 0 18px}
+.quiz-phonetic-word-original dt{font-weight:700;font-size:1rem;line-height:1.8}
+.quiz-phonetic-word-original dd{margin:0;font-size:clamp(1.3rem,2vw,1.6rem);line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.quiz-phonetic-word-examples{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 18px!important;padding:0!important;list-style:none}
+.quiz-phonetic-word-examples li{display:flex;flex-direction:column;max-width:100%;box-sizing:border-box;padding:8px 12px;border:1px solid #d8dce3;border-radius:10px;background:#fff;overflow-wrap:anywhere}
+.quiz-phonetic-word-examples strong{font-size:clamp(1.25rem,2vw,1.55rem);line-height:1.6}
+.quiz-phonetic-word-examples span{font-size:1rem;line-height:1.8;white-space:pre-wrap}
+.quiz-phonetic-word-issue{border-left:4px solid #b07725;padding:10px 12px;background:#fff3da;color:#634515;line-height:1.8}
+@media(max-width:420px){.quiz-phonetic-word-original{grid-template-columns:1fr;gap:2px}.quiz-phonetic-word-original dd{margin-bottom:8px}}
 
 
 
