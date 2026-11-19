@@ -4,12 +4,12 @@
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | Codex-typing-guide-fix-20261119 | 待發布腳本登記 | PR348，實際乾淨main由腳本鎖定 | `dpl_Cxv1RroCHdLnBRqCAynBfAY5bRfh` | grade3/115-1/week10.html、grade3/115-1/week10.js、grade3/115-1/week11.html、grade3/115-1/week11.js、grade3/115-1/week12.html、grade3/115-1/week12.js、+grade3/115-1/textbook-keyboard-target.mjs | Claude無阻擋；21測試、48情境485字卡、保存／草稿合成回歸通過，無SQL |
+| 已完成 | Codex-typing-guide-fix-20261119 | 2026-11-19T05:47:26.976Z | `e15b3f1` | `dpl_Cxv1RroCHdLnBRqCAynBfAY5bRfh` | grade3/115-1/week10.html、grade3/115-1/week10.js、grade3/115-1/week11.html、grade3/115-1/week11.js、grade3/115-1/week12.html、grade3/115-1/week12.js、+grade3/115-1/textbook-keyboard-target.mjs | `dpl_7CTEZXmZovPyTni9B3wM7hatiDbK`／回滾 `dpl_Cxv1RroCHdLnBRqCAynBfAY5bRfh`（eolOnly 0） |
 
 - 使用者截圖指出第12週「紅毛城」小幫手全為注音待確認，要求修復並上線。Codex從最新main `11fbffad` 建新工作樹 `typing-guide-fix-20261119`，唯一寫入者；Claude依既有授權只讀複核，不得寫入／網路／憑證／資料庫／部署。
 - 根因是第10～12週getter只傳中文文字、沒給zhuyin，共用model依契約不猜讀音。新增固定全文讀音對照並接回三週，包含原題／換題與混合行，未知中文仍警示；沒有改共用model或auth／progress／花葉。三週runtime快取與第11／12週builder同步。
 - 21項Node測試、三週48情境485字卡實際點選亮鍵、換題／中英行切換／焦點保留及1280／390通過，pageerror0、真實學生寫入0；第12週匿名鎖定、草稿、逐關保存／首關及魔王失敗重試、接回、換題不重寫與花葉入口的原合成矩陣通過。詳[修復與驗證](typing-guide-pronunciation-fix-20261119.md)。
-- Claude只讀複核 `e41b402d` 無阻擋（session `20261119-typing-guide-fix`、run completed、viewer啟動且Git前後一致），實檔／固定讀音與model比對通過；沒有冒稱重跑測試或登入驗證。準備PR進main並從乾淨main依腳本發布；無SQL或正式學生資料異動。
+- Claude只讀複核 `e41b402d` 無阻擋（session `20261119-typing-guide-fix`、run completed、viewer啟動且Git前後一致），實檔／固定讀音與model比對通過；沒有冒稱重跑測試或登入驗證。**已發布**：PR348進main，乾淨 `e15b3f15` 經指定腳本完成6改1增0刪，完整樹兩次ok／非預期0；候選7檔及正式7檔HTTP／bytes／SHA符合main。正式來源隔離Auth的48情境485字卡、中英行、原／換題、焦點及桌手機再次通過，pageerror0／真實學生寫入0；發布鎖釋放，無SQL。Claude、測試、截圖與發布證據私有封存，僅清本次完成worktree。
 
 # 造句、短語與接寫補充例句：已正式發布（2026-11-19）
 

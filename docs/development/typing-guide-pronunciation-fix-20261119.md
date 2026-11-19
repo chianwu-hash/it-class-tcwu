@@ -1,5 +1,12 @@
 # 三年級第10～12週找字小幫手修復
 
+## 正式發布收據
+
+- 使用者授權修復上線，Claude只讀複核無阻擋。[PR348](https://github.com/chianwu-hash/it-class-tcwu/pull/348) 進main，唯一來源乾淨 `e15b3f154bd8ee5f7da9e885004740c7e3915f51`；正式 `dpl_7CTEZXmZovPyTni9B3wM7hatiDbK`，回滾 `dpl_Cxv1RroCHdLnBRqCAynBfAY5bRfh`。
+- 經指定 `release-from-main.mjs start → deploy → promote`，完整樹兩次ok，6改1增0刪／非預期0／eolOnly0。受保護候選7檔及正式7檔均讀回與main bytes／SHA一致；alias確認，腳本鎖已釋放。
+- 正式來源隔離Auth／RPC的三週48情境485字卡再次通過：原題／換題、逐字注音與亮鍵、混合題中英行、焦點保留；1280／390截圖目視，pageerror0、真實學生寫入0。未把此驗收冒稱真人OAuth或實體IME候選窗。
+- 21項Node及原第12週保存／草稿矩陣通過，正式進度／草稿／花葉／資料庫未改。完整Claude response／run、測試、截圖與7檔HTTP／SHA收據依SOP私有封存。
+
 ## 問題與修正
 
 使用者提供第12週「紅毛城」截圖，字卡顯示注音待確認且鍵盤不亮。第10、11、12週的getter都只傳 `{ lang:'zh', text }`，沒有 `zhuyin`；共用model依原安全契約拒絕缺少／數量錯誤的讀音，因此三週均受影響。不是鍵盤圖載入或登入失敗。
