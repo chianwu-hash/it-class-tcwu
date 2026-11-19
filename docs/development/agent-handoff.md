@@ -1,8 +1,14 @@
-# 注音造詞第一格鍵盤：待依main發布（2026-11-19）
+# 注音造詞第一格鍵盤：已正式發布（2026-11-19）
+
+## 發布登記
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-bopomofo-word-20261119 | 2026-11-19T10:04:24.618Z | `1c4e938` | `dpl_7CTEZXmZovPyTni9B3wM7hatiDbK` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-answer-templates.css、shared/quiz-fields.mjs、shared/quiz-open-response.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-field-input-aids.mjs | `dpl_vj3x62enUEsGWk8vhQfyZFar1BUC`／回滾 `dpl_7CTEZXmZovPyTni9B3wM7hatiDbK`（eolOnly 0） |
 
 - Codex-bopomofo-word-fields-20261119從最新origin/main abf7396d新工作樹處理第36題缺注音鍵盤。176版本／320注音欄已沿既有NAS原件清冊重讀DOCX核SHA；共用來源模板與明確指示映回欄位ID，同列兩對、多音字單注音皆納入，造詞格不開。開放題及fields沿既有浮動鍵盤；原位注音工具直接可見，不靠focus。
 - 43回歸、176來源核對通過；1056個人／夥伴三尺寸流程及36對齊代表情境通過，21產物核對通過。無SQL／DML／AI，原ID、作答、自評、一次送出與外層不變；未知來源沿原規則。詳[來源與驗收](quiz-phonetic-word-keyboards-20261119.md)，證據D:/AI-Work/bopomofo-word-evidence-20261119/。
-- 下一步：PR進main後乾淨main腳本發布、正式第36題唯讀驗收、收據與清理。數學長線仍須整科通過才啟用。
+- PR351合併main `1c4e9389`，乾淨main依腳本發布至`dpl_vj3x62enUEsGWk8vhQfyZFar1BUC`；完整樹24改1增0刪／eolOnly0，候選7及正式25檔HTTP／SHA一致。正式第36題1280／390確認4注音鍵盤、造詞0、完整42鍵無內部溢出；僅開關鍵盤，responses／open_responses前後一致，未送答案或自評。回滾`dpl_7CTEZXmZovPyTni9B3wM7hatiDbK`。發布鎖、測試租約與分頁釋放，收據PR後清本次工作樹；保留使用者示範。數學長線仍須整科通過才啟用。
 
 # 新週頁注音與亮鍵：SOP發布阻擋規則（2026-11-19）
 
