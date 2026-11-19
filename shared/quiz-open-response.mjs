@@ -6,6 +6,7 @@ import {choiceQuestionPresentation} from './quiz-choice-conversion.mjs';
 import {openSubquestionPresentation} from './quiz-open-subquestions.mjs';
 import {answerTemplatePresentation,mountAnswerTemplate} from './quiz-answer-templates.mjs';
 import {openCompositionReview} from './quiz-open-composition.mjs';
+import {phoneticWordFields} from './quiz-field-input-aids.mjs';
 
 const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 const only=(v,keys)=>object(v)&&Object.keys(v).every(k=>keys.includes(k));
@@ -34,7 +35,7 @@ export function validateOpenQuestion(q,checkContent){
 export function renderOpenInputs(host,q,{raw='',locked=false,onChange,renderContent}){
  q=choiceQuestionPresentation(q);
  const presentation=openSubquestionPresentation(q);
- const values=fieldsValues(q,raw),group=make('div',undefined,'quiz-fields quiz-open-inputs');
+ const values=fieldsValues(q,raw),group=make('div',undefined,'quiz-fields quiz-open-inputs'),phonetic=phoneticWordFields(q);
  group.classList.toggle('quiz-open-subquestions',Boolean(presentation));
  group.append(make('p','請依原題寫下自己的答案。儲存後可以查看參考例答與檢核重點，再完成自評。'));
  for(const field of presentation?.fields??q.fields){
@@ -51,7 +52,8 @@ export function renderOpenInputs(host,q,{raw='',locked=false,onChange,renderCont
   const slot=make('fieldset',undefined,'quiz-field'),legend=make('legend',field.label),input=make('textarea');
   input.id='open-'+q.id+'-'+field.id;input.maxLength=250;input.rows=presentation?1:3;input.disabled=locked;input.autocomplete='off';input.setAttribute('aria-label',field.label);input.value=typeof values[field.id]==='string'?values[field.id]:'';
   input.addEventListener('input',()=>{values[field.id]=input.value;onChange(JSON.stringify({v:1,f:values}));});slot.append(legend,input);
-  if(field.label.includes('注音'))attachPastInputKeyboard(slot,input,{bopomofo:true});
+  if(phonetic.has(field.id))slot.classList.add('quiz-answer-bopomofo-slot');
+  if(phonetic.size?phonetic.has(field.id):field.label.includes('注音'))attachPastInputKeyboard(slot,input,{bopomofo:true});
   group.append(slot);
  }
  mountAnswerTemplate(group,q,{renderContent});host.append(group);return group;
