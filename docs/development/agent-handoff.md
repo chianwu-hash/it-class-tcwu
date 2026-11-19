@@ -1,8 +1,12 @@
-# 仿寫輸入超過基準後向右延伸：待發布（2026-11-19）
+# 仿寫輸入超過基準後向右延伸：已正式發布（2026-11-19）
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-growing-answer-width-20261119 | 2026-11-19T03:19:55.073Z | `69ecc1b` | `dpl_AguKCrXbVfRRM2nxWA74cBfMz9LX` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-answer-templates.css、shared/quiz-answer-templates.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css | `dpl_BNhh3g6aYJjFkhfTXVmXKMc1DFMR`／回滾 `dpl_AguKCrXbVfRRM2nxWA74cBfMz9LX`（eolOnly 0） |
 
 - Codex-growing-answer-width-20261119由最新origin/main f37434de新工作樹處理。沿用26來源／134格範例寬度，文字較長依實際字型／字距／內距增寬，刪短回原寬；手機先整格換行、最寬不超過該行。已保存與夥伴同規則，視窗及字型改變重算。
 - 56回歸、156三尺寸保存／整份回顧／夥伴接回加250字與伸縮／換視窗驗證，共157瀏覽器情境及21產物通過。原字串、字數上限、自評、一次送出與外層不變，無SQL／DML／AI；不對未知來源放寬呈現。證據D:/AI-Work/growing-answer-width-evidence-20261119/，規則與報告同dev-sop及quiz-answer-templates-20261119.md。
-- 下一步：PR進main、乾淨main依release-from-main發布，正式原卷唯讀核「選項」「豐富」原值與橫排，收據PR後清本次資源，保留使用者示範。
+- PR344合併main 69ecc1b7，乾淨main依release-from-main發布至dpl_BNhh3g6aYJjFkhfTXVmXKMc1DFMR；完整樹23改0增0刪／eolOnly0，候選5及正式23檔HTTP／SHA一致。正式原卷1280／390唯讀核範例欄寬、原值與無溢出，responses／open_responses前後相同；測試未送答案或自評。回滾dpl_AguKCrXbVfRRM2nxWA74cBfMz9LX；發布鎖、測試分頁及租約釋放，收據PR後清理本次工作樹，保留使用者示範。
 
 # 仿寫欄寬依原範例字數：已正式發布（2026-11-19）
 
