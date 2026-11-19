@@ -31,7 +31,7 @@ export function mountStructuredAnswers(root,{question,drafts,loadAsset,onChange}
    if(last&&!root.querySelector(`[data-structured-answer="${q.id}"]`))renderOpenSavedSketches(host,normal,last.value,{renderContent:(box,content)=>renderContent(box,content,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});
    continue;
   }
-  if(normal.type==='fields'&&root.querySelector(`[data-structured-answer="${q.id}"] .quiz-has-answer-template`))continue;
+  if(normal.type==='fields'&&root.querySelector(`[data-structured-answer="${q.id}"] :is(.quiz-has-answer-template,.quiz-reading-workbench)`))continue;
   if(normal.type==='fields'&&last&&typeof last.correct==='boolean'){
    renderFieldsChoices(host,normal,{raw:last.value,showWork:!root.querySelector(`[data-structured-answer="${q.id}"]`),review:{answer:q.normalReference,correct:last.correct},renderContent:(box,content)=>renderContent(box,content,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});continue;
   }
