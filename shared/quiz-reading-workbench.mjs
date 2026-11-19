@@ -15,7 +15,10 @@ export function mountReadingWorkbench(group,q,reading,{renderContent}={}){
  const byId=new Map(q.fields.map((f,i)=>[f.id,fields[i]])),layout=node('div',undefined,'quiz-reading-layout'),story=node('section',undefined,'quiz-reading-story'),questions=node('section',undefined,'quiz-reading-questions'),bar=node('div',undefined,'quiz-reading-navigation'),open=node('button',inline?'查看文章／填字（'+inline.slots.length+'格）':'查看文章','quiz-reading-open');open.type='button';
  story.setAttribute('aria-label','閱讀文章與文章內作答');story.tabIndex=-1;story.append(node('h4','閱讀文章'));
  const source=node('div',undefined,'quiz-reading-source'),tools=node('div',undefined,'quiz-reading-inline-tools');
- const activate=(slot,input,meta)=>{story.querySelectorAll('.quiz-inline-slot.is-reading-active').forEach(n=>n.classList.remove('is-reading-active'));slot.classList.add('is-reading-active');tools.replaceChildren(node('span','第'+slot.querySelector('.quiz-inline-number').textContent+'格・填'+(meta.role==='han'?'國字':'注音')));if(meta.role==='phonetic')attachPastInputKeyboard(tools,input,{bopomofo:true});};
+ let activeInput=null;
+ // Symbol insertion restores input focus. Keep that field's live keyboard;
+ // rebuilding its toolbar here would detach and close it after every key.
+ const activate=(slot,input,meta)=>{if(activeInput===input)return;activeInput=input;story.querySelectorAll('.quiz-inline-slot.is-reading-active').forEach(n=>n.classList.remove('is-reading-active'));slot.classList.add('is-reading-active');tools.replaceChildren(node('span','第'+slot.querySelector('.quiz-inline-number').textContent+'格・填'+(meta.role==='han'?'國字':'注音')));if(meta.role==='phonetic')attachPastInputKeyboard(tools,input,{bopomofo:true});};
  if(inline){
   story.append(node('p','在文章標示旁填國字或注音，再完成閱讀小題。','helper'),tools);
   const text=sourceStream(inline.passage);let offset=0;
