@@ -1,8 +1,12 @@
-# 仿寫欄寬依原範例字數：待發布（2026-11-19）
+# 仿寫欄寬依原範例字數：已正式發布（2026-11-19）
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-answer-slot-width-20261119 | 2026-11-19T03:05:44.790Z | `fef0e02` | `dpl_69z7YTAwd9eKRgEroXBGAj4q6Rbn` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-answer-templates.css、shared/quiz-answer-templates.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css | `dpl_AguKCrXbVfRRM2nxWA74cBfMz9LX`／回滾 `dpl_69z7YTAwd9eKRgEroXBGAj4q6Rbn`（eolOnly 0） |
 
 - Codex-answer-slot-width-20261119由最新origin/main 42c0dfd4新工作樹處理。29同類版本中26版本／134格有明確一致範例；逐格採中文字em加內距，只有核定欄移除巢狀padding，原第32題兩組均2／2／4字寬。3個無範例的接寫版本保留原寬。
 - 54回歸、156三尺寸個人／整份回顧／夥伴保存接回流程及21產物通過，實測內容寬與同字數單行。原控制項、250字、舊值、自評、一次送出及外層保持，無SQL／DML／AI。詳quiz-answer-templates-20261119.md追加節；私有證據D:/AI-Work/answer-slot-width-evidence-20261119/。
-- 下一步：PR進main、乾淨main依release-from-main發布，原卷第32題唯讀核字寬與原作答不變，收據PR後清理自有資源；保留使用者示範。
+- PR342合併main fef0e026，乾淨main依release-from-main發布至dpl_AguKCrXbVfRRM2nxWA74cBfMz9LX；完整樹23改0增0刪／eolOnly0，候選5及正式23檔HTTP／SHA一致。正式原卷第32題1280／390唯讀核兩組均2／2／4字實寬、原值及同字數文字單行，responses／open_responses前後相同，未送答案或自評。回滾dpl_69z7YTAwd9eKRgEroXBGAj4q6Rbn；發布鎖、測試分頁及租約釋放，收據PR後清理本次工作樹，保留使用者示範。
 
 # 仿寫與接寫完整參考：已正式發布（2026-11-19）
 
