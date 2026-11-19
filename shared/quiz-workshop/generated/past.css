@@ -249,6 +249,14 @@ input:has(+.past-input-tools),textarea:has(+.past-input-tools){scroll-margin-blo
 .quiz-phonetic-word-examples span{font-size:1rem;line-height:1.8;white-space:pre-wrap}
 .quiz-phonetic-word-issue{border-left:4px solid #b07725;padding:10px 12px;background:#fff3da;color:#634515;line-height:1.8}
 @media(max-width:420px){.quiz-phonetic-word-original{grid-template-columns:1fr;gap:2px}.quiz-phonetic-word-original dd{margin-bottom:8px}}
+.quiz-phonetic-check{border:1px solid;border-left-width:5px;border-radius:12px;padding:12px 16px;margin:12px 0;line-height:1.7;overflow-wrap:anywhere}
+.quiz-phonetic-check p{margin:4px 0}
+.quiz-phonetic-check-correct{color:#14532d;background:#f0fdf4;border-color:#86b69a}
+.quiz-phonetic-check-incorrect{color:#991b1b;background:#fff1f2;border-color:#e9a1aa}
+.quiz-phonetic-check-pending{color:#78350f;background:#fffbeb;border-color:#d6b365}
+.quiz-phonetic-word-original .quiz-phonetic-value-correct{color:#14532d}
+.quiz-phonetic-word-original .quiz-phonetic-value-incorrect{color:#991b1b;font-weight:700}
+.quiz-phonetic-word-original .quiz-phonetic-value-pending{color:#78350f}
 
 
 

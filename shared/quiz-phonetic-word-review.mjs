@@ -2,6 +2,7 @@ import {answerTemplatePresentation} from './quiz-answer-templates.mjs';
 import {phoneticWordFields} from './quiz-field-input-aids.mjs';
 import {sourceStream} from './quiz-content-slices.mjs';
 import {phoneticWordExamples} from './quiz-phonetic-word-examples.mjs';
+import {checkPhonetic} from './quiz-phonetic-check.mjs';
 
 const notes={植:'多用於植物、栽種或移入的意思。',直:'可表示不彎曲，也可用於直接、一直等詞。',值:'可表示價值、數值，也可表示輪班負責。',殖:'常用於生物繁衍、生長或增加的詞語。',丞:'這個字多用在古代官名，先理解意思再記詞語。',棵:'「棵」是量詞；下方是量詞的用法組合。'};
 export function phoneticWordReview(q,answer,{raw='',templateRegistry,examples=phoneticWordExamples}={}){
@@ -27,5 +28,6 @@ export function phoneticWordReview(q,answer,{raw='',templateRegistry,examples=ph
    if(!cards.has(character))cards.set(character,{character,note:notes[character]??'先核對本字在題目中的讀音，再用這個字組成意思通順的詞語。',entries:[]});cards.get(character).entries.push(entry);
   }
  }
+ for(const card of cards.values())for(const entry of card.entries)entry.phoneticCheck=checkPhonetic(card.character,entry,{splitReading:card.entries.length>1});
  return {cards:[...cards.values()]};
 }
