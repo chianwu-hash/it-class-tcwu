@@ -1,3 +1,14 @@
+# 閱讀文章原位填字：已正式發布（2026-11-19）
+
+## 發布登記
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-reading-inline-workspace-20261119 | 2026-11-19T13:50:18.482Z | `30817fe` | `dpl_Axd7t4MUSGCjpNpnBJkjKufSrQbQ` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/rich-content.js、shared/partner-pilot/structured-answer.js、shared/quiz-fields.css、shared/quiz-fields.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-reading-inline-sources.mjs、+shared/quiz-reading-inline.mjs、+shared/quiz-reading-workbench.mjs | `dpl_2TyfYFfgiCS5JAAj3iFvHDQk4DkE`／回滾 `dpl_Axd7t4MUSGCjpNpnBJkjKufSrQbQ`（eolOnly 0） |
+
+- Codex-reading-inline-workspace-20261119從最新origin/main `763d26d4`新工作樹處理第38題。95版本共用閱讀分區，其中12原件版本131格移回原文標記旁；桌機各自捲動，窄／低高度用同一DOM文章對話框並回原題焦點。原值、原欄ID、一次送出、揭答及認證不變，無SQL。
+- 41回歸、570完整流程與6尺寸／高度重點情境、21產物驗收。私有證據 `D:/AI-Work/reading-inline-workspace-evidence-20261119/`；詳[來源與驗收](quiz-reading-inline-workspace-20261119.md)。PR361合併main `30817fe3`，乾淨main腳本發布至`dpl_2TyfYFfgiCS5JAAj3iFvHDQk4DkE`；完整樹26改3增0刪／eolOnly0，候選8及正式29檔HTTP／SHA一致。正式第38題1280／390確認11原位填字格與3閱讀小題、桌機分區捲動、手機文章開關回到原小題焦點，原值及responses／open_responses前後相同，未送答案／自評；桌手機截圖已目視核對。回滾`dpl_Axd7t4MUSGCjpNpnBJkjKufSrQbQ`。發布鎖與測試租約釋放，收據後封存清本次工作樹，保留使用者示範。數學長線不開未整科驗收題目。
+
 # 單純造詞簡潔解析：已正式發布（2026-11-19）
 
 ## 發布登記
@@ -3594,8 +3605,3 @@ Supabase 新增每隻寵物獨立的 walk/rest 偏好，先儲存成功再切場
 - 114社會38官方C4與地圖五配對有疑義，待教材查證，不逕改D5；48原自核保留且補A選項位置疑義。114國文17作者專長指責已撤回，不能憑傳記未載推論不會。
 - 113數學計算題補拍已等圖片解碼，390px兩圖與作答欄正常；首張空白是截圖時機問題。114官方聽力稿是證據包漏帶，已補25段腳本與SHA，未真人逐段聽音。現行26必要圖均原題頁，解答圖曝光疑慮已排除。
 - 本輪只完成審查與報告，沒有更動正式內容／部署；應依報告優先修P1，建新版並驗入口及既有作答，保留歷史。chat-mode本輪完成視窗已清，分身02保留入口；私人證據仍在ignored目錄。
-# 閱讀文章原位填字：待main發布（2026-11-19）
-
-- Codex-reading-inline-workspace-20261119從最新origin/main `763d26d4`新工作樹處理第38題。95版本共用閱讀分區，其中12原件版本131格移回原文標記旁；桌機各自捲動，窄／低高度用同一DOM文章對話框並回原題焦點。原值、原欄ID、一次送出、揭答及認證不變，無SQL。
-- 41回歸、570完整流程與6尺寸／高度重點情境、21產物驗收。私有證據 `D:/AI-Work/reading-inline-workspace-evidence-20261119/`；詳[來源與驗收](quiz-reading-inline-workspace-20261119.md)。下一步PR進main、乾淨main腳本發布、正式唯讀確認及收據。數學長線不開未整科驗收題目。
-

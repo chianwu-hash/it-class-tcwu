@@ -21,4 +21,4 @@
 - 本機隔離fixture支援原有set／sequence陣列格式。驗收曾發現控制器缺少setDisabled並已補齊；一次本機傳輸失敗另存紀錄，完整重跑570項通過。桌手機截圖留私有證據。
 - `quiz:build`／`quiz:check`的21項產物通過。正式發布依乾淨main腳本；正式唯讀驗收不送答案或自評。
 
-私有證據：`D:/AI-Work/reading-inline-workspace-evidence-20261119/`。正式部署及收據後補。
+私有證據：`D:/AI-Work/reading-inline-workspace-evidence-20261119/`。PR361合併main `30817fe3`，乾淨main腳本發布至`dpl_2TyfYFfgiCS5JAAj3iFvHDQk4DkE`；完整樹26改3增0刪／eolOnly0，候選8及正式29檔HTTP／SHA一致。正式第38題1280／390確認11原位填字格與3閱讀小題、桌機分區捲動、手機文章開關回到原小題焦點，原值及responses／open_responses前後相同，未送答案／自評；桌手機截圖已目視核對。回滾`dpl_Axd7t4MUSGCjpNpnBJkjKufSrQbQ`。發布鎖與測試租約釋放，收據後封存清本次工作樹，保留使用者示範。
