@@ -3,6 +3,15 @@ import {sourceStream,sliceContent,omitRanges} from './quiz-content-slices.mjs';
 import {taskReadingSource,taskReadingPresentation} from './quiz-task-instructions.mjs';
 import {answerTemplateSources} from './quiz-answer-template-sources.mjs';
 import {openCompositionSources} from './quiz-open-composition-sources.mjs';
+const widthDocuments=new WeakSet();
+function installWidthReflow(doc){
+ if(widthDocuments.has(doc)||!doc.defaultView)return;widthDocuments.add(doc);let pending=false;
+ const refit=()=>{if(pending)return;pending=true;doc.defaultView.requestAnimationFrame(()=>{pending=false;doc.querySelectorAll('.quiz-answer-example-width textarea').forEach(input=>input.dispatchEvent(new doc.defaultView.Event('quiz-answer-refit')));});};
+ doc.defaultView.addEventListener('resize',refit);doc.fonts?.addEventListener('loadingdone',refit);
+}
+export function growingSlotWidth({text,fontSize,letterSpacing=0,padding=0,borders=0,measure}){
+ return Math.ceil(Math.max(0,...String(text).split(/\r?\n/u).map(line=>measure(line)+[...line].length*letterSpacing))+padding+borders+Math.max(4,fontSize*.1));
+}
 
 // Width comes from the publisher's populated example, never a reference answer
 // or the student's response. A differing or ambiguous pattern keeps its width.
@@ -77,7 +86,11 @@ export function mountAnswerTemplate(group,q,{renderContent,registry}={}){
  if(plan.source.prompt.media.length&&!renderContent)throw Error('answer_template_media_renderer_required');
  const doc=group.ownerDocument,container=doc.createElement('div');container.className='quiz-answer-templates';let number=0;
  const finish=()=>{container.querySelectorAll('img').forEach(img=>{img.dataset.imageLightbox='';img.dataset.partnerImage='';img.tabIndex=0;img.setAttribute('role','button');img.setAttribute('aria-label',(img.alt||'原題圖片')+'，點擊放大');});group.classList.add('quiz-has-answer-template');group.append(container);const work=group.querySelector(':scope > .quiz-work-input');if(work)group.append(work);return true;};
- const prepare=(slot,input,width,label)=>{slot.classList.add('quiz-answer-template-slot');slot.style.setProperty('--answer-slot-width',width+'ch');slot.querySelector('legend').classList.add('quiz-answer-template-label');input.setAttribute('aria-label',label);if(input.tagName==='TEXTAREA'){input.rows=1;const resize=()=>{input.style.height='auto';input.style.height=Math.max(48,Math.min(300,input.scrollHeight+4))+'px';input.style.overflowY=input.scrollHeight>300?'auto':'hidden';};input.addEventListener('input',resize);queueMicrotask(resize);doc.defaultView?.requestAnimationFrame(resize);}};
+ const prepare=(slot,input,width,label)=>{slot.classList.add('quiz-answer-template-slot');slot.style.setProperty('--answer-slot-width',width+'ch');slot.querySelector('legend').classList.add('quiz-answer-template-label');input.setAttribute('aria-label',label);if(input.tagName==='TEXTAREA'){input.rows=1;const resize=()=>{
+  if(!input.isConnected)return;
+  if(slot.classList.contains('quiz-answer-example-width')){const style=doc.defaultView.getComputedStyle(input),context=doc.createElement('canvas').getContext('2d');context.font=style.font;const px=name=>parseFloat(style[name])||0;slot.style.setProperty('--answer-slot-grown-width',growingSlotWidth({text:input.value,fontSize:px('fontSize'),letterSpacing:px('letterSpacing'),padding:px('paddingLeft')+px('paddingRight'),borders:px('borderLeftWidth')+px('borderRightWidth'),measure:text=>context.measureText(text).width})+'px');}
+  input.style.height='auto';input.style.height=Math.max(48,Math.min(300,input.scrollHeight+4))+'px';input.style.overflowY=input.scrollHeight>300?'auto':'hidden';
+ };input.addEventListener('input',resize);input.addEventListener('quiz-answer-refit',resize);installWidthReflow(doc);queueMicrotask(resize);doc.defaultView?.requestAnimationFrame(resize);}};
  if(plan.mode==='rich'){
   if(!renderContent)throw Error('answer_template_rich_renderer_required');renderContent(container,plan.source.prompt);
   const walker=doc.createTreeWalker(container,4),nodes=[];while(walker.nextNode())if(!walker.currentNode.parentElement?.closest('.katex,script,style'))nodes.push(walker.currentNode);
