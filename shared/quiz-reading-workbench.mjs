@@ -34,7 +34,7 @@ export function mountReadingWorkbench(group,q,reading,{renderContent,fieldFeedba
     row.append(slot);at=meta.end;
    }append(at,end);source.append(row);offset=end+1;
   }
-  const first=inline.slots[0],firstInput=byId.get(first.field).querySelector('input');if(firstInput.disabled)tools.append(node('span',story.querySelector('[data-reading-review]')?'✓ 綠框答對　✕ 紅框旁看正確答案':'已儲存的文章作答'));else activate(byId.get(first.field),firstInput,first);
+  const first=inline.slots[0],firstInput=byId.get(first.field).querySelector('input');if(firstInput.disabled)tools.append(node('span',source.querySelector('[data-reading-review]')?'✓ 綠框答對　✕ 紅框旁看正確答案':'已儲存的文章作答'));else activate(byId.get(first.field),firstInput,first);
  }else renderContent(source,plan.passage);
  story.insertBefore(source,story.querySelector('.quiz-inline-reference'));bar.append(open);
  questions.append(bar);const remaining=fields.filter(f=>!f.classList.contains('quiz-inline-slot'));
@@ -47,6 +47,9 @@ export function mountReadingWorkbench(group,q,reading,{renderContent,fieldFeedba
  let keyboardEscape=false;
  dialog.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const keyClose=story.querySelector('.past-input-popover:not([hidden]) .past-input-close');keyboardEscape=Boolean(keyClose);if(keyClose){e.preventDefault();e.stopPropagation();keyClose.click();}},true);
  open.setAttribute('aria-expanded','false');open.addEventListener('click',()=>{savedWindow=view.scrollY;savedQuestions=questions.scrollTop;dialog.append(story);dialog.showModal();open.setAttribute('aria-expanded','true');close.focus({preventScroll:true});});close.addEventListener('click',hide);dialog.addEventListener('cancel',e=>{e.preventDefault();if(keyboardEscape){keyboardEscape=false;return;}hide();});
+ // A native close (including an outer controller) must not strand the article
+ // inside the closed dialog. Normal hide/destroy already move it themselves.
+ dialog.addEventListener('close',()=>{if(story.parentNode!==dialog)return;layout.prepend(story);open.setAttribute('aria-expanded','false');questions.scrollTop=savedQuestions;});
  layout.append(story,questions);group.replaceChildren(layout,dialog);group.classList.add('quiz-reading-workbench');
  const controller=new view.AbortController();let frame=0;const resize=()=>{if(!group.isConnected)return;if(view.innerWidth>=900&&view.innerHeight>600&&dialog.open)hide();const dock=doc.querySelector('.quiz-workspace-dock'),top=Math.max(12,group.getBoundingClientRect().top);group.style.setProperty('--reading-pane-height',Math.max(280,view.innerHeight-top-(dock?.getBoundingClientRect().height??130)-18)+'px');};view.addEventListener('resize',resize,{signal:controller.signal});frame=view.requestAnimationFrame(resize);
  group.sketchEditors??=[];group.sketchEditors.push({setDisabled(disabled){if(disabled&&dialog.open)hide();},destroy(){controller.abort();view.cancelAnimationFrame(frame);if(dialog.open){dialog.close();layout.prepend(story);}dialog.remove();}});

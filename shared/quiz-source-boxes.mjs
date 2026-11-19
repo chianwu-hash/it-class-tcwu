@@ -3,6 +3,15 @@ import {presentationSignature} from './quiz-presentation-signature.mjs';
 import {numberedReadingPresentation} from './quiz-reading-numbered.mjs';
 import {reviewedSourceBoxes} from './quiz-source-boxes-sources.mjs';
 const context=Symbol('source-boxes');
+// Task instructions can replace a prefix. Project existing source frames only
+// across the identical retained suffix; never search for answer words.
+export function projectSourceBoxes(source,display){
+ const original=sourceStream(source),shown=sourceStream(display);if(original===null||shown===null||!display?.layout)return source;
+ const ranges=[];let at=0;for(const p of display.layout){for(const r of p.runs){const end=at+(r.type==='text'?r.text.length:1);if(r.type==='text'&&r.boxed&&end>at)ranges.push([at,end]);at=end;}at++;}
+ if(!ranges.length)return source;let same=0;while(same<Math.min(original.length,shown.length)&&original[original.length-1-same]===shown[shown.length-1-same])same++;
+ if(ranges.some(([a])=>a<shown.length-same))return source;
+ const delta=original.length-shown.length;return boxedContent(source,ranges.map(([a,b])=>[a+delta,b+delta]))??source;
+}
 // Ranges come from the original DOCX run borders, never from an answer key.
 export function boxedContent(content,ranges){
  const text=sourceStream(content);if(text===null)return null;

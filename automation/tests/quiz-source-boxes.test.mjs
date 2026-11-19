@@ -1,10 +1,17 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {boxedContent,sourceBoxQuestion,sourceBoxReading} from '../../shared/quiz-source-boxes.mjs';
+import {boxedContent,sourceBoxQuestion,sourceBoxReading,projectSourceBoxes} from '../../shared/quiz-source-boxes.mjs';
 import {sourceStream} from '../../shared/quiz-content-slices.mjs';
 import {presentationSignature} from '../../shared/quiz-presentation-signature.mjs';
 import {auditSourceBoxes} from '../audit-source-boxes.mjs';
 const make=()=>({id:'synthetic-box',type:'fields',prompt:{text:'□中的詞語是什麼意思？\n（　）１甲乙的句子。\n（　）２丙丁的句子。',media:[]},fields:[1,2].map(n=>({id:'f'+n,label:'第'+n+'格',input:'single',options:[{id:'original-a',content:{text:'一種意思',media:[]}},{id:'original-b',content:{text:'另一種意思',media:[]}}]})),answer:{format:'fields-v1',fields:{f1:['original-a'],f2:['original-b']}}});
 const plan=q=>({guard:presentationSignature(q),paired:true,ranges:['甲乙','丙丁'].map(t=>[q.prompt.text.indexOf(t),q.prompt.text.indexOf(t)+t.length])});
+test('instruction prefix changes retain exact source boxes without mutating the guarded source',()=>{
+ const raw={text:'舊指示\n要是下雨，就（　）。',media:[]},display=boxedContent({text:'新的作答指示\n要是下雨，就（　）。',media:[]},[[7,9],[12,13]]),before=JSON.stringify(raw);
+ // Use positions from the decorated source, not a keyword lookup in raw.
+ const words=display.layout.flatMap(p=>p.runs).filter(r=>r.boxed).map(r=>r.text),view=projectSourceBoxes(raw,display);
+ assert.deepEqual(words,['要是','就']);assert.deepEqual(view.layout.flatMap(p=>p.runs).filter(r=>r.boxed).map(r=>r.text),words);assert.equal(sourceStream(view),raw.text);assert.equal(JSON.stringify(raw),before);
+ const changed={...raw,text:'舊指示\n要是颱風，就（　）。'};assert.equal(projectSourceBoxes(changed,display),changed);assert.equal(projectSourceBoxes(raw,{text:raw.text,media:[]}),raw);
+});
 test('source boxes and sentence-choice adjacency retain original response identities and intended words',()=>{
  const q=make(),original=structuredClone(q),registry={[q.id]:[plan(q)]},view=sourceBoxQuestion(q,registry),reading=sourceBoxReading(view);
  assert.deepEqual(q,original);assert.equal(view.fields,q.fields);assert.equal(view.answer,q.answer);assert.equal(view.prompt.text,q.prompt.text);assert.equal(sourceBoxQuestion(view,registry),view);
