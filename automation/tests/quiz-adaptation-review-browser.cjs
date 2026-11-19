@@ -3,7 +3,7 @@
 const fs=require('node:fs'),assert=require('node:assert/strict'),{createRequire}=require('node:module'),pup=createRequire('D:/projects/cdp-tools/package.json')('puppeteer-core');
 const out=process.env.QUIZ_ADAPTATION_REVIEW_OUT;let browser,page;const checks=[],errors=[];
 (async()=>{try{
- assert(out);browser=await pup.connect({browserURL:process.env.CDP_URL,defaultViewport:null,waitForInitiallyDiscoveredTargets:false});page=await(await browser.waitForTarget(t=>t._targetId===process.env.AI_WORK_BROWSER_TARGET_ID)).page();page.on('pageerror',e=>errors.push(e.message));await page.waitForFunction(()=>window.templateReady);
+ assert(out);browser=await pup.connect({browserURL:process.env.CDP_URL,defaultViewport:null,waitForInitiallyDiscoveredTargets:false});page=await(await browser.waitForTarget(t=>t._targetId===process.env.AI_WORK_BROWSER_TARGET_ID)).page();page.on('pageerror',e=>errors.push(e.message));const cdp=await page.createCDPSession();cdp.grantForegroundOnce('Page.bringToFront','驗證原生視窗關閉事件與鍵盤操作');await cdp.send('Page.bringToFront');await page.waitForFunction(()=>window.templateReady);
  for(const width of [1280,768,390,320]){
   await page.setViewport({width,height:1000});const facts=await page.evaluate(async()=>{
    const [{renderFieldsInputs,fieldsResponseError},{renderMatchingBoard},{renderSequenceCards},{mountReadingWorkbench},{attachPastInputKeyboard}]=await Promise.all(['quiz-fields.mjs','quiz-matching.mjs','quiz-sequence.mjs','quiz-reading-workbench.mjs','quiz-input-keyboard.mjs'].map(n=>import('./shared/'+n)));

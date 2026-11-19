@@ -4,5 +4,5 @@ const options=(prefix,words)=>words.map((text,i)=>({id:prefix+i,content:{text,me
 test('matching right-card positions align by original content, allowing different per-field option IDs',()=>{
  const fields=[{id:'a',options:options('a',['甲','乙'])},{id:'b',options:options('b',['甲','乙'])},{id:'fallback'}],before=JSON.stringify(fields);
  assert.deepEqual(matchingOptionOrderIssues(fields),[]);assert.equal(JSON.stringify(fields),before);
- assert.deepEqual(matchingOptionOrderIssues([fields[0],{id:'swapped',options:options('s',['乙','甲'])}]),['swapped']);assert.deepEqual(matchingOptionOrderIssues([]),[]);
+ const swapped={id:'swapped',options:options('s',['乙','甲'])};assert.deepEqual(matchingOptionOrderIssues([fields[0],swapped]),['swapped']);assert.deepEqual(matchingOptionOrderIssues([{id:'fallback'},fields[0],swapped]),['swapped']);assert.deepEqual(matchingOptionOrderIssues([]),[]);
 });
