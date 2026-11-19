@@ -1,8 +1,14 @@
-# 單純造詞簡潔解析：待依main發布（2026-11-19）
+# 單純造詞簡潔解析：已正式發布（2026-11-19）
+
+## 發布登記
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-word-meaning-review-20261119 | 2026-11-19T12:58:49.923Z | `0b8955d` | `dpl_FWKUg8cD6eakZLeM6ChSnk4M5ck1` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/answer-feedback.mjs、shared/partner-pilot/review-layout.mjs、shared/quiz-fields.css、shared/quiz-open-response.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-word-meaning-guides.mjs、+shared/quiz-word-meaning-review.mjs | `dpl_Axd7t4MUSGCjpNpnBJkjKufSrQbQ`／回滾 `dpl_FWKUg8cD6eakZLeM6ChSnk4M5ck1`（eolOnly 0） |
 
 - Codex-word-meaning-review-20261119從最新origin/main fc702545新工作樹處理第37題「頂」逐格重複解析。163原生版本／目標（162字與劈啪1詞），NAS DOCX依清冊重讀核SHA。以已核來源題型及原模板選固定簡短字義＋742詞例呈現，一目標一卡，不拆劈啪。
 - 個人／整份回顧及夥伴保存／接回／共同回顧移除重複逐格例答、檢核、泛用前言及AI段落；原參考留固定資料，作答、自評、一次送出、外層與SQL不動。缺來源／引導／授權沿原流程；注音／部首／筆畫＋造詞不套用。詳[來源與驗收](quiz-word-meaning-review-20261119.md)。
-- 45回歸、163來源、978三尺寸完整流程及24重點複驗、21產物通過，桌手機畫面已核。私有證據D:/AI-Work/word-meaning-review-evidence-20261119/。下一步：PR進main、乾淨main腳本發布、正式第37題唯讀核原作答、收據及清理。數學長線不開未整科驗收題目。
+- 45回歸、163來源、978三尺寸完整流程及24重點複驗、21產物通過，桌手機畫面已核。私有證據D:/AI-Work/word-meaning-review-evidence-20261119/。PR359合併main `0b8955da`，乾淨main腳本發布至`dpl_Axd7t4MUSGCjpNpnBJkjKufSrQbQ`；完整樹26改2增0刪／eolOnly0，候選8及正式28檔HTTP／SHA一致。正式第37題1280／390確認「頂」一張字義卡、6詞例，無逐格檢核或重複AI段落；原兩格字串及responses／open_responses前後相同，未送答案／自評，正式手機截圖已目視核對。回滾`dpl_FWKUg8cD6eakZLeM6ChSnk4M5ck1`。發布鎖與測試租約釋放；收據PR後封存並清本次工作樹，保留使用者示範。數學長線不開未整科驗收題目。
 
 # 字音欄確定性核對：已正式發布（2026-11-19）
 
