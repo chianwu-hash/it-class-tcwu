@@ -1,0 +1,9 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {inlineReadingFeedback} from '../../shared/quiz-reading-inline.mjs';
+import {fieldsReviewPresentation} from '../../shared/quiz-fields-review.mjs';
+const q={type:'fields',fields:[{id:'f1',input:'text'},{id:'f2',input:'text'}]},raw=(a,b)=>JSON.stringify({v:1,f:{f1:a,f2:b}}),review={correct:false,answer:{format:'fields-v1',fields:{f1:['兄'],f2:['ㄌㄧˊ','ㄌㄧˇ']}}};
+test('authorized exact text blanks show green and incorrect blanks carry every accepted answer',()=>{
+ const feedback=fieldsReviewPresentation(q,raw('呂','ㄌㄧˊ'),review);assert.deepEqual(inlineReadingFeedback(feedback[0]),{state:'incorrect',label:'✕ 正確：',answers:['兄']});assert.equal(inlineReadingFeedback(feedback[1]).state,'correct');assert.deepEqual(inlineReadingFeedback(fieldsReviewPresentation(q,raw('兄','ㄌㄧˋ'),review)[1]).answers,['ㄌㄧˊ','ㄌㄧˇ']);
+});
+test('matches the existing server ASCII-space trimming without rewriting saved values',()=>{const response=raw(' 兄 ','ㄌㄧˊ'),feedback=fieldsReviewPresentation(q,response,review),before=JSON.stringify(feedback);assert.equal(inlineReadingFeedback(feedback[0]).state,'correct');assert.equal(JSON.stringify(feedback),before);assert.equal(inlineReadingFeedback({...feedback[0],value:'　兄　'}).state,'incorrect');});
+test('pending or unauthorized reviews, tuple conflicts and other field types are not red or green guesses',()=>{for(const r of [null,{}, {correct:false},{answer:review.answer}])assert.equal(fieldsReviewPresentation(q,raw('兄','ㄌㄧˊ'),r),null);for(const f of [null,{input:'math',state:'reference',value:'2/4',accepted:['0.5']},{input:'text',state:'paired',value:'兄',accepted:['兄']},{input:'text',state:'reference',value:'兄',accepted:[]},{input:'text',state:'reference',value:'兄',accepted:[null]}])assert.equal(inlineReadingFeedback(f),null);});

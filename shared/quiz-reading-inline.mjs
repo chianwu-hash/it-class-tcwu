@@ -5,6 +5,17 @@ import {choiceQuestionPresentation} from './quiz-choice-conversion.mjs';
 import {numberedReadingPresentation} from './quiz-reading-numbered.mjs';
 import {sourceStream,sliceContent} from './quiz-content-slices.mjs';
 
+// Only consumes an already authorized fieldsReviewPresentation result. These
+// source-mapped text blanks use quiz_fields_value's ASCII-space trim contract;
+// no math equivalence, dictionary inference or question answer lookup.
+export function inlineReadingFeedback(feedback){
+ if(!feedback||feedback.input!=='text')return null;
+ if(feedback.state==='correct')return {state:'correct',label:'✓ 答對',answers:[]};
+ if(feedback.state!=='reference'||typeof feedback.value!=='string'||!Array.isArray(feedback.accepted)||!feedback.accepted.length||feedback.accepted.some(a=>typeof a!=='string'||!a.replace(/^ +| +$/g,'')))return null;
+ const trim=s=>s.replace(/^ +| +$/g,''),answers=[...new Set(feedback.accepted.map(trim))];
+ return answers.includes(trim(feedback.value))?{state:'correct',label:'✓ 答對',answers:[]}:{state:'incorrect',label:'✕ 正確：',answers};
+}
+
 export function inlineReadingPlan(question,registry=readingInlineSources){
  if(!question)return null;const q=taskReadingSource(choiceQuestionPresentation(question)),record=registry[q.id];
  if(!record||record.guard!==readingSignature(q)||q.prompt.media.length)return null;

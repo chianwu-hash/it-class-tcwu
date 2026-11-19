@@ -1,4 +1,4 @@
-import {inlineReadingPlan} from './quiz-reading-inline.mjs';
+import {inlineReadingPlan,inlineReadingFeedback} from './quiz-reading-inline.mjs';
 import {sourceStream,sliceContent} from './quiz-content-slices.mjs';
 import {attachPastInputKeyboard} from './quiz-past-input.mjs';
 import {matchingPresentation} from './quiz-matching-presentation.mjs';
@@ -7,7 +7,7 @@ export const readingWorkbenchSupported=(q,reading)=>Boolean(q?.type==='fields'&&
 
 // Move original inputs, listeners and feedback. No new response, scoring or
 // persistence path. The same article DOM moves into the mobile dialog.
-export function mountReadingWorkbench(group,q,reading,{renderContent}={}){
+export function mountReadingWorkbench(group,q,reading,{renderContent,fieldFeedback=null}={}){
  if(!readingWorkbenchSupported(q,reading)||!renderContent)return false;
  const doc=group.ownerDocument,view=doc.defaultView,inline=inlineReadingPlan(q),plan=inline?.reading??reading;
  const node=(tag,text,cls)=>{const n=doc.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
@@ -20,7 +20,7 @@ export function mountReadingWorkbench(group,q,reading,{renderContent}={}){
  // rebuilding its toolbar here would detach and close it after every key.
  const activate=(slot,input,meta)=>{if(activeInput===input)return;activeInput=input;story.querySelectorAll('.quiz-inline-slot.is-reading-active').forEach(n=>n.classList.remove('is-reading-active'));slot.classList.add('is-reading-active');tools.replaceChildren(node('span','第'+slot.querySelector('.quiz-inline-number').textContent+'格・填'+(meta.role==='han'?'國字':'注音')));if(meta.role==='phonetic')attachPastInputKeyboard(tools,input,{bopomofo:true});};
  if(inline){
-  story.append(node('p','在文章標示旁填國字或注音，再完成閱讀小題。','helper'),tools);
+  story.append(node('p',fieldFeedback?'直接核對文章中的答案，需要修正的格子旁會顯示正確答案。':'在文章標示旁填國字或注音，再完成閱讀小題。','helper'),tools);
   const text=sourceStream(inline.passage);let offset=0;
   for(const line of text.split('\n')){const row=node('div',undefined,'quiz-reading-inline-paragraph'),end=offset+line.length;let at=offset;
    const append=(a,b)=>{if(a>=b)return;const span=node('span',undefined,'quiz-reading-piece');const content=inline.passage.layout?sliceContent(inline.passage,a,b):{text:text.slice(a,b),media:[]};renderContent(span,content);row.append(span);};
@@ -28,11 +28,13 @@ export function mountReadingWorkbench(group,q,reading,{renderContent}={}){
     // Size is a minimum, never a one-character maxlength or saved-value trim.
     const fit=()=>{input.style.width=Math.max(meta.role==='han'?2.1:meta.characters>1?6.5:3.8,[...input.value].length+1.1)+'em';};input.addEventListener('input',fit);fit();
     input.addEventListener('focus',()=>activate(slot,input,meta));
-    const feedback=[...slot.querySelectorAll(':scope > .quiz-field-review-status,:scope > .quiz-field-review-reference')];if(feedback.length){const details=node('details',undefined,'quiz-inline-reference'),summary=node('summary','第'+(i+1)+'格核對');details.append(summary,...feedback);story.append(details);}
+    const feedback=[...slot.querySelectorAll(':scope > .quiz-field-review-status,:scope > .quiz-field-review-reference')],mark=input.disabled?inlineReadingFeedback(fieldFeedback?.[q.fields.findIndex(f=>f.id===meta.field)]):null;
+    if(mark){slot.dataset.readingReview=mark.state;const note=node('span',mark.label+(mark.answers.length?mark.answers.join(' 或 '):''),'quiz-inline-result');note.id=input.id+'-result';input.setAttribute('aria-describedby',note.id);slot.append(note);feedback.forEach(n=>n.remove());}
+    else if(feedback.length){const details=node('details',undefined,'quiz-inline-reference'),summary=node('summary','第'+(i+1)+'格核對');details.append(summary,...feedback);story.append(details);}
     row.append(slot);at=meta.end;
    }append(at,end);source.append(row);offset=end+1;
   }
-  const first=inline.slots[0];activate(byId.get(first.field),byId.get(first.field).querySelector('input'),first);
+  const first=inline.slots[0],firstInput=byId.get(first.field).querySelector('input');if(firstInput.disabled)tools.append(node('span',story.querySelector('[data-reading-review]')?'✓ 綠框答對　✕ 紅框旁看正確答案':'已儲存的文章作答'));else activate(byId.get(first.field),firstInput,first);
  }else renderContent(source,plan.passage);
  story.insertBefore(source,story.querySelector('.quiz-inline-reference'));bar.append(open);
  questions.append(bar);const remaining=fields.filter(f=>!f.classList.contains('quiz-inline-slot'));
