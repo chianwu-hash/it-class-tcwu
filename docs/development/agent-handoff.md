@@ -1,3 +1,16 @@
+# 本輪各題型總驗證與 Claude 複核：驗證完成，發布中（2026-11-19）
+
+## 發布登記
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 發布中 | Codex-question-types-review-20261119 | 2026-11-19 | PR370合併後的乾淨main | `dpl_FoeTtAgd3coLPrvFjRniEqgh44ee` | 30個runtime檔；完整樹以腳本核對 | 驗證完成，待start／deploy／promote |
+
+- 本輪14類適應方式完成重新驗證；6390來源聯集無來源變更或例外，181單元、11認證／SQL隔離與送答、21產物核對通過。15套瀏覽器驗證及重新建置後補驗通過，不相加成獨立題數。詳見[題型驗證與Claude意見](question-type-review-20261119.md)。
+- Claude Code 2.1.323使用chat-mode唯讀CLI完成3輪廣度＋1輪補丁複核，62次Read，四次run均完成、檢視器啟動、Git前後相同；Claude未實跑測試或逐題校卷。Codex核實後修複選null／[]契約、一般模板內距及向右增長、4接寫來源框詞、排序確認、連線待選／拖曳Esc、閱讀圖例與nativeclose生命週期、虛擬鍵盤Enter焦點。生成CSS與manifest重建；保留原欄位、原答、一次送出、權限與固定資料，無SQL變更。
+- 74連線選項對位0問題，17同部首皆符合，176注音來源單音重複多組0例；table防護誤報撤回，勁等固定資料分歧仍待核。測試隔離於localhost nonce，正式僅唯讀，不改名冊、學生答案或自評。
+- 私有證據 `D:/AI-Work/question-type-review-evidence-20261119/`，Claude原信箱保留待封存。下一步：PR370合併，從最新origin/main建乾淨發布樹，release-from-main完整樹通過後promote，分身01唯讀核正式場次並記收據。發布鎖目前無持有者；若別人先取得鎖則停止協調。
+
 # 閱讀原位批改：已正式發布（2026-11-19）
 
 ## 發布登記

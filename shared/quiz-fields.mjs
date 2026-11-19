@@ -73,7 +73,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
    appendSingleChoiceOptions(slot,{name:id,options:f.options.map(o=>({...o,value:o.id})),selected:values[f.id],locked,badgeForOption:storedField.input==='text'&&f!==storedField?o=>o.id:undefined,onSelect:v=>{values[f.id]=v;changed()},renderBody:(box,o)=>renderContent(box,o.content)});
    if(feedback?.[fieldIndex])slot.querySelectorAll(':scope > .student-option').forEach((row,i)=>decorateFieldReviewOption(row,feedback[fieldIndex].options[i]));
   }else if(f.input==='set'){
-   const checks=[];const update=()=>{values[f.id]=checks.filter(x=>x.input.checked).map(x=>x.id);none.checked=values[f.id].length===0;changed()};
+   const checks=[];const update=()=>{const selected=checks.filter(x=>x.input.checked).map(x=>x.id);values[f.id]=selected.length?selected:null;none.checked=false;changed()};
    for(const [i,o]of f.options.entries()){const label=make('label'),input=make('input');input.type='checkbox';input.disabled=locked;input.checked=Array.isArray(values[f.id])&&values[f.id].includes(o.id);const body=make('span');renderContent(body,o.content);label.append(input,body);slot.append(label);decorateFieldReviewOption(label,feedback?.[fieldIndex]?.options[i]);checks.push({id:o.id,input});input.addEventListener('change',update)}
    const label=make('label'),none=make('input');none.type='checkbox';none.disabled=locked;none.checked=Array.isArray(values[f.id])&&values[f.id].length===0;none.addEventListener('change',()=>{if(none.checked)checks.forEach(x=>x.input.checked=false);values[f.id]=none.checked?[]:null;changed()});label.append(none,make('span','這些選項都不選'));slot.append(label);decorateFieldReviewOption(label,feedback?.[fieldIndex]?.none);
   }else if(f.input==='sequence'){

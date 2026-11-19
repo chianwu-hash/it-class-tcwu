@@ -10,11 +10,15 @@ import {readingPresentation} from '../shared/quiz-reading-presentation.mjs';
 import {matchingPresentation} from '../shared/quiz-matching-presentation.mjs';
 import {pastMatchingPresentation,partnerMatchingPresentation} from '../shared/quiz-matching-past.mjs';
 import {matchingReference} from '../shared/quiz-matching-model.mjs';
+export function matchingOptionOrderIssues(fields){
+ const reference=fields.find(f=>f.options)?.options;if(!reference)return [];
+ return fields.filter(f=>f.options&&(f.options.length!==reference.length||f.options.some((o,i)=>JSON.stringify(o.content)!==JSON.stringify(reference[i]?.content)))).map(f=>f.id);
+}
 export function auditMatchingQuestions({pool=[],past=[],partner=[]}={}){
  const rows=[],issues=[];
  for(const row of pool){const stored=row.question??row;if(stored.type!=='fields')continue;const before=JSON.stringify(stored),q=choiceQuestionPresentation(stored),reading=readingPresentation(q),shown=q.fields.map((f,i)=>reading?.fields[i]??fieldPresentation(q,f)),plan=matchingPresentation(q,shown);
   if(!plan){if(/連連看|連一連|畫線連|連出正確|請用線連起來/u.test(q.prompt?.text||''))issues.push({source:'pool',id:q.id,reason:'source_plan_missing_or_changed'});continue;}
-  for(const board of plan.boards)for(const left of board.left){const accepted=stored.answer?.fields?.[left.id];if(accepted?.some(value=>!matchingReference(left,value,accepted)?.correct||!matchingReference(left,value,accepted)?.selected.length))issues.push({source:'pool',id:q.id,field:left.id,reason:'original_value_has_no_card'});}
+  for(const board of plan.boards){for(const field of matchingOptionOrderIssues(board.indices.map(i=>shown[i])))issues.push({source:'pool',id:q.id,field,reason:'option_order_mismatch'});for(const left of board.left){const accepted=stored.answer?.fields?.[left.id];if(accepted?.some(value=>!matchingReference(left,value,accepted)?.correct||!matchingReference(left,value,accepted)?.selected.length))issues.push({source:'pool',id:q.id,field:left.id,reason:'original_value_has_no_card'});}}
   if(before!==JSON.stringify(stored))issues.push({source:'pool',id:q.id,reason:'source_mutated'});
   rows.push({source:'pool',id:q.id,boards:plan.boards.length,fields:plan.boards.flatMap(b=>b.left.map(l=>l.id))});
  }

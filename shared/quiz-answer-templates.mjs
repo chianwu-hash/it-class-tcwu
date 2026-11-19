@@ -3,10 +3,11 @@ import {sourceStream,sliceContent,omitRanges} from './quiz-content-slices.mjs';
 import {taskReadingSource,taskReadingPresentation} from './quiz-task-instructions.mjs';
 import {answerTemplateSources} from './quiz-answer-template-sources.mjs';
 import {openCompositionSources} from './quiz-open-composition-sources.mjs';
+import {projectSourceBoxes} from './quiz-source-boxes.mjs';
 const widthDocuments=new WeakSet();
 function installWidthReflow(doc){
  if(widthDocuments.has(doc)||!doc.defaultView)return;widthDocuments.add(doc);let pending=false;
- const refit=()=>{if(pending)return;pending=true;doc.defaultView.requestAnimationFrame(()=>{pending=false;doc.querySelectorAll('.quiz-answer-example-width textarea').forEach(input=>input.dispatchEvent(new doc.defaultView.Event('quiz-answer-refit')));});};
+ const refit=()=>{if(pending)return;pending=true;doc.defaultView.requestAnimationFrame(()=>{pending=false;doc.querySelectorAll('.quiz-answer-template-slot textarea').forEach(input=>input.dispatchEvent(new doc.defaultView.Event('quiz-answer-refit')));});};
  doc.defaultView.addEventListener('resize',refit);doc.fonts?.addEventListener('loadingdone',refit);
 }
 export function growingSlotWidth({text,fontSize,letterSpacing=0,padding=0,borders=0,measure}){
@@ -72,13 +73,14 @@ export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=
 export function answerTemplatePresentation(q,registry=answerTemplateSources){
  const source=taskReadingSource(q),p=registry[source?.id];if(!p||p.guard!==presentationSignature(source))return null;
  const model=p.model.mode==='groups'?deriveGroupedTemplate(source):p.model.mode==='options'?deriveOptionTemplate(source):p.model.mode==='material'&&source.prompt.media.length?{mode:'material',fields:source.fields.map(f=>f.id)}:deriveAnswerTemplate(source,{marked:p.model.mode==='marked',targetOffsets:p.model.targetOffsets,symbols:p.model.symbols,underscores:p.model.underscores});if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
- return {...model,source,passage:taskReadingPresentation(q,{passage:['rich','material'].includes(model.mode)?{text:'',media:[]}:sliceContent(source.prompt,0,model.start)}).passage};
+ const renderPrompt=projectSourceBoxes(source.prompt,q.prompt);
+ return {...model,source,renderPrompt,passage:taskReadingPresentation(q,{passage:['rich','material'].includes(model.mode)?{text:'',media:[]}:sliceContent(renderPrompt,0,model.start)}).passage};
 }
 
 // Move the original controls (and listeners/feedback/keyboards), never clone,
 // recreate values, change field names or introduce another submit action.
 export function mountAnswerTemplate(group,q,{renderContent,registry}={}){
- const plan=answerTemplatePresentation(q,registry);if(!plan)return false;
+ const plan=answerTemplatePresentation(q,registry);if(!plan)return false;const renderPrompt=plan.renderPrompt;
  const slots=[...group.querySelectorAll(':scope > .quiz-field')];if(slots.length!==q.fields.length)return false;
  const byId=new Map(q.fields.map((f,i)=>[f.id,slots[i]]));
  const exampleSource=openCompositionSources[plan.source.id],characters=exampleSource?.guard===presentationSignature(plan.source)?exampleSlotCharacters(plan):null;
@@ -88,11 +90,11 @@ export function mountAnswerTemplate(group,q,{renderContent,registry}={}){
  const finish=()=>{container.querySelectorAll('img').forEach(img=>{img.dataset.imageLightbox='';img.dataset.partnerImage='';img.tabIndex=0;img.setAttribute('role','button');img.setAttribute('aria-label',(img.alt||'原題圖片')+'，點擊放大');});group.classList.add('quiz-has-answer-template');group.append(container);const work=group.querySelector(':scope > .quiz-work-input');if(work)group.append(work);return true;};
  const prepare=(slot,input,width,label)=>{slot.classList.add('quiz-answer-template-slot');slot.style.setProperty('--answer-slot-width',width+'ch');slot.querySelector('legend').classList.add('quiz-answer-template-label');input.setAttribute('aria-label',label);if(input.tagName==='TEXTAREA'){input.rows=1;const resize=()=>{
   if(!input.isConnected)return;
-  if(slot.classList.contains('quiz-answer-example-width')){const style=doc.defaultView.getComputedStyle(input),context=doc.createElement('canvas').getContext('2d');context.font=style.font;const px=name=>parseFloat(style[name])||0;slot.style.setProperty('--answer-slot-grown-width',growingSlotWidth({text:input.value,fontSize:px('fontSize'),letterSpacing:px('letterSpacing'),padding:px('paddingLeft')+px('paddingRight'),borders:px('borderLeftWidth')+px('borderRightWidth'),measure:text=>context.measureText(text).width})+'px');}
+  {const style=doc.defaultView.getComputedStyle(input),context=doc.createElement('canvas').getContext('2d');context.font=style.font;const px=name=>parseFloat(style[name])||0;slot.style.setProperty('--answer-slot-grown-width',growingSlotWidth({text:input.value,fontSize:px('fontSize'),letterSpacing:px('letterSpacing'),padding:px('paddingLeft')+px('paddingRight'),borders:px('borderLeftWidth')+px('borderRightWidth'),measure:text=>context.measureText(text).width})+'px');}
   input.style.height='auto';input.style.height=Math.max(48,Math.min(300,input.scrollHeight+4))+'px';input.style.overflowY=input.scrollHeight>300?'auto':'hidden';
  };input.addEventListener('input',resize);input.addEventListener('quiz-answer-refit',resize);installWidthReflow(doc);queueMicrotask(resize);doc.defaultView?.requestAnimationFrame(resize);}};
  if(plan.mode==='rich'){
-  if(!renderContent)throw Error('answer_template_rich_renderer_required');renderContent(container,plan.source.prompt);
+  if(!renderContent)throw Error('answer_template_rich_renderer_required');renderContent(container,renderPrompt);
   const walker=doc.createTreeWalker(container,4),nodes=[];while(walker.nextNode())if(!walker.currentNode.parentElement?.closest('.katex,script,style'))nodes.push(walker.currentNode);
   const joined=nodes.map(n=>n.textContent).join(''),matches=sourceBlanks(joined,plan);
   // Keep a complete source beside the original controls if rendered math cannot
@@ -105,16 +107,16 @@ export function mountAnswerTemplate(group,q,{renderContent,registry}={}){
  }
  const render=(host,content)=>{if(renderContent)renderContent(host,content);else host.textContent=content.text;};
  if(plan.mode==='material'){
-  if(!renderContent)throw Error('answer_template_media_renderer_required');const source=doc.createElement('section'),answers=doc.createElement('section');source.className='quiz-answer-source-panel';source.tabIndex=0;source.setAttribute('aria-label','原題與共用圖表');render(source,plan.source.prompt);answers.className='quiz-answer-source-controls';for(const f of q.fields)answers.append(byId.get(f.id));container.classList.add('quiz-answer-material');container.append(source,answers);return finish();
+  if(!renderContent)throw Error('answer_template_media_renderer_required');const source=doc.createElement('section'),answers=doc.createElement('section');source.className='quiz-answer-source-panel';source.tabIndex=0;source.setAttribute('aria-label','原題與共用圖表');render(source,renderPrompt);answers.className='quiz-answer-source-controls';for(const f of q.fields)answers.append(byId.get(f.id));container.classList.add('quiz-answer-material');container.append(source,answers);return finish();
  }
  if(plan.mode==='groups'){
-  for(const row of plan.rows){const section=doc.createElement('section');section.className='quiz-answer-template-row quiz-answer-question-group';const stem=doc.createElement('div');stem.className='quiz-answer-group-stem';render(stem,sliceContent(plan.source.prompt,row.start,row.end));section.append(stem);const inputs=doc.createElement('div');inputs.className='quiz-answer-group-controls';for(const id of row.fields)inputs.append(byId.get(id));section.append(inputs);container.append(section);}return finish();
+  for(const row of plan.rows){const section=doc.createElement('section');section.className='quiz-answer-template-row quiz-answer-question-group';const stem=doc.createElement('div');stem.className='quiz-answer-group-stem';render(stem,sliceContent(renderPrompt,row.start,row.end));section.append(stem);const inputs=doc.createElement('div');inputs.className='quiz-answer-group-controls';for(const id of row.fields)inputs.append(byId.get(id));section.append(inputs);container.append(section);}return finish();
  }
  for(const row of plan.rows){
   const box=doc.createElement('section');box.className='quiz-answer-template-row';box.setAttribute('role','group');
   if(row.fields.length){const title=doc.createElement('h4');title.className='quiz-answer-template-title';title.textContent=`第${++number}組`;box.append(title);box.setAttribute('aria-label',title.textContent);}
   const line=doc.createElement('div');line.className='quiz-answer-template-line';box.append(line);let at=row.start;
-  const text=(a,b)=>{if(a>=b)return;let at=a;const pieces=[];for(const [x,y]of plan.omissions.filter(([x,y])=>x>=a&&y<=b)){if(at<x)pieces.push([at,x]);at=y;}if(at<b)pieces.push([at,b]);for(const [x,y]of pieces){const span=doc.createElement('div');span.className='quiz-answer-template-text';render(span,sliceContent(plan.source.prompt,x,y));line.append(span);}};
+  const text=(a,b)=>{if(a>=b)return;let at=a;const pieces=[];for(const [x,y]of plan.omissions.filter(([x,y])=>x>=a&&y<=b)){if(at<x)pieces.push([at,x]);at=y;}if(at<b)pieces.push([at,b]);for(const [x,y]of pieces){const span=doc.createElement('div');span.className='quiz-answer-template-text';render(span,sliceContent(renderPrompt,x,y));line.append(span);}};
   for(const blank of plan.blanks.filter(b=>row.fields.includes(b.field))){
    text(at,blank.start);const slot=byId.get(blank.field),input=slot.querySelector('input[type=text],textarea');if(!input)throw Error('answer_template_original_input_required');
    prepare(slot,input,blank.width,`${number?`第${number}組・`:''}${slot.querySelector('legend').textContent}`);

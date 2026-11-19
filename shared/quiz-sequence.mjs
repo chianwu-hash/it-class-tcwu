@@ -3,7 +3,7 @@ let activeDrag=null;
 const make=(doc,tag,text,cls)=>{const n=doc.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 export function renderSequenceCards(host,field,{value=null,locked=false,onChange,renderContent,accepted=null}={}){
  const doc=host.ownerDocument||document,view=doc.defaultView,root=make(doc,'div',undefined,'quiz-sequence'),list=make(doc,'ol',undefined,'quiz-sequence-list');
- const hint=make(doc,'p',locked?(completeSequence(field,value)?'你保存的排列順序：':'尚未保存完整的排列順序。'):'拖曳卡片排順序，也可以按「上移／下移」。','quiz-sequence-hint');
+ const hint=make(doc,'p',locked?(completeSequence(field,value)?'你保存的排列順序：':'尚未保存完整的排列順序。'):'拖曳卡片排順序，也可以按「上移／下移」；順序不用調整時，按「確認目前順序」。','quiz-sequence-hint');
  const live=make(doc,'p','','quiz-sequence-live');live.setAttribute('role','status');live.setAttribute('aria-live','polite');list.setAttribute('aria-label',field.label+'・排列順序');root.append(hint,list,live);host.append(root);
  let order=initialSequence(field,value),drag=null;const nodes=new Map();
  const target=sequenceReference(field,value,accepted),editable=()=>!locked&&root.isConnected!==false&&!nodes.values().next().value?.querySelector('.quiz-sequence-handle')?.disabled;
@@ -64,6 +64,6 @@ export function renderSequenceCards(host,field,{value=null,locked=false,onChange
    const actions=make(doc,'div',undefined,'quiz-sequence-actions');for(const [kind,label,step]of [['up','↑ 上移',-1],['down','↓ 下移',1]]){const b=make(doc,'button',label);b.type='button';b.dataset.sequenceMove=kind;b.setAttribute('aria-label','將「'+(option.content.text||'圖片選項')+'」'+(step<0?'上移':'下移'));b.addEventListener('click',()=>move(option.id,order.indexOf(option.id)+step,kind));actions.append(b);}li.append(handle,actions);
   }else li.classList.add('is-readonly');nodes.set(option.id,li);
  }
- paint();if(target&&accepted.length>1)root.append(make(doc,'p','以下以其中一種可接受順序對照；原作答與整組判分保持。','quiz-sequence-hint'));
+ paint();if(!locked){const confirm=make(doc,'button','確認目前順序','quiz-sequence-confirm');confirm.type='button';confirm.addEventListener('click',()=>{if(!editable())return;commit();live.textContent='已確認目前順序；完成其他小題後再一起送出。';});root.append(confirm);}if(target&&accepted.length>1)root.append(make(doc,'p','以下以其中一種可接受順序對照；原作答與整組判分保持。','quiz-sequence-hint'));
  return {getValue:()=>[...order],destroy:cancelDrag};
 }
