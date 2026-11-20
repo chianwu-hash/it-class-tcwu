@@ -4,10 +4,12 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | Codex-g9-textbook-before-answer-20261120 | 2026-11-20 | 待合併的發布 PR | `dpl_DDwfWKFUJHe7B6ZepQ37Db8QAbUF` | 自然考古卷答前課本 PDF 連結、練功坊產物、SOP | 隔離驗收後以 main-only 腳本發布 |
+| 已完成 | Codex-g9-textbook-before-answer-20261120 | 2026-11-20T13:37:28.784Z | `ca19770` | `dpl_DDwfWKFUJHe7B6ZepQ37Db8QAbUF` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-past-textbook-citations.mjs、shared/quiz-past-ui.mjs、shared/quiz-workshop/generated/assets.json | `dpl_HfXMB7TJNNJ9QHJy9TJhdMcrxn46`／回滾 `dpl_DDwfWKFUJHe7B6ZepQ37Db8QAbUF`（eolOnly 0） |
 
 - 113／114 上二段自然共 73 題。課本對照與翰林分章原檔下載在答題前可用，解析沿用送答後揭示。顯示印刷頁碼與分章 PDF 頁序，八份原檔來源不需教師登入即可下載。
 - 課本由出版社供檔，網站保留原卷與原作答流程。本次不套用資料庫函式，不上傳教材頁。
+
+- PR #387 已於臺灣時間 20:38 發布。正式站 19 個變更產物及兩卷入口均讀回一致。五組桌機與手機隔離情境確認答前連結可點、保留選答、一次送答與答後解析，未使用正式學生帳號送答。
 
 # 中正九年級自然考古卷課本對照（2026-11-20）
 
