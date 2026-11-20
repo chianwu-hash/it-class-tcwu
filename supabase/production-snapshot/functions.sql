@@ -2559,7 +2559,7 @@ grant execute on function public.is_teacher() to anon;
 grant execute on function public.is_teacher() to authenticated;
 grant execute on function public.is_teacher() to service_role;
 
--- partner_pilot.learning_snapshot(uuid)  md5=1004e6e1be013387c2ab03f2d0571c4a
+-- partner_pilot.learning_snapshot(uuid)  md5=c430f84ec1928a5e834da4cb7c833e0f
 CREATE OR REPLACE FUNCTION partner_pilot.learning_snapshot(rid uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -2588,7 +2588,7 @@ begin
  -- A shared field response is visible only after every allocated question has
  -- been submitted. Retain only its owner's latest original response.
  if coalesce((result#>>'{exercise,reviewOpen}')::boolean,false) then
-  select coalesce(jsonb_agg(n.value||case when q.normal_question->>'type'='fields'
+  select coalesce(jsonb_agg(n.value||case when q.normal_question->>'type' in ('fields','short')
    or (q.normal_question is null and q.past_meta is null and q.past_config is null
     and case when jsonb_typeof(q.options)='array'
      then jsonb_array_length(q.options) between 2 and 8 else false end)

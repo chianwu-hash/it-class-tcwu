@@ -1,6 +1,6 @@
 # 正式版資料庫快照（public／partner_pilot schema）
 
-來源：Supabase 專案 `upxgyusodibaqcrocdzj`，2026-11-21以 `automation/db-schema-snapshot.mjs` 唯讀匯出（只查系統目錄，不含任何資料列）。本次更新已核准的一般單選共同回顧擴充，保留先前一般多格行為；全隊完成後回傳原負責人最新實際作答。原授權、函式ACL、其他179個函式及schema定義保持；未包含尚未核准的簡答擴充。詳[單選套用與驗收](../../docs/development/quiz-partner-single-approved-20261121.md)。
+來源：Supabase 專案 `upxgyusodibaqcrocdzj`，2026-11-21以 `automation/db-schema-snapshot.mjs` 唯讀匯出（只查系統目錄，不含任何資料列）。本次更新已核准的一般簡答共同回顧，保留先前一般多格與單選；全隊完成後回傳原負責人最新實際作答。原授權、函式ACL、其他179個函式及schema定義保持。詳[簡答套用與驗收](../../docs/development/quiz-partner-short-approved-20261121.md)。
 
 | 檔案 | 內容 |
 | --- | --- |

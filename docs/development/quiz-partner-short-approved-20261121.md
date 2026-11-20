@@ -12,4 +12,8 @@
 
 ## 執行狀態
 
-本準備PR尚未套用正式庫。合併後從乾淨main核精確SHA及180函式基線，依核准只套本檔一次，再匯出production-snapshot、live及9項當前／升級測試；實際套用收據另經PR記回。drawing v2未包含，三年級數學整科門檻及使用者八題試用保持。
+已由PR #401進main `0505682149d8215fc4e46450c613d3de5a7767cf`，從該乾淨main核精確75c7ece6原文及180函式基線後，只正式套用本檔一次。目標MD5由 `1004e6e1be013387c2ab03f2d0571c4a` 變為 `c430f84ec1928a5e834da4cb7c833e0f`；其他179函式、原ACL／SECURITY DEFINER及整份schema／policy／trigger定義保持。沒有正式資料列寫入、來源啟用或前端部署。
+
+正式快照匯出、180函式live及9項升級／當前、純多格／三型混合、一般／凍結與依賴漂移測試全數通過零跳過。另將舊回歸測試同步為已核准的最新fields／short實答，其他開放作答保持原揭露契約；歷史升級仍核精確舊版結果，當前測試核現行manifest，三批核准SQL與structured回歸共24項通過。完整私有收據 `D:/AI-Work/conversion-resume-20261120/short-approved-production-receipt.private.json`。
+
+此為正式資料庫投影驗收；PR396的輸入欄、解析排版與回顧標題修正仍未部署，不冒稱正式學生OAuth介面驗收完成。前端與來源啟用繼續依整科門檻，drawing v2未包含，使用者八題試用保持。

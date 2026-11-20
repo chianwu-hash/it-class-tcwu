@@ -128,7 +128,13 @@ test('structured self papers preserve grading, privacy, old copies, drafts and c
  assert.equal(buildPeerSketchReviewMigration(peerFixture.definition.replaceAll('\n','\r\n')),peerSql,'line endings do not change the approved migration');
  const peerAcl=async()=> (await db.query("select proacl::text acl from pg_proc where oid='partner_pilot.learning_snapshot_pre_message_media(uuid)'::regprocedure")).rows[0].acl;
  const peerAclBefore=await peerAcl();await db.exec(peerSql);assert.equal(await peerAcl(),peerAclBefore,'existing execution grants are preserved');
- assert((await call(1,{action:'snapshot',roomId:room.id})).exercise.shared.every(q=>!Object.hasOwn(q,'attempts')),'legacy text/choice responses remain private');
+ const sharedCurrent=(await call(1,{action:'snapshot',roomId:room.id})).exercise.shared;
+ assert(sharedCurrent.some(q=>q.normal?.type==='fields')&&sharedCurrent.some(q=>q.normal?.type==='short'),'fixture includes both approved ordinary response kinds');
+ for(const q of sharedCurrent){
+  if(['fields','short'].includes(q.normal?.type)){
+   const raw=responses[(q.number-1)%6];assert.equal(q.attempts.length,1);assert.equal(q.attempts[0].value,typeof raw==='string'?raw:JSON.stringify(raw),'approved review retains latest original response');
+  }else assert(!Object.hasOwn(q,'attempts'),'other plain open responses keep their existing disclosure contract');
+ }
  const handwriting=document(10),ink={version:1,strokes:Array.from({length:20},(_,i)=>Array.from({length:50},(_,j)=>[i/20,j/50]))},penRaw=JSON.stringify({v:1,f:{work:ink}});
  assert(penRaw.length>2000);
  for(const b of handwriting.blocks){const original=b.questions[0];b.questions=[{id:original.id,type:'open',prompt:content('合成列式題，保留手寫過程'),explanation:content('自行核對步驟，不判筆跡正確'),fields:[{id:'work',label:'手寫過程',input:'sketch'}],answer:{format:'self-review-v1',fields:{work:{examples:['合成參考'],criteria:['保留完整計算']}}}}];}
