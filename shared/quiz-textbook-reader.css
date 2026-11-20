@@ -7,3 +7,4 @@
 .qtb-after-entry:hover::after,.qtb-after-entry:focus-visible::after{animation-play-state:paused}
 @media(prefers-reduced-motion:reduce){.qtb-after-entry::after{animation:none;opacity:.3;transform:none}}
 @media(max-width:700px){.is-textbook .image-lightbox-topbar{padding:6px;gap:6px}.qtb-page-nav select{width:140px;max-width:140px}.qtb-page-nav button,.qtb-page-nav select{font-size:13px;padding:6px 8px}.is-textbook .image-lightbox-controls{gap:6px}.is-textbook .image-lightbox-controls button,.is-textbook .image-lightbox-controls span{font-size:13px;min-width:44px}.is-textbook .image-lightbox-controls #lightbox-reset{padding:0 8px}}
+.qtb-page-links{display:flex;flex-wrap:wrap;gap:8px}.past-textbook-citation .qtb-page-links button{background:#fff;color:#224d4c;min-height:44px}.past-textbook-citation .qtb-page-links .qtb-open{background:#176753;color:#fff}
