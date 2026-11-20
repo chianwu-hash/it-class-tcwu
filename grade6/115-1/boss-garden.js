@@ -1,11 +1,13 @@
 import { initNavbarAuth } from '../../shared/navbar-auth.js';
 import { SUPABASE_URL, SUPABASE_ANON_KEY, getStoredAccessToken } from '../../shared/auth.js';
-import { getRewardTreeCourse, getActivityId } from '../../shared/reward-tree-config.js?v=20261113-g6w11';
+import { getRewardTreeCourse, getActivityId } from '../../shared/reward-tree-config.js?v=20261120-g6w12';
 import { deriveRewardTreeModel } from '../../shared/reward-tree-model.js';
 
 const courseId = 'grade6-115-1';
 const activities = getRewardTreeCourse(courseId).activities.filter(a => a.rewardMode === 'boss');
 const descriptions = {
+    '12:typing_boss_zh_1': { title: '狐假虎威', icon: '🐯', schoolYear: '115', publisher: '康軒', subject: '國語', lesson: '第8課', text: 'p.89 經典原文，依題目換行逐句輸入。完成並儲存後開一朵花。' },
+    '12:typing_boss_en_1': { title: 'Building Good Habits', icon: '🌱', schoolYear: '115', publisher: '康軒', subject: '英語', lesson: 'Unit 4', text: 'p.69～71 Reading 節錄，練習好習慣的長句與標點。完成並儲存後開一朵花。' },
     '11:typing_boss_zh_1': { title: '雨季裡的拖鞋', icon: '👟', schoolYear: '115', publisher: '康軒', subject: '國語', lesson: '第7課', text: '〈大小剛好的鞋子〉p.81第二段全文，共4行。可以分次儲存草稿，完整過關開1朵花。' },
     '11:typing_boss_en_1': { title: "Let's Make a Pizza!", icon: '🍕', schoolYear: '115', publisher: '康軒', subject: '英語', lesson: 'Unit 3', text: 'Reading p.55～57正文，共9行。依序輸入製作披薩的步驟，完整過關開1朵花。' },
     '09:typing_boss_zh_1': { title: '朱子治家格言選', icon: '📜', schoolYear: '115', publisher: '康軒', subject: '國語', lesson: '第2課', text: 'p.21～24四則格言原文整合，共8行。完整過關，開出1朵花。' },
@@ -18,7 +20,7 @@ const descriptions = {
     '08:typing_boss_en_1': { title: 'Fun Facts about National Flags', icon: '🌟', schoolYear: '115', publisher: '康軒', subject: '英語', lesson: 'Unit 1', text: 'More to Learn全文共11行，含六個國名標籤與 Think and Share 問句，完成開出1朵花。' }
 };
 const cards = new Map();
-for (const activity of activities) {
+for (const activity of [...activities].sort((a, b) => Number(b.weekCode) - Number(a.weekCode))) {
     const info = descriptions[`${activity.weekCode}:${activity.activityKey}`] || { title: activity.label, icon: '👑', subject: '進階', text: '完整挑戰成功，開出1朵花。' };
     const card = document.createElement('article'); card.className = `garden-card${info.subject === '英語' ? ' english' : ''}`;
     // All markup is fixed; catalog text uses textContent below.

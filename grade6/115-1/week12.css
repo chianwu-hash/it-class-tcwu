@@ -1,0 +1,27 @@
+.task .section-heading { background: var(--tint); }
+.section-heading i { margin-right: .35em; color: #5b21b6; }
+.example-caption { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.example-caption p { margin: 0; }
+.photo-guide { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 22px 0; }
+.photo-guide > div { padding: 16px 18px; border: 2px solid #bae6fd; border-radius: 16px; background: #f0f9ff; }
+.photo-guide > .photo-cover { border-color: #ddd6fe; background: #f5f3ff; }
+.photo-guide > .photo-center { border-color: #a7f3d0; background: #ecfdf5; }
+.photo-guide dt { font-size: 1.06rem; font-weight: 900; margin-bottom: .35em; }
+.photo-guide dd { margin: 0; }
+.step-links { margin-top: 10px; }
+.steps .text-link { text-decoration: underline; margin-inline: .25em; }
+.finish-list { margin-top: 8px; padding-inline-start: 1.3rem; list-style: disc; }
+.typing-level .formal-source { margin-bottom: 12px; }
+.typing-level .typing-grid > div { min-width: 0; }
+.replay-actions { margin-top: 14px; }
+.replay-actions[hidden], .replay-area[hidden] { display: none; }
+.replay-area { margin-top: 20px; border-top: 2px solid #ddd6fe; padding-top: 16px; }
+.replay-area h4 { color: #4c1d95; font-weight: 900; }
+.replay-area label { margin-top: 14px; }
+.boss-page footer, #typing-section { padding-bottom: 72px; }
+.callout p:last-child { margin-bottom: 0; }
+.extra-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+kbd { border: 1px solid #94a3b8; border-radius: 5px; background: white; padding: 0 5px; }
+@media (max-width: 760px) {
+  .example-caption, .photo-guide, .extra-grid { grid-template-columns: 1fr; }
+}
