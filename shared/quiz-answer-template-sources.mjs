@@ -1,5 +1,2222 @@
 // Verified source fingerprints and blank offsets; no source text or answers.
 export const answerTemplateSources={
+ "hlg3m_046c3bfb_rn143501bbf0ae": {
+  "guard": "5fa21bd4ed89f605",
+  "sourceSha": "1042f602be0111244154891ac452b0fb2e4b91931a7d04282b5037b9fc0ea7e1",
+  "model": {
+    "mode": "item-marks",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "比比看，最重的打ˇ，最輕的畫○。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4"
+        ]
+      }
+    ],
+    "unmarked": {
+      "f1": "o3",
+      "f2": "o3",
+      "f3": "o3",
+      "f4": "o3"
+    }
+  },
+  "partnerGuard": "5fa21bd4ed89f605"
+},
+ "hlg3m_031f306a_rnff194c179d14": {
+  "guard": "cf26aaf1f39a514d",
+  "sourceSha": "f6fe170e7af6d9e6f4200744a0fa2dc689f508efbc74465c1ae4fbb00e758e86",
+  "model": {
+    "mode": "item-marks",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "比比看，最重的打ˇ，最輕的畫○。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4"
+        ]
+      }
+    ],
+    "unmarked": {
+      "f1": "o3",
+      "f2": "o3",
+      "f3": "o3",
+      "f4": "o3"
+    }
+  },
+  "partnerGuard": "cf26aaf1f39a514d"
+},
+ "hlg3m_028014c2_rna73eeabb35ba": {
+  "guard": "db80540874d8bffd",
+  "sourceSha": "4374c08bde42033f44967f917c8e59a229664a0b25a5f7722c8f9dc047fd39bc",
+  "model": {
+    "mode": "item-marks",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "比比看，最重的打ˇ，最輕的畫○。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4"
+        ]
+      }
+    ],
+    "unmarked": {
+      "f1": "o3",
+      "f2": "o3",
+      "f3": "o3",
+      "f4": "o3"
+    }
+  },
+  "partnerGuard": "db80540874d8bffd"
+},
+ "hlg3m_012b6ceb_rn832ec67aa1dd": {
+  "guard": "c43a7b4f68442a15",
+  "sourceSha": "9a2af0b6dbfbff664c79d9de4d5758d6ccd8420aed55222b64f8b97733dbb23b",
+  "model": {
+    "mode": "item-marks",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "比比看，最重的打ˇ，最輕的畫○。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4"
+        ]
+      }
+    ],
+    "unmarked": {
+      "f1": "o3",
+      "f2": "o3",
+      "f3": "o3",
+      "f4": "o3"
+    }
+  },
+  "partnerGuard": "c43a7b4f68442a15"
+},
+ "hlg3m_05109334_rnacf0b80072a3": {
+  "guard": "36250158461ddf62",
+  "sourceSha": "a5971ddfa370aa7c8cadb00227ff3ab223a6c90055c5df03d6f72506d3559b9c",
+  "model": {
+    "mode": "diagram-symbols",
+    "start": 14,
+    "groups": [
+      {
+        "label": "原圖比較",
+        "fields": [
+          "f1",
+          "f2"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              2400,
+              1626
+            ],
+            "crop": [
+              0,
+              0,
+              2400,
+              1010
+            ],
+            "width": 400
+          }
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "e25ebc4d60d7c4d8"
+},
+ "hlg3m_041f596f_rn2979e7eeb47d": {
+  "guard": "cd0f4d045f8c0d22",
+  "sourceSha": "19ae7d7131c61aac86eeca222e17f39138938ce0c22abb778aca2efee756e9d1",
+  "model": {
+    "mode": "diagram-symbols",
+    "start": 24,
+    "groups": [
+      {
+        "label": "①（蘋果）",
+        "fields": [
+          "f1"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              1625,
+              2400
+            ],
+            "crop": [
+              10,
+              110,
+              790,
+              1100
+            ],
+            "width": 280
+          }
+        ]
+      },
+      {
+        "label": "②（番茄）",
+        "fields": [
+          "f2"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              1625,
+              2400
+            ],
+            "crop": [
+              817,
+              110,
+              790,
+              1100
+            ],
+            "width": 280
+          }
+        ]
+      },
+      {
+        "label": "③（木瓜）",
+        "fields": [
+          "f3"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              1625,
+              2400
+            ],
+            "crop": [
+              10,
+              1310,
+              790,
+              1090
+            ],
+            "width": 280
+          }
+        ]
+      },
+      {
+        "label": "④（柑橘）",
+        "fields": [
+          "f4"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              1625,
+              2400
+            ],
+            "crop": [
+              817,
+              1310,
+              790,
+              1090
+            ],
+            "width": 280
+          }
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "fc61a327ca4b81eb"
+},
+ "hlg3m_036fbc96_rn5222fb59673c": {
+  "guard": "d8563ec3bed9beb2",
+  "sourceSha": "ddb2e6aaa6d5fd884226a54cb757fa4ccf66f367e06b73eced250bd4c920dca0",
+  "model": {
+    "mode": "diagram-symbols",
+    "start": 34,
+    "groups": [
+      {
+        "label": "①",
+        "fields": [
+          "f1"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              160,
+              389
+            ],
+            "crop": [
+              0,
+              0,
+              160,
+              389
+            ],
+            "width": 115
+          }
+        ]
+      },
+      {
+        "label": "②",
+        "fields": [
+          "f2"
+        ],
+        "views": [
+          {
+            "media_index": 1,
+            "sourceSize": [
+              298,
+              238
+            ],
+            "crop": [
+              0,
+              0,
+              298,
+              238
+            ],
+            "width": 215
+          }
+        ]
+      },
+      {
+        "label": "③",
+        "fields": [
+          "f3"
+        ],
+        "views": [
+          {
+            "media_index": 2,
+            "sourceSize": [
+              298,
+              238
+            ],
+            "crop": [
+              0,
+              0,
+              298,
+              238
+            ],
+            "width": 215
+          }
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "8164d4877a8e26fa"
+},
+ "hlg3m_02734662_rnc02d9dab550a": {
+  "guard": "cbf2cb076527af63",
+  "sourceSha": "8f015fb35475de43ce3b5d24c4981fbaa1d511659719b3153b8d66f3b45bb49d",
+  "model": {
+    "mode": "diagram-symbols",
+    "start": 14,
+    "groups": [
+      {
+        "label": "原圖比較",
+        "fields": [
+          "f1",
+          "f2"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              2400,
+              1673
+            ],
+            "crop": [
+              0,
+              0,
+              2400,
+              990
+            ],
+            "width": 400
+          }
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "90cfb81ad0a63108"
+},
+ "hlg3m_0204cefa_rn4cec15904bc0": {
+  "guard": "5066b312a3e65a53",
+  "sourceSha": "593ea1de88265f4ea46715c2dfd6c6cec7ccaaf6682363aab48257b574b242b9",
+  "model": {
+    "mode": "diagram-symbols",
+    "start": 14,
+    "groups": [
+      {
+        "label": "原圖比較",
+        "fields": [
+          "f1",
+          "f2"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              2400,
+              2033
+            ],
+            "crop": [
+              0,
+              0,
+              2400,
+              1230
+            ],
+            "width": 400
+          }
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "700d5a0b4227e578"
+},
+ "hlg3m_01e8f996_rn1ed93354ab1b": {
+  "guard": "988cd3dabd8314c0",
+  "sourceSha": "05300824823e4d518877775ba943bf344f6dde9f82e02f11fa988effae5d534a",
+  "model": {
+    "mode": "diagram-symbols",
+    "start": 20,
+    "groups": [
+      {
+        "label": "①",
+        "fields": [
+          "f1"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              2400,
+              1833
+            ],
+            "crop": [
+              1383,
+              234,
+              643,
+              644
+            ],
+            "width": 240
+          }
+        ]
+      },
+      {
+        "label": "②",
+        "fields": [
+          "f2"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              2400,
+              1833
+            ],
+            "crop": [
+              201,
+              1144,
+              643,
+              644
+            ],
+            "width": 240
+          }
+        ]
+      },
+      {
+        "label": "③",
+        "fields": [
+          "f3"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              2400,
+              1833
+            ],
+            "crop": [
+              1379,
+              1137,
+              653,
+              651
+            ],
+            "width": 240
+          }
+        ]
+      }
+    ],
+    "reference": {
+      "label": "對照原圖",
+      "views": [
+        {
+          "media_index": 0,
+          "sourceSize": [
+            2400,
+            1833
+          ],
+          "crop": [
+            290,
+            129,
+            642,
+            653
+          ],
+          "width": 240
+        }
+      ]
+    }
+  },
+  "partnerGuard": "42b871c9816b2854"
+},
+ "hlg3m_00f760a0_rncf9bd7e59644": {
+  "guard": "7305f770afc6d935",
+  "sourceSha": "dd09d1dd5d24a36ecf7beff1987ac5696299d48f929f855717eec8e2f4d0c22d",
+  "model": {
+    "mode": "diagram-symbols",
+    "start": 48,
+    "groups": [
+      {
+        "label": "ㄅ",
+        "fields": [
+          "f1"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              1925,
+              2400
+            ],
+            "crop": [
+              0,
+              0,
+              1925,
+              2400
+            ],
+            "width": 260
+          }
+        ]
+      },
+      {
+        "label": "ㄆ",
+        "fields": [
+          "f2"
+        ],
+        "views": [
+          {
+            "media_index": 1,
+            "sourceSize": [
+              2062,
+              2400
+            ],
+            "crop": [
+              0,
+              0,
+              2062,
+              2400
+            ],
+            "width": 260
+          }
+        ]
+      },
+      {
+        "label": "ㄇ",
+        "fields": [
+          "f3"
+        ],
+        "views": [
+          {
+            "media_index": 2,
+            "sourceSize": [
+              1871,
+              2400
+            ],
+            "crop": [
+              0,
+              0,
+              1871,
+              2400
+            ],
+            "width": 260
+          }
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "4df7b4d1da53778e"
+},
+ "hlg3m_05be97be_rnea755025a4fd": {
+  "guard": "da56e6a273cbd91d",
+  "sourceSha": "71c246db6a351765891d6c2e239ad6c6eb6680f153a81ae6d11224d9e8e5a737",
+  "model": {
+    "mode": "number-symbols",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "是奇數的畫○，是偶數的畫△。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f6"
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "da56e6a273cbd91d"
+},
+ "hlg3m_04faefdd_rn78bc9c3eef73": {
+  "guard": "827a1cfde2db76ba",
+  "sourceSha": "f1852db34e844181f4e2360958f90fb8a4890648fa8e8c1f3f45f8d4478fda89",
+  "model": {
+    "mode": "number-symbols",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "下面的數是奇數的在（ ）裡畫○，是偶數的打ˇ。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f6",
+          "f7",
+          "f8"
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "827a1cfde2db76ba"
+},
+ "hlg3m_04b6eecd_rn23214404a935": {
+  "guard": "230499c6a413fe29",
+  "sourceSha": "8d5ab0ba127aa50d2b6fa487d6be973229ead1ac600683575752ca869a886033",
+  "model": {
+    "mode": "number-symbols",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "是奇數的畫○，是偶數的畫△。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f6",
+          "f7",
+          "f8",
+          "f9",
+          "f10",
+          "f11"
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "230499c6a413fe29"
+},
+ "hlg3m_034178ea_rn51544ef954e0": {
+  "guard": "f8c5b38de1143a44",
+  "sourceSha": "4f20abc22b9959457a9b0e2009fe9ed0f1856d46af684dd017345f8f804cd108",
+  "model": {
+    "mode": "number-symbols",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "下面的數是奇數的在（ ）裡畫○，是偶數的打ˇ。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f6"
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "f8c5b38de1143a44"
+},
+ "hlg3m_028f0436_rn93f57086e087": {
+  "guard": "de01fa21a0154ee4",
+  "sourceSha": "b16c3da77753018462112c926fd8aba766f29683651a2f12c99bde5498f1377f",
+  "model": {
+    "mode": "number-symbols",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "是奇數的畫○，是偶數的畫△。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f6",
+          "f7",
+          "f8",
+          "f9",
+          "f10",
+          "f11",
+          "f12"
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "de01fa21a0154ee4"
+},
+ "hlg3m_004900ff_rnb579bf6b7c2a": {
+  "guard": "3fb27bafd60ae47b",
+  "sourceSha": "f27177a9017b99c2c0966a0f3164929bbd9087c9f02dcf468fb55acd60bf221f",
+  "model": {
+    "mode": "number-symbols",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "(１)是奇數的畫○，是偶數的畫△。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f6",
+          "f7",
+          "f8",
+          "f9"
+        ]
+      },
+      {
+        "instruction": "(２)是奇數的畫○，是偶數的打ˇ。",
+        "fields": [
+          "f10",
+          "f11",
+          "f12",
+          "f13",
+          "f14",
+          "f15",
+          "f16",
+          "f17",
+          "f18"
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "3fb27bafd60ae47b"
+},
+ "hlg3m_045d2ca6_rn569993ae12b5": {
+  "guard": "cd240bacc75d9499",
+  "sourceSha": "faa2896ea9f0f1e428a91881ed23d2c6f5270c7caf294fb28b152e97d0396852",
+  "model": {
+    "mode": "inline-choices",
+    "start": 64,
+    "rows": [
+      {
+        "start": 64,
+        "end": 132,
+        "fields": [
+          "f1"
+        ]
+      },
+      {
+        "start": 132,
+        "end": 181,
+        "fields": [
+          "f2"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 110,
+        "end": 131,
+        "field": "f1"
+      },
+      {
+        "start": 158,
+        "end": 181,
+        "field": "f2"
+      }
+    ],
+    "omissions": [],
+    "grouped": true
+  },
+  "partnerGuard": "4e901e81722f9056"
+},
+ "hlg3m_034fa7b8_rn968bf964ed71": {
+  "guard": "798458f8ca50b8ce",
+  "sourceSha": "eb1dc1f93f39a2950b9b759f327c2384603d200b040afd595ea3481ef9d4f0e9",
+  "model": {
+    "mode": "inline-choices",
+    "start": 17,
+    "rows": [
+      {
+        "start": 17,
+        "end": 42,
+        "fields": [
+          "f1"
+        ]
+      },
+      {
+        "start": 42,
+        "end": 84,
+        "fields": [
+          "f2",
+          "f3"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 27,
+        "end": 40,
+        "field": "f1"
+      },
+      {
+        "start": 54,
+        "end": 67,
+        "field": "f2"
+      },
+      {
+        "start": 70,
+        "end": 83,
+        "field": "f3"
+      }
+    ],
+    "omissions": [],
+    "grouped": true
+  },
+  "partnerGuard": "9452b89197cdd4bb"
+},
+ "hlg3m_02f564f4_rnf05213396198": {
+  "guard": "40d8465e597d4cf1",
+  "sourceSha": "d7b9d3c07f82f60ce53dd7540eb5af811edf9d751093c20a407d2e2e7a03554e",
+  "model": {
+    "mode": "inline-choices",
+    "start": 0,
+    "rows": [
+      {
+        "start": 0,
+        "end": 47,
+        "fields": [
+          "f1",
+          "f2"
+        ]
+      },
+      {
+        "start": 47,
+        "end": 60,
+        "fields": []
+      }
+    ],
+    "blanks": [
+      {
+        "start": 14,
+        "end": 25,
+        "field": "f1"
+      },
+      {
+        "start": 34,
+        "end": 45,
+        "field": "f2"
+      }
+    ],
+    "omissions": []
+  },
+  "partnerGuard": "40d8465e597d4cf1"
+},
+ "hlg3m_02ccccd3_rnf4cc94d57695": {
+  "guard": "a2da5a5ddd03e72b",
+  "sourceSha": "d30604758029778b69ad85d23d4cf94733803948bcb114758006654e83639f59",
+  "model": {
+    "mode": "inline-choices",
+    "start": 11,
+    "rows": [
+      {
+        "start": 11,
+        "end": 42,
+        "fields": [
+          "f1"
+        ]
+      },
+      {
+        "start": 42,
+        "end": 70,
+        "fields": [
+          "f2"
+        ]
+      },
+      {
+        "start": 70,
+        "end": 97,
+        "fields": [
+          "f3"
+        ]
+      },
+      {
+        "start": 97,
+        "end": 128,
+        "fields": [
+          "f4"
+        ]
+      },
+      {
+        "start": 128,
+        "end": 158,
+        "fields": [
+          "f5"
+        ]
+      },
+      {
+        "start": 158,
+        "end": 186,
+        "fields": [
+          "f6"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 29,
+        "end": 40,
+        "field": "f1"
+      },
+      {
+        "start": 57,
+        "end": 68,
+        "field": "f2"
+      },
+      {
+        "start": 84,
+        "end": 95,
+        "field": "f3"
+      },
+      {
+        "start": 115,
+        "end": 126,
+        "field": "f4"
+      },
+      {
+        "start": 145,
+        "end": 156,
+        "field": "f5"
+      },
+      {
+        "start": 174,
+        "end": 185,
+        "field": "f6"
+      }
+    ],
+    "omissions": []
+  },
+  "partnerGuard": "a2da5a5ddd03e72b"
+},
+ "hlg3m_02bbb710_rn55ad35a0cb0f": {
+  "guard": "665147805ade532e",
+  "sourceSha": "a413d568ab81adbe165049d25190d7ff07986b89b2095b37ff15d174c74c9fbe",
+  "model": {
+    "mode": "inline-choices",
+    "start": 81,
+    "rows": [
+      {
+        "start": 81,
+        "end": 106,
+        "fields": [
+          "f1"
+        ]
+      },
+      {
+        "start": 106,
+        "end": 130,
+        "fields": [
+          "f2"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 84,
+        "end": 100,
+        "field": "f1"
+      },
+      {
+        "start": 109,
+        "end": 125,
+        "field": "f2"
+      }
+    ],
+    "omissions": []
+  },
+  "partnerGuard": "f55eab9895f320a9"
+},
+
+
+ "hlg3m_00c5a724_rn0975072dd0b3": {
+  "guard": "6957ab3e7512f727",
+  "sourceSha": "eca58384b27d69bd9bd730f226856d2d69cc186ae07be081d38f86251b8a4c5a",
+  "model": {
+    "mode": "inline-choices",
+    "start": 13,
+    "rows": [
+      {
+        "start": 13,
+        "end": 95,
+        "fields": [
+          "f1",
+          "f2"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 36,
+        "end": 47,
+        "field": "f1"
+      },
+      {
+        "start": 83,
+        "end": 94,
+        "field": "f2"
+      }
+    ],
+    "omissions": []
+  },
+  "partnerGuard": "56d1d92a76864a92"
+},
+ "hlg3m_02cbb5da_rn27991e0ccece": {
+  "guard": "fb6770aabcdfbe1d",
+  "sourceSha": "f07d049aa5fd35266c66cca181f32c9bd98772d97f48c76a166c1faf99b0f1e3",
+  "model": {
+    "mode": "image-panels",
+    "media_index": 1,
+    "sourceSize": [
+      2400,
+      1739
+    ],
+    "width": 230,
+    "imageRange": [
+      47,
+      48
+    ],
+    "panels": [
+      {
+        "field": "f1",
+        "crop": [
+          130,
+          186,
+          576,
+          190
+        ],
+        "unit": "片"
+      },
+      {
+        "field": "f2",
+        "crop": [
+          890,
+          192,
+          592,
+          194
+        ],
+        "unit": "片"
+      },
+      {
+        "field": "f3",
+        "crop": [
+          1679,
+          176,
+          597,
+          196
+        ],
+        "unit": "片"
+      },
+      {
+        "field": "f4",
+        "crop": [
+          130,
+          1046,
+          569,
+          188
+        ],
+        "unit": "片"
+      },
+      {
+        "field": "f5",
+        "crop": [
+          896,
+          1053,
+          587,
+          193
+        ],
+        "unit": "片"
+      },
+      {
+        "field": "f6",
+        "crop": [
+          1700,
+          1049,
+          579,
+          191
+        ],
+        "unit": "片"
+      }
+    ]
+  },
+  "partnerGuard": "2f94768bae0d637b"
+},
+ "hlg3m_02907747_rnbe133bdd4a33": {
+  "guard": "bab9cae2f305723e",
+  "sourceSha": "1b70a328af4ff5a24efef49fa545628f12870361b281380860b131a6ce7b14fd",
+  "model": {
+    "mode": "image-panels",
+    "media_index": 0,
+    "sourceSize": [
+      2400,
+      1745
+    ],
+    "width": 280,
+    "imageRange": [
+      15,
+      16
+    ],
+    "panels": [
+      {
+        "field": "f1",
+        "crop": [
+          23,
+          156,
+          759,
+          1322
+        ],
+        "unit": "公斤"
+      },
+      {
+        "field": "f2",
+        "crop": [
+          817,
+          219,
+          771,
+          1264
+        ],
+        "unit": "公斤"
+      },
+      {
+        "field": "f3",
+        "crop": [
+          1612,
+          164,
+          768,
+          1303
+        ],
+        "unit": "公斤"
+      }
+    ]
+  },
+  "partnerGuard": "a1471b0b936bf1aa"
+},
+ "hlg3m_020ef016_rnffa86add4883": {
+  "guard": "e946cdc234e96274",
+  "sourceSha": "818e04562a132f55697eff1ab98f0532ba54274912e77598c9bb2441c079b2e1",
+  "model": {
+    "mode": "image-panels",
+    "media_index": 0,
+    "sourceSize": [
+      2400,
+      2372
+    ],
+    "width": 280,
+    "imageRange": [
+      13,
+      14
+    ],
+    "panels": [
+      {
+        "field": "f1",
+        "crop": [
+          131,
+          323,
+          956,
+          1795
+        ],
+        "unit": "公斤"
+      },
+      {
+        "field": "f2",
+        "crop": [
+          1320,
+          195,
+          948,
+          1924
+        ],
+        "unit": "公斤"
+      }
+    ]
+  },
+  "partnerGuard": "7c9a94300c3c9091"
+},
+ "hlg3m_013d828e_rn96afb39f7032": {
+  "guard": "49c0e9dc366362e0",
+  "sourceSha": "08e904e116e2a99614cdd97a0abfe6b5af907b1ca7a0d5789d64596b91c77719",
+  "model": {
+    "mode": "image-panels",
+    "media_index": 1,
+    "sourceSize": [
+      2400,
+      1076
+    ],
+    "width": 230,
+    "imageRange": [
+      36,
+      37
+    ],
+    "panels": [
+      {
+        "field": "f1",
+        "crop": [
+          176,
+          177,
+          483,
+          483
+        ],
+        "unit": "張"
+      },
+      {
+        "field": "f2",
+        "crop": [
+          960,
+          177,
+          484,
+          485
+        ],
+        "unit": "張"
+      },
+      {
+        "field": "f3",
+        "crop": [
+          1747,
+          177,
+          483,
+          483
+        ],
+        "unit": "張"
+      }
+    ]
+  },
+  "partnerGuard": "6ba9284234270c43"
+},
+ "hlg3m_052341fe_rn12623ad67777": {
+  "guard": "938c45aaa95b41e8",
+  "sourceSha": "e55baef98baaba4ec7b4dc633f432b4d0d2e529cd8c6ad2c303316bf5fbc4343",
+  "model": {
+    "mode": "grouped-blanks",
+    "start": 42,
+    "rows": [
+      {
+        "start": 42,
+        "end": 68,
+        "number": 1,
+        "fields": [
+          "f1"
+        ]
+      },
+      {
+        "start": 68,
+        "end": 112,
+        "number": 2,
+        "fields": [
+          "f2",
+          "f3"
+        ]
+      },
+      {
+        "start": 112,
+        "end": 145,
+        "number": 3,
+        "fields": [
+          "f4"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 59,
+        "end": 65,
+        "field": "f1",
+        "width": 7
+      },
+      {
+        "start": 77,
+        "end": 83,
+        "field": "f2",
+        "width": 7
+      },
+      {
+        "start": 103,
+        "end": 109,
+        "field": "f3",
+        "width": 7
+      },
+      {
+        "start": 122,
+        "end": 141,
+        "field": "f4",
+        "width": 4,
+        "fraction": {
+          "start": 137,
+          "end": 139
+        }
+      }
+    ],
+    "omissions": [],
+    "fractionNumerators": true
+  },
+  "partnerGuard": "c7a6a43133a9ce74"
+},
+ "hlg3m_03994235_rncdf5bb25407d": {
+  "guard": "1e35452e4a3a0ff0",
+  "sourceSha": "9b61949a2729e6df984f2db048492fc251455037b9c054385abc3acffbade167",
+  "model": {
+    "mode": "grouped-blanks",
+    "start": 27,
+    "rows": [
+      {
+        "start": 27,
+        "end": 87,
+        "number": 1,
+        "fields": [
+          "f1",
+          "f2"
+        ]
+      },
+      {
+        "start": 87,
+        "end": 147,
+        "number": 2,
+        "fields": [
+          "f3",
+          "f4"
+        ]
+      },
+      {
+        "start": 147,
+        "end": 209,
+        "number": 3,
+        "fields": [
+          "f5",
+          "f6"
+        ]
+      },
+      {
+        "start": 209,
+        "end": 268,
+        "number": 4,
+        "fields": [
+          "f7",
+          "f8"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 48,
+        "end": 54,
+        "field": "f1",
+        "width": 7
+      },
+      {
+        "start": 67,
+        "end": 85,
+        "field": "f2",
+        "width": 4,
+        "fraction": {
+          "start": 82,
+          "end": 83
+        }
+      },
+      {
+        "start": 108,
+        "end": 114,
+        "field": "f3",
+        "width": 7
+      },
+      {
+        "start": 127,
+        "end": 145,
+        "field": "f4",
+        "width": 4,
+        "fraction": {
+          "start": 142,
+          "end": 143
+        }
+      },
+      {
+        "start": 169,
+        "end": 175,
+        "field": "f5",
+        "width": 7
+      },
+      {
+        "start": 188,
+        "end": 207,
+        "field": "f6",
+        "width": 4,
+        "fraction": {
+          "start": 203,
+          "end": 205
+        }
+      },
+      {
+        "start": 230,
+        "end": 236,
+        "field": "f7",
+        "width": 7
+      },
+      {
+        "start": 249,
+        "end": 267,
+        "field": "f8",
+        "width": 4,
+        "fraction": {
+          "start": 264,
+          "end": 265
+        }
+      }
+    ],
+    "omissions": [],
+    "fractionNumerators": true
+  },
+  "partnerGuard": "1404bea7f520b9c5"
+},
+ "hlg3m_0029b068_rn18c7383fdac3": {
+  "guard": "57cf4c9f057f5bee",
+  "sourceSha": "081cd62c5d12a0108ebb57dfbd467073f8a0cbdd53557bd7f76a0b8d40fd3ee2",
+  "model": {
+    "mode": "grouped-blanks",
+    "start": 35,
+    "rows": [
+      {
+        "start": 35,
+        "end": 75,
+        "number": 1,
+        "fields": [
+          "f1"
+        ]
+      },
+      {
+        "start": 75,
+        "end": 115,
+        "number": 2,
+        "fields": [
+          "f2"
+        ]
+      },
+      {
+        "start": 115,
+        "end": 149,
+        "number": 3,
+        "fields": [
+          "f3"
+        ]
+      },
+      {
+        "start": 149,
+        "end": 164,
+        "number": 4,
+        "fields": []
+      },
+      {
+        "start": 164,
+        "end": 176,
+        "number": "ㄅ",
+        "parentNumber": 4,
+        "fields": [
+          "f4"
+        ]
+      },
+      {
+        "start": 176,
+        "end": 188,
+        "number": "ㄆ",
+        "parentNumber": 4,
+        "fields": [
+          "f5"
+        ]
+      },
+      {
+        "start": 188,
+        "end": 199,
+        "number": "ㄇ",
+        "parentNumber": 4,
+        "fields": [
+          "f6"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 64,
+        "end": 70,
+        "field": "f1",
+        "width": 7
+      },
+      {
+        "start": 104,
+        "end": 110,
+        "field": "f2",
+        "width": 7
+      },
+      {
+        "start": 123,
+        "end": 141,
+        "field": "f3",
+        "width": 4,
+        "fraction": {
+          "start": 138,
+          "end": 139
+        }
+      },
+      {
+        "start": 168,
+        "end": 174,
+        "field": "f4",
+        "width": 7
+      },
+      {
+        "start": 180,
+        "end": 186,
+        "field": "f5",
+        "width": 7
+      },
+      {
+        "start": 192,
+        "end": 198,
+        "field": "f6",
+        "width": 7
+      }
+    ],
+    "omissions": [],
+    "fractionNumerators": true,
+    "subgroups": true
+  },
+  "partnerGuard": "3dd101f37db9462a"
+},
+ "hlg3m_05f3978e_rnbc489e3b9f5e": {
+  "guard": "ab9bd0154b6fa260",
+  "sourceSha": "042d9ded7619e95c3e6c37a7a85947c5c600234bfe9b93e4b37c747d61cc2d90",
+  "model": {
+    "mode": "grouped-blanks",
+    "start": 22,
+    "rows": [
+      {
+        "start": 22,
+        "end": 38,
+        "number": 1,
+        "fields": [
+          "f1",
+          "f2"
+        ]
+      },
+      {
+        "start": 38,
+        "end": 54,
+        "number": 2,
+        "fields": [
+          "f3",
+          "f4"
+        ]
+      },
+      {
+        "start": 54,
+        "end": 85,
+        "number": 3,
+        "fields": [
+          "f5",
+          "f6"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 26,
+        "end": 27,
+        "field": "f1",
+        "width": 4
+      },
+      {
+        "start": 30,
+        "end": 35,
+        "field": "f2",
+        "width": 7,
+        "unit": {
+          "start": 35,
+          "end": 37
+        }
+      },
+      {
+        "start": 42,
+        "end": 43,
+        "field": "f3",
+        "width": 4
+      },
+      {
+        "start": 46,
+        "end": 51,
+        "field": "f4",
+        "width": 7,
+        "unit": {
+          "start": 51,
+          "end": 53
+        }
+      },
+      {
+        "start": 58,
+        "end": 59,
+        "field": "f5",
+        "width": 4
+      },
+      {
+        "start": 62,
+        "end": 67,
+        "field": "f6",
+        "width": 7,
+        "unit": {
+          "start": 67,
+          "end": 69
+        }
+      }
+    ],
+    "omissions": [],
+    "symbols": true,
+    "keepMassUnits": true
+  },
+  "partnerGuard": "b0466b705361c7ea"
+},
+ "hlg3m_01b633d2_rnf5e90d3aa0a9": {
+  "guard": "d2580fd784796c4b",
+  "sourceSha": "a55211d0ac9c5ec0aa25bd019a61ee45f9ad7d95187639966f9453bb7313aa56",
+  "model": {
+    "mode": "grouped-blanks",
+    "start": 22,
+    "rows": [
+      {
+        "start": 22,
+        "end": 44,
+        "number": "ㄅ",
+        "fields": [
+          "f1",
+          "f2",
+          "f3"
+        ]
+      },
+      {
+        "start": 44,
+        "end": 66,
+        "number": "ㄆ",
+        "fields": [
+          "f4",
+          "f5",
+          "f6"
+        ]
+      },
+      {
+        "start": 66,
+        "end": 103,
+        "number": "ㄇ",
+        "fields": [
+          "f7",
+          "f8",
+          "f9"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 24,
+        "end": 25,
+        "field": "f1",
+        "width": 4
+      },
+      {
+        "start": 27,
+        "end": 33,
+        "field": "f2",
+        "width": 7,
+        "unit": {
+          "start": 33,
+          "end": 35
+        }
+      },
+      {
+        "start": 35,
+        "end": 41,
+        "field": "f3",
+        "width": 7,
+        "unit": {
+          "start": 41,
+          "end": 43
+        }
+      },
+      {
+        "start": 46,
+        "end": 47,
+        "field": "f4",
+        "width": 4
+      },
+      {
+        "start": 49,
+        "end": 55,
+        "field": "f5",
+        "width": 7,
+        "unit": {
+          "start": 55,
+          "end": 57
+        }
+      },
+      {
+        "start": 57,
+        "end": 63,
+        "field": "f6",
+        "width": 7,
+        "unit": {
+          "start": 63,
+          "end": 65
+        }
+      },
+      {
+        "start": 68,
+        "end": 69,
+        "field": "f7",
+        "width": 4
+      },
+      {
+        "start": 71,
+        "end": 77,
+        "field": "f8",
+        "width": 7,
+        "unit": {
+          "start": 77,
+          "end": 79
+        }
+      },
+      {
+        "start": 79,
+        "end": 85,
+        "field": "f9",
+        "width": 7,
+        "unit": {
+          "start": 85,
+          "end": 87
+        }
+      }
+    ],
+    "omissions": [],
+    "symbols": true,
+    "groupMarker": "bopomofo",
+    "keepMassUnits": true
+  },
+  "partnerGuard": "abcf86163ca6934d"
+},
+ "hlg3m_038bc025_rnd35e090bc8d1": {
+  "guard": "1fd9a9e205f83df0",
+  "sourceSha": "c81550a88dda60421ddfb455130cba56a6b14d93ff7d0a85877ab4a79a0a9577",
+  "model": {
+    "mode": "rich",
+    "fields": [
+      "f1",
+      "f2",
+      "f3",
+      "f4",
+      "f5",
+      "f6"
+    ]
+  }
+},
+ "hlg3m_017ff8c2_rn9deb8ee7a0a4": {
+  "guard": "01fcca7243c48cf9",
+  "sourceSha": "47ec3ef43d4c6cae5904666679a80d747b2628cb9264f801d3b711d669e8f04e",
+  "model": {
+    "mode": "rich",
+    "fields": [
+      "f1",
+      "f2",
+      "f3",
+      "f4",
+      "f5",
+      "f6",
+      "f7",
+      "f8",
+      "f9"
+    ]
+  }
+},
+ "hlg3m_001fd48e_rn15d0216e4bdb": {
+  "guard": "b0cd518806e498fb",
+  "sourceSha": "5ede2b22a2212e90aefef84f71f8b791a5c15585996e016407ccac3ffb66dce2",
+  "model": {
+    "mode": "rich",
+    "fields": [
+      "f1",
+      "f2",
+      "f3",
+      "f4",
+      "f5"
+    ]
+  }
+},
+ "hlg3m_05d9b0dd_rnebbd022a586c": {
+  "guard": "0f4cb2fdeec9ecc3",
+  "sourceSha": "8e27f058cdd7a04ccf65af048028741cd6e88dae4357647c0ee9a4bd4e99d79e",
+  "model": {
+    "mode": "blanks",
+    "start": 0,
+    "rows": [
+      {
+        "start": 0,
+        "end": 28,
+        "fields": [
+          "f1",
+          "f2"
+        ]
+      },
+      {
+        "start": 29,
+        "end": 30,
+        "fields": []
+      },
+      {
+        "start": 31,
+        "end": 58,
+        "fields": []
+      }
+    ],
+    "blanks": [
+      {
+        "start": 7,
+        "end": 12,
+        "field": "f1",
+        "width": 7
+      },
+      {
+        "start": 20,
+        "end": 25,
+        "field": "f2",
+        "width": 7
+      }
+    ],
+    "omissions": []
+  },
+  "partnerGuard": "2b0c5678d2be7fe4"
+},
+ "hlg3m_054ffb4f_rn73aba2408ee2": {
+  "guard": "4a357e87340ddc66",
+  "sourceSha": "d73d6a1a7492652717f33c3dc7d437c3542dd262d4cfceec7957787be6fef049",
+  "model": {
+    "mode": "grouped-blanks",
+    "start": 29,
+    "rows": [
+      {
+        "start": 29,
+        "end": 40,
+        "number": 1,
+        "fields": [
+          "f1"
+        ]
+      },
+      {
+        "start": 40,
+        "end": 51,
+        "number": 2,
+        "fields": [
+          "f2"
+        ]
+      },
+      {
+        "start": 51,
+        "end": 62,
+        "number": 3,
+        "fields": [
+          "f3"
+        ]
+      },
+      {
+        "start": 62,
+        "end": 100,
+        "number": 4,
+        "fields": [
+          "f4"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 32,
+        "end": 37,
+        "field": "f1",
+        "width": 7
+      },
+      {
+        "start": 43,
+        "end": 48,
+        "field": "f2",
+        "width": 7
+      },
+      {
+        "start": 54,
+        "end": 59,
+        "field": "f3",
+        "width": 7
+      },
+      {
+        "start": 65,
+        "end": 70,
+        "field": "f4",
+        "width": 7
+      }
+    ],
+    "omissions": []
+  },
+  "partnerGuard": "fd4d605150db9775"
+},
+ "hlg3m_050bea06_rn275e39592c3e": {
+  "guard": "555cbdbb6f27b783",
+  "sourceSha": "6d319ae63258de1fb3be36127874e6f919a2901b51f577d8d8d4e3f49c322aaf",
+  "model": {
+    "mode": "grouped-blanks",
+    "start": 17,
+    "rows": [
+      {
+        "start": 17,
+        "end": 31,
+        "number": 1,
+        "fields": [
+          "f1"
+        ]
+      },
+      {
+        "start": 31,
+        "end": 45,
+        "number": 2,
+        "fields": [
+          "f2"
+        ]
+      },
+      {
+        "start": 45,
+        "end": 59,
+        "number": 3,
+        "fields": [
+          "f3"
+        ]
+      },
+      {
+        "start": 59,
+        "end": 100,
+        "number": 4,
+        "fields": [
+          "f4"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 20,
+        "end": 25,
+        "field": "f1",
+        "width": 7
+      },
+      {
+        "start": 34,
+        "end": 39,
+        "field": "f2",
+        "width": 7
+      },
+      {
+        "start": 48,
+        "end": 53,
+        "field": "f3",
+        "width": 7
+      },
+      {
+        "start": 62,
+        "end": 67,
+        "field": "f4",
+        "width": 7
+      }
+    ],
+    "omissions": []
+  },
+  "partnerGuard": "d694b91cd417794a"
+},
+ "hlg3m_039b3acd_rn59e442154ce1": {
+  "guard": "fa40e16df2e77bab",
+  "sourceSha": "95f075993f9331addb6dfb6eb86dd5711560d2dd16756414e660e851124f7fd4",
+  "model": {
+    "mode": "blanks",
+    "start": 55,
+    "rows": [
+      {
+        "start": 55,
+        "end": 78,
+        "fields": [
+          "f1",
+          "f2",
+          "f3"
+        ]
+      },
+      {
+        "start": 79,
+        "end": 100,
+        "fields": [
+          "f4",
+          "f5"
+        ]
+      },
+      {
+        "start": 101,
+        "end": 116,
+        "fields": []
+      }
+    ],
+    "blanks": [
+      {
+        "start": 58,
+        "end": 64,
+        "field": "f1",
+        "width": 7
+      },
+      {
+        "start": 65,
+        "end": 71,
+        "field": "f2",
+        "width": 7
+      },
+      {
+        "start": 72,
+        "end": 78,
+        "field": "f3",
+        "width": 7
+      },
+      {
+        "start": 83,
+        "end": 89,
+        "field": "f4",
+        "width": 7
+      },
+      {
+        "start": 93,
+        "end": 99,
+        "field": "f5",
+        "width": 7
+      }
+    ],
+    "omissions": []
+  }
+},
+ "hlg3m_03336e15_rnaaa7a41ac5e8": {
+  "guard": "63d6a6a573b3f695",
+  "sourceSha": "5c8f063299862683800cd38f1fbc508df97aed5b799fb55b8f708d8203d1aeaa",
+  "model": {
+    "mode": "grouped-blanks",
+    "start": 28,
+    "rows": [
+      {
+        "start": 28,
+        "end": 41,
+        "number": 1,
+        "fields": [
+          "f1"
+        ]
+      },
+      {
+        "start": 41,
+        "end": 54,
+        "number": 2,
+        "fields": [
+          "f2"
+        ]
+      },
+      {
+        "start": 54,
+        "end": 94,
+        "number": 3,
+        "fields": [
+          "f3"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 34,
+        "end": 39,
+        "field": "f1",
+        "width": 7
+      },
+      {
+        "start": 47,
+        "end": 52,
+        "field": "f2",
+        "width": 7
+      },
+      {
+        "start": 60,
+        "end": 65,
+        "field": "f3",
+        "width": 7
+      }
+    ],
+    "omissions": []
+  },
+  "partnerGuard": "660ecb5de9bbf0eb"
+},
+ "hlg3m_028287b0_rne0aaec7f0e58": {
+  "guard": "8d935c98b9d58994",
+  "sourceSha": "a76b8e63dd3ce3d3e748f907c1b873bad8e3db2475c205cc5286cbb023e78c13",
+  "model": {
+    "mode": "rich",
+    "fields": [
+      "f1"
+    ]
+  }
+},
+ "hlg3m_00f606c3_rn342b2ac27082": {
+  "guard": "9c11de38c889b845",
+  "sourceSha": "61f4dbed2b3d6db47c94b085d02fb4725e10befc592df7a4104deaa8f52ae466",
+  "model": {
+    "mode": "blanks",
+    "start": 0,
+    "rows": [
+      {
+        "start": 0,
+        "end": 67,
+        "fields": [
+          "f1",
+          "f2",
+          "f3"
+        ]
+      },
+      {
+        "start": 68,
+        "end": 73,
+        "fields": []
+      },
+      {
+        "start": 74,
+        "end": 80,
+        "fields": []
+      },
+      {
+        "start": 81,
+        "end": 96,
+        "fields": []
+      }
+    ],
+    "blanks": [
+      {
+        "start": 35,
+        "end": 41,
+        "field": "f1",
+        "width": 7
+      },
+      {
+        "start": 44,
+        "end": 50,
+        "field": "f2",
+        "width": 7
+      },
+      {
+        "start": 55,
+        "end": 61,
+        "field": "f3",
+        "width": 7
+      }
+    ],
+    "omissions": []
+  }
+},
+ "hlg3m_05203aaf_rn11813cbea706": {
+  "guard": "38f5a9ae6b29fcee",
+  "sourceSha": "be169e4fdf621a1f4374b4469010944be0175f19a608882e745935bf75f3f6f5",
+  "model": {
+    "mode": "blanks",
+    "start": 54,
+    "rows": [
+      {
+        "start": 54,
+        "end": 81,
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4"
+        ]
+      },
+      {
+        "start": 82,
+        "end": 103,
+        "fields": [
+          "f5",
+          "f6"
+        ]
+      },
+      {
+        "start": 104,
+        "end": 127,
+        "fields": []
+      }
+    ],
+    "blanks": [
+      {
+        "start": 54,
+        "end": 60,
+        "field": "f1",
+        "width": 7
+      },
+      {
+        "start": 61,
+        "end": 67,
+        "field": "f2",
+        "width": 7
+      },
+      {
+        "start": 68,
+        "end": 74,
+        "field": "f3",
+        "width": 7
+      },
+      {
+        "start": 75,
+        "end": 81,
+        "field": "f4",
+        "width": 7
+      },
+      {
+        "start": 86,
+        "end": 92,
+        "field": "f5",
+        "width": 7
+      },
+      {
+        "start": 96,
+        "end": 102,
+        "field": "f6",
+        "width": 7
+      }
+    ],
+    "omissions": []
+  }
+},
  "hg6math_00044afd_vda597022cfae": {
   "guard": "879bc9d528b8247a",
   "sourceSha": "9ef125b6d74093aa540a2de1f12cc42fe93d668df03cdba7a2b887697f781fb7",

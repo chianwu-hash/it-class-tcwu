@@ -25,7 +25,9 @@ export function mountPastResults(root,{question,loadAsset}){
   }
  }
  for(const host of root.querySelectorAll('[data-review-choice]')){
-  const q=question(Number(host.dataset.reviewChoice));if(!q)continue;const last=q.attempts?.at(-1),past=q.past,choices=past?past.choices:q.options.map((text,i)=>({id:i,text})),official=past?revealedPastChoice(q)?.id:q.correct;
+  // Ordinary single choices are decorated by review-layout, including its
+  // reveal gate and backend/reference consistency check. Do not decorate twice.
+  const q=question(Number(host.dataset.reviewChoice));if(!q?.past)continue;const last=q.attempts?.at(-1),past=q.past,choices=past.choices,official=revealedPastChoice(q)?.id;
   const model=choiceReviewModel({kind:'single',choices,value:past?last?.value:last?.choice,official,correct:last?.correct,revealed:past?Boolean(revealedPastChoice(q)):Number.isInteger(q.correct),selfCheck:past?.selfCheck});if(!model)continue;host.classList.add('quiz-choice-review');host.querySelectorAll('[data-review-option-index]').forEach(row=>decorateFieldReviewOption(row,model.options[Number(row.dataset.reviewOptionIndex)]));
  }
 }

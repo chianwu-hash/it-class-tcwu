@@ -25,3 +25,4 @@ supabase/quiz-normal-fields-response.sql -text whitespace=cr-at-eol
 supabase/quiz-partner-structured-answers.sql text eol=lf
 automation/fixtures/partner-learning-snapshot-before-fields.sql -text whitespace=cr-at-eol
 supabase/quiz-partner-fields-review.sql text eol=lf
+supabase/quiz-partner-single-review.sql text eol=lf

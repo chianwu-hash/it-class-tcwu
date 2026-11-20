@@ -255,6 +255,7 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
     function prepareImages() {
         root.querySelectorAll(selector).forEach(trigger => {
             if (!trigger.matches('img')) return;
+            if(trigger.closest('[data-image-panel-proxy]')){trigger.tabIndex=-1;trigger.removeAttribute('role');trigger.removeAttribute('aria-label');return;}
             trigger.tabIndex = 0;
             trigger.setAttribute('role', 'button');
             trigger.setAttribute('aria-label', `${trigger.alt || '題目圖片'}，點擊放大`);
@@ -263,7 +264,7 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
     }
     let activationGeneration = 0;
     async function activateImage(event) {
-        const trigger = event.target.closest?.(selector);
+        const originalTrigger = event.target.closest?.(selector),trigger=originalTrigger?.closest('[data-image-panel-proxy]')||originalTrigger;
         if (!trigger || !root.contains(trigger)) return;
         if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
         const image = trigger.matches('img') ? trigger : trigger.querySelector('img');
