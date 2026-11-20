@@ -3,6 +3,19 @@ import {deriveAnswerTemplate,deriveGroupedTemplate,deriveOptionTemplate,answerTe
 import {presentationSignature} from '../../shared/quiz-presentation-signature.mjs';
 const q=(text,count,type='open')=>({id:'synthetic',type,prompt:{text,media:[]},fields:Array.from({length:count},(_,i)=>({id:'original-'+i,input:'text',label:'原欄'+i}))});
 
+test('reviewed native fraction blanks retain printed denominators and original integer numerator controls',()=>{
+ const source=q('(1)是（ ）條，1＝$\\frac{（ ）}{12}$。\n(2)是（ ）條。',3,'fields');source.fields.forEach((f,i)=>{f.input='math';f.label=i<2?'(1)原欄'+i:'(2)原欄'+i;});
+ const before=JSON.stringify(source);assert.equal(deriveAnswerTemplate(source,{grouped:true}),null);
+ const model=deriveAnswerTemplate(source,{grouped:true,fractionNumerators:true});assert.equal(model.blanks.length,3);assert.deepEqual(model.blanks.map(b=>b.field),source.fields.map(f=>f.id));const fraction=model.blanks[1];assert.equal(source.prompt.text.slice(fraction.fraction.start,fraction.fraction.end),'12');assert.equal(source.prompt.text.slice(fraction.start,fraction.end),'$\\frac{（ ）}{12}$');assert.equal(model.rows[0].fields.length,2);assert.equal(JSON.stringify(source),before);
+ const registry={synthetic:{guard:presentationSignature(source),model}};assert.ok(answerTemplatePresentation(source,registry));source.answer={fields:{'original-1':['999']}};assert.ok(answerTemplatePresentation(source,registry));
+ source.prompt.text=source.prompt.text.replace('{12}','{9}');assert.equal(answerTemplatePresentation(source,registry),null);assert.equal(deriveAnswerTemplate(source,{fractionNumerators:true}),null);source.prompt.text=source.prompt.text.replace('{9}','{0}');assert.equal(deriveAnswerTemplate(source,{grouped:true,fractionNumerators:true}),null);
+});
+
+test('reviewed nested phonetic subquestions retain each source diagram label and its own original field',()=>{
+ const source=q('(1)（ ）\n(2)各有多少？\nㄅ\n（ ）\nㄆ\n（ ）\nㄇ\n（ ）',4,'fields');source.fields.forEach((f,i)=>{f.input='math';f.label=i?'(2)'+'ㄅㄆㄇ'[i-1]+'空格':'(1)空格';});
+ const before=JSON.stringify(source),model=deriveAnswerTemplate(source,{grouped:true,subgroups:true});assert.equal(model.rows.length,5);assert.deepEqual(model.rows.filter(r=>r.parentNumber).map(r=>[r.parentNumber,r.number,r.fields]),[[2,'ㄅ',['original-1']],[2,'ㄆ',['original-2']],[2,'ㄇ',['original-3']]]);assert.equal(model.rows[1].fields.length,0);assert.equal(JSON.stringify(source),before);assert.ok(answerTemplatePresentation(source,{synthetic:{guard:presentationSignature(source),model}}));source.fields[2].label='(2)空格';assert.equal(deriveAnswerTemplate(source,{grouped:true,subgroups:true}),null);
+});
+
 test('reviewed phonetic subquestion markers group original rank and unit blanks only with explicit opt-in',()=>{
  const source=q('共用秤圖說明\nㄅ □\n（ ）公斤（ ）公克\nㄆ □\n（ ）公斤（ ）公克\nㄇ □\n（ ）公斤（ ）公克',9,'fields');
  source.fields.forEach((f,i)=>{f.input='math';f.label='ㄅㄆㄇ'[Math.floor(i/3)]+['排序空格','公斤空格','公克空格'][i%3];});

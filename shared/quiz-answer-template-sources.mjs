@@ -1,5 +1,301 @@
 // Verified source fingerprints and blank offsets; no source text or answers.
 export const answerTemplateSources={
+ "hlg3m_052341fe_rn12623ad67777": {
+  "guard": "938c45aaa95b41e8",
+  "sourceSha": "e55baef98baaba4ec7b4dc633f432b4d0d2e529cd8c6ad2c303316bf5fbc4343",
+  "model": {
+    "mode": "grouped-blanks",
+    "start": 42,
+    "rows": [
+      {
+        "start": 42,
+        "end": 68,
+        "number": 1,
+        "fields": [
+          "f1"
+        ]
+      },
+      {
+        "start": 68,
+        "end": 112,
+        "number": 2,
+        "fields": [
+          "f2",
+          "f3"
+        ]
+      },
+      {
+        "start": 112,
+        "end": 145,
+        "number": 3,
+        "fields": [
+          "f4"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 59,
+        "end": 65,
+        "field": "f1",
+        "width": 7
+      },
+      {
+        "start": 77,
+        "end": 83,
+        "field": "f2",
+        "width": 7
+      },
+      {
+        "start": 103,
+        "end": 109,
+        "field": "f3",
+        "width": 7
+      },
+      {
+        "start": 122,
+        "end": 141,
+        "field": "f4",
+        "width": 4,
+        "fraction": {
+          "start": 137,
+          "end": 139
+        }
+      }
+    ],
+    "omissions": [],
+    "fractionNumerators": true
+  },
+  "partnerGuard": "c7a6a43133a9ce74"
+},
+ "hlg3m_03994235_rncdf5bb25407d": {
+  "guard": "1e35452e4a3a0ff0",
+  "sourceSha": "9b61949a2729e6df984f2db048492fc251455037b9c054385abc3acffbade167",
+  "model": {
+    "mode": "grouped-blanks",
+    "start": 27,
+    "rows": [
+      {
+        "start": 27,
+        "end": 87,
+        "number": 1,
+        "fields": [
+          "f1",
+          "f2"
+        ]
+      },
+      {
+        "start": 87,
+        "end": 147,
+        "number": 2,
+        "fields": [
+          "f3",
+          "f4"
+        ]
+      },
+      {
+        "start": 147,
+        "end": 209,
+        "number": 3,
+        "fields": [
+          "f5",
+          "f6"
+        ]
+      },
+      {
+        "start": 209,
+        "end": 268,
+        "number": 4,
+        "fields": [
+          "f7",
+          "f8"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 48,
+        "end": 54,
+        "field": "f1",
+        "width": 7
+      },
+      {
+        "start": 67,
+        "end": 85,
+        "field": "f2",
+        "width": 4,
+        "fraction": {
+          "start": 82,
+          "end": 83
+        }
+      },
+      {
+        "start": 108,
+        "end": 114,
+        "field": "f3",
+        "width": 7
+      },
+      {
+        "start": 127,
+        "end": 145,
+        "field": "f4",
+        "width": 4,
+        "fraction": {
+          "start": 142,
+          "end": 143
+        }
+      },
+      {
+        "start": 169,
+        "end": 175,
+        "field": "f5",
+        "width": 7
+      },
+      {
+        "start": 188,
+        "end": 207,
+        "field": "f6",
+        "width": 4,
+        "fraction": {
+          "start": 203,
+          "end": 205
+        }
+      },
+      {
+        "start": 230,
+        "end": 236,
+        "field": "f7",
+        "width": 7
+      },
+      {
+        "start": 249,
+        "end": 267,
+        "field": "f8",
+        "width": 4,
+        "fraction": {
+          "start": 264,
+          "end": 265
+        }
+      }
+    ],
+    "omissions": [],
+    "fractionNumerators": true
+  },
+  "partnerGuard": "1404bea7f520b9c5"
+},
+ "hlg3m_0029b068_rn18c7383fdac3": {
+  "guard": "57cf4c9f057f5bee",
+  "sourceSha": "081cd62c5d12a0108ebb57dfbd467073f8a0cbdd53557bd7f76a0b8d40fd3ee2",
+  "model": {
+    "mode": "grouped-blanks",
+    "start": 35,
+    "rows": [
+      {
+        "start": 35,
+        "end": 75,
+        "number": 1,
+        "fields": [
+          "f1"
+        ]
+      },
+      {
+        "start": 75,
+        "end": 115,
+        "number": 2,
+        "fields": [
+          "f2"
+        ]
+      },
+      {
+        "start": 115,
+        "end": 149,
+        "number": 3,
+        "fields": [
+          "f3"
+        ]
+      },
+      {
+        "start": 149,
+        "end": 164,
+        "number": 4,
+        "fields": []
+      },
+      {
+        "start": 164,
+        "end": 176,
+        "number": "ㄅ",
+        "parentNumber": 4,
+        "fields": [
+          "f4"
+        ]
+      },
+      {
+        "start": 176,
+        "end": 188,
+        "number": "ㄆ",
+        "parentNumber": 4,
+        "fields": [
+          "f5"
+        ]
+      },
+      {
+        "start": 188,
+        "end": 199,
+        "number": "ㄇ",
+        "parentNumber": 4,
+        "fields": [
+          "f6"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 64,
+        "end": 70,
+        "field": "f1",
+        "width": 7
+      },
+      {
+        "start": 104,
+        "end": 110,
+        "field": "f2",
+        "width": 7
+      },
+      {
+        "start": 123,
+        "end": 141,
+        "field": "f3",
+        "width": 4,
+        "fraction": {
+          "start": 138,
+          "end": 139
+        }
+      },
+      {
+        "start": 168,
+        "end": 174,
+        "field": "f4",
+        "width": 7
+      },
+      {
+        "start": 180,
+        "end": 186,
+        "field": "f5",
+        "width": 7
+      },
+      {
+        "start": 192,
+        "end": 198,
+        "field": "f6",
+        "width": 7
+      }
+    ],
+    "omissions": [],
+    "fractionNumerators": true,
+    "subgroups": true
+  },
+  "partnerGuard": "3dd101f37db9462a"
+},
  "hlg3m_05f3978e_rnbc489e3b9f5e": {
   "guard": "ab9bd0154b6fa260",
   "sourceSha": "042d9ded7619e95c3e6c37a7a85947c5c600234bfe9b93e4b37c747d61cc2d90",
