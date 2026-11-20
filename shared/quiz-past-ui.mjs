@@ -160,15 +160,21 @@ function render(){if(!active)return;study.refresh();
   if(node.dataset.fieldLabel)feedbackPanel.append(el('p',node.dataset.fieldLabel,'helper'));
   feedbackPanel.append(node);
  }
- const textbook=saved?pastTextbookCitation(state.version,g.id):null;
+ const textbook=pastTextbookCitation(state.version,g.id);
  if(textbook){
-  const reference=el('section',undefined,'past-learning-review');
-  reference.append(el('h3','對照課本'),el('p',textbook.book,'helper'));
+  const reference=el('section',undefined,'qtb-card past-textbook-citation');
+  reference.append(el('h3','翻課本找線索'),el('p',textbook.book,'helper'));
   const pages=el('ul');
-  for(const section of textbook.sections)pages.append(el('li','第'+section.chapter+'章｜第'+section.pages.join('、')+'頁'));
+  for(const section of textbook.sections){
+   const row=el('li');
+   const link=el('a','下載第'+section.chapter+'章課本 PDF');
+   link.href=section.downloadUrl;link.target='_blank';link.rel='noopener noreferrer';
+   row.append(link,document.createTextNode('｜課本第'+section.pages.join('、')+'頁（PDF 第'+section.pdfPages.join('、')+'頁）'));
+   pages.append(row);
+  }
   reference.append(pages);
-  if(textbook.related)reference.append(el('p','這些頁面說明相關觀念，可搭配上方解析一起看。','helper'));
-  feedbackPanel.append(reference);
+  if(textbook.related)reference.append(el('p','這些頁面說明本題的相關觀念。','helper'));
+  card.insertBefore(reference,grid);
  }
  if(feedbackPanel.childNodes.length)card.append(feedbackPanel);card.classList.add('question');card.dataset.questionId=g.id;
  actions.classList.add('quiz-actions');
