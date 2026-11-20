@@ -15,6 +15,7 @@ import {readingWorkbenchSupported} from './quiz-reading-workbench.mjs';
 import {choiceReviewModel,decorateFieldReviewOption} from './quiz-review-choices.mjs';
 import {renderOpenInputs,renderOpenReview,openResponseError,renderOpenSavedSketches} from './quiz-open-response.mjs';
 import {wordMeaningReview} from './quiz-word-meaning-review.mjs';
+import {mountShortAnswerInput} from './quiz-short-answer.mjs';
 
 import {quizFeedbackMotion} from './quiz-feedback-motion.mjs?v=20261107-partner-motion';
 
@@ -89,7 +90,10 @@ export function initServerQuiz({ selectors, server }) {
       if(wordMeaningReview(q,review.answer))return;
       const explanation=make('section',undefined,'quiz-explanation-copy'),studentExplanation=study.explanation(q.id);
       if(studentExplanation?.origin==='ai'){explanation.classList.add('quiz-explanation-ai');explanation.append(make('strong','AI 解析','quiz-explanation-caption'));}
-      if(studentExplanation)renderExplanation(explanation,studentExplanation.text,q);else renderContent(explanation,explanationReferenceContent(q,review.explanation));
+      if(studentExplanation){
+        renderExplanation(explanation,studentExplanation.text,q);
+        if(review.explanation?.media?.length)renderContent(explanation,{text:'',media:review.explanation.media});
+      }else renderContent(explanation,explanationReferenceContent(q,review.explanation));
       if(studentExplanation)explanation.append(make('p',studySourceLabel(studentExplanation.origin),'helper'));
       box.append(explanation);return;
     }
@@ -128,7 +132,10 @@ export function initServerQuiz({ selectors, server }) {
     const studentExplanation=study.explanation(q.id);
     const explanation=make('section',undefined,'quiz-explanation-copy');
     if(studentExplanation?.origin==='ai'){explanation.classList.add('quiz-explanation-ai');explanation.append(make('strong','AI 解析','quiz-explanation-caption'));}
-    if(studentExplanation)renderExplanation(explanation,studentExplanation.text,q);
+    if(studentExplanation){
+      renderExplanation(explanation,studentExplanation.text,q);
+      if(review.explanation?.media?.length)renderContent(explanation,{text:'',media:review.explanation.media});
+    }
     else renderContent(explanation,explanationReferenceContent(q,review.explanation));
     if(studentExplanation)explanation.append(make('p',studySourceLabel(studentExplanation.origin),'helper'));
     box.append(explanation);
@@ -225,6 +232,7 @@ export function initServerQuiz({ selectors, server }) {
       const input = make('textarea'); input.setAttribute('aria-label', '簡答內容'); input.maxLength = 2000;
       input.disabled = choicesLocked;
       input.value = saved ? state.responses[q.id] : pending?.response ?? selected;
+      mountShortAnswerInput(input,q);
       input.addEventListener('input', () => { selected = input.value; }); inputs.append(input);
     }
     article.append(inputs);

@@ -1,6 +1,8 @@
 // Deterministic source-to-choice conversion, shared by import and legacy views.
 // Never reads answers, changes IDs, or mutates a fixed document.
 import {booleanChoicePresentation} from './quiz-boolean-choice.mjs';
+import {answerTemplateSources} from './quiz-answer-template-sources.mjs';
+import {presentationSignature} from './quiz-presentation-signature.mjs';
 import {convertCheckboxQuestion} from './quiz-checkbox-presentation.mjs';
 import {sourceStream,sliceContent,omitRanges} from './quiz-content-slices.mjs';
 import {convertStudentContent} from './quiz-student-content.mjs';
@@ -54,6 +56,9 @@ function sharedOptions(content,fields,coded){
 }
 function convertSingleChoiceQuestion(q){
  const changes=[],issues=[];if(!q||!['fields','single'].includes(q.type))return {question:q,changes,issues};
+ // A reviewed diagram's marks describe its original task, not truth captions.
+ const source=answerTemplateSources[q.id],signature=presentationSignature(q);
+ if(source?.model?.mode==='diagram-symbols'&&[source.guard,source.partnerGuard].includes(signature))return {question:q,changes,issues};
  const fields=q.type==='single'?[{id:'$single',input:'single',options:q.options}]:q.fields;
  if(!Array.isArray(fields))return {question:q,changes,issues};
  const converted=fields.map(f=>f),ranges=[],text=sourceStream(q.prompt);
