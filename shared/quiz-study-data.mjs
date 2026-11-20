@@ -16,7 +16,10 @@ export function readQuizStudy(snapshot,kind){
   const ref=reviewedStudyReference(kind,q.id,value.references[q.id],pages);
   if(ref&&typeof ref.bookId==='string'&&Number.isInteger(ref.primary)&&Array.isArray(ref.references)&&ref.references.includes(ref.primary)&&ref.references.every(n=>pages.some(p=>p.bookId===ref.bookId&&p.printedPages.includes(n)))){
    const fields=kind==='past'?(q.fields||[]).flatMap(f=>{const field=Array.isArray(ref.fields)?ref.fields.find(x=>x&&x.questionId===f.id):null;return field&&pages.some(p=>p.bookId===ref.bookId&&p.printedPages.includes(field.page))?[{selector:'[data-study-question-id='+JSON.stringify(f.id)+']',page:field.page,label:'第（'+f.label+'）小題'}]:[];}):[];
-   references[q.id]={bookId:ref.bookId,primary:ref.primary,references:[...new Set(ref.references)],fields,key:attempt+':'+version+':'+value.packageId+':'+q.id};
+   const teacherGuide=kind==='past'&&ref.material==='teacher-guide';
+   if(!teacherGuide||snapshot.records?.[q.id]){
+    references[q.id]={bookId:ref.bookId,primary:ref.primary,references:[...new Set(ref.references)],fields,key:attempt+':'+version+':'+value.packageId+':'+q.id,...(teacherGuide?{teacherGuide:true,related:ref.related===true}:{})};
+   }
   }
   const disclosed=kind==='past'?Boolean(snapshot.records?.[q.id]):snapshot.reviews?.some(r=>r.question_id===q.id);
   if(!disclosed)continue;

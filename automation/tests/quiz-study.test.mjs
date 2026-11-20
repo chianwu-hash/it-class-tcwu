@@ -9,6 +9,7 @@ test('固定課本與學生解析：真SQL、答前／答後、本人／跨人�
  await db.exec(await fs.readFile('supabase/quiz-past-exams.sql','utf8'));
  await db.exec(await fs.readFile('supabase/quiz-study.sql','utf8'));
  await db.exec(await fs.readFile('supabase/quiz-study.sql','utf8')); // safe same-wrapper reinstall
+ await db.exec(await fs.readFile('supabase/quiz-teacher-guide-after-answer.sql','utf8'));
  const [book,bank,version,session,pack,pv,pa,ppack]=Array.from({length:8},()=>randomUUID());
  const d=newDocument(),q=d.blocks[0].questions[0];d.catalog.volume='6年級上學期';q.id='water';q.prompt=c('水流變慢時，沙子會怎樣？');q.explanation=c('舊書商稿');
  await db.query('insert into public.quiz_banks(id,owner_id,draft) values($1,$2,$3)',[bank,TEACHER,d]);
@@ -60,6 +61,31 @@ test('固定課本與學生解析：真SQL、答前／答後、本人／跨人�
  const after=await snapshot();assert.equal(Object.keys(after.study.explanations).length,2);assert.equal(after.records.magnet.status,'self_checked');assert.equal(after.summary.score,0);
  assert.equal((await call(studentId(1),'select public.quiz_textbook_media_access($1,$2,$3,$4) r',['past',pa,pv,url])).rows[0].r.backend,'drive');
  await assert.rejects(call(studentId(2),'select public.quiz_textbook_media_access($1,$2,$3,$4)',['past',pa,pv,url]),/attempt_unavailable/);
+
+ const [guideVersion,guideAttempt,guidePack]=Array.from({length:3},()=>randomUUID());
+ const guideDoc={groups:[...pd.groups,{id:'force',kind:'short',fields:[{id:'force1',label:'3',text:'推力',points:2}]}]};
+ await db.query("insert into public.quiz_past_versions(id,paper_id,sha256,document,provenance) values($1,'test-study',$2,$3,'{}')",[guideVersion,'f'.repeat(64),guideDoc]);
+ await db.query("insert into public.quiz_past_attempts(id,paper_id,version_id,user_id,school_year,semester,start_request) values($1,'test-study',$2,$3,115,1,$4)",[guideAttempt,guideVersion,studentId(1),randomUUID()]);
+ await db.query("insert into public.quiz_study_packages(id,kind,version_id,approved,provenance) values($1,'past',$2,true,$3)",[guidePack,guideVersion,{material:'teacher-guide'}]);
+ await db.query("insert into public.quiz_study_items(package_id,group_id,question_id,book_id,primary_page,reference_pages,origin,teacher_notes) values($1,'magnet','f1',$2,75,'{75}','official',$3),($1,'force','force1',$2,81,'{81}','official','{}')",[guidePack,book,{reference_type:'related_concept'}]);
+ await db.query('update public.quiz_study_packages set enabled=true where id=$1',[guidePack]);
+ const guideSnapshot=()=>db.transaction(async tx=>{await tx.query("select set_config('quiz.test_uid',$1,true)",[studentId(1)]);return (await tx.query('select public.quiz_past_snapshot($1) r',[guideAttempt])).rows[0].r;});
+ const sign=(user,pageUrl,role)=>call(user,'select public.quiz_textbook_media_access($1,$2,$3,$4) r',['past',guideAttempt,guideVersion,pageUrl],role);
+ const lockedUrl=url.replace('a'.repeat(64),'d'.repeat(64));
+ assert.deepEqual((await guideSnapshot()).study.references,{});
+ assert.deepEqual((await guideSnapshot()).study.pages,[]);
+ await assert.rejects(sign(studentId(1),url),/media_unavailable/);
+ await db.query("insert into public.quiz_past_receipts values($1,'magnet',$2,'[]','[]',0,'self_checked')",[guideAttempt,randomUUID()]);
+ const saved=await guideSnapshot();
+ assert.deepEqual(Object.keys(saved.study.references),['magnet']);
+ assert.equal(saved.study.references.magnet.material,'teacher-guide');
+ assert.equal(saved.study.references.magnet.related,true);
+ assert.deepEqual(saved.study.pages.map(p=>p.printedPages),[[75]]);
+ assert.equal(readQuizStudy(saved,'past').references.magnet.teacherGuide,true);
+ assert.equal((await sign(studentId(1),url)).rows[0].r.backend,'drive');
+ await assert.rejects(sign(studentId(1),lockedUrl),/media_unavailable/);
+ await assert.rejects(sign(studentId(2),url),/attempt_unavailable/);
+ await assert.rejects(sign(null,url,'anon'),/permission denied/);
  }finally{await db.close();}
 });
 
