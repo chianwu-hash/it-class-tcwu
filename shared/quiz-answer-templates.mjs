@@ -138,9 +138,33 @@ export function deriveNumberSymbolTemplate(q){
  }
  return at===q.fields.length?{mode:'number-symbols',start:0,rows}:null;
 }
+// Reviewed diagrams stay immutable. Views only locate original pixels and their
+// original response controls; the printed task supplies the symbol choices.
+export function deriveDiagramSymbolTemplate(q,{groups,reference}={}){
+ if(q?.type!=='fields'||!q.fields?.length||q.fields.some(f=>f.input!=='single')||!Array.isArray(groups)||!groups.length)return null;
+ const text=sourceStream(q.prompt);if(text===null)return null;const end=text.indexOf('\n');if(end<0)return null;
+ const symbols=[...text.slice(0,end).matchAll(/(?:打|畫)\s*([○△ˇ╳])/gu)].map(m=>m[1]);
+ if(symbols.length<2||symbols.length>3||new Set(symbols).size!==symbols.length||!/^[\s①-⑳ㄅ-ㄩ□\ufffc]*$/u.test(text.slice(end)))return null;
+ if(q.fields.some(f=>f.options?.length!==symbols.length||f.options.some((o,i)=>o.content?.media?.length||sourceStream(o.content)!==symbols[i])))return null;
+ const fields=groups.flatMap(g=>g.fields||[]);if(JSON.stringify(fields)!==JSON.stringify(q.fields.map(f=>f.id)))return null;
+ const widths=new Map(),sizes=new Map(),used=new Set();
+ for(const g of [...(reference?[reference]:[]),...groups]){
+  if(typeof g.label!=='string'||!g.label.trim()||g.label.length>30||!Array.isArray(g.views)||!g.views.length||g!==reference&&(!g.fields.length||g.fields.length>2))return null;
+  for(const v of g.views){const i=v.media_index,c=v.crop,s=v.sourceSize;
+   if(!Number.isInteger(i)||q.prompt.media?.[i]?.kind!=='image'||!Array.isArray(s)||s.length!==2||s.some(n=>!Number.isInteger(n)||n<=0)||!Array.isArray(c)||c.length!==4||c.some(n=>!Number.isInteger(n)||n<0)||!c[2]||!c[3]||c[0]+c[2]>s[0]||c[1]+c[3]>s[1]||!Number.isInteger(v.width)||v.width<80||v.width>500)return null;
+   if(widths.has(i)&&widths.get(i)!==v.width||sizes.has(i)&&sizes.get(i)!==JSON.stringify(s))return null;widths.set(i,v.width);sizes.set(i,JSON.stringify(s));used.add(i);
+  }
+ }
+ if(used.size!==q.prompt.media.length)return null;
+ return {mode:'diagram-symbols',start:end,groups,...(reference?{reference}:{})};
+}
 export function answerTemplatePresentation(q,registry=answerTemplateSources){
  const source=taskReadingSource(q),p=registry[source?.id];if(!p)return null;
  const guard=presentationSignature(source);if(p.guard!==guard&&p.partnerGuard!==guard)return null;
+ if(p.model.mode==='diagram-symbols'){
+  const model=deriveDiagramSymbolTemplate(source,p.model);if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
+  const renderPrompt=projectSourceBoxes(source.prompt,q.prompt);return {...model,source,renderPrompt,passage:sliceContent(renderPrompt,0,model.start)};
+ }
  if(p.model.mode==='number-symbols'){
   const model=deriveNumberSymbolTemplate(source);if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
   return {...model,source,renderPrompt:projectSourceBoxes(source.prompt,q.prompt),passage:{text:'',media:[]}};
@@ -192,6 +216,18 @@ export function mountAnswerTemplate(group,q,{renderContent,registry,fieldFeedbac
   return finish();
  }
  const render=(host,content)=>{if(renderContent)renderContent(host,content);else host.textContent=content.text;};
+ if(plan.mode==='diagram-symbols'){
+  container.classList.add('quiz-answer-diagram-symbols','quiz-answer-number-symbols');const groups=doc.createElement('div');groups.className='quiz-diagram-groups';
+  const views=[...(plan.reference?.views||[]),...plan.groups.flatMap(g=>g.views)],maxWidths=new Map();for(const v of views)maxWidths.set(v.media_index,Math.max(maxWidths.get(v.media_index)||0,v.crop[2]));
+  const diagram=(host,v)=>{const frame=doc.createElement('div'),button=doc.createElement('button'),hint=doc.createElement('p'),[x,y,w,h]=v.crop;frame.className='quiz-answer-image-panel-frame';frame.style.width=v.width+'px';button.type='button';button.className='quiz-answer-image-panel-view';button.dataset.imagePanelProxy='';button.setAttribute('aria-label','放大完整原圖');button.style.width=w/maxWidths.get(v.media_index)*100+'%';button.style.aspectRatio=w+'/'+h;button.style.setProperty('--panel-image-width',v.sourceSize[0]/w*100+'%');button.style.setProperty('--panel-image-left',-x/w*100+'%');button.style.setProperty('--panel-image-top',-y/h*100+'%');render(button,{text:'',media:[renderPrompt.media[v.media_index]],layout:[{type:'paragraph',runs:[{type:'image',media_index:0}]}]});button.addEventListener('click',event=>{if(event.target===button)button.querySelector('img')?.click();});frame.append(button);hint.className='quiz-answer-image-panel-hint';hint.textContent='點圖看完整原圖';host.append(frame,hint);};
+  const card=row=>{const section=doc.createElement('section'),title=doc.createElement('h4');section.className='quiz-diagram-symbol-card';title.className='quiz-answer-template-title';title.textContent=row.label;section.append(title);for(const v of row.views)diagram(section,v);return section;};
+  if(plan.reference){const ref=card(plan.reference);ref.classList.add('quiz-diagram-reference');container.append(ref);}
+  for(const row of plan.groups){const section=card(row),controls=doc.createElement('div');controls.className='quiz-number-symbol-grid quiz-diagram-controls';controls.style.gridTemplateColumns=`repeat(${row.fields.length},minmax(0,1fr))`;
+   for(const id of row.fields){const slot=byId.get(id);slot.classList.add('quiz-number-symbol-card');if(row.fields.length===1)slot.querySelector('legend').classList.add('quiz-answer-template-label');const status=slot.querySelector(':scope > .quiz-field-review-status');if(status){status.title=status.textContent;status.textContent=slot.dataset.fieldReview==='correct'?'✓ 答對':slot.dataset.fieldReview==='incorrect'?'✕ 請修正':'請核對';}for(const note of slot.querySelectorAll('.quiz-field-review-note')){note.title=note.textContent;const state=note.closest('[data-field-result]')?.dataset.fieldResult;note.textContent=state==='correct'?'✓ 選對':state==='wrong'?'✕ 選錯':state==='answer'?'答案':note.textContent;}controls.append(slot);}
+   section.append(controls);groups.append(section);
+  }
+  container.append(groups);return finish();
+ }
  if(plan.mode==='number-symbols'){
   container.classList.add('quiz-answer-number-symbols');
   for(const row of plan.rows){

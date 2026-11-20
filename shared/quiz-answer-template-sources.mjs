@@ -1,5 +1,456 @@
 // Verified source fingerprints and blank offsets; no source text or answers.
 export const answerTemplateSources={
+ "hlg3m_05109334_rnacf0b80072a3": {
+  "guard": "36250158461ddf62",
+  "sourceSha": "a5971ddfa370aa7c8cadb00227ff3ab223a6c90055c5df03d6f72506d3559b9c",
+  "model": {
+    "mode": "diagram-symbols",
+    "start": 14,
+    "groups": [
+      {
+        "label": "原圖比較",
+        "fields": [
+          "f1",
+          "f2"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              2400,
+              1626
+            ],
+            "crop": [
+              0,
+              0,
+              2400,
+              1010
+            ],
+            "width": 400
+          }
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "e25ebc4d60d7c4d8"
+},
+ "hlg3m_041f596f_rn2979e7eeb47d": {
+  "guard": "cd0f4d045f8c0d22",
+  "sourceSha": "19ae7d7131c61aac86eeca222e17f39138938ce0c22abb778aca2efee756e9d1",
+  "model": {
+    "mode": "diagram-symbols",
+    "start": 24,
+    "groups": [
+      {
+        "label": "①（蘋果）",
+        "fields": [
+          "f1"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              1625,
+              2400
+            ],
+            "crop": [
+              10,
+              110,
+              790,
+              1100
+            ],
+            "width": 280
+          }
+        ]
+      },
+      {
+        "label": "②（番茄）",
+        "fields": [
+          "f2"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              1625,
+              2400
+            ],
+            "crop": [
+              817,
+              110,
+              790,
+              1100
+            ],
+            "width": 280
+          }
+        ]
+      },
+      {
+        "label": "③（木瓜）",
+        "fields": [
+          "f3"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              1625,
+              2400
+            ],
+            "crop": [
+              10,
+              1310,
+              790,
+              1090
+            ],
+            "width": 280
+          }
+        ]
+      },
+      {
+        "label": "④（柑橘）",
+        "fields": [
+          "f4"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              1625,
+              2400
+            ],
+            "crop": [
+              817,
+              1310,
+              790,
+              1090
+            ],
+            "width": 280
+          }
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "fc61a327ca4b81eb"
+},
+ "hlg3m_036fbc96_rn5222fb59673c": {
+  "guard": "d8563ec3bed9beb2",
+  "sourceSha": "ddb2e6aaa6d5fd884226a54cb757fa4ccf66f367e06b73eced250bd4c920dca0",
+  "model": {
+    "mode": "diagram-symbols",
+    "start": 34,
+    "groups": [
+      {
+        "label": "①",
+        "fields": [
+          "f1"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              160,
+              389
+            ],
+            "crop": [
+              0,
+              0,
+              160,
+              389
+            ],
+            "width": 115
+          }
+        ]
+      },
+      {
+        "label": "②",
+        "fields": [
+          "f2"
+        ],
+        "views": [
+          {
+            "media_index": 1,
+            "sourceSize": [
+              298,
+              238
+            ],
+            "crop": [
+              0,
+              0,
+              298,
+              238
+            ],
+            "width": 215
+          }
+        ]
+      },
+      {
+        "label": "③",
+        "fields": [
+          "f3"
+        ],
+        "views": [
+          {
+            "media_index": 2,
+            "sourceSize": [
+              298,
+              238
+            ],
+            "crop": [
+              0,
+              0,
+              298,
+              238
+            ],
+            "width": 215
+          }
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "8164d4877a8e26fa"
+},
+ "hlg3m_02734662_rnc02d9dab550a": {
+  "guard": "cbf2cb076527af63",
+  "sourceSha": "8f015fb35475de43ce3b5d24c4981fbaa1d511659719b3153b8d66f3b45bb49d",
+  "model": {
+    "mode": "diagram-symbols",
+    "start": 14,
+    "groups": [
+      {
+        "label": "原圖比較",
+        "fields": [
+          "f1",
+          "f2"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              2400,
+              1673
+            ],
+            "crop": [
+              0,
+              0,
+              2400,
+              990
+            ],
+            "width": 400
+          }
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "90cfb81ad0a63108"
+},
+ "hlg3m_0204cefa_rn4cec15904bc0": {
+  "guard": "5066b312a3e65a53",
+  "sourceSha": "593ea1de88265f4ea46715c2dfd6c6cec7ccaaf6682363aab48257b574b242b9",
+  "model": {
+    "mode": "diagram-symbols",
+    "start": 14,
+    "groups": [
+      {
+        "label": "原圖比較",
+        "fields": [
+          "f1",
+          "f2"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              2400,
+              2033
+            ],
+            "crop": [
+              0,
+              0,
+              2400,
+              1230
+            ],
+            "width": 400
+          }
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "700d5a0b4227e578"
+},
+ "hlg3m_01e8f996_rn1ed93354ab1b": {
+  "guard": "988cd3dabd8314c0",
+  "sourceSha": "05300824823e4d518877775ba943bf344f6dde9f82e02f11fa988effae5d534a",
+  "model": {
+    "mode": "diagram-symbols",
+    "start": 20,
+    "groups": [
+      {
+        "label": "①",
+        "fields": [
+          "f1"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              2400,
+              1833
+            ],
+            "crop": [
+              1383,
+              234,
+              643,
+              644
+            ],
+            "width": 240
+          }
+        ]
+      },
+      {
+        "label": "②",
+        "fields": [
+          "f2"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              2400,
+              1833
+            ],
+            "crop": [
+              201,
+              1144,
+              643,
+              644
+            ],
+            "width": 240
+          }
+        ]
+      },
+      {
+        "label": "③",
+        "fields": [
+          "f3"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              2400,
+              1833
+            ],
+            "crop": [
+              1379,
+              1137,
+              653,
+              651
+            ],
+            "width": 240
+          }
+        ]
+      }
+    ],
+    "reference": {
+      "label": "對照原圖",
+      "views": [
+        {
+          "media_index": 0,
+          "sourceSize": [
+            2400,
+            1833
+          ],
+          "crop": [
+            290,
+            129,
+            642,
+            653
+          ],
+          "width": 240
+        }
+      ]
+    }
+  },
+  "partnerGuard": "42b871c9816b2854"
+},
+ "hlg3m_00f760a0_rncf9bd7e59644": {
+  "guard": "7305f770afc6d935",
+  "sourceSha": "dd09d1dd5d24a36ecf7beff1987ac5696299d48f929f855717eec8e2f4d0c22d",
+  "model": {
+    "mode": "diagram-symbols",
+    "start": 48,
+    "groups": [
+      {
+        "label": "ㄅ",
+        "fields": [
+          "f1"
+        ],
+        "views": [
+          {
+            "media_index": 0,
+            "sourceSize": [
+              1925,
+              2400
+            ],
+            "crop": [
+              0,
+              0,
+              1925,
+              2400
+            ],
+            "width": 260
+          }
+        ]
+      },
+      {
+        "label": "ㄆ",
+        "fields": [
+          "f2"
+        ],
+        "views": [
+          {
+            "media_index": 1,
+            "sourceSize": [
+              2062,
+              2400
+            ],
+            "crop": [
+              0,
+              0,
+              2062,
+              2400
+            ],
+            "width": 260
+          }
+        ]
+      },
+      {
+        "label": "ㄇ",
+        "fields": [
+          "f3"
+        ],
+        "views": [
+          {
+            "media_index": 2,
+            "sourceSize": [
+              1871,
+              2400
+            ],
+            "crop": [
+              0,
+              0,
+              1871,
+              2400
+            ],
+            "width": 260
+          }
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "4df7b4d1da53778e"
+},
  "hlg3m_05be97be_rnea755025a4fd": {
   "guard": "da56e6a273cbd91d",
   "sourceSha": "71c246db6a351765891d6c2e239ad6c6eb6680f153a81ae6d11224d9e8e5a737",

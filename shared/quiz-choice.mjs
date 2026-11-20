@@ -1,8 +1,8 @@
 // Pure option presentation shared by personal and partner quizzes. No auth, grading or persistence.
 import {booleanChoicePresentation} from './quiz-boolean-choice.mjs';
-export function appendSingleChoiceOptions(host,{name,options,selected,locked=false,onSelect,renderBody,decorateInput,badgeForOption,result=null}){
+export function appendSingleChoiceOptions(host,{name,options,selected,locked=false,onSelect,renderBody,decorateInput,badgeForOption,result=null,literalSymbols=false}){
  host.classList.add('quiz-single-choice');
- const boolean=options.every(o=>o.content)?booleanChoicePresentation(options):null;
+ const boolean=!literalSymbols&&options.every(o=>o.content)?booleanChoicePresentation(options):null;
  for(const [index,option] of options.entries()){
   const label=document.createElement('label');label.className='student-option';
   const input=document.createElement('input');input.type='radio';input.name=name;input.value=option.value;

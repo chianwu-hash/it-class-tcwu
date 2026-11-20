@@ -70,7 +70,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
    if(phonetic.has(f.id))slot.classList.add('quiz-answer-bopomofo-slot');
    if(f.input==='text'&&!inline?.slots.some(s=>s.field===f.id))attachPastInputKeyboard(slot,input,{bopomofo:phonetic.size?phonetic.has(f.id):textInputAids.bopomofo===true,punctuation:textInputAids.punctuation===true});
   }else if(f.input==='single'){
-   appendSingleChoiceOptions(slot,{name:id,options:f.options.map(o=>({...o,value:o.id})),selected:values[f.id],locked,badgeForOption:storedField.input==='text'&&f!==storedField?o=>o.id:undefined,onSelect:v=>{values[f.id]=v;changed()},renderBody:(box,o)=>renderContent(box,o.content)});
+   appendSingleChoiceOptions(slot,{name:id,options:f.options.map(o=>({...o,value:o.id})),selected:values[f.id],locked,literalSymbols:answerTemplatePresentation(q)?.mode==='diagram-symbols',badgeForOption:storedField.input==='text'&&f!==storedField?o=>o.id:undefined,onSelect:v=>{values[f.id]=v;changed()},renderBody:(box,o)=>renderContent(box,o.content)});
    if(feedback?.[fieldIndex])slot.querySelectorAll(':scope > .student-option').forEach((row,i)=>decorateFieldReviewOption(row,feedback[fieldIndex].options[i]));
   }else if(f.input==='set'){
    const checks=[];const update=()=>{const selected=checks.filter(x=>x.input.checked).map(x=>x.id);values[f.id]=selected.length?selected:null;none.checked=false;changed()};
