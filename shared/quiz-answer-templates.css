@@ -65,3 +65,14 @@
 .quiz-answer-source-panel img{max-width:100%;height:auto;object-fit:contain}
 @media(min-width:1000px){.quiz-answer-templates.quiz-answer-material{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}.quiz-answer-material .quiz-answer-source-panel{position:sticky;top:16px;max-height:calc(100dvh - var(--quiz-dock-height,140px) - 48px);overflow:auto}.quiz-answer-source-controls{margin-top:0}}
 @media(max-width:599px){.quiz-answer-template-row{padding:12px}.quiz-answer-template-line{gap:7px}.quiz-answer-template-slot button{font-size:.85rem!important;padding:7px!important}}
+.quiz-number-symbol-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:12px}
+.quiz-number-symbol-grid>.quiz-field{grid-column:auto!important}
+.quiz-answer-number-symbols .quiz-number-symbol-card{display:flex!important;flex-wrap:wrap;align-content:start;gap:8px;min-width:0;margin:0!important;padding:12px!important}
+.quiz-number-symbol-card>legend{font-size:1.5rem;line-height:1.5;color:#164956}
+.quiz-answer-number-symbols .quiz-number-symbol-card>.student-option{display:flex!important;flex:1 1 44px;min-width:44px;min-height:44px;margin:0;padding:8px!important;justify-content:center;box-shadow:none;gap:4px}
+.quiz-number-symbol-card .option-badge{display:none!important}
+.quiz-number-symbol-card .option-body{min-width:0;font-size:1.35rem}
+.quiz-number-symbol-card .option-body :is(.preview-content,.quiz-rich-paragraph){margin:0!important;font:inherit!important;line-height:1.4!important}
+.quiz-number-symbol-card .quiz-field-review-note{display:block;font-size:.8rem!important;line-height:1.4}
+.quiz-fields .quiz-number-symbol-card>.quiz-field-review-status{flex-basis:100%;margin:0!important;padding:4px 6px!important;font-size:.85rem!important;line-height:1.4!important}
+@media(max-width:480px){.quiz-number-symbol-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.quiz-answer-number-symbols .quiz-number-symbol-card{padding:8px!important}.quiz-number-symbol-card .quiz-field-review-note{font-size:.75rem!important}}

@@ -1,5 +1,167 @@
 // Verified source fingerprints and blank offsets; no source text or answers.
 export const answerTemplateSources={
+ "hlg3m_05be97be_rnea755025a4fd": {
+  "guard": "da56e6a273cbd91d",
+  "sourceSha": "71c246db6a351765891d6c2e239ad6c6eb6680f153a81ae6d11224d9e8e5a737",
+  "model": {
+    "mode": "number-symbols",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "是奇數的畫○，是偶數的畫△。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f6"
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "da56e6a273cbd91d"
+},
+ "hlg3m_04faefdd_rn78bc9c3eef73": {
+  "guard": "827a1cfde2db76ba",
+  "sourceSha": "f1852db34e844181f4e2360958f90fb8a4890648fa8e8c1f3f45f8d4478fda89",
+  "model": {
+    "mode": "number-symbols",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "下面的數是奇數的在（ ）裡畫○，是偶數的打ˇ。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f6",
+          "f7",
+          "f8"
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "827a1cfde2db76ba"
+},
+ "hlg3m_04b6eecd_rn23214404a935": {
+  "guard": "230499c6a413fe29",
+  "sourceSha": "8d5ab0ba127aa50d2b6fa487d6be973229ead1ac600683575752ca869a886033",
+  "model": {
+    "mode": "number-symbols",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "是奇數的畫○，是偶數的畫△。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f6",
+          "f7",
+          "f8",
+          "f9",
+          "f10",
+          "f11"
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "230499c6a413fe29"
+},
+ "hlg3m_034178ea_rn51544ef954e0": {
+  "guard": "f8c5b38de1143a44",
+  "sourceSha": "4f20abc22b9959457a9b0e2009fe9ed0f1856d46af684dd017345f8f804cd108",
+  "model": {
+    "mode": "number-symbols",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "下面的數是奇數的在（ ）裡畫○，是偶數的打ˇ。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f6"
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "f8c5b38de1143a44"
+},
+ "hlg3m_028f0436_rn93f57086e087": {
+  "guard": "de01fa21a0154ee4",
+  "sourceSha": "b16c3da77753018462112c926fd8aba766f29683651a2f12c99bde5498f1377f",
+  "model": {
+    "mode": "number-symbols",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "是奇數的畫○，是偶數的畫△。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f6",
+          "f7",
+          "f8",
+          "f9",
+          "f10",
+          "f11",
+          "f12"
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "de01fa21a0154ee4"
+},
+ "hlg3m_004900ff_rnb579bf6b7c2a": {
+  "guard": "3fb27bafd60ae47b",
+  "sourceSha": "f27177a9017b99c2c0966a0f3164929bbd9087c9f02dcf468fb55acd60bf221f",
+  "model": {
+    "mode": "number-symbols",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "(１)是奇數的畫○，是偶數的畫△。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f6",
+          "f7",
+          "f8",
+          "f9"
+        ]
+      },
+      {
+        "instruction": "(２)是奇數的畫○，是偶數的打ˇ。",
+        "fields": [
+          "f10",
+          "f11",
+          "f12",
+          "f13",
+          "f14",
+          "f15",
+          "f16",
+          "f17",
+          "f18"
+        ]
+      }
+    ]
+  },
+  "partnerGuard": "3fb27bafd60ae47b"
+},
  "hlg3m_045d2ca6_rn569993ae12b5": {
   "guard": "cd240bacc75d9499",
   "sourceSha": "faa2896ea9f0f1e428a91881ed23d2c6f5270c7caf294fb28b152e97d0396852",

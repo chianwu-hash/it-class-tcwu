@@ -122,9 +122,29 @@ export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=
  }
  return {mode:marked?'marked':'blanks',start,rows,blanks,omissions,...(targetOffsets?{targetOffsets}:{}),...(symbols?{symbols}:{}),...(underscores?{underscores}:{})};
 }
+// A reviewed native transcription of a number/symbol task. Symbols come from
+// the printed instruction; this projection never inspects answer keys.
+export function deriveNumberSymbolTemplate(q){
+ if(q?.type!=='fields'||!q.fields?.length||q.prompt?.media?.length||q.fields.some(f=>f.input!=='single'))return null;
+ const text=sourceStream(q.prompt);if(text===null)return null;
+ const lines=text.trim().split('\n').filter(s=>s.trim());if(!lines.length||lines.length%2)return null;
+ const rows=[];let at=0;
+ for(let i=0;i<lines.length;i+=2){
+  const instruction=lines[i],match=/^(?:[（(][0-9０-９]+[）)])?(?:下面的數)?是奇數的(?:在[（(] *[）)]裡)?畫○，是偶數的(?:畫△|打ˇ)。$/u.exec(instruction);
+  if(!match||!/^\d+(?:、\d+)*$/u.test(lines[i+1]))return null;
+  const numbers=lines[i+1].split('、'),symbols=['○',instruction.includes('△')?'△':'ˇ'],fields=q.fields.slice(at,at+numbers.length);
+  if(fields.length!==numbers.length||fields.some((f,j)=>f.label!==numbers[j]||f.options?.length!==2||f.options.some((o,k)=>o.content?.media?.length||sourceStream(o.content)!==symbols[k])))return null;
+  rows.push({instruction,fields:fields.map(f=>f.id)});at+=numbers.length;
+ }
+ return at===q.fields.length?{mode:'number-symbols',start:0,rows}:null;
+}
 export function answerTemplatePresentation(q,registry=answerTemplateSources){
  const source=taskReadingSource(q),p=registry[source?.id];if(!p)return null;
  const guard=presentationSignature(source);if(p.guard!==guard&&p.partnerGuard!==guard)return null;
+ if(p.model.mode==='number-symbols'){
+  const model=deriveNumberSymbolTemplate(source);if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
+  return {...model,source,renderPrompt:projectSourceBoxes(source.prompt,q.prompt),passage:{text:'',media:[]}};
+ }
  const model=p.model.mode==='inline-choices'?deriveInlineChoiceTemplate(source,p.model):p.model.mode==='image-panels'?deriveImagePanelTemplate(source,p.model):p.model.mode==='groups'?deriveGroupedTemplate(source,{groupMarker:p.model.groupMarker}):p.model.mode==='options'?deriveOptionTemplate(source):p.model.mode==='material'&&source.prompt.media.length?{mode:'material',fields:source.fields.map(f=>f.id)}:deriveAnswerTemplate(source,{marked:p.model.mode==='marked',targetOffsets:p.model.targetOffsets,symbols:p.model.symbols,underscores:p.model.underscores,grouped:p.model.mode==='grouped-blanks',groupMarker:p.model.groupMarker,keepMassUnits:p.model.keepMassUnits,fractionNumerators:p.model.fractionNumerators,subgroups:p.model.subgroups});if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
  const renderPrompt=projectSourceBoxes(source.prompt,q.prompt);
  return {...model,source,renderPrompt,passage:taskReadingPresentation(q,{passage:model.mode==='image-panels'?omitRanges(renderPrompt,[model.imageRange]):['rich','material'].includes(model.mode)?{text:'',media:[]}:sliceContent(renderPrompt,0,model.start)}).passage};
@@ -172,6 +192,20 @@ export function mountAnswerTemplate(group,q,{renderContent,registry,fieldFeedbac
   return finish();
  }
  const render=(host,content)=>{if(renderContent)renderContent(host,content);else host.textContent=content.text;};
+ if(plan.mode==='number-symbols'){
+  container.classList.add('quiz-answer-number-symbols');
+  for(const row of plan.rows){
+   const section=doc.createElement('section'),title=doc.createElement('h4'),grid=doc.createElement('div');title.className='quiz-answer-template-title';title.textContent=row.instruction;grid.className='quiz-number-symbol-grid';section.append(title,grid);
+   for(const id of row.fields){
+    const slot=byId.get(id);slot.classList.add('quiz-number-symbol-card');
+    const status=slot.querySelector(':scope > .quiz-field-review-status');if(status){status.title=status.textContent;status.textContent=slot.dataset.fieldReview==='correct'?'✓ 答對':slot.dataset.fieldReview==='incorrect'?'✕ 請修正':'請核對';}
+    for(const note of slot.querySelectorAll('.quiz-field-review-note')){note.title=note.textContent;const state=note.closest('[data-field-result]')?.dataset.fieldResult;note.textContent=state==='correct'?'✓ 選對':state==='wrong'?'✕ 選錯':state==='answer'?'答案':note.textContent;}
+    grid.append(slot);
+   }
+   container.append(section);
+  }
+  return finish();
+ }
  if(plan.mode==='image-panels'){
   container.classList.add('quiz-answer-image-panels');const maxWidth=Math.max(...plan.panels.map(p=>p.crop[2]));
   for(const[i,p]of plan.panels.entries()){
