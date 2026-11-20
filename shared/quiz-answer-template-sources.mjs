@@ -1,5 +1,52 @@
 // Verified source fingerprints and blank offsets; no source text or answers.
 export const answerTemplateSources={
+ "hlg3m_038bc025_rnd35e090bc8d1": {
+  "guard": "1fd9a9e205f83df0",
+  "sourceSha": "c81550a88dda60421ddfb455130cba56a6b14d93ff7d0a85877ab4a79a0a9577",
+  "model": {
+    "mode": "rich",
+    "fields": [
+      "f1",
+      "f2",
+      "f3",
+      "f4",
+      "f5",
+      "f6"
+    ]
+  }
+},
+ "hlg3m_017ff8c2_rn9deb8ee7a0a4": {
+  "guard": "01fcca7243c48cf9",
+  "sourceSha": "47ec3ef43d4c6cae5904666679a80d747b2628cb9264f801d3b711d669e8f04e",
+  "model": {
+    "mode": "rich",
+    "fields": [
+      "f1",
+      "f2",
+      "f3",
+      "f4",
+      "f5",
+      "f6",
+      "f7",
+      "f8",
+      "f9"
+    ]
+  }
+},
+ "hlg3m_001fd48e_rn15d0216e4bdb": {
+  "guard": "b0cd518806e498fb",
+  "sourceSha": "5ede2b22a2212e90aefef84f71f8b791a5c15585996e016407ccac3ffb66dce2",
+  "model": {
+    "mode": "rich",
+    "fields": [
+      "f1",
+      "f2",
+      "f3",
+      "f4",
+      "f5"
+    ]
+  }
+},
  "hlg3m_05d9b0dd_rnebbd022a586c": {
   "guard": "0f4cb2fdeec9ecc3",
   "sourceSha": "8e27f058cdd7a04ccf65af048028741cd6e88dae4357647c0ee9a4bd4e99d79e",

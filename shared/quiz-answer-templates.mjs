@@ -121,6 +121,7 @@ export function mountAnswerTemplate(group,q,{renderContent,registry,fieldFeedbac
   const positions=[];let at=0;for(const node of nodes){positions.push({node,start:at,end:at+node.textContent.length});at+=node.textContent.length;}
   matches.forEach((m,i)=>{const slot=byId.get(q.fields[i].id),input=slot.querySelector('input[type=text],textarea');prepare(slot,input,10,q.fields[i].label);});
   for(let i=matches.length-1;i>=0;i--){const m=matches[i],first=positions.find(n=>m.index>=n.start&&m.index<n.end),last=positions.find(n=>m.index+m[0].length>n.start&&m.index+m[0].length<=n.end),range=doc.createRange();range.setStart(first.node,m.index-first.start);range.setEnd(last.node,m.index+m[0].length-last.start);range.deleteContents();range.insertNode(byId.get(q.fields[i].id));}
+  container.querySelectorAll('.quiz-table-wrap:has(.quiz-answer-template-slot)').forEach(wrapper=>{wrapper.tabIndex=0;wrapper.setAttribute('role','region');wrapper.setAttribute('aria-label','原題表格，可左右捲動');});
   return finish();
  }
  const render=(host,content)=>{if(renderContent)renderContent(host,content);else host.textContent=content.text;};
