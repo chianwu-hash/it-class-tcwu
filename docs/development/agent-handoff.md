@@ -4,11 +4,14 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | Codex-g6-week12-20261120 | 2026-11-20 | 本 PR 合併後的 `origin/main` | `dpl_6wm6o1ukgs7Pg9TaBLiXogGE3cxa` | 六年級第 12 週、打字及葉花目錄、導覽與教師後台週次 | 待完整樹比對及候選驗證 |
+| 已完成 | Codex-g6-week12-20261120 | 2026-11-20T03:49:58.133Z | `d0d574c` | `dpl_6wm6o1ukgs7Pg9TaBLiXogGE3cxa` | admin-progress.html、grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/boss-garden.html、grade6/115-1/boss-garden.js、grade6/115-1/homework.html、grade6/115-1/index.html、grade6/115-1/navbar.js、grade6/115-1/partner-practice.html、grade6/115-1/past-exam-review.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade6/115-1/typing-foundation.html、grade6/115-1/week01.html、grade6/115-1/week02.html、grade6/115-1/week03.html、grade6/115-1/week05-boss-en.html、grade6/115-1/week05-boss-zh.html、grade6/115-1/week05.html、grade6/115-1/week07-boss-en.html、grade6/115-1/week07-boss-zh.html、grade6/115-1/week07.html、grade6/115-1/week08-boss-en.html、grade6/115-1/week08-boss-zh.html、grade6/115-1/week08.html、grade6/115-1/week09-boss-en.html、grade6/115-1/week09-boss-zh.html、grade6/115-1/week09.html、grade6/115-1/week10.html、grade6/115-1/week11-boss-en.html、grade6/115-1/week11-boss-zh.html、grade6/115-1/week11.html、grade6/115-1/zhuyin-foundation.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、my-tree.html、shared/quiz-workshop/generated/assets.json、shared/reward-tree-config.js、shared/typing-challenge.js、+grade6/115-1/images/week12/week12-infographic-1920x1080-q80.webp、+grade6/115-1/week12-boss-en.html、+grade6/115-1/week12-boss-zh.html、+grade6/115-1/week12-boss.js、+grade6/115-1/week12-typing-content.mjs、+grade6/115-1/week12-typing.js、+grade6/115-1/week12.css、+grade6/115-1/week12.html、+grade6/115-1/week12.js、+grade6/LessonPlan/115-1/Week 12.md | `dpl_14XdnLtvfzDi1EBDWfeZTeCpHn3S`／回滾 `dpl_6wm6o1ukgs7Pg9TaBLiXogGE3cxa`（eolOnly 0） |
 
 - 目標：上線前複核 603、604 的兩頁相簿課程與第 12 週獨立中英打／雙魔王。工作樹由 `origin/main` 的 `cdad219f` 建立，Codex 負責程式與發布，Claude 僅做唯讀審查。
 - 範圍：`grade6/115-1/week12*`、學期首頁及導覽、魔王花園、努力樹目錄與本週窄範圍目錄 SQL。完整教學與驗收依 [第 12 週契約](grade6-week12-contract.md)。
 - Claude 兩輪唯讀複核。第一輪指出共用電腦換帳號時舊輸入與進度可能短暫留在畫面。第二輪確認隔離修正並指出同帳號重新確認或權杖更新可能清除輸入。已修正並加入瀏覽器回歸，包括舊讀寫延遲、同帳號事件保留輸入與首次讀取失敗的重試。
+
+- PR #376 合併教學與共用修正。初次候選因導覽雜湊的衍生檔待重新產生而被建置檢查擋下，PR #377 以既有產生器更新練功坊入口版本。第二次候選通過練功坊產物驗證、正式獎勵目錄預檢、完整檔案樹比對與切換前正式部署 ID 檢查。
+- 候選及正式網址各 58 個檔案 HTTP 回讀與 SHA-256 比對通過。桌機 1280px 與手機 390px 的打字原題、換題與雙魔王共 148 行、3094 次亮鍵比對通過。測試使用合成身分與隔離請求，零真人學生寫入。校內相簿可讀，教室學生席的下載與 Canva 批次上傳尚未逐台實測。
 
 # 作品繳交盒規則更正：SOP已補（2026-11-20）
 
