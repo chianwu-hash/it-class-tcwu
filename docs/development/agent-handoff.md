@@ -4,10 +4,12 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | Codex-g9-inline-textbook-20261120 | 2026-11-20 | 待合併的發布 PR | `dpl_HfXMB7TJNNJ9QHJy9TJhdMcrxn46` | 九年級答前原頁閱讀器、PDF.js、練功坊產物、SOP | 隔離驗收後以 main-only 腳本發布 |
+| 已完成 | Codex-g9-inline-textbook-20261120 | 2026-11-20T13:57:37.657Z | `c5a82d4` | `dpl_HfXMB7TJNNJ9QHJy9TJhdMcrxn46` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-past-ui.mjs、shared/quiz-workshop/generated/assets.json、+shared/quiz-publisher-textbook-reader.mjs、+shared/vendor/pdfjs/LICENSE、+shared/vendor/pdfjs/cmaps/Adobe-CNS1-UCS2.bcmap、+shared/vendor/pdfjs/cmaps/LICENSE、+shared/vendor/pdfjs/pdf.min.mjs、+shared/vendor/pdfjs/pdf.worker.min.mjs、+shared/vendor/pdfjs/wasm/LICENSE_JBIG2、+shared/vendor/pdfjs/wasm/LICENSE_OPENJPEG、+shared/vendor/pdfjs/wasm/LICENSE_PDFJS_JBIG2、+shared/vendor/pdfjs/wasm/LICENSE_PDFJS_OPENJPEG、+shared/vendor/pdfjs/wasm/LICENSE_PDFJS_QCMS、+shared/vendor/pdfjs/wasm/LICENSE_QCMS、+shared/vendor/pdfjs/wasm/jbig2.wasm、+shared/vendor/pdfjs/wasm/openjpeg.wasm、+shared/vendor/pdfjs/wasm/qcms_bg.wasm | `dpl_8iMTqEWe5PYwvbsM2E9uRP8Dh2MV`／回滾 `dpl_HfXMB7TJNNJ9QHJy9TJhdMcrxn46`（eolOnly 0） |
 
 - 中正 113／114 上二段自然共 73 題，在題目旁點印刷頁碼直接開啟原頁，可縮放與翻本題相關頁。關閉後焦點回到原按鈕並保留作答，解析仍於送答後顯示。
 - 瀏覽器分段讀取翰林公開、無憑證的學生課本 PDF，頁面在本機繪製。上傳內容只有網站程式與 PDF.js，沒有教材或資料庫變更。
+
+- PR #389 已發布。正式站 33 個變更產物及兩卷入口讀回一致。桌機與手機隔離驗收確認答前開原頁、回到同題保留選答、一次送答及答後解析。兩年度八份翰林分章原檔均抽開對應頁，讀取時無下載操作。
 
 # 中正九年級自然考古卷答前查課本（2026-11-20）
 
