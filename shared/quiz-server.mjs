@@ -303,7 +303,7 @@ export function initServerQuiz({ selectors, server }) {
       if(next.leaf?.learning?.earned_now){celebrateQuizLeaf({leaves:next.leaf.learning.earned_now,kind:'learning'});afterGardenReward();}
       if(next.leaf?.credit_added_now || next.leaf?.earned_now){celebrateQuizLeaf({leaves:next.leaf.awarded_leaf_count??1});afterGardenReward();}
       const fieldReview=q.type==='fields'?(root.querySelector('.quiz-field[data-field-review=incorrect]')||root.querySelector('.quiz-field[data-field-review=paired]')||root.querySelector('.quiz-field[data-field-review=reference]')):null;
-      if(fieldReview){fieldReview.tabIndex=-1;fieldReview.focus({preventScroll:true});fieldReview.scrollIntoView({block:'start',behavior:'instant'});}
+      if(fieldReview){const imageReview=fieldReview.dataset.imageReviewTarget&&root.ownerDocument.getElementById(fieldReview.dataset.imageReviewTarget),target=imageReview&&root.contains(imageReview)?imageReview:fieldReview;target.tabIndex=-1;target.focus({preventScroll:true});target.scrollIntoView({block:'start',behavior:'instant'});}
       else{
         root.querySelector('.answer-preview')?.focus({preventScroll:true});
         if(root.classList.contains('quiz-workspace-active')&&!root.classList.contains('workspace-desktop'))root.querySelector('.answer-preview')?.scrollIntoView({block:'start',behavior:'instant'});

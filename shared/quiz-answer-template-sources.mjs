@@ -1,5 +1,170 @@
 // Verified source fingerprints and blank offsets; no source text or answers.
 export const answerTemplateSources={
+
+  "hlg3m_0140f840_rnb34060bbec77": {
+    "guard": "eee4179a18f23799",
+    "partnerGuard": "d6dbefc9a94aefef",
+    "model": {
+      "mode": "image-blanks",
+      "media_index": 1,
+      "sourceSize": [
+        2400,
+        967
+      ],
+      "width": 880,
+      "blanks": [
+        {
+          "field": "f1",
+          "rect": [
+            675,
+            5,
+            150,
+            145
+          ]
+        },
+        {
+          "field": "f2",
+          "rect": [
+            1875,
+            5,
+            150,
+            145
+          ]
+        },
+        {
+          "field": "f3",
+          "rect": [
+            675,
+            490,
+            150,
+            145
+          ]
+        }
+      ],
+      "bank": [
+        "ㄅ",
+        "ㄆ",
+        "ㄇ"
+      ],
+      "imageRange": [
+        77,
+        78
+      ]
+    }
+  },
+  "hlg3m_02482a99_rn3645dcca8526": {
+    "guard": "a1e013bcbc092b69",
+    "partnerGuard": "c8b09c85c931da7f",
+    "model": {
+      "mode": "image-blanks",
+      "media_index": 0,
+      "sourceSize": [
+        2400,
+        2091
+      ],
+      "width": 880,
+      "blanks": [
+        {
+          "field": "f1",
+          "rect": [
+            555,
+            850,
+            150,
+            150
+          ]
+        },
+        {
+          "field": "f2",
+          "rect": [
+            1745,
+            850,
+            150,
+            150
+          ]
+        },
+        {
+          "field": "f3",
+          "rect": [
+            555,
+            1900,
+            150,
+            150
+          ]
+        }
+      ],
+      "bank": [
+        "ㄅ",
+        "ㄆ",
+        "ㄇ"
+      ],
+      "imageRange": [
+        44,
+        45
+      ]
+    }
+  },
+  "hlg3m_054ad906_rnd08b359ec8b5": {
+    "guard": "584e55d946c07577",
+    "partnerGuard": "052e8c9f2a1bcfa4",
+    "model": {
+      "mode": "image-blanks",
+      "media_index": 0,
+      "sourceSize": [
+        783,
+        219
+      ],
+      "width": 940,
+      "blanks": [
+        {
+          "field": "f1",
+          "rect": [
+            90,
+            61,
+            145,
+            40
+          ]
+        },
+        {
+          "field": "f2",
+          "rect": [
+            572,
+            2,
+            140,
+            40
+          ]
+        },
+        {
+          "field": "f3",
+          "rect": [
+            572,
+            60,
+            140,
+            40
+          ]
+        },
+        {
+          "field": "f4",
+          "rect": [
+            572,
+            169,
+            140,
+            40
+          ]
+        }
+      ],
+      "bank": [
+        "除數",
+        "被除數",
+        "商",
+        "餘數"
+      ],
+      "imageRange": [
+        22,
+        23
+      ]
+    }
+  }
+,
  "hlg3m_046c3bfb_rn143501bbf0ae": {
   "guard": "5fa21bd4ed89f605",
   "sourceSha": "1042f602be0111244154891ac452b0fb2e4b91931a7d04282b5037b9fc0ea7e1",

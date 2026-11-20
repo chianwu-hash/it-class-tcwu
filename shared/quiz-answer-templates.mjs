@@ -4,6 +4,7 @@ import {taskReadingSource,taskReadingPresentation} from './quiz-task-instruction
 import {answerTemplateSources} from './quiz-answer-template-sources.mjs';
 import {openCompositionSources} from './quiz-open-composition-sources.mjs';
 import {projectSourceBoxes} from './quiz-source-boxes.mjs';
+import {deriveImageBlankTemplate,imageBlankPassage,mountImageBlanks} from './quiz-image-blanks.mjs';
 const widthDocuments=new WeakSet();
 function installWidthReflow(doc){
  if(widthDocuments.has(doc)||!doc.defaultView)return;widthDocuments.add(doc);let pending=false;
@@ -173,6 +174,10 @@ export function deriveItemMarkTemplate(q){
 export function answerTemplatePresentation(q,registry=answerTemplateSources){
  const source=taskReadingSource(q),p=registry[source?.id];if(!p)return null;
  const guard=presentationSignature(source);if(p.guard!==guard&&p.partnerGuard!==guard)return null;
+ if(p.model.mode==='image-blanks'){
+  const model=deriveImageBlankTemplate(source,p.model);if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
+  const renderPrompt=projectSourceBoxes(source.prompt,q.prompt);return {...model,source,renderPrompt,passage:imageBlankPassage(renderPrompt,model)};
+ }
  if(p.model.mode==='diagram-symbols'){
   const model=deriveDiagramSymbolTemplate(source,p.model);if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
   const renderPrompt=projectSourceBoxes(source.prompt,q.prompt);return {...model,source,renderPrompt,passage:sliceContent(renderPrompt,0,model.start)};
@@ -198,6 +203,7 @@ export function compactTemplateFeedback(feedback){
 export function mountAnswerTemplate(group,q,{renderContent,registry,fieldFeedback}={}){
  const plan=answerTemplatePresentation(q,registry);if(!plan)return false;const renderPrompt=plan.renderPrompt;
  const slots=[...group.querySelectorAll(':scope > .quiz-field')];if(slots.length!==q.fields.length)return false;
+ if(plan.mode==='image-blanks'&&slots.some(slot=>!slot.querySelector('input[type=text]')||!slot.querySelector('legend')))return false;
  const byId=new Map(q.fields.map((f,i)=>[f.id,slots[i]]));
  const exampleSource=openCompositionSources[plan.source.id],characters=exampleSource?.guard===presentationSignature(plan.source)?exampleSlotCharacters(plan):null;
  slots.forEach(slot=>slot.classList.add('quiz-answer-paired-field'));
@@ -228,6 +234,7 @@ export function mountAnswerTemplate(group,q,{renderContent,registry,fieldFeedbac
   return finish();
  }
  const render=(host,content)=>{if(renderContent)renderContent(host,content);else host.textContent=content.text;};
+ if(plan.mode==='image-blanks'){mountImageBlanks(container,plan,{byId,render});return finish();}
  if(plan.mode==='diagram-symbols'){
   container.classList.add('quiz-answer-diagram-symbols','quiz-answer-number-symbols');const groups=doc.createElement('div');groups.className='quiz-diagram-groups';
   const views=[...(plan.reference?.views||[]),...plan.groups.flatMap(g=>g.views)],maxWidths=new Map();for(const v of views)maxWidths.set(v.media_index,Math.max(maxWidths.get(v.media_index)||0,v.crop[2]));
