@@ -1,12 +1,16 @@
 import {setToolIcon} from '../tool-icons.mjs';
+import {createDrawingEditor} from '../drawing/editor.mjs';
+import {drawingPaper} from '../drawing/render.mjs';
 import {validateSketch} from './contract.mjs';
 import {PEN_COLORS,DEFAULT_PEN,strokeColors,eraseStrokes} from './model.mjs';
 const NS='http://www.w3.org/2000/svg';
-export function sketchImage(value){
+export function sketchImage(value,options={}){
+ if(value?.version===2){validateSketch(value);return drawingPaper(value,options);}
  validateSketch(value);const svg=document.createElementNS(NS,'svg');svg.setAttribute('viewBox','0 0 600 360');svg.setAttribute('role','img');svg.setAttribute('aria-label','夥伴畫下的提示');
  value.strokes.forEach((stroke,i)=>{const p=document.createElementNS(NS,'polyline');p.setAttribute('points',stroke.map(([x,y])=>`${x*600},${y*360}`).join(' '));for(const [k,v]of Object.entries({fill:'none',stroke:strokeColors(value)[i],'stroke-width':'4','stroke-linecap':'round','stroke-linejoin':'round'}))p.setAttribute(k,v);svg.append(p);});return svg;
 }
-export function createSketchEditor(host,{value={version:1,strokes:[]},onChange=()=>{},onSave,messages={},toolbarHost}={}){
+export function createSketchEditor(host,{value={version:1,strokes:[]},onChange=()=>{},onSave,messages={},toolbarHost,drawing,renderContent}={}){
+ if(drawing||value?.version===2)return createDrawingEditor(host,{value,onChange,messages,drawing,renderContent});
  host.classList.add('sketch-editor');value=structuredClone(value);let pointer=null,current=null,path=null,disabled=false,mode='pen',color=DEFAULT_PEN,lastPoint=null,dirty=false;const history=[];
  const tools=document.createElement('div'),palette=document.createElement('div'),undo=document.createElement('button'),clear=document.createElement('button'),eraser=document.createElement('button'),hint=document.createElement('p');
  const button=(text)=>{const b=document.createElement('button');b.type='button';b.textContent=text;return b;};
