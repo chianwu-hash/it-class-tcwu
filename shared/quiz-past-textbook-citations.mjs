@@ -79,10 +79,33 @@ const citations={
  }},
 };
 
+// Original student textbook files. The publisher serves these as PDF downloads.
+const chapterFiles={
+ 113:{
+  2:'03-113國中自然3上課本CH2(113f254841).pdf',
+  3:'04-113國中自然3上課本CH3(113f254842).pdf',
+  5:'07-113國中自然3上課本CH5(113f254845).pdf',
+  6:'08-113國中自然3上課本CH6(113f254846).pdf',
+ },
+ 114:{
+  2:'03-114國中自然3上課本CH2-理化(114f245111).pdf',
+  3:'04-114國中自然3上課本CH3-理化(114f245112).pdf',
+  5:'07-114國中自然3上課本CH5-地科(114f245115).pdf',
+  6:'08-114國中自然3上課本CH6-地科(114f245116).pdf',
+ },
+};
+const firstPrintedPage={2:30,3:62,5:130,6:162};
+
 export function pastTextbookCitation(version,groupId){
  if(!Object.hasOwn(citations,version))return null;
  const {year,rows}=citations[version];
  if(!Object.hasOwn(rows,groupId))return null;
  const [related,...locations]=rows[groupId];
- return {book:year+'上學期翰林版《國中自然科學 3 上》課本',related,sections:locations.map(([chapter,pages])=>({chapter,pages:[...pages]}))};
+ const sections=locations.map(([chapter,pages])=>({
+  chapter,
+  pages:[...pages],
+  pdfPages:pages.map(page=>page-firstPrintedPage[chapter]+1),
+  downloadUrl:'https://resource.hle.com.tw/Books/BooksResource/'+encodeURIComponent(chapterFiles[year][chapter]),
+ }));
+ return {book:year+'上學期翰林版《國中自然科學 3 上》課本',related,sections};
 }
