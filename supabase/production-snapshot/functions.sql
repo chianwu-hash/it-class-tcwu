@@ -2559,7 +2559,7 @@ grant execute on function public.is_teacher() to anon;
 grant execute on function public.is_teacher() to authenticated;
 grant execute on function public.is_teacher() to service_role;
 
--- partner_pilot.learning_snapshot(uuid)  md5=2a8634c909aa6331fc3824213a6aee8e
+-- partner_pilot.learning_snapshot(uuid)  md5=1004e6e1be013387c2ab03f2d0571c4a
 CREATE OR REPLACE FUNCTION partner_pilot.learning_snapshot(rid uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -2589,6 +2589,9 @@ begin
  -- been submitted. Retain only its owner's latest original response.
  if coalesce((result#>>'{exercise,reviewOpen}')::boolean,false) then
   select coalesce(jsonb_agg(n.value||case when q.normal_question->>'type'='fields'
+   or (q.normal_question is null and q.past_meta is null and q.past_config is null
+    and case when jsonb_typeof(q.options)='array'
+     then jsonb_array_length(q.options) between 2 and 8 else false end)
    then jsonb_build_object('attempts',coalesce((
     select jsonb_build_array(jsonb_build_object('choice',a.choice,'value',a.response,'correct',a.correct,'at',a.created_at))
     from partner_pilot.answers a where a.room_id=rid and a.qid=q.id
