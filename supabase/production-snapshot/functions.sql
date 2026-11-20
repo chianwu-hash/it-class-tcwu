@@ -1964,7 +1964,7 @@ revoke all on function public.garden_quiz_leaf_map(jsonb,text) from public, anon
 grant execute on function public.garden_quiz_leaf_map(jsonb,text) to postgres;
 grant execute on function public.garden_quiz_leaf_map(jsonb,text) to service_role;
 
--- garden_test_rewards(text)  md5=abf6f06d50bc2a01c250b0f5b37152b0
+-- garden_test_rewards(text)  md5=04b89122e3b39c4ff69539a111ce7566
 CREATE OR REPLACE FUNCTION public.garden_test_rewards(p_course_id text)
  RETURNS jsonb
  LANGUAGE sql
@@ -1987,7 +1987,10 @@ AS $function$
  ) x
  where t.user_id=auth.uid() and t.course_id=p_course_id and u.email_confirmed_at is not null
  and lower(u.email)='chianwu@apps.ntpc.edu.tw'
- and exists(select 1 from public.student_enrollments e where e.school_year=115 and e.email=lower(u.email) and e.class_code='307' and e.seat_no=30)
+ and exists(select 1 from public.student_enrollments e where e.school_year=115 and e.email=lower(u.email) and e.seat_no=30 and (
+    (t.course_id='grade3-115-1' and e.class_code='307')
+    or (t.course_id='grade6-115-1' and e.class_code='609')
+  ))
 $function$;
 revoke all on function public.garden_test_rewards(text) from public, anon, authenticated, service_role;
 grant execute on function public.garden_test_rewards(text) to postgres;
