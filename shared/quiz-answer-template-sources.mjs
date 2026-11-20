@@ -1,5 +1,225 @@
 // Verified source fingerprints and blank offsets; no source text or answers.
 export const answerTemplateSources={
+ "hlg3m_02cbb5da_rn27991e0ccece": {
+  "guard": "fb6770aabcdfbe1d",
+  "sourceSha": "f07d049aa5fd35266c66cca181f32c9bd98772d97f48c76a166c1faf99b0f1e3",
+  "model": {
+    "mode": "image-panels",
+    "media_index": 1,
+    "sourceSize": [
+      2400,
+      1739
+    ],
+    "width": 230,
+    "imageRange": [
+      47,
+      48
+    ],
+    "panels": [
+      {
+        "field": "f1",
+        "crop": [
+          130,
+          186,
+          576,
+          190
+        ],
+        "unit": "片"
+      },
+      {
+        "field": "f2",
+        "crop": [
+          890,
+          192,
+          592,
+          194
+        ],
+        "unit": "片"
+      },
+      {
+        "field": "f3",
+        "crop": [
+          1679,
+          176,
+          597,
+          196
+        ],
+        "unit": "片"
+      },
+      {
+        "field": "f4",
+        "crop": [
+          130,
+          1046,
+          569,
+          188
+        ],
+        "unit": "片"
+      },
+      {
+        "field": "f5",
+        "crop": [
+          896,
+          1053,
+          587,
+          193
+        ],
+        "unit": "片"
+      },
+      {
+        "field": "f6",
+        "crop": [
+          1700,
+          1049,
+          579,
+          191
+        ],
+        "unit": "片"
+      }
+    ]
+  },
+  "partnerGuard": "2f94768bae0d637b"
+},
+ "hlg3m_02907747_rnbe133bdd4a33": {
+  "guard": "bab9cae2f305723e",
+  "sourceSha": "1b70a328af4ff5a24efef49fa545628f12870361b281380860b131a6ce7b14fd",
+  "model": {
+    "mode": "image-panels",
+    "media_index": 0,
+    "sourceSize": [
+      2400,
+      1745
+    ],
+    "width": 280,
+    "imageRange": [
+      15,
+      16
+    ],
+    "panels": [
+      {
+        "field": "f1",
+        "crop": [
+          23,
+          156,
+          759,
+          1322
+        ],
+        "unit": "公斤"
+      },
+      {
+        "field": "f2",
+        "crop": [
+          817,
+          219,
+          771,
+          1264
+        ],
+        "unit": "公斤"
+      },
+      {
+        "field": "f3",
+        "crop": [
+          1612,
+          164,
+          768,
+          1303
+        ],
+        "unit": "公斤"
+      }
+    ]
+  },
+  "partnerGuard": "a1471b0b936bf1aa"
+},
+ "hlg3m_020ef016_rnffa86add4883": {
+  "guard": "e946cdc234e96274",
+  "sourceSha": "818e04562a132f55697eff1ab98f0532ba54274912e77598c9bb2441c079b2e1",
+  "model": {
+    "mode": "image-panels",
+    "media_index": 0,
+    "sourceSize": [
+      2400,
+      2372
+    ],
+    "width": 280,
+    "imageRange": [
+      13,
+      14
+    ],
+    "panels": [
+      {
+        "field": "f1",
+        "crop": [
+          131,
+          323,
+          956,
+          1795
+        ],
+        "unit": "公斤"
+      },
+      {
+        "field": "f2",
+        "crop": [
+          1320,
+          195,
+          948,
+          1924
+        ],
+        "unit": "公斤"
+      }
+    ]
+  },
+  "partnerGuard": "7c9a94300c3c9091"
+},
+ "hlg3m_013d828e_rn96afb39f7032": {
+  "guard": "49c0e9dc366362e0",
+  "sourceSha": "08e904e116e2a99614cdd97a0abfe6b5af907b1ca7a0d5789d64596b91c77719",
+  "model": {
+    "mode": "image-panels",
+    "media_index": 1,
+    "sourceSize": [
+      2400,
+      1076
+    ],
+    "width": 230,
+    "imageRange": [
+      36,
+      37
+    ],
+    "panels": [
+      {
+        "field": "f1",
+        "crop": [
+          176,
+          177,
+          483,
+          483
+        ],
+        "unit": "張"
+      },
+      {
+        "field": "f2",
+        "crop": [
+          960,
+          177,
+          484,
+          485
+        ],
+        "unit": "張"
+      },
+      {
+        "field": "f3",
+        "crop": [
+          1747,
+          177,
+          483,
+          483
+        ],
+        "unit": "張"
+      }
+    ]
+  },
+  "partnerGuard": "6ba9284234270c43"
+},
  "hlg3m_052341fe_rn12623ad67777": {
   "guard": "938c45aaa95b41e8",
   "sourceSha": "e55baef98baaba4ec7b4dc633f432b4d0d2e529cd8c6ad2c303316bf5fbc4343",

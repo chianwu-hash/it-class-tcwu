@@ -1,7 +1,13 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {deriveAnswerTemplate,deriveGroupedTemplate,deriveOptionTemplate,answerTemplatePresentation,exampleSlotCharacters,growingSlotWidth,compactTemplateFeedback} from '../../shared/quiz-answer-templates.mjs';
+import {deriveAnswerTemplate,deriveGroupedTemplate,deriveOptionTemplate,deriveImagePanelTemplate,answerTemplatePresentation,exampleSlotCharacters,growingSlotWidth,compactTemplateFeedback} from '../../shared/quiz-answer-templates.mjs';
 import {presentationSignature} from '../../shared/quiz-presentation-signature.mjs';
 const q=(text,count,type='open')=>({id:'synthetic',type,prompt:{text,media:[]},fields:Array.from({length:count},(_,i)=>({id:'original-'+i,input:'text',label:'原欄'+i}))});
+
+test('reviewed original image panels retain fixed image bytes, original field order and source units',()=>{
+ const source=q('看原圖填答。',2,'fields');source.fields.forEach((f,i)=>{f.input='math';f.label=`(${i+1})公斤空格`;});source.prompt.media=[{kind:'image',url:'https://example.invalid/original.png',alt:'原題圖'}];source.prompt.layout=[{type:'paragraph',runs:[{type:'text',text:source.prompt.text}]},{type:'paragraph',runs:[{type:'image',media_index:0,width:400}]}];
+ const options={media_index:0,sourceSize:[1000,800],width:280,panels:[{field:'original-0',crop:[0,50,480,650],unit:'公斤'},{field:'original-1',crop:[500,50,480,650],unit:'公斤'}]},before=JSON.stringify(source),model=deriveImagePanelTemplate(source,options);assert.equal(model.mode,'image-panels');assert.equal(JSON.stringify(source),before);const registry={synthetic:{guard:presentationSignature(source),model}},view=answerTemplatePresentation(source,registry);assert.ok(view);assert.equal(view.passage.media.length,0);assert.equal(view.passage.text,source.prompt.text);source.answer={fields:{'original-0':['999']}};assert.ok(answerTemplatePresentation(source,registry));
+ const bad=structuredClone(options);bad.panels[0].crop[2]=1200;assert.equal(deriveImagePanelTemplate(source,bad),null);bad.panels[0]=options.panels[1];assert.equal(deriveImagePanelTemplate(source,bad),null);source.prompt.media[0].url+='-changed';assert.equal(answerTemplatePresentation(source,registry),null);
+});
 
 test('reviewed native fraction blanks retain printed denominators and original integer numerator controls',()=>{
  const source=q('(1)是（ ）條，1＝$\\frac{（ ）}{12}$。\n(2)是（ ）條。',3,'fields');source.fields.forEach((f,i)=>{f.input='math';f.label=i<2?'(1)原欄'+i:'(2)原欄'+i;});

@@ -58,6 +58,17 @@ export function deriveOptionTemplate(q){
  const marks=[...text.matchAll(/[（(][^（）()\n]*[／/][^（）()\n]*[）)]/gu)];if(marks.length!==q.fields.length)return null;
  return {mode:'options',start:0,rows:[{start:0,end:text.length,fields:q.fields.map(f=>f.id)}],blanks:marks.map((m,i)=>({start:m.index+m[0].length,end:m.index+m[0].length,field:q.fields[i].id,width:8})),omissions:[]};
 }
+// Reviewed pixel regions refer to the immutable original image, never a key.
+export function deriveImagePanelTemplate(q,{media_index,sourceSize,width,panels}={}){
+ if(q?.type!=='fields'||!q.fields?.length||q.fields.some(f=>f.input!=='math')||sourceStream(q.prompt)===null||q.prompt.media?.[media_index]?.kind!=='image')return null;
+ if(!Number.isInteger(media_index)||!Array.isArray(sourceSize)||sourceSize.length!==2||sourceSize.some(n=>!Number.isInteger(n)||n<=0)||!Number.isFinite(width)||width<120||width>400||!Array.isArray(panels)||panels.length!==q.fields.length)return null;
+ let at=0;const ranges=[];for(const p of q.prompt.layout||[]){for(const r of p.runs){if(r.type==='image'&&r.media_index===media_index)ranges.push([at,at+1]);at+=r.type==='text'?r.text.length:1;}at++;}if(ranges.length!==1)return null;
+ for(const[i,p]of panels.entries()){
+  const match=/^[（(]([0-9０-９]{1,2})[）)]/u.exec(q.fields[i].label),c=p.crop;
+  if(p.field!==q.fields[i].id||!match||Number(match[1].normalize('NFKC'))!==i+1||!['公斤','張','片'].includes(p.unit)||!Array.isArray(c)||c.length!==4||c.some(n=>!Number.isInteger(n)||n<0)||!c[2]||!c[3]||c[0]+c[2]>sourceSize[0]||c[1]+c[3]>sourceSize[1])return null;
+ }
+ return {mode:'image-panels',media_index,sourceSize,width,imageRange:ranges[0],panels};
+}
 export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=false,underscores=false,grouped=false,groupMarker='number',keepMassUnits=false,fractionNumerators=false,subgroups=false}={}){
  if(!['open','fields'].includes(q?.type)||!q.fields?.length||q.fields.some(f=>!['text','math'].includes(f.input)))return null;
  if(keepMassUnits&&(!grouped||q.fields.some(f=>f.input!=='math')))return null;
@@ -99,9 +110,9 @@ export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=
 export function answerTemplatePresentation(q,registry=answerTemplateSources){
  const source=taskReadingSource(q),p=registry[source?.id];if(!p)return null;
  const guard=presentationSignature(source);if(p.guard!==guard&&p.partnerGuard!==guard)return null;
- const model=p.model.mode==='groups'?deriveGroupedTemplate(source,{groupMarker:p.model.groupMarker}):p.model.mode==='options'?deriveOptionTemplate(source):p.model.mode==='material'&&source.prompt.media.length?{mode:'material',fields:source.fields.map(f=>f.id)}:deriveAnswerTemplate(source,{marked:p.model.mode==='marked',targetOffsets:p.model.targetOffsets,symbols:p.model.symbols,underscores:p.model.underscores,grouped:p.model.mode==='grouped-blanks',groupMarker:p.model.groupMarker,keepMassUnits:p.model.keepMassUnits,fractionNumerators:p.model.fractionNumerators,subgroups:p.model.subgroups});if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
+ const model=p.model.mode==='image-panels'?deriveImagePanelTemplate(source,p.model):p.model.mode==='groups'?deriveGroupedTemplate(source,{groupMarker:p.model.groupMarker}):p.model.mode==='options'?deriveOptionTemplate(source):p.model.mode==='material'&&source.prompt.media.length?{mode:'material',fields:source.fields.map(f=>f.id)}:deriveAnswerTemplate(source,{marked:p.model.mode==='marked',targetOffsets:p.model.targetOffsets,symbols:p.model.symbols,underscores:p.model.underscores,grouped:p.model.mode==='grouped-blanks',groupMarker:p.model.groupMarker,keepMassUnits:p.model.keepMassUnits,fractionNumerators:p.model.fractionNumerators,subgroups:p.model.subgroups});if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
  const renderPrompt=projectSourceBoxes(source.prompt,q.prompt);
- return {...model,source,renderPrompt,passage:taskReadingPresentation(q,{passage:['rich','material'].includes(model.mode)?{text:'',media:[]}:sliceContent(renderPrompt,0,model.start)}).passage};
+ return {...model,source,renderPrompt,passage:taskReadingPresentation(q,{passage:model.mode==='image-panels'?omitRanges(renderPrompt,[model.imageRange]):['rich','material'].includes(model.mode)?{text:'',media:[]}:sliceContent(renderPrompt,0,model.start)}).passage};
 }
 
 // Move the original controls (and listeners/feedback/keyboards), never clone,
@@ -121,7 +132,7 @@ export function mountAnswerTemplate(group,q,{renderContent,registry,fieldFeedbac
  slots.forEach(slot=>slot.classList.add('quiz-answer-paired-field'));
  if(plan.source.prompt.media.length&&!renderContent)throw Error('answer_template_media_renderer_required');
  const doc=group.ownerDocument,container=doc.createElement('div');container.className='quiz-answer-templates';if(plan.mode==='grouped-blanks')container.classList.add('quiz-answer-grouped-blanks');let number=0;
- const finish=()=>{container.querySelectorAll('img').forEach(img=>{img.dataset.imageLightbox='';img.dataset.partnerImage='';img.tabIndex=0;img.setAttribute('role','button');img.setAttribute('aria-label',(img.alt||'原題圖片')+'，點擊放大');});group.classList.add('quiz-has-answer-template');group.append(container);const work=group.querySelector(':scope > .quiz-work-input');if(work)group.append(work);return true;};
+ const finish=()=>{container.querySelectorAll('img').forEach(img=>{img.dataset.imageLightbox='';img.dataset.partnerImage='';if(img.closest('[data-image-panel-proxy]')){img.tabIndex=-1;return;}img.tabIndex=0;img.setAttribute('role','button');img.setAttribute('aria-label',(img.alt||'原題圖片')+'，點擊放大');});group.classList.add('quiz-has-answer-template');group.append(container);const work=group.querySelector(':scope > .quiz-work-input');if(work)group.append(work);return true;};
  const prepare=(slot,input,width,label)=>{slot.classList.add('quiz-answer-template-slot');slot.style.setProperty('--answer-slot-width',width+'ch');slot.querySelector('legend').classList.add('quiz-answer-template-label');input.setAttribute('aria-label',label);
   if(input.disabled&&q.type==='fields'&&q.fields.every(f=>f.input==='math')){
    const index=slots.indexOf(slot),mark=compactTemplateFeedback(fieldFeedback?.[index]);
@@ -146,6 +157,14 @@ export function mountAnswerTemplate(group,q,{renderContent,registry,fieldFeedbac
   return finish();
  }
  const render=(host,content)=>{if(renderContent)renderContent(host,content);else host.textContent=content.text;};
+ if(plan.mode==='image-panels'){
+  container.classList.add('quiz-answer-image-panels');const maxWidth=Math.max(...plan.panels.map(p=>p.crop[2]));
+  for(const[i,p]of plan.panels.entries()){
+   const card=doc.createElement('section'),title=doc.createElement('h4'),frame=doc.createElement('div'),view=doc.createElement('button'),hint=doc.createElement('p'),line=doc.createElement('div'),unit=doc.createElement('span');card.className='quiz-answer-template-row';title.className='quiz-answer-template-title';title.textContent=`第${i+1}小題`;card.setAttribute('role','group');card.setAttribute('aria-label',title.textContent);frame.className='quiz-answer-image-panel-frame';frame.style.width=plan.width+'px';view.type='button';view.className='quiz-answer-image-panel-view';view.dataset.imagePanelProxy='';view.setAttribute('aria-label',title.textContent+'原圖，放大完整原圖');const[x,y,w,h]=p.crop;view.style.width=w/maxWidth*100+'%';view.style.aspectRatio=w+'/'+h;view.style.setProperty('--panel-image-width',plan.sourceSize[0]/w*100+'%');view.style.setProperty('--panel-image-left',-x/w*100+'%');view.style.setProperty('--panel-image-top',-y/h*100+'%');
+   render(view,{text:'',media:[renderPrompt.media[plan.media_index]],layout:[{type:'paragraph',runs:[{type:'image',media_index:0}]}]});view.addEventListener('click',event=>{if(event.target===view)view.querySelector('img')?.click();});frame.append(view);hint.className='quiz-answer-image-panel-hint';hint.textContent='點圖看完整原圖';line.className='quiz-answer-template-line';const slot=byId.get(p.field),input=slot.querySelector('input[type=text],textarea');if(!input)throw Error('answer_template_original_input_required');prepare(slot,input,7,q.fields[i].label);unit.className='quiz-answer-template-unit-text';unit.textContent=p.unit;line.append(slot,unit);card.append(title,frame,hint,line);container.append(card);
+  }
+  return finish();
+ }
  if(plan.mode==='material'){
   if(!renderContent)throw Error('answer_template_media_renderer_required');const source=doc.createElement('section'),answers=doc.createElement('section');source.className='quiz-answer-source-panel';source.tabIndex=0;source.setAttribute('aria-label','原題與共用圖表');render(source,renderPrompt);answers.className='quiz-answer-source-controls';for(const f of q.fields)answers.append(byId.get(f.id));container.classList.add('quiz-answer-material');container.append(source,answers);return finish();
  }
