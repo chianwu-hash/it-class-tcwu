@@ -13,6 +13,7 @@ import {appendSingleChoiceOptions} from './quiz-choice.mjs';
 import {createQuizWorkspace} from './quiz-workspace.mjs';
 import {createQuizStudy,studySourceLabel} from './quiz-study.mjs';
 import {pastTextbookCitation} from './quiz-past-textbook-citations.mjs';
+import {createPublisherTextbookReader} from './quiz-publisher-textbook-reader.mjs';
 import {renderExplanation} from './quiz-explanation-render.mjs';
 import {choiceReviewModel,decorateFieldReviewOption} from './quiz-review-choices.mjs';
 import {pastCorrectionPrompt,pastCorrectionFieldLabel} from './quiz-correction-presentation.mjs';
@@ -28,6 +29,7 @@ const onToolsToggle=()=>{if(active)workspace.refresh();};
 root.addEventListener('toggle',onToolsToggle,true);
 const button=(text,fn,cls)=>{const b=el('button',text,cls);b.type='button';b.addEventListener('click',fn);return b;};
 let state,index=0,busy=false;const drafts=new Map(),clean=new Map(),pending=new Map(),reports=new Map();let tool='point',cursor={x:.5,y:.5},arrowStart=null,undo=[],draftRequest=null;
+let publisherTextbook;
 const study=createQuizStudy({root,kind:'past',getSnapshot:()=>state,resolvePage:resolveTextbook||(()=>Promise.reject(Error('課本暫時無法載入。')))});
 const say=t=>{if(active&&statusElement)statusElement.textContent=t;};
 const api=request;
@@ -41,7 +43,7 @@ const observe=()=>queueMicrotask(()=>{if(active)draftStatus();});
 for(const event of ['input','change','click','pointerup','keydown'])root.addEventListener(event,observe);
 const warn=e=>{if(dirty()){e.preventDefault();e.returnValue='';}};
 window.addEventListener('beforeunload',warn);
-const leave=e=>{const a=e.target.closest?.('a[href]');if(a&&a.getAttribute('href')!=='#'&&dirty()&&!window.confirm('還有未儲存的答案。確定離開？請先按「暫存作答」才能下次接續。'))e.preventDefault();};
+const leave=e=>{const a=e.target.closest?.('a[href]');if(a&&a.target!=='_blank'&&a.getAttribute('href')!=='#'&&dirty()&&!window.confirm('還有未儲存的答案。確定離開？請先按「暫存作答」才能下次接續。'))e.preventDefault();};
 document.addEventListener('click',leave);
 async function saveDraft(){
  if(busy||!active)return;
@@ -76,7 +78,7 @@ function renderPractice(){
  p.history.forEach((h,i)=>{const row=el('tr');row.append(el('td',String(i+1)+(h.id===state.attemptId?'（目前）':'')),el('td',h.complete?`${h.score}／${h.max_score}`:`目前 ${h.score} 分`),el('td',h.complete?(h.passed?'達標':'未達60%'):'未完成'),el('td',h.earned_flower?'開出1朵':'—'));table.append(row);});wrap.append(table);details.append(wrap);box.append(details);host.replaceChildren(box);
  $('#restart').textContent=p.complete?'重新作答':'另開一次作答';
 }
-function render(){if(!active)return;study.refresh();
+function render(){if(!active)return;publisherTextbook?.close();study.refresh();
  workspace.reset();
  stopAudio();
  const g=state.groups[index],saved=state.records[g.id],locked=Boolean(saved)||busy||pending.has(g.id);if(!saved)onView(g.id);const values=currentValue(g),matching=pastMatchingPresentation(g);const summary=state.summary;
@@ -164,14 +166,13 @@ function render(){if(!active)return;study.refresh();
  if(textbook){
   const reference=el('section',undefined,'qtb-card past-textbook-citation');
   reference.append(el('h3','翻課本找線索'),el('p',textbook.book,'helper'));
-  const pages=el('ul');
-  for(const section of textbook.sections){
-   const row=el('li');
-   const link=el('a','下載第'+section.chapter+'章課本 PDF');
-   link.href=section.downloadUrl;link.target='_blank';link.rel='noopener noreferrer';
-   row.append(link,document.createTextNode('｜課本第'+section.pages.join('、')+'頁（PDF 第'+section.pdfPages.join('、')+'頁）'));
-   pages.append(row);
-  }
+  const pages=el('div',undefined,'codes');
+  textbook.sections.flatMap(section=>section.pages).forEach((page,pageIndex)=>{
+   pages.append(button('看課本第'+page+'頁',event=>{
+    publisherTextbook??=createPublisherTextbookReader(root);
+    publisherTextbook.open(textbook,pageIndex,event.currentTarget);
+   },pageIndex===0?'qtb-open':'quiet'));
+  });
   reference.append(pages);
   if(textbook.related)reference.append(el('p','這些頁面說明本題的相關觀念。','helper'));
   card.insertBefore(reference,grid);
@@ -219,6 +220,6 @@ async function submitGroup(){const g=state.groups[index];let packet=pending.get(
 }
 let restartRequest=null;
 $('#restart').addEventListener('click',async()=>{if(busy)return;if(dirty()&&!window.confirm('還有未儲存的答案。要先暫存作答，請按取消。確定另開一次作答？'))return;busy=true;restartRequest??=crypto.randomUUID();try{const next=await api('/api/reset',{requestId:restartRequest});if(!active)return;state=next;restartRequest=null;drafts.clear();clean.clear();pending.clear();draftRequest=null;index=0;undo=[];arrowStart=null;say('');}catch(e){if(active)say(e.message);}finally{if(active){busy=false;render();}}});
-return {load(next){state=next;for(const [id,value] of Object.entries(next.draft?.groups||{})){if(!next.records[id]){drafts.set(id,structuredClone(value));clean.set(id,JSON.stringify(value));}}const found=state.groups.findIndex(g=>g.id===next.draft?.currentGroup);index=found>=0?found:Math.max(0,state.groups.findIndex(g=>!state.records[g.id]));render();draftStatus();},clear(){study.clear();root.removeEventListener('toggle',onToolsToggle,true);workspace.destroy();stopAudio();active=false;window.removeEventListener('beforeunload',warn);document.removeEventListener('click',leave);for(const event of ['input','change','click','pointerup','keydown'])root.removeEventListener(event,observe);drafts.clear();clean.clear();pending.clear();state=null;root.replaceChildren();}};
+return {load(next){state=next;for(const [id,value] of Object.entries(next.draft?.groups||{})){if(!next.records[id]){drafts.set(id,structuredClone(value));clean.set(id,JSON.stringify(value));}}const found=state.groups.findIndex(g=>g.id===next.draft?.currentGroup);index=found>=0?found:Math.max(0,state.groups.findIndex(g=>!state.records[g.id]));render();draftStatus();},clear(){publisherTextbook?.close();study.clear();root.removeEventListener('toggle',onToolsToggle,true);workspace.destroy();stopAudio();active=false;window.removeEventListener('beforeunload',warn);document.removeEventListener('click',leave);for(const event of ['input','change','click','pointerup','keydown'])root.removeEventListener(event,observe);drafts.clear();clean.clear();pending.clear();state=null;root.replaceChildren();}};
 
 }
