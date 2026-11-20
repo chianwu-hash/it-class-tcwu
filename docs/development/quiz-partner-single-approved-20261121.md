@@ -14,4 +14,8 @@ Git LF版SHA256為 `c620f20e51e748ac28dc06d4ee9c6532e837b184e3ff2c3d395f515e71bc
 
 ## 執行狀態
 
-SQL及核准紀錄先經PR進main；此準備階段尚未套正式庫。套用前仍要核對乾淨main、精確SHA、三相關函式基線及全部正式函式／ACL。套用後更新production-snapshot並執行live檢查及9項原生測試，再經PR記回收據。既有Claude單選複核與實際小隊隔離驗收已完成，這次不重做八題試用、不觸碰使用者試用草稿。
+已經PR #399進main `e69b90ce6a45ffa26ca379fd9d3a413a348cf10f`，從該乾淨main checkout核精確SHA及全部正式函式／ACL後套用一次。目標MD5由 `2a8634c909aa6331fc3824213a6aee8e` 變為 `1004e6e1be013387c2ab03f2d0571c4a`；其他179函式、EXECUTE ACL、SECURITY DEFINER及整份schema／policy／trigger定義均保持。SQL沒有正式資料列寫入，不更動題庫或學生作答。
+
+正式快照匯出、180函式live比對及新快照的升級／當前、純多格／混合單選、一般／凍結與依賴漂移共9測試全部通過、零跳過。逐筆資料雜湊保持來自隔離資料庫，不冒稱正式學生OAuth驗收；本次未部署前端、未啟用來源，也未套用簡答或drawing v2擴充。完整私有收據 `D:/AI-Work/conversion-resume-20261120/single-approved-production-receipt.private.json`。
+
+本機套用輔助程式最初仍帶上一輪fields-only的位元組範圍斷言，因此在任何正式查詢／寫入之前自行拒絕；已改成核本次c620原文及763函式本文，確認後只正式套用一次，沒有重跑成功的SQL。之後正式查詢皆明示既有project-ref薄包裝。既有Claude單選複核及實際小隊隔離驗收保留，使用者八題試用不重啟。
