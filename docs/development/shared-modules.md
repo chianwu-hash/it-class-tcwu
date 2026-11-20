@@ -1,5 +1,10 @@
 # 共用模組說明
 
+## 小隊一般單選共同回顧（2026-11-21，候選待發布）
+
+`partner-pilot/single-review.mjs`僅處理已開共同回顧、非past／非normal、2～8原選項的一般單選，沿原零起算索引與原後端correct核對負責人最新作答。缺回應只列參考，不猜選答；判分／參考矛盾採中性提示，不更改原判分。`review-layout`統一就地標註，核對狀態放在role=list之外，更新須保持單一提示；`past-results`只為past裝飾選項，避免雙路徑重複。SQL候選僅在reviewOpen後投影owner_of最新一筆，保留原配題、媒體、凍結及權限；正式套用仍須依精確新版SQL另獲核准。詳[本輪證據與限制](quiz-g3math-resume-20261120.md)。
+
+
 ## 原句括號內圈選（2026-11-21，候選待發布）
 
 `deriveInlineChoiceTemplate`只接受已核定、原句明印逗號分隔選項，且原生`single`欄位的選項數、內容與順序逐項吻合的多欄來源。`inline-choices`將原radio控制移回原句括號位置；精確`grouped` opt-in依原（1）（2）完整保留問題與其後另行印刷的選項、同一小題內①②不拆組，保留前後文、欄位／選項ID、鍵盤、一次送出與後端揭答；不依參考答案反推選項、不把未印選項的簡答題改選答。核對沿既有`quiz-fields-review`，原選項旁顯示選對、選錯及正確答案，錯值不覆寫；只在此模式縮小選項卡並去掉重複A／B及欄位摘要。只有一個圈選位置的新候選依既有canonical契約使用標準`single`，小隊沿真`copy_self`既有單選索引路徑，不能為模板強留一欄fields。詳[本輪來源與驗收](quiz-g3math-resume-20261120.md)。

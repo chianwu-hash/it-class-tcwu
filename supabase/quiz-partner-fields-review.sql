@@ -1,5 +1,6 @@
 -- Pending explicit production SQL approval. Isolated verification first.
--- Extends shared review to ordinary fields; no question, allocation or answer writes.
+-- Extends shared review to ordinary fields and legacy single choices.
+-- No question, allocation or answer writes. Supersedes the unapproved fields-only draft.
 begin;
 do $guard$
 begin
@@ -40,6 +41,9 @@ begin
  -- been submitted. Retain only its owner's latest original response.
  if coalesce((result#>>'{exercise,reviewOpen}')::boolean,false) then
   select coalesce(jsonb_agg(n.value||case when q.normal_question->>'type'='fields'
+   or (q.normal_question is null and q.past_meta is null and q.past_config is null
+    and case when jsonb_typeof(q.options)='array'
+     then jsonb_array_length(q.options) between 2 and 8 else false end)
    then jsonb_build_object('attempts',coalesce((
     select jsonb_build_array(jsonb_build_object('choice',a.choice,'value',a.response,'correct',a.correct,'at',a.created_at))
     from partner_pilot.answers a where a.room_id=rid and a.qid=q.id
