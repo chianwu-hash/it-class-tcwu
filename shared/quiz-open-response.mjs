@@ -62,7 +62,7 @@ export function renderOpenInputs(host,q,{raw='',locked=false,onChange,renderCont
 }
 
 function appendSketch(host,value,label){
- if(!value?.strokes?.length){host.append(make('p','這一欄尚未儲存手寫內容。','helper'));return;}
+ if(!value?.strokes?.length&&!value?.marks?.length){host.append(make('p','這一欄尚未儲存手寫內容。','helper'));return;}
  const svg=sketchImage(value);svg.setAttribute('aria-label',label+'・已儲存手寫內容');svg.classList.add('quiz-open-sketch-saved');host.append(svg,make('p','手寫內容已儲存，請對照參考例答與檢核重點。','helper'));
 }
 export function renderOpenSavedSketches(host,q,raw,{renderContent}={}){

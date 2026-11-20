@@ -9,3 +9,4 @@
 
 .sketch-editor .sketch-actions{gap:8px;margin:12px 0}.sketch-editor .sketch-palette{margin-bottom:8px}.sketch-editor .muted{font-size:.9rem;color:#536c67;line-height:1.5}
 .sketch-editor .sketch-palette button{justify-content:center}.sketch-editor .sketch-color-dot{flex:none;margin:0}
+@import '../drawing/editor.css';
