@@ -58,6 +58,21 @@ export function deriveOptionTemplate(q){
  const marks=[...text.matchAll(/[（(][^（）()\n]*[／/][^（）()\n]*[）)]/gu)];if(marks.length!==q.fields.length)return null;
  return {mode:'options',start:0,rows:[{start:0,end:text.length,fields:q.fields.map(f=>f.id)}],blanks:marks.map((m,i)=>({start:m.index+m[0].length,end:m.index+m[0].length,field:q.fields[i].id,width:8})),omissions:[]};
 }
+// Only literal publisher option banks, in their original order. No answer reads.
+export function deriveInlineChoiceTemplate(q,{grouped=false}={}){
+ if(q?.type!=='fields'||!q.fields?.length||q.fields.some(f=>f.input!=='single'))return null;
+ const text=sourceStream(q.prompt);if(text===null)return null;
+ const banks=[...text.matchAll(/[（(]([^（）()\n]*[，,][^（）()\n]*)[）)]/gu)];if(banks.length!==q.fields.length)return null;
+ const compact=s=>s.replace(/\s/gu,'');
+ for(const[i,m]of banks.entries()){
+  const parts=m[1].split(/[，,]/u).map(s=>s.trim()),options=q.fields[i].options;
+  if(parts.length<2||parts.length>8||parts.some(s=>!s)||!Array.isArray(options)||options.length!==parts.length||options.some((o,j)=>o.content?.media?.length||compact(sourceStream(o.content)??'')!==compact(parts[j])))return null;
+ }
+ let start=text.lastIndexOf('\n',banks[0].index)+1;const rows=[];
+ if(grouped){const headers=[...text.matchAll(/^[ \t　]*[（(]([0-9０-９]{1,2})[）)]/gmu)];if(headers.length<2||headers.some((m,i)=>Number(m[1].normalize('NFKC'))!==i+1)||banks[0].index<headers[0].index)return null;start=headers[0].index;for(const[i,m]of headers.entries()){const end=headers[i+1]?.index??text.length,fields=banks.flatMap((b,j)=>b.index>=m.index&&b.index<end?[q.fields[j].id]:[]);if(!fields.length)return null;rows.push({start:m.index,end,fields});}}
+ else{let at=start;for(const line of text.slice(start).split('\n')){const end=at+line.length+1,fields=banks.flatMap((m,i)=>m.index>=at&&m.index<end?[q.fields[i].id]:[]);rows.push({start:at,end:Math.min(end,text.length),fields});at=end;}}
+ return {mode:'inline-choices',start,rows,blanks:banks.map((m,i)=>({start:m.index,end:m.index+m[0].length,field:q.fields[i].id})),omissions:[],...(grouped?{grouped:true}:{})};
+}
 // Reviewed pixel regions refer to the immutable original image, never a key.
 export function deriveImagePanelTemplate(q,{media_index,sourceSize,width,panels}={}){
  if(q?.type!=='fields'||!q.fields?.length||q.fields.some(f=>f.input!=='math')||sourceStream(q.prompt)===null||q.prompt.media?.[media_index]?.kind!=='image')return null;
@@ -110,7 +125,7 @@ export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=
 export function answerTemplatePresentation(q,registry=answerTemplateSources){
  const source=taskReadingSource(q),p=registry[source?.id];if(!p)return null;
  const guard=presentationSignature(source);if(p.guard!==guard&&p.partnerGuard!==guard)return null;
- const model=p.model.mode==='image-panels'?deriveImagePanelTemplate(source,p.model):p.model.mode==='groups'?deriveGroupedTemplate(source,{groupMarker:p.model.groupMarker}):p.model.mode==='options'?deriveOptionTemplate(source):p.model.mode==='material'&&source.prompt.media.length?{mode:'material',fields:source.fields.map(f=>f.id)}:deriveAnswerTemplate(source,{marked:p.model.mode==='marked',targetOffsets:p.model.targetOffsets,symbols:p.model.symbols,underscores:p.model.underscores,grouped:p.model.mode==='grouped-blanks',groupMarker:p.model.groupMarker,keepMassUnits:p.model.keepMassUnits,fractionNumerators:p.model.fractionNumerators,subgroups:p.model.subgroups});if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
+ const model=p.model.mode==='inline-choices'?deriveInlineChoiceTemplate(source,p.model):p.model.mode==='image-panels'?deriveImagePanelTemplate(source,p.model):p.model.mode==='groups'?deriveGroupedTemplate(source,{groupMarker:p.model.groupMarker}):p.model.mode==='options'?deriveOptionTemplate(source):p.model.mode==='material'&&source.prompt.media.length?{mode:'material',fields:source.fields.map(f=>f.id)}:deriveAnswerTemplate(source,{marked:p.model.mode==='marked',targetOffsets:p.model.targetOffsets,symbols:p.model.symbols,underscores:p.model.underscores,grouped:p.model.mode==='grouped-blanks',groupMarker:p.model.groupMarker,keepMassUnits:p.model.keepMassUnits,fractionNumerators:p.model.fractionNumerators,subgroups:p.model.subgroups});if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
  const renderPrompt=projectSourceBoxes(source.prompt,q.prompt);
  return {...model,source,renderPrompt,passage:taskReadingPresentation(q,{passage:model.mode==='image-panels'?omitRanges(renderPrompt,[model.imageRange]):['rich','material'].includes(model.mode)?{text:'',media:[]}:sliceContent(renderPrompt,0,model.start)}).passage};
 }
@@ -131,7 +146,7 @@ export function mountAnswerTemplate(group,q,{renderContent,registry,fieldFeedbac
  const exampleSource=openCompositionSources[plan.source.id],characters=exampleSource?.guard===presentationSignature(plan.source)?exampleSlotCharacters(plan):null;
  slots.forEach(slot=>slot.classList.add('quiz-answer-paired-field'));
  if(plan.source.prompt.media.length&&!renderContent)throw Error('answer_template_media_renderer_required');
- const doc=group.ownerDocument,container=doc.createElement('div');container.className='quiz-answer-templates';if(plan.mode==='grouped-blanks')container.classList.add('quiz-answer-grouped-blanks');let number=0;
+ const doc=group.ownerDocument,container=doc.createElement('div');container.className='quiz-answer-templates';if(plan.mode==='grouped-blanks')container.classList.add('quiz-answer-grouped-blanks');if(plan.mode==='inline-choices')container.classList.add('quiz-answer-inline-choices');let number=0;
  const finish=()=>{container.querySelectorAll('img').forEach(img=>{img.dataset.imageLightbox='';img.dataset.partnerImage='';if(img.closest('[data-image-panel-proxy]')){img.tabIndex=-1;return;}img.tabIndex=0;img.setAttribute('role','button');img.setAttribute('aria-label',(img.alt||'原題圖片')+'，點擊放大');});group.classList.add('quiz-has-answer-template');group.append(container);const work=group.querySelector(':scope > .quiz-work-input');if(work)group.append(work);return true;};
  const prepare=(slot,input,width,label)=>{slot.classList.add('quiz-answer-template-slot');slot.style.setProperty('--answer-slot-width',width+'ch');slot.querySelector('legend').classList.add('quiz-answer-template-label');input.setAttribute('aria-label',label);
   if(input.disabled&&q.type==='fields'&&q.fields.every(f=>f.input==='math')){
@@ -177,7 +192,9 @@ export function mountAnswerTemplate(group,q,{renderContent,registry,fieldFeedbac
   const line=doc.createElement('div');line.className='quiz-answer-template-line';box.append(line);let at=row.start;
   const text=(a,b)=>{if(a>=b)return;let at=a;const pieces=[];for(const [x,y]of plan.omissions.filter(([x,y])=>x>=a&&y<=b)){if(at<x)pieces.push([at,x]);at=y;}if(at<b)pieces.push([at,b]);for(const [x,y]of pieces){const span=doc.createElement('div');span.className='quiz-answer-template-text';render(span,sliceContent(renderPrompt,x,y));line.append(span);}};
   for(const blank of plan.blanks.filter(b=>row.fields.includes(b.field))){
-   text(at,blank.start);const slot=byId.get(blank.field),input=slot.querySelector('input[type=text],textarea');if(!input)throw Error('answer_template_original_input_required');
+   text(at,blank.start);const slot=byId.get(blank.field);
+   if(plan.mode==='inline-choices'){slot.classList.add('quiz-inline-choice-slot');slot.querySelector('legend').classList.add('quiz-answer-template-label');line.append(slot);at=blank.end;continue;}
+   const input=slot.querySelector('input[type=text],textarea');if(!input)throw Error('answer_template_original_input_required');
    prepare(slot,input,blank.width,`${row.parentNumber?`第${row.parentNumber}組・${row.number}・`:number?`第${number}組・`:''}${slot.querySelector('legend').textContent}`);
    if(characters){slot.classList.add('quiz-answer-example-width');slot.style.setProperty('--answer-slot-characters',characters[blank.field]);}
    if(blank.fraction){
