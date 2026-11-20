@@ -4,9 +4,10 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | Codex-g9-reader-repair-20261120 | 2026-11-20 | 待合併發布 PR | `dpl_8iMTqEWe5PYwvbsM2E9uRP8Dh2MV` | 課本按鈕對比、同章連續翻頁、SOP | 驗收後 main-only 發布 |
+| 已完成 | Codex-g9-reader-repair-20261120 | 2026-11-20T14:11:50.368Z | `4215f29` | `dpl_8iMTqEWe5PYwvbsM2E9uRP8Dh2MV` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-past-ui.mjs、shared/quiz-publisher-textbook-reader.mjs、shared/quiz-textbook-reader.css、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css | `dpl_296z4BBUEfuedAUvNUUdnytkoBVJ`／回滾 `dpl_8iMTqEWe5PYwvbsM2E9uRP8Dh2MV`（eolOnly 0） |
 
 - 根因為 `.codes button` 白底樣式蓋過綠底按鈕，以及舊閱讀器僅列引用頁。入口改用課本專用容器，閱讀器從原 PDF 的 numPages 建立同章連續頁碼，保留原引用頁作為開啟位置。
+- PR #391 正式發布後，以已登入的 114 上二段自然實際場次在 1280／390px 操作通過。第 38 頁入口文字為白字綠底，閱讀器完整列出本章 32 頁，實測 38→39→38→37、章首／章尾及跳回 38；返回題目仍保留選答與焦點，pageerror 0。測試攔截 view 計時寫入，只放行 resume，不送答案／草稿。正式四個主要 runtime 讀回一致，完整部署樹比較 ok:true。截圖與腳本位於本機私有證據目錄及 repair worktree 的 tmp，沒有提交教材或學生資料。
 
 # 中正九年級自然考古卷直接翻課本（2026-11-20）
 
