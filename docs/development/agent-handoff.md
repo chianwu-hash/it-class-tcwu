@@ -1,3 +1,7 @@
+# 一般單選共同回顧：核准版準備（2026-11-21）
+
+- 使用者已補核763efe7e多格＋一般單選函式本文，原文比對相同；本次從最新main482a建立新工作樹，另存single遷移c620f20e，guard現行fields正式2a863。只目標一函式，不含新short範圍，原fields遷移不改／不重套。升級5通過、當前單選快照4明列跳過；main後正式套用／快照live及9全過另記收據。來源／前端未啟用，長線PR396六簡答890727dd成果保留。詳[核准與執行紀錄](quiz-partner-single-approved-20261121.md)。
+
 # 一般多格共同回顧：正式套用與快照驗收（2026-11-21）
 
 - 使用者核准的28920e29多格題版經PR #397進main `2c70ba3e`，從乾淨main核SHA `2d60bd31…`後正式套用一次。只改learning_snapshot，MD5 `ed117acd…`→`2a8634c9…`；其他179函式、ACL、SECURITY DEFINER及schema／policy／trigger保持，無題庫或作答資料列寫入、無前端部署與來源啟用。
