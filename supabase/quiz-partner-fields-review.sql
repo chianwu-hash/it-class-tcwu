@@ -6,6 +6,10 @@ begin
  if md5(pg_get_functiondef('partner_pilot.learning_snapshot(uuid)'::regprocedure)) <> 'ed117acd31cce89bd7622c60288bb307' then
   raise exception 'partner_learning_snapshot_baseline_changed';
  end if;
+ if md5(pg_get_functiondef('partner_pilot.learning_snapshot_pre_message_media(uuid)'::regprocedure)) <> '1064d2e6dece7ae4d027182dc2b42530'
+  or md5(pg_get_functiondef('partner_pilot.owner_of(uuid,integer)'::regprocedure)) <> 'c82e32f88cea2dbbdb5e838bf6684551' then
+  raise exception 'partner_learning_snapshot_dependency_changed';
+ end if;
 end $guard$;
 CREATE OR REPLACE FUNCTION partner_pilot.learning_snapshot(rid uuid)
  RETURNS jsonb
