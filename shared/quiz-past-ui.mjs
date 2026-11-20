@@ -166,7 +166,7 @@ function render(){if(!active)return;publisherTextbook?.close();study.refresh();
  if(textbook){
   const reference=el('section',undefined,'qtb-card past-textbook-citation');
   reference.append(el('h3','翻課本找線索'),el('p',textbook.book,'helper'));
-  const pages=el('div',undefined,'codes');
+  const pages=el('div',undefined,'qtb-page-links');
   textbook.sections.flatMap(section=>section.pages).forEach((page,pageIndex)=>{
    pages.append(button('看課本第'+page+'頁',event=>{
     publisherTextbook??=createPublisherTextbookReader(root);

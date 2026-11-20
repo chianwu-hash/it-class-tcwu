@@ -22,7 +22,6 @@ export function createPublisherTextbookReader(root){
  function releaseChapter(session){
   if(session.loading)void session.loading.destroy().catch(()=>{});
   session.loading=null;
-  session.url=null;
  }
  function finish(session){
   if(active!==session)return;
@@ -35,19 +34,21 @@ export function createPublisherTextbookReader(root){
  }
  function close(){if(active)lightbox.close();}
 
- async function show(session,index){
-  const page=session.pages[index];
+ async function show(session,pdfPage){
+  if(pdfPage<1||pdfPage>session.pageCount)return;
+  const page={printed:session.firstPrinted+pdfPage-1,pdfPage,url:session.url};
   const sequence=++session.sequence;
   const current=()=>active===session&&session.sequence===sequence;
-  session.index=index;
+  session.pdfPage=pdfPage;
   session.rendering?.cancel();
   session.rendering=null;
-  session.select.selectedIndex=index;
-  session.previous.disabled=index===0;
-  session.next.disabled=index===session.pages.length-1;
+  session.select.value=String(pdfPage);
+  session.previous.disabled=true;
+  session.next.disabled=true;
   const title='自然課本第'+page.printed+'頁';
   session.title.textContent=title;
   session.status.textContent='正在開啟課本…';
+  session.status.classList.remove('is-error');
   session.retry.hidden=true;
   session.download.hidden=true;
   const options={fit:'width',initialScale:.8,minScale:.2,zoomStep:.1,toolbar:session.toolbar,closeLabel:'回到題目',onClose:()=>finish(session)};
@@ -55,6 +56,7 @@ export function createPublisherTextbookReader(root){
 
   const fail=()=>{
    session.status.textContent='這一頁暫時無法載入。';
+   session.status.classList.add('is-error');
    session.retry.hidden=false;
    session.download.href=page.url;
    session.download.hidden=false;
@@ -70,7 +72,7 @@ export function createPublisherTextbookReader(root){
   try{
    const pdf=await import('./vendor/pdfjs/pdf.min.mjs');
    if(!current())return;
-   if(session.url!==page.url){
+   if(!session.loading){
     releaseChapter(session);
     pdf.GlobalWorkerOptions.workerSrc=new URL('pdf.worker.min.mjs',vendor).href;
     session.loading=pdf.getDocument({
@@ -83,6 +85,15 @@ export function createPublisherTextbookReader(root){
    }
    const book=await session.loading.promise;
    if(!current())return;
+   session.pageCount=book.numPages;
+   if(session.select.options.length!==book.numPages){
+    session.select.replaceChildren(...Array.from({length:book.numPages},(_,i)=>{
+     const option=element('option','第'+(session.firstPrinted+i)+'頁');
+     option.value=String(i+1);
+     return option;
+    }));
+   }
+   session.select.value=String(pdfPage);
    const source=await book.getPage(page.pdfPage);
    if(!current())return;
    const viewport=source.getViewport({scale:2.55});
@@ -98,7 +109,11 @@ export function createPublisherTextbookReader(root){
    if(session.imageUrl)URL.revokeObjectURL(session.imageUrl);
    session.imageUrl=URL.createObjectURL(image);
    if(!await lightbox.open(session.imageUrl,title,options))throw Error('textbook_image_unavailable');
-   if(current())session.status.textContent='';
+   if(current()){
+    session.status.textContent='';
+    session.previous.disabled=pdfPage===1;
+    session.next.disabled=pdfPage===book.numPages;
+   }
   }catch{
    if(!current())return;
    releaseChapter(session);
@@ -119,20 +134,20 @@ export function createPublisherTextbookReader(root){
   status.className='qtb-reading-status';status.setAttribute('role','status');
   const nav=element('div');nav.className='qtb-page-nav';
   const select=element('select');select.setAttribute('aria-label','選擇本題的課本頁碼');
-  select.append(...pages.map(page=>element('option','第'+page.printed+'頁')));
-  const session={pages,toolbar,title,status,select,trigger,scrollTop:window.scrollY,sequence:0};
-  session.previous=button('‹',()=>void show(session,session.index-1));
-  session.next=button('›',()=>void show(session,session.index+1));
+  const page=pages[index];
+  const session={url:page.url,firstPrinted:page.printed-page.pdfPage+1,pageCount:Infinity,toolbar,title,status,select,trigger,scrollTop:window.scrollY,sequence:0};
+  session.previous=button('‹',()=>void show(session,session.pdfPage-1));
+  session.next=button('›',()=>void show(session,session.pdfPage+1));
   session.previous.setAttribute('aria-label','上一頁');
   session.next.setAttribute('aria-label','下一頁');
-  session.retry=button('再試一次',()=>void show(session,session.index));
+  session.retry=button('再試一次',()=>void show(session,session.pdfPage));
   session.download=element('a','下載出版社原檔');
   session.download.target='_blank';session.download.rel='noopener noreferrer';
-  select.onchange=()=>void show(session,select.selectedIndex);
+  select.onchange=()=>void show(session,Number(select.value));
   nav.append(session.previous,select,session.next);
   toolbar.append(title,nav,status,session.retry,session.download);
   active=session;
-  void show(session,index);
+  void show(session,page.pdfPage);
  }
 
  return {open,close};
