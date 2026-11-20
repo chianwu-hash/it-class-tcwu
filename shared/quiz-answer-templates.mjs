@@ -158,6 +158,18 @@ export function deriveDiagramSymbolTemplate(q,{groups,reference}={}){
  if(used.size!==q.prompt.media.length)return null;
  return {mode:'diagram-symbols',start:end,groups,...(reference?{reference}:{})};
 }
+// Unmarked is a paper gesture state, not an answer inferred from a key.
+export function deriveItemMarkTemplate(q){
+ if(q?.type!=='fields'||q.prompt?.media?.length||!q.fields?.length||q.fields.some(f=>f.input!=='single'))return null;
+ const text=sourceStream(q.prompt);if(text===null)return null;const lines=text.trim().split('\n').filter(s=>s.trim()),instruction=lines[0];
+ const task=/^比比看，最重的(?:打|畫)([ˇ○╳])，最輕的(?:打|畫)([ˇ○╳])。$/u.exec(instruction);if(!task||task[1]===task[2]||lines.length!==q.fields.length+1)return null;
+ const symbols=[task[1],task[2],'留白'],unmarked={};
+ for(const[i,f]of q.fields.entries()){
+  const m=/^[（(][\s　]*[）)]([（(]([0-9０-９]+)[）)]\s*[0-9０-９]+\s*(?:公斤|公克)(?:\s*[0-9０-９]+\s*公克)?)$/u.exec(lines[i+1].trim());
+  if(!m||Number(m[2].normalize('NFKC'))!==i+1||f.label!==m[1]||f.options?.length!==3||f.options.some((o,j)=>o.content?.media?.length||sourceStream(o.content)!==symbols[j]))return null;unmarked[f.id]=f.options[2].id;
+ }
+ return {mode:'item-marks',start:0,rows:[{instruction,fields:q.fields.map(f=>f.id)}],unmarked};
+}
 export function answerTemplatePresentation(q,registry=answerTemplateSources){
  const source=taskReadingSource(q),p=registry[source?.id];if(!p)return null;
  const guard=presentationSignature(source);if(p.guard!==guard&&p.partnerGuard!==guard)return null;
@@ -165,8 +177,8 @@ export function answerTemplatePresentation(q,registry=answerTemplateSources){
   const model=deriveDiagramSymbolTemplate(source,p.model);if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
   const renderPrompt=projectSourceBoxes(source.prompt,q.prompt);return {...model,source,renderPrompt,passage:sliceContent(renderPrompt,0,model.start)};
  }
- if(p.model.mode==='number-symbols'){
-  const model=deriveNumberSymbolTemplate(source);if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
+ if(['number-symbols','item-marks'].includes(p.model.mode)){
+  const model=p.model.mode==='item-marks'?deriveItemMarkTemplate(source):deriveNumberSymbolTemplate(source);if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
   return {...model,source,renderPrompt:projectSourceBoxes(source.prompt,q.prompt),passage:{text:'',media:[]}};
  }
  const model=p.model.mode==='inline-choices'?deriveInlineChoiceTemplate(source,p.model):p.model.mode==='image-panels'?deriveImagePanelTemplate(source,p.model):p.model.mode==='groups'?deriveGroupedTemplate(source,{groupMarker:p.model.groupMarker}):p.model.mode==='options'?deriveOptionTemplate(source):p.model.mode==='material'&&source.prompt.media.length?{mode:'material',fields:source.fields.map(f=>f.id)}:deriveAnswerTemplate(source,{marked:p.model.mode==='marked',targetOffsets:p.model.targetOffsets,symbols:p.model.symbols,underscores:p.model.underscores,grouped:p.model.mode==='grouped-blanks',groupMarker:p.model.groupMarker,keepMassUnits:p.model.keepMassUnits,fractionNumerators:p.model.fractionNumerators,subgroups:p.model.subgroups});if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
@@ -228,10 +240,18 @@ export function mountAnswerTemplate(group,q,{renderContent,registry,fieldFeedbac
   }
   container.append(groups);return finish();
  }
- if(plan.mode==='number-symbols'){
+ if(['number-symbols','item-marks'].includes(plan.mode)){
   container.classList.add('quiz-answer-number-symbols');
+  if(plan.mode==='item-marks'){
+   container.classList.add('quiz-answer-item-marks');
+   let completing=false;container.addEventListener('change',event=>{
+    if(completing||event.target.type!=='radio'||event.target.disabled)return;completing=true;
+    try{for(const [id,value]of Object.entries(plan.unmarked)){const slot=byId.get(id);if(!slot.querySelector('input[type=radio]:checked'))[...slot.querySelectorAll('input[type=radio]')].find(input=>input.value===value)?.click();}}finally{completing=false;}
+   });
+  }
   for(const row of plan.rows){
-   const section=doc.createElement('section'),title=doc.createElement('h4'),grid=doc.createElement('div');title.className='quiz-answer-template-title';title.textContent=row.instruction;grid.className='quiz-number-symbol-grid';section.append(title,grid);
+   const section=doc.createElement('section'),title=doc.createElement('h4'),grid=doc.createElement('div');title.className='quiz-answer-template-title';title.textContent=row.instruction;grid.className='quiz-number-symbol-grid';section.append(title);
+   if(plan.mode==='item-marks'){const hint=doc.createElement('p');hint.className='helper';hint.textContent=slots.every(slot=>!slot.querySelector('input[type=radio]:not(:disabled)'))?'原標記已保留；「留白」表示該項目沒有標記。':'選擇要標的符號；其他項目保留空白，也可以選「留白」清除標記。';section.append(hint);}section.append(grid);
    for(const id of row.fields){
     const slot=byId.get(id);slot.classList.add('quiz-number-symbol-card');
     const status=slot.querySelector(':scope > .quiz-field-review-status');if(status){status.title=status.textContent;status.textContent=slot.dataset.fieldReview==='correct'?'✓ 答對':slot.dataset.fieldReview==='incorrect'?'✕ 請修正':'請核對';}

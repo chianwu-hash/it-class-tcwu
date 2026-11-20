@@ -1,5 +1,109 @@
 // Verified source fingerprints and blank offsets; no source text or answers.
 export const answerTemplateSources={
+ "hlg3m_046c3bfb_rn143501bbf0ae": {
+  "guard": "5fa21bd4ed89f605",
+  "sourceSha": "1042f602be0111244154891ac452b0fb2e4b91931a7d04282b5037b9fc0ea7e1",
+  "model": {
+    "mode": "item-marks",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "比比看，最重的打ˇ，最輕的畫○。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4"
+        ]
+      }
+    ],
+    "unmarked": {
+      "f1": "o3",
+      "f2": "o3",
+      "f3": "o3",
+      "f4": "o3"
+    }
+  },
+  "partnerGuard": "5fa21bd4ed89f605"
+},
+ "hlg3m_031f306a_rnff194c179d14": {
+  "guard": "cf26aaf1f39a514d",
+  "sourceSha": "f6fe170e7af6d9e6f4200744a0fa2dc689f508efbc74465c1ae4fbb00e758e86",
+  "model": {
+    "mode": "item-marks",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "比比看，最重的打ˇ，最輕的畫○。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4"
+        ]
+      }
+    ],
+    "unmarked": {
+      "f1": "o3",
+      "f2": "o3",
+      "f3": "o3",
+      "f4": "o3"
+    }
+  },
+  "partnerGuard": "cf26aaf1f39a514d"
+},
+ "hlg3m_028014c2_rna73eeabb35ba": {
+  "guard": "db80540874d8bffd",
+  "sourceSha": "4374c08bde42033f44967f917c8e59a229664a0b25a5f7722c8f9dc047fd39bc",
+  "model": {
+    "mode": "item-marks",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "比比看，最重的打ˇ，最輕的畫○。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4"
+        ]
+      }
+    ],
+    "unmarked": {
+      "f1": "o3",
+      "f2": "o3",
+      "f3": "o3",
+      "f4": "o3"
+    }
+  },
+  "partnerGuard": "db80540874d8bffd"
+},
+ "hlg3m_012b6ceb_rn832ec67aa1dd": {
+  "guard": "c43a7b4f68442a15",
+  "sourceSha": "9a2af0b6dbfbff664c79d9de4d5758d6ccd8420aed55222b64f8b97733dbb23b",
+  "model": {
+    "mode": "item-marks",
+    "start": 0,
+    "rows": [
+      {
+        "instruction": "比比看，最重的打ˇ，最輕的畫○。",
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4"
+        ]
+      }
+    ],
+    "unmarked": {
+      "f1": "o3",
+      "f2": "o3",
+      "f3": "o3",
+      "f4": "o3"
+    }
+  },
+  "partnerGuard": "c43a7b4f68442a15"
+},
  "hlg3m_05109334_rnacf0b80072a3": {
   "guard": "36250158461ddf62",
   "sourceSha": "a5971ddfa370aa7c8cadb00227ff3ab223a6c90055c5df03d6f72506d3559b9c",
