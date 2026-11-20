@@ -1,7 +1,7 @@
 // The server supplies read-only, separate rehearsal credits for one teacher test
 // account. Other students do not make this request or receive synthetic progress.
 export async function withGardenTestRewards(model,{supabase,session,courseId}){
- if(session?.user?.email?.trim().toLowerCase()!=='chianwu@apps.ntpc.edu.tw'||courseId!=='grade3-115-1')return model;
+ if(session?.user?.email?.trim().toLowerCase()!=='chianwu@apps.ntpc.edu.tw'||!['grade3-115-1','grade6-115-1'].includes(courseId))return model;
  let request=supabase.rpc('garden_test_rewards',{p_course_id:courseId});
  if(request.abortSignal)request=request.abortSignal(AbortSignal.timeout(10000));
  const {data,error}=await request;if(error)throw new Error('升級體驗準備資料暫時無法讀取，請重新整理。');

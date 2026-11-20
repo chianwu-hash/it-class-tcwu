@@ -1743,15 +1743,15 @@
    ],
    "constraints": [
     {
-     "def": "CHECK ((course_id = 'grade3-115-1'::text))",
+     "def": "CHECK ((course_id = ANY (ARRAY['grade3-115-1'::text, 'grade6-115-1'::text])))",
      "name": "garden_test_setup_course_id_check"
     },
     {
-     "def": "CHECK (((flowers >= 0) AND (flowers <= 10)))",
+     "def": "CHECK (((flowers >= 0) AND (flowers <=\nCASE course_id\n    WHEN 'grade3-115-1'::text THEN 10\n    ELSE 22\nEND)))",
      "name": "garden_test_setup_flowers_check"
     },
     {
-     "def": "CHECK (((leaves >= 0) AND (leaves <= 43)))",
+     "def": "CHECK (((leaves >= 0) AND (leaves <=\nCASE course_id\n    WHEN 'grade3-115-1'::text THEN 43\n    ELSE 92\nEND)))",
      "name": "garden_test_setup_leaves_check"
     },
     {
