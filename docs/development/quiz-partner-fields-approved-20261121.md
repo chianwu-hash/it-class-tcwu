@@ -13,4 +13,10 @@
 
 ## 執行狀態
 
-核准版 SQL 與測試已備妥，尚未套用正式庫。先經 PR 進 main，再從乾淨 main 取核准檔套用；成功後立即更新 production-snapshot 並執行 live 比對。函式、ACL、相依或 schema 出現非預期差異即停止，不重跑歷史修正或重套 SQL。
+已經 PR #397 合併到 main `2c70ba3ed51d97b488ed884d48280eab9f406574`，並從該乾淨 main checkout 核對核准檔 SHA 後套用正式庫一次。正式函式 MD5 從 `ed117acd31cce89bd7622c60288bb307` 變為 `2a8634c909aa6331fc3824213a6aee8e`，其他179個函式、EXECUTE ACL、SECURITY DEFINER及整份schema／policy／trigger定義均保持。
+
+隨即匯出快照、執行 `db-snapshot-check.mjs --live`，180函式比對通過；新快照的升級／當前函式、一般／凍結小隊及依賴漂移共5項測試全部通過、零跳過。正式SQL只有函式與既有EXECUTE權限定義，不含題目、配題、答案或歷次資料列寫入；逐筆資料雜湊保持的測試證據來自隔離資料庫，不冒稱正式學生介面OAuth驗收。本次不部署前端、不啟用新來源。
+
+CLI在全新工作目錄以 `--linked` 自動推導連線時先遇到IPv6設定問題，當時沒有正式寫入。改以工具原有 `--cli` 參數使用明示 `--project-ref upxgyusodibaqcrocdzj` 的本機薄包裝後，完整前後live檢查與匯出通過；沒有重設資料庫、重跑舊SQL或暴露連線憑證。完整私有收據位於 `D:/AI-Work/conversion-resume-20261120/fields-approved-production-receipt.private.json`。
+
+PR396的legacy single候選仍待補充核准，原本以舊MD5為前置條件的合併版已不能直接套用。後續須以本次正式多格版為基線，另外準備單選擴充；原核准檔保留不改，也不重套。

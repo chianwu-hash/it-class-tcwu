@@ -1,11 +1,11 @@
-# 正式版資料庫快照（public schema）
+# 正式版資料庫快照（public／partner_pilot schema）
 
-來源：Supabase 專案 `upxgyusodibaqcrocdzj`，2026-11-05 以 `automation/db-schema-snapshot.mjs` 唯讀匯出（只查系統目錄，不含任何資料列）。本次只擴充夥伴練功圖片描述函式的來源URL、內容校驗碼與媒體後端資訊；原小隊／揭答授權、所有函式權限與其他函式定義不變。
+來源：Supabase 專案 `upxgyusodibaqcrocdzj`，2026-11-21以 `automation/db-schema-snapshot.mjs` 唯讀匯出（只查系統目錄，不含任何資料列）。本次只更新已核准的一般多格題共同回顧函式，完成後回傳原負責人的最新實際作答；原小隊／揭答授權、所有函式權限、其他179個函式及schema定義保持，不含待核准的單選擴充。詳[套用與驗收](../../docs/development/quiz-partner-fields-approved-20261121.md)。
 
 | 檔案 | 內容 |
 | --- | --- |
-| `functions.sql` | 145 個函式的 `pg_get_functiondef()` 原文＋正式版 EXECUTE 權限（先對 `public, anon, authenticated, service_role` 全部撤銷，再依正式 ACL 授權），可直接重放 |
-| `schema.json` | 97 張表／view 的欄位、constraint、index、RLS 開關與 ACL；21 條 policy、9 個 trigger、sequence、type、extension |
+| `functions.sql` | 180 個函式的 `pg_get_functiondef()` 原文＋正式版 EXECUTE 權限（先對 `public, anon, authenticated, service_role` 全部撤銷，再依正式 ACL 授權），可直接重放 |
+| `schema.json` | 112 張表／view 的欄位、constraint、index、RLS 開關與 ACL；21 條 policy、22 個 trigger、sequence、type、extension |
 | `manifest.json` | 每個函式的 md5、SECURITY DEFINER、ACL，以及 `functions.sql` 的 SHA256 |
 
 整個資料夾在 `.gitattributes` 標為 `-text`，checkout 後位元組不變，雜湊才能比對。
