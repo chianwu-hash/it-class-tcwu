@@ -47,7 +47,7 @@ export function deriveOptionTemplate(q){
  const marks=[...text.matchAll(/[（(][^（）()\n]*[／/][^（）()\n]*[）)]/gu)];if(marks.length!==q.fields.length)return null;
  return {mode:'options',start:0,rows:[{start:0,end:text.length,fields:q.fields.map(f=>f.id)}],blanks:marks.map((m,i)=>({start:m.index+m[0].length,end:m.index+m[0].length,field:q.fields[i].id,width:8})),omissions:[]};
 }
-export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=false,underscores=false}={}){
+export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=false,underscores=false,grouped=false}={}){
  if(!['open','fields'].includes(q?.type)||!q.fields?.length||q.fields.some(f=>!['text','math'].includes(f.input)))return null;
  const stream=sourceStream(q.prompt);
  if(stream===null){
@@ -61,6 +61,11 @@ export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=
  const targets=targetOffsets?targetOffsets.map(index=>({index,0:''})):marked?[...stream.matchAll(/「[^「」\n]+」/gu)]:matches;
  if(targets.length!==q.fields.length)return null;
  const blanks=targets.map((m,i)=>({start:m.index+(marked?m[0].length:0),end:m.index+m[0].length,field:q.fields[i].id,width:m[0]==='□'?4:marked?7:Math.max(7,Math.min(18,m[0].replace(/[（()）\n\r]/gu,'').length))}));
+ if(grouped){
+  if(marked||targetOffsets)return null;const groups=deriveGroupedTemplate(q);if(!groups)return null;
+  if(groups.rows.some(row=>JSON.stringify(blanks.filter(b=>b.start>=row.start&&b.end<=row.end).map(b=>b.field))!==JSON.stringify(row.fields)))return null;
+  return {mode:'grouped-blanks',start:groups.start,rows:groups.rows,blanks,omissions:[],...(symbols?{symbols}:{}),...(underscores?{underscores}:{})};
+ }
  const start=stream.lastIndexOf('\n',Math.min(blanks[0].start,matches[0].index)-1)+1,rows=[];let at=start;
  // Newlines inside a publisher blank are not a new sentence/group.
  const limit=stream.length,omissions=marked?matches.map(m=>[m.index,m.index+m[0].length]):[];
@@ -71,8 +76,8 @@ export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=
  return {mode:marked?'marked':'blanks',start,rows,blanks,omissions,...(targetOffsets?{targetOffsets}:{}),...(symbols?{symbols}:{}),...(underscores?{underscores}:{})};
 }
 export function answerTemplatePresentation(q,registry=answerTemplateSources){
- const source=taskReadingSource(q),p=registry[source?.id];if(!p||p.guard!==presentationSignature(source))return null;
- const model=p.model.mode==='groups'?deriveGroupedTemplate(source):p.model.mode==='options'?deriveOptionTemplate(source):p.model.mode==='material'&&source.prompt.media.length?{mode:'material',fields:source.fields.map(f=>f.id)}:deriveAnswerTemplate(source,{marked:p.model.mode==='marked',targetOffsets:p.model.targetOffsets,symbols:p.model.symbols,underscores:p.model.underscores});if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
+ const source=taskReadingSource(q),p=registry[source?.id],guard=presentationSignature(source);if(!p||p.guard!==guard&&p.partnerGuard!==guard)return null;
+ const model=p.model.mode==='groups'?deriveGroupedTemplate(source):p.model.mode==='options'?deriveOptionTemplate(source):p.model.mode==='material'&&source.prompt.media.length?{mode:'material',fields:source.fields.map(f=>f.id)}:deriveAnswerTemplate(source,{marked:p.model.mode==='marked',targetOffsets:p.model.targetOffsets,symbols:p.model.symbols,underscores:p.model.underscores,grouped:p.model.mode==='grouped-blanks'});if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
  const renderPrompt=projectSourceBoxes(source.prompt,q.prompt);
  return {...model,source,renderPrompt,passage:taskReadingPresentation(q,{passage:['rich','material'].includes(model.mode)?{text:'',media:[]}:sliceContent(renderPrompt,0,model.start)}).passage};
 }

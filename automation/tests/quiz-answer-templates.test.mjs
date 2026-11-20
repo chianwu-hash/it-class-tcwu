@@ -3,6 +3,22 @@ import {deriveAnswerTemplate,deriveGroupedTemplate,deriveOptionTemplate,answerTe
 import {presentationSignature} from '../../shared/quiz-presentation-signature.mjs';
 const q=(text,count,type='open')=>({id:'synthetic',type,prompt:{text,media:[]},fields:Array.from({length:count},(_,i)=>({id:'original-'+i,input:'text',label:'原欄'+i}))});
 
+test('reviewed numbered blanks keep each diagram and its original input in one complete source group',()=>{
+ const source=q('看圖填分數。\n(１)\n（ ）條\n(２)\n（ ）條',2,'fields');source.fields.forEach((f,i)=>f.label=`(${i+1})條數`);
+ source.prompt.layout=[{type:'paragraph',runs:[{type:'text',text:'看圖填分數。'}]},...['１','２'].flatMap((n,i)=>[{type:'paragraph',runs:[{type:'text',text:`(${n})`}]},{type:'paragraph',runs:[{type:'image',media_index:i,width:150}]},{type:'paragraph',runs:[{type:'text',text:'（ ）條'}]}])];
+ source.prompt.media=[0,1].map(i=>({kind:'image',url:'https://example.invalid/'+i,alt:'原圖'}));
+ const model=deriveAnswerTemplate(source,{grouped:true});assert.equal(model.mode,'grouped-blanks');assert.equal(model.rows.length,2);assert.deepEqual(model.rows.map(r=>r.fields),[['original-0'],['original-1']]);
+ const registry={synthetic:{guard:presentationSignature(source),model}};assert.equal(answerTemplatePresentation(source,registry).mode,'grouped-blanks');
+ source.fields[0].label='(2)條數';assert.equal(deriveAnswerTemplate(source,{grouped:true}),null);
+});
+
+test('a reviewed self-copy media signature preserves its exact layout while unknown copies stay unadapted',()=>{
+ const source=q('（ ）',1,'fields');source.prompt.media=[{kind:'image',url:'https://quiz-media.invalid/00000000-0000-4000-8000-000000000001/'+'a'.repeat(64),alt:'原圖'}];source.prompt.layout=[{type:'paragraph',runs:[{type:'text',text:'（ ）'},{type:'image',media_index:0,width:120}]}];
+ const copied=structuredClone(source);copied.prompt.media[0].url='https://partner-media.invalid/'+'b'.repeat(64);
+ const model=deriveAnswerTemplate(source),registry={synthetic:{guard:presentationSignature(source),partnerGuard:presentationSignature(copied),model}};
+ assert.ok(answerTemplatePresentation(source,registry));assert.ok(answerTemplatePresentation(copied,registry));copied.prompt.media[0].url='https://partner-media.invalid/'+'c'.repeat(64);assert.equal(answerTemplatePresentation(copied,registry),null);
+});
+
 test('compact math feedback consumes revealed states without judging numeric equivalence or changing the reference',()=>{
  const reference={input:'math',state:'reference',value:'01',accepted:['1','1']},before=JSON.stringify(reference);
  assert.deepEqual(compactTemplateFeedback(reference),{state:'reference',text:'參考：1'});

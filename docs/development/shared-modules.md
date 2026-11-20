@@ -1,5 +1,9 @@
 # 共用模組說明
 
+## 數學看圖小題的原位分組（2026-11-20，候選待發布）
+
+`quiz-answer-templates.mjs`新增精確核定的`grouped-blanks`模型，依原編號、欄位歸屬及空格位置保留整個小題的圖文與輸入同卡。個人及夥伴共用原控制項，不改答案、保存或送出。自組卷複製媒體命名空間另有已核複本`partnerGuard`；未知指紋拒絕套用，不能替代原媒體授權。詳[來源與限制](quiz-g3math-resume-20261120.md)。一般fields小隊最新作答讀取的SQL修正另待明示核准。
+
 ## 單純造詞的簡潔解析（2026-11-19）
 
 `quiz-word-meaning-review.mjs`以既有來源題型與模板指紋識別單純造詞，`quiz-word-meaning-guides.mjs`提供固定的簡短字義和多個例詞。`quiz-open-response.mjs`共用一字詞一卡，`quiz-server.mjs`及夥伴feedback／共同回顧在完整引導已可呈現時省去重複說明；缺來源、引導或授權仍沿原流程。原答案、原欄位、保存、自評與權限不變。詳[範圍與驗收](quiz-word-meaning-review-20261119.md)。
