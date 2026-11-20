@@ -4,10 +4,11 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | Codex-g9-natural-textbook-20261120 | 2026-11-20 | 待合併的發布 PR | `dpl_CULWeFF3GjfhsznTqYx8WTkQupN4` | 考古卷課本對照、練功坊產物、SOP | 隔離驗收後以 main-only 腳本發布 |
+| 已完成 | Codex-g9-natural-textbook-20261120 | 2026-11-20T13:26:38.691Z | `82ca122` | `dpl_CULWeFF3GjfhsznTqYx8WTkQupN4` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-past-ui.mjs、shared/quiz-workshop/generated/assets.json、+shared/quiz-past-textbook-citations.mjs | `dpl_DDwfWKFUJHe7B6ZepQ37Db8QAbUF`／回滾 `dpl_CULWeFF3GjfhsznTqYx8WTkQupN4`（eolOnly 0） |
 
 - 113／114 上二段自然共 73 題，逐題核對翰林各年度學生課本，固定版本、章節與印刷頁。送答後在原有解析下方顯示課本對照。整頁使用依據尚未確認，先發布版次與印刷頁碼。
 - 本批維持既有原卷、固定解析、作答與判分。正式套用範圍為網站文件與程式，無資料庫變更。
+- PR #385 已於臺灣時間 20:27 發布。正式站 19 個變更產物與兩卷網址讀回符合 main。隔離九年級入口以 1280／390 像素驗證兩卷送答後顯示、單次送答與既有作答保留，未使用正式學生帳號送答。
 
 # 考古題附圖尺寸（2026-11-20）
 
