@@ -1,5 +1,77 @@
 // Verified source fingerprints and blank offsets; no source text or answers.
 export const answerTemplateSources={
+ "hlg3m_05203aaf_rn11813cbea706": {
+  "guard": "38f5a9ae6b29fcee",
+  "sourceSha": "be169e4fdf621a1f4374b4469010944be0175f19a608882e745935bf75f3f6f5",
+  "model": {
+    "mode": "blanks",
+    "start": 54,
+    "rows": [
+      {
+        "start": 54,
+        "end": 81,
+        "fields": [
+          "f1",
+          "f2",
+          "f3",
+          "f4"
+        ]
+      },
+      {
+        "start": 82,
+        "end": 103,
+        "fields": [
+          "f5",
+          "f6"
+        ]
+      },
+      {
+        "start": 104,
+        "end": 127,
+        "fields": []
+      }
+    ],
+    "blanks": [
+      {
+        "start": 54,
+        "end": 60,
+        "field": "f1",
+        "width": 7
+      },
+      {
+        "start": 61,
+        "end": 67,
+        "field": "f2",
+        "width": 7
+      },
+      {
+        "start": 68,
+        "end": 74,
+        "field": "f3",
+        "width": 7
+      },
+      {
+        "start": 75,
+        "end": 81,
+        "field": "f4",
+        "width": 7
+      },
+      {
+        "start": 86,
+        "end": 92,
+        "field": "f5",
+        "width": 7
+      },
+      {
+        "start": 96,
+        "end": 102,
+        "field": "f6",
+        "width": 7
+      }
+    ],
+    "omissions": []
+  }
+},
  "hg6math_00044afd_vda597022cfae": {
   "guard": "879bc9d528b8247a",
   "sourceSha": "9ef125b6d74093aa540a2de1f12cc42fe93d668df03cdba7a2b887697f781fb7",

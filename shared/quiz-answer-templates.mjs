@@ -79,7 +79,14 @@ export function answerTemplatePresentation(q,registry=answerTemplateSources){
 
 // Move the original controls (and listeners/feedback/keyboards), never clone,
 // recreate values, change field names or introduce another submit action.
-export function mountAnswerTemplate(group,q,{renderContent,registry}={}){
+export function compactTemplateFeedback(feedback){
+ if(feedback?.input!=='math')return null;
+ if(feedback.state==='correct')return {state:'correct',text:'✓ 答對'};
+ if(feedback.state==='incorrect')return {state:'incorrect',text:'✕ 請修正'};
+ if(!['reference','paired'].includes(feedback.state)||!Array.isArray(feedback.accepted)||!feedback.accepted.length||feedback.accepted.some(v=>typeof v!=='string'||!v.trim()))return null;
+ return {state:'reference',text:(feedback.state==='paired'?'整組核對：':'參考：')+[...new Set(feedback.accepted)].join(' 或 ')};
+}
+export function mountAnswerTemplate(group,q,{renderContent,registry,fieldFeedback}={}){
  const plan=answerTemplatePresentation(q,registry);if(!plan)return false;const renderPrompt=plan.renderPrompt;
  const slots=[...group.querySelectorAll(':scope > .quiz-field')];if(slots.length!==q.fields.length)return false;
  const byId=new Map(q.fields.map((f,i)=>[f.id,slots[i]]));
@@ -88,7 +95,12 @@ export function mountAnswerTemplate(group,q,{renderContent,registry}={}){
  if(plan.source.prompt.media.length&&!renderContent)throw Error('answer_template_media_renderer_required');
  const doc=group.ownerDocument,container=doc.createElement('div');container.className='quiz-answer-templates';let number=0;
  const finish=()=>{container.querySelectorAll('img').forEach(img=>{img.dataset.imageLightbox='';img.dataset.partnerImage='';img.tabIndex=0;img.setAttribute('role','button');img.setAttribute('aria-label',(img.alt||'原題圖片')+'，點擊放大');});group.classList.add('quiz-has-answer-template');group.append(container);const work=group.querySelector(':scope > .quiz-work-input');if(work)group.append(work);return true;};
- const prepare=(slot,input,width,label)=>{slot.classList.add('quiz-answer-template-slot');slot.style.setProperty('--answer-slot-width',width+'ch');slot.querySelector('legend').classList.add('quiz-answer-template-label');input.setAttribute('aria-label',label);if(input.tagName==='TEXTAREA'){input.rows=1;const resize=()=>{
+ const prepare=(slot,input,width,label)=>{slot.classList.add('quiz-answer-template-slot');slot.style.setProperty('--answer-slot-width',width+'ch');slot.querySelector('legend').classList.add('quiz-answer-template-label');input.setAttribute('aria-label',label);
+  if(input.disabled&&q.type==='fields'&&q.fields.every(f=>f.input==='math')){
+   const index=slots.indexOf(slot),mark=compactTemplateFeedback(fieldFeedback?.[index]);
+   if(mark){slot.dataset.templateReview=mark.state;slot.querySelectorAll(':scope > .quiz-field-review-status,:scope > .quiz-field-review-reference').forEach(n=>n.remove());const note=doc.createElement('span');note.className='quiz-answer-template-result';note.id=input.id+'-template-result';note.textContent=mark.text;input.setAttribute('aria-describedby',note.id);slot.append(note);}
+  }
+  if(input.tagName==='TEXTAREA'){input.rows=1;const resize=()=>{
   if(!input.isConnected)return;
   {const style=doc.defaultView.getComputedStyle(input),context=doc.createElement('canvas').getContext('2d');context.font=style.font;const px=name=>parseFloat(style[name])||0;slot.style.setProperty('--answer-slot-grown-width',growingSlotWidth({text:input.value,fontSize:px('fontSize'),letterSpacing:px('letterSpacing'),padding:px('paddingLeft')+px('paddingRight'),borders:px('borderLeftWidth')+px('borderRightWidth'),measure:text=>context.measureText(text).width})+'px');}
   input.style.height='auto';input.style.height=Math.max(48,Math.min(300,input.scrollHeight+4))+'px';input.style.overflowY=input.scrollHeight>300?'auto':'hidden';

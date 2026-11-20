@@ -81,7 +81,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
   }
   appendFieldReviewReference(slot,feedback?.[fieldIndex],v=>formatted(f,v),formatPair);group.append(slot);
  }
- if(matching)appendMatchingOriginal(group,matching.original,renderContent);else if(!reading)mountAnswerTemplate(group,choiceQuestionPresentation(q),{renderContent});
+ if(matching)appendMatchingOriginal(group,matching.original,renderContent);else if(!reading)mountAnswerTemplate(group,choiceQuestionPresentation(q),{renderContent,fieldFeedback:feedback});
  mountReadingWorkbench(group,q,reading,{renderContent,fieldFeedback:feedback});host.append(group);return group;
 }
 export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,referenceAnswer=null,showWork=true}){

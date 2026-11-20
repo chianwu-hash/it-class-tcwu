@@ -1,7 +1,19 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {deriveAnswerTemplate,deriveGroupedTemplate,deriveOptionTemplate,answerTemplatePresentation,exampleSlotCharacters,growingSlotWidth} from '../../shared/quiz-answer-templates.mjs';
+import {deriveAnswerTemplate,deriveGroupedTemplate,deriveOptionTemplate,answerTemplatePresentation,exampleSlotCharacters,growingSlotWidth,compactTemplateFeedback} from '../../shared/quiz-answer-templates.mjs';
 import {presentationSignature} from '../../shared/quiz-presentation-signature.mjs';
 const q=(text,count,type='open')=>({id:'synthetic',type,prompt:{text,media:[]},fields:Array.from({length:count},(_,i)=>({id:'original-'+i,input:'text',label:'原欄'+i}))});
+
+test('compact math feedback consumes revealed states without judging numeric equivalence or changing the reference',()=>{
+ const reference={input:'math',state:'reference',value:'01',accepted:['1','1']},before=JSON.stringify(reference);
+ assert.deepEqual(compactTemplateFeedback(reference),{state:'reference',text:'參考：1'});
+ assert.equal(JSON.stringify(reference),before);
+ assert.deepEqual(compactTemplateFeedback({...reference,state:'correct'}),{state:'correct',text:'✓ 答對'});
+ assert.deepEqual(compactTemplateFeedback({...reference,state:'incorrect'}),{state:'incorrect',text:'✕ 請修正'});
+ assert.deepEqual(compactTemplateFeedback({...reference,state:'paired'}),{state:'reference',text:'整組核對：1'});
+});
+test('unrevealed or incomplete feedback and text fields cannot acquire a math correctness mark',()=>{
+ for(const feedback of [null,{}, {input:'text',state:'correct'}, {input:'math',state:'reference'}, {input:'math',state:'reference',accepted:[null]}, {input:'math',state:'unknown',accepted:['1']}])assert.equal(compactTemplateFeedback(feedback),null);
+});
 test('two phrase rows retain six original fields and connecting words; a populated example is not a blank',()=>{const source=q('例：（一個）（可愛）的（動物）\n（　）（　）的（　）\n（　）（　）的（　）',6),before=JSON.stringify(source),m=deriveAnswerTemplate(source);assert.equal(m.rows.length,2);assert.deepEqual(m.rows.map(r=>r.fields),[source.fields.slice(0,3).map(f=>f.id),source.fields.slice(3).map(f=>f.id)]);assert.equal(m.blanks.length,6);assert.equal(JSON.stringify(source),before);});
 test('word formation and continuation keep multiple slots together without inventing a field',()=>{for(const [s,n]of[['丁—（　）—（　）\n戊—（　）—（　）',4],['（　　　），於是（　　　）。',2]]){const m=deriveAnswerTemplate(q(s,n));assert.equal(m.blanks.length,n);assert(m.rows.every(r=>r.fields.length===2));}});
 test('marked words place original inputs after targets and omit a separate answer bank both before and after the sentence',()=>{for(const s of ['（　）（　）「甲」和「乙」。','「甲」和「乙」。\n‧（　）（　）']){const source=q(s,2,'fields'),m=deriveAnswerTemplate(source,{marked:true});assert.equal(m.mode,'marked');assert(m.blanks.every(b=>b.start===b.end));assert.equal(m.omissions.length,2);assert.equal(m.rows.filter(r=>r.fields.length).length,1);assert.equal(source.prompt.text.slice(m.blanks[0].start-3,m.blanks[0].start),'「甲」');}});
