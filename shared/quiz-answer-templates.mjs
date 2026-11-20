@@ -33,13 +33,14 @@ export function exampleSlotCharacters(plan){
 // Only empty publisher blanks, never a populated example, unit or answer.
 const blankPattern=({symbols=false,underscores=false}={})=>new RegExp('[（(][\\s　ˉ_＿﹏…．.]*[）)]'+(symbols?'|□':'')+(underscores?'|[_＿]{2,}':''),'gu');
 const sourceBlanks=(text,options)=>[...text.matchAll(blankPattern(options))].filter(m=>!( /(?:寫|填|輸入|打|畫)[^。\n]{0,12}在\s*$/u.test(text.slice(Math.max(0,m.index-24),m.index))&&/^(?:內|中|裡)/u.test(text.slice(m.index+m[0].length))||/在\s*$/u.test(text.slice(Math.max(0,m.index-3),m.index))&&/^(?:內|中|裡)[^。\n]{0,6}(?:寫|填|輸入|打|畫)/u.test(text.slice(m.index+m[0].length))));
-export function deriveGroupedTemplate(q){
+export function deriveGroupedTemplate(q,{groupMarker='number'}={}){
+ if(!['number','bopomofo'].includes(groupMarker))return null;
  if(!q?.fields?.length||q.fields.some(f=>!['text','math'].includes(f.input)))return null;
  const text=sourceStream(q?.prompt);if(text===null||!q?.fields?.length)return null;
- const markers=[...text.matchAll(/^[ \t　]*[（(]([0-9０-９]{1,2})[）)]/gmu)];if(markers.length<2)return null;
- const numbers=markers.map(m=>Number(m[1].normalize('NFKC')));if(new Set(numbers).size!==numbers.length)return null;
- const owners=q.fields.map(f=>{const m=/^(?:第\s*)?[（(]?([0-9０-９]{1,2})[）)]/u.exec(f.label);return m?Number(m[1].normalize('NFKC')):null;});if(owners.some(n=>!numbers.includes(n)))return null;
- return {mode:'groups',start:markers[0].index,rows:markers.map((m,i)=>({start:m.index,end:markers[i+1]?.index??text.length,number:numbers[i],fields:q.fields.filter((f,j)=>owners[j]===numbers[i]).map(f=>f.id)}))};
+ const phonetic=groupMarker==='bopomofo',markers=[...text.matchAll(phonetic?/^[ \t　]*([ㄅ-ㄩ])(?=[ \t　]*(?:□|[（(]))/gmu:/^[ \t　]*[（(]([0-9０-９]{1,2})[）)]/gmu)];if(markers.length<2)return null;
+ const key=value=>phonetic?value:Number(value.normalize('NFKC')),numbers=markers.map(m=>key(m[1]));if(new Set(numbers).size!==numbers.length)return null;
+ const owners=q.fields.map(f=>{const m=(phonetic?/^([ㄅ-ㄩ])/u:/^(?:第\s*)?[（(]?([0-9０-９]{1,2})[）)]/u).exec(f.label);return m?key(m[1]):null;});if(owners.some(n=>!numbers.includes(n)))return null;
+ return {mode:'groups',start:markers[0].index,rows:markers.map((m,i)=>({start:m.index,end:markers[i+1]?.index??text.length,number:numbers[i],fields:q.fields.filter((f,j)=>owners[j]===numbers[i]).map(f=>f.id)})),...(phonetic?{groupMarker}:{})};
 }
 export function deriveOptionTemplate(q){
  if(!q?.fields?.length||q.fields.some(f=>!['text','math'].includes(f.input)))return null;
@@ -47,8 +48,9 @@ export function deriveOptionTemplate(q){
  const marks=[...text.matchAll(/[（(][^（）()\n]*[／/][^（）()\n]*[）)]/gu)];if(marks.length!==q.fields.length)return null;
  return {mode:'options',start:0,rows:[{start:0,end:text.length,fields:q.fields.map(f=>f.id)}],blanks:marks.map((m,i)=>({start:m.index+m[0].length,end:m.index+m[0].length,field:q.fields[i].id,width:8})),omissions:[]};
 }
-export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=false,underscores=false,grouped=false}={}){
+export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=false,underscores=false,grouped=false,groupMarker='number',keepMassUnits=false}={}){
  if(!['open','fields'].includes(q?.type)||!q.fields?.length||q.fields.some(f=>!['text','math'].includes(f.input)))return null;
+ if(keepMassUnits&&(!grouped||q.fields.some(f=>f.input!=='math')))return null;
  const stream=sourceStream(q.prompt);
  if(stream===null){
   if(!q.prompt.layout?.some(p=>p.type==='table'))return null;
@@ -60,11 +62,11 @@ export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=
  const matches=sourceBlanks(stream,{symbols,underscores});if(matches.length!==q.fields.length)return null;
  const targets=targetOffsets?targetOffsets.map(index=>({index,0:''})):marked?[...stream.matchAll(/「[^「」\n]+」/gu)]:matches;
  if(targets.length!==q.fields.length)return null;
- const blanks=targets.map((m,i)=>({start:m.index+(marked?m[0].length:0),end:m.index+m[0].length,field:q.fields[i].id,width:m[0]==='□'?4:marked?7:Math.max(7,Math.min(18,m[0].replace(/[（()）\n\r]/gu,'').length))}));
+ const blanks=targets.map((m,i)=>{const end=m.index+m[0].length,unit=keepMassUnits?/^[ \t　]*(?:公斤|公克)/u.exec(stream.slice(end)):null;return {start:m.index+(marked?m[0].length:0),end,field:q.fields[i].id,width:m[0]==='□'?4:marked?7:Math.max(7,Math.min(18,m[0].replace(/[（()）\n\r]/gu,'').length)),...(unit?{unit:{start:end,end:end+unit[0].length}}:{})};});
  if(grouped){
-  if(marked||targetOffsets)return null;const groups=deriveGroupedTemplate(q);if(!groups)return null;
+  if(marked||targetOffsets)return null;const groups=deriveGroupedTemplate(q,{groupMarker});if(!groups)return null;
   if(groups.rows.some(row=>JSON.stringify(blanks.filter(b=>b.start>=row.start&&b.end<=row.end).map(b=>b.field))!==JSON.stringify(row.fields)))return null;
-  return {mode:'grouped-blanks',start:groups.start,rows:groups.rows,blanks,omissions:[],...(symbols?{symbols}:{}),...(underscores?{underscores}:{})};
+  return {mode:'grouped-blanks',start:groups.start,rows:groups.rows,blanks,omissions:[],...(symbols?{symbols}:{}),...(underscores?{underscores}:{}),...(groupMarker!=='number'?{groupMarker}:{}),...(keepMassUnits?{keepMassUnits}:{})};
  }
  const start=stream.lastIndexOf('\n',Math.min(blanks[0].start,matches[0].index)-1)+1,rows=[];let at=start;
  // Newlines inside a publisher blank are not a new sentence/group.
@@ -78,7 +80,7 @@ export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=
 export function answerTemplatePresentation(q,registry=answerTemplateSources){
  const source=taskReadingSource(q),p=registry[source?.id];if(!p)return null;
  const guard=presentationSignature(source);if(p.guard!==guard&&p.partnerGuard!==guard)return null;
- const model=p.model.mode==='groups'?deriveGroupedTemplate(source):p.model.mode==='options'?deriveOptionTemplate(source):p.model.mode==='material'&&source.prompt.media.length?{mode:'material',fields:source.fields.map(f=>f.id)}:deriveAnswerTemplate(source,{marked:p.model.mode==='marked',targetOffsets:p.model.targetOffsets,symbols:p.model.symbols,underscores:p.model.underscores,grouped:p.model.mode==='grouped-blanks'});if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
+ const model=p.model.mode==='groups'?deriveGroupedTemplate(source,{groupMarker:p.model.groupMarker}):p.model.mode==='options'?deriveOptionTemplate(source):p.model.mode==='material'&&source.prompt.media.length?{mode:'material',fields:source.fields.map(f=>f.id)}:deriveAnswerTemplate(source,{marked:p.model.mode==='marked',targetOffsets:p.model.targetOffsets,symbols:p.model.symbols,underscores:p.model.underscores,grouped:p.model.mode==='grouped-blanks',groupMarker:p.model.groupMarker,keepMassUnits:p.model.keepMassUnits});if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
  const renderPrompt=projectSourceBoxes(source.prompt,q.prompt);
  return {...model,source,renderPrompt,passage:taskReadingPresentation(q,{passage:['rich','material'].includes(model.mode)?{text:'',media:[]}:sliceContent(renderPrompt,0,model.start)}).passage};
 }
@@ -99,7 +101,7 @@ export function mountAnswerTemplate(group,q,{renderContent,registry,fieldFeedbac
  const exampleSource=openCompositionSources[plan.source.id],characters=exampleSource?.guard===presentationSignature(plan.source)?exampleSlotCharacters(plan):null;
  slots.forEach(slot=>slot.classList.add('quiz-answer-paired-field'));
  if(plan.source.prompt.media.length&&!renderContent)throw Error('answer_template_media_renderer_required');
- const doc=group.ownerDocument,container=doc.createElement('div');container.className='quiz-answer-templates';let number=0;
+ const doc=group.ownerDocument,container=doc.createElement('div');container.className='quiz-answer-templates';if(plan.mode==='grouped-blanks')container.classList.add('quiz-answer-grouped-blanks');let number=0;
  const finish=()=>{container.querySelectorAll('img').forEach(img=>{img.dataset.imageLightbox='';img.dataset.partnerImage='';img.tabIndex=0;img.setAttribute('role','button');img.setAttribute('aria-label',(img.alt||'原題圖片')+'，點擊放大');});group.classList.add('quiz-has-answer-template');group.append(container);const work=group.querySelector(':scope > .quiz-work-input');if(work)group.append(work);return true;};
  const prepare=(slot,input,width,label)=>{slot.classList.add('quiz-answer-template-slot');slot.style.setProperty('--answer-slot-width',width+'ch');slot.querySelector('legend').classList.add('quiz-answer-template-label');input.setAttribute('aria-label',label);
   if(input.disabled&&q.type==='fields'&&q.fields.every(f=>f.input==='math')){
@@ -140,7 +142,8 @@ export function mountAnswerTemplate(group,q,{renderContent,registry,fieldFeedbac
    text(at,blank.start);const slot=byId.get(blank.field),input=slot.querySelector('input[type=text],textarea');if(!input)throw Error('answer_template_original_input_required');
    prepare(slot,input,blank.width,`${number?`第${number}組・`:''}${slot.querySelector('legend').textContent}`);
    if(characters){slot.classList.add('quiz-answer-example-width');slot.style.setProperty('--answer-slot-characters',characters[blank.field]);}
-   line.append(slot);at=blank.end;
+   if(blank.unit){const pair=doc.createElement('span'),unit=doc.createElement('span');pair.className='quiz-answer-template-unit';unit.className='quiz-answer-template-unit-text';render(unit,sliceContent(renderPrompt,blank.unit.start,blank.unit.end));pair.append(slot,unit);line.append(pair);at=blank.unit.end;}
+   else{line.append(slot);at=blank.end;}
   }
   text(at,row.end);container.append(box);
  }

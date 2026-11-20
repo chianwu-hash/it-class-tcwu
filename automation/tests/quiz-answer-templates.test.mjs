@@ -3,6 +3,22 @@ import {deriveAnswerTemplate,deriveGroupedTemplate,deriveOptionTemplate,answerTe
 import {presentationSignature} from '../../shared/quiz-presentation-signature.mjs';
 const q=(text,count,type='open')=>({id:'synthetic',type,prompt:{text,media:[]},fields:Array.from({length:count},(_,i)=>({id:'original-'+i,input:'text',label:'原欄'+i}))});
 
+test('reviewed phonetic subquestion markers group original rank and unit blanks only with explicit opt-in',()=>{
+ const source=q('共用秤圖說明\nㄅ □\n（ ）公斤（ ）公克\nㄆ □\n（ ）公斤（ ）公克\nㄇ □\n（ ）公斤（ ）公克',9,'fields');
+ source.fields.forEach((f,i)=>{f.input='math';f.label='ㄅㄆㄇ'[Math.floor(i/3)]+['排序空格','公斤空格','公克空格'][i%3];});
+ const before=JSON.stringify(source);assert.equal(deriveAnswerTemplate(source,{symbols:true,grouped:true}),null);
+ const model=deriveAnswerTemplate(source,{symbols:true,grouped:true,groupMarker:'bopomofo'});assert.equal(model.mode,'grouped-blanks');assert.equal(model.groupMarker,'bopomofo');assert.deepEqual(model.rows.map(r=>r.number),['ㄅ','ㄆ','ㄇ']);assert.deepEqual(model.rows.map(r=>r.fields),[source.fields.slice(0,3),source.fields.slice(3,6),source.fields.slice(6)].map(fs=>fs.map(f=>f.id)));
+ assert.equal(JSON.stringify(source),before);const registry={synthetic:{guard:presentationSignature(source),model}};assert.ok(answerTemplatePresentation(source,registry));
+ source.fields[3].label='ㄅ排序空格';assert.equal(deriveAnswerTemplate(source,{symbols:true,grouped:true,groupMarker:'bopomofo'}),null);assert.equal(answerTemplatePresentation(source,registry),null);
+ source.fields[3].label='ㄆ排序空格';assert.equal(deriveAnswerTemplate(source,{symbols:true,grouped:true,groupMarker:'guess'}),null);assert.equal(deriveAnswerTemplate(source,{grouped:true,groupMarker:'bopomofo'}),null);
+});
+
+test('reviewed mass units remain literal source ranges attached to their original controls',()=>{
+ const source=q('(1) □\n（ ）公斤（ ）公克\n(2) □\n（ ）公斤（ ）公克\n請填原格。',6,'fields');source.fields.forEach((f,i)=>{f.input='math';f.label=`(${Math.floor(i/3)+1})原欄${i}`;});
+ const before=JSON.stringify(source),plain=deriveAnswerTemplate(source,{grouped:true,symbols:true}),model=deriveAnswerTemplate(source,{grouped:true,symbols:true,keepMassUnits:true});assert.ok(plain.blanks.every(b=>!b.unit));assert.deepEqual(model.blanks.filter(b=>b.unit).map(b=>source.prompt.text.slice(b.unit.start,b.unit.end)),['公斤','公克','公斤','公克']);assert.ok(model.blanks.filter(b=>b.unit).every(b=>b.end===b.unit.start));assert.equal(JSON.stringify(source),before);
+ assert.equal(deriveAnswerTemplate(source,{symbols:true,keepMassUnits:true}),null);source.fields[0].input='text';assert.equal(deriveAnswerTemplate(source,{grouped:true,symbols:true,keepMassUnits:true}),null);
+});
+
 test('reviewed numbered blanks keep each diagram and its original input in one complete source group',()=>{
  const source=q('看圖填分數。\n(１)\n（ ）條\n(２)\n（ ）條',2,'fields');source.fields.forEach((f,i)=>f.label=`(${i+1})條數`);
  source.prompt.layout=[{type:'paragraph',runs:[{type:'text',text:'看圖填分數。'}]},...['１','２'].flatMap((n,i)=>[{type:'paragraph',runs:[{type:'text',text:`(${n})`}]},{type:'paragraph',runs:[{type:'image',media_index:i,width:150}]},{type:'paragraph',runs:[{type:'text',text:'（ ）條'}]}])];

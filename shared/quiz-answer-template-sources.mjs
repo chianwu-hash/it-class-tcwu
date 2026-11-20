@@ -1,5 +1,221 @@
 // Verified source fingerprints and blank offsets; no source text or answers.
 export const answerTemplateSources={
+ "hlg3m_05f3978e_rnbc489e3b9f5e": {
+  "guard": "ab9bd0154b6fa260",
+  "sourceSha": "042d9ded7619e95c3e6c37a7a85947c5c600234bfe9b93e4b37c747d61cc2d90",
+  "model": {
+    "mode": "grouped-blanks",
+    "start": 22,
+    "rows": [
+      {
+        "start": 22,
+        "end": 38,
+        "number": 1,
+        "fields": [
+          "f1",
+          "f2"
+        ]
+      },
+      {
+        "start": 38,
+        "end": 54,
+        "number": 2,
+        "fields": [
+          "f3",
+          "f4"
+        ]
+      },
+      {
+        "start": 54,
+        "end": 85,
+        "number": 3,
+        "fields": [
+          "f5",
+          "f6"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 26,
+        "end": 27,
+        "field": "f1",
+        "width": 4
+      },
+      {
+        "start": 30,
+        "end": 35,
+        "field": "f2",
+        "width": 7,
+        "unit": {
+          "start": 35,
+          "end": 37
+        }
+      },
+      {
+        "start": 42,
+        "end": 43,
+        "field": "f3",
+        "width": 4
+      },
+      {
+        "start": 46,
+        "end": 51,
+        "field": "f4",
+        "width": 7,
+        "unit": {
+          "start": 51,
+          "end": 53
+        }
+      },
+      {
+        "start": 58,
+        "end": 59,
+        "field": "f5",
+        "width": 4
+      },
+      {
+        "start": 62,
+        "end": 67,
+        "field": "f6",
+        "width": 7,
+        "unit": {
+          "start": 67,
+          "end": 69
+        }
+      }
+    ],
+    "omissions": [],
+    "symbols": true,
+    "keepMassUnits": true
+  },
+  "partnerGuard": "b0466b705361c7ea"
+},
+ "hlg3m_01b633d2_rnf5e90d3aa0a9": {
+  "guard": "d2580fd784796c4b",
+  "sourceSha": "a55211d0ac9c5ec0aa25bd019a61ee45f9ad7d95187639966f9453bb7313aa56",
+  "model": {
+    "mode": "grouped-blanks",
+    "start": 22,
+    "rows": [
+      {
+        "start": 22,
+        "end": 44,
+        "number": "ㄅ",
+        "fields": [
+          "f1",
+          "f2",
+          "f3"
+        ]
+      },
+      {
+        "start": 44,
+        "end": 66,
+        "number": "ㄆ",
+        "fields": [
+          "f4",
+          "f5",
+          "f6"
+        ]
+      },
+      {
+        "start": 66,
+        "end": 103,
+        "number": "ㄇ",
+        "fields": [
+          "f7",
+          "f8",
+          "f9"
+        ]
+      }
+    ],
+    "blanks": [
+      {
+        "start": 24,
+        "end": 25,
+        "field": "f1",
+        "width": 4
+      },
+      {
+        "start": 27,
+        "end": 33,
+        "field": "f2",
+        "width": 7,
+        "unit": {
+          "start": 33,
+          "end": 35
+        }
+      },
+      {
+        "start": 35,
+        "end": 41,
+        "field": "f3",
+        "width": 7,
+        "unit": {
+          "start": 41,
+          "end": 43
+        }
+      },
+      {
+        "start": 46,
+        "end": 47,
+        "field": "f4",
+        "width": 4
+      },
+      {
+        "start": 49,
+        "end": 55,
+        "field": "f5",
+        "width": 7,
+        "unit": {
+          "start": 55,
+          "end": 57
+        }
+      },
+      {
+        "start": 57,
+        "end": 63,
+        "field": "f6",
+        "width": 7,
+        "unit": {
+          "start": 63,
+          "end": 65
+        }
+      },
+      {
+        "start": 68,
+        "end": 69,
+        "field": "f7",
+        "width": 4
+      },
+      {
+        "start": 71,
+        "end": 77,
+        "field": "f8",
+        "width": 7,
+        "unit": {
+          "start": 77,
+          "end": 79
+        }
+      },
+      {
+        "start": 79,
+        "end": 85,
+        "field": "f9",
+        "width": 7,
+        "unit": {
+          "start": 85,
+          "end": 87
+        }
+      }
+    ],
+    "omissions": [],
+    "symbols": true,
+    "groupMarker": "bopomofo",
+    "keepMassUnits": true
+  },
+  "partnerGuard": "abcf86163ca6934d"
+},
  "hlg3m_038bc025_rnd35e090bc8d1": {
   "guard": "1fd9a9e205f83df0",
   "sourceSha": "c81550a88dda60421ddfb455130cba56a6b14d93ff7d0a85877ab4a79a0a9577",
