@@ -1,7 +1,21 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
 import {PGlite} from '../lib/quiz-local-db.mjs';
 import {mathResponseValue,mathResponseComplete,mathResponseError} from '../../shared/quiz-math-response.mjs';
-import {sourceCropStyle} from '../../shared/quiz-source-crop.mjs';
+import {applySourceCrop,sourceCropStyle} from '../../shared/quiz-source-crop.mjs';
+
+test('small source crops stay near their original size and tall crops stay within the figure height',()=>{
+ const image={style:{}}, frame={style:{}};
+ applySourceCrop(frame,image,{x:82.2,y:259.68,width:23.1,height:38.95,sourceWidth:728.64,sourceHeight:1032});
+ assert.match(frame.style.width,/^min\(100%, 57\.75px\)$/);
+ assert.equal(frame.style.aspectRatio,String(23.1/38.95));
+ assert.equal(image.loading,'eager');
+
+ const tall={x:0,y:0,width:300,height:900,sourceWidth:728.64,sourceHeight:1032};
+ applySourceCrop(frame,image,tall);
+ assert.equal(frame.style.width,'min(100%, 130px)');
+ applySourceCrop(frame,image,tall,{fill:true});
+ assert.equal(frame.style.width,'100%');
+});
 
 test('數學輸入正規化分數、小數、符號與座標，保留除法及座標次序',async()=>{
  const db=new PGlite();try{await db.exec('create role anon;create role authenticated;');await db.exec(fs.readFileSync(new URL('../../supabase/quiz-math-response.sql',import.meta.url),'utf8'));

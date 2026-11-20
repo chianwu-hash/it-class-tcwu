@@ -4,8 +4,27 @@ export function sourceCropStyle(v){
  if(v.x<0||v.y<0||v.width<=0||v.height<=0||v.sourceWidth<=0||v.sourceHeight<=0||v.x+v.width>v.sourceWidth+.01||v.y+v.height>v.sourceHeight+.01)return null;
  return {aspectRatio:String(v.width/v.height),width:`${100*v.sourceWidth/v.width}%`,left:`${-100*v.x/v.width}%`,top:`${-100*v.y/v.height}%`};
 }
-export function applySourceCrop(link,img,viewBox){const s=sourceCropStyle(viewBox);if(!s)return;
- // Before decoding, the absolutely positioned image can have zero height outside
- // its clipped view. Native lazy loading may then never request the source.
- img.loading='eager';
- Object.assign(link.style,{display:'block',position:'relative',overflow:'clip',aspectRatio:s.aspectRatio,width:'100%'});Object.assign(img.style,{position:'absolute',width:s.width,maxWidth:'none',height:'auto',maxHeight:'none',left:s.left,top:s.top,margin:'0'});}
+export function applySourceCrop(link, img, viewBox, { fill = false } = {}) {
+ const crop = sourceCropStyle(viewBox);
+ if (!crop) return;
+
+ // Use the same scale for small diagrams, and keep tall crops within the
+ // regular image height limit. Narrow containers can still shrink the crop.
+ const previewWidth = Math.min(2.5 * viewBox.width, 640, 390 * Number(crop.aspectRatio));
+ Object.assign(link.style, {
+  display: 'block',
+  position: 'relative',
+  overflow: 'clip',
+  aspectRatio: crop.aspectRatio,
+  width: fill ? '100%' : `min(100%, ${previewWidth}px)`,
+  marginInline: fill ? '' : 'auto'
+ });
+
+ // The source is positioned outside the crop before decoding. Eager loading
+ // ensures the browser requests it even when that image is offscreen.
+ img.loading = 'eager';
+ Object.assign(img.style, {
+  position: 'absolute', width: crop.width, maxWidth: 'none',
+  height: 'auto', maxHeight: 'none', left: crop.left, top: crop.top, margin: '0'
+ });
+}

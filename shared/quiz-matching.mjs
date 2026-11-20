@@ -55,7 +55,7 @@ export function renderMatchingBoard(host,board,{values={},locked=false,onChange=
   // The card itself is the control. Keep authenticated media rendering but avoid
   // nested links/buttons inside a native button; complete source stays nearby.
   body.querySelectorAll('a').forEach(a=>a.replaceWith(...a.childNodes));
-  const images=[...body.querySelectorAll('img')];(content.media||[]).filter(m=>m.kind==='image').forEach((m,j)=>{if(m.viewBox&&images[j]){const wrap=make('span','qm-crop');images[j].before(wrap);wrap.append(images[j]);applySourceCrop(wrap,images[j],m.viewBox);}});
+  const images=[...body.querySelectorAll('img')];(content.media||[]).filter(m=>m.kind==='image').forEach((m,j)=>{if(m.viewBox&&images[j]){const wrap=make('span','qm-crop');images[j].before(wrap);wrap.append(images[j]);applySourceCrop(wrap,images[j],m.viewBox,{fill:true});}});
   b.append(badge,body,pair,result,pin);b.addEventListener('click',()=>choose(side,id));buttons[side].set(id,b);b.disabled=false;
   b.addEventListener('pointerdown',e=>{if(!editable()||e.pointerType==='touch'||e.button!==0)return;drag={side,id,x:e.clientX,y:e.clientY,active:false,pointer:e.pointerId};b.setPointerCapture(e.pointerId);});
   b.addEventListener('pointermove',e=>{if(!drag||drag.pointer!==e.pointerId||!b.hasPointerCapture(e.pointerId))return;if(!drag.active&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)<6)return;drag.active=true;const rect=stage.getBoundingClientRect(),point={x:e.clientX-rect.x,y:e.clientY-rect.y};ghost=side==='left'?{from:anchor(side,id),to:point}:{from:point,to:anchor(side,id)};schedule();});
