@@ -2559,7 +2559,7 @@ grant execute on function public.is_teacher() to anon;
 grant execute on function public.is_teacher() to authenticated;
 grant execute on function public.is_teacher() to service_role;
 
--- partner_pilot.learning_snapshot(uuid)  md5=ed117acd31cce89bd7622c60288bb307
+-- partner_pilot.learning_snapshot(uuid)  md5=2a8634c909aa6331fc3824213a6aee8e
 CREATE OR REPLACE FUNCTION partner_pilot.learning_snapshot(rid uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -2585,6 +2585,20 @@ begin
   left join partner_pilot.question_bank q on q.id=(n.value->>'id')::integer;
   result:=jsonb_set(result,array['exercise',part],items);
  end loop;
+ -- A shared field response is visible only after every allocated question has
+ -- been submitted. Retain only its owner's latest original response.
+ if coalesce((result#>>'{exercise,reviewOpen}')::boolean,false) then
+  select coalesce(jsonb_agg(n.value||case when q.normal_question->>'type'='fields'
+   then jsonb_build_object('attempts',coalesce((
+    select jsonb_build_array(jsonb_build_object('choice',a.choice,'value',a.response,'correct',a.correct,'at',a.created_at))
+    from partner_pilot.answers a where a.room_id=rid and a.qid=q.id
+     and a.user_id=partner_pilot.owner_of(rid,q.id)
+    order by a.attempt desc limit 1),'[]'::jsonb)) else '{}'::jsonb end
+   order by n.ordinality),'[]'::jsonb) into items
+  from jsonb_array_elements(result#>'{exercise,shared}') with ordinality n(value,ordinality)
+  left join partner_pilot.question_bank q on q.id=(n.value->>'id')::integer;
+  result:=jsonb_set(result,'{exercise,shared}',items);
+ end if;
  select coalesce(jsonb_agg(n.value||jsonb_build_object('attachments',coalesce(a.media,'[]'::jsonb)) order by n.ordinality),'[]'::jsonb) into items
  from jsonb_array_elements(result#>'{exercise,notes}') with ordinality n(value,ordinality)
  left join (select x.note_id,jsonb_agg(partner_pilot.message_meta(x) order by x.created_at,x.id) media
