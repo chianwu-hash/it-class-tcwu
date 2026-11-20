@@ -12,6 +12,7 @@ import {renderPastLearningReview} from './quiz-past-learning-review.mjs';
 import {appendSingleChoiceOptions} from './quiz-choice.mjs';
 import {createQuizWorkspace} from './quiz-workspace.mjs';
 import {createQuizStudy,studySourceLabel} from './quiz-study.mjs';
+import {pastTextbookCitation} from './quiz-past-textbook-citations.mjs';
 import {renderExplanation} from './quiz-explanation-render.mjs';
 import {choiceReviewModel,decorateFieldReviewOption} from './quiz-review-choices.mjs';
 import {pastCorrectionPrompt,pastCorrectionFieldLabel} from './quiz-correction-presentation.mjs';
@@ -158,6 +159,16 @@ function render(){if(!active)return;study.refresh();
  for(const node of [...card.querySelectorAll('.feedback:not([data-local-review]),.reference,.past-learning-review')]){
   if(node.dataset.fieldLabel)feedbackPanel.append(el('p',node.dataset.fieldLabel,'helper'));
   feedbackPanel.append(node);
+ }
+ const textbook=saved?pastTextbookCitation(state.version,g.id):null;
+ if(textbook){
+  const reference=el('section',undefined,'past-learning-review');
+  reference.append(el('h3','對照課本'),el('p',textbook.book,'helper'));
+  const pages=el('ul');
+  for(const section of textbook.sections)pages.append(el('li','第'+section.chapter+'章｜第'+section.pages.join('、')+'頁'));
+  reference.append(pages);
+  if(textbook.related)reference.append(el('p','這些頁面說明相關觀念，可搭配上方解析一起看。','helper'));
+  feedbackPanel.append(reference);
  }
  if(feedbackPanel.childNodes.length)card.append(feedbackPanel);card.classList.add('question');card.dataset.questionId=g.id;
  actions.classList.add('quiz-actions');
