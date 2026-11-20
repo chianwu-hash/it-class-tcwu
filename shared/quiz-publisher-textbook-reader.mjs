@@ -43,6 +43,10 @@ export function createPublisherTextbookReader(root){
   session.rendering?.cancel();
   session.rendering=null;
   session.select.value=String(pdfPage);
+  session.referenceButtons.forEach((node,i)=>{
+   const reference=session.references[i];
+   node.setAttribute('aria-current',reference.url===session.url&&reference.pdfPage===pdfPage?'page':'false');
+  });
   session.previous.disabled=true;
   session.next.disabled=true;
   const title='自然課本第'+page.printed+'頁';
@@ -88,7 +92,8 @@ export function createPublisherTextbookReader(root){
    session.pageCount=book.numPages;
    if(session.select.options.length!==book.numPages){
     session.select.replaceChildren(...Array.from({length:book.numPages},(_,i)=>{
-     const option=element('option','第'+(session.firstPrinted+i)+'頁');
+     const related=session.references.some(reference=>reference.url===session.url&&reference.pdfPage===i+1);
+     const option=element('option','第'+(session.firstPrinted+i)+'頁'+(related?'（本題頁面）':''));
      option.value=String(i+1);
      return option;
     }));
@@ -133,9 +138,23 @@ export function createPublisherTextbookReader(root){
   const title=element('strong'),status=element('p');
   status.className='qtb-reading-status';status.setAttribute('role','status');
   const nav=element('div');nav.className='qtb-page-nav';
-  const select=element('select');select.setAttribute('aria-label','選擇本題的課本頁碼');
+  const select=element('select');select.setAttribute('aria-label','選擇課本頁碼');
   const page=pages[index];
-  const session={url:page.url,firstPrinted:page.printed-page.pdfPage+1,pageCount:Infinity,toolbar,title,status,select,trigger,scrollTop:window.scrollY,sequence:0};
+  const session={url:page.url,firstPrinted:page.printed-page.pdfPage+1,pageCount:Infinity,toolbar,title,status,select,trigger,scrollTop:window.scrollY,sequence:0,references:pages,referenceButtons:[]};
+  const references=element('div');references.className='qtb-question-pages';
+  references.append(element('span','本題頁面'));
+  session.referenceButtons=pages.map(reference=>button('第'+reference.printed+'頁',()=>{
+   if(session.url!==reference.url){
+    session.rendering?.cancel();
+    releaseChapter(session);
+    session.url=reference.url;
+    session.firstPrinted=reference.printed-reference.pdfPage+1;
+    session.pageCount=Infinity;
+    session.select.replaceChildren();
+   }
+   void show(session,reference.pdfPage);
+  }));
+  references.append(...session.referenceButtons);
   session.previous=button('‹',()=>void show(session,session.pdfPage-1));
   session.next=button('›',()=>void show(session,session.pdfPage+1));
   session.previous.setAttribute('aria-label','上一頁');
@@ -145,7 +164,7 @@ export function createPublisherTextbookReader(root){
   session.download.target='_blank';session.download.rel='noopener noreferrer';
   select.onchange=()=>void show(session,Number(select.value));
   nav.append(session.previous,select,session.next);
-  toolbar.append(title,nav,status,session.retry,session.download);
+  toolbar.append(title,nav,references,status,session.retry,session.download);
   active=session;
   void show(session,page.pdfPage);
  }
