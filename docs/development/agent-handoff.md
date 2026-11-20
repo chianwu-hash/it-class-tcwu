@@ -2,9 +2,9 @@
 
 ## 發布登記
 
-| 狀態 | agent | 基準正式 | 變更 |
-| --- | --- | --- | --- |
-| 發布中 | Codex-past-crop-sizing-20261120 | `dpl_GhHrNcf2jCDvnAhj857Y7LA8tjQ7` | 考古題、夥伴考古題裁圖尺寸與練功坊資產版本 |
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-past-crop-sizing-20261120 | 2026-11-20T12:00:24.575Z | `d875fa2` | `dpl_GhHrNcf2jCDvnAhj857Y7LA8tjQ7` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/quiz-source-crop.js、shared/quiz-matching.mjs、shared/quiz-source-crop.mjs、shared/quiz-workshop/generated/assets.json | `dpl_CULWeFF3GjfhsznTqYx8WTkQupN4`／回滾 `dpl_GhHrNcf2jCDvnAhj857Y7LA8tjQ7`（eolOnly 0） |
 
 中正九年級 114 上第二次段考自然第 1 題的小附圖曾被拉成整欄寬。共用裁圖保留比例並限制預設寬高，連連看沿用原尺寸。已用 Chrome 核實個人與夥伴模組在 1885、390、320px 視窗的小圖尺寸，17 項回歸及 21 個練功坊產物核對通過。
 
