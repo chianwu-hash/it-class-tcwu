@@ -1,10 +1,12 @@
 # 中正九年級課本入口位置與本題頁面（2026-11-20）
 
+- PR #393 已發布。正式登入的 114 上二段自然，1280／390px 均驗證入口在 body-grid 下方；閱讀器持續顯示「本題頁面」，頁碼選單標示本題參考，單頁及多頁第 7 題跨章 38→66→65 均可返回並標示當頁。原同章 32 頁連續翻閱、章首／章尾及返回保留選答與焦點通過，pageerror 0。測試只放行 resume、攔截 view，不送答或存草稿。完整發布樹比較 ok:true；截圖在私有證據目錄 reader-context-live-1280／390，測試腳本位於 context worktree 的 tmp。
+
 ## 發布登記
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | Codex-g9-reader-context-20261120 | 2026-11-20 | 待合併 PR | `dpl_296z4BBUEfuedAUvNUUdnytkoBVJ` | 課本入口移至題目下方、本題頁面標記及跨章返回 | 驗收後 main-only 發布 |
+| 已完成 | Codex-g9-reader-context-20261120 | 2026-11-20T14:19:21.948Z | `34c1de0` | `dpl_296z4BBUEfuedAUvNUUdnytkoBVJ` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-past-ui.mjs、shared/quiz-publisher-textbook-reader.mjs、shared/quiz-textbook-reader.css、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css | `dpl_GdF1Pw3WDodcQsVDbMjZHuAXg8kQ`／回滾 `dpl_296z4BBUEfuedAUvNUUdnytkoBVJ`（eolOnly 0） |
 
 # 中正九年級課本按鈕與連續翻頁修復（2026-11-20）
 
