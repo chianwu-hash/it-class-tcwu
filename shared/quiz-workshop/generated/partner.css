@@ -697,6 +697,7 @@ textarea{width:100%;min-height:88px;resize:vertical;font:inherit;color:inherit;p
 .quiz-answer-diagram-symbols .quiz-number-symbol-card>legend{font-size:1rem}
 .quiz-answer-diagram-symbols .quiz-diagram-reference{background:#f5fafb}
 @media(min-width:1000px){.quiz-answer-diagram-symbols:has(.quiz-diagram-reference){grid-template-columns:minmax(220px,280px) minmax(0,1fr);align-items:start}.quiz-diagram-reference{position:sticky;top:20px}}
+textarea.quiz-short-answer{display:block;box-sizing:border-box;width:calc(var(--quiz-short-answer-chars,4)*1em + 1.1em)!important;max-width:100%!important;min-height:3.1em!important;height:calc(var(--quiz-short-answer-lines,1)*1.45em + 1.65em)!important;padding:.35em .45em!important;font:inherit;font-size:1.4rem!important;line-height:1.45;white-space:pre;overflow-x:auto;overflow-y:hidden;resize:none}
 
 
 

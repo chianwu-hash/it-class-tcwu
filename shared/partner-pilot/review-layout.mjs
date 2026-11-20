@@ -4,6 +4,11 @@ import {wordMeaningReview} from '../quiz-word-meaning-review.mjs';
 import {partnerSingleReview} from './single-review.mjs';
 import {appendFieldReviewStatus,decorateFieldReviewOption} from '../quiz-fields-review.mjs';
 
+// The navigation preview is plain text; full questions keep their math renderer.
+export function reviewPreviewText(text){
+ return String(text??'').replace(/\$\\(?:d?frac)\{([0-9]+)\}\{([0-9]+)\}\$/gu,(_,numerator,denominator)=>`${denominator}分之${numerator}`);
+}
+
 // Presentation only. Never reads peer attempts, grades answers or grants rewards.
 export function reviewUnits(shared,notes){
  const marked=new Set(notes.filter(n=>n.kind==='mark').map(n=>n.qid));
@@ -13,7 +18,7 @@ export function createReviewLayout({esc,getRoom,getViewer,fragment,marks,stories
  let active=null,root=null;
  const model=()=>reviewUnits(getRoom().exercise.shared,getRoom().exercise.notes);
  const list=()=>model().filter(u=>!getMarkedOnly()||u.marked);
- const text=q=>q.rich?.prompt?.text||q.text||q.title;
+ const text=q=>reviewPreviewText(q.rich?.prompt?.text||q.text||q.title);
  const label=u=>u.past?`單元 ${u.index}・第 ${u.questions.map(q=>q.number??q.id).join('、')} 小題`:`第 ${u.questions[0].number??u.id} 題`;
  function part(q,grouped=false){
   // past correct is a bank placeholder, not an option index. Its authoritative reference

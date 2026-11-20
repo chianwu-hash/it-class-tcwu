@@ -91124,3 +91124,37 @@ export const answerTemplateSources={
   }
  }
 };
+
+// Reviewed short responses: fixed writing space, no answer content.
+export const shortAnswerSources = {
+  "hlg3m_006e5e74_rn0b52d8c8efc3": {
+    "guard": "97a3905f4167d160",
+    "partnerGuard": "69a292b011576da6",
+    "initialChars": 4
+  },
+  "hlg3m_029ba336_rn60c1e116d905": {
+    "guard": "4fd9cdb6830606a1",
+    "partnerGuard": "4fd9cdb6830606a1",
+    "initialChars": 4
+  },
+  "hlg3m_02f16104_rn8d174f43b92c": {
+    "guard": "c3388ba991143844",
+    "partnerGuard": "6282b92966f53c02",
+    "initialChars": 4
+  },
+  "hlg3m_0467cb75_rn58cf606c3822": {
+    "guard": "bf3f3c6511377b14",
+    "partnerGuard": "bf3f3c6511377b14",
+    "initialChars": 4
+  },
+  "hlg3m_059ad660_rn5ad5ac0e1323": {
+    "guard": "4642e4e0e7a9e1e0",
+    "partnerGuard": "4642e4e0e7a9e1e0",
+    "initialChars": 4
+  },
+  "hlg3m_05b02266_rn428d555921b5": {
+    "guard": "5629f67a0c3423d1",
+    "partnerGuard": "5629f67a0c3423d1",
+    "initialChars": 4
+  }
+};

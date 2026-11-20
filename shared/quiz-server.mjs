@@ -15,6 +15,7 @@ import {readingWorkbenchSupported} from './quiz-reading-workbench.mjs';
 import {choiceReviewModel,decorateFieldReviewOption} from './quiz-review-choices.mjs';
 import {renderOpenInputs,renderOpenReview,openResponseError,renderOpenSavedSketches} from './quiz-open-response.mjs';
 import {wordMeaningReview} from './quiz-word-meaning-review.mjs';
+import {mountShortAnswerInput} from './quiz-short-answer.mjs';
 
 import {quizFeedbackMotion} from './quiz-feedback-motion.mjs?v=20261107-partner-motion';
 
@@ -231,6 +232,7 @@ export function initServerQuiz({ selectors, server }) {
       const input = make('textarea'); input.setAttribute('aria-label', '簡答內容'); input.maxLength = 2000;
       input.disabled = choicesLocked;
       input.value = saved ? state.responses[q.id] : pending?.response ?? selected;
+      mountShortAnswerInput(input,q);
       input.addEventListener('input', () => { selected = input.value; }); inputs.append(input);
     }
     article.append(inputs);
