@@ -98,6 +98,9 @@ export function initTypingChallenge({
     let currentSession = null;
     let progressLoadBlocked = lockOnLoadError;
     let lastLoadedUserId = null;
+    let renderedUserId = null;
+    let accountRevision = 0;
+    let progressLoadRevision = 0;
     const checkingLevels = new Set();
     let highestUnlockedLevel = 1;
     const messages = { ...DEFAULT_PROGRESS_MESSAGES, ...progressMessages };
@@ -113,7 +116,7 @@ export function initTypingChallenge({
     let draftEpoch = 0;
     const activeDraftSession = () => progressAdapter ? adapterDraftSession : currentSession;
 
-    function invalidateAdapterDrafts() {
+    function invalidateDraftState() {
         draftEpoch += 1;
         adapterDraftSession = null;
         draftStateByLevel.clear();
@@ -127,13 +130,13 @@ export function initTypingChallenge({
         try {
             const session = await draftOptions.getSession?.();
             if (!session?.user || (adapterDraftSession && adapterDraftSession.user.id !== session.user.id)) {
-                invalidateAdapterDrafts();
+                invalidateDraftState();
                 return null;
             }
             adapterDraftSession = session;
             return session;
         } catch (_error) {
-            invalidateAdapterDrafts();
+            invalidateDraftState();
             return null;
         }
     }
@@ -422,9 +425,9 @@ export function initTypingChallenge({
     }
 
     async function loadDraftsOnce() {
-        const session = await refreshDraftSession();
         const epoch = draftEpoch;
-        if (!session?.user) {
+        const session = await refreshDraftSession();
+        if (epoch !== draftEpoch || !session?.user) {
             return;
         }
 
@@ -478,10 +481,10 @@ export function initTypingChallenge({
 
     async function saveDraft(level) {
         const inputEl = document.getElementById(`input-level${level}`);
+        const epoch = draftEpoch;
         const session = await refreshDraftSession();
         const user = session?.user;
-        const epoch = draftEpoch;
-        if (!draftsEnabled || !inputEl || !user) {
+        if (epoch !== draftEpoch || !draftsEnabled || !inputEl || !user) {
             return;
         }
 
@@ -542,7 +545,8 @@ export function initTypingChallenge({
     }
 
     async function restoreDraft(level) {
-        if (!await refreshDraftSession()) return;
+        const epoch = draftEpoch;
+        if (!await refreshDraftSession() || epoch !== draftEpoch) return;
         const inputEl = document.getElementById(`input-level${level}`);
         const state = draftStateByLevel.get(level);
         if (!inputEl || !state?.draft_text || inputEl.disabled || inputEl.readOnly) {
@@ -564,9 +568,9 @@ export function initTypingChallenge({
     }
 
     async function deleteDraft(level) {
-        const session = await refreshDraftSession();
         const epoch = draftEpoch;
-        if (!session?.user) {
+        const session = await refreshDraftSession();
+        if (epoch !== draftEpoch || !session?.user) {
             return;
         }
 
@@ -589,9 +593,9 @@ export function initTypingChallenge({
     }
 
     async function deleteAllDraftsForActivity() {
-        const session = await refreshDraftSession();
         const epoch = draftEpoch;
-        if (!session?.user) {
+        const session = await refreshDraftSession();
+        if (epoch !== draftEpoch || !session?.user) {
             return;
         }
 
@@ -782,6 +786,20 @@ export function initTypingChallenge({
             if (typeof afterAuthUpdate === 'function') await afterAuthUpdate(session);
             return;
         }
+        const userId = session?.user?.id ?? null;
+        if (lockOnLoadError && userId !== renderedUserId) {
+            renderedUserId = userId;
+            accountRevision += 1;
+            progressLoadBlocked = true;
+            lastLoadedUserId = null;
+            progressCompleted = false;
+            highestUnlockedLevel = 1;
+            invalidateDraftState();
+            document.getElementById("celebration-overlay")?.remove();
+            resetRenderedProgress();
+            setResetProgressVisible(false);
+            if (userId && progressStatusEl) progressStatusEl.textContent = "正在讀取你的闖關進度…";
+        }
         if (session?.user) {
             if (authStatusEl) {
                 authStatusEl.textContent = session.user.email || "Google 使用者";
@@ -824,7 +842,9 @@ export function initTypingChallenge({
             return currentSession.user;
         }
 
+        const revision = accountRevision;
         const { session, error } = await getSession();
+        if (revision !== accountRevision) return null;
         if (error) {
             console.error("getSession failed", error);
             showProgressDebug("getActiveUser", error);
@@ -837,6 +857,7 @@ export function initTypingChallenge({
     }
 
     async function loadProgress() {
+        const revision = ++progressLoadRevision;
         if (lockOnLoadError) {
             progressLoadBlocked = true;
             setTypingLocked(true);
@@ -853,24 +874,29 @@ export function initTypingChallenge({
             return;
         }
 
+        const userId = currentSession.user.id;
+        const isCurrent = () => !lockOnLoadError
+            || (revision === progressLoadRevision && currentSession?.user?.id === userId);
         let { data, error } = await supabase
             .from("student_progress")
             .select("current_level, completed")
-            .eq("user_id", currentSession.user.id)
+            .eq("user_id", userId)
             .eq("course_id", resolvedCourseId)
             .eq("week_code", weekCode)
             .eq("activity_key", activityKey)
             .maybeSingle();
 
+        if (!isCurrent()) return;
         if (error && isMissingCourseIdError(error)) {
             ({ data, error } = await supabase
                 .from("student_progress")
                 .select("current_level, completed")
-                .eq("user_id", currentSession.user.id)
+                .eq("user_id", userId)
                 .eq("week_code", weekCode)
                 .eq("activity_key", activityKey)
                 .maybeSingle());
         }
+        if (!isCurrent()) return;
 
         if (error) {
             if (progressStatusEl) {
@@ -881,7 +907,7 @@ export function initTypingChallenge({
         }
 
         if (lockOnLoadError) {
-            lastLoadedUserId = currentSession.user.id;
+            lastLoadedUserId = userId;
             progressLoadBlocked = false;
             setTypingLocked(false);
         }
@@ -973,8 +999,9 @@ export function initTypingChallenge({
         }
     }
 
-    async function saveProgress(nextLevel, completed) {
+    async function saveProgress(nextLevel, completed, revision = accountRevision) {
         const user = await getActiveUser();
+        if (revision !== accountRevision) return false;
         if (!user) {
             if (!requireAuth) {
                 if (guestProgress && typeof guestProgress.save === "function") {
@@ -1024,9 +1051,11 @@ export function initTypingChallenge({
 
         const accessToken = currentSession?.access_token ?? getStoredAccessToken();
         let { error } = await saveProgressDirect(payload, accessToken);
+        if (revision !== accountRevision) return false;
         if (error && isMissingCourseIdError(error)) {
             ({ error } = await saveProgressDirect(payload, accessToken, false));
         }
+        if (revision !== accountRevision) return false;
 
         if (!error) {
             afterGardenReward(resolvedCourseId);
@@ -1060,7 +1089,9 @@ export function initTypingChallenge({
     }
 
     async function resetProgress() {
+        const revision = accountRevision;
         const user = await getActiveUser();
+        if (revision !== accountRevision) return;
         if (!user) {
             if (progressStatusEl) {
                 progressStatusEl.textContent = messages.resetNoSession;
@@ -1081,6 +1112,7 @@ export function initTypingChallenge({
             .eq("week_code", weekCode)
             .eq("activity_key", activityKey);
 
+        if (revision !== accountRevision) return;
         if (error && isMissingCourseIdError(error)) {
             ({ error } = await supabase
                 .from("student_progress")
@@ -1089,6 +1121,7 @@ export function initTypingChallenge({
                 .eq("week_code", weekCode)
                 .eq("activity_key", activityKey));
         }
+        if (revision !== accountRevision) return;
 
         if (error) {
             console.error("resetProgress failed", error);
@@ -1100,6 +1133,7 @@ export function initTypingChallenge({
         }
 
         const saved = await fetchSavedProgress(user.id);
+        if (revision !== accountRevision) return;
         if (saved) {
             console.error("resetProgress verification failed", saved);
             if (progressStatusEl) {
@@ -1111,7 +1145,7 @@ export function initTypingChallenge({
 
         clearProgressDebug();
         await deleteAllDraftsForActivity();
-        window.location.reload();
+        if (revision === accountRevision) window.location.reload();
     }
 
     window.togglePinyin = function togglePinyin(level) {
@@ -1142,8 +1176,10 @@ export function initTypingChallenge({
             return;
         }
 
-        if (checkingLevels.has(levelIndex)) return;
-        checkingLevels.add(levelIndex);
+        const revision = accountRevision;
+        const pendingKey = `${revision}:${levelIndex}`;
+        if (checkingLevels.has(pendingKey)) return;
+        checkingLevels.add(pendingKey);
         try {
 
         if (lockOnLoadError && progressLoadBlocked) {
@@ -1163,6 +1199,7 @@ export function initTypingChallenge({
         }
 
         const user = await getActiveUser();
+        if (revision !== accountRevision) return;
         if (!user && requireAuth) {
             msgEl.textContent = messages.loginRequired;
             msgEl.className = "text-center font-black mt-4 min-h-12 text-base md:text-lg text-amber-600 leading-relaxed";
@@ -1190,7 +1227,8 @@ export function initTypingChallenge({
             }
 
             if (levelIndex < maxLevel) {
-                const didSave = await saveProgress(levelIndex + 1, false);
+                const didSave = await saveProgress(levelIndex + 1, false, revision);
+                if (revision !== accountRevision) return;
                 if (!didSave) {
                     msgEl.innerHTML = "⚠️ 你已經完成這一關了，但進度還沒記錄成功，請再按一次或稍後再試。";
                     if (progressAdapter) msgEl.textContent = `⚠️ ${progressStatusEl?.textContent || messages.saveError}`;
@@ -1219,7 +1257,8 @@ export function initTypingChallenge({
                 return;
             }
 
-            const didSave = await saveProgress(maxLevel, true);
+            const didSave = await saveProgress(maxLevel, true, revision);
+            if (revision !== accountRevision) return;
             if (!didSave) {
                 msgEl.innerHTML = "⚠️ 你已經把最後一關完成了，但完整進度還沒記錄成功，請再按一次或稍後再試。";
                 if (progressAdapter) msgEl.textContent = `⚠️ ${progressStatusEl?.textContent || messages.saveError}`;
@@ -1256,7 +1295,7 @@ export function initTypingChallenge({
             inputEl.classList.add("shake", "border-red-500");
         }
         } finally {
-            checkingLevels.delete(levelIndex);
+            checkingLevels.delete(pendingKey);
         }
     };
 
@@ -1323,7 +1362,7 @@ export function initTypingChallenge({
             await loadProgress();
             if (progressAdapter && draftsEnabled) {
                 supabase.auth.onAuthStateChange((_event, session) => {
-                    if (session?.user?.id !== adapterDraftSession?.user?.id) invalidateAdapterDrafts();
+                    if (session?.user?.id !== adapterDraftSession?.user?.id) invalidateDraftState();
                 });
                 await loadDraftsOnce();
                 syncAllDraftControls();
@@ -1333,16 +1372,18 @@ export function initTypingChallenge({
 
         const { session } = await getSession();
         currentSession = session;
-        await updateAuthUI(currentSession);
-        await loadProgress();
-
-        supabase.auth.onAuthStateChange(async (_event, session) => {
+        const onAuthChange = async (_event, session) => {
             currentSession = session;
             await updateAuthUI(currentSession);
-            if (currentSession) {
+            if (currentSession === session && session?.user
+                && (!lockOnLoadError || lastLoadedUserId !== session.user.id)) {
                 await loadProgress();
             }
-        });
+        };
+        if (lockOnLoadError) supabase.auth.onAuthStateChange(onAuthChange);
+        await updateAuthUI(currentSession);
+        if (currentSession === session) await loadProgress();
+        if (!lockOnLoadError) supabase.auth.onAuthStateChange(onAuthChange);
     }
 
     initialize().catch(error => {
@@ -1353,4 +1394,5 @@ export function initTypingChallenge({
         }
         if (progressStatusEl) progressStatusEl.textContent = progressAdapter && error?.message ? error.message : messages.loadError;
     });
+    return { isCompleted: () => progressCompleted };
 }
