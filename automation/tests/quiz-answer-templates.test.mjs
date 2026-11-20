@@ -13,6 +13,7 @@ test('reviewed numbered blanks keep each diagram and its original input in one c
 });
 
 test('a reviewed self-copy media signature preserves its exact layout while unknown copies stay unadapted',()=>{
+ assert.equal(answerTemplatePresentation(null,{}),null);
  const source=q('（ ）',1,'fields');source.prompt.media=[{kind:'image',url:'https://quiz-media.invalid/00000000-0000-4000-8000-000000000001/'+'a'.repeat(64),alt:'原圖'}];source.prompt.layout=[{type:'paragraph',runs:[{type:'text',text:'（ ）'},{type:'image',media_index:0,width:120}]}];
  const copied=structuredClone(source);copied.prompt.media[0].url='https://partner-media.invalid/'+'b'.repeat(64);
  const model=deriveAnswerTemplate(source),registry={synthetic:{guard:presentationSignature(source),partnerGuard:presentationSignature(copied),model}};

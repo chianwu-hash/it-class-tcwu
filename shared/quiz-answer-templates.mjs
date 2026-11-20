@@ -76,7 +76,8 @@ export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=
  return {mode:marked?'marked':'blanks',start,rows,blanks,omissions,...(targetOffsets?{targetOffsets}:{}),...(symbols?{symbols}:{}),...(underscores?{underscores}:{})};
 }
 export function answerTemplatePresentation(q,registry=answerTemplateSources){
- const source=taskReadingSource(q),p=registry[source?.id],guard=presentationSignature(source);if(!p||p.guard!==guard&&p.partnerGuard!==guard)return null;
+ const source=taskReadingSource(q),p=registry[source?.id];if(!p)return null;
+ const guard=presentationSignature(source);if(p.guard!==guard&&p.partnerGuard!==guard)return null;
  const model=p.model.mode==='groups'?deriveGroupedTemplate(source):p.model.mode==='options'?deriveOptionTemplate(source):p.model.mode==='material'&&source.prompt.media.length?{mode:'material',fields:source.fields.map(f=>f.id)}:deriveAnswerTemplate(source,{marked:p.model.mode==='marked',targetOffsets:p.model.targetOffsets,symbols:p.model.symbols,underscores:p.model.underscores,grouped:p.model.mode==='grouped-blanks'});if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
  const renderPrompt=projectSourceBoxes(source.prompt,q.prompt);
  return {...model,source,renderPrompt,passage:taskReadingPresentation(q,{passage:['rich','material'].includes(model.mode)?{text:'',media:[]}:sliceContent(renderPrompt,0,model.start)}).passage};
