@@ -89,7 +89,10 @@ export function initServerQuiz({ selectors, server }) {
       if(wordMeaningReview(q,review.answer))return;
       const explanation=make('section',undefined,'quiz-explanation-copy'),studentExplanation=study.explanation(q.id);
       if(studentExplanation?.origin==='ai'){explanation.classList.add('quiz-explanation-ai');explanation.append(make('strong','AI 解析','quiz-explanation-caption'));}
-      if(studentExplanation)renderExplanation(explanation,studentExplanation.text,q);else renderContent(explanation,explanationReferenceContent(q,review.explanation));
+      if(studentExplanation){
+        renderExplanation(explanation,studentExplanation.text,q);
+        if(review.explanation?.media?.length)renderContent(explanation,{text:'',media:review.explanation.media});
+      }else renderContent(explanation,explanationReferenceContent(q,review.explanation));
       if(studentExplanation)explanation.append(make('p',studySourceLabel(studentExplanation.origin),'helper'));
       box.append(explanation);return;
     }
@@ -128,7 +131,10 @@ export function initServerQuiz({ selectors, server }) {
     const studentExplanation=study.explanation(q.id);
     const explanation=make('section',undefined,'quiz-explanation-copy');
     if(studentExplanation?.origin==='ai'){explanation.classList.add('quiz-explanation-ai');explanation.append(make('strong','AI 解析','quiz-explanation-caption'));}
-    if(studentExplanation)renderExplanation(explanation,studentExplanation.text,q);
+    if(studentExplanation){
+      renderExplanation(explanation,studentExplanation.text,q);
+      if(review.explanation?.media?.length)renderContent(explanation,{text:'',media:review.explanation.media});
+    }
     else renderContent(explanation,explanationReferenceContent(q,review.explanation));
     if(studentExplanation)explanation.append(make('p',studySourceLabel(studentExplanation.origin),'helper'));
     box.append(explanation);
