@@ -175,7 +175,7 @@ function render(){if(!active)return;publisherTextbook?.close();study.refresh();
   });
   reference.append(pages);
   if(textbook.related)reference.append(el('p','這些頁面說明本題的相關觀念。','helper'));
-  card.insertBefore(reference,grid);
+  grid.after(reference);
  }
  if(feedbackPanel.childNodes.length)card.append(feedbackPanel);card.classList.add('question');card.dataset.questionId=g.id;
  actions.classList.add('quiz-actions');

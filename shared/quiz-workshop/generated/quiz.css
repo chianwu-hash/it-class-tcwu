@@ -1366,6 +1366,7 @@ input:has(+.past-input-tools),textarea:has(+.past-input-tools){scroll-margin-blo
 @media(prefers-reduced-motion:reduce){.qtb-after-entry::after{animation:none;opacity:.3;transform:none}}
 @media(max-width:700px){.is-textbook .image-lightbox-topbar{padding:6px;gap:6px}.qtb-page-nav select{width:140px;max-width:140px}.qtb-page-nav button,.qtb-page-nav select{font-size:13px;padding:6px 8px}.is-textbook .image-lightbox-controls{gap:6px}.is-textbook .image-lightbox-controls button,.is-textbook .image-lightbox-controls span{font-size:13px;min-width:44px}.is-textbook .image-lightbox-controls #lightbox-reset{padding:0 8px}}
 .qtb-page-links{display:flex;flex-wrap:wrap;gap:8px}.past-textbook-citation .qtb-page-links button{background:#fff;color:#224d4c;min-height:44px}.past-textbook-citation .qtb-page-links .qtb-open{background:#176753;color:#fff}
+.qtb-question-pages{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin:6px 0 0;font-size:13px}.qtb-question-pages span{font-weight:700}.qtb-book-toolbar .qtb-question-pages button{font-size:13px;padding:6px 10px;min-height:44px}.qtb-question-pages button[aria-current=page]{background:#176753;color:#fff;border-color:#176753}
 
 /* Course-specific reading aid, configured by the course registry. */
 body[data-zhuyin-images="enlarged"] .quiz-embedded-image:has(img[alt="原題注音字形"]){zoom:2;max-width:50%}
