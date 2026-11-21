@@ -513,3 +513,9 @@ quiz-matching-model.mjs 管原值與連線、quiz-matching-presentation.mjs／so
 ## 原式中的計算過程與分小題手寫（候選待發布）
 
 `quiz-work-answer-layout.mjs`的精確`within-template`計畫只能配相同`grouped-blanks`模型、原欄位及來源／copy_self指紋。`quiz-work-sketch-groups.mjs`把多區視圖儲存為同一既有sketch-v1，不改schema；舊跨區筆畫整張保留，空白草稿可重開。`sketch/editor.mjs`的預設行為保持，只有明確提供`canAddStroke`／`canRestore`的分區編輯器會驗合計80筆；超額復原不pop歷史或更新畫面。教師預覽須補完整原題尾段。範圍與驗收見[兩來源紀錄](quiz-original-equations2-20261121.md)。
+
+### 原括號中的人工算式
+
+`quiz-work-source-slots.mjs`只在`workAnswerPresentation`精確source／實際copy_self指紋及`workPosition:'source-slots'`計畫通過後使用。純文字原題每個空括號都必須完整、有序、唯一地對應原field或人工角色；原標題後的空白工作區只可在該角色標題「：」後換行處插入。不得靠答案或題型名稱猜插槽，不支援媒體／表格或和其他模板混用。
+
+移動原控制與listener，field仍fields-v1，人工算式仍work-v1 scalar／既有encoded groups；不加payload或函式。保留原文字、部分保存與舊整串；失敗補回原尾段，教師無raw與showWork:false不漏原題或重複work。已揭答的純整數核對與compactTemplateFeedback只影響這個精確模式的顏色及短參考，不運算任意表達式或改分數。詳[兩原題及驗收界線](quiz-original-manualslots2-20261121.md)。

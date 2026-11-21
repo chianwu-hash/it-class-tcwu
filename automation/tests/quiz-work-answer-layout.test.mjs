@@ -6,6 +6,19 @@ import {workResponseError} from '../../shared/quiz-work-response.mjs';
 import {deriveAnswerTemplate} from '../../shared/quiz-answer-templates.mjs';
 import {fieldsPromptPresentation} from '../../shared/quiz-fields-presentation.mjs';
 const source=()=>({id:'synthetic-work-roles',type:'fields',prompt:{text:'依原題記錄兩項算式。',media:[]},fields:[{id:'n',label:'數量',input:'math'},{id:'r',label:'剩下',input:'math'}],work:{input:'expression',label:'兩項算式'}});
+test('manual and numeric source slots require exact original blanks and complete unique roles',()=>{
+ const q=source();q.prompt={text:'先列除法再記錄減法。\n除法：（ ）…（ ）\n減法：（ ）',media:[]};const blanks=[...q.prompt.text.matchAll(/（ ）/gu)],p={guard:presentationSignature(q),work:q.work,initialChars:2,workPosition:'source-slots',passageEnd:q.prompt.text.indexOf('除法：'),sourceSlots:blanks.map((m,i)=>({start:m.index,end:m.index+m[0].length,...(i<2?{field:q.fields[i].id}:{work:0})}))};Object.defineProperty(q,'answer',{get(){throw Error('answer accessed')}});
+ assert.equal(workAnswerPresentation(q,{[q.id]:p}),p);
+ for(const slots of [[...p.sourceSlots.slice(0,2)],[p.sourceSlots[1],p.sourceSlots[0],p.sourceSlots[2]],[p.sourceSlots[0],{...p.sourceSlots[1],field:'n'},p.sourceSlots[2]],[p.sourceSlots[0],p.sourceSlots[1],{...p.sourceSlots[2],work:1}],[{...p.sourceSlots[0],start:p.sourceSlots[0].start-1},...p.sourceSlots.slice(1)],[{...p.sourceSlots[0],end:p.sourceSlots[0].start},...p.sourceSlots.slice(1)],[{...p.sourceSlots[0],work:0},...p.sourceSlots.slice(1)]])assert.equal(workAnswerPresentation(q,{[q.id]:{...p,sourceSlots:slots}}),null);
+ const changed={...q,prompt:{text:q.prompt.text.replace('先列','先寫'),media:[{kind:'image',url:'https://example.invalid/a',alt:'圖'}]}};assert.equal(workAnswerPresentation(changed,{[q.id]:{...p,guard:presentationSignature(changed)}}),null);
+ assert.equal(workAnswerPresentation(q,{[q.id]:{...p,workPosition:undefined}}),null);
+ const extra={...q,prompt:{text:q.prompt.text+'\n原題另有（ ）',media:[]}};assert.equal(workAnswerPresentation(extra,{[q.id]:{...p,guard:presentationSignature(extra)}}),null);
+});
+test('an unprinted work blank can only be inserted immediately after its exact original heading',()=>{
+ const q=source();q.prompt={text:'記錄兩種做法。\n乘法紀錄：\n除法：（ ）\n答：（ ）與（ ）',media:[]};q.work.label='兩種算式';const blanks=[...q.prompt.text.matchAll(/（ ）/gu)],insert=q.prompt.text.indexOf('乘法紀錄：')+'乘法紀錄：'.length,p={guard:presentationSignature(q),work:q.work,initialChars:2,groups:['乘法紀錄','除法算式'],workPosition:'source-slots',passageEnd:q.prompt.text.indexOf('乘法紀錄：'),sourceSlots:[{start:insert,end:insert,work:0},...blanks.map((m,i)=>({start:m.index,end:m.index+m[0].length,...(i===0?{work:1}:{field:q.fields[i-1].id})}))]};
+ assert.equal(workAnswerPresentation(q,{[q.id]:p}),p);for(const start of [insert-1,insert+1])assert.equal(workAnswerPresentation(q,{[q.id]:{...p,sourceSlots:[{start,end:start,work:0},...p.sourceSlots.slice(1)]}}),null);
+ assert.equal(workAnswerPresentation(q,{[q.id]:{...p,groups:['其他標題','除法算式']}}),null);
+});
 test('work layout opts into exact source and work roles without consulting answers',()=>{
  const q=source(),registry={[q.id]:{guard:presentationSignature(q),work:{...q.work},initialChars:4,groups:['乘法紀錄','除法算式']}};Object.defineProperty(q,'answer',{get(){throw Error('answer accessed')}});const before=JSON.stringify({prompt:q.prompt,fields:q.fields,work:q.work});assert.ok(workAnswerPresentation(q,registry));assert.equal(JSON.stringify({prompt:q.prompt,fields:q.fields,work:q.work}),before);
  for(const changed of [{...q,id:'another'},{...q,work:{input:'sketch',label:q.work.label}},{...q,work:{...q.work,label:'another work role'}},{...q,fields:[...q.fields].reverse()}])assert.equal(workAnswerPresentation(changed,registry),null);

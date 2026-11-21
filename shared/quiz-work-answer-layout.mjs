@@ -2,6 +2,7 @@ import {workAnswerSources,answerTemplateSources} from './quiz-answer-template-so
 import {presentationSignature} from './quiz-presentation-signature.mjs';
 import {sliceContent,sourceStream} from './quiz-content-slices.mjs';
 import {deriveAnswerTemplate} from './quiz-answer-templates.mjs';
+import {validWorkSourceSlots,mountWorkSourceSlots} from './quiz-work-source-slots.mjs';
 
 // Reviewed response roles only. Never infer an answer, field, or work area.
 export function workAnswerPresentation(q,registry=workAnswerSources){
@@ -13,7 +14,9 @@ export function workAnswerPresentation(q,registry=workAnswerSources){
  if(p.passageEnd!==undefined&&(!Number.isInteger(p.passageEnd)||p.passageEnd<=0||p.passageEnd>=limit))return null;
  if(p.workPosition!==undefined){
   const template=answerTemplateSources[q.id];
-  if(p.workPosition==='within-template'){
+  if(p.workPosition==='source-slots'){
+   if(answerTemplateSources[q.id]||!validWorkSourceSlots(q,p))return null;
+  }else if(p.workPosition==='within-template'){
    if(p.responseGroups||p.groups||!Number.isInteger(p.passageEnd)||template?.model?.mode!=='grouped-blanks'||![template.guard,template.partnerGuard].includes(presentationSignature(q)))return null;
    const model=deriveAnswerTemplate(q,{grouped:true});
    if(!model||JSON.stringify(model)!==JSON.stringify(template.model)||model.start!==p.passageEnd||!Array.isArray(p.templateRows)||p.templateRows.length!==(p.sketchGroups?.length??1)||new Set(p.templateRows).size!==p.templateRows.length||p.templateRows.some(i=>!Number.isInteger(i)||i<0||i>=model.rows.length))return null;
@@ -25,6 +28,7 @@ export function workAnswerPresentation(q,registry=workAnswerSources){
   const model=deriveAnswerTemplate(q);if(!model||JSON.stringify(model)!==JSON.stringify(template.model)||model.start!==p.passageEnd+p.work.label.length+2)return null;
   }
  }
+ if(p.sourceSlots&&p.workPosition!=='source-slots')return null;
  if((p.sketchGroups||p.templateRows||p.workBeforeFields)&&p.workPosition!=='within-template')return null;
  if(p.groups&&(!Array.isArray(p.groups)||p.work.input!=='expression'||p.groups.length<2||p.groups.length>8||p.groups.some(s=>typeof s!=='string'||!s.trim()||s.length>60)||new Set(p.groups).size!==p.groups.length))return null;
  if(p.responseGroups){
@@ -50,8 +54,11 @@ export function encodeWorkGroups(values){if(!Array.isArray(values)||values.lengt
 export function decodeWorkGroups(raw,count){
  try{const d=JSON.parse(raw);return d&&Object.keys(d).length===2&&d.v===1&&Array.isArray(d.parts)&&d.parts.length===count&&d.parts.every(s=>typeof s==='string')?d.parts:null;}catch{return null;}
 }
-export function mountWorkAnswerInputs(host,q,{renderContent}={}){
+export function mountWorkAnswerInputs(host,q,{renderContent,fieldFeedback}={}){
  const p=workAnswerPresentation(q);if(!p)return false;
+ if(p.workPosition==='source-slots'&&!mountWorkSourceSlots(host,q,p,{fieldFeedback})){
+  if(!host.querySelector(':scope > .quiz-work-source-reference')){const content=workResponseContent(q,p.passageEnd,sourceStream(q.prompt).length),tail=document.createElement('div');tail.className='quiz-work-source-reference';if(renderContent)renderContent(tail,content);else tail.textContent=content.text;host.prepend(tail);}return false;
+ }
  if(p.responseGroups&&!host.querySelector(':scope > .quiz-work-source-group')){
   const slots=[...host.querySelectorAll(':scope > .quiz-field')],work=host.querySelector(':scope > .quiz-work-input,:scope > .quiz-saved-work,:scope > .quiz-pending-work');
   if(slots.length!==q.fields.length)return false;

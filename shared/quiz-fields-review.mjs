@@ -6,7 +6,7 @@ const same=(a,b,input)=>Array.isArray(a)&&Array.isArray(b)?a.length===b.length&&
 export function fieldsReviewPresentation(q,raw,review){
  if(q?.type!=='fields'||typeof review?.correct!=='boolean'||review.answer?.format!=='fields-v1'||!review.answer.fields)return null;
  let values;try{const p=JSON.parse(raw);if(p.v!==1||!p.f||Array.isArray(p.f))return null;values=p.f;}catch{return null;}
- const integerReview=workAnswerPresentation(q)?.workPosition==='before-template';
+ const integerReview=['before-template','source-slots'].includes(workAnswerPresentation(q)?.workPosition);
  return q.fields.map(f=>{
   const value=values[f.id],accepted=review.answer.fields[f.id];if(!Object.hasOwn(values,f.id)||!Array.isArray(accepted)||!accepted.length)return null;
   const matched=accepted.findIndex(a=>same(value,a,f.input)),choice=['single','set','sequence'].includes(f.input);

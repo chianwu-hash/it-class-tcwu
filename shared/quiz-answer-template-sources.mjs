@@ -1257,6 +1257,83 @@ export const workAnswerSources={
     ]
   }
 
+,
+  "hlg3m_0190fae9_ms65ecea4b3636": {
+    "guard": "7b09500a493f02c3",
+    "partnerGuard": "7b09500a493f02c3",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "計算過程"
+    },
+    "passageEnd": 52,
+    "workPosition": "source-slots",
+    "sourceSlots": [
+      {
+        "start": 57,
+        "end": 63,
+        "field": "f1"
+      },
+      {
+        "start": 64,
+        "end": 70,
+        "field": "f2"
+      },
+      {
+        "start": 85,
+        "end": 91,
+        "work": 0
+      },
+      {
+        "start": 96,
+        "end": 102,
+        "field": "f3"
+      },
+      {
+        "start": 106,
+        "end": 112,
+        "field": "f4"
+      }
+    ]
+  },
+  "hlg3m_02beb4e3_mseed85ada8ae3": {
+    "guard": "4807f2220eb3b3d7",
+    "partnerGuard": "4807f2220eb3b3d7",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "乘除法算式紀錄"
+    },
+    "passageEnd": 45,
+    "workPosition": "source-slots",
+    "sourceSlots": [
+      {
+        "start": 52,
+        "end": 52,
+        "work": 0
+      },
+      {
+        "start": 58,
+        "end": 68,
+        "work": 1
+      },
+      {
+        "start": 73,
+        "end": 77,
+        "field": "f1"
+      },
+      {
+        "start": 82,
+        "end": 86,
+        "field": "f2"
+      }
+    ],
+    "groups": [
+      "乘法算式紀錄",
+      "除法算式"
+    ]
+  }
+
 };
 export const answerTemplateSources={
 
