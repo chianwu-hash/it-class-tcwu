@@ -193,8 +193,8 @@ export function answerTemplatePresentation(q,registry=answerTemplateSources){
 
 // Move the original controls (and listeners/feedback/keyboards), never clone,
 // recreate values, change field names or introduce another submit action.
-export function compactTemplateFeedback(feedback){
- if(feedback?.input!=='math')return null;
+export function compactTemplateFeedback(feedback,{allowText=false}={}){
+ if(feedback?.input!=='math'&&!(allowText&&feedback?.input==='text'))return null;
  if(feedback.state==='correct')return {state:'correct',text:'✓ 答對'};
  if(feedback.state==='incorrect'){const accepted=feedback.accepted;return {state:'incorrect',text:Array.isArray(accepted)&&accepted.length&&accepted.every(v=>typeof v==='string'&&v.trim())?'✕ 應填'+[...new Set(accepted)].join(' 或 '):'✕ 請修正'};}
  if(!['reference','paired'].includes(feedback.state)||!Array.isArray(feedback.accepted)||!feedback.accepted.length||feedback.accepted.some(v=>typeof v!=='string'||!v.trim()))return null;

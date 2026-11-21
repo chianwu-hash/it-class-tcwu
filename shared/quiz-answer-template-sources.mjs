@@ -1334,6 +1334,184 @@ export const workAnswerSources={
     ]
   }
 
+,
+  "hlg3m_01c1e02a_mf01105dfffecc": {
+    "guard": "c371279f377ef938",
+    "partnerGuard": "7b0246bcf698c598",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "計算過程"
+    },
+    "passageEnd": 24,
+    "responseWorkMap": true,
+    "fieldInputs": [
+      "math",
+      "math",
+      "math",
+      "math"
+    ],
+    "responseGroups": [
+      {
+        "start": 24,
+        "end": 57,
+        "fields": [
+          "f1",
+          "f2"
+        ],
+        "label": "第1小題",
+        "work": null
+      },
+      {
+        "start": 57,
+        "end": 74,
+        "fields": [
+          "f3",
+          "f4"
+        ],
+        "label": "第2小題",
+        "work": 0
+      }
+    ]
+  },
+  "hlg3m_02be50ee_mf46ca15a787d9": {
+    "guard": "e8597909075e2d55",
+    "partnerGuard": "272c93a84e2a98cb",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "計算過程"
+    },
+    "passageEnd": 18,
+    "responseWorkMap": true,
+    "fieldInputs": [
+      "math",
+      "math"
+    ],
+    "responseGroups": [
+      {
+        "start": 18,
+        "end": 50,
+        "fields": [
+          "f1",
+          "f2"
+        ],
+        "label": "第1小題",
+        "work": 0
+      }
+    ]
+  },
+  "hlg3m_04fac5f0_mf5ba2902827d4": {
+    "guard": "55407eea3af24f0e",
+    "partnerGuard": "55407eea3af24f0e",
+    "initialChars": 4,
+    "work": {
+      "input": "expression",
+      "label": "計算過程"
+    },
+    "passageEnd": 83,
+    "responseWorkMap": true,
+    "fieldInputs": [
+      "math",
+      "math",
+      "text"
+    ],
+    "responseGroups": [
+      {
+        "start": 83,
+        "end": 110,
+        "fields": [
+          "f1",
+          "f2",
+          "f3"
+        ],
+        "label": "第1小題",
+        "work": 0
+      }
+    ]
+  },
+  "hlg3m_054d3e75_mf2908831696e3": {
+    "guard": "3fb6d8cedc11610e",
+    "partnerGuard": "bb91f401f729d7d4",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "計算過程"
+    },
+    "passageEnd": 30,
+    "responseWorkMap": true,
+    "fieldInputs": [
+      "math",
+      "math"
+    ],
+    "responseGroups": [
+      {
+        "start": 30,
+        "end": 46,
+        "fields": [
+          "f1",
+          "f2"
+        ],
+        "label": "第1小題",
+        "work": 0
+      }
+    ]
+  },
+  "hlg3m_05a75039_mf188fcb0dedcc": {
+    "guard": "6643dd25b5b2e675",
+    "partnerGuard": "9064bbfc3aa1e28d",
+    "initialChars": 4,
+    "work": {
+      "input": "expression",
+      "label": "計算過程"
+    },
+    "passageEnd": 9,
+    "responseWorkMap": true,
+    "fieldInputs": [
+      "math",
+      "math",
+      "text",
+      "math",
+      "math"
+    ],
+    "responseGroups": [
+      {
+        "start": 9,
+        "end": 36,
+        "fields": [
+          "f1",
+          "f2"
+        ],
+        "label": "第1小題",
+        "work": 0
+      },
+      {
+        "start": 36,
+        "end": 63,
+        "fields": [
+          "f3"
+        ],
+        "label": "第2小題",
+        "work": 1
+      },
+      {
+        "start": 63,
+        "end": 83,
+        "fields": [
+          "f4",
+          "f5"
+        ],
+        "label": "第3小題",
+        "work": 2
+      }
+    ],
+    "groups": [
+      "第1小題計算過程",
+      "第2小題計算過程",
+      "第3小題計算過程"
+    ]
+  }
+
 };
 export const answerTemplateSources={
 

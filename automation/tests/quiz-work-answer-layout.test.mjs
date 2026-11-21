@@ -6,6 +6,19 @@ import {workResponseError} from '../../shared/quiz-work-response.mjs';
 import {deriveAnswerTemplate} from '../../shared/quiz-answer-templates.mjs';
 import {fieldsPromptPresentation} from '../../shared/quiz-fields-presentation.mjs';
 const source=()=>({id:'synthetic-work-roles',type:'fields',prompt:{text:'依原題記錄兩項算式。',media:[]},fields:[{id:'n',label:'數量',input:'math'},{id:'r',label:'剩下',input:'math'}],work:{input:'expression',label:'兩項算式'}});
+
+test('reviewed response work mapping keeps a reading-only subquestion free of invented work',()=>{
+ const q=source();q.prompt.text='看秤圖。\n(1)讀重量。\n(2)求內容物重。';const start=q.prompt.text.indexOf('(1)'),second=q.prompt.text.indexOf('(2)'),p={guard:presentationSignature(q),work:q.work,initialChars:2,passageEnd:start,responseWorkMap:true,fieldInputs:['math','math'],responseGroups:[{start,end:second,fields:['n'],label:'第1小題',work:null},{start:second,end:q.prompt.text.length,fields:['r'],label:'第2小題',work:0}]};Object.defineProperty(q,'answer',{get(){throw Error('hidden answer accessed')}});
+ assert.equal(workAnswerPresentation(q,{[q.id]:p}),p);
+ for(const patch of [{responseWorkMap:false},{fieldInputs:['text','math']},{fieldInputs:undefined},{responseGroups:p.responseGroups.map(g=>({...g,work:null}))},{responseGroups:p.responseGroups.map(g=>({...g,work:0}))},{responseGroups:[p.responseGroups[0],{...p.responseGroups[1],work:1}]},{responseGroups:[{...p.responseGroups[0],work:undefined},p.responseGroups[1]]},{responseGroups:[{...p.responseGroups[0],label:''},p.responseGroups[1]]}])assert.equal(workAnswerPresentation(q,{[q.id]:{...p,...patch}}),null);
+});
+
+test('mixed math and text fields require an exact opt-in and complete distinct manual roles',()=>{
+ const q=source();q.fields[1].input='text';q.prompt.text='共同情境。\n(1)算重量。\n(2)寫物品名稱。';const start=q.prompt.text.indexOf('(1)'),second=q.prompt.text.indexOf('(2)'),p={guard:presentationSignature(q),work:q.work,initialChars:4,passageEnd:start,responseWorkMap:true,fieldInputs:['math','text'],groups:['第1小題計算過程','第2小題計算過程'],responseGroups:[{start,end:second,fields:['n'],label:'第1小題',work:0},{start:second,end:q.prompt.text.length,fields:['r'],label:'第2小題',work:1}]};
+ assert.equal(workAnswerPresentation(q,{[q.id]:p}),p);assert.equal(q.fields[1].input,'text');
+ for(const patch of [{responseWorkMap:undefined},{responseWorkMap:'true'},{fieldInputs:['math','single']},{responseGroups:[p.responseGroups[0],{...p.responseGroups[1],work:0}]},{responseGroups:[p.responseGroups[0],{...p.responseGroups[1],fields:['n']}]},{responseGroups:[p.responseGroups[0],{...p.responseGroups[1],extra:'unreviewed'}]}])assert.equal(workAnswerPresentation(q,{[q.id]:{...p,...patch}}),null);
+ const changed={...q,fields:q.fields.map(f=>({...f,input:'single'}))};assert.equal(workAnswerPresentation(changed,{[q.id]:p}),null);
+});
 test('manual and numeric source slots require exact original blanks and complete unique roles',()=>{
  const q=source();q.prompt={text:'先列除法再記錄減法。\n除法：（ ）…（ ）\n減法：（ ）',media:[]};const blanks=[...q.prompt.text.matchAll(/（ ）/gu)],p={guard:presentationSignature(q),work:q.work,initialChars:2,workPosition:'source-slots',passageEnd:q.prompt.text.indexOf('除法：'),sourceSlots:blanks.map((m,i)=>({start:m.index,end:m.index+m[0].length,...(i<2?{field:q.fields[i].id}:{work:0})}))};Object.defineProperty(q,'answer',{get(){throw Error('answer accessed')}});
  assert.equal(workAnswerPresentation(q,{[q.id]:p}),p);

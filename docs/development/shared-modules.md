@@ -10,6 +10,10 @@
 
 [批次規則](quiz-batch-conversion-rules.md)及[JSON索引](quiz-batch-conversion-rules.json)將已定案作答方式對應既有共用模組，列明main、草稿接線與試用待adapter的差別。索引是資料規則，不會自動啟用未實作能力。新增同類來源只做來源、欄位、原鍵、解析／教材、媒體及版本資料檢查；規則／分支、相關JS/CSS、序列化與後端契約及入口未變時，沿用既驗代表題保存／回顧證據。只有新增行為或受影響契約才補對應回歸，不因每題來源guard不同而重測整套共用模組，也不例行重找Claude。
 
+## 原題小題的人工過程與混合欄位（2026-11-21，候選待整科發布）
+
+`quiz-work-answer-layout.mjs`的`responseWorkMap`以精確原件／真copy_self指紋及明列fieldInputs啟用math＋text；完整連續responseGroups各持有唯一原欄位及明列manual索引或null。單一過程沿scalar，多段沿同一work-v1編碼，不為只讀數小題新增過程要求，也不造原未印選項。原listener、舊整字串、pending、教師及showWork:false保留。新模式將既有揭答feedback移為原欄旁精簡核對，單位legend縮成公斤／公克而完整可存取名稱保持；文字formatter須allowText明示opt-in，其他舊分支預設不變。純整數僅比已揭露參考，未知合理文字／表達式保持中性，不改後端分數。按批次規則只補兩新分支並沿用未受影響收據，詳[來源與驗收](quiz-original-mixed5-20261121.md)。
+
 ## 原圖單選（2026-11-21，候選待整科發布）
 
 `quiz-image-choices.mjs`只對原件／真copy_self公開rich內容的精確指紋投影；保留原生single／原圖庫／選項ID與索引，不讀答案推介面、不新增SQL。點圖選答與獨立燈箱分開；原比例、原編號及題意須在揭答和共同回顧保持。figure保留實體盒供延後載入，回顧圖卡內容限定全寬，核對文字另列，不擠窄個別圖片；核對描述透過aria-describedby連原有結果。未知來源退回既有完整顯示。詳[來源與完整隔離驗收](quiz-image-choices-20261121.md)。
