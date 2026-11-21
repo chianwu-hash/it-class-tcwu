@@ -679,6 +679,60 @@ export const workAnswerSources={
       "input": "expression",
       "label": "算式紀錄"
     }
+  },
+  "hlg3m_0067fd12_dva8c435451c8b": {
+    "guard": "34005d05faac2ea5",
+    "partnerGuard": "34005d05faac2ea5",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_00aac7d9_dvc1385a3b65f6": {
+    "guard": "d0e45bded71941c1",
+    "partnerGuard": "d0e45bded71941c1",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_01962fbb_dv91277bd98015": {
+    "guard": "94621649c40abd4a",
+    "partnerGuard": "94621649c40abd4a",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_02e86c58_dv07dcc2291150": {
+    "guard": "d2c3ae39cfb8b0ab",
+    "partnerGuard": "d2c3ae39cfb8b0ab",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_03d27750_dv1567e4681676": {
+    "guard": "331d27124aebb981",
+    "partnerGuard": "331d27124aebb981",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_03dc2e29_dv1b8205af6219": {
+    "guard": "21144d97731add05",
+    "partnerGuard": "21144d97731add05",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
   }
 };
 export const answerTemplateSources={
