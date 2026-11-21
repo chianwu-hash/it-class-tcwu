@@ -847,6 +847,48 @@ export const workAnswerSources={
     }
   }
 
+,
+  "hlg3m_0030ed87_d4d010e6f70ae6": {
+    "guard": "fa0eac7b999c81df",
+    "partnerGuard": "fa0eac7b999c81df",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_00dec6f5_d4c7455fdd4dab": {
+    "guard": "218b0c1796819b56",
+    "partnerGuard": "218b0c1796819b56",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "乘法與減法算式紀錄"
+    },
+    "groups": [
+      "乘法算式",
+      "減法算式"
+    ]
+  },
+  "hlg3m_03d4c277_d49fb69c347afb": {
+    "guard": "6a3cd576d1e79d25",
+    "partnerGuard": "6a3cd576d1e79d25",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_04887764_d49fa43ff9ce6f": {
+    "guard": "82ba1177ddb9ac37",
+    "partnerGuard": "82ba1177ddb9ac37",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  }
+
 };
 export const answerTemplateSources={
 
