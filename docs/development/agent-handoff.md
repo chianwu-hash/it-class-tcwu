@@ -5,7 +5,7 @@
 | 已完成 | Codex-g3math-batch-20261121 | 2026-11-21 | `823be784` | `dpl_GdF1Pw3WDodcQsVDbMjZHuAXg8kQ` | 34題與三、四、六、九年級16入口 | `dpl_4TcxEvZStoueyyyNuqxdpW6QWxqM`，可回滾至基準部署，詳[首批34題收據](quiz-release34-20261121.md) |
 | 待新對話接續 | Codex-g3math-release34-20261121 | 2026-11-21 | `2d35c869`；續作須重新 fetch | `dpl_GdF1Pw3WDodcQsVDbMjZHuAXg8kQ` | 已核共用作答程式、生成資產與16入口；34題保持停用 | 使用者要求本段收尾，未部署、未取得發布鎖；詳[34題收據](quiz-release34-20261121.md) |
 
-- 數值與單位42題完成分流，72題隔離等值讀回全過；媒體及正式驗收待補，本輪未凍結。詳[數值與單位批次收據](quiz-number-units-diagnosis-20261121.md)。
+- 數值與單位 24 題完成正式 OAuth 並凍結；125 資產正式登錄，剩餘 48 題供圖齊全、待 OAuth。詳[24 題凍結收據](quiz-number-units-qa24-20261121.md)及[42 題診斷](quiz-number-units-diagnosis-20261121.md)。
 
 # 最新授權：整理合併、清理後討論效率，再接回長線（2026-11-21）
 
