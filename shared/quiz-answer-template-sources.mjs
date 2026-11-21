@@ -1,4 +1,407 @@
 // Verified source fingerprints and blank offsets; no source text or answers.
+export const workAnswerSources={
+  "hlg3m_001f381b_ow43e05bed5c51": {
+    "guard": "856ac909aad37222",
+    "partnerGuard": "856ac909aad37222",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_0033a870_ow36d7fdcbfac4": {
+    "guard": "427c3b18fad25752",
+    "partnerGuard": "427c3b18fad25752",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_003edead_owff4a5ad49a47": {
+    "guard": "61bbb8ee11d990a0",
+    "partnerGuard": "61bbb8ee11d990a0",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_004016d5_ow48cf005c41cb": {
+    "guard": "f8eaddcd18d46b14",
+    "partnerGuard": "f8eaddcd18d46b14",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_0042e5b8_ow9732910deac0": {
+    "guard": "55e207a7085fd0fe",
+    "partnerGuard": "55e207a7085fd0fe",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_004e199c_owd061f56d3746": {
+    "guard": "4b6e066e03acd545",
+    "partnerGuard": "4b6e066e03acd545",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_00c22e1e_owb5286667845f": {
+    "guard": "94d81876e9be06ea",
+    "partnerGuard": "94d81876e9be06ea",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_01508424_owcf92b1031917": {
+    "guard": "773f49da79bfa020",
+    "partnerGuard": "773f49da79bfa020",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_0152fef5_ow06f963739fae": {
+    "guard": "efcc8035838e27ea",
+    "partnerGuard": "efcc8035838e27ea",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_017ec1e8_ow3d8c5474ce58": {
+    "guard": "4bab68453a779118",
+    "partnerGuard": "4bab68453a779118",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_01c8c41c_owffb82fd37439": {
+    "guard": "bcd59d1bcde28b47",
+    "partnerGuard": "bcd59d1bcde28b47",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "乘法算式紀錄與除法算式"
+    },
+    "groups": [
+      "乘法算式紀錄",
+      "除法算式"
+    ],
+    "passageEnd": 48
+  },
+  "hlg3m_01e53a42_ow78338a726453": {
+    "guard": "d35aa82041479669",
+    "partnerGuard": "d35aa82041479669",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_01e9519b_owccc4c6ae6b7f": {
+    "guard": "5a656a848ae30723",
+    "partnerGuard": "5a656a848ae30723",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_01fb2fa2_owb550b2cf416a": {
+    "guard": "fc7a064dfaf1b318",
+    "partnerGuard": "fc7a064dfaf1b318",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_027f4653_ow91d98392f411": {
+    "guard": "cfd55569440ab925",
+    "partnerGuard": "cfd55569440ab925",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_032a4311_ow6e82864a71d9": {
+    "guard": "55997f5d27cd3907",
+    "partnerGuard": "55997f5d27cd3907",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_032da97b_ow4cd728ae42d2": {
+    "guard": "9840c3088c4fe05c",
+    "partnerGuard": "9840c3088c4fe05c",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_032e440c_owbaa150ab0955": {
+    "guard": "96a70872e33ebc62",
+    "partnerGuard": "96a70872e33ebc62",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_0339240f_owd07a31d35329": {
+    "guard": "cbfb673f2731db40",
+    "partnerGuard": "cbfb673f2731db40",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_033a2e40_owd4fb02578edb": {
+    "guard": "bf2114d7f1329509",
+    "partnerGuard": "bf2114d7f1329509",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_03a52687_owabaa8304decf": {
+    "guard": "be9ff98705b2ed50",
+    "partnerGuard": "be9ff98705b2ed50",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_03afd73c_owc3fb8e28a9e6": {
+    "guard": "ed8785adc336eb1f",
+    "partnerGuard": "ed8785adc336eb1f",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_03bea017_owcf9b3e4c03e5": {
+    "guard": "7179a69d9e69b550",
+    "partnerGuard": "7179a69d9e69b550",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_03c0a6bc_ow2e82e34b83a2": {
+    "guard": "fe408d2d3badaf7f",
+    "partnerGuard": "fe408d2d3badaf7f",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_03c56423_owdd943b9a7041": {
+    "guard": "27e28d9b46071b53",
+    "partnerGuard": "27e28d9b46071b53",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_03c56ce2_ow74afc217a8b6": {
+    "guard": "c62b91bc74ce8890",
+    "partnerGuard": "c62b91bc74ce8890",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_042319fa_owa30a86b33898": {
+    "guard": "dd42ad55b6598928",
+    "partnerGuard": "dd42ad55b6598928",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_04392b03_ow3d11fbd6c0f9": {
+    "guard": "11b8e4a39d75c79c",
+    "partnerGuard": "11b8e4a39d75c79c",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_04441cfd_ow9f9d9b931939": {
+    "guard": "41020c5aa3ae5446",
+    "partnerGuard": "41020c5aa3ae5446",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_046d6505_ow8fa632a60f40": {
+    "guard": "be744a48e9336cb7",
+    "partnerGuard": "be744a48e9336cb7",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_0470830c_owb50d63d955f9": {
+    "guard": "0e96cb81b07fd4a0",
+    "partnerGuard": "0e96cb81b07fd4a0",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_0470a1e9_ow40580eed4e60": {
+    "guard": "e1bd7aa9dfc7fc72",
+    "partnerGuard": "e1bd7aa9dfc7fc72",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_04f77dd1_owd563a43222cd": {
+    "guard": "5e4a19e7bdef59bd",
+    "partnerGuard": "5e4a19e7bdef59bd",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_04fae5e1_ow1d82d277f23e": {
+    "guard": "34efab38c3f49fed",
+    "partnerGuard": "34efab38c3f49fed",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_05025a15_ow3a2a355e8483": {
+    "guard": "ba7cfb9dbb2ae0b1",
+    "partnerGuard": "ba7cfb9dbb2ae0b1",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_050403ef_ow2fe1f3f7e35f": {
+    "guard": "25c8b3b6d2876eaf",
+    "partnerGuard": "3c8251cbab35210b",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_0508a799_owb351e113a917": {
+    "guard": "2f0d3e52aa9cc02e",
+    "partnerGuard": "2f0d3e52aa9cc02e",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_05571a9f_ow95b75289ee66": {
+    "guard": "ff433aa12f1f958b",
+    "partnerGuard": "ff433aa12f1f958b",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_057453a5_ow61a48c0bcf56": {
+    "guard": "89b3eafed4875ecd",
+    "partnerGuard": "89b3eafed4875ecd",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_0579f646_owf4d61d317a24": {
+    "guard": "16c74582cdadf1db",
+    "partnerGuard": "16c74582cdadf1db",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_05b786bc_ow035a033b00b5": {
+    "guard": "233af8a543e3fae8",
+    "partnerGuard": "233af8a543e3fae8",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_05e32330_ow7588a3416f8b": {
+    "guard": "b747f50dd8f6ae63",
+    "partnerGuard": "b747f50dd8f6ae63",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_05ee8f71_ow0ee6d6d467c7": {
+    "guard": "7dc3ba0b0f05478c",
+    "partnerGuard": "7dc3ba0b0f05478c",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_05f1e88f_ow3248de5107c0": {
+    "guard": "f8fbe076aa5e90dd",
+    "partnerGuard": "f8fbe076aa5e90dd",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  }
+};
 export const answerTemplateSources={
 
   "hlg3m_021169a8_rw0f2e9aafc198": {

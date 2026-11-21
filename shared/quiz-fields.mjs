@@ -13,6 +13,7 @@ import {answerTemplatePresentation,mountAnswerTemplate} from './quiz-answer-temp
 import {phoneticWordFields} from './quiz-field-input-aids.mjs';
 import {inlineReadingPlan} from './quiz-reading-inline.mjs';
 import {mountReadingWorkbench,readingWorkbenchSupported} from './quiz-reading-workbench.mjs';
+import {workAnswerPresentation,mountWorkAnswerInputs} from './quiz-work-answer-layout.mjs';
 export {fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
 
 const own=(o,k)=>o&&Object.hasOwn(o,k);
@@ -41,6 +42,7 @@ export function fieldsResponseError(q,raw){
 
 export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onChange,renderContent,textInputAids={},review=null}){
  const values=fieldsValues(q,raw),group=make('div'),phonetic=phoneticWordFields(choiceQuestionPresentation(q));group.className='quiz-fields';group.classList.toggle('quiz-fields-single',q.fields.length===1);
+ const workLayout=workAnswerPresentation(q);if(workLayout)group.classList.add('quiz-work-answer-layout');
  const inline=inlineReadingPlan(q),reading=inline?.reading??readingPresentation(choiceQuestionPresentation(q));group.classList.toggle('quiz-reading-fields',Boolean(reading));
  const shown=q.fields.map((f,i)=>reading?.fields?.[i]??fieldPresentation(q,f)),feedback=locked?fieldsReviewPresentation({...q,fields:shown},raw,review):null;
  const matching=matchingPresentation(choiceQuestionPresentation(q),shown);
@@ -82,11 +84,11 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
   appendFieldReviewReference(slot,feedback?.[fieldIndex],v=>formatted(f,v),formatPair);group.append(slot);
  }
  if(matching)appendMatchingOriginal(group,matching.original,renderContent);else if(!reading)mountAnswerTemplate(group,choiceQuestionPresentation(q),{renderContent,fieldFeedback:feedback});
- mountReadingWorkbench(group,q,reading,{renderContent,fieldFeedback:feedback});host.append(group);return group;
+ mountReadingWorkbench(group,q,reading,{renderContent,fieldFeedback:feedback});mountWorkAnswerInputs(group,q);host.append(group);return group;
 }
 export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,referenceAnswer=null,showWork=true}){
  if(raw&&readingWorkbenchSupported(q,readingPresentation(choiceQuestionPresentation(q)))){if(host.querySelector('.quiz-reading-workbench'))return;renderFieldsInputs(host,q,{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
- if(raw&&answerTemplatePresentation(choiceQuestionPresentation(q))){if(host.querySelector('.quiz-has-answer-template'))return;renderFieldsInputs(host,showWork?q:{...q,work:undefined},{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
+ if(raw&&(answerTemplatePresentation(choiceQuestionPresentation(q))||workAnswerPresentation(q))){if(host.querySelector('.quiz-has-answer-template,.quiz-work-answer-layout'))return;const group=renderFieldsInputs(host,showWork?q:{...q,work:undefined},{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});mountWorkAnswerInputs(group,q);return;}
  if(showWork&&raw&&q.work)renderSavedWork(host,q,raw);
  const reading=readingPresentation(choiceQuestionPresentation(q));
  const shown=(q.fields||[]).map((f,i)=>reading?.fields?.[i]??fieldPresentation(q,f)),feedback=fieldsReviewPresentation({...q,fields:shown},raw,review),formatPair=(id,v)=>{const f=shown.find(f=>f.id===id);return f.label+'：'+formatted(f,v)};
