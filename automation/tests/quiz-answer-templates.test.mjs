@@ -5,6 +5,12 @@ import {deriveNumberSymbolTemplate} from '../../shared/quiz-answer-templates.mjs
 import {deriveDiagramSymbolTemplate} from '../../shared/quiz-answer-templates.mjs';
 import {deriveItemMarkTemplate} from '../../shared/quiz-answer-templates.mjs';
 
+test('original division and compound-mass blanks keep work separate and preserve units without reading answers',()=>{
+ for(const text of ['39÷6＝（ ）…（ ）','15公斤800公克－7公斤632公克\n＝（ ）公斤（ ）公克']){
+  const q={id:'required-original-work',type:'fields',prompt:{text,media:[]},fields:[{id:'f1',input:'math',label:'第1格'},{id:'f2',input:'math',label:'第2格'}],work:{input:'sketch',label:'直式作答'}},before=JSON.stringify(q),model=deriveAnswerTemplate(q);assert.ok(model);assert.deepEqual(model.blanks.map(b=>b.field),['f1','f2']);assert.equal(JSON.stringify(q),before);Object.defineProperty(q,'answer',{get(){throw Error('answer read')}});const view=answerTemplatePresentation(q,{[q.id]:{guard:presentationSignature(q),model}});assert.ok(view);assert.equal(view.source.work.input,'sketch');assert.equal(view.source.prompt.text,text);
+ }
+});
+
 test('extreme item marks retain every printed blank and derive unmarked only from the gesture contract',()=>{
  const labels=['(１)1 公斤 200 公克','(２)2 公斤','(３)900 公克'],source={id:'item-marks',type:'fields',prompt:{text:'比比看，最重的打ˇ，最輕的畫○。\n'+labels.map(s=>'（ ）'+s).join('\n'),media:[]},fields:labels.map((label,i)=>({id:'f'+i,label,input:'single',options:['ˇ','○','留白'].map((text,j)=>({id:'o'+j,content:{text,media:[]}}))}))},before=JSON.stringify(source),model=deriveItemMarkTemplate(source);assert.ok(model);assert.deepEqual(model.unmarked,{f0:'o2',f1:'o2',f2:'o2'});assert.equal(JSON.stringify(source),before);const registry={'item-marks':{guard:presentationSignature(source),model}};assert.ok(answerTemplatePresentation(source,registry));Object.defineProperty(source,'answer',{get(){throw Error('answer must not be read')}});assert.ok(deriveItemMarkTemplate(source));source.fields[1].label='another source item';assert.equal(deriveItemMarkTemplate(source),null);assert.equal(answerTemplatePresentation(source,registry),null);
 });
