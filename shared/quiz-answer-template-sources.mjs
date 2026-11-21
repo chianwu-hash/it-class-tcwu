@@ -1512,6 +1512,262 @@ export const workAnswerSources={
     ]
   }
 
+,
+  "hlg3m_009ad521_dbce633e55e1af": {
+    "guard": "b751a6139109c394",
+    "partnerGuard": "b751a6139109c394",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "直式計算過程"
+    }
+  },
+  "hlg3m_0185ef6b_dba0cda12b195d": {
+    "guard": "aa7167a71f46b1b6",
+    "partnerGuard": "aa7167a71f46b1b6",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "直式計算過程"
+    }
+  },
+  "hlg3m_01d85d72_dbc564ce85df80": {
+    "guard": "a8722c057dcee55a",
+    "partnerGuard": "a8722c057dcee55a",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "直式計算過程"
+    }
+  },
+  "hlg3m_02178db6_db785499181da7": {
+    "guard": "b869582c3df3f682",
+    "partnerGuard": "b869582c3df3f682",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "直式計算過程"
+    }
+  },
+  "hlg3m_038c8791_db71beb421958e": {
+    "guard": "9511e9c3def97da6",
+    "partnerGuard": "9511e9c3def97da6",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "直式計算過程"
+    }
+  },
+  "hlg3m_04bbaa92_db68aca95161c0": {
+    "guard": "68d11597285c5581",
+    "partnerGuard": "68d11597285c5581",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "直式計算過程"
+    }
+  },
+  "hlg3m_04c26e80_dbdb90bf57a1d1": {
+    "guard": "fca98e6a9a98dcf2",
+    "partnerGuard": "fca98e6a9a98dcf2",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "直式計算過程"
+    }
+  },
+  "hlg3m_04f3a0a0_db206dcf0f6381": {
+    "guard": "72acc399d3deacce",
+    "partnerGuard": "72acc399d3deacce",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "直式計算過程"
+    }
+  },
+  "hlg3m_04f4a351_dbae7e68e3c844": {
+    "guard": "3f4266b0cef263cd",
+    "partnerGuard": "3f4266b0cef263cd",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "直式計算過程"
+    }
+  },
+  "hlg3m_02e877e2_db2f0c71413295": {
+    "guard": "eddb2c1dff917ad9",
+    "partnerGuard": "eddb2c1dff917ad9",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "直式計算過程"
+    }
+  },
+  "hlg3m_035da01d_db2b967b535b23": {
+    "guard": "454a0e70e6fdf4ba",
+    "partnerGuard": "454a0e70e6fdf4ba",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "直式計算過程"
+    }
+  },
+  "hlg3m_0507f9d1_db1e36cad876b2": {
+    "guard": "e0f4169498e100d2",
+    "partnerGuard": "e0f4169498e100d2",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "直式計算過程"
+    }
+  },
+  "hlg3m_05ddad04_db3c8b04d6169e": {
+    "guard": "18c1d362c81c33f1",
+    "partnerGuard": "18c1d362c81c33f1",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "直式計算過程"
+    }
+  }
+
+,
+  "hlg3m_00856815_dw19b7ef594b20": {
+    "guard": "392bcaca2c2ce412",
+    "partnerGuard": "392bcaca2c2ce412",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_009d60a4_dw1d7736178443": {
+    "guard": "54a39c3eac99fb5e",
+    "partnerGuard": "54a39c3eac99fb5e",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_01b2c504_dwbad60094ed12": {
+    "guard": "9ab1ac136effe929",
+    "partnerGuard": "9ab1ac136effe929",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_021e0373_dw68b728e4aff5": {
+    "guard": "fc1e2086316cdf2d",
+    "partnerGuard": "fc1e2086316cdf2d",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_0224789a_dwcff4624770da": {
+    "guard": "8d7b9fc5efa50945",
+    "partnerGuard": "8d7b9fc5efa50945",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_02d1911a_dwed6a739aac52": {
+    "guard": "8db3354fb76de3a3",
+    "partnerGuard": "8db3354fb76de3a3",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_02e490d7_dw907df52cb810": {
+    "guard": "4ae10fd05fb991e0",
+    "partnerGuard": "4ae10fd05fb991e0",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_0366630e_dwe1afd24d576b": {
+    "guard": "89123bfa8fd58f3f",
+    "partnerGuard": "89123bfa8fd58f3f",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_03777236_dw15dc105c7090": {
+    "guard": "a211ef47305372ba",
+    "partnerGuard": "a211ef47305372ba",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_03891269_dw9eed4c3d1908": {
+    "guard": "3b07b7cc47a9f65f",
+    "partnerGuard": "3b07b7cc47a9f65f",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_03f8341f_dw4c5dbd239d22": {
+    "guard": "d53f67b516518d90",
+    "partnerGuard": "d53f67b516518d90",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_0498274a_dw49cd32e1bfb6": {
+    "guard": "59597e0263607789",
+    "partnerGuard": "59597e0263607789",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_0525d4c3_dwc77264a48177": {
+    "guard": "d6e193fa7421ef44",
+    "partnerGuard": "d6e193fa7421ef44",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_058ea8a1_dwd62f823e88fc": {
+    "guard": "1eeca4832dc8fab6",
+    "partnerGuard": "1eeca4832dc8fab6",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  },
+  "hlg3m_05bca3d8_dw21751f1649b6": {
+    "guard": "fc9b30c34a7e9521",
+    "partnerGuard": "fc9b30c34a7e9521",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "除法算式與直式"
+    }
+  }
+
 };
 export const answerTemplateSources={
 
