@@ -1,3 +1,10 @@
+# 六個除法來源：正式私有媒體鏈補齊（2026-11-21）
+
+- fresh main12779473接PR396 28dcc753，`codex/g3math-divvertical6-media-20261121`。前次6來源的介面、解析、Claude唯讀複核及完整隔離收據保持；本次補六教師圖固定fileId／桌面原位同步、遠端私有權限與SHA，未擴OAuth或分享。
+- Worker只加6清冊，9926→9932；原程式SHA、既有清冊、所有settings／bindings保持。現行Edge簽票無fileId，六實際Worker下載SHA與401／401／404拒絕通過。隔離先驗新增6／重試0／錯誤owner拒絕，正式只加6媒體描述；函式ACL／RLS政策／觸發器／其他媒體指紋保持。正式唯讀claims探針核6owner、6無關身分拒絕及匿名拒絕，非學生OAuth。
+- 初始待同步收據保留；最終私有`divmedia6-final-receipt.private.json`、`divvertical6-final-receipt.private.json`及清冊v10。先前61加本6為67不同素材，不重傳／重套舊SQL。自有檢查視窗及Cloudflare精確分頁清理，Drive背景與八題試用保持。詳[來源與供圖鏈](quiz-original-divvertical6-20261121.md)。
+- 續原113剩32原來源；81已完成本輪隔離與所需媒體鏈，仍非正式啟用。708聯集310有某版候選／398無，46既有修正版另計；原題要求、兩處既知勘誤、多小題完整性仍須逐項核。未改函式、未啟用或部署，整科與正式OAuth門檻保持；週剩38%，15%即保存清理後暫停。
+
 # 六個除法算式與直式來源：完整隔離驗收通過，媒體待接（2026-11-21）
 
 - fresh main12779473接PR396 b6fc97b9，`codex/g3math-divvertical6-20261121`，Codex唯一writer／Claude唯讀複核。6原題明示算式及直式，單一手寫work-v1＋12商餘數格，12人工過程角色共用筆跡；24原檔SHA、6原生教師圖與3教材頁已核。只加6精確來源／真copy_self，前75保持，不加SQL。詳[來源與證據](quiz-original-divvertical6-20261121.md)。
