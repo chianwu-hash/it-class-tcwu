@@ -17,6 +17,8 @@ For new week pages, also read:
 
 - `docs/development/prompt-template.md`
 
+處理一般題庫或考古題轉化時，先讀 `docs/development/quiz-batch-conversion-rules.md` 及同名 JSON 規則索引（2026-11-21 使用者核定）：已定案同類題走程式批次；逐筆資料檢查，共用行為按規則／分支／程式契約指紋沿用代表收據。不要每批重做小樣、逐題跑完整 UI 或例行找 Claude；只有未解來源／答案疑義或高影響新共用契約才集中最小範圍複核。新資料、正式權限與發布關卡仍須核實；試用接受不等於正式 adapter 已接通。
+
 處理考古題來源、轉錄、審查或發布（含其他學校）時，另讀：
 
 - `docs/development/past-exam-playbook.md`：現行製作流程；政策變更時優先於舊案例報告。

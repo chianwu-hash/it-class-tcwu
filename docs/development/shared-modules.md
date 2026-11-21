@@ -1,5 +1,9 @@
 # 共用模組說明
 
+## 題型共用規則與代表驗收重用（2026-11-21）
+
+[批次規則](quiz-batch-conversion-rules.md)及[JSON索引](quiz-batch-conversion-rules.json)將已定案作答方式對應既有共用模組，列明main、草稿接線與試用待adapter的差別。索引是資料規則，不會自動啟用未實作能力。新增同類來源只做來源、欄位、原鍵、解析／教材、媒體及版本資料檢查；規則／分支、相關JS/CSS、序列化與後端契約及入口未變時，沿用既驗代表題保存／回顧證據。只有新增行為或受影響契約才補對應回歸，不因每題來源guard不同而重測整套共用模組，也不例行重找Claude。
+
 ## 單純造詞的簡潔解析（2026-11-19）
 
 `quiz-word-meaning-review.mjs`以既有來源題型與模板指紋識別單純造詞，`quiz-word-meaning-guides.mjs`提供固定的簡短字義和多個例詞。`quiz-open-response.mjs`共用一字詞一卡，`quiz-server.mjs`及夥伴feedback／共同回顧在完整引導已可呈現時省去重複說明；缺來源、引導或授權仍沿原流程。原答案、原欄位、保存、自評與權限不變。詳[範圍與驗收](quiz-word-meaning-review-20261119.md)。
