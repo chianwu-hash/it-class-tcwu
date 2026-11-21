@@ -1,6 +1,14 @@
+import {partnerImageChoicePresentation,mountImageChoiceReview} from '../quiz-image-choices.mjs';
 import {booleanChoicePresentation} from '../quiz-boolean-choice.mjs?v=20261107-boolean-choice';
 import {practiceUnits} from './practice-model.mjs';
 import {wordMeaningReview} from '../quiz-word-meaning-review.mjs';
+import {partnerSingleReview} from './single-review.mjs';
+import {appendFieldReviewStatus,decorateFieldReviewOption} from '../quiz-fields-review.mjs';
+
+// The navigation preview is plain text; full questions keep their math renderer.
+export function reviewPreviewText(text){
+ return String(text??'').replace(/\$\\(?:d?frac)\{([0-9]+)\}\{([0-9]+)\}\$/gu,(_,numerator,denominator)=>`${denominator}分之${numerator}`);
+}
 
 // Presentation only. Never reads peer attempts, grades answers or grants rewards.
 export function reviewUnits(shared,notes){
@@ -11,7 +19,7 @@ export function createReviewLayout({esc,getRoom,getViewer,fragment,marks,stories
  let active=null,root=null;
  const model=()=>reviewUnits(getRoom().exercise.shared,getRoom().exercise.notes);
  const list=()=>model().filter(u=>!getMarkedOnly()||u.marked);
- const text=q=>q.rich?.prompt?.text||q.text||q.title;
+ const text=q=>reviewPreviewText(q.rich?.prompt?.text||q.text||q.title);
  const label=u=>u.past?`單元 ${u.index}・第 ${u.questions.map(q=>q.number??q.id).join('、')} 小題`:`第 ${u.questions[0].number??u.id} 題`;
  function part(q,grouped=false){
   // past correct is a bank placeholder, not an option index. Its authoritative reference
@@ -36,6 +44,11 @@ export function createReviewLayout({esc,getRoom,getViewer,fragment,marks,stories
  function bind(node){root=node;place();root.querySelectorAll('[data-review-select]').forEach(b=>b.onclick=()=>{if(isLocked())return;capture();active=Number(b.dataset.reviewSelect);rerender();root.querySelector(`[data-review-select="${active}"]`)?.focus({preventScroll:true});});root.querySelectorAll('[data-review-filter]').forEach(b=>b.onclick=()=>{if(isLocked())return;capture();const filter=b.dataset.reviewFilter;setMarkedOnly(filter==='marked');rerender();root.querySelector(`[data-review-filter="${filter}"]`)?.focus({preventScroll:true});});root.querySelector('[data-review-jump]').onclick=jump;const next=root.querySelector('[data-review-next]');if(next)next.onclick=()=>{if(isLocked())return;capture();const items=list(),i=items.findIndex(u=>u.id===active);if(i<items.length-1){active=items[i+1].id;rerender();const card=root.querySelector('#review-detail');card?.scrollIntoView({block:'start'});const h=card?.querySelector('h3');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}else jump();};update();}
  function update(){if(!root?.isConnected)return;const r=getRoom(),e=r.exercise,own=e.reviewers.find(v=>v.user===getViewer().id),pending=r.members.filter(m=>!e.reviewers.some(v=>v.user===m.id));root.querySelector('[data-review-count]').textContent=`回顧確認 ${e.reviewers.length} / ${r.capacity} 人`;root.querySelector('[data-review-waiting]').textContent=e.finished?'全員完成':own&&pending.length?'等待：'+pending.map(m=>m.name).join('、'):'';root.querySelector('[data-review-score]').textContent=`小隊答對 ${e.correct} / ${e.gradedTotal??e.total}`;
   const input=root.querySelector('[data-draft="reflection-"]'),button=root.querySelector('[data-review-confirm]');button.hidden=!!own&&input.value===(own.reflection||'');button.textContent=own?'更新留言':'我看過了，完成回顧';button.classList.toggle('primary',!own);root.querySelector('[data-review-confirmed]').hidden=!own;root.querySelector('[data-review-status]').textContent=e.finished?'全員回顧完成。':own?'最後一位夥伴確認後，會自動顯示任務總結。':'';
+  for(const host of root.querySelectorAll('[data-review-choice]')){
+   const q=e.shared.find(q=>q.id===Number(host.dataset.reviewChoice)),model=partnerSingleReview(q,{revealed:e.reviewOpen});const picture=partnerImageChoicePresentation(q);if(picture)mountImageChoiceReview(host,picture);if(!model)continue;
+   const signature=JSON.stringify([model.value,model.official,model.state]);if(host.dataset.singleReviewState===signature)continue;host.dataset.singleReviewState=signature;host.classList.add('quiz-choice-review');if(host.previousElementSibling?.hasAttribute('data-single-review-status'))host.previousElementSibling.remove();appendFieldReviewStatus(host,model);const status=host.querySelector(':scope > .quiz-field-review-status');status.dataset.singleReviewStatus=String(q.id);status.textContent=model.state==='reference'?'請核對這一題的答案。':status.textContent.replace('這小題','這題');host.before(status);
+   host.querySelectorAll('[data-review-option-index]').forEach(row=>{row.querySelectorAll('.quiz-field-review-note').forEach(n=>n.remove());row.removeAttribute('data-field-result');row.removeAttribute('data-result');row.classList.remove('quiz-field-review-option');decorateFieldReviewOption(row,model.options[Number(row.dataset.reviewOptionIndex)]);});
+  }
   // Notes can arrive during IME input; update only their read-only slots, never the form.
   for(const host of root.querySelectorAll('[data-review-notes]')){const html=e.notes.filter(n=>n.kind==='discuss'&&n.qid===Number(host.dataset.reviewNotes)).map(noteHTML).join('');if(host.innerHTML!==html)host.innerHTML=html;}
   const finish=root.querySelector('[data-review-finish]'),html=e.finished?'<button type="button" data-view="book">查看共同紀錄冊 →</button>':e.reviewers.length===r.capacity?'<button type="button" data-finish-review class="primary">完成結算，看看共同總結 →</button>':'';

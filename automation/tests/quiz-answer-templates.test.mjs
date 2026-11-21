@@ -1,7 +1,99 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {deriveAnswerTemplate,deriveGroupedTemplate,deriveOptionTemplate,answerTemplatePresentation,exampleSlotCharacters,growingSlotWidth} from '../../shared/quiz-answer-templates.mjs';
+import {deriveAnswerTemplate,deriveGroupedTemplate,deriveOptionTemplate,deriveImagePanelTemplate,deriveInlineChoiceTemplate,answerTemplatePresentation,exampleSlotCharacters,growingSlotWidth,compactTemplateFeedback} from '../../shared/quiz-answer-templates.mjs';
 import {presentationSignature} from '../../shared/quiz-presentation-signature.mjs';
+import {deriveNumberSymbolTemplate} from '../../shared/quiz-answer-templates.mjs';
+import {deriveDiagramSymbolTemplate} from '../../shared/quiz-answer-templates.mjs';
+import {deriveItemMarkTemplate} from '../../shared/quiz-answer-templates.mjs';
+
+test('original division and compound-mass blanks keep work separate and preserve units without reading answers',()=>{
+ for(const text of ['39÷6＝（ ）…（ ）','15公斤800公克－7公斤632公克\n＝（ ）公斤（ ）公克']){
+  const q={id:'required-original-work',type:'fields',prompt:{text,media:[]},fields:[{id:'f1',input:'math',label:'第1格'},{id:'f2',input:'math',label:'第2格'}],work:{input:'sketch',label:'直式作答'}},before=JSON.stringify(q),model=deriveAnswerTemplate(q);assert.ok(model);assert.deepEqual(model.blanks.map(b=>b.field),['f1','f2']);assert.equal(JSON.stringify(q),before);Object.defineProperty(q,'answer',{get(){throw Error('answer read')}});const view=answerTemplatePresentation(q,{[q.id]:{guard:presentationSignature(q),model}});assert.ok(view);assert.equal(view.source.work.input,'sketch');assert.equal(view.source.prompt.text,text);
+ }
+});
+
+test('extreme item marks retain every printed blank and derive unmarked only from the gesture contract',()=>{
+ const labels=['(１)1 公斤 200 公克','(２)2 公斤','(３)900 公克'],source={id:'item-marks',type:'fields',prompt:{text:'比比看，最重的打ˇ，最輕的畫○。\n'+labels.map(s=>'（ ）'+s).join('\n'),media:[]},fields:labels.map((label,i)=>({id:'f'+i,label,input:'single',options:['ˇ','○','留白'].map((text,j)=>({id:'o'+j,content:{text,media:[]}}))}))},before=JSON.stringify(source),model=deriveItemMarkTemplate(source);assert.ok(model);assert.deepEqual(model.unmarked,{f0:'o2',f1:'o2',f2:'o2'});assert.equal(JSON.stringify(source),before);const registry={'item-marks':{guard:presentationSignature(source),model}};assert.ok(answerTemplatePresentation(source,registry));Object.defineProperty(source,'answer',{get(){throw Error('answer must not be read')}});assert.ok(deriveItemMarkTemplate(source));source.fields[1].label='another source item';assert.equal(deriveItemMarkTemplate(source),null);assert.equal(answerTemplatePresentation(source,registry),null);
+});
+test('diagram symbol projection preserves all original response roles and common image pixel scale',()=>{
+ const source={id:'diagram',type:'fields',prompt:{text:'比較重的打ˇ，比較輕的畫○。',media:[{kind:'image',url:'https://example.invalid/original.png'}],layout:[{type:'paragraph',runs:[{type:'text',text:'比較重的打ˇ，比較輕的畫○。'}]},{type:'paragraph',runs:[{type:'image',media_index:0}]}]},fields:['左邊','右邊'].map((label,i)=>({id:'f'+i,label,input:'single',options:['ˇ','○'].map((text,j)=>({id:'o'+j,content:{text,media:[]}}))}))};
+ const opts={groups:[{label:'完整天平',fields:['f0','f1'],views:[{media_index:0,sourceSize:[800,600],crop:[0,0,800,400],width:400}]}]},before=JSON.stringify(source),model=deriveDiagramSymbolTemplate(source,opts);assert.ok(model);assert.equal(JSON.stringify(source),before);const registry={diagram:{guard:presentationSignature(source),model}};assert.equal(answerTemplatePresentation(source,registry).passage.text,source.prompt.text);source.answer={fields:{f0:['incorrect-key']}};assert.ok(answerTemplatePresentation(source,registry));const wrong=structuredClone(opts);wrong.groups[0].fields.reverse();assert.equal(deriveDiagramSymbolTemplate(source,wrong),null);wrong.groups[0].fields.reverse();wrong.groups[0].views[0].crop[2]=900;assert.equal(deriveDiagramSymbolTemplate(source,wrong),null);source.fields[0].options.reverse();assert.equal(answerTemplatePresentation(source,registry),null);
+});
+test('number symbol cards follow printed symbols and original labels without reading reference answers',()=>{
+ const source={id:'symbols',type:'fields',prompt:{text:'是奇數的畫○，是偶數的畫△。\n9、12',media:[]},fields:['9','12'].map((label,i)=>({id:'f'+i,label,input:'single',options:['○','△'].map((text,j)=>({id:'o'+j,content:{text,media:[]}}))}))};
+ const before=JSON.stringify(source),model=deriveNumberSymbolTemplate(source);assert.deepEqual(model.rows[0].fields,['f0','f1']);assert.equal(JSON.stringify(source),before);const registry={symbols:{guard:presentationSignature(source),model}};assert.ok(answerTemplatePresentation(source,registry));source.answer={fields:{f0:['nonsense']}};assert.ok(answerTemplatePresentation(source,registry));source.fields[0].options.reverse();assert.equal(deriveNumberSymbolTemplate(source),null);assert.equal(answerTemplatePresentation(source,registry),null);source.fields[0].options.reverse();source.fields[1].label='15';assert.equal(deriveNumberSymbolTemplate(source),null);
+});
 const q=(text,count,type='open')=>({id:'synthetic',type,prompt:{text,media:[]},fields:Array.from({length:count},(_,i)=>({id:'original-'+i,input:'text',label:'原欄'+i}))});
+test('literal source choice banks keep each native option order and sentence, never infer alternatives from keys',()=>{
+ const source=q('選出單位。\n重量是50（ 公克 ， 公斤 ），小物品是1（ 公克 ， 公斤 ）。',2,'fields');source.fields.forEach(f=>{f.input='single';f.options=['公克','公斤'].map((text,i)=>({id:'o'+i,content:{text,media:[]}}));});const before=JSON.stringify(source),model=deriveInlineChoiceTemplate(source);assert.equal(model.mode,'inline-choices');assert.equal(model.rows[0].fields.length,2);assert.equal(JSON.stringify(source),before);const registry={synthetic:{guard:presentationSignature(source),model}};assert.equal(answerTemplatePresentation(source,registry).passage.text,'選出單位。');source.answer={fields:{'original-0':['o999']}};assert.ok(answerTemplatePresentation(source,registry));const bad=structuredClone(source);bad.fields[0].options.reverse();assert.equal(deriveInlineChoiceTemplate(bad),null);assert.equal(answerTemplatePresentation(bad,registry),null);bad.fields[0].options=source.fields[0].options;bad.prompt.text=bad.prompt.text.replace('公斤','公升');assert.equal(deriveInlineChoiceTemplate(bad),null);bad.prompt.text='沒有原選項的填空。';assert.equal(deriveInlineChoiceTemplate(bad),null);
+});
+test('reviewed numbered choice groups retain the question above its bank and nested choices together',()=>{
+ const source=q('共同情境。\n(１)哪個比較輕？\n（ 甲 ， 乙 ）\n(２)哪個比較重？\n①（ 甲 ， 乙 ）\n②（ 甲 ， 乙 ）',3,'fields');source.fields.forEach(f=>{f.input='single';f.options=['甲','乙'].map((text,i)=>({id:'o'+i,content:{text,media:[]}}));});const model=deriveInlineChoiceTemplate(source,{grouped:true});assert.deepEqual(model.rows.map(r=>r.fields),[['original-0'],['original-1','original-2']]);assert.ok(source.prompt.text.slice(model.rows[0].start,model.rows[0].end).startsWith('(１)哪個比較輕？'));source.prompt.text=source.prompt.text.replace('(２)','(３)');assert.equal(deriveInlineChoiceTemplate(source,{grouped:true}),null);
+});
+
+test('reviewed original image panels retain fixed image bytes, original field order and source units',()=>{
+ const source=q('看原圖填答。',2,'fields');source.fields.forEach((f,i)=>{f.input='math';f.label=`(${i+1})公斤空格`;});source.prompt.media=[{kind:'image',url:'https://example.invalid/original.png',alt:'原題圖'}];source.prompt.layout=[{type:'paragraph',runs:[{type:'text',text:source.prompt.text}]},{type:'paragraph',runs:[{type:'image',media_index:0,width:400}]}];
+ const options={media_index:0,sourceSize:[1000,800],width:280,panels:[{field:'original-0',crop:[0,50,480,650],unit:'公斤'},{field:'original-1',crop:[500,50,480,650],unit:'公斤'}]},before=JSON.stringify(source),model=deriveImagePanelTemplate(source,options);assert.equal(model.mode,'image-panels');assert.equal(JSON.stringify(source),before);const registry={synthetic:{guard:presentationSignature(source),model}},view=answerTemplatePresentation(source,registry);assert.ok(view);assert.equal(view.passage.media.length,0);assert.equal(view.passage.text,source.prompt.text);source.answer={fields:{'original-0':['999']}};assert.ok(answerTemplatePresentation(source,registry));
+ const bad=structuredClone(options);bad.panels[0].crop[2]=1200;assert.equal(deriveImagePanelTemplate(source,bad),null);bad.panels[0]=options.panels[1];assert.equal(deriveImagePanelTemplate(source,bad),null);source.prompt.media[0].url+='-changed';assert.equal(answerTemplatePresentation(source,registry),null);
+});
+
+test('reviewed native fraction blanks retain printed denominators and original integer numerator controls',()=>{
+ const source=q('(1)是（ ）條，1＝$\\frac{（ ）}{12}$。\n(2)是（ ）條。',3,'fields');source.fields.forEach((f,i)=>{f.input='math';f.label=i<2?'(1)原欄'+i:'(2)原欄'+i;});
+ const before=JSON.stringify(source);assert.equal(deriveAnswerTemplate(source,{grouped:true}),null);
+ const model=deriveAnswerTemplate(source,{grouped:true,fractionNumerators:true});assert.equal(model.blanks.length,3);assert.deepEqual(model.blanks.map(b=>b.field),source.fields.map(f=>f.id));const fraction=model.blanks[1];assert.equal(source.prompt.text.slice(fraction.fraction.start,fraction.fraction.end),'12');assert.equal(source.prompt.text.slice(fraction.start,fraction.end),'$\\frac{（ ）}{12}$');assert.equal(model.rows[0].fields.length,2);assert.equal(JSON.stringify(source),before);
+ const registry={synthetic:{guard:presentationSignature(source),model}};assert.ok(answerTemplatePresentation(source,registry));source.answer={fields:{'original-1':['999']}};assert.ok(answerTemplatePresentation(source,registry));
+ source.prompt.text=source.prompt.text.replace('{12}','{9}');assert.equal(answerTemplatePresentation(source,registry),null);assert.equal(deriveAnswerTemplate(source,{fractionNumerators:true}),null);source.prompt.text=source.prompt.text.replace('{9}','{0}');assert.equal(deriveAnswerTemplate(source,{grouped:true,fractionNumerators:true}),null);
+});
+
+test('reviewed nested phonetic subquestions retain each source diagram label and its own original field',()=>{
+ const source=q('(1)（ ）\n(2)各有多少？\nㄅ\n（ ）\nㄆ\n（ ）\nㄇ\n（ ）',4,'fields');source.fields.forEach((f,i)=>{f.input='math';f.label=i?'(2)'+'ㄅㄆㄇ'[i-1]+'空格':'(1)空格';});
+ const before=JSON.stringify(source),model=deriveAnswerTemplate(source,{grouped:true,subgroups:true});assert.equal(model.rows.length,5);assert.deepEqual(model.rows.filter(r=>r.parentNumber).map(r=>[r.parentNumber,r.number,r.fields]),[[2,'ㄅ',['original-1']],[2,'ㄆ',['original-2']],[2,'ㄇ',['original-3']]]);assert.equal(model.rows[1].fields.length,0);assert.equal(JSON.stringify(source),before);assert.ok(answerTemplatePresentation(source,{synthetic:{guard:presentationSignature(source),model}}));source.fields[2].label='(2)空格';assert.equal(deriveAnswerTemplate(source,{grouped:true,subgroups:true}),null);
+});
+
+test('reviewed phonetic subquestion markers group original rank and unit blanks only with explicit opt-in',()=>{
+ const source=q('共用秤圖說明\nㄅ □\n（ ）公斤（ ）公克\nㄆ □\n（ ）公斤（ ）公克\nㄇ □\n（ ）公斤（ ）公克',9,'fields');
+ source.fields.forEach((f,i)=>{f.input='math';f.label='ㄅㄆㄇ'[Math.floor(i/3)]+['排序空格','公斤空格','公克空格'][i%3];});
+ const before=JSON.stringify(source);assert.equal(deriveAnswerTemplate(source,{symbols:true,grouped:true}),null);
+ const model=deriveAnswerTemplate(source,{symbols:true,grouped:true,groupMarker:'bopomofo'});assert.equal(model.mode,'grouped-blanks');assert.equal(model.groupMarker,'bopomofo');assert.deepEqual(model.rows.map(r=>r.number),['ㄅ','ㄆ','ㄇ']);assert.deepEqual(model.rows.map(r=>r.fields),[source.fields.slice(0,3),source.fields.slice(3,6),source.fields.slice(6)].map(fs=>fs.map(f=>f.id)));
+ assert.equal(JSON.stringify(source),before);const registry={synthetic:{guard:presentationSignature(source),model}};assert.ok(answerTemplatePresentation(source,registry));
+ source.fields[3].label='ㄅ排序空格';assert.equal(deriveAnswerTemplate(source,{symbols:true,grouped:true,groupMarker:'bopomofo'}),null);assert.equal(answerTemplatePresentation(source,registry),null);
+ source.fields[3].label='ㄆ排序空格';assert.equal(deriveAnswerTemplate(source,{symbols:true,grouped:true,groupMarker:'guess'}),null);assert.equal(deriveAnswerTemplate(source,{grouped:true,groupMarker:'bopomofo'}),null);
+});
+
+test('reviewed mass units remain literal source ranges attached to their original controls',()=>{
+ const source=q('(1) □\n（ ）公斤（ ）公克\n(2) □\n（ ）公斤（ ）公克\n請填原格。',6,'fields');source.fields.forEach((f,i)=>{f.input='math';f.label=`(${Math.floor(i/3)+1})原欄${i}`;});
+ const before=JSON.stringify(source),plain=deriveAnswerTemplate(source,{grouped:true,symbols:true}),model=deriveAnswerTemplate(source,{grouped:true,symbols:true,keepMassUnits:true});assert.ok(plain.blanks.every(b=>!b.unit));assert.deepEqual(model.blanks.filter(b=>b.unit).map(b=>source.prompt.text.slice(b.unit.start,b.unit.end)),['公斤','公克','公斤','公克']);assert.ok(model.blanks.filter(b=>b.unit).every(b=>b.end===b.unit.start));assert.equal(JSON.stringify(source),before);
+ assert.equal(deriveAnswerTemplate(source,{symbols:true,keepMassUnits:true}),null);source.fields[0].input='text';assert.equal(deriveAnswerTemplate(source,{grouped:true,symbols:true,keepMassUnits:true}),null);
+});
+
+test('reviewed numbered blanks keep each diagram and its original input in one complete source group',()=>{
+ const source=q('看圖填分數。\n(１)\n（ ）條\n(２)\n（ ）條',2,'fields');source.fields.forEach((f,i)=>f.label=`(${i+1})條數`);
+ source.prompt.layout=[{type:'paragraph',runs:[{type:'text',text:'看圖填分數。'}]},...['１','２'].flatMap((n,i)=>[{type:'paragraph',runs:[{type:'text',text:`(${n})`}]},{type:'paragraph',runs:[{type:'image',media_index:i,width:150}]},{type:'paragraph',runs:[{type:'text',text:'（ ）條'}]}])];
+ source.prompt.media=[0,1].map(i=>({kind:'image',url:'https://example.invalid/'+i,alt:'原圖'}));
+ const model=deriveAnswerTemplate(source,{grouped:true});assert.equal(model.mode,'grouped-blanks');assert.equal(model.rows.length,2);assert.deepEqual(model.rows.map(r=>r.fields),[['original-0'],['original-1']]);
+ const registry={synthetic:{guard:presentationSignature(source),model}};assert.equal(answerTemplatePresentation(source,registry).mode,'grouped-blanks');
+ source.fields[0].label='(2)條數';assert.equal(deriveAnswerTemplate(source,{grouped:true}),null);
+});
+
+test('a reviewed self-copy media signature preserves its exact layout while unknown copies stay unadapted',()=>{
+ assert.equal(answerTemplatePresentation(null,{}),null);
+ const source=q('（ ）',1,'fields');source.prompt.media=[{kind:'image',url:'https://quiz-media.invalid/00000000-0000-4000-8000-000000000001/'+'a'.repeat(64),alt:'原圖'}];source.prompt.layout=[{type:'paragraph',runs:[{type:'text',text:'（ ）'},{type:'image',media_index:0,width:120}]}];
+ const copied=structuredClone(source);copied.prompt.media[0].url='https://partner-media.invalid/'+'b'.repeat(64);
+ const model=deriveAnswerTemplate(source),registry={synthetic:{guard:presentationSignature(source),partnerGuard:presentationSignature(copied),model}};
+ assert.ok(answerTemplatePresentation(source,registry));assert.ok(answerTemplatePresentation(copied,registry));copied.prompt.media[0].url='https://partner-media.invalid/'+'c'.repeat(64);assert.equal(answerTemplatePresentation(copied,registry),null);
+});
+
+test('compact math feedback consumes revealed states without judging numeric equivalence or changing the reference',()=>{
+ const reference={input:'math',state:'reference',value:'01',accepted:['1','1']},before=JSON.stringify(reference);
+ assert.deepEqual(compactTemplateFeedback(reference),{state:'reference',text:'參考：1'});
+ assert.equal(JSON.stringify(reference),before);
+ assert.deepEqual(compactTemplateFeedback({...reference,state:'correct'}),{state:'correct',text:'✓ 答對'});
+ assert.deepEqual(compactTemplateFeedback({...reference,state:'incorrect'}),{state:'incorrect',text:'✕ 應填1'});
+ assert.deepEqual(compactTemplateFeedback({input:'math',state:'incorrect'}),{state:'incorrect',text:'✕ 請修正'});
+ assert.deepEqual(compactTemplateFeedback({...reference,state:'paired'}),{state:'reference',text:'整組核對：1'});
+});
+test('unrevealed or incomplete feedback and text fields cannot acquire a math correctness mark',()=>{
+ for(const feedback of [null,{}, {input:'text',state:'correct'}, {input:'math',state:'reference'}, {input:'math',state:'reference',accepted:[null]}, {input:'math',state:'unknown',accepted:['1']}])assert.equal(compactTemplateFeedback(feedback),null);
+});
 test('two phrase rows retain six original fields and connecting words; a populated example is not a blank',()=>{const source=q('例：（一個）（可愛）的（動物）\n（　）（　）的（　）\n（　）（　）的（　）',6),before=JSON.stringify(source),m=deriveAnswerTemplate(source);assert.equal(m.rows.length,2);assert.deepEqual(m.rows.map(r=>r.fields),[source.fields.slice(0,3).map(f=>f.id),source.fields.slice(3).map(f=>f.id)]);assert.equal(m.blanks.length,6);assert.equal(JSON.stringify(source),before);});
 test('word formation and continuation keep multiple slots together without inventing a field',()=>{for(const [s,n]of[['丁—（　）—（　）\n戊—（　）—（　）',4],['（　　　），於是（　　　）。',2]]){const m=deriveAnswerTemplate(q(s,n));assert.equal(m.blanks.length,n);assert(m.rows.every(r=>r.fields.length===2));}});
 test('marked words place original inputs after targets and omit a separate answer bank both before and after the sentence',()=>{for(const s of ['（　）（　）「甲」和「乙」。','「甲」和「乙」。\n‧（　）（　）']){const source=q(s,2,'fields'),m=deriveAnswerTemplate(source,{marked:true});assert.equal(m.mode,'marked');assert(m.blanks.every(b=>b.start===b.end));assert.equal(m.omissions.length,2);assert.equal(m.rows.filter(r=>r.fields.length).length,1);assert.equal(source.prompt.text.slice(m.blanks[0].start-3,m.blanks[0].start),'「甲」');}});

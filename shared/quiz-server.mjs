@@ -1,4 +1,5 @@
 import {explanationReferenceContent} from './quiz-explanation-references.mjs';
+import {imageChoicePresentation} from './quiz-image-choices.mjs';
 import {appendSingleChoiceOptions} from './quiz-choice.mjs';
 import {choiceQuestionPresentation,choiceAnswerLabel} from './quiz-choice-conversion.mjs';
 import {renderFieldsChoices} from './quiz-fields.mjs';
@@ -15,6 +16,7 @@ import {readingWorkbenchSupported} from './quiz-reading-workbench.mjs';
 import {choiceReviewModel,decorateFieldReviewOption} from './quiz-review-choices.mjs';
 import {renderOpenInputs,renderOpenReview,openResponseError,renderOpenSavedSketches} from './quiz-open-response.mjs';
 import {wordMeaningReview} from './quiz-word-meaning-review.mjs';
+import {mountShortAnswerInput} from './quiz-short-answer.mjs';
 
 import {quizFeedbackMotion} from './quiz-feedback-motion.mjs?v=20261107-partner-motion';
 
@@ -89,7 +91,10 @@ export function initServerQuiz({ selectors, server }) {
       if(wordMeaningReview(q,review.answer))return;
       const explanation=make('section',undefined,'quiz-explanation-copy'),studentExplanation=study.explanation(q.id);
       if(studentExplanation?.origin==='ai'){explanation.classList.add('quiz-explanation-ai');explanation.append(make('strong','AI 解析','quiz-explanation-caption'));}
-      if(studentExplanation)renderExplanation(explanation,studentExplanation.text,q);else renderContent(explanation,explanationReferenceContent(q,review.explanation));
+      if(studentExplanation){
+        renderExplanation(explanation,studentExplanation.text,q);
+        if(review.explanation?.media?.length)renderContent(explanation,{text:'',media:review.explanation.media});
+      }else renderContent(explanation,explanationReferenceContent(q,review.explanation));
       if(studentExplanation)explanation.append(make('p',studySourceLabel(studentExplanation.origin),'helper'));
       box.append(explanation);return;
     }
@@ -128,7 +133,10 @@ export function initServerQuiz({ selectors, server }) {
     const studentExplanation=study.explanation(q.id);
     const explanation=make('section',undefined,'quiz-explanation-copy');
     if(studentExplanation?.origin==='ai'){explanation.classList.add('quiz-explanation-ai');explanation.append(make('strong','AI 解析','quiz-explanation-caption'));}
-    if(studentExplanation)renderExplanation(explanation,studentExplanation.text,q);
+    if(studentExplanation){
+      renderExplanation(explanation,studentExplanation.text,q);
+      if(review.explanation?.media?.length)renderContent(explanation,{text:'',media:review.explanation.media});
+    }
     else renderContent(explanation,explanationReferenceContent(q,review.explanation));
     if(studentExplanation)explanation.append(make('p',studySourceLabel(studentExplanation.origin),'helper'));
     box.append(explanation);
@@ -182,7 +190,12 @@ export function initServerQuiz({ selectors, server }) {
         article.append(make('p', `你的答案：${['fields','open'].includes(q.type) ? fieldsResponseSummary(q,state.responses[q.id]) : q.type === 'single' ? choiceAnswerLabel(q,state.responses[q.id]) : state.responses[q.id]}`));
         if(q.type==='fields')renderFieldsChoices(article,q,{renderContent,raw:state.responses[q.id],review:state.reviews.find(r=>r.question_id===q.id)});
         if(q.type==='open')renderOpenSavedSketches(article,q,state.responses[q.id],{renderContent});
-        if (q.type === 'single') {const display=booleanChoicePresentation(q.options),review=state.reviews.find(r=>r.question_id===q.id),feedback=choiceReviewModel({kind:'single',choices:q.options,value:state.responses[q.id],official:review?.answer?.option_id,correct:review?.correct,revealed:Boolean(review)});if(feedback)article.classList.add('quiz-choice-review');q.options.forEach((o, i) => { const row = make('div', undefined, 'preview-option'); row.append(make('strong', (display?.[i].badge??String.fromCharCode(65+i))+' ')); if(display)row.append(make('span',display[i].text));else renderContent(row, o.content);decorateFieldReviewOption(row,feedback?.options[i]);article.append(row); });}
+        if (q.type === 'single') {
+          const picture=imageChoicePresentation(q),display=booleanChoicePresentation(q.options),review=state.reviews.find(r=>r.question_id===q.id),feedback=choiceReviewModel({kind:'single',choices:q.options,value:state.responses[q.id],official:review?.answer?.option_id,correct:review?.correct,revealed:Boolean(review)});
+          if(feedback)article.classList.add('quiz-choice-review');
+          if(picture){const host=make('div');appendSingleChoiceOptions(host,{name:`review-${q.id}`,options:q.options.map(o=>({...o,value:o.id})),selected:state.responses[q.id],locked:true,renderBody:(body,o)=>renderContent(body,o.content),imagePresentation:picture,result:review?{chosen:state.responses[q.id],correct:review.answer.option_id,chosenCorrect:review.correct}:null});article.append(host);}
+          else q.options.forEach((o,i)=>{const row=make('div',undefined,'preview-option');row.append(make('strong',(display?.[i].badge??String.fromCharCode(65+i))+' '));if(display)row.append(make('span',display[i].text));else renderContent(row,o.content);decorateFieldReviewOption(row,feedback?.options[i]);article.append(row);});
+        }
         renderReview(article, q); mountQuestionReport(article,report(q));root.append(article);
       }
       return;
@@ -211,6 +224,7 @@ export function initServerQuiz({ selectors, server }) {
     const legend = make('legend', q.type==='fields'&&saved?(review?'逐小題核對作答':'已儲存的作答'):q.type === 'single'||fieldsAreSingleChoice(q) ? '選擇一個答案' : '填入你的答案'); inputs.append(legend);
     if (q.type === 'single') {
       appendSingleChoiceOptions(inputs, {
+        imagePresentation:imageChoicePresentation(q),
         name:`q-${q.id}`, options:q.options.map(o=>({...o,value:o.id})),
         selected:saved?state.responses[q.id]:pending?.response??selected, locked:choicesLocked,
         onSelect:value=>{selected=value;}, renderBody:(body,o)=>renderContent(body,o.content),
@@ -225,6 +239,7 @@ export function initServerQuiz({ selectors, server }) {
       const input = make('textarea'); input.setAttribute('aria-label', '簡答內容'); input.maxLength = 2000;
       input.disabled = choicesLocked;
       input.value = saved ? state.responses[q.id] : pending?.response ?? selected;
+      mountShortAnswerInput(input,q);
       input.addEventListener('input', () => { selected = input.value; }); inputs.append(input);
     }
     article.append(inputs);
@@ -295,7 +310,7 @@ export function initServerQuiz({ selectors, server }) {
       if(next.leaf?.learning?.earned_now){celebrateQuizLeaf({leaves:next.leaf.learning.earned_now,kind:'learning'});afterGardenReward();}
       if(next.leaf?.credit_added_now || next.leaf?.earned_now){celebrateQuizLeaf({leaves:next.leaf.awarded_leaf_count??1});afterGardenReward();}
       const fieldReview=q.type==='fields'?(root.querySelector('.quiz-field[data-field-review=incorrect]')||root.querySelector('.quiz-field[data-field-review=paired]')||root.querySelector('.quiz-field[data-field-review=reference]')):null;
-      if(fieldReview){fieldReview.tabIndex=-1;fieldReview.focus({preventScroll:true});fieldReview.scrollIntoView({block:'start',behavior:'instant'});}
+      if(fieldReview){const imageReview=fieldReview.dataset.imageReviewTarget&&root.ownerDocument.getElementById(fieldReview.dataset.imageReviewTarget),target=imageReview&&root.contains(imageReview)?imageReview:fieldReview;target.tabIndex=-1;target.focus({preventScroll:true});target.scrollIntoView({block:'start',behavior:'instant'});}
       else{
         root.querySelector('.answer-preview')?.focus({preventScroll:true});
         if(root.classList.contains('quiz-workspace-active')&&!root.classList.contains('workspace-desktop'))root.querySelector('.answer-preview')?.scrollIntoView({block:'start',behavior:'instant'});
