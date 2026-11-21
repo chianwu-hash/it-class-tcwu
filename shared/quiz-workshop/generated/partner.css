@@ -833,6 +833,8 @@ input:has(+.past-input-tools),textarea:has(+.past-input-tools){scroll-margin-blo
 .quiz-work-answer-layout .quiz-work-part{display:block;margin:10px 0}
 .quiz-work-answer-layout .quiz-work-part input{display:block;width:100%;box-sizing:border-box;padding:12px;font:inherit;min-height:44px}
 .quiz-work-answer-layout .quiz-work-input input[type=text]{font-size:clamp(1.25rem,2vw,1.5rem)}
+.quiz-work-before-template>.quiz-answer-templates{flex:0 0 100%;width:100%;min-width:0}
+.quiz-work-before-template .quiz-answer-template-title{display:none}
 .quiz-saved-work dl{margin:10px 0}.quiz-saved-work dt{font-weight:bold}.quiz-saved-work dd{margin:4px 0 12px;white-space:pre-wrap;overflow-wrap:anywhere}
 .quiz-choice-review .quiz-field-review-option{padding:12px;border:1px solid #d2d7e2;border-radius:10px;margin:10px 0;opacity:1!important}
 .quiz-choice-review .quiz-field-review-option:is([data-field-result=correct],[data-field-result=answer]){background:#e7f6ed!important;border-color:#32815c!important;outline:none!important}

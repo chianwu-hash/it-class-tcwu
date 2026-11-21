@@ -196,7 +196,7 @@ export function answerTemplatePresentation(q,registry=answerTemplateSources){
 export function compactTemplateFeedback(feedback){
  if(feedback?.input!=='math')return null;
  if(feedback.state==='correct')return {state:'correct',text:'✓ 答對'};
- if(feedback.state==='incorrect')return {state:'incorrect',text:'✕ 請修正'};
+ if(feedback.state==='incorrect'){const accepted=feedback.accepted;return {state:'incorrect',text:Array.isArray(accepted)&&accepted.length&&accepted.every(v=>typeof v==='string'&&v.trim())?'✕ 應填'+[...new Set(accepted)].join(' 或 '):'✕ 請修正'};}
  if(!['reference','paired'].includes(feedback.state)||!Array.isArray(feedback.accepted)||!feedback.accepted.length||feedback.accepted.some(v=>typeof v!=='string'||!v.trim()))return null;
  return {state:'reference',text:(feedback.state==='paired'?'整組核對：':'參考：')+[...new Set(feedback.accepted)].join(' 或 ')};
 }

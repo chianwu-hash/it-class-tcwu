@@ -87,7 +87,8 @@ test('compact math feedback consumes revealed states without judging numeric equ
  assert.deepEqual(compactTemplateFeedback(reference),{state:'reference',text:'參考：1'});
  assert.equal(JSON.stringify(reference),before);
  assert.deepEqual(compactTemplateFeedback({...reference,state:'correct'}),{state:'correct',text:'✓ 答對'});
- assert.deepEqual(compactTemplateFeedback({...reference,state:'incorrect'}),{state:'incorrect',text:'✕ 請修正'});
+ assert.deepEqual(compactTemplateFeedback({...reference,state:'incorrect'}),{state:'incorrect',text:'✕ 應填1'});
+ assert.deepEqual(compactTemplateFeedback({input:'math',state:'incorrect'}),{state:'incorrect',text:'✕ 請修正'});
  assert.deepEqual(compactTemplateFeedback({...reference,state:'paired'}),{state:'reference',text:'整組核對：1'});
 });
 test('unrevealed or incomplete feedback and text fields cannot acquire a math correctness mark',()=>{

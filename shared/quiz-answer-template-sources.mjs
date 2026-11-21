@@ -733,6 +733,72 @@ export const workAnswerSources={
       "input": "sketch",
       "label": "除法算式與直式"
     }
+  },
+  "hlg3m_00b11b6c_sc667566e96247": {
+    "guard": "054a9c517038976a",
+    "partnerGuard": "054a9c517038976a",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "乘法算式紀錄"
+    },
+    "passageEnd": 47,
+    "workPosition": "before-template"
+  },
+  "hlg3m_011324b7_sc61be342c44c0": {
+    "guard": "c1ffc97d2fe02b6b",
+    "partnerGuard": "c1ffc97d2fe02b6b",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "乘法算式紀錄"
+    },
+    "passageEnd": 49,
+    "workPosition": "before-template"
+  },
+  "hlg3m_015028f3_sc532d8c6fcddb": {
+    "guard": "c706881d6c9df5ab",
+    "partnerGuard": "c706881d6c9df5ab",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "乘法算式紀錄"
+    },
+    "passageEnd": 50,
+    "workPosition": "before-template"
+  },
+  "hlg3m_02846f04_sc5353232aae47": {
+    "guard": "e8eeecfbba60f4e3",
+    "partnerGuard": "e8eeecfbba60f4e3",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "乘法算式記錄"
+    },
+    "passageEnd": 47,
+    "workPosition": "before-template"
+  },
+  "hlg3m_04e14228_scf4ac5c4795d2": {
+    "guard": "54399a8a2642709d",
+    "partnerGuard": "54399a8a2642709d",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "乘法算式記錄"
+    },
+    "passageEnd": 48,
+    "workPosition": "before-template"
+  },
+  "hlg3m_05640237_sc9462db8d2a9f": {
+    "guard": "61a72b1d11e991e1",
+    "partnerGuard": "61a72b1d11e991e1",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "乘法算式記錄"
+    },
+    "passageEnd": 48,
+    "workPosition": "before-template"
   }
 };
 export const answerTemplateSources={
@@ -93402,7 +93468,409 @@ export const answerTemplateSources={
     }
    ]
   }
- }
+ },
+  "hlg3m_00b11b6c_sc667566e96247": {
+    "guard": "054a9c517038976a",
+    "partnerGuard": "054a9c517038976a",
+    "model": {
+      "mode": "blanks",
+      "start": 55,
+      "rows": [
+        {
+          "start": 55,
+          "end": 79,
+          "fields": [
+            "f1",
+            "f2",
+            "f3",
+            "f4"
+          ]
+        },
+        {
+          "start": 80,
+          "end": 97,
+          "fields": [
+            "f5",
+            "f6"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 60,
+          "end": 64,
+          "field": "f1",
+          "width": 7
+        },
+        {
+          "start": 65,
+          "end": 69,
+          "field": "f2",
+          "width": 7
+        },
+        {
+          "start": 70,
+          "end": 74,
+          "field": "f3",
+          "width": 7
+        },
+        {
+          "start": 75,
+          "end": 79,
+          "field": "f4",
+          "width": 7
+        },
+        {
+          "start": 84,
+          "end": 88,
+          "field": "f5",
+          "width": 7
+        },
+        {
+          "start": 92,
+          "end": 96,
+          "field": "f6",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_011324b7_sc61be342c44c0": {
+    "guard": "c1ffc97d2fe02b6b",
+    "partnerGuard": "c1ffc97d2fe02b6b",
+    "model": {
+      "mode": "blanks",
+      "start": 57,
+      "rows": [
+        {
+          "start": 57,
+          "end": 81,
+          "fields": [
+            "f1",
+            "f2",
+            "f3",
+            "f4"
+          ]
+        },
+        {
+          "start": 82,
+          "end": 99,
+          "fields": [
+            "f5",
+            "f6"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 62,
+          "end": 66,
+          "field": "f1",
+          "width": 7
+        },
+        {
+          "start": 67,
+          "end": 71,
+          "field": "f2",
+          "width": 7
+        },
+        {
+          "start": 72,
+          "end": 76,
+          "field": "f3",
+          "width": 7
+        },
+        {
+          "start": 77,
+          "end": 81,
+          "field": "f4",
+          "width": 7
+        },
+        {
+          "start": 86,
+          "end": 90,
+          "field": "f5",
+          "width": 7
+        },
+        {
+          "start": 94,
+          "end": 98,
+          "field": "f6",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_015028f3_sc532d8c6fcddb": {
+    "guard": "c706881d6c9df5ab",
+    "partnerGuard": "c706881d6c9df5ab",
+    "model": {
+      "mode": "blanks",
+      "start": 58,
+      "rows": [
+        {
+          "start": 58,
+          "end": 90,
+          "fields": [
+            "f1",
+            "f2",
+            "f3",
+            "f4"
+          ]
+        },
+        {
+          "start": 91,
+          "end": 112,
+          "fields": [
+            "f5",
+            "f6"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 63,
+          "end": 69,
+          "field": "f1",
+          "width": 7
+        },
+        {
+          "start": 70,
+          "end": 76,
+          "field": "f2",
+          "width": 7
+        },
+        {
+          "start": 77,
+          "end": 83,
+          "field": "f3",
+          "width": 7
+        },
+        {
+          "start": 84,
+          "end": 90,
+          "field": "f4",
+          "width": 7
+        },
+        {
+          "start": 95,
+          "end": 101,
+          "field": "f5",
+          "width": 7
+        },
+        {
+          "start": 105,
+          "end": 111,
+          "field": "f6",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_02846f04_sc5353232aae47": {
+    "guard": "e8eeecfbba60f4e3",
+    "partnerGuard": "e8eeecfbba60f4e3",
+    "model": {
+      "mode": "blanks",
+      "start": 55,
+      "rows": [
+        {
+          "start": 55,
+          "end": 87,
+          "fields": [
+            "f1",
+            "f2",
+            "f3",
+            "f4"
+          ]
+        },
+        {
+          "start": 88,
+          "end": 109,
+          "fields": [
+            "f5",
+            "f6"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 60,
+          "end": 66,
+          "field": "f1",
+          "width": 7
+        },
+        {
+          "start": 67,
+          "end": 73,
+          "field": "f2",
+          "width": 7
+        },
+        {
+          "start": 74,
+          "end": 80,
+          "field": "f3",
+          "width": 7
+        },
+        {
+          "start": 81,
+          "end": 87,
+          "field": "f4",
+          "width": 7
+        },
+        {
+          "start": 92,
+          "end": 98,
+          "field": "f5",
+          "width": 7
+        },
+        {
+          "start": 102,
+          "end": 108,
+          "field": "f6",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_04e14228_scf4ac5c4795d2": {
+    "guard": "54399a8a2642709d",
+    "partnerGuard": "54399a8a2642709d",
+    "model": {
+      "mode": "blanks",
+      "start": 56,
+      "rows": [
+        {
+          "start": 56,
+          "end": 88,
+          "fields": [
+            "f1",
+            "f2",
+            "f3",
+            "f4"
+          ]
+        },
+        {
+          "start": 89,
+          "end": 110,
+          "fields": [
+            "f5",
+            "f6"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 61,
+          "end": 67,
+          "field": "f1",
+          "width": 7
+        },
+        {
+          "start": 68,
+          "end": 74,
+          "field": "f2",
+          "width": 7
+        },
+        {
+          "start": 75,
+          "end": 81,
+          "field": "f3",
+          "width": 7
+        },
+        {
+          "start": 82,
+          "end": 88,
+          "field": "f4",
+          "width": 7
+        },
+        {
+          "start": 93,
+          "end": 99,
+          "field": "f5",
+          "width": 7
+        },
+        {
+          "start": 103,
+          "end": 109,
+          "field": "f6",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_05640237_sc9462db8d2a9f": {
+    "guard": "61a72b1d11e991e1",
+    "partnerGuard": "61a72b1d11e991e1",
+    "model": {
+      "mode": "blanks",
+      "start": 56,
+      "rows": [
+        {
+          "start": 56,
+          "end": 88,
+          "fields": [
+            "f1",
+            "f2",
+            "f3",
+            "f4"
+          ]
+        },
+        {
+          "start": 89,
+          "end": 112,
+          "fields": [
+            "f5",
+            "f6"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 61,
+          "end": 67,
+          "field": "f1",
+          "width": 7
+        },
+        {
+          "start": 68,
+          "end": 74,
+          "field": "f2",
+          "width": 7
+        },
+        {
+          "start": 75,
+          "end": 81,
+          "field": "f3",
+          "width": 7
+        },
+        {
+          "start": 82,
+          "end": 88,
+          "field": "f4",
+          "width": 7
+        },
+        {
+          "start": 93,
+          "end": 99,
+          "field": "f5",
+          "width": 7
+        },
+        {
+          "start": 105,
+          "end": 111,
+          "field": "f6",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  }
 };
 
 // Reviewed short responses: fixed writing space, no answer content.

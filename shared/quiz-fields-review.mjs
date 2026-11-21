@@ -1,15 +1,19 @@
 // Compare saved values with an already revealed server reference. Never score,
 // persist, infer hidden keys, or read a question's private answer property.
+import {workAnswerPresentation} from './quiz-work-answer-layout.mjs';
+const literalInteger=value=>{if(typeof value!=='string')return null;const text=value.trim().replace(/[０-９]/gu,c=>String(c.charCodeAt(0)-0xff10)).replace(/＋/gu,'+').replace(/[－−]/gu,'-');return /^[+-]?[0-9]{1,12}$/u.test(text)?BigInt(text):null;};
 const same=(a,b,input)=>Array.isArray(a)&&Array.isArray(b)?a.length===b.length&&(input==='set'?[...a].sort().every((v,i)=>v===[...b].sort()[i]):a.every((v,i)=>v===b[i])):a===b;
 export function fieldsReviewPresentation(q,raw,review){
  if(q?.type!=='fields'||typeof review?.correct!=='boolean'||review.answer?.format!=='fields-v1'||!review.answer.fields)return null;
  let values;try{const p=JSON.parse(raw);if(p.v!==1||!p.f||Array.isArray(p.f))return null;values=p.f;}catch{return null;}
+ const integerReview=workAnswerPresentation(q)?.workPosition==='before-template';
  return q.fields.map(f=>{
   const value=values[f.id],accepted=review.answer.fields[f.id];if(!Object.hasOwn(values,f.id)||!Array.isArray(accepted)||!accepted.length)return null;
   const matched=accepted.findIndex(a=>same(value,a,f.input)),choice=['single','set','sequence'].includes(f.input);
   const tuples=(review.answer.tuples||[]).filter(t=>t.fields.includes(f.id));
   const paired=tuples.some(t=>!t.accepted.some(a=>t.fields.every(id=>same(values[id],a[id],q.fields.find(f=>f.id===id)?.input))));
   let state=matched>=0?'correct':choice?'incorrect':review.correct?'correct':'reference';
+  if(integerReview&&f.input==='math'&&state==='reference'){const number=literalInteger(value),references=accepted.map(literalInteger);if(number!==null&&references.every(n=>n!==null))state=references.some(n=>n===number)?'correct':'incorrect';}
   if(paired&&!review.correct)state='paired';
   const target=matched>=0?[accepted[matched]]:accepted;
   const options=(f.options||[]).map(o=>{
