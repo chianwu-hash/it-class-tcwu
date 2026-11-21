@@ -1055,6 +1055,89 @@ export const workAnswerSources={
     ]
   }
 
+,
+  "hlg3m_0117db5f_dc2f440209d0dc": {
+    "guard": "90ad9cd9ec7a7de7",
+    "partnerGuard": "90ad9cd9ec7a7de7",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "各小題算式紀錄"
+    },
+    "groups": [
+      "第1小題算式紀錄",
+      "第2小題算式紀錄",
+      "第3小題算式紀錄",
+      "第4小題算式紀錄"
+    ],
+    "passageEnd": 1,
+    "groupUnit": "layout",
+    "responseGroups": [
+      {
+        "start": 1,
+        "end": 2,
+        "fields": [
+          "f1"
+        ]
+      },
+      {
+        "start": 2,
+        "end": 3,
+        "fields": [
+          "f2"
+        ]
+      },
+      {
+        "start": 3,
+        "end": 4,
+        "fields": [
+          "f3"
+        ]
+      },
+      {
+        "start": 4,
+        "end": 5,
+        "fields": [
+          "f4",
+          "f5"
+        ]
+      }
+    ]
+  },
+  "hlg3m_048b9b77_dcc2f283004ec1": {
+    "guard": "7430ee3f36f14342",
+    "partnerGuard": "7430ee3f36f14342",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "各小題算式紀錄"
+    },
+    "groups": [
+      "第1小題算式紀錄",
+      "第2小題算式紀錄"
+    ],
+    "passageEnd": 1,
+    "groupUnit": "layout",
+    "responseGroups": [
+      {
+        "start": 1,
+        "end": 2,
+        "fields": [
+          "f1",
+          "f2"
+        ]
+      },
+      {
+        "start": 2,
+        "end": 3,
+        "fields": [
+          "f3",
+          "f4"
+        ]
+      }
+    ]
+  }
+
 };
 export const answerTemplateSources={
 
