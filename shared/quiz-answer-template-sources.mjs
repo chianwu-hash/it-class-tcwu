@@ -463,9 +463,80 @@ export const workAnswerSources={
       "input": "sketch",
       "label": "重量直式計算過程"
     }
+  },
+  "hlg3m_00cddfbd_fo9112955067e0": {
+    "guard": "17662e9bd8939ba6",
+    "partnerGuard": "17662e9bd8939ba6",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_00e68daf_fo440be5cc6d88": {
+    "guard": "3877d58c9bd7f137",
+    "partnerGuard": "3877d58c9bd7f137",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_018d3801_foec46ac6b0dde": {
+    "guard": "b0f21c43d1da1cae",
+    "partnerGuard": "b0f21c43d1da1cae",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_0209d17e_fo6b9d585267a1": {
+    "guard": "94daef4b9172f313",
+    "partnerGuard": "94daef4b9172f313",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_02e90ed3_fob29369a0bb29": {
+    "guard": "56edd41df164edb0",
+    "partnerGuard": "56edd41df164edb0",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_032df4f4_fof814bc25ae2c": {
+    "guard": "d3f9e57c1c2465bd",
+    "partnerGuard": "9653c258bbea6b93",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_0370d001_foe2c72f517117": {
+    "guard": "634ac934bc34798b",
+    "partnerGuard": "634ac934bc34798b",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_054054ff_fo320479811115": {
+    "guard": "13d00c09218c9e4d",
+    "partnerGuard": "13d00c09218c9e4d",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
   }
-};
-export const answerTemplateSources={
+};export const answerTemplateSources={
 
   "hlg3m_021169a8_rw0f2e9aafc198": {
     "guard": "b381fab960011886",
