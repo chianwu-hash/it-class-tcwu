@@ -121,6 +121,9 @@
 .quiz-answer-templates .quiz-table-wrap:has(.quiz-answer-template-slot){position:relative;min-width:0;max-width:100%;overflow-x:auto}
 .quiz-answer-templates .quiz-content-table:has(.quiz-answer-template-slot){table-layout:auto;width:max-content;min-width:100%}
 .quiz-answer-templates .quiz-content-table .quiz-field.quiz-answer-template-slot{width:max(var(--answer-slot-width,10ch),var(--answer-slot-grown-width,0px));min-width:max(var(--answer-slot-width,10ch),var(--answer-slot-grown-width,0px));max-width:none}
+.quiz-answer-templates.quiz-answer-numeric-table .quiz-content-table .quiz-field.quiz-answer-template-slot{width:max(44px,var(--answer-slot-width,4ch),var(--answer-slot-grown-width,0px));min-width:max(44px,var(--answer-slot-width,4ch),var(--answer-slot-grown-width,0px))}
+:is(.question,.question-card,[data-review-qid]):has(.quiz-answer-numeric-table) .quiz-content-table{table-layout:auto;width:max-content;min-width:100%}
+:is(.question,.question-card,[data-review-qid]):has(.quiz-answer-numeric-table) .quiz-content-table :is(th,td,.preview-content){white-space:pre;overflow-wrap:normal;word-break:normal}
 .quiz-answer-templates .quiz-content-table .quiz-answer-template-result{white-space:normal}
 .quiz-answer-template-slot .quiz-answer-template-result{font-size:.85rem;line-height:1.4;overflow-wrap:anywhere;margin-top:4px}
 .quiz-answer-template-slot[data-template-review=correct] :is(textarea,input[type=text]){border-color:#22734c!important;background:#f0faf3!important}

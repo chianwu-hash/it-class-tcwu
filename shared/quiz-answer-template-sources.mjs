@@ -95021,6 +95021,118 @@ export const answerTemplateSources={
     }
   }
 
+,
+  "hlg3m_01768100_ntf290547acb33": {
+    "guard": "6719929c132c8f13",
+    "partnerGuard": "6719929c132c8f13",
+    "model": {
+      "mode": "rich",
+      "fields": [
+        "f1",
+        "f2",
+        "f3",
+        "f4",
+        "f5",
+        "f6",
+        "f7",
+        "f8",
+        "f9"
+      ],
+      "richSlotChars": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "hlg3m_05caedb2_nt354ca07ee984": {
+    "guard": "e7b24461a6826b9b",
+    "partnerGuard": "e7b24461a6826b9b",
+    "model": {
+      "mode": "rich",
+      "fields": [
+        "f1",
+        "f2",
+        "f3",
+        "f4",
+        "f5",
+        "f6",
+        "f7"
+      ],
+      "richSlotChars": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "hlg3m_048ae242_nt9b2e3d95a1b8": {
+    "guard": "47d8032aa7b3d15c",
+    "partnerGuard": "47d8032aa7b3d15c",
+    "model": {
+      "mode": "rich",
+      "fields": [
+        "f1",
+        "f4",
+        "f7",
+        "f2",
+        "f5",
+        "f8",
+        "f3",
+        "f6",
+        "f9"
+      ],
+      "richSlotChars": [
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+      ]
+    }
+  },
+  "hlg3m_04bc5d37_nt4e6cb58e609f": {
+    "guard": "6b25f85cd0714f8e",
+    "partnerGuard": "6b25f85cd0714f8e",
+    "model": {
+      "mode": "rich",
+      "fields": [
+        "f1",
+        "f2",
+        "f3",
+        "f4",
+        "f5",
+        "f6",
+        "f7",
+        "f8"
+      ],
+      "richSlotChars": [
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+      ]
+    }
+  }
+
 };
 
 // Reviewed short responses: fixed writing space, no answer content.

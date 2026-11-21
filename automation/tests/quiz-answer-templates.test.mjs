@@ -5,6 +5,16 @@ import {deriveNumberSymbolTemplate} from '../../shared/quiz-answer-templates.mjs
 import {deriveDiagramSymbolTemplate} from '../../shared/quiz-answer-templates.mjs';
 import {deriveItemMarkTemplate} from '../../shared/quiz-answer-templates.mjs';
 
+test('reviewed numeric table capacities retain the original field order and never inspect keys',()=>{
+ const q={id:'numeric-table-capacity',type:'fields',prompt:{text:'算式 餘數\n4÷3 （　）',media:[],layout:[{type:'table',rows:[[[{type:'text',text:'算式'}],[{type:'text',text:'餘數'}]],[[{type:'text',text:'4÷3'}],[{type:'text',text:'（　）'}]]]}]},fields:[{id:'remainder',input:'math',label:'4÷3的餘數'}]};
+ Object.defineProperty(q,'answer',{get(){throw Error('answer must not size a source blank')}});
+ const before=JSON.stringify(q.prompt),baseline=deriveAnswerTemplate(q);assert.deepEqual(baseline,{mode:'rich',fields:['remainder']});
+ const model=deriveAnswerTemplate(q,{richSlotChars:[1]});assert.deepEqual(model,{...baseline,richSlotChars:[1]});assert.ok(answerTemplatePresentation(q,{[q.id]:{guard:presentationSignature(q),model}}));assert.equal(JSON.stringify(q.prompt),before);
+ for(const widths of [[],[0],[13],[1.5],['1'],[1,2]])assert.equal(deriveAnswerTemplate(q,{richSlotChars:widths}),null);
+ const textField={...q,fields:[{...q.fields[0],input:'text'}]};assert.equal(deriveAnswerTemplate(textField,{richSlotChars:[1]}),null);
+ const paragraph={...q,prompt:{text:'4÷3＝（　）',media:[]}};assert.equal(deriveAnswerTemplate(paragraph,{richSlotChars:[1]}),null);
+});
+
 test('original division and compound-mass blanks keep work separate and preserve units without reading answers',()=>{
  for(const text of ['39÷6＝（ ）…（ ）','15公斤800公克－7公斤632公克\n＝（ ）公斤（ ）公克']){
   const q={id:'required-original-work',type:'fields',prompt:{text,media:[]},fields:[{id:'f1',input:'math',label:'第1格'},{id:'f2',input:'math',label:'第2格'}],work:{input:'sketch',label:'直式作答'}},before=JSON.stringify(q),model=deriveAnswerTemplate(q);assert.ok(model);assert.deepEqual(model.blanks.map(b=>b.field),['f1','f2']);assert.equal(JSON.stringify(q),before);Object.defineProperty(q,'answer',{get(){throw Error('answer read')}});const view=answerTemplatePresentation(q,{[q.id]:{guard:presentationSignature(q),model}});assert.ok(view);assert.equal(view.source.work.input,'sketch');assert.equal(view.source.prompt.text,text);

@@ -3,6 +3,12 @@ import {workAnswerSources,answerTemplateSources} from '../../shared/quiz-answer-
 import {presentationSignature} from '../../shared/quiz-presentation-signature.mjs';
 import {deriveAnswerTemplate} from '../../shared/quiz-answer-templates.mjs';
 const field=(id,input='set')=>({id,label:id,input,options:['a','b','c'].map(id=>({id,content:{text:id,media:[]}}))}),q=(fields=[field('f1')])=>({id:'synthetic',type:'fields',fields}),raw=f=>JSON.stringify({v:1,f}),review=(fields,correct=false,tuples)=>({correct,answer:{format:'fields-v1',fields,...(tuples?{tuples}:{})}});
+
+test('numeric source tables mark revealed literal mistakes, keep expressions neutral and require the exact source guard',()=>{
+ const source={id:'synthetic-numeric-table-review',type:'fields',prompt:{text:'表格（　）',media:[],layout:[{type:'table',rows:[[[{type:'text',text:'數量'}],[{type:'text',text:'（　）'}]]]}]},fields:[{id:'n',label:'數量',input:'math'}]};Object.defineProperty(source,'answer',{get(){throw Error('hidden key read')}});
+ answerTemplateSources[source.id]={guard:presentationSignature(source),model:deriveAnswerTemplate(source,{richSlotChars:[2]})};const key=review({n:['34']});
+ try{for(const[value,state]of[['35','incorrect'],['＋０３４','correct'],['17+17','reference'],['34.0','reference']]){const response=raw({n:value});assert.equal(fieldsReviewPresentation(source,response,key)[0].state,state);assert.equal(JSON.parse(response).f.n,value);}assert.equal(fieldsReviewPresentation({...source,prompt:{...source.prompt,text:'changed'}},raw({n:'35'}),key)[0].state,'reference');assert.equal(fieldsReviewPresentation(source,raw({n:'35'}),null),null);}finally{delete answerTemplateSources[source.id];}
+});
 test('reviewed manual source slots mark only certain literal integer errors and keep expressions for reference',()=>{
  const source={id:'synthetic-manual-slot-integers',type:'fields',prompt:{text:'原題。\n（ ）…（ ）\n（ ）',media:[]},fields:[{id:'n',label:'商',input:'math'},{id:'r',label:'餘數',input:'math'}],work:{input:'expression',label:'計算過程'}},blanks=[...source.prompt.text.matchAll(/（ ）/gu)];
  workAnswerSources[source.id]={guard:presentationSignature(source),work:source.work,initialChars:2,workPosition:'source-slots',passageEnd:source.prompt.text.indexOf('（'),sourceSlots:blanks.map((m,i)=>({start:m.index,end:m.index+m[0].length,...(i<2?{field:source.fields[i].id}:{work:0})}))};Object.defineProperty(source,'answer',{get(){throw Error('hidden answer read')}});
