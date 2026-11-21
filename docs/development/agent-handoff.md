@@ -2,7 +2,7 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | Codex-g3math-batch-20261121 | 2026-11-21 | `be145924` 加本登記 | `dpl_GdF1Pw3WDodcQsVDbMjZHuAXg8kQ` | 首批34題所需共用資產及三、四、六、九年級16入口 | 待候選完整樹比對與正式讀回；使用者已核准通過後啟用，詳[首批34題收據](quiz-release34-20261121.md) |
+| 已完成 | Codex-g3math-batch-20261121 | 2026-11-21 | `823be784` | `dpl_GdF1Pw3WDodcQsVDbMjZHuAXg8kQ` | 34題與三、四、六、九年級16入口 | `dpl_4TcxEvZStoueyyyNuqxdpW6QWxqM`，可回滾至基準部署，詳[首批34題收據](quiz-release34-20261121.md) |
 | 待新對話接續 | Codex-g3math-release34-20261121 | 2026-11-21 | `2d35c869`；續作須重新 fetch | `dpl_GdF1Pw3WDodcQsVDbMjZHuAXg8kQ` | 已核共用作答程式、生成資產與16入口；34題保持停用 | 使用者要求本段收尾，未部署、未取得發布鎖；詳[34題收據](quiz-release34-20261121.md) |
 
 # 最新授權：整理合併、清理後討論效率，再接回長線（2026-11-21）
