@@ -190,7 +190,7 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
     function prepareImages() {
         root.querySelectorAll(selector).forEach(trigger => {
             if (!trigger.matches('img')) return;
-            if(trigger.closest('[data-image-panel-proxy]')){trigger.tabIndex=-1;trigger.removeAttribute('role');trigger.removeAttribute('aria-label');return;}
+            if(trigger.closest('[data-image-panel-proxy],[data-choice-image-select]')){trigger.tabIndex=-1;trigger.removeAttribute('role');trigger.removeAttribute('aria-label');return;}
             trigger.tabIndex = 0;
             trigger.setAttribute('role', 'button');
             trigger.setAttribute('aria-label', `${trigger.alt || '題目圖片'}，點擊放大`);
@@ -199,10 +199,12 @@ export function initImageLightbox({ root = document, selector = '[data-image-lig
     }
     let activationGeneration = 0;
     async function activateImage(event) {
-        const originalTrigger = event.target.closest?.(selector),trigger=originalTrigger?.closest('[data-image-panel-proxy]')||originalTrigger;
+        const choiceZoom=event.target.closest?.('[data-choice-image-zoom]'),originalTrigger=choiceZoom?choiceZoom.closest('[data-choice-image-card]')?.querySelector('img'):event.target.closest?.(selector);
+        if(!choiceZoom&&originalTrigger?.closest('[data-choice-image-select]'))return;
+        const trigger=choiceZoom||originalTrigger?.closest('[data-image-panel-proxy]')||originalTrigger;
         if (!trigger || !root.contains(trigger)) return;
         if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
-        const image = trigger.matches('img') ? trigger : trigger.querySelector('img');
+        const image = choiceZoom ? originalTrigger : trigger.matches('img') ? trigger : trigger.querySelector('img');
         if (!image?.src || !image.complete || !image.naturalWidth) return;
         event.preventDefault();
         // 選項中的圖片只開燈箱，不觸發 label 的選答行為。

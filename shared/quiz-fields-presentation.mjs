@@ -1,3 +1,4 @@
+import {imageChoicePresentation} from './quiz-image-choices.mjs';
 import {choiceQuestionPresentation} from './quiz-choice-conversion.mjs';
 import {studentPromptContent} from './quiz-student-content.mjs';
 import {readingPresentation} from './quiz-reading-presentation.mjs';
@@ -29,6 +30,7 @@ export const fieldsAreSingleChoice=q=>q.type==='fields'&&q.fields?.length===1&&f
 export function fieldsPromptPresentation(q){
  const sequence=sequencePromptPresentation(q);if(sequence)return sequence;
  const converted=choiceQuestionPresentation(q);q=converted;
+ const picture=imageChoicePresentation(q);if(picture)return picture.passage;
  const open=openSubquestionPresentation(q);if(open)return open.passage;
  const matching=matchingPresentation(q);if(matching)return matching.passage;
  const reading=readingPresentation(q);if(reading)return reading.passage;

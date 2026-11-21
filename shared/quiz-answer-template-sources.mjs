@@ -1,6 +1,63 @@
 // Verified source fingerprints and blank offsets; no source text or answers.
 export const answerTemplateSources={
 
+  "hlg3m_018c67ba_rn376087574695": {
+    "guard": "8bbab0afad154657",
+    "partnerViewGuard": "8c8dfeab04c4886b",
+    "model": {
+      "mode": "image-choices",
+      "width": 320,
+      "badges": [
+        "(1)",
+        "(2)",
+        "(3)"
+      ],
+      "sourceWidths": [
+        106.1,
+        148.9,
+        243.2
+      ],
+      "promptMediaIndices": [
+        0,
+        1,
+        2
+      ],
+      "task": "numbered",
+      "bankRange": [
+        54,
+        71
+      ]
+    }
+  },
+  "hlg3m_033f6656_rn4be7d7f0014c": {
+    "guard": "32a938f1b05487a6",
+    "partnerViewGuard": "5c0149138ad5cbef",
+    "model": {
+      "mode": "image-choices",
+      "width": 180,
+      "badges": null,
+      "sourceWidths": [
+        55.8,
+        60.3,
+        62.5
+      ],
+      "promptMediaIndices": [
+        1,
+        2,
+        3
+      ],
+      "task": "heaviest",
+      "bankRange": [
+        2,
+        17
+      ]
+    }
+  }
+,
+
+
+
+
   "hlg3m_0140f840_rnb34060bbec77": {
     "guard": "eee4179a18f23799",
     "partnerGuard": "d6dbefc9a94aefef",

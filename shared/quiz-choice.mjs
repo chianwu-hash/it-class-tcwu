@@ -1,6 +1,7 @@
 // Pure option presentation shared by personal and partner quizzes. No auth, grading or persistence.
+import {mountImageChoices} from './quiz-image-choices.mjs';
 import {booleanChoicePresentation} from './quiz-boolean-choice.mjs';
-export function appendSingleChoiceOptions(host,{name,options,selected,locked=false,onSelect,renderBody,decorateInput,badgeForOption,result=null,literalSymbols=false}){
+export function appendSingleChoiceOptions(host,{name,options,selected,locked=false,onSelect,renderBody,decorateInput,badgeForOption,result=null,literalSymbols=false,imagePresentation=null}){
  host.classList.add('quiz-single-choice');
  const boolean=!literalSymbols&&options.every(o=>o.content)?booleanChoicePresentation(options):null;
  for(const [index,option] of options.entries()){
@@ -18,5 +19,6 @@ export function appendSingleChoiceOptions(host,{name,options,selected,locked=fal
   }
   host.append(label);
  }
+ if(imagePresentation)mountImageChoices(host,imagePresentation);
  return host;
 }

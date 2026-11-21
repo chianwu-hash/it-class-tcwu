@@ -1,4 +1,5 @@
 import {explanationReferenceContent} from './quiz-explanation-references.mjs';
+import {imageChoicePresentation} from './quiz-image-choices.mjs';
 import {appendSingleChoiceOptions} from './quiz-choice.mjs';
 import {choiceQuestionPresentation,choiceAnswerLabel} from './quiz-choice-conversion.mjs';
 import {renderFieldsChoices} from './quiz-fields.mjs';
@@ -189,7 +190,12 @@ export function initServerQuiz({ selectors, server }) {
         article.append(make('p', `你的答案：${['fields','open'].includes(q.type) ? fieldsResponseSummary(q,state.responses[q.id]) : q.type === 'single' ? choiceAnswerLabel(q,state.responses[q.id]) : state.responses[q.id]}`));
         if(q.type==='fields')renderFieldsChoices(article,q,{renderContent,raw:state.responses[q.id],review:state.reviews.find(r=>r.question_id===q.id)});
         if(q.type==='open')renderOpenSavedSketches(article,q,state.responses[q.id],{renderContent});
-        if (q.type === 'single') {const display=booleanChoicePresentation(q.options),review=state.reviews.find(r=>r.question_id===q.id),feedback=choiceReviewModel({kind:'single',choices:q.options,value:state.responses[q.id],official:review?.answer?.option_id,correct:review?.correct,revealed:Boolean(review)});if(feedback)article.classList.add('quiz-choice-review');q.options.forEach((o, i) => { const row = make('div', undefined, 'preview-option'); row.append(make('strong', (display?.[i].badge??String.fromCharCode(65+i))+' ')); if(display)row.append(make('span',display[i].text));else renderContent(row, o.content);decorateFieldReviewOption(row,feedback?.options[i]);article.append(row); });}
+        if (q.type === 'single') {
+          const picture=imageChoicePresentation(q),display=booleanChoicePresentation(q.options),review=state.reviews.find(r=>r.question_id===q.id),feedback=choiceReviewModel({kind:'single',choices:q.options,value:state.responses[q.id],official:review?.answer?.option_id,correct:review?.correct,revealed:Boolean(review)});
+          if(feedback)article.classList.add('quiz-choice-review');
+          if(picture){const host=make('div');appendSingleChoiceOptions(host,{name:`review-${q.id}`,options:q.options.map(o=>({...o,value:o.id})),selected:state.responses[q.id],locked:true,renderBody:(body,o)=>renderContent(body,o.content),imagePresentation:picture,result:review?{chosen:state.responses[q.id],correct:review.answer.option_id,chosenCorrect:review.correct}:null});article.append(host);}
+          else q.options.forEach((o,i)=>{const row=make('div',undefined,'preview-option');row.append(make('strong',(display?.[i].badge??String.fromCharCode(65+i))+' '));if(display)row.append(make('span',display[i].text));else renderContent(row,o.content);decorateFieldReviewOption(row,feedback?.options[i]);article.append(row);});
+        }
         renderReview(article, q); mountQuestionReport(article,report(q));root.append(article);
       }
       return;
@@ -218,6 +224,7 @@ export function initServerQuiz({ selectors, server }) {
     const legend = make('legend', q.type==='fields'&&saved?(review?'逐小題核對作答':'已儲存的作答'):q.type === 'single'||fieldsAreSingleChoice(q) ? '選擇一個答案' : '填入你的答案'); inputs.append(legend);
     if (q.type === 'single') {
       appendSingleChoiceOptions(inputs, {
+        imagePresentation:imageChoicePresentation(q),
         name:`q-${q.id}`, options:q.options.map(o=>({...o,value:o.id})),
         selected:saved?state.responses[q.id]:pending?.response??selected, locked:choicesLocked,
         onSelect:value=>{selected=value;}, renderBody:(body,o)=>renderContent(body,o.content),
