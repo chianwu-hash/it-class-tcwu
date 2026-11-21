@@ -1,11 +1,24 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import {convertChoiceQuestion} from '../../shared/quiz-choice-conversion.mjs';
 import {booleanChoicePresentation} from '../../shared/quiz-boolean-choice.mjs';
+import {answerTemplateSources} from '../../shared/quiz-answer-template-sources.mjs';
+import {presentationSignature} from '../../shared/quiz-presentation-signature.mjs';
 import {convertChoiceBatch} from '../convert-choice-content.mjs';
 import {partnerChoicePresentation} from '../../shared/partner-pilot/choice-presentation.mjs';
 const c=text=>({text,media:[]});
 const rich=text=>({...c(text),layout:[{type:'paragraph',runs:[{type:'text',text}]}]});
 const question=()=>({id:'any_publisher',type:'fields',prompt:rich('選擇題\n依原題完成全部答案欄，再一起送出。\n合成題目問哪一個？\n①甲國　②乙國　③丙國　④丁國'),fields:[{id:'f1',input:'single',label:'答案',options:[...'①②③④'].map((text,i)=>({id:'o'+(i+1),content:rich(text)}))}],answer:{format:'fields-v1',fields:{f1:['o2']}}});
+
+test('only exact reviewed diagram symbols retain literal marks through choice conversion',()=>{
+ const q={id:'synthetic_diagram_symbols',type:'fields',prompt:rich('相同畫○，不同打╳。'),fields:[{id:'f1',input:'single',label:'①',options:['○','╳'].map((text,i)=>({id:'o'+i,content:c(text)}))}]},before=JSON.stringify(q);
+ answerTemplateSources[q.id]={guard:presentationSignature(q),model:{mode:'diagram-symbols'}};
+ try{
+  assert.deepEqual(convertChoiceQuestion(q).question.fields[0].options,q.fields[0].options);
+  assert.equal(JSON.stringify(q),before);
+  const drift={...q,prompt:rich('請判斷正確或不正確。')};
+  assert.notDeepEqual(convertChoiceQuestion(drift).question.fields[0].options,q.fields[0].options);
+ }finally{delete answerTemplateSources[q.id];}
+});
 test('the reported code-only case becomes full choices without mutating IDs, keys or source',()=>{
  const q=question(),before=structuredClone(q),r=convertChoiceQuestion(q);assert.equal(r.issues.length,0);
  assert.deepEqual(r.question.fields[0].options.map(o=>o.content.text),['甲國','乙國','丙國','丁國']);assert.deepEqual(r.question.answer,q.answer);

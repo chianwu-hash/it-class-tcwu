@@ -92,6 +92,8 @@ export function renderContent(container, content, { strict = false, loadMedia = 
     };
     element.addEventListener('error', failed);
     const caption = document.createElement('figcaption'); caption.textContent = media.alt;
+    // 重繪解法須明示來源性質；一般嵌入圖的隱藏圖說樣式不能蓋掉此標示。
+    if (media.kind === 'image' && media.alt?.endsWith('（依原題重繪）')) caption.style.display = 'block';
     figure.append(element, caption); box.append(figure);
     // 不把短效下載網址寫回草稿／固定版本。移除的題目不再啟動媒體。
     const begin=()=>resolve(url.href).then(src => { if (figure.isConnected&&(!mediaScope||mediaScope.active())) element.src = src; }).catch(()=>{if(figure.isConnected&&(!mediaScope||mediaScope.active()))failed();});
