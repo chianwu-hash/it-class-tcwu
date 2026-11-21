@@ -1,6 +1,7 @@
 import {renderFieldsInputs,renderFieldsChoices,fieldsResponseError,fieldsResponseSummary,fieldsAnswerSummary} from '../quiz-fields.mjs';
 import {renderOpenInputs,openReferenceSummary,openResponseError,renderOpenSavedSketches,renderOpenReferences} from '../quiz-open-response.mjs';
 import {renderContent} from './past-content.js';
+import {mountShortAnswerInput} from '../quiz-short-answer.mjs';
 
 export function structuredResponseError(q,raw){
  if(q.type==='open')return openResponseError(q,raw);
@@ -21,7 +22,7 @@ export function mountStructuredAnswers(root,{question,drafts,loadAsset,onChange}
    const group=renderOpenInputs(host,normal,{raw,locked,onChange:store,renderContent:render});
    group.firstElementChild.textContent='請依題意寫下答案。送出後，和參考內容核對；共同回顧時可與夥伴討論。';
   }else{
-   const label=node('label','我的答案'),input=node('textarea');input.rows=2;input.maxLength=2000;input.required=true;input.disabled=locked;input.value=raw;input.setAttribute('aria-label','我的答案');input.oninput=()=>store(input.value);label.append(input);host.append(label);
+   const label=node('label','我的答案'),input=node('textarea');input.rows=2;input.maxLength=2000;input.required=true;input.disabled=locked;input.value=raw;input.setAttribute('aria-label','我的答案');mountShortAnswerInput(input,normal);input.oninput=()=>store(input.value);label.append(input);host.append(label);
   }
  }
  for(const host of root.querySelectorAll('[data-structured-reference]')){
@@ -31,14 +32,14 @@ export function mountStructuredAnswers(root,{question,drafts,loadAsset,onChange}
    if(last&&!root.querySelector(`[data-structured-answer="${q.id}"]`))renderOpenSavedSketches(host,normal,last.value,{renderContent:(box,content)=>renderContent(box,content,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});
    continue;
   }
-  if(normal.type==='fields'&&root.querySelector(`[data-structured-answer="${q.id}"] :is(.quiz-has-answer-template,.quiz-reading-workbench)`))continue;
+  if(normal.type==='fields'&&root.querySelector(`[data-structured-answer="${q.id}"] :is(.quiz-has-answer-template,.quiz-reading-workbench,.quiz-work-answer-layout)`))continue;
   if(normal.type==='fields'&&last&&typeof last.correct==='boolean'){
    renderFieldsChoices(host,normal,{raw:last.value,showWork:!root.querySelector(`[data-structured-answer="${q.id}"]`),review:{answer:q.normalReference,correct:last.correct},renderContent:(box,content)=>renderContent(box,content,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});continue;
   }
   if(normal.type==='fields'){
    renderFieldsChoices(host,normal,{referenceAnswer:q.normalReference,renderContent:(box,content)=>renderContent(box,content,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});continue;
   }
-  if(last){host.append(node('b','我這次留下的作答'),node('p',normal.type==='short'?last.value:fieldsResponseSummary(normal,last.value)));if(normal.type==='open'&&!root.querySelector(`[data-structured-answer="${q.id}"]`))renderOpenSavedSketches(host,normal,last.value,{renderContent:(box,content)=>renderContent(box,content,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});}
+  if(last){host.append(node('b',normal.type==='short'?'這題保留的作答':'我這次留下的作答'),node('p',normal.type==='short'?last.value:fieldsResponseSummary(normal,last.value)));if(normal.type==='open'&&!root.querySelector(`[data-structured-answer="${q.id}"]`))renderOpenSavedSketches(host,normal,last.value,{renderContent:(box,content)=>renderContent(box,content,{mediaScope:{active:()=>host.isConnected,resolve:loadAsset}})});}
   const answer=normal.type==='open'?openReferenceSummary(normal,q.normalReference):normal.type==='fields'?fieldsAnswerSummary(normal,q.normalReference):q.normalReference.accepted.join(' 或 ');
   host.append(node('b',normal.type==='open'?'參考例答與檢核重點':'參考答案'),node('p',answer));
  }

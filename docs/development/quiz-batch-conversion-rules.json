@@ -1,6 +1,6 @@
 {
   "schema": "quiz-conversion-rule-catalog/v1",
-  "version": "2026-11-21.1",
+  "version": "2026-11-21.3",
   "purpose": "已定案題型的批次轉化與驗收重用索引；不是匯入題庫格式或通用轉換器",
   "policyDocument": "docs/development/quiz-batch-conversion-rules.md",
   "scope": {
@@ -19,7 +19,10 @@
     "newSourcesInvalidateSharedBehaviorEvidence": false,
     "trialAcceptanceImpliesProductionSupport": false,
     "safeUnknownRoute": "exception_queue",
-    "currentLongRunningConversion": "paused_by_user",
+    "currentLongRunningConversion": "integrate_pr396_and_cleanup_then_claude_efficiency_discussion_before_resume",
+    "releaseGranularity": "independently_complete_batch_decided_by_codex",
+    "wholeSubjectRequiredBeforeBatchRelease": false,
+    "newProductionFunctionRequiresExplicitApproval": true,
     "thisCatalogResumesConversion": false
   },
   "requiredDataChecks": [
@@ -71,165 +74,398 @@
   },
   "rules": [
     {
-      "id": "choice", "version": 1, "label": "是非、選擇與原圖選答",
-      "sourceRoles": ["是非", "單選", "複選", "句中圈選", "原圖選答"],
+      "id": "choice",
+      "version": 1,
+      "label": "是非、選擇與原圖選答",
+      "sourceRoles": [
+        "是非",
+        "單選",
+        "複選",
+        "句中圈選",
+        "原圖選答"
+      ],
       "transform": "完整擷取原選項與ID；單一目標用single，多目標才用fields；保留原序與圖文",
       "explanation": "依選項內容說明理由，不用A/B位置指稱，不重複是非符號",
-      "mustPreserve": ["原選項與答案映射", "未作答與明示全不選", "原圖完整性"],
-      "mainModules": ["shared/quiz-choice.mjs", "shared/quiz-choice-conversion.mjs", "shared/quiz-answer-templates.mjs"],
-      "draftModules": ["shared/quiz-image-choices.mjs"],
+      "mustPreserve": [
+        "原選項與答案映射",
+        "未作答與明示全不選",
+        "原圖完整性"
+      ],
+      "mainModules": [
+        "shared/quiz-choice.mjs",
+        "shared/quiz-choice-conversion.mjs",
+        "shared/quiz-answer-templates.mjs"
+      ],
+      "draftModules": [
+        "shared/quiz-image-choices.mjs"
+      ],
       "availability": "existing_contracts_with_guarded_draft_image_variants"
     },
     {
-      "id": "sequence", "version": 1, "label": "排序",
-      "sourceRoles": ["文字排序", "圖卡排序"],
+      "id": "sequence",
+      "version": 1,
+      "label": "排序",
+      "sourceRoles": [
+        "文字排序",
+        "圖卡排序"
+      ],
       "transform": "沿原ID陣列建立排序卡，初始不替學生確認原序",
       "explanation": "完整順序及其依據",
-      "mustPreserve": ["原項目ID", "拖曳與鍵盤", "取消與鎖定回顧"],
-      "mainModules": ["shared/quiz-sequence.mjs", "shared/quiz-sequence-model.mjs"],
+      "mustPreserve": [
+        "原項目ID",
+        "拖曳與鍵盤",
+        "取消與鎖定回顧"
+      ],
+      "mainModules": [
+        "shared/quiz-sequence.mjs",
+        "shared/quiz-sequence-model.mjs"
+      ],
       "availability": "existing_contract"
     },
     {
-      "id": "matching", "version": 1, "label": "連連看",
-      "sourceRoles": ["原左右項目連線"],
+      "id": "matching",
+      "version": 1,
+      "label": "連連看",
+      "sourceRoles": [
+        "原左右項目連線"
+      ],
       "transform": "套用共用連線與已核端點映射，不改成逐列選單",
       "explanation": "原位配對及理由",
-      "mustPreserve": ["原端點與配對", "Esc取消手勢", "原一次送出"],
-      "mainModules": ["shared/quiz-matching.mjs", "shared/quiz-matching-model.mjs"],
+      "mustPreserve": [
+        "原端點與配對",
+        "Esc取消手勢",
+        "原一次送出"
+      ],
+      "mainModules": [
+        "shared/quiz-matching.mjs",
+        "shared/quiz-matching-model.mjs"
+      ],
       "availability": "existing_contract"
     },
     {
-      "id": "inline-language", "version": 1, "label": "就近填字、注音與字詞修訂",
-      "sourceRoles": ["國字注音", "標點", "改錯", "刪多餘字", "同部首", "反義詞", "看圖填字"],
+      "id": "inline-language",
+      "version": 1,
+      "label": "就近填字、注音與字詞修訂",
+      "sourceRoles": [
+        "國字注音",
+        "標點",
+        "改錯",
+        "刪多餘字",
+        "同部首",
+        "反義詞",
+        "看圖填字"
+      ],
       "transform": "原句與欄位對位；按原字數起始，輸入向右延伸；改錯與刪字保持不同任務",
       "explanation": "依原任務說明字詞及修訂理由",
-      "mustPreserve": ["故意錯字", "原框詞底線", "欄位順序與單位"],
-      "mainModules": ["shared/quiz-answer-templates.mjs", "shared/quiz-correction-presentation.mjs", "shared/quiz-source-box-render.mjs"],
+      "mustPreserve": [
+        "故意錯字",
+        "原框詞底線",
+        "欄位順序與單位"
+      ],
+      "mainModules": [
+        "shared/quiz-answer-templates.mjs",
+        "shared/quiz-correction-presentation.mjs",
+        "shared/quiz-source-box-render.mjs"
+      ],
       "availability": "existing_guarded_contracts"
     },
     {
-      "id": "word-meaning", "version": 1, "label": "單純造詞",
-      "sourceRoles": ["指定字造詞"],
+      "id": "word-meaning",
+      "version": 1,
+      "label": "單純造詞",
+      "sourceRoles": [
+        "指定字造詞"
+      ],
       "transform": "按一字一組保留原造詞數",
       "explanation": "簡短字義加多個適合例詞",
-      "mustPreserve": ["開放合理答案", "原指定字與詞數"],
-      "mainModules": ["shared/quiz-word-meaning-review.mjs", "shared/quiz-word-meaning-guides.mjs"],
+      "mustPreserve": [
+        "開放合理答案",
+        "原指定字與詞數"
+      ],
+      "mainModules": [
+        "shared/quiz-word-meaning-review.mjs",
+        "shared/quiz-word-meaning-guides.mjs"
+      ],
       "availability": "existing_guarded_contract"
     },
     {
-      "id": "phonetic-word", "version": 1, "label": "先注音再造詞",
-      "sourceRoles": ["指定字注音", "同字造詞"],
+      "id": "phonetic-word",
+      "version": 1,
+      "label": "先注音再造詞",
+      "sourceRoles": [
+        "指定字注音",
+        "同字造詞"
+      ],
       "transform": "一字一組，注音先於造詞，注音鍵盤保持連按與焦點",
       "explanation": "字義、固定字典讀音及多個例詞",
-      "mustPreserve": ["原字分組", "可追溯多音資料", "未知讀音不中傷為確定錯誤"],
-      "mainModules": ["shared/quiz-phonetic-word-review.mjs", "shared/quiz-phonetic-check.mjs"],
+      "mustPreserve": [
+        "原字分組",
+        "可追溯多音資料",
+        "未知讀音不中傷為確定錯誤"
+      ],
+      "mainModules": [
+        "shared/quiz-phonetic-word-review.mjs",
+        "shared/quiz-phonetic-check.mjs"
+      ],
       "availability": "existing_guarded_contract"
     },
     {
-      "id": "composition", "version": 1, "label": "短語、造句、接寫及接龍",
-      "sourceRoles": ["照樣寫短語", "造句", "接寫", "詞語接龍"],
+      "id": "composition",
+      "version": 1,
+      "label": "短語、造句、接寫及接龍",
+      "sourceRoles": [
+        "照樣寫短語",
+        "造句",
+        "接寫",
+        "詞語接龍"
+      ],
       "transform": "按原組數、固定詞與語序建立就近欄位",
       "explanation": "先呈現完整短語或句子，再解說及給多個例子",
-      "mustPreserve": ["原句型", "合理多解", "接龍首尾關係"],
-      "mainModules": ["shared/quiz-open-composition.mjs", "shared/quiz-open-response.mjs"],
+      "mustPreserve": [
+        "原句型",
+        "合理多解",
+        "接龍首尾關係"
+      ],
+      "mainModules": [
+        "shared/quiz-open-composition.mjs",
+        "shared/quiz-open-response.mjs"
+      ],
       "availability": "existing_guarded_contract"
     },
     {
-      "id": "reading", "version": 1, "label": "閱讀與共同圖表題組",
-      "sourceRoles": ["文章填空", "閱讀小題", "共同圖表對照"],
+      "id": "reading",
+      "version": 1,
+      "label": "閱讀與共同圖表題組",
+      "sourceRoles": [
+        "文章填空",
+        "閱讀小題",
+        "共同圖表對照"
+      ],
       "transform": "材料可對照、小題與選項相鄰；文章填空放回原位置",
       "explanation": "固定答案原位核對；開放題只給合理參考",
-      "mustPreserve": ["共同材料與圖位", "混合欄位角色", "同次保存與返回焦點"],
-      "mainModules": ["shared/quiz-reading-workbench.mjs", "shared/quiz-reading-inline.mjs", "shared/quiz-reading-presentation.mjs"],
+      "mustPreserve": [
+        "共同材料與圖位",
+        "混合欄位角色",
+        "同次保存與返回焦點"
+      ],
+      "mainModules": [
+        "shared/quiz-reading-workbench.mjs",
+        "shared/quiz-reading-inline.mjs",
+        "shared/quiz-reading-presentation.mjs"
+      ],
       "availability": "existing_guarded_contracts"
     },
     {
-      "id": "number-units", "version": 1, "label": "純答數、分數與單位",
-      "sourceRoles": ["純結果", "分數", "單位換算", "複名數"],
+      "id": "number-units",
+      "version": 1,
+      "label": "純答數、分數與單位",
+      "sourceRoles": [
+        "純結果",
+        "分數",
+        "單位換算",
+        "複名數"
+      ],
       "transform": "沿原欄位與單位；僅原題不需過程時可採純結果",
       "explanation": "分數上下排，說明單位及完整等價配對",
-      "mustPreserve": ["原過程要求不得遺失", "成組單位等價值", "原答案封裝"],
-      "mainModules": ["shared/quiz-fields.mjs", "shared/quiz-answer-templates.mjs"],
-      "availability": "existing_contracts"
+      "mustPreserve": [
+        "原過程要求不得遺失",
+        "成組單位等價值",
+        "原答案封裝"
+      ],
+      "mainModules": [
+        "shared/quiz-fields.mjs",
+        "shared/quiz-answer-templates.mjs"
+      ],
+      "availability": "existing_contracts",
+      "draftBranches": [
+        {
+          "id": "numeric-rich-source-slots",
+          "version": 1,
+          "availability": "draft_pr396_verified_not_deployed",
+          "sourceRoles": [
+            "原表格填數",
+            "原表與後續小題混合"
+          ],
+          "parameter": "richSlotChars：每欄1–12字元容量，只供精確來源／copy_self綁定的math原生表格",
+          "transform": "依原空儲存格明列座標與原位置ID，保留既印值與行列；欄位可按來源橫列重排，答案須維持原位置映射。空格加入輸入標記是原位轉錄，不新增題意。",
+          "explanation": "完整原表與計算依據；只對已揭露的字面整數作紅綠核對，表達式及未知格式維持參考。",
+          "sizing": "至少44px，較長輸入向右延伸，字型與視窗變化重排；原表和解析表可橫捲，算式不拆成直排。",
+          "evidenceDocument": "docs/development/quiz-original-nativetables6-20261121.md"
+        }
+      ]
     },
     {
-      "id": "expression", "version": 1, "label": "算式及計算過程",
-      "sourceRoles": ["列式", "做法與答案", "多小題算式"],
+      "id": "expression",
+      "version": 1,
+      "label": "算式及計算過程",
+      "sourceRoles": [
+        "列式",
+        "做法與答案",
+        "多小題算式"
+      ],
       "transform": "文字與數學鍵；沿work-v1與答數同次保存，角色明列不逐題特例",
       "explanation": "情境、列式、計算與驗算，合理過程不按單字串判錯",
-      "mustPreserve": ["原人工過程", "一次送出", "不強加直式或未印選項"],
-      "mainModules": ["shared/quiz-work-response.mjs", "shared/quiz-fields.mjs"],
-      "draftModules": ["shared/quiz-work-answer-layout.mjs", "shared/quiz-work-source-slots.mjs"],
+      "mustPreserve": [
+        "原人工過程",
+        "一次送出",
+        "不強加直式或未印選項"
+      ],
+      "mainModules": [
+        "shared/quiz-work-response.mjs",
+        "shared/quiz-fields.mjs"
+      ],
+      "draftModules": [
+        "shared/quiz-work-answer-layout.mjs",
+        "shared/quiz-work-source-slots.mjs"
+      ],
       "availability": "base_contract_exists_guarded_source_layouts_in_draft",
-      "pendingVariants": ["讀數免過程及數值文字混合角色：本機初驗與靜態複核完成，完整UI與媒體待驗，不算已完成"]
+      "pendingVariants": [
+        "讀數免過程及數值文字混合角色：本機初驗與靜態複核完成，完整UI與媒體待驗，不算已完成"
+      ]
     },
     {
-      "id": "vertical", "version": 1, "label": "明確直式過程",
-      "sourceRoles": ["原題或出版類型明確要求直式"],
+      "id": "vertical",
+      "version": 1,
+      "label": "明確直式過程",
+      "sourceRoles": [
+        "原題或出版類型明確要求直式"
+      ],
       "transform": "可保存筆跡的直式區與答案同次送出；不以計算紙替代",
       "explanation": "依真教材位值與記號畫完整各步，重繪標示解法示意",
-      "mustPreserve": ["原要求", "筆跡顏色", "答案與過程評量分開"],
-      "mainModules": ["shared/quiz-work-response.mjs", "shared/sketch/editor.mjs"],
-      "draftModules": ["shared/quiz-work-answer-layout.mjs", "shared/quiz-work-sketch-groups.mjs"],
+      "mustPreserve": [
+        "原要求",
+        "筆跡顏色",
+        "答案與過程評量分開"
+      ],
+      "mainModules": [
+        "shared/quiz-work-response.mjs",
+        "shared/sketch/editor.mjs"
+      ],
+      "draftModules": [
+        "shared/quiz-work-answer-layout.mjs",
+        "shared/quiz-work-sketch-groups.mjs"
+      ],
       "availability": "base_contract_exists_guarded_group_layouts_in_draft"
     },
     {
-      "id": "grid-drawing", "version": 1, "label": "方格作圖",
-      "sourceRoles": ["指定尺度方格上的作圖"],
+      "id": "grid-drawing",
+      "version": 1,
+      "label": "方格作圖",
+      "sourceRoles": [
+        "指定尺度方格上的作圖"
+      ],
       "transform": "原格線與尺度底板，學生自行作圖",
       "explanation": "固定示意及必要步驟",
-      "mustPreserve": ["原尺度", "學生實作", "合理圖形"],
-      "mainModules": ["shared/sketch/contract.mjs"],
+      "mustPreserve": [
+        "原尺度",
+        "學生實作",
+        "合理圖形"
+      ],
+      "mainModules": [
+        "shared/sketch/contract.mjs"
+      ],
       "availability": "trial_accepted_dedicated_adapter_not_proven",
       "batchRoute": "CONTRACT_GAP_until_adapter_evidence_exists"
     },
     {
-      "id": "circle-sector", "version": 1, "label": "圓與扇形作圖",
-      "sourceRoles": ["定圓心半徑角度與弧線"],
+      "id": "circle-sector",
+      "version": 1,
+      "label": "圓與扇形作圖",
+      "sourceRoles": [
+        "定圓心半徑角度與弧線"
+      ],
       "transform": "學生完成畫圖步驟，輔具協助定位不代做",
       "explanation": "半徑與角度形成指定圖形的步驟",
-      "mustPreserve": ["學生設定", "原條件", "不能一點畫好正解"],
-      "mainModules": ["shared/sketch/contract.mjs"],
+      "mustPreserve": [
+        "學生設定",
+        "原條件",
+        "不能一點畫好正解"
+      ],
+      "mainModules": [
+        "shared/sketch/contract.mjs"
+      ],
       "availability": "trial_accepted_dedicated_adapter_not_proven",
       "batchRoute": "CONTRACT_GAP_until_adapter_evidence_exists"
     },
     {
-      "id": "source-coloring", "version": 1, "label": "原圖塗色",
-      "sourceRoles": ["指定區域塗色"],
+      "id": "source-coloring",
+      "version": 1,
+      "label": "原圖塗色",
+      "sourceRoles": [
+        "指定區域塗色"
+      ],
       "transform": "原底圖與區域映射，分數上下排",
       "explanation": "總份數、塗色份數與原圖對照",
-      "mustPreserve": ["原圖", "區域", "分數讀法"],
-      "mainModules": ["shared/sketch/contract.mjs"],
+      "mustPreserve": [
+        "原圖",
+        "區域",
+        "分數讀法"
+      ],
+      "mainModules": [
+        "shared/sketch/contract.mjs"
+      ],
       "availability": "trial_accepted_dedicated_adapter_not_proven",
       "batchRoute": "CONTRACT_GAP_until_adapter_evidence_exists"
     },
     {
-      "id": "measurement", "version": 1, "label": "長度與角度量測",
-      "sourceRoles": ["尺與量角器操作", "指定圖形判讀"],
+      "id": "measurement",
+      "version": 1,
+      "label": "長度與角度量測",
+      "sourceRoles": [
+        "尺與量角器操作",
+        "指定圖形判讀"
+      ],
       "transform": "原尺度、單位與圖形；量測和讀數分支分開",
       "explanation": "起點、刻度及讀值方式",
-      "mustPreserve": ["真實比例或已定尺度", "操作證據", "不從答案倒推圖形"],
-      "mainModules": ["shared/sketch/contract.mjs"],
+      "mustPreserve": [
+        "真實比例或已定尺度",
+        "操作證據",
+        "不從答案倒推圖形"
+      ],
+      "mainModules": [
+        "shared/sketch/contract.mjs"
+      ],
       "availability": "trial_accepted_dedicated_adapter_not_proven",
       "batchRoute": "CONTRACT_GAP_until_adapter_evidence_exists"
     },
     {
-      "id": "chart-drawing", "version": 1, "label": "繪製圖表",
-      "sourceRoles": ["依統計表描點調點及連線"],
+      "id": "chart-drawing",
+      "version": 1,
+      "label": "繪製圖表",
+      "sourceRoles": [
+        "依統計表描點調點及連線"
+      ],
       "transform": "原表左側可對照，學生自行描點連線，不由答案自動繪製",
       "explanation": "資料、座標與結論的關係",
-      "mustPreserve": ["原數據", "原刻度或學生設定要求", "學生實作"],
-      "mainModules": ["shared/sketch/contract.mjs"],
+      "mustPreserve": [
+        "原數據",
+        "原刻度或學生設定要求",
+        "學生實作"
+      ],
+      "mainModules": [
+        "shared/sketch/contract.mjs"
+      ],
       "availability": "trial_accepted_dedicated_adapter_not_proven",
       "batchRoute": "CONTRACT_GAP_until_adapter_evidence_exists"
     },
     {
-      "id": "observation", "version": 1, "label": "實驗與觀察紀錄",
-      "sourceRoles": ["原觀察欄", "紀錄與推論"],
+      "id": "observation",
+      "version": 1,
+      "label": "實驗與觀察紀錄",
+      "sourceRoles": [
+        "原觀察欄",
+        "紀錄與推論"
+      ],
       "transform": "按原項目與單位建紀錄欄；觀察與推論分開",
       "explanation": "資料可支持的現象與結論，提供合理參考",
-      "mustPreserve": ["原任務", "實測與假設的區別", "不捏造已做實驗"],
-      "mainModules": ["shared/quiz-open-response.mjs"],
+      "mustPreserve": [
+        "原任務",
+        "實測與假設的區別",
+        "不捏造已做實驗"
+      ],
+      "mainModules": [
+        "shared/quiz-open-response.mjs"
+      ],
       "availability": "trial_accepted_dedicated_adapter_not_proven",
       "batchRoute": "CONTRACT_GAP_until_adapter_evidence_exists"
     }

@@ -1,11 +1,14 @@
 // Deterministic source-to-choice conversion, shared by import and legacy views.
 // Never reads answers, changes IDs, or mutates a fixed document.
 import {booleanChoicePresentation} from './quiz-boolean-choice.mjs';
+import {answerTemplateSources} from './quiz-answer-template-sources.mjs';
+import {presentationSignature} from './quiz-presentation-signature.mjs';
 import {convertCheckboxQuestion} from './quiz-checkbox-presentation.mjs';
 import {sourceStream,sliceContent,omitRanges} from './quiz-content-slices.mjs';
 import {convertStudentContent} from './quiz-student-content.mjs';
 import {normalizeQuestionOptionLabels} from './quiz-option-labels.mjs';
 import {finalOptionPeriodProjection} from './quiz-option-periods.mjs';
+import {imageChoicePresentation} from './quiz-image-choices.mjs';
 const circles='①②③④⑤⑥⑦⑧';
 const instructions=['依原題完成全部答案欄，再一起送出。','依原題順序完成所有答案欄；同一份原題保留為一組。'];
 const compact=s=>s.replace(/\s/gu,'');
@@ -54,6 +57,9 @@ function sharedOptions(content,fields,coded){
 }
 function convertSingleChoiceQuestion(q){
  const changes=[],issues=[];if(!q||!['fields','single'].includes(q.type))return {question:q,changes,issues};
+ // A reviewed diagram's marks describe its original task, not truth captions.
+ const source=answerTemplateSources[q.id],signature=presentationSignature(q);
+ if(source?.model?.mode==='diagram-symbols'&&[source.guard,source.partnerGuard].includes(signature))return {question:q,changes,issues};
  const fields=q.type==='single'?[{id:'$single',input:'single',options:q.options}]:q.fields;
  if(!Array.isArray(fields))return {question:q,changes,issues};
  const converted=fields.map(f=>f),ranges=[],text=sourceStream(q.prompt);
@@ -81,6 +87,7 @@ function convertSingleChoiceQuestion(q){
  return {question,changes,issues};
 }
 export function convertChoiceQuestion(q,options={}){
+ if(imageChoicePresentation(q))return {question:q,changes:[],issues:[]};
  const checkbox=convertCheckboxQuestion(q,options),single=convertSingleChoiceQuestion(checkbox.question);
  const content=convertStudentContent(single.question,options);
  const labelled=options.preserveOptionLabels===true?content.question:normalizeQuestionOptionLabels(content.question);
@@ -88,4 +95,4 @@ export function convertChoiceQuestion(q,options={}){
  return {...content,question,changes:[...checkbox.changes,...single.changes,...content.changes,...(labelled!==content.question?[{kind:'redundant_option_labels'}]:[]),...(question!==labelled?[{kind:'final_option_terminal_period'}]:[])],issues:[...checkbox.issues,...single.issues,...content.issues]};
 }
 export const choiceQuestionPresentation=q=>convertChoiceQuestion(q).question;
-export function choiceAnswerLabel(q,value){const options=choiceQuestionPresentation(q).options||[],i=options.findIndex(o=>o.id===value);if(i<0)return '未選';const display=booleanChoicePresentation(options)?.[i];return display?display.badge+' '+display.text:String.fromCharCode(65+i);}
+export function choiceAnswerLabel(q,value){const options=choiceQuestionPresentation(q).options||[],i=options.findIndex(o=>o.id===value);if(i<0)return '未選';const picture=imageChoicePresentation(q);if(picture)return picture.badges?.[i]??options[i].content.media[0].alt;const display=booleanChoicePresentation(options)?.[i];return display?display.badge+' '+display.text:String.fromCharCode(65+i);}

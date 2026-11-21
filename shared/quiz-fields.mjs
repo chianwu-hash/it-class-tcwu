@@ -13,6 +13,8 @@ import {answerTemplatePresentation,mountAnswerTemplate} from './quiz-answer-temp
 import {phoneticWordFields} from './quiz-field-input-aids.mjs';
 import {inlineReadingPlan} from './quiz-reading-inline.mjs';
 import {mountReadingWorkbench,readingWorkbenchSupported} from './quiz-reading-workbench.mjs';
+import {workAnswerPresentation,mountWorkAnswerInputs,workResponseContent} from './quiz-work-answer-layout.mjs';
+import {sourceStream} from './quiz-content-slices.mjs';
 export {fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
 
 const own=(o,k)=>o&&Object.hasOwn(o,k);
@@ -41,6 +43,7 @@ export function fieldsResponseError(q,raw){
 
 export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onChange,renderContent,textInputAids={},review=null}){
  const values=fieldsValues(q,raw),group=make('div'),phonetic=phoneticWordFields(choiceQuestionPresentation(q));group.className='quiz-fields';group.classList.toggle('quiz-fields-single',q.fields.length===1);
+ const workLayout=workAnswerPresentation(q);if(workLayout)group.classList.add('quiz-work-answer-layout');
  const inline=inlineReadingPlan(q),reading=inline?.reading??readingPresentation(choiceQuestionPresentation(q));group.classList.toggle('quiz-reading-fields',Boolean(reading));
  const shown=q.fields.map((f,i)=>reading?.fields?.[i]??fieldPresentation(q,f)),feedback=locked?fieldsReviewPresentation({...q,fields:shown},raw,review):null;
  const matching=matchingPresentation(choiceQuestionPresentation(q),shown);
@@ -70,7 +73,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
    if(phonetic.has(f.id))slot.classList.add('quiz-answer-bopomofo-slot');
    if(f.input==='text'&&!inline?.slots.some(s=>s.field===f.id))attachPastInputKeyboard(slot,input,{bopomofo:phonetic.size?phonetic.has(f.id):textInputAids.bopomofo===true,punctuation:textInputAids.punctuation===true});
   }else if(f.input==='single'){
-   appendSingleChoiceOptions(slot,{name:id,options:f.options.map(o=>({...o,value:o.id})),selected:values[f.id],locked,badgeForOption:storedField.input==='text'&&f!==storedField?o=>o.id:undefined,onSelect:v=>{values[f.id]=v;changed()},renderBody:(box,o)=>renderContent(box,o.content)});
+   appendSingleChoiceOptions(slot,{name:id,options:f.options.map(o=>({...o,value:o.id})),selected:values[f.id],locked,literalSymbols:answerTemplatePresentation(q)?.mode==='diagram-symbols',badgeForOption:storedField.input==='text'&&f!==storedField?o=>o.id:undefined,onSelect:v=>{values[f.id]=v;changed()},renderBody:(box,o)=>renderContent(box,o.content)});
    if(feedback?.[fieldIndex])slot.querySelectorAll(':scope > .student-option').forEach((row,i)=>decorateFieldReviewOption(row,feedback[fieldIndex].options[i]));
   }else if(f.input==='set'){
    const checks=[];const update=()=>{const selected=checks.filter(x=>x.input.checked).map(x=>x.id);values[f.id]=selected.length?selected:null;none.checked=false;changed()};
@@ -81,12 +84,13 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
   }
   appendFieldReviewReference(slot,feedback?.[fieldIndex],v=>formatted(f,v),formatPair);group.append(slot);
  }
- if(matching)appendMatchingOriginal(group,matching.original,renderContent);else if(!reading)mountAnswerTemplate(group,choiceQuestionPresentation(q),{renderContent});
- mountReadingWorkbench(group,q,reading,{renderContent,fieldFeedback:feedback});host.append(group);return group;
+ if(matching)appendMatchingOriginal(group,matching.original,renderContent);else if(!reading)mountAnswerTemplate(group,choiceQuestionPresentation(q),{renderContent,fieldFeedback:feedback});
+ mountReadingWorkbench(group,q,reading,{renderContent,fieldFeedback:feedback});mountWorkAnswerInputs(group,q,{renderContent,fieldFeedback:feedback});host.append(group);return group;
 }
 export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,referenceAnswer=null,showWork=true}){
+ const workPlan=workAnswerPresentation(q);if((workPlan?.responseGroups||['within-template','source-slots'].includes(workPlan?.workPosition))&&!raw&&!host.querySelector(':scope > .quiz-work-source-reference')){const source=make('div');source.className='quiz-work-source-reference';renderContent(source,workResponseContent(q,workPlan.passageEnd,workPlan.groupUnit==='layout'?q.prompt.layout.length:sourceStream(q.prompt).length,workPlan.groupUnit));host.append(source);}
  if(raw&&readingWorkbenchSupported(q,readingPresentation(choiceQuestionPresentation(q)))){if(host.querySelector('.quiz-reading-workbench'))return;renderFieldsInputs(host,q,{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
- if(raw&&answerTemplatePresentation(choiceQuestionPresentation(q))){if(host.querySelector('.quiz-has-answer-template'))return;renderFieldsInputs(host,showWork?q:{...q,work:undefined},{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
+ if(raw&&(answerTemplatePresentation(choiceQuestionPresentation(q))||workAnswerPresentation(q))){if(host.querySelector('.quiz-has-answer-template,.quiz-work-answer-layout'))return;const group=renderFieldsInputs(host,showWork?q:{...q,work:undefined},{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});mountWorkAnswerInputs(group,q,{renderContent,fieldFeedback:fieldsReviewPresentation(q,raw,review)});return;}
  if(showWork&&raw&&q.work)renderSavedWork(host,q,raw);
  const reading=readingPresentation(choiceQuestionPresentation(q));
  const shown=(q.fields||[]).map((f,i)=>reading?.fields?.[i]??fieldPresentation(q,f)),feedback=fieldsReviewPresentation({...q,fields:shown},raw,review),formatPair=(id,v)=>{const f=shown.find(f=>f.id===id);return f.label+'：'+formatted(f,v)};
