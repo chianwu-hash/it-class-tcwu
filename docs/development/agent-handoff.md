@@ -1,4 +1,10 @@
-# 重量圖文兩來源隔離完成、正式供圖待補（2026-11-21）
+# 重量圖文兩來源正式私有供圖鏈完成（2026-11-21）
+
+- fresh main12779473接草稿1067341b，`codex/g3math-weight-media-20261121`，本輪只補兩原圖媒體與文件，原題／qid／答案及前輪完整隔離驗收保持。重新核Drive可見儲存帳號及其開啟的真G槽，metadata查重、固定fileId、桌面原位寫入；遠端下載SHA及私人owner-only權限兩筆通過，未以API上傳內容或擴OAuth。
+- 新鮮Cloudflare可見帳號／免費方案與完整現況核9933→9935，原程式／舊索引／全部設定及bindings保持。main相同Edge簽票無fileId，兩圖Worker實取SHA及401／401／404拒絕通過。隔離descriptor新增2／重試0／錯owner拒絕通過；同SHA正式只新增2媒體列，函式ACL／RLS／觸發器／其他媒體保持。正式唯讀管理claims探針2owner／2無關拒絕及匿名拒絕，非學生OAuth。
+- 本輪Explorer／Drive UI與精確Cloudflare暫存分頁已清理，背景Drive與試用8236保持。固定weightmedia2-media-final-receipt、weightimages2-final-receipt及清冊v18：原113完成106／剩7未製作；708有某候選335／無373非整科驗收數，46修正版另計。已完成70不同媒體，舊68及本2不重傳／不重跑SQL。無新函式、原題／作答／配題寫入、啟用或網站部署。下一步fresh main接草稿396續original113-remaining7；三／六保持、四／九只考古，週用量剩34%，15%即清理保存後暫停。詳[來源與證據](quiz-original-weightimages2-20261121.md)。
+
+# 重量圖文兩來源隔離完成、正式供圖待補（歷程，2026-11-21）
 
 - fresh main12779473接PR396 109d46dd，Codex唯一writer，001fb5fc／04970a94共6原小題、8答數、6算式紀錄。保留原圖與小題，精確source-stream區間將原控制放同一卡；舊104來源與其他exports保持，無共用程式或SQL變更。
 - 原8檔SHA及原合頁、教材111／112已核；圓寶第二題教師誤印減號，依原題增加量及獨立加法修解析，原件／答案保留。教材均相關觀念，未冒稱同題詳解；原題不要求直式，不另加直式空格。
