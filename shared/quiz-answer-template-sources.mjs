@@ -400,6 +400,69 @@ export const workAnswerSources={
       "input": "expression",
       "label": "算式紀錄"
     }
+  },
+  "hlg3m_0007f530_vw2ef8073176eb": {
+    "guard": "baa75f120013a3cf",
+    "partnerGuard": "baa75f120013a3cf",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "重量直式計算過程"
+    }
+  },
+  "hlg3m_00918cce_vw60b26f43dc20": {
+    "guard": "d8d5696e9de9d11f",
+    "partnerGuard": "d8d5696e9de9d11f",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "重量直式計算過程"
+    }
+  },
+  "hlg3m_00e2296f_vw66e2d3eb5b1b": {
+    "guard": "a3716e3ca42d1efb",
+    "partnerGuard": "a3716e3ca42d1efb",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "重量直式計算過程"
+    }
+  },
+  "hlg3m_0148cd62_vw20213439ec7e": {
+    "guard": "2190658dcc5c051c",
+    "partnerGuard": "2190658dcc5c051c",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "重量直式計算過程"
+    }
+  },
+  "hlg3m_020ab2e1_vwcbb61bebcdf3": {
+    "guard": "865287977cdd34ac",
+    "partnerGuard": "865287977cdd34ac",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "重量直式計算過程"
+    }
+  },
+  "hlg3m_05c42551_vw06a3bbcc36c8": {
+    "guard": "b0df9f9953b7e889",
+    "partnerGuard": "b0df9f9953b7e889",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "重量直式計算過程"
+    }
+  },
+  "hlg3m_05c9d77d_vw455b51c37cf1": {
+    "guard": "e23a26d7d6e55d68",
+    "partnerGuard": "e23a26d7d6e55d68",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "重量直式計算過程"
+    }
   }
 };
 export const answerTemplateSources={
