@@ -271,6 +271,13 @@
       ],
       "transform": "沿原欄位與單位；僅原題不需過程時可採純結果",
       "explanation": "分數上下排，說明單位及完整等價配對",
+      "originalKeyVerification": {
+        "module": "automation/lib/quiz_numeric_teacher_keys.py",
+        "function": "parse_teacher_number_units_key",
+        "accepted": ["明示數值與單位", "公斤／公克及時／分的原順序", "同單位等值分數寫法", "有原題標號的各小題答句"],
+        "requiresMapping": ["答案圖或異形表", "原圖專有標號", "巢狀子題或混合表格", "異單位替代值與成組等價"],
+        "binding": "解析結果仍須比對原題完整位置、單位與固定複核；原鍵衝突留例外。隔離等值讀回獨立記錄。"
+      },
       "mustPreserve": [
         "原過程要求不得遺失",
         "成組單位等價值",

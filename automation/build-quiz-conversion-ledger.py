@@ -141,7 +141,33 @@ def resolve_identity(version, candidates, receipts):
             "binding_resolution": "unique_question_and_source_version_with_equal_content"}
 
 
-def build(inventory, receipts, candidates=None):
+def equivalent_readback_index(paths, schema_path, functions_path):
+    if not paths:
+        return {}
+    schema_sha, functions_sha = digest(schema_path), digest(functions_path)
+    results = {}
+    for path in paths:
+        report = read(path)
+        if (report.get("schema") != "quiz-isolated-equivalent-readback/v1"
+                or report.get("snapshot_sha256") != schema_sha
+                or report.get("functions_sha256") != functions_sha):
+            raise ValueError("Isolated readback proof must match the current schema and functions")
+        proof = {"path": str(Path(path).resolve()), "sha256": digest(path)}
+        seen = set()
+        rows = report["results"]
+        if len(rows) != report["sources"] or sum(row["passed"] is True for row in rows) != report["passed"]:
+            raise ValueError("Isolated readback proof has inconsistent counts")
+        for row in rows:
+            key = (row["source"], row["question_id"], row["candidate_sha256"])
+            if key in seen:
+                raise ValueError("Duplicate candidate in isolated readback proof")
+            seen.add(key)
+            if row["passed"] is True:
+                results[key] = proof
+    return results
+
+
+def build(inventory, receipts, candidates=None, equivalent_readbacks=None):
     records, seen, candidate_cache = [], set(), {}
     for source in inventory["records"]:
         sid = source["source_parent_id"]
@@ -157,7 +183,9 @@ def build(inventory, receipts, candidates=None):
                "behavior_evidence_key": None, "behavior_reuse": "unknown",
                "media": "unknown", "formal_oauth": "unknown", "activation": "unknown",
                "recorded_activation_by_this_run": source.get("production_enabled_by_this_run"),
-               "exception": source.get("exception"), "evidence": [], "historical_evidence": []}
+               "rule_diagnosis": source.get("rule_diagnosis"),
+               "exception": source.get("exception"), "evidence": [], "historical_evidence": [],
+               "isolated_equivalent_readback": None}
         if latest and "path" not in latest:
             # Some historical inventory entries only record question_id/source_version.
             # Keep the identity instead of inventing a candidate-file SHA binding.
@@ -176,6 +204,8 @@ def build(inventory, receipts, candidates=None):
             exact = actual_sha == latest["sha256"] and candidate is not None
             row["candidate_status"] = "exact_sha" if exact else "missing_or_changed"
             if exact:
+                row["isolated_equivalent_readback"] = (equivalent_readbacks or {}).get(
+                    (sid, latest["question_id"], actual_sha))
                 row["rule_id"] = classify(candidate.get("question", {}))
                 row["rule_status"] = "candidate_contract_only" if row["rule_id"] else "unknown"
                 for receipt in receipts:
@@ -195,6 +225,8 @@ def build(inventory, receipts, candidates=None):
     summary = {"universe": len(records), "with_candidate": sum(bool(r["candidate"]) for r in records),
                "exact_candidate": sum(r["candidate_status"] == "exact_sha" for r in records),
                "data_receipt_verified": sum(r["data_acceptance"] == "exact_receipt_verified" for r in records),
+               "isolated_equivalent_readback_verified": sum(bool(r["isolated_equivalent_readback"]) for r in records),
+               "recorded_activation": sum(r["recorded_activation_by_this_run"] is True for r in records),
                "release_ready": sum(r["data_acceptance"] == "exact_receipt_verified"
                                     and r["behavior_reuse"] == "verified_current"
                                     and r["media"] in ("verified_current", "not_required")
@@ -211,13 +243,17 @@ def main():
     parser.add_argument("--inventory", required=True)
     parser.add_argument("--receipt-root", action="append", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--isolated-equivalent-readback", action="append", default=[])
     args = parser.parse_args()
     output = Path(args.output).resolve()
     repo = Path(__file__).resolve().parents[1]
     if output.is_relative_to(repo):
         raise ValueError("Private ledger output must be outside the repository")
     receipts = receipt_index(args.receipt_root)
-    ledger = build(read(args.inventory), receipts, candidate_index(args.receipt_root))
+    snapshot = repo / "supabase" / "production-snapshot"
+    readbacks = equivalent_readback_index(args.isolated_equivalent_readback, snapshot / "schema.json",
+                                         snapshot / "functions.sql")
+    ledger = build(read(args.inventory), receipts, candidate_index(args.receipt_root), readbacks)
     ledger["inventory_sha256"] = digest(args.inventory)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(ledger, ensure_ascii=False, indent=2), encoding="utf-8")

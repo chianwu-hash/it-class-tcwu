@@ -91,6 +91,76 @@ def compare_teacher_numeric_key(parsed, reviewed_values):
     return True
 
 
+def parse_teacher_number_units_key(text, *, question_text):
+    """Read a result-only key without inferring graphic positions or unit conversions."""
+    unit_number = r"(?P<value>" + NUMBER + r")"
+    units = r"公斤|公克|時|分|元|人|個|張|片|格|杯|枝|顆|塊"
+    bare = re.compile(r"^" + unit_number + r"\s*(?P<unit>" + units + r")?$")
+    compound = re.compile(
+        r"^(?P<major>" + NUMBER + r")\s*(?P<major_unit>公斤|時)\s*"
+        r"(?P<minor>" + NUMBER + r")\s*(?P<minor_unit>公克|分)$"
+    )
+    labels = r"([" + "".join(ALPHABETS) + r"]|[（(][0-9０-９]+[）)])"
+    value = re.sub(r"^\s*答案\s*[:：]\s*", "", text).strip()
+    if not value:
+        raise ValueError("empty_teacher_key")
+    parts = re.split(r"[；;]", re.sub(r"[；;]$", "", value))
+    output, slot_units, alternatives, seen = [], [], [], []
+    for part in parts:
+        part = part.strip()
+        label = re.match(r"^" + labels + r"\s*[:：]?\s*", part)
+        if label:
+            raw_label = label[1]
+            if len(raw_label) == 1:
+                if raw_label not in question_text:
+                    raise ValueError("teacher_symbol_label_not_visible_in_question")
+                sequence = next(a for a in ALPHABETS if raw_label in a)
+                label_key = (sequence, sequence.index(raw_label) + 1)
+            else:
+                normalized = unicodedata.normalize("NFKC", raw_label)
+                if normalized not in unicodedata.normalize("NFKC", question_text):
+                    raise ValueError("teacher_number_label_not_visible_in_question")
+                label_key = ("numbered", int(normalized[1:-1]))
+            if (seen and label_key[0] != seen[0][0]) or label_key[1] != len(seen) + 1:
+                raise ValueError("teacher_labels_require_mapping")
+            seen.append(label_key)
+            part = part[label.end():].strip()
+        finals = list(re.finditer(r"(?:^|\n)\s*答[：:]\s*", part))
+        if finals:
+            # Printed subquestion labels bind each key segment to its own final-answer line.
+            if not label or len(finals) != 1:
+                raise ValueError("final_answer_requires_subquestion_mapping")
+            part = part[finals[0].end():].strip()
+        if re.search(r"[0-9０-９]\s*\$\\frac|\$\\frac\{\d+\}\{\d+\}\$\s*[0-9０-９]", part):
+            raise ValueError("mixed_number_requires_mapping")
+        part = re.sub(r"\$\\frac\{(\d+)\}\{(\d+)\}\$", r"\1/\2", part)
+        part = unicodedata.normalize("NFKC", part).strip()
+        pair = compound.fullmatch(part)
+        if pair:
+            unit_pair = (pair["major_unit"], pair["minor_unit"])
+            if unit_pair not in (("公斤", "公克"), ("時", "分")):
+                raise ValueError("compound_unit_requires_mapping")
+            output.extend([scalar(pair["major"]), scalar(pair["minor"])])
+            slot_units.extend(unit_pair)
+            alternatives.extend([[], []])
+            continue
+        variants = re.fullmatch(r"(.+?)\s*(?:\(\s*或\s*([^()]+)\)|或\s*([^()]+))", part)
+        primary = bare.fullmatch(variants[1].strip() if variants else part)
+        if not primary:
+            raise ValueError("number_units_key_requires_mapping")
+        result = scalar(primary["value"])
+        aliases = []
+        if variants:
+            alternative = bare.fullmatch((variants[2] or variants[3]).strip())
+            if not alternative or alternative["unit"] != primary["unit"] or Fraction(scalar(alternative["value"])) != Fraction(result):
+                raise ValueError("teacher_alternative_requires_mapping")
+            aliases.append(scalar(alternative["value"]))
+        output.append(result)
+        slot_units.append(primary["unit"])
+        alternatives.append(aliases)
+    return {"values": output, "units": slot_units, "alternatives": alternatives, "method": "original_result_segments"}
+
+
 def match_teacher_table_keys(question, teacher):
     """只取同形原表中「題目空白、教師填值」的數值格，保留原表座標。
 
