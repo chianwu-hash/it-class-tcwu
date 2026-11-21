@@ -1,3 +1,10 @@
+# 原式直式參考圖：正式私有供圖鏈完成（2026-11-21）
+
+- fresh main12779473接PR396 4ab88437，工作樹`codex/g3math-equation-media-20261121`，Codex唯一writer。本輪只補04b42707的一張已核重繪圖，兩來源前輪介面／解析／隔離收據保持，沒有改函式或題目。詳[來源與正式供圖](quiz-original-equations2-20261121.md)。
+- 核Drive桌面可見儲存帳號及其開啟的真G槽；固定fileId元資料＋桌面原位寫入完成，遠端SHA與私有owner-only權限通過。Worker完整新鮮現況核9932→9933，原程式、舊索引、所有設定／bindings保持；現行main相同Edge簽票不帶fileId，實際供圖SHA及401／401／404拒絕通過。
+- 隔離descriptor新增1／重試0／錯owner拒絕通過，正式只新增1媒體列，函式ACL／RLS／觸發器／其他媒體保持。正式唯讀管理claims探針1owner／1無關拒絕及匿名拒絕通過，非學生OAuth；不寫原題／作答／配題、不啟用或部署。自有Drive／Explorer及Cloudflare精確暫存分頁清理，背景Drive及試用8236保持。
+- 私有`equation1-media-final-receipt.private.json`、`equations2-final-receipt.private.json`與清冊v17。原113現104完整／剩9未製作；708仍333有某版候選／375無候選，非整科驗收數，46修正版另計。已完成68不同媒體，舊67及本圖都不重傳／重跑SQL。下一步fresh main接草稿396續9來源；三／六保持，四／九僅考古。週用量最新剩35%，15%即清理保存後暫停。
+
 # 原式空格與兩分區直式：隔離通過，1圖正式供圖待補（2026-11-21）
 
 - Codex唯一writer，Claude兩輪唯讀複核完成。03864646／04b42707共4原小題、18數值位置、3人工過程角色；原除法格與答數保留，兩直式分區仍儲存同一sketch-v1，無SQL。原教師第2圖商／除數對調，已核原件／教材並重繪，原錯圖保留。舊102work及所有舊模板／其他exports保持。

@@ -21,4 +21,15 @@ Claude CLI兩輪唯讀複核完成，Git前後保持；第一輪獨立核四小�
 
 實際來源瀏覽器程式與收據留在repo外，權威為`equations2-continuation-receipt.private.json`、`equations2-states-proof.private.json`、`verify-equations2-states.private.cjs`及清冊v16。不能因Claude在公開測試目錄搜尋不到私有來源測試，就冒稱它已閱讀或執行這些腳本。
 
-目前一張重繪參考圖的Drive及正式媒體descriptor唯讀核對皆未找到，正式供圖鏈待補，未新增正式資料。原113來源103筆已完成完整隔離及必要媒體，另1筆隔離通過待供圖、9筆尚未製作；待辦共10筆。708清冊333筆有某版候選、375筆無候選，不是整科驗收／啟用數，46筆既有修正版另計。無新SQL、來源啟用或網站發布；三／六目標保持，四／九僅各科考古題。
+前一階段唯讀確認重繪參考圖的Drive與正式媒體descriptor皆未找到；當時103筆完整、1筆待供圖及9筆未製作。這是保留的階段紀錄，後續供圖鏈已完成如下。
+
+
+## 一張重繪參考圖正式供圖鏈完成
+
+核對Drive桌面目前儲存帳號及由該帳號實際開啟的G槽後，沿既有窄授權先登記固定fileId空檔，再由桌面原位寫入；沒有透過API上傳圖片、擴OAuth或分享權限。初次遠端零大小的待同步紀錄保留，後續完整下載SHA、MIME、大小、parent及owner-only權限全部通過。桌面仍顯示其他同步錯誤，不能推稱它們已修復；本圖的遠端SHA獨立證實成功。
+
+Cloudflare目前帳戶與免費方案已核；Worker允許清冊9932→9933，只加此1筆。完整模組與設定讀回證明原Worker程式、既有索引、全部設定及bindings保持。沿與main相同的現行Edge簽票模組，票據不帶fileId，實際Worker下載SHA通過，未簽名401／過期401／私有快取404。
+
+正式庫只新增1筆媒體descriptor；先經隔離新增1／重試0／錯誤owner拒絕，再以正式交易比對函式ACL、RLS政策、觸發器與其他媒體保持。唯讀管理claims探針核1 owner描述、1無關身分拒絕及匿名拒絕；這不是學生瀏覽器OAuth驗收。無題目、作答、配題或來源啟用寫入，未發布網站。本次自有Drive檢查視窗及兩個Cloudflare暫存分頁已清理，Drive背景與八題試用保持。
+
+私有權威為`equation1-media-final-receipt.private.json`、`equations2-final-receipt.private.json`及清冊v17。前67個不同素材保持，加入本圖後共68個；不要重傳或重套已完成的descriptor SQL。原113來源現104筆完成完整隔離及必要媒體，剩9筆未製作；708清冊仍333有某版候選／375無候選，非整科完成數，46既有修正版另計。整科及正式學生流程門檻保持，三／六目標不變，四／九只考古。
