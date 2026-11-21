@@ -800,6 +800,53 @@ export const workAnswerSources={
     "passageEnd": 48,
     "workPosition": "before-template"
   }
+,
+  "hlg3m_0040ffbd_mfc947cb5fa4e6": {
+    "guard": "a7f6fa3206f1a753",
+    "partnerGuard": "a7f6fa3206f1a753",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_02fa1bb7_mf73cf0d038495": {
+    "guard": "3a2bf8e335cefb59",
+    "partnerGuard": "3a2bf8e335cefb59",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_044dc5b5_mfa14530c06854": {
+    "guard": "e6fd8dd39cebf705",
+    "partnerGuard": "e6fd8dd39cebf705",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_04c1ea01_mfbe803b167128": {
+    "guard": "7896f152ae8ab6c4",
+    "partnerGuard": "7896f152ae8ab6c4",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  },
+  "hlg3m_04d5cf3b_mf48d59116088b": {
+    "guard": "dc2c504926ee53c9",
+    "partnerGuard": "dc2c504926ee53c9",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "算式紀錄"
+    }
+  }
+
 };
 export const answerTemplateSources={
 
