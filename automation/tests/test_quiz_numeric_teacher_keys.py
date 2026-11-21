@@ -4,6 +4,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "lib"))
 from quiz_numeric_teacher_keys import parse_teacher_numeric_key as parse, compare_teacher_numeric_key as compare, match_teacher_table_keys
+from quiz_numeric_teacher_keys import parse_teacher_number_units_key as parse_units
 
 
 class NumericTeacherKeysTests(unittest.TestCase):
@@ -118,6 +119,31 @@ class NumericTeacherTableTests(unittest.TestCase):
         answer = table([[None]])
         answer["rows"][0][0] = [{"type": "image", "media_index": 0}]
         self.assertEqual(match_teacher_table_keys({"layout": [table([[None]])]}, {"layout": [answer], "media": [{"url": "https://example.invalid/picture"}]}), [])
+
+
+class NumberUnitsTests(unittest.TestCase):
+    def test_numbered_final_answers_remain_bound_to_original_subquestions(self):
+        key = parse_units("答案：(１) 64 元；\n(２) 40＋80＝120\n答：120 元", question_text="(1) 第一小題\n(2) 第二小題")
+        self.assertTrue(compare(key, [64, 120]))
+        self.assertEqual(key["units"], ["元", "元"])
+
+    def test_compound_units_preserve_order_and_units(self):
+        key = parse_units("答案：7 公斤 275 公克；1 時 30 分", question_text="")
+        self.assertEqual(key["units"], ["公斤", "公克", "時", "分"])
+        self.assertTrue(compare(key, [7, 275, 1, 30]))
+
+    def test_fraction_aliases_require_exact_equality_in_the_same_unit(self):
+        key = parse_units(r"答案：$\frac{4}{4}$（或 1）", question_text="")
+        self.assertEqual(key["alternatives"], [["1"]])
+        self.assertTrue(compare(key, [1]))
+        for text in ["1000 公克或 1 公斤", "4/4（或 2）"]:
+            with self.subTest(text=text), self.assertRaisesRegex(ValueError, "alternative_requires_mapping"):
+                parse_units(text, question_text="")
+
+    def test_reject_ambiguous_positions_and_non_results(self):
+        for text in ["① 10 公克；② 30 公克", "(1) 1；(3) 3", "2 公斤 5 分", "3+5", "1；；2", "答：2"]:
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                parse_units(text, question_text="(1) (3)")
 
 
 if __name__ == "__main__":
