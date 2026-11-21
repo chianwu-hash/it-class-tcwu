@@ -1138,6 +1138,45 @@ export const workAnswerSources={
     ]
   }
 
+,
+  "hlg3m_03864646_eqfe4a8a4637c3": {
+    "guard": "81e226cdf9e52482",
+    "partnerGuard": "81e226cdf9e52482",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "第1小題計算過程"
+    },
+    "workPosition": "within-template",
+    "passageEnd": 10,
+    "templateRows": [
+      0
+    ]
+  },
+  "hlg3m_04b42707_eq0c825eefa31e": {
+    "guard": "59ab4166aa173eda",
+    "partnerGuard": "59ab4166aa173eda",
+    "initialChars": 2,
+    "work": {
+      "input": "sketch",
+      "label": "兩小題直式紀錄"
+    },
+    "workPosition": "within-template",
+    "passageEnd": 37,
+    "templateRows": [
+      0,
+      1
+    ],
+    "sketchGroups": [
+      "第1小題直式",
+      "第2小題直式"
+    ],
+    "workBeforeFields": [
+      "f5",
+      "f11"
+    ]
+  }
+
 };
 export const answerTemplateSources={
 
@@ -94209,6 +94248,188 @@ export const answerTemplateSources={
       "omissions": []
     }
   }
+,
+  "hlg3m_03864646_eqfe4a8a4637c3": {
+    "guard": "81e226cdf9e52482",
+    "partnerGuard": "81e226cdf9e52482",
+    "model": {
+      "mode": "grouped-blanks",
+      "start": 10,
+      "rows": [
+        {
+          "start": 10,
+          "end": 65,
+          "number": 1,
+          "fields": [
+            "f1",
+            "f2"
+          ]
+        },
+        {
+          "start": 65,
+          "end": 118,
+          "number": 2,
+          "fields": [
+            "f3",
+            "f4",
+            "f5",
+            "f6"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 53,
+          "end": 56,
+          "field": "f1",
+          "width": 7
+        },
+        {
+          "start": 60,
+          "end": 63,
+          "field": "f2",
+          "width": 7
+        },
+        {
+          "start": 91,
+          "end": 97,
+          "field": "f3",
+          "width": 7
+        },
+        {
+          "start": 98,
+          "end": 104,
+          "field": "f4",
+          "width": 7
+        },
+        {
+          "start": 105,
+          "end": 111,
+          "field": "f5",
+          "width": 7
+        },
+        {
+          "start": 112,
+          "end": 118,
+          "field": "f6",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_04b42707_eq0c825eefa31e": {
+    "guard": "59ab4166aa173eda",
+    "partnerGuard": "59ab4166aa173eda",
+    "model": {
+      "mode": "grouped-blanks",
+      "start": 37,
+      "rows": [
+        {
+          "start": 37,
+          "end": 123,
+          "number": 1,
+          "fields": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6"
+          ]
+        },
+        {
+          "start": 123,
+          "end": 208,
+          "number": 2,
+          "fields": [
+            "f7",
+            "f8",
+            "f9",
+            "f10",
+            "f11",
+            "f12"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 80,
+          "end": 86,
+          "field": "f1",
+          "width": 7
+        },
+        {
+          "start": 87,
+          "end": 93,
+          "field": "f2",
+          "width": 7
+        },
+        {
+          "start": 94,
+          "end": 100,
+          "field": "f3",
+          "width": 7
+        },
+        {
+          "start": 101,
+          "end": 107,
+          "field": "f4",
+          "width": 7
+        },
+        {
+          "start": 110,
+          "end": 113,
+          "field": "f5",
+          "width": 7
+        },
+        {
+          "start": 117,
+          "end": 120,
+          "field": "f6",
+          "width": 7
+        },
+        {
+          "start": 166,
+          "end": 172,
+          "field": "f7",
+          "width": 7
+        },
+        {
+          "start": 173,
+          "end": 179,
+          "field": "f8",
+          "width": 7
+        },
+        {
+          "start": 180,
+          "end": 186,
+          "field": "f9",
+          "width": 7
+        },
+        {
+          "start": 187,
+          "end": 193,
+          "field": "f10",
+          "width": 7
+        },
+        {
+          "start": 196,
+          "end": 199,
+          "field": "f11",
+          "width": 7
+        },
+        {
+          "start": 203,
+          "end": 206,
+          "field": "f12",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  }
+
 };
 
 // Reviewed short responses: fixed writing space, no answer content.

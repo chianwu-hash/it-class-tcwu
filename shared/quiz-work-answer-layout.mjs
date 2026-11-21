@@ -13,9 +13,19 @@ export function workAnswerPresentation(q,registry=workAnswerSources){
  if(p.passageEnd!==undefined&&(!Number.isInteger(p.passageEnd)||p.passageEnd<=0||p.passageEnd>=limit))return null;
  if(p.workPosition!==undefined){
   const template=answerTemplateSources[q.id];
+  if(p.workPosition==='within-template'){
+   if(p.responseGroups||p.groups||!Number.isInteger(p.passageEnd)||template?.model?.mode!=='grouped-blanks'||![template.guard,template.partnerGuard].includes(presentationSignature(q)))return null;
+   const model=deriveAnswerTemplate(q,{grouped:true});
+   if(!model||JSON.stringify(model)!==JSON.stringify(template.model)||model.start!==p.passageEnd||!Array.isArray(p.templateRows)||p.templateRows.length!==(p.sketchGroups?.length??1)||new Set(p.templateRows).size!==p.templateRows.length||p.templateRows.some(i=>!Number.isInteger(i)||i<0||i>=model.rows.length))return null;
+   if(p.sketchGroups&&(p.work.input!=='sketch'||p.sketchGroups.length<2||p.sketchGroups.length>4||p.sketchGroups.some(s=>typeof s!=='string'||!s.trim()||s.length>60)||new Set(p.sketchGroups).size!==p.sketchGroups.length))return null;
+   if(!p.sketchGroups&&p.work.input!=='expression')return null;
+   if(p.workBeforeFields&&(!p.sketchGroups||!Array.isArray(p.workBeforeFields)||p.workBeforeFields.length!==p.templateRows.length||p.workBeforeFields.some((id,i)=>{const n=model.blanks.findIndex(b=>b.field===id);return n<1||!model.rows[p.templateRows[i]].fields.includes(id)||q.prompt.text.slice(model.blanks[n-1].end,model.blanks[n].start).trim()!=='答：';})))return null;
+  }else{
   if(p.workPosition!=='before-template'||p.work.input!=='expression'||p.groups||!Number.isInteger(p.passageEnd)||!q.prompt.text.slice(p.passageEnd).startsWith(p.work.label+'：')||template?.model?.mode!=='blanks'||![template.guard,template.partnerGuard].includes(presentationSignature(q)))return null;
   const model=deriveAnswerTemplate(q);if(!model||JSON.stringify(model)!==JSON.stringify(template.model)||model.start!==p.passageEnd+p.work.label.length+2)return null;
+  }
  }
+ if((p.sketchGroups||p.templateRows||p.workBeforeFields)&&p.workPosition!=='within-template')return null;
  if(p.groups&&(!Array.isArray(p.groups)||p.work.input!=='expression'||p.groups.length<2||p.groups.length>8||p.groups.some(s=>typeof s!=='string'||!s.trim()||s.length>60)||new Set(p.groups).size!==p.groups.length))return null;
  if(p.responseGroups){
   const text=p.groupUnit==='layout'?q.prompt.layout:sourceStream(q.prompt),groups=p.responseGroups,ids=q.fields.map(f=>f.id);
@@ -58,6 +68,13 @@ export function mountWorkAnswerInputs(host,q,{renderContent}={}){
   if(parts.length===p.groups.length||pairs.length===p.groups.length*2){work.hidden=true;for(const note of work.querySelectorAll(':scope > p'))host.append(note);}
  }
  host.classList.add('quiz-work-answer-layout');
+ if(p.workPosition==='within-template'){
+  const template=host.querySelector(':scope > .quiz-answer-templates'),work=host.querySelector(':scope > .quiz-work-input,:scope > .quiz-saved-work,:scope > .quiz-pending-work');
+  if(template&&work&&!host.classList.contains('quiz-work-within-template')){const rows=[...template.querySelectorAll(':scope > .quiz-answer-template-row')],parts=[...work.querySelectorAll(':scope > .quiz-work-sketch-part')];
+   if(parts.length===p.templateRows.length){p.templateRows.forEach((n,i)=>{const slot=p.workBeforeFields&&host.querySelector('#field-'+q.id+'-'+p.workBeforeFields[i])?.closest('.quiz-answer-template-slot'),label=slot?.previousElementSibling;if(label?.classList.contains('quiz-answer-template-text')&&label.textContent.trim()==='答：')label.before(parts[i]);else rows[n].append(parts[i]);});work.hidden=true;for(const note of work.querySelectorAll(':scope > p'))host.append(note);host.classList.add('quiz-work-within-template');}
+   else if(!parts.length){rows[p.templateRows[0]].append(work);host.classList.add('quiz-work-within-template');} // Old whole-sheet work stays whole.
+  }
+ }
  if(p.workPosition==='before-template'){
   const template=host.querySelector(':scope > .quiz-answer-templates');
   if(template){host.classList.add('quiz-work-before-template');for(const work of host.querySelectorAll(':scope > .quiz-work-input,:scope > .quiz-saved-work,:scope > .quiz-pending-work'))if(!(work.compareDocumentPosition(template)&4))host.insertBefore(work,template);
@@ -68,7 +85,7 @@ export function mountWorkAnswerInputs(host,q,{renderContent}={}){
  for(const input of host.querySelectorAll('input[type=text]')){
   if(!ids.has(input.id)||input.dataset.workAnswerSized)continue;
   input.dataset.workAnswerSized='true';input.placeholder='';
-  const resize=()=>{const chars=Math.min(250,Math.max(p.initialChars,Array.from(input.value).length));input.style.setProperty('--work-answer-chars',String(chars));if(p.workPosition==='before-template')input.closest('.quiz-answer-template-slot')?.style.setProperty('--answer-slot-width',`calc(${chars}em + 1em)`);};
+  const resize=()=>{const chars=Math.min(250,Math.max(p.initialChars,Array.from(input.value).length));input.style.setProperty('--work-answer-chars',String(chars));if(p.workPosition)input.closest('.quiz-answer-template-slot')?.style.setProperty('--answer-slot-width',`calc(${chars}em + 1em)`);};
   input.addEventListener('input',resize);input.addEventListener('compositionend',resize);resize();
  }
  return true;

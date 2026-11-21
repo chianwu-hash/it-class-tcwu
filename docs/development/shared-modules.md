@@ -508,3 +508,8 @@ quiz-matching-model.mjs 管原值與連線、quiz-matching-presentation.mjs／so
 
 `shared/quiz-reading-workbench.mjs`由原fields控制項建立文章／小題分區；桌機分別捲動，手機與低高度改為同一文章DOM的對話框。`quiz-reading-inline.mjs`與`quiz-reading-inline-sources.mjs`只在來源指紋、原欄序及標記相符時，把原填字格放在文章標記旁。個人、整份回顧與夥伴共用，保持原回應及一次送出。詳[來源與驗收](quiz-reading-inline-workspace-20261119.md)。
 
+
+
+## 原式中的計算過程與分小題手寫（候選待發布）
+
+`quiz-work-answer-layout.mjs`的精確`within-template`計畫只能配相同`grouped-blanks`模型、原欄位及來源／copy_self指紋。`quiz-work-sketch-groups.mjs`把多區視圖儲存為同一既有sketch-v1，不改schema；舊跨區筆畫整張保留，空白草稿可重開。`sketch/editor.mjs`的預設行為保持，只有明確提供`canAddStroke`／`canRestore`的分區編輯器會驗合計80筆；超額復原不pop歷史或更新畫面。教師預覽須補完整原題尾段。範圍與驗收見[兩來源紀錄](quiz-original-equations2-20261121.md)。
