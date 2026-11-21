@@ -889,6 +889,172 @@ export const workAnswerSources={
     }
   }
 
+,
+  "hlg3m_02410883_mw645d744332ea": {
+    "guard": "cf8cf4730c8f618f",
+    "partnerGuard": "cf8cf4730c8f618f",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "各小題算式紀錄"
+    },
+    "groups": [
+      "第1小題算式紀錄",
+      "第2小題算式紀錄",
+      "第3小題算式紀錄"
+    ],
+    "passageEnd": 1,
+    "groupUnit": "layout",
+    "responseGroups": [
+      {
+        "start": 1,
+        "end": 2,
+        "fields": [
+          "f1"
+        ]
+      },
+      {
+        "start": 2,
+        "end": 3,
+        "fields": [
+          "f2"
+        ]
+      },
+      {
+        "start": 3,
+        "end": 4,
+        "fields": [
+          "f3",
+          "f4"
+        ]
+      }
+    ]
+  },
+  "hlg3m_028b33d9_mwda6d5b338ee1": {
+    "guard": "db9e8f418ca9005b",
+    "partnerGuard": "db9e8f418ca9005b",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "各小題算式紀錄"
+    },
+    "groups": [
+      "第1小題算式紀錄",
+      "第2小題算式紀錄",
+      "第3小題算式紀錄"
+    ],
+    "passageEnd": 1,
+    "groupUnit": "layout",
+    "responseGroups": [
+      {
+        "start": 1,
+        "end": 2,
+        "fields": [
+          "f1"
+        ]
+      },
+      {
+        "start": 2,
+        "end": 3,
+        "fields": [
+          "f2"
+        ]
+      },
+      {
+        "start": 3,
+        "end": 4,
+        "fields": [
+          "f3",
+          "f4"
+        ]
+      }
+    ]
+  },
+  "hlg3m_03b41799_mw1c5aa00ffec7": {
+    "guard": "ad083b7cde7c87fb",
+    "partnerGuard": "ad083b7cde7c87fb",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "各小題算式紀錄"
+    },
+    "groups": [
+      "第1小題算式紀錄",
+      "第2小題算式紀錄",
+      "第3小題算式紀錄"
+    ],
+    "passageEnd": 2,
+    "groupUnit": "layout",
+    "responseGroups": [
+      {
+        "start": 2,
+        "end": 3,
+        "fields": [
+          "f1",
+          "f2"
+        ]
+      },
+      {
+        "start": 3,
+        "end": 4,
+        "fields": [
+          "f3",
+          "f4"
+        ]
+      },
+      {
+        "start": 4,
+        "end": 5,
+        "fields": [
+          "f5",
+          "f6"
+        ]
+      }
+    ]
+  },
+  "hlg3m_04b620c4_mw521062f5eb07": {
+    "guard": "061cfa929221dbd9",
+    "partnerGuard": "061cfa929221dbd9",
+    "initialChars": 2,
+    "work": {
+      "input": "expression",
+      "label": "各小題算式紀錄"
+    },
+    "groups": [
+      "第1小題算式紀錄",
+      "第2小題算式紀錄",
+      "第3小題算式紀錄"
+    ],
+    "passageEnd": 1,
+    "groupUnit": "layout",
+    "responseGroups": [
+      {
+        "start": 1,
+        "end": 2,
+        "fields": [
+          "f1",
+          "f2"
+        ]
+      },
+      {
+        "start": 2,
+        "end": 3,
+        "fields": [
+          "f3",
+          "f4"
+        ]
+      },
+      {
+        "start": 3,
+        "end": 4,
+        "fields": [
+          "f5",
+          "f6"
+        ]
+      }
+    ]
+  }
+
 };
 export const answerTemplateSources={
 
