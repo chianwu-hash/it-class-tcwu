@@ -1,6 +1,6 @@
 {
   "schema": "quiz-conversion-rule-catalog/v1",
-  "version": "2026-11-21.2",
+  "version": "2026-11-21.3",
   "purpose": "已定案題型的批次轉化與驗收重用索引；不是匯入題庫格式或通用轉換器",
   "policyDocument": "docs/development/quiz-batch-conversion-rules.md",
   "scope": {
@@ -19,7 +19,10 @@
     "newSourcesInvalidateSharedBehaviorEvidence": false,
     "trialAcceptanceImpliesProductionSupport": false,
     "safeUnknownRoute": "exception_queue",
-    "currentLongRunningConversion": "paused_by_user_after_native_tables6_2026_11_21",
+    "currentLongRunningConversion": "integrate_pr396_and_cleanup_then_claude_efficiency_discussion_before_resume",
+    "releaseGranularity": "independently_complete_batch_decided_by_codex",
+    "wholeSubjectRequiredBeforeBatchRelease": false,
+    "newProductionFunctionRequiresExplicitApproval": true,
     "thisCatalogResumesConversion": false
   },
   "requiredDataChecks": [
