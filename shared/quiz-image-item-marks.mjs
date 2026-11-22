@@ -51,7 +51,9 @@ export function mountImageItemMarks(container,plan,q,slots,{renderContent,fieldF
  const targets=slots.map((slot,index)=>{
   const art=make('div');art.className='quiz-image-mark-art';
   renderContent(art,{text:'',media:[plan.renderPrompt.media[index]]});
-  for(const row of slot.querySelectorAll(':scope > .student-option'))row.classList.add('quiz-image-mark-native');
+  const native=make('div');native.className='quiz-image-mark-native';native.hidden=true;
+  native.append(...slot.querySelectorAll(':scope > .student-option'));
+  slot.append(native);
   slot.querySelector(':scope > .quiz-field-review-status')?.remove();
   slot.classList.add('quiz-image-mark-card');
   const target=button('','quiz-image-mark-slot');target.dataset.markSlot=index;target.disabled=locked;
