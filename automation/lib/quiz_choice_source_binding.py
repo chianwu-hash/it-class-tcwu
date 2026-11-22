@@ -98,3 +98,35 @@ def labeled_weight_choice(content, teacher, reference):
         "options": options,
         "answer": {"option_id": options[chosen]["id"]},
     }
+
+
+def bind_cropped_choice_key(labels, teacher_text, fixed_reference, fixed_locator):
+    """Map an original printed answer to its manually reviewed crop order."""
+    labels = tuple(labels)
+    if not 2 <= len(labels) <= 8:
+        raise ValueError("complete_original_crop_labels_required")
+    supported = [tuple(str(i + 1) for i in range(len(labels))), tuple("ABCDEFGH"[:len(labels)])]
+    if labels not in supported and labels != ("left", "right"):
+        raise ValueError("complete_original_crop_labels_required")
+
+    def clean(value):
+        return re.sub(r"\s+", "", unicodedata.normalize("NFKC", str(value)))
+
+    def key(value):
+        value = re.sub(r"^答案:", "", clean(value))
+        if labels == ("left", "right"):
+            match = re.fullmatch(r"圖([1-9]\d*)(左|右)\(\)打[ˇ✓√Vv]", value)
+            return (match[1], "left" if match[2] == "左" else "right") if match else None
+        match = re.fullmatch(r"(?:\(([1-8])\)|([1-8A-H]))(?:圈起來|[ˇ✓√Vv])?", value)
+        return (match[1] or match[2]) if match else None
+
+    original, fixed = key(teacher_text), key(fixed_reference)
+    if labels != ("left", "right") and fixed is None and clean(fixed_reference) in ("v", "V", "ˇ", "✓", "√"):
+        mark = re.match(r"(?:在)?\(([1-8])\)", clean(fixed_locator))
+        fixed = mark[1] if mark else None
+    if original is None or original != fixed:
+        raise ValueError("teacher_and_fixed_cropped_choice_mismatch")
+    label = original[1] if isinstance(original, tuple) else original
+    if label not in labels:
+        raise ValueError("teacher_choice_outside_cropped_labels")
+    return f"o{labels.index(label) + 1}"

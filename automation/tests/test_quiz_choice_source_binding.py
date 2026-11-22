@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "lib"))
-from quiz_choice_source_binding import bind_single_choice, labeled_weight_choice
+from quiz_choice_source_binding import bind_cropped_choice_key, bind_single_choice, labeled_weight_choice
 
 
 def content(text, digest=None):
@@ -22,6 +22,20 @@ def single(parts, chosen="o1"):
 
 
 class ChoiceSourceBindingTests(unittest.TestCase):
+    def test_cropped_choices_require_agreement_and_original_order(self):
+        self.assertEqual(bind_cropped_choice_key(["1", "2", "3"], "答案：（２）圈起來", "(2)", ""), "o2")
+        self.assertEqual(bind_cropped_choice_key(["A", "B", "C"], "答案：A", "A", ""), "o1")
+        self.assertEqual(bind_cropped_choice_key(["1", "2"], "答案：(１)ˇ", "v", "(1)方框"), "o1")
+        self.assertEqual(bind_cropped_choice_key(["left", "right"], "答案：圖 4 左（ ）打ˇ", "圖4左( )打v", ""), "o1")
+        with self.assertRaisesRegex(ValueError, "complete_original_crop_labels_required"):
+            bind_cropped_choice_key(["2", "1"], "答案：(2)", "(2)", "")
+        with self.assertRaisesRegex(ValueError, "teacher_and_fixed_cropped_choice_mismatch"):
+            bind_cropped_choice_key(["1", "2"], "答案：(1)ˇ", "v", "(2)方框")
+        with self.assertRaisesRegex(ValueError, "teacher_and_fixed_cropped_choice_mismatch"):
+            bind_cropped_choice_key(["left", "right"], "答案：圖 4 左（ ）打ˇ", "圖5左( )打v", "")
+        with self.assertRaisesRegex(ValueError, "teacher_choice_outside_cropped_labels"):
+            bind_cropped_choice_key(["1", "2"], "答案：(3)", "(3)", "")
+
     def test_paper_marks_require_authorized_source_and_do_not_remove_inline_blanks(self):
         parts = [content("□", "a" * 64), content("另一項\n□")]
         question = single([content("", "a" * 64), content("另一項")])
