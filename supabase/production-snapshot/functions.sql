@@ -3022,7 +3022,7 @@ grant execute on function public.quiz_action(text,jsonb) to postgres;
 grant execute on function public.quiz_action(text,jsonb) to authenticated;
 grant execute on function public.quiz_action(text,jsonb) to service_role;
 
--- quiz_action_before_learning(text,jsonb)  md5=fcd825c196e1925d820a8f391644b7b6
+-- quiz_action_before_learning(text,jsonb)  md5=9149816f957142b1a9b194d9e2510dea
 CREATE OR REPLACE FUNCTION public.quiz_action_before_learning(p_action text, p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -3180,7 +3180,27 @@ begin
    select jsonb_agg(q->>'id' order by pos,ord) into qo from arranged,lateral jsonb_array_elements(b->'questions') with ordinality x(q,ord);
   for b in select value from jsonb_array_elements(d->'blocks') loop
    for q in select value from jsonb_array_elements(b->'questions') loop
-    select coalesce(jsonb_agg(o->>'id' order by case when sess.shuffle_options then random() else ord::float end),'[]') into result
+    select coalesce(jsonb_agg(o->>'id' order by case when sess.shuffle_options and not coalesce((
+      sess.access_mode='self' and q->>'type'='single'
+      and d#>>'{catalog,course_id}'='115-1-hanlin-g3-math'
+      and encode(sha256(convert_to(q->>'id','UTF8')),'hex') in (
+        '114571f75965c807475290e2635bbd8336d5fcbbb031ffd59ad608cb17c55410',
+        '136c6be87a582ce3be364b480dd757286549ab61eb7953d50a7198b18e66d1b6',
+        '19d43389f1fbafae5a533b81849503c64dd5fa07a3dcd3e9efb630379090fe1a',
+        '60b42fad6780cf6bf3133d381b946fd28eae7208664cd93d16335aa5c2963106',
+        '6aa3a87f795a65e9becbf9a707695b4d628a778f9ef0302705a99960b0c4a339',
+        '6e119261ee395e3d22f7123e76098359e46553874e18d76d3c8088568c425864',
+        'aae6836c78e873cae348f2877c6ac9ba51894971c9072d8c2b13414ea4425326',
+        'ad5ce4eb2e3d859a9d1e3be7939ad6461e46868499165aded61503b1295f549a',
+        'bb95b51ec8f71a36a0aa3c0c426580e9e4d15aaf1c2943d45be52e7ea960d4f6',
+        'ccf37befa44af8de2e1fd42b474f2eb2df84655d54a1ad6f0347b0bb63e923cf',
+        'ec36c24eae48edcc3fe797a281085bc464aafc9886742f0e7814e977eba953d0',
+        'f77b08b52e8d3281c058206b10040f2d37d72dc50cce7628cd14ae6d6aceef5e'
+      )
+      and exists(select 1 from public.quiz_generated_papers g
+                 where g.session_id=sess.id and g.user_id=uid and g.deleted_at is null
+                 and g.config->>'kind'='self' and g.config->>'release_qa' is distinct from 'true')
+    ),false) then random() else ord::float end),'[]') into result
      from jsonb_array_elements(coalesce(q->'options','[]')) with ordinality x(o,ord);
     oo:=oo||jsonb_build_object(q->>'id',result);
    end loop;
