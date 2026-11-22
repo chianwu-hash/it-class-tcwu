@@ -364,8 +364,14 @@ const classCardAuth = initClassCardAuth({ courseId: "grade3-115-1", mode: "requi
 4. **部署候選版**：`node automation/release-from-main.mjs deploy --agent <名稱>`。只建立候選版（`--prod --skip-domain`，不 promote），並自動比對完整檔案樹；不符就標為 rejected。2026-11-05 起 `vercel.json` 的 `git.deploymentEnabled` 同時設 `"**": false` 和 `"main": false`：所有 Git 分支的自動預覽／正式部署都關閉，包含 `codex/...` 等帶斜線分支，避免 PR 反覆觸發教材來源阻擋及失敗通知。新分支仍必須從最新 main 建立，以承接此設定；不要推送仍保有舊設定的歷史分支。這不影響 PR 或本 CLI 發布腳本，不需要為這項 Git 設定切換正式網站。不得重開 Git 自動部署，也不能停用發布前檢查來消除通知。
 5. **promote**：`node automation/release-from-main.mjs promote --agent <名稱>`。promote 前會再確認正式版與 `origin/main` 沒變、比對仍通過；promote 後確認正式網址已指向候選版，釋放鎖並寫入 `release-history.ndjson`。只差換行的檔（`core.autocrlf=true` 造成）會列為 `eolOnly`，不算失敗；內容不同就會擋下。正式版有 11 個混合換行檔已在 `.gitattributes` 標 `-text`。
 6. **收尾**：把 promote 輸出的 `handoffRow` 經 PR 加到 [agent-handoff.md](agent-handoff.md) 頂部的發布紀錄，並讀回關鍵頁面；確認收據已進 main、發布鎖已釋放後，必須完成下節的證據封存與工作目錄清理。放棄或失敗用 `abort --agent <名稱>` 釋放自己的鎖，保留未完成工作及排錯證據。回滾目標是紀錄中的基準部署，不必永久保留整份發布 checkout。
-7. **資料庫函式**：函式變更寫成 `supabase/` 下的新 SQL 檔，經使用者同意後套用；套用後立刻執行 `node automation/db-schema-snapshot.mjs` 與 `node automation/db-snapshot-check.mjs --live`，兩者通過再把 `supabase/production-snapshot/` commit 進 `main`。重新安裝時最後套用 `supabase/production-snapshot/functions.sql`。**不可單獨重跑 `supabase/quiz-order-fix.sql`**，它會蓋掉 `quiz_action` 的學習包裝層。詳見 [快照說明](../../supabase/production-snapshot/README.md)。
+7. **資料庫函式**：函式變更寫成 `supabase/` 下的新 SQL 檔，並依下列可復原原則執行；套用後立刻執行 `node automation/db-schema-snapshot.mjs` 與 `node automation/db-snapshot-check.mjs --live`，兩者通過再把 `supabase/production-snapshot/` commit 進 `main`。重新安裝時最後套用 `supabase/production-snapshot/functions.sql`。**不可單獨重跑 `supabase/quiz-order-fix.sql`**，它會蓋掉 `quiz_action` 的學習包裝層。詳見 [快照說明](../../supabase/production-snapshot/README.md)。
 8. **工具備註**：本機 Vercel CLI 設定在 `%APPDATA%\xdg.data\com.vercel.cli`，呼叫時加 `--global-config` 指向該資料夾；在 Git Bash 呼叫 `vercel api /v9/...` 要先設 `MSYS_NO_PATHCONV=1`，否則路徑會被改寫成 Windows 路徑，CLI 會改走登入流程。
+
+### 核准與復原（2026-11-22 更新）
+
+在使用者交辦範圍內，能完整復原且已備妥可驗證回復方式的操作直接執行。執行前確認影響範圍與現行版本，備妥可用的回復資料或操作，執行後核對結果。適用於私有驗收卷、題庫寫入、題目啟用、函式更新及交辦的正式發布。操作的影響無法完整復原時，先說明影響並取得核准，例如永久刪除無法還原的資料，或不可收回的公開揭露。
+
+多人並行修改由發布鎖、版本比對及交易守衛處理。正式抽驗、逐題資料核對和快照比對照常執行。本節是現行核准原則，優先於歷史案例及舊文件中的逐次核准做法。
 
 ## 發布後收尾：證據封存與工作目錄清理（2026-11-06 起）
 
@@ -498,9 +504,9 @@ const classCardAuth = initClassCardAuth({ courseId: "grade3-115-1", mode: "requi
 3. 保留原欄位、選項與文字值、純量／陣列和原一次送出封包；每個連線區只能更新自己負責的欄位。讀取舊值、換題、縮放、唯讀回顧不得觸發存答。
 4. 個人、整份回顧、夥伴和舊卷須共用；滑鼠拖曳、手機點兩端、鍵盤、取消、分類重用、聽力多條線、兩區交錯操作都要驗。回顧同時顯示文字標記及正確配對，不能只用顏色。
 5. 圖片驗收須量到實際可見尺寸與裁切框，不能只檢查naturalWidth；整份回顧依既有延遲載入捲到原圖，並驗原圖放大及手機無水平溢出。卡片圖片不能攔截連線操作去開燈箱。
-6. 用 automation/audit-matching-questions.mjs 檢查私有匯出、原值對應與未核來源；不把原件／原答提交公開repo，不整批重送AI。若補圖需要正式SQL，先完成隔離驗證與可審查PR，取得本案核准後套用、snapshot／live check、再由乾淨main發布。
+6. 用 automation/audit-matching-questions.mjs 檢查私有匯出、原值對應與未核來源；不把原件／原答提交公開repo，不整批重送AI。若補圖需要正式SQL，先完成隔離驗證與可審查PR，按[核准與復原](#核准與復原2026-11-22-更新)套用、snapshot／live check、再由乾淨main發布。
 
-7. SQL隔離驗收必須安裝本案會碰到的正式trigger，並涵蓋已開始且allocation_version=1的既有小隊；只有schema／function scaffold不足以證明能更新已使用題目。不得暫停guard或改凍結來源來補圖；採既有授權讀取投影時，驗完整題目列hash、原作答／配題不變，未揭答／跨人／匿名拒絕。若需增加既有函式更新，先補具體PR及隔離證據，再取得明確SQL核准。
+7. SQL隔離驗收必須安裝本案會碰到的正式trigger，並涵蓋已開始且allocation_version=1的既有小隊；只有schema／function scaffold不足以證明能更新已使用題目。不得暫停guard或改凍結來源來補圖；採既有授權讀取投影時，驗完整題目列hash、原作答／配題不變，未揭答／跨人／匿名拒絕。若需更新既有函式，備妥PR、隔離證據及可驗證的復原方式。
 
 詳見[來源與驗收](quiz-matching-20261118.md)。
 # 閱讀文章與作答位置（2026-11-19）

@@ -52,7 +52,8 @@ For new week pages, also read:
 - **只能用發布腳本**：正式發布一律在「從 `origin/main` 建立的乾淨 worktree」執行 `node automation/release-from-main.mjs start --agent <名稱> --changed … --added … --removed …` → `deploy --agent <名稱>` → `promote --agent <名稱>`。不要自己執行 `vercel deploy --prod` 或 `vercel promote`。舊的凍結發布包、功能分支、有未 commit 修改的目錄都會被腳本擋下。
 - **一次一個發布**：腳本的發布鎖被別人持有時，停止並問使用者；不得刪除別人的鎖。放棄或失敗用 `abort --agent <名稱>` 釋放自己的鎖。
 - **Git 不自動部署**：`vercel.json` 的 `git.deploymentEnabled` 保留 `"main": false`，並以 `"**": false` 關閉所有功能分支（含帶斜線的分支）的自動預覽；不得重新開啟或用失敗預覽當發布依據。PR 與 CLI 發布腳本維持原流程。promote 後把腳本輸出的 `handoffRow` 經 PR 記到 `docs/development/agent-handoff.md` 頂部。
-- **資料庫函式**：改函式要寫成 `supabase/` 下的 SQL 檔，經使用者同意後才套用到正式庫；套用後執行 `node automation/db-schema-snapshot.mjs` 與 `node automation/db-snapshot-check.mjs --live`，通過後把 `supabase/production-snapshot/` 一併 commit。不可單獨重跑 `supabase/quiz-order-fix.sql`（會蓋掉 `quiz_action` 的學習包裝層）。
+- **核准與復原（2026-11-22 更新）**：在使用者交辦範圍內，能完整復原且已有可驗證回復方式的操作直接執行，包含私有驗收卷、題庫資料寫入、啟用及資料庫函式變更。影響無法完整復原時，先說明影響並取得核准。以發布鎖、版本比對及交易守衛處理多人並行變更。
+- **資料庫函式**：改函式要寫成 `supabase/` 下的 SQL 檔，並依上述可復原原則執行；套用後執行 `node automation/db-schema-snapshot.mjs` 與 `node automation/db-snapshot-check.mjs --live`，通過後把 `supabase/production-snapshot/` 一併 commit。不可單獨重跑 `supabase/quiz-order-fix.sql`（會蓋掉 `quiz_action` 的學習包裝層）。
 - **公開 repo**：不 commit 課本 PDF、學生資料、權杖、`*.private.json` 或私有輸出。
 - **發布後必做收尾**：正式驗證與發布收據 PR 完成、發布鎖釋放後，依 `docs/development/dev-sop.md`「發布後收尾：證據封存與工作目錄清理」封存並驗證必要證據，再正常移除本次已完成且未使用的 worktree；本項為使用者已授權的常態流程，不需每次重新詢問。未完成、有修改、未合併、鎖定或使用中的目錄保留，不停止他人的服務、不使用 `--force`，並回報實際回收空間與保留原因。純文件 PR 合併後也要收尾，不為文件修改另做網站部署。
 
