@@ -198,3 +198,100 @@ def marked_single_choice(source, teacher_text, fixed_mark, fixed_locator):
         "type": "single", "prompt": {"text": prompt, "media": []}, "options": options,
         "answer": {"option_id": options[chosen]["id"]}, "source_labels": original_labels,
     }
+
+
+def boxed_single_choice(source, teacher_text, fixed_reference, fixed_locator):
+    """Split one checked option from paragraph runs without moving shared figures."""
+    mark = r"[ˇ✓√Vv]"
+    box = r"(?:□|[（(]\s*[）)])"
+    numbered = re.compile(box + r"\s*[（(]([1-8１-８])[）)]\s*(.+)")
+    instruction = re.compile(r"([？?])\s*(?:請|在[（(]\s*[）)]裡)?打" + mark + r"[。．]?\s*$")
+    layout = source.get("layout") or []
+    if len(layout) < 2 or any(part.get("type") != "paragraph" or set(part) != {"type", "runs"} for part in layout):
+        raise ValueError("boxed_choice_paragraph_layout_required")
+    if any(run.get("type") not in ("text", "image") for part in layout for run in part["runs"]):
+        raise ValueError("boxed_choice_unsupported_run")
+
+    media = source["media"]
+    parts = [part["runs"] for part in layout]
+    indices = [run["media_index"] for runs in parts for run in runs if run["type"] == "image"]
+    if (any(type(i) is not int for i in indices) or sorted(indices) != list(range(len(media)))
+            or any(item.get("kind") != "image" for item in media)):
+        raise ValueError("boxed_choice_must_preserve_each_source_image")
+
+    def text(runs):
+        return "".join(run["text"] for run in runs if run["type"] == "text").strip()
+
+    start = next((i for i, runs in enumerate(parts) if re.match(box, text(runs))), 0)
+    if not start:
+        raise ValueError("boxed_choice_missing_option_boundary")
+    prompt_parts = []
+    matched = False
+    for runs in parts[:start]:
+        prompt_runs = []
+        for run in runs:
+            if run["type"] == "image":
+                prompt_runs.append(run.copy())
+                continue
+            if matched and run["text"].strip():
+                raise ValueError("boxed_choice_text_after_instruction")
+            value, count = instruction.subn(r"\1", run["text"])
+            matched = matched or bool(count)
+            if value.strip():
+                prompt_runs.append({"type": "text", "text": value})
+        if prompt_runs:
+            prompt_parts.append(prompt_runs)
+    if not matched:
+        raise ValueError("boxed_choice_single_mark_instruction_required")
+
+    labels, contents = [], []
+    option_runs = parts[start:]
+    if numbered.fullmatch(text(option_runs[0])):
+        for runs in option_runs:
+            value = text(runs)
+            images = [media[run["media_index"]] for run in runs if run["type"] == "image"]
+            match = numbered.fullmatch(value)
+            if match and runs[0]["type"] == "text" and not re.search(box, match[2]):
+                labels.append(unicodedata.normalize("NFKC", match[1]))
+                contents.append({"text": match[2], "media": images})
+            elif not value and images and contents:
+                contents[-1]["media"].extend(images)
+            else:
+                raise ValueError("boxed_choice_incomplete_numbered_options")
+        if any(len(content["media"]) > 1 for content in contents):
+            raise ValueError("boxed_choice_ambiguous_numbered_media")
+        chosen = bind_cropped_choice_key(labels, teacher_text, fixed_reference, fixed_locator)
+    else:
+        for runs in option_runs:
+            if any(run["type"] != "text" for run in runs) or not text(runs).startswith("□"):
+                raise ValueError("boxed_choice_ambiguous_named_options")
+            labels.extend(value.strip() for value in text(runs)[1:].split("□"))
+
+        def compact(value):
+            return re.sub(r"\s+", "", unicodedata.normalize("NFKC", str(value)))
+
+        keys = [compact(label) for label in labels]
+        original = re.fullmatch(r"答案:" + mark + r"(.+)", compact(teacher_text))
+        fixed = compact(fixed_reference)
+        if (not original or original[1] != fixed or fixed not in keys or len(set(keys)) != len(keys)
+                or any(not key or re.search(box, key) or re.match(r"\(\d+\)", key) for key in keys)):
+            raise ValueError("boxed_choice_teacher_and_fixed_names_mismatch")
+        chosen = f"o{keys.index(fixed) + 1}"
+        contents = [{"text": label, "media": []} for label in labels]
+    if not 2 <= len(contents) <= 8:
+        raise ValueError("boxed_choice_option_count")
+
+    prompt_media = []
+    for runs in prompt_parts:
+        for run in runs:
+            if run["type"] == "image":
+                prompt_media.append(media[run["media_index"]])
+                run["media_index"] = len(prompt_media) - 1
+    prompt = {"text": "\n".join(filter(None, map(text, prompt_parts))), "media": prompt_media}
+    if prompt_media:
+        prompt["layout"] = [{"type": "paragraph", "runs": runs} for runs in prompt_parts]
+    return {
+        "type": "single", "prompt": prompt,
+        "options": [{"id": f"o{i}", "content": value} for i, value in enumerate(contents, 1)],
+        "answer": {"option_id": chosen}, "source_labels": labels,
+    }

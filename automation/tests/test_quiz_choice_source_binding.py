@@ -3,7 +3,9 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "lib"))
-from quiz_choice_source_binding import bind_cropped_choice_key, bind_single_choice, labeled_weight_choice, marked_single_choice
+from quiz_choice_source_binding import (
+    bind_cropped_choice_key, bind_single_choice, boxed_single_choice, labeled_weight_choice, marked_single_choice,
+)
 
 
 def content(text, digest=None):
@@ -78,6 +80,44 @@ class ChoiceSourceBindingTests(unittest.TestCase):
             bind_cropped_choice_key(["left", "right"], "答案：圖 4 左（ ）打ˇ", "圖5左( )打v", "")
         with self.assertRaisesRegex(ValueError, "teacher_choice_outside_cropped_labels"):
             bind_cropped_choice_key(["1", "2"], "答案：(3)", "(3)", "")
+
+    def test_boxed_choice_keeps_numbered_text_and_following_image_together(self):
+        source_media = [content("", "a" * 64)["media"][0], content("", "b" * 64)["media"][0]]
+        def paragraph(*runs):
+            return {"type": "paragraph", "runs": list(runs)}
+        def line(value):
+            return paragraph({"type": "text", "text": value})
+        def figure(i):
+            return paragraph({"type": "image", "media_index": i, "width": 90})
+        raw = {"media": source_media, "layout": [
+            line("哪一樣比較重？在（ ）裡打ˇ。"),
+            line("□(１)蘋果 500 公克"), figure(0), line("（ ）(２)西瓜 2 公斤"), figure(1),
+        ]}
+        result = boxed_single_choice(raw, "答案：(２)ˇ", "(2)", "勾選選項")
+        self.assertEqual(result["prompt"], content("哪一樣比較重？"))
+        self.assertEqual([o["content"] for o in result["options"]],
+                         [{"text": title, "media": [image]} for title, image in
+                          zip(["蘋果 500 公克", "西瓜 2 公斤"], source_media, strict=True)])
+        self.assertEqual(result["answer"], {"option_id": "o2"})
+        with self.assertRaisesRegex(ValueError, "teacher_and_fixed_cropped_choice_mismatch"):
+            boxed_single_choice(raw, "答案：(２)ˇ", "v", "(1)括號")
+
+    def test_boxed_named_choices_keep_shared_figures_in_rich_prompt(self):
+        figure = {"type": "image", "media_index": 0, "width": 100}
+        def paragraph(*runs):
+            return {"type": "paragraph", "runs": list(runs)}
+        raw = {"media": content("", "c" * 64)["media"], "layout": [
+            paragraph({"type": "text", "text": "誰塗得最少？請打ˇ。"}),
+            paragraph(figure), paragraph({"type": "text", "text": "□甲 □乙 □丙"}),
+        ]}
+        result = boxed_single_choice(raw, "答案：ˇ丙", "丙", "人名勾選框")
+        self.assertEqual(result["prompt"]["layout"][1], paragraph(figure))
+        self.assertEqual(result["prompt"]["media"], raw["media"])
+        self.assertEqual([o["content"] for o in result["options"]], [content("甲"), content("乙"), content("丙")])
+        self.assertEqual(result["answer"], {"option_id": "o3"})
+        raw["layout"].append(paragraph(figure))
+        with self.assertRaisesRegex(ValueError, "boxed_choice_must_preserve_each_source_image"):
+            boxed_single_choice(raw, "答案：ˇ丙", "丙", "人名勾選框")
 
     def test_paper_marks_require_authorized_source_and_do_not_remove_inline_blanks(self):
         parts = [content("□", "a" * 64), content("另一項\n□")]
