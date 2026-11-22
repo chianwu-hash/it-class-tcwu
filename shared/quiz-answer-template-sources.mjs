@@ -1770,6 +1770,28 @@ export const workAnswerSources={
 
 };
 export const answerTemplateSources={
+  "hlg3m_0273b6ed_marksb1c9e91182f6": {
+    "guard": "f9a205a2b000f677",
+    "model": {
+      "mode": "image-item-marks",
+      "symbols": [
+        "ˇ",
+        "╳",
+        "留白"
+      ]
+    }
+  },
+  "hlg3m_04b817a8_marks1157a9f91f39": {
+    "guard": "db3e546fa6427632",
+    "model": {
+      "mode": "image-item-marks",
+      "symbols": [
+        "○",
+        "╳",
+        "留白"
+      ]
+    }
+  },
 
   "hlg3m_021169a8_rw0f2e9aafc198": {
     "guard": "b381fab960011886",

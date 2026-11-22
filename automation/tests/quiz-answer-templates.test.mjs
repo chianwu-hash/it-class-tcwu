@@ -4,6 +4,17 @@ import {presentationSignature} from '../../shared/quiz-presentation-signature.mj
 import {deriveNumberSymbolTemplate} from '../../shared/quiz-answer-templates.mjs';
 import {deriveDiagramSymbolTemplate} from '../../shared/quiz-answer-templates.mjs';
 import {deriveItemMarkTemplate} from '../../shared/quiz-answer-templates.mjs';
+import {deriveImageItemMarks} from '../../shared/quiz-image-item-marks.mjs';
+
+test('image marks require one figure and the original symbol roles for every field',()=>{
+ const opts=['ˇ','╳','留白'].map((text,i)=>({id:'o'+(i+1),content:{text,media:[]}}));
+ const q={type:'fields',prompt:{text:'最重的打ˇ，最輕的打╳。',media:[{kind:'image'},{kind:'image'}]},
+  fields:['甲','乙'].map((label,i)=>({id:'f'+(i+1),label,input:'single',options:structuredClone(opts)}))};
+ assert.deepEqual(deriveImageItemMarks(q),{mode:'image-item-marks',symbols:['ˇ','╳','留白']});
+ const reordered=structuredClone(q);reordered.fields[0].options.reverse();
+ assert.equal(deriveImageItemMarks(reordered),null);
+ assert.equal(deriveImageItemMarks({...q,prompt:{...q.prompt,media:q.prompt.media.slice(1)}}),null);
+});
 
 test('reviewed numeric table capacities retain the original field order and never inspect keys',()=>{
  const q={id:'numeric-table-capacity',type:'fields',prompt:{text:'算式 餘數\n4÷3 （　）',media:[],layout:[{type:'table',rows:[[[{type:'text',text:'算式'}],[{type:'text',text:'餘數'}]],[[{type:'text',text:'4÷3'}],[{type:'text',text:'（　）'}]]]}]},fields:[{id:'remainder',input:'math',label:'4÷3的餘數'}]};

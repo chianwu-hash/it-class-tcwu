@@ -73,7 +73,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
    if(phonetic.has(f.id))slot.classList.add('quiz-answer-bopomofo-slot');
    if(f.input==='text'&&!inline?.slots.some(s=>s.field===f.id))attachPastInputKeyboard(slot,input,{bopomofo:phonetic.size?phonetic.has(f.id):textInputAids.bopomofo===true,punctuation:textInputAids.punctuation===true});
   }else if(f.input==='single'){
-   appendSingleChoiceOptions(slot,{name:id,options:f.options.map(o=>({...o,value:o.id})),selected:values[f.id],locked,literalSymbols:answerTemplatePresentation(q)?.mode==='diagram-symbols',badgeForOption:storedField.input==='text'&&f!==storedField?o=>o.id:undefined,onSelect:v=>{values[f.id]=v;changed()},renderBody:(box,o)=>renderContent(box,o.content)});
+   appendSingleChoiceOptions(slot,{name:id,options:f.options.map(o=>({...o,value:o.id})),selected:values[f.id],locked,literalSymbols:['diagram-symbols','image-item-marks'].includes(answerTemplatePresentation(q)?.mode),badgeForOption:storedField.input==='text'&&f!==storedField?o=>o.id:undefined,onSelect:v=>{values[f.id]=v;changed()},renderBody:(box,o)=>renderContent(box,o.content)});
    if(feedback?.[fieldIndex])slot.querySelectorAll(':scope > .student-option').forEach((row,i)=>decorateFieldReviewOption(row,feedback[fieldIndex].options[i]));
   }else if(f.input==='set'){
    const checks=[];const update=()=>{const selected=checks.filter(x=>x.input.checked).map(x=>x.id);values[f.id]=selected.length?selected:null;none.checked=false;changed()};
@@ -88,6 +88,12 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
  mountReadingWorkbench(group,q,reading,{renderContent,fieldFeedback:feedback});mountWorkAnswerInputs(group,q,{renderContent,fieldFeedback:feedback});host.append(group);return group;
 }
 export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,referenceAnswer=null,showWork=true}){
+ if(!raw&&answerTemplatePresentation(choiceQuestionPresentation(q))?.mode==='image-item-marks'){
+  const given=referenceAnswer?.format==='fields-v1'?referenceAnswer.fields:null;
+  const values=given&&q.fields.every(f=>given[f.id]?.length===1)?Object.fromEntries(q.fields.map(f=>[f.id,given[f.id][0]])):null;
+  renderFieldsInputs(host,q,{raw:values?JSON.stringify({v:1,f:values}):'',locked:true,onChange:()=>{},renderContent});
+  return;
+ }
  const workPlan=workAnswerPresentation(q);if((workPlan?.responseGroups||['within-template','source-slots'].includes(workPlan?.workPosition))&&!raw&&!host.querySelector(':scope > .quiz-work-source-reference')){const source=make('div');source.className='quiz-work-source-reference';renderContent(source,workResponseContent(q,workPlan.passageEnd,workPlan.groupUnit==='layout'?q.prompt.layout.length:sourceStream(q.prompt).length,workPlan.groupUnit));host.append(source);}
  if(raw&&readingWorkbenchSupported(q,readingPresentation(choiceQuestionPresentation(q)))){if(host.querySelector('.quiz-reading-workbench'))return;renderFieldsInputs(host,q,{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
  if(raw&&(answerTemplatePresentation(choiceQuestionPresentation(q))||workAnswerPresentation(q))){if(host.querySelector('.quiz-has-answer-template,.quiz-work-answer-layout'))return;const group=renderFieldsInputs(host,showWork?q:{...q,work:undefined},{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});mountWorkAnswerInputs(group,q,{renderContent,fieldFeedback:fieldsReviewPresentation(q,raw,review)});return;}
