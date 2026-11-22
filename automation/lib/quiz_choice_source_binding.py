@@ -21,6 +21,28 @@ def _image_digests(content):
     return digests
 
 
+def bind_graphic_choice_key(source, teacher):
+    """Locate a single image key among the printed, comma-separated options."""
+    layout = source.get("layout") or []
+    if len(layout) < 2 or layout[-1].get("type") != "paragraph":
+        raise ValueError("graphic_choice_option_paragraph_required")
+    runs = layout[-1]["runs"]
+    separators = [run["text"].strip() for run in runs[::2] if run["type"] == "text"]
+    options = runs[1::2]
+    if (not 2 <= len(options) <= 8 or len(runs) != 2 * len(options) + 1
+            or len(separators) != len(options) + 1 or separators[0] not in ("（", "(")
+            or separators[-1] not in ("）", ")") or any(s not in ("，", ",", "、") for s in separators[1:-1])
+            or any(r["type"] != "image" or type(r.get("media_index")) is not int
+                   or not 0 <= r["media_index"] < len(source["media"]) for r in options)):
+        raise ValueError("graphic_choice_option_boundaries_unverified")
+    original = [source["media"][r["media_index"]] for r in options]
+    hashes = _image_digests({"media": original})
+    teacher_hashes = _image_digests(teacher)
+    if len(teacher_hashes) != 1 or hashes.count(teacher_hashes[0]) != 1:
+        raise ValueError("graphic_choice_key_not_unique")
+    return original, hashes.index(teacher_hashes[0])
+
+
 def bind_single_choice(question, parts, key_index, *, paper_mark=False, verified_image_aliases=None):
     """Require matching option order, complete option content and answer ID.
 

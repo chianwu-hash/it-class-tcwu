@@ -4,7 +4,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "lib"))
 from quiz_choice_source_binding import (
-    bind_cropped_choice_key, bind_single_choice, boxed_single_choice, labeled_weight_choice, marked_single_choice,
+    bind_cropped_choice_key, bind_graphic_choice_key, bind_single_choice, boxed_single_choice, labeled_weight_choice,
+    marked_single_choice,
 )
 
 
@@ -24,6 +25,23 @@ def single(parts, chosen="o1"):
 
 
 class ChoiceSourceBindingTests(unittest.TestCase):
+    def test_graphic_key_matches_the_original_position_once(self):
+        images = [content("", char * 64)["media"][0] for char in "abc"]
+        runs = [{"type": "text", "text": "（"}, {"type": "image", "media_index": 2},
+                {"type": "text", "text": "，"}, {"type": "image", "media_index": 0},
+                {"type": "text", "text": "，"}, {"type": "image", "media_index": 1},
+                {"type": "text", "text": "）"}]
+        source = {"media": images, "layout": [{"type": "paragraph", "runs": []},
+                                               {"type": "paragraph", "runs": runs}]}
+        self.assertEqual(bind_graphic_choice_key(source, {"media": [images[1]]}),
+                         ([images[2], images[0], images[1]], 2))
+        runs[3]["media_index"] = 1
+        with self.assertRaisesRegex(ValueError, "graphic_choice_key_not_unique"):
+            bind_graphic_choice_key(source, {"media": [images[1]]})
+        runs[2]["text"] = "示意圖"
+        with self.assertRaisesRegex(ValueError, "graphic_choice_option_boundaries_unverified"):
+            bind_graphic_choice_key(source, {"media": [images[1]]})
+
     def test_single_mark_uses_the_fixed_source_position(self):
         raw = {
             "media": [],
