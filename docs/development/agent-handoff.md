@@ -2,6 +2,7 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | Codex-g3math-image-marks2-20261122 | 2026-11-22T11:25:03.968Z | `d68989a` | `dpl_4TcxEvZStoueyyyNuqxdpW6QWxqM` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-answer-template-sources.mjs、shared/quiz-answer-templates.css、shared/quiz-answer-templates.mjs、shared/quiz-choice-conversion.mjs、shared/quiz-fields.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-image-item-marks.mjs | `dpl_CtdXXUB4PJLfdz4kjvpS8spgv4Uq`／回滾 `dpl_4TcxEvZStoueyyyNuqxdpW6QWxqM`（eolOnly 0） |
 | 已完成 | Codex-g3math-batch-20261121 | 2026-11-21 | `823be784` | `dpl_GdF1Pw3WDodcQsVDbMjZHuAXg8kQ` | 34題與三、四、六、九年級16入口 | `dpl_4TcxEvZStoueyyyNuqxdpW6QWxqM`，可回滾至基準部署，詳[首批34題收據](quiz-release34-20261121.md) |
 | 待新對話接續 | Codex-g3math-release34-20261121 | 2026-11-21 | `2d35c869`；續作須重新 fetch | `dpl_GdF1Pw3WDodcQsVDbMjZHuAXg8kQ` | 已核共用作答程式、生成資產與16入口；34題保持停用 | 使用者要求本段收尾，未部署、未取得發布鎖；詳[34題收據](quiz-release34-20261121.md) |
 
@@ -24,6 +25,7 @@
 - 圖案單選另 3 題依 Word 原裁切與翻轉還原，6 個原序獨立選項的教師答案核對及隔離讀回全過，待 9 張題幹與選項圖的正式媒體登錄。私有總帳 v46 累計 346 題上線。詳[同批驗證收據](quiz-graphic3-choice-20261122.md)。
 - Word 圖案單選 3 題補齊 9 張圖及媒體登錄。正式 OAuth 抽 1 題通過，整批啟用後逐題讀回一致。私有總帳 v47 累計 349 題上線，選答 5 題保留分流。詳[同批上線收據](quiz-graphic3-release-20261122.md)。
 - 最重與最輕 2 題依核定預覽實作一題多位置拖曳，涵蓋 7 張圖與 7 個原標記位置。隔離等值讀回、判分及共用前端瀏覽器驗證通過。正式庫唯讀 dry-run 只缺 7 張圖的媒體登錄。私有總帳 v48 累計 349 題上線。詳[同批驗證收據](quiz-image-item-marks2-20261122.md)。
+- 海鮮與貓咪兩題補齊 7 張圖及媒體登錄。正式 OAuth 抽 1 題通過，整批啟用並逐題等值讀回。私有總帳 v49 累計上線 351 題。詳[同批上線收據](quiz-image-item-marks2-release-20261122.md)。
 
 # 最新授權：整理合併、清理後討論效率，再接回長線（2026-11-21）
 
