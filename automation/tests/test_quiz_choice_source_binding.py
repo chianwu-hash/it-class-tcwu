@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "lib"))
-from quiz_choice_source_binding import bind_cropped_choice_key, bind_single_choice, labeled_weight_choice
+from quiz_choice_source_binding import bind_cropped_choice_key, bind_single_choice, labeled_weight_choice, marked_single_choice
 
 
 def content(text, digest=None):
@@ -22,6 +22,49 @@ def single(parts, chosen="o1"):
 
 
 class ChoiceSourceBindingTests(unittest.TestCase):
+    def test_single_mark_uses_the_fixed_source_position(self):
+        raw = {
+            "media": [],
+            "layout": [
+                {"type": "paragraph", "runs": [{"type": "text", "text": "哪一個比較輕？請打ˇ。"}]},
+                {"type": "paragraph", "runs": [{"type": "text", "text": "□"}, {"type": "marker", "number": 1},
+                                               {"type": "text", "text": "2 公斤"}]},
+                {"type": "paragraph", "runs": [{"type": "text", "text": "□② 1500 公克"}]},
+            ],
+        }
+        result = marked_single_choice(raw, "答案：②ˇ", "v", "②方框")
+        self.assertEqual(result["type"], "single")
+        self.assertEqual(result["source_labels"], ["①", "②"])
+        self.assertEqual([o["content"]["text"] for o in result["options"]], ["2 公斤", "1500 公克"])
+        self.assertEqual(result["answer"], {"option_id": "o2"})
+        for mark, position in [("v", "①方框"), ("X", "②方框"), ("v", "方框")]:
+            with self.assertRaisesRegex(ValueError, "teacher_and_fixed_mark_position_mismatch"):
+                marked_single_choice(raw, "答案：②ˇ", mark, position)
+        with self.assertRaisesRegex(ValueError, "teacher_and_fixed_mark_position_mismatch"):
+            marked_single_choice(raw, "答案：①ˇ；②ˇ", "v", "②方框")
+        raw["layout"][0]["runs"][0]["text"] = "較重的打ˇ，較輕的打×。"
+        with self.assertRaisesRegex(ValueError, "marked_choice_single_comparison_required"):
+            marked_single_choice(raw, "答案：②ˇ", "v", "②方框")
+
+    def test_inline_zhuyin_labels_keep_exact_image_order(self):
+        media = [content("", "1" * 64)["media"][0], content("", "2" * 64)["media"][0]]
+        raw = {
+            "media": media,
+            "layout": [
+                {"type": "paragraph", "runs": [{"type": "text", "text": "比較重的打ˇ。"}]},
+                {"type": "paragraph", "runs": [{"type": "text", "text": "ㄅ□"},
+                                               {"type": "image", "media_index": 1},
+                                               {"type": "text", "text": " ㄆ□ "},
+                                               {"type": "image", "media_index": 0}]},
+            ],
+        }
+        result = marked_single_choice(raw, "答案：ㄅˇ", "V", "ㄅ括號")
+        self.assertEqual([o["content"]["media"][0] for o in result["options"]], list(reversed(media)))
+        self.assertEqual(result["answer"]["option_id"], "o1")
+        raw["layout"][1]["runs"][-1]["media_index"] = 1
+        with self.assertRaisesRegex(ValueError, "marked_choice_must_preserve_each_source_image"):
+            marked_single_choice(raw, "答案：ㄅˇ", "V", "ㄅ括號")
+
     def test_cropped_choices_require_agreement_and_original_order(self):
         self.assertEqual(bind_cropped_choice_key(["1", "2", "3"], "答案：（２）圈起來", "(2)", ""), "o2")
         self.assertEqual(bind_cropped_choice_key(["A", "B", "C"], "答案：A", "A", ""), "o1")

@@ -130,3 +130,71 @@ def bind_cropped_choice_key(labels, teacher_text, fixed_reference, fixed_locator
     if label not in labels:
         raise ValueError("teacher_choice_outside_cropped_labels")
     return f"o{labels.index(label) + 1}"
+
+
+def marked_single_choice(source, teacher_text, fixed_mark, fixed_locator):
+    """Convert a printed one-answer comparison whose mark is bound to a position."""
+    mark = r"[ˇ✓√Vv]"
+    labels = ("①②③④⑤⑥⑦⑧", "ㄅㄆㄇㄈㄉㄊㄋㄌ")
+    printed_label = "[" + "".join(labels) + "]"
+    layout = source.get("layout") or []
+    if len(layout) < 2 or any(part["type"] != "paragraph" or set(part) != {"type", "runs"} for part in layout):
+        raise ValueError("marked_choice_paragraph_layout_required")
+    if any(run["type"] != "text" for run in layout[0]["runs"]):
+        raise ValueError("marked_choice_plain_prompt_required")
+    prompt = "".join(r["text"] for r in layout[0]["runs"]).strip()
+    question = re.fullmatch(r"((?:下面)?哪一[^。！？?]*比較[重輕][？?])\s*(?:請)?(?:在\s*□\s*裡)?打" + mark + r"[。．：:]?", prompt)
+    simple = re.fullmatch(r"比較([重輕])的打" + mark + r"[。．]?", prompt)
+    if not question and not simple:
+        raise ValueError("marked_choice_single_comparison_required")
+    prompt = question[1] if question else f"哪一個比較{simple[1]}？"
+
+    options, original_labels, media_order = [], [], []
+    for part in layout[1:]:
+        runs = []
+        for run in part["runs"]:
+            if run["type"] == "marker" and type(run.get("number")) is int and 1 <= run["number"] <= 8:
+                runs.append({"type": "text", "text": labels[0][run["number"] - 1]})
+            elif run["type"] == "text":
+                runs.extend({"type": "text", "text": token} for token in re.split(f"({printed_label})", run["text"]) if token)
+            elif run["type"] == "image":
+                runs.append(run)
+            else:
+                raise ValueError("marked_choice_unsupported_option_run")
+        starts = [i for i, run in enumerate(runs) if run["type"] == "text" and re.fullmatch(printed_label, run["text"])]
+        if not starts:
+            raise ValueError("marked_choice_missing_printed_label")
+        prefix = "".join(r["text"] for r in runs[:starts[0]] if r["type"] == "text").strip()
+        if any(r["type"] != "text" for r in runs[:starts[0]]) or prefix not in ("", "□") or prefix and len(starts) != 1:
+            raise ValueError("marked_choice_ambiguous_box_position")
+        for start, end in zip(starts, starts[1:] + [len(runs)], strict=True):
+            tail = runs[start + 1:end]
+            text = "".join(r["text"] for r in tail if r["type"] == "text").strip()
+            if prefix != "□":
+                if not text.startswith("□"):
+                    raise ValueError("marked_choice_missing_option_box")
+                text = text[1:].strip()
+            indices = [r["media_index"] for r in tail if r["type"] == "image"]
+            if "□" in text or len(indices) > 1 or bool(text) == bool(indices):
+                raise ValueError("marked_choice_ambiguous_option")
+            original_labels.append(runs[start]["text"])
+            media_order.extend(indices)
+            options.append({"id": f"o{len(options) + 1}", "content": {
+                "text": text, "media": [source["media"][i] for i in indices],
+            }})
+    if not 2 <= len(options) <= 8 or not any(original_labels == list(a[:len(options)]) for a in labels):
+        raise ValueError("marked_choice_incomplete_source_order")
+    if sorted(media_order) != list(range(len(source["media"]))):
+        raise ValueError("marked_choice_must_preserve_each_source_image")
+
+    teacher = re.fullmatch(r"\s*答案\s*[:：]\s*(" + printed_label + r")\s*" + mark + r"\s*", teacher_text)
+    fixed = re.fullmatch(r"\s*(" + printed_label + r")\s*(?:方框|括號)\s*", fixed_locator)
+    if not teacher or not fixed or teacher[1] != fixed[1] or not re.fullmatch(mark, str(fixed_mark).strip()):
+        raise ValueError("teacher_and_fixed_mark_position_mismatch")
+    if teacher[1] not in original_labels:
+        raise ValueError("teacher_mark_outside_printed_options")
+    chosen = original_labels.index(teacher[1])
+    return {
+        "type": "single", "prompt": {"text": prompt, "media": []}, "options": options,
+        "answer": {"option_id": options[chosen]["id"]}, "source_labels": original_labels,
+    }
