@@ -5,6 +5,7 @@ import {answerTemplateSources} from './quiz-answer-template-sources.mjs';
 import {openCompositionSources} from './quiz-open-composition-sources.mjs';
 import {projectSourceBoxes} from './quiz-source-boxes.mjs';
 import {deriveImageBlankTemplate,imageBlankPassage,mountImageBlanks} from './quiz-image-blanks.mjs';
+import {deriveImageItemMarks,mountImageItemMarks} from './quiz-image-item-marks.mjs';
 const widthDocuments=new WeakSet();
 function installWidthReflow(doc){
  if(widthDocuments.has(doc)||!doc.defaultView)return;widthDocuments.add(doc);let pending=false;
@@ -176,6 +177,11 @@ export function deriveItemMarkTemplate(q){
 export function answerTemplatePresentation(q,registry=answerTemplateSources){
  const source=taskReadingSource(q),p=registry[source?.id];if(!p)return null;
  const guard=presentationSignature(source);if(p.guard!==guard&&p.partnerGuard!==guard)return null;
+ if(p.model.mode==='image-item-marks'){
+  const model=deriveImageItemMarks(source);if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
+  const renderPrompt=projectSourceBoxes(source.prompt,q.prompt);
+  return {...model,source,renderPrompt,passage:{text:renderPrompt.text,media:[]}};
+ }
  if(p.model.mode==='image-blanks'){
   const model=deriveImageBlankTemplate(source,p.model);if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
   const renderPrompt=projectSourceBoxes(source.prompt,q.prompt);return {...model,source,renderPrompt,passage:imageBlankPassage(renderPrompt,model)};
@@ -237,6 +243,7 @@ export function mountAnswerTemplate(group,q,{renderContent,registry,fieldFeedbac
   return finish();
  }
  const render=(host,content)=>{if(renderContent)renderContent(host,content);else host.textContent=content.text;};
+ if(plan.mode==='image-item-marks')return mountImageItemMarks(container,plan,q,slots,{renderContent:render,fieldFeedback})&&finish();
  if(plan.mode==='image-blanks'){mountImageBlanks(container,plan,{byId,render});return finish();}
  if(plan.mode==='diagram-symbols'){
   container.classList.add('quiz-answer-diagram-symbols','quiz-answer-number-symbols');const groups=doc.createElement('div');groups.className='quiz-diagram-groups';
