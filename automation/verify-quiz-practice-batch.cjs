@@ -1,6 +1,6 @@
 const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=require('node:path');
 (async()=>{
- const {loadBatch,expectedResponse,readJson}=await import('./lib/quiz-batch-plan.mjs');
+ const {loadBatch,expectedResponse,readJson,recordBatchTime,preserveOAuthReceipt}=await import('./lib/quiz-batch-plan.mjs');
  const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
  const file=s=>path.join(p.outputDir,p.prefix+'-'+s+'.private.json');
  const plan=await readJson(file('plan')),ids=plan.ids;
@@ -26,8 +26,9 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    const link=page.locator('#cloud-papers a[href*="'+ids.session+'"]').first();await link.waitFor({state:'attached'});
    const total=await page.evaluate(async id=>{const {supabase}=await import('/shared/auth.js');const {data}=await supabase.auth.getUser();const {createQuizRequest}=await import('/shared/quiz-api.mjs');const go=await createQuizRequest({getSession:()=>({user:{id:data.user.id}})});const r=await go('library_sessions');if(r.role!=='student'||Number(r.grade)!==3)throw Error('wrong library role');return r.sessions.find(s=>s.id===id)?.total;},ids.session);
    assert.equal(total,n.questions);const url=new URL(await link.getAttribute('href'),page.url()).href;
-   await fs.writeFile(file('library-proof'),JSON.stringify({passed:true,questions:total,sources:n.sources,url},null,2));return;
+   await fs.writeFile(file('library-proof'),JSON.stringify({passed:true,questions:total,sources:n.sources,url},null,2));await recordBatchTime(p,packetSha,'entry-verified');return;
   }
+  await recordBatchTime(p,packetSha,'oauth-started');
   for(const s of ids.samples){
    const question=p.candidates.flatMap(c=>c.doc.blocks.flatMap(b=>b.questions)).find(q=>q.id===s.question_id);
    const expected=expectedResponse(question,s.work),ref=p.studyRows.find(r=>r.question_id===s.question_id);
@@ -50,7 +51,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    const assertPage=async number=>{
     await page.waitForFunction(n=>{const t=document.querySelector('.qtb-book-toolbar strong')?.textContent,img=document.querySelector('#lightbox-img'),status=document.querySelector('.qtb-reading-status');return t?.includes('\u7b2c'+n+'\u9801')&&img?.complete&&img.naturalWidth>9&&!status?.classList.contains('is-error')&&status?.textContent.includes('80%');},number,{timeout:35000});
     const hash=await page.locator('#lightbox-img').evaluate(async img=>{const r=await fetch(img.currentSrc||img.src);if(!r.ok)throw Error('page unavailable');return [...new Uint8Array(await crypto.subtle.digest('SHA-256',await r.arrayBuffer()))].map(x=>x.toString(16).padStart(2,'0')).join('');});
-    assert.equal(hash,plan.assets.find(a=>a.printed===number).sha);
+    assert.equal(hash,plan.assets.find(a=>a.printedPages.includes(number)).sha);
    };
    for(const width of [1280,390]){
     await page.setViewportSize({width,height:960});
@@ -69,7 +70,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    await fs.writeFile(file('oauth-progress'),JSON.stringify(proof,null,2));
   }
   assert.equal(proof.samples.length,n.samples);proof.sampleCount=proof.samples.length;proof.passed=true;
-  await fs.writeFile(file('oauth-proof'),JSON.stringify(proof,null,2));
+  await preserveOAuthReceipt(file('oauth-proof'),{packet:p,counts:n,sha256:packetSha},proof);
+  await recordBatchTime(p,packetSha,'oauth-finished');
  }catch(error){await fs.writeFile(file('oauth-error'),JSON.stringify({...proof,error:{message:error.message,stack:error.stack}},null,2));throw error;}
  finally{if(page)await page.close().catch(()=>{});await browser.close();}
 })().catch(error=>{console.error(error.message);process.exitCode=1;});

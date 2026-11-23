@@ -143,3 +143,10 @@ Claude **不是固定生產步驟，也不是發布前固定再審一輪**。新
 `verify-quiz-practice-batch.cjs` 沿工作瀏覽器租約及專用帳號抽驗，重試先讀現有作答，完全一致才沿用，其他狀態停止該筆而不覆寫。runner 必核實際 OAuth 收據的批次 SHA、題目及 5% 數量。`apply-quiz-practice-batch.py` 對照事前固定意圖，回應不明先完整讀回版本、材料、欄位及教材，不盲重送。Worker 轉接器使用 `lib/quiz-worker-write.mjs` 的事前固定與完整檔案／索引／設定比對；傳輸仍須驗實際帳號與免費方案，模擬測試不能冒稱正式供圖。
 
 每批記來源數、作答欄位、媒體數、準備與工具開發範圍、實際階段時間、手改及恢復次數；缺基準就標缺資料，不能把網路等待當人工工時，或用無圖批次推論媒體批次的加速。程式與該批上線收據同一 PR。詳[25 筆實跑收據](quiz-batch-parameterized25-20261123.md)。
+
+
+### 跨頁綁定、固定收據與可比較計時（2026-11-23）
+
+課本頁別名 `printed` 必須屬於該圖完整 `printedPages`。同一印刷頁只對一個圖 ID；同 ID 可以拆列 111／112 等跨頁，但陣列與 SHA 必須一致。所有引用頁都須在 verified 圖的印刷頁陣列內，不用單頁假設比對正式資料。
+
+`packet.timing` 可在凍結前提供 `mode: development | production` 與實際 `selectionStartedAt`；共用工具將清單通過、隔離完成、OAuth 起訖與入口完成寫在儲存庫外獨立的 `prefix-timing/`，每事件保留第一次值。不把變動時間寫入凍結的 plan／isolated／OAuth 收據，不回填舊批次推估時間。OAuth 重驗先核既存答案，保留首份正式收據，另存重驗紀錄；不能讓「已存沿用」觀察值改變原收據雜湊。抽樣數由來源數推導，樣本依清單風險選取，不能冒稱隨機抽樣。詳[15 筆實跑及 Claude 共識](quiz-expression15-release-20261123.md)。

@@ -2,12 +2,13 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
-import {loadBatch,readJson,digest,expectedResponse,practiceWriteIntent,freezeJson} from './lib/quiz-batch-plan.mjs';
+import {loadBatch,readJson,digest,expectedResponse,practiceWriteIntent,freezeJson,recordBatchTime} from './lib/quiz-batch-plan.mjs';
 import {validateDocument} from '../shared/quiz-document.mjs';
 import {setupProductionQuizDB} from './fixtures/production-quiz-db.mjs';
 
 const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
 for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);assert.equal(c.doc.blocks[0].questions.length,1);const q=c.doc.blocks[0].questions[0];assert.equal(q.type,'fields');assert.equal(q.work?.input,'expression');assert.ok(q.fields.every(f=>f.input==='math'));assert.ok(!q.answer.tuples);}
+await recordBatchTime(p,packetSha,'packet-validated');
 const file=s=>path.join(p.outputDir,p.prefix+'-'+s+'.private');
 const save=(s,v)=>fs.writeFile(file(s)+'.json',JSON.stringify(v,null,2)+'\n');
 const doc=validateDocument({...p.candidates[0].doc,title:p.title,blocks:p.candidates.flatMap(c=>c.doc.blocks)});
@@ -22,7 +23,7 @@ const publications=[{...ids,doc,rows,access:'practice',user:owner},...ids.sample
 const guards=`if not exists(select 1 from auth.users where id=${q(owner)} and lower(email)=${q(ownerEmail)} and email_confirmed_at is not null) then raise exception 'owner_mismatch';end if;
 if not exists(select 1 from auth.users u join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 and e.class_code='307' where u.id=${q(student)} and lower(u.email)=${q(studentEmail)} and u.email_confirmed_at is not null and u.raw_app_meta_data->'providers'?'google') then raise exception 'qa_identity_mismatch';end if;
 if not exists(select 1 from public.quiz_textbooks where id=${q(book.id)} and grade=3 and school_year=115 and semester=1 and source_sha256=${q(book.sourceSha256)} and title=${q(book.title)} and enabled) then raise exception 'textbook_version_mismatch';end if;
-if exists(select 1 from jsonb_array_elements(${j(assets)}) r where not exists(select 1 from public.quiz_textbook_pages a where a.book_id=${q(book.id)} and a.id=r->>'id' and to_jsonb(a.printed_pages)=jsonb_build_array((r->>'printed')::integer) and a.sha256=r->>'sha' and a.bytes=(r->>'bytes')::integer and a.sequence=r->>'sequence' and a.provenance=r->'provenance')) then raise exception 'textbook_page_mismatch';end if;`;
+if exists(select 1 from jsonb_array_elements(${j(assets)}) r where not exists(select 1 from public.quiz_textbook_pages a where a.book_id=${q(book.id)} and a.id=r->>'id' and to_jsonb(a.printed_pages)=r->'printedPages' and a.sha256=r->>'sha' and a.bytes=(r->>'bytes')::integer and a.sequence=r->>'sequence' and a.provenance=r->'provenance')) then raise exception 'textbook_page_mismatch';end if;`;
 // This adapter deliberately supports documents without question media. Other batches use the media stage first.
 assert.equal(n.images,0,'此練習卷轉接器須先擴充媒體登錄查核');
 const exact=t=>`if not exists(select 1 from public.quiz_sessions s join public.quiz_versions v on v.id=s.version_id join public.quiz_banks b on b.id=v.bank_id join public.quiz_version_meta m on m.version_id=v.id where s.id=${q(t.session)} and s.owner_id=${q(t.user)} and s.access_mode=${q(t.access)} and s.status='open' and s.version_id=${q(t.version)} and v.bank_id=${q(t.bank)} and v.document=${j(t.doc)} and b.draft=v.document and m.total=${t.rows.length} and not s.shuffle_questions and not s.shuffle_options) then raise exception 'document_changed';end if;
@@ -96,5 +97,6 @@ try{
  await save('isolated',{passed:true,packetSha,counts:n,cases,results,private_samples:n.samples,anonymous_denied:true,other_grade_denied:true,rollback_verified:true,sql:Object.fromEntries(Object.entries(sqls).map(([k,v])=>[k,digest(v)]))});
  const frozenPlan=await readJson(file('plan')+'.json'),isolated=await readJson(file('isolated')+'.json');
  for(const op of ['stage','activate'])await freezeJson(file(op+'-intent')+'.json',practiceWriteIntent(frozenPlan,isolated,op));
+ await recordBatchTime(p,packetSha,'isolated-finished');
  console.log(JSON.stringify({passed:true,...n,cases}));
 }finally{await db.close();}

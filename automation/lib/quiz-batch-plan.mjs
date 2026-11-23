@@ -40,10 +40,11 @@ export async function loadBatch(file) {
   assert.equal(packet.studyRows.length, counts.questions);
   const questions = packet.candidates.flatMap(c => c.doc.blocks.flatMap(b => b.questions));
   assert.deepEqual(new Set(packet.studyRows.map(r => r.question_id)), new Set(questions.map(q => q.id)));
+  validatePageBindings(packet.pages);
   for (const row of packet.studyRows) {
     assert.ok(row.reference.includes(row.primary));
     assert.ok(row.student_explanation?.trim() && row.teacher_notes?.reason?.trim());
-    for (const n of row.reference) assert.ok(packet.pages.some(p => p.printed === n && p.verified));
+    for (const n of row.reference) assert.ok(packet.pages.some(p => p.printedPages.includes(n) && p.verified));
   }
   assert.equal(packet.samples.length, counts.samples);
   assert.equal(new Set(packet.samples.map(s => s.source)).size, counts.samples);
@@ -75,4 +76,46 @@ export function practiceWriteIntent(plan,isolated,operation) {
 export async function freezeJson(file,value) {
   try {await fs.writeFile(file,JSON.stringify(value,null,2),{flag:'wx'});}
   catch(error){if(error.code!=='EEXIST')throw error;assert.deepEqual(await readJson(file),value,'固定寫入意圖已改變');}
+}
+
+export function validatePageBindings(pages) {
+  assert.ok(Array.isArray(pages) && pages.length);
+  const ids=new Map(),printed=new Map();
+  for(const page of pages){
+    assert.ok(typeof page.id==='string' && page.id);
+    assert.ok(Number.isInteger(page.printed) && page.printed>0);
+    assert.ok(Array.isArray(page.printedPages) && page.printedPages.length && page.printedPages.every(n=>Number.isInteger(n)&&n>0));
+    assert.ok(page.printedPages.includes(page.printed),'引用印刷頁不在課本頁面中');
+    assert.equal(new Set(page.printedPages).size,page.printedPages.length);
+    const sha=page.sha??page.sha256;assert.match(sha,/^[a-f0-9]{64}$/);
+    const spec={printedPages:page.printedPages,sha};
+    if(ids.has(page.id))assert.deepEqual(ids.get(page.id),spec,'同一課本圖的頁碼或 SHA 不符');
+    ids.set(page.id,spec);
+    for(const n of page.printedPages){if(printed.has(n))assert.equal(printed.get(n),page.id,'同一印刷頁對應多張課本圖');printed.set(n,page.id);}
+  }
+}
+
+// Timing is intentionally separate from every hashed production receipt.
+export async function recordBatchTime(packet,packetSha,event) {
+  if(!packet.timing)return;
+  assert.ok(['development','production'].includes(packet.timing.mode));
+  assert.ok(Number.isFinite(Date.parse(packet.timing.selectionStartedAt)));
+  assert.match(packet.prefix,/^[a-z0-9-]+$/);assert.match(event,/^[a-z-]+$/);
+  const folder=packet.outputDir+'/'+packet.prefix+'-timing';await fs.mkdir(folder,{recursive:true});
+  const file=folder+'/'+event+'.private.json';
+  const value={packetSha,event,mode:packet.timing.mode,selectionStartedAt:packet.timing.selectionStartedAt,at:new Date().toISOString()};
+  try {await fs.writeFile(file,JSON.stringify(value,null,2),{flag:'wx'});return value;}
+  catch(error){if(error.code!=='EEXIST')throw error;const old=await readJson(file);assert.equal(old.packetSha,packetSha);assert.equal(old.event,event);return old;}
+}
+
+export async function preserveOAuthReceipt(file,batch,proof) {
+  assertOAuthReceipt(batch,proof);
+  try {await fs.writeFile(file,JSON.stringify(proof,null,2),{flag:'wx'});}
+  catch(error){
+    if(error.code!=='EEXIST')throw error;
+    const original=await readJson(file);assertOAuthReceipt(batch,original);
+    const fixed=s=>({source:s.source,question:s.question,session:s.session,version:s.version,package:s.package,checks:s.checks,correct:s.correct,saved_and_reopened:s.saved_and_reopened});
+    assert.deepEqual(original.samples.map(fixed),proof.samples.map(fixed),'OAuth 重驗與固定證據不符');
+    await fs.writeFile(file+'.recheck-'+Date.now(),JSON.stringify(proof,null,2),{flag:'wx'});
+  }
 }
