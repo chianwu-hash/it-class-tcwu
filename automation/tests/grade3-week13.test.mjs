@@ -1,0 +1,39 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import {WEEK13_LEVELS as levels,getWeek13KeyboardTarget as target} from '../../grade3/115-1/week13-content.mjs';
+import {buildKeyboardGuideModel as model} from '../../shared/typing-guide-model.mjs';
+const read=p=>fs.readFile(new URL('../../'+p,import.meta.url),'utf8');
+
+test('all six original/replay texts have complete phonetics and working keys',()=>{
+ assert.equal(levels.length,6);
+ for(const l of levels){assert.notEqual(l.ans,l.replay);for(const answer of [l.ans,l.replay])for(const line of answer.split('\n')){
+  const t=target(line),m=model(typeof t==='string'?{lang:'en',text:t}:t);
+  assert.equal(m.warning,'',line);assert.equal(m.items.map(x=>x.char).join(''),line);
+  assert.ok(m.items.filter(x=>x.kind==='han').every(x=>x.keys.length>0),line);
+ }}
+ const growing=model(target(levels[4].replay)).items.find(x=>x.char==='長');assert.equal(growing.syllable,'ㄓㄤˇ');
+ assert.equal(model(target('紅紅的屋頂')).items.find(x=>x.char==='的').keys.at(-1),'7');
+ assert.equal(model(target('安平古堡')).items[0].keys.at(-1),'space');
+ assert.match(model(target('未核新句')).warning,/注音/);
+});
+test('the entire formal typing UI is in fast tasks; primary exercises remain native and separate',async()=>{
+ const html=await read('grade3/115-1/week13.html');
+ const mainEnd=html.indexOf('<section id="fast-tasks"');
+ assert.ok(mainEnd>html.indexOf('<section id="message-card"'));
+ assert.ok(html.indexOf('id="typing-levels-container"')>mainEnd);
+ assert.equal((html.match(/id="input-level[1-6]"/g)||[]).length,6);
+ assert.equal((html.match(/data-tab-field=/g)||[]).length,3);
+ assert.ok(!html.slice(0,mainEnd).includes('onclick="checkLevel'));
+ assert.match(html,/中英打沒有全班必做關數/);
+ assert.ok(!html.includes('先完成中文、英文各一關'));
+ for(const id of ['shift-practice','mood-practice','tab-greeting','tab-mood','tab-wish'])assert.match(html,new RegExp('id="'+id+'"(?![^>]*disabled)'));
+ const practice=await read('grade3/115-1/week13-practice.mjs');assert.ok(!/localStorage|supabase|preventDefault|checkLevel/.test(practice));
+});
+test('formal auth, guide refresh, registration and reward catalog use exactly week13 six-level identity',async()=>{
+ const js=await read('grade3/115-1/week13.js');
+ assert.match(js,/initGoogleCourseAuth/);assert.match(js,/createGoogleCourseProgress/);assert.match(js,/weekCode: '13'/);assert.match(js,/activityKey: 'typing_task_6'/);assert.match(js,/getWeek13KeyboardTarget/);
+ assert.ok(!/weekCode: '12'|localStorage|\.upsert\(/.test(js));
+ const sql=await read('supabase/grade3_week13_typing.sql');assert.match(sql,/'13','typing_task_6',6/);assert.match(sql,/five-then-flower/);assert.ok(!/create function|delete from|student_progress/i.test(sql));
+ const config=await read('shared/reward-tree-config.js');assert.match(config,/weekCode: '13', activityKey: 'typing_task_6'.*week13\.html#typing/);
+});

@@ -1,0 +1,11 @@
+{
+  "url": "https://res.cloudinary.com/dmqmjfqng/image/upload/v1795405335/it-class-tcwu/grade3/115-1/week13/week13-infographic-20261123.webp",
+  "width": 1920,
+  "height": 1080,
+  "bytes": 173192,
+  "sha256": "98ac544b0c25d5b425fa33bbc7edc5d0e6334948d464d3f71f7be0db69d374ae",
+  "prompt": "automation/prompts/grade3-week13-infographic.txt",
+  "reference": "grade3/115-1/images/week01/week01-computer-lab-full-process-poster-portrait-v6-1080x1350-q82.webp",
+  "generator": "ChatGPT work browser; explicit image action; recovered same accepted request blob; no resubmit",
+  "verified": "2026-11-23; Traditional Chinese, four operations, footer fast-task scope visually checked"
+}

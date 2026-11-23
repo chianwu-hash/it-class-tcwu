@@ -1,3 +1,13 @@
+# 2026-11-23 三年級第13週網頁本機製作
+
+- 教師已採用教案，明確要求中英打闖關全部快手。新工作樹`C:/Users/user/.codex/worktrees/grade3-week13-web-20261123`／分支`codex/grade3-week13-web-20261123`，由最新origin/main `cc0c2b0f`建立，不修改主工作區。
+- 主線Shift、Windows＋句號、Tab／Shift＋Tab／Enter、Alt＋Tab與三行留言卡；主線自由區不保存／不發獎，OS操作由教師觀察。第八課／Unit4中英打六關全部在快手區，無全班時段／最低關數。
+- 沿用三年級固定風格與第12週Google／progress／typing／tools服務；首頁最新徽章、navbar／後台週卡預設、努力樹目錄與本週限定登記SQL同次更新，練功坊產物僅版本／navbar指紋更新。
+- 已通過11項資料／PGlite與舊讀音回歸、完整合成Auth／RPC保存接回／草稿／換題、32個桌手機逐字注音亮鍵矩陣、固定基準與新頁1280／390畫面對照。正式學生寫入0；不把合成OAuth入口驗證冒稱正式Google登入。
+- 本週圖卡已生成、目視、壓1920×1080 WebP q80／173,192 bytes、Cloudinary回讀SHA一致；新UI成品blob由同筆已接受請求回收，無重送，詳排查紀錄。原生成器保持原樣，局部實驗driver不提交；新增只讀回收helper。
+- 本機預覽`http://127.0.0.1:3143/grade3/115-1/week13.html`，契約`grade3-week13-contract.md`。正式活動兩筆SQL登記、真教師後台切換／本人保存及正式發布尚未執行，不可宣稱上線；後續仍依PR進main與乾淨main發布腳本。
+- 私有證據在本工作樹`.chat-mode/evidence/week13-*`，保持不進公開repo；原核定教案與Claude三輪教學討論仍在`grade3-week13-plan-20261123`工作樹，未清除。Windows實體注音候選窗、面板與Alt＋Tab須教室實機確認。
+
 ## 發布登記
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
