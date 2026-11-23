@@ -7,7 +7,7 @@ import {validateDocument} from '../shared/quiz-document.mjs';
 import {setupProductionQuizDB} from './fixtures/production-quiz-db.mjs';
 
 const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
-for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);assert.equal(c.doc.blocks[0].questions.length,1);const q=c.doc.blocks[0].questions[0];assert.equal(q.type,'fields');assert.equal(q.work?.input,'expression');assert.ok(q.fields.every(f=>f.input==='math'));assert.ok(!q.answer.tuples);}
+for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);assert.equal(c.doc.blocks[0].questions.length,1);const q=c.doc.blocks[0].questions[0];assert.equal(q.type,'fields');assert.ok(['expression','sketch'].includes(q.work?.input));assert.ok(q.fields.every(f=>f.input==='math'));assert.ok(!q.answer.tuples);}
 await recordBatchTime(p,packetSha,'packet-validated');
 const file=s=>path.join(p.outputDir,p.prefix+'-'+s+'.private');
 const save=(s,v)=>fs.writeFile(file(s)+'.json',JSON.stringify(v,null,2)+'\n');
@@ -49,7 +49,7 @@ const sqls={
  answers:`select encode(convert_to(jsonb_build_object('rows',coalesce(jsonb_agg(jsonb_build_object('session',t.session_id,'question',a.question_id,'response',a.response,'correct',a.correct)),'[]'))::text,'utf8'),'base64') payload from public.quiz_answers a join public.quiz_attempts t on t.id=a.attempt_id where t.session_id in (${ids.samples.map(s=>q(s.session)).join(',')}) and t.user_id=${q(student)};`,
 };
 for(const [k,s] of Object.entries(sqls))await fs.writeFile(file(k)+'.sql',s);
-await save('document',doc);await save('plan',{packetSha,counts:n,ids,book:book.id,rows,assets,publications});
+await save('document',doc);await save('plan',{packetSha,counts:n,ids,book:book.id,rows,assets,publications,sampleExpected:Object.fromEntries(ids.samples.map(s=>{const question=doc.blocks.flatMap(b=>b.questions).find(q=>q.id===s.question_id);return [s.question_id,expectedResponse(question,s.work)];}))});
 const {db,uid}=await setupProductionQuizDB({snapshot:true});
 const actor=async(id,role='authenticated')=>{await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[id]);await db.exec('set role '+role);};
 const action=async(name,p={})=>(await db.query('select public.quiz_action($1,$2) data',[name,p])).rows[0].data;
