@@ -7,7 +7,7 @@ import {validateDocument} from '../shared/quiz-document.mjs';
 import {setupProductionQuizDB} from './fixtures/production-quiz-db.mjs';
 
 const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
-for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.equal(q.type,'fields');if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','set'].includes(f.input)));assert.ok(!q.answer.tuples);}}
+for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.equal(q.type,'fields');if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set'].includes(f.input)));assert.ok(!q.answer.tuples);}}
 await recordBatchTime(p,packetSha,'packet-validated');
 const file=s=>path.join(p.outputDir,p.prefix+'-'+s+'.private');
 const save=(s,v)=>fs.writeFile(file(s)+'.json',JSON.stringify(v,null,2)+'\n');
@@ -73,10 +73,12 @@ try{
  assert.equal(joined.document.questions.length,n.questions);
  for(const [i,got] of joined.document.questions.entries()){const {q,material}=expected[i];assert.equal(got.id,q.id);assert.deepEqual(got.prompt,q.prompt);assert.deepEqual(got.fields,q.fields);assert.deepEqual(got.work,q.work);assert.deepEqual(got.material,material);assert.ok(!('answer' in got));assert.deepEqual(joined.study.references[q.id],{bookId:book.id,primary:rows[i].primary,references:rows[i].reference,fields:[]});}
  // All fields exercise the production grading contract; work is saved, not automatically graded.
+ for(const a of p.responseAliases??[])assert.ok(doc.blocks.flatMap(b=>b.questions).some(q=>q.id===a.question_id&&q.fields.some(f=>f.id===a.field_id&&f.input==='math')));
  let cases=0;const results=[];
  for(const c of p.candidates)for(const qn of c.doc.blocks[0].questions){const workFor=q=>p.works[q.id]??p.works[c.source],response=expectedResponse(qn,workFor(qn));
-  const variants=[response,...qn.fields.map(field=>{const bad=structuredClone(response);if(field.input==='single')bad.f[field.id]=field.options.find(o=>o.id!==response.f[field.id]).id;else if(field.input==='set'){const ids=new Set(response.f[field.id]),toggle=field.options[0].id;ids.has(toggle)?ids.delete(toggle):ids.add(toggle);bad.f[field.id]=[...ids];}else bad.f[field.id]='999999';return bad;})];
-  for(const [i,value] of variants.entries()){
+  const aliases=(p.responseAliases??[]).filter(a=>a.question_id===qn.id).map(a=>{assert.ok(qn.fields.some(f=>f.id===a.field_id&&f.input==='math'));assert.ok(typeof a.value==='string'&&a.value.length>0&&a.value.length<=250);assert.notEqual(a.value,response.f[a.field_id]);const value=structuredClone(response);value.f[a.field_id]=a.value;return value;});
+  const variants=[response,...qn.fields.map(field=>{const bad=structuredClone(response);if(field.input==='single')bad.f[field.id]=field.options.find(o=>o.id!==response.f[field.id]).id;else if(field.input==='set'){const ids=new Set(response.f[field.id]),toggle=field.options[0].id;ids.has(toggle)?ids.delete(toggle):ids.add(toggle);bad.f[field.id]=[...ids];}else bad.f[field.id]='999999';return bad;}),...aliases];
+  for(const [i,value] of variants.entries()){const shouldPass=i===0||i>qn.fields.length;
    await db.exec('reset role');const bank=randomUUID(),version=randomUUID(),session=randomUUID();
    await db.query('insert into public.quiz_banks(id,owner_id,draft) values($1,$2,$3)',[bank,student,c.doc]);
    await db.query('insert into public.quiz_versions(id,bank_id,revision,document) values($1,$2,1,$3)',[version,bank,c.doc]);
@@ -91,14 +93,14 @@ try{
     if(own&&i===0&&item.work){const missing={...itemValue};delete missing.w;await assert.rejects(action('submit',{...args,response:JSON.stringify(missing)}));}
     await action('submit',args);if(own&&i===0)await action('submit',args);expectedResponses[item.id]=encoded;
    }
-   const after=await action('resume',{session_id:session});assert.equal(after.complete,true);assert.deepEqual(after.responses,expectedResponses);for(const review of after.reviews){const own=review.question_id===qn.id;assert.equal(review.correct,own?i===0:true);assert.deepEqual(review.answer,c.doc.blocks[0].questions.find(q=>q.id===review.question_id).answer);}cases++;
+   const after=await action('resume',{session_id:session});assert.equal(after.complete,true);assert.deepEqual(after.responses,expectedResponses);for(const review of after.reviews){const own=review.question_id===qn.id;assert.equal(review.correct,own?shouldPass:true);assert.deepEqual(review.answer,c.doc.blocks[0].questions.find(q=>q.id===review.question_id).answer);}cases++;
   }
   results.push({source:c.source,question:qn.id,fields:qn.fields.length,exact:true});
  }
  await actor(student);for(const s of ids.samples){const joined=await action('join',{session_id:s.session});assert.equal(joined.document.questions.length,1);assert.deepEqual(joined.document.questions[0].prompt,expected.find(e=>e.q.id===s.question_id).q.prompt);}
  await actor(uid(3));assert.ok(!(await action('library_sessions')).sessions.some(s=>s.id===ids.session));await assert.rejects(action('join',{session_id:ids.session}));
  await db.exec('reset role');await db.exec(sqls.rollback);await actor(uid(2));assert.ok(!(await action('library_sessions')).sessions.some(s=>s.id===ids.session));
- await save('isolated',{passed:true,packetSha,counts:n,cases,results,private_samples:n.samples,anonymous_denied:true,other_grade_denied:true,rollback_verified:true,sql:Object.fromEntries(Object.entries(sqls).map(([k,v])=>[k,digest(v)]))});
+ await save('isolated',{passed:true,packetSha,counts:n,cases,equivalent_responses:p.responseAliases?.length??0,results,private_samples:n.samples,anonymous_denied:true,other_grade_denied:true,rollback_verified:true,sql:Object.fromEntries(Object.entries(sqls).map(([k,v])=>[k,digest(v)]))});
  const frozenPlan=await readJson(file('plan')+'.json'),isolated=await readJson(file('isolated')+'.json');
  for(const op of ['stage','activate'])await freezeJson(file(op+'-intent')+'.json',practiceWriteIntent(frozenPlan,isolated,op));
  await recordBatchTime(p,packetSha,'isolated-finished');

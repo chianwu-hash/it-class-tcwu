@@ -19,7 +19,7 @@ const sha=b=>createHash('sha256').update(b).digest('hex');
      assert.equal(await rows.last().locator('input').isChecked(),expected.length===0);fields.push({id:f.id,input:f.input,options:f.options.length,selected:expected});
     }else if(f.input==='single'){
      const radios=board.locator('input[type=radio][name="field-'+q.id+'-'+f.id+'"]');assert.equal(await radios.count(),f.options.length);for(const [j,o] of f.options.entries()){assert.equal(await radios.nth(j).isChecked(),o.id===expected);assert.ok(await radios.nth(j).isDisabled());}fields.push({id:f.id,input:f.input,selected:expected});
-    }else{assert.equal(f.input,'math');const input=board.locator('[id="field-'+q.id+'-'+f.id+'"]');if(await input.count()){assert.equal(await input.inputValue(),expected);assert.ok(await input.isDisabled());}else assert.ok((await board.innerText()).includes(expected));fields.push({id:f.id,input:f.input,value:expected});}
+    }else{assert.ok(['math','text'].includes(f.input));const input=board.locator('[id="field-'+q.id+'-'+f.id+'"]');if(await input.count()){assert.equal(await input.inputValue(),expected);assert.ok(await input.isDisabled());}else assert.ok((await board.innerText()).includes(expected));fields.push({id:f.id,input:f.input,value:expected});}
    }
    const bounds=await board.evaluate(el=>({scroll:el.scrollWidth,width:el.clientWidth}));assert.ok(bounds.scroll<=bounds.width+2);const target=path.join(E,prefix+'-ui-'+width+'.private.png');await board.screenshot({path:target});checks.push({width,fields,no_horizontal_overflow:true,file:target,sha256:sha(await fs.readFile(target))});if(width===1280)await page.waitForTimeout(10000);
   }
