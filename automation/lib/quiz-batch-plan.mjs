@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
+import {validateSketch} from '../../shared/sketch/contract.mjs';
 import {validateDocument} from '../../shared/quiz-document.mjs';
 
 export const digest = bytes => createHash('sha256').update(bytes).digest('hex');
@@ -29,7 +30,9 @@ export function expectedResponse(question, work) {
   assert.equal(question.type, 'fields');
   const fields = Object.fromEntries(question.fields.map(f => [f.id, question.answer.fields[f.id][0]]));
   for (const tuple of question.answer.tuples ?? []) Object.assign(fields, tuple.accepted[0]);
-  if (question.work) assert.equal(typeof work, 'string');
+  if (question.work?.input==='expression') assert.ok(typeof work==='string'&&work.trim());
+  else if(question.work?.input==='sketch')validateSketch(work);
+  else assert.ok(!question.work);
   return {v: 1, f: fields, ...(question.work ? {w: work} : {})};
 }
 

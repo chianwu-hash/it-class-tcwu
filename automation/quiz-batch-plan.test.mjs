@@ -52,12 +52,16 @@ test('清單生成器由批次推導 checks，事前意圖檔列入啟用 input 
  const packet={schema:1,prefix:'fixture',outputDir:folder,candidates:Array.from({length:25},(_,i)=>candidate(i)),inputs:{},pages:[{id:'page1',printed:1,printedPages:[1],sha:'a'.repeat(64),verified:true}],studyRows:Array.from({length:25},(_,i)=>({question_id:'q'+i,primary:1,reference:[1],student_explanation:'fixture',teacher_notes:{reason:'fixture'}})),samples:[{source:'s0',question_id:'q0',work:'1/1=1'},{source:'s1',question_id:'q1',work:'1/1=1'}]};
  const bytes=JSON.stringify(packet),packetSha=createHash('sha256').update(bytes).digest('hex'),packetFile=path.join(folder,'packet.private.json');await fs.writeFile(packetFile,bytes);
  await fs.writeFile(path.join(folder,'fixture-plan.private.json'),JSON.stringify({packetSha,ids:{session:'fixed',samples:packet.samples}}));
- await fs.writeFile(path.join(folder,'fixture-isolated.private.json'),JSON.stringify({packetSha,sql:{activate:'frozen-sql'}}));
- const result=spawnSync(process.execPath,['automation/create-quiz-practice-manifest.mjs',packetFile],{encoding:'utf8',windowsHide:true});assert.equal(result.status,0,result.stderr);
+ await fs.writeFile(path.join(folder,'fixture-isolated.private.json'),JSON.stringify({packetSha,passed:true,rollback_verified:true,sql:{activate:'frozen-sql'}}));
+ const extraFile=path.join(folder,'extra.private.json'),artifact=path.join(folder,'artifact.txt');await fs.writeFile(artifact,'original');await fs.writeFile(extraFile,JSON.stringify({passed:true,packetSha,artifacts:{[artifact]:createHash('sha256').update('original').digest('hex')}}));
+ const result=spawnSync(process.execPath,['automation/create-quiz-practice-manifest.mjs',packetFile,extraFile],{encoding:'utf8',windowsHide:true});assert.equal(result.status,0,result.stderr);
  const manifest=JSON.parse(await fs.readFile(path.join(folder,'fixture-manifest.private.json'),'utf8'));
  const activation=manifest.stages.find(s=>s.id==='activate');assert.ok(activation.inputs.includes(path.join(folder,'fixture-activate-intent.private.json')));
  assert.ok(activation.checks.some(c=>c.path[0]==='questions'&&c.equals===25));assert.equal(manifest.stages[0].checks.find(c=>c.path[0]==='sampleCount').equals,2);
  const intent=JSON.parse(await fs.readFile(path.join(folder,'fixture-activate-intent.private.json'),'utf8'));assert.equal(intent.sqlSha,'frozen-sql');assert.equal(intent.packetSha,packetSha);
+ assert.ok(manifest.stages[0].inputs.includes(extraFile));assert.ok(manifest.stages[0].command.includes(extraFile));
+ await fs.writeFile(path.join(folder,'fixture-oauth-proof.private.json'),JSON.stringify({passed:true,formalOAuth:true,packetSha,sampleCount:2,samples:[{question:'q0'},{question:'q1'}]}));
+ await fs.writeFile(artifact,'tampered');const denied=spawnSync(process.execPath,['automation/verify-quiz-batch-receipt.mjs',packetFile,extraFile],{encoding:'utf8',windowsHide:true});assert.notEqual(denied.status,0);await assert.rejects(fs.access(path.join(folder,'fixture-oauth-gate.private.json')));
 });
 
 test('跨頁可同 id 拆列，誤頁、歧義及同 id 換內容均拒絕',()=>{
@@ -82,4 +86,10 @@ test('OAuth 重驗保留首次固定收據，另存沿用紀錄',async()=>{
  await preserveOAuthReceipt(file,batch,proof);const bytes=await fs.readFile(file);
  await preserveOAuthReceipt(file,batch,{...proof,samples:[{...sample,reused_saved_answer:true}]});assert.deepEqual(await fs.readFile(file),bytes);
  await assert.rejects(preserveOAuthReceipt(file,batch,{...proof,samples:[{...sample,session:'other'}]}));
+});
+
+test('筆跡作答使用原生 sketch 契約，樣本正解只有共用推導一份',()=>{
+ const q={...question,work:{input:'sketch',label:'fixture'}},work={version:1,strokes:[[[0.1,0.1],[0.1,0.1],[0.8,0.8]]],colors:['#185e60']};
+ assert.deepEqual(expectedResponse(q,work),{v:1,f:{a:'1',b:'0'},w:work});
+ assert.throws(()=>expectedResponse(q,'text'));assert.throws(()=>expectedResponse(q,{version:1,strokes:[]}));
 });

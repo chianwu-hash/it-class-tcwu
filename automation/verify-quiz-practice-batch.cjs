@@ -31,8 +31,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
   await recordBatchTime(p,packetSha,'oauth-started');
   for(const s of ids.samples){
    const question=p.candidates.flatMap(c=>c.doc.blocks.flatMap(b=>b.questions)).find(q=>q.id===s.question_id);
-   const expected=expectedResponse(question,s.work),ref=p.studyRows.find(r=>r.question_id===s.question_id);
-   const neighbor=p.pages.find(a=>a.printed===ref.primary+1)?.printed??p.pages.find(a=>a.printed===ref.primary-1)?.printed;assert.ok(neighbor);
+   const expected=plan.sampleExpected[s.question_id];assert.deepEqual(expected,expectedResponse(question,s.work));const ref=p.studyRows.find(r=>r.question_id===s.question_id);
+   const primaryPage=p.pages.find(a=>a.printedPages.includes(ref.primary));const neighbor=p.pages.filter(a=>a.id!==primaryPage.id).sort((a,b)=>Math.abs(a.printed-ref.primary)-Math.abs(b.printed-ref.primary))[0]?.printedPages[0];assert.ok(neighbor);
    await page.goto('https://it-class-tcwu.vercel.app/grade3/115-1/quiz.html?cloud=1&session='+s.session,{waitUntil:'domcontentloaded',timeout:45000});
    const article=page.locator('article.question[data-question-id="'+s.question_id+'"]');await article.waitFor();await identity();
    assert.ok((await page.locator('body').innerText()).includes('307 \u73ed 30 \u865f'),'dedicated account not visibly identified');
@@ -43,19 +43,28 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    if(saved){assert.deepEqual(JSON.parse(before.responses[s.question_id]),expected);assert.equal(before.reviews.find(r=>r.question_id===s.question_id)?.correct,true);}
    else assert.deepEqual(before.responses,{});
    const checkAnswer=async()=>{
-    if(saved){const text=await article.innerText();assert.ok(text.includes(s.work));return;}
+    if(saved){if(question.work.input==='expression'){const text=await article.innerText();assert.ok(text.includes(s.work));}else assert.equal(await article.locator('.quiz-saved-work svg polyline').count(),expected.w.strokes.length);return;}
     for(const [id,value] of Object.entries(expected.f))assert.equal(await article.locator('#field-'+s.question_id+'-'+id).inputValue(),value);
-    assert.equal(await article.locator('#work-'+s.question_id).inputValue(),s.work);
+    if(question.work.input==='expression')assert.equal(await article.locator('#work-'+s.question_id).inputValue(),s.work);
+    else assert.deepEqual(await article.locator('.camp-sketch-board').evaluate(svg=>({version:1,strokes:[...svg.querySelectorAll('polyline')].map(p=>p.getAttribute('points').split(' ').map(pair=>pair.split(',').map((v,i)=>Math.round(Number(v)/(i?360:600)*10000)/10000))),colors:[...svg.querySelectorAll('polyline')].map(p=>p.getAttribute('stroke'))})),expected.w);
    };
    const checks=[],book=page.locator('#lightbox');
    const assertPage=async number=>{
-    await page.waitForFunction(n=>{const t=document.querySelector('.qtb-book-toolbar strong')?.textContent,img=document.querySelector('#lightbox-img'),status=document.querySelector('.qtb-reading-status');return t?.includes('\u7b2c'+n+'\u9801')&&img?.complete&&img.naturalWidth>9&&!status?.classList.contains('is-error')&&status?.textContent.includes('80%');},number,{timeout:35000});
+    const label='\u7b2c'+plan.assets.find(a=>a.printedPages.includes(number)).printedPages.join('\u2013')+'\u9801';
+    await page.waitForFunction(label=>{const t=document.querySelector('.qtb-book-toolbar strong')?.textContent,img=document.querySelector('#lightbox-img'),status=document.querySelector('.qtb-reading-status');return t?.includes(label)&&img?.complete&&img.naturalWidth>9&&!status?.classList.contains('is-error')&&status?.textContent.includes('80%');},label,{timeout:35000,polling:5000});
     const hash=await page.locator('#lightbox-img').evaluate(async img=>{const r=await fetch(img.currentSrc||img.src);if(!r.ok)throw Error('page unavailable');return [...new Uint8Array(await crypto.subtle.digest('SHA-256',await r.arrayBuffer()))].map(x=>x.toString(16).padStart(2,'0')).join('');});
     assert.equal(hash,plan.assets.find(a=>a.printedPages.includes(number)).sha);
    };
    for(const width of [1280,390]){
     await page.setViewportSize({width,height:960});
-    if(!saved){for(const [id,value] of Object.entries(expected.f))await article.locator('#field-'+s.question_id+'-'+id).fill(value);await article.locator('#work-'+s.question_id).fill(s.work);}
+    if(!saved){
+     for(const [id,value] of Object.entries(expected.f))await article.locator('#field-'+s.question_id+'-'+id).fill(value);
+     if(question.work.input==='expression')await article.locator('#work-'+s.question_id).fill(s.work);
+     else if(width===1280){
+      const board=article.locator('.camp-sketch-board');await board.scrollIntoViewIfNeeded();const rect=await board.boundingBox();assert.ok(rect&&rect.width>100);
+      for(const stroke of expected.w.strokes){await page.mouse.move(rect.x+stroke[0][0]*rect.width,rect.y+stroke[0][1]*rect.height);await page.mouse.down();for(const point of stroke.slice(2))await page.mouse.move(rect.x+point[0]*rect.width,rect.y+point[1]*rect.height);await page.mouse.up();}
+     }
+    }
     await checkAnswer();await article.locator('.qtb-entry').click();await book.waitFor();await assertPage(ref.primary);
     await book.locator('.qtb-book-toolbar select').selectOption(String(neighbor));await assertPage(neighbor);
     await book.getByRole('button',{name:'\u56de\u672c\u984c\u9801',exact:true}).click();await assertPage(ref.primary);

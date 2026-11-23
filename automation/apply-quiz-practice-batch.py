@@ -36,8 +36,7 @@ def answers():
  r=query('answers');assert len(r['rows'])==counts['samples']
  for sample in ids['samples']:
   matches=[a for a in r['rows'] if a['session']==sample['session'] and a['question']==sample['question_id']];assert len(matches)==1 and matches[0]['correct']
-  q=next(q for c in packet['candidates'] for b in c['doc']['blocks'] for q in b['questions'] if q['id']==sample['question_id'])
-  expected={'v':1,'f':{f['id']:q['answer']['fields'][f['id']][0] for f in q['fields']},'w':sample['work']}
+  expected=plan['sampleExpected'][sample['question_id']]
   assert json.loads(matches[0]['response'])==expected
  save('answer-readback',{'passed':True,'sampleCount':len(r['rows']),'questions':[a['question'] for a in r['rows']]})
 
