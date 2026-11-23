@@ -2,6 +2,8 @@
 
 2026-11-23，來源origin/main `cc0c2b0f81b46ee7e9570bb773b56be7144eff31`，新工作樹 `grade3-week13-web-20261123`。教師已採用教案並要求製作週頁、維持風格；本次先製作可檢視的本機版，不將未套用的登記或未發布候選稱正式完成。
 
+驗收程式來源提交：`c1efac20`；[草稿PR #440](https://github.com/chianwu-hash/it-class-tcwu/pull/440)。後續補充本段只修改文件，頁面與已驗證程式保持該提交內容。預覽服務3143持續提供本工作樹，未合併main、未部署。
+
 ## 開發前契約
 
 - [x] 已重讀dev-sop、shared-modules、page-types、new-page-checklist、high-risk-changes、agent-handoff、prompt-template、lesson-to-web-sop、三年級風格與每週圖卡規範。
