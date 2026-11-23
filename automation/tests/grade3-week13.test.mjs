@@ -5,6 +5,14 @@ import {WEEK13_LEVELS as levels,getWeek13KeyboardTarget as target} from '../../g
 import {buildKeyboardGuideModel as model} from '../../shared/typing-guide-model.mjs';
 const read=p=>fs.readFile(new URL('../../'+p,import.meta.url),'utf8');
 
+test('boss original and replay advance to distinct Chinese sentences while retaining five-line difficulty',()=>{
+ const boss=levels.find(x=>x.id===6),earlier=new Set(levels.filter(x=>x.id<6).flatMap(x=>[x.ans,x.replay]));
+ const original=boss.ans.split('\n'),replay=boss.replay.split('\n');
+ assert.equal(original.length,5);assert.equal(replay.length,5);
+ assert.ok(!earlier.has(original[0]));assert.ok(!earlier.has(replay[0]));assert.notEqual(original[0],replay[0]);
+ assert.ok([...original[0]].length>=25&&[...replay[0]].length>=25);
+});
+
 test('all six original/replay texts have complete phonetics and working keys',()=>{
  assert.equal(levels.length,6);
  for(const l of levels){assert.notEqual(l.ans,l.replay);for(const answer of [l.ans,l.replay])for(const line of answer.split('\n')){
