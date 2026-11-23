@@ -1,9 +1,9 @@
 import { initGoogleCourseAuth, createGoogleCourseProgress } from '../../shared/grade3-google-course.js?v=20261028-drafts';
 import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261028-drafts';
 import { initTypingTools } from '../../shared/typing-tools.js?v=20261028-keyboard';
-import { WEEK13_LEVELS, describeWeek13Mismatch } from './week13-content.mjs?v=20261123-hard-boss';
+import { WEEK13_LEVELS, describeWeek13Mismatch } from './week13-content.mjs?v=20261123-unique-boss';
 
-import { getWeek13KeyboardTarget as getTextbookKeyboardTarget } from './week13-content.mjs?v=20261123-hard-boss';
+import { getWeek13KeyboardTarget as getTextbookKeyboardTarget } from './week13-content.mjs?v=20261123-unique-boss';
 
 const levelsData = WEEK13_LEVELS.map(({ id, ans }) => ({ id, ans }));
 document.querySelector('#fast-tasks details').open = true;

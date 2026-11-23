@@ -1,7 +1,7 @@
 // Run with the shared browser lease wrapper; synthetic Auth/RPC, no real student writes.
 const fs=require('node:fs'),assert=require('node:assert/strict'),{pathToFileURL}=require('node:url');
 const {connectCdp,safeScreenshot}=require('D:/projects/cdp-tools/packages/cdp-safe-client');
-const base='http://127.0.0.1:3143',week='/grade3/115-1/week13.html',out='.chat-mode/evidence/week13-browser';
+const base=process.env.WEEK13_BASE_URL||'http://127.0.0.1:3143',week='/grade3/115-1/week13.html',out='.chat-mode/evidence/week13-browser';
 const user={user:{id:'synthetic-week13-a',email:'synthetic@apps.ntpc.edu.tw'},access_token:'synthetic'};
 const fixture=`
 export const SUPABASE_URL='${base}/fake',SUPABASE_ANON_KEY='synthetic';
