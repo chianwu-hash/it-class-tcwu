@@ -6,6 +6,8 @@
 
 2026-11-23教師圖示修訂：表情面板快捷鍵的Windows文字改為既有Font Awesome品牌圖示鍵帽，保留螢幕閱讀文字「Windows 鍵」及title；builder與HTML同步、CSS版本更新。1280／390實際字型與glyph載入、44px鍵帽及無水平溢出通過，已檢視手機圖；證據`.chat-mode/evidence/win-icon.json`及兩張截圖。沒有改動主線或打字服務。
 
+2026-11-23教師進度提示：基礎英打快手區加上本週建議練到第1大關「手指的暖身運動」→「無名指加入」（S、L），補左無名指S／右無名指L及從個人進度續練、已完成者可繼續往後的說明。已核現行curriculum第3小關title與focus `sl`；同步builder、HTML與教案，不改必做標準或進度資料。
+
 ## 開發前契約
 
 - [x] 已重讀dev-sop、shared-modules、page-types、new-page-checklist、high-risk-changes、agent-handoff、prompt-template、lesson-to-web-sop、三年級風格與每週圖卡規範。
