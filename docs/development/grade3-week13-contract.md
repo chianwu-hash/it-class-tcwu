@@ -2,7 +2,9 @@
 
 2026-11-23，來源origin/main `cc0c2b0f81b46ee7e9570bb773b56be7144eff31`，新工作樹 `grade3-week13-web-20261123`。教師已採用教案並要求製作週頁、維持風格；本次先製作可檢視的本機版，不將未套用的登記或未發布候選稱正式完成。
 
-驗收程式來源提交：`c1efac20`；[草稿PR #440](https://github.com/chianwu-hash/it-class-tcwu/pull/440)。後續補充本段只修改文件，頁面與已驗證程式保持該提交內容。預覽服務3143持續提供本工作樹，未合併main、未部署。
+完整功能驗收程式來源提交：`c1efac20`；[草稿PR #440](https://github.com/chianwu-hash/it-class-tcwu/pull/440)。後續局部圖示修改另列下方；主線互動、身分與進度程式保持。預覽服務3143持續提供本工作樹，未合併main、未部署。
+
+2026-11-23教師圖示修訂：表情面板快捷鍵的Windows文字改為既有Font Awesome品牌圖示鍵帽，保留螢幕閱讀文字「Windows 鍵」及title；builder與HTML同步、CSS版本更新。1280／390實際字型與glyph載入、44px鍵帽及無水平溢出通過，已檢視手機圖；證據`.chat-mode/evidence/win-icon.json`及兩張截圖。沒有改動主線或打字服務。
 
 ## 開發前契約
 

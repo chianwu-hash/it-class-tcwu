@@ -1,5 +1,6 @@
 @import url('./week11.css?v=20261110');
 @import url('./week11-infographic.css?v=20261111');
+.windows-key{min-width:44px;text-align:center;vertical-align:middle}.windows-key .fa-windows{font-size:24px;line-height:1}
 .task-section>summary{list-style:none;display:flex;align-items:center;gap:10px;cursor:pointer}.task-section>summary::-webkit-details-marker{display:none}.task-section>summary::after{content:'⌄';font-size:28px;margin-left:auto;margin-right:22px}.task-section:not([open])>summary::after{content:'›'}.task-section .card-heading{flex:1;min-width:0}.task-section .card-body{padding-top:18px}.task-section>summary .card-heading{margin:0}
 .card .notice{display:block}.card .notice p+p{margin-top:10px}.card-amber{--border:#fde68a;--light:#fffbeb;--deep:#92400e}.card-rose{--border:#fecdd3;--light:#fff1f2;--deep:#9f1239}
 .keyboard-demo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:20px 0}.keyboard-demo>div{padding:18px;background:#f0f9ff;border:2px solid #bae6fd;border-radius:18px}.keyboard-demo strong{display:block;margin-bottom:10px;font-size:21px}.keyboard-demo p{margin-top:12px!important}.key-result{font-size:25px;font-weight:900;color:#0369a1;display:block;margin-top:12px}
