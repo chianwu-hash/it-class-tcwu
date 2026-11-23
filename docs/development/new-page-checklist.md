@@ -109,7 +109,8 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   ```
 - [ ] 有打字闖關且為 grade3 → **同時呼叫 `initNavbarAuth()`**（防止 navbar 重渲後 listener 消失）
-- [ ] 有打字闖關 → 錯字提示必須沿用或等效於既有精準提示邏輯（可指出第幾行、第幾個字附近、可能少字/多字），不可只給籠統提示
+- [ ] 長句／多行／魔王闖關 → 沿`initTypingChallenge({ errorLocator: true })`使用共用錯字定位：題目／輸入對照標記、漏／多／錯字與「帶我到這裡」，不只顯示行字數；根節點用`div`並保留live region，不另造比對或判分
+- [ ] 錯字定位 → 原題／換題桌手機已實點定位並鍵盤改字，含空白／標點／Enter／大小寫／過期提示／IME與鎖定；不自動改字／提交／保存，有逐行鍵盤圖時提示跟隨新游標，無溢出。詳`lesson-to-web-sop.md`「打字錯字定位」
 - [ ] 有打字闖關 → 每關設定 `levelEncouragements`，且使用阿德勒式鼓勵語：描述努力、策略、耐心、修正與進步，不只寫泛泛稱讚
 - [ ] 有打字闖關且需要草稿暫存 → 使用 `draftOptions: { enabled: true }`，草稿只存 `typing_drafts`，不可寫入 `student_progress` 或 `localStorage`
 - [ ] 有草稿暫存 → 只做手動「儲存草稿 / 回復上次草稿」，不可加入自動存檔、`setInterval`、`focus` / `visibilitychange` / `beforeunload` 存檔
