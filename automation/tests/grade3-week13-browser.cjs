@@ -54,6 +54,7 @@ rpc(name,args){
  async function screenshot(width,name,section){await p.setViewport({width,height:900});await p.evaluate(id=>{document.documentElement.style.scrollBehavior='auto';if(id){const e=document.getElementById(id)||document.querySelector(id);scrollTo(0,scrollY+e.getBoundingClientRect().top-(document.querySelector('body > nav')?.getBoundingClientRect().height||0)-16);}else scrollTo(0,0);},section);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'overflow '+width);if(!process.env.QA_SKIP_IMAGES)await safeScreenshot(p,{path:`${out}/${name}.png`});}
  try{
   await scenario();assert.ok(await p.$eval('#typing-levels-container',e=>e.inert));assert.ok(await p.$eval('#input-level1',e=>e.disabled));
+  assert.equal(await p.$('#login'),null);assert.equal(await p.$('#course-identity-status'),null);
   await p.click('#login-btn');assert.equal(await p.evaluate(()=>fixtureLoginCalls[0].returnTo),base+week);
   assert.equal(await p.$eval('#fingers a[href="typing-foundation.html"]',e=>e.textContent.includes('基礎英打')),true);
   await screenshot(1280,'week13-desktop');await screenshot(390,'week13-mobile');
@@ -80,7 +81,8 @@ rpc(name,args){
   for(let id=3;id<=5;id++){assert.equal(await visible(id),true);await value(id,levels[id-1].ans);await check(id);await settled(id);}
   assert.match(await p.$eval('#msg-level5',e=>e.textContent),/一片葉/);
   await screenshot(390,'week13-typing-mobile','typing');
-  await value(6,levels[5].ans.replace('red','rex'));await check(6);await p.waitForFunction(()=>document.querySelector('#msg-level6').textContent.includes('第 3 行'));
+  const bossTypo=levels[5].ans.split('\n');bossTypo[2]=bossTypo[2].replace(/[A-Za-z]/,c=>c==='x'?'y':'x');
+  await value(6,bossTypo.join('\n'));await check(6);await p.waitForFunction(()=>document.querySelector('#msg-level6').textContent.includes('第 3 行'));
   await value(6,levels[5].ans.replace('\n',''));await check(6);await p.waitForFunction(()=>document.querySelector('#msg-level6').textContent.includes('Enter'));
   await value(6,levels[5].ans);await p.evaluate(()=>fixtureSaveFail=true);await check(6);await p.waitForFunction(()=>document.querySelector('#msg-level6').textContent.includes('合成儲存失敗'));assert.equal(await p.$('#celebration-overlay'),null);
   await p.evaluate(()=>fixtureSaveFail=false);await check(6);await settled(6);assert.match(await p.$eval('#celebration-overlay',e=>e.textContent),/一片葉、一朵花/);
