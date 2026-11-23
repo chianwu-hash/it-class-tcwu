@@ -1,3 +1,9 @@
+# 2026-11-24 商餘數與整除 6 筆已上線
+
+- 6 筆來源保留共用材料和原序，轉成 31 小題／56 作答位置，逐小題獨立判分。87 組隔離、15 項回歸、25 組算式／筆跡／連線／多小題交叉隔離、31 小題課本對照／正式逐題讀回與學生入口皆通過。5% 抽 1 題正式 OAuth 桌手機複選、教材開頁／返回保存及重載通過。總帳 v65：479／708，剩 229。[同批收據](quiz-mixed6calc-release-20261124.md)。沒有前端或函式變動。
+- 補拍驗收誤找已存答案的預覽列；實際為停用的原 checkbox，已依 DOM 核完整勾選／停用／逐項判分，修共用驗收並保留首份收據，重驗沒有重送。下一輪繼續可共用規則的來源，真正不確定保留分流；本夜仍依使用者授權推進。
+- 前批 7 筆連線的正式部署、v64 總帳與 PR454 收據已同步本 PR 的交接及發布列；私有 135 檔證據封存 SHA／CRC 通過。正式 dpl_E3YREHrkBm7XcVn8NAnmvrs5HE79，回復 dpl_CsNTCMtokMGmL74EeVR98wZAkHYT，發布鎖已釋放。
+
 # 2026-11-24 除法情境連線 7 筆待 main 發布與正式驗收
 
 - 原向量圖可完整擷取文字的 7 筆／23 配對位置已核原圖、教師鍵及獨立驗算；30 組隔離與 28 項相關回歸通過，題目無新增媒體。兩筆教材舊頁碼已由 86 更正至實際 87，首版隱藏卷關閉，固定修訂批次 matching7r1 待正式抽 1 題、啟用及逐題讀回。[本批](quiz-matching7-release-20261124.md)。
@@ -52,6 +58,7 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | codex-g3matching7r1 | 2026-11-23T20:08:14.949Z | `ae9be2a` | `dpl_CsNTCMtokMGmL74EeVR98wZAkHYT` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-matching-sources.mjs、shared/quiz-workshop/generated/assets.json | `dpl_E3YREHrkBm7XcVn8NAnmvrs5HE79`／回滾 `dpl_CsNTCMtokMGmL74EeVR98wZAkHYT`（eolOnly 0） |
 | 已完成 | codex-g3matching5 | 2026-11-23T14:48:50.888Z | `5c0b423` | `dpl_52fR1hai3f1MBbKL7ZzJSrzymw2M` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-fields.mjs、shared/quiz-matching-sources.mjs、shared/quiz-workshop/generated/assets.json | `dpl_CsNTCMtokMGmL74EeVR98wZAkHYT`／回滾 `dpl_52fR1hai3f1MBbKL7ZzJSrzymw2M`（eolOnly 0） |
 | 已完成 | Codex-grade3-week13-hints-20261123 | 2026-11-23T07:14:07.022Z | `59af143` | `dpl_D54urQaB92NfPD9gZgUNQdUKtgmf` | grade3/115-1/week13.html、grade3/115-1/week13.js、grade3/LessonPlan/115-1/Week 13.md | `dpl_52fR1hai3f1MBbKL7ZzJSrzymw2M`／回滾 `dpl_D54urQaB92NfPD9gZgUNQdUKtgmf`（eolOnly 0） |
 | 已完成 | Codex-grade3-week13-english-20261123 | 2026-11-23T06:33:29.298Z | `6180522` | `dpl_FMJpZfESoJz97SvR3otdqZGDHm86` | grade3/115-1/week13-content.mjs、grade3/115-1/week13.html、grade3/115-1/week13.js、grade3/LessonPlan/115-1/Week 13.md | `dpl_D54urQaB92NfPD9gZgUNQdUKtgmf`／回滾 `dpl_FMJpZfESoJz97SvR3otdqZGDHm86`（eolOnly 0） |

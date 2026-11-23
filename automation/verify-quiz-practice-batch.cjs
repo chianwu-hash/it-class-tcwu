@@ -42,10 +42,24 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    const saved=before.responses[s.question_id]!==undefined;
    if(saved){assert.deepEqual(JSON.parse(before.responses[s.question_id]),expected);assert.equal(before.reviews.find(r=>r.question_id===s.question_id)?.correct,true);}
    else assert.deepEqual(before.responses,{});
-   const checkMatching=async()=>{for(const f of question.fields){assert.equal(f.input,'single');const index=f.options.findIndex(o=>o.id===expected.f[f.id]);assert.equal(await article.locator('.qm-card[data-side=left][data-id=\"'+f.id+'\"] .qm-pair').innerText(),String.fromCharCode(65+index));}};
+   const checkMatching=async()=>{await article.locator('.quiz-matching').waitFor();for(const f of question.fields){assert.equal(f.input,'single');const index=f.options.findIndex(o=>o.id===expected.f[f.id]);assert.equal(await article.locator('.qm-card[data-side=left][data-id=\"'+f.id+'\"] .qm-pair').innerText(),String.fromCharCode(65+index));}};
+   const isMatching=question.fields.every(f=>f.input==='single');
+   const checkPlain=async()=>{
+    if(isMatching){await checkMatching();return;}
+    for(const [i,f] of question.fields.entries()){
+     if(f.input==='set'){
+      const chosen=expected.f[f.id];
+      await article.locator('fieldset.quiz-field,.quiz-field-preview-set').nth(i).waitFor();
+      const live=article.locator('fieldset.quiz-field').nth(i);
+      if(await live.count()){const boxes=live.locator('input[type=checkbox]');assert.equal(await boxes.count(),f.options.length+1);for(const [j,o] of f.options.entries()){assert.equal(await boxes.nth(j).isChecked(),chosen.includes(o.id));if(saved)assert.ok(await boxes.nth(j).isDisabled());}assert.equal(await boxes.last().isChecked(),chosen.length===0);}
+      else{assert.ok(saved);const rows=article.locator('.quiz-field-preview-set').nth(i).locator('.preview-option');for(const [j,o] of f.options.entries())assert.equal(await rows.nth(j).getAttribute('data-field-result'),chosen.includes(o.id)?'correct':null);if(chosen.length===0)assert.equal(await rows.last().getAttribute('data-field-result'),'correct');}
+     }else if(!saved)assert.equal(await article.locator('#field-'+s.question_id+'-'+f.id).inputValue(),expected.f[f.id]);
+     else assert.ok((await article.innerText()).includes(expected.f[f.id]));
+    }
+   };
    const checkAnswer=async()=>{
-    if(saved){if(question.work?.input==='expression'){const text=await article.innerText();assert.ok(text.includes(s.work));}else if(question.work)assert.equal(await article.locator('.quiz-saved-work svg polyline').count(),expected.w.strokes.length);else await checkMatching();return;}
-    if(!question.work){await checkMatching();return;}
+    if(saved){if(question.work?.input==='expression'){const text=await article.innerText();assert.ok(text.includes(s.work));}else if(question.work)assert.equal(await article.locator('.quiz-saved-work svg polyline').count(),expected.w.strokes.length);else await checkPlain();return;}
+    if(!question.work){await checkPlain();return;}
     for(const [id,value] of Object.entries(expected.f))assert.equal(await article.locator('#field-'+s.question_id+'-'+id).inputValue(),value);
     if(question.work?.input==='expression')assert.equal(await article.locator('#work-'+s.question_id).inputValue(),s.work);
     else assert.deepEqual(await article.locator('.camp-sketch-board').evaluate(svg=>({version:1,strokes:[...svg.querySelectorAll('polyline')].map(p=>p.getAttribute('points').split(' ').map(pair=>pair.split(',').map((v,i)=>Math.round(Number(v)/(i?360:600)*10000)/10000))),colors:[...svg.querySelectorAll('polyline')].map(p=>p.getAttribute('stroke'))})),expected.w);
@@ -60,7 +74,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    for(const width of [1280,390]){
     await page.setViewportSize({width,height:960});
     if(!saved){
-     if(!question.work){await article.locator('.quiz-matching').waitFor();for(const [id,value] of Object.entries(expected.f)){await article.locator('.qm-card[data-side=left][data-id=\"'+id+'\"]').click();await article.locator('.qm-card[data-side=right][data-id=\"'+value+'\"]').click();}}
+     if(!question.work&&isMatching){await article.locator('.quiz-matching').waitFor();for(const [id,value] of Object.entries(expected.f)){await article.locator('.qm-card[data-side=left][data-id=\"'+id+'\"]').click();await article.locator('.qm-card[data-side=right][data-id=\"'+value+'\"]').click();}}
+     else if(!question.work&&question.fields.every(f=>f.input==='set')){for(const [i,f] of question.fields.entries()){const boxes=article.locator('fieldset.quiz-field').nth(i).locator('input[type=checkbox]');for(const [j,o] of f.options.entries())await boxes.nth(j).setChecked(expected.f[f.id].includes(o.id));await boxes.last().setChecked(expected.f[f.id].length===0);}}
      else for(const [id,value] of Object.entries(expected.f))await article.locator('#field-'+s.question_id+'-'+id).fill(value);
      if(question.work?.input==='expression')await article.locator('#work-'+s.question_id).fill(s.work);
      else if(question.work&&width===1280){
