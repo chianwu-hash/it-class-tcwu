@@ -3,6 +3,7 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
+import {loadBatch,assertOAuthReceipt} from './lib/quiz-batch-plan.mjs';
 
 const sha = value => createHash('sha256').update(value).digest('hex');
 const readJson = async file => JSON.parse((await fs.readFile(file, 'utf8')).replace(/^\uFEFF/, ''));
@@ -42,7 +43,7 @@ async function execute(stage, cwd, log) {
   }
 }
 
-async function verifyOutput(stage) {
+async function verifyOutput(stage, batch) {
   const hashes = await fingerprints(stage.outputs);
   for (const check of stage.checks) {
     const data = await readJson(check.file);
@@ -50,6 +51,11 @@ async function verifyOutput(stage) {
     if (JSON.stringify(actual) !== JSON.stringify(check.equals)) {
       throw Error(`階段 ${stage.id} 的收據檢查未通過。`);
     }
+  }
+  if (stage.oauthReceipt) {
+    if (!batch || !stage.outputs.includes(stage.oauthReceipt)) throw Error('OAuth 收據須綁定固定批次');
+    const receipt = await readJson(stage.oauthReceipt);
+    assertOAuthReceipt(batch, receipt);
   }
   return hashes;
 }
@@ -60,6 +66,8 @@ export async function runBatch(manifestFile, through, recoveryFile) {
   const manifest = JSON.parse(input.toString('utf8').replace(/^\uFEFF/, ''));
   if (manifest.schema !== 1 || !Array.isArray(manifest.sources) || !manifest.sources.length) throw Error('批次清單格式不符。');
   if (new Set(manifest.sources).size !== manifest.sources.length) throw Error('批次來源重複。');
+  const batch = manifest.batchPacket ? await loadBatch(manifest.batchPacket) : undefined;
+  if (batch && JSON.stringify(manifest.sources) !== JSON.stringify(batch.packet.candidates.map(c => c.source))) throw Error('清單與固定批次來源不符');
   const cwd = await fs.realpath(manifest.cwd);
   if (cwd !== root) throw Error('批次工作目錄與執行器不符。');
   const stateRoot = await fs.realpath(manifest.stateRoot);
@@ -101,7 +109,7 @@ export async function runBatch(manifestFile, through, recoveryFile) {
       const old = state.stages[stage.id];
       if (old?.status === 'complete') {
         if (signature !== old.signature) throw Error(`階段 ${stage.id} 輸入已改變，請建立新批次清單。`);
-        const outputs = await verifyOutput(stage);
+        const outputs = await verifyOutput(stage, batch);
         if (JSON.stringify(outputs) !== JSON.stringify(old.outputs)) throw Error(`階段 ${stage.id} 輸出已改變。`);
         console.log(JSON.stringify({stage: stage.id, reused: true}));
       } else {
@@ -114,8 +122,8 @@ export async function runBatch(manifestFile, through, recoveryFile) {
           state.history ??= [];
           state.history.push({stage: stage.id, previous: old, recovery: {file: recoveryFile, sha256: sha(await fs.readFile(recoveryFile))}});
           if (recovery.mode === 'accept-readback') {
-            const outputs = await verifyOutput(stage);
-            state.stages[stage.id] = {status: 'complete', signature, outputs, recoveredByReadback: true, finished: new Date().toISOString()};
+            const outputs = await verifyOutput(stage, batch);
+            state.stages[stage.id] = {...old, status: 'complete', signature, outputs, recoveredByReadback: true, recoveredAt: new Date().toISOString(), finished: new Date().toISOString()};
             await atomicJson(stateFile, state);
             console.log(JSON.stringify({stage: stage.id, recoveredByReadback: true}));
             previous = signature;
@@ -132,12 +140,13 @@ export async function runBatch(manifestFile, through, recoveryFile) {
         await atomicJson(stateFile, state);
         try {
           await execute(stage, cwd, log);
-          const outputs = await verifyOutput(stage);
+          const outputs = await verifyOutput(stage, batch);
           state.stages[stage.id] = {...state.stages[stage.id], status: 'complete', outputs, finished: new Date().toISOString()};
           await atomicJson(stateFile, state);
           console.log(JSON.stringify({stage: stage.id, reused: false}));
         } catch (error) {
           state.stages[stage.id].status = 'failed';
+          state.stages[stage.id].finished = new Date().toISOString();
           await atomicJson(stateFile, state);
           throw error;
         }

@@ -1,0 +1,61 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import {workerIntent,freezeWorkerIntent,reconcileWorker,applyWorkerIntent} from './lib/quiz-worker-write.mjs';
+import {batchCounts,expectedResponse,assertOAuthReceipt,practiceWriteIntent,freezeJson} from './lib/quiz-batch-plan.mjs';
+const fixture=()=>{
+ const baseline={files:{'worker.mjs':'worker source','assets.mjs':'export const assets = {"old":{"id":"one"}};'},settings:{bindings:[{name:'SECRET',type:'secret_text'}],compatibility_date:'2026-01-01'}};
+ const files={...baseline.files,'assets.mjs':'export const assets = {"old":{"id":"one"},"new":{"id":"two"}};'};
+ return workerIntent(baseline,files,{accountVerified:true,freePlanVerified:true,account:'fixture'});
+};
+test('Worker 回應中斷後只讀回完整檔案與設定，續跑不重送',async()=>{
+ const intent=fixture();let current=intent.baseline,writes=0;
+ const read=async()=>current,write=async()=>{writes++;current={files:intent.expectedFiles,settings:intent.baseline.settings};throw Error('response lost');};
+ const result=await applyWorkerIntent(intent,{read,write,delay:async()=>{}});
+ assert.ok(result.passed&&result.reconciled);assert.equal(writes,1);
+ assert.ok((await applyWorkerIntent(intent,{read,write})).reused);assert.equal(writes,1);
+ const folder=await fs.mkdtemp(path.join(os.tmpdir(),'worker-intent-')),file=path.join(folder,'intent.json');
+ await freezeWorkerIntent(file,intent);await freezeWorkerIntent(file,intent);
+ await assert.rejects(freezeWorkerIntent(file,{...intent,identity:{account:'another'}}));
+});
+test('Worker 不接受其他程式、既有索引或設定變動，未確認不重送',async()=>{
+ const intent=fixture();assert.throws(()=>reconcileWorker(intent,{files:{...intent.expectedFiles,'worker.mjs':'changed'},settings:intent.baseline.settings}));
+ assert.throws(()=>reconcileWorker(intent,{files:intent.expectedFiles,settings:{...intent.baseline.settings,bindings:[]}}));
+ assert.throws(()=>workerIntent(intent.baseline,{...intent.expectedFiles,'assets.mjs':'export const assets = {"old":{"id":"wrong"}};'},intent.identity));
+ let writes=0;await assert.rejects(applyWorkerIntent(intent,{read:async()=>intent.baseline,write:async()=>{writes++;},delay:async()=>{}}),/不自動重送/);assert.equal(writes,1);
+});
+const question={id:'q1',type:'fields',prompt:{text:'fixture',media:[]},explanation:{text:'fixture',media:[]},fields:[{id:'a',label:'A',input:'math'},{id:'b',label:'B',input:'math'}],answer:{format:'fields-v1',fields:{a:['1'],b:['0']}},work:{input:'expression',label:'fixture'}};
+const candidate=i=>({source:'s'+i,doc:{schema:1,title:'Fixture',catalog:{school_year:'115',subject:'fixture',publisher:'fixture',volume:'fixture',unit:'1'},blocks:[{id:'b'+i,material:{text:'',media:[]},questions:[{...question,id:'q'+i}]}]}});
+test('來源數推導 5% 抽樣與作答位置，OAuth 缺題或重複不能過關',()=>{
+ const packet={schema:1,candidates:Array.from({length:25},(_,i)=>candidate(i)),samples:[{question_id:'q0'},{question_id:'q1'}]};
+ const counts=batchCounts(packet);assert.deepEqual(counts,{sources:25,questions:25,positions:50,images:0,samples:2});
+ assert.deepEqual(expectedResponse(question,'1/1=1'),{v:1,f:{a:'1',b:'0'},w:'1/1=1'});
+ assert.throws(()=>expectedResponse(question));
+ const batch={packet,counts,sha256:'fixed'},proof={passed:true,formalOAuth:true,packetSha:'fixed',sampleCount:2,samples:[{question:'q0'},{question:'q1'}]};
+ assertOAuthReceipt(batch,proof);assert.throws(()=>assertOAuthReceipt(batch,{...proof,sampleCount:1}));assert.throws(()=>assertOAuthReceipt(batch,{...proof,samples:[{question:'q0'},{question:'q0'}]}));assert.throws(()=>assertOAuthReceipt(batch,{...proof,packetSha:'other'}));
+});
+
+test('SQL 寫入意圖在執行前固定，輸入或 SQL 換版不能覆寫',async()=>{
+ const plan={packetSha:'packet',ids:{session:'session',samples:[{question_id:'q'}]}},isolated={packetSha:'packet',sql:{activate:'sqlsha'}};
+ const intent=practiceWriteIntent(plan,isolated,'activate');assert.equal(intent.sqlSha,'sqlsha');
+ const folder=await fs.mkdtemp(path.join(os.tmpdir(),'sql-intent-')),file=path.join(folder,'intent.json');
+ await freezeJson(file,intent);await freezeJson(file,intent);
+ await assert.rejects(freezeJson(file,{...intent,sqlSha:'changed'}));
+ assert.throws(()=>practiceWriteIntent(plan,{...isolated,packetSha:'other'},'activate'));
+});
+import {spawnSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+test('清單生成器由批次推導 checks，事前意圖檔列入啟用 input SHA',async()=>{
+ const folder=await fs.mkdtemp(path.join(os.tmpdir(),'quiz-manifest-'));
+ const packet={schema:1,prefix:'fixture',outputDir:folder,candidates:Array.from({length:25},(_,i)=>candidate(i)),inputs:{},pages:[{printed:1,verified:true}],studyRows:Array.from({length:25},(_,i)=>({question_id:'q'+i,primary:1,reference:[1],student_explanation:'fixture',teacher_notes:{reason:'fixture'}})),samples:[{source:'s0',question_id:'q0',work:'1/1=1'},{source:'s1',question_id:'q1',work:'1/1=1'}]};
+ const bytes=JSON.stringify(packet),packetSha=createHash('sha256').update(bytes).digest('hex'),packetFile=path.join(folder,'packet.private.json');await fs.writeFile(packetFile,bytes);
+ await fs.writeFile(path.join(folder,'fixture-plan.private.json'),JSON.stringify({packetSha,ids:{session:'fixed',samples:packet.samples}}));
+ await fs.writeFile(path.join(folder,'fixture-isolated.private.json'),JSON.stringify({packetSha,sql:{activate:'frozen-sql'}}));
+ const result=spawnSync(process.execPath,['automation/create-quiz-practice-manifest.mjs',packetFile],{encoding:'utf8',windowsHide:true});assert.equal(result.status,0,result.stderr);
+ const manifest=JSON.parse(await fs.readFile(path.join(folder,'fixture-manifest.private.json'),'utf8'));
+ const activation=manifest.stages.find(s=>s.id==='activate');assert.ok(activation.inputs.includes(path.join(folder,'fixture-activate-intent.private.json')));
+ assert.ok(activation.checks.some(c=>c.path[0]==='questions'&&c.equals===25));assert.equal(manifest.stages[0].checks.find(c=>c.path[0]==='sampleCount').equals,2);
+ const intent=JSON.parse(await fs.readFile(path.join(folder,'fixture-activate-intent.private.json'),'utf8'));assert.equal(intent.sqlSha,'frozen-sql');assert.equal(intent.packetSha,packetSha);
+});
