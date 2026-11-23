@@ -1,9 +1,9 @@
 import { initGoogleCourseAuth, createGoogleCourseProgress } from '../../shared/grade3-google-course.js?v=20261028-drafts';
 import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261028-drafts';
 import { initTypingTools } from '../../shared/typing-tools.js?v=20261028-keyboard';
-import { WEEK13_LEVELS, describeWeek13Mismatch } from './week13-content.mjs?v=20261123-unique-boss';
+import { WEEK13_LEVELS, describeWeek13Mismatch } from './week13-content.mjs?v=20261123-story-boss';
 
-import { getWeek13KeyboardTarget as getTextbookKeyboardTarget } from './week13-content.mjs?v=20261123-unique-boss';
+import { getWeek13KeyboardTarget as getTextbookKeyboardTarget } from './week13-content.mjs?v=20261123-story-boss';
 
 const levelsData = WEEK13_LEVELS.map(({ id, ans }) => ({ id, ans }));
 document.querySelector('#fast-tasks details').open = true;
@@ -26,7 +26,8 @@ container.querySelectorAll('input,textarea').forEach(input => {
 // initGoogleCourseAuth initializes the shared initNavbarAuth event controller once.
 const auth = await initGoogleCourseAuth({ courseId: 'grade3-115-1' }).catch(() => {
     const message = '網站身分暫時無法確認，請告訴老師；也可依老師指示使用下方離線題卡。';
-    document.getElementById('course-identity-status').textContent = message;
+    const status = document.getElementById('progress-status');
+    if (status) status.textContent = message;
     return { hasIdentity: () => false, getIdentity: () => null, getIdentityError: () => message };
 });
 const store = createGoogleCourseProgress({ courseId: 'grade3-115-1', weekCode: '13', activityKey: 'typing_task_6', total: 6, getIdentity: auth.getIdentity });
@@ -65,7 +66,7 @@ initTypingChallenge({
     courseId: 'grade3-115-1', weekCode: '13', activityKey: 'typing_task_6', levelsData, progressAdapter,
     autoScrollNext: false,
     draftOptions: { enabled: true, getSession: () => auth.getDraftSession?.() },
-    levelEncouragements: {1:'你慢慢選對了古堡的字。',2:'你仔細檢查了顏色單字的小寫。',3:'你檢查了屋頂的選字。',4:'你檢查了大寫、直撇號與句點。',5:'前五關都完成了，合計長出一片葉子！',6:'你逐行檢查，完成長句與雙重問答的五行魔王，再開一朵花！'},
+    levelEncouragements: {1:'你慢慢選對了古堡的字。',2:'你仔細檢查了顏色單字的小寫。',3:'你檢查了屋頂的選字。',4:'你檢查了大寫、直撇號與句點。',5:'前五關都完成了，合計長出一片葉子！',6:'你逐行檢查，完成中文長句與失物招領新臺詞，再開一朵花！'},
     progressMessages: {
         guestReady: auth.hasIdentity() ? '本人身分已確認，正在接回第 13 週進度。' : auth.getIdentityError() || '請先登入學校 Google 帳號，才能開始打字闖關並記錄進度。',
         guestNextLevel: level => `已記下你的成果，下次可以從第 ${level} 關繼續。`,

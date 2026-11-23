@@ -60,6 +60,10 @@
 
 ## 2. 登入 / Auth
 
+- [ ] 三年級115-1第13週起不再放獨立「準備出發／先確認是自己的帳號」卡；沿共用navbar登入與身分顯示，任務本人的auth／進度核對照常保留。
+
+- [ ] 中英打原題／換題已對照前週與當週其他關：沒有重複整句／英文行，第5關長句加難，第6關中英文皆有新進度；不能只重排、換顏色或只換中文。完整要求見`lesson-plan-sop.md`第4.1節，三年級快手定位與原花葉保持。
+
 - [ ] **需要登入按鈕** → 依實際巢狀路徑 import `initNavbarAuth` 並呼叫；115-1 週頁通常是 `../../shared/navbar-auth.js`
 - [ ] 不在頁面內直接對 `#login-btn` 等元素使用 `addEventListener`（一律靠 `initNavbarAuth` 的事件代理）
 - [ ] OAuth 跳轉必須走 `beginCentralizedLogin()`，不直接呼叫 `supabase.auth.signInWithOAuth()`

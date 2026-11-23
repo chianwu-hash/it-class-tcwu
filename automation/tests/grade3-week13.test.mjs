@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {WEEK13_LEVELS as levels,getWeek13KeyboardTarget as target} from '../../grade3/115-1/week13-content.mjs';
 import {buildKeyboardGuideModel as model} from '../../shared/typing-guide-model.mjs';
+import {WEEK11_LEVELS} from '../../grade3/115-1/week11-content.mjs';
+import {WEEK12_LEVELS} from '../../grade3/115-1/week12-content.mjs';
 const read=p=>fs.readFile(new URL('../../'+p,import.meta.url),'utf8');
 
 test('boss original and replay advance to distinct Chinese sentences while retaining five-line difficulty',()=>{
@@ -11,6 +13,11 @@ test('boss original and replay advance to distinct Chinese sentences while retai
  assert.equal(original.length,5);assert.equal(replay.length,5);
  assert.ok(!earlier.has(original[0]));assert.ok(!earlier.has(replay[0]));assert.notEqual(original[0],replay[0]);
  assert.ok([...original[0]].length>=25&&[...replay[0]].length>=25);
+ const english=[...original.slice(1),...replay.slice(1)];
+ const previous=new Set([...WEEK11_LEVELS,...WEEK12_LEVELS].flatMap(x=>[x.ans,x.replay]).flatMap(x=>x.split('\n')));
+ assert.equal(new Set(english).size,8,'原題與換題應有八行不同的新英文');
+ for(const line of english){assert.ok(!earlier.has(line));assert.ok(!previous.has(line));assert.ok(!/what color|it.s (red|white|blue)/i.test(line));}
+ assert.match(boss.ans,/I lost my bag\./);assert.match(boss.ans,/I see a rainbow!/);assert.match(boss.replay,/Good afternoon\./);
 });
 
 test('all six original/replay texts have complete phonetics and working keys',()=>{
@@ -35,6 +42,7 @@ test('the entire formal typing UI is in fast tasks; primary exercises remain nat
  assert.ok(!html.slice(0,mainEnd).includes('onclick="checkLevel'));
  assert.match(html,/中英打沒有全班必做關數/);
  assert.ok(!html.includes('先完成中文、英文各一關'));
+ assert.ok(!html.includes('先確認是自己的帳號'));assert.ok(!html.includes('id="course-identity-status"'));assert.ok(!html.includes('id="login"'));
  for(const id of ['shift-practice','mood-practice','tab-greeting','tab-mood','tab-wish'])assert.match(html,new RegExp('id="'+id+'"(?![^>]*disabled)'));
  const practice=await read('grade3/115-1/week13-practice.mjs');assert.ok(!/localStorage|supabase|preventDefault|checkLevel/.test(practice));
 });
