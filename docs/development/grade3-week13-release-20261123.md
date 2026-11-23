@@ -1,5 +1,14 @@
 # 三年級第13週正式發布
 
+## 魔王去重修正（2026-11-23後續）
+
+- 教師指出魔王中文重複第5關；PR442改用p.87遠望風光與參觀收穫兩句，逐字目視原課本與注音。原題83、換題92字元，保持五行；新增去重回歸，原題／換題均與前五關不同。
+- 新桌手機20行次逐字注音亮鍵、完整合成六關保存／失敗重試／接續／換題不回寫通過。沿原活動鍵、花葉與已保存進度；無SQL或學生進度重設。
+- 乾淨main `6b806c7d`經腳本發布到`dpl_FMJpZfESoJz97SvR3otdqZGDHm86`；回滾`dpl_FELoBs3igpDPUcDksKLH6dAjYqQh`。完整樹比對4修改／0新增／0刪除、`ok:true`，候選content／JS／HTML原始檔SHA與本次測試來源一致，正式四檔HTTP200與內容讀回一致，103筆目錄及獎勵設定保持。
+- 首次宣告漏列同步教案，候選被完整比較攔下，未promote；中止自己的鎖、補列教案後重新start／deploy／promote全過，未繞過比較器。
+- 後續直接以正式URL重跑既有guide驗證：1280／390、原題／換題五行共20行次逐字注音亮鍵全過，正式學生寫入0、pageerror 0。使用合成Auth，不送正式進度。私有證據`C:/Users/user/Documents/pc-master/worktree-evidence/20261123-grade3-week13-unique/live-guide/`。下方初次發布與舊候選識別保留為歷程。
+- 驗證程式重用：局部自寫代表helper在背景等待長句／首次初始化停滯，且同URL舊target曾造成目標斷言失敗；已停止自有worker、清理暫存分頁，未以失敗helper作驗收。改回本機已通過的`grade3-week13-guide-browser.cjs`，僅以`WEEK13_BASE_URL`切正式URL，即完整20行次通過。後續沿用此程式，不另寫一套簡化版本。`connectCdp`按URL可能拿到同站舊分頁，須比對本次target；長句先處理「看整段」。[Puppeteer等待文件](https://pptr.dev/api/puppeteer.framewaitforfunctionoptions)列明預設raf輪詢，背景分頁須考慮等待方式與可見性；這是停滯可能因素，未宣稱已單變因確證。既有程式的授權啟用目標分頁及完整等待路徑保留。
+
 - 教師於2026-11-23明確授權正式資料庫登記、PR合併及上線，供本人測試登入、保存與花葉。
 - PR440已合併，發布來源為乾淨main `0c5eabba8c911eb24a9a6471715541ed6f2fc63d`；由專案發布腳本start／deploy／promote完成。
 - 正式部署：`dpl_FELoBs3igpDPUcDksKLH6dAjYqQh`；回滾基準：`dpl_6LNttUmzxy9DLSTSRNY3djDzqz94`。正式alias已確認，發布鎖已釋放。
