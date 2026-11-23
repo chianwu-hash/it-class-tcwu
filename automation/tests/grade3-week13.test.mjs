@@ -50,6 +50,7 @@ test('formal auth, guide refresh, registration and reward catalog use exactly we
  const js=await read('grade3/115-1/week13.js');
  assert.match(js,/initGoogleCourseAuth/);assert.match(js,/createGoogleCourseProgress/);assert.match(js,/weekCode: '13'/);assert.match(js,/activityKey: 'typing_task_6'/);assert.match(js,/getWeek13KeyboardTarget/);
  assert.ok(!/weekCode: '12'|localStorage|\.upsert\(/.test(js));
+ assert.match(js,/errorLocator: true/);assert.ok(!js.includes('getWrongAnswerHtml:'));
  const sql=await read('supabase/grade3_week13_typing.sql');assert.match(sql,/'13','typing_task_6',6/);assert.match(sql,/five-then-flower/);assert.ok(!/create function|delete from|student_progress/i.test(sql));
  const config=await read('shared/reward-tree-config.js');assert.match(config,/weekCode: '13', activityKey: 'typing_task_6'.*week13\.html#typing/);
 });

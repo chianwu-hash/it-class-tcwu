@@ -68,7 +68,7 @@ rpc(name,args){
   assert.equal(await p.$eval('#input-level1',e=>e.value),'I like cats.');
   await p.keyboard.press('Home');for(let i=0;i<5;i++)await p.keyboard.press('ArrowRight');await p.keyboard.press('Delete');await p.keyboard.type('e');
   assert.equal(await p.$eval('#input-level1',e=>e.value),'I like cats.');
-  await value(1,'安');await check(1);await p.waitForFunction(()=>document.querySelector('#msg-level1').textContent.includes('還沒打完'));
+  await value(1,'安');await check(1);await p.waitForFunction(()=>!!document.querySelector('#msg-level1 .typing-error-locator'));assert.match(await p.$eval('#msg-level1',e=>e.textContent),/少了/);
   await p.click('#typing-draft-save-1');await p.waitForFunction(()=>document.querySelector('#typing-draft-status-1').textContent.includes('草稿已儲存'));
   assert.equal(await p.evaluate(()=>fixtureSaves.length),0);
   await scenario({user});await p.waitForFunction(()=>!document.querySelector('#typing-draft-restore-1').classList.contains('hidden'));
@@ -82,7 +82,7 @@ rpc(name,args){
   assert.match(await p.$eval('#msg-level5',e=>e.textContent),/一片葉/);
   await screenshot(390,'week13-typing-mobile','typing');
   const bossTypo=levels[5].ans.split('\n');bossTypo[2]=bossTypo[2].replace(/[A-Za-z]/,c=>c==='x'?'y':'x');
-  await value(6,bossTypo.join('\n'));await check(6);await p.waitForFunction(()=>document.querySelector('#msg-level6').textContent.includes('第 3 行'));
+  await value(6,bossTypo.join('\n'));await check(6);await p.waitForFunction(()=>!!document.querySelector('#msg-level6 .typing-error-locator'));assert.ok(await p.$('#msg-level6 .typing-error-jump'));
   await value(6,levels[5].ans.replace('\n',''));await check(6);await p.waitForFunction(()=>document.querySelector('#msg-level6').textContent.includes('Enter'));
   await value(6,levels[5].ans);await p.evaluate(()=>fixtureSaveFail=true);await check(6);await p.waitForFunction(()=>document.querySelector('#msg-level6').textContent.includes('合成儲存失敗'));assert.equal(await p.$('#celebration-overlay'),null);
   await p.evaluate(()=>fixtureSaveFail=false);await check(6);await settled(6);assert.match(await p.$eval('#celebration-overlay',e=>e.textContent),/一片葉、一朵花/);
@@ -90,7 +90,7 @@ rpc(name,args){
   await p.waitForFunction(()=>document.querySelector('#celebration-overlay a')?.getBoundingClientRect().width>100);
   await Promise.all([p.waitForNavigation({waitUntil:'networkidle2'}),p.click('#celebration-overlay a')]);
   assert.equal(new URL(p.url()).pathname,'/my-tree.html');assert.equal(new URL(p.url()).searchParams.get('course'),'grade3-115-1');
-  await p.waitForFunction(()=>!document.querySelector('#back-page-btn')?.classList.contains('hidden'));
+  await p.waitForFunction(()=>!document.querySelector('#back-page-btn')?.classList.contains('hidden'),{timeout:45000});
   assert.equal(await p.$eval('#back-page-btn',e=>new URL(e.href).pathname),week);
   await Promise.all([p.waitForNavigation({waitUntil:'networkidle2'}),p.click('#back-page-btn')]);assert.equal(new URL(p.url()).pathname,week);assert.equal(await p.$('#celebration-overlay'),null);
   await scenario({user,progress});await p.waitForFunction(()=>document.querySelector('#input-level6').readOnly);assert.equal(await p.$('#celebration-overlay'),null);

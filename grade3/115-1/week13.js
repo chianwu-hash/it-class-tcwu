@@ -1,7 +1,7 @@
 import { initGoogleCourseAuth, createGoogleCourseProgress } from '../../shared/grade3-google-course.js?v=20261028-drafts';
-import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261028-drafts';
+import { initTypingChallenge } from '../../shared/typing-challenge.js?v=20261113-locator';
 import { initTypingTools } from '../../shared/typing-tools.js?v=20261028-keyboard';
-import { WEEK13_LEVELS, describeWeek13Mismatch } from './week13-content.mjs?v=20261123-story-boss';
+import { WEEK13_LEVELS } from './week13-content.mjs?v=20261123-story-boss';
 
 import { getWeek13KeyboardTarget as getTextbookKeyboardTarget } from './week13-content.mjs?v=20261123-story-boss';
 
@@ -21,6 +21,10 @@ container.querySelectorAll('input,textarea').forEach(input => {
         focusedLevel = Number(input.id.replace('input-level', ''));
         refreshGuide();
     });
+});
+// The shared locator sets the selection after focusing; refresh the guide after that click finishes.
+container.addEventListener('click', event => {
+    if (event.target.closest?.('.typing-error-jump')) refreshGuide();
 });
 
 // initGoogleCourseAuth initializes the shared initNavbarAuth event controller once.
@@ -65,6 +69,7 @@ container.querySelectorAll('input,textarea,button').forEach(el => { el.disabled 
 initTypingChallenge({
     courseId: 'grade3-115-1', weekCode: '13', activityKey: 'typing_task_6', levelsData, progressAdapter,
     autoScrollNext: false,
+    errorLocator: true,
     draftOptions: { enabled: true, getSession: () => auth.getDraftSession?.() },
     levelEncouragements: {1:'你慢慢選對了古堡的字。',2:'你仔細檢查了顏色單字的小寫。',3:'你檢查了屋頂的選字。',4:'你檢查了大寫、直撇號與句點。',5:'前五關都完成了，合計長出一片葉子！',6:'你逐行檢查，完成中文長句與失物招領新臺詞，再開一朵花！'},
     progressMessages: {
@@ -72,7 +77,6 @@ initTypingChallenge({
         guestNextLevel: level => `已記下你的成果，下次可以從第 ${level} 關繼續。`,
         loadError: '進度暫時讀取不到，請告訴老師；重新整理重試，或依老師指示改做離線練習。'
     },
-    getWrongAnswerHtml: ({ levelIndex, userVal }) => describeWeek13Mismatch(levelsData[levelIndex - 1].ans, userVal),
     celebrationContent: {
         title: '一步一步，完成中英打魔王！',
         message: '你完成六關，努力樹記下自己的學習：一片葉、一朵花。第 10 週以前的獎勵維持原規則。',
