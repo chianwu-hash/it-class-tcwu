@@ -1,7 +1,20 @@
+# 2026-11-23 三年級第13週網頁本機製作
+
+- 教師已採用教案，明確要求中英打闖關全部快手。新工作樹`C:/Users/user/.codex/worktrees/grade3-week13-web-20261123`／分支`codex/grade3-week13-web-20261123`，由最新origin/main `cc0c2b0f`建立，不修改主工作區。
+- 主線Shift、Windows＋句號、Tab／Shift＋Tab／Enter、Alt＋Tab與三行留言卡；主線自由區不保存／不發獎，OS操作由教師觀察。第八課／Unit4中英打六關全部在快手區，無全班時段／最低關數。
+- 沿用三年級固定風格與第12週Google／progress／typing／tools服務；首頁最新徽章、navbar／後台週卡預設、努力樹目錄與本週限定登記SQL同次更新，練功坊產物僅版本／navbar指紋更新。
+- 已通過11項資料／PGlite與舊讀音回歸、完整合成Auth／RPC保存接回／草稿／換題、32個桌手機逐字注音亮鍵矩陣、固定基準與新頁1280／390畫面對照。正式學生寫入0；不把合成OAuth入口驗證冒稱正式Google登入。
+- 本週圖卡已生成、目視、壓1920×1080 WebP q80／173,192 bytes、Cloudinary回讀SHA一致；新UI成品blob由同筆已接受請求回收，無重送，詳排查紀錄。原生成器保持原樣，局部實驗driver不提交；新增只讀回收helper。
+- 本機預覽`http://127.0.0.1:3143/grade3/115-1/week13.html`，契約`grade3-week13-contract.md`。正式活動兩筆SQL登記、真教師後台切換／本人保存及正式發布尚未執行，不可宣稱上線；後續仍依PR進main與乾淨main發布腳本。
+- 程式提交`c1efac20`，已推[草稿PR #440](https://github.com/chianwu-hash/it-class-tcwu/pull/440)，未合併。GitHub連接器403後改用本機已登入gh建立，沒有重複PR。燈箱1280／390完整mouse／CDP雙指與auth失效分支亦已通過；維持人工Windows實機界線。
+- 教師後續微調已同步PR：Windows鍵帽改品牌圖示；基礎英打建議到第1大關「無名指加入」S／L，仍非必做門檻；魔王原題／換題改五行完整中文句＋兩組顏色問答，各83字元、換題交換回答順序。新魔王20個桌手機行次逐字注音亮鍵與新題完整保存／換題回歸全過，既有獎勵與正式登記待辦保持。
+- 私有證據在本工作樹`.chat-mode/evidence/week13-*`，保持不進公開repo；原核定教案與Claude三輪教學討論仍在`grade3-week13-plan-20261123`工作樹，未清除。Windows實體注音候選窗、面板與Alt＋Tab須教室實機確認。
+
 ## 發布登記
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
+| 發布中 | Codex-grade3-week13-20261123 | 2026-11-23 | PR440合併後乾淨origin/main | `dpl_6LNttUmzxy9DLSTSRNY3djDzqz94` | 第13週、首頁／navbar／後台預設與努力樹活動；教師已授權正式兩筆登記、合併及發布 | 登記前查活動／獎勵均不存在；已核隔離保存與花葉，正式本人驗收留教師測試 |
 | 已完成 | Codex-quiz-hide-image-mark-native-20261122 | 2026-11-22T11:36:03.520Z | `d86fce8` | `dpl_CtdXXUB4PJLfdz4kjvpS8spgv4Uq` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-image-item-marks.mjs、shared/quiz-workshop/generated/assets.json | `dpl_6LNttUmzxy9DLSTSRNY3djDzqz94`／回滾 `dpl_CtdXXUB4PJLfdz4kjvpS8spgv4Uq`（eolOnly 4） |
 | 已完成 | Codex-g3math-image-marks2-20261122 | 2026-11-22T11:25:03.968Z | `d68989a` | `dpl_4TcxEvZStoueyyyNuqxdpW6QWxqM` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-answer-template-sources.mjs、shared/quiz-answer-templates.css、shared/quiz-answer-templates.mjs、shared/quiz-choice-conversion.mjs、shared/quiz-fields.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css、+shared/quiz-image-item-marks.mjs | `dpl_CtdXXUB4PJLfdz4kjvpS8spgv4Uq`／回滾 `dpl_4TcxEvZStoueyyyNuqxdpW6QWxqM`（eolOnly 0） |
 | 已完成 | Codex-g3math-batch-20261121 | 2026-11-21 | `823be784` | `dpl_GdF1Pw3WDodcQsVDbMjZHuAXg8kQ` | 34題與三、四、六、九年級16入口 | `dpl_4TcxEvZStoueyyyNuqxdpW6QWxqM`，可回滾至基準部署，詳[首批34題收據](quiz-release34-20261121.md) |

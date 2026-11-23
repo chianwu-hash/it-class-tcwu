@@ -1,0 +1,25 @@
+Create ONE polished 16:9 educational infographic for Taiwanese grade 3 children. Use the attached grade 3 reference ONLY for its friendly young children, clear rounded cartoon drawing, deep navy headings, white/cream canvas, sky blue and teal with warm yellow accents. Do NOT reproduce any classroom-rules content or portrait layout. Landscape 1920x1080 composition with generous padding. Four clear rounded panels, large sharp text rendering, Traditional Chinese (Taiwan). No watermark, no school logo, no invented English subtitle. Avoid detailed finger closeups; children each have only two arms.
+
+Exact main title: 「第13週｜鍵盤小魔法」
+Exact subtitle: 「先點位置，再按組合；操作之後，看看結果！」
+
+Panel 1, sky blue, keyboard with clear keycaps Shift and A, 1 and !:
+「Shift 大寫與符號」
+「按住 Shift，再輕按另一鍵」
+「a → A　1 → !」
+
+Panel 2, teal, Windows logo key plus the period key ., a smiling emoji picker and a text caret:
+「Windows＋. 表情百寶箱」
+「點好位置 → 開面板 → 選入 → 檢查」
+
+Panel 3, amber, three labeled text fields with a visible focus border and arrow:
+「Tab 換欄位」
+「Tab 下一格　Shift＋Tab 上一格」
+「Enter 在多行框換行」
+
+Panel 4, violet accents but overall grade3 blue/teal style, two separate application windows, a browser and Notepad, reversible arrow:
+「Alt＋Tab 換視窗」
+「網頁看任務，記事本接著做」
+
+Footer text: 「完成主線，再做快手任務：基礎英打・中英打闖關」
+Only these specified labels. The information is arranged as four readable teaching panels, not a complete realistic screenshot. Windows＋. uses the actual period key, not a Chinese full stop. Do not show Alt＋F4 or Insert or copying as a new lesson.
