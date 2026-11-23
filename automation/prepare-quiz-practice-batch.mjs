@@ -7,7 +7,7 @@ import {validateDocument} from '../shared/quiz-document.mjs';
 import {setupProductionQuizDB} from './fixtures/production-quiz-db.mjs';
 
 const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
-for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);assert.equal(c.doc.blocks[0].questions.length,1);const q=c.doc.blocks[0].questions[0];assert.equal(q.type,'fields');assert.ok(['expression','sketch'].includes(q.work?.input));assert.ok(q.fields.every(f=>f.input==='math'));assert.ok(!q.answer.tuples);}
+for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);assert.equal(c.doc.blocks[0].questions.length,1);const q=c.doc.blocks[0].questions[0];assert.equal(q.type,'fields');if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>f.input==='single'));assert.ok(!q.answer.tuples);}
 await recordBatchTime(p,packetSha,'packet-validated');
 const file=s=>path.join(p.outputDir,p.prefix+'-'+s+'.private');
 const save=(s,v)=>fs.writeFile(file(s)+'.json',JSON.stringify(v,null,2)+'\n');
@@ -74,7 +74,7 @@ try{
  // All fields exercise the production grading contract; work is saved, not automatically graded.
  let cases=0;const results=[];
  for(const c of p.candidates){const qn=c.doc.blocks[0].questions[0],response=expectedResponse(qn,p.works[c.source]);
-  const variants=[response,...qn.fields.map(field=>{const bad=structuredClone(response);bad.f[field.id]='999999';return bad;})];
+  const variants=[response,...qn.fields.map(field=>{const bad=structuredClone(response);bad.f[field.id]=field.input==='single'?field.options.find(o=>o.id!==response.f[field.id]).id:'999999';return bad;})];
   for(const [i,value] of variants.entries()){
    await db.exec('reset role');const bank=randomUUID(),version=randomUUID(),session=randomUUID();
    await db.query('insert into public.quiz_banks(id,owner_id,draft) values($1,$2,$3)',[bank,student,c.doc]);
@@ -85,7 +85,7 @@ try{
    await action('view_question',{session_id:session,question_id:qn.id});await db.exec('reset role');
    await db.query("update public.quiz_question_timing set first_seen=clock_timestamp()-interval '10 seconds' where attempt_id=$1",[before.attempt_id]);await actor(student);
    const request_id=randomUUID(),args={session_id:session,question_id:qn.id,response:JSON.stringify(value),request_id,compact:true};
-   if(i===0){const missing={...value};delete missing.w;await assert.rejects(action('submit',{...args,response:JSON.stringify(missing)}));}
+   if(i===0&&qn.work){const missing={...value};delete missing.w;await assert.rejects(action('submit',{...args,response:JSON.stringify(missing)}));}
    await action('submit',args);if(i===0)await action('submit',args);
    const after=await action('resume',{session_id:session});assert.equal(after.complete,true);assert.deepEqual(after.responses,{[qn.id]:JSON.stringify(value)});assert.equal(after.reviews[0].correct,i===0);assert.deepEqual(after.reviews[0].answer,qn.answer);cases++;
   }

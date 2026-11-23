@@ -42,10 +42,12 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    const saved=before.responses[s.question_id]!==undefined;
    if(saved){assert.deepEqual(JSON.parse(before.responses[s.question_id]),expected);assert.equal(before.reviews.find(r=>r.question_id===s.question_id)?.correct,true);}
    else assert.deepEqual(before.responses,{});
+   const checkMatching=async()=>{for(const f of question.fields){assert.equal(f.input,'single');const index=f.options.findIndex(o=>o.id===expected.f[f.id]);assert.equal(await article.locator('.qm-card[data-side=left][data-id=\"'+f.id+'\"] .qm-pair').innerText(),String.fromCharCode(65+index));}};
    const checkAnswer=async()=>{
-    if(saved){if(question.work.input==='expression'){const text=await article.innerText();assert.ok(text.includes(s.work));}else assert.equal(await article.locator('.quiz-saved-work svg polyline').count(),expected.w.strokes.length);return;}
+    if(saved){if(question.work?.input==='expression'){const text=await article.innerText();assert.ok(text.includes(s.work));}else if(question.work)assert.equal(await article.locator('.quiz-saved-work svg polyline').count(),expected.w.strokes.length);else await checkMatching();return;}
+    if(!question.work){await checkMatching();return;}
     for(const [id,value] of Object.entries(expected.f))assert.equal(await article.locator('#field-'+s.question_id+'-'+id).inputValue(),value);
-    if(question.work.input==='expression')assert.equal(await article.locator('#work-'+s.question_id).inputValue(),s.work);
+    if(question.work?.input==='expression')assert.equal(await article.locator('#work-'+s.question_id).inputValue(),s.work);
     else assert.deepEqual(await article.locator('.camp-sketch-board').evaluate(svg=>({version:1,strokes:[...svg.querySelectorAll('polyline')].map(p=>p.getAttribute('points').split(' ').map(pair=>pair.split(',').map((v,i)=>Math.round(Number(v)/(i?360:600)*10000)/10000))),colors:[...svg.querySelectorAll('polyline')].map(p=>p.getAttribute('stroke'))})),expected.w);
    };
    const checks=[],book=page.locator('#lightbox');
@@ -58,9 +60,10 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    for(const width of [1280,390]){
     await page.setViewportSize({width,height:960});
     if(!saved){
-     for(const [id,value] of Object.entries(expected.f))await article.locator('#field-'+s.question_id+'-'+id).fill(value);
-     if(question.work.input==='expression')await article.locator('#work-'+s.question_id).fill(s.work);
-     else if(width===1280){
+     if(!question.work){await article.locator('.quiz-matching').waitFor();for(const [id,value] of Object.entries(expected.f)){await article.locator('.qm-card[data-side=left][data-id=\"'+id+'\"]').click();await article.locator('.qm-card[data-side=right][data-id=\"'+value+'\"]').click();}}
+     else for(const [id,value] of Object.entries(expected.f))await article.locator('#field-'+s.question_id+'-'+id).fill(value);
+     if(question.work?.input==='expression')await article.locator('#work-'+s.question_id).fill(s.work);
+     else if(question.work&&width===1280){
       const board=article.locator('.camp-sketch-board');await board.scrollIntoViewIfNeeded();const rect=await board.boundingBox();assert.ok(rect&&rect.width>100);
       for(const stroke of expected.w.strokes){await page.mouse.move(rect.x+stroke[0][0]*rect.width,rect.y+stroke[0][1]*rect.height);await page.mouse.down();for(const point of stroke.slice(2))await page.mouse.move(rect.x+point[0]*rect.width,rect.y+point[1]*rect.height);await page.mouse.up();}
      }

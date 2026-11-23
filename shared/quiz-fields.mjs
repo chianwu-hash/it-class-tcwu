@@ -51,7 +51,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
  let work=workValue(raw);
  const changed=()=>onChange(JSON.stringify({v:1,f:values,...(q.work?{w:work}:{} )}));
  const editor=renderWorkInput(group,q,{raw,locked,saved,onChange:value=>{work=value;changed()}});group.sketchEditors=editor?[editor]:[];
- if(!fieldsAreSingleChoice(q))group.append(make('p',feedback?'你原本的作答已保留；請看各小題旁的核對結果。':q.fields.length===1?'填好答案後送出。':'依照題目順序填好每格，再一起送出。'));
+ if(!fieldsAreSingleChoice(q)&&matching?.covered.size!==q.fields.length)group.append(make('p',feedback?'你原本的作答已保留；請看各小題旁的核對結果。':q.fields.length===1?'填好答案後送出。':'依照題目順序填好每格，再一起送出。'));
  for(const [fieldIndex,storedField] of q.fields.entries()){
   if(matching?.covered.has(fieldIndex)){
    const board=matching.boards.find(b=>b.indices[0]===fieldIndex);if(board)renderMatchingBoard(group,board,{values,locked,renderContent,accepted:feedback?Object.fromEntries(board.left.map(l=>[l.id,feedback[shown.findIndex(f=>f.id===l.id)]?.accepted])):null,onChange:next=>{Object.assign(values,next);changed();}});

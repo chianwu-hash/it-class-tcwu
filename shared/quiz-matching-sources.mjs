@@ -3139,6 +3139,108 @@ export const matchingSources={
    ]
   ],
   "sourceSha256": "612361e99f890bc65745a635fbd41b7d35d7cf3c6e6b97a98a2bc1b3df709a41"
+ },
+ "hlg3m_012f049b_mtbe080c33c866": {
+  "signature": "df80a644f4d7918b",
+  "boards": [
+   {
+    "indices": [
+     0,
+     1
+    ],
+    "unique": false
+   }
+  ],
+  "omit": [
+   [
+    15,
+    47
+   ]
+  ],
+  "sourceSha256": "f25716ecf94f87a9f83646cace40aa7b04b123fc521abc66648ad1c6e5a92e5e"
+ },
+ "hlg3m_0184fc22_mtf1d757ceb547": {
+  "signature": "bf01ee58bbea1905",
+  "boards": [
+   {
+    "indices": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "unique": false
+   }
+  ],
+  "omit": [
+   [
+    10,
+    120
+   ]
+  ],
+  "sourceSha256": "9a4ded75abfe9d49a036e48ed59569f5fe1f91a8162345f51264c401c08c85cf"
+ },
+ "hlg3m_0500e17c_mtbd81c3f4389f": {
+  "signature": "a1f7e18efdac6b4d",
+  "boards": [
+   {
+    "indices": [
+     0,
+     1,
+     2
+    ],
+    "unique": false
+   }
+  ],
+  "omit": [
+   [
+    10,
+    97
+   ]
+  ],
+  "sourceSha256": "2a7f1bc804a5f925f8560d7bf5c0cec1769f516ad0bc908c87ff72f157fca6a0"
+ },
+ "hlg3m_05646df8_mt352f761ad9e9": {
+  "signature": "a204028aea3132df",
+  "boards": [
+   {
+    "indices": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "unique": false
+   }
+  ],
+  "omit": [
+   [
+    10,
+    127
+   ]
+  ],
+  "sourceSha256": "9948f3508872a569ebe1310299236ed640b9833920a54855e5580f54f2a4f387"
+ },
+ "hlg3m_0574c2a2_mt97060aade262": {
+  "signature": "76e19c13bcec1c8d",
+  "boards": [
+   {
+    "indices": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "unique": false
+   }
+  ],
+  "omit": [
+   [
+    10,
+    128
+   ]
+  ],
+  "sourceSha256": "d77161ff61a49a8eaa285da63db820ba4b8aa9af37a8e4fed88c7c7ef4f43247"
  }
 };
 export const matchingVariants={};
