@@ -7,11 +7,12 @@ import {validateDocument} from '../shared/quiz-document.mjs';
 import {setupProductionQuizDB} from './fixtures/production-quiz-db.mjs';
 
 const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
-for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.equal(q.type,'fields');if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(q.fields.every(f=>f.input==='math'));}else assert.ok(['single','math','set'].some(kind=>q.fields.every(f=>f.input===kind)));assert.ok(!q.answer.tuples);}}
+for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.equal(q.type,'fields');if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','set'].includes(f.input)));assert.ok(!q.answer.tuples);}}
 await recordBatchTime(p,packetSha,'packet-validated');
 const file=s=>path.join(p.outputDir,p.prefix+'-'+s+'.private');
 const save=(s,v)=>fs.writeFile(file(s)+'.json',JSON.stringify(v,null,2)+'\n');
-const doc=validateDocument({...p.candidates[0].doc,title:p.title,blocks:p.candidates.flatMap(c=>c.doc.blocks)});
+if(p.catalogUnit!==undefined)assert.ok(typeof p.catalogUnit==='string'&&p.catalogUnit.trim()&&p.catalogUnit.length<=100);
+const doc=validateDocument({...p.candidates[0].doc,title:p.title,catalog:{...p.candidates[0].doc.catalog,...(p.catalogUnit?{unit:p.catalogUnit}:{})},blocks:p.candidates.flatMap(c=>c.doc.blocks)});
 const {owner,student,ownerEmail,studentEmail}=p.identities;
 let ids;try{ids=await readJson(file('ids')+'.json');}catch(e){if(e.code!=='ENOENT')throw e;ids={owner,student,packetSha,...Object.fromEntries(['bank','version','session','pkg'].map(k=>[k,randomUUID()])),samples:p.samples.map(s=>({...s,...Object.fromEntries(['bank','version','session','pkg','request'].map(k=>[k,randomUUID()]))}))};await fs.writeFile(file('ids')+'.json',JSON.stringify(ids,null,2),{flag:'wx'});}
 assert.equal(ids.packetSha,packetSha);

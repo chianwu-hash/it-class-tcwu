@@ -1,6 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=require('node:path');
 (async()=>{
  const {loadBatch,expectedResponse,readJson,recordBatchTime,preserveOAuthReceipt}=await import('./lib/quiz-batch-plan.mjs');
+ const {matchingPresentation}=await import('../shared/quiz-matching-presentation.mjs');
  const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
  const file=s=>path.join(p.outputDir,p.prefix+'-'+s+'.private.json');
  const plan=await readJson(file('plan')),ids=plan.ids;
@@ -43,7 +44,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    if(saved){assert.deepEqual(JSON.parse(before.responses[s.question_id]),expected);assert.equal(before.reviews.find(r=>r.question_id===s.question_id)?.correct,true);}
    else assert.deepEqual(before.responses,{});
    const checkMatching=async()=>{await article.locator('.quiz-matching').waitFor();for(const f of question.fields){assert.equal(f.input,'single');const index=f.options.findIndex(o=>o.id===expected.f[f.id]);assert.equal(await article.locator('.qm-card[data-side=left][data-id=\"'+f.id+'\"] .qm-pair').innerText(),String.fromCharCode(65+index));}};
-   const isMatching=question.fields.every(f=>f.input==='single');
+   const matching=matchingPresentation(question),isMatching=Boolean(matching);if(isMatching)assert.equal(matching.covered.size,question.fields.length);
    const checkPlain=async()=>{
     if(isMatching){await checkMatching();return;}
     for(const [i,f] of question.fields.entries()){
@@ -53,7 +54,11 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
       const live=article.locator('fieldset.quiz-field').nth(i);
       if(await live.count()){const boxes=live.locator('input[type=checkbox]');assert.equal(await boxes.count(),f.options.length+1);for(const [j,o] of f.options.entries()){assert.equal(await boxes.nth(j).isChecked(),chosen.includes(o.id));if(saved)assert.ok(await boxes.nth(j).isDisabled());}assert.equal(await boxes.last().isChecked(),chosen.length===0);}
       else{assert.ok(saved);const rows=article.locator('.quiz-field-preview-set').nth(i).locator('.preview-option');for(const [j,o] of f.options.entries())assert.equal(await rows.nth(j).getAttribute('data-field-result'),chosen.includes(o.id)?'correct':null);if(chosen.length===0)assert.equal(await rows.last().getAttribute('data-field-result'),'correct');}
-     }else if(!saved)assert.equal(await article.locator('#field-'+s.question_id+'-'+f.id).inputValue(),expected.f[f.id]);
+     }else if(f.input==='single'){
+      const radios=article.locator('input[type=radio][name="field-'+s.question_id+'-'+f.id+'"]');await article.locator('input[type=radio][name="field-'+s.question_id+'-'+f.id+'"],.quiz-field-preview').first().waitFor();
+      if(await radios.count()){assert.equal(await radios.count(),f.options.length);for(const [j,o] of f.options.entries()){assert.equal(await radios.nth(j).isChecked(),o.id===expected.f[f.id]);if(saved)assert.ok(await radios.nth(j).isDisabled());}}
+      else{assert.ok(saved);const rows=article.locator('.quiz-field-preview').nth(i).locator('.preview-option');for(const [j,o] of f.options.entries())assert.equal(await rows.nth(j).getAttribute('data-field-result'),o.id===expected.f[f.id]?'correct':null);}
+     }else if(!saved||await article.locator('#field-'+s.question_id+'-'+f.id).count())assert.equal(await article.locator('#field-'+s.question_id+'-'+f.id).inputValue(),expected.f[f.id]);
      else assert.ok((await article.innerText()).includes(expected.f[f.id]));
     }
    };
@@ -75,7 +80,11 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
     await page.setViewportSize({width,height:960});
     if(!saved){
      if(!question.work&&isMatching){await article.locator('.quiz-matching').waitFor();for(const [id,value] of Object.entries(expected.f)){await article.locator('.qm-card[data-side=left][data-id=\"'+id+'\"]').click();await article.locator('.qm-card[data-side=right][data-id=\"'+value+'\"]').click();}}
-     else if(!question.work&&question.fields.every(f=>f.input==='set')){for(const [i,f] of question.fields.entries()){const boxes=article.locator('fieldset.quiz-field').nth(i).locator('input[type=checkbox]');for(const [j,o] of f.options.entries())await boxes.nth(j).setChecked(expected.f[f.id].includes(o.id));await boxes.last().setChecked(expected.f[f.id].length===0);}}
+     else if(!question.work){for(const [i,f] of question.fields.entries()){
+      if(f.input==='set'){const boxes=article.locator('fieldset.quiz-field').nth(i).locator('input[type=checkbox]');for(const [j,o] of f.options.entries())await boxes.nth(j).setChecked(expected.f[f.id].includes(o.id));await boxes.last().setChecked(expected.f[f.id].length===0);}
+      else if(f.input==='single')await article.locator('input[type=radio][name="field-'+s.question_id+'-'+f.id+'"][value="'+expected.f[f.id]+'"]').check();
+      else await article.locator('#field-'+s.question_id+'-'+f.id).fill(expected.f[f.id]);
+     }}
      else for(const [id,value] of Object.entries(expected.f))await article.locator('#field-'+s.question_id+'-'+id).fill(value);
      if(question.work?.input==='expression')await article.locator('#work-'+s.question_id).fill(s.work);
      else if(question.work&&width===1280){

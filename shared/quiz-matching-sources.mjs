@@ -3355,6 +3355,38 @@ export const matchingSources={
   "omit": [],
   "sourceSha256": "b009cd13710d96bc4168aba736e46bd824da28d348609f7e0a3c333e0e52ba74",
   "emfSha256": "48d4fb5fa885a82c19dbf137b6bbd82b060d31668d84aa175752dbb79e92ccbb"
+ },
+ "hlg3m_01f700e9_mw355c426befa7": {
+  "signature": "6b932002480f5aa9",
+  "boards": [
+   {
+    "indices": [
+     0,
+     1,
+     2
+    ],
+    "unique": false
+   }
+  ],
+  "omit": [],
+  "sourceSha256": "d4cb7f613abed04088746a19899b4a5cb2dba2c5fc8381b755cb7275bab7c6ec",
+  "vectorSha256": "355c426befa7729816360d99a64eca79183902b756cf87aa42d8682cd33e2ba2"
+ },
+ "hlg3m_050990a6_mw7edf7024adf5": {
+  "signature": "516ec55e93db863e",
+  "boards": [
+   {
+    "indices": [
+     0,
+     1,
+     2
+    ],
+    "unique": false
+   }
+  ],
+  "omit": [],
+  "sourceSha256": "690c60e3cef9f02a45ac3aa21f8b5775d4364a06be543c4a45b55e7b98ae8003",
+  "vectorSha256": "7edf7024adf59af32f4312c2b6220df792b7598756ac2aeecfc1bf54871ba23e"
  }
 };
 export const matchingVariants={};
