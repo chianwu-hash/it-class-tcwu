@@ -25,5 +25,5 @@ const html=`<!doctype html>
 <main id="main" class="page-width"><nav class="section-links" aria-label="本週任務導覽">${[['shift','arrow-up','Shift魔法'],['symbols','face-smile','表情面板'],['tab','table-cells','換欄位'],['windows','window-restore','換視窗'],['message-card','envelope-open-text','留言卡'],['fast-tasks','bolt','快手任務']].map(([id,i,t])=>`<a href="#${id}">${icon(i)} ${t}</a>`).join('')}</nav>${sections.join('\n')}</main><footer class="page-width page-footer">按一按、看一看，找到下一步的方法。</footer>
 <script type="module" src="week13-practice.mjs?v=20261123"></script><script type="module" src="week13.js?v=20261123-hard-boss"></script><script type="module">import {initImageLightbox} from '../../shared/image-lightbox.js';initImageLightbox();</script></body></html>`;
 const target='grade3/115-1/week13.html';
-if(process.argv.includes('--check')){if(await fs.readFile(target,'utf8')!==html)throw Error('Week13 HTML is out of date');console.log('Week13 build matches');}
+if(process.argv.includes('--check')){if((await fs.readFile(target,'utf8')).replace(/\r\n/g,'\n')!==html.replace(/\r\n/g,'\n'))throw Error('Week13 HTML is out of date');console.log('Week13 build matches');}
 else{await fs.writeFile(target,html);console.log('Built '+target);}
