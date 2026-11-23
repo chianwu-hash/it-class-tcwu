@@ -3241,6 +3241,120 @@ export const matchingSources={
    ]
   ],
   "sourceSha256": "d77161ff61a49a8eaa285da63db820ba4b8aa9af37a8e4fed88c7c7ef4f43247"
+ },
+ "hlg3m_00ad7a99_md2d83648e10f3": {
+  "signature": "87dfd06ea1be1cc6",
+  "boards": [
+   {
+    "indices": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "unique": false
+   }
+  ],
+  "omit": [],
+  "sourceSha256": "661376d6a5701dd0b72b3b49aab9c0fe6f19f2fc99470f883a14e17559fbd1ef",
+  "emfSha256": "2d83648e10f3d145a9bf281ed7e411f063337af30e6a8a1a85bb0eee9ea14e52"
+ },
+ "hlg3m_00af0b07_mdb76cd097747c": {
+  "signature": "86514ae663cd7999",
+  "boards": [
+   {
+    "indices": [
+     0,
+     1,
+     2
+    ],
+    "unique": false
+   }
+  ],
+  "omit": [],
+  "sourceSha256": "5019da872f9093502826c96c531b1fd76fa394219820ff1ff335171c6dd4692e",
+  "emfSha256": "b76cd097747c523a1418b03fc76c3e55d5f136e4c0bda432162169e1a01b6dee"
+ },
+ "hlg3m_00fce61b_mdac6dbcc596ac": {
+  "signature": "3852ccf8d374ff94",
+  "boards": [
+   {
+    "indices": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "unique": false
+   }
+  ],
+  "omit": [],
+  "sourceSha256": "5365db39e176d5a8e9d52920035bf9800db55f3298b0cef8a4642a609a2c1f1b",
+  "emfSha256": "ac6dbcc596ac2e1b26d124c0871a8076544ce12da5ca5bfc9fbd87f9f19de7f6"
+ },
+ "hlg3m_01de4dca_mddc3407573fec": {
+  "signature": "af55b898fe931850",
+  "boards": [
+   {
+    "indices": [
+     0,
+     1,
+     2
+    ],
+    "unique": false
+   }
+  ],
+  "omit": [],
+  "sourceSha256": "bdfdf20f70e40f77ae662d85c008c958e471c9936bfc7225c92eeff98bace07d",
+  "emfSha256": "dc3407573fec88931a3f1aa0b878d6c2a194b525ef779d0367efad80c57f524c"
+ },
+ "hlg3m_0436e766_mdca98848dceff": {
+  "signature": "b929f1369e7196c8",
+  "boards": [
+   {
+    "indices": [
+     0,
+     1,
+     2
+    ],
+    "unique": false
+   }
+  ],
+  "omit": [],
+  "sourceSha256": "031e96b43ad64db243b3c27942124ea3a8324ecc58d3a8caa1b2b4684ec28e61",
+  "emfSha256": "ca98848dceff94a3c87aca6e5f32e6d90ed7497bbabe96ef40b0253a0eb2acd5"
+ },
+ "hlg3m_043c32de_md8db75cddf8eb": {
+  "signature": "c78b24aaccd177d3",
+  "boards": [
+   {
+    "indices": [
+     0,
+     1,
+     2
+    ],
+    "unique": false
+   }
+  ],
+  "omit": [],
+  "sourceSha256": "b651ef71babc7747ebf097283830d6fdbac3791af81770d705a32d6674aff043",
+  "emfSha256": "8db75cddf8eba374bee56168ad3b0f809dd6b1c8aff8e7f0274d15c27d352620"
+ },
+ "hlg3m_04d45526_md48d4fb5fa885": {
+  "signature": "34169952e77e3e59",
+  "boards": [
+   {
+    "indices": [
+     0,
+     1,
+     2
+    ],
+    "unique": false
+   }
+  ],
+  "omit": [],
+  "sourceSha256": "b009cd13710d96bc4168aba736e46bd824da28d348609f7e0a3c333e0e52ba74",
+  "emfSha256": "48d4fb5fa885a82c19dbf137b6bbd82b060d31668d84aa175752dbb79e92ccbb"
  }
 };
 export const matchingVariants={};

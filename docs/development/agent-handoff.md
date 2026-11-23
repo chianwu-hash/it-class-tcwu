@@ -1,3 +1,8 @@
+# 2026-11-24 除法情境連線 7 筆待 main 發布與正式驗收
+
+- 原向量圖可完整擷取文字的 7 筆／23 配對位置已核原圖、教師鍵及獨立驗算；30 組隔離與 28 項相關回歸通過，題目無新增媒體。兩筆教材舊頁碼已由 86 更正至實際 87，首版隱藏卷關閉，固定修訂批次 matching7r1 待正式抽 1 題、啟用及逐題讀回。[本批](quiz-matching7-release-20261124.md)。
+- 上一批重量連線 5 筆已正式 OAuth、課本返回、整批啟用／讀回及入口通過。總帳 v63 為 466／708，剩 242；正式部署 dpl_CsNTCMtokMGmL74EeVR98wZAkHYT，回復 dpl_52fR1hai3f1MBbKL7ZzJSrzymw2M；19 公開檔 HTTP SHA 一致，發布鎖已釋放。[同批 PR453 收據](https://github.com/chianwu-hash/it-class-tcwu/pull/453#issuecomment-7105005357)。發布列已同步下表。
+
 # 2026-11-23 重量連線 5 筆已凍結，待 main 發布與正式驗收
 
 - 52 筆連線已逐筆分流；5 筆文字表格端點可直接解析，47 筆為圖像端點或混合角色。5 筆／17 配對位置保留左右原序與原鍵，來源呈現稽核、22 組隔離及 29 項相關回歸通過；私有驗收卷已建立，公開卷保持隱藏。總帳仍 v62 的 461／708，未先計入 5 筆。
@@ -47,6 +52,7 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | codex-g3matching5 | 2026-11-23T14:48:50.888Z | `5c0b423` | `dpl_52fR1hai3f1MBbKL7ZzJSrzymw2M` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-fields.mjs、shared/quiz-matching-sources.mjs、shared/quiz-workshop/generated/assets.json | `dpl_CsNTCMtokMGmL74EeVR98wZAkHYT`／回滾 `dpl_52fR1hai3f1MBbKL7ZzJSrzymw2M`（eolOnly 0） |
 | 已完成 | Codex-grade3-week13-hints-20261123 | 2026-11-23T07:14:07.022Z | `59af143` | `dpl_D54urQaB92NfPD9gZgUNQdUKtgmf` | grade3/115-1/week13.html、grade3/115-1/week13.js、grade3/LessonPlan/115-1/Week 13.md | `dpl_52fR1hai3f1MBbKL7ZzJSrzymw2M`／回滾 `dpl_D54urQaB92NfPD9gZgUNQdUKtgmf`（eolOnly 0） |
 | 已完成 | Codex-grade3-week13-english-20261123 | 2026-11-23T06:33:29.298Z | `6180522` | `dpl_FMJpZfESoJz97SvR3otdqZGDHm86` | grade3/115-1/week13-content.mjs、grade3/115-1/week13.html、grade3/115-1/week13.js、grade3/LessonPlan/115-1/Week 13.md | `dpl_D54urQaB92NfPD9gZgUNQdUKtgmf`／回滾 `dpl_FMJpZfESoJz97SvR3otdqZGDHm86`（eolOnly 0） |
 | 已完成 | Codex-grade3-week13-unique-20261123 | 2026-11-23T06:09:37.190Z | `6b806c7` | `dpl_FELoBs3igpDPUcDksKLH6dAjYqQh` | grade3/115-1/week13-content.mjs、grade3/115-1/week13.html、grade3/115-1/week13.js、grade3/LessonPlan/115-1/Week 13.md | `dpl_FMJpZfESoJz97SvR3otdqZGDHm86`／回滾 `dpl_FELoBs3igpDPUcDksKLH6dAjYqQh`（eolOnly 0） |
