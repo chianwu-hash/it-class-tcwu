@@ -1,0 +1,10 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {loadBatch,readJson,assertOAuthReceipt,digest} from './lib/quiz-batch-plan.mjs';
+const batch=await loadBatch(process.argv[2]),p=batch.packet;
+const file=s=>path.join(p.outputDir,p.prefix+'-'+s+'.private.json');
+const proof=await readJson(file('oauth-proof')),isolated=await readJson(file('isolated'));
+assert.equal(isolated.packetSha,batch.sha256);assert.ok(isolated.passed&&isolated.rollback_verified);
+assertOAuthReceipt(batch,proof);
+await fs.writeFile(file('oauth-gate'),JSON.stringify({...proof,sourceReceiptSha:digest(await fs.readFile(file('oauth-proof')))},null,2)+'\n',{flag:'wx'});

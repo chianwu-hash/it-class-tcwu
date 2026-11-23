@@ -59,5 +59,7 @@ test('失敗的寫入階段留存狀態，續跑先要求讀回，避免盲目�
   await runBatch(manifestFile, 'write', recoveryFile);
   const recovered = JSON.parse(await fs.readFile(path.join(folder, batchId, 'state.private.json'), 'utf8'));
   assert.equal(recovered.stages.write.recoveredByReadback, true);
+  assert.equal(recovered.stages.write.started, state.stages.write.started);
+  assert.ok(recovered.stages.write.finished && recovered.stages.write.recoveredAt);
   assert.equal(recovered.history[0].previous.status, 'failed');
 });
