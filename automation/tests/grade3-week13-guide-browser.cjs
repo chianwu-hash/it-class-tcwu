@@ -1,7 +1,7 @@
 // Task-owned leased browser; fixture auth only. Full per-character original/replay matrix.
 const fs=require('node:fs'),assert=require('node:assert/strict'),{pathToFileURL}=require('node:url'),path=require('node:path');
 const {connectCdp,safeScreenshot}=require('D:/projects/cdp-tools/packages/cdp-safe-client');
-const base='http://127.0.0.1:3143',url=base+'/grade3/115-1/week13.html?qa=guide',out='.chat-mode/evidence/week13-guide';
+const base='http://127.0.0.1:3143',url=base+'/grade3/115-1/week13.html?qa=guide',out=process.env.WEEK13_GUIDE_OUT||'.chat-mode/evidence/week13-guide';
 const fixture=fs.readFileSync('automation/tests/grade3-week13-browser.cjs','utf8').match(/const fixture=`([\s\S]*?)`;/)[1].replaceAll('${base}',base);
 (async()=>{
  fs.mkdirSync(out,{recursive:true});const {WEEK13_LEVELS:levels,getWeek13KeyboardTarget:target}=await import(pathToFileURL(path.resolve('grade3/115-1/week13-content.mjs')));
@@ -27,7 +27,7 @@ const fixture=fs.readFileSync('automation/tests/grade3-week13-browser.cjs','utf8
    if(await p.$eval('#floating-kb-panel',e=>e.classList.contains('hidden')))await p.click('[data-typing-tool-toggle="keyboard"]');
    for(const variant of ['original','replay']){
     if(variant==='replay')for(let id=1;id<=6;id++)await p.$eval(`[data-replay="${id}"]`,e=>e.click());
-    for(const l of levels){
+    for(const l of levels.filter(l=>!process.env.WEEK13_GUIDE_BOSS_ONLY||l.id===6)){
      const answer=variant==='replay'?l.replay:l.ans;
      let offset=0;
      for(const [lineIndex,line]of answer.split('\n').entries()){

@@ -7,6 +7,7 @@
 - 本週圖卡已生成、目視、壓1920×1080 WebP q80／173,192 bytes、Cloudinary回讀SHA一致；新UI成品blob由同筆已接受請求回收，無重送，詳排查紀錄。原生成器保持原樣，局部實驗driver不提交；新增只讀回收helper。
 - 本機預覽`http://127.0.0.1:3143/grade3/115-1/week13.html`，契約`grade3-week13-contract.md`。正式活動兩筆SQL登記、真教師後台切換／本人保存及正式發布尚未執行，不可宣稱上線；後續仍依PR進main與乾淨main發布腳本。
 - 程式提交`c1efac20`，已推[草稿PR #440](https://github.com/chianwu-hash/it-class-tcwu/pull/440)，未合併。GitHub連接器403後改用本機已登入gh建立，沒有重複PR。燈箱1280／390完整mouse／CDP雙指與auth失效分支亦已通過；維持人工Windows實機界線。
+- 教師後續微調已同步PR：Windows鍵帽改品牌圖示；基礎英打建議到第1大關「無名指加入」S／L，仍非必做門檻；魔王原題／換題改五行完整中文句＋兩組顏色問答，各83字元、換題交換回答順序。新魔王20個桌手機行次逐字注音亮鍵與新題完整保存／換題回歸全過，既有獎勵與正式登記待辦保持。
 - 私有證據在本工作樹`.chat-mode/evidence/week13-*`，保持不進公開repo；原核定教案與Claude三輪教學討論仍在`grade3-week13-plan-20261123`工作樹，未清除。Windows實體注音候選窗、面板與Alt＋Tab須教室實機確認。
 
 ## 發布登記
