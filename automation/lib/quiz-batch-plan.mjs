@@ -8,6 +8,14 @@ import {batchMediaAssets} from './quiz-batch-media.mjs';
 export const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 export const readJson = async file => JSON.parse((await fs.readFile(file, 'utf8')).replace(/^\uFEFF/, ''));
 
+export function validateBatchCatalog(packet) {
+  const units = new Set(packet.candidates.map(c => c.doc.catalog?.unit).filter(Boolean));
+  if (units.size <= 1) return;
+  assert.ok(typeof packet.catalogUnit === 'string' && packet.catalogUnit.trim(), '跨單元批次須明列完整目錄單元');
+  const listed = new Set(packet.catalogUnit.split('、').map(s => s.trim()));
+  for (const unit of units) assert.ok(listed.has(unit), '批次目錄遺漏來源單元：' + unit);
+}
+
 export function batchCounts(packet) {
   assert.equal(packet.schema, 1);
   assert.ok(Array.isArray(packet.candidates) && packet.candidates.length);
@@ -48,6 +56,7 @@ export async function loadBatch(file) {
   const bytes = await fs.readFile(file);
   const packet = JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/, ''));
   const counts = batchCounts(packet);
+  validateBatchCatalog(packet);
   batchMediaAssets(packet);
   assert.equal(packet.studyRows.length, counts.questions);
   const questions = packet.candidates.flatMap(c => c.doc.blocks.flatMap(b => b.questions));
