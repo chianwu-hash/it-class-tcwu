@@ -5,6 +5,7 @@ import {randomUUID} from 'node:crypto';
 import {loadBatch,readJson,digest,expectedResponse,practiceWriteIntent,freezeJson,recordBatchTime} from './lib/quiz-batch-plan.mjs';
 import {validateDocument} from '../shared/quiz-document.mjs';
 import {setupProductionQuizDB} from './fixtures/production-quiz-db.mjs';
+import {batchMediaAssets} from './lib/quiz-batch-media.mjs';
 
 const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
 for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.equal(q.type,'fields');if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set'].includes(f.input)));assert.ok(!q.answer.tuples);}}
@@ -18,15 +19,16 @@ let ids;try{ids=await readJson(file('ids')+'.json');}catch(e){if(e.code!=='ENOEN
 assert.equal(ids.packetSha,packetSha);
 const q=s=>"'"+String(s).replaceAll("'","''")+"'",j=x=>q(JSON.stringify(x))+'::jsonb';
 const book=p.book,rows=p.studyRows,assets=p.pages.map(a=>({...a,sha:a.sha??a.sha256}));
+const mediaAssets=batchMediaAssets(p);
 const publications=[{...ids,doc,rows,access:'practice',user:owner},...ids.samples.map(s=>{
  const c=p.candidates.find(c=>c.source===s.source),b=c.doc.blocks.find(b=>b.questions.some(q=>q.id===s.question_id));
  return {...s,doc:validateDocument({...c.doc,title:p.title,blocks:[{...b,questions:b.questions.filter(q=>q.id===s.question_id)}]}),rows:rows.filter(r=>r.question_id===s.question_id),access:'self',user:student};})];
-const guards=`if not exists(select 1 from auth.users where id=${q(owner)} and lower(email)=${q(ownerEmail)} and email_confirmed_at is not null) then raise exception 'owner_mismatch';end if;
+const guards=`if exists(select 1 from jsonb_array_elements(${j(mediaAssets)}) r where not exists(select 1 from public.quiz_media_assets m where m.url=r->>'url' and m.owner_id=${q(owner)} and m.object_path=r->>'object_path' and m.mime=r->>'mime' and m.bytes=(r->>'bytes')::integer)) then raise exception 'private_media_descriptor_mismatch';end if;
+if not exists(select 1 from auth.users where id=${q(owner)} and lower(email)=${q(ownerEmail)} and email_confirmed_at is not null) then raise exception 'owner_mismatch';end if;
 if not exists(select 1 from auth.users u join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 and e.class_code='307' where u.id=${q(student)} and lower(u.email)=${q(studentEmail)} and u.email_confirmed_at is not null and u.raw_app_meta_data->'providers'?'google') then raise exception 'qa_identity_mismatch';end if;
 if not exists(select 1 from public.quiz_textbooks where id=${q(book.id)} and grade=3 and school_year=115 and semester=1 and source_sha256=${q(book.sourceSha256)} and title=${q(book.title)} and enabled) then raise exception 'textbook_version_mismatch';end if;
 if exists(select 1 from jsonb_array_elements(${j(assets)}) r where not exists(select 1 from public.quiz_textbook_pages a where a.book_id=${q(book.id)} and a.id=r->>'id' and to_jsonb(a.printed_pages)=r->'printedPages' and a.sha256=r->>'sha' and a.bytes=(r->>'bytes')::integer and a.sequence=r->>'sequence' and a.provenance=r->'provenance')) then raise exception 'textbook_page_mismatch';end if;`;
-// This adapter deliberately supports documents without question media. Other batches use the media stage first.
-assert.equal(n.images,0,'此練習卷轉接器須先擴充媒體登錄查核');
+assert.equal(n.images,mediaAssets.length);
 const exact=t=>`if not exists(select 1 from public.quiz_sessions s join public.quiz_versions v on v.id=s.version_id join public.quiz_banks b on b.id=v.bank_id join public.quiz_version_meta m on m.version_id=v.id where s.id=${q(t.session)} and s.owner_id=${q(t.user)} and s.access_mode=${q(t.access)} and s.status='open' and s.version_id=${q(t.version)} and v.bank_id=${q(t.bank)} and v.document=${j(t.doc)} and b.draft=v.document and m.total=${t.rows.length} and not s.shuffle_questions and not s.shuffle_options) then raise exception 'document_changed';end if;
 if not exists(select 1 from public.quiz_study_packages where id=${q(t.pkg)} and version_id=${q(t.version)} and kind='normal' and enabled and approved) then raise exception 'package_unavailable';end if;
 if (select count(*) from public.quiz_study_items where package_id=${q(t.pkg)})<>${t.rows.length} or exists(select 1 from jsonb_array_elements(${j(t.rows)}) r where not exists(select 1 from public.quiz_study_items i where i.package_id=${q(t.pkg)} and i.group_id='' and i.question_id=r->>'question_id' and i.book_id=${q(book.id)} and i.primary_page=(r->>'primary')::integer and to_jsonb(i.reference_pages)=r->'reference' and i.student_explanation=r->>'student_explanation' and i.teacher_notes=r->'teacher_notes')) then raise exception 'study_links_mismatch';end if;`;
@@ -60,9 +62,18 @@ try{
  for(const t of schema.triggers.filter(t=>t.schema==='public'&&tables.has(t.table)))await db.exec(t.def);
  await db.query("insert into auth.users(id,email,email_confirmed_at) values($1,$2,now()),($3,$4,now()),($5,'g3@example.invalid',now()),($6,'g4@example.invalid',now())",[owner,ownerEmail,student,studentEmail,uid(2),uid(3)]);
  await db.query("insert into public.student_enrollments values(115,$1,'307',30,'QA'),(115,'g3@example.invalid','301',31,'G3'),(115,'g4@example.invalid','401',31,'G4')",[studentEmail]);
+ for(const a of mediaAssets)await db.query('insert into public.quiz_media_assets(url,owner_id,object_path,mime,bytes) values($1,$2,$3,$4,$5)',[a.url,owner,a.object_path,a.mime,a.bytes]);
  await db.query('insert into public.quiz_textbooks values($1,$2,$3,$4,$5,$6,false)',[book.id,book.grade,book.schoolYear,book.semester,book.title,book.sourceSha256]);
  for(const b of book.pages)await db.query('insert into public.quiz_textbook_pages(book_id,id,printed_pages,sequence,sha256,bytes,provenance) values($1,$2,$3,$4,$5,$6,$7)',[book.id,b.id,'{'+b.printedPages.join(',')+'}',b.sequence,b.sha256,b.bytes,b.provenance]);
  await db.query('update public.quiz_textbooks set enabled=true where id=$1',[book.id]);
+ if(mediaAssets.length){
+  const a=mediaAssets[0];
+  for(const [column,value] of [['bytes',a.bytes+1],['mime',a.mime==='image/png'?'image/jpeg':'image/png'],['object_path',a.object_path+'-wrong'],['owner_id',student]]){
+   await db.query(`update public.quiz_media_assets set ${column}=$2 where url=$1`,[a.url,value]);
+   await assert.rejects(db.exec(sqls.stage),/private_media_descriptor_mismatch/);await db.exec('rollback');
+   await db.query('update public.quiz_media_assets set owner_id=$2,object_path=$3,mime=$4,bytes=$5 where url=$1',[a.url,owner,a.object_path,a.mime,a.bytes]);
+  }
+ }
  await db.exec(sqls.stage);await db.exec(sqls.readback);
  await actor(uid(2));await assert.rejects(action('join',{session_id:ids.session}));for(const s of ids.samples)await assert.rejects(action('join',{session_id:s.session}));
  await actor('', 'anon');await assert.rejects(action('join',{session_id:ids.session}));
@@ -77,7 +88,8 @@ try{
  let cases=0;const results=[];
  for(const c of p.candidates)for(const qn of c.doc.blocks[0].questions){const workFor=q=>p.works[q.id]??p.works[c.source],response=expectedResponse(qn,workFor(qn));
   const aliases=(p.responseAliases??[]).filter(a=>a.question_id===qn.id).map(a=>{assert.ok(qn.fields.some(f=>f.id===a.field_id&&f.input==='math'));assert.ok(typeof a.value==='string'&&a.value.length>0&&a.value.length<=250);assert.notEqual(a.value,response.f[a.field_id]);const value=structuredClone(response);value.f[a.field_id]=a.value;return value;});
-  const variants=[response,...qn.fields.map(field=>{const bad=structuredClone(response);if(field.input==='single')bad.f[field.id]=field.options.find(o=>o.id!==response.f[field.id]).id;else if(field.input==='set'){const ids=new Set(response.f[field.id]),toggle=field.options[0].id;ids.has(toggle)?ids.delete(toggle):ids.add(toggle);bad.f[field.id]=[...ids];}else bad.f[field.id]='999999';return bad;}),...aliases];
+  const acceptedAlternatives=qn.fields.filter(f=>f.input==='single').flatMap(f=>qn.answer.fields[f.id].slice(1).map(value=>{const alternative=structuredClone(response);alternative.f[f.id]=value;return alternative;}));
+  const variants=[response,...qn.fields.map(field=>{const bad=structuredClone(response);if(field.input==='single'){const wrong=field.options.find(o=>!qn.answer.fields[field.id].includes(o.id));assert.ok(wrong,'Need an independently incorrect option');bad.f[field.id]=wrong.id;}else if(field.input==='set'){const ids=new Set(response.f[field.id]),toggle=field.options[0].id;ids.has(toggle)?ids.delete(toggle):ids.add(toggle);bad.f[field.id]=[...ids];}else bad.f[field.id]='999999';return bad;}),...aliases,...acceptedAlternatives];
   for(const [i,value] of variants.entries()){const shouldPass=i===0||i>qn.fields.length;
    await db.exec('reset role');const bank=randomUUID(),version=randomUUID(),session=randomUUID();
    await db.query('insert into public.quiz_banks(id,owner_id,draft) values($1,$2,$3)',[bank,student,c.doc]);

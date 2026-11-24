@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {validateSketch} from '../../shared/sketch/contract.mjs';
 import {validateDocument} from '../../shared/quiz-document.mjs';
+import {batchMediaAssets} from './quiz-batch-media.mjs';
 
 export const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 export const readJson = async file => JSON.parse((await fs.readFile(file, 'utf8')).replace(/^\uFEFF/, ''));
@@ -40,6 +41,7 @@ export async function loadBatch(file) {
   const bytes = await fs.readFile(file);
   const packet = JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/, ''));
   const counts = batchCounts(packet);
+  batchMediaAssets(packet);
   assert.equal(packet.studyRows.length, counts.questions);
   const questions = packet.candidates.flatMap(c => c.doc.blocks.flatMap(b => b.questions));
   assert.deepEqual(new Set(packet.studyRows.map(r => r.question_id)), new Set(questions.map(q => q.id)));
