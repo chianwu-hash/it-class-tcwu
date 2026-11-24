@@ -26,8 +26,15 @@ export function batchCounts(packet) {
     images: media.size, samples: Math.max(1, Math.ceil(packet.candidates.length * 0.05))};
 }
 
-export function expectedResponse(question, work) {
+export function expectedResponse(question, work, openResponse) {
   if (question.type === 'single') return question.answer.option_id;
+  if(question.type==='open'){
+    assert.ok(question.fields.every(f=>f.input==='text'),'Open sketch requires its own reviewed batch adapter');
+    assert.ok(openResponse&&openResponse.v===1&&openResponse.f&&typeof openResponse.f==='object'&&!Array.isArray(openResponse.f));
+    assert.deepEqual(Object.keys(openResponse).sort(),['f','v']);assert.deepEqual(Object.keys(openResponse.f).sort(),question.fields.map(f=>f.id).sort());
+    for(const f of question.fields)assert.ok(typeof openResponse.f[f.id]==='string'&&openResponse.f[f.id].trim()&&openResponse.f[f.id].length<=250);
+    assert.ok(JSON.stringify(openResponse).length<=2000);return structuredClone(openResponse);
+  }
   assert.equal(question.type, 'fields');
   const fields = Object.fromEntries(question.fields.map(f => [f.id, question.answer.fields[f.id][0]]));
   for (const tuple of question.answer.tuples ?? []) Object.assign(fields, tuple.accepted[0]);
@@ -58,7 +65,7 @@ export async function loadBatch(file) {
     const q = candidate?.doc.blocks.flatMap(b => b.questions).find(q => q.id === sample.question_id);
     assert.ok(q);
     assert.ok(packet.studyRows.some(r => r.question_id === q.id));
-    expectedResponse(q, sample.work);
+    expectedResponse(q, sample.work,packet.openResponses?.[q.id]);
   }
   for (const [source, hash] of Object.entries(packet.inputs)) assert.equal(digest(await fs.readFile(source)), hash, '固定來源檔案已改變');
   return {packet, counts, sha256: digest(bytes)};
@@ -70,6 +77,7 @@ export function assertOAuthReceipt(batch,receipt) {
   assert.equal(receipt.sampleCount,batch.counts.samples,'正式抽驗數不符');
   assert.equal(receipt.samples?.length,batch.counts.samples,'正式抽驗數不符');
   assert.deepEqual(receipt.samples.map(s=>s.question).sort(),batch.packet.samples.map(s=>s.question_id).sort(),'正式抽驗題目不符');
+  for(const s of receipt.samples){const q=batch.packet.candidates?.flatMap(c=>c.doc.blocks.flatMap(b=>b.questions)).find(q=>q.id===s.question);if(q?.type==='open'){assert.equal(s.correct,null);assert.equal(s.assessment_status,'self_checked');assert.ok(['understood','practice'].includes(s.rating));assert.ok(s.saved_and_reopened&&s.self_checked_and_reopened);}}
 }
 
 export function practiceWriteIntent(plan,isolated,operation) {
