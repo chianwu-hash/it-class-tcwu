@@ -34,8 +34,15 @@ export function statisticsContractCandidate(src,review,catalog,contract,{teacher
   if(op.kind==='rowTotal')return rowTotals[row(op.row)];if(op.kind==='columnTotal')return colTotals[col(op.column)];if(op.kind==='total')return total;
   if(op.kind==='difference'){const a=evaluate(op.first),b=evaluate(op.second);assert.ok(Number.isInteger(a)&&Number.isInteger(b)&&a>=b,'Directed difference conflicts with source');return a-b;}
   if(op.kind==='subtractLiteral'){const a=evaluate(op.from);assert.ok(Number.isSafeInteger(op.amount)&&op.amount>=0&&a>=op.amount);const prompt=norm(parts.get(op.part).map(text).join('\n'));assert.ok(prompt.includes(norm(op.literal)));assert.ok(norm(op.literal).includes(String(op.amount)));return a-op.amount;}
+  if(op.kind==='sameRowTotal'){row(op.row);assert.ok(norm(parts.get(op.part).map(text).join('\n')).includes(norm(rowNames[op.row])));const found=rowNames.filter((_,i)=>i!==op.row&&rowTotals[i]===rowTotals[op.row]);assert.equal(found.length,1);return found[0];}
+  if(['monthExtreme','matchingMonth'].includes(op.kind)){
+   assert.deepEqual(rowNames.map(norm),Array.from({length:12},(_,i)=>(i+1)+'月'));
+   if(op.kind==='monthExtreme'){assert.ok(['min','max'].includes(op.mode));const value=op.mode==='min'?Math.min(...rowTotals):Math.max(...rowTotals);assert.equal(rowTotals.filter(v=>v===value).length,1);return rowTotals.indexOf(value)+1;}
+   assert.ok(norm(parts.get(op.part).map(text).join('\n')).includes(String(op.value)+'人'));const found=rowTotals.flatMap((n,i)=>n===op.value?[i+1]:[]);assert.equal(found.length,op.count);assert.ok(Number.isInteger(op.index)&&op.index>=0&&op.index<found.length);return found[op.index];
+  }
   const values=op.axis==='row'?(op.scope===undefined?rowTotals:solved.slice(0,R).map(r=>r[col(op.scope)])):(op.scope===undefined?colTotals:solved[row(op.scope)].slice(0,C));
   assert.ok(['row','column'].includes(op.axis));const names=op.axis==='row'?rowNames:colNames;
+  if(op.kind==='extremes'){assert.ok(['min','max'].includes(op.mode));const value=op.mode==='min'?Math.min(...values):Math.max(...values);return names.filter((_,i)=>values[i]===value);}
   if(op.kind==='extreme'){assert.ok(['min','max'].includes(op.mode));const value=op.mode==='min'?Math.min(...values):Math.max(...values);assert.equal(values.filter(v=>v===value).length,1,'Tied extreme requires an exception');return op.value?value:names[values.indexOf(value)];}
   if(op.kind==='rank'){assert.equal(new Set(values).size,values.length,'Tied rank requires an exception');assert.ok(Number.isInteger(op.index)&&op.index>=0&&op.index<values.length);return names.map((name,i)=>({name,n:values[i]})).sort((a,b)=>b.n-a.n)[op.index].name;}
   if(op.kind==='columnsCompare'){assert.equal(op.axis,'column');row(op.firstRow);row(op.secondRow);assert.ok(['equal','greater'].includes(op.relation));const found=colNames.filter((_,c)=>op.relation==='equal'?solved[op.firstRow][c]===solved[op.secondRow][c]:solved[op.firstRow][c]>solved[op.secondRow][c]);if(op.single){assert.equal(found.length,1);return found[0];}return found;}

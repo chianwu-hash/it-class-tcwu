@@ -21,8 +21,8 @@ export function reviewedFieldMapping(src,review,observation,{catalog,owner}){
   const accepted={},fields=t.fields.map((f,j)=>{
    const pos=target.positions[j];assert.equal(f.position,pos.position_id);
    assert.deepEqual(f.teacherKey,pos.reference_value);assert.ok(f.independentCheck);
-   assert.equal(f.input,pos.kind==='single_choice'?'single':pos.kind==='set'?'set':'math');
-   if(f.input==='math'){assert.ok(!/[\$\\]/u.test(f.label),'Math field labels are plain text; put formulas in prompt content');assert.equal(String(f.value),String(pos.reference_value));accepted[f.id]=[String(f.value)];}
+   assert.equal(f.input,pos.kind==='single_choice'?'single':pos.kind==='set'?'set':['short_text','text'].includes(pos.kind)?'text':'math');
+   if(['math','text'].includes(f.input)){assert.ok(!/[\$\\]/u.test(f.label),'Answer field labels are plain text; put formulas in prompt content');assert.equal(String(f.value),String(pos.reference_value));accepted[f.id]=f.accepted??[String(f.value)];assert.ok(Array.isArray(accepted[f.id])&&accepted[f.id][0]===String(f.value)&&accepted[f.id].every(v=>typeof v==='string'&&v.trim()));}
    else{
     assert.ok(f.options?.length>=2);assert.equal(new Set(f.options.map(o=>o.id)).size,f.options.length);
     const keys=Array.isArray(f.teacherKey)?f.teacherKey:[f.teacherKey];
