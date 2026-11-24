@@ -1,0 +1,13 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {reviewedFieldMapping,reviewedSourceSignature} from './lib/quiz-reviewed-field-mapping.mjs';
+const content=text=>({text,media:[]});
+function fixture(){
+ const src={id:'HL115G3M-12345678',question:{content:content('哪些袋數可以整除？')},answer:{content:content('1→乙、丙')},source_files:[{name:'preamble-question.docx.gz',sha256:'a'.repeat(64)}]},review={id:src.id,logical_targets:[{target_id:'t1',positions:[{position_id:'p1',kind:'set',reference_value:['乙','丙']}]}]};
+ const observation={sourceSignature:reviewedSourceSignature(src),teacherRaw:src.answer.content.text,visuallyReviewed:true,title:'整除配對',material:content('共12個'),targets:[{target:'t1',prompt:content('選出所有可以整除的袋數'),explanation:content('12可以被3及4整除'),fields:[{id:'f1',position:'p1',teacherKey:['乙','丙'],independentCheck:'12_mod_3_and_4',label:'12個',input:'set',options:[['甲','5'],['乙','3'],['丙','4']].map(([sourceKey,text],i)=>({id:'r'+i,sourceKey,content:content(text)}))}],boards:[{indices:[0],unique:false}]}]};
+ const settings={catalog:{school_year:'115',subject:'數學',publisher:'翰林',volume:'3年級上學期',unit:'6'},owner:'82dfc4ec-8c68-47d9-aa25-8918080ca577'};return {src,review,observation,settings};
+}
+const build=f=>reviewedFieldMapping(f.src,f.review,f.observation,f.settings);
+test('複選連線保留多值答案，原選項順序與不可變版本',()=>{const f=fixture(),a=build(f),q=a.candidate.doc.blocks[0].questions[0];assert.equal(q.fields[0].input,'set');assert.deepEqual(q.answer.fields.f1,[['r1','r2']]);assert.deepEqual(q.fields[0].options.map(o=>o.content.text),['5','3','4']);const g=fixture();g.observation.targets[0].fields[0].options.reverse();assert.notEqual(build(g).candidate.doc.blocks[0].questions[0].id,q.id);});
+test('不能漏位置、把複選降成單選或遺漏教師選項',()=>{for(const mutate of [f=>f.observation.targets[0].fields.pop(),f=>f.observation.targets[0].fields[0].input='single',f=>f.observation.targets[0].fields[0].options.pop()]){const f=fixture();mutate(f);assert.throws(()=>build(f));}});
+test('原題或教師答案變動必須重新固定複核',()=>{const f=fixture();f.src.answer.content.text='1→甲';assert.throws(()=>build(f));const g=fixture();g.observation.teacherRaw='錯鍵';assert.throws(()=>build(g));});
+test('重複位置與不同欄選項不能暗中合成一板',()=>{const f=fixture(),t=f.observation.targets[0];t.boards[0].indices=[0,0];assert.throws(()=>build(f));});
