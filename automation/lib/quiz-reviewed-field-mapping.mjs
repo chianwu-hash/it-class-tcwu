@@ -22,7 +22,7 @@ export function reviewedFieldMapping(src,review,observation,{catalog,owner}){
    const pos=target.positions[j];assert.equal(f.position,pos.position_id);
    assert.deepEqual(f.teacherKey,pos.reference_value);assert.ok(f.independentCheck);
    assert.equal(f.input,pos.kind==='single_choice'?'single':pos.kind==='set'?'set':'math');
-   if(f.input==='math'){assert.equal(String(f.value),String(pos.reference_value));accepted[f.id]=[String(f.value)];}
+   if(f.input==='math'){assert.ok(!/[\$\\]/u.test(f.label),'Math field labels are plain text; put formulas in prompt content');assert.equal(String(f.value),String(pos.reference_value));accepted[f.id]=[String(f.value)];}
    else{
     assert.ok(f.options?.length>=2);assert.equal(new Set(f.options.map(o=>o.id)).size,f.options.length);
     const keys=Array.isArray(f.teacherKey)?f.teacherKey:[f.teacherKey];
