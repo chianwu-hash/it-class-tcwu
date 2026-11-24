@@ -1,3 +1,10 @@
+# 2026-11-24 重量20題私有供圖契約修正
+
+- 首版正式抽驗在送答前發現多欄選項圖片不在既有prompt媒體授權範圍；20題尚未啟用。Codex唯一寫入者；Claude唯讀複核本次來源資料修正及實際媒體可見性回歸，不讀私有原題、憑證或執行SQL。
+- 新版本把原可見選項圖加入同題prompt媒體索引，沿現行renderer及DB權限。73情境、70次媒體可見及62次外題拒絕通過；舊版反例確實拒絕。關閉首版兩私有卷／停用包，版本留存；接續新版本OAuth、啟用與讀回，正式收據仍在原批PR462，修正PR另含實際程式變更。
+
+| 已完成 | codex-matching20 | 2026-11-24T09:17:43.143Z | `c1a672c` | `dpl_66b7n9rrWUoCUqJ9iL9VsZ3VuNbA` | shared/quiz-matching-sources.mjs、shared/quiz-workshop/generated/assets.json、grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html | `dpl_F8gtBF3JFrwcRFEiPH6P7Mmta9vo`／回滾 `dpl_66b7n9rrWUoCUqJ9iL9VsZ3VuNbA`（eolOnly 0） |
+
 # 2026-11-24 重量連線20筆接續中
 
 - 前批8來源已正式上線、逐題讀回及入口通過，總帳v71：510／708、剩198；最終收據留[同一PR461](https://github.com/chianwu-hash/it-class-tcwu/pull/461#issuecomment-7126607479)。

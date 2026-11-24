@@ -54,6 +54,7 @@ const sqls={
 for(const [k,s] of Object.entries(sqls))await fs.writeFile(file(k)+'.sql',s);
 await save('document',doc);await save('plan',{packetSha,counts:n,ids,book:book.id,rows,assets,publications,sampleExpected:Object.fromEntries(ids.samples.map(s=>{const question=doc.blocks.flatMap(b=>b.questions).find(q=>q.id===s.question_id);return [s.question_id,expectedResponse(question,s.work)];}))});
 const {db,uid}=await setupProductionQuizDB({snapshot:true});
+let mediaVisibilityChecks=0,foreignMediaDenialChecks=0;
 const actor=async(id,role='authenticated')=>{await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[id]);await db.exec('set role '+role);};
 const action=async(name,p={})=>(await db.query('select public.quiz_action($1,$2) data',[name,p])).rows[0].data;
 try{
@@ -82,6 +83,15 @@ try{
  const joined=await action('join',{session_id:ids.session});
  const expected=doc.blocks.flatMap(b=>b.questions.map(q=>({q,material:b.material})));
  assert.equal(joined.document.questions.length,n.questions);
+ // Exercise the actual snapshot media gate; descriptor rows alone do not prove
+ // that a student can load images nested in structured answer fields.
+ if(mediaAssets.length){
+  const urls=value=>{const found=new Set();const visit=v=>{if(!v||typeof v!=='object')return;if(typeof v.url==='string')found.add(v.url);for(const child of Object.values(v))if(typeof child==='object')visit(child);};visit(value);return found;};
+  const publicUrls=urls(doc.blocks.map(b=>({material:b.material,questions:b.questions.map(q=>({prompt:q.prompt,options:q.options,fields:q.fields}))})));
+  await db.exec('reset role');
+  for(const a of mediaAssets){assert.equal((await db.query('select public.quiz_media_visible($1,$2) visible',[a.url,joined.attempt_id])).rows[0].visible,publicUrls.has(a.url),'Student media visibility differs from public question content');mediaVisibilityChecks++;}
+  await actor(uid(2));
+ }
  for(const [i,got] of joined.document.questions.entries()){const {q,material}=expected[i];assert.equal(got.id,q.id);assert.deepEqual(got.prompt,q.prompt);assert.deepEqual(got.fields,q.fields);assert.deepEqual(got.work,q.work);assert.deepEqual(got.material,material);assert.ok(!('answer' in got));assert.deepEqual(joined.study.references[q.id],{bookId:book.id,primary:rows[i].primary,references:rows[i].reference,fields:[]});}
  // All fields exercise the production grading contract; work is saved, not automatically graded.
  for(const a of p.responseAliases??[])assert.ok(doc.blocks.flatMap(b=>b.questions).some(q=>q.id===a.question_id&&q.fields.some(f=>f.id===a.field_id&&f.input==='math')));
@@ -109,10 +119,18 @@ try{
   }
   results.push({source:c.source,question:qn.id,fields:qn.fields.length,exact:true});
  }
- await actor(student);for(const s of ids.samples){const joined=await action('join',{session_id:s.session});assert.equal(joined.document.questions.length,1);assert.deepEqual(joined.document.questions[0].prompt,expected.find(e=>e.q.id===s.question_id).q.prompt);}
+ await actor(student);for(const s of ids.samples){
+  const joined=await action('join',{session_id:s.session});assert.equal(joined.document.questions.length,1);assert.deepEqual(joined.document.questions[0].prompt,expected.find(e=>e.q.id===s.question_id).q.prompt);
+  if(mediaAssets.length){
+   const own=publications.find(t=>t.session===s.session),publicOwn=JSON.stringify(own.doc.blocks.map(b=>({material:b.material,questions:b.questions.map(q=>({prompt:q.prompt,options:q.options,fields:q.fields}))})));
+   await db.exec('reset role');
+   for(const a of mediaAssets){const visible=publicOwn.includes(a.url);assert.equal((await db.query('select public.quiz_media_visible($1,$2) visible',[a.url,joined.attempt_id])).rows[0].visible,visible,'Private sample media visibility differs from its public content');if(visible)mediaVisibilityChecks++;else foreignMediaDenialChecks++;}
+   await actor(student);
+  }
+ }
  await actor(uid(3));assert.ok(!(await action('library_sessions')).sessions.some(s=>s.id===ids.session));await assert.rejects(action('join',{session_id:ids.session}));
  await db.exec('reset role');await db.exec(sqls.rollback);await actor(uid(2));assert.ok(!(await action('library_sessions')).sessions.some(s=>s.id===ids.session));
- await save('isolated',{passed:true,packetSha,counts:n,cases,equivalent_responses:p.responseAliases?.length??0,results,private_samples:n.samples,anonymous_denied:true,other_grade_denied:true,rollback_verified:true,sql:Object.fromEntries(Object.entries(sqls).map(([k,v])=>[k,digest(v)]))});
+ await save('isolated',{passed:true,packetSha,counts:n,cases,mediaVisibilityChecks,foreignMediaDenialChecks,equivalent_responses:p.responseAliases?.length??0,results,private_samples:n.samples,anonymous_denied:true,other_grade_denied:true,rollback_verified:true,sql:Object.fromEntries(Object.entries(sqls).map(([k,v])=>[k,digest(v)]))});
  const frozenPlan=await readJson(file('plan')+'.json'),isolated=await readJson(file('isolated')+'.json');
  for(const op of ['stage','activate'])await freezeJson(file(op+'-intent')+'.json',practiceWriteIntent(frozenPlan,isolated,op));
  await recordBatchTime(p,packetSha,'isolated-finished');
