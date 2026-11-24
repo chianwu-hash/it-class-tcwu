@@ -1,3 +1,11 @@
+# 2026-11-24 剩餘連線10來源整群轉接
+
+- 前批20來源正式上線及逐題讀回完成，總帳v72：530／708、剩178；66張圖另以實際學生權限逐SHA取回。[原批PR462最終收據](https://github.com/chianwu-hash/it-class-tcwu/pull/462#issuecomment-7127818192)。首版失敗及修訂歷程留存，修正PR463含程式變更。
+- 現批剩餘10連線來源已逐原圖、教師鍵、Word幾何核對，15小題／38欄；原共用材料及小題獨立判分保持。53正式快照隔離、56可見與外題拒絕通過，13回歸及21產物檢查通過。49媒體先SHA對帳，6可沿用、43待補；9課本原頁核定，舊98頁錯配追加勘誤成96／99，不改舊證據。候選未啟用。
+- Codex唯一寫入者。採既有單值／集合連線、數值與算式欄，不新增renderer／DB函式或權限，不例行Claude二審。接續供圖登錄、main發布、5%抽1來源驗混合連線／填空、課本返回與保存；通過後整批啟用、逐題讀回及總帳，最終收據留本批同PR。
+
+| 已完成 | codex-matching20r1 | 2026-11-24T09:39:28.952Z | `faf151c` | `dpl_F8gtBF3JFrwcRFEiPH6P7Mmta9vo` | shared/quiz-matching-sources.mjs、shared/quiz-workshop/generated/assets.json、grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html | `dpl_2vofj5XAfeNHDkoiNSX6xoSd9DPA`／回滾 `dpl_F8gtBF3JFrwcRFEiPH6P7Mmta9vo`（eolOnly 0） |
+
 # 2026-11-24 重量20題私有供圖契約修正
 
 - 首版正式抽驗在送答前發現多欄選項圖片不在既有prompt媒體授權範圍；20題尚未啟用。Codex唯一寫入者；Claude唯讀複核本次來源資料修正及實際媒體可見性回歸，不讀私有原題、憑證或執行SQL。
