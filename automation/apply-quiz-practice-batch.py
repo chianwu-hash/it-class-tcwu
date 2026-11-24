@@ -35,7 +35,10 @@ def exact(r,visible):
 def answers():
  r=query('answers');assert len(r['rows'])==counts['samples']
  for sample in ids['samples']:
-  matches=[a for a in r['rows'] if a['session']==sample['session'] and a['question']==sample['question_id']];assert len(matches)==1 and matches[0]['correct']
+  matches=[a for a in r['rows'] if a['session']==sample['session'] and a['question']==sample['question_id']];assert len(matches)==1
+  question=next(q for c in packet['candidates'] for b in c['doc']['blocks'] for q in b['questions'] if q['id']==sample['question_id'])
+  if question['type']=='open':assert matches[0]['correct'] is None and matches[0]['assessment_status']=='self_checked' and matches[0]['self_rating'] in ['understood','practice']
+  else:assert matches[0]['correct']
   expected=plan['sampleExpected'][sample['question_id']]
   assert (matches[0]['response'] if isinstance(expected,str) else json.loads(matches[0]['response']))==expected
  save('answer-readback',{'passed':True,'sampleCount':len(r['rows']),'questions':[a['question'] for a in r['rows']]})
@@ -71,7 +74,10 @@ elif kind=='activate':
  assert proof['sampleCount']==counts['samples']==len(proof['samples'])
  assert {s['question'] for s in proof['samples']}=={s['question_id'] for s in ids['samples']}
  for s in proof['samples']:
-  assert s['saved_and_reopened'] and s['correct']
+  assert s['saved_and_reopened']
+  question=next(q for c in packet['candidates'] for b in c['doc']['blocks'] for q in b['questions'] if q['id']==s['question'])
+  if question['type']=='open':assert s['correct'] is None and s['assessment_status']=='self_checked' and s['rating'] in ['understood','practice'] and s['self_checked_and_reopened']
+  else:assert s['correct']
   assert {c['width'] for c in s['checks']}=={390,1280}
   assert all(c['sha_verified'] and c['returned_to_primary'] and c['retained_answer_and_work'] for c in s['checks'])
  answers();mutation('activate',True)

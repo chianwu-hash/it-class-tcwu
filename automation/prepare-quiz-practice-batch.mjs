@@ -9,7 +9,7 @@ import {batchMediaAssets} from './lib/quiz-batch-media.mjs';
 import {atomicPairCases} from './lib/quiz-batch-atomic-pairs.mjs';
 
 const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
-for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.ok(['fields','single'].includes(q.type));if(q.type==='single'){assert.ok(!q.work);continue;}if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set'].includes(f.input)));}}
+for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.ok(['fields','single','open'].includes(q.type));if(q.type==='single'){assert.ok(!q.work);continue;}if(q.type==='open'){assert.ok(!q.work&&q.fields.every(f=>f.input==='text')&&!q.explanation.media.length,'Only reviewed open text without reference media is supported');expectedResponse(q,undefined,p.openResponses?.[q.id]);continue;}if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set'].includes(f.input)));}}
 await recordBatchTime(p,packetSha,'packet-validated');
 const file=s=>path.join(p.outputDir,p.prefix+'-'+s+'.private');
 const save=(s,v)=>fs.writeFile(file(s)+'.json',JSON.stringify(v,null,2)+'\n');
@@ -50,10 +50,10 @@ const sqls={
  rollback:`begin;update public.quiz_sessions set library_visible=false,class_codes='[]',status='closed' where id=${q(ids.session)} and owner_id=${q(owner)} and version_id=${q(ids.version)} and access_mode='practice';${select} commit;`,
  readback:`begin read only;do $$begin ${guards} ${fixed} end$$;${select} commit;`,
  presence:`select encode(convert_to(jsonb_build_object('sessions',(select count(*) from public.quiz_sessions where id in (${publications.map(t=>q(t.session)).join(',')})))::text,'utf8'),'base64') payload;`,
- answers:`select encode(convert_to(jsonb_build_object('rows',coalesce(jsonb_agg(jsonb_build_object('session',t.session_id,'question',a.question_id,'response',a.response,'correct',a.correct)),'[]'))::text,'utf8'),'base64') payload from public.quiz_answers a join public.quiz_attempts t on t.id=a.attempt_id where t.session_id in (${ids.samples.map(s=>q(s.session)).join(',')}) and t.user_id=${q(student)};`,
+ answers:`select encode(convert_to(jsonb_build_object('rows',coalesce(jsonb_agg(r),'[]'))::text,'utf8'),'base64') payload from (select t.session_id session,a.question_id question,a.response,a.correct,null::text assessment_status,null::text self_rating from public.quiz_answers a join public.quiz_attempts t on t.id=a.attempt_id where t.session_id in (${ids.samples.map(s=>q(s.session)).join(',')}) and t.user_id=${q(student)} union all select t.session_id,a.question_id,a.response,null::boolean,a.status,a.self_rating from public.quiz_open_responses a join public.quiz_attempts t on t.id=a.attempt_id where t.session_id in (${ids.samples.map(s=>q(s.session)).join(',')}) and t.user_id=${q(student)}) r;`,
 };
 for(const [k,s] of Object.entries(sqls))await fs.writeFile(file(k)+'.sql',s);
-await save('document',doc);await save('plan',{packetSha,counts:n,ids,book:book.id,rows,assets,publications,sampleExpected:Object.fromEntries(ids.samples.map(s=>{const question=doc.blocks.flatMap(b=>b.questions).find(q=>q.id===s.question_id);return [s.question_id,expectedResponse(question,s.work)];}))});
+await save('document',doc);await save('plan',{packetSha,counts:n,ids,book:book.id,rows,assets,publications,sampleExpected:Object.fromEntries(ids.samples.map(s=>{const question=doc.blocks.flatMap(b=>b.questions).find(q=>q.id===s.question_id);return [s.question_id,expectedResponse(question,s.work,p.openResponses?.[question.id])];}))});
 const {db,uid}=await setupProductionQuizDB({snapshot:true});
 let mediaVisibilityChecks=0,foreignMediaDenialChecks=0;
 const actor=async(id,role='authenticated')=>{await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[id]);await db.exec('set role '+role);};
@@ -97,12 +97,12 @@ try{
  // All fields exercise the production grading contract; work is saved, not automatically graded.
  for(const a of p.responseAliases??[])assert.ok(doc.blocks.flatMap(b=>b.questions).some(q=>q.id===a.question_id&&q.fields.some(f=>f.id===a.field_id&&f.input==='math')));
  let cases=0;const results=[];
- for(const c of p.candidates)for(const qn of c.doc.blocks[0].questions){const workFor=q=>p.works[q.id]??p.works[c.source],response=expectedResponse(qn,workFor(qn));
+ for(const c of p.candidates)for(const qn of c.doc.blocks[0].questions){const workFor=q=>p.works[q.id]??p.works[c.source],responseFor=q=>expectedResponse(q,workFor(q),p.openResponses?.[q.id]),response=responseFor(qn);
   const aliases=(p.responseAliases??[]).filter(a=>a.question_id===qn.id).map(a=>{assert.ok(qn.fields.some(f=>f.id===a.field_id&&f.input==='math'));assert.ok(typeof a.value==='string'&&a.value.length>0&&a.value.length<=250);assert.notEqual(a.value,response.f[a.field_id]);const value=structuredClone(response);value.f[a.field_id]=a.value;return value;});
   const tupleFieldIds=new Set((qn.answer.tuples??[]).flatMap(t=>t.fields));
-  const fields=qn.fields??[],single=qn.type==='single';
-  const acceptedAlternatives=fields.filter(f=>['single','text'].includes(f.input)&&!tupleFieldIds.has(f.id)).flatMap(f=>qn.answer.fields[f.id].slice(1).map(value=>{const alternative=structuredClone(response);alternative.f[f.id]=value;return alternative;}));
-  const tupleCases=single?{correct:[],incorrect:[]}:atomicPairCases(qn,response);
+  const fields=qn.fields??[],single=qn.type==='single',open=qn.type==='open';
+  const acceptedAlternatives=open?[]:fields.filter(f=>['single','text'].includes(f.input)&&!tupleFieldIds.has(f.id)).flatMap(f=>qn.answer.fields[f.id].slice(1).map(value=>{const alternative=structuredClone(response);alternative.f[f.id]=value;return alternative;}));
+  const tupleCases=single||open?{correct:[],incorrect:[]}:atomicPairCases(qn,response);
   const wrong=single?qn.options.filter(o=>o.id!==response).map(o=>o.id):fields.map(field=>{const bad=structuredClone(response);if(field.input==='single'){const wrong=field.options.find(o=>!qn.answer.fields[field.id].includes(o.id));assert.ok(wrong,'Need an independently incorrect option');bad.f[field.id]=wrong.id;}else if(field.input==='set'){const ids=new Set(response.f[field.id]),toggle=field.options[0].id;ids.has(toggle)?ids.delete(toggle):ids.add(toggle);bad.f[field.id]=[...ids];}else bad.f[field.id]='999999';return bad;});
   const variants=[response,...wrong,...aliases,...acceptedAlternatives,...tupleCases.correct];
   const tupleIncorrectStart=variants.length;variants.push(...tupleCases.incorrect);
@@ -117,13 +117,20 @@ try{
    for(const item of c.doc.blocks[0].questions){
     await action('view_question',{session_id:session,question_id:item.id});await db.exec('reset role');
     await db.query("update public.quiz_question_timing set first_seen=clock_timestamp()-interval '10 seconds' where attempt_id=$1",[before.attempt_id]);await actor(student);
-    const own=item.id===qn.id,itemValue=own?value:expectedResponse(item,workFor(item)),encoded=item.type==='single'?itemValue:JSON.stringify(itemValue),args={session_id:session,question_id:item.id,response:encoded,request_id:randomUUID(),compact:true};
+    const own=item.id===qn.id,itemValue=own?value:responseFor(item),encoded=item.type==='single'?itemValue:JSON.stringify(itemValue),args={session_id:session,question_id:item.id,response:encoded,request_id:randomUUID(),compact:true};
     if(own&&i===0&&item.work){const missing={...itemValue};delete missing.w;await assert.rejects(action('submit',{...args,response:JSON.stringify(missing)}));}
+    if(item.type==='open'&&own&&i===0){await assert.rejects(action('self_check',{session_id:session,question_id:item.id,request_id:randomUUID(),self_rating:'understood',self_note:''}),/open_answer_required/);for(const f of item.fields){const missing=structuredClone(itemValue);delete missing.f[f.id];await assert.rejects(action('submit',{...args,response:JSON.stringify(missing)}));const empty=structuredClone(itemValue);empty.f[f.id]=' ';await assert.rejects(action('submit',{...args,response:JSON.stringify(empty)}));const long=structuredClone(itemValue);long.f[f.id]='字'.repeat(251);await assert.rejects(action('submit',{...args,response:JSON.stringify(long)}));}}
     await action('submit',args);if(own&&i===0)await action('submit',args);expectedResponses[item.id]=encoded;
+    if(item.type==='open'){
+     const pending=await action('resume',{session_id:session}),review=pending.reviews.find(r=>r.question_id===item.id);assert.equal(review.correct,null);assert.notEqual(review.assessment.status,'self_checked');assert.equal(pending.complete,false);
+     const next=c.doc.blocks[0].questions[c.doc.blocks[0].questions.indexOf(item)+1];if(next)await assert.rejects(action('view_question',{session_id:session,question_id:next.id}),/question_order/);
+     const self={session_id:session,question_id:item.id,request_id:randomUUID(),self_rating:own&&i>0?'practice':'understood',self_note:'',compact:true};if(own&&i===0)await assert.rejects(action('self_check',{...self,request_id:args.request_id}),/submission_conflict/);await action('self_check',self);await action('self_check',self);
+     const saved=await action('resume',{session_id:session}),checked=saved.reviews.find(r=>r.question_id===item.id);assert.equal(checked.correct,null);assert.equal(checked.assessment.status,'self_checked');assert.equal(checked.assessment.rating,self.self_rating);
+    }
    }
-   const after=await action('resume',{session_id:session});assert.equal(after.complete,true);assert.deepEqual(after.responses,expectedResponses);for(const review of after.reviews){const own=review.question_id===qn.id;assert.equal(review.correct,own?shouldPass:true);assert.deepEqual(review.answer,c.doc.blocks[0].questions.find(q=>q.id===review.question_id).answer);}cases++;
+   const after=await action('resume',{session_id:session});assert.equal(after.complete,true);assert.deepEqual(after.responses,expectedResponses);for(const review of after.reviews){const own=review.question_id===qn.id,q=c.doc.blocks[0].questions.find(q=>q.id===review.question_id);assert.equal(review.correct,q.type==='open'?null:own?shouldPass:true);if(q.type==='open')assert.equal(review.assessment.status,'self_checked');assert.deepEqual(review.answer,q.answer);}cases++;
   }
-  results.push({source:c.source,question:qn.id,fields:single?1:fields.length,exact:true});
+  results.push({source:c.source,question:qn.id,type:qn.type,fields:single?1:fields.length,auto_graded:!open,self_review:open,exact:true});
  }
  await actor(student);for(const s of ids.samples){
   const joined=await action('join',{session_id:s.session});assert.equal(joined.document.questions.length,1);assert.deepEqual(joined.document.questions[0].prompt,expected.find(e=>e.q.id===s.question_id).q.prompt);
