@@ -9,7 +9,7 @@ import {batchMediaAssets} from './lib/quiz-batch-media.mjs';
 import {atomicPairCases} from './lib/quiz-batch-atomic-pairs.mjs';
 
 const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
-for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.equal(q.type,'fields');if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set'].includes(f.input)));}}
+for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.ok(['fields','single'].includes(q.type));if(q.type==='single'){assert.ok(!q.work);continue;}if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set'].includes(f.input)));}}
 await recordBatchTime(p,packetSha,'packet-validated');
 const file=s=>path.join(p.outputDir,p.prefix+'-'+s+'.private');
 const save=(s,v)=>fs.writeFile(file(s)+'.json',JSON.stringify(v,null,2)+'\n');
@@ -93,18 +93,20 @@ try{
   for(const a of mediaAssets){assert.equal((await db.query('select public.quiz_media_visible($1,$2) visible',[a.url,joined.attempt_id])).rows[0].visible,publicUrls.has(a.url),'Student media visibility differs from public question content');mediaVisibilityChecks++;}
   await actor(uid(2));
  }
- for(const [i,got] of joined.document.questions.entries()){const {q,material}=expected[i];assert.equal(got.id,q.id);assert.deepEqual(got.prompt,q.prompt);assert.deepEqual(got.fields,q.fields);assert.deepEqual(got.work,q.work);assert.deepEqual(got.material,material);assert.ok(!('answer' in got));assert.deepEqual(joined.study.references[q.id],{bookId:book.id,primary:rows[i].primary,references:rows[i].reference,fields:[]});}
+ for(const [i,got] of joined.document.questions.entries()){const {q,material}=expected[i];assert.equal(got.id,q.id);assert.deepEqual(got.prompt,q.prompt);assert.equal(got.type,q.type);if(q.type==='single'){assert.deepEqual(got.options,q.options);assert.ok(!got.fields?.length);}else{assert.deepEqual(got.fields,q.fields);assert.ok(!got.options?.length);}assert.deepEqual(got.work,q.work);assert.deepEqual(got.material,material);assert.ok(!('answer' in got));assert.deepEqual(joined.study.references[q.id],{bookId:book.id,primary:rows[i].primary,references:rows[i].reference,fields:[]});}
  // All fields exercise the production grading contract; work is saved, not automatically graded.
  for(const a of p.responseAliases??[])assert.ok(doc.blocks.flatMap(b=>b.questions).some(q=>q.id===a.question_id&&q.fields.some(f=>f.id===a.field_id&&f.input==='math')));
  let cases=0;const results=[];
  for(const c of p.candidates)for(const qn of c.doc.blocks[0].questions){const workFor=q=>p.works[q.id]??p.works[c.source],response=expectedResponse(qn,workFor(qn));
   const aliases=(p.responseAliases??[]).filter(a=>a.question_id===qn.id).map(a=>{assert.ok(qn.fields.some(f=>f.id===a.field_id&&f.input==='math'));assert.ok(typeof a.value==='string'&&a.value.length>0&&a.value.length<=250);assert.notEqual(a.value,response.f[a.field_id]);const value=structuredClone(response);value.f[a.field_id]=a.value;return value;});
   const tupleFieldIds=new Set((qn.answer.tuples??[]).flatMap(t=>t.fields));
-  const acceptedAlternatives=qn.fields.filter(f=>['single','text'].includes(f.input)&&!tupleFieldIds.has(f.id)).flatMap(f=>qn.answer.fields[f.id].slice(1).map(value=>{const alternative=structuredClone(response);alternative.f[f.id]=value;return alternative;}));
-  const tupleCases=atomicPairCases(qn,response);
-  const variants=[response,...qn.fields.map(field=>{const bad=structuredClone(response);if(field.input==='single'){const wrong=field.options.find(o=>!qn.answer.fields[field.id].includes(o.id));assert.ok(wrong,'Need an independently incorrect option');bad.f[field.id]=wrong.id;}else if(field.input==='set'){const ids=new Set(response.f[field.id]),toggle=field.options[0].id;ids.has(toggle)?ids.delete(toggle):ids.add(toggle);bad.f[field.id]=[...ids];}else bad.f[field.id]='999999';return bad;}),...aliases,...acceptedAlternatives,...tupleCases.correct];
+  const fields=qn.fields??[],single=qn.type==='single';
+  const acceptedAlternatives=fields.filter(f=>['single','text'].includes(f.input)&&!tupleFieldIds.has(f.id)).flatMap(f=>qn.answer.fields[f.id].slice(1).map(value=>{const alternative=structuredClone(response);alternative.f[f.id]=value;return alternative;}));
+  const tupleCases=single?{correct:[],incorrect:[]}:atomicPairCases(qn,response);
+  const wrong=single?qn.options.filter(o=>o.id!==response).map(o=>o.id):fields.map(field=>{const bad=structuredClone(response);if(field.input==='single'){const wrong=field.options.find(o=>!qn.answer.fields[field.id].includes(o.id));assert.ok(wrong,'Need an independently incorrect option');bad.f[field.id]=wrong.id;}else if(field.input==='set'){const ids=new Set(response.f[field.id]),toggle=field.options[0].id;ids.has(toggle)?ids.delete(toggle):ids.add(toggle);bad.f[field.id]=[...ids];}else bad.f[field.id]='999999';return bad;});
+  const variants=[response,...wrong,...aliases,...acceptedAlternatives,...tupleCases.correct];
   const tupleIncorrectStart=variants.length;variants.push(...tupleCases.incorrect);
-  for(const [i,value] of variants.entries()){const shouldPass=(i===0||i>qn.fields.length)&&i<tupleIncorrectStart;
+  for(const [i,value] of variants.entries()){const shouldPass=(i===0||i>wrong.length)&&i<tupleIncorrectStart;
    await db.exec('reset role');const bank=randomUUID(),version=randomUUID(),session=randomUUID();
    await db.query('insert into public.quiz_banks(id,owner_id,draft) values($1,$2,$3)',[bank,student,c.doc]);
    await db.query('insert into public.quiz_versions(id,bank_id,revision,document) values($1,$2,1,$3)',[version,bank,c.doc]);
@@ -115,13 +117,13 @@ try{
    for(const item of c.doc.blocks[0].questions){
     await action('view_question',{session_id:session,question_id:item.id});await db.exec('reset role');
     await db.query("update public.quiz_question_timing set first_seen=clock_timestamp()-interval '10 seconds' where attempt_id=$1",[before.attempt_id]);await actor(student);
-    const own=item.id===qn.id,itemValue=own?value:expectedResponse(item,workFor(item)),encoded=JSON.stringify(itemValue),args={session_id:session,question_id:item.id,response:encoded,request_id:randomUUID(),compact:true};
+    const own=item.id===qn.id,itemValue=own?value:expectedResponse(item,workFor(item)),encoded=item.type==='single'?itemValue:JSON.stringify(itemValue),args={session_id:session,question_id:item.id,response:encoded,request_id:randomUUID(),compact:true};
     if(own&&i===0&&item.work){const missing={...itemValue};delete missing.w;await assert.rejects(action('submit',{...args,response:JSON.stringify(missing)}));}
     await action('submit',args);if(own&&i===0)await action('submit',args);expectedResponses[item.id]=encoded;
    }
    const after=await action('resume',{session_id:session});assert.equal(after.complete,true);assert.deepEqual(after.responses,expectedResponses);for(const review of after.reviews){const own=review.question_id===qn.id;assert.equal(review.correct,own?shouldPass:true);assert.deepEqual(review.answer,c.doc.blocks[0].questions.find(q=>q.id===review.question_id).answer);}cases++;
   }
-  results.push({source:c.source,question:qn.id,fields:qn.fields.length,exact:true});
+  results.push({source:c.source,question:qn.id,fields:single?1:fields.length,exact:true});
  }
  await actor(student);for(const s of ids.samples){
   const joined=await action('join',{session_id:s.session});assert.equal(joined.document.questions.length,1);assert.deepEqual(joined.document.questions[0].prompt,expected.find(e=>e.q.id===s.question_id).q.prompt);

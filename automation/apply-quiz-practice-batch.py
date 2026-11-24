@@ -37,7 +37,7 @@ def answers():
  for sample in ids['samples']:
   matches=[a for a in r['rows'] if a['session']==sample['session'] and a['question']==sample['question_id']];assert len(matches)==1 and matches[0]['correct']
   expected=plan['sampleExpected'][sample['question_id']]
-  assert json.loads(matches[0]['response'])==expected
+  assert (matches[0]['response'] if isinstance(expected,str) else json.loads(matches[0]['response']))==expected
  save('answer-readback',{'passed':True,'sampleCount':len(r['rows']),'questions':[a['question'] for a in r['rows']]})
 
 def mutation(name,visible):
