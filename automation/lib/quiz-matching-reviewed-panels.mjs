@@ -35,9 +35,13 @@ export function reviewedWeightMatching(src,review,observation,{catalog,owner}){
  const promptMedia=[media({...original,alt:'原卷連線圖'})],board={indices:Array.from({length:n},(_,i)=>i),unique:false};
  for(const p of panels.filter(p=>p.kind==='material')){board.materialIndex=promptMedia.length;promptMedia.push(media({...p.crop,alt:'原卷完整天平比較圖'}));}
  if(c.leftPictures){const left=panels.filter(p=>p.kind==='left').sort((a,b)=>a.index-b.index);assert.equal(left.length,n);board.leftCrops=left.map((p,i)=>{assert.equal(p.index,i);const index=promptMedia.length;promptMedia.push(media({...p.crop,alt:c.labels[i]}));const [width,height]=p.crop.size;return {index,viewBox:{x:0,y:0,width,height,sourceWidth:width,sourceHeight:height}};});}
+ // quiz_media_visible authorizes prompt/material and top-level options. Keep
+ // these visible field-choice images in this question's prompt references too.
+ // The source plan omits reference images from the visible introductory passage.
+ for(const option of options)for(const image of option.content.media)if(!promptMedia.some(m=>m.url===image.url))promptMedia.push(structuredClone(image));
  const text=src.question.content.text||'把相同重量的連起來。';
  const explanation=c.balance?`${c.balance==='left_lighter'?'天平左盤較高，表示左盤較輕；右盤較低，表示右盤較重。':'天平左盤較低，表示左盤較重；右盤較高，表示右盤較輕。'}比較兩個秤面的指針刻度，較重物品配較大的重量，較輕物品配較小的重量。`:mapping.map((m,i)=>`${c.labels[i]}${c.estimate?'，可能的重量是':'，重量是'}${c.rightGrams[m.rightIndex]}公克。`).join('\n');
- const version=createHash('sha256').update(JSON.stringify({source:original.sha256,config:c,panels:panels.map(p=>[p.kind,p.index,p.crop.sha256])})).digest('hex').slice(0,12);
+ const version=createHash('sha256').update(JSON.stringify({contract:'prompt-media-references-v1',source:original.sha256,config:c,panels:panels.map(p=>[p.kind,p.index,p.crop.sha256])})).digest('hex').slice(0,12);
  const q={id:`hlg3m_${src.id.slice(-8)}_wm${version}`,type:'fields',prompt:{text,media:promptMedia,layout:[{type:'paragraph',runs:[{type:'text',text}]},...promptMedia.map((_,i)=>({type:'paragraph',runs:[{type:'image',media_index:i,width:640}]}))]},fields:c.labels.map((label,i)=>({id:'f'+(i+1),label,input:'single',options:structuredClone(options)})),answer:{format:'fields-v1',fields:accepted},explanation:{text:explanation,media:[]}};
  const doc=validateDocument({schema:1,title:'重量與秤面連線',catalog,blocks:[{id:'source_'+src.id.slice(-8),material:{text:'',media:[]},questions:[q]}]});
  const partner=structuredClone(q);
