@@ -6,9 +6,10 @@ import {loadBatch,readJson,digest,expectedResponse,practiceWriteIntent,freezeJso
 import {validateDocument} from '../shared/quiz-document.mjs';
 import {setupProductionQuizDB} from './fixtures/production-quiz-db.mjs';
 import {batchMediaAssets} from './lib/quiz-batch-media.mjs';
+import {atomicPairCases} from './lib/quiz-batch-atomic-pairs.mjs';
 
 const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
-for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.equal(q.type,'fields');if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set'].includes(f.input)));assert.ok(!q.answer.tuples);}}
+for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.equal(q.type,'fields');if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set'].includes(f.input)));}}
 await recordBatchTime(p,packetSha,'packet-validated');
 const file=s=>path.join(p.outputDir,p.prefix+'-'+s+'.private');
 const save=(s,v)=>fs.writeFile(file(s)+'.json',JSON.stringify(v,null,2)+'\n');
@@ -98,9 +99,12 @@ try{
  let cases=0;const results=[];
  for(const c of p.candidates)for(const qn of c.doc.blocks[0].questions){const workFor=q=>p.works[q.id]??p.works[c.source],response=expectedResponse(qn,workFor(qn));
   const aliases=(p.responseAliases??[]).filter(a=>a.question_id===qn.id).map(a=>{assert.ok(qn.fields.some(f=>f.id===a.field_id&&f.input==='math'));assert.ok(typeof a.value==='string'&&a.value.length>0&&a.value.length<=250);assert.notEqual(a.value,response.f[a.field_id]);const value=structuredClone(response);value.f[a.field_id]=a.value;return value;});
-  const acceptedAlternatives=qn.fields.filter(f=>f.input==='single').flatMap(f=>qn.answer.fields[f.id].slice(1).map(value=>{const alternative=structuredClone(response);alternative.f[f.id]=value;return alternative;}));
-  const variants=[response,...qn.fields.map(field=>{const bad=structuredClone(response);if(field.input==='single'){const wrong=field.options.find(o=>!qn.answer.fields[field.id].includes(o.id));assert.ok(wrong,'Need an independently incorrect option');bad.f[field.id]=wrong.id;}else if(field.input==='set'){const ids=new Set(response.f[field.id]),toggle=field.options[0].id;ids.has(toggle)?ids.delete(toggle):ids.add(toggle);bad.f[field.id]=[...ids];}else bad.f[field.id]='999999';return bad;}),...aliases,...acceptedAlternatives];
-  for(const [i,value] of variants.entries()){const shouldPass=i===0||i>qn.fields.length;
+  const tupleFieldIds=new Set((qn.answer.tuples??[]).flatMap(t=>t.fields));
+  const acceptedAlternatives=qn.fields.filter(f=>['single','text'].includes(f.input)&&!tupleFieldIds.has(f.id)).flatMap(f=>qn.answer.fields[f.id].slice(1).map(value=>{const alternative=structuredClone(response);alternative.f[f.id]=value;return alternative;}));
+  const tupleCases=atomicPairCases(qn,response);
+  const variants=[response,...qn.fields.map(field=>{const bad=structuredClone(response);if(field.input==='single'){const wrong=field.options.find(o=>!qn.answer.fields[field.id].includes(o.id));assert.ok(wrong,'Need an independently incorrect option');bad.f[field.id]=wrong.id;}else if(field.input==='set'){const ids=new Set(response.f[field.id]),toggle=field.options[0].id;ids.has(toggle)?ids.delete(toggle):ids.add(toggle);bad.f[field.id]=[...ids];}else bad.f[field.id]='999999';return bad;}),...aliases,...acceptedAlternatives,...tupleCases.correct];
+  const tupleIncorrectStart=variants.length;variants.push(...tupleCases.incorrect);
+  for(const [i,value] of variants.entries()){const shouldPass=(i===0||i>qn.fields.length)&&i<tupleIncorrectStart;
    await db.exec('reset role');const bank=randomUUID(),version=randomUUID(),session=randomUUID();
    await db.query('insert into public.quiz_banks(id,owner_id,draft) values($1,$2,$3)',[bank,student,c.doc]);
    await db.query('insert into public.quiz_versions(id,bank_id,revision,document) values($1,$2,1,$3)',[version,bank,c.doc]);

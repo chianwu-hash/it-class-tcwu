@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {reverseAtomicPair,atomicPairCases} from './lib/quiz-batch-atomic-pairs.mjs';
+import {expectedResponse} from './lib/quiz-batch-plan.mjs';
+const fixture=()=>({id:'source_pair',type:'fields',prompt:{text:'起站到迄站',media:[]},fields:[{id:'from',label:'起站',input:'text'},{id:'to',label:'迄站',input:'text'}],answer:{format:'fields-v1',fields:{from:['甲站'],to:['乙站']}}});
+test('可互換的兩空保留整組配對，不接受各取一半',()=>{const source=fixture(),q=reverseAtomicPair(source,['from','to']);assert.deepEqual(source.answer.fields,{from:['甲站'],to:['乙站']});assert.equal(q.answer.fields.from[0],'甲站');assert.equal(q.answer.fields.to[0],'乙站');assert.notEqual(q.id,source.id);const response=expectedResponse(q),cases=atomicPairCases(q,response);assert.deepEqual(response.f,{from:'甲站',to:'乙站'});assert.deepEqual(cases.correct.map(c=>c.f),[{from:'乙站',to:'甲站'}]);assert.deepEqual(new Set(cases.incorrect.map(c=>JSON.stringify(c.f))),new Set([JSON.stringify({from:'甲站',to:'甲站'}),JSON.stringify({from:'乙站',to:'乙站'})]));});
+test('不能把相同值、不同輸入型別或已耦合欄位再任意互換',()=>{for(const change of [q=>q.answer.fields.to=['甲站'],q=>q.fields[1].input='math',q=>q.answer.tuples=[{fields:['from','to'],accepted:[{from:'甲站',to:'乙站'}]}]]){const q=fixture();change(q);assert.throws(()=>reverseAtomicPair(q,['from','to']));}});
