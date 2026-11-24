@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {sniffQuestionImageMime} from './lib/quiz-image-format.mjs';
+test('原圖片MIME依位元組辨識，不能把JPEG一律登為PNG',()=>{assert.equal(sniffQuestionImageMime(Buffer.from('89504e470d0a1a0a00000000','hex')),'image/png');assert.equal(sniffQuestionImageMime(Buffer.from('ffd8ffe000104a464946','hex')),'image/jpeg');assert.equal(sniffQuestionImageMime(Buffer.from('524946460000000057454250','hex')),'image/webp');});
+test('未知或不完整的圖片標頭拒絕，不猜格式',()=>{for(const b of [Buffer.alloc(0),Buffer.from('image.png'),Buffer.from('ffd8','hex'),Buffer.from('RIFF0000WAVE')])assert.throws(()=>sniffQuestionImageMime(b));});
