@@ -148,3 +148,5 @@ textarea.quiz-short-answer{display:block;box-sizing:border-box;width:calc(var(--
 .quiz-graphic-choice-review-main{display:flex;align-items:center;gap:10px;flex:1;min-width:0;width:100%}
 .quiz-graphic-choice-card :is(.option-badge,.rv-letter)[hidden]{display:none!important}
 .quiz-graphic-choice-review-main .rv-option{flex:1;min-width:0}
+
+.quiz-answer-fraction-numerator{display:block;border-bottom:2px solid currentColor;padding:0 8px 3px;text-align:center;line-height:1.3}

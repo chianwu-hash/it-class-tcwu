@@ -62,7 +62,7 @@ test('reviewed native fraction blanks retain printed denominators and original i
  const before=JSON.stringify(source);assert.equal(deriveAnswerTemplate(source,{grouped:true}),null);
  const model=deriveAnswerTemplate(source,{grouped:true,fractionNumerators:true});assert.equal(model.blanks.length,3);assert.deepEqual(model.blanks.map(b=>b.field),source.fields.map(f=>f.id));const fraction=model.blanks[1];assert.equal(source.prompt.text.slice(fraction.fraction.start,fraction.fraction.end),'12');assert.equal(source.prompt.text.slice(fraction.start,fraction.end),'$\\frac{（ ）}{12}$');assert.equal(model.rows[0].fields.length,2);assert.equal(JSON.stringify(source),before);
  const registry={synthetic:{guard:presentationSignature(source),model}};assert.ok(answerTemplatePresentation(source,registry));source.answer={fields:{'original-1':['999']}};assert.ok(answerTemplatePresentation(source,registry));
- source.prompt.text=source.prompt.text.replace('{12}','{9}');assert.equal(answerTemplatePresentation(source,registry),null);assert.equal(deriveAnswerTemplate(source,{fractionNumerators:true}),null);source.prompt.text=source.prompt.text.replace('{9}','{0}');assert.equal(deriveAnswerTemplate(source,{grouped:true,fractionNumerators:true}),null);
+ source.prompt.text=source.prompt.text.replace('{12}','{9}');assert.equal(answerTemplatePresentation(source,registry),null);assert.equal(deriveAnswerTemplate(source,{fractionNumerators:true}).mode,'blanks');source.prompt.text=source.prompt.text.replace('{9}','{0}');assert.equal(deriveAnswerTemplate(source,{grouped:true,fractionNumerators:true}),null);
 });
 
 test('reviewed nested phonetic subquestions retain each source diagram label and its own original field',()=>{
@@ -134,3 +134,19 @@ test('missing, different or ambiguous example structures never guess widths from
 test('multiple populated examples must agree on each slot width',()=>{for(const [sample,expected]of[['（小巧）的（盒子）',[2,2]],['（漂亮）的（透明盒子）',null]]){const source=q('（可愛）的（玩偶）\n'+sample+'\n（　）的（　）',2),plan={...deriveAnswerTemplate(source),source},actual=exampleSlotCharacters(plan);assert.deepEqual(actual&&Object.values(actual),expected);}});
 test('growing slots measure actual text plus spacing, padding and borders without changing it',()=>{const text='兩個選項',before=text,width=growingSlotWidth({text,fontSize:20,letterSpacing:1,padding:16,borders:4,measure:s=>[...s].length*20});assert.equal(width,108);assert.equal(text,before);});
 test('growth measures the longest existing line and preserves long saved values',()=>{const text='甲\n乙丙丁';assert.equal(growingSlotWidth({text,fontSize:20,measure:s=>s.length*20}),64);const saved='字'.repeat(250);assert.equal(growingSlotWidth({text:saved,fontSize:20,measure:s=>s.length*20}),5004);assert.equal(saved.length,250);});
+
+test('mixed fraction chain keeps the printed component and binds only the missing component',()=>{
+ const source=q('1＝$\\frac{（ ）}{2}$＝$\\frac{4}{（ ）}$',2,'fields');
+ source.fields.forEach(field=>{field.input='math';});
+ const flags={fractionNumerators:true,fractionDenominators:true};
+ const model=deriveAnswerTemplate(source,flags);
+ assert.equal(model.mode,'blanks');
+ assert.deepEqual(model.blanks.map(({fraction})=>[source.prompt.text.slice(fraction.start,fraction.end),Boolean(fraction.denominatorBlank)]),[['2',false],['4',true]]);
+ assert.ok(answerTemplatePresentation(source,{synthetic:{guard:presentationSignature(source),model}}));
+ assert.equal(deriveAnswerTemplate(source,{fractionNumerators:true}),null);
+ const plainFraction=source.prompt.text.split('＝')[1];
+ source.prompt.text=plainFraction+'＝$2'+plainFraction.slice(1);
+ assert.equal(deriveAnswerTemplate(source,{fractionNumerators:true}),null);
+ source.prompt.text='1＝$\\frac{（ ）}{（ ）}$';
+ assert.equal(deriveAnswerTemplate(source,flags),null);
+});
