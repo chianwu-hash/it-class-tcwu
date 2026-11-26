@@ -43,13 +43,19 @@ export function renderCircleColoring(host, plan, {value, locked, correct, onChan
   const instruction = doc.createElement('p');
   instruction.textContent = locked ? '你塗色的部分已保留。' : '點一下圖中的一塊就能塗色，再點一下可以清除。';
   const art = doc.createElement('div');
-  Object.assign(art.style, {position:'relative', width:'min(100%, 320px)', aspectRatio:plan.width + '/' + plan.height});
   renderContent(art, {text:'', media:[plan.image]});
   const image = art.querySelector('img');
   if (!image) return false;
   const figure = image.closest('figure');
   if (figure) figure.style.margin = '0';
-  Object.assign(image.style, {display:'block', width:'100%', height:'auto', maxHeight:'none', borderRadius:'0'});
+  const board = doc.createElement('div');
+  Object.assign(board.style, {position:'relative', width:'min(100%, 320px)', aspectRatio:plan.width + '/' + plan.height});
+  image.before(board);
+  board.append(image);
+  Object.assign(image.style, {
+    position:'absolute', inset:'0', width:'100%', height:'100%', maxHeight:'none',
+    objectFit:'fill', margin:'0', padding:'0', border:'0', borderRadius:'0',
+  });
   const overlay = doc.createElementNS(SVG, 'svg');
   overlay.setAttribute('viewBox', `0 0 ${plan.width} ${plan.height}`);
   overlay.setAttribute('role', 'group');
@@ -113,7 +119,7 @@ export function renderCircleColoring(host, plan, {value, locked, correct, onChan
     overlay.append(path);
     paths.set(region.id, path);
   }
-  art.append(overlay);
+  board.append(overlay);
   group.append(instruction, art, status);
   sync();
   host.append(group);
