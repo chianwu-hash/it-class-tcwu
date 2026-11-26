@@ -8,6 +8,7 @@ import {openSubquestionPresentation} from './quiz-open-subquestions.mjs';
 import {answerTemplatePresentation} from './quiz-answer-templates.mjs';
 import {workAnswerPassage} from './quiz-work-answer-layout.mjs';
 import {circleColoringPlan} from './quiz-circle-coloring.mjs';
+import {arrangementPlan} from './quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from './quiz-grid-drawing.mjs';
 import {groupingDrawingPlan} from './quiz-grouping-drawing.mjs';
 import {fractionColorsPlan} from './quiz-fraction-colors.mjs';
@@ -40,6 +41,7 @@ export function fieldsPromptPresentation(q,{showGroupingBoard=false}={}){
  const shading=showGroupingBoard&&(fractionShadingPlan(q)||fractionBarPlan(q)||fractionRectPlan(q));if(shading)return shading.passage;
  const grouping=showGroupingBoard&&groupingDrawingPlan(q);if(grouping)return grouping.passage;
  const circle=circleColoringPlan(q);if(circle)return circle.passage;
+ const arrangement=arrangementPlan(q);if(arrangement?.passage)return arrangement.passage;
  const grid=gridDrawingPlan(q);if(grid)return grid.passage;
  const workPassage=workAnswerPassage(q);if(workPassage)return workPassage;
  const sequence=sequencePromptPresentation(q);if(sequence)return sequence;
