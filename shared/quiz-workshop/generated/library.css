@@ -635,6 +635,10 @@ input:has(+.past-input-tools),textarea:has(+.past-input-tools){scroll-margin-blo
 .quiz-reading-dialog .quiz-reading-inline-tools{top:64px}
 .quiz-inline-reference{font-size:1rem;margin:10px 0;line-height:1.6;white-space:normal}
 @media(max-width:899px),(max-height:600px){.quiz-reading-layout{display:block}.quiz-reading-layout>.quiz-reading-story{display:none}.quiz-reading-questions{height:auto;overflow:visible}.quiz-reading-open{display:inline-block}.quiz-reading-navigation{top:0}.quiz-reading-source,.quiz-reading-source .preview-content{font-size:1.2rem!important}}
+.quiz-fraction-comparison > .quiz-circle-coloring,.quiz-fraction-comparison-symbols{grid-column:1/-1;min-width:0}
+.quiz-fraction-symbol-choices{display:flex;flex-wrap:wrap;gap:.6rem}
+.quiz-fraction-symbol-choices .student-option{display:flex;align-items:center;gap:.5rem;min-width:4.5rem;min-height:44px}
+.quiz-fraction-symbol-choices .student-option>span{font-weight:700;font-size:1.4em}
 
 
 

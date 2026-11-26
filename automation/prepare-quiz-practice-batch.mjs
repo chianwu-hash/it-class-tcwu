@@ -6,15 +6,21 @@ import {loadBatch,readJson,digest,expectedResponse,practiceWriteIntent,freezeJso
 import {arrangementPlan} from '../shared/quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from '../shared/quiz-grid-drawing.mjs';
 import {groupingDrawingPlan} from '../shared/quiz-grouping-drawing.mjs';
+import {fractionComparisonPlan,fractionComparisonResponse} from '../shared/quiz-fraction-comparison.mjs';
 import {validateDocument} from '../shared/quiz-document.mjs';
 import {setupProductionQuizDB} from './fixtures/production-quiz-db.mjs';
 import {batchMediaAssets} from './lib/quiz-batch-media.mjs';
 import {atomicPairCases} from './lib/quiz-batch-atomic-pairs.mjs';
 
 const reviewedSketch = q => gridDrawingPlan(q) || arrangementPlan(q);
-const hasDrawingReference = q => reviewedSketch(q) || groupingDrawingPlan(q);
+const hasDrawingReference = q => reviewedSketch(q) || groupingDrawingPlan(q) || fractionComparisonPlan(q);
+function alternateShading(plan, left, right, comparison, offset=0){
+ const counts=[Number(left),Number(right)];
+ const ids=new Set(plan.regions.filter((r,i)=>((i%plan.parts)-offset+plan.parts)%plan.parts<counts[r.side]).map(r=>r.id));
+ return fractionComparisonResponse(plan,ids,comparison);
+}
 const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
-for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.ok(['fields','single','open'].includes(q.type));if(q.type==='single'){assert.ok(!q.work);continue;}if(q.type==='open'){assert.ok(!q.work && (reviewedSketch(q) ? q.explanation.media.length===1 && q.explanation.media[0].kind==='image' : q.fields.every(f=>f.input==='text') && !q.explanation.media.length), 'Open media requires an independently reviewed grid answer');expectedResponse(q,undefined,p.openResponses?.[q.id]);continue;}if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set'].includes(f.input)));}}
+for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.ok(['fields','single','open'].includes(q.type));if(q.type==='single'){assert.ok(!q.work);continue;}if(q.type==='open'){assert.ok(!q.work && (reviewedSketch(q) ? q.explanation.media.length===1 && q.explanation.media[0].kind==='image' : q.fields.every(f=>f.input==='text') && !q.explanation.media.length), 'Open media requires an independently reviewed grid answer');expectedResponse(q,undefined,p.openResponses?.[q.id]);continue;}if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(fractionComparisonPlan(q)||q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set'].includes(f.input)));}}
 await recordBatchTime(p,packetSha,'packet-validated');
 const file=s=>path.join(p.outputDir,p.prefix+'-'+s+'.private');
 const save=(s,v)=>fs.writeFile(file(s)+'.json',JSON.stringify(v,null,2)+'\n');
@@ -31,10 +37,12 @@ const publications=[{...ids,doc,rows,access:'practice',user:owner},...ids.sample
  return {...s,doc:validateDocument({...c.doc,title:p.title,blocks:[{...b,questions:b.questions.filter(q=>q.id===s.question_id)}]}),rows:rows.filter(r=>r.question_id===s.question_id),access:'self',user:student};})];
 // A reference may reveal only its own saved drawing, even when other items share a grid image.
 const drawingReferences = publications[0].doc.blocks.flatMap(block => block.questions
- .filter(q => hasDrawingReference(q)).map(q => {
-   assert.equal(q.explanation.media.length,1);
-   assert.equal(q.explanation.media[0].kind,'image');
-   return [q.id, q.explanation.media[0].url];
+ .filter(q => hasDrawingReference(q)).flatMap(q => {
+   assert.equal(q.explanation.media.length,fractionComparisonPlan(q)?2:1);
+   return q.explanation.media.map(asset=>{
+     assert.equal(asset.kind,'image');
+     return [q.id,asset.url];
+   });
  }));
 const drawingOwners = new Map(drawingReferences.map(([id,url]) => [url,id]));
 assert.equal(drawingOwners.size,drawingReferences.length,'Drawing references must be unique to a question');
@@ -126,9 +134,20 @@ try{
   const fields=qn.fields??[],single=qn.type==='single',open=qn.type==='open';
   const acceptedAlternatives=open?[]:fields.filter(f=>['single','text'].includes(f.input)&&!tupleFieldIds.has(f.id)).flatMap(f=>qn.answer.fields[f.id].slice(1).map(value=>{const alternative=structuredClone(response);alternative.f[f.id]=value;return alternative;}));
   const tupleCases=single||open?{correct:[],incorrect:[]}:atomicPairCases(qn,response);
-  const wrong=reviewedSketch(qn)?[]:single?qn.options.filter(o=>o.id!==response).map(o=>o.id):fields.map(field=>{const bad=structuredClone(response);if(field.input==='single'){const wrong=field.options.find(o=>!qn.answer.fields[field.id].includes(o.id));assert.ok(wrong,'Need an independently incorrect option');bad.f[field.id]=wrong.id;}else if(field.input==='set'){const ids=new Set(response.f[field.id]),toggle=field.options[0].id;ids.has(toggle)?ids.delete(toggle):ids.add(toggle);bad.f[field.id]=[...ids];}else bad.f[field.id]='999999';return bad;});
+  const fraction=fractionComparisonPlan(qn);
+  const wrong=fraction?[
+    alternateShading(fraction,1,response.f.right,response.f.comparison),
+    alternateShading(fraction,response.f.left,1,response.f.comparison),
+    {...response,f:{...response.f,comparison:response.f.comparison==='less'?'greater':'less'}},
+  ]:reviewedSketch(qn)?[]:single?qn.options.filter(o=>o.id!==response).map(o=>o.id):fields.map(field=>{const bad=structuredClone(response);if(field.input==='single'){const wrong=field.options.find(o=>!qn.answer.fields[field.id].includes(o.id));assert.ok(wrong,'Need an independently incorrect option');bad.f[field.id]=wrong.id;}else if(field.input==='set'){const ids=new Set(response.f[field.id]),toggle=field.options[0].id;ids.has(toggle)?ids.delete(toggle):ids.add(toggle);bad.f[field.id]=[...ids];}else bad.f[field.id]='999999';return bad;});
   const variants=[response,...wrong,...aliases,...acceptedAlternatives,...tupleCases.correct];
   if(groupingDrawingPlan(qn))variants.push({...response,w:{version:1,strokes:[[[.1,.1],[.2,.1],[.2,.2],[.1,.2],[.1,.1]]]}});
+  if(fraction){
+   const {left,right,comparison}=response.f;
+   const alternatives=Array.from({length:fraction.parts},(_,i)=>alternateShading(fraction,left,right,comparison,i));
+   assert.equal(new Set(alternatives.map(value=>JSON.stringify(value.w))).size,fraction.parts);
+   variants.push(...alternatives.filter(value=>JSON.stringify(value.w)!==JSON.stringify(response.w)));
+  }
   const tupleIncorrectStart=variants.length;variants.push(...tupleCases.incorrect);
   for(const [i,value] of variants.entries()){const shouldPass=(i===0||i>wrong.length)&&i<tupleIncorrectStart;
    await db.exec('reset role');const bank=randomUUID(),version=randomUUID(),session=randomUUID();
@@ -152,8 +171,10 @@ try{
     }
     async function checkDrawingReference(expected){
      await db.exec('reset role');
-     const report=await db.query('select public.quiz_media_visible($1,$2) visible',[item.explanation.media[0].url,before.attempt_id]);
-     assert.equal(report.rows[0].visible,expected);drawingReferenceChecks++;
+     for(const asset of item.explanation.media){
+      const report=await db.query('select public.quiz_media_visible($1,$2) visible',[asset.url,before.attempt_id]);
+      assert.equal(report.rows[0].visible,expected);drawingReferenceChecks++;
+     }
      await actor(student);
     }
     if(drawing)await checkDrawingReference(false);
@@ -167,7 +188,7 @@ try{
      const saved=await action('resume',{session_id:session}),checked=saved.reviews.find(r=>r.question_id===item.id);assert.equal(checked.correct,null);assert.equal(checked.assessment.status,'self_checked');assert.equal(checked.assessment.rating,self.self_rating);
     }
    }
-   const after=await action('resume',{session_id:session});assert.equal(after.complete,true);assert.deepEqual(after.responses,expectedResponses);for(const review of after.reviews){const own=review.question_id===qn.id,q=c.doc.blocks[0].questions.find(q=>q.id===review.question_id);assert.equal(review.correct,q.type==='open'?null:own?shouldPass:true);if(q.type==='open')assert.equal(review.assessment.status,'self_checked');if(groupingDrawingPlan(q))assert.deepEqual(review.explanation.media,q.explanation.media);assert.deepEqual(review.answer,q.answer);}cases++;
+   const after=await action('resume',{session_id:session});assert.equal(after.complete,true);assert.deepEqual(after.responses,expectedResponses);for(const review of after.reviews){const own=review.question_id===qn.id,q=c.doc.blocks[0].questions.find(q=>q.id===review.question_id);assert.equal(review.correct,q.type==='open'?null:own?shouldPass:true);if(q.type==='open')assert.equal(review.assessment.status,'self_checked');if(groupingDrawingPlan(q)||fractionComparisonPlan(q))assert.deepEqual(review.explanation.media,q.explanation.media);assert.deepEqual(review.answer,q.answer);}cases++;
   }
   results.push({source:c.source,question:qn.id,type:qn.type,fields:single?1:fields.length,auto_graded:!open,self_review:open,exact:true});
  }

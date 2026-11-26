@@ -17,6 +17,7 @@ import {choiceReviewModel,decorateFieldReviewOption} from './quiz-review-choices
 import {renderOpenInputs,renderOpenReview,openResponseError,renderOpenSavedSketches} from './quiz-open-response.mjs';
 import {wordMeaningReview} from './quiz-word-meaning-review.mjs';
 import {mountShortAnswerInput} from './quiz-short-answer.mjs';
+import {fractionComparisonPlan,readFractionComparison} from './quiz-fraction-comparison.mjs';
 
 import {quizFeedbackMotion} from './quiz-feedback-motion.mjs?v=20261107-partner-motion';
 
@@ -86,6 +87,12 @@ export function initServerQuiz({ selectors, server }) {
   function renderReview(article, q) {
     const review = state.reviews.find(r => r.question_id === q.id);
     if (!review) { article.append(make('p', '已儲存；正解與解析會在符合本場次揭答條件後顯示。', 'notice')); return; }
+    const fraction=fractionComparisonPlan(q);
+    if(fraction){
+      let response;
+      try{response=JSON.parse(state.responses[q.id]);}catch{}
+      if(!readFractionComparison(fraction,response)){article.append(make('p','原作答的塗色與格數無法配對，請回報這題。','notice'));return;}
+    }
     if(q.type==='open'){
       const box=renderOpenReview(article,q,review,{raw:state.responses[q.id],busy:busy||state.status==='closed',pending:Boolean(pending),draftNote:pending?.self_note??openNotes.get(q.id)??'',onNoteChange:value=>openNotes.set(q.id,value),onSelfCheck:selfCheck});
       if(wordMeaningReview(q,review.answer))return;
@@ -120,7 +127,8 @@ export function initServerQuiz({ selectors, server }) {
     }
     const message = make('div', undefined, 'feedback-message');
     message.append(make('strong', q.work?(review.correct?'答案欄答對了 ✓':'答案欄還沒全對，一起核對解法。'):(review.correct ? '這題答對了 ✓' : '這題還沒答對，一起看看解題想法。')));
-    if(q.work)message.append(make('p','計算過程已保存，請對照參考解法核對；系統只判分答案欄。'));
+    if(fraction)message.append(make('p','你的塗色及比較符號已保存。'));
+    else if(q.work)message.append(make('p','計算過程已保存，請對照參考解法核對；系統只判分答案欄。'));
     const phrases = review.correct ? encouragement.correct : encouragement.incorrect;
     message.append(make('p', phrases[Math.max(0, index) % phrases.length], 'feedback-encouragement'));
     intro.append(character, message); box.append(intro);

@@ -1,4 +1,5 @@
 const SVG = 'http://www.w3.org/2000/svg';
+const imageObservers = new WeakMap();
 const boards = {
   '00e4de90': ['70445737ea122be80f6b1df4ba5587eeadb927a8820bc48e9ee110addc91343c', 8, 121, 119, 59.5, 60, 56.5, 57, -90],
   '02a90926': ['33b79758d33a5ece57c2c3f4aae4755560902a542798598ff65359f2d3c2c1bb', 3, 250, 250, 123, 125.5, 111, 111.5, -90],
@@ -22,21 +23,26 @@ export function circleColoringPlan(question) {
   if (image.kind !== 'image' || !image.url?.endsWith('/' + sha) ||
       options.length !== parts || !expectedIds.every(id => actualIds.has(id))) return null;
 
+  return {
+    passage: {...prompt, media: []},
+    image, width, height,
+    regions: makeCircleRegions({parts,cx,cy,rx,ry,start}),
+  };
+}
+
+export function makeCircleRegions({parts,cx,cy,rx,ry,start}, {prefix='r',sideLabel=''}={}) {
   const point = step => {
     const angle = (start + step * 360 / parts) * Math.PI / 180;
     return [cx + rx * Math.cos(angle), cy + ry * Math.sin(angle)].join(' ');
   };
-  return {
-    passage: {...prompt, media: []},
-    image, width, height,
-    regions: Array.from({length: parts}, (_, index) => ({
-      id: 'r' + (index + 1),
-      path: `M ${cx} ${cy} L ${point(index)} A ${rx} ${ry} 0 0 1 ${point(index + 1)} Z`,
-    })),
-  };
+  return Array.from({length: parts}, (_, index) => ({
+    id: prefix + (index + 1),
+    label: sideLabel + '第 ' + (index + 1) + ' 塊',
+    path: `M ${cx} ${cy} L ${point(index)} A ${rx} ${ry} 0 0 1 ${point(index + 1)} Z`,
+  }));
 }
 
-export function renderCircleColoring(host, plan, {value, locked, correct, onChange, renderContent}) {
+export function renderCircleColoring(host, plan, {value, locked, correct, onChange, renderContent, countText}) {
   const doc = host.ownerDocument;
   const group = doc.createElement('section');
   group.className = 'quiz-circle-coloring';
@@ -48,10 +54,19 @@ export function renderCircleColoring(host, plan, {value, locked, correct, onChan
   if (!image) return false;
   const figure = image.closest('figure');
   if (figure) figure.style.margin = '0';
-  const board = doc.createElement('div');
-  Object.assign(board.style, {position:'relative', width:'min(100%, 320px)', aspectRatio:plan.width + '/' + plan.height});
-  image.before(board);
-  board.append(image);
+  let board = image.closest('.quiz-circle-coloring-board');
+  if (board) {
+    imageObservers.get(board)?.abort();
+    board.replaceChildren(image);
+  } else {
+    board = doc.createElement('div');
+    board.className = 'quiz-circle-coloring-board';
+    Object.assign(board.style, {
+      position:'relative', width:`min(100%, ${plan.maxWidth ?? 320}px)`, aspectRatio:plan.width + '/' + plan.height,
+    });
+    image.before(board);
+    board.append(image);
+  }
   Object.assign(image.style, {
     position:'absolute', inset:'0', width:'100%', height:'100%', maxHeight:'none',
     objectFit:'fill', margin:'0', padding:'0', border:'0', borderRadius:'0',
@@ -75,7 +90,7 @@ export function renderCircleColoring(host, plan, {value, locked, correct, onChan
     let label = selected.size ? `已塗 ${selected.size} 塊。` : '還沒有塗色。';
     if (correct === true) label = '答對了。' + label;
     if (correct === false) label += '再看看題目要塗多少。';
-    status.textContent = label;
+    status.textContent = countText ? countText(selected) : label;
   };
   const changed = () => {
     sync();
@@ -86,15 +101,19 @@ export function renderCircleColoring(host, plan, {value, locked, correct, onChan
     overlay.hidden = !ready;
     overlay.style.visibility = ready ? 'visible' : 'hidden';
   }
-  setReady(image.complete && image.naturalWidth > 0);
-  image.addEventListener('load', () => setReady(true));
-  image.addEventListener('error', () => setReady(false));
+  const observer = new AbortController();
+  imageObservers.set(board, observer);
+  const ready = () => setReady(image.complete && image.naturalWidth === plan.width);
+  ready();
+  image.addEventListener('load', ready, {signal:observer.signal});
+  image.addEventListener('error', ready, {signal:observer.signal});
 
-  for (const [index, region] of plan.regions.entries()) {
+  for (const region of plan.regions) {
     const path = doc.createElementNS(SVG, 'path');
     path.setAttribute('d', region.path);
     path.setAttribute('role', 'button');
-    path.setAttribute('aria-label', '第 ' + (index + 1) + ' 塊');
+    path.setAttribute('aria-label', region.label);
+    path.dataset.region = region.id;
     path.setAttribute('aria-disabled', String(locked));
     if (!locked) {
       path.setAttribute('tabindex', '0');
