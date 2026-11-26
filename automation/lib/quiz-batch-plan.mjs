@@ -4,6 +4,7 @@ import {createHash} from 'node:crypto';
 import {validateSketch} from '../../shared/sketch/contract.mjs';
 import {validateDocument} from '../../shared/quiz-document.mjs';
 import {batchMediaAssets} from './quiz-batch-media.mjs';
+import {arrangementPlan,readArrangement} from '../../shared/quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from '../../shared/quiz-grid-drawing.mjs';
 
 export const digest = bytes => createHash('sha256').update(bytes).digest('hex');
@@ -38,10 +39,15 @@ export function batchCounts(packet) {
 export function expectedResponse(question, work, openResponse) {
   if (question.type === 'single') return question.answer.option_id;
   if(question.type==='open'){
-    const grid = gridDrawingPlan(question);
-    assert.ok(grid || question.fields.every(f=>f.input==='text'),'Open sketch requires its own reviewed batch adapter');
+    const grid = gridDrawingPlan(question), arrangement = arrangementPlan(question);
+    assert.ok(grid || arrangement || question.fields.every(f=>f.input==='text'),'Open sketch requires its own reviewed batch adapter');
     assert.ok(openResponse&&openResponse.v===1&&openResponse.f&&typeof openResponse.f==='object'&&!Array.isArray(openResponse.f));
     assert.deepEqual(Object.keys(openResponse).sort(),['f','v']);assert.deepEqual(Object.keys(openResponse.f).sort(),question.fields.map(f=>f.id).sort());
+    if (arrangement) {
+      validateSketch(openResponse.f.drawing);
+      assert.ok(readArrangement(openResponse.f.drawing, arrangement)?.size, 'Invalid reviewed arrangement example');
+      return structuredClone(openResponse);
+    }
     if (grid) {
       validateSketch(openResponse.f.drawing);
       const onLine = (value, lines) => lines.some(line => Math.abs(value - line) < 1e-7);
