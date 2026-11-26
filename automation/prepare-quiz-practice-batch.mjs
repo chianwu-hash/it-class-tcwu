@@ -7,13 +7,14 @@ import {arrangementPlan} from '../shared/quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from '../shared/quiz-grid-drawing.mjs';
 import {groupingDrawingPlan} from '../shared/quiz-grouping-drawing.mjs';
 import {fractionComparisonPlan,fractionComparisonResponse} from '../shared/quiz-fraction-comparison.mjs';
+import {fractionShadingPlan,fractionShadingResponse} from '../shared/quiz-fraction-shading.mjs';
 import {validateDocument} from '../shared/quiz-document.mjs';
 import {setupProductionQuizDB} from './fixtures/production-quiz-db.mjs';
 import {batchMediaAssets} from './lib/quiz-batch-media.mjs';
 import {atomicPairCases} from './lib/quiz-batch-atomic-pairs.mjs';
 
 const reviewedSketch = q => gridDrawingPlan(q) || arrangementPlan(q);
-const hasDrawingReference = q => reviewedSketch(q) || groupingDrawingPlan(q) || fractionComparisonPlan(q);
+const hasDrawingReference = q => reviewedSketch(q) || groupingDrawingPlan(q) || fractionComparisonPlan(q) || fractionShadingPlan(q);
 function alternateShading(plan, left, right, comparison, offset=0){
  const counts=[Number(left),Number(right)];
  const ids=new Set(plan.regions.filter((r,i)=>((i%plan.parts)-offset+plan.parts)%plan.parts<counts[r.side]).map(r=>r.id));
@@ -135,13 +136,19 @@ try{
   const acceptedAlternatives=open?[]:fields.filter(f=>['single','text'].includes(f.input)&&!tupleFieldIds.has(f.id)).flatMap(f=>qn.answer.fields[f.id].slice(1).map(value=>{const alternative=structuredClone(response);alternative.f[f.id]=value;return alternative;}));
   const tupleCases=single||open?{correct:[],incorrect:[]}:atomicPairCases(qn,response);
   const fraction=fractionComparisonPlan(qn);
-  const wrong=fraction?[
+  const shading=fractionShadingPlan(qn);
+  const wrong=shading?[fractionShadingResponse(shading,new Set([shading.regions[0].id]))]:fraction?[
     alternateShading(fraction,1,response.f.right,response.f.comparison),
     alternateShading(fraction,response.f.left,1,response.f.comparison),
     {...response,f:{...response.f,comparison:response.f.comparison==='less'?'greater':'less'}},
   ]:reviewedSketch(qn)?[]:single?qn.options.filter(o=>o.id!==response).map(o=>o.id):fields.map(field=>{const bad=structuredClone(response);if(field.input==='single'){const wrong=field.options.find(o=>!qn.answer.fields[field.id].includes(o.id));assert.ok(wrong,'Need an independently incorrect option');bad.f[field.id]=wrong.id;}else if(field.input==='set'){const ids=new Set(response.f[field.id]),toggle=field.options[0].id;ids.has(toggle)?ids.delete(toggle):ids.add(toggle);bad.f[field.id]=[...ids];}else bad.f[field.id]='999999';return bad;});
   const variants=[response,...wrong,...aliases,...acceptedAlternatives,...tupleCases.correct];
   if(groupingDrawingPlan(qn))variants.push({...response,w:{version:1,strokes:[[[.1,.1],[.2,.1],[.2,.2],[.1,.2],[.1,.1]]]}});
+  if(shading){
+   const count=Number(response.f.colored);
+   assert.ok(count>1&&count<shading.regions.length);
+   variants.push(fractionShadingResponse(shading,new Set(shading.regions.slice(-count).map(region=>region.id))));
+  }
   if(fraction){
    const {left,right,comparison}=response.f;
    const alternatives=Array.from({length:fraction.parts},(_,i)=>alternateShading(fraction,left,right,comparison,i));
@@ -163,8 +170,8 @@ try{
     const own=item.id===qn.id,itemValue=own?value:responseFor(item),encoded=item.type==='single'?itemValue:JSON.stringify(itemValue),args={session_id:session,question_id:item.id,response:encoded,request_id:randomUUID(),compact:true};
     if(own&&i===0&&item.work){const missing={...itemValue};delete missing.w;await assert.rejects(action('submit',{...args,response:JSON.stringify(missing)}));}
     if(item.type==='open'&&own&&i===0){await assert.rejects(action('self_check',{session_id:session,question_id:item.id,request_id:randomUUID(),self_rating:'understood',self_note:''}),/open_answer_required/);for(const f of item.fields){const missing=structuredClone(itemValue);delete missing.f[f.id];await assert.rejects(action('submit',{...args,response:JSON.stringify(missing)}));const empty=structuredClone(itemValue);empty.f[f.id]=f.input==='sketch'?{version:1,strokes:[]}:' ';await assert.rejects(action('submit',{...args,response:JSON.stringify(empty)}));const long=structuredClone(itemValue);long.f[f.id]=f.input==='sketch'?{version:1,strokes:[[[0,0],[2,1]]]}:'字'.repeat(251);await assert.rejects(action('submit',{...args,response:JSON.stringify(long)}));}}
-    const drawing=hasDrawingReference(item),grouping=groupingDrawingPlan(item);
-    if(grouping&&own&&i===0){
+    const drawing=hasDrawingReference(item),grouping=groupingDrawingPlan(item),shade=fractionShadingPlan(item);
+    if((grouping||shade)&&own&&i===0){
      for(const strokes of [[],[[[0,0],[2,1]]]]){
       await assert.rejects(action('submit',{...args,response:JSON.stringify({...itemValue,w:{version:1,strokes}})}));
      }
@@ -179,7 +186,14 @@ try{
     }
     if(drawing)await checkDrawingReference(false);
     await action('submit',args);if(own&&i===0)await action('submit',args);expectedResponses[item.id]=encoded;
-    if(drawing)await checkDrawingReference(true);
+    if(drawing)await checkDrawingReference(item.type==='open'||item===c.doc.blocks[0].questions.at(-1));
+    if(shade&&item!==c.doc.blocks[0].questions.at(-1)){
+     await db.exec('reset role');
+     const next=c.doc.blocks[0].questions[c.doc.blocks[0].questions.indexOf(item)+1];
+     const report=await db.query('select public.quiz_media_visible($1,$2) visible',[next.explanation.media[0].url,before.attempt_id]);
+     assert.equal(report.rows[0].visible,false);drawingReferenceChecks++;
+     await actor(student);
+    }
     if(item.type==='open'){
      const pending=await action('resume',{session_id:session}),review=pending.reviews.find(r=>r.question_id===item.id);assert.equal(review.correct,null);assert.notEqual(review.assessment.status,'self_checked');assert.equal(pending.complete,false);
      if(drawing)assert.deepEqual(review.explanation.media,item.explanation.media);
@@ -188,7 +202,16 @@ try{
      const saved=await action('resume',{session_id:session}),checked=saved.reviews.find(r=>r.question_id===item.id);assert.equal(checked.correct,null);assert.equal(checked.assessment.status,'self_checked');assert.equal(checked.assessment.rating,self.self_rating);
     }
    }
-   const after=await action('resume',{session_id:session});assert.equal(after.complete,true);assert.deepEqual(after.responses,expectedResponses);for(const review of after.reviews){const own=review.question_id===qn.id,q=c.doc.blocks[0].questions.find(q=>q.id===review.question_id);assert.equal(review.correct,q.type==='open'?null:own?shouldPass:true);if(q.type==='open')assert.equal(review.assessment.status,'self_checked');if(groupingDrawingPlan(q)||fractionComparisonPlan(q))assert.deepEqual(review.explanation.media,q.explanation.media);assert.deepEqual(review.answer,q.answer);}cases++;
+   const after=await action('resume',{session_id:session});assert.equal(after.complete,true);assert.deepEqual(after.responses,expectedResponses);for(const review of after.reviews){const own=review.question_id===qn.id,q=c.doc.blocks[0].questions.find(q=>q.id===review.question_id);assert.equal(review.correct,q.type==='open'?null:own?shouldPass:true);if(q.type==='open')assert.equal(review.assessment.status,'self_checked');if(groupingDrawingPlan(q)||fractionComparisonPlan(q)||fractionShadingPlan(q))assert.deepEqual(review.explanation.media,q.explanation.media);assert.deepEqual(review.answer,q.answer);}
+   if(shading){
+    await db.exec('reset role');
+    for(const item of c.doc.blocks[0].questions){
+     const visible=await db.query('select public.quiz_media_visible($1,$2) visible',[item.explanation.media[0].url,before.attempt_id]);
+     assert.equal(visible.rows[0].visible,true);drawingReferenceChecks++;
+    }
+    await actor(student);
+   }
+   cases++;
   }
   results.push({source:c.source,question:qn.id,type:qn.type,fields:single?1:fields.length,auto_graded:!open,self_review:open,exact:true});
  }

@@ -18,6 +18,7 @@ import {renderOpenInputs,renderOpenReview,openResponseError,renderOpenSavedSketc
 import {wordMeaningReview} from './quiz-word-meaning-review.mjs';
 import {mountShortAnswerInput} from './quiz-short-answer.mjs';
 import {fractionComparisonPlan,readFractionComparison} from './quiz-fraction-comparison.mjs';
+import {fractionShadingPlan,readFractionShading} from './quiz-fraction-shading.mjs';
 
 import {quizFeedbackMotion} from './quiz-feedback-motion.mjs?v=20261107-partner-motion';
 
@@ -88,10 +89,12 @@ export function initServerQuiz({ selectors, server }) {
     const review = state.reviews.find(r => r.question_id === q.id);
     if (!review) { article.append(make('p', '已儲存；正解與解析會在符合本場次揭答條件後顯示。', 'notice')); return; }
     const fraction=fractionComparisonPlan(q);
-    if(fraction){
+    const shading=fractionShadingPlan(q);
+    if(fraction||shading){
       let response;
       try{response=JSON.parse(state.responses[q.id]);}catch{}
-      if(!readFractionComparison(fraction,response)){article.append(make('p','原作答的塗色與格數無法配對，請回報這題。','notice'));return;}
+      const selected=fraction?readFractionComparison(fraction,response):readFractionShading(shading,response);
+      if(!selected?.size){article.append(make('p','原作答的塗色與格數無法配對，請回報這題。','notice'));return;}
     }
     if(q.type==='open'){
       const box=renderOpenReview(article,q,review,{raw:state.responses[q.id],busy:busy||state.status==='closed',pending:Boolean(pending),draftNote:pending?.self_note??openNotes.get(q.id)??'',onNoteChange:value=>openNotes.set(q.id,value),onSelfCheck:selfCheck});
@@ -128,6 +131,7 @@ export function initServerQuiz({ selectors, server }) {
     const message = make('div', undefined, 'feedback-message');
     message.append(make('strong', q.work?(review.correct?'答案欄答對了 ✓':'答案欄還沒全對，一起核對解法。'):(review.correct ? '這題答對了 ✓' : '這題還沒答對，一起看看解題想法。')));
     if(fraction)message.append(make('p','你的塗色及比較符號已保存。'));
+    else if(shading)message.append(make('p','你的塗色已保存。'));
     else if(q.work)message.append(make('p','計算過程已保存，請對照參考解法核對；系統只判分答案欄。'));
     const phrases = review.correct ? encouragement.correct : encouragement.incorrect;
     message.append(make('p', phrases[Math.max(0, index) % phrases.length], 'feedback-encouragement'));
@@ -136,6 +140,7 @@ export function initServerQuiz({ selectors, server }) {
     if (animate) { box.classList.add('feedback-fresh'); feedbackAnimation = null; }
     const answerSummary=make('p',undefined,'quiz-answer-summary');
     if(q.type==='single')answerSummary.append(make('span','正確選項：'),make('strong',choiceAnswerLabel(q,review.answer.option_id),'quiz-answer-value'));
+    else if(shading)answerSummary.textContent='請在原圖下方核對塗色格數。';
     else answerSummary.textContent=q.type==='fields'?'各小題已在原作答欄旁標示核對結果；本題仍按整組計分。':`可接受答案：${review.answer.accepted.join('、')}`;
     const answerRow=make('div',undefined,'quiz-answer-row');answerRow.append(answerSummary);box.append(answerRow);
     const studentExplanation=study.explanation(q.id);

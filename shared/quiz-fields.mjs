@@ -18,6 +18,7 @@ import {workAnswerPresentation,mountWorkAnswerInputs,workResponseContent} from '
 import {sourceStream} from './quiz-content-slices.mjs';
 import {circleColoringPlan,renderCircleColoring} from './quiz-circle-coloring.mjs';
 import {fractionComparisonPlan,readFractionComparison,renderFractionComparison} from './quiz-fraction-comparison.mjs';
+import {fractionShadingPlan,readFractionShading,renderFractionShading} from './quiz-fraction-shading.mjs';
 export {fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
 
 const own=(o,k)=>o&&Object.hasOwn(o,k);
@@ -29,11 +30,14 @@ export function fieldsValues(q,raw){
 }
 export function fieldsResponseError(q,raw){
  const fraction=fractionComparisonPlan(q);
+ const shading=fractionShadingPlan(q);
+ if(shading&&!raw)return '請在原圖塗色，再送出答案。';
  if(fraction&&!raw)return '請在兩個圓上塗色，再選比較符號。';
  if(typeof raw!=='string'||!raw||(q.work?.input==='sketch'?new TextEncoder().encode(raw).length>300000:raw.length>2000))return '請完成每個答案欄與要求的計算過程。';
  let d;try{d=JSON.parse(raw)}catch{return '答案格式不完整，請更新儲存狀態後再試。'}
  if(!object(d)||d.v!==1||!object(d.f)||Object.keys(d).some(k=>!(q.work?['v','f','w']:['v','f']).includes(k))||Object.keys(d.f).length!==q.fields.length)return '請完成每個答案欄。';
  if(fraction&&(!readFractionComparison(fraction,d)||d.f.left==='0'||d.f.right==='0'))return '請在左右兩個圓上各塗色，再送出答案。';
+ if(shading&&!readFractionShading(shading,d)?.size)return '請在原圖塗色，再送出答案。';
  const workError=workResponseError(q,d.w);if(workError)return workError;
  const reading=readingPresentation(choiceQuestionPresentation(q));
  for(const [i,storedField] of q.fields.entries()){
@@ -50,6 +54,9 @@ export function fieldsResponseError(q,raw){
 export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onChange,renderContent,textInputAids={},review=null}){
  const circle=circleColoringPlan(q);
  if(circle&&renderCircleColoring(host,circle,{value:fieldsValues(q,raw).regions,locked,correct:review?.correct,onChange:value=>onChange(JSON.stringify({v:1,f:{regions:value}})),renderContent}))return host.lastElementChild;
+ const shading=fractionShadingPlan(q);
+ if(shading&&renderFractionShading(host,shading,{response:{f:fieldsValues(q,raw),w:workValue(raw)},
+  locked,review:locked?review:null,onChange,renderContent}))return host.lastElementChild;
  const fraction=fractionComparisonPlan(q);
  if(fraction&&renderFractionComparison(host,q,fraction,{
   value:{f:fieldsValues(q,raw),w:workValue(raw)},locked,
@@ -102,7 +109,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
  mountReadingWorkbench(group,q,reading,{renderContent,fieldFeedback:feedback});mountWorkAnswerInputs(group,q,{renderContent,fieldFeedback:feedback});host.append(group);return group;
 }
 export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,referenceAnswer=null,showWork=true}){
- if(raw&&showWork&&fractionComparisonPlan(q)){renderFieldsInputs(host,q,{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
+ if(raw&&showWork&&(fractionComparisonPlan(q)||fractionShadingPlan(q))){renderFieldsInputs(host,q,{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
  const circle=circleColoringPlan(q);
  if(circle&&renderCircleColoring(host,circle,{value:raw?fieldsValues(q,raw).regions:referenceAnswer?.fields?.regions?.[0],locked:true,correct:raw?review?.correct:undefined,renderContent}))return;
  if(!raw&&answerTemplatePresentation(choiceQuestionPresentation(q))?.mode==='image-item-marks'){
