@@ -7,6 +7,7 @@ const originals = {
   'hlg3m_0262d7c8_grouping_v1': ['3d43ee914fa34b9013476c2f36568b3f7cc941921001857b3e012146fc9b0c85', 594, 162],
   'hlg3m_028342b7_grouping_v1': ['b7458492741a68908bbc32e4b6cfa4e9d283ff9c035e8a3b53a6a06478398272', 2400, 1374],
 };
+const loadObservers = new WeakMap();
 
 export function groupingDrawingPlan(question) {
   if (question?.type !== 'fields' || question.work?.input !== 'sketch' ||
@@ -28,13 +29,19 @@ export function renderGroupingDrawing(host, plan, {value, onChange, locked, rend
   if (!image) return null;
   const figure = image.closest('figure');
   if (figure) figure.style.margin = '0';
-  const board = doc.createElement('div');
-  board.className = 'quiz-grouping-drawing';
-  Object.assign(board.style, {
-    position: 'relative', width: 'min(100%, 620px)', aspectRatio: plan.width + '/' + plan.height,
-  });
-  image.before(board);
-  board.append(image);
+  let board = image.closest('.quiz-grouping-drawing');
+  if (board) {
+    loadObservers.get(board)?.abort();
+    board.replaceChildren(image);
+  } else {
+    board = doc.createElement('div');
+    board.className = 'quiz-grouping-drawing';
+    Object.assign(board.style, {
+      position: 'relative', width: 'min(100%, 620px)', aspectRatio: plan.width + '/' + plan.height,
+    });
+    image.before(board);
+    board.append(image);
+  }
   const cover = {position: 'absolute', inset: '0', width: '100%', height: '100%',
     maxHeight: 'none', margin: '0', padding: '0', border: '0', borderRadius: '0'};
   Object.assign(image.style, cover, {objectFit: 'fill'});
@@ -70,8 +77,10 @@ export function renderGroupingDrawing(host, plan, {value, onChange, locked, rend
     const update = () => {
       overlay.style.visibility = image.complete && image.naturalWidth === plan.width ? 'visible' : 'hidden';
     };
-    image.addEventListener('load', update);
-    image.addEventListener('error', update);
+    const observer = new AbortController();
+    loadObservers.set(board, observer);
+    image.addEventListener('load', update, {signal: observer.signal});
+    image.addEventListener('error', update, {signal: observer.signal});
     update();
     board.append(overlay);
   }
