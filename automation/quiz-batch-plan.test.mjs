@@ -4,7 +4,30 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {workerIntent,freezeWorkerIntent,reconcileWorker,applyWorkerIntent} from './lib/quiz-worker-write.mjs';
-import {batchCounts,expectedResponse,assertOAuthReceipt,practiceWriteIntent,freezeJson,validatePageBindings,recordBatchTime,preserveOAuthReceipt} from './lib/quiz-batch-plan.mjs';
+import {batchCounts,expectedResponse,assertOAuthReceipt,practiceWriteIntent,freezeJson,validatePageBindings,recordBatchTime,preserveOAuthReceipt,assertSourceCoverage} from './lib/quiz-batch-plan.mjs';
+
+test('部分題組補發可引用已發布小題，但不得重複匯入或省略原收據',()=>{
+ const sha='5'.repeat(64);
+ const packet={
+  candidates:[{source:'source1',doc:{blocks:[{questions:[{id:'new1'}]}]}}],
+  inputs:{'previous-receipt.private.json':sha},
+  sourceCoverage:{source1:[
+   {part:1,question_id:'new1'},
+   {part:2,prior_question_id:'old2',prior_receipt_sha256:sha},
+   {part:3,reason:'reading_without_math_textbook_alignment'}
+  ]}
+ };
+ assert.doesNotThrow(()=>assertSourceCoverage(packet));
+ const badReceipt=structuredClone(packet);
+ badReceipt.sourceCoverage.source1[1].prior_receipt_sha256='6'.repeat(64);
+ assert.throws(()=>assertSourceCoverage(badReceipt));
+ const duplicate=structuredClone(packet);
+ duplicate.sourceCoverage.source1[1].prior_question_id='new1';
+ assert.throws(()=>assertSourceCoverage(duplicate));
+ const mixed=structuredClone(packet);
+ mixed.sourceCoverage.source1[1].reason='withheld';
+ assert.throws(()=>assertSourceCoverage(mixed));
+});
 const fixture=()=>{
  const baseline={files:{'worker.mjs':'worker source','assets.mjs':'export const assets = {"old":{"id":"one"}};'},settings:{bindings:[{name:'SECRET',type:'secret_text'}],compatibility_date:'2026-01-01'}};
  const files={...baseline.files,'assets.mjs':'export const assets = {"old":{"id":"one"},"new":{"id":"two"}};'};
