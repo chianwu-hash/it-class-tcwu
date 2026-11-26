@@ -1770,6 +1770,321 @@ export const workAnswerSources={
 
 };
 export const answerTemplateSources={
+  "hlg3m_recovered_03264c6e_fraction_1": {
+    "guard": "4e8c45c56b6034c8",
+    "model": {
+      "mode": "blanks",
+      "start": 0,
+      "rows": [
+        {
+          "start": 0,
+          "end": 15,
+          "fields": [
+            "f1"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 4,
+          "end": 10,
+          "field": "f1",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_recovered_03264c6e_fraction_2": {
+    "guard": "3aa476d5017ef9c7",
+    "model": {
+      "mode": "blanks",
+      "start": 0,
+      "rows": [
+        {
+          "start": 0,
+          "end": 45,
+          "fields": [
+            "f1",
+            "f2"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 6,
+          "end": 12,
+          "field": "f1",
+          "width": 7
+        },
+        {
+          "start": 34,
+          "end": 40,
+          "field": "f2",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_recovered_03264c6e_fraction_3": {
+    "guard": "9ec8d703c44d342e",
+    "model": {
+      "mode": "blanks",
+      "start": 0,
+      "rows": [
+        {
+          "start": 0,
+          "end": 45,
+          "fields": [
+            "f1",
+            "f2"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 6,
+          "end": 12,
+          "field": "f1",
+          "width": 7
+        },
+        {
+          "start": 34,
+          "end": 40,
+          "field": "f2",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_recovered_03264c6e_fraction_4": {
+    "guard": "54945d7316db05d2",
+    "model": {
+      "mode": "blanks",
+      "start": 0,
+      "rows": [
+        {
+          "start": 0,
+          "end": 29,
+          "fields": [
+            "f1"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 18,
+          "end": 24,
+          "field": "f1",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_recovered_03264c6e_fraction_5": {
+    "guard": "213272b882f6a512",
+    "model": {
+      "mode": "blanks",
+      "start": 0,
+      "rows": [
+        {
+          "start": 0,
+          "end": 48,
+          "fields": [
+            "f1"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 41,
+          "end": 47,
+          "field": "f1",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_recovered_01361184_fraction_1": {
+    "guard": "3f8a0bdb9500e9a6",
+    "model": {
+      "mode": "blanks",
+      "start": 0,
+      "rows": [
+        {
+          "start": 0,
+          "end": 33,
+          "fields": [
+            "f1"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 26,
+          "end": 31,
+          "field": "f1",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_recovered_01361184_fraction_2": {
+    "guard": "186ba15feb134912",
+    "model": {
+      "mode": "blanks",
+      "start": 0,
+      "rows": [
+        {
+          "start": 0,
+          "end": 37,
+          "fields": [
+            "f1"
+          ]
+        },
+        {
+          "start": 38,
+          "end": 39,
+          "fields": []
+        },
+        {
+          "start": 40,
+          "end": 79,
+          "fields": [
+            "f2"
+          ]
+        },
+        {
+          "start": 80,
+          "end": 81,
+          "fields": []
+        },
+        {
+          "start": 82,
+          "end": 135,
+          "fields": [
+            "f3",
+            "f4"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 17,
+          "end": 32,
+          "field": "f1",
+          "width": 4,
+          "fraction": {
+            "start": 29,
+            "end": 30
+          }
+        },
+        {
+          "start": 58,
+          "end": 74,
+          "field": "f2",
+          "width": 4,
+          "fraction": {
+            "start": 70,
+            "end": 72
+          }
+        },
+        {
+          "start": 102,
+          "end": 117,
+          "field": "f3",
+          "width": 4,
+          "fraction": {
+            "start": 114,
+            "end": 115
+          }
+        },
+        {
+          "start": 118,
+          "end": 134,
+          "field": "f4",
+          "width": 4,
+          "fraction": {
+            "start": 130,
+            "end": 132
+          }
+        }
+      ],
+      "omissions": [],
+      "fractionNumerators": true
+    }
+  },
+  "hlg3m_recovered_0555b444_fraction_1": {
+    "guard": "a30d83d34ac53bbe",
+    "model": {
+      "mode": "blanks",
+      "start": 12,
+      "rows": [
+        {
+          "start": 12,
+          "end": 77,
+          "fields": [
+            "f1",
+            "f2",
+            "f3",
+            "f4"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 14,
+          "end": 29,
+          "field": "f1",
+          "width": 4,
+          "fraction": {
+            "start": 26,
+            "end": 27
+          }
+        },
+        {
+          "start": 30,
+          "end": 45,
+          "field": "f2",
+          "width": 4,
+          "fraction": {
+            "start": 37,
+            "end": 38,
+            "denominatorBlank": true
+          }
+        },
+        {
+          "start": 46,
+          "end": 61,
+          "field": "f3",
+          "width": 4,
+          "fraction": {
+            "start": 58,
+            "end": 59
+          }
+        },
+        {
+          "start": 62,
+          "end": 77,
+          "field": "f4",
+          "width": 4,
+          "fraction": {
+            "start": 69,
+            "end": 70,
+            "denominatorBlank": true
+          }
+        }
+      ],
+      "omissions": [],
+      "fractionNumerators": true,
+      "fractionDenominators": true
+    }
+  },
   "hlg3m_recovered_053c461e_table": {
     "guard": "40e960169e80f669",
     "model": {

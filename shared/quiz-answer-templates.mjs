@@ -86,7 +86,7 @@ export function deriveImagePanelTemplate(q,{media_index,sourceSize,width,panels}
  }
  return {mode:'image-panels',media_index,sourceSize,width,imageRange:ranges[0],panels};
 }
-export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=false,underscores=false,grouped=false,groupMarker='number',keepMassUnits=false,fractionNumerators=false,subgroups=false,richSlotChars=null}={}){
+export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=false,underscores=false,grouped=false,groupMarker='number',keepMassUnits=false,fractionNumerators=false,fractionDenominators=false,subgroups=false,richSlotChars=null}={}){
  if(!['open','fields'].includes(q?.type)||!q.fields?.length||q.fields.some(f=>!['text','math'].includes(f.input)))return null;
  if(keepMassUnits&&(!grouped||q.fields.some(f=>f.input!=='math')))return null;
  const stream=sourceStream(q.prompt);
@@ -100,13 +100,24 @@ export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=
  const referenced=new Set(q.prompt.layout?.flatMap(p=>p.runs.filter(r=>r.type==='image').map(r=>r.media_index))??[]);
  if(q.prompt.media?.some((m,i)=>m.kind!=='image'||!referenced.has(i)))return null;
  let matches=sourceBlanks(stream,{symbols,underscores});
- const fractions=[...stream.matchAll(/\$\\frac\{([（(][\s　_＿]*[）)])\}\{([0-9]{1,3})\}\$/gu)];
- if(fractions.length&&!fractionNumerators)return null;
- if(fractionNumerators){
-  if(!grouped||marked||targetOffsets||q.fields.some(f=>f.input!=='math'))return null;
-  if(!fractions.length||fractions.some(m=>Number(m[2])===0))return null;
+ const fractionPattern=/\$\\frac\{([（(][\s　_＿]*[）)]|[0-9]{1,3})\}\{([（(][\s　_＿]*[）)]|[0-9]{1,3})\}\$/gu;
+ const fractions=[...stream.matchAll(fractionPattern)].filter(m=>/^[（(]/u.test(m[1])||/^[（(]/u.test(m[2]));
+ if(fractions.length||fractionNumerators||fractionDenominators){
+  if(marked||targetOffsets||q.fields.some(f=>f.input!=='math')||!fractions.length)return null;
+  const fractionBlanks=[];
+  for(const m of fractions){
+   const numeratorBlank=/^[（(]/u.test(m[1]),denominatorBlank=/^[（(]/u.test(m[2]);
+   if(numeratorBlank===denominatorBlank||numeratorBlank&&!fractionNumerators||denominatorBlank&&!fractionDenominators)return null;
+   if(numeratorBlank&&Number(m[2])===0)return null;
+   const start=m.index+(numeratorBlank?m[0].lastIndexOf('{'):m[0].indexOf('{'))+1;
+   const fixed=numeratorBlank?m[2]:m[1];
+   fractionBlanks.push({index:m.index,0:m[0],fraction:{start,end:start+fixed.length,...(denominatorBlank?{denominatorBlank:true}:{})}});
+  }
+  if(fractionNumerators&&!fractionBlanks.some(m=>!m.fraction.denominatorBlank)||fractionDenominators&&!fractionBlanks.some(m=>m.fraction.denominatorBlank))return null;
   matches=matches.filter(m=>!fractions.some(f=>m.index>=f.index&&m.index+m[0].length<=f.index+f[0].length));
-  matches.push(...fractions.map(m=>({index:m.index,0:m[0],fraction:{start:m.index+m[0].lastIndexOf('{')+1,end:m.index+m[0].length-2}})));matches.sort((a,b)=>a.index-b.index);
+  matches.push(...fractionBlanks);matches.sort((a,b)=>a.index-b.index);
+  const math=[...stream.matchAll(/[$][^$\n]*[$]/gu)];
+  if(matches.some(m=>!m.fraction&&math.some(expr=>m.index<expr.index+expr[0].length&&m.index+m[0].length>expr.index)))return null;
  }
  if(matches.length!==q.fields.length)return null;
  const targets=targetOffsets?targetOffsets.map(index=>({index,0:''})):marked?[...stream.matchAll(/「[^「」\n]+」/gu)]:matches;
@@ -115,7 +126,7 @@ export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=
  if(grouped){
   if(marked||targetOffsets)return null;const groups=deriveGroupedTemplate(q,{groupMarker,subgroups});if(!groups)return null;
   if(groups.rows.some(row=>JSON.stringify(blanks.filter(b=>b.start>=row.start&&b.end<=row.end).map(b=>b.field))!==JSON.stringify(row.fields)))return null;
-  return {mode:'grouped-blanks',start:groups.start,rows:groups.rows,blanks,omissions:[],...(symbols?{symbols}:{}),...(underscores?{underscores}:{}),...(groupMarker!=='number'?{groupMarker}:{}),...(keepMassUnits?{keepMassUnits}:{}),...(fractionNumerators?{fractionNumerators}:{}),...(subgroups?{subgroups}:{})};
+  return {mode:'grouped-blanks',start:groups.start,rows:groups.rows,blanks,omissions:[],...(symbols?{symbols}:{}),...(underscores?{underscores}:{}),...(groupMarker!=='number'?{groupMarker}:{}),...(keepMassUnits?{keepMassUnits}:{}),...(fractionNumerators?{fractionNumerators}:{}),...(fractionDenominators?{fractionDenominators}:{}),...(subgroups?{subgroups}:{})};
  }
  const start=stream.lastIndexOf('\n',Math.min(blanks[0].start,matches[0].index)-1)+1,rows=[];let at=start;
  // Newlines inside a publisher blank are not a new sentence/group.
@@ -124,7 +135,7 @@ export function deriveAnswerTemplate(q,{marked=false,targetOffsets=null,symbols=
   let keep=stream.slice(at,i);for(const [a,b]of [...omissions].reverse())if(a>=at&&b<=i)keep=keep.slice(0,a-at)+keep.slice(b-at);
   if(keep.replace(/[\s　‧．ˉ]/gu,'').length)rows.push({start:at,end:i,fields:blanks.filter(b=>b.start>=at&&b.end<=i).map(b=>b.field)});at=i+1;
  }
- return {mode:marked?'marked':'blanks',start,rows,blanks,omissions,...(targetOffsets?{targetOffsets}:{}),...(symbols?{symbols}:{}),...(underscores?{underscores}:{})};
+ return {mode:marked?'marked':'blanks',start,rows,blanks,omissions,...(targetOffsets?{targetOffsets}:{}),...(symbols?{symbols}:{}),...(underscores?{underscores}:{}),...(fractionNumerators?{fractionNumerators}:{}),...(fractionDenominators?{fractionDenominators}:{})};
 }
 // A reviewed native transcription of a number/symbol task. Symbols come from
 // the printed instruction; this projection never inspects answer keys.
@@ -194,7 +205,7 @@ export function answerTemplatePresentation(q,registry=answerTemplateSources){
   const model=p.model.mode==='item-marks'?deriveItemMarkTemplate(source):deriveNumberSymbolTemplate(source);if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
   return {...model,source,renderPrompt:projectSourceBoxes(source.prompt,q.prompt),passage:{text:'',media:[]}};
  }
- const model=p.model.mode==='inline-choices'?deriveInlineChoiceTemplate(source,p.model):p.model.mode==='image-panels'?deriveImagePanelTemplate(source,p.model):p.model.mode==='groups'?deriveGroupedTemplate(source,{groupMarker:p.model.groupMarker}):p.model.mode==='options'?deriveOptionTemplate(source):p.model.mode==='material'&&source.prompt.media.length?{mode:'material',fields:source.fields.map(f=>f.id)}:deriveAnswerTemplate(source,{marked:p.model.mode==='marked',targetOffsets:p.model.targetOffsets,symbols:p.model.symbols,underscores:p.model.underscores,grouped:p.model.mode==='grouped-blanks',groupMarker:p.model.groupMarker,keepMassUnits:p.model.keepMassUnits,fractionNumerators:p.model.fractionNumerators,subgroups:p.model.subgroups,richSlotChars:p.model.richSlotChars??null});if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
+ const model=p.model.mode==='inline-choices'?deriveInlineChoiceTemplate(source,p.model):p.model.mode==='image-panels'?deriveImagePanelTemplate(source,p.model):p.model.mode==='groups'?deriveGroupedTemplate(source,{groupMarker:p.model.groupMarker}):p.model.mode==='options'?deriveOptionTemplate(source):p.model.mode==='material'&&source.prompt.media.length?{mode:'material',fields:source.fields.map(f=>f.id)}:deriveAnswerTemplate(source,{marked:p.model.mode==='marked',targetOffsets:p.model.targetOffsets,symbols:p.model.symbols,underscores:p.model.underscores,grouped:p.model.mode==='grouped-blanks',groupMarker:p.model.groupMarker,keepMassUnits:p.model.keepMassUnits,fractionNumerators:p.model.fractionNumerators,fractionDenominators:p.model.fractionDenominators,subgroups:p.model.subgroups,richSlotChars:p.model.richSlotChars??null});if(!model||JSON.stringify(model)!==JSON.stringify(p.model))return null;
  const renderPrompt=projectSourceBoxes(source.prompt,q.prompt);
  return {...model,source,renderPrompt,passage:taskReadingPresentation(q,{passage:model.mode==='image-panels'?omitRanges(renderPrompt,[model.imageRange]):['rich','material'].includes(model.mode)?{text:'',media:[]}:sliceContent(renderPrompt,0,model.start)}).passage};
 }
@@ -305,8 +316,16 @@ export function mountAnswerTemplate(group,q,{renderContent,registry,fieldFeedbac
    prepare(slot,input,blank.width,`${row.parentNumber?`第${row.parentNumber}組・${row.number}・`:number?`第${number}組・`:''}${slot.querySelector('legend').textContent}`);
    if(characters){slot.classList.add('quiz-answer-example-width');slot.style.setProperty('--answer-slot-characters',characters[blank.field]);}
    if(blank.fraction){
-    const fraction=doc.createElement('span'),body=doc.createElement('span'),denominator=doc.createElement('span');fraction.className='quiz-answer-fraction';body.className='quiz-answer-fraction-body';denominator.className='quiz-answer-fraction-denominator';denominator.textContent=sourceStream(renderPrompt).slice(blank.fraction.start,blank.fraction.end);
-    input.setAttribute('aria-label',input.getAttribute('aria-label')+'（分母'+denominator.textContent+'，只填分子）');input.placeholder='分子';input.inputMode='numeric';body.append(slot,denominator);fraction.append(body);for(const result of slot.querySelectorAll(':scope > .quiz-answer-template-result'))fraction.append(result);line.append(fraction);at=blank.end;
+    const fraction=doc.createElement('div'),body=doc.createElement('div'),fixed=doc.createElement('span');
+    fraction.className='quiz-answer-fraction';body.className='quiz-answer-fraction-body';
+    const below=blank.fraction.denominatorBlank;
+    fixed.className=below?'quiz-answer-fraction-numerator':'quiz-answer-fraction-denominator';
+    fixed.textContent=sourceStream(renderPrompt).slice(blank.fraction.start,blank.fraction.end);
+    fixed.setAttribute('aria-hidden','true');
+    input.setAttribute('aria-label',input.getAttribute('aria-label')+`（${below?'分子':'分母'}${fixed.textContent}，只填${below?'分母':'分子'}）`);
+    input.placeholder=below?'分母':'分子';input.inputMode='numeric';
+    body.append(...(below?[fixed,slot]:[slot,fixed]));
+    fraction.append(body);for(const result of slot.querySelectorAll(':scope > .quiz-answer-template-result'))fraction.append(result);line.append(fraction);at=blank.end;
    }
    else if(blank.unit){const pair=doc.createElement('span'),unit=doc.createElement('span');pair.className='quiz-answer-template-unit';unit.className='quiz-answer-template-unit-text';render(unit,sliceContent(renderPrompt,blank.unit.start,blank.unit.end));pair.append(slot,unit);line.append(pair);at=blank.unit.end;}
    else{line.append(slot);at=blank.end;}
