@@ -98,11 +98,29 @@ export function expectedResponse(question, work, openResponse) {
   return response;
 }
 
+export function assertSourceCoverage(packet) {
+  if (packet.sourceCoverage === undefined) return;
+  const coveredSources = Object.keys(packet.sourceCoverage).sort();
+  assert.deepEqual(coveredSources, packet.candidates.map(c=>c.source).sort(), 'Partial coverage must list every source');
+  for (const candidate of packet.candidates) {
+    const coverage = packet.sourceCoverage[candidate.source];
+    assert.ok(Array.isArray(coverage) && coverage.length && coverage.every((row,i) => {
+      const published = typeof row?.question_id === 'string' && Boolean(row.question_id.trim());
+      const withheld = typeof row?.reason === 'string' && Boolean(row.reason.trim());
+      return row?.part === i+1 && (published ? !Object.hasOwn(row,'reason') : withheld && !Object.hasOwn(row,'question_id'));
+    }), 'Each original part needs an ordered question mapping or a reason');
+    const questions = candidate.doc.blocks.flatMap(b=>b.questions.map(q=>q.id));
+    assert.deepEqual(coverage.flatMap(row=>row.question_id?[row.question_id]:[]),questions,
+      'Covered parts must match the exact published question order');
+  }
+}
+
 export async function loadBatch(file) {
   const bytes = await fs.readFile(file);
   const packet = JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/, ''));
   const counts = batchCounts(packet);
   validateBatchCatalog(packet);
+  assertSourceCoverage(packet);
   batchMediaAssets(packet);
   assert.equal(packet.studyRows.length, counts.questions);
   const questions = packet.candidates.flatMap(c => c.doc.blocks.flatMap(b => b.questions));
