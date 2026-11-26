@@ -114,6 +114,8 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
  const bar=fractionBarPlan(q)||rectangle||matchingShade;
  const grouping=groupingDrawingPlan(q),values=fieldsValues(q,raw),group=make('div'),phonetic=phoneticWordFields(choiceQuestionPresentation(q));group.className='quiz-fields';group.classList.toggle('quiz-fields-single',q.fields.length===1);
  const workLayout=workAnswerPresentation(q);if(workLayout)group.classList.add('quiz-work-answer-layout');
+ const template=answerTemplatePresentation(choiceQuestionPresentation(q));
+ const numericImage=template?.mode==='image-blanks'&&template.numeric;
  const inline=inlineReadingPlan(q),reading=inline?.reading??readingPresentation(choiceQuestionPresentation(q));group.classList.toggle('quiz-reading-fields',Boolean(reading));
  const shown=q.fields.map((f,i)=>reading?.fields?.[i]??fieldPresentation(q,f)),feedback=locked?fieldsReviewPresentation({...q,fields:shown},raw,review):null;
  const matching=matchingPresentation(choiceQuestionPresentation(q),shown);
@@ -130,7 +132,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
   const editor=renderWorkInput(group,q,{raw,locked,saved,renderContent,onChange:value=>{work=value;changed()}});
   group.sketchEditors=editor?[editor]:[];
  }
- if(!matchingShade&&!fieldsAreSingleChoice(q)&&matching?.covered.size!==q.fields.length)group.append(make('p',feedback?'你原本的作答已保留；請看各小題旁的核對結果。':q.fields.length===1?'填好答案後送出。':'依照題目順序填好每格，再一起送出。'));
+ if(!numericImage&&!matchingShade&&!fieldsAreSingleChoice(q)&&matching?.covered.size!==q.fields.length)group.append(make('p',feedback?'你原本的作答已保留；請看各小題旁的核對結果。':q.fields.length===1?'填好答案後送出。':'依照題目順序填好每格，再一起送出。'));
  for(const [fieldIndex,storedField] of q.fields.entries()){
   if(onBar&&storedField.id==='colored')continue;
   if(matching?.covered.has(fieldIndex)){
@@ -147,7 +149,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
   appendFieldReviewStatus(slot,feedback?.[fieldIndex]);
   if(['math','text'].includes(f.input)){
    const input=make('input');input.id=id;input.type='text';input.maxLength=250;input.value=typeof values[f.id]==='string'?values[f.id]:'';input.disabled=locked;input.autocomplete='off';input.setAttribute('aria-label',f.label);
-   const integer=Boolean(grouping||bar?.integerIds.has(f.id)||integerFields[q.id]?.includes(f.id));
+   const integer=Boolean(numericImage||grouping||bar?.integerIds.has(f.id)||integerFields[q.id]?.includes(f.id));
    if(integer)input.inputMode='numeric';
    else if(f.input==='math')input.placeholder='分數可以用 / 表示';
    input.addEventListener('input',()=>{values[f.id]=input.value;changed()});slot.append(input);

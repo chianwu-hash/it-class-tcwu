@@ -2,11 +2,11 @@ import {sourceStream,omitRanges} from './quiz-content-slices.mjs';
 
 // Coordinates are reviewed against the immutable original image. Neither the
 // geometry nor the input aid may be inferred from a private answer key.
-export function deriveImageBlankTemplate(q,{media_index,sourceSize,width,blanks,bank}={}){
- if(q?.type!=='fields'||!q.fields?.length||q.fields.some(f=>f.input!=='text')||new Set(q.fields.map(f=>f.id)).size!==q.fields.length)return null;
+export function deriveImageBlankTemplate(q,{media_index,sourceSize,width,blanks,bank,numeric=false}={}){
+ if(typeof numeric!=='boolean'||q?.type!=='fields'||!q.fields?.length||q.fields.some(f=>f.input!==(numeric?'math':'text'))||new Set(q.fields.map(f=>f.id)).size!==q.fields.length)return null;
  const text=sourceStream(q.prompt);
  if(text===null||!Number.isInteger(media_index)||q.prompt.media?.[media_index]?.kind!=='image'||!Array.isArray(sourceSize)||sourceSize.length!==2||sourceSize.some(n=>!Number.isInteger(n)||n<=0)||!Number.isInteger(width)||width<640||width>1200)return null;
- if(!Array.isArray(bank)||!bank.length||bank.length>8||new Set(bank).size!==bank.length||bank.some(s=>typeof s!=='string'||!s.trim()||s.length>8||!q.prompt.text.includes(s)))return null;
+ if(numeric?bank!==undefined:(!Array.isArray(bank)||!bank.length||bank.length>8||new Set(bank).size!==bank.length||bank.some(s=>typeof s!=='string'||!s.trim()||s.length>8||!q.prompt.text.includes(s))))return null;
  if(!Array.isArray(blanks)||blanks.length!==q.fields.length)return null;
  for(const[i,b]of blanks.entries()){
   const r=b.rect;if(b.field!==q.fields[i].id||!Array.isArray(r)||r.length!==4||r.some(n=>!Number.isInteger(n)||n<0)||r[2]*width/sourceSize[0]<44||r[3]*width/sourceSize[0]<44||r[0]+r[2]>sourceSize[0]||r[1]+r[3]>sourceSize[1])return null;
@@ -15,7 +15,7 @@ export function deriveImageBlankTemplate(q,{media_index,sourceSize,width,blanks,
  let pos=0;const ranges=[];
  for(const p of q.prompt.layout||[]){for(const r of p.runs){if(r.type==='image'&&r.media_index===media_index)ranges.push([pos,pos+1]);pos+=r.type==='text'?r.text.length:1;}pos++;}
  if(ranges.length!==1)return null;
- return {mode:'image-blanks',media_index,sourceSize,width,blanks,bank,imageRange:ranges[0]};
+ return {mode:'image-blanks',media_index,sourceSize,width,blanks,...(numeric?{numeric}:{bank}),imageRange:ranges[0]};
 }
 
 export const imageBlankPassage=(prompt,model)=>omitRanges(prompt,[model.imageRange]);
@@ -28,16 +28,32 @@ export function mountImageBlanks(container,plan,{byId,render}){
  tools.className='quiz-image-blank-tools';tools.setAttribute('role','group');tools.setAttribute('aria-label','原題代號或名詞輸入輔助');hint.className='helper';hint.setAttribute('aria-live','polite');
  feedback.className='quiz-image-blank-feedback';let active=null,returningFromAid=false;const buttons=[];
  const locked=plan.blanks.every(b=>byId.get(b.field).querySelector('input[type=text]')?.disabled);
- hint.textContent=locked?'已保留各格作答，請對照原圖核對。':'先選原圖中的空格，再輸入或按下代號／名詞；圖可上下及左右捲動。';
+ hint.textContent=locked?'已保留各格作答，請對照原圖核對。':plan.numeric?'在原圖空格填入數字，圖可上下及左右捲動。':'先選原圖中的空格，再輸入或按下代號／名詞；圖可上下及左右捲動。';
  const selected=doc.createElement('span');selected.className='quiz-image-blank-selected';selected.textContent='先選空格';tools.append(selected);
- if(!locked)for(const value of plan.bank){const button=doc.createElement('button');button.type='button';button.textContent=value;button.disabled=true;button.addEventListener('pointerdown',event=>{if(active&&!active.disabled)event.preventDefault();});button.addEventListener('click',()=>{if(!active||active.disabled)return;active.value=value;active.dispatchEvent(new doc.defaultView.Event('input',{bubbles:true}));returningFromAid=true;try{active.focus({preventScroll:true});}finally{returningFromAid=false;}});buttons.push(button);tools.append(button);}
+ if(!locked&&!plan.numeric)for(const value of plan.bank){const button=doc.createElement('button');button.type='button';button.textContent=value;button.disabled=true;button.addEventListener('pointerdown',event=>{if(active&&!active.disabled)event.preventDefault();});button.addEventListener('click',()=>{if(!active||active.disabled)return;active.value=value;active.dispatchEvent(new doc.defaultView.Event('input',{bubbles:true}));returningFromAid=true;try{active.focus({preventScroll:true});}finally{returningFromAid=false;}});buttons.push(button);tools.append(button);}
  for(const b of plan.blanks){
   const slot=byId.get(b.field),input=slot.querySelector('input[type=text]'),legend=slot.querySelector('legend');if(!input)throw Error('image_blank_original_input_required');
+  if(plan.numeric){input.inputMode='numeric';input.placeholder='';}
   slot.classList.add('quiz-image-blank-slot');legend.classList.add('quiz-answer-template-label');const[x,y,w,h]=b.rect;Object.assign(slot.style,{left:x/plan.sourceSize[0]*100+'%',top:y/plan.sourceSize[1]*100+'%',width:w/plan.sourceSize[0]*100+'%',height:h/plan.sourceSize[1]*100+'%'});
-  input.addEventListener('focus',()=>{active=input;buttons.forEach(button=>button.disabled=input.disabled);selected.textContent=legend.textContent;if(!locked)hint.textContent=legend.textContent+'：請輸入或選代號／名詞。';if(!returningFromAid)input.scrollIntoView({block:'nearest',inline:'nearest'});});
+  input.addEventListener('focus',()=>{active=input;buttons.forEach(button=>button.disabled=input.disabled);selected.textContent=legend.textContent;if(!locked&&!plan.numeric)hint.textContent=legend.textContent+'：請輸入或選代號／名詞。';if(!returningFromAid)input.scrollIntoView({block:'nearest',inline:'nearest'});});
   const notes=[...slot.querySelectorAll(':scope > .quiz-field-review-status,:scope > .quiz-field-review-reference')];
   if(notes.length){const card=doc.createElement('section'),title=doc.createElement('h4');card.className='quiz-image-blank-review';card.dataset.fieldReview=slot.dataset.fieldReview;card.id=input.id+'-image-review';slot.dataset.imageReviewTarget=card.id;title.textContent=legend.textContent;card.append(title,...notes);feedback.append(card);input.setAttribute('aria-describedby',[input.getAttribute('aria-describedby'),card.id].filter(Boolean).join(' '));}
   board.append(slot);
  }
- scroll.append(board);container.append(hint);if(!locked)container.append(tools);container.append(scroll);if(feedback.childNodes.length)container.append(feedback);
+ if(plan.numeric){
+  const image=picture.querySelector('img');
+  const prompt=hint.textContent;
+  const updateImage=()=>{
+   const ready=image?.complete&&image.naturalWidth===plan.sourceSize[0]&&image.naturalHeight===plan.sourceSize[1];
+   board.dataset.imageReady=String(Boolean(ready));
+   hint.textContent=ready?prompt:!image||image.complete&&image.currentSrc?'原圖無法顯示，請重新載入圖片。':'原圖載入中。';
+  };
+  if(image){
+   image.loading='eager';
+   image.addEventListener('load',updateImage);
+   image.addEventListener('error',updateImage);
+  }
+  updateImage();
+ }
+ scroll.append(board);container.append(hint);if(!locked&&!plan.numeric)container.append(tools);container.append(scroll);if(feedback.childNodes.length)container.append(feedback);
 }
