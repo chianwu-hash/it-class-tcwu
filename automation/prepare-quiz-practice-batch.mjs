@@ -175,7 +175,24 @@ try{
     alternateShading(fraction,response.f.left==='1'?2:1,response.f.right,response.f.comparison),
     alternateShading(fraction,response.f.left,response.f.right==='1'?2:1,response.f.comparison),
     {...response,f:{...response.f,comparison:response.f.comparison==='less'?'greater':'less'}},
-  ]:reviewedSketch(qn)?[]:single?qn.options.filter(o=>o.id!==response).map(o=>o.id):fields.map(field=>{const bad=structuredClone(response);if(field.input==='single'){const wrong=field.options.find(o=>!qn.answer.fields[field.id].includes(o.id));assert.ok(wrong,'Need an independently incorrect option');bad.f[field.id]=wrong.id;}else if(field.input==='set'){const ids=new Set(response.f[field.id]),toggle=field.options[0].id;ids.has(toggle)?ids.delete(toggle):ids.add(toggle);bad.f[field.id]=[...ids];}else bad.f[field.id]='999999';return bad;});
+  ]:reviewedSketch(qn)?[]:single?qn.options.filter(o=>o.id!==response).map(o=>o.id):fields.flatMap(field=>{
+   const bad=structuredClone(response);
+   if(field.input==='single'){
+    const wrong=field.options.find(o=>!qn.answer.fields[field.id].includes(o.id));
+    if(!wrong&&tupleFieldIds.has(field.id)){
+     assert.ok(tupleCases.incorrect.some(value=>value.f[field.id]!==response.f[field.id]),
+      'Need a rejected cross-pair when every option is accepted in isolation');
+     return [];
+    }
+    assert.ok(wrong,'Need an independently incorrect option');
+    bad.f[field.id]=wrong.id;
+   }else if(field.input==='set'){
+    const ids=new Set(response.f[field.id]),toggle=field.options[0].id;
+    ids.has(toggle)?ids.delete(toggle):ids.add(toggle);
+    bad.f[field.id]=[...ids];
+   }else bad.f[field.id]='999999';
+   return [bad];
+  });
   const variants=[response,...wrong,...aliases,...acceptedAlternatives,...tupleCases.correct];
   if(groupingDrawingPlan(qn))variants.push({...response,w:{version:1,strokes:[[[.1,.1],[.2,.1],[.2,.2],[.1,.2],[.1,.1]]]}});
   if(shading){

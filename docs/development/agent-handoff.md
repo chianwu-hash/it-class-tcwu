@@ -902,6 +902,7 @@
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
+| 發布中 | codex-number-units-recovered-20261127 | 2026-11-26T17:46:24.664303+00:00 | latest main after merge | dpl_ALqcrWsNwQEW1EtTtcGgn4zUaayt | Verified scale and table sources | pending tree comparison and formal OAuth |
 | 已完成 | Codex-typing-guide-fix-20261119 | 2026-11-19T05:47:26.976Z | `e15b3f1` | `dpl_Cxv1RroCHdLnBRqCAynBfAY5bRfh` | grade3/115-1/week10.html、grade3/115-1/week10.js、grade3/115-1/week11.html、grade3/115-1/week11.js、grade3/115-1/week12.html、grade3/115-1/week12.js、+grade3/115-1/textbook-keyboard-target.mjs | `dpl_7CTEZXmZovPyTni9B3wM7hatiDbK`／回滾 `dpl_Cxv1RroCHdLnBRqCAynBfAY5bRfh`（eolOnly 0） |
 
 - 使用者截圖指出第12週「紅毛城」小幫手全為注音待確認，要求修復並上線。Codex從最新main `11fbffad` 建新工作樹 `typing-guide-fix-20261119`，唯一寫入者；Claude依既有授權只讀複核，不得寫入／網路／憑證／資料庫／部署。

@@ -25,6 +25,10 @@ import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,isFractionShadingMa
 export {fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
 
 const integerFields = {
+ 'hlg3m_recovered_02c43935':['amount'],
+ 'hlg3m_recovered_032716bb':['amount'],
+ 'hlg3m_recovered_0482bc09':['amount'],
+ 'hlg3m_recovered_04fde7ae':['amount'],
  'hlg3m_019d47a1_fraction_bar_5': ['numerator'],
  'hlg3m_05507d9c_fraction_circle_2': ['brother','sister'],
  'hlg3m_05507d9c_fraction_circle_4': ['amount','numerator'],

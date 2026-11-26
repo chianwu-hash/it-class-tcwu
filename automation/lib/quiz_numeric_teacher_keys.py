@@ -168,11 +168,19 @@ def match_teacher_table_keys(question, teacher):
     呼叫端須另外核完整位置數及順序，不能把部分配到的格當整題完成。
     """
     def identity(cell, media):
-        return [
-            (run["type"], re.sub(r"\s+", "", run["text"]) if run["type"] == "text"
-             else media[run["media_index"]]["url"].rsplit("/", 1)[-1])
-            for run in cell if run["type"] != "text" or run["text"].strip()
-        ]
+        tokens = []
+        for run in cell:
+            if run["type"] == "text":
+                text = re.sub(r"\s+", "", run["text"])
+                if not text:
+                    continue
+                if tokens and tokens[-1][0] == "text":
+                    tokens[-1] = ("text", tokens[-1][1] + text)
+                else:
+                    tokens.append(("text", text))
+            else:
+                tokens.append((run["type"], media[run["media_index"]]["url"].rsplit("/", 1)[-1]))
+        return tokens
 
     teachers = [(i, block) for i, block in enumerate(teacher.get("layout", [])) if block["type"] == "table"]
     result, used = [], set()
