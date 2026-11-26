@@ -109,7 +109,7 @@ export function renderCircleColoring(host, plan, {value, locked, correct, onChan
   group.className = 'quiz-circle-coloring';
   const instruction = doc.createElement('p');
   const palette = plan.palette;
-  const readyText = !locked && palette ? '選一種顏色，再點蛋糕。用同色再點一次可以清除。' : locked ? '你塗色的部分已保留。' : '點一下圖中的一塊就能塗色，再點一下可以清除。';
+  const readyText = plan.readyText ?? (!locked && palette ? '選一種顏色，再點蛋糕。用同色再點一次可以清除。' : locked ? '你塗色的部分已保留。' : '點一下圖中的一塊就能塗色，再點一下可以清除。');
   const art = doc.createElement('div');
   renderContent(art, {text:'', media:[plan.image]});
   const image = art.querySelector('img');
@@ -136,7 +136,7 @@ export function renderCircleColoring(host, plan, {value, locked, correct, onChan
   const overlay = doc.createElementNS(SVG, 'svg');
   overlay.setAttribute('viewBox', `0 0 ${plan.width} ${plan.height}`);
   overlay.setAttribute('role', 'group');
-  overlay.setAttribute('aria-label', '原圖的等分區域');
+  overlay.setAttribute('aria-label', plan.regionLabel ?? '原圖的等分區域');
   Object.assign(overlay.style, {position:'absolute', inset:'0', width:'100%', height:'100%'});
   const status = doc.createElement('p');
   status.setAttribute('aria-live', 'polite');
@@ -223,6 +223,12 @@ export function renderCircleColoring(host, plan, {value, locked, correct, onChan
     }
     overlay.append(path);
     paths.set(region.id, path);
+  }
+  for (const d of plan.dividers ?? []) {
+    const divider = doc.createElementNS(SVG,'path');
+    for (const [key,value] of Object.entries({d,fill:'none',stroke:'#234459','stroke-width':'2',
+      'vector-effect':'non-scaling-stroke','pointer-events':'none','aria-hidden':'true'})) divider.setAttribute(key,value);
+    overlay.append(divider);
   }
   board.append(overlay);
   group.append(instruction);

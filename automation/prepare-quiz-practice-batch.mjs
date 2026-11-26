@@ -6,6 +6,7 @@ import {loadBatch,readJson,digest,expectedResponse,practiceWriteIntent,freezeJso
 import {arrangementPlan} from '../shared/quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from '../shared/quiz-grid-drawing.mjs';
 import {groupingDrawingPlan} from '../shared/quiz-grouping-drawing.mjs';
+import {fractionPartitionPlan,fractionPartitionVariants} from '../shared/quiz-fraction-partition.mjs';
 import {sourceRoutePlan,readSourceRoute} from '../shared/quiz-source-route.mjs';
 import {fractionColorsPlan,fractionColorsResponse,readFractionColors} from '../shared/quiz-fraction-colors.mjs';
 import {fractionComparisonPlan,fractionComparisonResponse} from '../shared/quiz-fraction-comparison.mjs';
@@ -17,7 +18,7 @@ import {atomicPairCases} from './lib/quiz-batch-atomic-pairs.mjs';
 
 const reviewedSketch = q => gridDrawingPlan(q) || arrangementPlan(q);
 const shadingPlan = q => fractionShadingPlan(q) || fractionBarPlan(q) || fractionRectPlan(q);
-const hasDrawingReference = q => reviewedSketch(q) || groupingDrawingPlan(q) || fractionComparisonPlan(q) || shadingPlan(q);
+const hasDrawingReference = q => reviewedSketch(q) || groupingDrawingPlan(q) || fractionComparisonPlan(q) || shadingPlan(q) || fractionPartitionPlan(q);
 function responseWithShading(response,plan,ids){
  const shaded=fractionShadingResponse(plan,new Set(ids));
  return {...response,f:{...response.f,...shaded.f},w:shaded.w};
@@ -159,7 +160,9 @@ try{
    assert.equal(readSourceRoute(route,wrongRoute)?.at(-1),route.end);
    assert.ok(!qn.answer.fields.route.includes(wrongRoute));
   }
-  const wrong=route?[{v:1,f:{route:wrongRoute}}]:colors?colors.palette.map((color,index)=>{
+  const partition=fractionPartitionPlan(qn);
+  const wrong=partition?fractionPartitionVariants().filter(({value})=>!qn.answer.fields.partition.includes(value))
+   .map(({value})=>({v:1,f:{partition:value}})):route?[{v:1,f:{route:wrongRoute}}]:colors?colors.palette.map((color,index)=>{
    const changed=new Map(colorMarks);
    const id=colors.regions.find(region=>changed.get(region.id)===color.id)?.id;
    assert.ok(id,'Each required color needs an independently testable sector');

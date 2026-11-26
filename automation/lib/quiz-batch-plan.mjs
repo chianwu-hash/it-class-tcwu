@@ -6,6 +6,7 @@ import {validateDocument} from '../../shared/quiz-document.mjs';
 import {batchMediaAssets} from './quiz-batch-media.mjs';
 import {arrangementPlan,readArrangement} from '../../shared/quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from '../../shared/quiz-grid-drawing.mjs';
+import {isFractionPartition,fractionPartitionPlan,fractionPartitionVariants} from '../../shared/quiz-fraction-partition.mjs';
 import {isSourceRoute,sourceRoutePlan,readSourceRoute} from '../../shared/quiz-source-route.mjs';
 import {fractionColorsPlan,isFractionColorsQuestion,readFractionColors} from '../../shared/quiz-fraction-colors.mjs';
 import {fractionComparisonPlan,readFractionComparison} from '../../shared/quiz-fraction-comparison.mjs';
@@ -71,6 +72,13 @@ export function expectedResponse(question, work, openResponse) {
   else if(question.work?.input==='sketch')validateSketch(work);
   else assert.ok(!question.work);
   const response = {v: 1, f: fields, ...(question.work ? {w: work} : {})};
+  if (isFractionPartition(question)) {
+    const targetParts = question.id.includes('00ab5c1f') ? 4 : 2;
+    assert.ok(fractionPartitionPlan(question), 'Reviewed partition must use the original source diagram');
+    const accepted = fractionPartitionVariants().filter(state=>state.parts===targetParts && state.share===1/targetParts);
+    assert.deepEqual(question.answer.fields.partition.toSorted(),accepted.map(state=>state.value).sort(),
+      'Reviewed partition must accept every correct drawing and reject every other drawing');
+  }
   if (isSourceRoute(question)) {
     const plan=sourceRoutePlan(question);
     assert.ok(plan && question.answer.fields.route.every(value=>readSourceRoute(plan,value)?.at(-1)===plan.end),
