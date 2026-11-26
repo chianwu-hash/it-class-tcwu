@@ -1770,6 +1770,84 @@ export const workAnswerSources={
 
 };
 export const answerTemplateSources={
+  "hlg3m_recovered_056cd12e_diagram_1": {
+    "guard": "ae61bf417d5ee74a",
+    "model": {
+      "mode": "rich",
+      "fields": [
+        "f1",
+        "f2"
+      ],
+      "richSlotChars": [
+        2,
+        3
+      ]
+    }
+  },
+  "hlg3m_recovered_059dbdea_diagram_1": {
+    "guard": "a11a979624824c03",
+    "model": {
+      "mode": "rich",
+      "fields": [
+        "f1",
+        "f2"
+      ],
+      "richSlotChars": [
+        2,
+        3
+      ]
+    }
+  },
+  "hlg3m_recovered_00a92efe_diagram_1": {
+    "guard": "eb7498fc56436d79",
+    "model": {
+      "mode": "blanks",
+      "start": 0,
+      "rows": [
+        {
+          "start": 0,
+          "end": 47,
+          "fields": [
+            "f1"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 39,
+          "end": 45,
+          "field": "f1",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_recovered_00a92efe_diagram_2": {
+    "guard": "84ca0895190a071c",
+    "model": {
+      "mode": "blanks",
+      "start": 52,
+      "rows": [
+        {
+          "start": 52,
+          "end": 59,
+          "fields": [
+            "f1"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 54,
+          "end": 57,
+          "field": "f1",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
   "hlg3m_recovered_007fb4ae_teacher_fig": {
     "guard": "06c33f5144ee8e33",
     "model": {
