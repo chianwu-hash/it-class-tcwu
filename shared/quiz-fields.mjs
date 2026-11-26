@@ -15,6 +15,7 @@ import {inlineReadingPlan} from './quiz-reading-inline.mjs';
 import {mountReadingWorkbench,readingWorkbenchSupported} from './quiz-reading-workbench.mjs';
 import {workAnswerPresentation,mountWorkAnswerInputs,workResponseContent} from './quiz-work-answer-layout.mjs';
 import {sourceStream} from './quiz-content-slices.mjs';
+import {circleColoringPlan,renderCircleColoring} from './quiz-circle-coloring.mjs';
 export {fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
 
 const own=(o,k)=>o&&Object.hasOwn(o,k);
@@ -42,6 +43,8 @@ export function fieldsResponseError(q,raw){
 }
 
 export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onChange,renderContent,textInputAids={},review=null}){
+ const circle=circleColoringPlan(q);
+ if(circle&&renderCircleColoring(host,circle,{value:fieldsValues(q,raw).regions,locked,correct:review?.correct,onChange:value=>onChange(JSON.stringify({v:1,f:{regions:value}})),renderContent}))return host.lastElementChild;
  const values=fieldsValues(q,raw),group=make('div'),phonetic=phoneticWordFields(choiceQuestionPresentation(q));group.className='quiz-fields';group.classList.toggle('quiz-fields-single',q.fields.length===1);
  const workLayout=workAnswerPresentation(q);if(workLayout)group.classList.add('quiz-work-answer-layout');
  const inline=inlineReadingPlan(q),reading=inline?.reading??readingPresentation(choiceQuestionPresentation(q));group.classList.toggle('quiz-reading-fields',Boolean(reading));
@@ -88,6 +91,8 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
  mountReadingWorkbench(group,q,reading,{renderContent,fieldFeedback:feedback});mountWorkAnswerInputs(group,q,{renderContent,fieldFeedback:feedback});host.append(group);return group;
 }
 export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,referenceAnswer=null,showWork=true}){
+ const circle=circleColoringPlan(q);
+ if(circle&&renderCircleColoring(host,circle,{value:raw?fieldsValues(q,raw).regions:referenceAnswer?.fields?.regions?.[0],locked:true,correct:raw?review?.correct:undefined,renderContent}))return;
  if(!raw&&answerTemplatePresentation(choiceQuestionPresentation(q))?.mode==='image-item-marks'){
   const given=referenceAnswer?.format==='fields-v1'?referenceAnswer.fields:null;
   const values=given&&q.fields.every(f=>given[f.id]?.length===1)?Object.fromEntries(q.fields.map(f=>[f.id,given[f.id][0]])):null;
