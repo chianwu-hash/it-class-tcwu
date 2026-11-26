@@ -6,6 +6,7 @@ import {validateDocument} from '../../shared/quiz-document.mjs';
 import {batchMediaAssets} from './quiz-batch-media.mjs';
 import {arrangementPlan,readArrangement} from '../../shared/quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from '../../shared/quiz-grid-drawing.mjs';
+import {fractionColorsPlan,isFractionColorsQuestion,readFractionColors} from '../../shared/quiz-fraction-colors.mjs';
 import {fractionComparisonPlan,readFractionComparison} from '../../shared/quiz-fraction-comparison.mjs';
 import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,readFractionShading} from '../../shared/quiz-fraction-shading.mjs';
 
@@ -69,6 +70,10 @@ export function expectedResponse(question, work, openResponse) {
   else if(question.work?.input==='sketch')validateSketch(work);
   else assert.ok(!question.work);
   const response = {v: 1, f: fields, ...(question.work ? {w: work} : {})};
+  if (isFractionColorsQuestion(question)) {
+    const colors = fractionColorsPlan(question);
+    assert.ok(colors && readFractionColors(colors,response)?.size===colors.regions.length,'Reviewed colors must match the original image and fill the board');
+  }
   const fraction = fractionComparisonPlan(question);
   if (fraction) assert.ok(readFractionComparison(fraction,response),'Reviewed shading must match both stored counts');
   if (/_fraction_(?:(?:bar|rect)_)?shade_\d+$/u.test(question.id)||

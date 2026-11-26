@@ -10,6 +10,7 @@ import {workAnswerPassage} from './quiz-work-answer-layout.mjs';
 import {circleColoringPlan} from './quiz-circle-coloring.mjs';
 import {gridDrawingPlan} from './quiz-grid-drawing.mjs';
 import {groupingDrawingPlan} from './quiz-grouping-drawing.mjs';
+import {fractionColorsPlan} from './quiz-fraction-colors.mjs';
 import {fractionComparisonPlan} from './quiz-fraction-comparison.mjs';
 import {fractionShadingPlan,fractionBarPlan,fractionRectPlan} from './quiz-fraction-shading.mjs';
 // Compatibility for the reviewed Chinese import's circled-code choice fields.
@@ -34,6 +35,7 @@ export function fieldPresentation(q,field){
 export const fieldsAreSingleChoice=q=>q.type==='fields'&&q.fields?.length===1&&fieldPresentation(q,q.fields[0]).input==='single';
 
 export function fieldsPromptPresentation(q,{showGroupingBoard=false}={}){
+ const colors=showGroupingBoard&&fractionColorsPlan(q);if(colors)return colors.passage;
  const comparison=showGroupingBoard&&fractionComparisonPlan(q);if(comparison)return comparison.passage;
  const shading=showGroupingBoard&&(fractionShadingPlan(q)||fractionBarPlan(q)||fractionRectPlan(q));if(shading)return shading.passage;
  const grouping=showGroupingBoard&&groupingDrawingPlan(q);if(grouping)return grouping.passage;

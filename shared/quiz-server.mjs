@@ -17,6 +17,7 @@ import {choiceReviewModel,decorateFieldReviewOption} from './quiz-review-choices
 import {renderOpenInputs,renderOpenReview,openResponseError,renderOpenSavedSketches} from './quiz-open-response.mjs';
 import {wordMeaningReview} from './quiz-word-meaning-review.mjs';
 import {mountShortAnswerInput} from './quiz-short-answer.mjs';
+import {fractionColorsPlan,readFractionColors} from './quiz-fraction-colors.mjs';
 import {fractionComparisonPlan,readFractionComparison} from './quiz-fraction-comparison.mjs';
 import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,readFractionShading} from './quiz-fraction-shading.mjs';
 
@@ -88,13 +89,14 @@ export function initServerQuiz({ selectors, server }) {
   function renderReview(article, q) {
     const review = state.reviews.find(r => r.question_id === q.id);
     if (!review) { article.append(make('p', '已儲存；正解與解析會在符合本場次揭答條件後顯示。', 'notice')); return; }
+    const colors=fractionColorsPlan(q);
     const fraction=fractionComparisonPlan(q);
     const shading=fractionShadingPlan(q)||fractionBarPlan(q)||fractionRectPlan(q);
-    if(fraction||shading){
+    if(colors||fraction||shading){
       let response;
       try{response=JSON.parse(state.responses[q.id]);}catch{}
-      const selected=fraction?readFractionComparison(fraction,response):readFractionShading(shading,response);
-      if(!selected?.size){article.append(make('p','原作答的塗色與格數無法配對，請回報這題。','notice'));return;}
+      const selected=colors?readFractionColors(colors,response):fraction?readFractionComparison(fraction,response):readFractionShading(shading,response);
+      if(!selected?.size||(colors&&selected.size!==colors.regions.length)){article.append(make('p','原作答的塗色與格數無法配對，請回報這題。','notice'));return;}
     }
     if(q.type==='open'){
       const box=renderOpenReview(article,q,review,{raw:state.responses[q.id],busy:busy||state.status==='closed',pending:Boolean(pending),draftNote:pending?.self_note??openNotes.get(q.id)??'',onNoteChange:value=>openNotes.set(q.id,value),onSelfCheck:selfCheck});

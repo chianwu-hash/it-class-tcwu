@@ -6,6 +6,7 @@ import {loadBatch,readJson,digest,expectedResponse,practiceWriteIntent,freezeJso
 import {arrangementPlan} from '../shared/quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from '../shared/quiz-grid-drawing.mjs';
 import {groupingDrawingPlan} from '../shared/quiz-grouping-drawing.mjs';
+import {fractionColorsPlan,fractionColorsResponse,readFractionColors} from '../shared/quiz-fraction-colors.mjs';
 import {fractionComparisonPlan,fractionComparisonResponse} from '../shared/quiz-fraction-comparison.mjs';
 import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,fractionShadingResponse} from '../shared/quiz-fraction-shading.mjs';
 import {validateDocument} from '../shared/quiz-document.mjs';
@@ -144,7 +145,15 @@ try{
   const tupleCases=single||open?{correct:[],incorrect:[]}:atomicPairCases(qn,response);
   const fraction=fractionComparisonPlan(qn);
   const shading=shadingPlan(qn);
-  const wrong=shading?[
+  const colors=fractionColorsPlan(qn);
+  const colorMarks=colors&&readFractionColors(colors,response);
+  const wrong=colors?colors.palette.map((color,index)=>{
+   const changed=new Map(colorMarks);
+   const id=colors.regions.find(region=>changed.get(region.id)===color.id)?.id;
+   assert.ok(id,'Each required color needs an independently testable sector');
+   changed.set(id,colors.palette[(index+1)%colors.palette.length].id);
+   return fractionColorsResponse(colors,changed);
+  }):shading?[
    responseWithShading(response,shading,shading.regions.slice(0,response.f.colored==='1'?2:1).map(r=>r.id)),
    ...fields.filter(f=>f.id!=='colored').map(f=>({...response,f:{...response.f,[f.id]:'999999'}})),
   ]:fraction?[
@@ -171,6 +180,17 @@ try{
    assert.equal(new Set(alternatives.map(value=>JSON.stringify(value.w))).size,fraction.parts);
    variants.push(...alternatives.filter(value=>JSON.stringify(value.w)!==JSON.stringify(response.w)));
   }
+  if(colors){
+   const identical=new Set([JSON.stringify(response.w)]);
+   for(let offset=1;offset<colors.regions.length;offset++){
+    const marks=new Map(colors.regions.map(({id},i)=>[id,colorMarks.get(colors.regions[(i+offset)%colors.regions.length].id)]));
+    const rotated=fractionColorsResponse(colors,marks);
+    assert.deepEqual(rotated.f,response.f);
+    const key=JSON.stringify(rotated.w);
+    if(!identical.has(key)){identical.add(key);variants.push(rotated);}
+   }
+   assert.ok(identical.size>1,'Color positions must allow equivalent placements');
+  }
   const tupleIncorrectStart=variants.length;variants.push(...tupleCases.incorrect);
   for(const [i,value] of variants.entries()){const shouldPass=(i===0||i>wrong.length)&&i<tupleIncorrectStart;
    await db.exec('reset role');const bank=randomUUID(),version=randomUUID(),session=randomUUID();
@@ -187,7 +207,7 @@ try{
     if(own&&i===0&&item.work){const missing={...itemValue};delete missing.w;await assert.rejects(action('submit',{...args,response:JSON.stringify(missing)}));}
     if(item.type==='open'&&own&&i===0){await assert.rejects(action('self_check',{session_id:session,question_id:item.id,request_id:randomUUID(),self_rating:'understood',self_note:''}),/open_answer_required/);for(const f of item.fields){const missing=structuredClone(itemValue);delete missing.f[f.id];await assert.rejects(action('submit',{...args,response:JSON.stringify(missing)}));const empty=structuredClone(itemValue);empty.f[f.id]=f.input==='sketch'?{version:1,strokes:[]}:' ';await assert.rejects(action('submit',{...args,response:JSON.stringify(empty)}));const long=structuredClone(itemValue);long.f[f.id]=f.input==='sketch'?{version:1,strokes:[[[0,0],[2,1]]]}:'字'.repeat(251);await assert.rejects(action('submit',{...args,response:JSON.stringify(long)}));}}
     const drawing=hasDrawingReference(item),grouping=groupingDrawingPlan(item),shade=shadingPlan(item);
-    if((grouping||shade)&&own&&i===0){
+    if((grouping||shade||colors)&&own&&i===0){
      for(const strokes of [[],[[[0,0],[2,1]]]]){
       await assert.rejects(action('submit',{...args,response:JSON.stringify({...itemValue,w:{version:1,strokes}})}));
      }
