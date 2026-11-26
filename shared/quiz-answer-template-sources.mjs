@@ -1770,6 +1770,430 @@ export const workAnswerSources={
 
 };
 export const answerTemplateSources={
+  "hlg3m_recovered_007fb4ae_teacher_fig": {
+    "guard": "06c33f5144ee8e33",
+    "model": {
+      "mode": "rich",
+      "fields": [
+        "f1",
+        "f2",
+        "f3",
+        "f4",
+        "f5",
+        "f6",
+        "f7",
+        "f8",
+        "f9"
+      ],
+      "richSlotChars": [
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+      ]
+    }
+  },
+  "hlg3m_recovered_00d65ff0_teacher_fig": {
+    "guard": "45f4520ed8e7c25f",
+    "model": {
+      "mode": "rich",
+      "fields": [
+        "f1",
+        "f2",
+        "f3",
+        "f4",
+        "f5",
+        "f6",
+        "f7",
+        "f8",
+        "f9"
+      ],
+      "richSlotChars": [
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+      ]
+    }
+  },
+  "hlg3m_recovered_01c5299d_teacher_fig": {
+    "guard": "698f1c0a8a911dd8",
+    "model": {
+      "mode": "rich",
+      "fields": [
+        "f1",
+        "f2",
+        "f3",
+        "f4",
+        "f5",
+        "f6",
+        "f7"
+      ],
+      "richSlotChars": [
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+      ]
+    }
+  },
+  "hlg3m_recovered_00d6034c_teacher_fig": {
+    "guard": "f24153c137bf85fd",
+    "model": {
+      "mode": "blanks",
+      "start": 0,
+      "rows": [
+        {
+          "start": 0,
+          "end": 81,
+          "fields": [
+            "f1",
+            "f2"
+          ]
+        },
+        {
+          "start": 82,
+          "end": 83,
+          "fields": []
+        }
+      ],
+      "blanks": [
+        {
+          "start": 49,
+          "end": 54,
+          "field": "f1",
+          "width": 7
+        },
+        {
+          "start": 56,
+          "end": 71,
+          "field": "f2",
+          "width": 4,
+          "fraction": {
+            "start": 68,
+            "end": 69
+          }
+        }
+      ],
+      "omissions": [],
+      "fractionNumerators": true
+    }
+  },
+  "hlg3m_recovered_01de7b65_teacher_fig": {
+    "guard": "6e8eda4b73a74226",
+    "model": {
+      "mode": "image-blanks",
+      "media_index": 0,
+      "sourceSize": [
+        685,
+        376
+      ],
+      "width": 1100,
+      "blanks": [
+        {
+          "field": "f1",
+          "rect": [
+            455,
+            10,
+            52,
+            30
+          ]
+        },
+        {
+          "field": "f2",
+          "rect": [
+            556,
+            122,
+            44,
+            30
+          ]
+        },
+        {
+          "field": "f3",
+          "rect": [
+            523,
+            319,
+            49,
+            29
+          ]
+        },
+        {
+          "field": "f4",
+          "rect": [
+            47,
+            312,
+            50,
+            30
+          ]
+        },
+        {
+          "field": "f5",
+          "rect": [
+            13,
+            128,
+            50,
+            29
+          ]
+        }
+      ],
+      "numeric": true,
+      "imageRange": [
+        18,
+        19
+      ]
+    }
+  },
+  "hlg3m_recovered_0480cbe6_teacher_fig": {
+    "guard": "1195ce1e687a76c3",
+    "model": {
+      "mode": "image-blanks",
+      "media_index": 0,
+      "sourceSize": [
+        2400,
+        1197
+      ],
+      "width": 1100,
+      "blanks": [
+        {
+          "field": "f1",
+          "rect": [
+            1769,
+            148,
+            117,
+            97
+          ]
+        },
+        {
+          "field": "f2",
+          "rect": [
+            1709,
+            1009,
+            139,
+            98
+          ]
+        },
+        {
+          "field": "f3",
+          "rect": [
+            240,
+            1009,
+            122,
+            98
+          ]
+        },
+        {
+          "field": "f4",
+          "rect": [
+            89,
+            365,
+            127,
+            98
+          ]
+        }
+      ],
+      "numeric": true,
+      "imageRange": [
+        18,
+        19
+      ]
+    }
+  },
+  "hlg3m_recovered_04c8206e_teacher_fig": {
+    "guard": "98cf800ea9bd1f50",
+    "model": {
+      "mode": "image-blanks",
+      "media_index": 0,
+      "sourceSize": [
+        678,
+        314
+      ],
+      "width": 1200,
+      "blanks": [
+        {
+          "field": "f1",
+          "rect": [
+            540,
+            35,
+            43,
+            26
+          ]
+        },
+        {
+          "field": "f2",
+          "rect": [
+            547,
+            270,
+            43,
+            26
+          ]
+        },
+        {
+          "field": "f3",
+          "rect": [
+            33,
+            175,
+            45,
+            26
+          ]
+        },
+        {
+          "field": "f4",
+          "rect": [
+            76,
+            19,
+            45,
+            25
+          ]
+        }
+      ],
+      "numeric": true,
+      "imageRange": [
+        18,
+        19
+      ]
+    }
+  },
+  "hlg3m_recovered_04d48475_teacher_fig": {
+    "guard": "0ca56290ce7b56a3",
+    "model": {
+      "mode": "image-blanks",
+      "media_index": 0,
+      "sourceSize": [
+        2400,
+        1197
+      ],
+      "width": 1100,
+      "blanks": [
+        {
+          "field": "f1",
+          "rect": [
+            1558,
+            36,
+            108,
+            100
+          ]
+        },
+        {
+          "field": "f2",
+          "rect": [
+            1706,
+            961,
+            137,
+            101
+          ]
+        },
+        {
+          "field": "f3",
+          "rect": [
+            86,
+            724,
+            128,
+            102
+          ]
+        },
+        {
+          "field": "f4",
+          "rect": [
+            175,
+            172,
+            123,
+            101
+          ]
+        }
+      ],
+      "numeric": true,
+      "imageRange": [
+        18,
+        19
+      ]
+    }
+  },
+  "hlg3m_recovered_04235638_teacher_fig": {
+    "guard": "3d06f15694783114",
+    "model": {
+      "mode": "image-blanks",
+      "media_index": 0,
+      "sourceSize": [
+        457,
+        192
+      ],
+      "width": 1180,
+      "blanks": [
+        {
+          "field": "f1",
+          "rect": [
+            202,
+            57,
+            20,
+            20
+          ]
+        },
+        {
+          "field": "f2",
+          "rect": [
+            242,
+            57,
+            20,
+            20
+          ]
+        },
+        {
+          "field": "f3",
+          "rect": [
+            366,
+            57,
+            20,
+            20
+          ]
+        },
+        {
+          "field": "f4",
+          "rect": [
+            101,
+            155,
+            20,
+            19
+          ]
+        },
+        {
+          "field": "f5",
+          "rect": [
+            267,
+            155,
+            19,
+            19
+          ]
+        },
+        {
+          "field": "f6",
+          "rect": [
+            398,
+            155,
+            20,
+            19
+          ]
+        }
+      ],
+      "numeric": true,
+      "imageRange": [
+        31,
+        32
+      ]
+    }
+  },
   "hlg3m_recovered_00b83165_weight_image": {
     "guard": "0a760d1bdb7f019a",
     "model": {
