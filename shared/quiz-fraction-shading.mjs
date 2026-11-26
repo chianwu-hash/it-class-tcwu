@@ -1,4 +1,5 @@
 import {makeCircleRegions,renderCircleColoring} from './quiz-circle-coloring.mjs';
+import {fractionRectangles} from './quiz-fraction-rectangles.mjs';
 
 const figures = {
   '018f1b67_1':['817ff15e8a0bff65568a9141c7c25157040db4e99d4135a77eb0e4ff9abf2b3e',896,900,'circle',[3,475,601,292,287]],
@@ -71,6 +72,19 @@ export function fractionBarPlan(q) {
   if(id[1]==='02930e68'&&id[2]==='2')integerIds.delete('answer');
   return {image,width,height,maxWidth:620,regions:makePaths('grid',[xs,ys]),
     passage:{...prompt,media:[]},integerIds};
+}
+
+export function fractionRectPlan(q) {
+  const id=/^hlg3m_([0-9a-f]{8})_fraction_rect_shade_([1-4])$/u.exec(q?.id??'');
+  const entry=id&&fractionRectangles[id[1]+'_'+id[2]], prompt=q?.prompt;
+  if(!entry||q.type!=='fields'||q.work?.input!=='sketch'||prompt?.layout||prompt?.media?.length!==1)return null;
+  const fieldIds=id[1]==='001a16d8'?['colored']:['colored','answer'];
+  if(q.fields?.length!==fieldIds.length||q.fields.some((f,i)=>f.id!==fieldIds[i]||f.input!=='math'))return null;
+  const [sha,width,height,xs,ys]=entry,image=prompt.media[0];
+  if(image.kind!=='image'||!image.url?.startsWith('https://quiz-media.invalid/')||!image.url.endsWith('/'+sha))return null;
+  const regions=makePaths('grid',[xs,ys]);
+  if(regions.length>32)return null;
+  return {image,width,height,maxWidth:470,regions,passage:{...prompt,media:[]},integerIds:new Set()};
 }
 
 export function fractionShadingResponse(plan,selected) {

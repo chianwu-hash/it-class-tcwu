@@ -7,14 +7,14 @@ import {arrangementPlan} from '../shared/quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from '../shared/quiz-grid-drawing.mjs';
 import {groupingDrawingPlan} from '../shared/quiz-grouping-drawing.mjs';
 import {fractionComparisonPlan,fractionComparisonResponse} from '../shared/quiz-fraction-comparison.mjs';
-import {fractionShadingPlan,fractionBarPlan,fractionShadingResponse} from '../shared/quiz-fraction-shading.mjs';
+import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,fractionShadingResponse} from '../shared/quiz-fraction-shading.mjs';
 import {validateDocument} from '../shared/quiz-document.mjs';
 import {setupProductionQuizDB} from './fixtures/production-quiz-db.mjs';
 import {batchMediaAssets} from './lib/quiz-batch-media.mjs';
 import {atomicPairCases} from './lib/quiz-batch-atomic-pairs.mjs';
 
 const reviewedSketch = q => gridDrawingPlan(q) || arrangementPlan(q);
-const shadingPlan = q => fractionShadingPlan(q) || fractionBarPlan(q);
+const shadingPlan = q => fractionShadingPlan(q) || fractionBarPlan(q) || fractionRectPlan(q);
 const hasDrawingReference = q => reviewedSketch(q) || groupingDrawingPlan(q) || fractionComparisonPlan(q) || shadingPlan(q);
 function responseWithShading(response,plan,ids){
  const shaded=fractionShadingResponse(plan,new Set(ids));
