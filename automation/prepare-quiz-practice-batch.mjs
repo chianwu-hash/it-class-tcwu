@@ -6,6 +6,7 @@ import {loadBatch,readJson,digest,expectedResponse,practiceWriteIntent,freezeJso
 import {arrangementPlan} from '../shared/quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from '../shared/quiz-grid-drawing.mjs';
 import {groupingDrawingPlan} from '../shared/quiz-grouping-drawing.mjs';
+import {sourceRoutePlan,readSourceRoute} from '../shared/quiz-source-route.mjs';
 import {fractionColorsPlan,fractionColorsResponse,readFractionColors} from '../shared/quiz-fraction-colors.mjs';
 import {fractionComparisonPlan,fractionComparisonResponse} from '../shared/quiz-fraction-comparison.mjs';
 import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,fractionShadingResponse} from '../shared/quiz-fraction-shading.mjs';
@@ -151,8 +152,14 @@ try{
   const fraction=fractionComparisonPlan(qn);
   const shading=shadingPlan(qn);
   const colors=fractionColorsPlan(qn);
+  const route=sourceRoutePlan(qn);
   const colorMarks=colors&&readFractionColors(colors,response);
-  const wrong=colors?colors.palette.map((color,index)=>{
+  const wrongRoute=route&&p.routeWrong?.[qn.id];
+  if(route){
+   assert.equal(readSourceRoute(route,wrongRoute)?.at(-1),route.end);
+   assert.ok(!qn.answer.fields.route.includes(wrongRoute));
+  }
+  const wrong=route?[{v:1,f:{route:wrongRoute}}]:colors?colors.palette.map((color,index)=>{
    const changed=new Map(colorMarks);
    const id=colors.regions.find(region=>changed.get(region.id)===color.id)?.id;
    assert.ok(id,'Each required color needs an independently testable sector');

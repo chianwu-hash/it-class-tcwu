@@ -470,6 +470,16 @@ button.quiz-sector-color:focus-visible{outline:3px solid #16396f;outline-offset:
 .quiz-matchstick-point:focus-visible{outline:none;stroke:#12395d;stroke-width:3}
 .quiz-matchstick-stick{stroke:#874821;stroke-width:7;stroke-linecap:round}
 
+.quiz-source-route-board{position:relative;width:min(100%,430px);margin-inline:auto}
+.quiz-source-route-board>img,.quiz-source-route-board>svg{position:absolute;inset:0;width:100%;height:100%}
+.quiz-source-route-board>img{margin:0;padding:0;border:0;border-radius:0;max-height:none;object-fit:fill}
+.quiz-source-route-board polyline{stroke:#126185;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.quiz-source-route-board [data-route-node]{fill:transparent;stroke:transparent;stroke-width:2;vector-effect:non-scaling-stroke}
+.quiz-source-route-board circle[role="button"]{cursor:pointer}
+.quiz-source-route-board circle[data-current="true"]{stroke:#126185;fill:#23799a26}
+.quiz-source-route-board circle:focus-visible{outline:none;stroke:#103358;stroke-width:3}
+.quiz-source-route-status{overflow-wrap:anywhere}
+
 
 
 /* ============ QuizFeedbackMotion：只作用在 .qfm-actor 之下 ============ */
