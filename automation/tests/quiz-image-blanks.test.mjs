@@ -20,3 +20,16 @@ test('unreviewed choices, overlapping/out-of-image geometry, tiny targets and in
  const q=fixture();q.fields[0].input='single';assert.equal(deriveImageBlankTemplate(q,options()),null);
  const duplicate=fixture();duplicate.fields[1].id=duplicate.fields[0].id;assert.equal(deriveImageBlankTemplate(duplicate,options()),null);
 });
+
+test('numeric image blanks keep native math fields and use no text bank',()=>{
+ const q=fixture();q.fields.forEach(f=>{f.input='math';});
+ const spec=options();delete spec.bank;spec.numeric=true;
+ const model=deriveImageBlankTemplate(q,spec);
+ assert.equal(model.numeric,true);
+ assert.equal(Object.hasOwn(model,'bank'),false);
+ assert.ok(answerTemplatePresentation(q,{[q.id]:{guard:presentationSignature(q),model}}));
+ assert.equal(deriveImageBlankTemplate(q,{...spec,bank:['ㄅ']}),null);
+ assert.equal(deriveImageBlankTemplate(q,{...spec,numeric:false}),null);
+ q.fields[0].input='text';
+ assert.equal(deriveImageBlankTemplate(q,spec),null);
+});
