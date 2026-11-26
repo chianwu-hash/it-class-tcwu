@@ -18,7 +18,7 @@ import {workAnswerPresentation,mountWorkAnswerInputs,workResponseContent} from '
 import {sourceStream} from './quiz-content-slices.mjs';
 import {circleColoringPlan,renderCircleColoring} from './quiz-circle-coloring.mjs';
 import {fractionComparisonPlan,readFractionComparison,renderFractionComparison} from './quiz-fraction-comparison.mjs';
-import {fractionShadingPlan,readFractionShading,renderFractionShading} from './quiz-fraction-shading.mjs';
+import {fractionShadingPlan,fractionBarPlan,readFractionShading,renderFractionShading} from './quiz-fraction-shading.mjs';
 export {fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
 
 const own=(o,k)=>o&&Object.hasOwn(o,k);
@@ -30,7 +30,7 @@ export function fieldsValues(q,raw){
 }
 export function fieldsResponseError(q,raw){
  const fraction=fractionComparisonPlan(q);
- const shading=fractionShadingPlan(q);
+ const shading=fractionShadingPlan(q)||fractionBarPlan(q);
  if(shading&&!raw)return '請在原圖塗色，再送出答案。';
  if(fraction&&!raw)return '請在兩個圓上塗色，再選比較符號。';
  if(typeof raw!=='string'||!raw||(q.work?.input==='sketch'?new TextEncoder().encode(raw).length>300000:raw.length>2000))return '請完成每個答案欄與要求的計算過程。';
@@ -62,6 +62,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
   value:{f:fieldsValues(q,raw),w:workValue(raw)},locked,
   feedback:locked?fieldsReviewPresentation(q,raw,review):null,onChange,renderContent,
  }))return host.lastElementChild;
+ const bar=fractionBarPlan(q);
  const grouping=groupingDrawingPlan(q),values=fieldsValues(q,raw),group=make('div'),phonetic=phoneticWordFields(choiceQuestionPresentation(q));group.className='quiz-fields';group.classList.toggle('quiz-fields-single',q.fields.length===1);
  const workLayout=workAnswerPresentation(q);if(workLayout)group.classList.add('quiz-work-answer-layout');
  const inline=inlineReadingPlan(q),reading=inline?.reading??readingPresentation(choiceQuestionPresentation(q));group.classList.toggle('quiz-reading-fields',Boolean(reading));
@@ -70,9 +71,19 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
  const formatPair=(id,value)=>{const f=shown.find(f=>f.id===id);return f.label+'：'+formatted(f,value)};
  let work=workValue(raw);
  const changed=()=>onChange(JSON.stringify({v:1,f:values,...(q.work?{w:work}:{} )}));
- const editor=renderWorkInput(group,q,{raw,locked,saved,renderContent,onChange:value=>{work=value;changed()}});group.sketchEditors=editor?[editor]:[];
+ const onBar=bar&&renderFractionShading(group,bar,{response:{f:values,w:work},locked,review:locked?review:null,
+  renderContent,showCount:false,onChange:payload=>{
+   const next=JSON.parse(payload);
+   values.colored=next.f.colored;work=next.w;changed();
+  }});
+ if(onBar)group.lastElementChild.style.gridColumn='1/-1';
+ else{
+  const editor=renderWorkInput(group,q,{raw,locked,saved,renderContent,onChange:value=>{work=value;changed()}});
+  group.sketchEditors=editor?[editor]:[];
+ }
  if(!fieldsAreSingleChoice(q)&&matching?.covered.size!==q.fields.length)group.append(make('p',feedback?'你原本的作答已保留；請看各小題旁的核對結果。':q.fields.length===1?'填好答案後送出。':'依照題目順序填好每格，再一起送出。'));
  for(const [fieldIndex,storedField] of q.fields.entries()){
+  if(onBar&&storedField.id==='colored')continue;
   if(matching?.covered.has(fieldIndex)){
    const board=matching.boards.find(b=>b.indices[0]===fieldIndex);if(board)renderMatchingBoard(group,board,{values,locked,renderContent,accepted:feedback?Object.fromEntries(board.left.map(l=>[l.id,feedback[shown.findIndex(f=>f.id===l.id)]?.accepted])):null,onChange:next=>{Object.assign(values,next);changed();}});
    continue;
@@ -87,10 +98,11 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
   appendFieldReviewStatus(slot,feedback?.[fieldIndex]);
   if(['math','text'].includes(f.input)){
    const input=make('input');input.id=id;input.type='text';input.maxLength=250;input.value=typeof values[f.id]==='string'?values[f.id]:'';input.disabled=locked;input.autocomplete='off';input.setAttribute('aria-label',f.label);
-   if(grouping)input.inputMode='numeric';
+   const integer=Boolean(grouping||bar?.integerIds.has(f.id)||q.id==='hlg3m_019d47a1_fraction_bar_5'&&f.id==='numerator');
+   if(integer)input.inputMode='numeric';
    else if(f.input==='math')input.placeholder='分數可以用 / 表示';
    input.addEventListener('input',()=>{values[f.id]=input.value;changed()});slot.append(input);
-   if(f.input==='math'&&!grouping)attachPastInputKeyboard(slot,input,{math:true});
+   if(f.input==='math'&&!integer)attachPastInputKeyboard(slot,input,{math:true});
    if(phonetic.has(f.id))slot.classList.add('quiz-answer-bopomofo-slot');
    if(f.input==='text'&&!inline?.slots.some(s=>s.field===f.id))attachPastInputKeyboard(slot,input,{bopomofo:phonetic.size?phonetic.has(f.id):textInputAids.bopomofo===true,punctuation:textInputAids.punctuation===true});
   }else if(f.input==='single'){
@@ -109,7 +121,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
  mountReadingWorkbench(group,q,reading,{renderContent,fieldFeedback:feedback});mountWorkAnswerInputs(group,q,{renderContent,fieldFeedback:feedback});host.append(group);return group;
 }
 export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,referenceAnswer=null,showWork=true}){
- if(raw&&showWork&&(fractionComparisonPlan(q)||fractionShadingPlan(q))){renderFieldsInputs(host,q,{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
+ if(raw&&showWork&&(fractionComparisonPlan(q)||fractionShadingPlan(q)||fractionBarPlan(q))){renderFieldsInputs(host,q,{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
  const circle=circleColoringPlan(q);
  if(circle&&renderCircleColoring(host,circle,{value:raw?fieldsValues(q,raw).regions:referenceAnswer?.fields?.regions?.[0],locked:true,correct:raw?review?.correct:undefined,renderContent}))return;
  if(!raw&&answerTemplatePresentation(choiceQuestionPresentation(q))?.mode==='image-item-marks'){

@@ -14,6 +14,19 @@ const figures = {
     [[870,723],[[37,723],[451,14],[1287,14],[1704,723],[1287,1432],[451,1432]]]],
 };
 
+const bars = {
+  '0014e09e':['9b68241c9b8a927123812eaaf4936f4ab921ff28da2659fe11f7f567eb278aad',702,189,
+    [5,74,143.5,213,282,351.1,420.5,490,559,628,697.5],[50.5,180.5],[['answer','fraction']]],
+  '0173ac43':['5e24eb6cae2a73dd00c61bb8fdae6996e6fb0f69b5260a59becde05f1d7586d8',713,192,
+    [6,92.5,179,266,352,439,525.5,612,698.5],[53.5,183.5],[['answer','integer']]],
+  '019d47a1':['bf2cf3cc67f94045c5d2fd9f6e8eaa7639f311e19b39ee8ab37e4c473689fd78',326,66,
+    [1.5,37.5,73.5,109.5,145.5,181.5,217.5,253.5,289.5,324.5],[42.5,64.5],[['amount','integer'],['rest','fraction']]],
+  '02930e68':['3f5390a5be7aab3725bef9e9df9c2bbca2b24b74ce660e709662f7587cb55c53',342,104,
+    [4.5,60,115,169.6,224,279,334.5],[41.5,96.5],[['answer','integer']]],
+  '0397ad14':['df0024af5120da8d486432080b210b5211939a6d2429f1787ff280b65ada270a',703,196,
+    [5.5,121,236,352,467,583,698],[55.5,185],[['answer','fraction']]],
+};
+
 const polygon = points=>`M ${points.map(p=>p.join(' ')).join(' L ')} Z`;
 function makePaths(kind, data) {
   if(kind==='circle'){
@@ -44,6 +57,22 @@ export function fractionShadingPlan(q) {
     regions:makePaths(kind,data),passage:{...prompt,media:[]}};
 }
 
+export function fractionBarPlan(q) {
+  const id=/^hlg3m_([0-9a-f]{8})_fraction_bar_shade_([12])$/u.exec(q?.id??'');
+  const entry=id&&bars[id[1]], prompt=q?.prompt, image=prompt?.media?.[0];
+  if(!entry||q.type!=='fields'||q.work?.input!=='sketch'||prompt?.layout||
+      prompt?.media?.length!==1||image.kind!=='image'||!Array.isArray(q.fields))return null;
+  const [sha,width,height,xs,ys,fields]=entry;
+  if(id[2]==='2'&&!['019d47a1','02930e68'].includes(id[1]))return null;
+  if(q.fields.length!==fields.length+1||q.fields[0].id!=='colored'||
+      q.fields.some((field,i)=>field.input!=='math'||i>0&&field.id!==fields[i-1][0]))return null;
+  if(!image.url?.startsWith('https://quiz-media.invalid/')||!image.url.endsWith('/'+sha))return null;
+  const integerIds=new Set(fields.filter(([,type])=>type==='integer').map(([field])=>field));
+  if(id[1]==='02930e68'&&id[2]==='2')integerIds.delete('answer');
+  return {image,width,height,maxWidth:620,regions:makePaths('grid',[xs,ys]),
+    passage:{...prompt,media:[]},integerIds};
+}
+
 export function fractionShadingResponse(plan,selected) {
   const marks=plan.regions.flatMap((region,index)=>selected.has(region.id)?[[[(index+1)/32,.5]]]:[]);
   return {v:1,f:{colored:String(marks.length)},w:{version:1,strokes:marks}};
@@ -65,11 +94,12 @@ export function readFractionShading(plan,response) {
   return selected;
 }
 
-export function renderFractionShading(host,plan,{response,locked,review,onChange,renderContent}) {
+export function renderFractionShading(host,plan,{response,locked,review,onChange,renderContent,showCount=true}) {
   const selected=readFractionShading(plan,response);
   const accepted=review?.answer?.fields?.colored;
   const countText=chosen=>{
     if(locked&&!selected)return '這份作答的塗色與格數無法配對。';
+    if(!locked&&!showCount)return '';
     const count=chosen.size;
     if(!locked||!Array.isArray(accepted))return count?`已塗 ${count} 塊。`:'還沒有塗色。';
     const result=accepted.includes(String(count))?'塗色格數答對了。':`參考答案：${accepted.join(' 或 ')} 塊。`;

@@ -11,7 +11,7 @@ import {circleColoringPlan} from './quiz-circle-coloring.mjs';
 import {gridDrawingPlan} from './quiz-grid-drawing.mjs';
 import {groupingDrawingPlan} from './quiz-grouping-drawing.mjs';
 import {fractionComparisonPlan} from './quiz-fraction-comparison.mjs';
-import {fractionShadingPlan} from './quiz-fraction-shading.mjs';
+import {fractionShadingPlan,fractionBarPlan} from './quiz-fraction-shading.mjs';
 // Compatibility for the reviewed Chinese import's circled-code choice fields.
 // Only the view changes: the original field ID, circled values and fields-v1
 // response envelope remain exactly as stored. Never read or infer an answer.
@@ -35,7 +35,7 @@ export const fieldsAreSingleChoice=q=>q.type==='fields'&&q.fields?.length===1&&f
 
 export function fieldsPromptPresentation(q,{showGroupingBoard=false}={}){
  const comparison=showGroupingBoard&&fractionComparisonPlan(q);if(comparison)return comparison.passage;
- const shading=showGroupingBoard&&fractionShadingPlan(q);if(shading)return shading.passage;
+ const shading=showGroupingBoard&&(fractionShadingPlan(q)||fractionBarPlan(q));if(shading)return shading.passage;
  const grouping=showGroupingBoard&&groupingDrawingPlan(q);if(grouping)return grouping.passage;
  const circle=circleColoringPlan(q);if(circle)return circle.passage;
  const grid=gridDrawingPlan(q);if(grid)return grid.passage;

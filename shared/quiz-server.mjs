@@ -18,7 +18,7 @@ import {renderOpenInputs,renderOpenReview,openResponseError,renderOpenSavedSketc
 import {wordMeaningReview} from './quiz-word-meaning-review.mjs';
 import {mountShortAnswerInput} from './quiz-short-answer.mjs';
 import {fractionComparisonPlan,readFractionComparison} from './quiz-fraction-comparison.mjs';
-import {fractionShadingPlan,readFractionShading} from './quiz-fraction-shading.mjs';
+import {fractionShadingPlan,fractionBarPlan,readFractionShading} from './quiz-fraction-shading.mjs';
 
 import {quizFeedbackMotion} from './quiz-feedback-motion.mjs?v=20261107-partner-motion';
 
@@ -89,7 +89,8 @@ export function initServerQuiz({ selectors, server }) {
     const review = state.reviews.find(r => r.question_id === q.id);
     if (!review) { article.append(make('p', '已儲存；正解與解析會在符合本場次揭答條件後顯示。', 'notice')); return; }
     const fraction=fractionComparisonPlan(q);
-    const shading=fractionShadingPlan(q);
+    const bar=fractionBarPlan(q);
+    const shading=fractionShadingPlan(q)||bar;
     if(fraction||shading){
       let response;
       try{response=JSON.parse(state.responses[q.id]);}catch{}
@@ -140,6 +141,7 @@ export function initServerQuiz({ selectors, server }) {
     if (animate) { box.classList.add('feedback-fresh'); feedbackAnimation = null; }
     const answerSummary=make('p',undefined,'quiz-answer-summary');
     if(q.type==='single')answerSummary.append(make('span','正確選項：'),make('strong',choiceAnswerLabel(q,review.answer.option_id),'quiz-answer-value'));
+    else if(bar)answerSummary.textContent='請分別核對塗色格數和填入的答案。';
     else if(shading)answerSummary.textContent='請在原圖下方核對塗色格數。';
     else answerSummary.textContent=q.type==='fields'?'各小題已在原作答欄旁標示核對結果；本題仍按整組計分。':`可接受答案：${review.answer.accepted.join('、')}`;
     const answerRow=make('div',undefined,'quiz-answer-row');answerRow.append(answerSummary);box.append(answerRow);
