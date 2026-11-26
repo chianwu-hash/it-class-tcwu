@@ -1,3 +1,12 @@
+# 2026-11-27 書商題目更正複核
+
+- Codex 負責題目、教科書與答案證據核對，Claude 僅唯讀複核發布 SOP 及改寫範圍。
+- 三類待處理項目：教師分數誤植、題幹色名與原圖不符、票價表找不到題幹指定票價。既有學生資料和已上線小題保持。
+- 第四筆臺灣黑熊題組的數學小題已上線，另外兩小題尚無可支持的教材原頁證據。
+
+- Claude 已複核一般題庫的最小更正條件。四張六等分圖測出等距格線與 1～4 個著色格，四條項鍊可成立的重複週期均給出相同顏色數量。21 張單程票價的對照中，教師指定的站對唯一是 259 元。舊題兩小題及共用媒體先完成讀回。
+- 本批 3 個來源、10 小題通過 33 種隔離、74 項回歸及 30 組桌機／手機檢查。課本第 119、135、141 頁與 10 張原圖核對完成。沿用 6 張 Drive 圖與 Worker 索引，補 4 張；沿用 1 筆正式媒體登錄，補 9 筆。
+
 # 2026-11-27 奇偶個位數無序填答
 
 - 本題原卷為奇數、偶數各五格，沒有指定順序。原位保留十格，任何排列均可，重複或混入另一類數字須判錯。
@@ -924,7 +933,8 @@
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | codex-parity-20261127 | 2026-11-26T18:52:13.1332410Z | latest main after merge | dpl_GGYqdabnz1YZ8YNGqAmTC1w54CBu | Order-independent digit groups | pending full tree comparison and formal OAuth |
+| 發布中 | codex-publisher-corrections-20261127 | 2026-11-26T19:06:00.6065264Z | latest main after merge | dpl_BygmEzpfEyxSC7TP77jYp1aV1dcQ | Three publisher-practice corrections | pending full tree comparison and formal OAuth |
+| 已完成 | codex-parity-20261127 | 2026-11-26T18:54:41.854Z | `3902c0e` | `dpl_GGYqdabnz1YZ8YNGqAmTC1w54CBu` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-answer-template-sources.mjs、shared/quiz-answer-templates.mjs、shared/quiz-fields-review.mjs、shared/quiz-fields.mjs、shared/quiz-workshop/generated/assets.json、+shared/quiz-distinct-digit-groups.mjs | `dpl_BygmEzpfEyxSC7TP77jYp1aV1dcQ`／回滾 `dpl_GGYqdabnz1YZ8YNGqAmTC1w54CBu`（eolOnly 0） |
 | 已完成 | codex-diagram-recovery-20261127 | 2026-11-26T18:42:09.447Z | `3aec3ad` | `dpl_B6huw5GCUrZwxWUnAJ4ydFZ4fbD9` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-answer-template-sources.mjs、shared/quiz-fields.mjs、shared/quiz-workshop/generated/assets.json | `dpl_GGYqdabnz1YZ8YNGqAmTC1w54CBu`／回滾 `dpl_B6huw5GCUrZwxWUnAJ4ydFZ4fbD9`（eolOnly 0） |
 | 已完成 | codex-teacher-figures-20261127 | 2026-11-26T18:30:50.742Z | `944d740` | `dpl_8xTy72a3bTWZ9US5fLJgs9G3kK25` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-answer-template-sources.mjs、shared/quiz-fields.mjs、shared/quiz-workshop/generated/assets.json | `dpl_B6huw5GCUrZwxWUnAJ4ydFZ4fbD9`／回滾 `dpl_8xTy72a3bTWZ9US5fLJgs9G3kK25`（eolOnly 0） |
 | 已完成 | codex-weight-labels-20261127 | 2026-11-26T18:13:02.080Z | `131049b` | `dpl_HoV5FgKJB5uHJ6isy2R8nJHH7ajc` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-answer-template-sources.mjs、shared/quiz-answer-templates.css、shared/quiz-fields.mjs、shared/quiz-image-blanks.mjs、shared/quiz-workshop/generated/assets.json、shared/quiz-workshop/generated/library.css、shared/quiz-workshop/generated/partner.css、shared/quiz-workshop/generated/past.css、shared/quiz-workshop/generated/quiz.css | `dpl_8xTy72a3bTWZ9US5fLJgs9G3kK25`／回滾 `dpl_HoV5FgKJB5uHJ6isy2R8nJHH7ajc`（eolOnly 0） |

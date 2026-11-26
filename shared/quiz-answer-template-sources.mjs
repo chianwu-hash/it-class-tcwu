@@ -1770,6 +1770,303 @@ export const workAnswerSources={
 
 };
 export const answerTemplateSources={
+  "hlg3m_01803039_necklace_color_1": {
+    "guard": "f62cb7cef09fbeab",
+    "model": {
+      "mode": "blanks",
+      "start": 6,
+      "rows": [
+        {
+          "start": 6,
+          "end": 17,
+          "fields": [
+            "f1"
+          ]
+        },
+        {
+          "start": 18,
+          "end": 29,
+          "fields": [
+            "f2"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 10,
+          "end": 16,
+          "field": "f1",
+          "width": 7
+        },
+        {
+          "start": 22,
+          "end": 28,
+          "field": "f2",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_01803039_necklace_color_2": {
+    "guard": "38f9362a18dcae22",
+    "model": {
+      "mode": "blanks",
+      "start": 6,
+      "rows": [
+        {
+          "start": 6,
+          "end": 18,
+          "fields": [
+            "f1"
+          ]
+        },
+        {
+          "start": 19,
+          "end": 30,
+          "fields": [
+            "f2"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 11,
+          "end": 17,
+          "field": "f1",
+          "width": 7
+        },
+        {
+          "start": 23,
+          "end": 29,
+          "field": "f2",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_01803039_necklace_color_3": {
+    "guard": "957f2697c7f521e1",
+    "model": {
+      "mode": "blanks",
+      "start": 6,
+      "rows": [
+        {
+          "start": 6,
+          "end": 18,
+          "fields": [
+            "f1"
+          ]
+        },
+        {
+          "start": 19,
+          "end": 30,
+          "fields": [
+            "f2"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 11,
+          "end": 17,
+          "field": "f1",
+          "width": 7
+        },
+        {
+          "start": 23,
+          "end": 29,
+          "field": "f2",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_01803039_necklace_color_4": {
+    "guard": "13372fd8becb77ef",
+    "model": {
+      "mode": "blanks",
+      "start": 6,
+      "rows": [
+        {
+          "start": 6,
+          "end": 18,
+          "fields": [
+            "f1"
+          ]
+        },
+        {
+          "start": 19,
+          "end": 30,
+          "fields": [
+            "f2"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 11,
+          "end": 17,
+          "field": "f1",
+          "width": 7
+        },
+        {
+          "start": 23,
+          "end": 29,
+          "field": "f2",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_03f2e4f1_paper_sixths_1": {
+    "guard": "e63eb65234bba5e5",
+    "model": {
+      "mode": "blanks",
+      "start": 0,
+      "rows": [
+        {
+          "start": 0,
+          "end": 35,
+          "fields": [
+            "f1"
+          ]
+        },
+        {
+          "start": 36,
+          "end": 37,
+          "fields": []
+        }
+      ],
+      "blanks": [
+        {
+          "start": 28,
+          "end": 34,
+          "field": "f1",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_03f2e4f1_paper_sixths_2": {
+    "guard": "b0c6fec497cb0f85",
+    "model": {
+      "mode": "blanks",
+      "start": 0,
+      "rows": [
+        {
+          "start": 0,
+          "end": 33,
+          "fields": [
+            "f1"
+          ]
+        },
+        {
+          "start": 34,
+          "end": 35,
+          "fields": []
+        }
+      ],
+      "blanks": [
+        {
+          "start": 23,
+          "end": 29,
+          "field": "f1",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_03f2e4f1_paper_sixths_3": {
+    "guard": "9ddc88ed4a054a8f",
+    "model": {
+      "mode": "blanks",
+      "start": 0,
+      "rows": [
+        {
+          "start": 0,
+          "end": 33,
+          "fields": [
+            "f1"
+          ]
+        },
+        {
+          "start": 34,
+          "end": 35,
+          "fields": []
+        }
+      ],
+      "blanks": [
+        {
+          "start": 23,
+          "end": 29,
+          "field": "f1",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_03f2e4f1_paper_sixths_4": {
+    "guard": "df121d56ef45eb1e",
+    "model": {
+      "mode": "blanks",
+      "start": 0,
+      "rows": [
+        {
+          "start": 0,
+          "end": 33,
+          "fields": [
+            "f1"
+          ]
+        },
+        {
+          "start": 34,
+          "end": 35,
+          "fields": []
+        }
+      ],
+      "blanks": [
+        {
+          "start": 23,
+          "end": 29,
+          "field": "f1",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
+  "hlg3m_03f2e4f1_paper_sixths_5": {
+    "guard": "78356dae291b0d69",
+    "model": {
+      "mode": "blanks",
+      "start": 0,
+      "rows": [
+        {
+          "start": 0,
+          "end": 35,
+          "fields": [
+            "f1"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 28,
+          "end": 34,
+          "field": "f1",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
   "hlg3m_recovered_0479e63b_parity": {
     "guard": "48a8415a0f354512",
     "model": {
