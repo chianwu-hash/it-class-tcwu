@@ -6,6 +6,7 @@ import {validateDocument} from '../../shared/quiz-document.mjs';
 import {batchMediaAssets} from './quiz-batch-media.mjs';
 import {arrangementPlan,readArrangement} from '../../shared/quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from '../../shared/quiz-grid-drawing.mjs';
+import {isSourceRoute,sourceRoutePlan,readSourceRoute} from '../../shared/quiz-source-route.mjs';
 import {fractionColorsPlan,isFractionColorsQuestion,readFractionColors} from '../../shared/quiz-fraction-colors.mjs';
 import {fractionComparisonPlan,readFractionComparison} from '../../shared/quiz-fraction-comparison.mjs';
 import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,readFractionShading} from '../../shared/quiz-fraction-shading.mjs';
@@ -70,6 +71,11 @@ export function expectedResponse(question, work, openResponse) {
   else if(question.work?.input==='sketch')validateSketch(work);
   else assert.ok(!question.work);
   const response = {v: 1, f: fields, ...(question.work ? {w: work} : {})};
+  if (isSourceRoute(question)) {
+    const plan=sourceRoutePlan(question);
+    assert.ok(plan && question.answer.fields.route.every(value=>readSourceRoute(plan,value)?.at(-1)===plan.end),
+      'Reviewed paths must link the original start and end');
+  }
   if (isFractionColorsQuestion(question)) {
     const colors = fractionColorsPlan(question);
     assert.ok(colors && readFractionColors(colors,response)?.size===colors.regions.length,'Reviewed colors must match the original image and fill the board');

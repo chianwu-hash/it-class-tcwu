@@ -8,6 +8,7 @@ import {openSubquestionPresentation} from './quiz-open-subquestions.mjs';
 import {answerTemplatePresentation} from './quiz-answer-templates.mjs';
 import {workAnswerPassage} from './quiz-work-answer-layout.mjs';
 import {circleColoringPlan} from './quiz-circle-coloring.mjs';
+import {sourceRoutePlan} from './quiz-source-route.mjs';
 import {arrangementPlan} from './quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from './quiz-grid-drawing.mjs';
 import {groupingDrawingPlan} from './quiz-grouping-drawing.mjs';
@@ -36,6 +37,7 @@ export function fieldPresentation(q,field){
 export const fieldsAreSingleChoice=q=>q.type==='fields'&&q.fields?.length===1&&fieldPresentation(q,q.fields[0]).input==='single';
 
 export function fieldsPromptPresentation(q,{showGroupingBoard=false}={}){
+ const route=showGroupingBoard&&sourceRoutePlan(q);if(route)return route.passage;
  const colors=showGroupingBoard&&fractionColorsPlan(q);if(colors)return colors.passage;
  const comparison=showGroupingBoard&&fractionComparisonPlan(q);if(comparison)return comparison.passage;
  const shading=showGroupingBoard&&(fractionShadingPlan(q)||fractionBarPlan(q)||fractionRectPlan(q));if(shading)return shading.passage;

@@ -17,6 +17,7 @@ import {mountReadingWorkbench,readingWorkbenchSupported} from './quiz-reading-wo
 import {workAnswerPresentation,mountWorkAnswerInputs,workResponseContent} from './quiz-work-answer-layout.mjs';
 import {sourceStream} from './quiz-content-slices.mjs';
 import {circleColoringPlan,renderCircleColoring} from './quiz-circle-coloring.mjs';
+import {isSourceRoute,sourceRoutePlan,readSourceRoute,renderSourceRoute,sourceRouteSummary} from './quiz-source-route.mjs';
 import {fractionColorsPlan,isFractionColorsQuestion,readFractionColors,renderFractionColors} from './quiz-fraction-colors.mjs';
 import {fractionComparisonPlan,readFractionComparison,renderFractionComparison} from './quiz-fraction-comparison.mjs';
 import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,readFractionShading,renderFractionShading} from './quiz-fraction-shading.mjs';
@@ -35,6 +36,9 @@ export function fieldsValues(q,raw){
  return Object.fromEntries(q.fields.map(f=>[f.id,['set','sequence'].includes(f.input)?null:'']));
 }
 export function fieldsResponseError(q,raw){
+ const route=sourceRoutePlan(q);
+ if(isSourceRoute(q)&&!route)return '這題的原圖與路線不符，請回報題目。';
+ if(route&&!raw)return '請依序點路線，走到終點再送出。';
  const colors=fractionColorsPlan(q);
  if(isFractionColorsQuestion(q)&&!colors)return '這題的圖片與塗色區不符，請回報題目。';
  const fraction=fractionComparisonPlan(q);
@@ -45,6 +49,7 @@ export function fieldsResponseError(q,raw){
  if(typeof raw!=='string'||!raw||(q.work?.input==='sketch'?new TextEncoder().encode(raw).length>300000:raw.length>2000))return '請完成每個答案欄與要求的計算過程。';
  let d;try{d=JSON.parse(raw)}catch{return '答案格式不完整，請更新儲存狀態後再試。'}
  if(!object(d)||d.v!==1||!object(d.f)||Object.keys(d).some(k=>!(q.work?['v','f','w']:['v','f']).includes(k))||Object.keys(d.f).length!==q.fields.length)return '請完成每個答案欄。';
+ if(route&&(readSourceRoute(route,d.f.route)?.at(-1)!==route.end))return '請依序點路線，走到終點再送出。';
  if(colors&&readFractionColors(colors,d)?.size!==colors.regions.length)return '請把蛋糕每一片都塗上顏色。';
  if(fraction&&(!readFractionComparison(fraction,d)||d.f.left==='0'||d.f.right==='0'))return '請在左右兩個圓上各塗色，再送出答案。';
  if(shading&&!readFractionShading(shading,d)?.size)return '請在原圖塗色，再送出答案。';
@@ -62,6 +67,12 @@ export function fieldsResponseError(q,raw){
 }
 
 export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onChange,renderContent,textInputAids={},review=null}){
+ const route=sourceRoutePlan(q);
+ if(route){
+  if(!renderSourceRoute(host,route,{value:fieldsValues(q,raw).route,locked,correct:review?.correct,renderContent,
+   onChange:value=>onChange(JSON.stringify({v:1,f:{route:value}}))}))host.append(make('p','原圖無法顯示，請重新整理頁面。'));
+  return host.lastElementChild;
+ }
  const colors=fractionColorsPlan(q);
  if(colors){
   if(!renderFractionColors(host,q,colors,{response:{v:1,f:fieldsValues(q,raw),w:workValue(raw)},
@@ -138,6 +149,16 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
  mountReadingWorkbench(group,q,reading,{renderContent,fieldFeedback:feedback});mountWorkAnswerInputs(group,q,{renderContent,fieldFeedback:feedback});host.append(group);return group;
 }
 export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,referenceAnswer=null,showWork=true}){
+ const route=sourceRoutePlan(q);
+ if(route){
+  if(raw&&showWork){renderFieldsInputs(host,q,{raw,locked:true,onChange:()=>{},renderContent,review});return;}
+  if(raw)host.append(make('p','你的路線：'+fieldsResponseSummary(q,raw)));
+  const answer=referenceAnswer??review?.answer;
+  if(answer?.format==='fields-v1'&&Array.isArray(answer.fields?.route)){
+   host.append(make('p','參考路線：'+fieldsAnswerSummary(q,answer)));
+  }
+  return;
+ }
  if(raw&&showWork&&(fractionColorsPlan(q)||fractionComparisonPlan(q)||fractionShadingPlan(q)||fractionBarPlan(q)||fractionRectPlan(q))){renderFieldsInputs(host,q,{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
  const circle=circleColoringPlan(q);
  if(circle&&renderCircleColoring(host,circle,{value:raw?fieldsValues(q,raw).regions:referenceAnswer?.fields?.regions?.[0],locked:true,correct:raw?review?.correct:undefined,renderContent}))return;
@@ -173,8 +194,10 @@ const formatted=(f,v)=>{
  const one=id=>{const i=f.options?.findIndex(o=>o.id===id)??-1;return i<0?String(id):f.options[i].content.text||`選項${i+1}`};
  return Array.isArray(v)?v.map(one).join(f.input==='sequence'?' → ':'、')||'都不選':['single'].includes(f.input)?one(v):String(v??'未填');
 };
-export function fieldsResponseSummary(q,raw){const v=fieldsValues(q,raw),reading=readingPresentation(choiceQuestionPresentation(q));return q.fields.map((storedField,i)=>{const f=reading?.fields?.[i]??fieldPresentation(q,storedField);return `${f.label}：${formatted(f,v[f.id])}`}).join('；');}
+export function fieldsResponseSummary(q,raw){const v=fieldsValues(q,raw),route=sourceRoutePlan(q);if(route)return sourceRouteSummary(route,readSourceRoute(route,v.route));const reading=readingPresentation(choiceQuestionPresentation(q));return q.fields.map((storedField,i)=>{const f=reading?.fields?.[i]??fieldPresentation(q,storedField);return `${f.label}：${formatted(f,v[f.id])}`}).join('；');}
 export function fieldsAnswerSummary(q,answer){
+ const route=sourceRoutePlan(q);
+ if(route)return answer.fields.route.map(value=>sourceRouteSummary(route,readSourceRoute(route,value))).join('／');
  const reading=readingPresentation(choiceQuestionPresentation(q));
  const parts=q.fields.map((storedField,i)=>{const f=reading?.fields?.[i]??fieldPresentation(q,storedField);return `${f.label}：${(answer.fields[f.id]||[]).map(v=>formatted(f,v)).join(' 或 ')}`});
  for(const tuple of answer.tuples||[])parts.push('可接受的完整配對：'+tuple.accepted.map(a=>tuple.fields.map(id=>{const f=q.fields.find(f=>f.id===id);return `${f.label} ${formatted(f,a[id])}`}).join('、')).join('；'));
