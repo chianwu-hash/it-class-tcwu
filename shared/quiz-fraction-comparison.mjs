@@ -2,6 +2,8 @@ import {makeCircleRegions,renderCircleColoring} from './quiz-circle-coloring.mjs
 import {appendFieldReviewStatus,appendFieldReviewReference} from './quiz-fields-review.mjs';
 
 const boards = {
+  '05507d9c': ['36bae0bac9c8941f359580704f32a72d8ebafdf3fbc0bb5fba9c1b2fac3667e6',10,2400,1385,
+    [613,670.5,356,356.5],[1802,670.5,356,356.5]],
   '013ed4d3': ['c7462c8bb350603a6e472941133b451a6378ca013443a2320af64b1f77890935',5,2400,1013,
     [534,490.5,488,489],[1896.5,490.5,488,489]],
   '02ce3c4c': ['90b15937716b01d6a79d25c2c59a502993f70fb0a4d33aac3241d9c16de7c43f',10,2400,1050,

@@ -21,6 +21,11 @@ import {fractionComparisonPlan,readFractionComparison,renderFractionComparison} 
 import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,readFractionShading,renderFractionShading} from './quiz-fraction-shading.mjs';
 export {fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
 
+const integerFields = {
+ 'hlg3m_019d47a1_fraction_bar_5': ['numerator'],
+ 'hlg3m_05507d9c_fraction_circle_2': ['brother','sister'],
+ 'hlg3m_05507d9c_fraction_circle_4': ['amount','numerator'],
+};
 const own=(o,k)=>o&&Object.hasOwn(o,k);
 const object=o=>o!==null&&typeof o==='object'&&!Array.isArray(o);
 const make=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
@@ -99,7 +104,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
   appendFieldReviewStatus(slot,feedback?.[fieldIndex]);
   if(['math','text'].includes(f.input)){
    const input=make('input');input.id=id;input.type='text';input.maxLength=250;input.value=typeof values[f.id]==='string'?values[f.id]:'';input.disabled=locked;input.autocomplete='off';input.setAttribute('aria-label',f.label);
-   const integer=Boolean(grouping||bar?.integerIds.has(f.id)||q.id==='hlg3m_019d47a1_fraction_bar_5'&&f.id==='numerator');
+   const integer=Boolean(grouping||bar?.integerIds.has(f.id)||integerFields[q.id]?.includes(f.id));
    if(integer)input.inputMode='numeric';
    else if(f.input==='math')input.placeholder='分數可以用 / 表示';
    input.addEventListener('input',()=>{values[f.id]=input.value;changed()});slot.append(input);
