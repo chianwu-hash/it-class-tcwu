@@ -17,6 +17,7 @@ import {mountReadingWorkbench,readingWorkbenchSupported} from './quiz-reading-wo
 import {workAnswerPresentation,mountWorkAnswerInputs,workResponseContent} from './quiz-work-answer-layout.mjs';
 import {sourceStream} from './quiz-content-slices.mjs';
 import {circleColoringPlan,renderCircleColoring} from './quiz-circle-coloring.mjs';
+import {fractionColorsPlan,isFractionColorsQuestion,readFractionColors,renderFractionColors} from './quiz-fraction-colors.mjs';
 import {fractionComparisonPlan,readFractionComparison,renderFractionComparison} from './quiz-fraction-comparison.mjs';
 import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,readFractionShading,renderFractionShading} from './quiz-fraction-shading.mjs';
 export {fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
@@ -34,13 +35,17 @@ export function fieldsValues(q,raw){
  return Object.fromEntries(q.fields.map(f=>[f.id,['set','sequence'].includes(f.input)?null:'']));
 }
 export function fieldsResponseError(q,raw){
+ const colors=fractionColorsPlan(q);
+ if(isFractionColorsQuestion(q)&&!colors)return '這題的圖片與塗色區不符，請回報題目。';
  const fraction=fractionComparisonPlan(q);
  const shading=fractionShadingPlan(q)||fractionBarPlan(q)||fractionRectPlan(q);
+ if(colors&&!raw)return '請把蛋糕每一片都塗上顏色。';
  if(shading&&!raw)return '請在原圖塗色，再送出答案。';
  if(fraction&&!raw)return '請在兩個圓上塗色，再選比較符號。';
  if(typeof raw!=='string'||!raw||(q.work?.input==='sketch'?new TextEncoder().encode(raw).length>300000:raw.length>2000))return '請完成每個答案欄與要求的計算過程。';
  let d;try{d=JSON.parse(raw)}catch{return '答案格式不完整，請更新儲存狀態後再試。'}
  if(!object(d)||d.v!==1||!object(d.f)||Object.keys(d).some(k=>!(q.work?['v','f','w']:['v','f']).includes(k))||Object.keys(d.f).length!==q.fields.length)return '請完成每個答案欄。';
+ if(colors&&readFractionColors(colors,d)?.size!==colors.regions.length)return '請把蛋糕每一片都塗上顏色。';
  if(fraction&&(!readFractionComparison(fraction,d)||d.f.left==='0'||d.f.right==='0'))return '請在左右兩個圓上各塗色，再送出答案。';
  if(shading&&!readFractionShading(shading,d)?.size)return '請在原圖塗色，再送出答案。';
  const workError=workResponseError(q,d.w);if(workError)return workError;
@@ -57,6 +62,12 @@ export function fieldsResponseError(q,raw){
 }
 
 export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onChange,renderContent,textInputAids={},review=null}){
+ const colors=fractionColorsPlan(q);
+ if(colors){
+  if(!renderFractionColors(host,q,colors,{response:{v:1,f:fieldsValues(q,raw),w:workValue(raw)},
+   locked,review,renderContent,onChange}))host.append(make('p','圖片無法顯示，請重新整理頁面。'));
+  return host.lastElementChild;
+ }
  const circle=circleColoringPlan(q);
  if(circle&&renderCircleColoring(host,circle,{value:fieldsValues(q,raw).regions,locked,correct:review?.correct,onChange:value=>onChange(JSON.stringify({v:1,f:{regions:value}})),renderContent}))return host.lastElementChild;
  const rectangle=fractionRectPlan(q);
@@ -127,7 +138,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
  mountReadingWorkbench(group,q,reading,{renderContent,fieldFeedback:feedback});mountWorkAnswerInputs(group,q,{renderContent,fieldFeedback:feedback});host.append(group);return group;
 }
 export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,referenceAnswer=null,showWork=true}){
- if(raw&&showWork&&(fractionComparisonPlan(q)||fractionShadingPlan(q)||fractionBarPlan(q)||fractionRectPlan(q))){renderFieldsInputs(host,q,{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
+ if(raw&&showWork&&(fractionColorsPlan(q)||fractionComparisonPlan(q)||fractionShadingPlan(q)||fractionBarPlan(q)||fractionRectPlan(q))){renderFieldsInputs(host,q,{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
  const circle=circleColoringPlan(q);
  if(circle&&renderCircleColoring(host,circle,{value:raw?fieldsValues(q,raw).regions:referenceAnswer?.fields?.regions?.[0],locked:true,correct:raw?review?.correct:undefined,renderContent}))return;
  if(!raw&&answerTemplatePresentation(choiceQuestionPresentation(q))?.mode==='image-item-marks'){

@@ -450,6 +450,15 @@ input:has(+.past-input-tools),textarea:has(+.past-input-tools){scroll-margin-blo
 .quiz-reading-dialog .quiz-reading-inline-tools{top:64px}
 .quiz-inline-reference{font-size:1rem;margin:10px 0;line-height:1.6;white-space:normal}
 @media(max-width:899px),(max-height:600px){.quiz-reading-layout{display:block}.quiz-reading-layout>.quiz-reading-story{display:none}.quiz-reading-questions{height:auto;overflow:visible}.quiz-reading-open{display:inline-block}.quiz-reading-navigation{top:0}.quiz-reading-source,.quiz-reading-source .preview-content{font-size:1.2rem!important}}
+.quiz-sector-palette{display:flex;flex-wrap:wrap;gap:.5rem;margin:0 0 .65rem;padding:0;border:0;min-width:0}
+.quiz-sector-palette legend{font-weight:700;margin-bottom:.35rem}
+.quiz-sector-palette .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.quiz-sector-color{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;border:1px solid transparent;border-radius:.6rem;padding:.35rem .55rem;color:inherit;font:inherit}
+button.quiz-sector-color{min-height:44px;cursor:pointer;border-color:#75879a;background:#fff;color:#1a3049}
+button.quiz-sector-color[aria-pressed="true"]{border-color:#123b66;box-shadow:inset 0 0 0 2px #123b66;background:#edf5ff;font-weight:700}
+button.quiz-sector-color:focus-visible{outline:3px solid #16396f;outline-offset:2px}
+.quiz-circle-coloring-board svg path[data-region]:focus{outline:none}
+.quiz-sector-color svg{width:1.2rem;height:1.2rem;border:1px solid #56677b;border-radius:.2rem}
 .quiz-fraction-comparison > .quiz-circle-coloring,.quiz-fraction-comparison-symbols{grid-column:1/-1;min-width:0}
 .quiz-fraction-symbol-choices{display:flex;flex-wrap:wrap;gap:.6rem}
 .quiz-fraction-symbol-choices .student-option{display:flex;align-items:center;gap:.5rem;min-width:4.5rem;min-height:44px}
