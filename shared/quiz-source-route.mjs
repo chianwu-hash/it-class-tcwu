@@ -1,4 +1,5 @@
 const SVG = 'http://www.w3.org/2000/svg';
+const imageObservers = new WeakMap();
 let maskSequence=0;
 const specs = {
   hlg3m_01fcc7e1_source_route_v1: {
@@ -73,9 +74,15 @@ export function renderSourceRoute(host,plan,{value,locked,correct,onChange,rende
   const image=art.querySelector('img');
   if(!image)return false;
   const figure=image.closest('figure');if(figure)figure.style.margin='0';
-  const board=doc.createElement('div');board.className='quiz-source-route-board';
-  Object.assign(board.style,{aspectRatio:plan.width+'/'+plan.height});
-  image.before(board);board.append(image);
+  let board=image.closest('.quiz-source-route-board');
+  if(board){
+    imageObservers.get(board)?.abort();
+    board.replaceChildren(image);
+  }else{
+    board=doc.createElement('div');board.className='quiz-source-route-board';
+    Object.assign(board.style,{aspectRatio:plan.width+'/'+plan.height});
+    image.before(board);board.append(image);
+  }
   Object.assign(image.style,{position:'absolute',inset:'0',width:'100%',height:'100%',maxHeight:'none',
     objectFit:'fill',margin:'0',padding:'0',border:'0',borderRadius:'0'});
   const element=(name,attrs)=>{
@@ -173,7 +180,10 @@ export function renderSourceRoute(host,plan,{value,locked,correct,onChange,rende
     failed=!ready&&(event?.type==='error'||image.currentSrc&&image.complete);
     refresh();
   };
-  image.addEventListener('load',markReady);image.addEventListener('error',markReady);
+  const observer=new AbortController();
+  imageObservers.set(board,observer);
+  image.addEventListener('load',markReady,{signal:observer.signal});
+  image.addEventListener('error',markReady,{signal:observer.signal});
   group.append(instruction,art,status);if(!locked)group.append(undo);host.append(group);
   markReady();
   return true;
