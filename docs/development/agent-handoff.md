@@ -1,3 +1,14 @@
+# 2026-11-27 臺灣黑熊題組逐小題教材對照
+
+- 第 2 小題原重量運算已在正式題庫，維持原版本與第 109 頁對照。
+- 第 1 小題是從短文擷取數字區間並排除不在區間內的數字。重新目視第 110 頁，找到從動物短文擷取數值後比較大小的數學閱讀，候選標為相關觀念。
+- 第 3 小題要求解釋動物另稱的文字原因，原教材候選第 115 頁僅有重量運算及讀秤，留存來源與教師答案，暫無可支持的數學課本頁。
+- Codex 為唯一寫入者。Claude 唯讀複核第 1 小題是否適用教材「相關觀念」，第 3 小題是否應維持未發布，並確認部分發布記錄方式。
+
+- 上一批三項題庫更正已上線，總帳 v103 為 707／708。[同批 PR #499 收據](https://github.com/chianwu-hash/it-class-tcwu/pull/499#issuecomment-7201336327)
+- Claude 已複核第 110 頁為相關觀念，適用的範圍是從動物短文擷取數值再比較。新批只補第 1 小題，保留整段共用文章、四個選項原序及教師答案。第 2 小題以原收據指紋引用，第 3 小題列為語文閱讀、現有數學課本無可靠對照。
+- 批次驗證新增區分「既有已上線小題」與「留待處理小題」，並驗證前次收據及防止重複匯入。正式網站沿用目前已核對的單選作答方式。
+
 # 2026-11-27 書商題目更正複核
 
 - Codex 負責題目、教科書與答案證據核對，Claude 僅唯讀複核發布 SOP 及改寫範圍。
@@ -933,7 +944,7 @@
 
 | 狀態 | Agent | 開始UTC | main來源 | 基準正式 | 變更檔案 | 結果 |
 |---|---|---|---|---|---|---|
-| 發布中 | codex-publisher-corrections-20261127 | 2026-11-26T19:06:00.6065264Z | latest main after merge | dpl_BygmEzpfEyxSC7TP77jYp1aV1dcQ | Three publisher-practice corrections | pending full tree comparison and formal OAuth |
+| 已完成 | codex-publisher-corrections-20261127 | 2026-11-26T19:07:17.231Z | `95d0b51` | `dpl_BygmEzpfEyxSC7TP77jYp1aV1dcQ` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-answer-template-sources.mjs、shared/quiz-fields.mjs、shared/quiz-workshop/generated/assets.json | `dpl_7W5BR2wEY8xCWeJzjZviV11bjvE5`／回滾 `dpl_BygmEzpfEyxSC7TP77jYp1aV1dcQ`（eolOnly 0） |
 | 已完成 | codex-parity-20261127 | 2026-11-26T18:54:41.854Z | `3902c0e` | `dpl_GGYqdabnz1YZ8YNGqAmTC1w54CBu` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-answer-template-sources.mjs、shared/quiz-answer-templates.mjs、shared/quiz-fields-review.mjs、shared/quiz-fields.mjs、shared/quiz-workshop/generated/assets.json、+shared/quiz-distinct-digit-groups.mjs | `dpl_BygmEzpfEyxSC7TP77jYp1aV1dcQ`／回滾 `dpl_GGYqdabnz1YZ8YNGqAmTC1w54CBu`（eolOnly 0） |
 | 已完成 | codex-diagram-recovery-20261127 | 2026-11-26T18:42:09.447Z | `3aec3ad` | `dpl_B6huw5GCUrZwxWUnAJ4ydFZ4fbD9` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-answer-template-sources.mjs、shared/quiz-fields.mjs、shared/quiz-workshop/generated/assets.json | `dpl_GGYqdabnz1YZ8YNGqAmTC1w54CBu`／回滾 `dpl_B6huw5GCUrZwxWUnAJ4ydFZ4fbD9`（eolOnly 0） |
 | 已完成 | codex-teacher-figures-20261127 | 2026-11-26T18:30:50.742Z | `944d740` | `dpl_8xTy72a3bTWZ9US5fLJgs9G3kK25` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-answer-template-sources.mjs、shared/quiz-fields.mjs、shared/quiz-workshop/generated/assets.json | `dpl_B6huw5GCUrZwxWUnAJ4ydFZ4fbD9`／回滾 `dpl_8xTy72a3bTWZ9US5fLJgs9G3kK25`（eolOnly 0） |

@@ -111,12 +111,24 @@ export function assertSourceCoverage(packet) {
   if (packet.sourceCoverage === undefined) return;
   const coveredSources = Object.keys(packet.sourceCoverage).sort();
   assert.deepEqual(coveredSources, packet.candidates.map(c=>c.source).sort(), 'Partial coverage must list every source');
+  const inputHashes = new Set(Object.values(packet.inputs ?? {}));
+  const priorQuestions = new Set();
+  const newQuestions = new Set(packet.candidates.flatMap(c => c.doc.blocks.flatMap(b => b.questions.map(q => q.id))));
   for (const candidate of packet.candidates) {
     const coverage = packet.sourceCoverage[candidate.source];
     assert.ok(Array.isArray(coverage) && coverage.length && coverage.every((row,i) => {
       const published = typeof row?.question_id === 'string' && Boolean(row.question_id.trim());
       const withheld = typeof row?.reason === 'string' && Boolean(row.reason.trim());
-      return row?.part === i+1 && (published ? !Object.hasOwn(row,'reason') : withheld && !Object.hasOwn(row,'question_id'));
+      if (row?.part !== i+1) return false;
+      if (Object.hasOwn(row,'prior_question_id') || Object.hasOwn(row,'prior_receipt_sha256')) {
+        const id = row.prior_question_id, sha = row.prior_receipt_sha256;
+        if (Object.hasOwn(row,'question_id') || Object.hasOwn(row,'reason') || typeof id !== 'string' ||
+            !id.trim() || typeof sha !== 'string' || !/^[a-f0-9]{64}$/u.test(sha) || !inputHashes.has(sha) ||
+            priorQuestions.has(id) || newQuestions.has(id)) return false;
+        priorQuestions.add(id);
+        return true;
+      }
+      return published ? !Object.hasOwn(row,'reason') : withheld && !Object.hasOwn(row,'question_id');
     }), 'Each original part needs an ordered question mapping or a reason');
     const questions = candidate.doc.blocks.flatMap(b=>b.questions.map(q=>q.id));
     assert.deepEqual(coverage.flatMap(row=>row.question_id?[row.question_id]:[]),questions,
