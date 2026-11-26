@@ -44,7 +44,9 @@ const publications=[{...ids,doc,rows,access:'practice',user:owner},...ids.sample
 // A reference may reveal only its own saved drawing, even when other items share a grid image.
 const drawingReferences = publications[0].doc.blocks.flatMap(block => block.questions
  .filter(q => hasDrawingReference(q)).flatMap(q => {
-   assert.equal(q.explanation.media.length,fractionComparisonPlan(q)?2:1);
+   // A comparison may have one original teacher image containing both figures.
+   const count = q.explanation.media.length;
+   assert.ok(count === 1 || (count === 2 && fractionComparisonPlan(q)), 'Unexpected number of drawing references');
    return q.explanation.media.map(asset=>{
      assert.equal(asset.kind,'image');
      return [q.id,asset.url];
@@ -143,19 +145,25 @@ try{
   const fraction=fractionComparisonPlan(qn);
   const shading=shadingPlan(qn);
   const wrong=shading?[
-   responseWithShading(response,shading,[shading.regions[0].id]),
+   responseWithShading(response,shading,shading.regions.slice(0,response.f.colored==='1'?2:1).map(r=>r.id)),
    ...fields.filter(f=>f.id!=='colored').map(f=>({...response,f:{...response.f,[f.id]:'999999'}})),
   ]:fraction?[
-    alternateShading(fraction,1,response.f.right,response.f.comparison),
-    alternateShading(fraction,response.f.left,1,response.f.comparison),
+    alternateShading(fraction,response.f.left==='1'?2:1,response.f.right,response.f.comparison),
+    alternateShading(fraction,response.f.left,response.f.right==='1'?2:1,response.f.comparison),
     {...response,f:{...response.f,comparison:response.f.comparison==='less'?'greater':'less'}},
   ]:reviewedSketch(qn)?[]:single?qn.options.filter(o=>o.id!==response).map(o=>o.id):fields.map(field=>{const bad=structuredClone(response);if(field.input==='single'){const wrong=field.options.find(o=>!qn.answer.fields[field.id].includes(o.id));assert.ok(wrong,'Need an independently incorrect option');bad.f[field.id]=wrong.id;}else if(field.input==='set'){const ids=new Set(response.f[field.id]),toggle=field.options[0].id;ids.has(toggle)?ids.delete(toggle):ids.add(toggle);bad.f[field.id]=[...ids];}else bad.f[field.id]='999999';return bad;});
   const variants=[response,...wrong,...aliases,...acceptedAlternatives,...tupleCases.correct];
   if(groupingDrawingPlan(qn))variants.push({...response,w:{version:1,strokes:[[[.1,.1],[.2,.1],[.2,.2],[.1,.2],[.1,.1]]]}});
   if(shading){
    const count=Number(response.f.colored);
-   assert.ok(count>1&&count<shading.regions.length);
-   variants.push(responseWithShading(response,shading,shading.regions.slice(-count).map(region=>region.id)));
+   assert.ok(count>0&&count<=shading.regions.length);
+   if(count<shading.regions.length){
+    const alternate=[shading.regions.slice(0,count),shading.regions.slice(-count)]
+      .map(regions=>responseWithShading(response,shading,regions.map(region=>region.id)))
+      .find(value=>JSON.stringify(value.w)!==JSON.stringify(response.w));
+    assert.ok(alternate,'A partial board must allow a different correct selection');
+    variants.push(alternate);
+   }
   }
   if(fraction){
    const {left,right,comparison}=response.f;
@@ -213,7 +221,7 @@ try{
     }
    }
    const after=await action('resume',{session_id:session});assert.equal(after.complete,true);assert.deepEqual(after.responses,expectedResponses);for(const review of after.reviews){const own=review.question_id===qn.id,q=c.doc.blocks[0].questions.find(q=>q.id===review.question_id);assert.equal(review.correct,q.type==='open'?null:own?shouldPass:true);if(q.type==='open')assert.equal(review.assessment.status,'self_checked');if(groupingDrawingPlan(q)||fractionComparisonPlan(q)||shadingPlan(q))assert.deepEqual(review.explanation.media,q.explanation.media);assert.deepEqual(review.answer,q.answer);}
-   if(shading){
+   if(shading||fraction){
     await db.exec('reset role');
     for(const asset of c.doc.blocks[0].questions.flatMap(item=>item.explanation.media)){
      const visible=await db.query('select public.quiz_media_visible($1,$2) visible',[asset.url,before.attempt_id]);

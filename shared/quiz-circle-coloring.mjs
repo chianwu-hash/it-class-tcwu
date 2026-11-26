@@ -47,7 +47,7 @@ export function renderCircleColoring(host, plan, {value, locked, correct, onChan
   const group = doc.createElement('section');
   group.className = 'quiz-circle-coloring';
   const instruction = doc.createElement('p');
-  instruction.textContent = locked ? '你塗色的部分已保留。' : '點一下圖中的一塊就能塗色，再點一下可以清除。';
+  const readyText = locked ? '你塗色的部分已保留。' : '點一下圖中的一塊就能塗色，再點一下可以清除。';
   const art = doc.createElement('div');
   renderContent(art, {text:'', media:[plan.image]});
   const image = art.querySelector('img');
@@ -100,10 +100,12 @@ export function renderCircleColoring(host, plan, {value, locked, correct, onChan
   function setReady(ready) {
     overlay.hidden = !ready;
     overlay.style.visibility = ready ? 'visible' : 'hidden';
+    instruction.textContent = ready ? readyText : image.complete && image.currentSrc
+      ? '圖片無法載入，請重新整理頁面。' : '圖片載入中。';
   }
   const observer = new AbortController();
   imageObservers.set(board, observer);
-  const ready = () => setReady(image.complete && image.naturalWidth === plan.width);
+  const ready = () => setReady(image.complete && image.naturalWidth === plan.width && image.naturalHeight === plan.height);
   ready();
   image.addEventListener('load', ready, {signal:observer.signal});
   image.addEventListener('error', ready, {signal:observer.signal});
@@ -118,9 +120,10 @@ export function renderCircleColoring(host, plan, {value, locked, correct, onChan
     if (!locked) {
       path.setAttribute('tabindex', '0');
       path.style.cursor = 'pointer';
+      path.setAttribute('vector-effect', 'non-scaling-stroke');
       path.addEventListener('focus', () => {
         path.setAttribute('stroke', '#16396f');
-        path.setAttribute('stroke-width', '2');
+        path.setAttribute('stroke-width', '3');
       });
       path.addEventListener('blur', () => path.removeAttribute('stroke'));
       const toggle = () => {

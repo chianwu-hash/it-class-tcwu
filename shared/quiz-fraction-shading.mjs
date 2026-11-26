@@ -2,6 +2,8 @@ import {makeCircleRegions,renderCircleColoring} from './quiz-circle-coloring.mjs
 import {fractionRectangles} from './quiz-fraction-rectangles.mjs';
 
 const figures = {
+  '00133439_1':['d944bf9fb431a1ab3b74bafdad1d7d48b39106b8be2e180977b16309d61d4440',256,232,'circle',[9,128,111,102,102.5,90]],
+  '04351a63_1':['0c25b19689f607d346424aaa26dcde3bdc53261c7ad9a123fbd6b912617ad120',254,232,'circle',[10,129,115.5,102,102.5,0]],
   '018f1b67_1':['817ff15e8a0bff65568a9141c7c25157040db4e99d4135a77eb0e4ff9abf2b3e',896,900,'circle',[3,475,601,292,287]],
   '018f1b67_2':['5ea98a05d5047ea5e491d4d59834bfc4b1e2fbddb67e1a5a43aa67eb8a31cf8a',1179,900,'circle',[6,615,597,297,297]],
   '018f1b67_3':['eb2b248b9d8b711e3e5414dfb1138c76e5f03347aba88b21f16dd207780ad77c',1169,942,'circle',[8,611,633.5,300,299.8]],
@@ -31,8 +33,8 @@ const bars = {
 const polygon = points=>`M ${points.map(p=>p.join(' ')).join(' L ')} Z`;
 function makePaths(kind, data) {
   if(kind==='circle'){
-    const [parts,cx,cy,rx,ry]=data;
-    return makeCircleRegions({parts,cx,cy,rx,ry,start:-90});
+    const [parts,cx,cy,rx,ry,start=-90]=data;
+    return makeCircleRegions({parts,cx,cy,rx,ry,start});
   }
   let paths;
   if(kind==='grid'){
