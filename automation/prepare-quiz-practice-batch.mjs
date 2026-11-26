@@ -3,13 +3,14 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {loadBatch,readJson,digest,expectedResponse,practiceWriteIntent,freezeJson,recordBatchTime} from './lib/quiz-batch-plan.mjs';
+import {gridDrawingPlan} from '../shared/quiz-grid-drawing.mjs';
 import {validateDocument} from '../shared/quiz-document.mjs';
 import {setupProductionQuizDB} from './fixtures/production-quiz-db.mjs';
 import {batchMediaAssets} from './lib/quiz-batch-media.mjs';
 import {atomicPairCases} from './lib/quiz-batch-atomic-pairs.mjs';
 
 const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
-for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.ok(['fields','single','open'].includes(q.type));if(q.type==='single'){assert.ok(!q.work);continue;}if(q.type==='open'){assert.ok(!q.work&&q.fields.every(f=>f.input==='text')&&!q.explanation.media.length,'Only reviewed open text without reference media is supported');expectedResponse(q,undefined,p.openResponses?.[q.id]);continue;}if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set'].includes(f.input)));}}
+for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.ok(['fields','single','open'].includes(q.type));if(q.type==='single'){assert.ok(!q.work);continue;}if(q.type==='open'){assert.ok(!q.work && (gridDrawingPlan(q) ? q.explanation.media.length===1 && q.explanation.media[0].kind==='image' : q.fields.every(f=>f.input==='text') && !q.explanation.media.length), 'Open media requires an independently reviewed grid answer');expectedResponse(q,undefined,p.openResponses?.[q.id]);continue;}if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set'].includes(f.input)));}}
 await recordBatchTime(p,packetSha,'packet-validated');
 const file=s=>path.join(p.outputDir,p.prefix+'-'+s+'.private');
 const save=(s,v)=>fs.writeFile(file(s)+'.json',JSON.stringify(v,null,2)+'\n');
@@ -24,6 +25,20 @@ const mediaAssets=batchMediaAssets(p);
 const publications=[{...ids,doc,rows,access:'practice',user:owner},...ids.samples.map(s=>{
  const c=p.candidates.find(c=>c.source===s.source),b=c.doc.blocks.find(b=>b.questions.some(q=>q.id===s.question_id));
  return {...s,doc:validateDocument({...c.doc,title:p.title,blocks:[{...b,questions:b.questions.filter(q=>q.id===s.question_id)}]}),rows:rows.filter(r=>r.question_id===s.question_id),access:'self',user:student};})];
+// A reference may reveal only its own saved drawing, even when other items share a grid image.
+const drawingReferences = publications[0].doc.blocks.flatMap(block => block.questions
+ .filter(q => gridDrawingPlan(q)).map(q => [q.id, q.explanation.media[0].url]));
+const drawingOwners = new Map(drawingReferences.map(([id,url]) => [url,id]));
+assert.equal(drawingOwners.size,drawingReferences.length,'Drawing references must be unique to a question');
+for(const [url,id] of drawingOwners){
+ for(const block of publications[0].doc.blocks){
+  assert.ok(!JSON.stringify(block.material).includes(url),'Drawing reference overlaps common material');
+  for(const question of block.questions){
+   assert.ok(!JSON.stringify([question.prompt,question.options,question.fields]).includes(url),'Drawing reference appears in student content');
+   if(question.id!==id)assert.ok(!JSON.stringify(question.explanation).includes(url),'Drawing reference overlaps the explanation of another question');
+  }
+ }
+}
 const guards=`if exists(select 1 from jsonb_array_elements(${j(mediaAssets)}) r where not exists(select 1 from public.quiz_media_assets m where m.url=r->>'url' and m.owner_id=${q(owner)} and m.object_path=r->>'object_path' and m.mime=r->>'mime' and m.bytes=(r->>'bytes')::integer)) then raise exception 'private_media_descriptor_mismatch';end if;
 if not exists(select 1 from auth.users where id=${q(owner)} and lower(email)=${q(ownerEmail)} and email_confirmed_at is not null) then raise exception 'owner_mismatch';end if;
 if not exists(select 1 from auth.users u join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 and e.class_code='307' where u.id=${q(student)} and lower(u.email)=${q(studentEmail)} and u.email_confirmed_at is not null and u.raw_app_meta_data->'providers'?'google') then raise exception 'qa_identity_mismatch';end if;
@@ -55,7 +70,7 @@ const sqls={
 for(const [k,s] of Object.entries(sqls))await fs.writeFile(file(k)+'.sql',s);
 await save('document',doc);await save('plan',{packetSha,counts:n,ids,book:book.id,rows,assets,publications,sampleExpected:Object.fromEntries(ids.samples.map(s=>{const question=doc.blocks.flatMap(b=>b.questions).find(q=>q.id===s.question_id);return [s.question_id,expectedResponse(question,s.work,p.openResponses?.[question.id])];}))});
 const {db,uid}=await setupProductionQuizDB({snapshot:true});
-let mediaVisibilityChecks=0,foreignMediaDenialChecks=0;
+let mediaVisibilityChecks=0,foreignMediaDenialChecks=0,drawingReferenceChecks=0;
 const actor=async(id,role='authenticated')=>{await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[id]);await db.exec('set role '+role);};
 const action=async(name,p={})=>(await db.query('select public.quiz_action($1,$2) data',[name,p])).rows[0].data;
 try{
@@ -103,7 +118,7 @@ try{
   const fields=qn.fields??[],single=qn.type==='single',open=qn.type==='open';
   const acceptedAlternatives=open?[]:fields.filter(f=>['single','text'].includes(f.input)&&!tupleFieldIds.has(f.id)).flatMap(f=>qn.answer.fields[f.id].slice(1).map(value=>{const alternative=structuredClone(response);alternative.f[f.id]=value;return alternative;}));
   const tupleCases=single||open?{correct:[],incorrect:[]}:atomicPairCases(qn,response);
-  const wrong=single?qn.options.filter(o=>o.id!==response).map(o=>o.id):fields.map(field=>{const bad=structuredClone(response);if(field.input==='single'){const wrong=field.options.find(o=>!qn.answer.fields[field.id].includes(o.id));assert.ok(wrong,'Need an independently incorrect option');bad.f[field.id]=wrong.id;}else if(field.input==='set'){const ids=new Set(response.f[field.id]),toggle=field.options[0].id;ids.has(toggle)?ids.delete(toggle):ids.add(toggle);bad.f[field.id]=[...ids];}else bad.f[field.id]='999999';return bad;});
+  const wrong=gridDrawingPlan(qn)?[]:single?qn.options.filter(o=>o.id!==response).map(o=>o.id):fields.map(field=>{const bad=structuredClone(response);if(field.input==='single'){const wrong=field.options.find(o=>!qn.answer.fields[field.id].includes(o.id));assert.ok(wrong,'Need an independently incorrect option');bad.f[field.id]=wrong.id;}else if(field.input==='set'){const ids=new Set(response.f[field.id]),toggle=field.options[0].id;ids.has(toggle)?ids.delete(toggle):ids.add(toggle);bad.f[field.id]=[...ids];}else bad.f[field.id]='999999';return bad;});
   const variants=[response,...wrong,...aliases,...acceptedAlternatives,...tupleCases.correct];
   const tupleIncorrectStart=variants.length;variants.push(...tupleCases.incorrect);
   for(const [i,value] of variants.entries()){const shouldPass=(i===0||i>wrong.length)&&i<tupleIncorrectStart;
@@ -119,10 +134,20 @@ try{
     await db.query("update public.quiz_question_timing set first_seen=clock_timestamp()-interval '10 seconds' where attempt_id=$1",[before.attempt_id]);await actor(student);
     const own=item.id===qn.id,itemValue=own?value:responseFor(item),encoded=item.type==='single'?itemValue:JSON.stringify(itemValue),args={session_id:session,question_id:item.id,response:encoded,request_id:randomUUID(),compact:true};
     if(own&&i===0&&item.work){const missing={...itemValue};delete missing.w;await assert.rejects(action('submit',{...args,response:JSON.stringify(missing)}));}
-    if(item.type==='open'&&own&&i===0){await assert.rejects(action('self_check',{session_id:session,question_id:item.id,request_id:randomUUID(),self_rating:'understood',self_note:''}),/open_answer_required/);for(const f of item.fields){const missing=structuredClone(itemValue);delete missing.f[f.id];await assert.rejects(action('submit',{...args,response:JSON.stringify(missing)}));const empty=structuredClone(itemValue);empty.f[f.id]=' ';await assert.rejects(action('submit',{...args,response:JSON.stringify(empty)}));const long=structuredClone(itemValue);long.f[f.id]='字'.repeat(251);await assert.rejects(action('submit',{...args,response:JSON.stringify(long)}));}}
+    if(item.type==='open'&&own&&i===0){await assert.rejects(action('self_check',{session_id:session,question_id:item.id,request_id:randomUUID(),self_rating:'understood',self_note:''}),/open_answer_required/);for(const f of item.fields){const missing=structuredClone(itemValue);delete missing.f[f.id];await assert.rejects(action('submit',{...args,response:JSON.stringify(missing)}));const empty=structuredClone(itemValue);empty.f[f.id]=f.input==='sketch'?{version:1,strokes:[]}:' ';await assert.rejects(action('submit',{...args,response:JSON.stringify(empty)}));const long=structuredClone(itemValue);long.f[f.id]=f.input==='sketch'?{version:1,strokes:[[[0,0],[2,1]]]}:'字'.repeat(251);await assert.rejects(action('submit',{...args,response:JSON.stringify(long)}));}}
+    const grid=gridDrawingPlan(item);
+    async function checkDrawingReference(expected){
+     await db.exec('reset role');
+     const report=await db.query('select public.quiz_media_visible($1,$2) visible',[item.explanation.media[0].url,before.attempt_id]);
+     assert.equal(report.rows[0].visible,expected);drawingReferenceChecks++;
+     await actor(student);
+    }
+    if(grid)await checkDrawingReference(false);
     await action('submit',args);if(own&&i===0)await action('submit',args);expectedResponses[item.id]=encoded;
     if(item.type==='open'){
+     if(grid)await checkDrawingReference(true);
      const pending=await action('resume',{session_id:session}),review=pending.reviews.find(r=>r.question_id===item.id);assert.equal(review.correct,null);assert.notEqual(review.assessment.status,'self_checked');assert.equal(pending.complete,false);
+     if(grid)assert.deepEqual(review.explanation.media,item.explanation.media);
      const next=c.doc.blocks[0].questions[c.doc.blocks[0].questions.indexOf(item)+1];if(next)await assert.rejects(action('view_question',{session_id:session,question_id:next.id}),/question_order/);
      const self={session_id:session,question_id:item.id,request_id:randomUUID(),self_rating:own&&i>0?'practice':'understood',self_note:'',compact:true};if(own&&i===0)await assert.rejects(action('self_check',{...self,request_id:args.request_id}),/submission_conflict/);await action('self_check',self);await action('self_check',self);
      const saved=await action('resume',{session_id:session}),checked=saved.reviews.find(r=>r.question_id===item.id);assert.equal(checked.correct,null);assert.equal(checked.assessment.status,'self_checked');assert.equal(checked.assessment.rating,self.self_rating);
@@ -143,7 +168,7 @@ try{
  }
  await actor(uid(3));assert.ok(!(await action('library_sessions')).sessions.some(s=>s.id===ids.session));await assert.rejects(action('join',{session_id:ids.session}));
  await db.exec('reset role');await db.exec(sqls.rollback);await actor(uid(2));assert.ok(!(await action('library_sessions')).sessions.some(s=>s.id===ids.session));
- await save('isolated',{passed:true,packetSha,counts:n,cases,mediaVisibilityChecks,foreignMediaDenialChecks,equivalent_responses:p.responseAliases?.length??0,results,private_samples:n.samples,anonymous_denied:true,other_grade_denied:true,rollback_verified:true,sql:Object.fromEntries(Object.entries(sqls).map(([k,v])=>[k,digest(v)]))});
+ await save('isolated',{passed:true,packetSha,counts:n,cases,mediaVisibilityChecks,foreignMediaDenialChecks,drawingReferenceChecks,equivalent_responses:p.responseAliases?.length??0,results,private_samples:n.samples,anonymous_denied:true,other_grade_denied:true,rollback_verified:true,sql:Object.fromEntries(Object.entries(sqls).map(([k,v])=>[k,digest(v)]))});
  const frozenPlan=await readJson(file('plan')+'.json'),isolated=await readJson(file('isolated')+'.json');
  for(const op of ['stage','activate'])await freezeJson(file(op+'-intent')+'.json',practiceWriteIntent(frozenPlan,isolated,op));
  await recordBatchTime(p,packetSha,'isolated-finished');
