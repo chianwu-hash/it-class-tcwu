@@ -17,6 +17,7 @@ import {mountReadingWorkbench,readingWorkbenchSupported} from './quiz-reading-wo
 import {workAnswerPresentation,mountWorkAnswerInputs,workResponseContent} from './quiz-work-answer-layout.mjs';
 import {sourceStream} from './quiz-content-slices.mjs';
 import {circleColoringPlan,renderCircleColoring} from './quiz-circle-coloring.mjs';
+import {isFractionPartition,fractionPartitionPlan,readFractionPartition,renderFractionPartition,fractionPartitionSummary} from './quiz-fraction-partition.mjs';
 import {isSourceRoute,sourceRoutePlan,readSourceRoute,renderSourceRoute,sourceRouteSummary} from './quiz-source-route.mjs';
 import {fractionColorsPlan,isFractionColorsQuestion,readFractionColors,renderFractionColors} from './quiz-fraction-colors.mjs';
 import {fractionComparisonPlan,readFractionComparison,renderFractionComparison} from './quiz-fraction-comparison.mjs';
@@ -36,6 +37,13 @@ export function fieldsValues(q,raw){
  return Object.fromEntries(q.fields.map(f=>[f.id,['set','sequence'].includes(f.input)?null:'']));
 }
 export function fieldsResponseError(q,raw){
+ const partition=fractionPartitionPlan(q);
+ if(isFractionPartition(q)&&!partition)return '這題的原圖與分割區不符，請回報題目。';
+ if(partition){
+  const draft=readFractionPartition(fieldsValues(q,raw).partition);
+  if(!draft)return '請先選一種分法。';
+  if(!draft.regions.length)return '請在色紙上塗色。';
+ }
  const route=sourceRoutePlan(q);
  if(isSourceRoute(q)&&!route)return '這題的原圖與路線不符，請回報題目。';
  if(route&&!raw)return '請依序點路線，走到終點再送出。';
@@ -67,6 +75,12 @@ export function fieldsResponseError(q,raw){
 }
 
 export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onChange,renderContent,textInputAids={},review=null}){
+ if(isFractionPartition(q)){
+  const plan=fractionPartitionPlan(q);
+  if(!plan||!renderFractionPartition(host,plan,{value:fieldsValues(q,raw).partition,locked,review,renderContent,
+   onChange:value=>onChange(JSON.stringify({v:1,f:{partition:value}}))}))host.append(make('p','原圖無法顯示，請重新整理頁面。'));
+  return host.lastElementChild;
+ }
  const route=sourceRoutePlan(q);
  if(route){
   if(!renderSourceRoute(host,route,{value:fieldsValues(q,raw).route,locked,correct:review?.correct,renderContent,
@@ -149,6 +163,12 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
  mountReadingWorkbench(group,q,reading,{renderContent,fieldFeedback:feedback});mountWorkAnswerInputs(group,q,{renderContent,fieldFeedback:feedback});host.append(group);return group;
 }
 export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,referenceAnswer=null,showWork=true}){
+ if(isFractionPartition(q)){
+  const example=(referenceAnswer??review?.answer)?.fields?.partition?.[0];
+  if(showWork&&(raw||example))renderFieldsInputs(host,q,{raw:raw||JSON.stringify({v:1,f:{partition:example}}),locked:true,renderContent,review});
+  else if(raw)host.append(make('p',fieldsResponseSummary(q,raw)));
+  return;
+ }
  const route=sourceRoutePlan(q);
  if(route){
   if(raw&&showWork){renderFieldsInputs(host,q,{raw,locked:true,onChange:()=>{},renderContent,review});return;}
@@ -194,8 +214,9 @@ const formatted=(f,v)=>{
  const one=id=>{const i=f.options?.findIndex(o=>o.id===id)??-1;return i<0?String(id):f.options[i].content.text||`選項${i+1}`};
  return Array.isArray(v)?v.map(one).join(f.input==='sequence'?' → ':'、')||'都不選':['single'].includes(f.input)?one(v):String(v??'未填');
 };
-export function fieldsResponseSummary(q,raw){const v=fieldsValues(q,raw),route=sourceRoutePlan(q);if(route)return sourceRouteSummary(route,readSourceRoute(route,v.route));const reading=readingPresentation(choiceQuestionPresentation(q));return q.fields.map((storedField,i)=>{const f=reading?.fields?.[i]??fieldPresentation(q,storedField);return `${f.label}：${formatted(f,v[f.id])}`}).join('；');}
+export function fieldsResponseSummary(q,raw){const v=fieldsValues(q,raw),route=sourceRoutePlan(q);if(isFractionPartition(q))return fractionPartitionSummary(v.partition);if(route)return sourceRouteSummary(route,readSourceRoute(route,v.route));const reading=readingPresentation(choiceQuestionPresentation(q));return q.fields.map((storedField,i)=>{const f=reading?.fields?.[i]??fieldPresentation(q,storedField);return `${f.label}：${formatted(f,v[f.id])}`}).join('；');}
 export function fieldsAnswerSummary(q,answer){
+ if(isFractionPartition(q))return fractionPartitionSummary(answer.fields.partition[0]);
  const route=sourceRoutePlan(q);
  if(route)return answer.fields.route.map(value=>sourceRouteSummary(route,readSourceRoute(route,value))).join('／');
  const reading=readingPresentation(choiceQuestionPresentation(q));

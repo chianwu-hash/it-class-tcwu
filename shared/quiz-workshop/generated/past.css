@@ -480,6 +480,12 @@ button.quiz-sector-color:focus-visible{outline:3px solid #16396f;outline-offset:
 .quiz-source-route-board circle:focus-visible{outline:none;stroke:#103358;stroke-width:3}
 .quiz-source-route-status{overflow-wrap:anywhere}
 
+.quiz-fraction-partition-controls{display:flex;flex-wrap:wrap;gap:.5rem}
+.quiz-fraction-partition-controls button{min-height:44px;padding:.45rem .85rem;border:1px solid #547696;border-radius:.5rem;background:#fff;color:#193b57;font:inherit}
+.quiz-fraction-partition-controls button[aria-pressed="true"]{background:#234459;color:#fff}
+.quiz-fraction-partition-controls button:focus-visible{outline:3px solid #1680bd;outline-offset:2px}
+.quiz-fraction-partition p:empty,.quiz-fraction-partition-controls:empty{display:none}
+
 
 
 /* ============ QuizFeedbackMotion：只作用在 .qfm-actor 之下 ============ */
