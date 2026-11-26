@@ -1770,6 +1770,100 @@ export const workAnswerSources={
 
 };
 export const answerTemplateSources={
+  "hlg3m_recovered_0479e63b_parity": {
+    "guard": "48a8415a0f354512",
+    "model": {
+      "mode": "blanks",
+      "start": 0,
+      "rows": [
+        {
+          "start": 0,
+          "end": 38,
+          "fields": [
+            "odd1",
+            "odd2",
+            "odd3",
+            "odd4",
+            "odd5"
+          ]
+        },
+        {
+          "start": 39,
+          "end": 77,
+          "fields": [
+            "even1",
+            "even2",
+            "even3",
+            "even4",
+            "even5"
+          ]
+        }
+      ],
+      "blanks": [
+        {
+          "start": 8,
+          "end": 13,
+          "field": "odd1",
+          "width": 7
+        },
+        {
+          "start": 14,
+          "end": 19,
+          "field": "odd2",
+          "width": 7
+        },
+        {
+          "start": 20,
+          "end": 25,
+          "field": "odd3",
+          "width": 7
+        },
+        {
+          "start": 26,
+          "end": 31,
+          "field": "odd4",
+          "width": 7
+        },
+        {
+          "start": 32,
+          "end": 37,
+          "field": "odd5",
+          "width": 7
+        },
+        {
+          "start": 47,
+          "end": 52,
+          "field": "even1",
+          "width": 7
+        },
+        {
+          "start": 53,
+          "end": 58,
+          "field": "even2",
+          "width": 7
+        },
+        {
+          "start": 59,
+          "end": 64,
+          "field": "even3",
+          "width": 7
+        },
+        {
+          "start": 65,
+          "end": 70,
+          "field": "even4",
+          "width": 7
+        },
+        {
+          "start": 71,
+          "end": 76,
+          "field": "even5",
+          "width": 7
+        }
+      ],
+      "omissions": []
+    }
+  },
   "hlg3m_recovered_056cd12e_diagram_1": {
     "guard": "ae61bf417d5ee74a",
     "model": {

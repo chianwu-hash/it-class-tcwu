@@ -5,6 +5,7 @@ import {booleanChoicePresentation} from './quiz-boolean-choice.mjs';
 import {choiceQuestionPresentation} from './quiz-choice-conversion.mjs';
 import {readingPresentation} from './quiz-reading-presentation.mjs';
 import {fieldsReviewPresentation,appendFieldReviewStatus,decorateFieldReviewOption,appendFieldReviewReference} from './quiz-fields-review.mjs';
+import {distinctDigitGroups,distinctDigitGroupSummary} from './quiz-distinct-digit-groups.mjs';
 import {validWorkSpec,workValue,workResponseError,renderWorkInput,renderSavedWork} from './quiz-work-response.mjs';
 import {groupingDrawingPlan} from './quiz-grouping-drawing.mjs';
 import {renderSequenceCards} from './quiz-sequence.mjs';
@@ -37,6 +38,7 @@ const integerFields = {
  'hlg3m_recovered_059dbdea_diagram_1':['f1','f2'],
  'hlg3m_recovered_00a92efe_diagram_1':['f1'],
  'hlg3m_recovered_00a92efe_diagram_2':['f1'],
+ 'hlg3m_recovered_0479e63b_parity':['odd1','odd2','odd3','odd4','odd5','even1','even2','even3','even4','even5'],
  'hlg3m_019d47a1_fraction_bar_5': ['numerator'],
  'hlg3m_05507d9c_fraction_circle_2': ['brother','sister'],
  'hlg3m_05507d9c_fraction_circle_4': ['amount','numerator'],
@@ -180,6 +182,10 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
  mountReadingWorkbench(group,q,reading,{renderContent,fieldFeedback:feedback});mountWorkAnswerInputs(group,q,{renderContent,fieldFeedback:feedback});host.append(group);return group;
 }
 export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,referenceAnswer=null,showWork=true}){
+ if(!raw){
+  const digitGroups=distinctDigitGroups(q.fields,referenceAnswer);
+  if(digitGroups){host.append(make('p',distinctDigitGroupSummary(digitGroups)));return;}
+ }
  if(isFractionPartition(q)){
   const example=(referenceAnswer??review?.answer)?.fields?.partition?.[0];
   if(showWork&&(raw||example))renderFieldsInputs(host,q,{raw:raw||JSON.stringify({v:1,f:{partition:example}}),locked:true,renderContent,review});
@@ -233,6 +239,8 @@ const formatted=(f,v)=>{
 };
 export function fieldsResponseSummary(q,raw){const v=fieldsValues(q,raw),route=sourceRoutePlan(q);if(isFractionPartition(q))return fractionPartitionSummary(v.partition);if(route)return sourceRouteSummary(route,readSourceRoute(route,v.route));const reading=readingPresentation(choiceQuestionPresentation(q));return q.fields.map((storedField,i)=>{const f=reading?.fields?.[i]??fieldPresentation(q,storedField);return `${f.label}：${formatted(f,v[f.id])}`}).join('；');}
 export function fieldsAnswerSummary(q,answer){
+ const digitGroups=distinctDigitGroups(q.fields,answer);
+ if(digitGroups)return distinctDigitGroupSummary(digitGroups);
  if(isFractionPartition(q))return fractionPartitionSummary(answer.fields.partition[0]);
  const route=sourceRoutePlan(q);
  if(route)return answer.fields.route.map(value=>sourceRouteSummary(route,readSourceRoute(route,value))).join('／');

@@ -2,11 +2,26 @@
 // persist, infer hidden keys, or read a question's private answer property.
 import {workAnswerPresentation} from './quiz-work-answer-layout.mjs';
 import {answerTemplatePresentation} from './quiz-answer-templates.mjs';
+import {distinctDigitGroups,reviewDigit} from './quiz-distinct-digit-groups.mjs';
 const literalInteger=value=>{if(typeof value!=='string')return null;const text=value.trim().replace(/[０-９]/gu,c=>String(c.charCodeAt(0)-0xff10)).replace(/＋/gu,'+').replace(/[－−]/gu,'-');return /^[+-]?[0-9]{1,12}$/u.test(text)?BigInt(text):null;};
 const same=(a,b,input)=>Array.isArray(a)&&Array.isArray(b)?a.length===b.length&&(input==='set'?[...a].sort().every((v,i)=>v===[...b].sort()[i]):a.every((v,i)=>v===b[i])):a===b;
 export function fieldsReviewPresentation(q,raw,review){
  if(q?.type!=='fields'||typeof review?.correct!=='boolean'||review.answer?.format!=='fields-v1'||!review.answer.fields)return null;
  let values;try{const p=JSON.parse(raw);if(p.v!==1||!p.f||Array.isArray(p.f))return null;values=p.f;}catch{return null;}
+ const digitGroups=distinctDigitGroups(q.fields,review.answer);
+ if(digitGroups){
+  const feedback=new Map();
+  for(const {ids,digits} of digitGroups){
+   const normalized=ids.map(id=>reviewDigit(values[id]));
+   for(const [index,id] of ids.entries()){
+    const value=normalized[index],within=digits.includes(value);
+    const repeated=within&&normalized.some((other,i)=>i!==index&&other===value);
+    const state=review.correct?'correct':value===null?'reference':!within?'incorrect':repeated?'paired':'correct';
+    feedback.set(id,{id,input:'math',state,value:values[id],accepted:digits,options:[],none:null,tuples:[],digitGroup:true});
+   }
+  }
+  return q.fields.map(({id})=>Object.hasOwn(values,id)?feedback.get(id):null);
+ }
  const workPlan=workAnswerPresentation(q),integerReview=workPlan?.responseWorkMap===true||['before-template','source-slots'].includes(workPlan?.workPosition)||Boolean(answerTemplatePresentation(q)?.richSlotChars);
  return q.fields.map(f=>{
   const value=values[f.id],accepted=review.answer.fields[f.id];if(!Object.hasOwn(values,f.id)||!Array.isArray(accepted)||!accepted.length)return null;
@@ -35,7 +50,8 @@ export function fieldsReviewPresentation(q,raw,review){
 const node=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
 export function appendFieldReviewStatus(host,feedback){
  if(!feedback)return;host.dataset.fieldReview=feedback.state;
- const p=node('p',({correct:'✓ 這小題答對了',incorrect:'✕ 這小題需要修正',reference:'請核對這一格的答案',paired:'這幾格需要一起核對'})[feedback.state]);p.className='quiz-field-review-status';host.append(p);
+ const paired=feedback.digitGroup?'✕ 同組數字重複':'這幾格需要一起核對';
+ const p=node('p',({correct:'✓ 這小題答對了',incorrect:'✕ 這小題需要修正',reference:'請核對這一格的答案',paired})[feedback.state]);p.className='quiz-field-review-status';host.append(p);
 }
 export function decorateFieldReviewOption(row,feedback){
  if(!feedback||feedback.state==='neutral')return;
@@ -44,7 +60,7 @@ export function decorateFieldReviewOption(row,feedback){
  if(feedback.text){const body=row.querySelector('.option-body,.option-content,.rv-option')||row.querySelector('input+span')||row,note=node('span',feedback.text);note.className='quiz-field-review-note';body.append(note);}
 }
 export function appendFieldReviewReference(host,feedback,format,formatPair){
- if(!feedback)return;
+ if(!feedback||feedback.digitGroup)return;
  if(['reference','paired'].includes(feedback.state)||!['single','set'].includes(feedback.input)||feedback.accepted.length>1&&feedback.state!=='correct'){
   const box=node('div');box.className='quiz-field-review-reference';
   box.append(node('p','你的答案：'+format(feedback.value)),node('p','參考答案：'+feedback.accepted.map(format).join(' 或 ')));

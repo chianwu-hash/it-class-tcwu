@@ -2,7 +2,28 @@ import test from 'node:test';import assert from 'node:assert/strict';import {fie
 import {workAnswerSources,answerTemplateSources} from '../../shared/quiz-answer-template-sources.mjs';
 import {presentationSignature} from '../../shared/quiz-presentation-signature.mjs';
 import {deriveAnswerTemplate} from '../../shared/quiz-answer-templates.mjs';
+import {fieldsAnswerSummary} from '../../shared/quiz-fields.mjs';
 const field=(id,input='set')=>({id,label:id,input,options:['a','b','c'].map(id=>({id,content:{text:id,media:[]}}))}),q=(fields=[field('f1')])=>({id:'synthetic',type:'fields',fields}),raw=f=>JSON.stringify({v:1,f}),review=(fields,correct=false,tuples)=>({correct,answer:{format:'fields-v1',fields,...(tuples?{tuples}:{})}});
+
+test('complete distinct digit groups show one sorted reference and identify only affected positions',()=>{
+ const ids=['a','b','c'],digits=['1','3','5'],source={
+  ...q(ids.map(id=>({id,label:id,input:'math'}))),prompt:{text:'任意順序填數字。',media:[]}
+ };
+ Object.defineProperty(source,'answer',{get(){throw Error('hidden key read');}});
+ const tuples=[['a','b'],['a','c'],['b','c']].map(([x,y])=>({
+  fields:[x,y],accepted:digits.flatMap(a=>digits.filter(b=>b!==a).map(b=>({[x]:a,[y]:b})))
+ }));
+ const key=review(Object.fromEntries(ids.map(id=>[id,digits])),false,tuples);
+ const value=raw({a:'（６／２）',b:'３',c:'5.0'});
+ const result=fieldsReviewPresentation(source,value,key);
+ assert.deepEqual(result.map(f=>f.state),['paired','paired','correct']);
+ assert.ok(result.every(f=>f.digitGroup&&!f.tuples.length));
+ assert.equal(fieldsAnswerSummary(source,key.answer),'第 1 組：1、3、5（順序不限）');
+ assert.deepEqual(fieldsReviewPresentation(source,raw({a:'7',b:'1',c:'5'}),key).map(f=>f.state),['incorrect','correct','correct']);
+ assert.equal(fieldsReviewPresentation(source,value,null),null);
+ const incomplete={...key,answer:{...key.answer,tuples:tuples.slice(1)}};
+ assert.match(fieldsAnswerSummary(source,incomplete.answer),/可接受的完整配對/u);
+});
 
 test('numeric source tables mark revealed literal mistakes, keep expressions neutral and require the exact source guard',()=>{
  const source={id:'synthetic-numeric-table-review',type:'fields',prompt:{text:'表格（　）',media:[],layout:[{type:'table',rows:[[[{type:'text',text:'數量'}],[{type:'text',text:'（　）'}]]]}]},fields:[{id:'n',label:'數量',input:'math'}]};Object.defineProperty(source,'answer',{get(){throw Error('hidden key read')}});
