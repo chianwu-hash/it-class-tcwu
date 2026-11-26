@@ -67,7 +67,16 @@ export function expectedResponse(question, work, openResponse) {
   }
   assert.equal(question.type, 'fields');
   const fields = Object.fromEntries(question.fields.map(f => [f.id, question.answer.fields[f.id][0]]));
-  for (const tuple of question.answer.tuples ?? []) Object.assign(fields, tuple.accepted[0]);
+ const firstTupleValues=new Map();
+ for (const tuple of question.answer.tuples ?? []) {
+  for(const [id,value] of Object.entries(tuple.accepted[0])) {
+   const field=question.fields.find(f=>f.id===id);
+   const canonical=field?.input==='set'?value.toSorted():value;
+   if(firstTupleValues.has(id))assert.deepEqual(canonical,firstTupleValues.get(id),'Overlapping tuple defaults disagree');
+   firstTupleValues.set(id,canonical);
+   fields[id]=value;
+  }
+ }
   if (question.work?.input==='expression') assert.ok(typeof work==='string'&&work.trim());
   else if(question.work?.input==='sketch')validateSketch(work);
   else assert.ok(!question.work);

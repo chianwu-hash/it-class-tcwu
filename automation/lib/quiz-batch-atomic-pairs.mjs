@@ -17,11 +17,16 @@ export function reverseAtomicPair(question,fieldIds){
 
 export function atomicPairCases(question,response){
  const correct=[],incorrect=[];
- for(const tuple of question.answer.tuples??[]){
+ const tuples=question.answer.tuples??[];
+ const same=(id,a,b)=>{const set=question.fields.find(f=>f.id===id).input==='set';return JSON.stringify(set?a.toSorted():a)===JSON.stringify(set?b.toSorted():b);};
+ const matches=(tuple,values)=>tuple.accepted.some(a=>tuple.fields.every(id=>same(id,a[id],values[id])));
+ for(const tuple of tuples){
   assert.ok(tuple.fields.length>=2&&tuple.fields.every(id=>question.fields.some(f=>f.id===id&&['math','text','single','set'].includes(f.input))));
-  for(const accepted of tuple.accepted.slice(1)){const next=structuredClone(response);Object.assign(next.f,structuredClone(accepted));correct.push(next);}
-  const same=(id,a,b)=>{const set=question.fields.find(f=>f.id===id).input==='set';return JSON.stringify(set?a.toSorted():a)===JSON.stringify(set?b.toSorted():b);};
-  for(const a of tuple.accepted)for(const b of tuple.accepted)for(const id of tuple.fields){const mixed={...a,[id]:b[id]};if(tuple.accepted.some(t=>tuple.fields.every(k=>same(k,t[k],mixed[k]))))continue;const next=structuredClone(response);Object.assign(next.f,structuredClone(mixed));if(!incorrect.some(x=>JSON.stringify(x)===JSON.stringify(next)))incorrect.push(next);}
+  for(const accepted of tuple.accepted.slice(1)){
+   const next=structuredClone(response);Object.assign(next.f,structuredClone(accepted));
+   if(tuples.every(rule=>matches(rule,next.f))&&!correct.some(x=>JSON.stringify(x)===JSON.stringify(next)))correct.push(next);
+  }
+  for(const a of tuple.accepted)for(const b of tuple.accepted)for(const id of tuple.fields){const mixed={...a,[id]:b[id]};if(matches(tuple,mixed))continue;const next=structuredClone(response);Object.assign(next.f,structuredClone(mixed));if(!incorrect.some(x=>JSON.stringify(x)===JSON.stringify(next)))incorrect.push(next);}
  }
  return {correct,incorrect};
 }
