@@ -87,6 +87,19 @@ class NumericTeacherTableTests(unittest.TestCase):
         result = match_teacher_table_keys(q, a)
         self.assertEqual([(c["row"], c["column"], c["value"]) for c in result], [(1, 1, "0"), (1, 2, "2")])
 
+    def test_fragmented_labels_match_only_when_the_visible_text_is_the_same(self):
+        original = table([["正方形個數（個）", None]])
+        original["rows"][0][0] = [
+            {"type": "text", "text": "正方形個數"},
+            {"type": "text", "text": "\n"},
+            {"type": "text", "text": "（個）"},
+        ]
+        q = {"layout": [original]}
+        a = {"layout": [table([["正方形個數（個）", 5]])]}
+        self.assertEqual([c["value"] for c in match_teacher_table_keys(q, a)], ["5"])
+        a = {"layout": [table([["正方形個數（枝）", 5]])]}
+        self.assertEqual(match_teacher_table_keys(q, a), [])
+
     def test_changed_printed_value_cannot_be_paired(self):
         q = {"layout": [table([["被除數", 7], ["餘數", None]])]}
         a = {"layout": [table([["被除數", 8], ["餘數", 1]])]}

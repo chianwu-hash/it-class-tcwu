@@ -1770,6 +1770,88 @@ export const workAnswerSources={
 
 };
 export const answerTemplateSources={
+  "hlg3m_recovered_053c461e_table": {
+    "guard": "40e960169e80f669",
+    "model": {
+      "mode": "rich",
+      "fields": [
+        "cell_1_1",
+        "cell_1_2",
+        "cell_1_3",
+        "cell_1_4",
+        "cell_1_5",
+        "cell_2_1",
+        "cell_2_2",
+        "cell_2_3",
+        "cell_2_4",
+        "cell_2_5"
+      ],
+      "richSlotChars": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    }
+  },
+  "hlg3m_recovered_01ec268d_table": {
+    "guard": "8482fd95f5d63d0b",
+    "model": {
+      "mode": "rich",
+      "fields": [
+        "cell_1_2",
+        "cell_1_4",
+        "cell_1_5",
+        "cell_2_3",
+        "cell_2_4",
+        "cell_2_5",
+        "cell_3_2",
+        "cell_3_3",
+        "cell_3_4",
+        "cell_3_5"
+      ],
+      "richSlotChars": [
+        2,
+        2,
+        3,
+        2,
+        2,
+        3,
+        2,
+        3,
+        2,
+        3
+      ]
+    }
+  },
+  "hlg3m_recovered_045122e8_table": {
+    "guard": "0c3b4b9cda948f98",
+    "model": {
+      "mode": "rich",
+      "fields": [
+        "cell_1_1",
+        "cell_1_4",
+        "cell_2_2",
+        "cell_2_3",
+        "cell_2_4",
+        "cell_3_4"
+      ],
+      "richSlotChars": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        3
+      ]
+    }
+  },
   "hlg3m_0273b6ed_marksb1c9e91182f6": {
     "guard": "f9a205a2b000f677",
     "model": {
