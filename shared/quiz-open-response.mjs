@@ -9,6 +9,7 @@ import {openCompositionReview} from './quiz-open-composition.mjs';
 import {phoneticWordFields} from './quiz-field-input-aids.mjs';
 import {phoneticWordReview} from './quiz-phonetic-word-review.mjs';
 import {wordMeaningReview} from './quiz-word-meaning-review.mjs';
+import {gridDrawingPlan,renderGridDrawing} from './quiz-grid-drawing.mjs';
 
 const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 const only=(v,keys)=>object(v)&&Object.keys(v).every(k=>keys.includes(k));
@@ -36,6 +37,12 @@ export function validateOpenQuestion(q,checkContent){
 
 export function renderOpenInputs(host,q,{raw='',locked=false,onChange,renderContent}){
  q=choiceQuestionPresentation(q);
+ const grid=gridDrawingPlan(q);
+ if(grid){
+  const values=fieldsValues(q,raw),group=make('div',undefined,'quiz-open-inputs');
+  const editor=renderGridDrawing(group,grid,{value:values.drawing,locked,renderContent,onChange:drawing=>onChange(JSON.stringify({v:1,f:{drawing}}))});
+  if(editor){group.sketchEditors=[editor];host.append(group);return group;}
+ }
  const presentation=openSubquestionPresentation(q);
  const values=fieldsValues(q,raw),group=make('div',undefined,'quiz-fields quiz-open-inputs'),phonetic=phoneticWordFields(q);
  group.classList.toggle('quiz-open-subquestions',Boolean(presentation));
@@ -66,6 +73,7 @@ function appendSketch(host,value,label){
  const svg=sketchImage(value);svg.setAttribute('aria-label',label+'・已儲存手寫內容');svg.classList.add('quiz-open-sketch-saved');host.append(svg,make('p','手寫內容已儲存，請對照參考例答與檢核重點。','helper'));
 }
 export function renderOpenSavedSketches(host,q,raw,{renderContent}={}){
+ if(gridDrawingPlan(q)){renderOpenInputs(host,q,{raw,locked:true,onChange:()=>{},renderContent});return;}
  if(openSubquestionPresentation(choiceQuestionPresentation(q))||answerTemplatePresentation(choiceQuestionPresentation(q))){renderOpenInputs(host,q,{raw,locked:true,onChange:()=>{},renderContent});return;}
  if(!hasSketchFields(q))return;
  const values=fieldsValues(q,raw);

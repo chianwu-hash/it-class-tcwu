@@ -4,6 +4,7 @@ import {createHash} from 'node:crypto';
 import {validateSketch} from '../../shared/sketch/contract.mjs';
 import {validateDocument} from '../../shared/quiz-document.mjs';
 import {batchMediaAssets} from './quiz-batch-media.mjs';
+import {gridDrawingPlan} from '../../shared/quiz-grid-drawing.mjs';
 
 export const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 export const readJson = async file => JSON.parse((await fs.readFile(file, 'utf8')).replace(/^\uFEFF/, ''));
@@ -37,9 +38,19 @@ export function batchCounts(packet) {
 export function expectedResponse(question, work, openResponse) {
   if (question.type === 'single') return question.answer.option_id;
   if(question.type==='open'){
-    assert.ok(question.fields.every(f=>f.input==='text'),'Open sketch requires its own reviewed batch adapter');
+    const grid = gridDrawingPlan(question);
+    assert.ok(grid || question.fields.every(f=>f.input==='text'),'Open sketch requires its own reviewed batch adapter');
     assert.ok(openResponse&&openResponse.v===1&&openResponse.f&&typeof openResponse.f==='object'&&!Array.isArray(openResponse.f));
     assert.deepEqual(Object.keys(openResponse).sort(),['f','v']);assert.deepEqual(Object.keys(openResponse.f).sort(),question.fields.map(f=>f.id).sort());
+    if (grid) {
+      validateSketch(openResponse.f.drawing);
+      const onLine = (value, lines) => lines.some(line => Math.abs(value - line) < 1e-7);
+      const valid = ([x,y]) => onLine(x * grid.width,grid.xs) && onLine(y * grid.height,grid.ys);
+      for (const stroke of openResponse.f.drawing.strokes) {
+        assert.ok(stroke.length===2 && stroke.every(valid), 'The reviewed grid example must use the original intersections');
+      }
+      return structuredClone(openResponse);
+    }
     for(const f of question.fields)assert.ok(typeof openResponse.f[f.id]==='string'&&openResponse.f[f.id].trim()&&openResponse.f[f.id].length<=250);
     assert.ok(JSON.stringify(openResponse).length<=2000);return structuredClone(openResponse);
   }

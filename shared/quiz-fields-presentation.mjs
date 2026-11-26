@@ -8,6 +8,7 @@ import {openSubquestionPresentation} from './quiz-open-subquestions.mjs';
 import {answerTemplatePresentation} from './quiz-answer-templates.mjs';
 import {workAnswerPassage} from './quiz-work-answer-layout.mjs';
 import {circleColoringPlan} from './quiz-circle-coloring.mjs';
+import {gridDrawingPlan} from './quiz-grid-drawing.mjs';
 // Compatibility for the reviewed Chinese import's circled-code choice fields.
 // Only the view changes: the original field ID, circled values and fields-v1
 // response envelope remain exactly as stored. Never read or infer an answer.
@@ -31,6 +32,7 @@ export const fieldsAreSingleChoice=q=>q.type==='fields'&&q.fields?.length===1&&f
 
 export function fieldsPromptPresentation(q){
  const circle=circleColoringPlan(q);if(circle)return circle.passage;
+ const grid=gridDrawingPlan(q);if(grid)return grid.passage;
  const workPassage=workAnswerPassage(q);if(workPassage)return workPassage;
  const sequence=sequencePromptPresentation(q);if(sequence)return sequence;
  const converted=choiceQuestionPresentation(q);q=converted;
