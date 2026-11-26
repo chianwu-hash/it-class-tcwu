@@ -4,6 +4,7 @@ from hashlib import sha256
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 from datetime import datetime,timezone
@@ -40,7 +41,22 @@ def answers():
   if question['type']=='open':assert matches[0]['correct'] is None and matches[0]['assessment_status']=='self_checked' and matches[0]['self_rating'] in ['understood','practice']
   else:assert matches[0]['correct']
   expected=plan['sampleExpected'][sample['question_id']]
-  assert (matches[0]['response'] if isinstance(expected,str) else json.loads(matches[0]['response']))==expected
+  raw=matches[0]['response']
+  actual=raw if isinstance(expected,str) else json.loads(raw)
+  if re.fullmatch(r'hlg3m_[0-9a-f]{8}_grouping_v1',question['id']):
+   # A mouse or touch trace can differ from the isolated reference geometry.
+   # Match the exact response captured from the authenticated browser reload.
+   assert question['type']=='fields' and question['work']['input']=='sketch'
+   proof=load('oauth-proof')
+   assert proof['passed'] and proof['formalOAuth'] and proof['packetSha']==plan['packetSha']
+   receipts=[s for s in proof['samples'] if s['question']==sample['question_id'] and s['session']==sample['session']]
+   assert len(receipts)==1 and receipts[0]['saved_and_reopened']
+   assert sha256(raw.encode('utf8')).hexdigest()==receipts[0]['response_sha256']
+   assert actual.keys()==expected.keys() and actual['v']==expected['v'] and actual['f']==expected['f']
+   assert actual['w']['version']==expected['w']['version']==1
+   assert len(actual['w']['strokes'])==len(expected['w']['strokes'])
+  else:
+   assert actual==expected
  save('answer-readback',{'passed':True,'sampleCount':len(r['rows']),'questions':[a['question'] for a in r['rows']]})
 
 def mutation(name,visible):
