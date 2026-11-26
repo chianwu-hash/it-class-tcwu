@@ -298,6 +298,7 @@ export function initServerQuiz({ selectors, server }) {
     const token = generation; busy = true;
     root.querySelectorAll('.quiz-open-inputs,.quiz-fields').forEach(group=>group.sketchEditors?.forEach(editor=>editor.setDisabled(true)));
     root.querySelectorAll('.quiz-choices input,.quiz-choices textarea,.quiz-choices select,.quiz-choices button,.quiz-actions button').forEach(n=>n.disabled=true);
+    root.querySelectorAll('.quiz-choices .quiz-circle-coloring').forEach(n=>n.inert=true);
     const saving=root.querySelector('#server-submit');if(saving)saving.textContent='正在儲存…';
     say('正在儲存答案…');
     try {
