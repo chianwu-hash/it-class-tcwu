@@ -7,6 +7,7 @@ import {batchMediaAssets} from './quiz-batch-media.mjs';
 import {arrangementPlan,readArrangement} from '../../shared/quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from '../../shared/quiz-grid-drawing.mjs';
 import {fractionComparisonPlan,readFractionComparison} from '../../shared/quiz-fraction-comparison.mjs';
+import {fractionShadingPlan,readFractionShading} from '../../shared/quiz-fraction-shading.mjs';
 
 export const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 export const readJson = async file => JSON.parse((await fs.readFile(file, 'utf8')).replace(/^\uFEFF/, ''));
@@ -70,6 +71,10 @@ export function expectedResponse(question, work, openResponse) {
   const response = {v: 1, f: fields, ...(question.work ? {w: work} : {})};
   const fraction = fractionComparisonPlan(question);
   if (fraction) assert.ok(readFractionComparison(fraction,response),'Reviewed shading must match both stored counts');
+  if (/_fraction_shade_[1-3]$/u.test(question.id)) {
+    const shading=fractionShadingPlan(question);
+    assert.ok(shading&&readFractionShading(shading,response)?.size,'Reviewed shading must match the image and stored count');
+  }
   return response;
 }
 
