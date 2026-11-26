@@ -6,6 +6,7 @@ import {choiceQuestionPresentation} from './quiz-choice-conversion.mjs';
 import {readingPresentation} from './quiz-reading-presentation.mjs';
 import {fieldsReviewPresentation,appendFieldReviewStatus,decorateFieldReviewOption,appendFieldReviewReference} from './quiz-fields-review.mjs';
 import {validWorkSpec,workValue,workResponseError,renderWorkInput,renderSavedWork} from './quiz-work-response.mjs';
+import {groupingDrawingPlan} from './quiz-grouping-drawing.mjs';
 import {renderSequenceCards} from './quiz-sequence.mjs';
 import {matchingPresentation} from './quiz-matching-presentation.mjs';
 import {renderMatchingBoard,appendMatchingOriginal} from './quiz-matching.mjs';
@@ -45,7 +46,7 @@ export function fieldsResponseError(q,raw){
 export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onChange,renderContent,textInputAids={},review=null}){
  const circle=circleColoringPlan(q);
  if(circle&&renderCircleColoring(host,circle,{value:fieldsValues(q,raw).regions,locked,correct:review?.correct,onChange:value=>onChange(JSON.stringify({v:1,f:{regions:value}})),renderContent}))return host.lastElementChild;
- const values=fieldsValues(q,raw),group=make('div'),phonetic=phoneticWordFields(choiceQuestionPresentation(q));group.className='quiz-fields';group.classList.toggle('quiz-fields-single',q.fields.length===1);
+ const grouping=groupingDrawingPlan(q),values=fieldsValues(q,raw),group=make('div'),phonetic=phoneticWordFields(choiceQuestionPresentation(q));group.className='quiz-fields';group.classList.toggle('quiz-fields-single',q.fields.length===1);
  const workLayout=workAnswerPresentation(q);if(workLayout)group.classList.add('quiz-work-answer-layout');
  const inline=inlineReadingPlan(q),reading=inline?.reading??readingPresentation(choiceQuestionPresentation(q));group.classList.toggle('quiz-reading-fields',Boolean(reading));
  const shown=q.fields.map((f,i)=>reading?.fields?.[i]??fieldPresentation(q,f)),feedback=locked?fieldsReviewPresentation({...q,fields:shown},raw,review):null;
@@ -53,7 +54,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
  const formatPair=(id,value)=>{const f=shown.find(f=>f.id===id);return f.label+'：'+formatted(f,value)};
  let work=workValue(raw);
  const changed=()=>onChange(JSON.stringify({v:1,f:values,...(q.work?{w:work}:{} )}));
- const editor=renderWorkInput(group,q,{raw,locked,saved,onChange:value=>{work=value;changed()}});group.sketchEditors=editor?[editor]:[];
+ const editor=renderWorkInput(group,q,{raw,locked,saved,renderContent,onChange:value=>{work=value;changed()}});group.sketchEditors=editor?[editor]:[];
  if(!fieldsAreSingleChoice(q)&&matching?.covered.size!==q.fields.length)group.append(make('p',feedback?'你原本的作答已保留；請看各小題旁的核對結果。':q.fields.length===1?'填好答案後送出。':'依照題目順序填好每格，再一起送出。'));
  for(const [fieldIndex,storedField] of q.fields.entries()){
   if(matching?.covered.has(fieldIndex)){
@@ -70,9 +71,10 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
   appendFieldReviewStatus(slot,feedback?.[fieldIndex]);
   if(['math','text'].includes(f.input)){
    const input=make('input');input.id=id;input.type='text';input.maxLength=250;input.value=typeof values[f.id]==='string'?values[f.id]:'';input.disabled=locked;input.autocomplete='off';input.setAttribute('aria-label',f.label);
-   if(f.input==='math')input.placeholder='分數可以用 / 表示';
+   if(grouping)input.inputMode='numeric';
+   else if(f.input==='math')input.placeholder='分數可以用 / 表示';
    input.addEventListener('input',()=>{values[f.id]=input.value;changed()});slot.append(input);
-   if(f.input==='math')attachPastInputKeyboard(slot,input,{math:true});
+   if(f.input==='math'&&!grouping)attachPastInputKeyboard(slot,input,{math:true});
    if(phonetic.has(f.id))slot.classList.add('quiz-answer-bopomofo-slot');
    if(f.input==='text'&&!inline?.slots.some(s=>s.field===f.id))attachPastInputKeyboard(slot,input,{bopomofo:phonetic.size?phonetic.has(f.id):textInputAids.bopomofo===true,punctuation:textInputAids.punctuation===true});
   }else if(f.input==='single'){
@@ -102,7 +104,7 @@ export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,ref
  const workPlan=workAnswerPresentation(q);if((workPlan?.responseGroups||['within-template','source-slots'].includes(workPlan?.workPosition))&&!raw&&!host.querySelector(':scope > .quiz-work-source-reference')){const source=make('div');source.className='quiz-work-source-reference';renderContent(source,workResponseContent(q,workPlan.passageEnd,workPlan.groupUnit==='layout'?q.prompt.layout.length:sourceStream(q.prompt).length,workPlan.groupUnit));host.append(source);}
  if(raw&&readingWorkbenchSupported(q,readingPresentation(choiceQuestionPresentation(q)))){if(host.querySelector('.quiz-reading-workbench'))return;renderFieldsInputs(host,q,{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
  if(raw&&(answerTemplatePresentation(choiceQuestionPresentation(q))||workAnswerPresentation(q))){if(host.querySelector('.quiz-has-answer-template,.quiz-work-answer-layout'))return;const group=renderFieldsInputs(host,showWork?q:{...q,work:undefined},{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});mountWorkAnswerInputs(group,q,{renderContent,fieldFeedback:fieldsReviewPresentation(q,raw,review)});return;}
- if(showWork&&raw&&q.work)renderSavedWork(host,q,raw);
+ if(showWork&&raw&&q.work)renderSavedWork(host,q,raw,{renderContent});
  const reading=readingPresentation(choiceQuestionPresentation(q));
  const shown=(q.fields||[]).map((f,i)=>reading?.fields?.[i]??fieldPresentation(q,f)),feedback=fieldsReviewPresentation({...q,fields:shown},raw,review),formatPair=(id,v)=>{const f=shown.find(f=>f.id===id);return f.label+'：'+formatted(f,v)};
  const matching=matchingPresentation(choiceQuestionPresentation(q),shown);

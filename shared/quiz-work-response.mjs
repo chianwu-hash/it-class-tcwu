@@ -2,6 +2,7 @@ import {validateSketch} from './sketch/contract.mjs';
 import {createSketchEditor,sketchImage} from './sketch/editor.mjs';
 import {workAnswerPresentation,encodeWorkGroups,decodeWorkGroups} from './quiz-work-answer-layout.mjs';
 import {splitWorkSketch,mergeWorkSketch} from './quiz-work-sketch-groups.mjs';
+import {groupingDrawingPlan,renderGroupingDrawing} from './quiz-grouping-drawing.mjs';
 
 const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 const make=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
@@ -21,12 +22,18 @@ export function workResponseError(q,value){
   if(value.length>250)return parts?'這些算式合併後太長，請縮短後再儲存。':'請輸入算式或計算過程，最多250字。';
   return parts?.some(s=>!s.trim())?'請完成每一項算式紀錄。':'';
  }
- try{validateSketch(value);const labels=workAnswerPresentation(q)?.sketchGroups,parts=labels&&splitWorkSketch(value,labels.length);return parts?.some(p=>!p.strokes.length)?'請完成每一小題的直式紀錄。':'';}catch{return '請在直式作答區寫下計算過程，每張紙最多80筆。';}
+ try{validateSketch(value);const labels=workAnswerPresentation(q)?.sketchGroups,parts=labels&&splitWorkSketch(value,labels.length);return parts?.some(p=>!p.strokes.length)?'請完成每一小題的直式紀錄。':'';}catch{return groupingDrawingPlan(q)?'請先在原圖圈畫，再填答案。':'請在直式作答區寫下計算過程，每張紙最多80筆。';}
 }
-export function renderSavedWork(host,q,raw,{saved=true}={}){
+export function renderSavedWork(host,q,raw,{saved=true,renderContent}={}){
  if(!q.work)return;
  const section=make('section');section.className=saved?'quiz-saved-work':'quiz-pending-work';section.append(make('strong',q.work.label));
  const value=workValue(raw);
+ const grouping=renderContent&&groupingDrawingPlan(q);
+ if(grouping){
+  renderGroupingDrawing(section,grouping,{value,locked:true,renderContent});
+  if(saved)section.append(make('p','圈畫已保存，請對照教師參考圖。系統核對下方兩個數字。'));
+  host.append(section);return section;
+ }
  if(q.work.input==='expression'&&typeof value==='string'&&value.trim()){
   const groups=workAnswerPresentation(q)?.groups,parts=groups&&decodeWorkGroups(value,groups.length);
   if(parts){const list=make('dl');groups.forEach((label,i)=>list.append(make('dt',label),make('dd',parts[i]||'（原作答未填寫）')));section.append(list);}else section.append(make('p',value));
@@ -37,11 +44,16 @@ export function renderSavedWork(host,q,raw,{saved=true}={}){
   else{const image=sketchImage(value);image.setAttribute('aria-label',saved?'已保存的直式作答':'待確認保存的直式作答');section.append(image);}}
  section.append(make('p',saved?'計算過程已保存，請對照參考解法核對；系統只判分答案欄。':'正在確認保存結果，請使用原送答按鈕重試。'));host.append(section);return section;
 }
-export function renderWorkInput(host,q,{raw,locked,saved=locked,onChange}){
+export function renderWorkInput(host,q,{raw,locked,saved=locked,onChange,renderContent}){
  if(!q.work)return null;
  if(!validWorkSpec(q))throw Error('invalid_work_spec');
- if(locked){renderSavedWork(host,q,raw,{saved});return null;}
+ if(locked){renderSavedWork(host,q,raw,{saved,renderContent});return null;}
  const section=make('section');section.className='quiz-work-input';const label=make('label',q.work.label);section.append(label);
+ const grouping=renderContent&&groupingDrawingPlan(q);
+ if(grouping){
+  const editor=renderGroupingDrawing(section,grouping,{value:workValue(raw),onChange,locked:false,renderContent});
+  if(editor){host.append(section);return editor;}
+ }
  let editor=null;
  if(q.work.input==='sketch'){
   const labels=workAnswerPresentation(q)?.sketchGroups,parts=labels&&splitWorkSketch(workValue(raw),labels.length);

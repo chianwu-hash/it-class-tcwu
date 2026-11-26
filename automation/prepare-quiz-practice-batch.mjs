@@ -5,12 +5,14 @@ import {randomUUID} from 'node:crypto';
 import {loadBatch,readJson,digest,expectedResponse,practiceWriteIntent,freezeJson,recordBatchTime} from './lib/quiz-batch-plan.mjs';
 import {arrangementPlan} from '../shared/quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from '../shared/quiz-grid-drawing.mjs';
+import {groupingDrawingPlan} from '../shared/quiz-grouping-drawing.mjs';
 import {validateDocument} from '../shared/quiz-document.mjs';
 import {setupProductionQuizDB} from './fixtures/production-quiz-db.mjs';
 import {batchMediaAssets} from './lib/quiz-batch-media.mjs';
 import {atomicPairCases} from './lib/quiz-batch-atomic-pairs.mjs';
 
 const reviewedSketch = q => gridDrawingPlan(q) || arrangementPlan(q);
+const hasDrawingReference = q => reviewedSketch(q) || groupingDrawingPlan(q);
 const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
 for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.ok(['fields','single','open'].includes(q.type));if(q.type==='single'){assert.ok(!q.work);continue;}if(q.type==='open'){assert.ok(!q.work && (reviewedSketch(q) ? q.explanation.media.length===1 && q.explanation.media[0].kind==='image' : q.fields.every(f=>f.input==='text') && !q.explanation.media.length), 'Open media requires an independently reviewed grid answer');expectedResponse(q,undefined,p.openResponses?.[q.id]);continue;}if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set'].includes(f.input)));}}
 await recordBatchTime(p,packetSha,'packet-validated');
@@ -29,7 +31,11 @@ const publications=[{...ids,doc,rows,access:'practice',user:owner},...ids.sample
  return {...s,doc:validateDocument({...c.doc,title:p.title,blocks:[{...b,questions:b.questions.filter(q=>q.id===s.question_id)}]}),rows:rows.filter(r=>r.question_id===s.question_id),access:'self',user:student};})];
 // A reference may reveal only its own saved drawing, even when other items share a grid image.
 const drawingReferences = publications[0].doc.blocks.flatMap(block => block.questions
- .filter(q => reviewedSketch(q)).map(q => [q.id, q.explanation.media[0].url]));
+ .filter(q => hasDrawingReference(q)).map(q => {
+   assert.equal(q.explanation.media.length,1);
+   assert.equal(q.explanation.media[0].kind,'image');
+   return [q.id, q.explanation.media[0].url];
+ }));
 const drawingOwners = new Map(drawingReferences.map(([id,url]) => [url,id]));
 assert.equal(drawingOwners.size,drawingReferences.length,'Drawing references must be unique to a question');
 for(const [url,id] of drawingOwners){
@@ -122,6 +128,7 @@ try{
   const tupleCases=single||open?{correct:[],incorrect:[]}:atomicPairCases(qn,response);
   const wrong=reviewedSketch(qn)?[]:single?qn.options.filter(o=>o.id!==response).map(o=>o.id):fields.map(field=>{const bad=structuredClone(response);if(field.input==='single'){const wrong=field.options.find(o=>!qn.answer.fields[field.id].includes(o.id));assert.ok(wrong,'Need an independently incorrect option');bad.f[field.id]=wrong.id;}else if(field.input==='set'){const ids=new Set(response.f[field.id]),toggle=field.options[0].id;ids.has(toggle)?ids.delete(toggle):ids.add(toggle);bad.f[field.id]=[...ids];}else bad.f[field.id]='999999';return bad;});
   const variants=[response,...wrong,...aliases,...acceptedAlternatives,...tupleCases.correct];
+  if(groupingDrawingPlan(qn))variants.push({...response,w:{version:1,strokes:[[[.1,.1],[.2,.1],[.2,.2],[.1,.2],[.1,.1]]]}});
   const tupleIncorrectStart=variants.length;variants.push(...tupleCases.incorrect);
   for(const [i,value] of variants.entries()){const shouldPass=(i===0||i>wrong.length)&&i<tupleIncorrectStart;
    await db.exec('reset role');const bank=randomUUID(),version=randomUUID(),session=randomUUID();
@@ -137,25 +144,30 @@ try{
     const own=item.id===qn.id,itemValue=own?value:responseFor(item),encoded=item.type==='single'?itemValue:JSON.stringify(itemValue),args={session_id:session,question_id:item.id,response:encoded,request_id:randomUUID(),compact:true};
     if(own&&i===0&&item.work){const missing={...itemValue};delete missing.w;await assert.rejects(action('submit',{...args,response:JSON.stringify(missing)}));}
     if(item.type==='open'&&own&&i===0){await assert.rejects(action('self_check',{session_id:session,question_id:item.id,request_id:randomUUID(),self_rating:'understood',self_note:''}),/open_answer_required/);for(const f of item.fields){const missing=structuredClone(itemValue);delete missing.f[f.id];await assert.rejects(action('submit',{...args,response:JSON.stringify(missing)}));const empty=structuredClone(itemValue);empty.f[f.id]=f.input==='sketch'?{version:1,strokes:[]}:' ';await assert.rejects(action('submit',{...args,response:JSON.stringify(empty)}));const long=structuredClone(itemValue);long.f[f.id]=f.input==='sketch'?{version:1,strokes:[[[0,0],[2,1]]]}:'字'.repeat(251);await assert.rejects(action('submit',{...args,response:JSON.stringify(long)}));}}
-    const grid=reviewedSketch(item);
+    const drawing=hasDrawingReference(item),grouping=groupingDrawingPlan(item);
+    if(grouping&&own&&i===0){
+     for(const strokes of [[],[[[0,0],[2,1]]]]){
+      await assert.rejects(action('submit',{...args,response:JSON.stringify({...itemValue,w:{version:1,strokes}})}));
+     }
+    }
     async function checkDrawingReference(expected){
      await db.exec('reset role');
      const report=await db.query('select public.quiz_media_visible($1,$2) visible',[item.explanation.media[0].url,before.attempt_id]);
      assert.equal(report.rows[0].visible,expected);drawingReferenceChecks++;
      await actor(student);
     }
-    if(grid)await checkDrawingReference(false);
+    if(drawing)await checkDrawingReference(false);
     await action('submit',args);if(own&&i===0)await action('submit',args);expectedResponses[item.id]=encoded;
+    if(drawing)await checkDrawingReference(true);
     if(item.type==='open'){
-     if(grid)await checkDrawingReference(true);
      const pending=await action('resume',{session_id:session}),review=pending.reviews.find(r=>r.question_id===item.id);assert.equal(review.correct,null);assert.notEqual(review.assessment.status,'self_checked');assert.equal(pending.complete,false);
-     if(grid)assert.deepEqual(review.explanation.media,item.explanation.media);
+     if(drawing)assert.deepEqual(review.explanation.media,item.explanation.media);
      const next=c.doc.blocks[0].questions[c.doc.blocks[0].questions.indexOf(item)+1];if(next)await assert.rejects(action('view_question',{session_id:session,question_id:next.id}),/question_order/);
      const self={session_id:session,question_id:item.id,request_id:randomUUID(),self_rating:own&&i>0?'practice':'understood',self_note:'',compact:true};if(own&&i===0)await assert.rejects(action('self_check',{...self,request_id:args.request_id}),/submission_conflict/);await action('self_check',self);await action('self_check',self);
      const saved=await action('resume',{session_id:session}),checked=saved.reviews.find(r=>r.question_id===item.id);assert.equal(checked.correct,null);assert.equal(checked.assessment.status,'self_checked');assert.equal(checked.assessment.rating,self.self_rating);
     }
    }
-   const after=await action('resume',{session_id:session});assert.equal(after.complete,true);assert.deepEqual(after.responses,expectedResponses);for(const review of after.reviews){const own=review.question_id===qn.id,q=c.doc.blocks[0].questions.find(q=>q.id===review.question_id);assert.equal(review.correct,q.type==='open'?null:own?shouldPass:true);if(q.type==='open')assert.equal(review.assessment.status,'self_checked');assert.deepEqual(review.answer,q.answer);}cases++;
+   const after=await action('resume',{session_id:session});assert.equal(after.complete,true);assert.deepEqual(after.responses,expectedResponses);for(const review of after.reviews){const own=review.question_id===qn.id,q=c.doc.blocks[0].questions.find(q=>q.id===review.question_id);assert.equal(review.correct,q.type==='open'?null:own?shouldPass:true);if(q.type==='open')assert.equal(review.assessment.status,'self_checked');if(groupingDrawingPlan(q))assert.deepEqual(review.explanation.media,q.explanation.media);assert.deepEqual(review.answer,q.answer);}cases++;
   }
   results.push({source:c.source,question:qn.id,type:qn.type,fields:single?1:fields.length,auto_graded:!open,self_review:open,exact:true});
  }

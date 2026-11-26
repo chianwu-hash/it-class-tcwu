@@ -61,7 +61,7 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
       el('wrong-title').textContent=`${data.catalog?.subject||'未分類'}・${data.catalog?.unit||data.title}・${ref.source_type==='past_exam'?'原卷 '+data.source_label+'（'+data.field_label+'）':'第 '+data.number+' 題'}`;
       el('wrong-meta').textContent=`${ref.source_type==='past_exam'?'考古題｜本次開始時間':'作答時間'}：${new Date(data.answered_at).toLocaleString('zh-TW')}｜以下保留你當時的選項順序。`;
       const q=choiceQuestionPresentation(data.question);if(q.material?.text||q.material?.media?.length){const material=make('section',undefined,'wrong-material');material.append(make('h4','共用材料'));content(material,q.material);article.append(material);}
-      content(article,fieldsPromptPresentation(q));
+      content(article,fieldsPromptPresentation(q,{showGroupingBoard:Boolean(data.response)}));
       if(q.type==='fields')renderFieldsChoices(article,q,{renderContent:content,raw:data.response,review:data.review});
       const choices=make('div',undefined,'wrong-choices'),display=q.type==='single'?booleanChoicePresentation(q.options):null;
       for(const [index,o] of (q.options||[]).entries()){

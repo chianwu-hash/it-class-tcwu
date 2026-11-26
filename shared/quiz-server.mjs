@@ -186,7 +186,7 @@ export function initServerQuiz({ selectors, server }) {
       for (const [index, q] of questions.entries()) {
         const article = make('article', undefined, 'question'); article.dataset.questionId = q.id;
         article.append(make('h3', `第 ${index + 1} 題 / ${questions.length} 題`));
-        renderContent(article, q.material); if(!readingWorkbenchSupported(q,readingPresentation(q)))renderContent(article, fieldsPromptPresentation(q));
+        renderContent(article, q.material); if(!readingWorkbenchSupported(q,readingPresentation(q)))renderContent(article, fieldsPromptPresentation(q,{showGroupingBoard:Boolean(state.responses[q.id])}));
         article.append(make('p', `你的答案：${['fields','open'].includes(q.type) ? fieldsResponseSummary(q,state.responses[q.id]) : q.type === 'single' ? choiceAnswerLabel(q,state.responses[q.id]) : state.responses[q.id]}`));
         if(q.type==='fields')renderFieldsChoices(article,q,{renderContent,raw:state.responses[q.id],review:state.reviews.find(r=>r.question_id===q.id)});
         if(q.type==='open')renderOpenSavedSketches(article,q,state.responses[q.id],{renderContent});
@@ -213,7 +213,7 @@ export function initServerQuiz({ selectors, server }) {
     const readingLayout=readingPresentation(q);
     if(readingWorkbenchSupported(q,readingLayout)){}
     else if(readingLayout&&!readingLayout.standalone){const promptHost=make('section',undefined,'quiz-question-prompt');promptHost.tabIndex=0;promptHost.setAttribute('aria-label','閱讀文章與補充說明');promptHost.append(make('h4','閱讀文章'),make('p','文章可向下捲動；各小題與選項在作答區。','helper'));renderContent(promptHost,fieldsPromptPresentation(q));article.append(promptHost);}
-    else renderContent(article, fieldsPromptPresentation(q));
+    else renderContent(article, fieldsPromptPresentation(q,{showGroupingBoard:true}));
     const inputs = make('fieldset');
     // 鎖住作答控制項，保留已作答選項內圖片的燈箱操作。
     const choicesLocked = saved || Boolean(pending) || busy || state.status === 'closed';
