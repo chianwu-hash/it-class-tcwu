@@ -89,6 +89,26 @@ export function fractionRectPlan(q) {
   return {image,width,height,maxWidth:470,regions,passage:{...prompt,media:[]},integerIds:new Set()};
 }
 
+const matchingCircles = [
+  ['75d6db49c80dfa72259a2065ca28d6b177eaa7d805cc49d439cd6c8a77d68e8a',349,354,4,173.5,178,156.5,159,-90],
+  ['ddd6aee9b1a8a59a055bb3597328c1554273369bc5c2e78c76fdcccd7489756d',351,363,6,169,182.5,165,166.5,0],
+  ['ef30e22a42af6e73edea1a2a417355b271d5102ae88b6dbf8edfd95ca2440ad4',347,352,8,167,179,159,161,-90],
+];
+
+export const isFractionShadingMatch = q => /^hlg3m_05587b62_fraction_match_[1-3]$/u.test(q?.id ?? '');
+export function fractionShadingMatchPlan(q) {
+  if(!isFractionShadingMatch(q)||q.type!=='fields'||q.work?.input!=='sketch'||q.prompt?.layout||
+      q.prompt?.media?.length!==1||q.fields?.length!==2) return null;
+  const [colored,match]=q.fields;
+  if(colored.id!=='colored'||colored.input!=='math'||match.id!=='match'||match.input!=='single'||
+      match.options?.map(o=>o.id).join(',')!=='whole,half') return null;
+  const [sha,width,height,...geometry]=matchingCircles[Number(q.id.at(-1))-1];
+  const [image]=q.prompt.media;
+  if(image.kind!=='image'||!image.url?.startsWith('https://quiz-media.invalid/')||!image.url.endsWith('/'+sha))return null;
+  return {image,width,height,maxWidth:290,regions:makePaths('circle',geometry),
+    passage:{...q.prompt,media:[]},integerIds:new Set()};
+}
+
 export function fractionShadingResponse(plan,selected) {
   const marks=plan.regions.flatMap((region,index)=>selected.has(region.id)?[[[(index+1)/32,.5]]]:[]);
   return {v:1,f:{colored:String(marks.length)},w:{version:1,strokes:marks}};

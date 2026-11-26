@@ -21,7 +21,7 @@ import {isFractionPartition,fractionPartitionPlan,readFractionPartition,renderFr
 import {isSourceRoute,sourceRoutePlan,readSourceRoute,renderSourceRoute,sourceRouteSummary} from './quiz-source-route.mjs';
 import {fractionColorsPlan,isFractionColorsQuestion,readFractionColors,renderFractionColors} from './quiz-fraction-colors.mjs';
 import {fractionComparisonPlan,readFractionComparison,renderFractionComparison} from './quiz-fraction-comparison.mjs';
-import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,readFractionShading,renderFractionShading} from './quiz-fraction-shading.mjs';
+import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,isFractionShadingMatch,fractionShadingMatchPlan,readFractionShading,renderFractionShading} from './quiz-fraction-shading.mjs';
 export {fieldsAreSingleChoice,fieldsPromptPresentation} from './quiz-fields-presentation.mjs';
 
 const integerFields = {
@@ -50,7 +50,9 @@ export function fieldsResponseError(q,raw){
  const colors=fractionColorsPlan(q);
  if(isFractionColorsQuestion(q)&&!colors)return '這題的圖片與塗色區不符，請回報題目。';
  const fraction=fractionComparisonPlan(q);
- const shading=fractionShadingPlan(q)||fractionBarPlan(q)||fractionRectPlan(q);
+ const matchingShade=fractionShadingMatchPlan(q);
+ if(isFractionShadingMatch(q)&&!matchingShade)return '這題的原圖與塗色區不符，請回報題目。';
+ const shading=fractionShadingPlan(q)||fractionBarPlan(q)||fractionRectPlan(q)||matchingShade;
  if(colors&&!raw)return '請把蛋糕每一片都塗上顏色。';
  if(shading&&!raw)return '請在原圖塗色，再送出答案。';
  if(fraction&&!raw)return '請在兩個圓上塗色，再選比較符號。';
@@ -104,7 +106,8 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
   value:{f:fieldsValues(q,raw),w:workValue(raw)},locked,
   feedback:locked?fieldsReviewPresentation(q,raw,review):null,onChange,renderContent,
  }))return host.lastElementChild;
- const bar=fractionBarPlan(q)||rectangle;
+ const matchingShade=fractionShadingMatchPlan(q);
+ const bar=fractionBarPlan(q)||rectangle||matchingShade;
  const grouping=groupingDrawingPlan(q),values=fieldsValues(q,raw),group=make('div'),phonetic=phoneticWordFields(choiceQuestionPresentation(q));group.className='quiz-fields';group.classList.toggle('quiz-fields-single',q.fields.length===1);
  const workLayout=workAnswerPresentation(q);if(workLayout)group.classList.add('quiz-work-answer-layout');
  const inline=inlineReadingPlan(q),reading=inline?.reading??readingPresentation(choiceQuestionPresentation(q));group.classList.toggle('quiz-reading-fields',Boolean(reading));
@@ -114,7 +117,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
  let work=workValue(raw);
  const changed=()=>onChange(JSON.stringify({v:1,f:values,...(q.work?{w:work}:{} )}));
  const onBar=bar&&renderFractionShading(group,bar,{response:{f:values,w:work},locked,review:locked?review:null,
-  renderContent,showCount:false,onChange:payload=>{
+  renderContent,showCount:Boolean(matchingShade),onChange:payload=>{
    const next=JSON.parse(payload);
    values.colored=next.f.colored;work=next.w;changed();
   }});
@@ -123,7 +126,7 @@ export function renderFieldsInputs(host,q,{raw='',locked=false,saved=locked,onCh
   const editor=renderWorkInput(group,q,{raw,locked,saved,renderContent,onChange:value=>{work=value;changed()}});
   group.sketchEditors=editor?[editor]:[];
  }
- if(!fieldsAreSingleChoice(q)&&matching?.covered.size!==q.fields.length)group.append(make('p',feedback?'你原本的作答已保留；請看各小題旁的核對結果。':q.fields.length===1?'填好答案後送出。':'依照題目順序填好每格，再一起送出。'));
+ if(!matchingShade&&!fieldsAreSingleChoice(q)&&matching?.covered.size!==q.fields.length)group.append(make('p',feedback?'你原本的作答已保留；請看各小題旁的核對結果。':q.fields.length===1?'填好答案後送出。':'依照題目順序填好每格，再一起送出。'));
  for(const [fieldIndex,storedField] of q.fields.entries()){
   if(onBar&&storedField.id==='colored')continue;
   if(matching?.covered.has(fieldIndex)){
@@ -179,7 +182,7 @@ export function renderFieldsChoices(host,q,{renderContent,raw='',review=null,ref
   }
   return;
  }
- if(raw&&showWork&&(fractionColorsPlan(q)||fractionComparisonPlan(q)||fractionShadingPlan(q)||fractionBarPlan(q)||fractionRectPlan(q))){renderFieldsInputs(host,q,{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
+ if(raw&&showWork&&(fractionColorsPlan(q)||fractionComparisonPlan(q)||fractionShadingPlan(q)||fractionBarPlan(q)||fractionRectPlan(q)||fractionShadingMatchPlan(q))){renderFieldsInputs(host,q,{raw,locked:true,saved:true,onChange:()=>{},renderContent,review});return;}
  const circle=circleColoringPlan(q);
  if(circle&&renderCircleColoring(host,circle,{value:raw?fieldsValues(q,raw).regions:referenceAnswer?.fields?.regions?.[0],locked:true,correct:raw?review?.correct:undefined,renderContent}))return;
  if(!raw&&answerTemplatePresentation(choiceQuestionPresentation(q))?.mode==='image-item-marks'){

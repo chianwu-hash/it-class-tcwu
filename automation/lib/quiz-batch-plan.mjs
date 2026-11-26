@@ -10,7 +10,7 @@ import {isFractionPartition,fractionPartitionPlan,fractionPartitionVariants} fro
 import {isSourceRoute,sourceRoutePlan,readSourceRoute} from '../../shared/quiz-source-route.mjs';
 import {fractionColorsPlan,isFractionColorsQuestion,readFractionColors} from '../../shared/quiz-fraction-colors.mjs';
 import {fractionComparisonPlan,readFractionComparison} from '../../shared/quiz-fraction-comparison.mjs';
-import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,readFractionShading} from '../../shared/quiz-fraction-shading.mjs';
+import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,isFractionShadingMatch,fractionShadingMatchPlan,readFractionShading} from '../../shared/quiz-fraction-shading.mjs';
 
 export const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 export const readJson = async file => JSON.parse((await fs.readFile(file, 'utf8')).replace(/^\uFEFF/, ''));
@@ -92,7 +92,7 @@ export function expectedResponse(question, work, openResponse) {
   if (fraction) assert.ok(readFractionComparison(fraction,response),'Reviewed shading must match both stored counts');
   if (/_fraction_(?:(?:bar|rect)_)?shade_\d+$/u.test(question.id)||
       question.work?.input==='sketch'&&question.fields.some(f=>f.id==='colored')) {
-    const shading=fractionShadingPlan(question)||fractionBarPlan(question)||fractionRectPlan(question);
+    const shading=fractionShadingPlan(question)||fractionBarPlan(question)||fractionRectPlan(question)||fractionShadingMatchPlan(question);
     assert.ok(shading&&readFractionShading(shading,response)?.size,'Reviewed shading must match the image and stored count');
   }
   return response;
@@ -107,6 +107,17 @@ export async function loadBatch(file) {
   assert.equal(packet.studyRows.length, counts.questions);
   const questions = packet.candidates.flatMap(c => c.doc.blocks.flatMap(b => b.questions));
   assert.deepEqual(new Set(packet.studyRows.map(r => r.question_id)), new Set(questions.map(q => q.id)));
+  const fractionMatches = questions.filter(isFractionShadingMatch);
+  if(fractionMatches.length){
+    assert.deepEqual(Object.keys(packet.fractionMatchingReferenceSha??{}).sort(),fractionMatches.map(q=>q.id).sort());
+    for(const q of fractionMatches){
+      const expected = packet.fractionMatchingReferenceSha[q.id];
+      const media = q.explanation.media;
+      assert.match(expected,/^[a-f0-9]{64}$/u);
+      assert.ok(media.length===1 && media[0].kind==='image' && media[0].url.endsWith('/'+expected),
+        'Shading reference must match the reviewed sector count');
+    }
+  }
   validatePageBindings(packet.pages);
   for (const row of packet.studyRows) {
     assert.ok(row.reference.includes(row.primary));

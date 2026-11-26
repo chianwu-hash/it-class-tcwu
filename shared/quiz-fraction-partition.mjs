@@ -97,7 +97,7 @@ export function renderFractionPartition(host,plan,{value,locked,review,onChange,
   const changeNotice = doc.createElement('p');
   changeNotice.setAttribute('role','status');
   section.append(note,controls,board,changeNotice);
-  note.textContent = locked ? fractionPartitionSummary(value) : '先選一種分法，再點色紙上的區塊塗色。換分法會清除塗色。';
+  note.textContent = locked ? (review?'':fractionPartitionSummary(value)) : '先選一種分法，再點色紙上的區塊塗色。換分法會清除塗色。';
   const update = () => onChange([layout,...marks].join('-'));
   const buttons = new Map();
   for (const [key,{label}] of locked ? [] : Object.entries(layouts)) {
@@ -123,7 +123,7 @@ export function renderFractionPartition(host,plan,{value,locked,review,onChange,
         (locked?'':'點一下區塊塗色，再點一下可清除。') : (locked?'':'')},{
       value:marks,locked,renderContent,
       countText: chosen => locked
-        ? (review?.correct === true ? '答對了。' : review?.correct === false ? '再想想要分成幾等分、塗哪一部分。' : '')
+        ? (review?.correct === false ? '再想想要分成幾等分、塗哪一部分。' : '')
         : layout ? (chosen.size ? `已塗 ${chosen.size} 塊。` : '還沒有塗色。') : '',
       onChange: next => {marks=next??[];update();}
     });
