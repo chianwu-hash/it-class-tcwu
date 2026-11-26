@@ -6,6 +6,7 @@ import {validateDocument} from '../../shared/quiz-document.mjs';
 import {batchMediaAssets} from './quiz-batch-media.mjs';
 import {arrangementPlan,readArrangement} from '../../shared/quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from '../../shared/quiz-grid-drawing.mjs';
+import {fractionComparisonPlan,readFractionComparison} from '../../shared/quiz-fraction-comparison.mjs';
 
 export const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 export const readJson = async file => JSON.parse((await fs.readFile(file, 'utf8')).replace(/^\uFEFF/, ''));
@@ -66,7 +67,10 @@ export function expectedResponse(question, work, openResponse) {
   if (question.work?.input==='expression') assert.ok(typeof work==='string'&&work.trim());
   else if(question.work?.input==='sketch')validateSketch(work);
   else assert.ok(!question.work);
-  return {v: 1, f: fields, ...(question.work ? {w: work} : {})};
+  const response = {v: 1, f: fields, ...(question.work ? {w: work} : {})};
+  const fraction = fractionComparisonPlan(question);
+  if (fraction) assert.ok(readFractionComparison(fraction,response),'Reviewed shading must match both stored counts');
+  return response;
 }
 
 export async function loadBatch(file) {
