@@ -28,6 +28,11 @@ function alternateShading(plan, left, right, comparison, offset=0){
 }
 const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
 for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.ok(['fields','single','open'].includes(q.type));if(q.type==='single'){assert.ok(!q.work);continue;}if(q.type==='open'){assert.ok(!q.work && (reviewedSketch(q) ? q.explanation.media.length===1 && q.explanation.media[0].kind==='image' : q.fields.every(f=>f.input==='text') && !q.explanation.media.length), 'Open media requires an independently reviewed grid answer');expectedResponse(q,undefined,p.openResponses?.[q.id]);continue;}if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(fractionComparisonPlan(q)||q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set'].includes(f.input)));}}
+for(const c of p.candidates)for(const block of c.doc.blocks){
+ const firstArrangement=block.questions.findIndex(arrangementPlan);
+ if(firstArrangement>=0)assert.ok(block.questions.slice(firstArrangement+1).every(q=>q.type==='open' || !q.fields?.some(f=>f.input==='math')),
+   'Complete the numeric fields before revealing drawing references');
+}
 await recordBatchTime(p,packetSha,'packet-validated');
 const file=s=>path.join(p.outputDir,p.prefix+'-'+s+'.private');
 const save=(s,v)=>fs.writeFile(file(s)+'.json',JSON.stringify(v,null,2)+'\n');

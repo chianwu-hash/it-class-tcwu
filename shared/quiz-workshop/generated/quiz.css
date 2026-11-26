@@ -464,6 +464,12 @@ button.quiz-sector-color:focus-visible{outline:3px solid #16396f;outline-offset:
 .quiz-fraction-symbol-choices .student-option{display:flex;align-items:center;gap:.5rem;min-width:4.5rem;min-height:44px}
 .quiz-fraction-symbol-choices .student-option>span{font-weight:700;font-size:1.4em}
 
+.quiz-matchstick-board{display:block;width:min(100%,460px);height:auto}
+.quiz-matchstick-point{fill:#d8eaee;stroke:#2c6373;stroke-width:1.5;cursor:pointer}
+.quiz-matchstick-point[aria-pressed="true"]{fill:#4db5d1;stroke:#145270}
+.quiz-matchstick-point:focus-visible{outline:none;stroke:#12395d;stroke-width:3}
+.quiz-matchstick-stick{stroke:#874821;stroke-width:7;stroke-linecap:round}
+
 
 
 /* ============ QuizFeedbackMotion：只作用在 .qfm-actor 之下 ============ */
