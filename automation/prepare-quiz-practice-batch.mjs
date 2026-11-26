@@ -10,14 +10,14 @@ import {fractionPartitionPlan,fractionPartitionVariants} from '../shared/quiz-fr
 import {sourceRoutePlan,readSourceRoute} from '../shared/quiz-source-route.mjs';
 import {fractionColorsPlan,fractionColorsResponse,readFractionColors} from '../shared/quiz-fraction-colors.mjs';
 import {fractionComparisonPlan,fractionComparisonResponse} from '../shared/quiz-fraction-comparison.mjs';
-import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,fractionShadingResponse} from '../shared/quiz-fraction-shading.mjs';
+import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,fractionShadingMatchPlan,fractionShadingResponse} from '../shared/quiz-fraction-shading.mjs';
 import {validateDocument} from '../shared/quiz-document.mjs';
 import {setupProductionQuizDB} from './fixtures/production-quiz-db.mjs';
 import {batchMediaAssets} from './lib/quiz-batch-media.mjs';
 import {atomicPairCases} from './lib/quiz-batch-atomic-pairs.mjs';
 
 const reviewedSketch = q => gridDrawingPlan(q) || arrangementPlan(q);
-const shadingPlan = q => fractionShadingPlan(q) || fractionBarPlan(q) || fractionRectPlan(q);
+const shadingPlan = q => fractionShadingPlan(q) || fractionBarPlan(q) || fractionRectPlan(q) || fractionShadingMatchPlan(q);
 const hasDrawingReference = q => reviewedSketch(q) || groupingDrawingPlan(q) || fractionComparisonPlan(q) || shadingPlan(q) || fractionPartitionPlan(q);
 function responseWithShading(response,plan,ids){
  const shaded=fractionShadingResponse(plan,new Set(ids));
@@ -29,7 +29,7 @@ function alternateShading(plan, left, right, comparison, offset=0){
  return fractionComparisonResponse(plan,ids,comparison);
 }
 const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
-for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.ok(['fields','single','open'].includes(q.type));if(q.type==='single'){assert.ok(!q.work);continue;}if(q.type==='open'){assert.ok(!q.work && (reviewedSketch(q) ? q.explanation.media.length===1 && q.explanation.media[0].kind==='image' : q.fields.every(f=>f.input==='text') && !q.explanation.media.length), 'Open media requires an independently reviewed grid answer');expectedResponse(q,undefined,p.openResponses?.[q.id]);continue;}if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(fractionComparisonPlan(q)||q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set'].includes(f.input)));}}
+for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.ok(['fields','single','open'].includes(q.type));if(q.type==='single'){assert.ok(!q.work);continue;}if(q.type==='open'){assert.ok(!q.work && (reviewedSketch(q) ? q.explanation.media.length===1 && q.explanation.media[0].kind==='image' : q.fields.every(f=>f.input==='text') && !q.explanation.media.length), 'Open media requires an independently reviewed grid answer');expectedResponse(q,undefined,p.openResponses?.[q.id]);continue;}if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(fractionComparisonPlan(q)||fractionShadingMatchPlan(q)||q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set'].includes(f.input)));}}
 for(const c of p.candidates)for(const block of c.doc.blocks){
  const firstArrangement=block.questions.findIndex(arrangementPlan);
  if(firstArrangement>=0)assert.ok(block.questions.slice(firstArrangement+1).every(q=>q.type==='open' || !q.fields?.some(f=>f.input==='math')),
@@ -170,7 +170,7 @@ try{
    return fractionColorsResponse(colors,changed);
   }):shading?[
    responseWithShading(response,shading,shading.regions.slice(0,response.f.colored==='1'?2:1).map(r=>r.id)),
-   ...fields.filter(f=>f.id!=='colored').map(f=>({...response,f:{...response.f,[f.id]:'999999'}})),
+   ...fields.filter(f=>f.id!=='colored').map(f=>({...response,f:{...response.f,[f.id]:f.input==='single'?f.options.find(o=>!qn.answer.fields[f.id].includes(o.id)).id:'999999'}})),
   ]:fraction?[
     alternateShading(fraction,response.f.left==='1'?2:1,response.f.right,response.f.comparison),
     alternateShading(fraction,response.f.left,response.f.right==='1'?2:1,response.f.comparison),
