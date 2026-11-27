@@ -22,9 +22,11 @@ export function batchMediaAssets(packet) {
     assert.match(a.sha256,/^[a-f0-9]{64}$/);
     assert.equal(a.url,`https://quiz-media.invalid/${packet.identities.owner}/${a.sha256}`);
     assert.ok(typeof a.object_path==='string'&&a.object_path.trim());
-    assert.ok(['image/png','image/jpeg','image/webp'].includes(a.mime));
+    const expectedKind = ['image/png','image/jpeg','image/webp'].includes(a.mime)
+      ? 'image' : a.mime === 'audio/mpeg' ? 'audio' : null;
+    assert.ok(expectedKind, 'Unsupported private media MIME');
     assert.ok(Number.isSafeInteger(a.bytes)&&a.bytes>0);
-    assert.equal(media.kind,'image');
+    assert.equal(media.kind,expectedKind);
   }
   return assets;
 }

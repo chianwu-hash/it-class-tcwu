@@ -45,7 +45,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    const single=question.type==='single';
    const readResponse=state=>single?state.responses[s.question_id]:JSON.parse(state.responses[s.question_id]);
    const selectedRadio=single?article.locator('input[type=radio][value="'+expected+'"]'):null;
-   const questionImageHashes=[];
+   const questionImageHashes=[],audioChecks=[];
    const textFields=question.type==='fields'&&!question.work&&question.fields.every(field=>field.input==='text');
    const questionImages=single?[...question.prompt.media,...question.options.flatMap(option=>option.content.media)]:textFields?question.prompt.media:[];
    const studentImages=[...block.material.media.map(asset=>({asset,scope:page})),...questionImages.map(asset=>({asset,scope:article}))];
@@ -68,6 +68,38 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
     assert.deepEqual(bytes,{hash:descriptor.sha256,length:descriptor.bytes,mime:descriptor.mime});
     questionImageHashes.push(bytes.hash);
    }
+   const audible=[...block.material.media,...question.prompt.media].filter(asset=>asset.kind==='audio');
+   const verifyAudio=async()=>{
+    for(const asset of audible){
+     const descriptor=p.mediaAssets.find(item=>item.url===asset.url);
+     assert.ok(descriptor,'Original audio descriptor unavailable');
+     const player=page.locator('audio[data-quiz-media-url="'+asset.url+'"]').first();
+     await player.scrollIntoViewIfNeeded();
+     await page.waitForFunction(url=>{
+      const player=[...document.querySelectorAll('audio[data-quiz-media-url]')].find(el=>el.dataset.quizMediaUrl===url);
+      return player?.src.startsWith('https://')&&!player.error;
+     },asset.url,{timeout:30000,polling:1000});
+     const played=await player.evaluate(async(player,expected)=>{
+      if(!player.controls)throw Error('Audio playback controls unavailable');
+      const response=await fetch(player.src,{cache:'no-store'});
+      if(!response.ok)throw Error('Original audio unavailable');
+      const data=await response.arrayBuffer();
+      const hash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',data))].map(byte=>byte.toString(16).padStart(2,'0')).join('');
+      if(hash!==expected.sha256||data.byteLength!==expected.bytes||response.headers.get('content-type')?.split(';')[0]!==expected.mime)throw Error('Original audio bytes differ');
+      try {
+       await player.play();
+       await new Promise(resolve=>setTimeout(resolve,450));
+       if(player.currentTime<=0||!Number.isFinite(player.duration))throw Error('Original audio did not advance');
+       player.pause();player.currentTime=0;
+       await player.play();
+       await new Promise(resolve=>setTimeout(resolve,300));
+       if(player.currentTime<=0||player.error)throw Error('Original audio did not replay');
+       return {hash,bytes:data.byteLength,playback:true,replay:true};
+      }finally{player.pause();}
+     },descriptor);
+     audioChecks.push(played);
+    }
+   };
    if(saved){assert.deepEqual(readResponse(before),expected);assert.equal(before.reviews.find(r=>r.question_id===s.question_id)?.correct,true);}
    else assert.deepEqual(before.responses,{});
    const checkMatching=async()=>{await article.locator('.quiz-matching').waitFor();for(const f of question.fields){assert.equal(f.input,'single');const index=f.options.findIndex(o=>o.id===expected.f[f.id]);assert.equal(await article.locator('.qm-card[data-side=left][data-id=\"'+f.id+'\"] .qm-pair').innerText(),String.fromCharCode(65+index));}};
@@ -143,6 +175,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
       for(const stroke of expected.w.strokes){await page.mouse.move(rect.x+stroke[0][0]*rect.width,rect.y+stroke[0][1]*rect.height);await page.mouse.down();for(const point of stroke.slice(2))await page.mouse.move(rect.x+point[0]*rect.width,rect.y+point[1]*rect.height);await page.mouse.up();}
      }
     }
+    if(width===1280&&audible.length)await verifyAudio();
     await checkAnswer();await article.locator('.qtb-entry').click();await book.waitFor();await assertPage(ref.primary);
     await book.locator('.qtb-book-toolbar select').selectOption(String(neighbor));await assertPage(neighbor);
     await book.getByRole('button',{name:'\u56de\u672c\u984c\u9801',exact:true}).click();await assertPage(ref.primary);
@@ -153,7 +186,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    if(!saved){await page.locator('#server-submit').click();await page.locator('#server-submit').waitFor({state:'detached'});}
    let after=await read();assert.deepEqual(readResponse(after),expected);assert.equal(after.reviews.find(r=>r.question_id===s.question_id)?.correct,true);
    await page.reload({waitUntil:'domcontentloaded'});await article.waitFor();after=await read();assert.deepEqual(readResponse(after),expected);
-   proof.samples.push({source:s.source,question:s.question_id,session:s.session,version:s.version,package:s.pkg,checks,correct:true,saved_and_reopened:true,reused_saved_answer:saved,...(questionImageHashes.length?{question_image_sha256:questionImageHashes}:{})});
+   proof.samples.push({source:s.source,question:s.question_id,session:s.session,version:s.version,package:s.pkg,checks,correct:true,saved_and_reopened:true,reused_saved_answer:saved,...(questionImageHashes.length?{question_image_sha256:questionImageHashes}:{}),...(audioChecks.length?{audio_checks:audioChecks}:{})});
    await fs.writeFile(file('oauth-progress'),JSON.stringify(proof,null,2));
   }
   assert.equal(proof.samples.length,n.samples);proof.sampleCount=proof.samples.length;proof.passed=true;
