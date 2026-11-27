@@ -33,7 +33,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
   for(const s of ids.samples){
    const block=p.candidates.flatMap(c=>c.doc.blocks).find(b=>b.questions.some(q=>q.id===s.question_id));
    const question=block.questions.find(q=>q.id===s.question_id);
-   const expected=plan.sampleExpected[s.question_id];assert.deepEqual(expected,expectedResponse(question,s.work));const ref=p.studyRows.find(r=>r.question_id===s.question_id);
+   const expected=plan.sampleExpected[s.question_id];assert.deepEqual(expected,expectedResponse(question,s.work,p.openResponses?.[s.question_id]));const ref=p.studyRows.find(r=>r.question_id===s.question_id);
    const primaryPage=p.pages.find(a=>a.printedPages.includes(ref.primary));const neighbor=p.pages.filter(a=>a.id!==primaryPage.id).sort((a,b)=>Math.abs(a.printed-ref.primary)-Math.abs(b.printed-ref.primary))[0]?.printedPages[0];assert.ok(neighbor);
    await page.goto('https://it-class-tcwu.vercel.app/grade3/115-1/quiz.html?cloud=1&session='+s.session,{waitUntil:'domcontentloaded',timeout:45000});
    const article=page.locator('article.question[data-question-id="'+s.question_id+'"]');await article.waitFor();await identity();
@@ -43,6 +43,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    assert.deepEqual(before.refs[s.question_id],{bookId:plan.book,primary:ref.primary,references:ref.reference,fields:[]});
    const saved=before.responses[s.question_id]!==undefined;
    const single=question.type==='single';
+   const open=question.type==='open';
    const readResponse=state=>single?state.responses[s.question_id]:JSON.parse(state.responses[s.question_id]);
    const selectedRadio=single?article.locator('input[type=radio][value="'+expected+'"]'):null;
    const questionImageHashes=[],audioChecks=[];
@@ -100,7 +101,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
      audioChecks.push(played);
     }
    };
-   if(saved){assert.deepEqual(readResponse(before),expected);assert.equal(before.reviews.find(r=>r.question_id===s.question_id)?.correct,true);}
+   if(saved){assert.deepEqual(readResponse(before),expected);assert.equal(before.reviews.find(r=>r.question_id===s.question_id)?.correct,open?null:true);}
    else assert.deepEqual(before.responses,{});
    const checkMatching=async()=>{await article.locator('.quiz-matching').waitFor();for(const f of question.fields){assert.equal(f.input,'single');const index=f.options.findIndex(o=>o.id===expected.f[f.id]);assert.equal(await article.locator('.qm-card[data-side=left][data-id=\"'+f.id+'\"] .qm-pair').innerText(),String.fromCharCode(65+index));}};
    const matching=matchingPresentation(question),isMatching=Boolean(matching);if(isMatching)assert.equal(matching.covered.size,question.fields.length);
@@ -139,6 +140,11 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
     }
    };
    const checkAnswer=async()=>{
+    if(open){
+     if(saved)assert.deepEqual(readResponse(await read()),expected);
+     else for(const [id,value] of Object.entries(expected.f))assert.equal(await article.locator('#open-'+s.question_id+'-'+id).inputValue(),value);
+     return;
+    }
     if(single){
      if(!saved)assert.ok(await selectedRadio.isChecked());
      else assert.equal(readResponse(await read()),expected);
@@ -161,6 +167,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
     await page.setViewportSize({width,height:960});
     if(!saved){
      if(single){if(width===1280)await selectedRadio.check();}
+     else if(open){for(const [id,value] of Object.entries(expected.f))await article.locator('#open-'+s.question_id+'-'+id).fill(value);}
      else if(!question.work&&isMatching){await article.locator('.quiz-matching').waitFor();for(const [id,value] of Object.entries(expected.f)){await article.locator('.qm-card[data-side=left][data-id=\"'+id+'\"]').click();await article.locator('.qm-card[data-side=right][data-id=\"'+value+'\"]').click();}}
      else if(!question.work){for(const [i,f] of question.fields.entries()){
       if(f.input==='sequence'){if(width===1280)await setSequence(i,expected.f[f.id]);}
@@ -184,9 +191,25 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    }
    // Resume is checked before any submit; a saved exact response is never resent.
    if(!saved){await page.locator('#server-submit').click();await page.locator('#server-submit').waitFor({state:'detached'});}
-   let after=await read();assert.deepEqual(readResponse(after),expected);assert.equal(after.reviews.find(r=>r.question_id===s.question_id)?.correct,true);
+   let after=await read();assert.deepEqual(readResponse(after),expected);assert.equal(after.reviews.find(r=>r.question_id===s.question_id)?.correct,open?null:true);
    await page.reload({waitUntil:'domcontentloaded'});await article.waitFor();after=await read();assert.deepEqual(readResponse(after),expected);
-   proof.samples.push({source:s.source,question:s.question_id,session:s.session,version:s.version,package:s.pkg,checks,correct:true,saved_and_reopened:true,reused_saved_answer:saved,...(questionImageHashes.length?{question_image_sha256:questionImageHashes}:{}),...(audioChecks.length?{audio_checks:audioChecks}:{})});
+   let assessment={};
+   if(open){
+    const pending=after.reviews.find(row=>row.question_id===s.question_id);
+    assert.equal(pending.correct,null);
+    if(pending.assessment.status!=='self_checked'){
+    const selfCheck=article.getByRole('button',{name:'我的答案符合重點',exact:true});
+     await selfCheck.click();await selfCheck.waitFor({state:'detached'});
+    }
+    await page.reload({waitUntil:'domcontentloaded'});await article.waitFor();
+    const checked=await read();
+    assert.deepEqual(readResponse(checked),expected);
+    const review=checked.reviews.find(row=>row.question_id===s.question_id);
+    assert.equal(review.correct,null);
+    assert.equal(review.assessment.status,'self_checked');assert.equal(review.assessment.rating,'understood');
+    assessment={assessment_status:'self_checked',rating:'understood',self_checked_and_reopened:true};
+   }
+   proof.samples.push({source:s.source,question:s.question_id,session:s.session,version:s.version,package:s.pkg,checks,correct:open?null:true,saved_and_reopened:true,reused_saved_answer:saved,...assessment,...(questionImageHashes.length?{question_image_sha256:questionImageHashes}:{}),...(audioChecks.length?{audio_checks:audioChecks}:{})});
    await fs.writeFile(file('oauth-progress'),JSON.stringify(proof,null,2));
   }
   assert.equal(proof.samples.length,n.samples);proof.sampleCount=proof.samples.length;proof.passed=true;
