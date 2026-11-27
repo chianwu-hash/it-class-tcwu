@@ -44,6 +44,26 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    const single=question.type==='single';
    const readResponse=state=>single?state.responses[s.question_id]:JSON.parse(state.responses[s.question_id]);
    const selectedRadio=single?article.locator('input[type=radio][value="'+expected+'"]'):null;
+   const questionImageHashes=[];
+   if(single)for(const image of question.prompt.media.filter(asset=>asset.kind==='image')){
+    const descriptor=p.mediaAssets?.find(asset=>asset.url===image.url);
+    if(!descriptor)continue;
+    const rendered=article.locator('img[data-quiz-media-url="'+image.url+'"]');
+    await rendered.scrollIntoViewIfNeeded();
+    await page.waitForFunction(url=>{
+     const img=[...document.querySelectorAll('img[data-quiz-media-url]')].find(item=>item.dataset.quizMediaUrl===url);
+     return Boolean(img?.complete&&img.naturalWidth>0&&(img.currentSrc||img.src).startsWith('https://'));
+    },image.url,{timeout:30000,polling:1000});
+    const bytes=await rendered.evaluate(async img=>{
+     const response=await fetch(img.currentSrc||img.src,{cache:'no-store'});
+     if(!response.ok)throw Error('Original question image unavailable');
+     const data=await response.arrayBuffer();
+     const hash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',data))].map(byte=>byte.toString(16).padStart(2,'0')).join('');
+     return {hash,length:data.byteLength,mime:response.headers.get('content-type')};
+    });
+    assert.deepEqual(bytes,{hash:descriptor.sha256,length:descriptor.bytes,mime:descriptor.mime});
+    questionImageHashes.push(bytes.hash);
+   }
    if(saved){assert.deepEqual(readResponse(before),expected);assert.equal(before.reviews.find(r=>r.question_id===s.question_id)?.correct,true);}
    else assert.deepEqual(before.responses,{});
    const checkMatching=async()=>{await article.locator('.quiz-matching').waitFor();for(const f of question.fields){assert.equal(f.input,'single');const index=f.options.findIndex(o=>o.id===expected.f[f.id]);assert.equal(await article.locator('.qm-card[data-side=left][data-id=\"'+f.id+'\"] .qm-pair').innerText(),String.fromCharCode(65+index));}};
@@ -111,7 +131,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    if(!saved){await page.locator('#server-submit').click();await page.locator('#server-submit').waitFor({state:'detached'});}
    let after=await read();assert.deepEqual(readResponse(after),expected);assert.equal(after.reviews.find(r=>r.question_id===s.question_id)?.correct,true);
    await page.reload({waitUntil:'domcontentloaded'});await article.waitFor();after=await read();assert.deepEqual(readResponse(after),expected);
-   proof.samples.push({source:s.source,question:s.question_id,session:s.session,version:s.version,package:s.pkg,checks,correct:true,saved_and_reopened:true,reused_saved_answer:saved});
+   proof.samples.push({source:s.source,question:s.question_id,session:s.session,version:s.version,package:s.pkg,checks,correct:true,saved_and_reopened:true,reused_saved_answer:saved,...(questionImageHashes.length?{question_image_sha256:questionImageHashes}:{})});
    await fs.writeFile(file('oauth-progress'),JSON.stringify(proof,null,2));
   }
   assert.equal(proof.samples.length,n.samples);proof.sampleCount=proof.samples.length;proof.passed=true;
