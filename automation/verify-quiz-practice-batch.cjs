@@ -46,8 +46,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    const readResponse=state=>single?state.responses[s.question_id]:JSON.parse(state.responses[s.question_id]);
    const selectedRadio=single?article.locator('input[type=radio][value="'+expected+'"]'):null;
    const questionImageHashes=[],audioChecks=[];
-   const textFields=question.type==='fields'&&!question.work&&question.fields.every(field=>field.input==='text');
-   const questionImages=single?[...question.prompt.media,...question.options.flatMap(option=>option.content.media)]:textFields?question.prompt.media:[];
+   const fieldOptionImages=question.fields?.flatMap(field=>(field.options??[]).flatMap(option=>option.content.media))??[];
+   const questionImages=[...question.prompt.media,...(single?question.options.flatMap(option=>option.content.media):fieldOptionImages)];
    const studentImages=[...block.material.media.map(asset=>({asset,scope:page})),...questionImages.map(asset=>({asset,scope:article}))];
    for(const {asset:image,scope} of studentImages.filter(({asset})=>asset.kind==='image')){
     const descriptor=p.mediaAssets?.find(asset=>asset.url===image.url);
