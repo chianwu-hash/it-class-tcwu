@@ -52,7 +52,7 @@ def heard_target(script, names, rules):
     return normalized
 
 
-def convert(row, audio, second, media, book, rules):
+def convert(row, audio, second, media, book, rules, reviewed_clip=None):
     sid=row["id"]
     names=PICTURE_WORDS[sid]
     label=row["labels"][0]
@@ -77,6 +77,8 @@ def convert(row, audio, second, media, book, rules):
         require(second["sha256"]==audio["sha256"],"second_audio_sha")
     proper_asr=next((model for model,hyp in (("base.en",audio.get("asr")),("small",second.get("asr")))
                      if rules.audio_agrees(script,hyp,"choose_sentence")),None)
+    if not proper_asr and rules.clip_review_agrees(reviewed_clip,script,audio["sha256"]):
+        proper_asr="reviewed_clip"
     require(proper_asr,"audio_transcript_review")
     context=[]
     if "畫○" in label:
