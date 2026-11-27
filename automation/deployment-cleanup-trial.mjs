@@ -32,6 +32,8 @@ export function trialMarkdown(report, slot, check) {
   text += `${report.acceptanceCaveat}\n\n七天每日穩定版共 ${report.dailyBaselines.length} 筆；24小時寬限與保留規則取聯集。平台原生保留設定保持原狀，本報告不能阻止平台自行回收。\n\n`;
   if (report.issues.length) text += '需處理：\n\n' + [...new Set(report.issues)].map(i => '- ' + i).join('\n') + '\n\n';
   if (report.missingRegistered.length) text += `歷史保留登記已有 ${report.missingRegistered.length} 筆未出現在遠端清單；不擅自解除登記，候選全部撤回，完整 ID 見 inventory.json。\n\n`;
+  if (report.archivedRegistrations?.length) text += `歷史封存登記 ${report.archivedRegistrations.length} 筆，已保存原用途及逐筆查核證據；本次沒有刪除遠端部署。\n\n`;
+  if (report.knownUnavailableAliases?.length) text += `已查核但保持原狀的舊預覽網址 ${report.knownUnavailableAliases.length} 個，目標本輪兩次查詢404；不是忽略未知網址。\n\n`;
   return text + '[候選清單](cleanup-candidates.md) · [完整保留清單](retained-deployments.md) · [結構化證據](inventory.json)\n';
 }
 
@@ -69,7 +71,7 @@ export async function runTrial({configFile, check = false, now, collector}) {
       await fs.writeFile(path.join(output, 'summary.md'), trialMarkdown(report, slot, check), {flag: 'wx'});
       await fs.writeFile(path.join(output, 'cleanup-candidates.md'), inventoryMarkdown(report, 'candidates'), {flag: 'wx'});
       await fs.writeFile(path.join(output, 'retained-deployments.md'), inventoryMarkdown(report, 'retained'), {flag: 'wx'});
-      const result = {status: report.status, date: slot.date, day: check ? null : slot.day, output, productionId: report.productionId, rollbackIds: report.rollbackVersions.map(r => r.id), deploymentCount: report.deploymentCount, retained: report.retained.length, candidates: report.candidates.length, missingRegistered: report.missingRegistered.length, protectionCheck: report.protectionCheck, deletions: false, retentionChanged: false};
+      const result = {status: report.status, date: slot.date, day: check ? null : slot.day, output, productionId: report.productionId, rollbackIds: report.rollbackVersions.map(r => r.id), deploymentCount: report.deploymentCount, retained: report.retained.length, candidates: report.candidates.length, missingRegistered: report.missingRegistered.length, archivedRegistrations: report.archivedRegistrations?.length ?? 0, knownUnavailableAliases: report.knownUnavailableAliases?.length ?? 0, protectionCheck: report.protectionCheck, deletions: false, retentionChanged: false};
       await fs.writeFile(path.join(output, 'result.json'), JSON.stringify(result, null, 2) + '\n', {flag: 'wx'});
       if (!check) {
         state.completedDates.push({date: slot.date, status: report.status, output});

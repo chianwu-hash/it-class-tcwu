@@ -90,10 +90,19 @@ export function validateRegistry(registry, config) {
   if (registry?.version !== 1 || registry.projectId !== config.project.id || !Array.isArray(registry.entries)) throw Error('保留／任務登記表無效或專案不符');
   const ids = new Set();
   for (const entry of registry.entries) {
-    if (!idPattern.test(entry.id) || ids.has(entry.id) || !['protected', 'active', 'completed', 'unknown'].includes(entry.status) || typeof entry.reason !== 'string' || !entry.reason || typeof entry.evidence !== 'string' || !entry.evidence) throw Error('保留／任務登記項目無效');
+    if (!idPattern.test(entry.id) || ids.has(entry.id) || !['protected', 'active', 'completed', 'unknown', 'archived'].includes(entry.status) || typeof entry.reason !== 'string' || !entry.reason || typeof entry.evidence !== 'string' || !entry.evidence) throw Error('保留／任務登記項目無效');
     ids.add(entry.id);
     if (entry.reviewAfter !== undefined && entry.reviewAfter !== null && !validTime(entry.reviewAfter)) throw Error('複查日期無效');
     if (entry.productionHistoryReviewed !== undefined && typeof entry.productionHistoryReviewed !== 'boolean') throw Error('正式歷史用途審閱狀態無效');
+    if (entry.status === 'archived') {
+      const a = entry.archive;
+      if (!a || !validTime(a.archivedAt) || !['protected', 'active', 'unknown'].includes(a.previousStatus) || typeof a.reason !== 'string' || !a.reason || typeof a.evidence !== 'string' || !a.evidence || !Array.isArray(a.deploymentChecks) || a.deploymentChecks.length < 2 || !a.deploymentChecks.every(c => c.status === 404 && validTime(c.checkedAt)) || a.aliasReferenceCount !== 0 || a.currentProduction !== false) throw Error('歷史封存缺少逐筆遠端查核證據');
+    }
+  }
+  const names = new Set();
+  for (const review of registry.aliasReviews ?? []) {
+    if (review.status !== 'historical-unavailable' || review.projectId !== config.project.id || !review.name?.startsWith(config.project.name + '-git-') || !/^[a-z0-9.-]+$/.test(review.name) || names.has(review.name) || !idPattern.test(review.deploymentId) || !validTime(review.reviewedAt) || !review.reason || !review.evidence || !Array.isArray(review.deploymentChecks) || review.deploymentChecks.length < 2 || !review.deploymentChecks.every(c => c.status === 404 && validTime(c.checkedAt))) throw Error('舊預覽網址審閱登記無效');
+    names.add(review.name);
   }
   return registry;
 }
@@ -114,14 +123,24 @@ export function weeklyReport(snapshot, config, registry, {now = new Date()} = {}
   const productionId = snapshot.project?.productionId;
   if (!idPattern.test(productionId) || !ids.has(productionId)) issues.push('目前正式版本未包含在完整清單');
   const aliases = Array.isArray(snapshot.aliases) ? snapshot.aliases : [];
-  const aliasNames = new Set(), aliasIds = new Set();
+  const aliasNames = new Set(), aliasIds = new Set(), knownUnavailableAliases = [];
   for (const alias of aliases) {
-    if (!alias.name || aliasNames.has(alias.name) || alias.projectId !== config.project.id || !ids.has(alias.deploymentId)) issues.push('別名身份或部署對應無法核對');
+    const identityValid = alias.name && !aliasNames.has(alias.name) && alias.projectId === config.project.id;
+    if (!identityValid) issues.push('別名身份或部署對應無法核對');
+    if (!ids.has(alias.deploymentId)) {
+      const review = (registry.aliasReviews ?? []).find(r => r.name === alias.name && r.deploymentId === alias.deploymentId);
+      const checks = (snapshot.aliasTargetChecks ?? []).filter(c => c.id === alias.deploymentId);
+      const fresh = checks.length >= 2 && checks.every(c => c.status === 404 && validTime(c.checkedAt) && Date.parse(now) - Date.parse(c.checkedAt) >= -60_000 && Date.parse(now) - Date.parse(c.checkedAt) <= config.snapshotMaxAgeMinutes * 60_000);
+      if (identityValid && review && fresh && snapshot.coverage?.aliasTargetsComplete === true && snapshot.verification?.aliasTargetsUnchanged === true && alias.deploymentId !== productionId) knownUnavailableAliases.push({...alias, status: '已查核的舊預覽目標不存在；網址保持原狀', evidence: review.evidence});
+      else issues.push('別名身份或部署對應無法核對');
+    }
     aliasNames.add(alias.name); aliasIds.add(alias.deploymentId);
   }
   for (const domain of snapshot.domains ?? []) if (domain.projectId !== config.project.id || !domain.name || !domain.redirect && !aliasNames.has(domain.name)) issues.push('專案網域尚未在完整別名對應中核對：' + domain.name);
   if (!aliases.some(alias => alias.deploymentId === productionId)) issues.push('無法核對正式版本的別名');
   const registrations = new Map(registry.entries.map(entry => [entry.id, entry]));
+  const reappearedArchived = registry.entries.filter(e => e.status === 'archived' && ids.has(e.id));
+  if (reappearedArchived.length) issues.push('歷史封存版本重新出現，需重新複核，候選全部撤回');
   const retained = [], candidates = [];
   for (const deployment of deployments) {
     const reasons = [], record = registrations.get(deployment.id);
@@ -133,6 +152,7 @@ export function weeklyReport(snapshot, config, registry, {now = new Date()} = {}
     if (deployment.target === 'production' && !(record?.status === 'completed' && record.productionHistoryReviewed === true)) reasons.push('正式發布歷史，回復用途尚未明確審閱');
     if (!['READY', 'ERROR', 'CANCELED'].includes(deployment.readyState)) reasons.push('部署狀態尚在進行或未知');
     if (!record || record.status === 'unknown') reasons.push('用途未明，沒有任務已結束的正面證據');
+    if (record?.status === 'archived') reasons.push('歷史封存版本重新出現，不自動解除保護');
     if (record && ['active', 'protected'].includes(record.status)) reasons.push('登記保留：' + record.reason);
     if (record?.status === 'completed' && record.reviewAfter && Date.parse(record.reviewAfter) > Date.parse(now)) reasons.push('指定複查時間尚未到達');
     const item = {
@@ -152,6 +172,7 @@ export function weeklyReport(snapshot, config, registry, {now = new Date()} = {}
     project: config.project, productionId,
     aliasMap: aliases.map(alias => [alias.name, alias.deploymentId]).sort((a, b) => a[0].localeCompare(b[0])),
     domains: [...(snapshot.domains ?? [])].sort((a, b) => a.name.localeCompare(b.name)),
+    unavailableAliasTargets: knownUnavailableAliases.map(a => [a.name, a.deploymentId]).sort((a, b) => a[0].localeCompare(b[0])),
     registryHash: fingerprint(registry), candidateIds: candidates.map(item => item.id).sort(),
     inventoryHash: fingerprint([...deployments].sort((a, b) => a.id.localeCompare(b.id))),
   };
@@ -159,6 +180,7 @@ export function weeklyReport(snapshot, config, registry, {now = new Date()} = {}
     version: 1, reportType: 'weekly-inventory-only', generatedAt: new Date(now).toISOString(), collectedAt: snapshot.collectedAt,
     project: config.project, status: issues.length ? 'blocked' : 'review-only', issues,
     productionId, deploymentCount: deployments.length, retained, candidates, missingRegistered,
+    archivedRegistrations: registry.entries.filter(e => e.status === 'archived'), reappearedArchived, knownUnavailableAliases,
     batch: {...batch, fingerprint: fingerprint(batch), expiresAt: validTime(snapshot.collectedAt) ? new Date(Date.parse(snapshot.collectedAt) + config.snapshotMaxAgeMinutes * 60_000).toISOString() : null},
     deletionAuthorized: false, actions: {cloudWrites: false, deletions: false, deployment: false},
     limitations: ['候選只是人工審閱資料，不是刪除授權。', '沒有逐部署帳務可回收量，不以檔案大小乘部署數估算節省GB。', '沒有任務結束證據的版本保留；登記到期只觸發複查。'],

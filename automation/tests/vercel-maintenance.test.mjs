@@ -97,3 +97,26 @@ test('local runner writes all reports, reuses local state, and never overwrites 
   assert((await fs.readdir(root)).some(name=>name.includes('.bak')));
  }finally{await fs.rm(root,{recursive:true,force:true});}
 });
+
+const archiveProof=()=>({archivedAt:now,previousStatus:'protected',reason:'Historical task; scoped authenticated queries returned 404 twice; no active alias',evidence:'Reviewed audit hash',deploymentChecks:[{status:404,checkedAt:'2026-11-04T02:59:58Z'},{status:404,checkedAt:'2026-11-04T02:59:59Z'}],aliasReferenceCount:0,currentProduction:false});
+const retiredAlias=()=>({name:'course-git-old.vercel.app',projectId:'prj_course',deploymentId:'dpl_gone',status:'historical-unavailable',reviewedAt:now,reason:'Target missing; alias unchanged',evidence:'Reviewed alias audit',deploymentChecks:archiveProof().deploymentChecks});
+function reviewedDangling(){const s=snapshot(),r=finished();s.aliases.push({name:'course-git-old.vercel.app',projectId:'prj_course',deploymentId:'dpl_gone'});s.aliasTargetChecks=[{id:'dpl_gone',status:404,checkedAt:'2026-11-04T02:59:58Z'},{id:'dpl_gone',status:404,checkedAt:'2026-11-04T02:59:59Z'}];s.coverage.aliasTargetsComplete=true;s.verification.aliasTargetsUnchanged=true;r.aliasReviews=[retiredAlias()];return{s,r};}
+
+test('逐筆查核封存保留原理由與證據，不再把已知歷史缺漏當成未解保護版本',()=>{
+ const r=finished();r.entries.push({id:'dpl_missing',status:'archived',reason:'Original reason',evidence:'Original evidence',archive:archiveProof()});const w=weeklyReport(snapshot(),config,r,opts);assert.equal(w.status,'review-only');assert.equal(w.candidates.length,1);assert.equal(w.missingRegistered.length,0);assert.equal(w.archivedRegistrations[0].reason,'Original reason');assert.equal(w.actions.deletions,false);
+});
+test('封存缺證據、非404、仍有alias或當時為正式版的登記不得通過',()=>{
+ for(const mutate of [e=>delete e.archive,e=>e.archive.deploymentChecks.pop(),e=>e.archive.deploymentChecks[1].status=403,e=>e.archive.aliasReferenceCount=1,e=>e.archive.currentProduction=true]){const r=finished(),e={id:'dpl_missing',status:'archived',reason:'Original reason',evidence:'Original evidence',archive:archiveProof()};mutate(e);r.entries.push(e);assert.throws(()=>weeklyReport(snapshot(),config,r,opts));}
+});
+test('封存版本重新出現時全部撤回候選，不把它默認為已完成任務',()=>{
+ const r=finished();r.entries[0]={...r.entries[0],status:'archived',archive:archiveProof()};const w=weeklyReport(snapshot(),config,r,opts);assert.equal(w.status,'blocked');assert.equal(w.candidates.length,0);assert.equal(w.reappearedArchived.length,1);assert(w.retained.some(d=>d.id==='dpl_old'));
+});
+test('精確舊預覽登記加上本輪兩次404，可報告已知不可用網址但不修改它',()=>{
+ const{s,r}=reviewedDangling();const w=weeklyReport(s,config,r,opts);assert.equal(w.status,'review-only');assert.equal(w.knownUnavailableAliases.length,1);assert.equal(w.batch.aliasMap.length,2);assert.equal(w.candidates.length,1);assert.equal(w.actions.cloudWrites,false);
+});
+test('舊預覽例外不能套用新指向、未知網址、過期快照、單次404或非404錯誤',()=>{
+ for(const mutate of [s=>s.aliases.at(-1).deploymentId='dpl_other',s=>s.aliases.at(-1).name='course-git-other.vercel.app',s=>s.aliasTargetChecks[1].status=403,s=>s.aliasTargetChecks[1].status=200,s=>s.aliasTargetChecks.pop(),s=>s.aliasTargetChecks[0].checkedAt='2026-11-03T00:00:00Z',s=>s.verification.aliasTargetsUnchanged=false,s=>s.coverage.aliasTargetsComplete=false]){const{s,r}=reviewedDangling();mutate(s);const w=weeklyReport(s,config,r,opts);assert.equal(w.status,'blocked');assert.equal(w.candidates.length,0);}
+});
+test('舊預覽審閱不能把正式網域加入例外',()=>{
+ const{s,r}=reviewedDangling();r.aliasReviews[0].name='course.vercel.app';assert.throws(()=>weeklyReport(s,config,r,opts));
+});

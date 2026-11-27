@@ -55,6 +55,7 @@ export function trialInventory(snapshot, config, registry, history, {now = new D
   const effective = structuredClone(registry);
   for (const [id, reasons] of policy) {
     const existing = effective.entries.find(e => e.id === id);
+    if (existing?.status === 'archived') continue; // Reappearance must remain visible to the shared guard.
     const entry = {id, status: 'protected', reason: reasons.join('；'), evidence: 'trial-policy-v1; ' + (receipts.find(r => r.id === id)?.source ?? 'live inventory')};
     if (existing) Object.assign(existing, entry, {reason: existing.reason + '；' + entry.reason});
     else effective.entries.push(entry);
