@@ -44,6 +44,8 @@ export function inventoryMarkdown(report, kind) {
     text += '\n完整ID與登記證據保留於weekly.json，不以短ID執行任何操作。\n\n';
   }
   if (report.missingRegistered.length) text += `先前登記保留但本次未見：${report.missingRegistered.map(row => '`' + row.id + '`').join('、')}，需人工核對。\n\n`;
+  if (report.archivedRegistrations?.length) text += `已逐筆查核封存的歷史登記：${report.archivedRegistrations.length}筆；原用途、理由與證據保留於weekly.json／inventory.json，不代表本次刪除。\n\n`;
+  if (report.knownUnavailableAliases?.length) text += '已核對的舊預覽網址（保留遠端原狀）：\n\n' + report.knownUnavailableAliases.map(a => '- `' + a.name + '` → `' + a.deploymentId + '`；目標本輪兩次查詢404。').join('\n') + '\n\n';
   text += `批次指紋：\`${report.batch.fingerprint}\`。\n\n快照有效至${report.batch.expiresAt ? date(report.batch.expiresAt) : '未知，必須重新取數'}；到期需重讀，不代表可自動刪除。\n\n`;
   return text + report.limitations.map(note => '- ' + note).join('\n') + '\n';
 }

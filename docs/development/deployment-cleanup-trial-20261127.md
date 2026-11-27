@@ -57,6 +57,17 @@ npm run maintenance:cleanup-test
 
 本機安裝可將已提交版本的五個執行模組及保留登記複製至 repo 外固定目錄，保留逐檔 SHA-256 與來源 commit。排程呼叫該固定副本，不能依賴後續會清理的開發 worktree。每日重新讀取真正 repo 的發布紀錄及最新 origin/main，不自動下載或替換執行程式。
 
+## 2026-11-27 歷史登記與舊預覽逐筆複核
+
+使用者另行授權查核原15筆保留登記與兩個舊預覽網址，確認過期者改為歷史封存，保留原資料；禁止刪除遠端部署、網址或變更保留設定。
+
+- 原15筆已逐ID完成兩次指定團隊、既有帳號的認證GET，皆回覆Deployment not found (404)；無現行alias指向，非目前正式版。另讀回11月初快照及11/3清理保留證據，保存原用途、原reason／evidence、最後已知建立時間、類型與網址。它們與本聊天先前刪除的53筆沒有重疊。
+- 登記狀態改為archived，附archive.previousStatus、兩次查核時間／404、當時alias引用數及非正式版等證據。原reason與evidence保持；原始登記與完整查核紀錄保留repo外，登記內保存原始證據SHA-256。封存只表示不再以此缺漏阻擋目前盤點，不表示本次刪除、不可恢復或已證明永久消失。
+- 兩個網址分別為`it-class-tcwu-git-codex-effort-tr-651cc8-chianwu-4755s-projects.vercel.app`及`it-class-tcwu-git-codex-past-exam-269d79-chianwu-4755s-projects.vercel.app`。目標ID均兩次認證查詢404；公開請求分別410與302。遠端alias保持原狀，僅在aliasReviews記錄精確name／projectId／deploymentId與審閱證據。
+- 每次盤點對不在完整部署清單中的alias目標，前後各讀一次部署ID，必須皆為404、帳號／團隊／專案一致、對應同一筆已審閱舊分支網址、資料新鮮且前後不變，才列為「已核對的舊預覽目標不存在」而不全域阻擋。這不是省略網址或忽略所有404。
+- 未登記的缺漏、新目標、401／403／網路錯誤、單次或過期查核、目標狀態改變，繼續撤回全部候選。若目標重新在完整清單中出現，正常按有效alias保護；若archived部署重新出現，立即標為受阻且保留，不當成已完成可刪版本。試行疊加保護不得掩蓋封存版本重現。
+- 報告列出archivedRegistrations與knownUnavailableAliases；歷史封存不構成任何遠端刪除授權。七天排程與截止日期不變，不重設已執行日期或另加次數。
+
 ## 驗收與七天收尾
 
 測試須涵蓋正式 alias 與 targets.production 不同、兩個不同 commit 的回復目標、每日基線、24小時及三／七天邊界、發布中、缺漏、分頁重複、非 main 收據、舊保留版本失蹤、日期與重入、拒絕寫入參數。

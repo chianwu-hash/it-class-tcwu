@@ -96,3 +96,12 @@ test('立即驗證不耗用試行次數；七天報告保留、同日重入不�
     assert.throws(()=>validateTrialConfig({...c,outputRoot:path.join(c.repo,'private')}));
   }finally{await fs.rm(root,{recursive:true,force:true})}
 });
+
+test('試行疊加保護條件也不能掩蓋已封存部署重新出現',()=>{
+ const f=fixture(),e=f.registry.entries.find(e=>e.id==='dpl_current');e.status='archived';e.archive={archivedAt:NOW,previousStatus:'protected',reason:'Previously missing',evidence:'Historical audit',deploymentChecks:[{status:404,checkedAt:NOW},{status:404,checkedAt:NOW}],aliasReferenceCount:0,currentProduction:false};const r=report(f);assert.equal(r.status,'blocked');assert.equal(r.candidates.length,0);assert.equal(r.reappearedArchived[0].id,'dpl_current');assert(r.protectionCheck.currentProductionRetained);
+});
+
+test('CLI只有精確的Deployment not found (404)回覆可標為不存在',async()=>{
+ const root=await fs.mkdtemp(path.join(os.tmpdir(),'deployment-target-status-'));
+ try{const entry=path.join(root,'fake-cli.cjs');const get=cliReader({cliEntry:entry,cwd:root,project});for(const message of ['Error: Forbidden (403)\n','Error: Unauthorized (401)\n','Error: network failure\n','Error: other item not found (404)\n']){await fs.writeFile(entry,'process.stderr.write('+JSON.stringify(message)+');process.exit(1)');await assert.rejects(get.deploymentStatus('dpl_gone'),/不能認定不存在/);}await fs.writeFile(entry,'if(process.argv[process.argv.indexOf("--method")+1]!=="GET")process.exit(2);process.stderr.write("Error: Deployment not found (404)\\n");process.exit(1)');assert.equal((await get.deploymentStatus('dpl_gone')).status,404);await assert.rejects(get.deploymentStatus('../other'));}finally{await fs.rm(root,{recursive:true,force:true})}
+});

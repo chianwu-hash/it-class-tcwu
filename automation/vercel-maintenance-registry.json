@@ -1,112 +1,514 @@
 {
   "version": 1,
   "projectId": "prj_eJ1qle57xyilS5MKy6ZS6OuYtyFb",
-  "source": "既有清理保留紀錄；不是新增永久保留或刪除授權",
+  "source": "既有清理保留紀錄；不是新增永久保留或刪除授權；2026-11-27經使用者授權逐筆查核後封存15筆過期登記，原用途與證據保持。",
   "entries": [
     {
       "id": "dpl_EojJsU7YdekYetu5AvW11XStLD9i",
-      "status": "protected",
+      "status": "archived",
       "reason": "沿用已核對的基準／預覽／驗證證據保留：original:failed-build-evidence",
       "evidence": "2026-11-03 approved121 cleanup preflight and verification",
-      "reviewAfter": null
+      "reviewAfter": null,
+      "archive": {
+        "archivedAt": "2026-11-27T06:25:32.664Z",
+        "previousStatus": "protected",
+        "reason": "原保留用途屬11月初歷史建置／預覽／回復證據；兩次認證查詢皆404、無現行alias及正式指向。封存登記不代表本次刪除或已證明永久無法恢復。",
+        "evidence": "2026-11-27逐筆唯讀複核；原始證據SHA-256:c3836746b7052a62011463b7ec266cd207a9be0e25d87ebda2361d5023b85782",
+        "deploymentChecks": [
+          {
+            "checkedAt": "2026-11-27T06:24:54.278Z",
+            "status": 404
+          },
+          {
+            "checkedAt": "2026-11-27T06:25:10.943Z",
+            "status": 404
+          }
+        ],
+        "aliasReferenceCount": 0,
+        "currentProduction": false,
+        "lastKnownDeployment": {
+          "createdAt": 1793711154808,
+          "readyState": "ERROR",
+          "target": "production",
+          "url": "it-class-tcwu-ltnfo8113-chianwu-4755s-projects.vercel.app"
+        }
+      }
     },
     {
       "id": "dpl_3o9oGaZGk2WJdPu1FkNgzozNwHcR",
-      "status": "protected",
+      "status": "archived",
       "reason": "沿用已核對的基準／預覽／驗證證據保留：original:failed-build-evidence",
       "evidence": "2026-11-03 approved121 cleanup preflight and verification",
-      "reviewAfter": null
+      "reviewAfter": null,
+      "archive": {
+        "archivedAt": "2026-11-27T06:25:32.664Z",
+        "previousStatus": "protected",
+        "reason": "原保留用途屬11月初歷史建置／預覽／回復證據；兩次認證查詢皆404、無現行alias及正式指向。封存登記不代表本次刪除或已證明永久無法恢復。",
+        "evidence": "2026-11-27逐筆唯讀複核；原始證據SHA-256:c3836746b7052a62011463b7ec266cd207a9be0e25d87ebda2361d5023b85782",
+        "deploymentChecks": [
+          {
+            "checkedAt": "2026-11-27T06:24:55.247Z",
+            "status": 404
+          },
+          {
+            "checkedAt": "2026-11-27T06:25:11.918Z",
+            "status": 404
+          }
+        ],
+        "aliasReferenceCount": 0,
+        "currentProduction": false,
+        "lastKnownDeployment": {
+          "createdAt": 1793698284814,
+          "readyState": "ERROR",
+          "target": null,
+          "url": "it-class-tcwu-384c05r66-chianwu-4755s-projects.vercel.app"
+        }
+      }
     },
     {
       "id": "dpl_4ye54c9t4KsX1NeY66jUEjLXtJED",
-      "status": "protected",
+      "status": "archived",
       "reason": "沿用已核對的基準／預覽／驗證證據保留：original:previous-explicit-baseline-or-final-preview",
       "evidence": "2026-11-03 approved121 cleanup preflight and verification",
-      "reviewAfter": null
+      "reviewAfter": null,
+      "archive": {
+        "archivedAt": "2026-11-27T06:25:32.664Z",
+        "previousStatus": "protected",
+        "reason": "原保留用途屬11月初歷史建置／預覽／回復證據；兩次認證查詢皆404、無現行alias及正式指向。封存登記不代表本次刪除或已證明永久無法恢復。",
+        "evidence": "2026-11-27逐筆唯讀複核；原始證據SHA-256:c3836746b7052a62011463b7ec266cd207a9be0e25d87ebda2361d5023b85782",
+        "deploymentChecks": [
+          {
+            "checkedAt": "2026-11-27T06:24:56.215Z",
+            "status": 404
+          },
+          {
+            "checkedAt": "2026-11-27T06:25:12.854Z",
+            "status": 404
+          }
+        ],
+        "aliasReferenceCount": 0,
+        "currentProduction": false,
+        "lastKnownDeployment": {
+          "createdAt": 1793533711201,
+          "readyState": "READY",
+          "target": "production",
+          "url": "it-class-tcwu-dldlqfr59-chianwu-4755s-projects.vercel.app"
+        }
+      }
     },
     {
       "id": "dpl_HanAtZKNenwRgCaHmGQMpLTeB3EZ",
-      "status": "protected",
+      "status": "archived",
       "reason": "沿用已核對的基準／預覽／驗證證據保留：original:previous-explicit-baseline-or-final-preview; latest-manual-preview-workspace:logs/vercel-slim-final-preview-20261101/publish",
       "evidence": "2026-11-03 approved121 cleanup preflight and verification",
-      "reviewAfter": null
+      "reviewAfter": null,
+      "archive": {
+        "archivedAt": "2026-11-27T06:25:32.664Z",
+        "previousStatus": "protected",
+        "reason": "原保留用途屬11月初歷史建置／預覽／回復證據；兩次認證查詢皆404、無現行alias及正式指向。封存登記不代表本次刪除或已證明永久無法恢復。",
+        "evidence": "2026-11-27逐筆唯讀複核；原始證據SHA-256:c3836746b7052a62011463b7ec266cd207a9be0e25d87ebda2361d5023b85782",
+        "deploymentChecks": [
+          {
+            "checkedAt": "2026-11-27T06:24:57.164Z",
+            "status": 404
+          },
+          {
+            "checkedAt": "2026-11-27T06:25:13.829Z",
+            "status": 404
+          }
+        ],
+        "aliasReferenceCount": 0,
+        "currentProduction": false,
+        "lastKnownDeployment": {
+          "createdAt": 1793529482729,
+          "readyState": "READY",
+          "target": null,
+          "url": "it-class-tcwu-o6v0sey84-chianwu-4755s-projects.vercel.app"
+        }
+      }
     },
     {
       "id": "dpl_4LsmuQBTztjPS3vvG6a8nXLQd93w",
-      "status": "protected",
+      "status": "archived",
       "reason": "沿用已核對的基準／預覽／驗證證據保留：original:previous-explicit-baseline-or-final-preview",
       "evidence": "2026-11-03 approved121 cleanup preflight and verification",
-      "reviewAfter": null
+      "reviewAfter": null,
+      "archive": {
+        "archivedAt": "2026-11-27T06:25:32.664Z",
+        "previousStatus": "protected",
+        "reason": "原保留用途屬11月初歷史建置／預覽／回復證據；兩次認證查詢皆404、無現行alias及正式指向。封存登記不代表本次刪除或已證明永久無法恢復。",
+        "evidence": "2026-11-27逐筆唯讀複核；原始證據SHA-256:c3836746b7052a62011463b7ec266cd207a9be0e25d87ebda2361d5023b85782",
+        "deploymentChecks": [
+          {
+            "checkedAt": "2026-11-27T06:24:58.112Z",
+            "status": 404
+          },
+          {
+            "checkedAt": "2026-11-27T06:25:14.776Z",
+            "status": 404
+          }
+        ],
+        "aliasReferenceCount": 0,
+        "currentProduction": false,
+        "lastKnownDeployment": {
+          "createdAt": 1793529193212,
+          "readyState": "READY",
+          "target": "production",
+          "url": "it-class-tcwu-wexhdvkbw-chianwu-4755s-projects.vercel.app"
+        }
+      }
     },
     {
       "id": "dpl_DaA4x3QGP5ch8tDVDK8i8ShhCjAh",
-      "status": "protected",
+      "status": "archived",
       "reason": "沿用已核對的基準／預覽／驗證證據保留：latest-manual-preview-workspace:logs/vercel-slim-latest-preview-20261101/publish",
       "evidence": "2026-11-03 approved121 cleanup preflight and verification",
-      "reviewAfter": null
+      "reviewAfter": null,
+      "archive": {
+        "archivedAt": "2026-11-27T06:25:32.664Z",
+        "previousStatus": "protected",
+        "reason": "原保留用途屬11月初歷史建置／預覽／回復證據；兩次認證查詢皆404、無現行alias及正式指向。封存登記不代表本次刪除或已證明永久無法恢復。",
+        "evidence": "2026-11-27逐筆唯讀複核；原始證據SHA-256:c3836746b7052a62011463b7ec266cd207a9be0e25d87ebda2361d5023b85782",
+        "deploymentChecks": [
+          {
+            "checkedAt": "2026-11-27T06:24:59.146Z",
+            "status": 404
+          },
+          {
+            "checkedAt": "2026-11-27T06:25:15.874Z",
+            "status": 404
+          }
+        ],
+        "aliasReferenceCount": 0,
+        "currentProduction": false,
+        "lastKnownDeployment": {
+          "createdAt": 1793528815458,
+          "readyState": "READY",
+          "target": null,
+          "url": "it-class-tcwu-ijljpzni6-chianwu-4755s-projects.vercel.app"
+        }
+      }
     },
     {
       "id": "dpl_4gF28HT2cZZniUywcX189bA32JX3",
-      "status": "protected",
+      "status": "archived",
       "reason": "沿用已核對的基準／預覽／驗證證據保留：latest-manual-preview-workspace:logs/vercel-slim-rebase-preview-20261101/publish",
       "evidence": "2026-11-03 approved121 cleanup preflight and verification",
-      "reviewAfter": null
+      "reviewAfter": null,
+      "archive": {
+        "archivedAt": "2026-11-27T06:25:32.664Z",
+        "previousStatus": "protected",
+        "reason": "原保留用途屬11月初歷史建置／預覽／回復證據；兩次認證查詢皆404、無現行alias及正式指向。封存登記不代表本次刪除或已證明永久無法恢復。",
+        "evidence": "2026-11-27逐筆唯讀複核；原始證據SHA-256:c3836746b7052a62011463b7ec266cd207a9be0e25d87ebda2361d5023b85782",
+        "deploymentChecks": [
+          {
+            "checkedAt": "2026-11-27T06:25:00.078Z",
+            "status": 404
+          },
+          {
+            "checkedAt": "2026-11-27T06:25:16.849Z",
+            "status": 404
+          }
+        ],
+        "aliasReferenceCount": 0,
+        "currentProduction": false,
+        "lastKnownDeployment": {
+          "createdAt": 1793527604059,
+          "readyState": "READY",
+          "target": null,
+          "url": "it-class-tcwu-dvw156hzk-chianwu-4755s-projects.vercel.app"
+        }
+      }
     },
     {
       "id": "dpl_Gf6haTfxYJvZzVNexQwAK26VbwAt",
-      "status": "protected",
+      "status": "archived",
       "reason": "沿用已核對的基準／預覽／驗證證據保留：latest-manual-preview-workspace:logs/vercel-slim-preview-20261101/publish",
       "evidence": "2026-11-03 approved121 cleanup preflight and verification",
-      "reviewAfter": null
+      "reviewAfter": null,
+      "archive": {
+        "archivedAt": "2026-11-27T06:25:32.664Z",
+        "previousStatus": "protected",
+        "reason": "原保留用途屬11月初歷史建置／預覽／回復證據；兩次認證查詢皆404、無現行alias及正式指向。封存登記不代表本次刪除或已證明永久無法恢復。",
+        "evidence": "2026-11-27逐筆唯讀複核；原始證據SHA-256:c3836746b7052a62011463b7ec266cd207a9be0e25d87ebda2361d5023b85782",
+        "deploymentChecks": [
+          {
+            "checkedAt": "2026-11-27T06:25:01.023Z",
+            "status": 404
+          },
+          {
+            "checkedAt": "2026-11-27T06:25:18.826Z",
+            "status": 404
+          }
+        ],
+        "aliasReferenceCount": 0,
+        "currentProduction": false,
+        "lastKnownDeployment": {
+          "createdAt": 1793525073740,
+          "readyState": "READY",
+          "target": null,
+          "url": "it-class-tcwu-nb88t3z9v-chianwu-4755s-projects.vercel.app"
+        }
+      }
     },
     {
       "id": "dpl_8RRMxcuQ9ozADDWWC77BgYF5isFa",
-      "status": "protected",
+      "status": "archived",
       "reason": "沿用已核對的基準／預覽／驗證證據保留：original:previous-explicit-baseline-or-final-preview",
       "evidence": "2026-11-03 approved121 cleanup preflight and verification",
-      "reviewAfter": null
+      "reviewAfter": null,
+      "archive": {
+        "archivedAt": "2026-11-27T06:25:32.664Z",
+        "previousStatus": "protected",
+        "reason": "原保留用途屬11月初歷史建置／預覽／回復證據；兩次認證查詢皆404、無現行alias及正式指向。封存登記不代表本次刪除或已證明永久無法恢復。",
+        "evidence": "2026-11-27逐筆唯讀複核；原始證據SHA-256:c3836746b7052a62011463b7ec266cd207a9be0e25d87ebda2361d5023b85782",
+        "deploymentChecks": [
+          {
+            "checkedAt": "2026-11-27T06:25:01.996Z",
+            "status": 404
+          },
+          {
+            "checkedAt": "2026-11-27T06:25:19.863Z",
+            "status": 404
+          }
+        ],
+        "aliasReferenceCount": 0,
+        "currentProduction": false,
+        "lastKnownDeployment": {
+          "createdAt": 1793517609995,
+          "readyState": "READY",
+          "target": "production",
+          "url": "it-class-tcwu-f61597f8a-chianwu-4755s-projects.vercel.app"
+        }
+      }
     },
     {
       "id": "dpl_J9cLJUUCH6GeoGqC7dj47jNFajzC",
-      "status": "protected",
+      "status": "archived",
       "reason": "沿用已核對的基準／預覽／驗證證據保留：original:previous-explicit-baseline-or-final-preview",
       "evidence": "2026-11-03 approved121 cleanup preflight and verification",
-      "reviewAfter": null
+      "reviewAfter": null,
+      "archive": {
+        "archivedAt": "2026-11-27T06:25:32.664Z",
+        "previousStatus": "protected",
+        "reason": "原保留用途屬11月初歷史建置／預覽／回復證據；兩次認證查詢皆404、無現行alias及正式指向。封存登記不代表本次刪除或已證明永久無法恢復。",
+        "evidence": "2026-11-27逐筆唯讀複核；原始證據SHA-256:c3836746b7052a62011463b7ec266cd207a9be0e25d87ebda2361d5023b85782",
+        "deploymentChecks": [
+          {
+            "checkedAt": "2026-11-27T06:25:03.044Z",
+            "status": 404
+          },
+          {
+            "checkedAt": "2026-11-27T06:25:20.866Z",
+            "status": 404
+          }
+        ],
+        "aliasReferenceCount": 0,
+        "currentProduction": false,
+        "lastKnownDeployment": {
+          "createdAt": 1793368274944,
+          "readyState": "READY",
+          "target": "production",
+          "url": "it-class-tcwu-h57uh0xzd-chianwu-4755s-projects.vercel.app"
+        }
+      }
     },
     {
       "id": "dpl_22AkKxwdsa5edMebf5Gd29VReojp",
-      "status": "protected",
+      "status": "archived",
       "reason": "沿用已核對的基準／預覽／驗證證據保留：latest-manual-preview-workspace:C:/Users/user/projects/it-class-tcwu/automation/output/tucheng-grade4-knowledge-complete-20261101/frontend/publish",
       "evidence": "2026-11-03 approved121 cleanup preflight and verification",
-      "reviewAfter": null
+      "reviewAfter": null,
+      "archive": {
+        "archivedAt": "2026-11-27T06:25:32.664Z",
+        "previousStatus": "protected",
+        "reason": "原保留用途屬11月初歷史建置／預覽／回復證據；兩次認證查詢皆404、無現行alias及正式指向。封存登記不代表本次刪除或已證明永久無法恢復。",
+        "evidence": "2026-11-27逐筆唯讀複核；原始證據SHA-256:c3836746b7052a62011463b7ec266cd207a9be0e25d87ebda2361d5023b85782",
+        "deploymentChecks": [
+          {
+            "checkedAt": "2026-11-27T06:25:04.037Z",
+            "status": 404
+          },
+          {
+            "checkedAt": "2026-11-27T06:25:21.849Z",
+            "status": 404
+          }
+        ],
+        "aliasReferenceCount": 0,
+        "currentProduction": false,
+        "lastKnownDeployment": {
+          "createdAt": 1793535804272,
+          "readyState": "READY",
+          "target": null,
+          "url": "it-class-tcwu-ec5pe9836-chianwu-4755s-projects.vercel.app"
+        }
+      }
     },
     {
       "id": "dpl_6DsEksfNvWVg2hjFwRUAMkvK2EKr",
-      "status": "protected",
+      "status": "archived",
       "reason": "沿用已核對的基準／預覽／驗證證據保留：latest-manual-preview-workspace:C:/Users/user/projects/it-class-tcwu/automation/output/tucheng-grade4-extension-20261101/frontend/publish",
       "evidence": "2026-11-03 approved121 cleanup preflight and verification",
-      "reviewAfter": null
+      "reviewAfter": null,
+      "archive": {
+        "archivedAt": "2026-11-27T06:25:32.664Z",
+        "previousStatus": "protected",
+        "reason": "原保留用途屬11月初歷史建置／預覽／回復證據；兩次認證查詢皆404、無現行alias及正式指向。封存登記不代表本次刪除或已證明永久無法恢復。",
+        "evidence": "2026-11-27逐筆唯讀複核；原始證據SHA-256:c3836746b7052a62011463b7ec266cd207a9be0e25d87ebda2361d5023b85782",
+        "deploymentChecks": [
+          {
+            "checkedAt": "2026-11-27T06:25:05.018Z",
+            "status": 404
+          },
+          {
+            "checkedAt": "2026-11-27T06:25:23.176Z",
+            "status": 404
+          }
+        ],
+        "aliasReferenceCount": 0,
+        "currentProduction": false,
+        "lastKnownDeployment": {
+          "createdAt": 1793533598012,
+          "readyState": "READY",
+          "target": null,
+          "url": "it-class-tcwu-qg8bzs42f-chianwu-4755s-projects.vercel.app"
+        }
+      }
     },
     {
       "id": "dpl_6iQ8aWjvgYm8PUFbWnueSppPm5mC",
-      "status": "protected",
+      "status": "archived",
       "reason": "沿用已核對的基準／預覽／驗證證據保留：latest-manual-preview-workspace:C:/Users/user/projects/it-class-tcwu/automation/output/test-identity-three-buttons-20261101/frontend/publish",
       "evidence": "2026-11-03 approved121 cleanup preflight and verification",
-      "reviewAfter": null
+      "reviewAfter": null,
+      "archive": {
+        "archivedAt": "2026-11-27T06:25:32.664Z",
+        "previousStatus": "protected",
+        "reason": "原保留用途屬11月初歷史建置／預覽／回復證據；兩次認證查詢皆404、無現行alias及正式指向。封存登記不代表本次刪除或已證明永久無法恢復。",
+        "evidence": "2026-11-27逐筆唯讀複核；原始證據SHA-256:c3836746b7052a62011463b7ec266cd207a9be0e25d87ebda2361d5023b85782",
+        "deploymentChecks": [
+          {
+            "checkedAt": "2026-11-27T06:25:05.980Z",
+            "status": 404
+          },
+          {
+            "checkedAt": "2026-11-27T06:25:24.149Z",
+            "status": 404
+          }
+        ],
+        "aliasReferenceCount": 0,
+        "currentProduction": false,
+        "lastKnownDeployment": {
+          "createdAt": 1793529089152,
+          "readyState": "READY",
+          "target": null,
+          "url": "it-class-tcwu-daftj3bps-chianwu-4755s-projects.vercel.app"
+        }
+      }
     },
     {
       "id": "dpl_7YcHExFyJAuwL8fCtKQP3Wvf1Aqf",
-      "status": "protected",
+      "status": "archived",
       "reason": "沿用已核對的基準／預覽／驗證證據保留：latest-manual-preview-workspace:C:/Users/user/projects/it-class-tcwu/automation/output/tucheng-grade4-past-release-20261101/frontend/publish",
       "evidence": "2026-11-03 approved121 cleanup preflight and verification",
-      "reviewAfter": null
+      "reviewAfter": null,
+      "archive": {
+        "archivedAt": "2026-11-27T06:25:32.664Z",
+        "previousStatus": "protected",
+        "reason": "原保留用途屬11月初歷史建置／預覽／回復證據；兩次認證查詢皆404、無現行alias及正式指向。封存登記不代表本次刪除或已證明永久無法恢復。",
+        "evidence": "2026-11-27逐筆唯讀複核；原始證據SHA-256:c3836746b7052a62011463b7ec266cd207a9be0e25d87ebda2361d5023b85782",
+        "deploymentChecks": [
+          {
+            "checkedAt": "2026-11-27T06:25:07.022Z",
+            "status": 404
+          },
+          {
+            "checkedAt": "2026-11-27T06:25:25.110Z",
+            "status": 404
+          }
+        ],
+        "aliasReferenceCount": 0,
+        "currentProduction": false,
+        "lastKnownDeployment": {
+          "createdAt": 1793528015547,
+          "readyState": "READY",
+          "target": null,
+          "url": "it-class-tcwu-fays8cg2a-chianwu-4755s-projects.vercel.app"
+        }
+      }
     },
     {
       "id": "dpl_FNyxToDFZyB57RQuRzAyQbQnRfJD",
-      "status": "protected",
+      "status": "archived",
       "reason": "11/3清理時額外保留的回復／進行中預覽：baseline-of-protected:dpl_4gF28HT2cZZniUywcX189bA32JX3",
       "evidence": "2026-11-03 approved121 cleanup retainedCandidates",
-      "reviewAfter": null
+      "reviewAfter": null,
+      "archive": {
+        "archivedAt": "2026-11-27T06:25:32.664Z",
+        "previousStatus": "protected",
+        "reason": "原保留用途屬11月初歷史建置／預覽／回復證據；兩次認證查詢皆404、無現行alias及正式指向。封存登記不代表本次刪除或已證明永久無法恢復。",
+        "evidence": "2026-11-27逐筆唯讀複核；原始證據SHA-256:c3836746b7052a62011463b7ec266cd207a9be0e25d87ebda2361d5023b85782",
+        "deploymentChecks": [
+          {
+            "checkedAt": "2026-11-27T06:25:07.998Z",
+            "status": 404
+          },
+          {
+            "checkedAt": "2026-11-27T06:25:26.049Z",
+            "status": 404
+          }
+        ],
+        "aliasReferenceCount": 0,
+        "currentProduction": false,
+        "lastKnownDeployment": {
+          "createdAt": 1793527374986,
+          "readyState": "READY",
+          "target": "production",
+          "url": "it-class-tcwu-hucxtzz7z-chianwu-4755s-projects.vercel.app"
+        }
+      }
+    }
+  ],
+  "aliasReviews": [
+    {
+      "name": "it-class-tcwu-git-codex-effort-tr-651cc8-chianwu-4755s-projects.vercel.app",
+      "projectId": "prj_eJ1qle57xyilS5MKy6ZS6OuYtyFb",
+      "deploymentId": "dpl_hs2KvC4baznH8hMHfuepnw1xtn2L",
+      "status": "historical-unavailable",
+      "reviewedAt": "2026-11-27T06:25:32.664Z",
+      "reason": "舊分支網址仍存在，但認證查詢目標部署兩次404；保留遠端網址，每輪重新查核，不將舊404套用到新指向。",
+      "evidence": "2026-11-27逐筆唯讀複核；原始證據SHA-256:c3836746b7052a62011463b7ec266cd207a9be0e25d87ebda2361d5023b85782",
+      "deploymentChecks": [
+        {
+          "checkedAt": "2026-11-27T06:25:08.942Z",
+          "status": 404
+        },
+        {
+          "checkedAt": "2026-11-27T06:25:27.045Z",
+          "status": 404
+        }
+      ],
+      "publicHttpStatus": 410
+    },
+    {
+      "name": "it-class-tcwu-git-codex-past-exam-269d79-chianwu-4755s-projects.vercel.app",
+      "projectId": "prj_eJ1qle57xyilS5MKy6ZS6OuYtyFb",
+      "deploymentId": "dpl_T33Sqmm4Qoo3mMzMA6jS4YxVEBAM",
+      "status": "historical-unavailable",
+      "reviewedAt": "2026-11-27T06:25:32.664Z",
+      "reason": "舊分支網址仍存在，但認證查詢目標部署兩次404；保留遠端網址，每輪重新查核，不將舊404套用到新指向。",
+      "evidence": "2026-11-27逐筆唯讀複核；原始證據SHA-256:c3836746b7052a62011463b7ec266cd207a9be0e25d87ebda2361d5023b85782",
+      "deploymentChecks": [
+        {
+          "checkedAt": "2026-11-27T06:25:10.002Z",
+          "status": 404
+        },
+        {
+          "checkedAt": "2026-11-27T06:25:28.003Z",
+          "status": 404
+        }
+      ],
+      "publicHttpStatus": 302
     }
   ]
 }
