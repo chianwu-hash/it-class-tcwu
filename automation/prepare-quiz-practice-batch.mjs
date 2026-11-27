@@ -29,7 +29,7 @@ function alternateShading(plan, left, right, comparison, offset=0){
  return fractionComparisonResponse(plan,ids,comparison);
 }
 const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
-for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.ok(['fields','single','open'].includes(q.type));if(q.type==='single'){assert.ok(!q.work);continue;}if(q.type==='open'){assert.ok(!q.work && (reviewedSketch(q) ? q.explanation.media.length===1 && q.explanation.media[0].kind==='image' : q.fields.every(f=>f.input==='text') && !q.explanation.media.length), 'Open media requires an independently reviewed grid answer');expectedResponse(q,undefined,p.openResponses?.[q.id]);continue;}if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(fractionComparisonPlan(q)||fractionShadingMatchPlan(q)||q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set'].includes(f.input)));}}
+for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.ok(['fields','single','open'].includes(q.type));if(q.type==='single'){assert.ok(!q.work);continue;}if(q.type==='open'){assert.ok(!q.work && (reviewedSketch(q) ? q.explanation.media.length===1 && q.explanation.media[0].kind==='image' : q.fields.every(f=>f.input==='text') && !q.explanation.media.length), 'Open media requires an independently reviewed grid answer');expectedResponse(q,undefined,p.openResponses?.[q.id]);continue;}if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(fractionComparisonPlan(q)||fractionShadingMatchPlan(q)||q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set','sequence'].includes(f.input)));}}
 for(const c of p.candidates)for(const block of c.doc.blocks){
  const firstArrangement=block.questions.findIndex(arrangementPlan);
  if(firstArrangement>=0)assert.ok(block.questions.slice(firstArrangement+1).every(q=>q.type==='open' || !q.fields?.some(f=>f.input==='math')),
@@ -190,6 +190,11 @@ try{
     const ids=new Set(response.f[field.id]),toggle=field.options[0].id;
     ids.has(toggle)?ids.delete(toggle):ids.add(toggle);
     bad.f[field.id]=[...ids];
+   }else if(field.input==='sequence'){
+    const [first,second,...remaining]=response.f[field.id];
+    const swapped=[second,first,...remaining];
+    assert.ok(!qn.answer.fields[field.id].some(value=>JSON.stringify(value)===JSON.stringify(swapped)));
+    bad.f[field.id]=swapped;
    }else bad.f[field.id]='999999';
    return [bad];
   });

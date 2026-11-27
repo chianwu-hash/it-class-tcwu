@@ -69,10 +69,27 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    else assert.deepEqual(before.responses,{});
    const checkMatching=async()=>{await article.locator('.quiz-matching').waitFor();for(const f of question.fields){assert.equal(f.input,'single');const index=f.options.findIndex(o=>o.id===expected.f[f.id]);assert.equal(await article.locator('.qm-card[data-side=left][data-id=\"'+f.id+'\"] .qm-pair').innerText(),String.fromCharCode(65+index));}};
    const matching=matchingPresentation(question),isMatching=Boolean(matching);if(isMatching)assert.equal(matching.covered.size,question.fields.length);
+   const sequenceCards=index=>article.locator('.quiz-sequence-list').nth(index).locator('[data-sequence-id]');
+   const sequenceOrder=cards=>cards.evaluateAll(items=>items.map(item=>item.dataset.sequenceId));
+   const setSequence=async(index,target)=>{
+    const cards=sequenceCards(index);
+    await cards.first().waitFor();
+    for(const [position,id] of target.entries()){
+     const order=await sequenceOrder(cards);
+     const offset=order.indexOf(id)-position;
+     assert.ok(offset>=0);
+     const move=cards.filter({has:page.locator('[data-sequence-move=up]')});
+     for(let i=0;i<offset;i++)await move.nth(order.indexOf(id)-i).locator('[data-sequence-move=up]').click();
+    }
+    await article.locator('.quiz-sequence-confirm').nth(index).click();
+   };
    const checkPlain=async()=>{
     if(isMatching){await checkMatching();return;}
     for(const [i,f] of question.fields.entries()){
-     if(f.input==='set'){
+     if(f.input==='sequence'){
+      await sequenceCards(i).first().waitFor();
+      assert.deepEqual(await sequenceOrder(sequenceCards(i)),expected.f[f.id]);
+     }else if(f.input==='set'){
       const chosen=expected.f[f.id];
       await article.locator('fieldset.quiz-field,.quiz-field-preview-set').nth(i).waitFor();
       const live=article.locator('fieldset.quiz-field').nth(i);
@@ -111,7 +128,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
      if(single){if(width===1280)await selectedRadio.check();}
      else if(!question.work&&isMatching){await article.locator('.quiz-matching').waitFor();for(const [id,value] of Object.entries(expected.f)){await article.locator('.qm-card[data-side=left][data-id=\"'+id+'\"]').click();await article.locator('.qm-card[data-side=right][data-id=\"'+value+'\"]').click();}}
      else if(!question.work){for(const [i,f] of question.fields.entries()){
-      if(f.input==='set'){const boxes=article.locator('fieldset.quiz-field').nth(i).locator('input[type=checkbox]');for(const [j,o] of f.options.entries())await boxes.nth(j).setChecked(expected.f[f.id].includes(o.id));await boxes.last().setChecked(expected.f[f.id].length===0);}
+      if(f.input==='sequence'){if(width===1280)await setSequence(i,expected.f[f.id]);}
+      else if(f.input==='set'){const boxes=article.locator('fieldset.quiz-field').nth(i).locator('input[type=checkbox]');for(const [j,o] of f.options.entries())await boxes.nth(j).setChecked(expected.f[f.id].includes(o.id));await boxes.last().setChecked(expected.f[f.id].length===0);}
       else if(f.input==='single')await article.locator('input[type=radio][name="field-'+s.question_id+'-'+f.id+'"][value="'+expected.f[f.id]+'"]').check();
       else await article.locator('#field-'+s.question_id+'-'+f.id).fill(expected.f[f.id]);
      }}
