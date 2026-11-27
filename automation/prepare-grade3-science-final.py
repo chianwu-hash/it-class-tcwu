@@ -75,7 +75,15 @@ def adapt(parent, targets, original, pages):
     require(all(p["type"] == "paragraph" for p in parsed.get("layout", [])), "original_table")
     native = parent["original_source"]["native_content"]
     raw = native["questions"]
-    source_preamble, lines = numbered_lines(parsed["text"])
+    paragraphs = [line.strip() for line in parsed["text"].splitlines() if line.strip()]
+    standalone_choice = (
+        len(raw) == len(targets) == len(paragraphs) == 1 and not (native.get("preamble") or "").strip()
+        and targets[0]["kind"] in {"single_choice", "multiple_choice"} and raw[0]["options"]
+    )
+    if standalone_choice:
+        source_preamble, lines = "", paragraphs
+    else:
+        source_preamble, lines = numbered_lines(parsed["text"])
     require(len(raw) == len(lines), "numbered_word_items")
     require(normalize(source_preamble) == normalize(native.get("preamble") or ""), "shared_material_mismatch")
     require(digest(original["question_docx"]) == original["question_docx_sha256"], "original_word_changed")
@@ -86,7 +94,7 @@ def adapt(parent, targets, original, pages):
     resolve = lambda t: refs_for(t, unit, pages)
     options = lambda texts: [{"id": f"o{i}", "content": plain(s)} for i, s in enumerate(texts, 1)]
 
-    if len(targets) == 1 and targets[0]["kind"] in {"multiple_choice", "checkbox"}:
+    if not standalone_choice and len(targets) == 1 and targets[0]["kind"] in {"multiple_choice", "checkbox"}:
         t = targets[0]
         require(list(t["source_question_indices"]) == list(range(1, len(raw) + 1)), "whole_group_mapping")
         require(source_preamble and 2 <= len(raw) <= 8 and all(not q["options"] for q in raw), "checkbox_source_format")
@@ -106,12 +114,12 @@ def adapt(parent, targets, original, pages):
         return "", [(t, resolve(t), question)], "checkbox"
 
     require(len(targets) == len(raw) and set(targets_by_index) == set(ids), "independent_question_mapping")
-    symbols = {"○": "1", "◯": "1", "〇": "1", "×": "2", "╳": "2", "X": "2"}
+    symbols = {"○": "1", "◯": "1", "〇": "1", "ˇ": "1", "×": "2", "╳": "2", "X": "2"}
     result = []
     for i, (item, line, answer) in enumerate(zip(raw, lines, answers), 1):
         t = targets_by_index[(i,)]
         require(len(answer) == 1, "original_independent_key")
-        if t["kind"] == "single_choice":
+        if t["kind"] == "single_choice" or standalone_choice:
             markers = list(re.finditer(r"[①②③④⑤⑥⑦⑧]", line))
             texts = [line[m.end():markers[k+1].start() if k+1 < len(markers) else None].strip()
                      for k, m in enumerate(markers)]
@@ -132,7 +140,7 @@ def adapt(parent, targets, original, pages):
         require(not re.search(r"[①②③④⑤⑥⑦⑧]|選項\s*[A-H1-8]", explanation), "explanation_option_key")
         result.append((t, resolve(t), {"type": "single", "prompt": plain(stem), "options": options(texts),
                                       "answer": {"option_id": "o" + key}, "explanation": plain(explanation)}))
-    return source_preamble, result, "independent"
+    return source_preamble, result, "standalone_choice" if standalone_choice else "independent"
 
 
 def main():
