@@ -3,7 +3,7 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
-import {loadBatch,assertOAuthReceipt} from './lib/quiz-batch-plan.mjs';
+import {loadBatch,assertOAuthReceipt,oauthSampleCount} from './lib/quiz-batch-plan.mjs';
 
 const sha = value => createHash('sha256').update(value).digest('hex');
 const readJson = async file => JSON.parse((await fs.readFile(file, 'utf8')).replace(/^\uFEFF/, ''));
@@ -68,6 +68,10 @@ export async function runBatch(manifestFile, through, recoveryFile) {
   if (new Set(manifest.sources).size !== manifest.sources.length) throw Error('批次來源重複。');
   const batch = manifest.batchPacket ? await loadBatch(manifest.batchPacket) : undefined;
   if (batch && JSON.stringify(manifest.sources) !== JSON.stringify(batch.packet.candidates.map(c => c.source))) throw Error('清單與固定批次來源不符');
+  if (batch && manifest.samplingMode !== undefined && manifest.samplingMode !== (batch.packet.samplingMode ?? 'standard')) {
+    throw Error('清單與固定批次的正式抽驗模式不符');
+  }
+  const oauthSamples = batch?.counts.samples ?? oauthSampleCount(manifest.sources.length, manifest.samplingMode);
   const cwd = await fs.realpath(manifest.cwd);
   if (cwd !== root) throw Error('批次工作目錄與執行器不符。');
   const stateRoot = await fs.realpath(manifest.stateRoot);
@@ -154,7 +158,7 @@ export async function runBatch(manifestFile, through, recoveryFile) {
       previous = signature;
       if (stage.id === through) break;
     }
-    return {batchId, sources: manifest.sources.length, oauthSamples: Math.max(1, Math.ceil(manifest.sources.length * 0.05)), stateFile};
+    return {batchId, sources: manifest.sources.length, oauthSamples, stateFile};
   } finally {
     await locked.close();
     await fs.unlink(lock);

@@ -23,6 +23,13 @@ export function validateBatchCatalog(packet) {
   for (const unit of units) assert.ok(listed.has(unit), '批次目錄遺漏來源單元：' + unit);
 }
 
+export function oauthSampleCount(sources, samplingMode = 'standard') {
+  assert.ok(Number.isSafeInteger(sources) && sources > 0, '抽驗須有有效的來源題數');
+  assert.ok(['programmatic', 'standard'].includes(samplingMode), '正式抽驗模式不符');
+  const percent = samplingMode === 'programmatic' ? 3 : 5;
+  return Math.max(1, Math.ceil(sources * percent / 100));
+}
+
 export function batchCounts(packet) {
   assert.equal(packet.schema, 1);
   assert.ok(Array.isArray(packet.candidates) && packet.candidates.length);
@@ -38,7 +45,7 @@ export function batchCounts(packet) {
   packet.candidates.forEach(c => walk(c.doc));
   return {sources: packet.candidates.length, questions: questions.length,
     positions: questions.reduce((n, q) => n + (q.fields?.length ?? 1), 0),
-    images: media.size, samples: Math.max(1, Math.ceil(packet.candidates.length * 0.05))};
+    images: media.size, samples: oauthSampleCount(packet.candidates.length, packet.samplingMode)};
 }
 
 export function expectedResponse(question, work, openResponse) {

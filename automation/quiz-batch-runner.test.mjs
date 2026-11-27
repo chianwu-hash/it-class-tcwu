@@ -15,7 +15,7 @@ test('續跑核對輸入及輸出並跳過已完成命令，鎖拒絕同批並�
   await fs.writeFile(command, `import fs from 'node:fs/promises';await fs.writeFile(${JSON.stringify(output)},'{"passed":true}',{flag:'wx'});`);
   const manifestFile = path.join(folder, 'batch.private.json');
   const manifest = {
-    schema: 1, sources: ['one'], cwd: process.cwd(), stateRoot: folder,
+    schema: 1, samplingMode: 'programmatic', sources: Array.from({length: 30}, (_, i) => 'source-' + i), cwd: process.cwd(), stateRoot: folder,
     stages: [{id: 'verify', command: [process.execPath, command], inputs: [input, command], outputs: [output], checks: [{file: output, path: ['passed'], equals: true}]}],
   };
   await fs.writeFile(manifestFile, JSON.stringify(manifest));
