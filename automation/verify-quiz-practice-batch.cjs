@@ -45,7 +45,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    const readResponse=state=>single?state.responses[s.question_id]:JSON.parse(state.responses[s.question_id]);
    const selectedRadio=single?article.locator('input[type=radio][value="'+expected+'"]'):null;
    const questionImageHashes=[];
-   if(single)for(const image of question.prompt.media.filter(asset=>asset.kind==='image')){
+   const singleImages=single?[...question.prompt.media,...question.options.flatMap(option=>option.content.media)]:[];
+   for(const image of singleImages.filter(asset=>asset.kind==='image')){
     const descriptor=p.mediaAssets?.find(asset=>asset.url===image.url);
     if(!descriptor)continue;
     const rendered=article.locator('img[data-quiz-media-url="'+image.url+'"]');
