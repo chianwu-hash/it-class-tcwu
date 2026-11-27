@@ -25,7 +25,7 @@ const composer = initComposer({request,context:localContext});
 const ownSection=document.createElement('section');ownSection.id='my-papers-section';ownSection.className='paper-collection collection-own';ownSection.hidden=true;ownSection.setAttribute('aria-labelledby','my-papers-title');
 ownSection.innerHTML='<header class="collection-heading"><span class="collection-label">自己選範圍</span><h2 id="my-papers-title" tabindex="-1">我的自組卷 <span id="my-papers-count" class="collection-count"></span></h2><p>依科目、複習範圍與角色卷名找到練習，整理試卷，並接著作答。</p></header><p id="my-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的自組卷，按「我要自組卷」試試看。</p><div id="my-papers" class="papers"></div>';
 const presetSection=document.createElement('section');presetSection.id='system-papers-section';presetSection.className='paper-collection collection-preset';presetSection.setAttribute('aria-labelledby','system-papers-title');
-presetSection.innerHTML='<header class="collection-heading"><span class="collection-label">已準備好的練習</span><h2 id="system-papers-title">老師準備的卷 <span id="system-papers-count" class="collection-count"></span></h2><p>各科單元卷已經準備好，選一份就能開始練習。</p></header><p id="system-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的老師準備的卷。</p>';
+presetSection.innerHTML='<header class="collection-heading"><span class="collection-label">已準備好的練習</span><h2 id="system-papers-title">老師準備的卷 <span id="system-papers-count" class="collection-count"></span></h2><p>各科 10 題或 20 題練習卷。</p></header><p id="system-papers-empty" class="collection-empty" hidden>目前沒有符合篩選條件的老師準備的卷。</p>';
 el('cloud-papers').before(presetSection);presetSection.append(el('cloud-papers'));presetSection.before(ownSection);
 const hasPastExams=Boolean(pageCourse?.pastExams)&&!localContext;
 let pastPapers=[],pastCatalogError=false;
@@ -74,9 +74,13 @@ function render() {
   el('system-papers-empty').textContent=scopeEmpty;el('my-papers-empty').textContent=scopeEmpty;
   shown.splice(0,shown.length,...filtered);
   shown.sort(comparePapers);
-  el('my-papers-empty').hidden=shown.some(p=>p.generated);
+  const isSupplement=p=>!p.generated&&![10,20].includes(p.total);
+  const supplements=shown.filter(isSupplement);
+  const supplementList=node('div',undefined,'papers');
   const ownCount=shown.filter(p=>p.generated).length;
-  el('my-papers-count').textContent=`${ownCount}卷`;el('system-papers-count').textContent=`${shown.length-ownCount}卷`;el('system-papers-empty').hidden=shown.length>ownCount;
+  const presetCount=shown.length-ownCount-supplements.length;
+  el('my-papers-empty').hidden=ownCount>0;
+  el('my-papers-count').textContent=`${ownCount}卷`;el('system-papers-count').textContent=`${presetCount}卷`;el('system-papers-empty').hidden=presetCount>0;
   for (const p of shown) {
     const a = node('article', undefined, 'paper-card'); a.dataset.subject = p.catalog?.subject || '';
     a.dataset.source=p.generated?'own':'preset';
@@ -117,7 +121,9 @@ function render() {
       });
       }
     }
-    a.append(body); (p.generated?el('my-papers'):el('cloud-papers')).append(a);
+    a.append(body);
+    const list=p.generated?el('my-papers'):isSupplement(p)?supplementList:el('cloud-papers');
+    list.append(a);
   }
   el('cloud-status').textContent = `進度已從${localContext?'本機測試資料庫':'雲端'}讀取`;
   const visiblePast=hasPastExams&&studentView?pastPapers.map(pastPaperDisplay).filter(p=>p.grade===pageGrade&&(!subject||subject===p.subject)&&(matchesPracticeScope(paperPracticeScope(p,{past:true}),practiceScope)||paperPracticeScope(p,{past:true})==='unknown')):[];
@@ -135,12 +141,19 @@ function render() {
   const openCount=visiblePast.filter(p=>p.enabled).length,unopenedCount=visiblePast.length-openCount;
   el('past-papers-empty').hidden=openCount>0;el('past-papers-empty').textContent=pastCatalogError?'暫時無法讀取考古題，請按「更新雲端進度」重試。':'目前沒有符合篩選條件的考古題。';el('past-papers-count').textContent=openCount+'卷';el('past-unopened-count').textContent=unopenedCount+'卷';el('past-unopened-section').hidden=unopenedCount===0;
   renderContinue();
-  for(const id of ['cloud-papers','my-papers','past-papers','past-unopened']){
-    const box=el(id),unknown=[...box.children].filter(n=>n.dataset.practiceScope==='unknown');if(!unknown.length)continue;
+  for(const box of [el('cloud-papers'),el('my-papers'),el('past-papers'),el('past-unopened'),supplementList]){
+    const unknown=[...box.children].filter(n=>n.dataset.practiceScope==='unknown');if(!unknown.length)continue;
     const folder=node('details',undefined,'scope-unclassified'),list=node('div',undefined,'papers');folder.append(node('summary',`範圍待核對（${unknown.length}卷）`),node('p','這些卷尚未核定考試範圍，保留原有入口與進度。'));list.append(...unknown);folder.append(list);box.append(folder);
   }
   groupLibraryCards(el('cloud-papers'),shown);
   for(const box of el('cloud-papers').querySelectorAll('.scope-unclassified>.papers'))groupLibraryCards(box,shown);
+  if(supplements.length){
+    groupLibraryCards(supplementList,supplements,{useTitles:true});
+    for(const box of supplementList.querySelectorAll('.scope-unclassified>.papers'))groupLibraryCards(box,supplements,{useTitles:true});
+    const folder=node('details',undefined,'scope-unclassified supplementary-papers');
+    folder.append(node('summary',`補充練習卷（${supplements.length}卷）`),supplementList);
+    el('cloud-papers').append(folder);
+  }
   decorateSubjectCards(el('cloud-library'));
   focusOwnPaper();
 }

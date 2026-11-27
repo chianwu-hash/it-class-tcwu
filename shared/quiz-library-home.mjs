@@ -14,16 +14,17 @@ export function initLibraryHome({tabs,scopeBox,ownSection,continueBox}){
  const explore=make('a','找不到想練的？自己組一份','home-compose-link');explore.href='#mine';byId('system-papers-section').append(explore);
  return {sync};
 }
-export function groupLibraryCards(container,papers){
+export function groupLibraryCards(container,papers,{useTitles=false}={}){
  const byId=new Map(papers.map(p=>[String(p.id),p]));
  const groups=new Map();
  for(const card of [...container.children]){
   if(!card.matches('.paper-card')||card.dataset.source!=='preset')continue;
   const p=byId.get(card.dataset.sessionId),c=p?.catalog||{};
-  const key=JSON.stringify([c.subject,c.unit||p?.title,c.volume,c.publisher,card.dataset.practiceScope]);
+  const title=(useTitles&&p?.title)||c.unit||p?.title;
+  const key=JSON.stringify([c.subject,title,c.volume,c.publisher,card.dataset.practiceScope]);
   let group=groups.get(key);
-  if(!group){group=make('section',null,'home-unit-group');group.dataset.subject=c.subject||'';const h=make('h3',c.unit||p.title);const header=make('header',null,'home-unit-heading');header.append(subjectMark(c.subject),make('span',c.subject||'單元練習','home-unit-subject'),h);group.append(header);container.insertBefore(group,card);groups.set(key,group);}
-  card.classList.add('home-paper-row');card.setAttribute('aria-label',`${c.subject||''} ${c.unit||p.title} ${p.total}題`);group.append(card);
+  if(!group){group=make('section',null,'home-unit-group');group.dataset.subject=c.subject||'';const h=make('h3',title);const header=make('header',null,'home-unit-heading');header.append(subjectMark(c.subject),make('span',c.subject||'單元練習','home-unit-subject'),h);group.append(header);container.insertBefore(group,card);groups.set(key,group);}
+  card.classList.add('home-paper-row');card.setAttribute('aria-label',`${c.subject||''} ${title} ${p.total}題`);group.append(card);
  }
  for(const group of groups.values()){
   const rows=[...group.querySelectorAll(':scope>.paper-card')];rows.sort((a,b)=>(byId.get(a.dataset.sessionId)?.total||0)-(byId.get(b.dataset.sessionId)?.total||0));group.append(...rows);
