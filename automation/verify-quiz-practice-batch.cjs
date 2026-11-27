@@ -41,7 +41,10 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    const before=await read();assert.equal(before.version,s.version);assert.equal(before.pkg,s.pkg);assert.equal(before.questions.length,1);
    assert.deepEqual(before.refs[s.question_id],{bookId:plan.book,primary:ref.primary,references:ref.reference,fields:[]});
    const saved=before.responses[s.question_id]!==undefined;
-   if(saved){assert.deepEqual(JSON.parse(before.responses[s.question_id]),expected);assert.equal(before.reviews.find(r=>r.question_id===s.question_id)?.correct,true);}
+   const single=question.type==='single';
+   const readResponse=state=>single?state.responses[s.question_id]:JSON.parse(state.responses[s.question_id]);
+   const selectedRadio=single?article.locator('input[type=radio][value="'+expected+'"]'):null;
+   if(saved){assert.deepEqual(readResponse(before),expected);assert.equal(before.reviews.find(r=>r.question_id===s.question_id)?.correct,true);}
    else assert.deepEqual(before.responses,{});
    const checkMatching=async()=>{await article.locator('.quiz-matching').waitFor();for(const f of question.fields){assert.equal(f.input,'single');const index=f.options.findIndex(o=>o.id===expected.f[f.id]);assert.equal(await article.locator('.qm-card[data-side=left][data-id=\"'+f.id+'\"] .qm-pair').innerText(),String.fromCharCode(65+index));}};
    const matching=matchingPresentation(question),isMatching=Boolean(matching);if(isMatching)assert.equal(matching.covered.size,question.fields.length);
@@ -63,6 +66,11 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
     }
    };
    const checkAnswer=async()=>{
+    if(single){
+     if(!saved)assert.ok(await selectedRadio.isChecked());
+     else assert.equal(readResponse(await read()),expected);
+     return;
+    }
     if(saved){if(question.work?.input==='expression'){const text=await article.innerText();assert.ok(text.includes(s.work));}else if(question.work)assert.equal(await article.locator('.quiz-saved-work svg polyline').count(),expected.w.strokes.length);else await checkPlain();return;}
     if(!question.work){await checkPlain();return;}
     for(const [id,value] of Object.entries(expected.f))assert.equal(await article.locator('#field-'+s.question_id+'-'+id).inputValue(),value);
@@ -79,7 +87,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    for(const width of [1280,390]){
     await page.setViewportSize({width,height:960});
     if(!saved){
-     if(!question.work&&isMatching){await article.locator('.quiz-matching').waitFor();for(const [id,value] of Object.entries(expected.f)){await article.locator('.qm-card[data-side=left][data-id=\"'+id+'\"]').click();await article.locator('.qm-card[data-side=right][data-id=\"'+value+'\"]').click();}}
+     if(single){if(width===1280)await selectedRadio.check();}
+     else if(!question.work&&isMatching){await article.locator('.quiz-matching').waitFor();for(const [id,value] of Object.entries(expected.f)){await article.locator('.qm-card[data-side=left][data-id=\"'+id+'\"]').click();await article.locator('.qm-card[data-side=right][data-id=\"'+value+'\"]').click();}}
      else if(!question.work){for(const [i,f] of question.fields.entries()){
       if(f.input==='set'){const boxes=article.locator('fieldset.quiz-field').nth(i).locator('input[type=checkbox]');for(const [j,o] of f.options.entries())await boxes.nth(j).setChecked(expected.f[f.id].includes(o.id));await boxes.last().setChecked(expected.f[f.id].length===0);}
       else if(f.input==='single')await article.locator('input[type=radio][name="field-'+s.question_id+'-'+f.id+'"][value="'+expected.f[f.id]+'"]').check();
@@ -100,8 +109,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    }
    // Resume is checked before any submit; a saved exact response is never resent.
    if(!saved){await page.locator('#server-submit').click();await page.locator('#server-submit').waitFor({state:'detached'});}
-   let after=await read();assert.deepEqual(JSON.parse(after.responses[s.question_id]),expected);assert.equal(after.reviews.find(r=>r.question_id===s.question_id)?.correct,true);
-   await page.reload({waitUntil:'domcontentloaded'});await article.waitFor();after=await read();assert.deepEqual(JSON.parse(after.responses[s.question_id]),expected);
+   let after=await read();assert.deepEqual(readResponse(after),expected);assert.equal(after.reviews.find(r=>r.question_id===s.question_id)?.correct,true);
+   await page.reload({waitUntil:'domcontentloaded'});await article.waitFor();after=await read();assert.deepEqual(readResponse(after),expected);
    proof.samples.push({source:s.source,question:s.question_id,session:s.session,version:s.version,package:s.pkg,checks,correct:true,saved_and_reopened:true,reused_saved_answer:saved});
    await fs.writeFile(file('oauth-progress'),JSON.stringify(proof,null,2));
   }
