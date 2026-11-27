@@ -1,6 +1,6 @@
 {
   "schema": "quiz-conversion-rule-catalog/v1",
-  "version": "2026-11-21.4",
+  "version": "2026-11-27.1",
   "purpose": "已定案題型的批次轉化與驗收重用索引；不是匯入題庫格式或通用轉換器",
   "policyDocument": "docs/development/quiz-batch-conversion-rules.md",
   "scope": {
@@ -13,6 +13,13 @@
     "default": "reuse_confirmed_rule_and_programmatic_batch",
     "claudeDefault": "none",
     "repeatSamplePerBatch": false,
+    "formalOAuthSampling": {
+      "programmatic": 3,
+      "standard": 5,
+      "denominator": "original_sources",
+      "rounding": "ceil",
+      "minimum": 1
+    },
     "repeatUiPerSource": false,
     "sourceGuardBindingPerSource": true,
     "allRecordsRequireDataChecks": true,

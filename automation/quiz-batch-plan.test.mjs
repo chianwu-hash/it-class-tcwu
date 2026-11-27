@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {workerIntent,freezeWorkerIntent,reconcileWorker,applyWorkerIntent} from './lib/quiz-worker-write.mjs';
-import {batchCounts,expectedResponse,assertOAuthReceipt,practiceWriteIntent,freezeJson,validatePageBindings,recordBatchTime,preserveOAuthReceipt,assertSourceCoverage} from './lib/quiz-batch-plan.mjs';
+import {batchCounts,expectedResponse,assertOAuthReceipt,practiceWriteIntent,freezeJson,validatePageBindings,recordBatchTime,preserveOAuthReceipt,assertSourceCoverage,oauthSampleCount} from './lib/quiz-batch-plan.mjs';
 
 test('部分題組補發可引用已發布小題，但不得重複匯入或省略原收據',()=>{
  const sha='5'.repeat(64);
@@ -58,6 +58,22 @@ test('來源數推導 5% 抽樣與作答位置，OAuth 缺題或重複不能過�
  assert.throws(()=>expectedResponse(question));
  const batch={packet,counts,sha256:'fixed'},proof={passed:true,formalOAuth:true,packetSha:'fixed',sampleCount:2,samples:[{question:'q0'},{question:'q1'}]};
  assertOAuthReceipt(batch,proof);assert.throws(()=>assertOAuthReceipt(batch,{...proof,sampleCount:1}));assert.throws(()=>assertOAuthReceipt(batch,{...proof,samples:[{question:'q0'},{question:'q0'}]}));assert.throws(()=>assertOAuthReceipt(batch,{...proof,packetSha:'other'}));
+});
+
+test('程式轉換依來源數向上取整至 3%，OAuth 收據須符合批次樣本',()=>{
+ const packet={schema:1,samplingMode:'programmatic',candidates:Array.from({length:30},(_,i)=>candidate(i)),samples:[{question_id:'q0'}]};
+ const counts=batchCounts(packet);
+ assert.equal(counts.samples,1);
+ assert.equal(oauthSampleCount(34,'programmatic'),2);
+ assert.equal(oauthSampleCount(100,'programmatic'),3);
+ assert.equal(oauthSampleCount(101,'programmatic'),4);
+ assert.equal(oauthSampleCount(1,'programmatic'),1);
+ assert.equal(oauthSampleCount(30),2);
+ assert.throws(()=>oauthSampleCount(30,'unknown'));
+ const batch={packet,counts,sha256:'fixed'};
+ const proof={passed:true,formalOAuth:true,packetSha:'fixed',sampleCount:1,samples:[{question:'q0'}]};
+ assertOAuthReceipt(batch,proof);
+ assert.throws(()=>assertOAuthReceipt(batch,{...proof,sampleCount:2}));
 });
 
 test('SQL 寫入意圖在執行前固定，輸入或 SQL 換版不能覆寫',async()=>{
