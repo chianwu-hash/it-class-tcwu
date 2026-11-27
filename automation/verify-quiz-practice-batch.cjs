@@ -31,7 +31,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
   }
   await recordBatchTime(p,packetSha,'oauth-started');
   for(const s of ids.samples){
-   const question=p.candidates.flatMap(c=>c.doc.blocks.flatMap(b=>b.questions)).find(q=>q.id===s.question_id);
+   const block=p.candidates.flatMap(c=>c.doc.blocks).find(b=>b.questions.some(q=>q.id===s.question_id));
+   const question=block.questions.find(q=>q.id===s.question_id);
    const expected=plan.sampleExpected[s.question_id];assert.deepEqual(expected,expectedResponse(question,s.work));const ref=p.studyRows.find(r=>r.question_id===s.question_id);
    const primaryPage=p.pages.find(a=>a.printedPages.includes(ref.primary));const neighbor=p.pages.filter(a=>a.id!==primaryPage.id).sort((a,b)=>Math.abs(a.printed-ref.primary)-Math.abs(b.printed-ref.primary))[0]?.printedPages[0];assert.ok(neighbor);
    await page.goto('https://it-class-tcwu.vercel.app/grade3/115-1/quiz.html?cloud=1&session='+s.session,{waitUntil:'domcontentloaded',timeout:45000});
@@ -46,11 +47,12 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    const selectedRadio=single?article.locator('input[type=radio][value="'+expected+'"]'):null;
    const questionImageHashes=[];
    const textFields=question.type==='fields'&&!question.work&&question.fields.every(field=>field.input==='text');
-   const studentImages=single?[...question.prompt.media,...question.options.flatMap(option=>option.content.media)]:textFields?question.prompt.media:[];
-   for(const image of studentImages.filter(asset=>asset.kind==='image')){
+   const questionImages=single?[...question.prompt.media,...question.options.flatMap(option=>option.content.media)]:textFields?question.prompt.media:[];
+   const studentImages=[...block.material.media.map(asset=>({asset,scope:page})),...questionImages.map(asset=>({asset,scope:article}))];
+   for(const {asset:image,scope} of studentImages.filter(({asset})=>asset.kind==='image')){
     const descriptor=p.mediaAssets?.find(asset=>asset.url===image.url);
     if(!descriptor)continue;
-    const rendered=article.locator('img[data-quiz-media-url="'+image.url+'"]');
+    const rendered=scope.locator('img[data-quiz-media-url="'+image.url+'"]').first();
     await rendered.scrollIntoViewIfNeeded();
     await page.waitForFunction(url=>{
      const img=[...document.querySelectorAll('img[data-quiz-media-url]')].find(item=>item.dataset.quizMediaUrl===url);
