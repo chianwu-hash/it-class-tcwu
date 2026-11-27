@@ -4,11 +4,11 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | codex-teacher-library-20261128 | 2026-11-28 | 本批合併後核對 | `dpl_7W5BR2wEY8xCWeJzjZviV11bjvE5` | 各年級教師卷清單 | 依正式發布腳本驗證 |
+| 已完成 | codex-teacher-library-20261128 | 2026-11-27T23:07:51.138Z | `4ba9d9d` | `dpl_7W5BR2wEY8xCWeJzjZviV11bjvE5` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-library-home.mjs、shared/quiz-library.mjs、shared/quiz-workshop/generated/assets.json、package.json | `dpl_52m6Hs4pdxaGB5LkEUtjFHZrBT5d`／回滾 `dpl_7W5BR2wEY8xCWeJzjZviV11bjvE5`（eolOnly 0） |
 
 - 正式庫按所有範圍盤點。三年級 51 份 10／20 題卷、50 份非制式卷。四、六、九年級各有 23、49、30 份 10／20 題卷，無非制式卷。
 - 主清單與計數限 10／20 題卷，其餘在「補充練習卷」以原卷名顯示，沿用原範圍、科目、練習進度與原作答入口。
-- 「數值與單位批次試跑」及「114 上自然考古題節選 9 題」僅專用帳號有場次記錄，已在回滾交易中演練撤出清單與還原。另兩份自然實測卷已有非專用帳號的場次，保留在補充區。正式操作與驗證結果記在本批 PR。
+- 「數值與單位批次試跑」及「114 上自然考古題節選 9 題」僅專用帳號有場次記錄，已在回滾交易中演練撤出清單與還原。另兩份自然實測卷已有非專用帳號的場次，保留在補充區。已正式撤出這兩份，讀回確認四份場次的版本、班級及作答筆數保留。詳[本批 PR 收據](https://github.com/chianwu-hash/it-class-tcwu/pull/539#issuecomment-7229969526)。
 - 桌機與手機合成瀏覽器 50 項驗證、8 項範圍與路由測試、練功坊產物檢查均通過。
 
 # 2026-11-27 舊部署清理七天唯讀試行
