@@ -110,6 +110,13 @@ def teacher_text(answer):
     return normalize(answer["text"]).removeprefix("答案:").strip()
 
 
+def clip_review_agrees(review, script, digest):
+    if not review or review["audio_sha256"] != digest or normalize(review["publishable_transcript"]) != script:
+        return False
+    windows = {(section["start"], section["end"]) for section in review["review"]}
+    return len(windows) >= 2 or bool(windows and review["base_model_exact"])
+
+
 def eq_positions(item):
     out = []
     for field in item["fields"]:
@@ -152,7 +159,7 @@ def page_refs(script, shape, stem, draft, unit, textbook):
         draft.append({"page": n, "file": filename, "sha": sha(path), "index": n-origin+1})
 
 
-def convert(row, audio, second, textbook):
+def convert(row, audio, second, textbook, reviewed_clip=None):
     label = normalize(row["labels"][0].split("，", 1)[-1])
     shape = next((rule for part, rule in TEXT_RULES if label == part or label.startswith(part + "畫")), None)
     require(shape, "other_layout")
@@ -174,6 +181,8 @@ def convert(row, audio, second, textbook):
         require(second["sha256"] == audio["sha256"], "second_audio_sha")
     asr = next((model for model, reading in (("base.en", audio.get("asr")), ("small", second.get("asr")))
                 if audio_agrees(script, reading, shape)), None)
+    if not asr and clip_review_agrees(reviewed_clip, script, audio["sha256"]):
+        asr = "reviewed_clip"
     require(asr, "audio_transcript_review")
     printed = normalize(word["text"])
     options = [normalize(o) for o in native["options"]]

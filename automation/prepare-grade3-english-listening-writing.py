@@ -14,7 +14,7 @@ RULES = {
 }
 
 
-def convert(item, original_audio, second_audio, assets, book, rules):
+def convert(item, original_audio, second_audio, assets, book, rules, reviewed_clip=None):
     label = item["labels"][0].split("仔細聽，", 1)[-1]
     shape, blank = RULES[label]
     require = rules.require
@@ -42,8 +42,14 @@ def convert(item, original_audio, second_audio, assets, book, rules):
     original = norm(word["text"])
     printed = norm(re.sub(r"【\s*】", "", q["stem"]))
     script = rules.script_text(item["content"]["solution"])
-    require(script and script == rules.script_text(solution["text"]), "publisher_transcript")
+    require(script == rules.script_text(solution["text"]), "publisher_transcript")
     a = original_audio
+    if not script and shape=="unscramble" and reviewed_clip and reviewed_clip["script_absent_in_publisher"]:
+        fallback=norm(reviewed_clip["publishable_transcript"])
+        require(rules.clip_review_agrees(reviewed_clip,fallback,a["sha256"]),"missing_transcript_clip")
+        require(rules.audio_agrees(fallback,a.get("asr"),shape),"missing_transcript_full_recording")
+        script=fallback
+    require(script, "publisher_transcript")
     require(a.get("samples", 0) and a.get("peak", 0) and rules.sha(a["path"]) == a["sha256"] == item["audio_resource"]["sha256"],
             "audio_bytes")
     if second_audio:
@@ -51,6 +57,8 @@ def convert(item, original_audio, second_audio, assets, book, rules):
     mode = {"phonics_write":"check_phonics","case_write":"choose_letter"}.get(shape,shape)
     verified = next((model for model, text in (("base.en", a.get("asr")),("small", second_audio.get("asr")))
                      if rules.audio_agrees(script,text,mode)), None)
+    if not verified and rules.clip_review_agrees(reviewed_clip,script,a["sha256"]):
+        verified="reviewed_clip"
     require(verified, "audio_transcript_review")
     if shape == "phonics_write":
         pronunciation = re.fullmatch(r"/([a-z])/,\s*/\1/,\s*(.+)", script, re.I)
