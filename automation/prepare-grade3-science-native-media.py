@@ -135,6 +135,15 @@ def adapt(parent, targets, original, pages, legacy, docx):
     else:
         raise ValueError("other_source_layout")
     explanation=t["student_explanation"]
+    if kind=="single_choice":
+        # Strip only a trailing summary that cites the already checked option.
+        # Keeps the explanation valid regardless of the delivered option order.
+        suffix=re.search(r"[，,。；;]\s*(?:所以)?答案(?:是|選)\s*([①②③④⑤⑥⑦⑧])\s*([^。]*)(?:。)?$",explanation)
+        if suffix:
+            require("①②③④⑤⑥⑦⑧".index(suffix[1])+1==key,"ordinal_explanation_key")
+            cited=norm(suffix[2]).rstrip("。")
+            require(not cited or cited==norm(labels[key-1]["text"]).rstrip("。"),"ordinal_explanation_label")
+            explanation=explanation[:suffix.start()].rstrip()+"。"
     require(not re.search(r"[①②③④⑤⑥⑦⑧]|選項\s*[A-H1-8]",explanation),"ordinal_explanation")
     return kind,[{"target":t["target_id"],"refs":legacy.refs_for(t,unit,pages),
                    "question":output_question(kind,prompt,labels,[key],plain(explanation))}],assets
