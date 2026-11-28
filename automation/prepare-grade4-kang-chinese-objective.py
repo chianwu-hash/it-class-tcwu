@@ -8,6 +8,8 @@ from pathlib import Path, PureWindowsPath
 from xml.etree import ElementTree as ET
 from zipfile import BadZipFile, ZipFile
 
+from lib.quiz_chinese_fonts import convert_zhuyin_tree
+
 W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 MARKERS = "①②③④"
 TRUE_FALSE = {"○": "a", "Ｏ": "a", "O": "a", "╳": "b", "×": "b", "Ｘ": "b", "X": "b"}
@@ -19,12 +21,22 @@ SEMANTIC_MARKUP = {"drawing", "pict", "object", "ruby", "oMath", "oMathPara"}
 FORMAT_REFERENCES = re.compile(r"畫線|劃線|底線|加線|著色處|粗體|紅色|畫記處")
 PHONETIC_ANSWER = re.compile(r"注音(?:分別)?(?:是什麼|為何|是哪個)|注音錯誤")
 BOPOMOFO = re.compile(r"[\u3105-\u312f\u31a0-\u31bf]")
+HAN = re.compile(r"[\u3400-\u9fff]")
 
 def local_name(element):
     return element.tag.rsplit("}", 1)[-1]
 
 def rich(text):
     return {"text": text, "media": []}
+
+def uses_phonetic_font(cell):
+    for run in cell.iter(W + "r"):
+        fonts = run.find(W + "rPr/" + W + "rFonts")
+        if (fonts is not None
+                and any("注音" in name or "ㄅㄆㄇ" in name for name in fonts.attrib.values())
+                and any(HAN.search(node.text or "") for node in run.iter(W + "t"))):
+            return True
+    return False
 
 def cell_text(cell):
     paragraphs = []
@@ -67,7 +79,16 @@ def read_original(path):
         raise ValueError("unknown_word_column_order")
     if any(local_name(e) in SEMANTIC_MARKUP for cell in rows[1] for e in cell.iter()):
         raise ValueError("word_media_or_ruby")
-    return tuple(cell_text(c) for c in rows[1])
+    # The Word font can render a Han code point as a different phonetic string.
+    changes = []
+    for cell in rows[1]:
+        try:
+            changes.extend(convert_zhuyin_tree(cell))
+        except ValueError as error:
+            raise ValueError("requires_original_phonetic_rendering") from error
+        if uses_phonetic_font(cell):
+            raise ValueError("requires_original_phonetic_rendering")
+    return [cell_text(cell) for cell in rows[1]], changes
 
 def convert(record, source_root):
     qtype = record["type"]
@@ -81,7 +102,7 @@ def convert(record, source_root):
     original = source_root.joinpath(*member.parts)
     if not original.is_file():
         raise ValueError("word_not_extracted")
-    prompt, teacher_key, solution = read_original(original)
+    (prompt, teacher_key, solution), phonetic_changes = read_original(original)
     fixed_key = re.fullmatch(r"《答案》\s*(\S+)", teacher_key)
     is_tf = qtype == "11"
     key = answer_key(fixed_key.group(1), is_tf) if fixed_key else None
@@ -109,6 +130,7 @@ def convert(record, source_root):
         "wordSha256": hashlib.sha256(original.read_bytes()).hexdigest(),
         "difficulty": DIFFICULTY[record["difficulty"]],
         "publisherExplanation": solution,
+        "phoneticChanges": phonetic_changes,
         "question": {
             "type": "single",
             "prompt": rich(prompt),
