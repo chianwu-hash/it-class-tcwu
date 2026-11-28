@@ -135,7 +135,13 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
       else{assert.ok(saved);const rows=article.locator('.quiz-field-preview-set').nth(i).locator('.preview-option');for(const [j,o] of f.options.entries())assert.equal(await rows.nth(j).getAttribute('data-field-result'),chosen.includes(o.id)?'correct':null);if(chosen.length===0)assert.equal(await rows.last().getAttribute('data-field-result'),'correct');}
      }else if(f.input==='single'){
       const radios=article.locator('input[type=radio][name="field-'+s.question_id+'-'+f.id+'"]');await article.locator('input[type=radio][name="field-'+s.question_id+'-'+f.id+'"],.quiz-field-preview').first().waitFor();
-      if(await radios.count()){assert.equal(await radios.count(),f.options.length);for(const [j,o] of f.options.entries()){assert.equal(await radios.nth(j).isChecked(),o.id===expected.f[f.id]);if(saved)assert.ok(await radios.nth(j).isDisabled());}}
+      if(await radios.count()){
+       assert.equal(await radios.count(),f.options.length);
+       if(p.verifyPrintedPairOrder===true&&f.id==='pair'){
+        assert.deepEqual(await radios.evaluateAll(items=>items.map(radio=>radio.value)),f.options.map(o=>o.id));
+       }
+       for(const [j,o] of f.options.entries()){assert.equal(await radios.nth(j).isChecked(),o.id===expected.f[f.id]);if(saved)assert.ok(await radios.nth(j).isDisabled());}
+      }
       else{assert.ok(saved);const rows=article.locator('.quiz-field-preview').nth(i).locator('.preview-option');for(const [j,o] of f.options.entries())assert.equal(await rows.nth(j).getAttribute('data-field-result'),o.id===expected.f[f.id]?'correct':null);}
      }else if(!saved||await article.locator('#field-'+s.question_id+'-'+f.id).count())assert.equal(await article.locator('#field-'+s.question_id+'-'+f.id).inputValue(),expected.f[f.id]);
      else assert.ok((await article.innerText()).includes(expected.f[f.id]));
