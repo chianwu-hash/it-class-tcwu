@@ -5347,7 +5347,7 @@ revoke all on function public.quiz_past_snapshot(uuid) from public, anon, authen
 grant execute on function public.quiz_past_snapshot(uuid) to postgres;
 grant execute on function public.quiz_past_snapshot(uuid) to service_role;
 
--- quiz_past_snapshot_before_drafts(uuid)  md5=588e36cb7015d20bb4a3797de71f916b
+-- quiz_past_snapshot_before_drafts(uuid)  md5=074421da5937e369d97813f418900737
 CREATE OR REPLACE FUNCTION public.quiz_past_snapshot_before_drafts(p_attempt uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -5382,7 +5382,11 @@ declare data jsonb;m public.quiz_learning_maps;e jsonb;r jsonb;g jsonb;items jso
    if not exists(select 1 from jsonb_array_elements(coalesce(r->'results','[]')) x where x->>'questionId'=e->>'questionId' and jsonb_typeof(x->'correct')='boolean') and not(coalesce((e->>'selfCheck')::boolean,false) and r->>'status'='self_checked') then continue;end if;
    href:=null;
    if exists(select 1 from jsonb_array_elements(r->'results') x where x->>'questionId'=e->>'questionId' and x->>'correct'='false') then
-    href:='/grade3/115-1/quiz-library.html?wrong_source=past_exam&wrong_attempt='||p_attempt||'&wrong_paper='||m.paper_id||'&wrong_version='||m.source_version||'&wrong_group='||(e->>'groupId')||'&wrong_question='||(e->>'questionId')||'#wrong';
+    -- Derive the route from this owned attempt's immutable source, not a fixed grade.
+    select '/grade'||p.grade::text||'/115-1/quiz-library.html?wrong_source=past_exam&wrong_attempt='||p_attempt||'&wrong_paper='||m.paper_id||'&wrong_version='||m.source_version||'&wrong_group='||(e->>'groupId')||'&wrong_question='||(e->>'questionId')||'#wrong' into href
+    from public.quiz_past_attempts a join public.quiz_past_papers p on p.id=a.paper_id
+    where a.id=p_attempt and a.user_id=auth.uid()
+     and a.version_id=m.source_version and a.paper_id=m.paper_id;
    end if;
    items:=items||jsonb_build_array(jsonb_strip_nulls(jsonb_build_object('questionId',e->>'questionId','text',e->>'explanation','selfCheck',coalesce((e->>'selfCheck')::boolean,false),'wrongReviewHref',href)));
   end loop;
