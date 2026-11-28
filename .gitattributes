@@ -29,3 +29,7 @@ supabase/quiz-partner-single-review.sql text eol=lf
 automation/fixtures/partner-learning-snapshot-before-single.sql -text whitespace=cr-at-eol
 supabase/quiz-partner-short-review.sql text eol=lf
 automation/fixtures/partner-learning-snapshot-before-short.sql -text whitespace=cr-at-eol
+
+# Function-definition guards must see the same dollar-quoted body on Windows.
+supabase/quiz-past-learning-grade-route-fix-20261128.sql text eol=lf
+supabase/quiz-past-learning-grade-route-rollback-20261128.sql text eol=lf
