@@ -4,7 +4,9 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | codex-g4-kang-chinese-l10-12-20261128 | 2026-11-28 | [#579](https://github.com/chianwu-hash/it-class-tcwu/pull/579) 合併後的 main | `dpl_6FWNT5J8vM57D8B4h5uNX7j3B9k4` | 合冊翻頁設定與練功坊入口資產 | 待候選版完整樹比對及正式學生複驗 |
+| 已完成 | codex-g4-kang-chinese-l10-12-20261128 | 2026-11-28T06:52:00.942Z | `289063a` | `dpl_6FWNT5J8vM57D8B4h5uNX7j3B9k4` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-textbook-settings.mjs、shared/quiz-workshop/generated/assets.json | `dpl_EoKaExaQgPj3A18Ev4ZFLCQw2Rvq`／回滾 `dpl_6FWNT5J8vM57D8B4h5uNX7j3B9k4`（eolOnly 0） |
+
+第十至十二課 56 題與正式課本對照讀回相符。桌機與手機正式樣本及學生自組卷確認由右往左翻閱與返回保留選答。 [本批正式複驗收據](https://github.com/chianwu-hash/it-class-tcwu/pull/579#issuecomment-7235644723)
 
 # 2026-11-28 四年級英語期末自組卷
 
