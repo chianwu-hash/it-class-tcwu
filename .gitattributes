@@ -36,3 +36,6 @@ supabase/quiz-past-learning-grade-route-rollback-20261128.sql text eol=lf
 
 supabase/quiz-partner-optional-bonus.sql text eol=lf
 supabase/quiz-partner-optional-bonus-rollback.sql text eol=lf
+
+supabase/quiz-past-oauth-acceptance.sql text eol=lf
+supabase/quiz-past-oauth-acceptance-rollback.sql text eol=lf
