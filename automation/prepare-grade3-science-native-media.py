@@ -63,13 +63,14 @@ def output_question(kind, prompt, labels, keys, explanation):
             "answer":{"option_id":f"o{keys[0]}"},"explanation":explanation}
 
 
-def shared_image_choices(parent, targets, original, pages, legacy, docx):
+def shared_image_choices(parent, targets, original, pages, legacy, docx, review=None):
     require = legacy.require
     norm = legacy.normalize
     native = parent["original_source"]["native_content"]
     raw = native["questions"]
+    kinds = ("single_choice", "multiple_choice") if review else ("single_choice",)
     require(len(raw) == len(targets) > 1 and native.get("preamble")
-            and all(t["kind"] == "single_choice" for t in targets)
+            and all(t["kind"] in kinds for t in targets)
             and all(item["options"] for item in raw), "other_source_layout")
     by_position = {tuple(t["source_question_indices"]):t for t in targets}
     require(set(by_position) == {(i,) for i in range(1, len(raw) + 1)}, "source_position")
@@ -81,6 +82,20 @@ def shared_image_choices(parent, targets, original, pages, legacy, docx):
     parsed = legacy.read(path)
     require(all(block["type"] == "paragraph" for block in parsed["layout"]), "original_table")
     assets = verify_assets(parsed, asset["images"], original["question_docx"], legacy)
+    teacher_keys = []
+    if review:
+        teacher = Path(original["question_docx"]).with_name("answer.docx.gz")
+        require(legacy.digest(teacher) == review["teacher_sha256"], "teacher_word_changed")
+        require(len(assets) == 1 and next(iter(assets.values()))["sha256"] == review["image_sha256"],
+                "shared_image_changed")
+        require(review["pattern"] in ("inline", "separate_options"), "unsupported_choice_layout")
+        source_key = teacher_printed_answer(teacher, require)
+        expected_mark = "ˇ" if review["pattern"] == "separate_options" else ""
+        for i, entry in enumerate(re.split(r"[；;]", source_key.strip()), 1):
+            match = re.fullmatch(r"[（(]([１-８1-8])[）)]([①②③④])(ˇ?)", entry.strip())
+            require(match and int(match[1]) == i and match[3] == expected_mark, "teacher_choice_position")
+            teacher_keys.append(norm(match[2]))
+        require(len(teacher_keys) == len(raw), "teacher_choice_count")
     prefix, body = [], []
     for block in parsed["layout"]:
         runs = block["runs"]
@@ -97,6 +112,9 @@ def shared_image_choices(parent, targets, original, pages, legacy, docx):
     questions = []
     for i, (item, line) in enumerate(zip(raw, lines), 1):
         target = by_position[(i,)]
+        if review and review["pattern"] == "separate_options":
+            line, removed = re.subn(r"(?m)^\s*[（(][\s_＿]*[）)](?=[①②③④])", "", line)
+            require(removed == len(item["options"]), "word_choice_mark_count")
         source = {"layout":[{"type":"paragraph","runs":[{"type":"text","text":line}]}],"media":[]}
         prompt, *labels = docx.split_options(source)
         labels = [legacy.plain(label["text"]) for label in labels]
@@ -107,6 +125,9 @@ def shared_image_choices(parent, targets, original, pages, legacy, docx):
         answers = [norm(str(a)) for group in item["answers"] for a in group if str(a).strip()]
         require(len(answers) == 1 and answers[0] in {str(j) for j in range(1, len(labels)+1)}
                 and answers[0] == norm(target["reference_answer"]), "review_choice_key")
+        if review:
+            require(len(target["positions"]) == 1 and answers[0] == teacher_keys[i-1]
+                    == norm(target["positions"][0]["reference_value"]), "review_choice_position")
         explanation = re.sub(r"[①②③④]", lambda match: "「"+labels[ord(match[0])-0x2460]["text"]+"」"
                              if ord(match[0])-0x2460 < len(labels) else match[0],
                              target["student_explanation"])
@@ -430,14 +451,17 @@ def main():
     parser.add_argument("--visual-ordinals", type=Path)
     parser.add_argument("--visual-grid-selections", type=Path)
     parser.add_argument("--visual-grid-matching", type=Path)
+    parser.add_argument("--shared-single-reviews", type=Path)
     args=parser.parse_args()
     legacy=load_module(args.legacy)
     docx=load_module(args.docx)
     visual_reviews = legacy.read(args.visual_ordinals) if args.visual_ordinals else {}
     grid_reviews = legacy.read(args.visual_grid_selections) if args.visual_grid_selections else {}
     matching_reviews = legacy.read(args.visual_grid_matching) if args.visual_grid_matching else {}
-    if len(set(visual_reviews) | set(grid_reviews) | set(matching_reviews)) != sum(map(len, (visual_reviews, grid_reviews, matching_reviews))):
-        parser.error("the same source cannot use both visual review modes")
+    single_reviews = legacy.read(args.shared_single_reviews) if args.shared_single_reviews else {}
+    modes = (visual_reviews, grid_reviews, matching_reviews, single_reviews)
+    if len(set().union(*modes)) != sum(map(len, modes)):
+        parser.error("the same source cannot use multiple visual review modes")
     sources={r["stable_id"]:r for r in legacy.read(args.source_catalog)["records"]}
     export=legacy.read(args.export)
     parents={r["id"]:r for r in export["parents"]}
@@ -466,6 +490,9 @@ def main():
             elif sid in matching_reviews:
                 rule = "visual_grid_matching"
                 material, qs, assets = visual_grid_matching(parent, group, source, pages, legacy, docx, matching_reviews[sid])
+            elif sid in single_reviews:
+                rule = "reviewed_shared_single_choices"
+                material, qs, assets = shared_image_choices(parent, group, source, pages, legacy, docx, single_reviews[sid])
             elif len(group) > 1 and all(t["kind"] == "single_choice" for t in group):
                 rule = "shared_image_choices"
                 material, qs, assets = shared_image_choices(parent, group, source, pages, legacy, docx)
