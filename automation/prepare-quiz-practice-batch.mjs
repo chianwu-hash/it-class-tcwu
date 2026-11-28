@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
-import {loadBatch,readJson,digest,expectedResponse,practiceWriteIntent,freezeJson,recordBatchTime} from './lib/quiz-batch-plan.mjs';
+import {loadBatch,readJson,digest,expectedResponse,practiceWriteIntent,freezeJson,recordBatchTime,practiceGrade} from './lib/quiz-batch-plan.mjs';
 import {arrangementPlan} from '../shared/quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from '../shared/quiz-grid-drawing.mjs';
 import {groupingDrawingPlan} from '../shared/quiz-grouping-drawing.mjs';
@@ -29,6 +29,7 @@ function alternateShading(plan, left, right, comparison, offset=0){
  return fractionComparisonResponse(plan,ids,comparison);
 }
 const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
+const {grade,qaClass}=practiceGrade(p);
 for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.ok(['fields','single','open'].includes(q.type));if(q.type==='single'){assert.ok(!q.work);continue;}if(q.type==='open'){assert.ok(!q.work && (reviewedSketch(q) ? q.explanation.media.length===1 && q.explanation.media[0].kind==='image' : q.fields.every(f=>f.input==='text') && !q.explanation.media.length), 'Open media requires an independently reviewed grid answer');expectedResponse(q,undefined,p.openResponses?.[q.id]);continue;}if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(fractionComparisonPlan(q)||fractionShadingMatchPlan(q)||q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set','sequence'].includes(f.input)));}}
 for(const c of p.candidates)for(const block of c.doc.blocks){
  const firstArrangement=block.questions.findIndex(arrangementPlan);
@@ -73,8 +74,8 @@ for(const [url,id] of drawingOwners){
 }
 const guards=`if exists(select 1 from jsonb_array_elements(${j(mediaAssets)}) r where not exists(select 1 from public.quiz_media_assets m where m.url=r->>'url' and m.owner_id=${q(owner)} and m.object_path=r->>'object_path' and m.mime=r->>'mime' and m.bytes=(r->>'bytes')::integer)) then raise exception 'private_media_descriptor_mismatch';end if;
 if not exists(select 1 from auth.users where id=${q(owner)} and lower(email)=${q(ownerEmail)} and email_confirmed_at is not null) then raise exception 'owner_mismatch';end if;
-if not exists(select 1 from auth.users u join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 and e.class_code='307' where u.id=${q(student)} and lower(u.email)=${q(studentEmail)} and u.email_confirmed_at is not null and u.raw_app_meta_data->'providers'?'google') then raise exception 'qa_identity_mismatch';end if;
-if not exists(select 1 from public.quiz_textbooks where id=${q(book.id)} and grade=3 and school_year=115 and semester=1 and source_sha256=${q(book.sourceSha256)} and title=${q(book.title)} and enabled) then raise exception 'textbook_version_mismatch';end if;
+if not exists(select 1 from auth.users u join public.student_enrollments e on e.email=lower(u.email) and e.school_year=115 and e.class_code=${q(qaClass)} where u.id=${q(student)} and lower(u.email)=${q(studentEmail)} and u.email_confirmed_at is not null and u.raw_app_meta_data->'providers'?'google') then raise exception 'qa_identity_mismatch';end if;
+if not exists(select 1 from public.quiz_textbooks where id=${q(book.id)} and grade=${grade} and school_year=115 and semester=1 and source_sha256=${q(book.sourceSha256)} and title=${q(book.title)} and enabled) then raise exception 'textbook_version_mismatch';end if;
 if exists(select 1 from jsonb_array_elements(${j(assets)}) r where not exists(select 1 from public.quiz_textbook_pages a where a.book_id=${q(book.id)} and a.id=r->>'id' and to_jsonb(a.printed_pages)=r->'printedPages' and a.sha256=r->>'sha' and a.bytes=(r->>'bytes')::integer and a.sequence=r->>'sequence' and a.provenance=r->'provenance')) then raise exception 'textbook_page_mismatch';end if;`;
 assert.equal(n.images,mediaAssets.length);
 const exact=t=>`if not exists(select 1 from public.quiz_sessions s join public.quiz_versions v on v.id=s.version_id join public.quiz_banks b on b.id=v.bank_id join public.quiz_version_meta m on m.version_id=v.id where s.id=${q(t.session)} and s.owner_id=${q(t.user)} and s.access_mode=${q(t.access)} and s.status='open' and s.version_id=${q(t.version)} and v.bank_id=${q(t.bank)} and v.document=${j(t.doc)} and b.draft=v.document and m.total=${t.rows.length} and not s.shuffle_questions and not s.shuffle_options) then raise exception 'document_changed';end if;
@@ -85,15 +86,15 @@ const select=`select encode(convert_to(jsonb_build_object('visible',s.library_vi
 const insertion=publications.map(t=>`select public.quiz_validate(${j(t.doc)});
 insert into public.quiz_banks(id,owner_id,draft) values(${q(t.bank)},${q(t.user)},${j(t.doc)});
 insert into public.quiz_versions(id,bank_id,revision,document) values(${q(t.version)},${q(t.bank)},1,${j(t.doc)});
-insert into public.quiz_sessions(id,owner_id,version_id,school_year,class_codes,reveal,shuffle_questions,shuffle_options,access_mode,status,library_visible) values(${q(t.session)},${q(t.user)},${q(t.version)},115,${j(t.access==='self'?['307']:[])},'immediate',false,false,${q(t.access)},'open',false);
+insert into public.quiz_sessions(id,owner_id,version_id,school_year,class_codes,reveal,shuffle_questions,shuffle_options,access_mode,status,library_visible) values(${q(t.session)},${q(t.user)},${q(t.version)},115,${j(t.access==='self'?[qaClass]:[])},'immediate',false,false,${q(t.access)},'open',false);
 ${t.access==='self'?`insert into public.quiz_generated_papers(session_id,user_id,request_id,config,actual_distribution,display_name) values(${q(t.session)},${q(student)},${q(t.request)},${j({kind:'self',count:t.rows.length,course_id:doc.catalog.course_id})},${j({sample_count:t.rows.length})},${q(p.title)});`:''}
 insert into public.quiz_study_packages(id,kind,version_id,approved,enabled,provenance) values(${q(t.pkg)},'normal',${q(t.version)},true,false,${j({method:'parameterized_verified_practice_batch',packetSha,source_records:t.doc.blocks.length,verified_references:t.rows.length})});
 ${t.rows.map(r=>`insert into public.quiz_study_items(package_id,question_id,book_id,primary_page,reference_pages,student_explanation,origin,teacher_notes) values(${q(t.pkg)},${q(r.question_id)},${q(book.id)},${r.primary},array[${r.reference.join(',')}]::integer[],${q(r.student_explanation)},'ai',${j(r.teacher_notes)});`).join('\n')}
 update public.quiz_study_packages set enabled=true where id=${q(t.pkg)};`).join('\n');
-const classes=`coalesce((select jsonb_agg(distinct class_code order by class_code) from public.student_enrollments where school_year=115 and class_code ~ '^3[0-9]{2}$'),'[]'::jsonb)`;
+const classes=`coalesce((select jsonb_agg(distinct class_code order by class_code) from public.student_enrollments where school_year=115 and class_code ~ '^${grade}[0-9]{2}$'),'[]'::jsonb)`;
 const sqls={
  stage:`begin;do $$begin ${guards} end$$;${insertion} do $$begin ${fixed} end$$;${select} commit;`,
- activate:`begin;select id from public.quiz_sessions where id=${q(ids.session)} for update;do $$begin ${guards} ${fixed} if jsonb_array_length(${classes})=0 then raise exception 'no_grade3_classes';end if;end$$;update public.quiz_sessions set library_visible=true,class_codes=${classes} where id=${q(ids.session)};${select} commit;`,
+ activate:`begin;select id from public.quiz_sessions where id=${q(ids.session)} for update;do $$begin ${guards} ${fixed} if jsonb_array_length(${classes})=0 then raise exception 'no_grade${grade}_classes';end if;end$$;update public.quiz_sessions set library_visible=true,class_codes=${classes} where id=${q(ids.session)};${select} commit;`,
  rollback:`begin;update public.quiz_sessions set library_visible=false,class_codes='[]',status='closed' where id=${q(ids.session)} and owner_id=${q(owner)} and version_id=${q(ids.version)} and access_mode='practice';${select} commit;`,
  readback:`begin read only;do $$begin ${guards} ${fixed} end$$;${select} commit;`,
  presence:`select encode(convert_to(jsonb_build_object('sessions',(select count(*) from public.quiz_sessions where id in (${publications.map(t=>q(t.session)).join(',')})))::text,'utf8'),'base64') payload;`,
@@ -109,8 +110,8 @@ try{
  const schema=await readJson(new URL('../supabase/production-snapshot/schema.json',import.meta.url));
  const tables=new Set(['quiz_versions','quiz_study_packages','quiz_study_items','quiz_textbooks','quiz_textbook_pages']);
  for(const t of schema.triggers.filter(t=>t.schema==='public'&&tables.has(t.table)))await db.exec(t.def);
- await db.query("insert into auth.users(id,email,email_confirmed_at) values($1,$2,now()),($3,$4,now()),($5,'g3@example.invalid',now()),($6,'g4@example.invalid',now())",[owner,ownerEmail,student,studentEmail,uid(2),uid(3)]);
- await db.query("insert into public.student_enrollments values(115,$1,'307',30,'QA'),(115,'g3@example.invalid','301',31,'G3'),(115,'g4@example.invalid','401',31,'G4')",[studentEmail]);
+ await db.query("insert into auth.users(id,email,email_confirmed_at) values($1,$2,now()),($3,$4,now()),($5,'same-grade@example.invalid',now()),($6,'other-grade@example.invalid',now())",[owner,ownerEmail,student,studentEmail,uid(2),uid(3)]);
+ await db.query("insert into public.student_enrollments values(115,$1,$2,30,'QA'),(115,'same-grade@example.invalid',$3,31,'QA same grade'),(115,'other-grade@example.invalid',$4,31,'QA other grade')",[studentEmail,qaClass,`${grade}01`,grade===3?'401':'301']);
  for(const a of mediaAssets)await db.query('insert into public.quiz_media_assets(url,owner_id,object_path,mime,bytes) values($1,$2,$3,$4,$5)',[a.url,owner,a.object_path,a.mime,a.bytes]);
  await db.query('insert into public.quiz_textbooks values($1,$2,$3,$4,$5,$6,false)',[book.id,book.grade,book.schoolYear,book.semester,book.title,book.sourceSha256]);
  for(const b of book.pages)await db.query('insert into public.quiz_textbook_pages(book_id,id,printed_pages,sequence,sha256,bytes,provenance) values($1,$2,$3,$4,$5,$6,$7)',[book.id,b.id,'{'+b.printedPages.join(',')+'}',b.sequence,b.sha256,b.bytes,b.provenance]);
@@ -233,7 +234,7 @@ try{
    await db.exec('reset role');const bank=randomUUID(),version=randomUUID(),session=randomUUID();
    await db.query('insert into public.quiz_banks(id,owner_id,draft) values($1,$2,$3)',[bank,student,c.doc]);
    await db.query('insert into public.quiz_versions(id,bank_id,revision,document) values($1,$2,1,$3)',[version,bank,c.doc]);
-   await db.query("insert into public.quiz_sessions(id,owner_id,version_id,school_year,class_codes,reveal,shuffle_questions,shuffle_options,access_mode) values($1,$2,$3,115,'[\"307\"]','immediate',false,false,'self')",[session,student,version]);
+   await db.query("insert into public.quiz_sessions(id,owner_id,version_id,school_year,class_codes,reveal,shuffle_questions,shuffle_options,access_mode) values($1,$2,$3,115,$4::jsonb,'immediate',false,false,'self')",[session,student,version,JSON.stringify([qaClass])]);
    await db.query("insert into public.quiz_generated_papers(session_id,user_id,request_id,config,actual_distribution) values($1,$2,$3,'{}','{}')",[session,student,randomUUID()]);
    await actor(student);const before=await action('join',{session_id:session});
    const expectedResponses={};

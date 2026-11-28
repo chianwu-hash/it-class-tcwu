@@ -79,6 +79,17 @@ test('正式單元目錄的數字、列舉與範圍依完整內容分類',()=>{
  assert.equal(paperPracticeScope({catalog:{...catalog,course_id:'115-1-hanlin-g3-science',subject:'自然',unit:'3'}}),'after');
 });
 
+test('四年級翰林社會自組卷顯示已核對的第4單元',()=>{
+ const course={id:'115-1-hanlin-g4-social',grade:4,publisher:'翰林',subject:'社會',volume:'4年級上學期',school_year:'115'};
+ assert.equal(unitPracticeScope(course,{id:4}),'after');
+ assert.equal(unitPracticeScope(course,{id:2}),'before');
+ assert.equal(unitPracticeScope(course,{id:3}),'unknown');
+ assert.equal(unitPracticeScope({...course,publisher:'康軒'},{id:4}),'unknown');
+ const catalog={...course,course_id:course.id,unit:'第4單元｜家鄉的多元文化'};
+ assert.equal(paperPracticeScope({catalog,generated:true}),'after');
+ assert.equal(paperPracticeScope({catalog}),'unknown');
+});
+
 test('四年級五科的自組單元保留期中，九年級七科使用歷年第二次段考範圍',()=>{
  for(const [grade,id,subject,unit,scope] of [
   [4,'115-1-hanlin-g4-english','英語',2,'before'],[4,'115-1-hanlin-g4-social','社會',2,'before'],

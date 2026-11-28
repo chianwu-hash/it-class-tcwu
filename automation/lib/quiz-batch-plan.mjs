@@ -15,6 +15,12 @@ import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,isFractionShadingMa
 export const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 export const readJson = async file => JSON.parse((await fs.readFile(file, 'utf8')).replace(/^\uFEFF/, ''));
 
+export function practiceGrade(packet) {
+  const grade = packet.book.grade;
+  assert.ok([3, 4].includes(grade), 'Unsupported practice batch grade');
+  return {grade, qaClass: {3:'307', 4:'407'}[grade]};
+}
+
 export function validateBatchCatalog(packet) {
   const units = new Set(packet.candidates.map(c => c.doc.catalog?.unit).filter(Boolean));
   if (units.size <= 1) return;

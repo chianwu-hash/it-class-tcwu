@@ -1,8 +1,10 @@
 const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=require('node:path');
 (async()=>{
- const {loadBatch,expectedResponse,readJson,recordBatchTime,preserveOAuthReceipt}=await import('./lib/quiz-batch-plan.mjs');
+ const {loadBatch,expectedResponse,readJson,recordBatchTime,preserveOAuthReceipt,practiceGrade}=await import('./lib/quiz-batch-plan.mjs');
  const {matchingPresentation}=await import('../shared/quiz-matching-presentation.mjs');
  const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
+ const {grade,qaClass}=practiceGrade(p);
+ const gradeUrl='https://it-class-tcwu.vercel.app/grade'+grade+'/115-1';
  const file=s=>path.join(p.outputDir,p.prefix+'-'+s+'.private.json');
  const plan=await readJson(file('plan')),ids=plan.ids;
  const {chromium}=require(process.env.QUIZ_PLAYWRIGHT_MODULE||'playwright');
@@ -23,9 +25,9 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
   },p.identities);
   await identity();const foreground=await context.newCDPSession(page);foreground.grantForegroundOnce('Page.bringToFront','Verify sampled textbook and persisted calculation');await foreground.send('Page.bringToFront');await foreground.detach();
   if(process.argv[3]==='library'){
-   await page.goto('https://it-class-tcwu.vercel.app/grade3/115-1/quiz-library.html',{waitUntil:'domcontentloaded'});await identity();
+   await page.goto(gradeUrl+'/quiz-library.html',{waitUntil:'domcontentloaded'});await identity();
    const link=page.locator('#cloud-papers a[href*="'+ids.session+'"]').first();await link.waitFor({state:'attached'});
-   const total=await page.evaluate(async id=>{const {supabase}=await import('/shared/auth.js');const {data}=await supabase.auth.getUser();const {createQuizRequest}=await import('/shared/quiz-api.mjs');const go=await createQuizRequest({getSession:()=>({user:{id:data.user.id}})});const r=await go('library_sessions');if(r.role!=='student'||Number(r.grade)!==3)throw Error('wrong library role');return r.sessions.find(s=>s.id===id)?.total;},ids.session);
+   const total=await page.evaluate(async ({id,expectedGrade})=>{const {supabase}=await import('/shared/auth.js');const {data}=await supabase.auth.getUser();const {createQuizRequest}=await import('/shared/quiz-api.mjs');const go=await createQuizRequest({getSession:()=>({user:{id:data.user.id}})});const r=await go('library_sessions');if(r.role!=='student'||Number(r.grade)!==expectedGrade)throw Error('wrong library role');return r.sessions.find(s=>s.id===id)?.total;},{id:ids.session,expectedGrade:grade});
    assert.equal(total,n.questions);const url=new URL(await link.getAttribute('href'),page.url()).href;
    await fs.writeFile(file('library-proof'),JSON.stringify({passed:true,questions:total,sources:n.sources,url},null,2));await recordBatchTime(p,packetSha,'entry-verified');return;
   }
@@ -35,9 +37,9 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    const question=block.questions.find(q=>q.id===s.question_id);
    const expected=plan.sampleExpected[s.question_id];assert.deepEqual(expected,expectedResponse(question,s.work,p.openResponses?.[s.question_id]));const ref=p.studyRows.find(r=>r.question_id===s.question_id);
    const primaryPage=p.pages.find(a=>a.printedPages.includes(ref.primary));const neighbor=p.pages.filter(a=>a.id!==primaryPage.id).sort((a,b)=>Math.abs(a.printed-ref.primary)-Math.abs(b.printed-ref.primary))[0]?.printedPages[0];assert.ok(neighbor);
-   await page.goto('https://it-class-tcwu.vercel.app/grade3/115-1/quiz.html?cloud=1&session='+s.session,{waitUntil:'domcontentloaded',timeout:45000});
+   await page.goto(gradeUrl+'/quiz.html?cloud=1&session='+s.session,{waitUntil:'domcontentloaded',timeout:45000});
    const article=page.locator('article.question[data-question-id="'+s.question_id+'"]');await article.waitFor();await identity();
-   assert.ok((await page.locator('body').innerText()).includes('307 \u73ed 30 \u865f'),'dedicated account not visibly identified');
+   assert.ok((await page.locator('body').innerText()).includes(qaClass+' \u73ed 30 \u865f'),'dedicated account not visibly identified');
    const read=()=>page.evaluate(async args=>{const {supabase}=await import('/shared/auth.js');const {data}=await supabase.auth.getUser();const {createQuizRequest}=await import('/shared/quiz-api.mjs');const go=await createQuizRequest({getSession:()=>({user:{id:data.user.id}})});const r=await go('resume',{session_id:args.session});return {version:r.version_id,pkg:r.study.packageId,refs:r.study.references,questions:r.document.questions,responses:r.responses,reviews:r.reviews};},s);
    const before=await read();assert.equal(before.version,s.version);assert.equal(before.pkg,s.pkg);assert.equal(before.questions.length,1);
    assert.deepEqual(before.refs[s.question_id],{bookId:plan.book,primary:ref.primary,references:ref.reference,fields:[]});
