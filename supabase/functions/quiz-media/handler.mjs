@@ -1,4 +1,4 @@
-import { signDriveImage } from './drive-ticket.mjs';
+import { isRegisteredPastDriveImage, signDriveImage } from './drive-ticket.mjs';
 const BUCKET = 'quiz-media', MAX = 8388608, TOTAL = 33554432;
 const uuid = x => typeof x === 'string' && /^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(x);
 const fail = code => { throw new Error(code); };
@@ -64,7 +64,10 @@ export function createHandler({ env, fetcher = fetch }) {
       }
       if (body.action === 'read') {
         const asset = await rpc('quiz_media_access', { p_url: body.url, p_attempt: body.attempt_id || null });
-        if (env('QUIZ_IMAGE_BACKEND') === 'drive' && asset.backend !== 'supabase' && asset.mime?.startsWith('image/')) {
+        const driveEnabled = env('QUIZ_IMAGE_BACKEND') === 'drive';
+        const registeredPastImage = isRegisteredPastDriveImage({ path: asset.object_path, url: asset.url, mime: asset.mime });
+        if (registeredPastImage && !driveEnabled) fail('media_unavailable');
+        if (driveEnabled && (registeredPastImage || (asset.backend !== 'supabase' && asset.mime?.startsWith('image/')))) {
           if (asset.url !== body.url) fail('media_unavailable');
           return send(200, { url: await signDriveImage(asset, env) });
         }
