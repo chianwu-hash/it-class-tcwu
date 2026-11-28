@@ -24,10 +24,10 @@ const rules={
  '115-1-kang-g3-ch':{before:[1,2,3,4,5,6],after:[7,8,9,10,11,12]},
 };
 const explicit=value=>['before','after','mixed'].includes(value)?value:null;
-// These boundaries come from the unit mappings in quiz-scope-g4-g9-20261112.md.
+// These boundaries come from reviewed textbook mappings and release receipts.
 const reviewedCourses={
  '115-1-hanlin-g4-english':[4,'翰林','英語',[1,2]],
- '115-1-hanlin-g4-social':[4,'翰林','社會',[1,2]],
+ '115-1-hanlin-g4-social':[4,'翰林','社會',[1,2],[4]],
  '115-1-kang-g4-chinese':[4,'康軒','國語',[1,2,3,4,5,6]],
  '115-1-nani-g4-math':[4,'南一','數學',[1,2,3,4,5]],
  '115-1-nani-g4-science':[4,'南一','自然',[1,2]],
@@ -42,9 +42,9 @@ const reviewedCourses={
 function reviewedCourseRule(c={}){
  const details=reviewedCourses[c.course_id||c.id];
  if(!details)return null;
- const [grade,publisher,subject,units]=details;
+ const [grade,publisher,subject,units,laterUnits=[]]=details;
  if(c.school_year!==undefined&&String(c.school_year)!=='115'||c.grade!==undefined&&Number(c.grade)!==grade||c.volume!==undefined&&c.volume!==grade+'年級上學期'||c.publisher!==undefined&&c.publisher!==publisher||c.subject!==undefined&&c.subject!==subject)return null;
- return {grade,before:grade===4?units:[],after:grade===9?units:[]};
+ return {grade,before:grade===4?units:[],after:grade===9?units:laterUnits};
 }
 export function practiceScopeOptions(grade){return [
  ['after',Number(grade)===9?'本次範圍・第2次段考':'期末範圍'],
