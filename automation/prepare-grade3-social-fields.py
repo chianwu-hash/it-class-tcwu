@@ -278,6 +278,65 @@ def matching_rows_question(prompt, bank, labels, selected, require, separate=Non
             "answer":{"format":"fields-v1","fields":answers}}
 
 
+def adapt_text_checklists(word, teacher_key, native, symbol_labels=None):
+    require = native.require
+    lines = [line.strip() for line in word.splitlines() if line.strip()]
+    key = re.sub(r"\s+","",teacher_key)
+    require(len(lines)>=3,"word_checklist_layout")
+    box = r"[□☐]?\s*"
+    choice_pattern = box+r"(["+CIRCLED+r"])\s*(.+)"
+    key_marks = key.removesuffix("打ˇ").split("、")
+    if key.endswith("打ˇ") and all(v and (v in CIRCLED or v.isdecimal()) for v in key_marks):
+        lead, labels = numbered(word,choice_pattern,require)
+        positions = [CIRCLED.index(k)+1 if k in CIRCLED else int(k) for k in key_marks]
+        require("打ˇ" in "".join(lead) and positions==sorted(set(positions))
+                and 2<=len(labels)<=len(CIRCLED) and 1<=min(positions)<=max(positions)<=len(labels),
+                "teacher_checkbox_key")
+        fields,answers = [],{}
+        bounds = [(0,len(labels))] if len(labels)<=8 else [(0,5),(5,len(labels))]
+        for offset,end in bounds:
+            name = f"f{len(fields)+1}"
+            labels_in_range = [f"{CIRCLED[i]} {labels[i]}" for i in range(offset,end)]
+            title = "勾選符合的項目" if len(bounds)==1 else f"{CIRCLED[offset]} 至 {CIRCLED[end-1]}"
+            fields.append({"id":name,"input":"set","label":title,"options":options(labels_in_range)})
+            answers[name] = [[f"o{i-offset}" for i in positions if offset<i<=end]]
+        return {"type":"fields","prompt":{"text":"\n".join(lead),"media":[]},"fields":fields,
+                "answer":{"format":"fields-v1","fields":answers}}
+
+    if symbol_labels:
+        lead,labels = numbered(word,BLANK+r"\s*(["+CIRCLED+r"])\s*(.+)",require)
+        keys = numbered_key(key,require)
+        symbols = list(symbol_labels)
+        require(len(symbols)==2 and all(v in "".join(lead) for v in symbols)
+                and len(keys)==len(labels) and set(keys)<=set(symbols),"teacher_symbol_columns")
+        fields = [{"id":f"f{i}","input":"single","label":label,
+                   "options":options([symbol_labels[s] for s in symbols])} for i,label in enumerate(labels,1)]
+        answers = {field["id"]:[f"o{symbols.index(mark)+1}"] for field,mark in zip(fields,keys,strict=True)}
+        return {"type":"fields","prompt":{"text":"\n".join(lead),"media":[]},"fields":fields,
+                "answer":{"format":"fields-v1","fields":answers}}
+
+    if re.search(r"[甲乙丙丁][、.．]",word) and re.fullmatch(r"(?:["+CIRCLED+r"][甲乙丙丁])+",key):
+        return adapt_text_matching_rows(word,teacher_key,native)
+
+    row_pattern = re.compile(r"(?:(["+CIRCLED+r"])\s*|([1-8１-８])[.．]\s*)(.+)")
+    choices_letter = box+r"([甲乙丙丁戊己])[、.．]\s*(.+)"
+    calls = [(index,m) for index,line in enumerate(lines[1:],1) if (m:=row_pattern.fullmatch(line))]
+    groups = list(re.finditer(r"(?:(["+CIRCLED+r"])|([1-8１-８])[.．])([甲乙丙丁戊己"+CIRCLED+r"])打ˇ",key))
+    indexes = [CIRCLED.index(m[1])+1 if m[1] else int(m[2]) for m in groups]
+    require(groups and "".join(m[0] for m in groups)==key and len(calls)==len(groups)
+            and indexes==list(range(1,len(groups)+1)) and calls[0][0]==1,"teacher_group_selection")
+    ends = [i for i,_ in calls[1:]]+[len(lines)]
+    parts = []
+    for i,((idx,match),end,mark) in enumerate(zip(calls,ends,groups,strict=True),1):
+        printed_number = CIRCLED.index(match[1])+1 if match[1] else int(match[2])
+        require(printed_number==i,"word_choice_alignment")
+        pattern = choices_letter if mark[3] not in CIRCLED else choice_pattern
+        bank = [re.fullmatch(pattern,v) for v in lines[idx+1:end]]
+        require(2<=len(bank)<=8 and all(bank),"word_choice_alignment")
+        parts.append((match[3],bank,[mark[3]]))
+    return matching_rows_question(lines[0],None,[p[0] for p in parts],[p[2] for p in parts],require,[p[1] for p in parts])
+
+
 def adapt_illustrated_selection(prompt, teacher_key, native):
     """Reconstruct a single Word question with an ordered choice list and its illustrations."""
     require = native.require
@@ -397,12 +456,15 @@ def reviewed_illustrated_row(source, screen, item, metadata_keys, metadata_detai
                 and native.sha(Path(spread["path"]))==spread["sha256"]==reference["spread_sha256"]
                 and native.compact(reference["anchor"])
                 and native.compact(reference["anchor"]) in native.compact(p["text"]), "original_textbook_mismatch")
-    layout = {"23":"text_matching_rows","40":"illustrated_matching","41":"illustrated_selection"}[item["QUES_TYPE"]]
+    layout = {"23":"text_matching_rows","40":"illustrated_matching","41":"illustrated_selection","44":"text_checklist","45":"text_checklist"}[item["QUES_TYPE"]]
     if layout=="illustrated_matching":
         question = adapt_illustrated_matching(prompt,teacher,review,native)
     elif layout=="text_matching_rows":
         require(native.plain(prompt),"original_text_only")
         question = adapt_text_matching_rows(prompt["text"],teacher,native)
+    elif layout=="text_checklist":
+        require(native.plain(prompt),"original_text_only")
+        question = adapt_text_checklists(prompt["text"],teacher,native,review.get("symbol_labels"))
     else:
         question = adapt_illustrated_selection(prompt,teacher,native)
     assets = {}
@@ -433,7 +495,7 @@ def main():
     md=read(args.metadata)
     if args.illustrated_selection_reviews:
         reviews = read(args.illustrated_selection_reviews)
-        screened = {r["source"]:r for r in read(args.source_screen) if r["source"] in reviews and r.get("type_code") in ("23","40","41")}
+        screened = {r["source"]:r for r in read(args.source_screen) if r["source"] in reviews and r.get("type_code") in ("23","40","41","44","45")}
         assert screened.keys()==reviews.keys()
         book = read(args.book)
     else:
