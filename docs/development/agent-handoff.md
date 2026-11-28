@@ -1,12 +1,22 @@
+# 2026-11-28 四年級國語期末自組卷
+
+## 發布登記
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 發布中 | codex-g4-kang-chinese-20261128 | 2026-11-28 | 合併本批後的 `origin/main` | `dpl_FP4mxSDimvQEdvS84T1pUM9MgTLK` | 康軒四年級國語期末課次、課本翻閱方向及練功坊生成檔 | 正式學生入口收據附同批 PR。 |
+
+第七課 27 筆已通過正式抽驗及逐題資料讀回。課次與閱讀器方向依原件檢核。[本批題庫收據](quiz-final-bank-ledger-20261127.md#四年級康軒國語第七課閱讀題發布收據)
+
 # 2026-11-28 四年級社會期末單元分類
 
 ## 發布登記
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | codex-g4-social-unit3-20261128 | 2026-11-28 | 本批合併後的 `origin/main` | `dpl_GSPbPesaUiJRk9SBjiXNH564kXwJ` | 翰林四年級社會第 3–6 單元書商範圍及練功坊生成檔 | 正式學生入口收據附同批 PR。 |
+| 已完成 | codex-g4-social-unit3-20261128 | 2026-11-28T03:53:11.868Z | `d8d927b` | `dpl_GSPbPesaUiJRk9SBjiXNH564kXwJ` | shared/quiz-practice-scope.mjs、shared/quiz-workshop/generated/assets.json、grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html | `dpl_FP4mxSDimvQEdvS84T1pUM9MgTLK`／回滾 `dpl_GSPbPesaUiJRk9SBjiXNH564kXwJ`（eolOnly 0） |
 
-第 3 單元「家鄉的人口與生活」60 題已通過正式抽驗及逐題資料讀回。書商分類以同版課本目錄為據，正式題池有可用題目時才顯示單元。[本批題庫收據](quiz-final-bank-ledger-20261127.md#四年級翰林社會家鄉的人口與生活發布收據)
+第 3 單元「家鄉的人口與生活」60 題已通過正式抽驗及逐題資料讀回。正式四年級自組卷在期末顯示第 3 單元 60 題、第 4 單元 82 題。[本批正式發布與入口收據](https://github.com/chianwu-hash/it-class-tcwu/pull/558#issuecomment-7233517434)
 
 # 2026-11-28 四年級社會期末自組卷
 
