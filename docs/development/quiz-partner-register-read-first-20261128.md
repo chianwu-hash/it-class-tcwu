@@ -1,6 +1,6 @@
 # 夥伴目錄逾時：相同本人登錄的行鎖修正候選
 
-本批接續[九年級社會教材導向正式驗證](zhongzheng-g9-social-partner-study-entry-20261128.md)。**SQL候選尚未套用正式庫；已完成隔離測試與精確回滾，仍須集中審查及正式套用核准。** 不把本機鎖行為改善宣稱為正式目錄逾時已消除。
+本批接續[九年級社會教材導向正式驗證](zhongzheng-g9-social-partner-study-entry-20261128.md)。**SQL候選尚未套用正式庫；已完成隔離測試、精確回滾及集中唯讀審查，待正式套用核准。** 不把本機鎖行為改善宣稱為正式目錄逾時已消除。
 
 ## 正式觀察與可證實範圍
 
@@ -44,11 +44,11 @@ node --test automation/tests/quiz-partner-register-read-first.test.mjs
 
 其中以statement trigger核對：舊版即使資料相同仍發出寫入敘述，候選版不發出；同時驗證Google provider、信箱確認、服務停用及已有登錄時仍重新核資格。這2項使用PGlite，不能替代上述真PostgreSQL並行證據。原生測試伺服器已正常停止，未連Supabase或使用真學生身分。
 
-集中Claude唯讀審查已完成，未發現可證實的阻擋問題；審查8個主要檔案／定義，Git狀態、HEAD與上游前後一致。依提醒在repo測試補上直接呼叫私有函式時的資格拒絕，不只經公開access入口測試；真PG原生證據原已包含直接拒絕。正式套用前仍須獨立核owner／ACL，MD5本身不含這兩項。
+集中Claude唯讀審查已完成，未發現可證實的阻擋問題；涵蓋SQL、回滾、測試、現行函式與表約束，Git狀態、HEAD與上游前後一致。依提醒在repo測試補上直接呼叫私有函式時的資格拒絕，不只經公開access入口測試；真PG原生證據原已包含直接拒絕。正式套用前仍須獨立核owner／ACL，MD5本身不含這兩項。
 
 ## 正式套用前後的待辦
 
-1. 集中審查此新共用SQL契約；PR先進main。正式套用須依本對話提供的AGENTS資料庫函式核准規則處理，不把先前另一份SQL的同意沿用到本修正。
+1. 此新共用SQL契約已集中審查，PR先進main。正式套用須依本對話提供的AGENTS資料庫函式核准規則處理，不把先前另一份SQL的同意沿用到本修正。
 2. 核准後由新建乾淨main checkout，核對live原函式、owner及ACL，先交易ROLLBACK演練，再journal記錄正式套用；未知結果先讀回，不盲目重送。
 3. 核正式新函式與權限，全數資料守衛保持；執行`db-schema-snapshot.mjs`及`db-snapshot-check.mjs --live`，production snapshot經PR回main。
 4. 正式OAuth重新核各適用年級的access、catalog、原生選卷與既有小隊接續，記錄延遲與錯誤；若仍逾時，繼續查其他根因，不調高timeout或移除授權。

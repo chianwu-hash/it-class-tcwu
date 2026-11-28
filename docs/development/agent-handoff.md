@@ -1,10 +1,10 @@
-# 夥伴目錄逾時：本人登錄行鎖候選審查
+# 夥伴目錄逾時：本人登錄行鎖候選已審查
 
 - 目標：解決已由真PostgreSQL重現的相同本人登錄衝突行鎖，保留每次資格檢查；正式catalog是否因此恢復仍待驗證。
 - 現況：正式單頁1次catalog約8.10秒逾時；活動抽樣看到tuple／transaction等待。候選與精確回滾已完成，正式未套用。
 - Codex持有本worktree寫入；Claude僅唯讀審查`supabase/quiz-partner-register-read-first.sql`、對應rollback、`automation/tests/quiz-partner-register-read-first.test.mjs`及[本批文件](quiz-partner-register-read-first-20261128.md)。不讀憑證、私有題包或其他對話，不修改、不部署、不呼叫另一代理。
 - 證據：2項repo測試及真PG17雙連線、資格／權限、首次登錄、姓名／active更新、完整回滾與換版拒絕通過。來源函式`38ed977b2ca39d46bf998afd312eb291`，候選`dc06cd3396d2567036e43b8c3eb2a4ea`。
-- 下一步：集中SQL審查、具體PR及必要正式套用核准；之後乾淨main交易演練／套用、live snapshot核對與正式入口複驗。原113驗收房保留，第二身分問題仍待回覆。
+- 集中SQL唯讀審查未發現阻擋問題；依提醒補上直接私有函式的資格拒絕測試，2項repo測試重跑通過。下一步：具體PR及必要正式套用核准；之後乾淨main交易演練／套用、live snapshot核對與正式入口複驗。原113驗收房保留，第二身分問題仍待回覆。
 
 # 九年級二段社會夥伴教材入口：正式導向已發布
 
