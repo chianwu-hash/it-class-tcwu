@@ -842,6 +842,111 @@ def reviewed_diagram_choices(parent, targets, original, pages, legacy, docx, rev
     return material,questions,assets
 
 
+def reviewed_figure_answers(parent, targets, original, pages, legacy, docx, review):
+    require, norm, plain = legacy.require, legacy.normalize, legacy.plain
+    parsed, assets, teacher = reviewed_image_source(parent, original, legacy, review)
+    native = parent["original_source"]["native_content"]
+    raw = native["questions"]
+    require(all(not item["options"] for item in raw), "figure_answer_layout")
+
+    def printed_prompt(text):
+        text = re.sub(r"(?:【[\s_＿]*】\s*)+$", "", text)
+        return legacy.statement(re.sub(r"\s*答[：:]\s*$", "", text).strip())
+
+    if review["mode"] == "figure_sequence":
+        require(len(targets) == len(raw) == 1 and not native.get("preamble"), "sequence_source_structure")
+        target = targets[0]
+        labels, ranks = review["ordinals"], review["ranks"]
+        require(target["kind"] == "ordering" and target["source_question_indices"] == [1]
+                and labels in [list("①②③"),list("①②③④")] and sorted(ranks) == list(range(1,len(labels)+1)), "sequence_source_position")
+        expected = [f"{label}{rank}" for label,rank in zip(labels,ranks,strict=True)]
+        publisher = [v for group in raw[0]["answers"] for v in group if v.strip()]
+        require([norm(v) for v in expected] == [norm(v) for v in re.split(r"[；;]",teacher)]
+                == list(map(norm,publisher)) == [norm(v) for v in re.split(r"[；;]",target["reference_answer"])]
+                and [norm(pos["reference_value"]) for pos in target["positions"]] == list(map(str,ranks)), "sequence_answer_key")
+        sequence = [i for i,_ in sorted(enumerate(ranks,1),key=lambda x:x[1])]
+        require([labels[i-1] for i in sequence] == review["sequence"]
+                and norm(parsed["text"]) == norm(printed_prompt(raw[0]["stem"])), "word_prompt")
+        prompt = compact_layout(parsed["layout"],parsed["media"],docx)
+        question = {"type":"fields", "prompt":prompt,
+                    "fields":[{"id":"sequence", "label":"依風力排列圖號", "input":"sequence",
+                               "options":[{"id":f"o{i}","content":plain(v)} for i,v in enumerate(labels,1)]}],
+                    "answer":{"format":"fields-v1","fields":{"sequence":[[f"o{i}" for i in sequence]]}},
+                    "explanation":plain(target["student_explanation"])}
+        return plain(""), [{"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":question}],assets
+
+    require(review["mode"] == "figure_finite_answer" and len(targets) == len(raw) == len(review["keys"]), "figure_answer_layout")
+    common = []
+    started = False
+    for block in parsed["layout"]:
+        line = "".join(r.get("text","") for r in block["runs"])
+        started = started or bool(legacy.WORD_ORDINAL.fullmatch(line))
+        if not started or any(r["type"] == "image" for r in block["runs"]):
+            require(not started or all(r["type"] == "image" for r in block["runs"]), "figure_answer_layout")
+            common.append(block)
+    material = compact_layout(common,parsed["media"],docx)
+    preamble, lines = legacy.numbered_lines(parsed["text"])
+    require(len(material["media"]) == 1 and len(lines) == len(raw)
+            and norm(material["text"]) == norm(preamble) == norm(native["preamble"]), "source_preamble")
+    teacher_parts = re.split(r"[（(]([１-８1-8])[）)]", teacher)
+    require(not teacher_parts[0].strip() and [int(i) for i in teacher_parts[1::2]] == list(range(1,len(raw)+1)), "teacher_choice_position")
+    keys = [part.strip().strip("；;") for part in teacher_parts[2::2]]
+    require(keys == review["keys"], "reviewed_teacher_key")
+    questions = []
+    for i,(item,target,line,key,accepted) in enumerate(zip(raw,targets,lines,keys,review["accepted"],strict=True),1):
+        publisher = [a for group in item["answers"] for a in group if a.strip()]
+        require(target["kind"] == "short_answer" and target["source_question_indices"] == [i]
+                and len(target["positions"]) == len(publisher) == 1 and key == accepted[0]
+                and norm(key) == norm(publisher[0]) == norm(target["reference_answer"]) == norm(target["positions"][0]["reference_value"]),
+                "review_choice_position")
+        prompt = printed_prompt(line)
+        require(prompt and norm(prompt) == norm(printed_prompt(item["stem"])), "word_prompt")
+        question = {"type":"fields", "prompt":plain(prompt), "fields":[{"id":"answer", "label":"答案", "input":"text"}],
+                    "answer":{"format":"fields-v1","fields":{"answer":accepted}}, "explanation":plain(target["student_explanation"])}
+        questions.append({"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":question})
+    return material,questions,assets
+
+
+def reviewed_native_table_choices(parent, targets, original, pages, legacy, docx, review):
+    require, norm, plain = legacy.require, legacy.normalize, legacy.plain
+    asset = parent["question_only_asset"]
+    snapshot = Path(asset["local_content"])
+    word = Path(original["question_docx"])
+    teacher = word.with_name("answer.docx.gz")
+    require(legacy.digest(word) == original["question_docx_sha256"] == review["question_sha256"], "original_word_changed")
+    require(legacy.digest(teacher) == review["teacher_sha256"], "teacher_word_changed")
+    require(legacy.digest(snapshot) == asset["sha256"] == review["snapshot_sha256"], "word_snapshot_missing")
+    parsed = legacy.read(snapshot)
+    blocks = parsed["layout"]
+    require(not parsed["media"] and len(blocks) > 2 and [b["type"] for b in blocks[:2]] == ["paragraph","table"]
+            and all(b["type"] == "paragraph" for b in blocks[2:]), "native_table_layout")
+    plain_cells = [["".join(run["text"] for run in cell) for cell in row] for row in blocks[1]["rows"]]
+    require(plain_cells == review["cells"], "native_table_cells")
+    material = compact_layout(blocks[:2],[],docx)
+    native = parent["original_source"]["native_content"]
+    preamble, lines = legacy.numbered_lines(parsed["text"])
+    require(norm(material["text"]) == norm(preamble) == norm(native["preamble"]) and len(lines) == len(targets)
+            == len(native["questions"]) == len(review["items"]), "source_preamble")
+    parts = re.split(r"[（(]([１-８1-8])[）)]", teacher_printed_answer(teacher,require))
+    require(not parts[0].strip() and [int(i) for i in parts[1::2]] == list(range(1,len(lines)+1)), "teacher_choice_position")
+    questions = []
+    for i,(item,target,line,expected,printed) in enumerate(zip(native["questions"],targets,lines,review["items"],parts[2::2],strict=True),1):
+        require(target["kind"] == "single_choice" and target["source_question_indices"] == [i] and len(target["positions"]) == 1
+                and expected["ordinal"] == i, "source_position")
+        value = norm(printed).strip(";").removesuffix("ˇ")
+        publisher = [a for group in item["answers"] for a in group if a.strip()]
+        require(len(publisher) == 1 and value == norm(publisher[0]) == norm(target["reference_answer"])
+                == norm(target["positions"][0]["reference_value"]) == str(expected["option_index"]), "review_choice_position")
+        stem,*options = docx.split_options({"layout":[{"type":"paragraph","runs":[{"type":"text","text":line}]}],"media":[]})
+        labels = [legacy.statement(v["text"]) for v in options]
+        require(norm(stem["text"]) == norm(legacy.statement(item["stem"]))
+                and list(map(norm,labels)) == list(map(norm,map(legacy.statement,item["options"])))
+                == list(map(norm,map(legacy.statement,expected["options"]))) and 1 <= int(value) <= len(labels), "word_choice_alignment")
+        q = output_question("single_choice",plain(stem["text"]),list(map(plain,labels)),[int(value)],plain(target["student_explanation"]))
+        questions.append({"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":q})
+    return material,questions,{}
+
+
 def adapt(parent, targets, original, pages, legacy, docx):
     require = legacy.require
     plain, norm = legacy.plain, legacy.normalize
@@ -947,6 +1052,8 @@ def main():
     parser.add_argument("--text-sequence-reviews", type=Path)
     parser.add_argument("--image-single-reviews", type=Path)
     parser.add_argument("--diagram-reviews", type=Path)
+    parser.add_argument("--figure-answer-reviews", type=Path)
+    parser.add_argument("--native-table-choice-reviews", type=Path)
     args=parser.parse_args()
     legacy=load_module(args.legacy)
     docx=load_module(args.docx)
@@ -962,8 +1069,10 @@ def main():
     sequence_reviews = legacy.read(args.text_sequence_reviews) if args.text_sequence_reviews else {}
     image_single_reviews = legacy.read(args.image_single_reviews) if args.image_single_reviews else {}
     diagram_reviews = legacy.read(args.diagram_reviews) if args.diagram_reviews else {}
-    text_modes = (classification_reviews, choice_reviews, boolean_reviews, numbered_reviews, sequence_reviews)
-    modes = (visual_reviews, grid_reviews, matching_reviews, single_reviews, mixed_reviews, image_single_reviews, diagram_reviews, *text_modes)
+    figure_reviews = legacy.read(args.figure_answer_reviews) if args.figure_answer_reviews else {}
+    native_table_reviews = legacy.read(args.native_table_choice_reviews) if args.native_table_choice_reviews else {}
+    text_modes = (classification_reviews, choice_reviews, boolean_reviews, numbered_reviews, sequence_reviews, native_table_reviews)
+    modes = (visual_reviews, grid_reviews, matching_reviews, single_reviews, mixed_reviews, image_single_reviews, diagram_reviews, figure_reviews, *text_modes)
     if len(set().union(*modes)) != sum(map(len, modes)):
         parser.error("the same source cannot use multiple visual review modes")
     sources={r["stable_id"]:r for r in legacy.read(args.source_catalog)["records"]}
@@ -1021,6 +1130,12 @@ def main():
             elif sid in diagram_reviews:
                 rule = "reviewed_diagram_choices"
                 material, qs, assets = reviewed_diagram_choices(parent, group, source, pages, legacy, docx, diagram_reviews[sid])
+            elif sid in figure_reviews:
+                rule = "reviewed_figure_answers"
+                material, qs, assets = reviewed_figure_answers(parent, group, source, pages, legacy, docx, figure_reviews[sid])
+            elif sid in native_table_reviews:
+                rule = "reviewed_native_table_choices"
+                material, qs, assets = reviewed_native_table_choices(parent, group, source, pages, legacy, docx, native_table_reviews[sid])
             elif len(group) > 1 and all(t["kind"] == "single_choice" for t in group):
                 rule = "shared_image_choices"
                 material, qs, assets = shared_image_choices(parent, group, source, pages, legacy, docx)
