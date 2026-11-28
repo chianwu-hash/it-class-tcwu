@@ -32,20 +32,43 @@ def statement(text):
     return re.sub(r"[【（(][\s_＿]*[】）)]\s*$", "", text).strip()
 
 
+WORD_ORDINAL = re.compile(r"^\s*(?:[（(][\s_＿]*[）)]\s*)?[（(]([0-9０-９]+)[）)]\s*(.*)$")
+CIRCLE_PAIR = re.compile(r"[（(][\u3000 \t]+([^（）(),，\n]+?)[\u3000 \t]*[，,]"
+                         r"[\u3000 \t]*([^（）(),，\n]+?)[\u3000 \t]+[）)]")
+
+
 def numbered_lines(text):
-    pattern = re.compile(r"^\s*(?:[（(][\s_＿]*[）)]\s*)?[（(]([0-9０-９]+)[）)]\s*(.*)$")
     preamble, items = [], []
     for line in text.splitlines():
         if not line.strip():
             continue
-        match = pattern.fullmatch(line)
+        match = WORD_ORDINAL.fullmatch(line)
         if match:
             items.append((int(normalize(match[1])), match[2]))
+        elif items:
+            ordinal, text = items[-1]
+            items[-1] = (ordinal, f"{text}\n{line.strip()}")
         else:
-            require(not items, "unmatched_source_line")
             preamble.append(line.strip())
     require(items and [i for i, _ in items] == list(range(1, len(items) + 1)), "numbered_word_items")
     return "\n".join(preamble), [s for _, s in items]
+
+
+def circle_pair(line, raw_stem, original_key, reviewed_key):
+    source = statement(line)
+    require(normalize(source) == normalize(statement(raw_stem)), "word_stem_mismatch")
+    pairs = list(CIRCLE_PAIR.finditer(source))
+    require(len(pairs) == 1, "word_choices_mismatch")
+    match = pairs[0]
+    texts = [s.strip() for s in match.groups()]
+    normalized = list(map(normalize, texts))
+    require(all(normalized) and normalized[0] != normalized[1], "word_choices_mismatch")
+    answer = normalize(original_key)
+    require(answer in normalized and answer == normalize(reviewed_key), "single_review_key")
+    before, after = source[:match.start()].rstrip(), source[match.end():].lstrip()
+    stem = before if not after else f"{before}＿＿{after}"
+    require(stem, "word_stem_mismatch")
+    return stem, texts, str(normalized.index(answer) + 1)
 
 
 def refs_for(target, unit, pages):
@@ -76,12 +99,14 @@ def adapt(parent, targets, original, pages):
     native = parent["original_source"]["native_content"]
     raw = native["questions"]
     paragraphs = [line.strip() for line in parsed["text"].splitlines() if line.strip()]
-    standalone_choice = (
-        len(raw) == len(targets) == len(paragraphs) == 1 and not (native.get("preamble") or "").strip()
-        and targets[0]["kind"] in {"single_choice", "multiple_choice"} and raw[0]["options"]
+    standalone = (
+        len(raw) == len(targets) == 1 and paragraphs and not (native.get("preamble") or "").strip()
+        and targets[0]["kind"] in {"single_choice", "multiple_choice", "true_false"}
+        and not WORD_ORDINAL.fullmatch(paragraphs[0])
     )
-    if standalone_choice:
-        source_preamble, lines = "", paragraphs
+    standalone_choice = standalone and bool(raw[0]["options"])
+    if standalone:
+        source_preamble, lines = "", ["\n".join(paragraphs)]
     else:
         source_preamble, lines = numbered_lines(parsed["text"])
     require(len(raw) == len(lines), "numbered_word_items")
@@ -94,7 +119,7 @@ def adapt(parent, targets, original, pages):
     resolve = lambda t: refs_for(t, unit, pages)
     options = lambda texts: [{"id": f"o{i}", "content": plain(s)} for i, s in enumerate(texts, 1)]
 
-    if not standalone_choice and len(targets) == 1 and targets[0]["kind"] in {"multiple_choice", "checkbox"}:
+    if not standalone and len(targets) == 1 and targets[0]["kind"] in {"multiple_choice", "checkbox"}:
         t = targets[0]
         require(list(t["source_question_indices"]) == list(range(1, len(raw) + 1)), "whole_group_mapping")
         require(source_preamble and 2 <= len(raw) <= 8 and all(not q["options"] for q in raw), "checkbox_source_format")
@@ -119,7 +144,9 @@ def adapt(parent, targets, original, pages):
     for i, (item, line, answer) in enumerate(zip(raw, lines, answers), 1):
         t = targets_by_index[(i,)]
         require(len(answer) == 1, "original_independent_key")
-        if t["kind"] == "single_choice" or standalone_choice:
+        if t["kind"] == "single_choice" and not item["options"]:
+            stem, texts, key = circle_pair(line, item["stem"], answer[0], t["reference_answer"])
+        elif t["kind"] == "single_choice" or standalone_choice:
             markers = list(re.finditer(r"[①②③④⑤⑥⑦⑧]", line))
             texts = [line[m.end():markers[k+1].start() if k+1 < len(markers) else None].strip()
                      for k, m in enumerate(markers)]
@@ -134,7 +161,8 @@ def adapt(parent, targets, original, pages):
             stem, texts = statement(line), ["○", "×"]
             key = symbols.get(answer[0])
             require(key and key == symbols.get(t["reference_answer"].strip()), "boolean_review_key")
-        require(normalize(stem) == normalize(statement(item["stem"])), "word_stem_mismatch")
+        if item["options"] or t["kind"] != "single_choice":
+            require(normalize(stem) == normalize(statement(item["stem"])), "word_stem_mismatch")
         explanation = t["student_explanation"]
         explanation = re.sub(r"[①②③④⑤⑥⑦⑧]", lambda m: "「"+texts[ord(m[0])-0x2460]+"」" if ord(m[0])-0x2460 < len(texts) else m[0], explanation)
         require(not re.search(r"[①②③④⑤⑥⑦⑧]|選項\s*[A-H1-8]", explanation), "explanation_option_key")
