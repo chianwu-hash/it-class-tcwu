@@ -8,6 +8,7 @@ import {gridDrawingPlan} from '../shared/quiz-grid-drawing.mjs';
 import {groupingDrawingPlan} from '../shared/quiz-grouping-drawing.mjs';
 import {fractionPartitionPlan,fractionPartitionVariants} from '../shared/quiz-fraction-partition.mjs';
 import {sourceRoutePlan,readSourceRoute} from '../shared/quiz-source-route.mjs';
+import {windDrawingPlan} from '../shared/quiz-wind-drawing.mjs';
 import {fractionColorsPlan,fractionColorsResponse,readFractionColors} from '../shared/quiz-fraction-colors.mjs';
 import {fractionComparisonPlan,fractionComparisonResponse} from '../shared/quiz-fraction-comparison.mjs';
 import {fractionShadingPlan,fractionBarPlan,fractionRectPlan,fractionShadingMatchPlan,fractionShadingResponse} from '../shared/quiz-fraction-shading.mjs';
@@ -30,7 +31,7 @@ function alternateShading(plan, left, right, comparison, offset=0){
 }
 const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
 const {grade,qaClass}=practiceGrade(p);
-for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.ok(['fields','single','open'].includes(q.type));if(q.type==='single'){assert.ok(!q.work);continue;}if(q.type==='open'){assert.ok(!q.work && (reviewedSketch(q) ? q.explanation.media.length===1 && q.explanation.media[0].kind==='image' : q.fields.every(f=>f.input==='text') && !q.explanation.media.length), 'Open media requires an independently reviewed grid answer');expectedResponse(q,undefined,p.openResponses?.[q.id]);continue;}if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(fractionComparisonPlan(q)||fractionShadingMatchPlan(q)||q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set','sequence'].includes(f.input)));}}
+for(const c of p.candidates){assert.equal(c.doc.blocks.length,1);for(const q of c.doc.blocks[0].questions){assert.ok(['fields','single','open'].includes(q.type));if(q.type==='single'){assert.ok(!q.work);continue;}if(q.type==='open'){const wind=windDrawingPlan(q);assert.ok(!q.work && (reviewedSketch(q) ? q.explanation.media.length===1 && q.explanation.media[0].kind==='image' : (wind||q.fields.every(f=>f.input==='text')) && !q.explanation.media.length), 'Open media requires an independently reviewed drawing answer');expectedResponse(q,undefined,p.openResponses?.[q.id]);continue;}if(q.work){assert.ok(['expression','sketch'].includes(q.work.input));assert.ok(fractionComparisonPlan(q)||fractionShadingMatchPlan(q)||q.fields.every(f=>f.input==='math'));}else assert.ok(q.fields.every(f=>['single','math','text','set','sequence'].includes(f.input)));}}
 for(const c of p.candidates)for(const block of c.doc.blocks){
  const firstArrangement=block.questions.findIndex(arrangementPlan);
  if(firstArrangement>=0)assert.ok(block.questions.slice(firstArrangement+1).every(q=>q.type==='open' || !q.fields?.some(f=>f.input==='math')),
@@ -178,7 +179,7 @@ try{
     alternateShading(fraction,response.f.left==='1'?2:1,response.f.right,response.f.comparison),
     alternateShading(fraction,response.f.left,response.f.right==='1'?2:1,response.f.comparison),
     {...response,f:{...response.f,comparison:response.f.comparison==='less'?'greater':'less'}},
-  ]:reviewedSketch(qn)?[]:single?qn.options.filter(o=>o.id!==response).map(o=>o.id):fields.flatMap(field=>{
+  ]:reviewedSketch(qn)||windDrawingPlan(qn)?[]:single?qn.options.filter(o=>o.id!==response).map(o=>o.id):fields.flatMap(field=>{
    const bad=structuredClone(response);
    if(field.input==='single'){
     const wrong=field.options.find(o=>!qn.answer.fields[field.id].includes(o.id));

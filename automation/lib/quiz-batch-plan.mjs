@@ -7,6 +7,7 @@ import {textbookReadingDirection} from '../../shared/quiz-textbook-settings.mjs'
 import {batchMediaAssets} from './quiz-batch-media.mjs';
 import {arrangementPlan,readArrangement} from '../../shared/quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from '../../shared/quiz-grid-drawing.mjs';
+import {readWindArrow,windDrawingPlan,windArrowExample} from '../../shared/quiz-wind-drawing.mjs';
 import {isFractionPartition,fractionPartitionPlan,fractionPartitionVariants} from '../../shared/quiz-fraction-partition.mjs';
 import {isSourceRoute,sourceRoutePlan,readSourceRoute} from '../../shared/quiz-source-route.mjs';
 import {fractionColorsPlan,isFractionColorsQuestion,readFractionColors} from '../../shared/quiz-fraction-colors.mjs';
@@ -67,10 +68,17 @@ export function batchCounts(packet) {
 export function expectedResponse(question, work, openResponse) {
   if (question.type === 'single') return question.answer.option_id;
   if(question.type==='open'){
-    const grid = gridDrawingPlan(question), arrangement = arrangementPlan(question);
-    assert.ok(grid || arrangement || question.fields.every(f=>f.input==='text'),'Open sketch requires its own reviewed batch adapter');
+    const grid = gridDrawingPlan(question), arrangement = arrangementPlan(question), wind = windDrawingPlan(question);
+    assert.ok(grid || arrangement || wind || question.fields.every(f=>f.input==='text'),'Open sketch requires its own reviewed batch adapter');
     assert.ok(openResponse&&openResponse.v===1&&openResponse.f&&typeof openResponse.f==='object'&&!Array.isArray(openResponse.f));
     assert.deepEqual(Object.keys(openResponse).sort(),['f','v']);assert.deepEqual(Object.keys(openResponse.f).sort(),question.fields.map(f=>f.id).sort());
+    if (wind) {
+      const writing = question.fields.find(f=>f.id==='direction');
+      if (writing) assert.ok(typeof openResponse.f.direction==='string' && openResponse.f.direction.trim() && openResponse.f.direction.length<=250);
+      validateSketch(openResponse.f.drawing);
+      assert.ok(readWindArrow(openResponse.f.drawing,wind) && windArrowExample(question.answer,wind),'Wind response or reviewed reference has invalid endpoints');
+      return structuredClone(openResponse);
+    }
     if (arrangement) {
       validateSketch(openResponse.f.drawing);
       assert.ok(readArrangement(openResponse.f.drawing, arrangement)?.size, 'Invalid reviewed arrangement example');
