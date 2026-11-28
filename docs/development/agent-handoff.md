@@ -1,3 +1,11 @@
+# 九年級二段社會夥伴教材入口：共用契約審查
+
+- 目標：讓已核115教材的113／114社會夥伴題目另開本人原卷相同題組，答前可讀課本／教冊；保持小隊作答及既有媒體權限。
+- Codex持有本worktree全部寫入；Claude僅針對共用導向與版本競態唯讀審查，不修改、不部署、不讀憑證或私有題包。
+- 修改：`shared/quiz-past-study-entry.mjs`、`shared/quiz-past-exams.mjs`、`shared/quiz-past-ui.mjs`、`shared/partner-pilot/learning.js`、測試、生成入口／manifest及本批文件。
+- 本機15項測試及產物檢查通過；尚未發布。正式夥伴catalog另遇約8秒查詢逾時；已建113驗收房保留，未重送。詳見[候選與待辦](zhongzheng-g9-social-partner-study-entry-20261128.md)。
+- 下一步：只讀檢查版本綁定、開卷前後競態、同題組定位與草稿保留；實際DOM驗證後才進main及發布。正式多人與可靠配題仍待完成，不宣稱整個長線完成。
+
 # 三年級自然風向作答介面
 
 ## 發布登記
