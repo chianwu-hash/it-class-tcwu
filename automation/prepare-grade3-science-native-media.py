@@ -1360,6 +1360,104 @@ def reviewed_merged_image_choices(parent, targets, original, pages, legacy, docx
     return plain(""),[{"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":question}],assets
 
 
+def reviewed_text_reading(parent, targets, original, pages, legacy, review):
+    require, norm, plain = legacy.require, legacy.normalize, legacy.plain
+    word = Path(original["question_docx"])
+    teacher = word.with_name("answer.docx.gz")
+    require(legacy.digest(word)==original["question_docx_sha256"]==review["word_sha256"], "original_word_changed")
+    require(legacy.digest(teacher)==review["teacher_sha256"], "teacher_word_changed")
+
+    namespace = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+    circled = "①②③④⑤⑥⑦⑧"
+    with zipfile.ZipFile(word) as source:
+        body = ElementTree.fromstring(source.read("word/document.xml")).find(namespace+"body")
+    require(body is not None and all(p.tag in (namespace+"p",namespace+"sectPr") for p in body)
+            and all(n.tag not in (namespace+"drawing",namespace+"pict",namespace+"object") for n in body.iter()),
+            "original_text_only")
+    lines = []
+    for paragraph in body.findall(namespace+"p"):
+        line = "".join(n.text or "" for n in paragraph.iter() if n.tag in (namespace+"t",namespace+"instrText"))
+        line = re.sub(r"eq\s*\\o\(○,([１２３４５６７８1-8])\)", lambda m:circled[int(m[1])-1],line).strip()
+        if line:
+            lines.append(line)
+
+    native = parent["original_source"]["native_content"]
+    items = native["questions"]
+    require(len(items)==len(targets) and [t["source_question_indices"] for t in targets]
+            ==[[i] for i in range(1,len(items)+1)], "source_position")
+    starts = [(i,m) for i,line in enumerate(lines) if (m:=legacy.WORD_ORDINAL.fullmatch(line))]
+    teacher_key = teacher_printed_answer(teacher,require)
+    finite = review.get("finite_options")
+    modes = review["open_fields"]
+    if finite:
+        require(len(lines)==len(items)==1 and not starts and not modes, "word_finite_layout")
+        require(lines[0].endswith(f"（填入{'、'.join(finite[:-1])}或{finite[-1]}）"), "word_choice_alignment")
+        intro, parts, answers = [], [(lines[0],[])], [teacher_key]
+    else:
+        require([int(norm(m[1])) for _,m in starts]==list(range(1,len(items)+1)), "word_question_position")
+        intro = lines[:starts[0][0]]
+        ends = [i for i,_ in starts[1:]]+[len(lines)]
+        parts = [(m[2],lines[i+1:end]) for (i,m),end in zip(starts,ends,strict=True)]
+        keys = re.split(r"[（(]([1-8１-８])[）)]",teacher_key)
+        require(not keys[0].strip() and [int(norm(k)) for k in keys[1::2]]==list(range(1,len(items)+1)),
+                "teacher_choice_position")
+        answers = [v.strip().rstrip("；;") for v in keys[2::2]]
+    require(norm("".join(intro))==norm(native.get("preamble") or ""), "source_preamble")
+
+    questions = []
+    for i,((text,tail),item,target,teacher_answer) in enumerate(zip(parts,items,targets,answers,strict=True),1):
+        groups = [[x.strip() for x in group if x.strip()] for group in item["answers"]]
+        require(all(len(group)==1 for group in groups), "teacher_answer_columns")
+        raw_key = [group[0] for group in groups]
+        fixed_key = [p["reference_value"] for p in target["positions"]]
+        source_stem = re.sub(r"答[：:]\s*(?:【[\s_＿]*】\s*)+$","",item["stem"]).strip()
+        source_stem = re.sub(r"[（(][\s_＿]*[）)]\s*$","",source_stem).strip()
+        explanation = checked_explanation(target,review.get("explanations",{}).get(str(i)),require)
+        options = item["options"]
+        if options:
+            printed = " ".join([text,*[re.sub(r"^[（(][\s_＿]*[）)]\s*","",line) for line in tail]])
+            segments = re.split(f"([{circled}])",printed)
+            text = segments[0].strip()
+            require(segments[1::2]==list(circled[:len(options)]) and
+                    [norm(v) for v in segments[2::2]]==list(map(norm,options)), "word_choice_alignment")
+        else:
+            require(all(re.fullmatch(r"答[：:]\s*",line) for line in tail), "word_answer_area")
+        require(norm(text)==norm(source_stem), "word_prompt")
+        if options or finite:
+            choices = options or finite
+            require(len(raw_key)==len(fixed_key)==1 and norm(raw_key[0])==norm(fixed_key[0])==norm(target["reference_answer"]),
+                    "review_choice_key")
+            if options:
+                key = re.fullmatch(f"([{circled}])[ˇ✓√✔]?",teacher_answer)
+                require(key and str(circled.index(key[1])+1)==norm(raw_key[0]), "teacher_choice_key")
+                selected = int(norm(raw_key[0]))
+                require(not re.search(f"[{circled}]",explanation), "ordinal_explanation")
+            else:
+                require(target["kind"]=="fill_in_the_blank" and teacher_answer in choices
+                        and norm(teacher_answer)==norm(raw_key[0]), "teacher_finite_key")
+                selected = choices.index(teacher_answer)+1
+                text = re.sub(r"[（(][\s_＿]+[）)]","＿＿",text,count=1)
+            question = output_question("single_choice",plain(text),list(map(plain,choices)),[selected],plain(explanation))
+        else:
+            teacher_fields = [v.strip() for v in re.split(r"[；;]",teacher_answer)]
+            labels = modes.get(str(i),[])
+            require(target["kind"]=="short_answer" and len(labels)==len(raw_key)>0
+                    and list(map(norm,teacher_fields))==list(map(norm,raw_key))==list(map(norm,fixed_key))
+                    and norm("；".join(fixed_key))==norm(target["reference_answer"]), "teacher_open_fields")
+            fields, examples = [], {}
+            for f,(field,example) in enumerate(zip(labels,teacher_fields,strict=True),1):
+                field_id = f"answer{f}"
+                require(field["label"].strip() and field["criteria"], "open_review_criteria")
+                fields.append({"id":field_id,"input":"text","label":field["label"]})
+                examples[field_id] = {"examples":[re.sub(r"[（(]答案僅供參考[）)]$","",example).strip()],
+                                      "criteria":field["criteria"]}
+            question = {"type":"open","prompt":plain(text),"fields":fields,"explanation":plain(explanation),
+                        "answer":{"format":"self-review-v1","fields":examples}}
+        refs = legacy.refs_for(target,original["unit"],pages,require_auto_grade=question["type"]!="open")
+        questions.append({"target":target["target_id"],"refs":refs,"question":question})
+    return plain("\n".join(intro)),questions,{}
+
+
 def reviewed_recovered_word(parent, targets, original, pages, legacy, docx, review):
     require, norm, plain = legacy.require, legacy.normalize, legacy.plain
     word = Path(original["question_docx"])
@@ -1647,6 +1745,7 @@ def main():
     parser.add_argument("--wind-strength-reviews", type=Path)
     parser.add_argument("--solubility-result-reviews", type=Path)
     parser.add_argument("--merged-image-choice-reviews", type=Path)
+    parser.add_argument("--text-reading-reviews", type=Path)
     parser.add_argument("--recovered-word-reviews", type=Path)
     args=parser.parse_args()
     legacy=load_module(args.legacy)
@@ -1669,6 +1768,7 @@ def main():
     wind_strength_reviews = legacy.read(args.wind_strength_reviews) if args.wind_strength_reviews else {}
     solubility_reviews = legacy.read(args.solubility_result_reviews) if args.solubility_result_reviews else {}
     merged_image_reviews = legacy.read(args.merged_image_choice_reviews) if args.merged_image_choice_reviews else {}
+    text_reading_reviews = legacy.read(args.text_reading_reviews) if args.text_reading_reviews else {}
     recovered_word_reviews = legacy.read(args.recovered_word_reviews) if args.recovered_word_reviews else {}
     text_modes = (classification_reviews, choice_reviews, boolean_reviews, numbered_reviews, sequence_reviews, native_table_reviews)
     modes = (visual_reviews, grid_reviews, matching_reviews, single_reviews, mixed_reviews, image_single_reviews, diagram_reviews, figure_reviews, mixed_image_reviews, wind_strength_reviews, solubility_reviews, merged_image_reviews, recovered_word_reviews, *text_modes)
@@ -1747,6 +1847,9 @@ def main():
             elif sid in merged_image_reviews:
                 rule = "reviewed_merged_image_choices"
                 material, qs, assets = reviewed_merged_image_choices(parent, group, source, pages, legacy, docx, merged_image_reviews[sid])
+            elif sid in text_reading_reviews:
+                rule = "reviewed_text_reading"
+                material, qs, assets = reviewed_text_reading(parent, group, source, pages, legacy, text_reading_reviews[sid])
             elif sid in recovered_word_reviews:
                 rule = "reviewed_recovered_word"
                 material, qs, assets = reviewed_recovered_word(parent, group, source, pages, legacy, docx, recovered_word_reviews[sid])

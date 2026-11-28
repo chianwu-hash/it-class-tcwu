@@ -4,9 +4,9 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | codex-g3-wind-drawing | 2026-11-28 | 本次風向作答介面 PR | `dpl_HJPA6J5ByZCqugGfj4giHLvGgEPs` | 三年級自然原圖畫箭頭與作答後教師示意 | 待正式驗收 |
+| 已完成 | codex-g3-wind-drawing | 2026-11-28T12:12:07.157Z | `49fd749` | `dpl_HJPA6J5ByZCqugGfj4giHLvGgEPs` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-fields-presentation.mjs、shared/quiz-open-response.mjs、shared/quiz-server.mjs、shared/quiz-workshop/generated/assets.json、+shared/quiz-wind-drawing.mjs | `dpl_Gu5MPuhovLLtjSdB8do9DxFkmCNJ`／回滾 `dpl_HJPA6J5ByZCqugGfj4giHLvGgEPs`（eolOnly 0） |
 
-這批 6 筆原題已核對 13 張教師示意，14 小題通過 16 組隔離作答。桌機、手機本機驗證包含箭頭繪製、鍵盤選點、文字填答、儲存還原和送答後顯示示意。正式介面發布與學生端驗收完成後再更新題庫總帳。
+這批 6 筆原題、14 小題已從正式學生入口驗證並逐題讀回。 [本批正式收據](https://github.com/chianwu-hash/it-class-tcwu/pull/612#issuecomment-7239150748)
 
 # 2026-11-28 四年級南一期末自然自組卷
 
