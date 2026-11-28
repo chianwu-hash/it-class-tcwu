@@ -4,9 +4,9 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | codex-g4-kang-chinese-20261128 | 2026-11-28 | 合併本批後的 `origin/main` | `dpl_FP4mxSDimvQEdvS84T1pUM9MgTLK` | 康軒四年級國語期末課次、課本翻閱方向及練功坊生成檔 | 正式學生入口收據附同批 PR。 |
+| 已完成 | codex-g4-kang-chinese-20261128 | 2026-11-28T04:10:21.262Z | `ebb0691` | `dpl_FP4mxSDimvQEdvS84T1pUM9MgTLK` | shared/quiz-practice-scope.mjs、shared/quiz-textbook-settings.mjs、shared/quiz-workshop/generated/assets.json、grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html | `dpl_Awuyj8ncWMnhRTA1xVEgeQPKCi6t`／回滾 `dpl_FP4mxSDimvQEdvS84T1pUM9MgTLK`（eolOnly 0） |
 
-第七課 27 筆已通過正式抽驗及逐題資料讀回。課次與閱讀器方向依原件檢核。[本批題庫收據](quiz-final-bank-ledger-20261127.md#四年級康軒國語第七課閱讀題發布收據)
+第七課 27 筆已通過正式抽驗及逐題資料讀回。實際組成 5 題自組卷，跨頁右翻閱讀方向及返回保留選答均通過。[本批正式發布與入口收據](https://github.com/chianwu-hash/it-class-tcwu/pull/559#issuecomment-7233799605)
 
 # 2026-11-28 四年級社會期末單元分類
 
