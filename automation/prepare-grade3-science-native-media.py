@@ -1360,6 +1360,205 @@ def reviewed_merged_image_choices(parent, targets, original, pages, legacy, docx
     return plain(""),[{"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":question}],assets
 
 
+def reviewed_associated_images(parent, targets, original, pages, legacy, docx, review):
+    require, norm, plain = legacy.require, legacy.normalize, legacy.plain
+    word = Path(original["question_docx"])
+    teacher = word.with_name("answer.docx.gz")
+    asset = parent["question_only_asset"]
+    snapshot = Path(asset["local_content"])
+    require(legacy.digest(snapshot)==asset["sha256"]==review["snapshot_sha256"], "word_snapshot_changed")
+    require(legacy.digest(word)==original["question_docx_sha256"]==review["word_sha256"], "original_word_changed")
+    require(legacy.digest(teacher)==review["teacher_sha256"], "teacher_word_changed")
+    parsed = legacy.read(snapshot)
+    assets = verify_assets(parsed,asset["images"],word,legacy)
+    layout, media = parsed["layout"], parsed["media"]
+    raw = parent["original_source"]["native_content"]
+    teacher_key = teacher_printed_answer(teacher,require)
+
+    def paragraph(block):
+        require(block["type"]=="paragraph" and all(r["type"]=="text" for r in block["runs"]), "word_caption")
+        return "".join(r["text"] for r in block["runs"]).strip()
+
+    def caption_image(caption, image):
+        require(len(image)==1 and image[0]["type"]=="image","word_image_position")
+        return compact_layout([{"type":"paragraph","runs":[{"type":"text","text":caption},*image]}],media,docx)
+
+    heading = paragraph(layout[0])
+    if review["mode"]=="numbered_caption_checklist":
+        require(len(targets)==1 and targets[0]["kind"]=="checkbox" and targets[0]["source_question_indices"]==list(range(1,len(raw["questions"])+1))
+                and len(targets[0]["positions"])==1, "source_position")
+        questions = raw["questions"]
+        require(len(layout)==2*len(questions)+1 and len(assets)==len(questions)
+                and norm(heading)==norm(raw["preamble"]), "word_prompt")
+        gallery, choices, selected = [layout[0]], [], []
+        for i,item in enumerate(questions,1):
+            caption = legacy.WORD_ORDINAL.fullmatch(paragraph(layout[2*i-1]))
+            image = layout[2*i]
+            require(caption and int(norm(caption[1]))==i and image["type"]=="paragraph"
+                    and norm(caption[2])==norm(legacy.statement(item["stem"])), "word_choice_alignment")
+            label = f"{i}. {caption[2]}"
+            gallery.extend([{"type":"paragraph","runs":[{"type":"text","text":label}]},image])
+            choices.append(plain(label))
+            if item["answers"]:
+                require(item["answers"]==[["ˇ"]], "teacher_check_key")
+                selected.append(i)
+        target, = targets
+        key = ";".join(f"({i})ˇ" for i in selected)
+        require(key and key==norm(teacher_key)==norm(target["reference_answer"])
+                ==norm(target["positions"][0]["reference_value"]), "teacher_check_key")
+        explanation = checked_explanation(target,review.get("explanation"),require)
+        prompt = compact_layout(gallery,media,docx)
+        result = output_question("checkbox",prompt,choices,selected,plain(explanation))
+        return plain(""),[{"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),
+                           "question":result}],assets
+
+    if review["mode"]=="figure_printed_choices":
+        require(len(assets)==1 and len(raw["questions"])==1 and len(targets)==1 and len(layout)==2
+                and layout[1]["type"]=="paragraph" and [r["type"] for r in layout[1]["runs"]]==["image"],
+                "word_choice_alignment")
+        require(next(iter(assets.values()))["sha256"]==review["image_sha256"], "original_media_sha")
+        target, = targets
+        item, = raw["questions"]
+        require(target["kind"]=="circle" and target["source_question_indices"]==[1] and len(target["positions"])==1
+                and not item["options"] and norm(heading)==norm(legacy.statement(item["stem"])), "word_choice_alignment")
+        recorded = [v for group in item["answers"] for v in group]
+        require(len(recorded)==1 and norm(teacher_key)==norm(recorded[0])==norm(target["reference_answer"])
+                ==norm(target["positions"][0]["reference_value"]), "review_selection_key")
+        labels = review["labels"]
+        require(2<=len(labels)<=8 and len(set(labels))==len(labels), "printed_selection_positions")
+        if ordinals:=review.get("ordinals"):
+            require(ordinals==list("①②③④⑤⑥⑦⑧"[:len(labels)]), "printed_selection_positions")
+            mode,selected = printed_selection_key(teacher_key)
+            require(mode=="circle" and all(v in ordinals for v in selected),"review_selection_key")
+            keys = [ordinals.index(v)+1 for v in selected]
+            choices = [f"{code} {v}" for code,v in zip(ordinals,labels,strict=True)]
+        else:
+            require(teacher_key.strip().endswith("圈起來"),"review_selection_key")
+            selected = teacher_key.strip().removesuffix("圈起來").split("、")
+            require(selected==[v for v in labels if v in selected],"review_selection_key")
+            keys = [labels.index(v)+1 for v in selected]
+            choices = labels
+        require(keys and "圈" in heading, "word_selection_action")
+        explanation = checked_explanation(target,review.get("explanation"),require)
+        q = output_question("checkbox",compact_layout(layout,media,docx),list(map(plain,choices)),keys,plain(explanation))
+        return plain(""),[{"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":q}],assets
+
+    if review["mode"]=="figure_caption_pairs":
+        n = len(targets)
+        require(len(assets)==1 and len(raw["questions"])==1 and len(layout)==n+2 and layout[-1]["type"]=="paragraph"
+                and [r["type"] for r in layout[-1]["runs"]]==["image"], "word_matching_layout")
+        require(next(iter(assets.values()))["sha256"]==review["image_sha256"], "original_media_sha")
+        labels = list("①②③④⑤⑥"[:n])
+        codes = list("ㄅㄆㄇㄈㄉㄊ"[:n])
+        names = review["image_choices"]
+        keys = re.split(r"[;；]",teacher_key.strip())
+        evidence = raw["questions"][0]
+        captions = [paragraph(x) for x in layout[1:-1]]
+        stem = re.sub(r"(?:【[\s_＿]*】\s*)+$","",evidence["stem"]).strip()
+        require(not evidence["options"] and norm(stem)==norm(heading+"".join(captions))
+                and len(keys)==len(names)==n and len(set(names))==n
+                and keys==[v for group in evidence["answers"] for v in group]
+                and all(k.startswith(label) and k[1:] in names for k,label in zip(keys,labels,strict=True)),
+                "teacher_matching_key")
+        require(heading==review["original_instruction"] and review["display_instruction"].strip(),"matching_instruction_changed")
+        material = caption_image(review["display_instruction"],layout[-1]["runs"])
+        items = []
+        for i,(target,key,caption,code) in enumerate(zip(targets,keys,captions,codes,strict=True)):
+            require(target["kind"]=="matching" and target["source_question_indices"]==[1] and len(target["positions"])==1
+                    and norm(key)==norm(target["reference_answer"])==norm(target["positions"][0]["reference_value"])
+                    and caption.startswith(review["names"][i]+"：") and code in caption
+                    and target["positions"][0]["source_part_locator"].startswith(review["names"][i]),"source_position")
+            q = output_question("single_choice",plain(caption),list(map(plain,names)),[names.index(key[1:])+1],
+                                plain(target["student_explanation"]))
+            items.append({"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":q})
+        return material,items,assets
+
+    if review["mode"]=="figure_short_answers":
+        require(len(targets)==len(raw["questions"])==len(review["fields"]) and len(assets)==review["image_count"],
+                "word_question_position")
+        starts = [(i,m) for i,b in enumerate(layout) if b["type"]=="paragraph"
+                  and all(run["type"]=="text" for run in b["runs"])
+                  and (m:=legacy.WORD_ORDINAL.fullmatch(paragraph(b)))]
+        if starts:
+            require([int(norm(m[1])) for _,m in starts]==list(range(1,len(targets)+1)), "word_question_position")
+            ends = [i for i,_ in starts[1:]]+[len(layout)]
+            require(all([paragraph(b) for b in layout[i+1:end]]==["答："]
+                        for (i,_),end in zip(starts,ends,strict=True)), "word_answer_area")
+            questions = [m[2] for _,m in starts]
+            material = compact_layout(layout[:starts[0][0]],media,docx)
+            keys = re.split(r"[（(]([1-8１-８])[）)]",teacher_key)
+            require(not keys[0].strip() and [int(norm(k)) for k in keys[1::2]]==list(range(1,len(targets)+1)),
+                    "teacher_choice_position")
+            keys = [v.strip().rstrip("；;") for v in keys[2::2]]
+        else:
+            require(len(targets)==1 and len(layout)==3 and layout[1]["type"]=="paragraph"
+                    and [r["type"] for r in layout[1]["runs"]]==["image"]
+                    and norm(paragraph(layout[2]))==norm(review["answer_area"]), "word_answer_area")
+            questions,keys = [heading],[teacher_key]
+            material = plain("")
+        items = []
+        for i,(question,key,raw_item,target,fields) in enumerate(zip(questions,keys,raw["questions"],targets,review["fields"],strict=True),1):
+            require(target["kind"]=="short_answer" and target["source_question_indices"]==[i], "source_position")
+            stem = raw_item["stem"].strip()
+            if not starts and review.get("export_answer_area"):
+                raw_area = review["export_answer_area"]
+                require(stem.endswith(raw_area), "word_answer_area")
+                stem = stem.removesuffix(raw_area)
+            stem = re.sub(r"答[：:]\s*(?:【[\s_＿]*】\s*)+$","",stem).strip()
+            require(norm(question)==norm(stem), "word_prompt")
+            field_keys = [v.strip() for v in re.split(r"[;；]",key)]
+            publisher_values = [v.strip() for group in raw_item["answers"] for v in group if v.strip()]
+            require(not raw_item["options"] and len(fields)==len(field_keys)==len(target["positions"])
+                    and list(map(norm,field_keys))==list(map(norm,publisher_values))
+                    ==[norm(v["reference_value"]) for v in target["positions"]]
+                    and norm(target["reference_answer"])==norm(review["fixed_references"][i-1]), "teacher_open_fields")
+            prompt = plain(question) if starts else compact_layout(layout[:2],media,docx)
+            inputs,references = [],{}
+            for j,(field,reference) in enumerate(zip(fields,field_keys,strict=True),1):
+                example = re.sub(r"[（(]答案僅供參考[）)]","",reference).strip()
+                if correction:=field.get("correction"):
+                    require(correction["original"]==example, "reviewed_reference_changed")
+                    example = correction["display"]
+                name = f"answer{j}"
+                inputs.append({"id":name,"input":"text","label":field["label"]})
+                references[name] = {"examples":[example],"criteria":field["criteria"]}
+            explanation = checked_explanation(target,review.get("explanations",{}).get(str(i)),require)
+            q = {"type":"open","prompt":prompt,"fields":inputs,"explanation":plain(explanation),
+                 "answer":{"format":"self-review-v1","fields":references}}
+            items.append({"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages,require_auto_grade=False),
+                          "question":q})
+        return material,items,assets
+
+    require(review["mode"]=="table_pair_columns" and len(layout)==2 and layout[1]["type"]=="table",
+            "word_matching_layout")
+    rows = layout[1]["rows"]
+    n = len(targets)
+    labels, codes = list("①②③④⑤⑥"[:n]),list("ㄅㄆㄇㄈㄉㄊ"[:n])
+    require(2<=n<=6 and len(rows)==2*n and all(len(r)==5 for r in rows) and len(media)==2*n, "word_matching_layout")
+    require(len(raw["questions"])==1 and norm(raw["questions"][0]["stem"]).startswith(norm(heading)), "word_prompt")
+    keys = re.split(r"[;；]",teacher_key.strip())
+    require(keys==[answer[0] for answer in raw["questions"][0]["answers"]] and len(keys)==n
+            and all(len(k)==2 and k[0]==label and k[1] in codes for label,k in zip(labels,keys,strict=True)),
+            "teacher_matching_key")
+    left, right = [], []
+    for i,(label,code) in enumerate(zip(labels,codes,strict=True)):
+        captions, pictures = rows[2*i:2*i+2]
+        require(captions==[[{"type":"text","text":label}],[],[],[],[{"type":"text","text":code}]]
+                and pictures[1:4]==[[{"type":"text","text":"‧"}],[],[{"type":"text","text":"‧"}]],
+                "word_matching_layout")
+        left.append(caption_image(f"圖 {label}",pictures[0]))
+        right.append(caption_image(code,pictures[-1]))
+    items = []
+    for i,(target,key) in enumerate(zip(targets,keys,strict=True)):
+        require(target["kind"]=="matching" and target["source_question_indices"]==[1] and len(target["positions"])==1
+                and norm(target["positions"][0]["reference_value"])==norm(target["reference_answer"])==norm(key)
+                and target["positions"][0]["source_part_locator"].startswith(f"第{labels[i]}"), "source_position")
+        question = output_question("single_choice",left[i],right,[codes.index(key[1])+1],plain(target["student_explanation"]))
+        items.append({"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":question})
+    require(review["original_instruction"]==heading, "matching_instruction_changed")
+    return plain(review["display_instruction"]),items,assets
+
+
 def reviewed_reading_slots(text, raw_key, fixed_key, teacher_answer, target, review, explanation, legacy, intro):
     require, norm, plain = legacy.require, legacy.normalize, legacy.plain
     require(len(raw_key)==len(fixed_key)==len(review["labels"]), "teacher_answer_columns")
@@ -1818,6 +2017,7 @@ def main():
     parser.add_argument("--wind-strength-reviews", type=Path)
     parser.add_argument("--solubility-result-reviews", type=Path)
     parser.add_argument("--merged-image-choice-reviews", type=Path)
+    parser.add_argument("--associated-image-reviews", type=Path)
     parser.add_argument("--text-reading-reviews", type=Path)
     parser.add_argument("--recovered-word-reviews", type=Path)
     args=parser.parse_args()
@@ -1841,6 +2041,7 @@ def main():
     wind_strength_reviews = legacy.read(args.wind_strength_reviews) if args.wind_strength_reviews else {}
     solubility_reviews = legacy.read(args.solubility_result_reviews) if args.solubility_result_reviews else {}
     merged_image_reviews = legacy.read(args.merged_image_choice_reviews) if args.merged_image_choice_reviews else {}
+    associated_image_reviews = legacy.read(args.associated_image_reviews) if args.associated_image_reviews else {}
     text_reading_reviews = legacy.read(args.text_reading_reviews) if args.text_reading_reviews else {}
     recovered_word_reviews = legacy.read(args.recovered_word_reviews) if args.recovered_word_reviews else {}
     text_modes = (classification_reviews, choice_reviews, boolean_reviews, numbered_reviews, sequence_reviews, native_table_reviews)
@@ -1920,6 +2121,9 @@ def main():
             elif sid in merged_image_reviews:
                 rule = "reviewed_merged_image_choices"
                 material, qs, assets = reviewed_merged_image_choices(parent, group, source, pages, legacy, docx, merged_image_reviews[sid])
+            elif sid in associated_image_reviews:
+                rule = "reviewed_associated_images"
+                material, qs, assets = reviewed_associated_images(parent, group, source, pages, legacy, docx, associated_image_reviews[sid])
             elif sid in text_reading_reviews:
                 rule = "reviewed_text_reading"
                 material, qs, assets = reviewed_text_reading(parent, group, source, pages, legacy, text_reading_reviews[sid])
