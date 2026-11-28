@@ -431,6 +431,60 @@ def reviewed_mixed_single_choices(parent, targets, original, pages, legacy, docx
     return material, questions, assets
 
 
+def reviewed_text_classification(parent, targets, original, pages, legacy, review):
+    require, norm, plain = legacy.require, legacy.normalize, legacy.plain
+    native = parent["original_source"]["native_content"]
+    raw = native["questions"]
+    require(len(raw) == len(targets) == len(review["match"]) > 1 and native.get("preamble")
+            and all(t["kind"] == "matching" for t in targets), "classification_source_structure")
+    indexed = {tuple(t["source_question_indices"]):t for t in targets}
+    require(set(indexed) == {(i,) for i in range(1, len(raw)+1)}, "source_position")
+    word = Path(original["question_docx"])
+    teacher = word.with_name("answer.docx.gz")
+    snapshot = Path(parent["question_only_asset"]["local_content"])
+    require(legacy.digest(word) == original["question_docx_sha256"] == review["question_sha256"], "original_word_changed")
+    require(legacy.digest(teacher) == review["teacher_sha256"], "teacher_word_changed")
+    require(legacy.digest(snapshot) == parent["question_only_asset"]["sha256"] == review["snapshot_sha256"], "word_snapshot_missing")
+    body = legacy.read(snapshot)
+    require(not body["media"] and all(b["type"] == "paragraph" for b in body["layout"]), "classification_source_layout")
+    preamble, lines = legacy.numbered_lines(body["text"])
+    require(norm(preamble) == norm(native["preamble"]) and len(lines) == len(raw), "source_preamble")
+    domain = review["options"]
+    require(list(domain) in [list(s) for s in ("ㄅㄆ", "ㄅㄆㄇ", "ABC", "甲乙丙")]
+            and len(set(domain.values())) == len(domain), "classification_domain")
+    previous = -1
+    for code in domain:
+        index = preamble.find(code, previous+1)
+        require(index > previous, "classification_domain")
+        previous = index
+    teacher_text = teacher_printed_answer(teacher, require)
+    parts = re.split(r"[（(]([１-８1-8])[）)]", teacher_text)
+    require(not parts[0].strip() and [int(n) for n in parts[1::2]] == list(range(1, len(raw)+1)), "teacher_choice_position")
+
+    def key(text):
+        return norm(text).strip(";").split(";")
+
+    multiple = review["set_domain"] is True
+    options = [plain(label) for label in domain.values()]
+    options_by_code = {code: i for i, code in enumerate(domain, 1)}
+    result = []
+    for i, (item, line, printed_key, expected) in enumerate(zip(raw, lines, parts[2::2], review["match"]), 1):
+        target = indexed[(i,)]
+        require(expected["ordinal"] == i and len(target["positions"]) == 1, "source_position")
+        selected = expected["selection"]
+        original_key = "；".join(a.strip() for group in item["answers"] for a in group if a.strip())
+        require(selected and selected == [c for c in domain if c in selected]
+                and selected == key(printed_key) == key(original_key) == key(target["reference_answer"])
+                == key(target["positions"][0]["reference_value"]), "classification_answer_key")
+        require(not item["options"] and (multiple or len(selected) == 1), "classification_answer_mode")
+        prompt = legacy.statement(line).rstrip("：:")
+        require(prompt and norm(prompt) == norm(legacy.statement(item["stem"]).rstrip("：:")), "word_prompt")
+        q = output_question("checkbox" if multiple else "single_choice", plain(prompt), options,
+                            [options_by_code[c] for c in selected], plain(target["student_explanation"]))
+        result.append({"target":target["target_id"], "refs":legacy.refs_for(target,original["unit"],pages), "question":q})
+    return plain(preamble), result, {}
+
+
 def adapt(parent, targets, original, pages, legacy, docx):
     require = legacy.require
     plain, norm = legacy.plain, legacy.normalize
@@ -529,6 +583,7 @@ def main():
     parser.add_argument("--visual-grid-matching", type=Path)
     parser.add_argument("--shared-single-reviews", type=Path)
     parser.add_argument("--mixed-single-reviews", type=Path)
+    parser.add_argument("--text-classification-reviews", type=Path)
     args=parser.parse_args()
     legacy=load_module(args.legacy)
     docx=load_module(args.docx)
@@ -537,7 +592,8 @@ def main():
     matching_reviews = legacy.read(args.visual_grid_matching) if args.visual_grid_matching else {}
     single_reviews = legacy.read(args.shared_single_reviews) if args.shared_single_reviews else {}
     mixed_reviews = legacy.read(args.mixed_single_reviews) if args.mixed_single_reviews else {}
-    modes = (visual_reviews, grid_reviews, matching_reviews, single_reviews, mixed_reviews)
+    classification_reviews = legacy.read(args.text_classification_reviews) if args.text_classification_reviews else {}
+    modes = (visual_reviews, grid_reviews, matching_reviews, single_reviews, mixed_reviews, classification_reviews)
     if len(set().union(*modes)) != sum(map(len, modes)):
         parser.error("the same source cannot use multiple visual review modes")
     sources={r["stable_id"]:r for r in legacy.read(args.source_catalog)["records"]}
@@ -551,9 +607,9 @@ def main():
            for name,r in book.items() for p in r["printed_pages"]}
     rows=[]
     for old in legacy.read(args.previous)["held"]:
-        if old["reason"]!="original_media":
-            continue
         sid=old["parent"]
+        if old["reason"]!="original_media" and sid not in classification_reviews:
+            continue
         source=sources[sid]
         try:
             parent = parents[sid]
@@ -574,6 +630,9 @@ def main():
             elif sid in mixed_reviews:
                 rule = "reviewed_mixed_single_choices"
                 material, qs, assets = reviewed_mixed_single_choices(parent, group, source, pages, legacy, docx, mixed_reviews[sid])
+            elif sid in classification_reviews:
+                rule = "reviewed_text_classification"
+                material, qs, assets = reviewed_text_classification(parent, group, source, pages, legacy, classification_reviews[sid])
             elif len(group) > 1 and all(t["kind"] == "single_choice" for t in group):
                 rule = "shared_image_choices"
                 material, qs, assets = shared_image_choices(parent, group, source, pages, legacy, docx)
