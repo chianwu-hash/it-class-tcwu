@@ -60,6 +60,61 @@ def output_question(kind, prompt, labels, keys, explanation):
             "answer":{"option_id":f"o{keys[0]}"},"explanation":explanation}
 
 
+def shared_image_choices(parent, targets, original, pages, legacy, docx):
+    require = legacy.require
+    norm = legacy.normalize
+    native = parent["original_source"]["native_content"]
+    raw = native["questions"]
+    require(len(raw) == len(targets) > 1 and native.get("preamble")
+            and all(t["kind"] == "single_choice" for t in targets)
+            and all(item["options"] for item in raw), "other_source_layout")
+    by_position = {tuple(t["source_question_indices"]):t for t in targets}
+    require(set(by_position) == {(i,) for i in range(1, len(raw) + 1)}, "source_position")
+    asset = parent["question_only_asset"]
+    path = Path(asset["local_content"])
+    require(legacy.digest(path) == asset["sha256"], "word_snapshot_missing")
+    require(legacy.digest(original["question_docx"]) == original["question_docx_sha256"],
+            "original_word_changed")
+    parsed = legacy.read(path)
+    require(all(block["type"] == "paragraph" for block in parsed["layout"]), "original_table")
+    assets = verify_assets(parsed, asset["images"], original["question_docx"], legacy)
+    prefix, body = [], []
+    for block in parsed["layout"]:
+        runs = block["runs"]
+        text = "".join(run["text"] for run in runs if run["type"] == "text").strip()
+        if body or legacy.WORD_ORDINAL.fullmatch(text):
+            require(all(run["type"] == "text" for run in runs), "item_media")
+            body.append(text)
+        else:
+            prefix.append(block)
+    common = compact_layout(prefix, parsed["media"], docx)
+    require(common["media"] and norm(common["text"]) == norm(native["preamble"]), "source_preamble")
+    extra_preamble, lines = legacy.numbered_lines("\n".join(body))
+    require(not extra_preamble and len(lines) == len(raw), "source_position")
+    questions = []
+    for i, (item, line) in enumerate(zip(raw, lines), 1):
+        target = by_position[(i,)]
+        source = {"layout":[{"type":"paragraph","runs":[{"type":"text","text":line}]}],"media":[]}
+        prompt, *labels = docx.split_options(source)
+        labels = [legacy.plain(label["text"]) for label in labels]
+        require(norm(prompt["text"]) == norm(legacy.statement(item["stem"]))
+                and [norm(label["text"]) for label in labels] == list(map(norm, item["options"])),
+                "word_choice_alignment")
+        require(len({norm(label["text"]) for label in labels}) == len(labels), "duplicate_options")
+        answers = [norm(str(a)) for group in item["answers"] for a in group if str(a).strip()]
+        require(len(answers) == 1 and answers[0] in {str(j) for j in range(1, len(labels)+1)}
+                and answers[0] == norm(target["reference_answer"]), "review_choice_key")
+        explanation = re.sub(r"[①②③④]", lambda match: "「"+labels[ord(match[0])-0x2460]["text"]+"」"
+                             if ord(match[0])-0x2460 < len(labels) else match[0],
+                             target["student_explanation"])
+        require(not re.search(r"[①②③④⑤⑥⑦⑧]|選項\s*[A-H1-8]", explanation), "ordinal_explanation")
+        question = output_question("single_choice", legacy.plain(prompt["text"]), labels,
+                                   [int(answers[0])], legacy.plain(explanation))
+        questions.append({"target":target["target_id"],"refs":legacy.refs_for(target, original["unit"], pages),
+                          "question":question})
+    return common, questions, assets
+
+
 def adapt(parent, targets, original, pages, legacy, docx):
     require = legacy.require
     plain, norm = legacy.plain, legacy.normalize
@@ -172,9 +227,17 @@ def main():
         sid=old["parent"]
         source=sources[sid]
         try:
-            rule,qs,assets=adapt(parents[sid],targets[sid],source,pages,legacy,docx)
-            rows.append({"passed":True,"parent":sid,"source":source["id"],"unit":source["unit"],
-                         "difficulty":source["difficulty"],"rule":rule,"questions":qs,"assets":assets})
+            parent = parents[sid]
+            group = targets[sid]
+            if len(group) > 1 and all(t["kind"] == "single_choice" for t in group):
+                material, qs, assets = shared_image_choices(parent, group, source, pages, legacy, docx)
+                rows.append({"passed":True,"parent":sid,"source":source["id"],"unit":source["unit"],
+                             "difficulty":source["difficulty"],"rule":"shared_image_choices","questions":qs,
+                             "material":material,"assets":assets})
+            else:
+                rule,qs,assets=adapt(parent,group,source,pages,legacy,docx)
+                rows.append({"passed":True,"parent":sid,"source":source["id"],"unit":source["unit"],
+                             "difficulty":source["difficulty"],"rule":rule,"questions":qs,"assets":assets})
         except (KeyError,ValueError,OSError) as exc:
             rows.append({"passed":False,"parent":sid,"reason":str(exc)})
     args.output.write_text(json.dumps(rows,ensure_ascii=False,indent=2),encoding="utf8")
