@@ -25,6 +25,8 @@
 
 遷移與[回滾SQL](../../supabase/quiz-partner-register-read-first-rollback.sql)均有交易、執行前來源指紋及執行後結果指紋守衛。來源有其他變更即拒絕，不覆蓋未知版本。回滾還原原始函式定義及權限，不刪資料。
 
+兩份SQL以`.gitattributes`固定LF，避免Windows新checkout將dollar-quoted函式本體換行改成CRLF而改變指紋；正式執行前仍核對Git固定檔與實體檔SHA。
+
 ## 已完成驗證
 
 真PostgreSQL 17的兩個獨立連線，以正式快照函式及合成身分測試，通過：
