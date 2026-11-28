@@ -9,7 +9,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
  const plan=await readJson(file('plan')),ids=plan.ids;
  const {chromium}=require(process.env.QUIZ_PLAYWRIGHT_MODULE||'playwright');
  const browser=await chromium.connectOverCDP(process.env.CDP_URL,{timeout:12000});let page;
- const proof={packetSha,formalOAuth:true,bookReadingDirection:readingDirection,samples:[]};
+ const verificationScriptSha=require('node:crypto').createHash('sha256').update(await fs.readFile(__filename)).digest('hex');
+ const proof={packetSha,verificationScriptSha,formalOAuth:true,bookReadingDirection:readingDirection,samples:[]};
  try{
   const context=browser.contexts()[0];
   for(const candidate of context.pages()){
@@ -26,10 +27,26 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
   await identity();const foreground=await context.newCDPSession(page);foreground.grantForegroundOnce('Page.bringToFront','Verify sampled textbook and persisted calculation');await foreground.send('Page.bringToFront');await foreground.detach();
   if(process.argv[3]==='library'){
    await page.goto(gradeUrl+'/quiz-library.html',{waitUntil:'domcontentloaded'});await identity();
-   const link=page.locator('#cloud-papers a[href*="'+ids.session+'"]').first();await link.waitFor({state:'attached'});
    const total=await page.evaluate(async ({id,expectedGrade})=>{const {supabase}=await import('/shared/auth.js');const {data}=await supabase.auth.getUser();const {createQuizRequest}=await import('/shared/quiz-api.mjs');const go=await createQuizRequest({getSession:()=>({user:{id:data.user.id}})});const r=await go('library_sessions');if(r.role!=='student'||Number(r.grade)!==expectedGrade)throw Error('wrong library role');return r.sessions.find(s=>s.id===id)?.total;},{id:ids.session,expectedGrade:grade});
-   assert.equal(total,n.questions);const url=new URL(await link.getAttribute('href'),page.url()).href;
-   await fs.writeFile(file('library-proof'),JSON.stringify({passed:true,questions:total,sources:n.sources,url},null,2));await recordBatchTime(p,packetSha,'entry-verified');return;
+   assert.equal(total,n.questions);
+   const card=page.locator('#cloud-papers [data-session-id="'+ids.session+'"]');
+   await card.waitFor({state:'attached'});
+   const supplemental=await card.evaluate(node=>Boolean(node.closest('.supplementary-papers')));
+   if(![10,20].includes(total))assert.ok(supplemental,'Nonstandard practice paper must be in supplementary exercises');
+   const hiddenFolders=await card.evaluate(node=>{let count=0;for(let e=node.parentElement;e&&e.id!=='cloud-papers';e=e.parentElement)if(e.matches('details:not([open])'))count++;return count;});
+   for(let i=0;i<hiddenFolders;i++){
+    const summary=page.locator('details:not([open])').filter({has:page.locator('[data-session-id="'+ids.session+'"]')}).first().locator('summary').first();
+    await summary.click();
+   }
+   const link=card.locator('a.paper-start');
+   await link.waitFor({state:'visible'});
+   const url=new URL(await link.getAttribute('href'),page.url());
+   assert.equal(url.searchParams.get('session'),ids.session);
+   await link.click();await page.waitForURL(url.href);
+   await page.locator('article.question[data-question-id]').first().waitFor({state:'visible'});
+   await identity();
+   await fs.writeFile(file('library-proof'),JSON.stringify({passed:true,questions:total,sources:n.sources,url:url.href,opened:true,supplemental,verificationScriptSha},null,2));
+   await recordBatchTime(p,packetSha,'entry-verified');return;
   }
   await recordBatchTime(p,packetSha,'oauth-started');
   for(const s of ids.samples){
@@ -164,14 +181,24 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
     if(question.work?.input==='expression')assert.equal(await article.locator('#work-'+s.question_id).inputValue(),s.work);
     else assert.deepEqual(await article.locator('.camp-sketch-board').evaluate(svg=>({version:1,strokes:[...svg.querySelectorAll('polyline')].map(p=>p.getAttribute('points').split(' ').map(pair=>pair.split(',').map((v,i)=>Math.round(Number(v)/(i?360:600)*10000)/10000))),colors:[...svg.querySelectorAll('polyline')].map(p=>p.getAttribute('stroke'))})),expected.w);
    };
-   const tableLayouts=(block.material.layout??[]).filter(part=>part.type==='table');
    const normalizedCell=s=>s.replace(/\s+/gu,' ').trim();
-   const sourceTables=tableLayouts.map(part=>part.rows.map(row=>row.map(cell=>normalizedCell(cell.map(run=>run.text??'').join('')))));
+   const sourceTables=content=>(content.layout??[]).filter(part=>part.type==='table').map(part=>part.rows.map(row=>row.map(cell=>({
+    text:normalizedCell(cell.map(run=>run.text??'').join('')),
+    images:cell.filter(run=>run.type==='image').map(run=>content.media[run.media_index].url)
+   }))));
+   const commonTables=sourceTables(block.material),promptTables=sourceTables(question.prompt);
    const checkSourceTables=async()=>{
-    if(!sourceTables.length)return;
-    const rendered=await article.locator('section.material table').evaluateAll(tables=>tables.map(table=>
-     [...table.rows].map(row=>[...row.cells].map(cell=>cell.textContent.replace(/\s+/gu,' ').trim()))));
-    assert.deepEqual(rendered,sourceTables,'Common table cell order or text changed');
+    for(const [inMaterial,expectedTables] of [[true,commonTables],[false,promptTables]]){
+     if(!expectedTables.length)continue;
+     const rendered=await article.locator('table.quiz-content-table').evaluateAll((tables,inMaterial)=>tables
+      .filter(table=>Boolean(table.closest('section.material'))===inMaterial&&!table.closest('fieldset'))
+      .map(table=>[...table.rows].map(row=>[...row.cells].map(cell=>{
+       const textOnly=cell.cloneNode(true);
+       for(const figure of textOnly.querySelectorAll('figure'))figure.remove();
+       return {text:textOnly.textContent.replace(/\s+/gu,' ').trim(),images:[...cell.querySelectorAll('img')].map(img=>img.dataset.quizMediaUrl)};
+      }))),inMaterial);
+     assert.deepEqual(rendered,expectedTables,'Table cell order, text or image placement changed');
+    }
    };
    const checks=[],book=page.locator('#lightbox');
    const assertPage=async number=>{
@@ -206,7 +233,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
     await book.locator('.qtb-book-toolbar select').selectOption(String(neighbor));await assertPage(neighbor);
     await book.getByRole('button',{name:'\u56de\u672c\u984c\u9801',exact:true}).click();await assertPage(ref.primary);
     await book.locator('#lightbox-close').click();await book.waitFor({state:'hidden'});await checkAnswer();
-    checks.push({width,pages:[ref.primary,neighbor],sha_verified:true,returned_to_primary:true,retained_answer_and_work:true,...(sourceTables.length?{common_tables_exact:sourceTables.length}:{})});
+    checks.push({width,pages:[ref.primary,neighbor],sha_verified:true,returned_to_primary:true,retained_answer_and_work:true,
+     ...(commonTables.length?{common_tables_exact:commonTables.length}:{}),...(promptTables.length?{prompt_tables_exact:promptTables.length}:{})});
    }
    // Resume is checked before any submit; a saved exact response is never resent.
    if(!saved){await page.locator('#server-submit').click();await page.locator('#server-submit').waitFor({state:'detached'});}
