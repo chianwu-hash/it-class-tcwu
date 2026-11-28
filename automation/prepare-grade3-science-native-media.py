@@ -431,11 +431,11 @@ def reviewed_mixed_single_choices(parent, targets, original, pages, legacy, docx
     return material, questions, assets
 
 
-def reviewed_text_source(parent, targets, original, legacy, review, preamble_key=None):
+def reviewed_text_source(parent, targets, original, legacy, review, preamble_key=None, minimum_item_count=2):
     require, norm = legacy.require, legacy.normalize
     native = parent["original_source"]["native_content"]
     raw = native["questions"]
-    require(len(raw) == len(targets) > 1 and native.get("preamble"), "reviewed_text_source_structure")
+    require(len(raw) == len(targets) >= minimum_item_count and native.get("preamble"), "reviewed_text_source_structure")
     indexed = {tuple(t["source_question_indices"]):t for t in targets}
     require(set(indexed) == {(i,) for i in range(1, len(raw)+1)}, "source_position")
     word = Path(original["question_docx"])
@@ -493,7 +493,7 @@ def reviewed_text_classification(parent, targets, original, pages, legacy, revie
 
 def reviewed_text_choices(parent, targets, original, pages, legacy, review):
     require, norm, plain = legacy.require, legacy.normalize, legacy.plain
-    preamble, indexed, entries = reviewed_text_source(parent, targets, original, legacy, review)
+    preamble, indexed, entries = reviewed_text_source(parent, targets, original, legacy, review, minimum_item_count=1)
     require(len(entries) == len(review["items"]) and all(t["kind"] in ("checkbox", "multiple_choice", "single_choice_code")
             for t in targets), "choice_source_structure")
 
@@ -501,15 +501,21 @@ def reviewed_text_choices(parent, targets, original, pages, legacy, review):
     for i, ((item, line, teacher_key), expected) in enumerate(zip(entries, review["items"], strict=True), 1):
         target = indexed[(i,)]
         require(expected["ordinal"] == i and len(target["positions"]) == 1, "source_position")
+        mode = expected["mode"]
         answer = norm(teacher_key).strip(";")
+        if mode == "circled_mark":
+            require(re.fullmatch(r"[1-4]ˇ", answer), "printed_choice_mark")
+            answer = answer.removesuffix("ˇ")
         publisher = norm("；".join(a for group in item["answers"] for a in group if a.strip())).strip(";")
         require(answer and answer == publisher == norm(target["reference_answer"]).strip(";")
                 == norm(target["positions"][0]["reference_value"]).strip(";"), "review_choice_position")
-        is_circled = expected["mode"] == "circled_text"
-        require(is_circled == bool(item["options"]) and expected["mode"] in ("circled_text", "bopomofo"), "printed_choice_layout")
-        pattern = r"[①②③④]" if is_circled else r"[（(][\s_＿]*[）)]\s*([ㄅㄆㄇㄈㄉ])\s*"
+        is_circled = mode in ("circled_text", "circled_mark")
+        require(is_circled == bool(item["options"]) and mode in ("circled_text", "circled_mark", "bopomofo"), "printed_choice_layout")
+        pattern = {"circled_text":r"([①②③④])",
+                   "circled_mark":r"[（(][\s_＿]*[）)]\s*([①②③④])\s*",
+                   "bopomofo":r"[（(][\s_＿]*[）)]\s*([ㄅㄆㄇㄈㄉ])\s*"}[mode]
         spans = list(re.finditer(pattern, line))
-        codes = [m[0] if is_circled else m[1] for m in spans]
+        codes = [m[1] for m in spans]
         alphabet = "①②③④" if is_circled else "ㄅㄆㄇㄈㄉ"
         require(2 <= len(codes) <= len(alphabet) and codes == list(alphabet[:len(codes)]), "printed_choice_order")
         labels = [line[m.end():spans[j+1].start() if j+1<len(spans) else len(line)].strip() for j,m in enumerate(spans)]
@@ -571,6 +577,58 @@ def reviewed_text_booleans(parent, targets, original, pages, legacy, review):
         question = output_question("true_false", plain(prompt), options, [1 if selected else 2], plain(target["student_explanation"]))
         questions.append({"target":target["target_id"], "refs":legacy.refs_for(target,original["unit"],pages), "question":question})
     return plain(material), questions, {}
+
+
+def reviewed_numbered_choices(parent, targets, original, pages, legacy, review):
+    require, norm, plain = legacy.require, legacy.normalize, legacy.plain
+    native = parent["original_source"]["native_content"]
+    asset = parent["question_only_asset"]
+    snapshot = Path(asset["local_content"])
+    word = Path(original["question_docx"])
+    teacher = word.with_name("answer.docx.gz")
+    require(legacy.digest(word) == original["question_docx_sha256"] == review["question_sha256"], "original_word_changed")
+    require(legacy.digest(teacher) == review["teacher_sha256"], "teacher_word_changed")
+    require(legacy.digest(snapshot) == asset["sha256"] == review["snapshot_sha256"], "word_snapshot_missing")
+    body = legacy.read(snapshot)
+    require(not body["media"] and all(b["type"] == "paragraph" for b in body["layout"]), "reviewed_text_source_layout")
+    preamble, labels = legacy.numbered_lines(body["text"])
+    require(preamble == review["source_introduction"] and labels == review["source_options"], "printed_choice_layout")
+    require(len(targets) == 1 and 2 <= len(labels) == len(native["questions"]) <= 8, "source_position")
+    target = targets[0]
+    require(target["kind"] in ("checkbox", "multiple_choice") and target["target_id"] == review["target"]
+            and len(target["positions"]) == 1 and target["source_question_indices"] == list(range(1,len(labels)+1)), "source_position")
+
+    def verify_text(position, printed, transcription):
+        variant = review["verified_word_variants"].get(position)
+        if variant:
+            require(printed == variant["word"] and transcription == variant["transcription"], "numbered_choice_transcription")
+        else:
+            require(norm(printed) == norm(transcription), "numbered_choice_transcription")
+
+    verify_text("introduction", preamble, native["preamble"])
+    marked = []
+    for index,(label,item) in enumerate(zip(labels,native["questions"],strict=True),1):
+        require(not item["options"], "printed_choice_layout")
+        verify_text(str(index), label, legacy.statement(item["stem"]))
+        values = [a for group in item["answers"] for a in group if isinstance(a,str) and a.strip()]
+        require(all(norm(v) in ("ˇ","✓","✔","√","v","V") for v in values), "printed_choice_mark")
+        if values:
+            marked.append(index)
+
+    def key(value):
+        labels = r"(?:\(([1-8])\)|([1-8]))[vVˇ✓✔√]?"
+        normalized = norm(value)
+        require(not re.sub(labels+r"|;", "",normalized), "numbered_choice_key")
+        return [int(a or b) for a,b in re.findall(labels,normalized)]
+
+    chosen = review["selected"]
+    require(chosen and chosen == sorted(set(chosen)) and max(chosen) <= len(labels)
+            and chosen == key(teacher_printed_answer(teacher,require)) == key(target["reference_answer"])
+            == key(target["positions"][0]["reference_value"]) and (not marked or marked == chosen), "numbered_choice_key")
+    prompt = re.sub(r"^[（(][\s_＿]*[）)]\s*", "", preamble).replace("？。", "？")
+    question = output_question("checkbox" if len(chosen)>1 else "single_choice", plain(prompt),list(map(plain,labels)),
+                               chosen,plain(target["student_explanation"]))
+    return plain(""), [{"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":question}], {}
 
 
 def adapt(parent, targets, original, pages, legacy, docx):
@@ -674,6 +732,7 @@ def main():
     parser.add_argument("--text-classification-reviews", type=Path)
     parser.add_argument("--text-choice-reviews", type=Path)
     parser.add_argument("--text-boolean-reviews", type=Path)
+    parser.add_argument("--numbered-choice-reviews", type=Path)
     args=parser.parse_args()
     legacy=load_module(args.legacy)
     docx=load_module(args.docx)
@@ -685,7 +744,9 @@ def main():
     classification_reviews = legacy.read(args.text_classification_reviews) if args.text_classification_reviews else {}
     choice_reviews = legacy.read(args.text_choice_reviews) if args.text_choice_reviews else {}
     boolean_reviews = legacy.read(args.text_boolean_reviews) if args.text_boolean_reviews else {}
-    modes = (visual_reviews, grid_reviews, matching_reviews, single_reviews, mixed_reviews, classification_reviews, choice_reviews, boolean_reviews)
+    numbered_reviews = legacy.read(args.numbered_choice_reviews) if args.numbered_choice_reviews else {}
+    text_modes = (classification_reviews, choice_reviews, boolean_reviews, numbered_reviews)
+    modes = (visual_reviews, grid_reviews, matching_reviews, single_reviews, mixed_reviews, *text_modes)
     if len(set().union(*modes)) != sum(map(len, modes)):
         parser.error("the same source cannot use multiple visual review modes")
     sources={r["stable_id"]:r for r in legacy.read(args.source_catalog)["records"]}
@@ -700,7 +761,7 @@ def main():
     rows=[]
     for old in legacy.read(args.previous)["held"]:
         sid=old["parent"]
-        if old["reason"]!="original_media" and not any(sid in reviews for reviews in (classification_reviews, choice_reviews, boolean_reviews)):
+        if old["reason"]!="original_media" and not any(sid in reviews for reviews in text_modes):
             continue
         source=sources[sid]
         try:
@@ -731,6 +792,9 @@ def main():
             elif sid in boolean_reviews:
                 rule = "reviewed_text_booleans"
                 material, qs, assets = reviewed_text_booleans(parent, group, source, pages, legacy, boolean_reviews[sid])
+            elif sid in numbered_reviews:
+                rule = "reviewed_numbered_choices"
+                material, qs, assets = reviewed_numbered_choices(parent, group, source, pages, legacy, numbered_reviews[sid])
             elif len(group) > 1 and all(t["kind"] == "single_choice" for t in group):
                 rule = "shared_image_choices"
                 material, qs, assets = shared_image_choices(parent, group, source, pages, legacy, docx)
