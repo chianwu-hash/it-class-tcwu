@@ -1,3 +1,13 @@
+# 2026-11-28 四年級英語期末自組卷
+
+## 發布登記
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | codex-g4-english-20261128 | 2026-11-28T05:02:31.749Z | `4ccff47` | `dpl_Awuyj8ncWMnhRTA1xVEgeQPKCi6t` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-practice-scope.mjs、shared/quiz-workshop/generated/assets.json | `dpl_6FWNT5J8vM57D8B4h5uNX7j3B9k4`／回滾 `dpl_Awuyj8ncWMnhRTA1xVEgeQPKCi6t`（eolOnly 0） |
+
+翰林四上英語首批 24 題正式讀回相符。期末自組卷驗證 Unit 3、Unit 4、Review 2 題量及課本返回保留作答。 [同批 PR 的正式發布收據](https://github.com/chianwu-hash/it-class-tcwu/pull/564#issuecomment-7234439149)
+
 # 2026-11-28 四年級國語期末自組卷
 
 ## 發布登記
