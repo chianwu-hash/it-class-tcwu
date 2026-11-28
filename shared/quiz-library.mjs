@@ -33,6 +33,10 @@ const readPastCatalog=hasPastExams?await createPastCatalogReader(()=>currentSess
 const pastSection=document.createElement('section');pastSection.id='past-papers-section';pastSection.className='paper-collection collection-past';pastSection.hidden=true;pastSection.setAttribute('aria-labelledby','past-papers-title');
 pastSection.innerHTML='<header class="collection-heading"><h2 id="past-papers-title">考古題專區 <span id="past-papers-count" class="collection-count">0卷</span></h2><p>'+(pageCourse?.pastCatalogIntro||'')+'依照歷年原卷練習，保留各次成績；同一份試卷首次完整達標可取得一朵考古花。</p></header><p id="past-papers-empty" class="collection-empty">目前沒有符合篩選條件的考古題。</p><div id="past-papers" class="papers"></div><details id="past-unopened-section"><summary>未開放區 <span id="past-unopened-count" class="collection-count">0卷</span></summary><p>已整理的其他考古題暫不開放作答，既有成績與考古花紀錄仍保留。</p><div id="past-unopened" class="papers"></div></details>';
 presetSection.after(pastSection);
+if(hasPastExams&&pageGrade===9){
+ const learning=document.createElement('a');learning.id='past-learning-entry';learning.className='home-compose-link';learning.href='/grade9/115-1/learning.html';learning.textContent='完成原卷後，主動選學習重點再練習';
+ pastSection.querySelector('.collection-heading').append(learning);
+}
 // Compose returns the saved card in the library shape; insert it instead of reloading the whole list.
 document.addEventListener('quiz-paper-saved',e=>{const paper=e.detail?.paper;if(paper?.id&&!busy&&studentView){papers=[...papers.filter(p=>p.id!==paper.id),paper];render();return;}if(busy)reloadAfter=true;else load({refreshComposer:false,refreshWrong:false});});
 const wrongQuestions = initWrongQuestions({request,pageGrade,getUserId:()=>currentSession?.user?.id,onExtension:composer?.extend,canExtend:catalog=>composer?.canExtend(catalog),externalNavigation:true});
