@@ -15,7 +15,7 @@ const request=async(action,data)=>{
  if(action==='wrong_questions'&&data.action==='detail')return {...item,question,response:'A',review:{answer:{option_id:'B'},explanation:content('合成固定解析。')},past_review:{group:{id:'choice-01',fields:[{id:'choice-01'}]},version:id(2),record:{results:[{questionId:'choice-01',correct:false}],learningReview}}};
  if(action==='past_practice'){
   let path=`/grade${grade}/115-1/quiz.html?cloud=1&learning=1&session=${id(3)}`;
-  if(fault==='grade')path='/grade3/115-1/quiz.html?cloud=1&learning=1&session='+id(3);
+  if(fault==='grade')path=`/grade${grade===3?6:3}/115-1/quiz.html?cloud=1&learning=1&session=${id(3)}`;
   if(fault==='external')path='https://other.invalid/grade9/115-1/quiz.html';
   return {url:path,sessionId:id(3),count:2};
  }

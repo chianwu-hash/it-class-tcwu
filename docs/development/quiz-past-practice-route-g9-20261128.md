@@ -29,6 +29,6 @@ npm run quiz:build
 npm run quiz:check
 ```
 
-合成頁為`automation/fixtures/quiz-past-practice-route.html`，由既有loopback預覽server供應，不部署到Vercel。新共用導向契約仍須聚焦審查。PR／main／乾淨發布、完整檔案比對、正式九年級學生的錯題→重點→兩題練習→保存讀回，皆列待完成。
+合成頁為`automation/fixtures/quiz-past-practice-route.html`，由既有loopback預覽server供應，不部署到Vercel。新共用導向契約已完成聚焦唯讀審查，未發現阻擋合併的問題；審查範圍包括年級型別、後端回傳網址、同源與精確路徑，以及遲到回應與request ID保護。審查者未代跑測試或正式驗收。依審查小觀察，合成頁的跨年級錯誤改為依目前年級選擇不同年級，避免三年級負向案例誤回同年級。PR／main／乾淨發布、完整檔案比對、正式九年級學生的錯題→重點→兩題練習→保存讀回，皆列待完成。
 
 社會配題另行核固定來源與115教材後登錄；本修正不把未發布候選或沒有可靠題目的重點標為可練習。二段其餘考古卷、三段及四項適用入口的完整完成定義維持。
