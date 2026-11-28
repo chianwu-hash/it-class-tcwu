@@ -28,12 +28,14 @@ node --test automation/tests/quiz-past-learning-grade-route.test.mjs automation/
 - 重裝同一候選、精確回復及重複回復通過；遇到另一函式變更會拒絕。
 - 前後作答、答案、收據與獎勵資料相符。
 
-本機 scaffold 的舊年級限制依正式快照調整，只用於建立合成資料。上述測試**不代表**原生 PostgreSQL 正式交易回滾、公開 RPC 年級授權、OAuth 或正式桌機／手機驗收。
+本機 scaffold 的舊年級限制依正式快照調整，只用於建立合成資料。上述測試不代表公開 RPC 年級授權、OAuth 或正式桌機／手機驗收。
+
+另以 Windows 原生 PostgreSQL 17.12 重跑這個返回路徑的多情境資料庫案例，維持相同合成 scaffold、來源函式、候選 SQL 及斷言；接頭改用原生連線，明確序列化 JSONB 陣列，另加整份安裝交易回滾後指紋回到原版的斷言。本人／跨人／無身分、三／四／六／九年級參數、角色拒絕、資料摘要、重裝、精確回復、重複回復及未知變更拒絕均通過。每案使用獨立暫存庫，結束已刪除並停止只監聽本機的服務；不是正式資料交易或 OAuth 驗收。原生收據 SHA-256：`9ec3161bcbd5d796c68edce457b3712a56b3dddb887b8deec99749df49c5c4ad`；日誌 SHA-256：`6f92a64e962031424eb7e6bd5d499e82e40d82b8e28afb9183601d3060c3df0f`。原生執行檔使用 PostgreSQL 官方 Windows 頁指向的 EDB binaries，來源及封存 SHA 詳見[文字引用候選的原生驗證紀錄](https://github.com/chianwu-hash/it-class-tcwu/pull/569)。
 
 ## 正式套用前仍須完成
 
 目前僅備妥候選，未修改正式函式、未發布網站。本案使用者指定正式函式變更須先取得同意，因此保留本次核准關卡；其他 main／PR、來源守衛及快照流程依 [AGENTS.md](../../AGENTS.md)。此處不將本案指定的核准關卡擴張為所有可復原操作都要另問。
 
-取得針對此單一函式的核准後，先做原生 PostgreSQL 的完整交易回滾驗證，核原資料摘要及本人／跨人／匿名權限；通過後才能從 main 套用。套用前重查正式指紋，套用後更新 `supabase/production-snapshot/`，執行 `node automation/db-snapshot-check.mjs --live`，並補正式讀回收據。實際學生入口的年級返回及同次作答還需正式 OAuth 驗收，不能以本機測試代替。
+原生隔離交易回滾已驗證。取得針對此單一函式的核准並經 PR 進 main 後，套用前仍須重查正式指紋及原資料摘要；套用後更新 `supabase/production-snapshot/`，執行 `node automation/db-snapshot-check.mjs --live`，並補正式讀回收據。實際學生入口的年級返回及同次作答還需正式 OAuth 驗收，不能以本機測試代替。
 
 此候選尚未決定含解答教冊原頁的開放政策，也未啟用新增題庫學習包；這些仍屬二段完整交付的未完成項。
