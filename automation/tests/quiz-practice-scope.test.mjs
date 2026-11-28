@@ -101,7 +101,9 @@ test('四年級康軒國語自組卷依核對過的書商課次分類',()=>{
 
 test('四年級五科的自組單元保留期中，九年級七科使用歷年第二次段考範圍',()=>{
  for(const [grade,id,subject,unit,scope] of [
-  [4,'115-1-hanlin-g4-english','英語',2,'before'],[4,'115-1-hanlin-g4-social','社會',2,'before'],
+  [4,'115-1-hanlin-g4-english','英語',2,'before'],[4,'115-1-hanlin-g4-english','英語',3,'after'],
+  [4,'115-1-hanlin-g4-english','英語',4,'after'],[4,'115-1-hanlin-g4-english','英語',5,'after'],
+  [4,'115-1-hanlin-g4-social','社會',2,'before'],
   [4,'115-1-kang-g4-chinese','國語',6,'before'],[4,'115-1-nani-g4-math','數學',5,'before'],
   [4,'115-1-nani-g4-science','自然',2,'before'],[9,'115-1-g9-hanlin-chinese','國文',6,'after'],
   [9,'115-1-g9-hanlin-math','數學',3,'after'],[9,'115-1-g9-hanlin-science','自然',11,'after'],
