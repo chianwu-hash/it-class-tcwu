@@ -4,7 +4,7 @@
 -- so every function ends at the production definition (e.g. quiz_action with ordered next-question lookup).
 -- Check: node automation/db-snapshot-check.mjs
 
--- partner_pilot.action_core(jsonb)  md5=28657e37a327992c1c178f45f1f05e3e
+-- partner_pilot.action_core(jsonb)  md5=9a19ba109261a61d6e20b506e547f3eb
 CREATE OR REPLACE FUNCTION partner_pilot.action_core(p jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -12,6 +12,7 @@ CREATE OR REPLACE FUNCTION partner_pilot.action_core(p jsonb)
  SET search_path TO 'pg_catalog', 'partner_pilot'
 AS $function$
 declare uid uuid:=auth.uid(); act text:=p->>'action'; rid uuid; r partner_pilot.rooms; req text:=p->>'requestId'; prior partner_pilot.requests; result jsonb; total int; qid int; choice int; count_attempt int; correct_choice int; option_count int; k text; body text; parent partner_pilot.notes; roster uuid[]; memberkey text; snap jsonb; qb partner_pilot.question_bank; response_value jsonb; is_correct boolean;
+ required_submitted int;
 begin
  perform partner_pilot.register_self();
  if act='catalog' then return jsonb_build_object('papers',(select jsonb_agg(jsonb_build_object('id',id,'title',title,'grade',grade,'subject',subject,'kind',kind,'total',pp.total,'real',is_real,'past',past_meta is not null,'sourceSession',source_session,'sourceSessions',(select coalesce(jsonb_agg(s.id order by s.id),'[]') from public.quiz_sessions s where s.version_id=pp.source_version and (s.id=pp.source_session or s.access_mode='practice') and s.status='open' and s.library_visible and not exists(select 1 from public.quiz_generated_papers g where g.session_id=s.id)),'sourcePaper',past_meta->>'sourcePaper') order by is_real desc,grade,subject,title) from partner_pilot.papers pp where enabled and partner_pilot.source_allowed(pp.id,false))); end if;
@@ -29,7 +30,10 @@ begin
  select * into r from partner_pilot.rooms where id=rid for update;
  if not found or not exists(select 1 from partner_pilot.members where room_id=rid and user_id=uid) then raise exception 'NOT_MEMBER'; end if;
  if not r.started then raise exception 'NOT_STARTED'; end if;
- total:=partner_pilot.paper_total(r.paper);
+ if act in ('discuss','review','finish') then
+  select progress.total, progress.submitted into total, required_submitted
+  from partner_pilot.required_progress(r.paper,rid) progress;
+ end if;
  if act in ('answer','ask','mark','discuss') then
   qid:=(p->>'qid')::int;
   if qid is null or not exists(select 1 from partner_pilot.paper_items i where i.paper_id=r.paper and i.qid=(p->>'qid')::int) then raise exception 'INVALID_QUESTION'; end if;
@@ -73,16 +77,16 @@ begin
    if not found then raise exception 'THREAD_NOT_FOUND'; end if;
    qid:=parent.qid;
   end if;
-  if act='discuss' and (select count(distinct a.qid) from partner_pilot.answers a where a.room_id=rid)<>total then raise exception 'REVIEW_NOT_READY'; end if;
+  if act='discuss' and required_submitted<>total then raise exception 'REVIEW_NOT_READY'; end if;
   insert into partner_pilot.notes(room_id,user_id,kind,qid,thread_id,tag,text) values(rid,uid,act,qid,case when act='reply' then parent.id else null end,case when act='mark' then p->>'tag' else null end,body);
  elsif act='review' then
-  if (select count(distinct a.qid) from partner_pilot.answers a where a.room_id=rid)<>total then raise exception 'REVIEW_NOT_READY'; end if;
+  if required_submitted<>total then raise exception 'REVIEW_NOT_READY'; end if;
   body:=trim(coalesce(p->>'text',''));if length(body)>240 then raise exception 'INVALID_TEXT'; end if;
   insert into partner_pilot.review_seen values(rid,uid,body,clock_timestamp()) on conflict(room_id,user_id) do update set reflection=excluded.reflection;
   -- The room row is already locked: the last explicit review completes atomically.
   if (select count(*) from partner_pilot.review_seen where room_id=rid)=r.capacity then update partner_pilot.rooms set finished=true where id=rid;end if;
  elsif act='finish' then
-  if (select count(distinct a.qid) from partner_pilot.answers a where a.room_id=rid)<>total or (select count(*) from partner_pilot.review_seen where room_id=rid)<>r.capacity then raise exception 'WAIT_FOR_REVIEW'; end if;
+  if required_submitted<>total or (select count(*) from partner_pilot.review_seen where room_id=rid)<>r.capacity then raise exception 'WAIT_FOR_REVIEW'; end if;
   update partner_pilot.rooms set finished=true where id=rid;
  elsif act='settle' then
   perform partner_pilot.claim_award(rid);
@@ -2612,7 +2616,7 @@ end $function$;
 revoke all on function partner_pilot.learning_snapshot(uuid) from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.learning_snapshot(uuid) to postgres;
 
--- partner_pilot.learning_snapshot_pre_message_media(uuid)  md5=1064d2e6dece7ae4d027182dc2b42530
+-- partner_pilot.learning_snapshot_pre_message_media(uuid)  md5=16cc58b531fe04c67f1b9ed6b3b964c0
 CREATE OR REPLACE FUNCTION partner_pilot.learning_snapshot_pre_message_media(rid uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -2625,8 +2629,8 @@ begin
  select * into strict r from partner_pilot.rooms where id=rid;
  base:=base||jsonb_build_object('paperInfo',(select jsonb_build_object('title',title,'grade',grade,'subject',subject,'kind',kind,'total',pp.total,'real',is_real,'sourceVersion',source_version,'sourceSha',source_sha,'past',past_meta) from partner_pilot.papers pp where id=r.paper));
  if not r.started then return base; end if;
- total:=partner_pilot.paper_total(r.paper);
- select count(distinct qid) into submitted from partner_pilot.answers where room_id=rid;
+ select progress.total, progress.submitted into total, submitted
+ from partner_pilot.required_progress(r.paper,rid) progress;
  select count(*) into correct_count from (select distinct on(qid) correct from partner_pilot.answers where room_id=rid order by qid,attempt desc) a where correct;
  select count(*) into first_correct from partner_pilot.answers where room_id=rid and attempt=1 and correct;
  for q in select b.*,i.number from partner_pilot.question_bank b join partner_pilot.paper_items i on i.qid=b.id where i.paper_id=r.paper order by i.number loop
@@ -6535,6 +6539,26 @@ end $function$;
 revoke all on function partner_pilot.register_self() from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.register_self() to postgres;
 
+-- partner_pilot.required_progress(text,uuid,uuid)  md5=49ea6b85c3af35cc477bb974b0481e46
+CREATE OR REPLACE FUNCTION partner_pilot.required_progress(pid text, rid uuid, member_id uuid DEFAULT NULL::uuid)
+ RETURNS TABLE(total integer, submitted integer)
+ LANGUAGE sql
+ STABLE
+ SET search_path TO ''
+AS $function$
+ SELECT count(*)::integer,
+        count(*) FILTER (WHERE EXISTS (
+          SELECT 1 FROM partner_pilot.answers a WHERE a.room_id=rid AND a.qid=i.qid
+        ))::integer
+ FROM partner_pilot.paper_items i
+ JOIN partner_pilot.question_bank q ON q.id=i.qid
+ WHERE i.paper_id=pid
+   AND NOT coalesce(q.past_meta @> '{"optional":true,"selfCheck":true}',false)
+   AND (member_id IS NULL OR partner_pilot.owner_of(rid,i.qid)=member_id)
+$function$;
+revoke all on function partner_pilot.required_progress(text,uuid,uuid) from public, anon, authenticated, service_role;
+grant execute on function partner_pilot.required_progress(text,uuid,uuid) to postgres;
+
 -- rls_auto_enable()  md5=6998ea6b4c2480f5d2e34b5dcf3f8d36
 CREATE OR REPLACE FUNCTION public.rls_auto_enable()
  RETURNS event_trigger
@@ -6746,7 +6770,7 @@ $function$;
 revoke all on function partner_pilot.sync_source_links() from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.sync_source_links() to postgres;
 
--- partner_pilot.team_rooms()  md5=fb026928de1052c2b8d76f4785f9cf54
+-- partner_pilot.team_rooms()  md5=0307e4b5ccba544efd459a753b5e63dd
 CREATE OR REPLACE FUNCTION partner_pilot.team_rooms()
  RETURNS jsonb
  LANGUAGE sql
@@ -6760,24 +6784,26 @@ AS $function$
   'inviteExpired',not r.started and r.expires_at<=now(),
   'count',(select count(*) from partner_pilot.members m where m.room_id=r.id),
   'members',(select coalesce(jsonb_agg(jsonb_build_object('id',m.user_id,'name',u.display_name,
-   'assigned',case when r.started then (select count(*) from partner_pilot.paper_items i where i.paper_id=r.paper and partner_pilot.owner_of(r.id,i.qid)=m.user_id) else 0 end,
-   'submitted',(select count(distinct a.qid) from partner_pilot.answers a where a.room_id=r.id and a.user_id=m.user_id),
+   'assigned',case when r.started then member_progress.total else 0 end,
+   'submitted',member_progress.submitted,
    'reviewed',exists(select 1 from partner_pilot.review_seen v where v.room_id=r.id and v.user_id=m.user_id)) order by m.joined_at,m.user_id),'[]')
-   from partner_pilot.members m join partner_pilot.allowed_users u on u.user_id=m.user_id where m.room_id=r.id),
+   from partner_pilot.members m join partner_pilot.allowed_users u on u.user_id=m.user_id
+   cross join lateral partner_pilot.required_progress(r.paper,r.id,m.user_id) member_progress
+   where m.room_id=r.id),
   'phase',case when r.finished then 'completed' when not r.started then 'waiting'
    when s.submitted=s.total then 'review' else 'practice' end,
-  'progress',jsonb_build_object('total',s.total,'submitted',s.submitted,'graded',s.graded,
-   'correct',case when s.submitted=s.total and r.started then s.correct else null end,
+  'progress',jsonb_build_object('total',s.total,'submitted',s.submitted,'graded',scores.graded,
+   'correct',case when s.submitted=s.total and r.started then scores.correct else null end,
    'reviewed',(select count(*) from partner_pilot.review_seen v where v.room_id=r.id),
    'meReviewed',exists(select 1 from partner_pilot.review_seen v where v.room_id=r.id and v.user_id=auth.uid()),
    'award',(select jsonb_build_object('leaves',a.leaves,'flowers',a.flowers,'earnedHere',a.room_id=r.id)
      from partner_pilot.awards a where a.content_key=p.content_key and a.member_key=(select string_agg(user_id::text,',' order by user_id) from partner_pilot.members where room_id=r.id)))
  ) order by r.created_at desc,r.id),'[]'::jsonb)
  from partner_pilot.rooms r join partner_pilot.members mine on mine.room_id=r.id and mine.user_id=auth.uid() join partner_pilot.papers p on p.id=r.paper
- cross join lateral (select partner_pilot.paper_total(r.paper) total,
-  (select count(distinct a.qid) from partner_pilot.answers a where a.room_id=r.id) submitted,
+ cross join lateral partner_pilot.required_progress(r.paper,r.id) s
+ cross join lateral (select
   (select count(*) from partner_pilot.paper_items i join partner_pilot.question_bank q on q.id=i.qid where i.paper_id=r.paper and coalesce(q.past_meta->>'selfCheck','false')<>'true' and coalesce(q.normal_question->>'type','')<>'open') graded,
-  (select count(*) from (select distinct on(a.qid) a.correct from partner_pilot.answers a where a.room_id=r.id order by a.qid,a.attempt desc)x where correct) correct) s
+  (select count(*) from (select distinct on(a.qid) a.correct from partner_pilot.answers a where a.room_id=r.id order by a.qid,a.attempt desc)x where correct) correct) scores
 $function$;
 revoke all on function partner_pilot.team_rooms() from public, anon, authenticated, service_role;
 grant execute on function partner_pilot.team_rooms() to postgres;

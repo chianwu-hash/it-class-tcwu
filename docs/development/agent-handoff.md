@@ -6,6 +6,16 @@
 - 本機15項測試及產物檢查通過；尚未發布。正式夥伴catalog另遇約8秒查詢逾時；已建113驗收房保留，未重送。詳見[候選與待辦](zhongzheng-g9-social-partner-study-entry-20261128.md)。
 - 下一步：只讀檢查版本綁定、開卷前後競態、同題組定位與草稿保留；實際DOM驗證後才進main及發布。正式多人與可靠配題仍待完成，不宣稱整個長線完成。
 
+# 六年級自然考古卷夥伴選做題發布
+
+## 發布登記
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | codex-g6-science-partner | 2026-11-28T14:36:00.807Z | `3f0aac8` | `dpl_Gu5MPuhovLLtjSdB8do9DxFkmCNJ` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/learning.js、shared/partner-pilot/review-layout.mjs、shared/quiz-workshop/generated/assets.json | `dpl_7ZgSAw1UcksrJU2FffPdMfyHRv3h`／回滾 `dpl_Gu5MPuhovLLtjSdB8do9DxFkmCNJ`（eolOnly 0） |
+
+本卷停用副本已逐欄讀回，正式回滾演練通過。題卷維持停用，等待 Google 雙帳號驗收。發布取鎖與完整檔案比較由正式發布腳本執行。 [本批 PR](https://github.com/chianwu-hash/it-class-tcwu/pull/628)
+
 # 三年級自然風向作答介面
 
 ## 發布登記
