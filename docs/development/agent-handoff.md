@@ -4,12 +4,12 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | codex-practice-scope-20261128 | 2026-11-28 | 合併後核對 | `dpl_52m6Hs4pdxaGB5LkEUtjFHZrBT5d` | 共用選卷與組卷篩選 | 依正式發布腳本驗證 |
+| 已完成 | codex-practice-scope-20261128 | 2026-11-28T01:09:33.021Z | `c3e14cd` | `dpl_52m6Hs4pdxaGB5LkEUtjFHZrBT5d` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-compose.mjs、shared/quiz-practice-scope.mjs、shared/quiz-workshop/generated/assets.json | `dpl_Cku5eD7NjX7RxTUwzRFp4S1aUQ5w`／回滾 `dpl_52m6Hs4pdxaGB5LkEUtjFHZrBT5d`（eolOnly 0） |
 
 - 先把學生入口範圍驗收列入[題庫發布 SOP](quiz-conversion-operations-sop.md#學生選卷入口必驗)，再修共用篩選。正式唯讀盤點 22 科目課程、112 個可抽單元、201 份開放教師卷及 49 份開放考古卷。
 - 三年級英語補 Unit 3、Unit 4、Review 2，社會補第 3、4 單元。依正式單元目錄辨識數字、列舉與「至」的範圍，修正英語 2 份、數學 30 份、自然 1 份教師卷的分類。
 - 四年級五科共 17 個現有單元歸期中，沒有期末已發布來源。九年級七科共 30 個現有單元依[歷年核對紀錄](quiz-scope-g4-g9-20261112.md)歸本次第二次段考範圍，組卷頁明示歷年參考。六年級五科無同類漏接。
-- 候選全量重跑後，可抽單元與開放教師卷均有範圍分類。沿用資料庫題池、版本、考古卷與學生作答。三年級舊自然考古卷從既有固定 fallback 取得期中考次。正式驗收收據放在本批 PR。
+- 候選全量重跑後，可抽單元與開放教師卷均有範圍分類。沿用資料庫題池、版本、考古卷與學生作答。三年級舊自然考古卷從既有固定 fallback 取得期中考次。四個年級學生 OAuth 全數核對通過，詳[同批正式驗收收據](https://github.com/chianwu-hash/it-class-tcwu/pull/541#issuecomment-7231506106)。
 
 # 2026-11-28 教師卷清單整理
 
