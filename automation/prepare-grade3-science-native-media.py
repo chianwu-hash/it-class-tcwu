@@ -1,11 +1,14 @@
 """Preserve Word media placement for verified Grade 3 science questions."""
 import argparse
 from collections import Counter, defaultdict
+import gzip
 from hashlib import sha256
 import importlib.util
+from io import BytesIO
 import json
 from pathlib import Path
 import re
+from xml.etree import ElementTree
 import zipfile
 
 
@@ -115,6 +118,71 @@ def shared_image_choices(parent, targets, original, pages, legacy, docx):
     return common, questions, assets
 
 
+def visual_true_false(parent, targets, original, pages, legacy, docx, visual_review):
+    require = legacy.require
+    native = parent["original_source"]["native_content"]
+    raw = native["questions"]
+    require(len(raw) == 1 and not raw[0]["options"] and not (native.get("preamble") or "").strip()
+            and 2 <= len(targets) <= 4 and all(t["kind"] == "true_false" for t in targets), "other_source_layout")
+    source_part = r"^(?:原圖|第)?([①②③④ㄅㄆㄇ])"
+    labels = visual_review["ordinals"]
+    require(labels in [list("①②③"), list("①②③④"), list("ㄅㄆㄇ")] and len(labels) == len(targets),
+            "printed_ordinal")
+    by_label = {}
+    for target in targets:
+        match = re.match(source_part, target.get("source_part_locator") or "")
+        require(target["source_question_indices"] == [1] and match and match[1] not in by_label,
+                "source_position")
+        by_label[match[1]] = target
+    require(set(labels) == by_label.keys(), "source_position")
+
+    word = Path(original["question_docx"])
+    teacher_word = word.with_name("answer.docx.gz")
+    asset = parent["question_only_asset"]
+    path = Path(asset["local_content"])
+    require(legacy.digest(path) == asset["sha256"], "word_snapshot_missing")
+    require(legacy.digest(word) == original["question_docx_sha256"], "original_word_changed")
+    require(legacy.digest(teacher_word) == visual_review["answer_sha256"], "teacher_word_changed")
+    parsed = legacy.read(path)
+    require(len(parsed["media"]) == 1 and len(parsed["layout"]) == 2
+            and [block["type"] for block in parsed["layout"]] == ["paragraph", "paragraph"]
+            and all(run["type"] == "text" for run in parsed["layout"][0]["runs"])
+            and [run["type"] for run in parsed["layout"][1]["runs"]] == ["image"], "other_source_layout")
+    assets = verify_assets(parsed, asset["images"], word, legacy)
+    require(next(iter(assets.values()))["sha256"] == visual_review["image_sha256"], "printed_ordinal")
+    common = compact_layout(parsed["layout"], parsed["media"], docx)
+    printed_stem = re.sub(r"(?:【[\s_＿]*】\s*)+$", "", raw[0]["stem"]).strip()
+    require(legacy.normalize(printed_stem) == legacy.normalize(common["text"]), "word_prompt")
+
+    ns = {"w":"http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+    with zipfile.ZipFile(BytesIO(gzip.decompress(teacher_word.read_bytes()))) as teacher:
+        xml = ElementTree.fromstring(teacher.read("word/document.xml"))
+    markup = "".join(node.text or "" for node in xml.iter()
+                     if node.tag in {f"{{{ns['w']}}}t", f"{{{ns['w']}}}instrText"})
+    markup = re.sub(r"eq\s*\\o\(○,([１２３４1-4])\)", lambda m: "①②③④"[int(m[1])-1], markup)
+    marks = r"[ˇ✓√✔○◯×╳X]"
+    teacher_keys = re.findall(r"([①②③④ㄅㄆㄇ])("+marks+")", markup)
+    require(not re.sub(r"答案[：:]|[；;\s]|[①②③④ㄅㄆㄇ]"+marks, "", markup), "teacher_key")
+    raw_keys = re.findall(r"([①②③④ㄅㄆㄇ])("+marks+")", "；".join(a.strip() for group in raw[0]["answers"] for a in group))
+    require([label for label, _ in teacher_keys] == labels and raw_keys == teacher_keys, "teacher_key")
+    questions = []
+    for label, mark in teacher_keys:
+        t = by_label[label]
+        require(t["reference_answer"].strip() == label + mark and len(t["positions"]) == 1,
+                "review_boolean_key")
+        position = t["positions"][0]
+        position_label = re.match(source_part, position.get("source_part_locator") or "")
+        require(position_label and position_label[1] == label and position["reference_value"].strip() in (mark, label + mark),
+                "review_boolean_key")
+        key = 1 if mark in "ˇ✓√✔○◯" else 2
+        question = output_question("true_false", legacy.plain(f"判斷圖 {label}。"),
+                                   list(map(legacy.plain, ("○", "×"))), [key],
+                                   legacy.plain(t["student_explanation"]))
+        questions.append({"target":t["target_id"],"refs":legacy.refs_for(t, original["unit"], pages),
+                          "question":question})
+    return common, questions, assets
+
+
 def adapt(parent, targets, original, pages, legacy, docx):
     require = legacy.require
     plain, norm = legacy.plain, legacy.normalize
@@ -208,9 +276,11 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     for name in ("legacy","docx","export","source-catalog","previous","page-registry","output"):
         parser.add_argument("--"+name, type=Path,required=True)
+    parser.add_argument("--visual-ordinals", type=Path)
     args=parser.parse_args()
     legacy=load_module(args.legacy)
     docx=load_module(args.docx)
+    visual_reviews = legacy.read(args.visual_ordinals) if args.visual_ordinals else {}
     sources={r["stable_id"]:r for r in legacy.read(args.source_catalog)["records"]}
     export=legacy.read(args.export)
     parents={r["id"]:r for r in export["parents"]}
@@ -229,15 +299,20 @@ def main():
         try:
             parent = parents[sid]
             group = targets[sid]
-            if len(group) > 1 and all(t["kind"] == "single_choice" for t in group):
+            material = None
+            if sid in visual_reviews:
+                rule = "visual_true_false"
+                material, qs, assets = visual_true_false(parent, group, source, pages, legacy, docx, visual_reviews[sid])
+            elif len(group) > 1 and all(t["kind"] == "single_choice" for t in group):
+                rule = "shared_image_choices"
                 material, qs, assets = shared_image_choices(parent, group, source, pages, legacy, docx)
-                rows.append({"passed":True,"parent":sid,"source":source["id"],"unit":source["unit"],
-                             "difficulty":source["difficulty"],"rule":"shared_image_choices","questions":qs,
-                             "material":material,"assets":assets})
             else:
                 rule,qs,assets=adapt(parent,group,source,pages,legacy,docx)
-                rows.append({"passed":True,"parent":sid,"source":source["id"],"unit":source["unit"],
-                             "difficulty":source["difficulty"],"rule":rule,"questions":qs,"assets":assets})
+            row = {"passed":True,"parent":sid,"source":source["id"],"unit":source["unit"],
+                   "difficulty":source["difficulty"],"rule":rule,"questions":qs,"assets":assets}
+            if material is not None:
+                row["material"] = material
+            rows.append(row)
         except (KeyError,ValueError,OSError) as exc:
             rows.append({"passed":False,"parent":sid,"reason":str(exc)})
     args.output.write_text(json.dumps(rows,ensure_ascii=False,indent=2),encoding="utf8")
