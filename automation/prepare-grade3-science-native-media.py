@@ -431,13 +431,11 @@ def reviewed_mixed_single_choices(parent, targets, original, pages, legacy, docx
     return material, questions, assets
 
 
-def reviewed_text_source(parent, targets, original, legacy, review, preamble_key=None, minimum_item_count=2):
+def reviewed_text_entries(parent, original, legacy, review, preamble_key=None):
     require, norm = legacy.require, legacy.normalize
     native = parent["original_source"]["native_content"]
     raw = native["questions"]
-    require(len(raw) == len(targets) >= minimum_item_count and native.get("preamble"), "reviewed_text_source_structure")
-    indexed = {tuple(t["source_question_indices"]):t for t in targets}
-    require(set(indexed) == {(i,) for i in range(1, len(raw)+1)}, "source_position")
+    require(raw and native.get("preamble"), "reviewed_text_source_structure")
     word = Path(original["question_docx"])
     teacher = word.with_name("answer.docx.gz")
     snapshot = Path(parent["question_only_asset"]["local_content"])
@@ -451,13 +449,22 @@ def reviewed_text_source(parent, targets, original, legacy, review, preamble_key
     require(compare(preamble) == compare(native["preamble"]) and len(lines) == len(raw), "source_preamble")
     parts = re.split(r"[（(]([１-８1-8])[）)]", teacher_printed_answer(teacher, require))
     require(not parts[0].strip() and [int(n) for n in parts[1::2]] == list(range(1, len(raw)+1)), "teacher_choice_position")
-    return preamble, indexed, list(zip(raw, lines, parts[2::2], strict=True))
+    return preamble, list(zip(raw, lines, parts[2::2], strict=True))
+
+
+def reviewed_text_source(parent, targets, original, legacy, review, preamble_key=None, minimum_item_count=2):
+    preamble, entries = reviewed_text_entries(parent, original, legacy, review, preamble_key)
+    indexed = {tuple(t["source_question_indices"]):t for t in targets}
+    legacy.require(len(entries) == len(targets) >= minimum_item_count
+                   and set(indexed) == {(i,) for i in range(1,len(entries)+1)}, "source_position")
+    return preamble, indexed, entries
 
 
 def reviewed_text_classification(parent, targets, original, pages, legacy, review):
     require, norm, plain = legacy.require, legacy.normalize, legacy.plain
     preamble, indexed, entries = reviewed_text_source(parent, targets, original, legacy, review)
-    require(len(entries) == len(review["match"]) and all(t["kind"] == "matching" for t in targets), "classification_source_structure")
+    kinds = ("matching", "short_answer") if review.get("reviewed_code_bank") else ("matching",)
+    require(len(entries) == len(review["match"]) and all(t["kind"] in kinds for t in targets), "classification_source_structure")
     domain = review["options"]
     require(list(domain) in [list(s) for s in ("ㄅㄆ", "ㄅㄆㄇ", "ABC", "甲乙丙")]
             and len(set(domain.values())) == len(domain), "classification_domain")
@@ -468,7 +475,9 @@ def reviewed_text_classification(parent, targets, original, pages, legacy, revie
         previous = index
 
     def key(text):
-        return norm(text).strip(";").split(";")
+        if isinstance(text, list):
+            return list(map(norm, text))
+        return re.split(r"[;、]", norm(text).strip(";、"))
 
     multiple = review["set_domain"] is True
     options = [plain(label) for label in domain.values()]
@@ -631,6 +640,38 @@ def reviewed_numbered_choices(parent, targets, original, pages, legacy, review):
     return plain(""), [{"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":question}], {}
 
 
+def reviewed_text_sequence(parent, targets, original, pages, legacy, review):
+    require, norm, plain = legacy.require, legacy.normalize, legacy.plain
+    preamble, entries = reviewed_text_entries(parent, original, legacy, review)
+    require(len(targets) == 1 and 2 <= len(entries) <= 8, "sequence_source_structure")
+    target = targets[0]
+    ordinals = list(range(1,len(entries)+1))
+    require(target["kind"] == "ordering" and target["source_question_indices"] == ordinals
+            and len(target["positions"]) == len(entries), "sequence_source_position")
+    ranks = []
+    labels = []
+    for i, ((item, label, printed), position) in enumerate(zip(entries,target["positions"],strict=True),1):
+        publisher = [a for group in item["answers"] for a in group if isinstance(a,str) and a.strip()]
+        require(not item["options"] and len(publisher) == 1 and re.search(rf"\({i}\)", norm(position["source_part_locator"])),
+                "sequence_source_position")
+        value = norm(printed).strip(";")
+        require(re.fullmatch(r"[1-8]", value) and value == norm(publisher[0]) == norm(position["reference_value"])
+                and norm(label) == norm(legacy.statement(item["stem"])), "sequence_answer_key")
+        ranks.append(int(value))
+        labels.append(label)
+    expected = ";".join(f"({i}){rank}" for i,rank in enumerate(ranks,1))
+    require(sorted(ranks) == ordinals and ranks == review["ranks"] and labels == review["options"]
+            and expected == norm(target["reference_answer"]), "sequence_answer_key")
+    sequence = [ordinal for ordinal,_ in sorted(enumerate(ranks,1),key=lambda entry:entry[1])]
+    require(sequence == review["sequence"], "sequence_answer_key")
+    question = {"type":"fields", "prompt":plain(preamble),
+                "fields":[{"id":"sequence", "label":"依序排列操作步驟", "input":"sequence",
+                           "options":[{"id":f"o{i}","content":plain(label)} for i,label in enumerate(labels,1)]}],
+                "answer":{"format":"fields-v1","fields":{"sequence":[[f"o{i}" for i in sequence]]}},
+                "explanation":plain(target["student_explanation"])}
+    return plain(""), [{"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":question}], {}
+
+
 def adapt(parent, targets, original, pages, legacy, docx):
     require = legacy.require
     plain, norm = legacy.plain, legacy.normalize
@@ -733,6 +774,7 @@ def main():
     parser.add_argument("--text-choice-reviews", type=Path)
     parser.add_argument("--text-boolean-reviews", type=Path)
     parser.add_argument("--numbered-choice-reviews", type=Path)
+    parser.add_argument("--text-sequence-reviews", type=Path)
     args=parser.parse_args()
     legacy=load_module(args.legacy)
     docx=load_module(args.docx)
@@ -745,7 +787,8 @@ def main():
     choice_reviews = legacy.read(args.text_choice_reviews) if args.text_choice_reviews else {}
     boolean_reviews = legacy.read(args.text_boolean_reviews) if args.text_boolean_reviews else {}
     numbered_reviews = legacy.read(args.numbered_choice_reviews) if args.numbered_choice_reviews else {}
-    text_modes = (classification_reviews, choice_reviews, boolean_reviews, numbered_reviews)
+    sequence_reviews = legacy.read(args.text_sequence_reviews) if args.text_sequence_reviews else {}
+    text_modes = (classification_reviews, choice_reviews, boolean_reviews, numbered_reviews, sequence_reviews)
     modes = (visual_reviews, grid_reviews, matching_reviews, single_reviews, mixed_reviews, *text_modes)
     if len(set().union(*modes)) != sum(map(len, modes)):
         parser.error("the same source cannot use multiple visual review modes")
@@ -795,6 +838,9 @@ def main():
             elif sid in numbered_reviews:
                 rule = "reviewed_numbered_choices"
                 material, qs, assets = reviewed_numbered_choices(parent, group, source, pages, legacy, numbered_reviews[sid])
+            elif sid in sequence_reviews:
+                rule = "reviewed_text_sequence"
+                material, qs, assets = reviewed_text_sequence(parent, group, source, pages, legacy, sequence_reviews[sid])
             elif len(group) > 1 and all(t["kind"] == "single_choice" for t in group):
                 rule = "shared_image_choices"
                 material, qs, assets = shared_image_choices(parent, group, source, pages, legacy, docx)
