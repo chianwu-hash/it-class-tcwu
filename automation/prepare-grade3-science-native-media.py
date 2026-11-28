@@ -183,6 +183,80 @@ def visual_true_false(parent, targets, original, pages, legacy, docx, visual_rev
     return common, questions, assets
 
 
+def printed_selection_key(text):
+    labels = "①②③④⑤⑥⑦⑧"
+    text = re.sub(r"\s+", "", text)
+    if re.fullmatch(rf"[{labels}]+圈起來", text):
+        return "circle", list(text.removesuffix("圈起來"))
+    if re.fullmatch(rf"[{labels}][ˇ✓√✔](?:[；;][{labels}][ˇ✓√✔])*", text):
+        return "check", re.findall(rf"[{labels}]", text)
+    raise ValueError("printed_selection_key")
+
+
+def visual_grid_selection(parent, targets, original, pages, legacy, docx, review):
+    require = legacy.require
+    native = parent["original_source"]["native_content"]
+    raw = native["questions"]
+    require(len(raw) == len(targets) == 1 and not raw[0]["options"]
+            and not (native.get("preamble") or "").strip(), "other_source_layout")
+    target = targets[0]
+    require(target["kind"] in ("checkbox", "multiple_choice")
+            and target.get("include_in_current_practice") is not False
+            and target["source_question_indices"] == [1]
+            and len(target["positions"]) == 1, "source_position")
+    labels = review["ordinals"]
+    require(2 <= len(labels) <= 8 and labels == list("①②③④⑤⑥⑦⑧"[:len(labels)]), "printed_ordinal")
+
+    word = Path(original["question_docx"])
+    teacher_word = word.with_name("answer.docx.gz")
+    asset = parent["question_only_asset"]
+    snapshot = Path(asset["local_content"])
+    require(legacy.digest(snapshot) == asset["sha256"], "word_snapshot_missing")
+    require(legacy.digest(word) == original["question_docx_sha256"], "original_word_changed")
+    require(legacy.digest(teacher_word) == review["answer_sha256"], "teacher_word_changed")
+    parsed = legacy.read(snapshot)
+    require(len(parsed["media"]) == 1 and len(parsed["layout"]) == 2
+            and [block["type"] for block in parsed["layout"]] == ["paragraph", "paragraph"]
+            and all(run["type"] == "text" for run in parsed["layout"][0]["runs"])
+            and [run["type"] for run in parsed["layout"][1]["runs"]] == ["image"], "other_source_layout")
+    assets = verify_assets(parsed, asset["images"], word, legacy)
+    require(next(iter(assets.values()))["sha256"] == review["image_sha256"], "printed_ordinal")
+    prompt = compact_layout(parsed["layout"], parsed["media"], docx)
+    stem = re.sub(r"(?:【[\s_＿]*】\s*)+$", "", raw[0]["stem"]).strip()
+    require(legacy.normalize(stem) == legacy.normalize(prompt["text"]), "word_prompt")
+
+    raw_word = teacher_word.read_bytes()
+    if raw_word.startswith(b"\x1f\x8b"):
+        raw_word = gzip.decompress(raw_word)
+    with zipfile.ZipFile(BytesIO(raw_word)) as teacher:
+        xml = ElementTree.fromstring(teacher.read("word/document.xml"))
+    namespace = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+    markup = "".join(node.text or "" for node in xml.iter()
+                     if node.tag in {namespace + "t", namespace + "instrText"})
+    markup = re.sub(r"eq\s*\\o\(○,([１２３４５６７８1-8])\)",
+                    lambda match: "①②③④⑤⑥⑦⑧"[int(match[1])-1], markup)
+    require(re.match(r"^\s*答案[：:]", markup), "teacher_key")
+    key = printed_selection_key(re.sub(r"^\s*答案[：:]", "", markup))
+    recorded = "；".join(a.strip() for group in raw[0]["answers"] for a in group if a.strip())
+    require(key == printed_selection_key(recorded)
+            == printed_selection_key(target["reference_answer"])
+            == printed_selection_key(target["positions"][0]["reference_value"]), "review_selection_key")
+    mode, selected = key
+    require(selected == [label for label in labels if label in selected], "printed_selection_positions")
+    require((mode == "circle" and "圈" in stem) or (mode == "check" and "ˇ" in stem), "word_selection_action")
+
+    explanation = target["student_explanation"]
+    if "explanation_review" in review:
+        revision = review["explanation_review"]
+        require(explanation == revision["original"] and revision["corrected"].strip(), "review_explanation_changed")
+        explanation = revision["corrected"]
+    options = list(map(legacy.plain, labels))
+    keys = [labels.index(label) + 1 for label in selected]
+    question = output_question("checkbox", prompt, options, keys, legacy.plain(explanation))
+    return [{"target":target["target_id"],"refs":legacy.refs_for(target, original["unit"], pages),
+             "question":question}], assets
+
+
 def adapt(parent, targets, original, pages, legacy, docx):
     require = legacy.require
     plain, norm = legacy.plain, legacy.normalize
@@ -277,10 +351,14 @@ def main():
     for name in ("legacy","docx","export","source-catalog","previous","page-registry","output"):
         parser.add_argument("--"+name, type=Path,required=True)
     parser.add_argument("--visual-ordinals", type=Path)
+    parser.add_argument("--visual-grid-selections", type=Path)
     args=parser.parse_args()
     legacy=load_module(args.legacy)
     docx=load_module(args.docx)
     visual_reviews = legacy.read(args.visual_ordinals) if args.visual_ordinals else {}
+    grid_reviews = legacy.read(args.visual_grid_selections) if args.visual_grid_selections else {}
+    if visual_reviews.keys() & grid_reviews.keys():
+        parser.error("the same source cannot use both visual review modes")
     sources={r["stable_id"]:r for r in legacy.read(args.source_catalog)["records"]}
     export=legacy.read(args.export)
     parents={r["id"]:r for r in export["parents"]}
@@ -303,6 +381,9 @@ def main():
             if sid in visual_reviews:
                 rule = "visual_true_false"
                 material, qs, assets = visual_true_false(parent, group, source, pages, legacy, docx, visual_reviews[sid])
+            elif sid in grid_reviews:
+                rule = "visual_grid_selection"
+                qs, assets = visual_grid_selection(parent, group, source, pages, legacy, docx, grid_reviews[sid])
             elif len(group) > 1 and all(t["kind"] == "single_choice" for t in group):
                 rule = "shared_image_choices"
                 material, qs, assets = shared_image_choices(parent, group, source, pages, legacy, docx)
