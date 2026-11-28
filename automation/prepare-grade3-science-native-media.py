@@ -431,7 +431,7 @@ def reviewed_mixed_single_choices(parent, targets, original, pages, legacy, docx
     return material, questions, assets
 
 
-def reviewed_text_source(parent, targets, original, legacy, review):
+def reviewed_text_source(parent, targets, original, legacy, review, preamble_key=None):
     require, norm = legacy.require, legacy.normalize
     native = parent["original_source"]["native_content"]
     raw = native["questions"]
@@ -447,7 +447,8 @@ def reviewed_text_source(parent, targets, original, legacy, review):
     body = legacy.read(snapshot)
     require(not body["media"] and all(b["type"] == "paragraph" for b in body["layout"]), "reviewed_text_source_layout")
     preamble, lines = legacy.numbered_lines(body["text"])
-    require(norm(preamble) == norm(native["preamble"]) and len(lines) == len(raw), "source_preamble")
+    compare = preamble_key or norm
+    require(compare(preamble) == compare(native["preamble"]) and len(lines) == len(raw), "source_preamble")
     parts = re.split(r"[（(]([１-８1-8])[）)]", teacher_printed_answer(teacher, require))
     require(not parts[0].strip() and [int(n) for n in parts[1::2]] == list(range(1, len(raw)+1)), "teacher_choice_position")
     return preamble, indexed, list(zip(raw, lines, parts[2::2], strict=True))
@@ -528,6 +529,48 @@ def reviewed_text_choices(parent, targets, original, pages, legacy, review):
                                    [codes.index(c)+1 for c in chosen], plain(target["student_explanation"]))
         questions.append({"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":question})
     return plain(preamble), questions, {}
+
+
+def printed_boolean_key(value, ordinal, legacy):
+    value = legacy.normalize(value).strip(";")
+    position = re.fullmatch(r"\((\d+)\)(.+)", value)
+    if position:
+        legacy.require(int(position[1]) == ordinal, "boolean_key_position")
+        value = position[2]
+    return {"○":True,"◯":True,"〇":True,"ˇ":True,"✓":True,"✔":True,"√":True,"v":True,"o":True,
+            "╳":False,"×":False,"x":False,"✕":False,"✗":False,"✘":False}.get(value.lower())
+
+
+def reviewed_text_booleans(parent, targets, original, pages, legacy, review):
+    require, norm, plain = legacy.require, legacy.normalize, legacy.plain
+    def preamble_key(text):
+        return norm(text).replace("◯", "○").replace("⋯⋯", "......")
+
+    material, indexed, entries = reviewed_text_source(parent, targets, original, legacy, review, preamble_key)
+    require(len(entries) == len(review["positions"]) and all(t["kind"] == "true_false" for t in targets),
+            "boolean_source_structure")
+    questions = []
+    for ordinal, ((item, line, teacher_key), expected) in enumerate(zip(entries, review["positions"], strict=True), 1):
+        target = indexed[(ordinal,)]
+        require(expected["index"] == ordinal and type(expected["keys"]["teacher"]) is bool
+                and len(target["positions"]) == 1 and not item["options"], "source_position")
+        publisher = [a.strip() for group in item["answers"] for a in group if a.strip()]
+        require(len(publisher) == 1, "boolean_publisher_key")
+        selected = expected["keys"]["teacher"]
+        keys = (teacher_key, publisher[0], target["reference_answer"], target["positions"][0]["reference_value"])
+        require(all(printed_boolean_key(key, ordinal, legacy) is selected for key in keys), "boolean_answer_key")
+        prompt = legacy.statement(line)
+        publisher_prompt = legacy.statement(item["stem"])
+        correction = expected.get("verified_transcription")
+        if correction:
+            require(prompt == correction["word"] and publisher_prompt == correction["transcription"]
+                    and target["student_explanation"] == correction["fixed_explanation"], "boolean_transcription_review")
+        else:
+            require(prompt and norm(prompt) == norm(publisher_prompt), "word_prompt")
+        options = list(map(plain, ("○","╳")))
+        question = output_question("true_false", plain(prompt), options, [1 if selected else 2], plain(target["student_explanation"]))
+        questions.append({"target":target["target_id"], "refs":legacy.refs_for(target,original["unit"],pages), "question":question})
+    return plain(material), questions, {}
 
 
 def adapt(parent, targets, original, pages, legacy, docx):
@@ -630,6 +673,7 @@ def main():
     parser.add_argument("--mixed-single-reviews", type=Path)
     parser.add_argument("--text-classification-reviews", type=Path)
     parser.add_argument("--text-choice-reviews", type=Path)
+    parser.add_argument("--text-boolean-reviews", type=Path)
     args=parser.parse_args()
     legacy=load_module(args.legacy)
     docx=load_module(args.docx)
@@ -640,7 +684,8 @@ def main():
     mixed_reviews = legacy.read(args.mixed_single_reviews) if args.mixed_single_reviews else {}
     classification_reviews = legacy.read(args.text_classification_reviews) if args.text_classification_reviews else {}
     choice_reviews = legacy.read(args.text_choice_reviews) if args.text_choice_reviews else {}
-    modes = (visual_reviews, grid_reviews, matching_reviews, single_reviews, mixed_reviews, classification_reviews, choice_reviews)
+    boolean_reviews = legacy.read(args.text_boolean_reviews) if args.text_boolean_reviews else {}
+    modes = (visual_reviews, grid_reviews, matching_reviews, single_reviews, mixed_reviews, classification_reviews, choice_reviews, boolean_reviews)
     if len(set().union(*modes)) != sum(map(len, modes)):
         parser.error("the same source cannot use multiple visual review modes")
     sources={r["stable_id"]:r for r in legacy.read(args.source_catalog)["records"]}
@@ -655,7 +700,7 @@ def main():
     rows=[]
     for old in legacy.read(args.previous)["held"]:
         sid=old["parent"]
-        if old["reason"]!="original_media" and sid not in classification_reviews and sid not in choice_reviews:
+        if old["reason"]!="original_media" and not any(sid in reviews for reviews in (classification_reviews, choice_reviews, boolean_reviews)):
             continue
         source=sources[sid]
         try:
@@ -683,6 +728,9 @@ def main():
             elif sid in choice_reviews:
                 rule = "reviewed_text_choices"
                 material, qs, assets = reviewed_text_choices(parent, group, source, pages, legacy, choice_reviews[sid])
+            elif sid in boolean_reviews:
+                rule = "reviewed_text_booleans"
+                material, qs, assets = reviewed_text_booleans(parent, group, source, pages, legacy, boolean_reviews[sid])
             elif len(group) > 1 and all(t["kind"] == "single_choice" for t in group):
                 rule = "shared_image_choices"
                 material, qs, assets = shared_image_choices(parent, group, source, pages, legacy, docx)
