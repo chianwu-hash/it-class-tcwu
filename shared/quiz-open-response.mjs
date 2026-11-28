@@ -11,6 +11,7 @@ import {phoneticWordReview} from './quiz-phonetic-word-review.mjs';
 import {wordMeaningReview} from './quiz-word-meaning-review.mjs';
 import {arrangementPlan,renderArrangement} from './quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan,renderGridDrawing} from './quiz-grid-drawing.mjs';
+import {windArrowExample,windDrawingPlan,renderWindDrawing} from './quiz-wind-drawing.mjs';
 
 const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 const only=(v,keys)=>object(v)&&Object.keys(v).every(k=>keys.includes(k));
@@ -38,7 +39,7 @@ export function validateOpenQuestion(q,checkContent){
 
 export function renderOpenInputs(host,q,{raw='',locked=false,onChange,renderContent}){
  q=choiceQuestionPresentation(q);
- const grid=gridDrawingPlan(q),arrangement=arrangementPlan(q);
+ const grid=gridDrawingPlan(q),arrangement=arrangementPlan(q),wind=windDrawingPlan(q);
  if(grid||arrangement){
   const values=fieldsValues(q,raw),group=make('div',undefined,'quiz-open-inputs');
   const options={value:values.drawing,locked,renderContent,onChange:drawing=>onChange(JSON.stringify({v:1,f:{drawing}}))};
@@ -52,6 +53,10 @@ export function renderOpenInputs(host,q,{raw='',locked=false,onChange,renderCont
  for(const field of presentation?.fields??q.fields){
   if(field.input==='sketch'){
    const slot=make('fieldset',undefined,'quiz-field quiz-open-sketch');slot.append(make('legend',field.label));
+   if(wind){
+    const editor=renderWindDrawing(slot,wind,{value:values[field.id],locked,renderContent,onChange:value=>{values[field.id]=value;onChange(JSON.stringify({v:1,f:values}));}});
+    if(editor){group.sketchEditors??=[];group.sketchEditors.push(editor);group.append(slot);continue;}
+   }
    if(locked){appendSketch(slot,values[field.id],field.label);}
    else{
     const board=make('div');slot.append(board);
@@ -75,7 +80,7 @@ function appendSketch(host,value,label){
  const svg=sketchImage(value);svg.setAttribute('aria-label',label+'・已儲存手寫內容');svg.classList.add('quiz-open-sketch-saved');host.append(svg,make('p','手寫內容已儲存，請對照參考例答與檢核重點。','helper'));
 }
 export function renderOpenSavedSketches(host,q,raw,{renderContent}={}){
- if(gridDrawingPlan(q)||arrangementPlan(q)){renderOpenInputs(host,q,{raw,locked:true,onChange:()=>{},renderContent});return;}
+ if(gridDrawingPlan(q)||arrangementPlan(q)||windDrawingPlan(q)){renderOpenInputs(host,q,{raw,locked:true,onChange:()=>{},renderContent});return;}
  if(openSubquestionPresentation(choiceQuestionPresentation(q))||answerTemplatePresentation(choiceQuestionPresentation(q))){renderOpenInputs(host,q,{raw,locked:true,onChange:()=>{},renderContent});return;}
  if(!hasSketchFields(q))return;
  const values=fieldsValues(q,raw);
@@ -133,7 +138,7 @@ export function renderWritingSupplement(host,guide,{family='sentence',explain=fa
  wrapper.append(extra);host.append(wrapper);return true;
 }
 
-export function renderOpenReview(host,q,review,{busy=false,pending=false,draftNote='',onNoteChange=()=>{},onSelfCheck,raw=''}){
+export function renderOpenReview(host,q,review,{busy=false,pending=false,draftNote='',onNoteChange=()=>{},onSelfCheck,raw='',renderContent}){
  q=choiceQuestionPresentation(q);
  const presentation=openSubquestionPresentation(q);
  const box=make('section',undefined,'answer-preview quiz-open-review');box.tabIndex=-1;
@@ -142,6 +147,11 @@ export function renderOpenReview(host,q,review,{busy=false,pending=false,draftNo
  if(!renderOpenReferences(box,q,review.answer,{raw}))for(const field of presentation?.fields??q.fields){
   const ref=review.answer.fields[field.id],section=make('section',undefined,'quiz-open-reference');section.append(make('h5',field.label),make('p','參考例答（其他合理答案也可以）：'));
   const examples=make('ul');for(const text of ref.examples)examples.append(make('li',text));section.append(examples,make('p','檢核重點：'));const criteria=make('ul');for(const text of ref.criteria)criteria.append(make('li',text));section.append(criteria);box.append(section);
+ }
+ const wind=renderContent&&windDrawingPlan(q),example=wind&&windArrowExample(review.answer,wind);
+ if(example){
+  const figure=make('section',undefined,'quiz-wind-reference');figure.append(make('h5','依教師示意標示的風向'));
+  if(renderWindDrawing(figure,wind,{value:example,locked:true,renderContent}))box.append(figure);
  }
  if(review.assessment?.status==='self_checked'){
   box.append(make('p',review.assessment.rating==='understood'?'已完成自評：我的答案符合檢核重點。':'已完成自評：我還想再練習或修改。','notice'));

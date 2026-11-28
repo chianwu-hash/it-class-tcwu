@@ -12,6 +12,7 @@ import {fractionPartitionPlan} from './quiz-fraction-partition.mjs';
 import {sourceRoutePlan} from './quiz-source-route.mjs';
 import {arrangementPlan} from './quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from './quiz-grid-drawing.mjs';
+import {windDrawingPlan} from './quiz-wind-drawing.mjs';
 import {groupingDrawingPlan} from './quiz-grouping-drawing.mjs';
 import {fractionColorsPlan} from './quiz-fraction-colors.mjs';
 import {fractionComparisonPlan} from './quiz-fraction-comparison.mjs';
@@ -47,6 +48,7 @@ export function fieldsPromptPresentation(q,{showGroupingBoard=false}={}){
  const circle=circleColoringPlan(q);if(circle)return circle.passage;
  const arrangement=arrangementPlan(q);if(arrangement?.passage)return arrangement.passage;
  const grid=gridDrawingPlan(q);if(grid)return grid.passage;
+ const wind=windDrawingPlan(q);if(wind)return wind.passage;
  const workPassage=workAnswerPassage(q);if(workPassage)return workPassage;
  const sequence=sequencePromptPresentation(q);if(sequence)return sequence;
  const converted=choiceQuestionPresentation(q);q=converted;

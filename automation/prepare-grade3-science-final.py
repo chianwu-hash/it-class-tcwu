@@ -71,10 +71,10 @@ def circle_pair(line, raw_stem, original_key, reviewed_key):
     return stem, texts, str(normalized.index(answer) + 1)
 
 
-def refs_for(target, unit, pages):
+def refs_for(target, unit, pages, *, require_auto_grade=True):
     require(not target.get("reference_answer_issue") and not target.get("needs_teacher_manual")
             and not target.get("uncertainties") and target.get("student_explanation")
-            and target.get("auto_grade") is not False and target.get("include_in_current_practice") is not False,
+            and (not require_auto_grade or target.get("auto_grade") is not False) and target.get("include_in_current_practice") is not False,
             "fixed_review_missing")
     refs = []
     for evidence in target.get("evidence", []):

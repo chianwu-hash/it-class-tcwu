@@ -99,7 +99,7 @@ export function initServerQuiz({ selectors, server }) {
       if(!selected?.size||(colors&&selected.size!==colors.regions.length)){article.append(make('p','原作答的塗色與格數無法配對，請回報這題。','notice'));return;}
     }
     if(q.type==='open'){
-      const box=renderOpenReview(article,q,review,{raw:state.responses[q.id],busy:busy||state.status==='closed',pending:Boolean(pending),draftNote:pending?.self_note??openNotes.get(q.id)??'',onNoteChange:value=>openNotes.set(q.id,value),onSelfCheck:selfCheck});
+      const box=renderOpenReview(article,q,review,{raw:state.responses[q.id],busy:busy||state.status==='closed',pending:Boolean(pending),draftNote:pending?.self_note??openNotes.get(q.id)??'',onNoteChange:value=>openNotes.set(q.id,value),onSelfCheck:selfCheck,renderContent});
       if(wordMeaningReview(q,review.answer))return;
       const explanation=make('section',undefined,'quiz-explanation-copy'),studentExplanation=study.explanation(q.id);
       if(studentExplanation?.origin==='ai'){explanation.classList.add('quiz-explanation-ai');explanation.append(make('strong','AI 解析','quiz-explanation-caption'));}

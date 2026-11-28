@@ -2,6 +2,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
 (async()=>{
  const {loadBatch,expectedResponse,readJson,recordBatchTime,preserveOAuthReceipt,practiceGrade}=await import('./lib/quiz-batch-plan.mjs');
  const {matchingPresentation}=await import('../shared/quiz-matching-presentation.mjs');
+ const {readWindArrow,windDrawingPlan,windArrowExample}=await import('../shared/quiz-wind-drawing.mjs');
  const {packet:p,counts:n,readingDirection,sha256:packetSha}=await loadBatch(process.argv[2]);
  const {grade,qaClass}=practiceGrade(p);
  const gradeUrl='https://it-class-tcwu.vercel.app/grade'+grade+'/115-1';
@@ -63,6 +64,9 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    const saved=before.responses[s.question_id]!==undefined;
    const single=question.type==='single';
    const open=question.type==='open';
+   const wind=windDrawingPlan(question);
+   const drawing=wind&&readWindArrow(expected.f.drawing,wind);
+   const studentBoard=article.locator('.quiz-open-inputs .quiz-wind-drawing');
    const readResponse=state=>single?state.responses[s.question_id]:JSON.parse(state.responses[s.question_id]);
    const selectedRadio=single?article.locator('input[type=radio][value="'+expected+'"]'):null;
    const questionImageHashes=[],audioChecks=[];
@@ -167,7 +171,10 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    const checkAnswer=async()=>{
     if(open){
      if(saved)assert.deepEqual(readResponse(await read()),expected);
-     else for(const [id,value] of Object.entries(expected.f))assert.equal(await article.locator('#open-'+s.question_id+'-'+id).inputValue(),value);
+     if(wind){
+      assert.equal(await studentBoard.getAttribute('data-wind-arrow'),drawing.map(point=>point.label).join('→'));
+      if(expected.f.direction!==undefined)assert.equal(await article.locator('#open-'+s.question_id+'-direction').inputValue(),expected.f.direction);
+     }else if(!saved)for(const [id,value] of Object.entries(expected.f))assert.equal(await article.locator('#open-'+s.question_id+'-'+id).inputValue(),value);
      return;
     }
     if(single){
@@ -212,7 +219,15 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
     await checkSourceTables();
     if(!saved){
      if(single){if(width===1280)await selectedRadio.check();}
-     else if(open){for(const [id,value] of Object.entries(expected.f))await article.locator('#open-'+s.question_id+'-'+id).fill(value);}
+     else if(open){
+      if(wind){
+       const reference=article.locator('.quiz-wind-reference');assert.equal(await reference.count(),0);
+       if(await studentBoard.getAttribute('data-wind-arrow')!==drawing.map(point=>point.label).join('→')){
+        for(const point of drawing)await studentBoard.getByRole('button',{name:point.label,exact:true}).click();
+       }
+       if(expected.f.direction!==undefined)await article.locator('#open-'+s.question_id+'-direction').fill(expected.f.direction);
+      }else for(const [id,value] of Object.entries(expected.f))await article.locator('#open-'+s.question_id+'-'+id).fill(value);
+     }
      else if(!question.work&&isMatching){await article.locator('.quiz-matching').waitFor();for(const [id,value] of Object.entries(expected.f)){await article.locator('.qm-card[data-side=left][data-id=\"'+id+'\"]').click();await article.locator('.qm-card[data-side=right][data-id=\"'+value+'\"]').click();}}
      else if(!question.work){for(const [i,f] of question.fields.entries()){
       if(f.input==='sequence'){if(width===1280)await setSequence(i,expected.f[f.id]);}
@@ -244,6 +259,12 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    if(open){
     const pending=after.reviews.find(row=>row.question_id===s.question_id);
     assert.equal(pending.correct,null);
+    if(wind){
+     const arrow=readWindArrow(windArrowExample(question.answer,wind),wind).map(point=>point.label).join('→');
+     const ref=article.locator('.quiz-wind-reference .quiz-wind-drawing');
+     await ref.waitFor({state:'visible'});
+     assert.equal(await ref.getAttribute('data-wind-arrow'),arrow);
+    }
     if(pending.assessment.status!=='self_checked'){
     const selfCheck=article.getByRole('button',{name:'我的答案符合重點',exact:true});
      await selfCheck.click();await selfCheck.waitFor({state:'detached'});
