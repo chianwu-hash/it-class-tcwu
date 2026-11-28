@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {validateSketch} from '../../shared/sketch/contract.mjs';
 import {validateDocument} from '../../shared/quiz-document.mjs';
+import {textbookReadingDirection} from '../../shared/quiz-textbook-settings.mjs';
 import {batchMediaAssets} from './quiz-batch-media.mjs';
 import {arrangementPlan,readArrangement} from '../../shared/quiz-pattern-arrangement.mjs';
 import {gridDrawingPlan} from '../../shared/quiz-grid-drawing.mjs';
@@ -27,6 +28,15 @@ export function validateBatchCatalog(packet) {
   assert.ok(typeof packet.catalogUnit === 'string' && packet.catalogUnit.trim(), '跨單元批次須明列完整目錄單元');
   const listed = new Set(packet.catalogUnit.split('、').map(s => s.trim()));
   for (const unit of units) assert.ok(listed.has(unit), '批次目錄遺漏來源單元：' + unit);
+}
+
+export function validateBatchBookDirection(packet) {
+  const direction = textbookReadingDirection(packet.book?.id);
+  for (const page of packet.pages) {
+    const reviewed = page.provenance?.readingDirection;
+    if (reviewed !== undefined) assert.equal(direction, reviewed, '教材閱讀方向設定與原件不符：' + page.id);
+  }
+  return direction;
 }
 
 export function oauthSampleCount(sources, samplingMode = 'standard') {
@@ -171,6 +181,7 @@ export async function loadBatch(file) {
     }
   }
   validatePageBindings(packet.pages);
+  const readingDirection = validateBatchBookDirection(packet);
   for (const row of packet.studyRows) {
     assert.ok(row.reference.includes(row.primary));
     assert.ok(row.student_explanation?.trim() && row.teacher_notes?.reason?.trim());
@@ -186,7 +197,7 @@ export async function loadBatch(file) {
     expectedResponse(q, sample.work,packet.openResponses?.[q.id]);
   }
   for (const [source, hash] of Object.entries(packet.inputs)) assert.equal(digest(await fs.readFile(source)), hash, '固定來源檔案已改變');
-  return {packet, counts, sha256: digest(bytes)};
+  return {packet, counts, readingDirection, sha256: digest(bytes)};
 }
 
 export function assertOAuthReceipt(batch,receipt) {
