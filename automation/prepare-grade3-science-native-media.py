@@ -1360,6 +1360,103 @@ def reviewed_merged_image_choices(parent, targets, original, pages, legacy, docx
     return plain(""),[{"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":question}],assets
 
 
+def reviewed_answer_rows(parent, targets, original, pages, legacy, review):
+    require, norm, plain = legacy.require, legacy.normalize, legacy.plain
+    word = Path(original["question_docx"])
+    teacher = word.with_name("answer.docx.gz")
+    asset = parent["question_only_asset"]
+    snapshot = Path(asset["local_content"])
+    require(legacy.digest(snapshot)==asset["sha256"]==review["snapshot_sha256"],"word_snapshot_changed")
+    require(legacy.digest(word)==original["question_docx_sha256"]==review["word_sha256"],"original_word_changed")
+    require(legacy.digest(teacher)==review["teacher_sha256"],"teacher_word_changed")
+    parsed = legacy.read(snapshot)
+    require(not parsed["media"],"original_text_only")
+    layout = parsed["layout"]
+    raw = parent["original_source"]["native_content"]
+    source_answers = teacher_printed_answer(teacher,require)
+    items = []
+
+    def text(runs):
+        require(runs and all(r["type"]=="text" for r in runs),"word_text_only")
+        return "".join(r["text"] for r in runs).strip()
+
+    def item(target, question):
+        require(len(target["positions"])==1,"source_position")
+        return {"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":question}
+
+    if review["mode"]=="text_pair_table":
+        require(len(layout)==2 and layout[0]["type"]=="paragraph" and layout[1]["type"]=="table"
+                and len(raw["questions"])==1, "word_matching_layout")
+        rows = layout[1]["rows"]
+        require(len(rows)==len(targets)==3 and all(len(row)==4 for row in rows),"word_matching_layout")
+        heading = text(layout[0]["runs"])
+        require(heading==review["original_instruction"] and norm(raw["questions"][0]["stem"]).startswith(norm(heading)),
+                "matching_instruction_changed")
+        codes = "①②③"
+        options, prompts = [],[]
+        for row,code in zip(rows,codes,strict=True):
+            caption,a,b,option = [text(runs) for runs in row]
+            require(a==b=="‧" and caption.startswith(code),"word_matching_layout")
+            prompts.append(caption.removeprefix(code))
+            options.append(option)
+        keys = re.split(r"[；;]",source_answers.strip())
+        require(len(keys)==len(codes) and len(set(options))==len(options)
+                and [norm(v) for v in prompts]==list(map(norm,raw["questions"][0]["options"]))
+                and raw["questions"][0]["answers"]==[["1","2","3"]],"word_matching_layout")
+        for code,target,key,prompt in zip(codes,targets,keys,prompts,strict=True):
+            require(key.startswith(code) and key[1:] in options and target["kind"]=="matching"
+                    and target["source_question_indices"]==[1]
+                    and norm(key[1:])==norm(target["reference_answer"])==norm(target["positions"][0]["reference_value"]),
+                    "teacher_matching_key")
+            question = output_question("single_choice",plain(prompt),list(map(plain,options)),[options.index(key[1:])+1],
+                                       plain(target["student_explanation"]))
+            items.append(item(target,question))
+        return plain(review["display_instruction"]),items,{}
+
+    require(review["mode"]=="circle_rows_and_boolean" and len(layout)==11 and len(targets)==5
+            and all(b["type"]=="paragraph" for b in layout) and len(raw["questions"])==2, "word_question_position")
+    lines = [text(b["runs"]) for b in layout]
+    first, second = (legacy.WORD_ORDINAL.fullmatch(lines[i]) for i in (1,6))
+    require(first and second and norm(first[1])=="1" and norm(second[1])=="2"
+            and norm(lines[0])==norm(raw["preamble"])
+            and norm(first[2])==norm(legacy.statement(raw["questions"][0]["stem"]))
+            and norm(second[2])==norm(legacy.statement(raw["questions"][1]["stem"])), "word_prompt")
+    key = re.split(r"[（(]([1-2１-２])[）)]",source_answers)
+    require(len(key)==5 and not key[0].strip() and list(map(norm,key[1::2]))==["1","2"],"teacher_row_position")
+    circles, booleans = [re.split(r"[；;]",v.strip().rstrip("；;")) for v in key[2::2]]
+    require(len(circles)==len(booleans)==4 and all(r["answers"]==[["1","2","3","4"]] for r in raw["questions"]),
+            "teacher_row_position")
+    labels="①②③④"
+    bank=["能","不能"]
+    field_keys,fields,statement_pairs = {},[],[]
+    for i,(code,line,k) in enumerate(zip(labels,lines[2:6],circles,strict=True),1):
+        match = re.fullmatch(r"([①②③④])(.+?)[（(]\s*(能)\s*[,，]\s*(不能)\s*[）)](.+)",line)
+        require(match and match[1]==code and list(match.groups()[2:4])==bank and k[0]==code and k[1:] in bank
+                and norm(line[1:])==norm(raw["questions"][0]["options"][i-1]), "word_choice_alignment")
+        name = f"slot{i}"
+        fields.append({"id":name,"input":"single","label":match[2],
+                       "options":[{"id":f"o{j}","content":plain(v)} for j,v in enumerate(bank,1)]})
+        field_keys[name]=[f"o{bank.index(k[1:])+1}"]
+        statement_pairs.append(f"{match[2]}（{k[1:]}）")
+    target=targets[0]
+    require(target["kind"]=="multiple_choice" and target["source_question_indices"]==[1]
+            and norm("；".join(statement_pairs))==norm(target["reference_answer"])==norm(target["positions"][0]["reference_value"]),
+            "review_choice_key")
+    q={"type":"fields","prompt":plain(first[2]),"fields":fields,"answer":{"format":"fields-v1","fields":field_keys},
+       "explanation":plain(target["student_explanation"])}
+    items.append(item(target,q))
+    for i,(code,line,k,target) in enumerate(zip(labels,lines[7:],booleans,targets[1:],strict=True)):
+        mark = re.fullmatch(r"[（(]\s*[）)]\s*([①②③④])(.+)",line)
+        require(mark and mark[1]==code and norm(mark[2])==norm(raw["questions"][1]["options"][i])
+                and len(k)==2 and k[0]==code and k[1] in "ˇ╳"
+                and target["kind"]=="true_false" and target["source_question_indices"]==[2]
+                and target["reference_answer"]==target["positions"][0]["reference_value"]==k,"teacher_boolean_key")
+        q=output_question("true_false",plain(mark[2]),list(map(plain,["ˇ","╳"])),[1 if k[1]=="ˇ" else 2],
+                          plain(target["student_explanation"]))
+        items.append(item(target,q))
+    return plain(lines[0]),items,{}
+
+
 def reviewed_associated_images(parent, targets, original, pages, legacy, docx, review):
     require, norm, plain = legacy.require, legacy.normalize, legacy.plain
     word = Path(original["question_docx"])
@@ -2017,6 +2114,7 @@ def main():
     parser.add_argument("--wind-strength-reviews", type=Path)
     parser.add_argument("--solubility-result-reviews", type=Path)
     parser.add_argument("--merged-image-choice-reviews", type=Path)
+    parser.add_argument("--answer-row-reviews", type=Path)
     parser.add_argument("--associated-image-reviews", type=Path)
     parser.add_argument("--text-reading-reviews", type=Path)
     parser.add_argument("--recovered-word-reviews", type=Path)
@@ -2041,6 +2139,7 @@ def main():
     wind_strength_reviews = legacy.read(args.wind_strength_reviews) if args.wind_strength_reviews else {}
     solubility_reviews = legacy.read(args.solubility_result_reviews) if args.solubility_result_reviews else {}
     merged_image_reviews = legacy.read(args.merged_image_choice_reviews) if args.merged_image_choice_reviews else {}
+    answer_row_reviews = legacy.read(args.answer_row_reviews) if args.answer_row_reviews else {}
     associated_image_reviews = legacy.read(args.associated_image_reviews) if args.associated_image_reviews else {}
     text_reading_reviews = legacy.read(args.text_reading_reviews) if args.text_reading_reviews else {}
     recovered_word_reviews = legacy.read(args.recovered_word_reviews) if args.recovered_word_reviews else {}
@@ -2121,6 +2220,9 @@ def main():
             elif sid in merged_image_reviews:
                 rule = "reviewed_merged_image_choices"
                 material, qs, assets = reviewed_merged_image_choices(parent, group, source, pages, legacy, docx, merged_image_reviews[sid])
+            elif sid in answer_row_reviews:
+                rule = "reviewed_answer_rows"
+                material, qs, assets = reviewed_answer_rows(parent, group, source, pages, legacy, answer_row_reviews[sid])
             elif sid in associated_image_reviews:
                 rule = "reviewed_associated_images"
                 material, qs, assets = reviewed_associated_images(parent, group, source, pages, legacy, docx, associated_image_reviews[sid])
