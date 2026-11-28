@@ -1,6 +1,14 @@
 const uuid=v=>typeof v==='string'&&/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(v);
 const id=v=>typeof v==='string'&&/^[a-zA-Z0-9_-]{1,100}$/.test(v);
 const fields={source_type:'wrong_source',attempt_id:'wrong_attempt',question_id:'wrong_question',paper_id:'wrong_paper',version_id:'wrong_version',group_id:'wrong_group'};
+// Navigation check only. The existing student RPC remains the authority.
+export function pastPracticeHref(href,pageGrade,origin){
+ try{
+  const grade=Number(pageGrade),base=new URL(origin),url=new URL(href,base);
+  if(![3,4,6,9].includes(grade)||typeof href!=='string'||url.origin!==base.origin||url.username||url.password||url.pathname!==`/grade${grade}/115-1/quiz.html`)throw Error();
+  return url.href;
+ }catch{throw Error('練習連結無效。');}
+}
 export function wrongQuestionRef(item){
  const type=item?.source_type||'quiz';
  if(!['quiz','past_exam'].includes(type)||!uuid(item?.attempt_id)||!id(item?.question_id))return null;

@@ -6,7 +6,7 @@ import {resolveQuizImage} from './quiz-media.mjs?v=20261029-load-batch1';
 import {initImageLightbox} from './image-lightbox.js';
 import {createQuestionReport} from './quiz-question-reports.mjs';
 import {renderPastLearningReview} from './quiz-past-learning-review.mjs';
-import {wrongQuestionRef,readWrongQuestionRef,wrongQuestionSearch} from './quiz-wrong-route.mjs';
+import {wrongQuestionRef,readWrongQuestionRef,wrongQuestionSearch,pastPracticeHref} from './quiz-wrong-route.mjs';
 
 const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canExtend=()=>Boolean(onExtension),externalNavigation=false}) {
@@ -84,8 +84,7 @@ export function initWrongQuestions({request,pageGrade,getUserId,onExtension,canE
         renderPastLearningReview({host:article,...data.past_review,onPractice:async({source,conceptId,requestId})=>{
           const result=await request('past_practice',{attempt_id:ref.attempt_id,version:source.versionId,group_id:source.groupId,question_id:source.questionId,concept_id:conceptId,request_id:requestId});
           if(!current(g,uid)||!active||epoch!==detailEpoch||!article.isConnected)throw Error('目前已切換題目或帳號，請重新選擇。');
-          const url=new URL(result.url,location.origin);if(url.origin!==location.origin||!/\/grade[36]\/115-1\/quiz\.html$/.test(url.pathname))throw Error('練習連結無效。');
-          return {...result,url:url.href};
+          return {...result,url:pastPracticeHref(result.url,pageGrade,location.origin)};
         }});
       }
       article.append(createQuestionReport({request,context:ref.source_type==='past_exam'?{source:'past',attempt_id:ref.attempt_id,question_id:ref.group_id}:{source:'quiz',attempt_id:item.attempt_id,question_id:item.question_id},options:q.options,valid:()=>current(g,uid)&&active&&article.isConnected}));
