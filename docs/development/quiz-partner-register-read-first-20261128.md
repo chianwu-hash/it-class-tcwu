@@ -44,6 +44,8 @@ node --test automation/tests/quiz-partner-register-read-first.test.mjs
 
 其中以statement trigger核對：舊版即使資料相同仍發出寫入敘述，候選版不發出；同時驗證Google provider、信箱確認、服務停用及已有登錄時仍重新核資格。這2項使用PGlite，不能替代上述真PostgreSQL並行證據。原生測試伺服器已正常停止，未連Supabase或使用真學生身分。
 
+集中Claude唯讀審查已完成，未發現可證實的阻擋問題；審查8個主要檔案／定義，Git狀態、HEAD與上游前後一致。依提醒在repo測試補上直接呼叫私有函式時的資格拒絕，不只經公開access入口測試；真PG原生證據原已包含直接拒絕。正式套用前仍須獨立核owner／ACL，MD5本身不含這兩項。
+
 ## 正式套用前後的待辦
 
 1. 集中審查此新共用SQL契約；PR先進main。正式套用須依本對話提供的AGENTS資料庫函式核准規則處理，不把先前另一份SQL的同意沿用到本修正。
