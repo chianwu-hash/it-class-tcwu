@@ -158,6 +158,15 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
     if(question.work?.input==='expression')assert.equal(await article.locator('#work-'+s.question_id).inputValue(),s.work);
     else assert.deepEqual(await article.locator('.camp-sketch-board').evaluate(svg=>({version:1,strokes:[...svg.querySelectorAll('polyline')].map(p=>p.getAttribute('points').split(' ').map(pair=>pair.split(',').map((v,i)=>Math.round(Number(v)/(i?360:600)*10000)/10000))),colors:[...svg.querySelectorAll('polyline')].map(p=>p.getAttribute('stroke'))})),expected.w);
    };
+   const tableLayouts=(block.material.layout??[]).filter(part=>part.type==='table');
+   const normalizedCell=s=>s.replace(/\s+/gu,' ').trim();
+   const sourceTables=tableLayouts.map(part=>part.rows.map(row=>row.map(cell=>normalizedCell(cell.map(run=>run.text??'').join('')))));
+   const checkSourceTables=async()=>{
+    if(!sourceTables.length)return;
+    const rendered=await article.locator('section.material table').evaluateAll(tables=>tables.map(table=>
+     [...table.rows].map(row=>[...row.cells].map(cell=>cell.textContent.replace(/\s+/gu,' ').trim()))));
+    assert.deepEqual(rendered,sourceTables,'Common table cell order or text changed');
+   };
    const checks=[],book=page.locator('#lightbox');
    const assertPage=async number=>{
     const label='\u7b2c'+plan.assets.find(a=>a.printedPages.includes(number)).printedPages.join('\u2013')+'\u9801';
@@ -167,6 +176,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
    };
    for(const width of [1280,390]){
     await page.setViewportSize({width,height:960});
+    await checkSourceTables();
     if(!saved){
      if(single){if(width===1280)await selectedRadio.check();}
      else if(open){for(const [id,value] of Object.entries(expected.f))await article.locator('#open-'+s.question_id+'-'+id).fill(value);}
@@ -190,7 +200,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
     await book.locator('.qtb-book-toolbar select').selectOption(String(neighbor));await assertPage(neighbor);
     await book.getByRole('button',{name:'\u56de\u672c\u984c\u9801',exact:true}).click();await assertPage(ref.primary);
     await book.locator('#lightbox-close').click();await book.waitFor({state:'hidden'});await checkAnswer();
-    checks.push({width,pages:[ref.primary,neighbor],sha_verified:true,returned_to_primary:true,retained_answer_and_work:true});
+    checks.push({width,pages:[ref.primary,neighbor],sha_verified:true,returned_to_primary:true,retained_answer_and_work:true,...(sourceTables.length?{common_tables_exact:sourceTables.length}:{})});
    }
    // Resume is checked before any submit; a saved exact response is never resent.
    if(!saved){await page.locator('#server-submit').click();await page.locator('#server-submit').waitFor({state:'detached'});}
