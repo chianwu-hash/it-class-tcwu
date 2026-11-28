@@ -1,3 +1,11 @@
+# 九年級社會首次補配題：契約已核、正式未啟用
+
+- 原卷同內容SHA有唯一約束，不能用另換UUID建立相同原卷。先核對首次新增固定配題與改版的SOP界線，不改正式來源、原作答或學習圖。
+- 首次補齊只接受原先沒有topic的來源／重點，不替換既有配題；原卷、map與舊作答保持。原schema／SOP集中唯讀核對完成；兩份實際map共57重點沒有衝突studentLabel，開放以runtime available/count為準，coverage保留原固定製作紀錄。
+- Codex持有本worktree寫入；Claude唯讀本批文件、SOP指定段落、schema指定表、既有learning／wrong-detail／renderer小段與`.chat-mode/evidence`的去個資證據／測試副本，不讀外部原題、PDF、憑證或資料，不操作正式服務。
+- 私有候選34份／45道原題／68個位置，含一份明列前後SHA的未發布修訂；舊25份保留，另23個重點待篩。34份原生文件驗證、前29份保持、完成整份原卷後的主動練習、跨使用者拒絕、重試、兩筆積分及回復通過，仍非正式OAuth。
+- 正式前須補普通練習教材package及逐筆來源guard；bank／version／package／topic同交易啟用，不先commit沒有連線的bank。回復精確解除本批連線並停用package，保留場次作答；已知解除後bank回到擁有者編輯清單須如實記錄，不宣稱不可見。[契約與驗證界線](quiz-past-practice-initial-binding-20261129.md)。PR #636 SQL與夥伴第二身分仍待回覆，其餘內容工作繼續。
+
 # 九年級考古錯題練習導向：已發布並完成代表驗收
 
 - 問題：正式後端回傳目前學生年級的固定練習網址，但錯題頁只接受grade3／6，會拒絕grade9。既有錯題`past_practice`接線已存在，不另造個人原卷練習權限。
