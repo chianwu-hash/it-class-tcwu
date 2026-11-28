@@ -28,4 +28,8 @@ supabase/quiz-partner-fields-review.sql text eol=lf
 supabase/quiz-partner-single-review.sql text eol=lf
 automation/fixtures/partner-learning-snapshot-before-single.sql -text whitespace=cr-at-eol
 supabase/quiz-partner-short-review.sql text eol=lf
+
+# Guarded text-citation migrations use exact PostgreSQL function fingerprints.
+supabase/quiz-pool-study-text-citation.sql text eol=lf
+supabase/quiz-pool-study-text-citation-rollback.sql text eol=lf
 automation/fixtures/partner-learning-snapshot-before-short.sql -text whitespace=cr-at-eol
