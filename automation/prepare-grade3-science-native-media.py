@@ -947,8 +947,8 @@ def reviewed_native_table_choices(parent, targets, original, pages, legacy, docx
     return material,questions,{}
 
 
-def reviewed_mixed_image_choices(parent, targets, original, pages, legacy, docx, review):
-    require, norm, plain = legacy.require, legacy.normalize, legacy.plain
+def reviewed_image_layout_source(parent, original, legacy, review):
+    require = legacy.require
     asset = parent["question_only_asset"]
     snapshot = Path(asset["local_content"])
     word = Path(original["question_docx"])
@@ -957,12 +957,18 @@ def reviewed_mixed_image_choices(parent, targets, original, pages, legacy, docx,
     require(legacy.digest(teacher) == review["teacher_sha256"], "teacher_word_changed")
     require(legacy.digest(snapshot) == asset["sha256"] == review["snapshot_sha256"], "word_snapshot_missing")
     parsed = legacy.read(snapshot)
-    media = parsed["media"]
-    blocks = parsed["layout"]
     assets = verify_assets(parsed, asset["images"], word, legacy)
     require([a["sha256"] for a in assets.values()] == review["media"], "original_media_sha")
     key = teacher_printed_answer(teacher, require)
     require(key == review["teacher_key"], "reviewed_teacher_key")
+    return parsed, assets, key
+
+
+def reviewed_mixed_image_choices(parent, targets, original, pages, legacy, docx, review):
+    require, norm, plain = legacy.require, legacy.normalize, legacy.plain
+    parsed, assets, key = reviewed_image_layout_source(parent, original, legacy, review)
+    media = parsed["media"]
+    blocks = parsed["layout"]
     layout = review["verified_layout"]
     mode, selected = layout["mode"], layout["selected"]
     native = parent["original_source"]["native_content"]
@@ -1049,6 +1055,97 @@ def reviewed_mixed_image_choices(parent, targets, original, pages, legacy, docx,
         require(len(codes) >= 2 and len(codes) == len(set(codes)) and chosen and chosen == [v for v in codes if v in chosen], "word_choice_alignment")
         kind = "checkbox" if len(chosen)>1 else "single_choice"
         question = output_question(kind,prompt,list(map(plain,labels)),[codes.index(v)+1 for v in chosen],plain(target["student_explanation"]))
+        questions.append({"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":question})
+    return material,questions,assets
+
+
+def reviewed_wind_strength(parent, targets, original, pages, legacy, docx, review):
+    require, norm, plain = legacy.require, legacy.normalize, legacy.plain
+    parsed, assets, key = reviewed_image_layout_source(parent, original, legacy, review)
+    media, blocks = parsed["media"], parsed["layout"]
+    native = parent["original_source"]["native_content"]
+    require(native == review["original"], "word_snapshot_changed")
+    target_keys = ("target_id", "kind", "source_question_indices", "reference_answer", "positions")
+    require([{k:t[k] for k in target_keys} for t in targets] == review["targets"], "source_position")
+    mode = review["verified_layout"]["mode"]
+    expected = review["verified_layout"]["answer_by_position"]
+    numbers = "①②③"
+    bank = ["無風", "弱風", "強風"]
+
+    def glyphs(text):
+        return norm(text).replace("◯","○")
+
+    def unnumber(text, index):
+        return re.sub(rf"^(?:\({index}\)|{index}(?=[無弱強]))", "", glyphs(text))
+
+    def printed_ordinal(text, index):
+        return bool(re.search(rf"\({index}\)|{index}(?=(?:號|小題|下方))",glyphs(text)))
+
+    def paragraph_text(block):
+        return "".join(run["text"] for run in block["runs"] if run["type"] == "text")
+
+    material = compact_layout(blocks[:1],media,docx)
+    body = native["questions"]
+    raw_publisher = [token for item in body for group in item["answers"] for text in group for token in re.split(r"[;；]",text) if token.strip()]
+    teacher = glyphs(key).split(";")
+    if mode == "strongest_and_weakest" or (mode == "one_image_per_classification" and blocks[1]["type"] == "table"):
+        require(len(blocks)==2 and blocks[1]["type"]=="table", "wind_image_layout")
+        row_labels, row_images, row_blanks = blocks[1]["rows"]
+        require([cell[0]["text"] for cell in row_labels] == list(numbers) and all(len(cell)==1 for cell in row_labels), "wind_image_position")
+        require([cell[0]["media_index"] for cell in row_images] == list(range(3)) and all(len(cell)==1 for cell in row_images), "wind_image_position")
+        require(len(row_blanks)==3 and all(len(cell)==1 and norm(cell[0]["text"])=="()" for cell in row_blanks), "wind_image_layout")
+        if mode == "strongest_and_weakest":
+            target, = targets
+            positions = target["positions"]
+            keys = []
+            for part in positions:
+                ordinal = re.match(r"^([1-3])號",glyphs(part["source_part_locator"]))
+                require(ordinal is not None, "source_position")
+                keys.append(ordinal.group(1)+glyphs(part["reference_value"]))
+            require(keys == teacher == list(map(glyphs,raw_publisher)) == glyphs(target["reference_answer"]).split(";") == expected, "reviewed_teacher_key")
+            meaning = {"ˇ":"風力最強", "○":"風力最弱"}
+            require({v[1:] for v in keys} == set(meaning) and len({v[0] for v in keys})==2, "wind_mark_positions")
+            fields, answers = [], {}
+            choices = [{"id":f"o{i}","content":plain(symbol)} for i,symbol in enumerate(numbers,1)]
+            for index,symbol in enumerate(("ˇ","○"),1):
+                field_id = f"f{index}"
+                fields.append({"id":field_id,"label":meaning[symbol],"input":"single","options":choices})
+                answers[field_id] = ["o" + next(v[0] for v in keys if v[1:]==symbol)]
+            table = {**blocks[1],"rows":[row_labels,row_images]}
+            material = compact_layout([blocks[0],table],media,docx)
+            question = {"type":"fields","prompt":plain("哪一盆的風力最強？哪一盆的風力最弱？"),"fields":fields,
+                        "answer":{"format":"fields-v1","fields":answers},"explanation":plain(target["student_explanation"])}
+            return material,[{"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":question}],assets
+        pictures = [{"type":"paragraph","runs":cell} for cell in row_images]
+    elif mode == "one_numbered_image_for_classification":
+        require(len(blocks)==3 and norm(paragraph_text(blocks[1]))=="".join(bank) and len(media)==1, "wind_image_layout")
+        material = compact_layout([blocks[0],blocks[2]],media,docx)
+        require(len(material["media"])==1, "wind_image_position")
+        pictures = [None]*3
+    else:
+        require(mode in {"one_image_per_classification","one_image_per_choice"} and len(blocks)==4 and len(media)==3, "wind_image_layout")
+        pictures = []
+        for i,block in enumerate(blocks[1:],1):
+            require(block["type"]=="paragraph", "wind_image_layout")
+            expected_text = f"()({i})" if mode=="one_image_per_classification" else ""
+            images = [run for run in block["runs"] if run["type"]=="image"]
+            require(norm(paragraph_text(block))==expected_text and len(images)==1 and images[0]["media_index"]==i-1, "wind_image_position")
+            pictures.append({"type":"paragraph","runs":images})
+
+    options = list("ㄅㄆ") if mode=="one_image_per_choice" else bank
+    require(len(targets)==len(teacher)==len(raw_publisher)==len(expected)==3, "source_position")
+    require([unnumber(v,i) for i,v in enumerate(teacher,1)] == [unnumber(v,i) for i,v in enumerate(raw_publisher,1)] == expected, "reviewed_teacher_key")
+    questions = []
+    for i,(target,picture,value) in enumerate(zip(targets,pictures,expected,strict=True),1):
+        position, = target["positions"]
+        require(printed_ordinal(position["source_part_locator"],i) and value==unnumber(target["reference_answer"],i)==unnumber(position["reference_value"],i), "review_choice_position")
+        choice = value.removesuffix("ˇ")
+        require(choice in options, "wind_classification_value")
+        title = f"第 {i} 小題" if mode=="one_image_per_choice" else f"圖{numbers[i-1]}的風力屬於哪一種？"
+        intro = {"type":"paragraph","runs":[{"type":"text","text":title}]}
+        prompt = compact_layout([intro,picture],media,docx) if picture else plain(title)
+        require(len(prompt["media"])==int(picture is not None), "wind_image_position")
+        question = output_question("single_choice",prompt,list(map(plain,options)),[options.index(choice)+1],plain(target["student_explanation"]))
         questions.append({"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":question})
     return material,questions,assets
 
@@ -1161,6 +1258,7 @@ def main():
     parser.add_argument("--figure-answer-reviews", type=Path)
     parser.add_argument("--native-table-choice-reviews", type=Path)
     parser.add_argument("--mixed-image-choice-reviews", type=Path)
+    parser.add_argument("--wind-strength-reviews", type=Path)
     args=parser.parse_args()
     legacy=load_module(args.legacy)
     docx=load_module(args.docx)
@@ -1179,8 +1277,9 @@ def main():
     figure_reviews = legacy.read(args.figure_answer_reviews) if args.figure_answer_reviews else {}
     native_table_reviews = legacy.read(args.native_table_choice_reviews) if args.native_table_choice_reviews else {}
     mixed_image_reviews = legacy.read(args.mixed_image_choice_reviews) if args.mixed_image_choice_reviews else {}
+    wind_strength_reviews = legacy.read(args.wind_strength_reviews) if args.wind_strength_reviews else {}
     text_modes = (classification_reviews, choice_reviews, boolean_reviews, numbered_reviews, sequence_reviews, native_table_reviews)
-    modes = (visual_reviews, grid_reviews, matching_reviews, single_reviews, mixed_reviews, image_single_reviews, diagram_reviews, figure_reviews, mixed_image_reviews, *text_modes)
+    modes = (visual_reviews, grid_reviews, matching_reviews, single_reviews, mixed_reviews, image_single_reviews, diagram_reviews, figure_reviews, mixed_image_reviews, wind_strength_reviews, *text_modes)
     if len(set().union(*modes)) != sum(map(len, modes)):
         parser.error("the same source cannot use multiple visual review modes")
     sources={r["stable_id"]:r for r in legacy.read(args.source_catalog)["records"]}
@@ -1247,6 +1346,9 @@ def main():
             elif sid in mixed_image_reviews:
                 rule = "reviewed_mixed_image_choices"
                 material, qs, assets = reviewed_mixed_image_choices(parent, group, source, pages, legacy, docx, mixed_image_reviews[sid])
+            elif sid in wind_strength_reviews:
+                rule = "reviewed_wind_strength"
+                material, qs, assets = reviewed_wind_strength(parent, group, source, pages, legacy, docx, wind_strength_reviews[sid])
             elif len(group) > 1 and all(t["kind"] == "single_choice" for t in group):
                 rule = "shared_image_choices"
                 material, qs, assets = shared_image_choices(parent, group, source, pages, legacy, docx)

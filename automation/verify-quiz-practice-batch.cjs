@@ -27,10 +27,26 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
   await identity();const foreground=await context.newCDPSession(page);foreground.grantForegroundOnce('Page.bringToFront','Verify sampled textbook and persisted calculation');await foreground.send('Page.bringToFront');await foreground.detach();
   if(process.argv[3]==='library'){
    await page.goto(gradeUrl+'/quiz-library.html',{waitUntil:'domcontentloaded'});await identity();
-   const link=page.locator('#cloud-papers a[href*="'+ids.session+'"]').first();await link.waitFor({state:'attached'});
    const total=await page.evaluate(async ({id,expectedGrade})=>{const {supabase}=await import('/shared/auth.js');const {data}=await supabase.auth.getUser();const {createQuizRequest}=await import('/shared/quiz-api.mjs');const go=await createQuizRequest({getSession:()=>({user:{id:data.user.id}})});const r=await go('library_sessions');if(r.role!=='student'||Number(r.grade)!==expectedGrade)throw Error('wrong library role');return r.sessions.find(s=>s.id===id)?.total;},{id:ids.session,expectedGrade:grade});
-   assert.equal(total,n.questions);const url=new URL(await link.getAttribute('href'),page.url()).href;
-   await fs.writeFile(file('library-proof'),JSON.stringify({passed:true,questions:total,sources:n.sources,url},null,2));await recordBatchTime(p,packetSha,'entry-verified');return;
+   assert.equal(total,n.questions);
+   const card=page.locator('#cloud-papers [data-session-id="'+ids.session+'"]');
+   await card.waitFor({state:'attached'});
+   const supplemental=await card.evaluate(node=>Boolean(node.closest('.supplementary-papers')));
+   if(![10,20].includes(total))assert.ok(supplemental,'Nonstandard practice paper must be in supplementary exercises');
+   const hiddenFolders=await card.evaluate(node=>{let count=0;for(let e=node.parentElement;e&&e.id!=='cloud-papers';e=e.parentElement)if(e.matches('details:not([open])'))count++;return count;});
+   for(let i=0;i<hiddenFolders;i++){
+    const summary=page.locator('details:not([open])').filter({has:page.locator('[data-session-id="'+ids.session+'"]')}).first().locator('summary').first();
+    await summary.click();
+   }
+   const link=card.locator('a.paper-start');
+   await link.waitFor({state:'visible'});
+   const url=new URL(await link.getAttribute('href'),page.url());
+   assert.equal(url.searchParams.get('session'),ids.session);
+   await link.click();await page.waitForURL(url.href);
+   await page.locator('article.question[data-question-id]').first().waitFor({state:'visible'});
+   await identity();
+   await fs.writeFile(file('library-proof'),JSON.stringify({passed:true,questions:total,sources:n.sources,url:url.href,opened:true,supplemental,verificationScriptSha},null,2));
+   await recordBatchTime(p,packetSha,'entry-verified');return;
   }
   await recordBatchTime(p,packetSha,'oauth-started');
   for(const s of ids.samples){
