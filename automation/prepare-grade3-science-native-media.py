@@ -1360,6 +1360,56 @@ def reviewed_merged_image_choices(parent, targets, original, pages, legacy, docx
     return plain(""),[{"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":question}],assets
 
 
+def reviewed_reading_slots(text, raw_key, fixed_key, teacher_answer, target, review, explanation, legacy, intro):
+    require, norm, plain = legacy.require, legacy.normalize, legacy.plain
+    require(len(raw_key)==len(fixed_key)==len(review["labels"]), "teacher_answer_columns")
+    printed_key = [v.strip() for v in re.split(r"[;；]",teacher_answer)]
+    fixed = [re.sub(r"^\([1-8]\)","",norm(value)) for value in fixed_key]
+    require(list(map(norm,printed_key))==list(map(norm,raw_key))==fixed
+            and norm(target["reference_answer"])==norm(review["fixed_reference"]), "teacher_finite_key")
+    blanks = re.compile(r"[（(][\s_＿]+[）)]")
+    pairs = re.compile(r"[（(][\u3000 \t]+([^（）()]+?)[\u3000 \t]+[）)]")
+    fields, keys = [], {}
+    mode = review["mode"]
+    if mode=="local_choices":
+        spans = list(pairs.finditer(text))
+        choices = [[v.strip() for v in re.split(r"[,，]",m[1])] for m in spans]
+        require(len(choices)==len(raw_key) and all(len(v)>1 for v in choices), "word_choice_alignment")
+        text = pairs.sub("＿＿",text)
+    elif mode=="shared_bank":
+        require(intro and len(list(blanks.finditer(text)))==len(raw_key), "word_answer_columns")
+        bank = [v.strip() for v in intro[-1].split()]
+        require(len(bank)==len(set(bank))>=2, "word_choice_alignment")
+        choices = [bank]*len(raw_key)
+        text = blanks.sub("＿＿",text)
+    elif mode=="printed_binary":
+        choice_hint = re.search(r"[（(]填([^（）()]+)或([^（）()]+)[）)]$",text)
+        require(choice_hint and len(raw_key)==1, "word_choice_alignment")
+        choices = [list(choice_hint.groups())]
+        text = re.sub(r"\s*[（(][\s_＿]+[）)]\s*$","",text[:choice_hint.start()]).strip()
+    else:
+        spans = list(blanks.finditer(text))
+        require(mode=="fixed_suffix" and len(raw_key)==1 and len(spans)==1, "word_answer_columns")
+        suffix = text[spans[0].end():].strip()
+        require(suffix and suffix==review["suffix"], "word_answer_columns")
+        text = re.sub(r"答[：:]\s*(?:[（(][\s_＿]+[）)])","＿＿",text)
+        fields = [{"id":"slot1","input":"text","label":review["labels"][0]}]
+        keys["slot1"] = [printed_key[0],printed_key[0]+suffix]
+        choices = []
+    for i,(options,answer,label) in enumerate(zip(choices,printed_key,review["labels"]),1):
+        require(len(set(map(norm,options)))==len(options) and norm(answer) in list(map(norm,options)),
+                "word_choice_alignment")
+        position = list(map(norm,options)).index(norm(answer))+1
+        if len(choices)==1:
+            return output_question("single_choice",plain(text),list(map(plain,options)),[position],plain(explanation))
+        field_id = f"slot{i}"
+        fields.append({"id":field_id,"input":"single","label":label,
+                       "options":[{"id":f"o{j}","content":plain(v)} for j,v in enumerate(options,1)]})
+        keys[field_id] = [f"o{position}"]
+    return {"type":"fields","prompt":plain(text),"fields":fields,
+            "answer":{"format":"fields-v1","fields":keys},"explanation":plain(explanation)}
+
+
 def reviewed_text_reading(parent, targets, original, pages, legacy, review):
     require, norm, plain = legacy.require, legacy.normalize, legacy.plain
     word = Path(original["question_docx"])
@@ -1393,6 +1443,9 @@ def reviewed_text_reading(parent, targets, original, pages, legacy, review):
         require(len(lines)==len(items)==1 and not starts and not modes, "word_finite_layout")
         require(lines[0].endswith(f"（填入{'、'.join(finite[:-1])}或{finite[-1]}）"), "word_choice_alignment")
         intro, parts, answers = [], [(lines[0],[])], [teacher_key]
+    elif review.get("unnumbered"):
+        require(len(lines)==len(items)==1 and not starts, "word_unnumbered_layout")
+        intro, parts, answers = [], [(lines[0],[])], [teacher_key]
     else:
         require([int(norm(m[1])) for _,m in starts]==list(range(1,len(items)+1)), "word_question_position")
         intro = lines[:starts[0][0]]
@@ -1407,14 +1460,17 @@ def reviewed_text_reading(parent, targets, original, pages, legacy, review):
     questions = []
     for i,((text,tail),item,target,teacher_answer) in enumerate(zip(parts,items,targets,answers,strict=True),1):
         groups = [[x.strip() for x in group if x.strip()] for group in item["answers"]]
-        require(all(len(group)==1 for group in groups), "teacher_answer_columns")
-        raw_key = [group[0] for group in groups]
+        raw_key = [value for group in groups for value in group]
         fixed_key = [p["reference_value"] for p in target["positions"]]
-        source_stem = re.sub(r"答[：:]\s*(?:【[\s_＿]*】\s*)+$","",item["stem"]).strip()
+        source_stem = re.sub(r"(?:答[：:]\s*)?(?:【[\s_＿]*】\s*)+$","",item["stem"]).strip()
         source_stem = re.sub(r"[（(][\s_＿]*[）)]\s*$","",source_stem).strip()
         explanation = checked_explanation(target,review.get("explanations",{}).get(str(i)),require)
         options = item["options"]
-        if options:
+        placement = review.get("slots",{}).get(str(i))
+        free = review.get("distinct_examples",{}).get(str(i))
+        if placement:
+            text = " ".join([text,*tail]).strip()
+        elif options:
             printed = " ".join([text,*[re.sub(r"^[（(][\s_＿]*[）)]\s*","",line) for line in tail]])
             segments = re.split(f"([{circled}])",printed)
             text = segments[0].strip()
@@ -1423,27 +1479,44 @@ def reviewed_text_reading(parent, targets, original, pages, legacy, review):
         else:
             require(all(re.fullmatch(r"答[：:]\s*",line) for line in tail), "word_answer_area")
         require(norm(text)==norm(source_stem), "word_prompt")
-        if options or finite:
+        if placement:
+            question = reviewed_reading_slots(text, raw_key, fixed_key, teacher_answer, target, placement, explanation, legacy, intro)
+        elif options or finite:
             choices = options or finite
-            require(len(raw_key)==len(fixed_key)==1 and norm(raw_key[0])==norm(fixed_key[0])==norm(target["reference_answer"]),
-                    "review_choice_key")
             if options:
-                key = re.fullmatch(f"([{circled}])[ˇ✓√✔]?",teacher_answer)
-                require(key and str(circled.index(key[1])+1)==norm(raw_key[0]), "teacher_choice_key")
-                selected = int(norm(raw_key[0]))
+                printed_keys = [re.fullmatch(f"([{circled}])[ˇ✓√✔]?",value.strip())
+                                for value in re.split(r"[;；]",teacher_answer)]
+                fixed = re.split(r"[,;、]",norm(target["reference_answer"]))
+                selected = [int(value) for value in fixed]
+                require(fixed==list(map(norm,raw_key))==re.split(r"[,;、]",norm("；".join(fixed_key)))
+                        and all(printed_keys)
+                        and selected==[circled.index(k[1])+1 for k in printed_keys]
+                        and selected==sorted(set(selected)) and 1<=min(selected)<=max(selected)<=len(choices),
+                        "teacher_choice_key")
                 require(not re.search(f"[{circled}]",explanation), "ordinal_explanation")
             else:
-                require(target["kind"]=="fill_in_the_blank" and teacher_answer in choices
+                require(len(raw_key)==len(fixed_key)==1 and norm(raw_key[0])==norm(fixed_key[0])==norm(target["reference_answer"])
+                        and target["kind"]=="fill_in_the_blank" and teacher_answer in choices
                         and norm(teacher_answer)==norm(raw_key[0]), "teacher_finite_key")
-                selected = choices.index(teacher_answer)+1
+                selected = [choices.index(teacher_answer)+1]
                 text = re.sub(r"[（(][\s_＿]+[）)]","＿＿",text,count=1)
-            question = output_question("single_choice",plain(text),list(map(plain,choices)),[selected],plain(explanation))
+            kind = "checkbox" if len(selected)>1 else "single_choice"
+            question = output_question(kind,plain(text),list(map(plain,choices)),selected,plain(explanation))
         else:
             teacher_fields = [v.strip() for v in re.split(r"[；;]",teacher_answer)]
             labels = modes.get(str(i),[])
-            require(target["kind"]=="short_answer" and len(labels)==len(raw_key)>0
-                    and list(map(norm,teacher_fields))==list(map(norm,raw_key))==list(map(norm,fixed_key))
-                    and norm("；".join(fixed_key))==norm(target["reference_answer"]), "teacher_open_fields")
+            require(target["kind"]=="short_answer" and labels, "teacher_open_fields")
+            if free:
+                reference = "；".join(teacher_fields)
+                cleaned = [re.sub(r"[（(]答案僅供參考[）)]$","",v).strip() for v in teacher_fields]
+                require(len(labels)==len(cleaned)==len(fixed_key)==free
+                        and len(set(cleaned))==free
+                        and norm(reference)==norm("；".join(raw_key))==norm(target["reference_answer"])
+                        and all(v=={"examples":cleaned,"non_exhaustive":True} for v in fixed_key), "teacher_open_fields")
+            else:
+                require(len(labels)==len(raw_key) and
+                        list(map(norm,teacher_fields))==list(map(norm,raw_key))==list(map(norm,fixed_key))
+                        and norm("；".join(fixed_key))==norm(target["reference_answer"]), "teacher_open_fields")
             fields, examples = [], {}
             for f,(field,example) in enumerate(zip(labels,teacher_fields,strict=True),1):
                 field_id = f"answer{f}"
