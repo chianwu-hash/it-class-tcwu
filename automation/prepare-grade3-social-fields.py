@@ -26,7 +26,7 @@ def options(values):
             for i, value in enumerate(values, 1)]
 
 
-def read_original(file, output, native):
+def read_original_cells(file, output, native):
     parser = native.Native(file, output)
     require = native.require
     try:
@@ -39,12 +39,17 @@ def read_original(file, output, native):
         headers, body_row = tables[0].findall("w:tr", native.ns)
         require(["".join(c.xpath(".//w:t/text()", namespaces=native.ns))
                  for c in headers.findall("w:tc", native.ns)] == ["題目", "答案", "解析"], "word_headers")
-        prompt, key, solution = [parser.nodes(cell) for cell in body_row.findall("w:tc", native.ns)]
-        require(all(native.plain(c) for c in (prompt, key, solution)), "original_media_or_table")
-        require(key["text"].startswith("《答案》"), "teacher_key_header")
-        return prompt["text"], key["text"], solution["text"]
+        return [parser.nodes(cell) for cell in body_row.findall("w:tc", native.ns)]
     finally:
         parser.z.close()
+
+
+def read_original(file, output, native):
+    prompt, key, solution = read_original_cells(file, output, native)
+    require = native.require
+    require(all(native.plain(c) for c in (prompt, key, solution)), "original_media_or_table")
+    require(key["text"].startswith("《答案》"), "teacher_key_header")
+    return prompt["text"], key["text"], solution["text"]
 
 
 def numbered(text, pattern, require):
@@ -210,17 +215,119 @@ def adapt(item, word, raw_key, required, native):
     return kind, prompt, fields, field_targets, "／".join(selected_text)
 
 
+def adapt_illustrated_selection(prompt, teacher_key, native):
+    """Reconstruct a single Word question with an ordered choice list and its illustrations."""
+    require = native.require
+    lead, choices, labels, caption_positions = [], [], [], []
+    marker = r"(?:" + BLANK + r"\s*)?([①②③④⑤⑥⑦⑧甲乙丙丁戊己庚辛])(?:[、.．])?\s*(.+)"
+    blank_answer = r"答[：:]\s*" + BLANK
+    found_answer_area = False
+    option_images = False
+    for block in prompt["layout"]:
+        require(block["type"]=="paragraph", "word_selection_layout")
+        for run in block["runs"]:
+            if run["type"]=="image":
+                require(not found_answer_area, "word_answer_area")
+                lead.append({"type":"paragraph","runs":[run]})
+                option_images |= bool(choices)
+                continue
+            require(run["type"]=="text", "word_selection_layout")
+            for line in run["text"].splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                require(not found_answer_area, "word_answer_area")
+                if re.fullmatch(blank_answer,line):
+                    found_answer_area = True
+                    continue
+                match = re.fullmatch(marker,line)
+                if match:
+                    labels.append(match[1])
+                    choices.append(match[2])
+                    caption_positions.append(len(lead))
+                else:
+                    require(not choices, "unmatched_word_line")
+                retain = line if not match else f"{match[1]} {match[2]}"
+                lead.append({"type":"paragraph","runs":[{"type":"text","text":retain}]})
+    require(2<=len(choices)<=8 and len(set(map(native.compact,choices)))==len(choices)
+            and "".join(labels) in (CIRCLED[:len(choices)],"甲乙丙丁戊己庚辛"[:len(choices)]), "word_choice_alignment")
+    keys = re.split(r"[、,，]",teacher_key.strip().removesuffix("打ˇ"))
+    keys = [k.strip().rstrip("。") for k in keys]
+    if all(key.isdecimal() for key in keys):
+        require(all(1<=int(key)<=len(choices) for key in keys),"teacher_choice_key")
+        keys = [labels[int(key)-1] for key in keys]
+    require(keys and keys==[label for label in labels if label in keys],"teacher_choice_key")
+    selected = [f"o{labels.index(key)+1}" for key in keys]
+    from quiz_native_docx import compact
+    content = compact(lead if option_images else [b for i,b in enumerate(lead) if i not in caption_positions],prompt["media"])
+    media = content["media"]
+    require(media and len(media)==len(prompt["media"]), "word_image_position")
+    # Production signs all prompt images; answer choices under a set field are text.
+    opts = options([f"{label} {choice}" for label,choice in zip(labels,choices,strict=True)])
+    if len(selected)==1:
+        return {"type":"single","prompt":content,"options":opts,"answer":{"option_id":selected[0]}}
+    return {"type":"fields","prompt":content,
+            "fields":[{"id":"selected","input":"set","label":"勾選符合題意的項目","options":opts}],
+            "answer":{"format":"fields-v1","fields":{"selected":[selected]}}}
+
+
+def reviewed_illustrated_row(source, screen, item, metadata_keys, metadata_details, book, reviews, output, native):
+    require = native.require
+    sid = screen["source"]
+    review = reviews[sid]
+    require(native.sha(source)==screen["source_sha256"]==review["word_sha256"], "original_sha")
+    target_path = output/sid
+    target_path.mkdir(parents=True, exist_ok=True)
+    prompt, key, solution = read_original_cells(source,target_path,native)
+    require(native.plain(key) and native.plain(solution) and key["text"].startswith("《答案》"), "teacher_key_header")
+    teacher = key["text"].removeprefix("《答案》").strip()
+    require(len(metadata_keys)==len(metadata_details)==1 and native.compact(teacher)==native.compact(metadata_keys[0])
+            and native.compact(prompt["text"]+key["text"]+solution["text"])==native.compact(metadata_details[0]), "publisher_detail_mismatch")
+    require(review["source_answer"]==teacher and review["student_explanation"].strip(), "reviewed_teacher_key")
+    pages = review["pages"]
+    require(pages and len({p["page"] for p in pages})==len(pages),"original_textbook_missing")
+    for reference in pages:
+        matches = [(row, page) for row in book for page in row["pages"] if page["page"]==reference["page"]]
+        require(len(matches)==1,"original_textbook_missing")
+        spread,p = matches[0]
+        require(spread["unit"]==int(item["LESN_NUM"][:2])
+                and native.sha(Path(spread["path"]))==spread["sha256"]==reference["spread_sha256"]
+                and native.compact(reference["anchor"])
+                and native.compact(reference["anchor"]) in native.compact(p["text"]), "original_textbook_mismatch")
+    question = adapt_illustrated_selection(prompt,teacher,native)
+    assets = {}
+    for img in question["prompt"]["media"]:
+        name = img["url"].rsplit("/",1)[-1]
+        original = target_path/"original-images"/name
+        display = target_path/"web-images"/name
+        require(name.endswith(".jpeg") and native.sha(original)==native.sha(display)==Path(name).stem,"original_media_sha")
+        h = Path(name).stem
+        assets[img["url"]] = {"sha256":h,"mime":"image/jpeg","bytes":display.stat().st_size,
+                             "path":display.as_posix(),"original_file":original.as_posix(),"original_sha256":h}
+    question["explanation"]={"text":review["student_explanation"],"media":[]}
+    return {"passed":True,"source":sid,"source_file":source.as_posix(),"source_sha256":screen["source_sha256"],
+            "lesson":item["LESN_NUM"],"unit":int(item["LESN_NUM"][:2]),"knowledge":item["KNOW_SPOT"],
+            "difficulty":dict(A=-3,B=0,C=3)[item["DIFC_CODE"]],"layout":"illustrated_selection","question":question,
+            "references":[p["page"] for p in pages],"source_answer":teacher,"assets":assets}
+
+
 def main():
     cli=argparse.ArgumentParser(description=__doc__)
     for name in ("native-rules","textbook-rules","metadata","originals","source-screen","book","output"):
         cli.add_argument("--"+name, type=Path, required=True)
+    cli.add_argument("--illustrated-selection-reviews", type=Path)
     args=cli.parse_args()
     native=module(args.native_rules)
     textbook=module(args.textbook_rules)
     read=lambda p:json.loads(p.read_text(encoding="utf8"))
     md=read(args.metadata)
-    screened={r["source"]:r for r in read(args.source_screen)
-              if r.get("type_code") in ("21","22","23","39","44","45")}
+    if args.illustrated_selection_reviews:
+        reviews = read(args.illustrated_selection_reviews)
+        screened = {r["source"]:r for r in read(args.source_screen) if r["source"] in reviews and r.get("type_code")=="41"}
+        assert screened.keys()==reviews.keys()
+        book = read(args.book)
+    else:
+        screened = {r["source"]:r for r in read(args.source_screen) if r.get("type_code") in ("21","22","23","39","44","45")}
     by_code={r["QUES_NO"]:r for r in md["QuesMaster"] if r["QUES_NO"] in screened}
     keys, details=defaultdict(list),defaultdict(list)
     for row in md["QuesAnswer"]:
@@ -237,6 +344,9 @@ def main():
         source=docs[sid]
         require=native.require
         try:
+            if args.illustrated_selection_reviews:
+                result.append(reviewed_illustrated_row(source,screen,item,keys[sid],details[sid],book,reviews,args.output.parent,native))
+                continue
             require(native.sha(source)==screen["source_sha256"],"original_sha")
             word,key,explanation=read_original(source,args.output.parent,native)
             original_key=key.removeprefix("《答案》").strip()
@@ -251,7 +361,7 @@ def main():
                            "explanation":explanation.removeprefix("詳解：").strip(),"fields":fields,"field_answer":targets})
         except (ValueError, KeyError) as exc:
             result.append({**screen,"reason":str(exc)})
-    mapped=list(textbook.apply(result,read(args.book)))
+    mapped=result if args.illustrated_selection_reviews else list(textbook.apply(result,read(args.book)))
     args.output.write_text(json.dumps(mapped,ensure_ascii=False,indent=2),encoding="utf8")
     print(Counter(row.get("reason",row.get("layout")) for row in mapped))
 
