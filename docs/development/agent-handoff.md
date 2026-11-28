@@ -1,10 +1,10 @@
-# 九年級考古錯題練習導向：共用契約候選審查
+# 九年級考古錯題練習導向：已發布並完成代表驗收
 
 - 問題：正式後端回傳目前學生年級的固定練習網址，但錯題頁只接受grade3／6，會拒絕grade9。既有錯題`past_practice`接線已存在，不另造個人原卷練習權限。
 - 修改：`shared/quiz-wrong-route.mjs`新增純導向驗證；`shared/quiz-wrong-questions.mjs`改用同源且本人頁面年級的驗證，保留RPC／request ID／世代檢查。另附純函式測試、合成頁及生成入口／manifest。
 - 驗證：四年級群兩種寬度8案原UI按鈕→原練習頁、2案錯年級／外站拒絕，合計10案通過；來源全為合成，正式OAuth待驗。詳[本批候選](quiz-past-practice-route-g9-20261128.md)。
 - Codex持有本worktree全部寫入；Claude只讀新導向函式、控制器小段、測試及本批文件，必要時最小核對正式RPC回傳形狀，不讀私有題目／憑證或其他對話。
-- 聚焦審查已完成，未發現阻擋問題；同步main同名卷修正並重產入口，15項測試通過。正式專用九年級身分已唯讀找到一題既有自然錯題及兩題固定練習，未新建練習／送答；下一步由乾淨main發布導向修正，以該既有錯題驗原生按鈕、兩題保存及讀回，不冒稱自然115教材已驗。社會25組配題仍為候選。PR #636 SQL仍待使用者核准，本分支不套用該SQL。
+- PR #638由乾淨main發布為`dpl_AUUheQHf367M9szxoPqAfiJm4ng1`，19／0／0完整比對通過、alias相符、鎖已釋放。正式九年級既有自然錯題→重點→兩題練習→存答→手機重開通過，原卷records／draft未變；四處原頁題圖引用（同一素材）HTTP SHA補驗通過。詳[正式收據](quiz-past-practice-route-g9-20261128.md#正式發布與代表驗收)。不代表自然115教材內容已核完，社會25份配題仍為候選；PR #636 SQL及夥伴第二身分仍待回覆。
 
 # 夥伴目錄逾時：本人登錄行鎖候選已審查
 
@@ -20,6 +20,7 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
+| 已完成 | g9-past-practice-route-20261128 | 2026-11-28T16:06:07.271Z | `757c3a5` | `dpl_GiSCQvMDzHiyjmxwPLtndotsowGC` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-workshop/generated/assets.json、shared/quiz-wrong-questions.mjs、shared/quiz-wrong-route.mjs | `dpl_AUUheQHf367M9szxoPqAfiJm4ng1`／回滾 `dpl_GiSCQvMDzHiyjmxwPLtndotsowGC`（eolOnly 0） |
 | 已完成 | codex-past-catalog-school | 2026-11-28T15:50:05.069Z | `293a82c` | `dpl_CUDruEjQ5GU3QtqJfNvHfiZsNvTZ` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-library.mjs、shared/quiz-past-catalog.mjs、shared/quiz-workshop/generated/assets.json | `dpl_GiSCQvMDzHiyjmxwPLtndotsowGC`／回滾 `dpl_CUDruEjQ5GU3QtqJfNvHfiZsNvTZ`（eolOnly 0） |
 
 四年級期末國語與英語清單的四張深美、文澳卷卡，已由正式學生 Google OAuth 在 1280 與 390 px 核對校名及作答連結。專用帳號班級已復原。[發布 PR](https://github.com/chianwu-hash/it-class-tcwu/pull/640)
