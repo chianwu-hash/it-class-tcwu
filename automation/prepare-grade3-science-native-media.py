@@ -947,6 +947,112 @@ def reviewed_native_table_choices(parent, targets, original, pages, legacy, docx
     return material,questions,{}
 
 
+def reviewed_mixed_image_choices(parent, targets, original, pages, legacy, docx, review):
+    require, norm, plain = legacy.require, legacy.normalize, legacy.plain
+    asset = parent["question_only_asset"]
+    snapshot = Path(asset["local_content"])
+    word = Path(original["question_docx"])
+    teacher = word.with_name("answer.docx.gz")
+    require(legacy.digest(word) == original["question_docx_sha256"] == review["word_sha256"], "original_word_changed")
+    require(legacy.digest(teacher) == review["teacher_sha256"], "teacher_word_changed")
+    require(legacy.digest(snapshot) == asset["sha256"] == review["snapshot_sha256"], "word_snapshot_missing")
+    parsed = legacy.read(snapshot)
+    media = parsed["media"]
+    blocks = parsed["layout"]
+    assets = verify_assets(parsed, asset["images"], word, legacy)
+    require([a["sha256"] for a in assets.values()] == review["media"], "original_media_sha")
+    key = teacher_printed_answer(teacher, require)
+    require(key == review["teacher_key"], "reviewed_teacher_key")
+    layout = review["verified_layout"]
+    mode, selected = layout["mode"], layout["selected"]
+    native = parent["original_source"]["native_content"]
+    items = native["questions"]
+    ordinal = r"[（(]([１-８1-8])[）)]"
+    numbered_key = re.split(ordinal, key)
+    require(not numbered_key[0].strip() and [int(v) for v in numbered_key[1::2]] == list(range(1,len(targets)+1)), "teacher_choice_position")
+
+    def answer(value, index):
+        value = re.sub(rf"^\({index}\)", "", norm(value).strip(";、"))
+        return [v.rstrip("ˇvV") for v in re.split(r"[;、]",value)]
+
+    def paragraph(block):
+        return "".join(run["text"] for run in block["runs"] if run["type"] == "text")
+
+    def image_sha(content):
+        return [assets[item["url"]]["sha256"] for item in content["media"]]
+
+    expected_media = review["media"]
+    if mode == "each_item_image":
+        require(len(items) == 1 and len(blocks) == len(targets)+1 and not items[0]["options"], "mixed_image_layout")
+        material = compact_layout(blocks[:1],media,docx)
+        stem = re.sub(r"(?:【[\s_＿]*】\s*)+$", "", items[0]["stem"])
+        require(not material["media"] and norm(material["text"]) == norm(stem), "word_prompt")
+        prompts = []
+        for i,(block,h) in enumerate(zip(blocks[1:],expected_media,strict=True),1):
+            image = compact_layout([block],media,docx)
+            require(not image["text"].strip() and image_sha(image) == [h], "mixed_image_placement")
+            heading = {"type":"paragraph","runs":[{"type":"text","text":f"第 {i} 小題"}]}
+            prompts.append(compact_layout([heading,block],media,docx))
+        label_sets = layout["image_options"]
+        require(all(labels in [list("ㄅㄆ"),list("ㄅㄆㄇ")] for labels in label_sets), "word_choice_alignment")
+        values = label_sets
+        publisher = [v for group in items[0]["answers"] for text in group for v in re.split(r"[；;]",text) if v.strip()]
+        publisher_keys = [answer(v,i) for i,v in enumerate(publisher,1)]
+    else:
+        require(mode in {"shared_image_numbered","shared_image_symbol","one_inline_layout"} and len(items) == len(targets), "mixed_image_layout")
+        starts = [(i,m) for i,b in enumerate(blocks) if b["type"] == "paragraph" and (m := re.match(ordinal,paragraph(b)))]
+        require([int(m.group(1)) for _,m in starts] == list(range(1,len(targets)+1)), "word_question_position")
+        material = compact_layout(blocks[:starts[0][0]],media,docx)
+        require(norm(material["text"]) == norm(native["preamble"]), "source_preamble")
+        require(image_sha(material) == (expected_media if mode.startswith("shared_image_") else []), "mixed_image_placement")
+        prompts, label_sets, values, publisher_keys = [], [], [], []
+        ends = [i for i,_ in starts[1:]]+[len(blocks)]
+        for i,((start,match),end,item) in enumerate(zip(starts,ends,items,strict=True),1):
+            stem = paragraph(blocks[start])[match.end():].strip()
+            tail = blocks[start+1:end]
+            raw = item["stem"]
+            if mode == "one_inline_layout" and i == 1:
+                require(len(tail) == 1 and tail[0]["type"] == "table", "mixed_image_layout")
+                prompt = compact_layout([{"type":"paragraph","runs":[{"type":"text","text":stem}]},*tail],media,docx)
+                require(image_sha(prompt) == expected_media and norm(prompt["text"]) == norm(raw), "mixed_image_placement")
+                labels = layout["image_options"]
+                require(labels in [list("①②"),list("甲乙")], "word_choice_alignment")
+                cell_labels = re.findall(r"([①②])([甲乙]?)[（(][\s_＿]*[）)]",prompt["text"])
+                require([symbol or number for number,symbol in cell_labels] == labels, "word_choice_alignment")
+                codes = ["1","2"]
+            elif mode == "shared_image_symbol":
+                require(len(tail) == 1 and tail[0]["type"] == "paragraph" and not item["options"], "word_choice_alignment")
+                line = paragraph(tail[0]).strip()
+                require(line.startswith("□") and norm(stem+line) == norm(re.sub(r"【[\s_＿]*】\s*$","",raw).replace("☐","□")), "word_prompt")
+                labels = [v.strip() for v in line.split("□")[1:]]
+                codes = list(map(norm,labels))
+                prompt = plain(stem)
+            else:
+                require(tail and all(b["type"] == "paragraph" for b in tail), "word_choice_alignment")
+                options = [re.fullmatch(r"[（(][\s_＿]*[）)]\s*([①-⑧])\s*(.+)", paragraph(b)) for b in tail]
+                require(all(options) and norm(stem) == norm(re.sub(r"[（(][\s_＿]*[）)]\s*$","",raw)), "word_prompt")
+                labels = [m.group(2) for m in options]
+                codes = [norm(m.group(1)) for m in options]
+                require(codes == [str(j) for j in range(1,len(labels)+1)] and list(map(norm,labels)) == list(map(norm,item["options"])), "word_choice_alignment")
+                prompt = plain(stem)
+            prompts.append(prompt)
+            label_sets.append(labels)
+            values.append(codes)
+            publisher_keys.append([v for group in item["answers"] for text in group for v in answer(text,i)])
+
+    require(publisher_keys == selected and [answer(v,i) for i,v in enumerate(numbered_key[2::2],1)] == selected, "reviewed_teacher_key")
+    questions = []
+    for i,(target,prompt,labels,codes,chosen,bound) in enumerate(zip(targets,prompts,label_sets,values,selected,review["targets"],strict=True),1):
+        require(target["source_question_indices"] == bound["source_indices"] == [1 if mode == "each_item_image" else i]
+                and target["positions"] == bound["positions"] and target["reference_answer"] == bound["answer"], "source_position")
+        require(chosen == answer(bound["answer"],i) == [v for p in bound["positions"] for v in answer(p["reference_value"],i)], "review_choice_position")
+        require(len(codes) >= 2 and len(codes) == len(set(codes)) and chosen and chosen == [v for v in codes if v in chosen], "word_choice_alignment")
+        kind = "checkbox" if len(chosen)>1 else "single_choice"
+        question = output_question(kind,prompt,list(map(plain,labels)),[codes.index(v)+1 for v in chosen],plain(target["student_explanation"]))
+        questions.append({"target":target["target_id"],"refs":legacy.refs_for(target,original["unit"],pages),"question":question})
+    return material,questions,assets
+
+
 def adapt(parent, targets, original, pages, legacy, docx):
     require = legacy.require
     plain, norm = legacy.plain, legacy.normalize
@@ -1054,6 +1160,7 @@ def main():
     parser.add_argument("--diagram-reviews", type=Path)
     parser.add_argument("--figure-answer-reviews", type=Path)
     parser.add_argument("--native-table-choice-reviews", type=Path)
+    parser.add_argument("--mixed-image-choice-reviews", type=Path)
     args=parser.parse_args()
     legacy=load_module(args.legacy)
     docx=load_module(args.docx)
@@ -1071,8 +1178,9 @@ def main():
     diagram_reviews = legacy.read(args.diagram_reviews) if args.diagram_reviews else {}
     figure_reviews = legacy.read(args.figure_answer_reviews) if args.figure_answer_reviews else {}
     native_table_reviews = legacy.read(args.native_table_choice_reviews) if args.native_table_choice_reviews else {}
+    mixed_image_reviews = legacy.read(args.mixed_image_choice_reviews) if args.mixed_image_choice_reviews else {}
     text_modes = (classification_reviews, choice_reviews, boolean_reviews, numbered_reviews, sequence_reviews, native_table_reviews)
-    modes = (visual_reviews, grid_reviews, matching_reviews, single_reviews, mixed_reviews, image_single_reviews, diagram_reviews, figure_reviews, *text_modes)
+    modes = (visual_reviews, grid_reviews, matching_reviews, single_reviews, mixed_reviews, image_single_reviews, diagram_reviews, figure_reviews, mixed_image_reviews, *text_modes)
     if len(set().union(*modes)) != sum(map(len, modes)):
         parser.error("the same source cannot use multiple visual review modes")
     sources={r["stable_id"]:r for r in legacy.read(args.source_catalog)["records"]}
@@ -1136,6 +1244,9 @@ def main():
             elif sid in native_table_reviews:
                 rule = "reviewed_native_table_choices"
                 material, qs, assets = reviewed_native_table_choices(parent, group, source, pages, legacy, docx, native_table_reviews[sid])
+            elif sid in mixed_image_reviews:
+                rule = "reviewed_mixed_image_choices"
+                material, qs, assets = reviewed_mixed_image_choices(parent, group, source, pages, legacy, docx, mixed_image_reviews[sid])
             elif len(group) > 1 and all(t["kind"] == "single_choice" for t in group):
                 rule = "shared_image_choices"
                 material, qs, assets = shared_image_choices(parent, group, source, pages, legacy, docx)
