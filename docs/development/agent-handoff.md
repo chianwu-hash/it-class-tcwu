@@ -4,9 +4,9 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | codex-g4-social-unit4-20261128 | 2026-11-28 | 合併本批後的 `origin/main` | `dpl_Cku5eD7NjX7RxTUwzRFp4S1aUQ5w` | 四年級社會第 4 單元期末範圍及練功坊生成檔 | 結果與學生入口驗收附在同批 PR。 |
+| 已完成 | codex-g4-social-unit4-20261128 | 2026-11-28T03:29:52.209Z | `44b3849` | `dpl_Cku5eD7NjX7RxTUwzRFp4S1aUQ5w` | shared/quiz-practice-scope.mjs、shared/quiz-workshop/generated/assets.json、grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html | `dpl_GSPbPesaUiJRk9SBjiXNH564kXwJ`／回滾 `dpl_Cku5eD7NjX7RxTUwzRFp4S1aUQ5w`（eolOnly 0） |
 
-四年級翰林社會首批 30 題已通過正式 OAuth 及逐題資料讀回。新增的期末自組卷篩選依書商單元分類。見[同批題庫收據](quiz-final-bank-ledger-20261127.md#四年級翰林社會多元飲食文化發布收據)。
+四年級翰林社會首批 30 題已通過正式 OAuth 及逐題資料讀回。新增的期末自組卷篩選依書商單元分類。正式學生入口由第 4 單元組出 5 題，重開及教材返回保留選答均通過。見[同批發布與入口收據](https://github.com/chianwu-hash/it-class-tcwu/pull/554#issuecomment-7233168327)。
 
 # 2026-11-28 練功坊選卷範圍盤點
 
