@@ -4,7 +4,7 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | codex-g4-wenao-final | 2026-11-28T08:32:51+00:00 | PR #589 | quiz-media v16／quiz-partner-pilot-media v2 | 私有考古卷供圖 Edge | 保留此前正式程式版本供回復，驗收收據列同一 PR |
+| 已完成（Supabase Edge 與題庫資料） | codex-g4-wenao-final | 2026-11-28 | `feff5ae7`（PR #589） | quiz-media v16／quiz-partner-pilot-media v2 | 文澳期末英語、私有考古卷供圖 | quiz-media v17／quiz-partner-pilot-media v3；[正式收據](https://github.com/chianwu-hash/it-class-tcwu/pull/589#issuecomment-7236695093) |
 | 已完成 | codex-g4-nani-science-20261128 | 2026-11-28T07:50:27.027Z | `6a36b8a` | `dpl_EoKaExaQgPj3A18Ev4ZFLCQw2Rvq` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-practice-scope.mjs、shared/quiz-workshop/generated/assets.json | `dpl_HJPA6J5ByZCqugGfj4giHLvGgEPs`／回滾 `dpl_EoKaExaQgPj3A18Ev4ZFLCQw2Rvq`（eolOnly 0） |
 
 四年級期末自然首批 68 題及學生入口已複驗，期中仍可選第 1、2 單元。 [第 587 號 PR 正式複驗收據](https://github.com/chianwu-hash/it-class-tcwu/pull/587#issuecomment-7236220093)
