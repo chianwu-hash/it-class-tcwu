@@ -5,6 +5,7 @@ import {createAuthenticatedTransport} from './quiz-transport.mjs?v=20261029-batc
 import {createMediaScope,configureQuizMedia} from './quiz-media.mjs';
 import {initImageLightbox} from './image-lightbox.js';
 import {provideNavIdentity} from './quiz-nav-identity.mjs';
+import {readPastStudyEntry,assertPastStudySource,assertPastStudySnapshot} from './quiz-past-study-entry.mjs';
 import {quizError} from './quiz-api.mjs?v=20261030-question-reports';
 const messages={invalid_response:'答案格式不符，請修改後再送出。',answer_too_fast:'請先看清這一組題目，再送出答案。',paper_unavailable:'這份考古題尚未開放，或不適用目前年級。',roster_required:'請使用名冊中的學生帳號。',student_required:'此入口僅供學生作答，教師請使用預覽入口。',attempt_unavailable:'無法讀取這次作答，請重新選擇試卷。',submission_conflict:'這組已有儲存紀錄，請更新後查看。'};
 Object.assign(messages,{draft_conflict:'另一個分頁已更新這次作答。請先保留本頁內容，再重新開啟查看最新草稿。',invalid_draft:'草稿內容超出限制或格式不符，請保留本頁並檢查作答。',attempt_complete:'這次作答已完成，請另開一次作答。',version_changed:'作答版本不符，請重新開啟這次作答。'});
@@ -32,8 +33,11 @@ export function initPastExam({selectors,server}){
   const token=generation;const auth=await import('./auth.js');if(token!==generation)return;
   transport=createAuthenticatedTransport({auth,getSession:()=>user});
   try{
+   const studyEntry=readPastStudyEntry(location.href,server.paperId);
+   if(studyEntry){const catalog=await rpc('list');if(token!==generation)return;assertPastStudySource(studyEntry,catalog);}
    const aid=new URLSearchParams(location.search).get('attempt');
    const next=await rpc(aid?'resume':'start',aid?{attempt_id:aid}:{request_id:crypto.randomUUID()});if(token!==generation)return;
+   assertPastStudySnapshot(studyEntry,next);
    state=next;const url=new URL(location.href);url.searchParams.set('attempt',state.attemptId);history.replaceState(null,'',url);viewed.clear();root.innerHTML=template;content.hidden=false;lock.hidden=true;updateScope();
    provideNavIdentity({userId:user.user.id,email:user.user.email,row:next.identity?.enrollment||next.identity,lookupIfIncomplete:true});
    root.querySelector('#paper-title').textContent=next.title;
@@ -45,7 +49,7 @@ export function initPastExam({selectors,server}){
     const result=await transport('/functions/v1/quiz-media',{action:'textbook',url,kind:'past',attempt_id:aid,version_id:version});
     if(context!==generation||state?.attemptId!==aid||state?.version!==version)throw Error('登入身分或題目已變更。');
     return result.url;
-   },onView,reportRequest});ui.load(next);
+   },onView,reportRequest});ui.load(next,{initialGroup:studyEntry?.groupId});
   }catch(e){if(token!==generation)return;lock.querySelector('[role="status"]').textContent=e.message;}
  },destroy(){clear();user=null;transport=null;}};
 }
