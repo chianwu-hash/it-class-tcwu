@@ -1,0 +1,578 @@
+{
+  "paper": "zhongzheng-114-1-g9-exam2-social",
+  "version": "c04c3b2f-552d-442c-ae06-f33274cf8c0e",
+  "sha256": "c221404596e31e1d23a925092ca1aefebecb5b0ed56ab2d83395075362a5b8dd",
+  "packs": [
+    {
+      "id": "unit-02a66076c740e276",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-31",
+          "group": "choice-31"
+        }
+      ],
+      "units": [
+        "unit-02a66076c740e276"
+      ]
+    },
+    {
+      "id": "unit-106354d92f8ef8e3",
+      "weight": 2,
+      "fields": [
+        {
+          "id": "choice-15",
+          "group": "choice-15"
+        },
+        {
+          "id": "choice-16",
+          "group": "choice-16"
+        }
+      ],
+      "units": [
+        "unit-106354d92f8ef8e3"
+      ]
+    },
+    {
+      "id": "unit-11866f32e9094dda",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-43",
+          "group": "choice-43"
+        }
+      ],
+      "units": [
+        "unit-11866f32e9094dda"
+      ]
+    },
+    {
+      "id": "unit-1cf12de08238e974",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-11",
+          "group": "choice-11"
+        }
+      ],
+      "units": [
+        "unit-1cf12de08238e974"
+      ]
+    },
+    {
+      "id": "unit-20e12923891fbc6e",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-49",
+          "group": "choice-49"
+        }
+      ],
+      "units": [
+        "unit-20e12923891fbc6e"
+      ]
+    },
+    {
+      "id": "unit-2394f11a33489c3a",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-02",
+          "group": "choice-02"
+        }
+      ],
+      "units": [
+        "unit-2394f11a33489c3a"
+      ]
+    },
+    {
+      "id": "unit-2627eea2ec9a84c6",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-03",
+          "group": "choice-03"
+        }
+      ],
+      "units": [
+        "unit-2627eea2ec9a84c6"
+      ]
+    },
+    {
+      "id": "unit-28d1e8e57180cc5e",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-01",
+          "group": "choice-01"
+        }
+      ],
+      "units": [
+        "unit-28d1e8e57180cc5e"
+      ]
+    },
+    {
+      "id": "unit-2995de78fdde75b1",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-34",
+          "group": "choice-34"
+        }
+      ],
+      "units": [
+        "unit-2995de78fdde75b1"
+      ]
+    },
+    {
+      "id": "unit-37a96d29ed052fe1",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-12",
+          "group": "choice-12"
+        }
+      ],
+      "units": [
+        "unit-37a96d29ed052fe1"
+      ]
+    },
+    {
+      "id": "unit-44e468221da821dc",
+      "weight": 2,
+      "fields": [
+        {
+          "id": "choice-40",
+          "group": "choice-40"
+        },
+        {
+          "id": "choice-41",
+          "group": "choice-41"
+        }
+      ],
+      "units": [
+        "unit-44e468221da821dc"
+      ]
+    },
+    {
+      "id": "unit-45912be28cf9e8ac",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-25",
+          "group": "choice-25"
+        }
+      ],
+      "units": [
+        "unit-45912be28cf9e8ac"
+      ]
+    },
+    {
+      "id": "unit-468ae1e277dceb0b",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-42",
+          "group": "choice-42"
+        }
+      ],
+      "units": [
+        "unit-468ae1e277dceb0b"
+      ]
+    },
+    {
+      "id": "unit-4d12131f947d3bfe",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-28",
+          "group": "choice-28"
+        }
+      ],
+      "units": [
+        "unit-4d12131f947d3bfe"
+      ]
+    },
+    {
+      "id": "unit-4ed3a921088599dd",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-48",
+          "group": "choice-48"
+        }
+      ],
+      "units": [
+        "unit-4ed3a921088599dd"
+      ]
+    },
+    {
+      "id": "unit-565f50e6bebf7f2d",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-26",
+          "group": "choice-26"
+        }
+      ],
+      "units": [
+        "unit-565f50e6bebf7f2d"
+      ]
+    },
+    {
+      "id": "unit-5895c65ff98285d8",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-09",
+          "group": "choice-09"
+        }
+      ],
+      "units": [
+        "unit-5895c65ff98285d8"
+      ]
+    },
+    {
+      "id": "unit-59f4d7dc7800a999",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-10",
+          "group": "choice-10"
+        }
+      ],
+      "units": [
+        "unit-59f4d7dc7800a999"
+      ]
+    },
+    {
+      "id": "unit-5ac4e848eb61d5e4",
+      "weight": 2,
+      "fields": [
+        {
+          "id": "choice-13",
+          "group": "choice-13"
+        },
+        {
+          "id": "choice-14",
+          "group": "choice-14"
+        }
+      ],
+      "units": [
+        "unit-5ac4e848eb61d5e4"
+      ]
+    },
+    {
+      "id": "unit-5e29e16f0c50402e",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-07",
+          "group": "choice-07"
+        }
+      ],
+      "units": [
+        "unit-5e29e16f0c50402e"
+      ]
+    },
+    {
+      "id": "unit-60dcd9c15b57500f",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-23",
+          "group": "choice-23"
+        }
+      ],
+      "units": [
+        "unit-60dcd9c15b57500f"
+      ]
+    },
+    {
+      "id": "unit-721cf9d2430f4740",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-27",
+          "group": "choice-27"
+        }
+      ],
+      "units": [
+        "unit-721cf9d2430f4740"
+      ]
+    },
+    {
+      "id": "unit-783f8720d4941933",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-24",
+          "group": "choice-24"
+        }
+      ],
+      "units": [
+        "unit-783f8720d4941933"
+      ]
+    },
+    {
+      "id": "unit-8a9dcf41171c6b63",
+      "weight": 3,
+      "fields": [
+        {
+          "id": "choice-37",
+          "group": "choice-37"
+        },
+        {
+          "id": "choice-38",
+          "group": "choice-38"
+        },
+        {
+          "id": "choice-39",
+          "group": "choice-39"
+        }
+      ],
+      "units": [
+        "unit-8a9dcf41171c6b63"
+      ]
+    },
+    {
+      "id": "unit-938fd524600551f5",
+      "weight": 3,
+      "fields": [
+        {
+          "id": "choice-44",
+          "group": "choice-44"
+        },
+        {
+          "id": "choice-45",
+          "group": "choice-45"
+        },
+        {
+          "id": "choice-46",
+          "group": "choice-46"
+        }
+      ],
+      "units": [
+        "unit-938fd524600551f5"
+      ]
+    },
+    {
+      "id": "unit-94b437048a1ee6dc",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-06",
+          "group": "choice-06"
+        }
+      ],
+      "units": [
+        "unit-94b437048a1ee6dc"
+      ]
+    },
+    {
+      "id": "unit-954b1f3025fc868b",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-04",
+          "group": "choice-04"
+        }
+      ],
+      "units": [
+        "unit-954b1f3025fc868b"
+      ]
+    },
+    {
+      "id": "unit-ac9d423da1bda7e5",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-29",
+          "group": "choice-29"
+        }
+      ],
+      "units": [
+        "unit-ac9d423da1bda7e5"
+      ]
+    },
+    {
+      "id": "unit-b041c6cd4d5c54dd",
+      "weight": 3,
+      "fields": [
+        {
+          "id": "choice-17",
+          "group": "choice-17"
+        },
+        {
+          "id": "choice-18",
+          "group": "choice-18"
+        },
+        {
+          "id": "choice-19",
+          "group": "choice-19"
+        }
+      ],
+      "units": [
+        "unit-b041c6cd4d5c54dd"
+      ]
+    },
+    {
+      "id": "unit-b08320f312d25c94",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-50",
+          "group": "choice-50"
+        }
+      ],
+      "units": [
+        "unit-b08320f312d25c94"
+      ]
+    },
+    {
+      "id": "unit-b152cbb21aabcaff",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-20",
+          "group": "choice-20"
+        }
+      ],
+      "units": [
+        "unit-b152cbb21aabcaff"
+      ]
+    },
+    {
+      "id": "unit-be5b19c394295859",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-36",
+          "group": "choice-36"
+        }
+      ],
+      "units": [
+        "unit-be5b19c394295859"
+      ]
+    },
+    {
+      "id": "unit-c0969925a6c399c1",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-30",
+          "group": "choice-30"
+        }
+      ],
+      "units": [
+        "unit-c0969925a6c399c1"
+      ]
+    },
+    {
+      "id": "unit-d886912ce7d4f770",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-33",
+          "group": "choice-33"
+        }
+      ],
+      "units": [
+        "unit-d886912ce7d4f770"
+      ]
+    },
+    {
+      "id": "unit-da44edcb343d2803",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-35",
+          "group": "choice-35"
+        }
+      ],
+      "units": [
+        "unit-da44edcb343d2803"
+      ]
+    },
+    {
+      "id": "unit-e2ceb0bdd79a7c4a",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-32",
+          "group": "choice-32"
+        }
+      ],
+      "units": [
+        "unit-e2ceb0bdd79a7c4a"
+      ]
+    },
+    {
+      "id": "unit-ed000fb500029558",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-05",
+          "group": "choice-05"
+        }
+      ],
+      "units": [
+        "unit-ed000fb500029558"
+      ]
+    },
+    {
+      "id": "unit-ee57e3cf6b3d1945",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-22",
+          "group": "choice-22"
+        }
+      ],
+      "units": [
+        "unit-ee57e3cf6b3d1945"
+      ]
+    },
+    {
+      "id": "unit-f4d7bab81dfb5240",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-21",
+          "group": "choice-21"
+        }
+      ],
+      "units": [
+        "unit-f4d7bab81dfb5240"
+      ]
+    },
+    {
+      "id": "unit-f8c6831e3b8b1973",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-08",
+          "group": "choice-08"
+        }
+      ],
+      "units": [
+        "unit-f8c6831e3b8b1973"
+      ]
+    },
+    {
+      "id": "unit-fb5108bce2248c7c",
+      "weight": 1,
+      "fields": [
+        {
+          "id": "choice-47",
+          "group": "choice-47"
+        }
+      ],
+      "units": [
+        "unit-fb5108bce2248c7c"
+      ]
+    }
+  ],
+  "blockedTargets": 0,
+  "unlistedAssessments": []
+}
