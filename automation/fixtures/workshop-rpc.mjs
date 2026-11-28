@@ -30,7 +30,7 @@ function partner(grade,user,kind){
   exercise:{mine:own,shared:[],notes:[],total:3,submitted:1,correct:1,gradedTotal:3,reviewOpen:false,finished:false,reviewers:[{user:'peer',text:'這是合成夥伴的示範回顧。'}],stories:[],award:null,privateDraft:{state:null,revision:0}},_peer:peer};
 }
 function publicRoom(room){const value=structuredClone(room);delete value._peer;return value;}
-export function fixtureRPC({route,body={},grade,user='a',namespace='default',roomKind='normal',study=false}){
+export function fixtureRPC({route,body={},grade,user='a',namespace='default',roomKind='normal',study=false,studyEntry=false}){
  if(route==='reset'){for(const key of stores.keys())if(key.startsWith(namespace+':'))stores.delete(key);return {};}
  if(!/^[a-zA-Z0-9_-]{1,70}$/.test(namespace)||![3,4,6,9].includes(Number(grade)))throw Error('invalid_preview_scope');
  if(route==='reset_preview'){for(const key of stores.keys())if(key.startsWith(namespace+':'+grade+':'))stores.delete(key);return {};}
@@ -73,8 +73,14 @@ export function fixtureRPC({route,body={},grade,user='a',namespace='default',roo
  if(route.includes('quiz_learning'))return {enabled:false};
  if(route.includes('quiz_question_report'))return {id:'synthetic-report'};
  if(route.includes('quiz_past_action')){
-  if(action==='list')return {papers:[]};
+  // Local synthetic questions only. Public release IDs let the real controller
+  // exercise its registered-navigation guard without proxying production data.
+  const studyRelease=grade===9&&['social114','social114-stale','social114-race'].includes(studyEntry);
+  const registeredVersion='c04c3b2f-552d-442c-ae06-f33274cf8c0e';
+  if(action==='list')return {papers:studyRelease?[{id:'zhongzheng-114-1-g9-exam2-social',grade:9,enabled:true,version:studyEntry==='social114-stale'?'synthetic-old':registeredVersion}]:[]};
   const state=store.past;
+  if(studyRelease)state.version=studyEntry==='social114-race'?'synthetic-old':registeredVersion;
+  if(studyRelease&&action==='resume'&&data.attempt_id!==state.attemptId)throw Error('attempt_unavailable');
   if(action==='view')return {};
   if(action==='save_draft'){state.draft={revision:state.draft.revision+1,groups:data.groups,currentGroup:data.current_group,updatedAt:new Date().toISOString()};return state.draft;}
   if(action==='restart'){store.past=past(grade,user);return store.past;}

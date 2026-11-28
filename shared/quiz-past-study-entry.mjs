@@ -10,7 +10,7 @@ export function partnerPastStudyHref(room, question) {
  const paper = room?.paperInfo?.past?.sourcePaper;
  const version = room?.paperInfo?.sourceVersion;
  const group = question?.past?.group;
- if (room?.paperInfo?.grade !== 9 || releases.get(paper) !== version || !validGroup(group)) return null;
+ if (room?.paperInfo?.grade !== 9 || !releases.has(paper) || releases.get(paper) !== version || !validGroup(group)) return null;
  const params = new URLSearchParams({paper, study_version:version, study_group:group});
  return '/grade9/115-1/past-exam.html?' + params;
 }

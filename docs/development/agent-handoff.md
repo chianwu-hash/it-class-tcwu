@@ -1,10 +1,16 @@
-# 九年級二段社會夥伴教材入口：共用契約審查
+# 九年級二段社會夥伴教材入口：發布準備
+
+## 發布登記
+
+| 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 發布中（合併後由腳本取鎖） | codex-g9-social-study115 | 2026-11-28 | PR #630 合併後的乾淨main，以start讀回為準 | `dpl_7ZgSAw1UcksrJU2FffPdMfyHRv3h` | 16個生成入口、3個既有JS模組、manifest及新增教材導向模組 | 尚未deploy／promote；回滾至基準正式 |
 
 - 目標：讓已核115教材的113／114社會夥伴題目另開本人原卷相同題組，答前可讀課本／教冊；保持小隊作答及既有媒體權限。
 - Codex持有本worktree全部寫入；Claude僅針對共用導向與版本競態唯讀審查，不修改、不部署、不讀憑證或私有題包。
 - 修改：`shared/quiz-past-study-entry.mjs`、`shared/quiz-past-exams.mjs`、`shared/quiz-past-ui.mjs`、`shared/partner-pilot/learning.js`、測試、生成入口／manifest及本批文件。
-- 本機15項測試及產物檢查通過；尚未發布。正式夥伴catalog另遇約8秒查詢逾時；已建113驗收房保留，未重送。詳見[候選與待辦](zhongzheng-g9-social-partner-study-entry-20261128.md)。
-- 下一步：只讀檢查版本綁定、開卷前後競態、同題組定位與草稿保留；實際DOM驗證後才進main及發布。正式多人與可靠配題仍待完成，不宣稱整個長線完成。
+- 本機17項測試、產物檢查、桌機／手機6項完整控制器情境與四年級群32入口合成回歸通過；兩張合成教材閱讀圖已目視核對。尚未發布。正式夥伴catalog另遇間歇查詢逾時；已建113驗收房保留，未重送。詳見[候選與待辦](zhongzheng-g9-social-partner-study-entry-20261128.md)。
+- 已合併main的選做題更新並重建產物，不覆蓋他人變更。下一步：main／乾淨checkout／發布腳本及完整比對，正式學生核教材與原作答，收據回同PR。正式多人與可靠配題仍待完成，不宣稱整個長線完成。
 
 # 六年級自然考古卷夥伴選做題發布
 
