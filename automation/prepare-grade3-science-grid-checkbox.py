@@ -93,6 +93,20 @@ def answer_indices(raw):
     return sorted(result)
 
 def ordinals_removed(text, keys):
+    # An answer-only clause may appear before the explanation of the unchecked cards.
+    recap = re.compile(
+        r"(?:^|[，。；;])\s*(?P<lead>所以|因此)?\s*"
+        r"(?P<before>跟風或空氣有關的是|打勾|勾)?\s*"
+        r"(?P<labels>[①②③④⑤⑥](?:\s*[、，和及與]\s*[①②③④⑤⑥])*)"
+        r"\s*(?P<after>(?:全都|全部|全)?(?:要)?打[ˇ勾√✓])?(?=[。；;，]|$)"
+    )
+
+    def remove_verified_recap(match):
+        printed = sorted(ORDINALS.index(c) + 1 for c in match["labels"] if c in ORDINALS)
+        has_action = match["before"] or match["after"]
+        return "" if printed == keys and has_action else match[0]
+
+    text = recap.sub(remove_verified_recap, text)
     # A final phase that only re-lists the marked cards is redundant.
     final=re.search(r"[，。；;]\s*(?:所以|因此)?([^。；;]*[①②③④⑤⑥][^。；;]*)。?$",text)
     if final and sorted(set(ORDINALS.index(c)+1 for c in final[1] if c in ORDINALS))==keys:
@@ -102,6 +116,7 @@ def ordinals_removed(text, keys):
             text=text[:final.start()].rstrip()+"。"
     text=re.sub(r"（[①②③④⑤⑥、和及與]+）","",text)
     text=re.sub(r"([①②③④⑤⑥])(?=[\u3400-\u9fff])","",text)
+    text=text.lstrip("。；;，").strip()
     rule(not re.search(r"[①②③④⑤⑥]|選項\s*[A-F1-6]",text) and len(text)>=18,"ordinal_explanation")
     return text
 
