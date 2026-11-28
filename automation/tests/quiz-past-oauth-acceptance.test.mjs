@@ -12,6 +12,12 @@ const book=randomUUID();
 const packageId=randomUUID();
 const h='f'.repeat(64);
 
+async function restoreBaselineIfInstalled(db) {
+ const check=await db.query("select to_regclass('public.quiz_past_acceptance_grants') as name");
+ if(check.rows[0].name) await db.exec(rollback);
+}
+
+
 test('私人考古驗收僅限指定 Google 學生和固定版本，課本、媒體、草稿、判分走正式入口',async()=>{
  const {db,uid,as}=await setupProductionQuizDB({snapshot:true});
  const call=async(n,action,data={})=>rpc(n,'quiz_past_action',[action,{paper_id:paper,...data}]);
@@ -31,6 +37,7 @@ test('私人考古驗收僅限指定 Google 學生和固定版本，課本、媒
      choices:[{id:'a',text:'甲'},{id:'b',text:'乙'}],
      fields:[{id:'q1',text:'選出甲。',points:1,label:'1',answer:'a'}]}],blocked:[]};
  try {
+   await restoreBaselineIfInstalled(db);
    await db.exec(migration);
    for (const n of [1,2,3,4,5]) {
      const email=n===1?'teacher@example.invalid':n+'@example.invalid';
@@ -115,6 +122,7 @@ test('尚未使用的驗收功能可完整回復正式函式、權限及資料�
    "select p.oid::regprocedure::text name,md5(pg_get_functiondef(p.oid)) fingerprint,p.proacl::text acl from pg_proc p where p.pronamespace='public'::regnamespace and p.prokind='f' order by name"
  )).rows;
  try{
+   await restoreBaselineIfInstalled(db);
    const original=await digest();
    await db.exec(migration);
    await db.exec(rollback);
