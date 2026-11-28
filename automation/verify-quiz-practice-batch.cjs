@@ -9,7 +9,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
  const plan=await readJson(file('plan')),ids=plan.ids;
  const {chromium}=require(process.env.QUIZ_PLAYWRIGHT_MODULE||'playwright');
  const browser=await chromium.connectOverCDP(process.env.CDP_URL,{timeout:12000});let page;
- const proof={packetSha,formalOAuth:true,samples:[]};
+ const proof={packetSha,formalOAuth:true,bookReadingDirection:readingDirection,samples:[]};
  try{
   const context=browser.contexts()[0];
   for(const candidate of context.pages()){
@@ -190,7 +190,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
     await book.locator('.qtb-book-toolbar select').selectOption(String(neighbor));await assertPage(neighbor);
     await book.getByRole('button',{name:'\u56de\u672c\u984c\u9801',exact:true}).click();await assertPage(ref.primary);
     await book.locator('#lightbox-close').click();await book.waitFor({state:'hidden'});await checkAnswer();
-    checks.push({width,pages:[ref.primary,neighbor],reading_direction:readingDirection,sha_verified:true,returned_to_primary:true,retained_answer_and_work:true});
+    checks.push({width,pages:[ref.primary,neighbor],sha_verified:true,returned_to_primary:true,retained_answer_and_work:true});
    }
    // Resume is checked before any submit; a saved exact response is never resent.
    if(!saved){await page.locator('#server-submit').click();await page.locator('#server-submit').waitFor({state:'detached'});}
