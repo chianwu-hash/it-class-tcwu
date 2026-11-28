@@ -337,6 +337,112 @@ def adapt_text_checklists(word, teacher_key, native, symbol_labels=None):
     return matching_rows_question(lines[0],None,[p[0] for p in parts],[p[2] for p in parts],require,[p[1] for p in parts])
 
 
+def adapt_reviewed_plain_social(prompt, teacher, item, review, native):
+    require = native.require
+    require(native.plain(prompt),"original_text_only")
+    word = prompt["text"]
+    code = item["QUES_TYPE"]
+    if code=="39":
+        slots = list(re.finditer(BLANK,word))
+        lead, separator, tail = word.partition("\n")
+        if separator and re.search(BLANK,lead) and "填入" in lead:
+            word = tail
+            slots = list(re.finditer(BLANK,word))
+        raw = teacher.rstrip("。").strip()
+        flexible = raw.endswith("（答案可不照順序）")
+        if flexible:
+            raw = raw.removesuffix("（答案可不照順序）").rstrip("。")
+        keys = [v.strip() for v in raw.split("、")]
+        require(len(slots)==len(keys)>0 and len(keys)<=8
+                and all(re.fullmatch(r"[\u3400-\u9fff]{1,20}",k) for k in keys),"teacher_text_blank_key")
+        answers,fields = {},[]
+        for i,value in enumerate(keys,1):
+            name = f"f{i}"
+            fields.append({"id":name,"input":"text","label":f"第 {i} 格"})
+            answers[name] = [value]
+        if flexible:
+            from itertools import permutations
+            require(len(keys)<=3 and len(set(keys))==len(keys),"teacher_text_blank_key")
+            names = list(answers)
+            for name in names:
+                answers[name] = list(keys)
+            variants = [dict(zip(names,values,strict=True)) for values in permutations(keys)]
+        rendered = iter(range(1,len(keys)+1))
+        text = re.sub(BLANK,lambda _:f"〔{next(rendered)}〕",word)
+        answer = {"format":"fields-v1","fields":answers}
+        if flexible:
+            answer["tuples"]=[{"fields":names,"accepted":variants}]
+        return {"type":"fields","prompt":{"text":text,"media":[]},"fields":fields,"answer":answer}
+
+    if code=="37":
+        require(teacher in native.SYMBOLS,"teacher_boolean_symbols")
+        labels,selected = ["○","╳"],"o1" if native.SYMBOLS[teacher] else "o2"
+    else:
+        chunks = re.split(f"([{CIRCLED}])",word)
+        word = chunks[0].strip()
+        markers,labels = chunks[1::2],[s.strip() for s in chunks[2::2]]
+        require("".join(markers)==CIRCLED[:len(labels)] and 2<=len(labels)<=8 and all(labels),"word_choice_alignment")
+        index = int(native.compact(teacher))-1
+        require(0<=index<len(labels),"teacher_choice_key")
+        duplicate = review.get("duplicate_distractor")
+        if duplicate:
+            keep,drop = duplicate
+            require(0<=keep<drop<len(labels) and index not in (keep,drop)
+                    and native.compact(labels[keep])==native.compact(labels[drop]),"word_duplicate_choice")
+            del labels[drop]
+            index -= int(drop<index)
+        require(len({native.compact(v).rstrip("。") for v in labels})==len(labels),"word_duplicate_choice")
+        selected = f"o{index+1}"
+    return {"type":"single","prompt":{"text":word.strip(),"media":[]},"options":options(labels),
+            "answer":{"option_id":selected}}
+
+
+def adapt_reviewed_social_media(prompt, teacher, review, native):
+    require = native.require
+    from quiz_native_docx import compact
+    mode = review["media_mode"]
+    if mode=="ordered_images":
+        images = [r for b in prompt["layout"] for r in b["runs"] if r["type"]=="image"]
+        nonempty = [line.strip() for line in prompt["text"].splitlines() if line.strip()]
+        choices = review["image_labels"]
+        labels = list(CIRCLED[:len(choices)])
+        keys = [token.strip() for token in teacher.split("→")]
+        require(len(nonempty)==2 and re.fullmatch(r"答[：:]\s*"+BLANK+r"(?:\s*→\s*"+BLANK+")*",nonempty[1])
+                and len({r["media_index"] for r in images})==len(images)==len(choices)==len(keys)
+                and list(sorted(keys))==labels,"teacher_sequence_key")
+        require([Path(prompt["media"][r["media_index"]]["url"]).stem for r in images]==review["image_hashes"],
+                "original_media_sha")
+        show = [{"type":"paragraph","runs":[{"type":"text","text":review["instruction"]}]}]
+        for code,label,img in zip(labels,choices,images,strict=True):
+            show.append({"type":"paragraph","runs":[{"type":"text","text":f"圖 {code} {label}"},img]})
+        field = {"id":"sequence","input":"sequence","label":"依流程排列","options":options([f"圖 {c} {v}" for c,v in zip(labels,choices,strict=True)])}
+        return {"type":"fields","prompt":compact(show,prompt["media"]),"fields":[field],
+                "answer":{"format":"fields-v1","fields":{"sequence":[[f"o{labels.index(v)+1}" for v in keys]]}}}
+
+    first = prompt["text"].splitlines()[0]
+    if mode=="image_fill_fields":
+        texts = [line.strip() for line in prompt["text"].splitlines() if line.strip()][1:]
+        keys = numbered_key(re.sub(r"\s+","",teacher),require)
+        require(len(keys)==len(texts)==3 and len(prompt["media"])==3
+                and all(line.startswith(code) and len(re.findall(BLANK,line))==1 for code,line in zip(CIRCLED,texts)),
+                "word_picture_blank")
+        fields,answers = [],{}
+        for i,v in enumerate(keys,1):
+            name=f"f{i}"
+            fields.append({"id":name,"input":"text","label":f"第 {i} 格"})
+            answers[name]=[v]
+        return {"type":"fields","prompt":prompt,"fields":fields,"answer":{"format":"fields-v1","fields":answers}}
+
+    require(mode=="parallel_image_choices" and len(prompt["media"])==1,"word_image_position")
+    # This source placed the next numbered subquestion on the last option line.
+    word = re.sub(r"(?<=[。！？])(?=["+CIRCLED+r"])", "\n", prompt["text"])
+    q = adapt_text_checklists(word,teacher,native)
+    img = [r for b in prompt["layout"] for r in b["runs"] if r["type"]=="image"]
+    require(len(img)==1 and q["prompt"]["text"]==first.strip(),"word_image_position")
+    q["prompt"] = compact([{"type":"paragraph","runs":[{"type":"text","text":first},img[0]]}],prompt["media"])
+    return q
+
+
 def adapt_illustrated_selection(prompt, teacher_key, native):
     """Reconstruct a single Word question with an ordered choice list and its illustrations."""
     require = native.require
@@ -437,6 +543,7 @@ def reviewed_illustrated_row(source, screen, item, metadata_keys, metadata_detai
     require = native.require
     sid = screen["source"]
     review = reviews[sid]
+    require(screen.get("type_code",item["QUES_TYPE"])==item["QUES_TYPE"],"publisher_question_type")
     require(native.sha(source)==screen["source_sha256"]==review["word_sha256"], "original_sha")
     target_path = output/sid
     target_path.mkdir(parents=True, exist_ok=True)
@@ -456,7 +563,7 @@ def reviewed_illustrated_row(source, screen, item, metadata_keys, metadata_detai
                 and native.sha(Path(spread["path"]))==spread["sha256"]==reference["spread_sha256"]
                 and native.compact(reference["anchor"])
                 and native.compact(reference["anchor"]) in native.compact(p["text"]), "original_textbook_mismatch")
-    layout = {"23":"text_matching_rows","40":"illustrated_matching","41":"illustrated_selection","44":"text_checklist","45":"text_checklist"}[item["QUES_TYPE"]]
+    layout = {"23":"text_matching_rows","40":"illustrated_matching","41":"illustrated_selection","44":"text_checklist","45":"text_checklist","37":"reviewed_plain","38":"reviewed_plain","39":"reviewed_plain"}[item["QUES_TYPE"]]
     if layout=="illustrated_matching":
         question = adapt_illustrated_matching(prompt,teacher,review,native)
     elif layout=="text_matching_rows":
@@ -465,6 +572,11 @@ def reviewed_illustrated_row(source, screen, item, metadata_keys, metadata_detai
     elif layout=="text_checklist":
         require(native.plain(prompt),"original_text_only")
         question = adapt_text_checklists(prompt["text"],teacher,native,review.get("symbol_labels"))
+    elif layout=="reviewed_plain":
+        question = adapt_reviewed_plain_social(prompt,teacher,item,review,native)
+    elif review.get("media_mode"):
+        question = adapt_reviewed_social_media(prompt,teacher,review,native)
+        layout = review["media_mode"]
     else:
         question = adapt_illustrated_selection(prompt,teacher,native)
     assets = {}
@@ -495,7 +607,7 @@ def main():
     md=read(args.metadata)
     if args.illustrated_selection_reviews:
         reviews = read(args.illustrated_selection_reviews)
-        screened = {r["source"]:r for r in read(args.source_screen) if r["source"] in reviews and r.get("type_code") in ("23","40","41","44","45")}
+        screened = {r["source"]:r for r in read(args.source_screen) if r["source"] in reviews}
         assert screened.keys()==reviews.keys()
         book = read(args.book)
     else:
