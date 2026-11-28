@@ -7,3 +7,12 @@
 只新增九年級入口，既有三／四／六年級的選卷流程保持。經 `build-quiz-workshop.mjs` 更新產物及指紋，從乾淨main依發布腳本上線後，再由正式學生首頁→選卷頁→考古題專區→新連結→已完成原卷→重點實測。正式結果待回填，不以語法或生成檢查冒稱學生驗收。
 
 回復可經PR移除此連結並重建產物，或依發布紀錄回到原基準部署；不改資料庫與已存作答。
+
+
+## 正式發布及入口驗收
+
+PR #654／#655由乾淨main `bf21eb2080d464b684a136e445eb0c60638b4cbb`發布為`dpl_CsvUENrtyDBMyap8V8KA6rpgproz`，18／0／0完整比對通過，eolOnly=0，alias相符且發布鎖已釋放。第一次候選因另一文件PR更新main而被守衛阻止promote，已釋放自己的鎖並從新建最新main重做，未繞過守衛。回滾基準為`dpl_AUUheQHf367M9szxoPqAfiJm4ng1`。
+
+正式Google OAuth從九年級首頁實際點選選卷頁、考古題專區新連結、本人已完成114社會卷，再展開自核地理重點；25個重點及兩題練習按鈕可見，桌機1280與手機390無頁面水平溢出。此次入口導覽沒有新增練習場次或作答；九組固定練習保存另見[社會正式收據](zhongzheng-g9-social57-formal-receipt-20261129.md)。證據SHA：`1fce55594ca556d2069cc6f50ae47156d3e0fde91c83f98be1d15d77a217fbce`。
+
+[本PR正式發布及驗收收據](https://github.com/chianwu-hash/it-class-tcwu/pull/654#issuecomment-7244173907)。
