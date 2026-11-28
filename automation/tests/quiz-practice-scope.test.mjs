@@ -52,6 +52,54 @@ test('考次收納不更改原學年度、開放狀態或整份卷，九年級�
  assert.match(practiceScopeOptions(9)[0][1],/第2次段考/);assert.match(practiceScopeBadge('after',{past:true}),/依原卷範圍/);
 });
 
+test('三年級翰林英語及康軒社會的期末單元由正式課程 ID 對應',()=>{
+ for(const [id,publisher,subject,after] of [
+  ['115-1-hanlin-g3-english','翰林','英語',[3,4,5]],
+  ['115-1-kang-g3-so','康軒','社會',[3,4]],
+ ]){
+  const course={id,grade:3,volume:'3年級上學期',subject};
+  for(const unit of [1,2])assert.equal(unitPracticeScope(course,{id:unit}),'before');
+  for(const unit of after)assert.equal(unitPracticeScope(course,{id:unit}),'after');
+  assert.equal(unitPracticeScope(course,{id:99}),'unknown');
+  const catalog={...course,school_year:'115',publisher,course_id:id,unit:after.join('、')};
+  assert.equal(paperPracticeScope({catalog}),'after');
+  assert.equal(paperPracticeScope({catalog:{...catalog,unit:'2、3'}}),'mixed');
+  for(const invalid of [{grade:6},{volume:'3年級下學期'},{publisher:'其他'},{subject:'其他'},{school_year:'114'}])
+   assert.equal(paperPracticeScope({catalog:{...catalog,...invalid}}),'unknown');
+ }
+});
+
+test('正式單元目錄的數字、列舉與範圍依完整內容分類',()=>{
+ const catalog={course_id:'115-1-hanlin-g3-math',school_year:'115',volume:'3年級上學期',publisher:'翰林',subject:'數學'};
+ const classify=unit=>paperPracticeScope({catalog:{...catalog,unit}});
+ for(const unit of ['6','6、7、9','第 6、9 單元｜生活應用','第 7 至 9 單元｜重量'])assert.equal(classify(unit),'after');
+ for(const unit of ['5、6','第 5 至 7 單元'])assert.equal(classify(unit),'mixed');
+ for(const unit of ['6、99','第 9 至 7 單元','期末綜合練習'])assert.equal(classify(unit),'unknown');
+ assert.equal(paperPracticeScope({catalog:{...catalog,course_id:undefined,unit:'5、6'}}),'mixed');
+ assert.equal(paperPracticeScope({catalog:{...catalog,course_id:'115-1-hanlin-g3-science',subject:'自然',unit:'3'}}),'after');
+});
+
+test('四年級五科的自組單元保留期中，九年級七科使用歷年第二次段考範圍',()=>{
+ for(const [grade,id,subject,unit,scope] of [
+  [4,'115-1-hanlin-g4-english','英語',2,'before'],[4,'115-1-hanlin-g4-social','社會',2,'before'],
+  [4,'115-1-kang-g4-chinese','國語',6,'before'],[4,'115-1-nani-g4-math','數學',5,'before'],
+  [4,'115-1-nani-g4-science','自然',2,'before'],[9,'115-1-g9-hanlin-chinese','國文',6,'after'],
+  [9,'115-1-g9-hanlin-math','數學',3,'after'],[9,'115-1-g9-hanlin-science','自然',11,'after'],
+  [9,'115-1-g9-kang-civics','公民',4,'after'],[9,'115-1-g9-kang-geography','地理',4,'after'],
+  [9,'115-1-g9-kang-history','歷史',2,'after'],[9,'115-1-g9-nani-english','英語',8,'after'],
+ ]){
+  const course={id,grade,subject,volume:grade+'年級上學期'};
+  assert.equal(unitPracticeScope(course,{id:unit}),scope);
+  assert.equal(unitPracticeScope(course,{id:99}),'unknown');
+  assert.equal(unitPracticeScope({...course,school_year:'114'},{id:unit}),'unknown');
+  assert.equal(unitPracticeScope({...course,subject:'其他'},{id:unit}),'unknown');
+  const own={catalog:{...course,course_id:id},generated:true,unit_ids:[unit]};
+  assert.equal(paperPracticeScope(own),scope);
+  assert.equal(paperPracticeScope({...own,generated:false}),'unknown');
+  assert.equal(paperPracticeScopeBasis(own),grade===9?'historical_reference':null);
+ }
+});
+
 test('115上康軒三年級國語依已核課本區分1–6及7–12課',()=>{
  const c={id:'115-1-kang-g3-ch',school_year:'115',grade:3,volume:'3年級上學期',publisher:'康軒',subject:'國語'};
  for(const id of [1,2,3,4,5,6])assert.equal(unitPracticeScope(c,{id}),'before');
