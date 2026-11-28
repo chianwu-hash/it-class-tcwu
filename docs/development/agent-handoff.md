@@ -1,8 +1,15 @@
+# 九年級二段社會57份固定配題：正式啟用及代表驗收通過
+
+- PR #652由乾淨main d7d56cf4執行資料交易；rehearsal回滾後零筆、activate後57份／114筆教材item／57個topic全量相符。原卷、map、教材及一般題池保持，不新增一般題池成員。
+- 正式OAuth由九年級入口進入9組／18個位置、17道不同原題；6筆教冊答前可讀、四張原圖HTTP SHA、正誤存答、原卷保持及390px停用快取的整份回顧通過。115教材不改為舊卷來源年；不改答前閱讀設定。
+- 固定配題資料交易未改函式；另以PR #654補主動重點入口並正式發布，完整比對及學生導覽通過。正式未執行detach／restore，回復證據為隔離庫；保留bank解除後回到擁有者編輯清單的影響已明記。
+- Codex持有本收據worktree的文件寫入。後續二段其他8卷／348欄、三段及正式夥伴雙人驗收仍待完成；PR #636 SQL與第二身分仍待回覆。[正式收據](zhongzheng-g9-social57-formal-receipt-20261129.md)。
+
 ## 發布登記
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | Codex-g9-active-entry-20261129 | 2026-11-29 | PR #654／2af0f6c0，含本登記PR之最新main | dpl_AUUheQHf367M9szxoPqAfiJm4ng1 | 九年級考古專區新增主動重點入口及必要生成指紋；18個網站檔 | 已核鎖為空且無其他發布中登記，下一步從新建乾淨main執行發布腳本；正式驗收待回填 |
+| 已完成 | Codex-g9-active-entry-20261129 | 2026-11-28T18:49:45.994Z | `bf21eb2` | `dpl_AUUheQHf367M9szxoPqAfiJm4ng1` | shared/quiz-library.mjs、shared/quiz-workshop/generated/assets.json、grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html | `dpl_CsvUENrtyDBMyap8V8KA6rpgproz`／回滾 `dpl_AUUheQHf367M9szxoPqAfiJm4ng1`（eolOnly 0） |
 
 # 九年級主動重點入口：補上考古專區連結
 

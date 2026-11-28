@@ -1,0 +1,276 @@
+{
+  "schema": "g9-social57-formal-receipt-v1",
+  "atUtc": "2026-11-28T18:55:59.524Z",
+  "status": "formal-fixed-practice-representative-acceptance-passed",
+  "sourcePR": 652,
+  "mainUsedForDataTransaction": "d7d56cf482f595aa86922af632e59b5f1809ea91",
+  "planSha256": "573214ab663b2b521f2d341dfc948b577176aee6bb8b9af22f435d20a7846a71",
+  "dataOnly": false,
+  "websiteDeployment": true,
+  "functionSQLChanged": false,
+  "originalPapers": 2,
+  "enabledPracticeBanks": 57,
+  "enabledVersions": 57,
+  "enabledPackages": 57,
+  "studyItems": 114,
+  "topicBindings": 57,
+  "uniqueOriginalPublisherSources": 81,
+  "practiceQuestionPositions": 114,
+  "generalTeacherPoolAdded": 0,
+  "materialsSchoolYear": 115,
+  "reusedBooks": 6,
+  "reusedPageRows": 61,
+  "uniqueGuidePageContents": 34,
+  "originalExistingMedia": 4,
+  "newMediaUploaded": 0,
+  "beforeAnswerGuideAccessPreserved": true,
+  "formalRehearsalRollbackReadbackPassed": true,
+  "formalActivationFullReadbackPassed": true,
+  "formalDetachRestorePerformed": false,
+  "detachRestoreEvidence": "僅原生PostgreSQL隔離庫；精確固定版本及歷史作答保持，未冒稱正式detach／restore。",
+  "oauth": {
+    "conversion": "program-batch",
+    "denominatorOriginalSources": 81,
+    "samplingRate": 0.03,
+    "minimumSources": 3,
+    "practiceCases": 9,
+    "questionPositionsSaved": 18,
+    "uniqueSourceQuestionsSaved": 17,
+    "beforeAnswerGuideLoadsWithHttpSha": 17,
+    "bookRecordsCovered": 6,
+    "uniqueOriginalImagesWithHttpSha": 4,
+    "desktopWidth": 1280,
+    "mobileWidth": 390,
+    "mobileCacheDisabledFullReview": true,
+    "mobileNoHorizontalOverflow": true,
+    "correctAndWrongSaved": true,
+    "reloadAndOriginalSourceStatePreserved": true,
+    "completedSourceNativeReviewAndManualBranch": true,
+    "dedicatedFixtureChanges": [
+      {
+        "year": 113,
+        "preservedSavedGroups": 3,
+        "addedGroups": 1
+      },
+      {
+        "year": 114,
+        "preservedSavedGroups": 3,
+        "addedGroups": 47
+      }
+    ]
+  },
+  "cases": [
+    {
+      "conceptId": "g9-social113-competition-price",
+      "mode": "wrong",
+      "practiceVersion": "7cb5ff6f-0217-48d4-9983-a2fba6c473e7",
+      "questionsSaved": 2,
+      "beforeAnswerGuideLoads": 1,
+      "originalImages": 0,
+      "evidenceSha256": "850a0385115df78803bbf7dd353136d1a0efc167b79189e3711fee1df7b4599d"
+    },
+    {
+      "conceptId": "g9-social113-religion-map",
+      "mode": "wrong",
+      "practiceVersion": "c4259383-0851-494b-a6a8-6dfd16428a4f",
+      "questionsSaved": 2,
+      "beforeAnswerGuideLoads": 2,
+      "originalImages": 0,
+      "evidenceSha256": "7e88fd9c1d242c6e3142bc11297994056a434701e127b6750d11607b3716f42a"
+    },
+    {
+      "conceptId": "g9-social113-us-industry",
+      "mode": "wrong",
+      "practiceVersion": "6aa98c42-8674-49ac-8e21-4bc0dc8c5eba",
+      "questionsSaved": 2,
+      "beforeAnswerGuideLoads": 2,
+      "originalImages": 2,
+      "evidenceSha256": "533482015d2bd461721fffc068f1b056991ba2f63cbea59b48f2da060702ae04"
+    },
+    {
+      "conceptId": "g9-social113-west-coast-fog",
+      "mode": "wrong",
+      "practiceVersion": "31c70342-e591-4b2a-ba24-3736db3cb435",
+      "questionsSaved": 2,
+      "beforeAnswerGuideLoads": 2,
+      "originalImages": 1,
+      "evidenceSha256": "2fed3f359ed52a60485ba07536a739893bc2ad3507971a23546cedece3a87cc3"
+    },
+    {
+      "conceptId": "g9-social114-consumer",
+      "mode": "wrong",
+      "practiceVersion": "0b2bb8f5-4e42-49b1-909c-1dfa58b76092",
+      "questionsSaved": 2,
+      "beforeAnswerGuideLoads": 2,
+      "originalImages": 0,
+      "evidenceSha256": "c8e4481d24fc8e72d51a47ba531d736dd2fb87f2220370a7d40f87b6d73d8b6d"
+    },
+    {
+      "conceptId": "g9-social114-industry",
+      "mode": "wrong",
+      "practiceVersion": "e7de8d5b-ff6d-4f38-b23f-99e587c4921c",
+      "questionsSaved": 2,
+      "beforeAnswerGuideLoads": 2,
+      "originalImages": 1,
+      "evidenceSha256": "2b80def169aa0c6e271e4301d0db14f143a66e25fec1cd5b029a0d3744f42bbe"
+    },
+    {
+      "conceptId": "g9-social114-manual-geography",
+      "mode": "review",
+      "practiceVersion": "4047729e-9764-43ab-9dfa-73342bbb61ad",
+      "questionsSaved": 2,
+      "beforeAnswerGuideLoads": 2,
+      "originalImages": 0,
+      "evidenceSha256": "4cc8ad040e511fdac9afb02de7787faaa4cd60c5d61d80a21bcf11599ce9126f"
+    },
+    {
+      "conceptId": "g9-social114-reformation",
+      "mode": "review",
+      "practiceVersion": "0fec879d-3490-47c5-9225-ec308c0537b9",
+      "questionsSaved": 2,
+      "beforeAnswerGuideLoads": 2,
+      "originalImages": 0,
+      "evidenceSha256": "a5f76c22f64a07fa601fc75a4a2c84c692c191108468b349776bf29690bc7237"
+    },
+    {
+      "conceptId": "g9-social114-responsibility",
+      "mode": "review",
+      "practiceVersion": "a0c234d0-252a-4c01-9bda-c1ee82bb76c0",
+      "questionsSaved": 2,
+      "beforeAnswerGuideLoads": 2,
+      "originalImages": 1,
+      "evidenceSha256": "42ba927fbae9c01975b8086edfe4ff66548a2dcd2656a1573675e3bd08b0d4a3"
+    }
+  ],
+  "evidence": [
+    {
+      "role": "social57-rehearsal-result",
+      "sha256": "935c961f12e76d2ed5bacda4a9db9447aaadfe09a4d013e5909a82cd860c5cb9"
+    },
+    {
+      "role": "social57-rehearsal-readback-proof",
+      "sha256": "c3205468642650d6feaa66908746e2a88f9dd9c2078e6656a5c40aae79f57395"
+    },
+    {
+      "role": "social57-activate-result",
+      "sha256": "9f213ead6c3ab156230740e03b3a87ba1c518c6b9571954e2555193733db0e84"
+    },
+    {
+      "role": "social57-activate-readback-proof",
+      "sha256": "52c68c6a1021b3f08994ec522d4a49a4850b97b79606ca1f1d5daa661e7da931"
+    },
+    {
+      "role": "all57-material-source-audit",
+      "sha256": "a03c96784e7b46341331af412e557319852553b84cdd68f78067a23355b4a5ef"
+    },
+    {
+      "role": "social57-pool-source-comparison",
+      "sha256": "58a1b4e8786dace8da06f5eded80d7259b55c578bd7df10270ce62761b97ff23"
+    },
+    {
+      "role": "social57-source-completion-proof",
+      "sha256": "ba769d57ef4c52d7cc4a135eab46327669453487c78e321f4522dbd1e1f899cb"
+    },
+    {
+      "role": "social57-mobile-cold-proof",
+      "sha256": "d8ffa4b58a0737c4a437b12fc50c9c5fc7b07f71a6b4b5a9f5076940ae7af522"
+    },
+    {
+      "role": "social57-oauth-g9-social113-competition-price-proof",
+      "sha256": "850a0385115df78803bbf7dd353136d1a0efc167b79189e3711fee1df7b4599d"
+    },
+    {
+      "role": "social57-oauth-g9-social113-religion-map-proof",
+      "sha256": "7e88fd9c1d242c6e3142bc11297994056a434701e127b6750d11607b3716f42a"
+    },
+    {
+      "role": "social57-oauth-g9-social113-us-industry-proof",
+      "sha256": "533482015d2bd461721fffc068f1b056991ba2f63cbea59b48f2da060702ae04"
+    },
+    {
+      "role": "social57-oauth-g9-social113-west-coast-fog-proof",
+      "sha256": "2fed3f359ed52a60485ba07536a739893bc2ad3507971a23546cedece3a87cc3"
+    },
+    {
+      "role": "social57-oauth-g9-social114-consumer-proof",
+      "sha256": "c8e4481d24fc8e72d51a47ba531d736dd2fb87f2220370a7d40f87b6d73d8b6d"
+    },
+    {
+      "role": "social57-oauth-g9-social114-industry-proof",
+      "sha256": "2b80def169aa0c6e271e4301d0db14f143a66e25fec1cd5b029a0d3744f42bbe"
+    },
+    {
+      "role": "social57-oauth-g9-social114-manual-geography-proof",
+      "sha256": "4cc8ad040e511fdac9afb02de7787faaa4cd60c5d61d80a21bcf11599ce9126f"
+    },
+    {
+      "role": "social57-oauth-g9-social114-reformation-proof",
+      "sha256": "a5f76c22f64a07fa601fc75a4a2c84c692c191108468b349776bf29690bc7237"
+    },
+    {
+      "role": "social57-oauth-g9-social114-responsibility-proof",
+      "sha256": "42ba927fbae9c01975b8086edfe4ff66548a2dcd2656a1573675e3bd08b0d4a3"
+    },
+    {
+      "role": "active-entry-release-proof",
+      "sha256": "925bffccc5c7f7971143a8e6ded7ef84bf48c3ddfe35575ff0f961f410d3616e"
+    },
+    {
+      "role": "active-entry-formal-proof",
+      "sha256": "1fce55594ca556d2069cc6f50ae47156d3e0fde91c83f98be1d15d77a217fbce"
+    }
+  ],
+  "limits": [
+    "每份兩題練習均明列固定的部分覆蓋界線，不代表整章完整覆蓋。",
+    "四張原圖重用既有舊儲存；教冊頁沿用私有Drive／Worker，沒有新圖上傳或遷移。",
+    "正式夥伴雙人送答及共同回顧仍待完成。",
+    "PR #636函式SQL尚未套用。",
+    "其他九年級二段考古科目及後續三段尚未完成。",
+    "本批里程碑不代表整個題庫及四項適用學生入口全部完成。"
+  ],
+  "dataTransactionOnly": true,
+  "entryDependency": {
+    "PR": 654,
+    "registrationPR": 655,
+    "main": "bf21eb2080d464b684a136e445eb0c60638b4cbb",
+    "deployment": "dpl_CsvUENrtyDBMyap8V8KA6rpgproz",
+    "rollback": "dpl_AUUheQHf367M9szxoPqAfiJm4ng1",
+    "comparison": {
+      "ok": true,
+      "changed": [
+        "grade3/115-1/partner-practice.html",
+        "grade3/115-1/past-exam.html",
+        "grade3/115-1/quiz-library.html",
+        "grade3/115-1/quiz.html",
+        "grade4/115-1/partner-practice.html",
+        "grade4/115-1/past-exam.html",
+        "grade4/115-1/quiz-library.html",
+        "grade4/115-1/quiz.html",
+        "grade6/115-1/partner-practice.html",
+        "grade6/115-1/past-exam.html",
+        "grade6/115-1/quiz-library.html",
+        "grade6/115-1/quiz.html",
+        "grade9/115-1/partner-practice.html",
+        "grade9/115-1/past-exam.html",
+        "grade9/115-1/quiz-library.html",
+        "grade9/115-1/quiz.html",
+        "shared/quiz-library.mjs",
+        "shared/quiz-workshop/generated/assets.json"
+      ],
+      "added": [],
+      "removed": [],
+      "eolOnly": 0,
+      "unexpected": [],
+      "missingFromChange": [],
+      "addedCheck": {
+        "missing": [],
+        "unexpected": []
+      },
+      "removedCheck": {
+        "missing": [],
+        "unexpected": []
+      }
+    },
+    "nativeFormalPathPassed": true
+  }
+}
