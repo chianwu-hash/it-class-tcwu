@@ -1,4 +1,4 @@
-import { signDriveImage } from '../quiz-media/drive-ticket.mjs';
+import { isRegisteredPastDriveImage, signDriveImage } from '../quiz-media/drive-ticket.mjs';
 
 const MAX = 20_000_000;
 const hex = bytes => [...bytes].map(b => b.toString(16).padStart(2, '0')).join('');
@@ -54,10 +54,11 @@ export function createHandler({ env, fetcher = fetch }) {
         || !Number.isInteger(media.bytes) || media.bytes < 1 || media.bytes > MAX
         || !/^[a-f0-9]{64}$/.test(media.sha256 || '')) return send(403, { error: 'MEDIA_DENIED' });
       let object;
-      // Match the existing quiz-media contract: past exams stay in Storage;
-      // native images follow the configured image backend, audio stays in Storage.
-      if (media.backend === 'auto' && env('QUIZ_IMAGE_BACKEND') === 'drive' && media.mime.startsWith('image/')) {
-        if (env('QUIZ_IMAGE_BACKEND') !== 'drive' || media.url?.split('/').at(-1) !== media.sha256) throw Error('MEDIA_UNAVAILABLE');
+      const driveEnabled = env('QUIZ_IMAGE_BACKEND') === 'drive';
+      const registeredPastImage = isRegisteredPastDriveImage(media);
+      if (registeredPastImage && !driveEnabled) throw Error('MEDIA_UNAVAILABLE');
+      if (driveEnabled && (registeredPastImage || (media.backend === 'auto' && media.mime.startsWith('image/')))) {
+        if (media.url?.split('/').at(-1) !== media.sha256) throw Error('MEDIA_UNAVAILABLE');
         const url = await signDriveImage({ url: media.url, mime: media.mime, bytes: media.bytes }, env);
         // Never send a Supabase service credential to the image Worker.
         object = await call(url);

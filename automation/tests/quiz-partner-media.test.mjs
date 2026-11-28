@@ -5,13 +5,13 @@ import { createHandler } from '../../supabase/functions/quiz-partner-pilot-media
 const bytes=Uint8Array.from([137,80,78,71,13,10,26,10]),hash=createHash('sha256').update(bytes).digest('hex');
 const room='00000000-0000-4000-8000-000000000001',alias='c'.repeat(64),origin='https://it-class-tcwu.vercel.app';
 const source='https://quiz-media.invalid/'+room+'/'+hash;
-function fixture({backend='auto',mime='image/png',imageBackend='drive',deny=false,corrupt=false,oversize=false}={}) {
+function fixture({backend='auto',mime='image/png',imageBackend='drive',deny=false,corrupt=false,oversize=false,path='g6-english-u3-20261030-'+hash}={}) {
  const calls=[];
  const env=n=>({SUPABASE_URL:'https://example.invalid',SUPABASE_ANON_KEY:'public',SUPABASE_SERVICE_ROLE_KEY:'private',QUIZ_IMAGE_BACKEND:imageBackend,QUIZ_DRIVE_ORIGIN:'https://dingxi-quiz-drive-library.nblm-book-audio.workers.dev',QUIZ_DRIVE_TICKET_KEY:'A'.repeat(43)})[n];
  const handler=createHandler({env,fetcher:async(url,options)=>{
   calls.push({url,options});
   if(url.endsWith('/auth/v1/user'))return Response.json({id:room});
-  if(url.includes('/rpc/'))return deny?Response.json({error:'denied'},{status:403}):Response.json({path:'g6-english-u3-20261030-'+hash,mime,bytes:bytes.length,sha256:hash,url:source,backend});
+  if(url.includes('/rpc/'))return deny?Response.json({error:'denied'},{status:403}):Response.json({path,mime,bytes:bytes.length,sha256:hash,url:source,backend});
   return new Response(corrupt?new Uint8Array(bytes.length):oversize?new Uint8Array(100):bytes);
  }});
  const request=(headers={})=>new Request('https://example.invalid/media',{method:'POST',headers:{origin,authorization:'Bearer student','content-type':'application/json',...headers},body:JSON.stringify({roomId:room,hash:alias})});
@@ -42,4 +42,17 @@ test('corrupt and oversized bytes never return image data',async()=>{
 test('untrusted origins and missing login are rejected before network',async()=>{
  const f=fixture();assert.equal((await f.handler(f.request({origin:'https://evil.invalid'}))).status,403);
  assert.equal((await f.handler(f.request({authorization:''}))).status,401);assert.equal(f.calls.length,0);
+});
+
+test('explicit past Drive images retain room authorization and never fall back to Storage',async()=>{
+ const path='drive-past/'+hash;
+ const authorized=fixture({backend:'supabase',path});
+ const response=await authorized.handler(authorized.request());
+ assert.equal(response.status,200);
+ assert(authorized.calls.at(-1).url.includes('/media/'+hash+'?ticket='));
+ for(const options of [{imageBackend:'supabase'},{mime:'audio/mpeg'},{path:'drive-past/'+'f'.repeat(64)},{deny:true}]){
+  const f=fixture({backend:'supabase',path,...options});
+  assert((await f.handler(f.request())).status>=400);
+  assert.equal(f.calls.length,2);
+ }
 });

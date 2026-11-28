@@ -1,5 +1,14 @@
 // Only metadata crosses Supabase; the Worker owns the private Drive allowlist.
 const encode = bytes => btoa(String.fromCharCode(...bytes)).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+export function isRegisteredPastDriveImage({ path, url, mime }) {
+  if (!path?.startsWith('drive-past/')) return false;
+  const hash = url?.match(/^https:\/\/quiz-media\.invalid\/[0-9a-f-]{36}\/([a-f0-9]{64})$/)?.[1];
+  if (!hash || !/^image\/(png|jpeg|webp|gif)$/.test(mime) || path !== 'drive-past/' + hash) {
+    throw new Error('media_unavailable');
+  }
+  return true;
+}
+
 export async function signDriveImage(asset, env) {
   const origin = env('QUIZ_DRIVE_ORIGIN'), secret = env('QUIZ_DRIVE_TICKET_KEY');
   if (origin !== 'https://dingxi-quiz-drive-library.nblm-book-audio.workers.dev'
