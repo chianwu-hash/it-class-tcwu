@@ -5631,6 +5631,82 @@
    "view_def": null
   },
   {
+   "acl": "{postgres=arwdDxtm/postgres}",
+   "columns": [
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "paper_id",
+     "not_null": true,
+     "type": "text"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "version_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "user_id",
+     "not_null": true,
+     "type": "uuid"
+    },
+    {
+     "default": "now()",
+     "generated": "",
+     "identity": "",
+     "name": "starts_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    },
+    {
+     "default": null,
+     "generated": "",
+     "identity": "",
+     "name": "expires_at",
+     "not_null": true,
+     "type": "timestamp with time zone"
+    }
+   ],
+   "constraints": [
+    {
+     "def": "CHECK (((expires_at > starts_at) AND (expires_at <= (starts_at + '02:00:00'::interval))))",
+     "name": "quiz_past_acceptance_grants_check"
+    },
+    {
+     "def": "FOREIGN KEY (paper_id) REFERENCES quiz_past_papers(id)",
+     "name": "quiz_past_acceptance_grants_paper_id_fkey"
+    },
+    {
+     "def": "PRIMARY KEY (paper_id, user_id)",
+     "name": "quiz_past_acceptance_grants_pkey"
+    },
+    {
+     "def": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+     "name": "quiz_past_acceptance_grants_user_id_fkey"
+    },
+    {
+     "def": "FOREIGN KEY (version_id) REFERENCES quiz_past_versions(id)",
+     "name": "quiz_past_acceptance_grants_version_id_fkey"
+    }
+   ],
+   "force_rls": false,
+   "indexes": [
+    "CREATE UNIQUE INDEX quiz_past_acceptance_grants_pkey ON public.quiz_past_acceptance_grants USING btree (paper_id, user_id)"
+   ],
+   "kind": "r",
+   "name": "quiz_past_acceptance_grants",
+   "rls": true,
+   "schema": "public",
+   "view_def": null
+  },
+  {
    "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
    "columns": [
     {
@@ -5796,6 +5872,14 @@
      "name": "max_score",
      "not_null": false,
      "type": "numeric"
+    },
+    {
+     "default": "false",
+     "generated": "",
+     "identity": "",
+     "name": "acceptance_only",
+     "not_null": true,
+     "type": "boolean"
     }
    ],
    "constraints": [
