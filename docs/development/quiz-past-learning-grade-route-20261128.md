@@ -8,6 +8,7 @@
 - 查詢參數保留同一次作答、版本、大題及小題，返回 `/grade{原卷年級}/115-1/quiz-library.html`。115-1 是現有正式入口契約；歷年參考卷的來源學年度不拿來取代學生入口學期。
 - [修正 SQL](../../supabase/quiz-past-learning-grade-route-fix-20261128.sql)及[回復 SQL](../../supabase/quiz-past-learning-grade-route-rollback-20261128.sql)均以完整函式定義指紋守衛。只接受已知前／後版本；遇到其他工作變更則拒絕，不覆蓋未知函式。
 - 原正式指紋 `588e36cb7015d20bb4a3797de71f916b`；候選 `074421da5937e369d97813f418900737`。2026-11-28 正式唯讀查詢確認仍為原指紋，九年級有 2 份啟用學習圖；這不是學生操作重現或發布收據。
+- 兩份 SQL 個別固定 `eol=lf`，避免 Windows checkout 改變 dollar-quoted 函式內容與完整指紋；不修改其他檔案的換行政策。
 
 ## 已做的驗證
 

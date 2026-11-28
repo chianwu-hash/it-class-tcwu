@@ -15,6 +15,7 @@ const definition=name=>{
 };
 const fix=fs.readFileSync('supabase/quiz-past-learning-grade-route-fix-20261128.sql','utf8');
 const rollback=fs.readFileSync('supabase/quiz-past-learning-grade-route-rollback-20261128.sql','utf8');
+assert(!fix.includes('\r')&&!rollback.includes('\r'),'guarded SQL must retain LF in a Windows checkout');
 const sourceMd5='588e36cb7015d20bb4a3797de71f916b',fixedMd5='074421da5937e369d97813f418900737';
 const hash=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
 
