@@ -33,3 +33,6 @@ automation/fixtures/partner-learning-snapshot-before-short.sql -text whitespace=
 # Function-definition guards must see the same dollar-quoted body on Windows.
 supabase/quiz-past-learning-grade-route-fix-20261128.sql text eol=lf
 supabase/quiz-past-learning-grade-route-rollback-20261128.sql text eol=lf
+
+supabase/quiz-partner-optional-bonus.sql text eol=lf
+supabase/quiz-partner-optional-bonus-rollback.sql text eol=lf

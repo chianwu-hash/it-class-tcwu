@@ -3,8 +3,9 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {setupProductionQuizDB} from '../fixtures/production-quiz-db.mjs';
 
-const migration = await readFile('supabase/quiz-partner-optional-bonus.sql', 'utf8');
-const rollback = await readFile('supabase/quiz-partner-optional-bonus-rollback.sql', 'utf8');
+const readMigration = async filename => (await readFile(filename, 'utf8')).replaceAll('\r\n', '\n');
+const migration = await readMigration('supabase/quiz-partner-optional-bonus.sql');
+const rollback = await readMigration('supabase/quiz-partner-optional-bonus-rollback.sql');
 const names = ['action_core', 'learning_snapshot_pre_message_media', 'team_rooms', 'required_progress'];
 
 test('夥伴選做題遷移可恢復原函式與權限，拒絕覆蓋換版後的函式', async () => {
