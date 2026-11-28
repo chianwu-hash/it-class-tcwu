@@ -271,6 +271,46 @@ def adapt_illustrated_selection(prompt, teacher_key, native):
             "answer":{"format":"fields-v1","fields":{"selected":[selected]}}}
 
 
+def adapt_illustrated_matching(prompt, teacher_key, review, native):
+    require = native.require
+    media = prompt["media"]
+    require(len(media)==1 and len(prompt["layout"])==1 and
+            [r["type"] for r in prompt["layout"][0]["runs"]]==["text","image"], "word_matching_layout")
+    require(Path(media[0]["url"]).stem==review["image_sha256"], "original_media_sha")
+    left,right = review["numbered_lines"],review["letter_lines"]
+    require(2<=len(left)<=8 and 2<=len(right)<=8 and all(v.strip() for v in [*left,*right])
+            and len(left)==len(set(map(native.compact,left)))
+            and len(right)==len(set(map(native.compact,right))), "word_matching_layout")
+    numbers = CIRCLED[:len(left)]
+    letters = "甲乙丙丁戊己庚辛"[:len(right)]
+    key = re.sub(r"\s+","",teacher_key)
+    if key.startswith(numbers[0]):
+        pairs = re.findall(f"([{numbers}])([{letters}])",key)
+        require("".join(a+b for a,b in pairs)==key and "".join(a for a,b in pairs)==numbers,
+                "teacher_matching_symbols")
+        answer = dict(pairs)
+    else:
+        matches = list(re.finditer(f"([{letters}])[:：]([{numbers}](?:[、,，][{numbers}])*)",key))
+        require("".join(m[0] for m in matches)==key and "".join(m[1] for m in matches)==letters,
+                "teacher_matching_symbols")
+        groups = [m.groups() for m in matches]
+        pairs = [(number,letter) for letter,codes in groups for number in re.split(r"[、,，]",codes)]
+        require(len(pairs)==len(numbers) and {n for n,_ in pairs}==set(numbers),"teacher_matching_symbols")
+        answer = dict(pairs)
+    fields, keys = [], {}
+    variants = options([f"{letter} {caption}" for letter,caption in zip(letters,right,strict=True)])
+    for i,(number,caption) in enumerate(zip(numbers,left,strict=True),1):
+        name=f"pair{i}"
+        fields.append({"id":name,"input":"single","label":f"{number} {caption}","options":variants})
+        keys[name] = [f"o{letters.index(answer[number])+1}"]
+    heading = prompt["layout"][0]["runs"][0]["text"].strip()
+    require(heading==review["original_instruction"] and review["instruction"].strip(),"original_prompt_mismatch")
+    from quiz_native_docx import compact
+    lead = {"type":"paragraph","runs":[{"type":"text","text":review["instruction"]},prompt["layout"][0]["runs"][1]]}
+    return {"type":"fields","prompt":compact([lead],media),"fields":fields,
+            "answer":{"format":"fields-v1","fields":keys}}
+
+
 def reviewed_illustrated_row(source, screen, item, metadata_keys, metadata_details, book, reviews, output, native):
     require = native.require
     sid = screen["source"]
@@ -294,7 +334,11 @@ def reviewed_illustrated_row(source, screen, item, metadata_keys, metadata_detai
                 and native.sha(Path(spread["path"]))==spread["sha256"]==reference["spread_sha256"]
                 and native.compact(reference["anchor"])
                 and native.compact(reference["anchor"]) in native.compact(p["text"]), "original_textbook_mismatch")
-    question = adapt_illustrated_selection(prompt,teacher,native)
+    layout = "illustrated_matching" if item["QUES_TYPE"]=="40" else "illustrated_selection"
+    if layout=="illustrated_matching":
+        question = adapt_illustrated_matching(prompt,teacher,review,native)
+    else:
+        question = adapt_illustrated_selection(prompt,teacher,native)
     assets = {}
     for img in question["prompt"]["media"]:
         name = img["url"].rsplit("/",1)[-1]
@@ -307,7 +351,7 @@ def reviewed_illustrated_row(source, screen, item, metadata_keys, metadata_detai
     question["explanation"]={"text":review["student_explanation"],"media":[]}
     return {"passed":True,"source":sid,"source_file":source.as_posix(),"source_sha256":screen["source_sha256"],
             "lesson":item["LESN_NUM"],"unit":int(item["LESN_NUM"][:2]),"knowledge":item["KNOW_SPOT"],
-            "difficulty":dict(A=-3,B=0,C=3)[item["DIFC_CODE"]],"layout":"illustrated_selection","question":question,
+            "difficulty":dict(A=-3,B=0,C=3)[item["DIFC_CODE"]],"layout":layout,"question":question,
             "references":[p["page"] for p in pages],"source_answer":teacher,"assets":assets}
 
 
@@ -323,7 +367,7 @@ def main():
     md=read(args.metadata)
     if args.illustrated_selection_reviews:
         reviews = read(args.illustrated_selection_reviews)
-        screened = {r["source"]:r for r in read(args.source_screen) if r["source"] in reviews and r.get("type_code")=="41"}
+        screened = {r["source"]:r for r in read(args.source_screen) if r["source"] in reviews and r.get("type_code") in ("40","41")}
         assert screened.keys()==reviews.keys()
         book = read(args.book)
     else:
