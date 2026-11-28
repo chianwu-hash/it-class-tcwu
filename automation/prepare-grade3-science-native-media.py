@@ -193,6 +193,29 @@ def printed_selection_key(text):
     raise ValueError("printed_selection_key")
 
 
+def teacher_printed_answer(path, require):
+    raw_word = path.read_bytes()
+    if raw_word.startswith(b"\x1f\x8b"):
+        raw_word = gzip.decompress(raw_word)
+    with zipfile.ZipFile(BytesIO(raw_word)) as teacher:
+        xml = ElementTree.fromstring(teacher.read("word/document.xml"))
+    namespace = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+    markup = "".join(node.text or "" for node in xml.iter()
+                     if node.tag in {namespace + "t", namespace + "instrText"})
+    markup = re.sub(r"eq\s*\\o\(○,([１２３４５６７８1-8])\)",
+                    lambda match: "①②③④⑤⑥⑦⑧"[int(match[1])-1], markup)
+    require(re.match(r"^\s*答案[：:]", markup), "teacher_key")
+    return re.sub(r"^\s*答案[：:]", "", markup)
+
+
+def checked_explanation(target, revision, require):
+    explanation = target["student_explanation"]
+    if revision is not None:
+        require(explanation == revision["original"] and revision["corrected"].strip(), "review_explanation_changed")
+        return revision["corrected"]
+    return explanation
+
+
 def visual_grid_selection(parent, targets, original, pages, legacy, docx, review):
     require = legacy.require
     native = parent["original_source"]["native_content"]
@@ -225,18 +248,7 @@ def visual_grid_selection(parent, targets, original, pages, legacy, docx, review
     stem = re.sub(r"(?:【[\s_＿]*】\s*)+$", "", raw[0]["stem"]).strip()
     require(legacy.normalize(stem) == legacy.normalize(prompt["text"]), "word_prompt")
 
-    raw_word = teacher_word.read_bytes()
-    if raw_word.startswith(b"\x1f\x8b"):
-        raw_word = gzip.decompress(raw_word)
-    with zipfile.ZipFile(BytesIO(raw_word)) as teacher:
-        xml = ElementTree.fromstring(teacher.read("word/document.xml"))
-    namespace = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
-    markup = "".join(node.text or "" for node in xml.iter()
-                     if node.tag in {namespace + "t", namespace + "instrText"})
-    markup = re.sub(r"eq\s*\\o\(○,([１２３４５６７８1-8])\)",
-                    lambda match: "①②③④⑤⑥⑦⑧"[int(match[1])-1], markup)
-    require(re.match(r"^\s*答案[：:]", markup), "teacher_key")
-    key = printed_selection_key(re.sub(r"^\s*答案[：:]", "", markup))
+    key = printed_selection_key(teacher_printed_answer(teacher_word, require))
     recorded = "；".join(a.strip() for group in raw[0]["answers"] for a in group if a.strip())
     require(key == printed_selection_key(recorded)
             == printed_selection_key(target["reference_answer"])
@@ -245,16 +257,81 @@ def visual_grid_selection(parent, targets, original, pages, legacy, docx, review
     require(selected == [label for label in labels if label in selected], "printed_selection_positions")
     require((mode == "circle" and "圈" in stem) or (mode == "check" and "ˇ" in stem), "word_selection_action")
 
-    explanation = target["student_explanation"]
-    if "explanation_review" in review:
-        revision = review["explanation_review"]
-        require(explanation == revision["original"] and revision["corrected"].strip(), "review_explanation_changed")
-        explanation = revision["corrected"]
+    explanation = checked_explanation(target, review.get("explanation_review"), require)
     options = list(map(legacy.plain, labels))
     keys = [labels.index(label) + 1 for label in selected]
     question = output_question("checkbox", prompt, options, keys, legacy.plain(explanation))
     return [{"target":target["target_id"],"refs":legacy.refs_for(target, original["unit"], pages),
              "question":question}], assets
+
+
+def visual_grid_matching(parent, targets, original, pages, legacy, docx, review):
+    require = legacy.require
+    native = parent["original_source"]["native_content"]
+    raw = native["questions"]
+    require(len(raw) == 1 and not raw[0]["options"] and not (native.get("preamble") or "").strip(),
+            "other_source_layout")
+    left, right = review["left"], review["right"]
+    labels = list("①②③④⑤⑥⑦⑧"[:len(left)])
+    codes = list("ㄅㄆㄇ"[:len(right)])
+    require(2 <= len(left) <= 8 and list(left) == labels and 2 <= len(right) <= 3 and list(right) == codes
+            and len(set(right.values())) == len(right), "printed_matching_domain")
+    require(len(targets) == len(labels) and all(t["kind"] == "matching"
+            and t["source_question_indices"] == [1] and len(t["positions"]) == 1 for t in targets), "source_position")
+
+    word = Path(original["question_docx"])
+    teacher = word.with_name("answer.docx.gz")
+    asset = parent["question_only_asset"]
+    snapshot = Path(asset["local_content"])
+    require(legacy.digest(snapshot) == asset["sha256"], "word_snapshot_missing")
+    require(legacy.digest(word) == original["question_docx_sha256"] == review["question_sha256"], "original_word_changed")
+    require(legacy.digest(teacher) == review["teacher_sha256"], "teacher_word_changed")
+    parsed = legacy.read(snapshot)
+    layout = parsed["layout"]
+    require(len(parsed["media"]) == 1 and 2 <= len(layout) <= 4
+            and all(block["type"] == "paragraph" for block in layout)
+            and all(run["type"] == "text" for block in layout[:-1] for run in block["runs"])
+            and [run["type"] for run in layout[-1]["runs"]] == ["image"], "other_source_layout")
+    assets = verify_assets(parsed, asset["images"], word, legacy)
+    require(next(iter(assets.values()))["sha256"] == review["image_sha256"], "printed_ordinal")
+    stem = re.sub(r"(?:【[\s_＿]*】\s*)+$", "", raw[0]["stem"]).strip()
+    require(legacy.normalize(stem) == legacy.normalize(parsed["text"]), "word_prompt")
+
+    keys = [label + review["matches"][label] for label in labels]
+    require(list(review["matches"]) == labels and all(key[1:] in right for key in keys), "printed_matching_domain")
+    recorded = "；".join(a.strip() for group in raw[0]["answers"] for a in group if a.strip())
+    require(keys == re.split(r"[；;]", teacher_printed_answer(teacher, require).strip())
+            == re.split(r"[；;]", recorded), "printed_matching_key")
+    by_label = {}
+    for target in targets:
+        position = target["positions"][0]
+        match = re.match(r"^第?([①②③④⑤⑥⑦⑧])", position.get("source_part_locator") or "")
+        require(match and match[1] not in by_label, "source_position")
+        by_label[match[1]] = target
+    require(set(by_label) == set(labels), "source_position")
+
+    first = "".join(run["text"] for run in layout[0]["runs"]).strip()
+    require(first == review["original_instruction"], "matching_instruction_changed")
+    instruction = review["display_instruction"].strip()
+    require(instruction, "matching_instruction_missing")
+    material = compact_layout([{"type":"paragraph","runs":[{"type":"text","text":instruction}]}, layout[-1]],
+                              parsed["media"], docx)
+    questions = []
+    for key in keys:
+        label, code = key
+        t = by_label[label]
+        position = t["positions"][0]
+        require(t["reference_answer"].strip() in (code, key)
+                and position["reference_value"].strip() in (code, key), "review_matching_key")
+        explanation = checked_explanation(t, review.get("explanations", {}).get(label), require)
+        caption = left[label] if review["printed_text_labels"] else ""
+        question = {"type":"fields", "prompt":legacy.plain(f"圖 {label}" + (f"　{caption}" if caption else "")),
+                    "fields":[{"id":"pair", "label":"配對答案", "input":"single",
+                               "options":[{"id":f"o{i}", "content":legacy.plain(right[c])} for i, c in enumerate(codes, 1)]}],
+                    "answer":{"format":"fields-v1", "fields":{"pair":[f"o{codes.index(code)+1}"]}},
+                    "explanation":legacy.plain(explanation)}
+        questions.append({"target":t["target_id"],"refs":legacy.refs_for(t, original["unit"], pages),"question":question})
+    return material, questions, assets
 
 
 def adapt(parent, targets, original, pages, legacy, docx):
@@ -352,12 +429,14 @@ def main():
         parser.add_argument("--"+name, type=Path,required=True)
     parser.add_argument("--visual-ordinals", type=Path)
     parser.add_argument("--visual-grid-selections", type=Path)
+    parser.add_argument("--visual-grid-matching", type=Path)
     args=parser.parse_args()
     legacy=load_module(args.legacy)
     docx=load_module(args.docx)
     visual_reviews = legacy.read(args.visual_ordinals) if args.visual_ordinals else {}
     grid_reviews = legacy.read(args.visual_grid_selections) if args.visual_grid_selections else {}
-    if visual_reviews.keys() & grid_reviews.keys():
+    matching_reviews = legacy.read(args.visual_grid_matching) if args.visual_grid_matching else {}
+    if len(set(visual_reviews) | set(grid_reviews) | set(matching_reviews)) != sum(map(len, (visual_reviews, grid_reviews, matching_reviews))):
         parser.error("the same source cannot use both visual review modes")
     sources={r["stable_id"]:r for r in legacy.read(args.source_catalog)["records"]}
     export=legacy.read(args.export)
@@ -384,6 +463,9 @@ def main():
             elif sid in grid_reviews:
                 rule = "visual_grid_selection"
                 qs, assets = visual_grid_selection(parent, group, source, pages, legacy, docx, grid_reviews[sid])
+            elif sid in matching_reviews:
+                rule = "visual_grid_matching"
+                material, qs, assets = visual_grid_matching(parent, group, source, pages, legacy, docx, matching_reviews[sid])
             elif len(group) > 1 and all(t["kind"] == "single_choice" for t in group):
                 rule = "shared_image_choices"
                 material, qs, assets = shared_image_choices(parent, group, source, pages, legacy, docx)
