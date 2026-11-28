@@ -1,6 +1,6 @@
 # 中正九年級二段114社會考古卷：115教材對照與正式個人驗收
 
-本批接續[113社會115教材正式驗收](zhongzheng-g9-exam2-social113-materials115-20261128.md)，處理114學年度原考古卷的50題。**115教材新版已啟用，正式個人考古入口、3題OAuth抽驗及38頁教冊實際供圖已通過；可靠配題與新版夥伴副本仍待處理，長線未完成。** [正式開始練習](https://it-class-tcwu.vercel.app/grade9/115-1/past-exam.html?paper=zhongzheng-114-1-g9-exam2-social)
+本批接續[113社會115教材正式驗收](zhongzheng-g9-exam2-social113-materials115-20261128.md)，處理114學年度原考古卷的50題。**115教材新版已啟用，正式個人考古入口、3題OAuth抽驗及38頁教冊實際供圖已通過；新版夥伴副本已啟用，正式多人驗收與可靠配題仍待完成，長線未完成。** [正式開始練習](https://it-class-tcwu.vercel.app/grade9/115-1/past-exam.html?paper=zhongzheng-114-1-g9-exam2-social)；[夥伴副本進度](zhongzheng-g9-exam2-social-partner115-20261128.md)。
 
 ## 正式個人驗收更新
 
