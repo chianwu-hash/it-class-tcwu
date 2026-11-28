@@ -1,6 +1,6 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {readFile} from 'node:fs/promises';
 import {quizLibraryForEnrollment,quizStudentRedirect,quizPageGrade} from '../../shared/quiz-grade-route.mjs';
-import {pastPaperDisplay} from '../../shared/quiz-past-catalog.mjs';
+import {pastPaperDisplay,pastPaperDisplays} from '../../shared/quiz-past-catalog.mjs';
 import {grade9FunctionChanges,buildGrade9Migration} from '../lib/quiz-grade9-migration.mjs';
 const browserModule=async file=>import('data:text/javascript;base64,'+Buffer.from(await readFile(new URL(file,import.meta.url),'utf8')).toString('base64'));
 
@@ -26,6 +26,21 @@ test('國中第二次段考及國小期末語意分開',()=>{
   assert.equal(pastPaperDisplay(p).shortTitle,'114上九年級第2次段考數學');
   assert.equal(pastPaperDisplay({...p,grade:4}).shortTitle,'114上四年級期末數學');
   assert.equal(pastPaperDisplay({...p,catalog:{subject:'國文'}}).shortTitle,'九年級考古題國文');
+});
+
+test('考古卷同名時保留校名，其他卷沿用簡稱',()=>{
+  const catalog={sourceYear:'114-1',exam:2,subject:'國語'};
+  const papers=[
+    {id:'deep',grade:4,title:'基隆深美114上四年級期末國語（康軒）',catalog},
+    {id:'wenao',grade:4,title:'澎湖文澳114上四年級期末國語（康軒）',catalog},
+    {id:'math',grade:4,title:'某校數學原卷',catalog:{...catalog,subject:'數學'}},
+  ];
+  const [deep,wenao,math]=pastPaperDisplays(papers);
+  assert.equal(deep.displayTitle,papers[0].title);
+  assert.equal(wenao.displayTitle,papers[1].title);
+  assert.equal(math.displayTitle,'114上四年級期末數學');
+  assert.deepEqual([deep.id,wenao.id,math.id],papers.map(paper=>paper.id));
+  assert.equal(pastPaperDisplays([papers[0]])[0].displayTitle,'114上四年級期末國語');
 });
 
 test('九年級遷移只接受預期來源，保留指紋檢查與可重複執行分支',()=>{

@@ -8,3 +8,15 @@ export function pastPaperDisplay(p){
  const c={...fallback,...p.catalog};
  return {...c,id:p.id,title:p.title,grade:p.grade,enabled:p.enabled!==false,shortTitle:`${(c.sourceYear||'').replace('-1','上')}${({3:'三',4:'四',6:'六',9:'九'}[p.grade]||p.grade)}年級${p.grade===9?(Number.isInteger(c.exam)&&c.exam>0?`第${c.exam}次段考`:'考古題'):c.exam===1?'期中':c.exam===2?'期末':''}${c.subject||''}`};
 }
+
+export function pastPaperDisplays(papers) {
+ const details = papers.map(pastPaperDisplay);
+ const titleCounts = new Map();
+ for (const { shortTitle } of details) {
+  titleCounts.set(shortTitle, (titleCounts.get(shortTitle) ?? 0) + 1);
+ }
+ return details.map(paper => ({
+  ...paper,
+  displayTitle: (titleCounts.get(paper.shortTitle) > 1 && paper.title) || paper.shortTitle
+ }));
+}
