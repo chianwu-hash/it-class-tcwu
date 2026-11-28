@@ -17,6 +17,8 @@ SUPPORTED_TYPES = {"11", "55", "56", "57"}
 DIFFICULTY = {"A": -3, "B": 0, "C": 3}
 SEMANTIC_MARKUP = {"drawing", "pict", "object", "ruby", "oMath", "oMathPara"}
 FORMAT_REFERENCES = re.compile(r"畫線|劃線|底線|加線|著色處|粗體|紅色|畫記處")
+PHONETIC_ANSWER = re.compile(r"注音(?:分別)?(?:是什麼|為何|是哪個)|注音錯誤")
+BOPOMOFO = re.compile(r"[\u3105-\u312f\u31a0-\u31bf]")
 
 def local_name(element):
     return element.tag.rsplit("}", 1)[-1]
@@ -100,6 +102,8 @@ def convert(record, source_root):
         prompt = prompt[:found[0].start()].strip()
         if not prompt or not all(options) or len(set(options)) != len(options):
             raise ValueError("empty_or_identical_original_options")
+        if qtype == "55" and ("「ˉ」" in prompt or PHONETIC_ANSWER.search(prompt) and not all(BOPOMOFO.search(option) for option in options)):
+            raise ValueError("requires_original_phonetic_rendering")
     solution = re.sub(r"^(?:詳解|解析)\s*[：:]\s*", "", solution).strip()
     return {
         "wordSha256": hashlib.sha256(original.read_bytes()).hexdigest(),
