@@ -90,6 +90,15 @@ test('四年級翰林社會自組卷依核對過的書商單元分類',()=>{
  assert.equal(paperPracticeScope({catalog}),'unknown');
 });
 
+test('四年級康軒國語自組卷依核對過的書商課次分類',()=>{
+ const course={id:'115-1-kang-g4-chinese',grade:4,publisher:'康軒',subject:'國語',volume:'4年級上學期',school_year:'115'};
+ for(const unit of [7,8,9,10,11,12])assert.equal(unitPracticeScope(course,{id:unit}),'after');
+ assert.equal(unitPracticeScope(course,{id:6}),'before');
+ assert.equal(unitPracticeScope(course,{id:13}),'unknown');
+ assert.equal(unitPracticeScope({...course,school_year:'114'},{id:7}),'unknown');
+ assert.equal(paperPracticeScope({catalog:{...course,course_id:course.id,unit:'第七課｜美味的一堂課'},generated:true}),'after');
+});
+
 test('四年級五科的自組單元保留期中，九年級七科使用歷年第二次段考範圍',()=>{
  for(const [grade,id,subject,unit,scope] of [
   [4,'115-1-hanlin-g4-english','英語',2,'before'],[4,'115-1-hanlin-g4-social','社會',2,'before'],
