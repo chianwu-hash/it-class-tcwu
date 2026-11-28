@@ -3986,7 +3986,7 @@ revoke all on function public.quiz_leaf_result_before_learning(uuid,boolean) fro
 grant execute on function public.quiz_leaf_result_before_learning(uuid,boolean) to postgres;
 grant execute on function public.quiz_leaf_result_before_learning(uuid,boolean) to service_role;
 
--- quiz_learning(jsonb)  md5=7a64a004c959dcf5b6a6ae5b7cae7673
+-- quiz_learning(jsonb)  md5=115473013ff4149652b76d0b426d917a
 CREATE OR REPLACE FUNCTION public.quiz_learning(p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -4006,10 +4006,10 @@ begin
  end if;
  if action='reviews' then
   select coalesce(jsonb_agg(jsonb_build_object('id',pa.id,'title',p.title,'score',pa.score,'max_score',pa.max_score,'paper_id',pa.paper_id,'created_at',pa.created_at) order by pa.created_at desc),'[]') into result
-  from public.quiz_past_attempts pa join public.quiz_past_papers p on p.id=pa.paper_id join public.quiz_learning_maps lm on lm.source_version=pa.version_id and lm.enabled where pa.user_id=auth.uid() and p.enabled and p.grade=(identity->>'grade')::integer and pa.completed_at is not null and pa.school_year=cfg.school_year and pa.semester=cfg.semester;
+  from public.quiz_past_attempts pa join public.quiz_past_papers p on p.id=pa.paper_id join public.quiz_learning_maps lm on lm.source_version=pa.version_id and lm.enabled where pa.user_id=auth.uid() and not pa.acceptance_only and p.enabled and p.grade=(identity->>'grade')::integer and pa.completed_at is not null and pa.school_year=cfg.school_year and pa.semester=cfg.semester;
   return jsonb_build_object('attempts',result);
  end if;
- select * into a from public.quiz_past_attempts where id=(p_data->>'attempt_id')::uuid and user_id=auth.uid();if a.id is null then raise exception 'attempt_unavailable';end if;
+ select * into a from public.quiz_past_attempts where id=(p_data->>'attempt_id')::uuid and user_id=auth.uid() and not acceptance_only;if a.id is null then raise exception 'attempt_unavailable';end if;
  if a.school_year is distinct from cfg.school_year or a.semester is distinct from cfg.semester or not exists(select 1 from public.quiz_past_papers p where p.id=a.paper_id and p.enabled and p.grade=(identity->>'grade')::integer) then raise exception 'course_unavailable';end if;
  select * into m from public.quiz_learning_maps where source_version=a.version_id and paper_id=a.paper_id and enabled;if m.source_version is null then raise exception 'learning_unavailable';end if;
  snap:=public.quiz_past_action('resume',jsonb_build_object('paper_id',a.paper_id,'attempt_id',a.id));
@@ -4173,7 +4173,7 @@ revoke all on function public.quiz_learning_wrong_detail(jsonb) from public, ano
 grant execute on function public.quiz_learning_wrong_detail(jsonb) to postgres;
 grant execute on function public.quiz_learning_wrong_detail(jsonb) to service_role;
 
--- quiz_learning_wrong_items(integer)  md5=4c23de22e897b10eccde977bf202d2a6
+-- quiz_learning_wrong_items(integer)  md5=307ab6079718bf1e79d0c1f3515cc538
 CREATE OR REPLACE FUNCTION public.quiz_learning_wrong_items(p_grade integer)
  RETURNS SETOF jsonb
  LANGUAGE sql
@@ -4184,7 +4184,7 @@ AS $function$
  from public.quiz_past_attempts a join public.quiz_past_versions v on v.id=a.version_id join public.quiz_past_papers p on p.id=a.paper_id join public.quiz_learning_maps m on m.source_version=a.version_id and m.enabled
  join public.quiz_past_answers an on an.attempt_id=a.id and an.correct=false join public.quiz_past_receipts r on r.attempt_id=a.id and r.group_id=an.group_id
  cross join lateral jsonb_array_elements(v.document->'groups') with ordinality groups(g,ord) cross join lateral jsonb_array_elements(g->'fields') with ordinality fields(f,ford)
- where a.user_id=auth.uid() and p.enabled and p.grade=p_grade and a.school_year=(select school_year from public.quiz_learning_settings where id) and a.semester=(select semester from public.quiz_learning_settings where id)
+ where a.user_id=auth.uid() and not a.acceptance_only and p.enabled and p.grade=p_grade and a.school_year=(select school_year from public.quiz_learning_settings where id) and a.semester=(select semester from public.quiz_learning_settings where id)
  and g->>'id'=an.group_id and f->>'id'=an.question_id and g->>'kind' not in('annotation','manual')
  and exists(select 1 from jsonb_array_elements(m.content->'questions') e where e->>'groupId'=an.group_id and e->>'questionId'=an.question_id and not coalesce((e->>'selfCheck')::boolean,false))
  and exists(select 1 from jsonb_array_elements(r.results) x where x->>'questionId'=an.question_id and x->>'correct'='false')
@@ -4349,7 +4349,7 @@ revoke all on function public.quiz_media_access_before_past(text,uuid) from publ
 grant execute on function public.quiz_media_access_before_past(text,uuid) to postgres;
 grant execute on function public.quiz_media_access_before_past(text,uuid) to service_role;
 
--- quiz_media_access_before_reports(text,uuid)  md5=4f8ac6502ef5bc43ba7528ff5bbcbdcc
+-- quiz_media_access_before_reports(text,uuid)  md5=40278db4465ae4f108acb5e046dea4e2
 CREATE OR REPLACE FUNCTION public.quiz_media_access_before_reports(p_url text, p_attempt uuid DEFAULT NULL::uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -4366,7 +4366,9 @@ begin
  select * into att from public.quiz_past_attempts where id=p_attempt;
  if att.id is null then return public.quiz_media_access_before_past(p_url,p_attempt);end if;
  identity:=public.quiz_student_identity();select * into paper from public.quiz_past_papers where id=att.paper_id;
- if att.user_id<>auth.uid() or identity->>'role' is distinct from 'student' or not paper.enabled or paper.grade<>(identity->>'grade')::integer then raise exception 'media_unavailable';end if;
+ if att.user_id<>auth.uid() or identity->>'role' is distinct from 'student' or (case when att.acceptance_only then
+  public.quiz_past_acceptance_version(paper.id) is distinct from att.version_id
+  else not paper.enabled end) or paper.grade<>(identity->>'grade')::integer then raise exception 'media_unavailable';end if;
  select document into d from public.quiz_past_versions where id=att.version_id;
  if not public.quiz_past_has_media(d,p_url) and not exists(select 1 from jsonb_array_elements(d->'groups') g where g->>'referenceUrl'=p_url and exists(select 1 from public.quiz_past_receipts r where r.attempt_id=att.id and r.group_id=g->>'id' and r.status='self_checked')) then raise exception 'media_unavailable';end if;
  select * into asset from public.quiz_media_assets where url=p_url and owner_id=paper.owner_id;if asset.url is null then raise exception 'media_unavailable';end if;
@@ -4988,6 +4990,28 @@ grant execute on function public.quiz_partner_rewards(text) to postgres;
 grant execute on function public.quiz_partner_rewards(text) to service_role;
 grant execute on function public.quiz_partner_rewards(text) to authenticated;
 
+-- quiz_past_acceptance_version(text)  md5=5b8f678e0a62fac94c2bb4b562d7d0c1
+CREATE OR REPLACE FUNCTION public.quiz_past_acceptance_version(pid text)
+ RETURNS uuid
+ LANGUAGE sql
+ STABLE
+ SET search_path TO ''
+AS $function$
+ SELECT g.version_id
+ FROM public.quiz_past_acceptance_grants g
+ JOIN public.quiz_past_papers p ON p.id=g.paper_id AND NOT p.enabled AND p.active_version IS NULL
+ JOIN public.quiz_past_versions v ON v.id=g.version_id AND v.paper_id=p.id
+ JOIN auth.users u ON u.id=g.user_id AND u.email_confirmed_at IS NOT NULL AND u.raw_app_meta_data->'providers' ? 'google'
+ WHERE g.user_id=auth.uid() AND g.paper_id=pid
+   AND g.starts_at<=statement_timestamp() AND g.expires_at>statement_timestamp()
+   AND EXISTS (
+     SELECT 1 FROM public.student_enrollments e WHERE e.email=lower(u.email)
+       AND e.school_year=p.school_year AND left(e.class_code,1)=p.grade::text
+   )
+$function$;
+revoke all on function public.quiz_past_acceptance_version(text) from public, anon, authenticated, service_role;
+grant execute on function public.quiz_past_acceptance_version(text) to postgres;
+
 -- quiz_past_action(text,jsonb)  md5=57b26a04b90792f892ce812d50644465
 CREATE OR REPLACE FUNCTION public.quiz_past_action(p_action text, p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
@@ -5036,7 +5060,7 @@ grant execute on function public.quiz_past_action(text,jsonb) to postgres;
 grant execute on function public.quiz_past_action(text,jsonb) to authenticated;
 grant execute on function public.quiz_past_action(text,jsonb) to service_role;
 
--- quiz_past_action_before_drafts(text,jsonb)  md5=79ae9c807de6cd4084549a02b97bbfe3
+-- quiz_past_action_before_drafts(text,jsonb)  md5=62a8f2a6bdab8fb11a8b190575d6e4c1
 CREATE OR REPLACE FUNCTION public.quiz_past_action_before_drafts(p_action text, p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -5044,7 +5068,7 @@ CREATE OR REPLACE FUNCTION public.quiz_past_action_before_drafts(p_action text, 
  SET search_path TO ''
 AS $function$
 #variable_conflict use_variable
-declare identity jsonb;paper public.quiz_past_papers;att public.quiz_past_attempts;prior public.quiz_past_receipts;d jsonb;g jsonb;f jsonb;r jsonb;v jsonb;correct boolean;canonical jsonb:='[]';results jsonb:='[]';n integer:=0;score numeric:=0;mx numeric;aid uuid;rid uuid;viewed public.quiz_past_views;elapsed numeric;min_seconds numeric;gid text;
+declare identity jsonb; qa_version uuid; paper public.quiz_past_papers;att public.quiz_past_attempts;prior public.quiz_past_receipts;d jsonb;g jsonb;f jsonb;r jsonb;v jsonb;correct boolean;canonical jsonb:='[]';results jsonb:='[]';n integer:=0;score numeric:=0;mx numeric;aid uuid;rid uuid;viewed public.quiz_past_views;elapsed numeric;min_seconds numeric;gid text;
 begin
  if auth.uid() is null then raise exception 'login_required';end if;
  if p_action in('preview','preview_list') then
@@ -5057,19 +5081,29 @@ begin
  identity:=public.quiz_student_identity();if identity->>'role' is distinct from 'student' then raise exception 'roster_required';end if;
  if p_action='list' then return jsonb_build_object('identity',identity,'papers',coalesce((select jsonb_agg(jsonb_build_object('id',p.id,'title',p.title,'version',p.active_version,'grade',p.grade,'enabled',p.enabled,'catalog',v.document->'catalog') order by p.id) from public.quiz_past_papers p join public.quiz_past_versions v on v.id=p.active_version and v.paper_id=p.id where p.grade=(identity->>'grade')::integer and p.school_year=115 and p.semester=1),'[]'));end if;
  select * into paper from public.quiz_past_papers where id=p_data->>'paper_id' for share;
- if paper.id is null or not paper.enabled or paper.grade<>(identity->>'grade')::integer or paper.school_year<>115 or paper.semester<>1 then raise exception 'paper_unavailable';end if;
+ if not paper.enabled then qa_version:=public.quiz_past_acceptance_version(paper.id);end if;
+ if paper.id is null or (not paper.enabled and qa_version is null)
+    or paper.grade<>(identity->>'grade')::integer or paper.school_year<>115 or paper.semester<>1
+ then raise exception 'paper_unavailable';end if;
  if p_action in('start','restart') then
   rid:=(p_data->>'request_id')::uuid;if rid is null then raise exception 'invalid_request';end if;
   -- Retry of a lost start response returns the exact existing attempt, even after a later revision.
   perform pg_advisory_xact_lock(hashtextextended(auth.uid()::text||':'||paper.id,0));
   select * into att from public.quiz_past_attempts where user_id=auth.uid() and paper_id=paper.id and start_request=rid;
-  if att.id is null and p_action='start' then select * into att from public.quiz_past_attempts where user_id=auth.uid() and paper_id=paper.id and school_year=paper.school_year and semester=paper.semester and (paper.grade<>9 or version_id=paper.active_version) and completed_at is null order by created_at desc limit 1;end if;
-  if att.id is null then insert into public.quiz_past_attempts(paper_id,version_id,user_id,school_year,semester,start_request) values(paper.id,paper.active_version,auth.uid(),paper.school_year,paper.semester,rid) returning * into att;end if;
+  if att.id is not null and (att.acceptance_only is distinct from (qa_version is not null)
+    or (qa_version is not null and att.version_id is distinct from qa_version))
+  then raise exception 'attempt_unavailable';end if;
+  if att.id is null and p_action='start' then select * into att from public.quiz_past_attempts where user_id=auth.uid() and paper_id=paper.id and school_year=paper.school_year and semester=paper.semester and acceptance_only=(qa_version is not null)
+   and (case when qa_version is not null then version_id=qa_version else paper.grade<>9 or version_id=paper.active_version end)
+   and completed_at is null order by created_at desc limit 1;end if;
+  if att.id is null then insert into public.quiz_past_attempts(paper_id,version_id,user_id,school_year,semester,start_request,acceptance_only) values(paper.id,coalesce(qa_version,paper.active_version),auth.uid(),paper.school_year,paper.semester,rid,qa_version is not null) returning * into att;end if;
   return public.quiz_past_snapshot(att.id)||jsonb_build_object('identity',identity);
  end if;
  aid:=(p_data->>'attempt_id')::uuid;
  select * into att from public.quiz_past_attempts where id=aid and user_id=auth.uid() and paper_id=paper.id for update;
- if att.id is null then raise exception 'attempt_unavailable';end if;
+ if att.id is null or att.acceptance_only is distinct from (qa_version is not null)
+    or (qa_version is not null and att.version_id is distinct from qa_version)
+ then raise exception 'attempt_unavailable';end if;
  select document into d from public.quiz_past_versions where id=att.version_id;
  if p_action='resume' then return public.quiz_past_snapshot(aid)||jsonb_build_object('identity',identity);end if;
  gid:=p_data->>'group_id';select x into g from jsonb_array_elements(d->'groups') x where x->>'id'=gid;if g is null then raise exception 'group_unavailable';end if;
@@ -5106,7 +5140,7 @@ begin
  update public.quiz_past_attempts set score=score,max_score=mx where id=aid;
  if not exists(select 1 from jsonb_array_elements(d->'groups') required where required->'optional' is distinct from 'true'::jsonb and not exists(select 1 from public.quiz_past_receipts r where r.attempt_id=aid and r.group_id=required->>'id')) then
   update public.quiz_past_attempts set completed_at=coalesce(completed_at,clock_timestamp()) where id=aid;
-  if mx>0 and score*100>=mx*60 then
+  if not att.acceptance_only and mx>0 and score*100>=mx*60 then
    insert into public.quiz_past_leaves(user_id,paper_id,school_year,semester,attempt_id) values(auth.uid(),paper.id,att.school_year,att.semester,aid) on conflict(user_id,paper_id,school_year,semester) do nothing;
   end if;
  end if;
@@ -5351,7 +5385,7 @@ revoke all on function public.quiz_past_snapshot(uuid) from public, anon, authen
 grant execute on function public.quiz_past_snapshot(uuid) to postgres;
 grant execute on function public.quiz_past_snapshot(uuid) to service_role;
 
--- quiz_past_snapshot_before_drafts(uuid)  md5=074421da5937e369d97813f418900737
+-- quiz_past_snapshot_before_drafts(uuid)  md5=3af1301e1efc2fd6214cdc966f4f6594
 CREATE OR REPLACE FUNCTION public.quiz_past_snapshot_before_drafts(p_attempt uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -5361,11 +5395,13 @@ AS $function$
 declare data jsonb;m public.quiz_learning_maps;e jsonb;r jsonb;g jsonb;items jsonb;href text;doc jsonb;f jsonb;begin
  data:=public.quiz_past_snapshot_before_learning(p_attempt);
  -- Old attempts remain readable, with a clear way to open the revised paper.
- if exists(select 1 from public.quiz_past_attempts a join public.quiz_past_papers p on p.id=a.paper_id where a.id=p_attempt and p.grade=9 and p.active_version::text is distinct from data->>'version') then
+ if exists(select 1 from public.quiz_past_attempts a join public.quiz_past_papers p on p.id=a.paper_id where a.id=p_attempt and not a.acceptance_only and p.grade=9 and p.active_version::text is distinct from data->>'version') then
   data:=jsonb_set(data,'{groups}',(select jsonb_agg(jsonb_set(x,'{notice}',to_jsonb('這是更新前的舊版作答，原紀錄已保留。要練習新版，請展開「成績紀錄與重新作答」，按「另開一次作答」或「重新作答」。 '||coalesce(x->>'notice',''))) order by ord) from jsonb_array_elements(data->'groups') with ordinality q(x,ord)));
  end if;
 
- select * into m from public.quiz_learning_maps where source_version=(data->>'version')::uuid and enabled;
+ select * into m from public.quiz_learning_maps where source_version=(data->>'version')::uuid and (enabled or exists (
+  select 1 from public.quiz_past_attempts a where a.id=p_attempt and a.user_id=auth.uid()
+    and a.acceptance_only and public.quiz_past_acceptance_version(a.paper_id)=a.version_id));
  if m.source_version is null then
   if data->'records'='{}'::jsonb then return data;end if;
   select document into doc from public.quiz_past_versions where id=(data->>'version')::uuid;
@@ -5402,7 +5438,7 @@ revoke all on function public.quiz_past_snapshot_before_drafts(uuid) from public
 grant execute on function public.quiz_past_snapshot_before_drafts(uuid) to postgres;
 grant execute on function public.quiz_past_snapshot_before_drafts(uuid) to service_role;
 
--- quiz_past_snapshot_before_flowers(uuid)  md5=cfdca6b8722433bf295ca63e129a4ae7
+-- quiz_past_snapshot_before_flowers(uuid)  md5=ca138495273fbf41d6431c356a21bf5d
 CREATE OR REPLACE FUNCTION public.quiz_past_snapshot_before_flowers(aid uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -5425,7 +5461,7 @@ begin
  select coalesce(sum((df->>'points')::numeric),0),count(*) into mx,total from jsonb_array_elements(d->'groups') dg cross join lateral jsonb_array_elements(dg->'fields') df where dg->>'kind' not in('annotation','manual');
  if exists(select 1 from public.quiz_past_receipts where attempt_id=aid and status='self_checked') then drawing:='self_checked';end if;
  select attempt_id into award from public.quiz_past_leaves where user_id=auth.uid() and paper_id=att.paper_id and school_year=att.school_year and semester=att.semester;
- select coalesce(jsonb_agg(jsonb_build_object('id',a.id,'version_id',a.version_id,'created_at',a.created_at,'completed_at',a.completed_at,'complete',a.completed_at is not null,'score',coalesce(a.score,0),'max_score',a.max_score,'passed',case when a.completed_at is null then null else a.max_score>0 and a.score*100>=a.max_score*60 end,'earned_leaf',a.id=award) order by a.created_at,a.id),'[]') into history from public.quiz_past_attempts a where a.user_id=auth.uid() and a.paper_id=att.paper_id and a.school_year=att.school_year and a.semester=att.semester;
+ select coalesce(jsonb_agg(jsonb_build_object('id',a.id,'version_id',a.version_id,'created_at',a.created_at,'completed_at',a.completed_at,'complete',a.completed_at is not null,'score',coalesce(a.score,0),'max_score',a.max_score,'passed',case when a.completed_at is null then null else a.max_score>0 and a.score*100>=a.max_score*60 end,'earned_leaf',a.id=award) order by a.created_at,a.id),'[]') into history from public.quiz_past_attempts a where a.user_id=auth.uid() and a.paper_id=att.paper_id and a.acceptance_only=att.acceptance_only and a.school_year=att.school_year and a.semester=att.semester;
  return jsonb_build_object('version',att.version_id,'title',d->'title','policy',jsonb_build_object('automaticPoints',mx,'manualPoints',(select coalesce(sum((pf->>'points')::numeric),0) from jsonb_array_elements(d->'groups') pg cross join lateral jsonb_array_elements(pg->'fields') pf where pg->>'kind' in('annotation','manual')),'blockedPoints',(select coalesce(sum((b->>'points')::numeric),0) from jsonb_array_elements(coalesce(d->'blocked','[]')) b),'blockedFields',jsonb_array_length(coalesce(d->'blocked','[]'))),'groups',safe,'records',records,'attemptId',aid,'summary',jsonb_build_object('score',score,'max',mx,'answered',answered,'total',total,'drawingStatus',drawing),
   'practice',jsonb_build_object('localOnly',false,'eligible',mx>0,'thresholdPercent',60,'complete',att.completed_at is not null,'leafCount',case when award is null then 0 else 1 end,'earnedByThisAttempt',award=aid,'history',history));
 end $function$;
@@ -5550,7 +5586,7 @@ revoke all on function public.quiz_pool_study_source_guard() from public, anon, 
 grant execute on function public.quiz_pool_study_source_guard() to postgres;
 grant execute on function public.quiz_pool_study_source_guard() to service_role;
 
--- quiz_question_report(jsonb)  md5=4cd12b935a83c67e45cdbb0b3596bd6d
+-- quiz_question_report(jsonb)  md5=a37a7280000aeca728616d392d7c004b
 CREATE OR REPLACE FUNCTION public.quiz_question_report(p_data jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -5596,7 +5632,7 @@ begin
     'number',(select ord from jsonb_array_elements_text(a.question_order) with ordinality x(id,ord) where x.id=qid),
     'question',projected||jsonb_build_object('answer',q->'answer','explanation',q->'explanation'));
   else
-   select * into pa from public.quiz_past_attempts where id=aid and user_id=uid;
+   select * into pa from public.quiz_past_attempts where id=aid and user_id=uid and not acceptance_only;
    select * into pp from public.quiz_past_papers where id=pa.paper_id;
    if pa.id is null or pp.grade<>(identity->>'grade')::integer then raise exception 'report_unavailable';end if;
    vid:=pa.version_id;select document into d from public.quiz_past_versions where id=vid;
@@ -5917,18 +5953,26 @@ grant execute on function public.quiz_study_insert_guard() to anon;
 grant execute on function public.quiz_study_insert_guard() to authenticated;
 grant execute on function public.quiz_study_insert_guard() to service_role;
 
--- quiz_study_payload(text,uuid,uuid,jsonb)  md5=217af41e87b728299f490684e66860b0
+-- quiz_study_payload(text,uuid,uuid,jsonb)  md5=880aa459a85f01430d851eb7d2f25f8f
 CREATE OR REPLACE FUNCTION public.quiz_study_payload(p_kind text, p_attempt uuid, p_version uuid, p_disclosed jsonb DEFAULT '[]'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
 AS $function$
-declare identity jsonb;d jsonb;pkg public.quiz_study_packages;link public.quiz_study_items;
+declare identity jsonb;d jsonb; qa_attempt boolean:=false; private_access boolean:=false;pkg public.quiz_study_packages;link public.quiz_study_items;
  refs jsonb:='{}';explanations jsonb:='{}';pages jsonb;ref jsonb;known boolean;book_ids uuid[]:='{}';key text;field jsonb;
 begin
+ if p_kind='past' then
+  select a.acceptance_only,
+   a.acceptance_only and public.quiz_past_acceptance_version(a.paper_id)=a.version_id
+  into qa_attempt,private_access
+  from public.quiz_past_attempts a where a.id=p_attempt and a.version_id=p_version and a.user_id=auth.uid();
+  qa_attempt:=coalesce(qa_attempt,false); private_access:=coalesce(private_access,false);
+  if qa_attempt and not private_access then raise exception 'attempt_unavailable'; end if;
+ end if;
  if not exists(select 1 from public.quiz_study_attempts where kind=p_kind and attempt_id=p_attempt and version_id=p_version)
-  and not exists(select 1 from public.quiz_study_packages where kind=p_kind and version_id=p_version and enabled and approved) then return '{}'::jsonb;end if;
+  and not exists(select 1 from public.quiz_study_packages where kind=p_kind and version_id=p_version and (enabled or private_access) and approved) then return '{}'::jsonb;end if;
  if p_kind='normal' and coalesce(public.is_teacher(),false) then
   -- The existing teacher trial joins only an owned session. Derive this book's
   -- grade from that fixed version, never from a browser-provided identity.
@@ -5948,12 +5992,12 @@ begin
  select p.* into pkg from public.quiz_study_attempts a join public.quiz_study_packages p on p.id=a.package_id
   where a.kind=p_kind and a.attempt_id=p_attempt and a.version_id=p_version;
  if pkg.id is null then
-  select * into pkg from public.quiz_study_packages p where p.kind=p_kind and p.version_id=p_version and p.enabled and p.approved order by p.created_at desc,p.id desc limit 1;
+  select * into pkg from public.quiz_study_packages p where p.kind=p_kind and p.version_id=p_version and (p.enabled or private_access) and p.approved order by p.created_at desc,p.id desc limit 1;
   if pkg.id is null then return '{}'::jsonb;end if;
   insert into public.quiz_study_attempts values(p_kind,p_attempt,p_version,pkg.id) on conflict do nothing;
   select p.* into pkg from public.quiz_study_attempts a join public.quiz_study_packages p on p.id=a.package_id where a.kind=p_kind and a.attempt_id=p_attempt and a.version_id=p_version;
  end if;
- if not pkg.enabled or not pkg.approved then return '{}'::jsonb;end if;
+ if (not pkg.enabled and not private_access) or not pkg.approved then return '{}'::jsonb;end if;
  for link in select * from public.quiz_study_items where package_id=pkg.id order by group_id,question_id loop
   if p_kind='normal' then
    known:=link.group_id='' and exists(select 1 from jsonb_array_elements(d->'blocks') b,jsonb_array_elements(b->'questions') q where q->>'id'=link.question_id);
