@@ -215,6 +215,69 @@ def adapt(item, word, raw_key, required, native):
     return kind, prompt, fields, field_targets, "／".join(selected_text)
 
 
+def adapt_text_matching_rows(word, teacher_key, native):
+    """Preserve source answer areas when the teacher key groups printed marks."""
+    require = native.require
+    lines = [line.strip() for line in word.splitlines() if line.strip()]
+    require(len(lines)>=4, "word_matching_layout")
+    word_bank = r"([甲乙丙丁戊己庚辛])[、.．]\s*(.+)"
+    numbered_bank = r"([" + CIRCLED + r"])\s*(.+)"
+    key = re.sub(r"\s+","",teacher_key)
+    groups = list(re.finditer(r"([甲乙丙丁戊己庚辛])[:：]([^;；]+)(?:[;；]|$)",key))
+    if groups:
+        require("".join(m[0] for m in groups)==key,"teacher_matching_symbols")
+        start = next((i for i,line in enumerate(lines) if re.fullmatch(word_bank,line)),len(lines))
+        choices = [re.fullmatch(numbered_bank,line) for line in lines[1:start]]
+        fields = [re.fullmatch(word_bank,line) for line in lines[start:]]
+        require(len(choices)>=2 and len(groups)==len(fields) and all(choices) and all(fields)
+                and "".join(m[1] for m in choices)==CIRCLED[:len(choices)]
+                and [m[1] for m in fields]==[m[1] for m in groups]
+                and all(re.search(BLANK,m[2]) for m in fields),"word_matching_layout")
+        labels = [re.sub(BLANK,"",m[2]).rstrip("：: ") for m in fields]
+        selected = [m[2].split("、") for m in groups]
+        counted = [code for field in selected for code in field]
+        require(len(counted)==len(choices) and set(counted)=={m[1] for m in choices},"teacher_matching_symbols")
+        return matching_rows_question(lines[0],choices,labels,selected,require)
+
+    # Normalize separators and split two complete rows whenever Word combines them in one paragraph.
+    key = re.sub(r"[ˉ;；](?=["+CIRCLED+"])", "", key)
+    checks = numbered_key(key,require)
+    per_row = [i for i,line in enumerate(lines) if re.match(r"^(?:"+BLANK+r"\s*)?["+CIRCLED+"]",line)]
+    if len(per_row)==len(checks) and per_row[0]==1:
+        ends = per_row[1:]+[len(lines)]
+        pairs = []
+        for i,(start,stop) in enumerate(zip(per_row,ends,strict=True)):
+            match = re.fullmatch(r"(?:"+BLANK+r"\s*)?(["+CIRCLED+r"])\s*(.+)",lines[start])
+            bank = [re.fullmatch(word_bank,v) for v in lines[start+1:stop]]
+            require(match and match[1]==CIRCLED[i] and len(bank)>=2 and all(bank),"word_matching_layout")
+            pairs.append((match[2],bank,[checks[i]]))
+        return matching_rows_question(lines[0],None,[p[0] for p in pairs],[p[2] for p in pairs],require,[p[1] for p in pairs])
+
+    normalized = "\n".join(re.sub(r"(?<=[）)])(?=["+CIRCLED+r"])", "\n", line)
+                           if sum(mark in line for mark in CIRCLED)>1 else line for line in word.splitlines())
+    shape,prompt,fields,answers,_ = adapt({"QUES_TYPE":"23"},normalized,key,native.compact(key),native)
+    require(shape=="match_columns","word_matching_layout")
+    return {"type":"fields","prompt":{"text":prompt,"media":[]},"fields":fields,
+            "answer":{"format":"fields-v1","fields":answers}}
+
+
+def matching_rows_question(prompt, bank, labels, selected, require, separate=None):
+    fields,answers = [],{}
+    for i,(label,selection) in enumerate(zip(labels,selected,strict=True),1):
+        choices = separate[i-1] if separate is not None else bank
+        codes = [m[1] for m in choices]
+        require(len(codes)==len(set(codes)) and selection and len(selection)==len(set(selection))
+                and all(v in codes for v in selection),"teacher_matching_symbols")
+        name = f"f{i}"
+        ids = [f"o{codes.index(v)+1}" for v in selection]
+        multiple = len(ids)>1
+        fields.append({"id":name,"input":"set" if multiple else "single","label":label,
+                       "options":options([f"{m[1]} {m[2]}" for m in choices])})
+        answers[name] = [ids] if multiple else ids
+    return {"type":"fields","prompt":{"text":prompt,"media":[]},"fields":fields,
+            "answer":{"format":"fields-v1","fields":answers}}
+
+
 def adapt_illustrated_selection(prompt, teacher_key, native):
     """Reconstruct a single Word question with an ordered choice list and its illustrations."""
     require = native.require
@@ -334,9 +397,12 @@ def reviewed_illustrated_row(source, screen, item, metadata_keys, metadata_detai
                 and native.sha(Path(spread["path"]))==spread["sha256"]==reference["spread_sha256"]
                 and native.compact(reference["anchor"])
                 and native.compact(reference["anchor"]) in native.compact(p["text"]), "original_textbook_mismatch")
-    layout = "illustrated_matching" if item["QUES_TYPE"]=="40" else "illustrated_selection"
+    layout = {"23":"text_matching_rows","40":"illustrated_matching","41":"illustrated_selection"}[item["QUES_TYPE"]]
     if layout=="illustrated_matching":
         question = adapt_illustrated_matching(prompt,teacher,review,native)
+    elif layout=="text_matching_rows":
+        require(native.plain(prompt),"original_text_only")
+        question = adapt_text_matching_rows(prompt["text"],teacher,native)
     else:
         question = adapt_illustrated_selection(prompt,teacher,native)
     assets = {}
@@ -367,7 +433,7 @@ def main():
     md=read(args.metadata)
     if args.illustrated_selection_reviews:
         reviews = read(args.illustrated_selection_reviews)
-        screened = {r["source"]:r for r in read(args.source_screen) if r["source"] in reviews and r.get("type_code") in ("40","41")}
+        screened = {r["source"]:r for r in read(args.source_screen) if r["source"] in reviews and r.get("type_code") in ("23","40","41")}
         assert screened.keys()==reviews.keys()
         book = read(args.book)
     else:
