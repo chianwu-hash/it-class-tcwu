@@ -34,7 +34,7 @@ node --test automation/tests/quiz-past-learning-grade-route.test.mjs automation/
 
 ## 正式套用前仍須完成
 
-目前僅備妥候選，未修改正式函式、未發布網站。本案使用者指定正式函式變更須先取得同意，因此保留本次核准關卡；其他 main／PR、來源守衛及快照流程依 [AGENTS.md](../../AGENTS.md)。此處不將本案指定的核准關卡擴張為所有可復原操作都要另問。
+2026-11-28 使用者明確回覆「同意套用 PR #553 的 SQL 修正」，本次單一函式已取得核准。核准前的正式唯讀指紋仍為 `588e36cb7015d20bb4a3797de71f916b`，已確認缺陷位於 `quiz_past_snapshot_before_drafts(uuid)`，不能只查最外層包裝函式而誤判修正完成。此時尚未修改正式函式、未發布網站；main／PR、來源守衛及快照流程依 [AGENTS.md](../../AGENTS.md)。
 
 原生隔離交易回滾已驗證。取得針對此單一函式的核准並經 PR 進 main 後，套用前仍須重查正式指紋及原資料摘要；套用後更新 `supabase/production-snapshot/`，執行 `node automation/db-snapshot-check.mjs --live`，並補正式讀回收據。實際學生入口的年級返回及同次作答還需正式 OAuth 驗收，不能以本機測試代替。
 
