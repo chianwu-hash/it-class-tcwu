@@ -2,7 +2,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
 (async()=>{
  const {loadBatch,expectedResponse,readJson,recordBatchTime,preserveOAuthReceipt,practiceGrade}=await import('./lib/quiz-batch-plan.mjs');
  const {matchingPresentation}=await import('../shared/quiz-matching-presentation.mjs');
- const {packet:p,counts:n,sha256:packetSha}=await loadBatch(process.argv[2]);
+ const {packet:p,counts:n,readingDirection,sha256:packetSha}=await loadBatch(process.argv[2]);
  const {grade,qaClass}=practiceGrade(p);
  const gradeUrl='https://it-class-tcwu.vercel.app/grade'+grade+'/115-1';
  const file=s=>path.join(p.outputDir,p.prefix+'-'+s+'.private.json');
@@ -186,10 +186,11 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
     }
     if(width===1280&&audible.length)await verifyAudio();
     await checkAnswer();await article.locator('.qtb-entry').click();await book.waitFor();await assertPage(ref.primary);
+    assert.equal(await book.locator('.qtb-book-toolbar [data-reading-direction]').getAttribute('data-reading-direction'),readingDirection);
     await book.locator('.qtb-book-toolbar select').selectOption(String(neighbor));await assertPage(neighbor);
     await book.getByRole('button',{name:'\u56de\u672c\u984c\u9801',exact:true}).click();await assertPage(ref.primary);
     await book.locator('#lightbox-close').click();await book.waitFor({state:'hidden'});await checkAnswer();
-    checks.push({width,pages:[ref.primary,neighbor],sha_verified:true,returned_to_primary:true,retained_answer_and_work:true});
+    checks.push({width,pages:[ref.primary,neighbor],reading_direction:readingDirection,sha_verified:true,returned_to_primary:true,retained_answer_and_work:true});
    }
    // Resume is checked before any submit; a saved exact response is never resent.
    if(!saved){await page.locator('#server-submit').click();await page.locator('#server-submit').waitFor({state:'detached'});}
