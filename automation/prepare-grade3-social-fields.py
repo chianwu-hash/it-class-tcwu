@@ -73,9 +73,54 @@ def numbered_key(text, require):
     return [match[2].strip().rstrip("。") for match in found]
 
 
+def adapt_sequence(word, raw_key, native):
+    require = native.require
+    lines = [line.strip() for line in word.splitlines() if line.strip()]
+    require(len(lines) >= 4 and "排" in lines[0] and re.fullmatch(
+        r"答[：:]\s*" + BLANK + r"(?:\s*→\s*" + BLANK + ")*", lines[-1]), "sequence_word_layout")
+    pattern = r"([甲乙丙丁戊己①②③④⑤⑥])(?:[、.．])?\s*(\S.*)"
+    items = [re.fullmatch(pattern, line) for line in lines[1:-1]]
+    require(all(items) and 2 <= len(items) <= 6, "sequence_word_options")
+    marks = [m[1] for m in items]
+    require(marks in [list("甲乙丙丁戊己"[:len(items)]), list(CIRCLED[:len(items)])], "sequence_word_options")
+    labels = [m[2] for m in items]
+    require(len({native.compact(label) for label in labels}) == len(labels), "sequence_word_options")
+    typed_slots = len(re.findall(BLANK, lines[-1]))
+    require(typed_slots in (1, len(items)), "sequence_word_options")
+    key = re.split(r"\s*→\s*", raw_key.strip().rstrip("。"))
+    require(len(key) == len(marks) and set(key) == set(marks), "sequence_teacher_key")
+    indices = [marks.index(mark) for mark in key]
+    field = {"id":"f1","input":"sequence","label":"依序排列","options":options(labels)}
+    return "sequence", lines[0], [field], {"f1":[[f"o{i+1}" for i in indices]]}, " → ".join(labels[i] for i in indices)
+
+
+def adapt_inline_selection(word, raw_key, native):
+    require = native.require
+    pattern = r"([" + CIRCLED + r"])[（(]([^／/（）()\n]+)[／/]([^／/（）()\n]+)[）)]"
+    pairs = list(re.finditer(pattern, word))
+    require(2 <= len(pairs) <= 6 and "".join(m[1] for m in pairs) == CIRCLED[:len(pairs)]
+            and not re.search("["+CIRCLED+"]", re.sub(pattern, "", word)), "inline_choice_positions")
+    keys = numbered_key(raw_key, require)
+    require(len(pairs) == len(keys), "inline_choice_teacher_key")
+    fields, answers = [], {}
+    for i, (match, answer) in enumerate(zip(pairs, keys), 1):
+        texts = [v.strip() for v in match.groups()[1:]]
+        require(all(texts) and len(set(map(native.compact, texts))) == 2 and answer in texts,
+                "inline_choice_teacher_key")
+        fid = f"f{i}"
+        fields.append({"id":fid,"input":"single","label":f"第 {i} 格","options":options(texts)})
+        answers[fid] = [f"o{texts.index(answer)+1}"]
+    prompt = re.sub(pattern, lambda m: f"〔{CIRCLED.index(m[1])+1}〕", word)
+    return "inline_choice", prompt, fields, answers, "／".join(keys)
+
+
 def adapt(item, word, raw_key, required, native):
     require = native.require
     code = item["QUES_TYPE"]
+    if code == "21":
+        return adapt_sequence(word, raw_key, native)
+    if code == "22":
+        return adapt_inline_selection(word, raw_key, native)
     field_targets = {}
     selected_text = []
     kind = ""
@@ -175,7 +220,7 @@ def main():
     read=lambda p:json.loads(p.read_text(encoding="utf8"))
     md=read(args.metadata)
     screened={r["source"]:r for r in read(args.source_screen)
-              if r.get("type_code") in ("23","39","44","45")}
+              if r.get("type_code") in ("21","22","23","39","44","45")}
     by_code={r["QUES_NO"]:r for r in md["QuesMaster"] if r["QUES_NO"] in screened}
     keys, details=defaultdict(list),defaultdict(list)
     for row in md["QuesAnswer"]:
