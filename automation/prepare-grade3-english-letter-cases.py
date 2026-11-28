@@ -75,7 +75,7 @@ def convert(row, pages):
     require(not question["options"], "native_choice_layout")
     anchor, options = source_choices(original["preamble-question"]["text"], shape)
     require(source_choices(question["stem"], shape) == (anchor, options), "native_word_mismatch")
-    require(len(options) == len(set(options)), "duplicate_source_choice")
+    original_options = options
     if shape == "pair":
         valid = [o for o in options if o[0].lower() == o[1]]
         prompt = WORDS[shape][1]
@@ -87,12 +87,19 @@ def convert(row, pages):
     answer = valid[0]
     key = re.fullmatch(r"答案:\s*([A-Za-z]{1,2})", normalize(original["answer"]["text"]))
     require(key and key[1] == answer and question["answers"] == [[answer]], "teacher_key_mismatch")
+    if len(options) != len(set(options)):
+        require(shape == "circle" and options.count(answer) == 1, "duplicate_source_choice")
+        # Identical distractors represent one choice in the online exercise.
+        options = list(dict.fromkeys(options))
+        require(len(options) >= 2, "duplicate_source_choice")
     letter = answer[0].upper()
     page = pages.get((row["sections"][0], letter))
     require(page, "no_unit_textbook_pair")
     return {
         "passed": True, "id": row["id"], "section": row["sections"][0], "shape": shape,
         "prompt": prompt, "options": options, "answer": options.index(answer) + 1, "letter": letter,
+        **({"original_options": original_options, "duplicate_distractor_merged": True}
+           if options is not original_options else {}),
         **page,
     }
 
