@@ -10,7 +10,7 @@ do $guard$declare f text; c text; h text;begin
   select md5(pg_get_functiondef('public.quiz_text_citation_valid(jsonb,text,jsonb,jsonb)'::regprocedure)) into h;
  end if;
  if ((f='76fc3552b43d5989c17c8832938a3833' and c='fc94f18029f09b8ff0cdd3e56bcd0eff' and h is null)
-  or (f='78d18e6366e891fd4a91ea53b322ced2' and c='435a724e9e48805057337bf23ea34bb0' and h='b96ca30c9b45c4641ac5fd6c23191a53')) is not true then
+  or (f='78d18e6366e891fd4a91ea53b322ced2' and c='435a724e9e48805057337bf23ea34bb0' and h='15a63e3ca678f82c92cd909f4655512d')) is not true then
   raise exception 'text_citation_contract_changed';
  end if;
 end $guard$;
@@ -38,7 +38,8 @@ begin
   if (jsonb_typeof(r)='object' and r->>'source_role' in ('teacher_guide','student_textbook')
    and jsonb_typeof(r->'source_sha256')='string' and r->>'source_sha256' ~ '^[a-f0-9]{64}$'
    and jsonb_typeof(r->'pdf_page')='number' and r->>'pdf_page' ~ '^[1-9][0-9]{0,3}$'
-   and jsonb_typeof(r->'printed_page')='number' and r->>'printed_page' ~ '^[1-9][0-9]{0,3}$'
+   and ((jsonb_typeof(r->'printed_page')='number' and r->>'printed_page' ~ '^[1-9][0-9]{0,3}$')
+    or (jsonb_typeof(r->'printed_page')='string' and r->>'printed_page' ~ '^[1-9][0-9]{0,3}-[1-9][0-9]{0,2}$'))
    and jsonb_typeof(r->'chapter')='string' and length(btrim(r->>'chapter')) between 1 and 200) is not true then return false;end if;
  end loop;
  return true;
@@ -99,7 +100,7 @@ revoke all on function public.quiz_bind_composed_study() from public,anon,authen
 grant execute on function public.quiz_bind_composed_study() to service_role;
 do $verify$begin
  if md5(pg_get_functiondef('public.quiz_bind_composed_study()'::regprocedure))<>'78d18e6366e891fd4a91ea53b322ced2'
-  or md5(pg_get_functiondef('public.quiz_text_citation_valid(jsonb,text,jsonb,jsonb)'::regprocedure))<>'b96ca30c9b45c4641ac5fd6c23191a53'
+  or md5(pg_get_functiondef('public.quiz_text_citation_valid(jsonb,text,jsonb,jsonb)'::regprocedure))<>'15a63e3ca678f82c92cd909f4655512d'
   or (select md5(pg_get_constraintdef(oid)) from pg_constraint where conrelid='public.quiz_pool_study_sources'::regclass and conname='quiz_pool_study_sources_reference_shape')<>'435a724e9e48805057337bf23ea34bb0' then
   raise exception 'text_citation_install_mismatch';end if;
 end $verify$;

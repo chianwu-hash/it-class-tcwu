@@ -10,7 +10,7 @@ do $guard$declare f text; c text; h text;begin
   select md5(pg_get_functiondef('public.quiz_text_citation_valid(jsonb,text,jsonb,jsonb)'::regprocedure)) into h;
  end if;
  if ((f='76fc3552b43d5989c17c8832938a3833' and c='fc94f18029f09b8ff0cdd3e56bcd0eff' and h is null)
-  or (f='78d18e6366e891fd4a91ea53b322ced2' and c='435a724e9e48805057337bf23ea34bb0' and h='b96ca30c9b45c4641ac5fd6c23191a53')) is not true then
+  or (f='78d18e6366e891fd4a91ea53b322ced2' and c='435a724e9e48805057337bf23ea34bb0' and h='15a63e3ca678f82c92cd909f4655512d')) is not true then
   raise exception 'text_citation_contract_changed';
  end if;
 end $guard$;
@@ -64,4 +64,10 @@ grant execute on function public.quiz_bind_composed_study() to service_role;
 alter table public.quiz_pool_study_sources drop constraint quiz_pool_study_sources_reference_shape;
 alter table public.quiz_pool_study_sources add constraint quiz_pool_study_sources_reference_shape CHECK (((((book_id IS NULL) AND (primary_page IS NULL) AND (cardinality(reference_pages) = 0) AND ((teacher_notes ->> 'book_match_status'::text) = 'no_reliable_match'::text) AND (length(btrim((teacher_notes ->> 'unmatched_explanation'::text))) > 0)) OR ((book_id IS NOT NULL) AND (primary_page IS NOT NULL) AND (primary_page > 0) AND (cardinality(reference_pages) > 0) AND (primary_page = ANY (reference_pages)) AND (0 < ALL (reference_pages)) AND (array_position(reference_pages, NULL::integer) IS NULL))) IS TRUE));
 drop function if exists public.quiz_text_citation_valid(jsonb,text,jsonb,jsonb);
+do $verify$begin
+ if md5(pg_get_functiondef('public.quiz_bind_composed_study()'::regprocedure))<>'76fc3552b43d5989c17c8832938a3833'
+  or (select md5(pg_get_constraintdef(oid)) from pg_constraint where conrelid='public.quiz_pool_study_sources'::regclass and conname='quiz_pool_study_sources_reference_shape') is distinct from 'fc94f18029f09b8ff0cdd3e56bcd0eff'
+  or to_regprocedure('public.quiz_text_citation_valid(jsonb,text,jsonb,jsonb)') is not null then
+  raise exception 'text_citation_rollback_mismatch';end if;
+end $verify$;
 commit;

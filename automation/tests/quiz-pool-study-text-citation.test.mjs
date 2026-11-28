@@ -9,6 +9,11 @@ const install=await fs.readFile('supabase/quiz-pool-study-text-citation.sql','ut
 const rollback=await fs.readFile('supabase/quiz-pool-study-text-citation-rollback.sql','utf8');
 const oldMd5='76fc3552b43d5989c17c8832938a3833',newMd5='78d18e6366e891fd4a91ea53b322ced2';
 const binderHash=async db=>(await db.query("select md5(pg_get_functiondef('public.quiz_bind_composed_study()'::regprocedure)) h")).rows[0].h;
+async function assertRestored(db){
+ assert.equal(await binderHash(db),oldMd5);
+ assert.equal((await db.query("select md5(pg_get_constraintdef(oid)) h from pg_constraint where conrelid='public.quiz_pool_study_sources'::regclass and conname='quiz_pool_study_sources_reference_shape'")).rows[0].h,'fc94f18029f09b8ff0cdd3e56bcd0eff');
+ assert.equal((await db.query("select to_regprocedure('public.quiz_text_citation_valid(jsonb,text,jsonb,jsonb)') h")).rows[0].h,null);
+}
 async function fixture(){
  const f=await setupProductionQuizDB({snapshot:true}),{db,uid}=f;
  await db.exec(`create type public.quiz_draw_candidate as (question_id text,group_key text,unit_ids jsonb,knowledge_code text,difficulty integer,seen bigint,rank text,unit_bucket bigint);
@@ -59,7 +64,23 @@ test('文字引用形狀守衛、完整交易回滾、重裝與並行變更拒�
   await assert.rejects(s.save(s.notes,{reviewed:false,source_version:'a'.repeat(64)}),e=>e.code==='23514');
   await assert.rejects(s.save(s.notes,{reviewed:true,source_version:'c'.repeat(64)}),e=>e.code==='23514');
   const malformed=[null,[],true,{},42];for(const value of malformed){const [{ok}]=(await db.query('select public.quiz_text_citation_valid($1,$2,$3,$4) ok',[s.q,s.course,value,s.provenance])).rows;assert.notEqual(ok,true);}
-  await db.exec(rollback);await db.exec(rollback);assert.equal(await binderHash(db),oldMd5);
+  for(const page of ['1-1','75-5','75-20','9999-999']){
+   const notes=structuredClone(s.notes);notes.text_citation.references[0].printed_page=page;
+   assert.equal((await db.query('select public.quiz_text_citation_valid($1,$2,$3,$4) ok',[s.q,s.course,notes,s.provenance])).rows[0].ok,true);
+   await db.exec('begin;');await s.save(notes);
+   assert.deepEqual((await db.query('select teacher_notes from public.quiz_pool_study_sources where question_id=$1',[s.q.id])).rows[0].teacher_notes,notes);
+   await assert.rejects(db.exec(rollback),/text_citation_sources_require_rollback_plan/);await db.exec('rollback;');
+   assert.equal((await db.query('select count(*)::int n from public.quiz_pool_study_sources')).rows[0].n,0);
+  }
+  for(const page of ['20','0-1','75-0','075-5','75-05','75--5','75-5\n','75-5 ','75-5x','75-5/6','10000-1','75-1000','７５-５','75－5','75–5',10000,-1,20.5,{},null]){
+   const notes=structuredClone(s.notes);notes.text_citation.references[0].printed_page=page;
+   await assert.rejects(s.save(notes),e=>e.code==='23514');
+  }
+  const incompleteRollback=rollback.replace('drop function if exists public.quiz_text_citation_valid(jsonb,text,jsonb,jsonb);','-- deliberately incomplete rollback');
+  await assert.rejects(db.exec(incompleteRollback),/text_citation_rollback_mismatch/);await db.exec('rollback;');
+  assert.equal(await binderHash(db),newMd5);
+  assert.equal((await db.query("select md5(pg_get_constraintdef(oid)) h from pg_constraint where conrelid='public.quiz_pool_study_sources'::regclass and conname='quiz_pool_study_sources_reference_shape'")).rows[0].h,'435a724e9e48805057337bf23ea34bb0');
+  await db.exec(rollback);await assertRestored(db);await db.exec(rollback);await assertRestored(db);
   await db.exec(install);await s.save();await assert.rejects(db.exec(rollback),/text_citation_sources_require_rollback_plan/);await db.exec('rollback;');assert.equal(await binderHash(db),newMd5);
   await db.exec("create or replace function public.quiz_text_citation_valid(p_question jsonb,p_course text,p_notes jsonb,p_provenance jsonb) returns boolean language sql immutable as 'select false'");
   await assert.rejects(db.exec(install),/text_citation_contract_changed/);await db.exec('rollback;');
@@ -72,10 +93,14 @@ test('三四六九年級實際組卷RPC、答後文字、舊固定包與精確�
  try{
   await db.exec(install);const originals=[];
   for(const grade of [3,4,6,9]){
-   for(let i=0;i<5;i++){const s=await f.source(grade,i);await s.save();originals.push(s.q);}
+   for(let i=0;i<5;i++){const s=await f.source(grade,i);if(grade===9)s.notes.text_citation.references[0].printed_page=i%2?'75-20':'75-5';await s.save();originals.push(s.q);}
    const request={kind:'self',course_id:`synthetic-text-g${grade}`,units:[1],difficulty:'medium',count:5,request_id:randomUUID()};
    const made=await f.call(grade,request,'quiz_compose'),joined=await f.call(grade,{action:'join',session_id:made.session_id});
    assert.equal((await f.call(grade,request,'quiz_compose')).session_id,made.session_id);
+   if(grade===9){
+    const items=(await db.query('select teacher_notes from public.quiz_study_items where package_id=$1',[joined.study.packageId])).rows;
+    assert.equal(items.length,5);assert.deepEqual(new Set(items.map(r=>r.teacher_notes.text_citation.references[0].printed_page)),new Set(['75-5','75-20']));
+   }
    assert.deepEqual(joined.study.pages,[]);assert.deepEqual(joined.study.references,{});assert.deepEqual(joined.study.explanations,{});
    assert.doesNotMatch(JSON.stringify(joined),/合成固定解析|teacher_note_marker|text_citation|question_sha256/);
    const q=originals.find(x=>x.id===joined.document.questions[0].id);
