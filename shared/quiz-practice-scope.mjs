@@ -26,7 +26,7 @@ const rules={
 const explicit=value=>['before','after','mixed'].includes(value)?value:null;
 // These boundaries come from reviewed textbook mappings and release receipts.
 const reviewedCourses={
- '115-1-hanlin-g4-english':[4,'翰林','英語',[1,2]],
+ '115-1-hanlin-g4-english':[4,'翰林','英語',[1,2],[3,4,5]],
  '115-1-hanlin-g4-social':[4,'翰林','社會',[1,2],[3,4,5,6]],
  '115-1-kang-g4-chinese':[4,'康軒','國語',[1,2,3,4,5,6],[7,8,9,10,11,12]],
  '115-1-nani-g4-math':[4,'南一','數學',[1,2,3,4,5]],
