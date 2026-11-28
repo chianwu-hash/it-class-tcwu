@@ -1150,6 +1150,99 @@ def reviewed_wind_strength(parent, targets, original, pages, legacy, docx, revie
     return material,questions,assets
 
 
+def reviewed_solubility_results(parent, targets, original, pages, legacy, docx, review):
+    require, norm, plain = legacy.require, legacy.normalize, legacy.plain
+    parsed, assets, key = reviewed_image_layout_source(parent, original, legacy, review)
+    media, blocks = parsed["media"], parsed["layout"]
+    native = parent["original_source"]["native_content"]
+    require(native == review["native"], "word_snapshot_changed")
+    raw_items = native["questions"]
+    layout = review["verified_layout"]
+    mode = layout["mode"]
+    keys = layout["keys"]
+    ordinal = r"[（(]([１-８1-8])[）)]"
+    blank = r"[（(][\s_＿]+[）)]"
+
+    def paragraph_text(block):
+        return "".join(run["text"] for run in block["runs"] if run["type"]=="text")
+
+    def answer(text):
+        return re.sub(r"[ˇ✓√](?=;|$)","",norm(text)).strip(";")
+
+    segments = re.split(ordinal,key)
+    require(not segments[0].strip() and [int(v) for v in segments[1::2]]==list(range(1,len(targets)+1)), "teacher_choice_position")
+    require([answer(v) for v in segments[2::2]]==keys, "reviewed_teacher_key")
+    starts = [(i,m) for i,b in enumerate(blocks) if b["type"]=="paragraph" and (m:=re.match(ordinal,paragraph_text(b)))]
+    require([int(m.group(1)) for _,m in starts]==list(range(1,len(targets)+1)), "word_question_position")
+    material = compact_layout(blocks[:starts[0][0]],media,docx)
+    require(norm(material["text"])==norm(native["preamble"]), "source_preamble")
+    common_count = {"shared_result_image":1,"shared_native_tally_table":2,"image_choices_per_question":0}
+    require(len(material["media"])==common_count[mode], "mixed_image_placement")
+    if mode=="shared_native_tally_table":
+        require([b["type"] for b in material["layout"]]==["paragraph","table"], "native_table_layout")
+        rows = material["layout"][1]["rows"]
+        require(len(rows)==3 and all(len(row)==2 for row in rows)
+                and [rows[i][0][0]["text"] for i in (1,2)]==["食鹽","砂糖"]
+                and [rows[i][1][0]["media_index"] for i in (1,2)]==[0,1], "native_table_cells")
+
+    questions = []
+    ends = [i for i,_ in starts[1:]]+[len(blocks)]
+    for i,(target,raw,(start,match),end,expected,bound) in enumerate(zip(targets,raw_items,starts,ends,keys,review["targets"],strict=True),1):
+        require(target["source_question_indices"]==bound["source_question_indices"]==[i]
+                and target["kind"]==bound["kind"] and target["positions"]==bound["position"]
+                and target["reference_answer"]==bound["key"], "source_position")
+        publisher = ";".join(v for group in raw["answers"] for v in group if v.strip())
+        require(answer(publisher)==answer(bound["key"])==answer(";".join(p["reference_value"] for p in bound["position"]))==expected,
+                "reviewed_teacher_key")
+        refs = legacy.refs_for(target,original["unit"],pages)
+        require(refs==bound["printed_pages"], "original_textbook_mismatch")
+        stem = paragraph_text(blocks[start])[match.end():].strip()
+        tail = blocks[start+1:end]
+        require(all(b["type"]=="paragraph" for b in tail), "word_choice_alignment")
+        suffix = r"(?:【[\s_＿]*】\s*|[（(][\s_＿]*[）)]\s*)+$"
+        native_stem = re.sub(suffix,"",raw["stem"])
+        tail_text = " ".join(map(paragraph_text,tail)).rstrip()
+        rendered_text = stem if raw["options"] else stem+tail_text
+        require(norm(rendered_text)==norm(native_stem), "word_prompt")
+        explanation = plain(target["student_explanation"])
+        if target["kind"]=="fill_in_the_blank":
+            values = expected.split(";")
+            require(not tail and len(re.findall(blank,stem))==len(values)==len(target["positions"])
+                    and all(re.fullmatch(r"\d+",v) for v in values), "solubility_numeric_positions")
+            labels = ["平匙數"] if len(values)==1 else ["食鹽（平匙）","砂糖（平匙）"]
+            require(len(labels)==len(values) and (len(values)==1 or stem.index("食鹽")<stem.index("砂糖")), "solubility_numeric_positions")
+            fields = [{"id":f"n{index}","label":label,"input":"math"} for index,label in enumerate(labels,1)]
+            prompt = plain(re.sub(blank,"幾",stem))
+            question = {"type":"fields","prompt":prompt,"fields":fields,"explanation":explanation,
+                        "answer":{"format":"fields-v1","fields":{f["id"]:[v] for f,v in zip(fields,values,strict=True)}}}
+        else:
+            question_layout = compact_layout(tail,media,docx)
+            if question_layout["media"]:
+                require(mode=="image_choices_per_question" and len(tail)==len(question_layout["media"])==1 and not tail_text
+                        and tail[0]["runs"][0]["media_index"]==i-1, "mixed_image_placement")
+                codes, labels = ["1","2"],["甲","乙"]
+                prompt = compact_layout([{"type":"paragraph","runs":[{"type":"text","text":stem}]},*tail],media,docx)
+            else:
+                marked = [re.fullmatch(blank+r"\s*([A-Dㄅㄆㄇㄈ①②])\s*(.+)",paragraph_text(b)) for b in tail]
+                if marked and all(marked):
+                    codes = [norm(m.group(1)) for m in marked]
+                    labels = [m.group(2) for m in marked]
+                    if raw["options"]:
+                        require(list(map(norm,labels))==list(map(norm,raw["options"])), "word_choice_alignment")
+                else:
+                    pair = re.fullmatch(r"[（(]\s*([^，,）)]+?)\s*[，,]\s*([^，,）)]+?)\s*[）)]",tail_text)
+                    require(pair is not None and len(tail)==1 and not raw["options"], "word_choice_alignment")
+                    labels = list(pair.groups())
+                    codes = list(map(norm,labels))
+                prompt = plain(stem)
+            chosen = expected.split(";")
+            require(len(codes)==len(set(codes))>=2 and chosen==[v for v in codes if v in chosen], "word_choice_alignment")
+            kind = "checkbox" if len(chosen)>1 else "single_choice"
+            question = output_question(kind,prompt,list(map(plain,labels)),[codes.index(v)+1 for v in chosen],explanation)
+        questions.append({"target":target["target_id"],"refs":refs,"question":question})
+    return material,questions,assets
+
+
 def adapt(parent, targets, original, pages, legacy, docx):
     require = legacy.require
     plain, norm = legacy.plain, legacy.normalize
@@ -1259,6 +1352,7 @@ def main():
     parser.add_argument("--native-table-choice-reviews", type=Path)
     parser.add_argument("--mixed-image-choice-reviews", type=Path)
     parser.add_argument("--wind-strength-reviews", type=Path)
+    parser.add_argument("--solubility-result-reviews", type=Path)
     args=parser.parse_args()
     legacy=load_module(args.legacy)
     docx=load_module(args.docx)
@@ -1278,8 +1372,9 @@ def main():
     native_table_reviews = legacy.read(args.native_table_choice_reviews) if args.native_table_choice_reviews else {}
     mixed_image_reviews = legacy.read(args.mixed_image_choice_reviews) if args.mixed_image_choice_reviews else {}
     wind_strength_reviews = legacy.read(args.wind_strength_reviews) if args.wind_strength_reviews else {}
+    solubility_reviews = legacy.read(args.solubility_result_reviews) if args.solubility_result_reviews else {}
     text_modes = (classification_reviews, choice_reviews, boolean_reviews, numbered_reviews, sequence_reviews, native_table_reviews)
-    modes = (visual_reviews, grid_reviews, matching_reviews, single_reviews, mixed_reviews, image_single_reviews, diagram_reviews, figure_reviews, mixed_image_reviews, wind_strength_reviews, *text_modes)
+    modes = (visual_reviews, grid_reviews, matching_reviews, single_reviews, mixed_reviews, image_single_reviews, diagram_reviews, figure_reviews, mixed_image_reviews, wind_strength_reviews, solubility_reviews, *text_modes)
     if len(set().union(*modes)) != sum(map(len, modes)):
         parser.error("the same source cannot use multiple visual review modes")
     sources={r["stable_id"]:r for r in legacy.read(args.source_catalog)["records"]}
@@ -1349,6 +1444,9 @@ def main():
             elif sid in wind_strength_reviews:
                 rule = "reviewed_wind_strength"
                 material, qs, assets = reviewed_wind_strength(parent, group, source, pages, legacy, docx, wind_strength_reviews[sid])
+            elif sid in solubility_reviews:
+                rule = "reviewed_solubility_results"
+                material, qs, assets = reviewed_solubility_results(parent, group, source, pages, legacy, docx, solubility_reviews[sid])
             elif len(group) > 1 and all(t["kind"] == "single_choice" for t in group):
                 rule = "shared_image_choices"
                 material, qs, assets = shared_image_choices(parent, group, source, pages, legacy, docx)
