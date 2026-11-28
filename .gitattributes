@@ -39,3 +39,6 @@ supabase/quiz-partner-optional-bonus-rollback.sql text eol=lf
 
 supabase/quiz-past-oauth-acceptance.sql text eol=lf
 supabase/quiz-past-oauth-acceptance-rollback.sql text eol=lf
+
+supabase/quiz-partner-register-read-first.sql text eol=lf
+supabase/quiz-partner-register-read-first-rollback.sql text eol=lf
