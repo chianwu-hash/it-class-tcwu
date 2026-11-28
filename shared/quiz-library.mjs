@@ -6,7 +6,7 @@ import { initWrongQuestions } from './quiz-wrong-questions.mjs?v=20261102-learni
 import { localPoolContext, initComposer, paperUrl } from './quiz-compose.mjs?v=20261029-batch4';
 import {comparePapers,paperRange,paperTitle,paperMix,isExtension,paperDifficulty} from './quiz-paper-display.mjs';
 import {difficultyAdjustment} from './quiz-difficulty.mjs';
-import {createPastCatalogReader,pastPaperDisplay} from './quiz-past-catalog.mjs?v=20261102-grade9-release';
+import {createPastCatalogReader,pastPaperDisplays} from './quiz-past-catalog.mjs?v=20261128-catalog-titles';
 import { onTestIdentityChange } from './test-identity-state.mjs?v=20261030-identity-sync';
 import {workshopCourse} from './quiz-workshop-config.mjs';
 import {practiceScopeOptions,paperPracticeScope,paperPracticeScopeBasis,matchesPracticeScope,practiceScopeBadge} from './quiz-practice-scope.mjs';
@@ -126,12 +126,12 @@ function render() {
     list.append(a);
   }
   el('cloud-status').textContent = `進度已從${localContext?'本機測試資料庫':'雲端'}讀取`;
-  const visiblePast=hasPastExams&&studentView?pastPapers.map(pastPaperDisplay).filter(p=>p.grade===pageGrade&&(!subject||subject===p.subject)&&(matchesPracticeScope(paperPracticeScope(p,{past:true}),practiceScope)||paperPracticeScope(p,{past:true})==='unknown')):[];
+  const visiblePast=hasPastExams&&studentView?pastPaperDisplays(pastPapers).filter(p=>p.grade===pageGrade&&(!subject||subject===p.subject)&&(matchesPracticeScope(paperPracticeScope(p,{past:true}),practiceScope)||paperPracticeScope(p,{past:true})==='unknown')):[];
   for(const p of visiblePast){
     const card=node('article',undefined,'paper-card');card.dataset.subject=p.subject;card.dataset.kind='past-exam';
     const classification=paperPracticeScope(p,{past:true});card.dataset.practiceScope=classification;
     const header=node('div',undefined,'paper-card-header'),icon=node('span',undefined,'subject-icon'),symbol=node('i',undefined,'fa-solid fa-leaf');symbol.setAttribute('aria-hidden','true');icon.append(symbol);
-    const title=node('div');title.append(node('span','考古題專區','paper-source-label'),node('p',p.subject,'paper-subject'),node('h3',p.shortTitle));header.append(icon,title);card.append(header);
+    const title=node('div');title.append(node('span','考古題專區','paper-source-label'),node('p',p.subject,'paper-subject'),node('h3',p.displayTitle));header.append(icon,title);card.append(header);
     const body=node('div',undefined,'paper-card-body');body.append(node('p',`${p.edition||''} ${p.range||''}｜原卷圖文與歷次成績`),node('p','單次完整作答達60%，同卷同學期首次達標得1片葉。開放題採自我核對，暫停題不列入完成。'));
     body.prepend(node('p',practiceScopeBadge(classification,{past:true,grade:pageGrade}),'paper-scope-badge'));
     if(p.enabled){const link=node('a','開始／繼續考古題 →','paper-start');link.href='past-exam.html?paper='+encodeURIComponent(p.id);body.append(link);}

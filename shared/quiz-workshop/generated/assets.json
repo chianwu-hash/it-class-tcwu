@@ -146,7 +146,7 @@
       "/shared/partner-pilot/app.mjs?v=e9869e0a6a7cf4e8"
     ],
     "library": [
-      "/shared/quiz-library.mjs?v=369d7f1f91222a65",
+      "/shared/quiz-library.mjs?v=b0ed13f0f060d4c7",
       "/shared/quiz-partner-pilot-entry.mjs?v=e22113f03e636d5c"
     ]
   },
@@ -265,7 +265,7 @@
     "/shared/quiz-input-keyboard.mjs": "/shared/quiz-input-keyboard.mjs?v=05c4ae6c51b7171e",
     "/shared/quiz-leaf-celebration.mjs": "/shared/quiz-leaf-celebration.mjs?v=cc1b034d980fb775",
     "/shared/quiz-library-home.mjs": "/shared/quiz-library-home.mjs?v=16a9f23fd2802023",
-    "/shared/quiz-library.mjs": "/shared/quiz-library.mjs?v=369d7f1f91222a65",
+    "/shared/quiz-library.mjs": "/shared/quiz-library.mjs?v=b0ed13f0f060d4c7",
     "/shared/quiz-matching-model.mjs": "/shared/quiz-matching-model.mjs?v=a2a7332502e336eb",
     "/shared/quiz-matching-past-sources.mjs": "/shared/quiz-matching-past-sources.mjs?v=8652e9befd53ae2d",
     "/shared/quiz-matching-past.mjs": "/shared/quiz-matching-past.mjs?v=e3c1d2853a00ecfb",
@@ -295,8 +295,8 @@
     "/shared/quiz-partner-pilot-entry.mjs": "/shared/quiz-partner-pilot-entry.mjs?v=e22113f03e636d5c",
     "/shared/quiz-partner-rewards.mjs": "/shared/quiz-partner-rewards.mjs?v=57e960278d0e92bd",
     "/shared/quiz-partner-rewards.mjs?v=20261106-keepsake": "/shared/quiz-partner-rewards.mjs?v=57e960278d0e92bd",
-    "/shared/quiz-past-catalog.mjs": "/shared/quiz-past-catalog.mjs?v=0a0ea774bdeb164a",
-    "/shared/quiz-past-catalog.mjs?v=20261102-grade9-release": "/shared/quiz-past-catalog.mjs?v=0a0ea774bdeb164a",
+    "/shared/quiz-past-catalog.mjs": "/shared/quiz-past-catalog.mjs?v=9c2f55d4562b351f",
+    "/shared/quiz-past-catalog.mjs?v=20261128-catalog-titles": "/shared/quiz-past-catalog.mjs?v=9c2f55d4562b351f",
     "/shared/quiz-past-content.mjs": "/shared/quiz-past-content.mjs?v=a9b71ab3208fc27e",
     "/shared/quiz-past-content.mjs?v=20261102-transcribed": "/shared/quiz-past-content.mjs?v=a9b71ab3208fc27e",
     "/shared/quiz-past-entry.mjs": "/shared/quiz-past-entry.mjs?v=bd8cd08d9c14b6e3",
