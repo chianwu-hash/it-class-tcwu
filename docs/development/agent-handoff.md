@@ -12,7 +12,10 @@
 
 | 狀態 | agent | 日期 | main來源 | 基準正式 | 變更 | 結果 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 發布中 | codex-past-catalog-school | 2026-11-28 | 待本批 PR 合併 | `dpl_CUDruEjQ5GU3QtqJfNvHfiZsNvTZ` | 考古卷清單、共用標題模組及產生入口 | 等待正式候選完整檔案比對 |
+| 已完成 | codex-past-catalog-school | 2026-11-28T15:50:05.069Z | `293a82c` | `dpl_CUDruEjQ5GU3QtqJfNvHfiZsNvTZ` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/quiz-library.mjs、shared/quiz-past-catalog.mjs、shared/quiz-workshop/generated/assets.json | `dpl_GiSCQvMDzHiyjmxwPLtndotsowGC`／回滾 `dpl_CUDruEjQ5GU3QtqJfNvHfiZsNvTZ`（eolOnly 0） |
+
+四年級期末國語與英語清單的四張深美、文澳卷卡，已由正式學生 Google OAuth 在 1280 與 390 px 核對校名及作答連結。專用帳號班級已復原。[發布 PR](https://github.com/chianwu-hash/it-class-tcwu/pull/640)
+
 | 已完成 | codex-g9-social-study115 | 2026-11-28T14:53:16.089Z | `acad518` | `dpl_7ZgSAw1UcksrJU2FffPdMfyHRv3h` | grade3/115-1/partner-practice.html、grade3/115-1/past-exam.html、grade3/115-1/quiz-library.html、grade3/115-1/quiz.html、grade4/115-1/partner-practice.html、grade4/115-1/past-exam.html、grade4/115-1/quiz-library.html、grade4/115-1/quiz.html、grade6/115-1/partner-practice.html、grade6/115-1/past-exam.html、grade6/115-1/quiz-library.html、grade6/115-1/quiz.html、grade9/115-1/partner-practice.html、grade9/115-1/past-exam.html、grade9/115-1/quiz-library.html、grade9/115-1/quiz.html、shared/partner-pilot/learning.js、shared/quiz-past-exams.mjs、shared/quiz-past-ui.mjs、shared/quiz-workshop/generated/assets.json、+shared/quiz-past-study-entry.mjs | `dpl_CUDruEjQ5GU3QtqJfNvHfiZsNvTZ`／回滾 `dpl_7ZgSAw1UcksrJU2FffPdMfyHRv3h`（eolOnly 0） |
 
 - 目標：讓已核115教材的113／114社會夥伴題目另開本人原卷相同題組，答前可讀課本／教冊；保持小隊作答及既有媒體權限。
