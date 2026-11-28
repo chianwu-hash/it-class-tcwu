@@ -1,0 +1,539 @@
+{
+  "schema": 1,
+  "purpose": "113及114社會115教材固定解析的新版夥伴副本",
+  "status": "candidate-not-formally-enabled",
+  "learningMaterialsSchoolYear": 115,
+  "copies": [
+    {
+      "sourcePaperId": "zhongzheng-113-1-g9-exam2-social",
+      "sourceVersion": "cf67c5c7-029c-4c83-9055-4947d5040178",
+      "sourceDocumentSha256": "c19430960f815a3b6b7c8fe4feea364d1246d39ff236a3b5d89bd74a58af7961",
+      "partnerPaperId": "past-cf67c5c7-029c-4c83-9055-4947d5040178",
+      "originalPartnerPaperId": "past-b036a408-eb7c-988f-d53f-32bee0e68d0e",
+      "questionCount": 50,
+      "sharedPackCount": 48,
+      "rewardContentKeyPreserved": true,
+      "fieldBindings": [
+        {
+          "number": 1,
+          "groupId": "choice-01",
+          "newQuestionId": 1313875320
+        },
+        {
+          "number": 2,
+          "groupId": "choice-02",
+          "newQuestionId": 1215624371
+        },
+        {
+          "number": 3,
+          "groupId": "choice-03",
+          "newQuestionId": 1316387319
+        },
+        {
+          "number": 4,
+          "groupId": "choice-04",
+          "newQuestionId": 1137220875
+        },
+        {
+          "number": 5,
+          "groupId": "choice-05",
+          "newQuestionId": 1210932503
+        },
+        {
+          "number": 6,
+          "groupId": "choice-06",
+          "newQuestionId": 1544072200
+        },
+        {
+          "number": 7,
+          "groupId": "choice-07",
+          "newQuestionId": 1506651646
+        },
+        {
+          "number": 8,
+          "groupId": "choice-08",
+          "newQuestionId": 1325085699
+        },
+        {
+          "number": 9,
+          "groupId": "choice-09",
+          "newQuestionId": 1580035755
+        },
+        {
+          "number": 10,
+          "groupId": "choice-10",
+          "newQuestionId": 1574249040
+        },
+        {
+          "number": 11,
+          "groupId": "choice-11",
+          "newQuestionId": 1602729184
+        },
+        {
+          "number": 12,
+          "groupId": "choice-12",
+          "newQuestionId": 1464385319
+        },
+        {
+          "number": 13,
+          "groupId": "choice-13",
+          "newQuestionId": 1278690923
+        },
+        {
+          "number": 14,
+          "groupId": "choice-14",
+          "newQuestionId": 1454579408
+        },
+        {
+          "number": 15,
+          "groupId": "choice-15",
+          "newQuestionId": 1390109026
+        },
+        {
+          "number": 16,
+          "groupId": "choice-16",
+          "newQuestionId": 1346340405
+        },
+        {
+          "number": 17,
+          "groupId": "choice-17",
+          "newQuestionId": 1163107655
+        },
+        {
+          "number": 18,
+          "groupId": "choice-18",
+          "newQuestionId": 1138029358
+        },
+        {
+          "number": 19,
+          "groupId": "choice-19",
+          "newQuestionId": 1368196792
+        },
+        {
+          "number": 20,
+          "groupId": "choice-20",
+          "newQuestionId": 1270596260
+        },
+        {
+          "number": 21,
+          "groupId": "choice-21",
+          "newQuestionId": 1376414634
+        },
+        {
+          "number": 22,
+          "groupId": "choice-22",
+          "newQuestionId": 1177428528
+        },
+        {
+          "number": 23,
+          "groupId": "choice-23",
+          "newQuestionId": 1253558932
+        },
+        {
+          "number": 24,
+          "groupId": "choice-24",
+          "newQuestionId": 1506410582
+        },
+        {
+          "number": 25,
+          "groupId": "choice-25",
+          "newQuestionId": 1565022162
+        },
+        {
+          "number": 26,
+          "groupId": "choice-26",
+          "newQuestionId": 1314468521
+        },
+        {
+          "number": 27,
+          "groupId": "choice-27",
+          "newQuestionId": 1155236861
+        },
+        {
+          "number": 28,
+          "groupId": "choice-28",
+          "newQuestionId": 1143389153
+        },
+        {
+          "number": 29,
+          "groupId": "choice-29",
+          "newQuestionId": 1378540271
+        },
+        {
+          "number": 30,
+          "groupId": "choice-30",
+          "newQuestionId": 1555357119
+        },
+        {
+          "number": 31,
+          "groupId": "choice-31",
+          "newQuestionId": 1205165419
+        },
+        {
+          "number": 32,
+          "groupId": "choice-32",
+          "newQuestionId": 1528666926
+        },
+        {
+          "number": 33,
+          "groupId": "choice-33",
+          "newQuestionId": 1608358496
+        },
+        {
+          "number": 34,
+          "groupId": "choice-34",
+          "newQuestionId": 1274218990
+        },
+        {
+          "number": 35,
+          "groupId": "choice-35",
+          "newQuestionId": 1503919648
+        },
+        {
+          "number": 36,
+          "groupId": "choice-36",
+          "newQuestionId": 1081829589
+        },
+        {
+          "number": 37,
+          "groupId": "choice-37",
+          "newQuestionId": 1545466040
+        },
+        {
+          "number": 38,
+          "groupId": "choice-38",
+          "newQuestionId": 1588202391
+        },
+        {
+          "number": 39,
+          "groupId": "choice-39",
+          "newQuestionId": 1489518257
+        },
+        {
+          "number": 40,
+          "groupId": "choice-40",
+          "newQuestionId": 1448489965
+        },
+        {
+          "number": 41,
+          "groupId": "choice-41",
+          "newQuestionId": 1391955396
+        },
+        {
+          "number": 42,
+          "groupId": "choice-42",
+          "newQuestionId": 1357542162
+        },
+        {
+          "number": 43,
+          "groupId": "choice-43",
+          "newQuestionId": 1446311036
+        },
+        {
+          "number": 44,
+          "groupId": "choice-44",
+          "newQuestionId": 1312289670
+        },
+        {
+          "number": 45,
+          "groupId": "choice-45",
+          "newQuestionId": 1257879853
+        },
+        {
+          "number": 46,
+          "groupId": "choice-46",
+          "newQuestionId": 1082577624
+        },
+        {
+          "number": 47,
+          "groupId": "choice-47",
+          "newQuestionId": 1090279705
+        },
+        {
+          "number": 48,
+          "groupId": "choice-48",
+          "newQuestionId": 1230487721
+        },
+        {
+          "number": 49,
+          "groupId": "choice-49",
+          "newQuestionId": 1506678837
+        },
+        {
+          "number": 50,
+          "groupId": "choice-50",
+          "newQuestionId": 1355508130
+        }
+      ]
+    },
+    {
+      "sourcePaperId": "zhongzheng-114-1-g9-exam2-social",
+      "sourceVersion": "c04c3b2f-552d-442c-ae06-f33274cf8c0e",
+      "sourceDocumentSha256": "c221404596e31e1d23a925092ca1aefebecb5b0ed56ab2d83395075362a5b8dd",
+      "partnerPaperId": "past-c04c3b2f-552d-442c-ae06-f33274cf8c0e",
+      "originalPartnerPaperId": "past-11890eed-74e4-d0b3-f647-37c4714c6753",
+      "questionCount": 50,
+      "sharedPackCount": 41,
+      "rewardContentKeyPreserved": true,
+      "fieldBindings": [
+        {
+          "number": 1,
+          "groupId": "choice-01",
+          "newQuestionId": 1154881851
+        },
+        {
+          "number": 2,
+          "groupId": "choice-02",
+          "newQuestionId": 1302498751
+        },
+        {
+          "number": 3,
+          "groupId": "choice-03",
+          "newQuestionId": 1162070913
+        },
+        {
+          "number": 4,
+          "groupId": "choice-04",
+          "newQuestionId": 1146801768
+        },
+        {
+          "number": 5,
+          "groupId": "choice-05",
+          "newQuestionId": 1192456288
+        },
+        {
+          "number": 6,
+          "groupId": "choice-06",
+          "newQuestionId": 1561771834
+        },
+        {
+          "number": 7,
+          "groupId": "choice-07",
+          "newQuestionId": 1502778419
+        },
+        {
+          "number": 8,
+          "groupId": "choice-08",
+          "newQuestionId": 1144708398
+        },
+        {
+          "number": 9,
+          "groupId": "choice-09",
+          "newQuestionId": 1468753290
+        },
+        {
+          "number": 10,
+          "groupId": "choice-10",
+          "newQuestionId": 1201474628
+        },
+        {
+          "number": 11,
+          "groupId": "choice-11",
+          "newQuestionId": 1448553168
+        },
+        {
+          "number": 12,
+          "groupId": "choice-12",
+          "newQuestionId": 1553718189
+        },
+        {
+          "number": 13,
+          "groupId": "choice-13",
+          "newQuestionId": 1589323578
+        },
+        {
+          "number": 14,
+          "groupId": "choice-14",
+          "newQuestionId": 1561971701
+        },
+        {
+          "number": 15,
+          "groupId": "choice-15",
+          "newQuestionId": 1400635918
+        },
+        {
+          "number": 16,
+          "groupId": "choice-16",
+          "newQuestionId": 1524929208
+        },
+        {
+          "number": 17,
+          "groupId": "choice-17",
+          "newQuestionId": 1421831179
+        },
+        {
+          "number": 18,
+          "groupId": "choice-18",
+          "newQuestionId": 1401465828
+        },
+        {
+          "number": 19,
+          "groupId": "choice-19",
+          "newQuestionId": 1234338522
+        },
+        {
+          "number": 20,
+          "groupId": "choice-20",
+          "newQuestionId": 1410201313
+        },
+        {
+          "number": 21,
+          "groupId": "choice-21",
+          "newQuestionId": 1460934426
+        },
+        {
+          "number": 22,
+          "groupId": "choice-22",
+          "newQuestionId": 1463806215
+        },
+        {
+          "number": 23,
+          "groupId": "choice-23",
+          "newQuestionId": 1417791861
+        },
+        {
+          "number": 24,
+          "groupId": "choice-24",
+          "newQuestionId": 1519531707
+        },
+        {
+          "number": 25,
+          "groupId": "choice-25",
+          "newQuestionId": 1288363862
+        },
+        {
+          "number": 26,
+          "groupId": "choice-26",
+          "newQuestionId": 1537582886
+        },
+        {
+          "number": 27,
+          "groupId": "choice-27",
+          "newQuestionId": 1425180563
+        },
+        {
+          "number": 28,
+          "groupId": "choice-28",
+          "newQuestionId": 1527917929
+        },
+        {
+          "number": 29,
+          "groupId": "choice-29",
+          "newQuestionId": 1133531800
+        },
+        {
+          "number": 30,
+          "groupId": "choice-30",
+          "newQuestionId": 1466523941
+        },
+        {
+          "number": 31,
+          "groupId": "choice-31",
+          "newQuestionId": 1270157373
+        },
+        {
+          "number": 32,
+          "groupId": "choice-32",
+          "newQuestionId": 1191334082
+        },
+        {
+          "number": 33,
+          "groupId": "choice-33",
+          "newQuestionId": 1321455741
+        },
+        {
+          "number": 34,
+          "groupId": "choice-34",
+          "newQuestionId": 1262968880
+        },
+        {
+          "number": 35,
+          "groupId": "choice-35",
+          "newQuestionId": 1299771228
+        },
+        {
+          "number": 36,
+          "groupId": "choice-36",
+          "newQuestionId": 1344673016
+        },
+        {
+          "number": 37,
+          "groupId": "choice-37",
+          "newQuestionId": 1259476095
+        },
+        {
+          "number": 38,
+          "groupId": "choice-38",
+          "newQuestionId": 1222978331
+        },
+        {
+          "number": 39,
+          "groupId": "choice-39",
+          "newQuestionId": 1602395431
+        },
+        {
+          "number": 40,
+          "groupId": "choice-40",
+          "newQuestionId": 1561314567
+        },
+        {
+          "number": 41,
+          "groupId": "choice-41",
+          "newQuestionId": 1558965437
+        },
+        {
+          "number": 42,
+          "groupId": "choice-42",
+          "newQuestionId": 1516133661
+        },
+        {
+          "number": 43,
+          "groupId": "choice-43",
+          "newQuestionId": 1333704986
+        },
+        {
+          "number": 44,
+          "groupId": "choice-44",
+          "newQuestionId": 1479581685
+        },
+        {
+          "number": 45,
+          "groupId": "choice-45",
+          "newQuestionId": 1109784945
+        },
+        {
+          "number": 46,
+          "groupId": "choice-46",
+          "newQuestionId": 1595716771
+        },
+        {
+          "number": 47,
+          "groupId": "choice-47",
+          "newQuestionId": 1395112499
+        },
+        {
+          "number": 48,
+          "groupId": "choice-48",
+          "newQuestionId": 1562636193
+        },
+        {
+          "number": 49,
+          "groupId": "choice-49",
+          "newQuestionId": 1604418856
+        },
+        {
+          "number": 50,
+          "groupId": "choice-50",
+          "newQuestionId": 1371613589
+        }
+      ]
+    }
+  ],
+  "nativeSqlSha256": {
+    "stage": "1324fc2a8c5256e696308e6c79fe07731cbca22ec6f034a554e803cd1572b4f9",
+    "enable": "c84bfd9dfd473a3758c27a51fa1502f652bd19fea835a0a9929c4390f811c1c1",
+    "disable": "716786d321769a959ee8dd7c2476a2655800fdaf6aa6bcba494f87ffee050941"
+  },
+  "readingAdapterStatus": "partner-not-connected",
+  "existingRoomsAndAnswersPreserved": true
+}
